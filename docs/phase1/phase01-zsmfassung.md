@@ -223,23 +223,41 @@ Belege:
 - `runs/<runId>/approvals/approval_*.json` existiert
 - `docs/*.md` existiert
 
-## How-to-run
+## erweiterung mit langem/unstrukturiertem Tranksskript
 
-## Voraussetzungen
-- Ollama läuft lokal. (ich nutze modell qwen geht aber auch anderes)
-- Modell ist vorhanden: `qwen2.5:14b`
-- .NET 10 installiert.
+**RunId:** `20260225_123947_560ab9`  
+**Input:** `input/transcripts/T9999_chaos.txt` (generiert: 3 Sprecher, widersprüchliche Ziele, Prioritätskonflikte, Kontextsprünge).
 
-## Build
-dotnet build Agentic-SDLC.slnx
+### Beobachtete Probleme
 
-## Run
-dotnet run --project AgenticSdlc.Host
+1) **Nicht-deterministische Artefakt-Erstellung (mehrfache Überschreibungen)**
+   In `events.jsonl` sind mehrere `fs_write`-Aufrufe auf dieselben Dateien sichtbar (z.B. `docs/requirements.md` wird mehrfach überschrieben).  
+   **Implikation:** Single-Pass produziert Draft/Revisionen ohne explizite Konsolidierungsphase. Das erschwert Reproduzierbarkeit und Vergleichbarkeit zwischen Runs.
 
-## Outputs
-- Repo Artefakte: docs/*
-- Run Artefakte: runs/<runId>/...
-    - logs/events.jsonl
-    - logs/tool-discovery.json
-    - approvals/approval_*.json
-    - snapshots/docs/*
+2) **Governance-Routine instabil (mehrfache Approval Requests)**
+   `request_approval` wird im selben Run dreimal aufgerufen-entsprechend entstehen drei Approval-Dateien.  
+    Ohne klaren Workflow-Endstep “Approval exactly once” schließt der Agent mehrfach ab 
+
+3) **Output Contract nicht zuverlässig erfüllt**
+   Im Run werden Requirements/Open-Questions/Risks geschrieben, aber `docs/architecture.md` wird nicht aktualisiert (kein `fs_write` dazu im Log).  
+   Im `docs/` Ordner können Artefakte aus früheren Runs “stehen bleiben” und verfälschen den Eindruck. Daher sind Snapshots (`runs/<runId>/snapshots/docs`) bzw. eine deterministische Finalisierung zwingend.
+
+4) **Faktenstabilität sinkt bei hoher Komplexität**
+   Ein Beispiel ist ein Werte-Drift bei erwarteten Nutzerzahlen (Output enthält Werte, die im Transkript nicht vorkommen).  
+   Bei langen Inputs steigt die Gefahr von Detailverlust/Drift; reine Single-Pass “Summarize & Write”-Strategien scheinen nicht robust.
+
+5) **Traceability bleibt unvollständig**
+   Der Output enthält keine robuste Traceability (Chunk-IDs/Marker) und “verschiebt” sie implizit (“coming soon”).  
+   Traceability erfordert strukturelle Vorarbeit (Chunking + Referenzmarker) und ist als nachträglicher “Anhang” im Single-Pass unzuverlässig.
+
+### Alternative Erklärungen
+Ein Teil der beobachteten Instabilität (mehrfaches Approval, mehrfaches Überschreiben) ist theoretisch durch strengere Prompt-Regeln reduzierbar-> wird weiter getestet
+
+### Ableitung: Warum Phase 2 notwendig ist
+Die beobachteten Failure Modes motivieren zu einer weiteren Phase als strukturelle Weiterentwicklung:
+- **Chunking & IDs** als erster Workflow-Step -> stabile Traceability.
+- **Fakten/Constraints Extraktion** getrennt von “Schreiben” -> weniger Drift.
+- **KonfliktSchritt** -> Widersprüche explizit statt geglättet
+- **Finalisierung** -> genau einmal pro Artefakt schreiben
+- **Governance Endstep** → genau einmal Approval am Ende
+
