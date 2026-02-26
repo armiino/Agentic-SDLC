@@ -21,6 +21,32 @@ var config = new
 };
 run.WriteConfig(config);
 
+WriteRunChangeNote(run);
+
+static void WriteRunChangeNote(RunContext run)
+{
+    Console.WriteLine();
+    Console.WriteLine("Run change note (what is new in this run?).");
+    Console.WriteLine("Type a short note and press Enter. Leave empty for 'nichts neues in diesem Run'.");
+    Console.Write("> ");
+
+    var note = Console.ReadLine();
+    if (string.IsNullOrWhiteSpace(note))
+        note = "nichts neues in diesem Run";
+
+    var content =
+        $"""
+         runId: {run.RunId} timestampUtc: {DateTime.UtcNow:O}
+        {note}
+        """;
+
+    // Speichern unter runs/<runId>/logs/changes.txt
+    File.WriteAllText(run.ChangesPath, content);
+
+    //auch als Event (damit es in events.jsonl auffindbar ist)
+    run.AppendEvent(new { type = "RUN_CHANGE_NOTE", runId = run.RunId, note, timestampUtc = DateTime.UtcNow });
+}
+
 run.AppendEvent(new { type = "RUN_STARTED", runId, timestampUtc = DateTime.UtcNow });
 
 // mit MCP local connecten
