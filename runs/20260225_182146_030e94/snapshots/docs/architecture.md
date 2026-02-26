@@ -1,0 +1,2 @@
+# Architektur
+Es wird ein Architekt benötigt, um den Entwurf zu leiten. Besonderer Fokus liegt auf Dokumentationen über Rollen- und Berechtigungskonzepte sowie Löschkonzepte für personenbezogene Daten.
