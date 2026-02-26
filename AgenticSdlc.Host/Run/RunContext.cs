@@ -14,7 +14,8 @@ public sealed class RunContext
     public string EventsPath => Path.Combine(LogsDir, "events.jsonl");
     public string ToolDiscoveryPath => Path.Combine(LogsDir, "tool-discovery.json");
     public string ConfigPath => Path.Combine(RunDir, "config.json");
-
+    public string ChangesPath => Path.Combine(LogsDir, "changes.txt");
+    
     private readonly JsonSerializerOptions _json = new(JsonSerializerDefaults.Web);
 
     public RunContext(string runId)
