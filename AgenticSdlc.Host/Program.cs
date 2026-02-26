@@ -119,8 +119,14 @@ Outputs (write via fs_write to docs/):
 - docs/architecture.md
 Optional:
 - docs/issues.json (draft)
+Definition of Done (MUST):
+1) You must create/update ALL four files above using fs_write.
+2) Only after all four files are written, call request_approval exactly once with action="phase1_review".
+3) Do not output pseudo-code (no Python `open(...)` etc.). Use tools only.
+4) If you cannot write one of the required files, STOP and explain why. Do NOT call request_approval.
 
 Constraints:
+- Your language must be in german!
 - You can only read/write files via available tools.
 - Read roots: input/, docs/, runs/
 - Write roots: docs/, runs/
