@@ -44,6 +44,21 @@ public sealed class ToolCallLoggerMiddleware
                 timestampUtc = DateTime.UtcNow
             });
 
+            //wenn etwas file geschrieben - log eintrag mit DOC_WRITTEN
+            if (string.Equals(context.Function?.Name, "fs_write", StringComparison.OrdinalIgnoreCase))
+            {
+                if (TryGetStringArgument(context.Arguments, "path", out var path) &&
+                    path.StartsWith("docs/", StringComparison.Ordinal))
+                {
+                    _run.AppendEvent(new
+                    {
+                        type = "DOC_WRITTEN",
+                        path,
+                        timestampUtc = DateTime.UtcNow
+                    });
+                }
+            }
+
             return result;
         }
         catch (Exception ex)
@@ -57,5 +72,30 @@ public sealed class ToolCallLoggerMiddleware
             });
             throw;
         }
+    }
+    private static bool TryGetStringArgument(object? args, string key, out string value)
+    {
+        value = string.Empty;
+
+        if (args is null)
+            return false;
+
+        if (args is IDictionary<string, object?> dictObj &&
+            dictObj.TryGetValue(key, out var raw) &&
+            raw is not null)
+        {
+            value = raw.ToString() ?? string.Empty;
+            return value.Length > 0;
+        }
+
+        if (args is IDictionary<string, object> dict &&
+            dict.TryGetValue(key, out var raw2) &&
+            raw2 is not null)
+        {
+            value = raw2.ToString() ?? string.Empty;
+            return value.Length > 0;
+        }
+
+        return false;
     }
 }
