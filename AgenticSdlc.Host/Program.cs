@@ -9,6 +9,7 @@ using OllamaSharp;
 var runId = RunId.New();
 var run = new RunContext(runId);
 run.EnsureFolders();
+CleanDocsFolder();
 
 var config = new
 {
@@ -179,5 +180,26 @@ static void CopyDirectory(string sourceDir, string targetDir)
         var dest = Path.Combine(targetDir, rel);
         Directory.CreateDirectory(Path.GetDirectoryName(dest)!);
         File.Copy(file, dest, overwrite: true);
+    }
+}
+
+//docs muss vor jedem run "geleert" werden damit keine alten Daten ausversehen bleiben oder sich etwas vermischt.
+static void CleanDocsFolder()
+{
+    var docsDir = "docs";
+
+    if (!Directory.Exists(docsDir))
+        return;
+
+    var files = Directory.GetFiles(docsDir, "*.md", SearchOption.TopDirectoryOnly);
+
+    foreach (var file in files)
+    {
+        var name = Path.GetFileName(file);
+
+        if (name.Equals(".gitkeep", StringComparison.OrdinalIgnoreCase))
+            continue;
+
+        File.Delete(file);
     }
 }
