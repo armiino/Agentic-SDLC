@@ -1,0 +1,114 @@
+namespace AgenticSdlc.Host.Phases.Phase1;
+
+/// <summary>
+/// Erste Prompt-Version der Phase 1.
+/// </summary>
+/// <remarks>
+/// Diese Version bleibt als nachvollziehbarer Forschungsstand erhalten. Sie
+/// beschreibt den Ablauf sehr detailliert und versucht, das Modell stark über explizite Regeln für Reihenfolge,
+/// fs_write-Metadaten und Definition of Done zu führen. Dieser Prompt wurde am anfang verwendet..
+/// </remarks>
+public static class Phase1_1Prompt
+{
+    /// <summary>
+    /// Erstellt den Prompttext für einen konkreten Run.
+    /// </summary>
+    public static string Create(string runId)
+    {
+        return $$"""
+        You are an agent working inside a git repository.
+
+        Goal:
+        Create SDLC artifacts from stakeholder transcripts.
+
+        Inputs:
+        - Transcripts are in: input/transcripts/
+        You MUST discover and process ALL transcript files found there.
+
+        Outputs (write via fs_write to docs/):
+        - docs/requirements.md with sections:
+          - Functional Requirements
+          - Non-functional Requirements
+          - Constraints/Compliance
+          - Traceability (each item links to transcript chunks you cite)
+        - docs/open-qüstions.md
+        - docs/risks.md
+        - docs/architecture.md
+        Optional:
+        - docs/issues.json (draft)
+        Required artifact workflow (MUST follow exactly):
+        - First read and process all transcript files.
+        - Then create the four required docs in this exact order:
+          1. docs/requirements.md
+          2. docs/open-questions.md
+          3. docs/risks.md
+          4. docs/architecture.md
+        - During this first pass, call fs_write exactly once for each required doc.
+        - After reading the transcripts, do NOT produce a long analysis in assistant text. Immediately call fs_write for the next required doc.
+        - Keep each first-pass artifact concise but complete. Prefer clear bullet lists over long prose.
+        - Do NOT revise or overwrite any required doc until all four required docs have been written at least once.
+        - If you notice a missing section while writing the first pass, still continue with the next required document. Revisions are only allowed after all four required documents exist.
+        - Before any revision, check which required docs already exist. Only revise after all four required docs exist.
+        - If a required document is missing, your next fs_write MUST target the first missing required document in the order above.
+        Write observability metadata for fs_write (MUST for every fs_write):
+        - Every fs_write call MUST include these arguments:
+          - path: the target file that will be written.
+          - content: the complete new file content.
+          - intent: the category of this write action. This is NOT a reason sentence.
+          - reason: the concrete explanation why this write is needed now.
+          - evidence: the concrete source or check this write is based on.
+        - Choose intent exactly as follows:
+          - initial_draft: use ONLY when the target file does not exist yet and you create the first version of that exact file.
+          - revision: use when the target file already exists and you overwrite or improve it.
+          - finalization: use when writing a final run summary or completion artifact after all required docs exist.
+          - missing_artifact_fix: use when a required document is missing after an existence check and you write that missing document.
+          - format_fix: use when the file already exists and you only fix structure, headings, formatting, or required sections.
+          - approval_payload: use when writing the approval/request payload file.
+        - Do NOT use overwrite as intent. Overwrite is an observed file effect, not your declared intent.
+        - If you write to a path for the second time in the same run, intent MUST NOT be initial_draft.
+        - If you overwrite an existing file, intent MUST be revision or format_fix, and reason MUST state what was missing, incorrect, or improved compared to the previous version.
+        - Good reason examples:
+          - "requirements.md is created because it is the first required artifact after transcript processing."
+          - "requirements.md is revised because the previous version missed the Traceability section required by the output contract."
+          - "open-questions.md is revised because the previous version contained duplicate questions and missed the SSO decision."
+        - Bad reason examples:
+          - "Creating requirements."
+          - "Based on transcript."
+          - "Updating file."
+        - Good evidence examples:
+          - "input/transcripts/T9999_chaos.txt: Anna requests customer portal and offer creation."
+          - "Output contract requires sections Functional Requirements, Non-functional Requirements, Constraints/Compliance, Traceability."
+          - "Previous artifact check: docs/requirements.md exists but Traceability section is missing."
+        - Do not write a file without concrete reason and evidence.
+        Definition of Done (MUST):
+        1) You must create/update ALL four files above using fs_write.
+        2) Do not output pseudo-code (no Python `open(...)` etc.). Use tools only.
+        3) If you cannot write one of the required files, STOP and explain why
+
+        Constraints:
+        - Your language must be in german!
+        - You can only read/write files via available tools.
+        - Read roots: input/, docs/, runs/
+        - Write roots: docs/, runs/
+        - Do NOT invent placeholder artifacts. If transcripts cannot be read, STOP and report the exact error.
+        - Do NOT print pseudo tool calls. If you need to read/write, you MUST actually call the tool.
+        At the end:
+        - Verify that all four required docs exist:
+          - docs/requirements.md
+          - docs/open-questions.md
+          - docs/risks.md
+          - docs/architecture.md
+        - If all four exist, write a JSON payload file to:
+          runs/{{runId}}_request_approval_payload.json
+        - The payload must include:
+          - runId
+          - createdOrUpdatedFiles
+          - shortSummary
+
+        Do NOT claim success if any required file is missing.
+        If one required document is still missing, explain which one is missing and stop.
+
+        Start when ready.
+        """;
+    }
+}
