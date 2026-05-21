@@ -18,7 +18,7 @@ namespace AgenticSdlc.Host.Observability;
 /// - und optional einen kurzen Ausschnitt der Assistant-Antwort fuer Debugging.
 ///
 /// Wichtige Grenze:
-/// Diese Klasse fuehrt keine Tools aus und beweist nicht, warum sich das Modell auf eine
+/// Diese Klasse führt keine Tools aus und beweist nicht, warum sich das Modell auf eine
 /// bestimmte Weise verhalten hat. Sie speichert nur beobachtbare Antwortsignale. Die echte
 /// Tool-Ausführung wird separat in der ToolCallLoggerMiddleware geloggt.
 ///
@@ -74,10 +74,10 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
         CancellationToken cancellationToken = default)
     {
         /*
-         * Diese Zahl beschreibt Chat-Aufrufe, nicht Tool-Ausführungen.
+         * Diese Zahl beschreibt Chat-Pipeline-Aufrufe, nicht Tool-Ausführungen.
          * Wenn chatIteration meistens 1 ist, bedeutet das: Der Agent hat nur einen
-         * vollständigen Chat-Zyklus benötigt. Innerhalb dieses Zyklus können trotzdem
-         * mehrere Toolcalls liegen.. aktuell schwaches model deswegen auch immer nur ein chat
+         * vollständigen Chat-Zyklus benötigt. Innerhalb dieses Zyklus werden mehrere toolcalls ausgeführt
+         * eig ist es wie der lebenszyclus des agenten..
          */
         var chatIteration = Interlocked.Increment(ref _chatIteration);
 
@@ -110,7 +110,7 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
         {
             /*
              * CHAT_FAILED bedeutet, dass die Chat-Pipeline selbst fehlgeschlagen ist,
-             * beispielsweise durch einen unvollstaendigen Provider-Stream.. 
+             * beispielsweise durch einen unvollständigen Provider-Stream.. 
              *
              * Das ist fachlich von Tool-Fehlern zu trennen: Ein Tool kann erfolgreich
              * aufgerufen werden und trotzdem ein Fehlerergebnis liefern. Solche Tool-
@@ -147,7 +147,7 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
 
         /*
          * Preview-Felder bleiben null, solange die Environment-Konfiguration sie nicht
-         * erlaubt. Der SHA ermoeglicht den Vergleich vollstaendiger Antworten, ohne den
+         * erlaubt. Der SHA ermöglicht den Vergleich vollständiger Antworten, ohne den
          * kompletten Antworttext speichern zu muessen.
          */
         string? preview = null;
@@ -164,9 +164,9 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
             previewLen = assistantText.Length;
 
             /*
-             * Spiegelt den Preview zusaetzlich in OpenTelemetry.
+             * Spiegelt den Preview zusätzlich in OpenTelemetry.
              * Dadurch ist dasselbe Debug-Signal sowohl in lokalen Run-Logs als auch
-             * in exportierten Traces sichtbar.
+             * in exportierten Traces sichtbar. TODO: vllt nicht nötig alles überall zu haben.
              */
             AddOtelEvent("llm.assistant_preview", new Dictionary<string, object?>
             {
