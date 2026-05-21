@@ -1,0 +1,51 @@
+﻿--- before/docs/requirements.md
++++ after/docs/requirements.md
+-   - Login via E-Mail und Passwort oder SSO (optional)
++   - Implementierung eines Portals, das als Frontend für Kunden zur Verfügung steht.
+-   - Rollenmanagement: Admin, User und Manager
++   - Die Anmeldung erfolgt via E-Mail und Passwort. Ein optionaler Single Sign-On (SSO) kann in Betracht gezogen werden.
+-   - SAP Integration für Kundendaten und Produktinformationen
++   - Rollenmanagement umfasst die Berechtigungen von Admins, Usern und Managern.
+-   - Funktion zur Erstellung von Angeboten
++   - Integration mit SAP für Kundendaten und Produktinformationen.
+-   - Möglichkeit zum Herunterladen von Rechnungen
++ 
+- 
++ - Funktion zur Erstellung von Angeboten
+- ## Non-functional Requirements
++   - Ein Interface für den Umgang mit Angeboten und Bestellungen.
+- - Kompatibilität mit DSGVO (Datenschutzrichtlinien)
++   - Die Möglichkeit zu erstellen, anzuzeigen und herunterzuladen von Rechnungen.
+- - TLS Verschlüsselung
++ 
+- - Logging/Protokollierung für Audit-Purposes und Compliance
++ ## Non-functional Requirements
+- - Kein Overengineering, sondern skalierbare Architektur
++ - Kompatibilität mit DSGVO (Datenschutzrichtlinien)
+- - Backup und Disaster Recovery
++   - Implementierung der Double Opt-In-Mechanik für E-Mail-Benachrichtigungen.
+- 
++   - Logging/Audit Trails um eine nachvollziehbare Nutzung zu gewährleisten.
+- ## Constraints/Compliance
++ 
+- - Double Opt-In für E-Mail-Benachrichtigungen
++ - Verschlüsselung und Sicherheit
+- - Logging/Audit Trails
++   - Verwendung von TLS (Transport Layer Security) für die Verschlüsselung der Datenübertragung.
+- - Zugriffskontrolle/Rollenmodelle
++   - Kein Overengineering, sondern Skalierbarkeit durch einfache Architekturprinzipien.
+- - Datenschutz: Verschlüsselung, Tracking-Einschränkungen und Auditierbarkeit
++ 
++ - Backup und Disaster Recovery
++   - Etablierung eines Backupsystems um sicherzustellen, dass in Fällen von Ausfällen oder Schäden Daten wiedergewonnen werden können.
++ 
++ ## Constraints/Compliance
++ - Zugriffskontrolle/Rollenmodelle
++   - Eine zentrale Zugriffssteuerung für die verschiedenen Benutzerrollen (Admin, User und Manager).
++ 
++ - Datenschutz: Verschlüsselung, Tracking-Einschränkungen und Auditierbarkeit
++   - Verschlüsselung von personenbezogenen Daten, Einschränkungen der Nutzung von Tracking-Mechanismen sowie die Möglichkeit für eine nachvollziehbare Nutzung durch Logging.
++ 
++ ### Unentschiedene Punkte
++ - API Layer (OAuth oder API Keys)
++   - Die Implementation einer API-Layer um externe Systeme zu integrieren. Es ist unentschieden, ob OAuth oder API Keys verwendet werden sollen.

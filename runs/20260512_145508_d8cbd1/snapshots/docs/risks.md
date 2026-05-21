@@ -1,0 +1,2 @@
+- Security Review dauert 6 Wochen.
+- Kein neuer DB Server, Managed Services sind günstiger aber weniger skalierbar.

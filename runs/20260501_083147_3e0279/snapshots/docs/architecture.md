@@ -1,0 +1,6 @@
+# Architektur
+- Kundenportal als Webanwendung (Responsive Design)
+- API Layer für Integration von Angebotserstellung und Rechnungsdownload
+- Managed Services für Datenbanken
+- OAuth-basierte Authentifizierung für APIs
+- Verschlüsselung (TLS) für Datensicherheit

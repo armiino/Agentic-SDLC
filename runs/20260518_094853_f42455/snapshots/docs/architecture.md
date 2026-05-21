@@ -1,0 +1,8 @@
+# Architektur
+
+## Backend
+- Managed Services für Datenhaltung ohne neuen DB-Server.
+- API Layer mit OAuth für Sicherheit und Integrierbarkeit.
+
+## Frontend
+- Web-basiertes Portal als MVP, möglicherweise später native App oder responsive Design.

@@ -1,0 +1,6 @@
+# Architektur
+- API Layer für Integration
+- Managed Services für Datenbank (kein neuer DB Server)
+- Verschlüsselung (TLS) für Datensicherheit
+- Logging und Audit Trails für Compliance
+- Skalierbare Infrastruktur für bis zu 20.000 Benutzer

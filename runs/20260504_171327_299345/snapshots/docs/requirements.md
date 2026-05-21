@@ -1,0 +1,22 @@
+- **Funktionale Anforderungen:**
+  - Kundenportal zur Erstellung von Angeboten
+  - Rechnungsdownload für Kunden
+  - Login mit E-Mail und Passwort (zukünftig Single Sign-On)
+  - Rollensystem (Admin, User, Manager, Support)
+  - SAP Integration für Produktinformationen und Preise
+  - API Layer für Integrierung
+- **Nicht-funktionale Anforderungen:**
+  - DSGVO-konforme Datenverarbeitung
+  - Verschlüsselung (TLS)
+  - Logging und Audit Trails
+  - Skalierbarkeit für bis zu 20.000 Nutzer
+  - Backup und Disaster Recovery
+  - KPIs zur Messung von Conversion Rate und Zeit bis Angebot
+- **Beschränkungen/Compliance:**
+  - Kein neuer DB Server, Managed Services bevorzugen
+  - EU-only Datenhaltung oder DSGVO-konforme Lösung
+  - Security Review in 6 Wochen abgeschlossen haben (ohne MVP Verzögerung)
+- **Traceability:**
+  - Kundenportal: [Anna] "Kunden sollen Angebote erstellen und Rechnungen downloaden."
+  - Rollensystem: [Clara] "Wir brauchen ein Rollen- und Berechtigungskonzept."
+  - SAP Integration: [Ben] "Produktinformationen liegen in SAP."

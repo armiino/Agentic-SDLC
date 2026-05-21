@@ -1,0 +1,18 @@
+# Anforderungen
+## Funktionsanforderungen:
+- Ein Kundenportal zur Unterstützung des Angebots- und Verkaufsprozesses.
+- Bereitstellung eines Angebots-Generierungsmodells, das Produktinformationen, Preise und Rabattlogik integriert.
+- Benutzerrollen (Admin, Normaler User, Support) für eine sichere Nutzung der Plattform.
+- Login über E-Mail und Passwort oder SSO mit Azure AD oder Google.
+
+## Nicht-funktionale Anforderungen:
+- Datenschutz gemäß DSGVO einschließlich Double-Opt-In, Auftragsverarbeitungsverträge und Löschkonzepte.
+- Sicherheitsanforderungen, wie TLS-Verschlüsselung für Datenübertragung und Logging zur Prüfung der Auditability.
+- Skalierbarkeit im Hinblick auf eine erwartete Anzahl von 20.000 Benutzern (falls das Produkt gut ankommt).
+
+## Restriktionen/Komplianz:
+- Keine Installation eines neuen Datenbankservers, stattdessen Managed Services verwenden.
+- Die API-Methode muss OAuth verwendet werden und abgesichert sein.
+
+## Traceability
+Referenz zu Transkriptabschnitten wie [Anna] "Also wir brauchen definitiv ein Kundenportal." oder [Clara] "DSGVO Compliance ist Pflicht."

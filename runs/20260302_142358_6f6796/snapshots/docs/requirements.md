@@ -1,0 +1,7 @@
+- **Traceability**
+  - Kundenportal (Zeile 3)
+  - Bestellungen und Rechnungen (Zeilen 15-16)
+  - Angebote erstellen (Zeile 17)
+  - Login per E-Mail und Passwort (Zeile 20)
+  - Rollenmodelle (Zeilen 23-24)
+  - SAP Integration (Zeile 25)

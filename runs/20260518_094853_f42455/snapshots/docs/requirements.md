@@ -1,0 +1,24 @@
+# Anforderungen
+
+## Funktional Requirements
+- Kundenportal mit Login, Rollenmanagement und SAP Integration.
+- Angebote erstellen und Rechnungsdownload.
+- Verschlüsselung für personenbezogene Daten.
+- Logging und Audit Trails.
+- API Layer für Integrierbarkeit.
+
+## Nicht-funktionale Anforderungen
+- Skalierbarkeit (bis zu 20.000 Nutzer).
+- DSGVO-konforme Lösung.
+- Kein Overengineering, aber genug Flexibilität für zukünftige Anpassungen.
+
+## Beschränkungen/Compliance
+- EU-only Datenhaltung und DSGVO-Kompatibilität.
+- Keine neuen DB-Servers, Managed Services verwenden.
+- Backup und Disaster Recovery.
+- Security Review in 6 Wochen durchgeführt werden.
+
+## Traceability
+- Kundenportal: Anna (Transcript T9999_chaos.txt)
+- Angebote erstellen: Anna (Transcript T9999_chaos.txt)
+- Verschlüsselung: Anna, Ben, Clara (Transcript T9999_chaos.txt)

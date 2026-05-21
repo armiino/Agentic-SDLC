@@ -1,0 +1,5 @@
+# Architektur
+- Kein neuer DB Server
+- Managed Services für Datenbanken
+- API Layer mit OAuth oder API Keys
+- Skalierbarkeit durch Cloud-Dienste wie AWS oder Azure

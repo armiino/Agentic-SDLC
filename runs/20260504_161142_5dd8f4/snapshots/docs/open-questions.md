@@ -1,0 +1,5 @@
+# Offene Fragen
+- Soll das Portal native App oder responsive Web sein?
+- Wie soll die Integration von Single Sign-On (SSO) implementiert werden?
+- Welche Art von Backup und Disaster Recovery ist notwendig?
+- Wie sollen Push Notifications und Tracking umgesetzt werden?

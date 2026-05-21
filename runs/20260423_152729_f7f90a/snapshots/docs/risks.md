@@ -1,0 +1,4 @@
+# Risiken
+1. **Zeitbedarf für die Implementierung:** Der MVP muss innerhalb von 8 Wochen fertig sein.
+2. **Compliance-Probleme:** DSGVO-Forderungen können das Projekt verlangsamen oder blockieren.
+3. **Sicherheitsanforderungen:** Eine Security Review dauert 6 Wochen und würde den Zeitplan sprengen.

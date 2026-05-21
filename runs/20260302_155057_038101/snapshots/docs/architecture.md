@@ -1,0 +1,3 @@
+# Architektur
+Das Projekt wird eine API-Layer implementieren, um Zugriff auf externe APIs und Datenquellen wie SAP zu ermöglichen. Die Frontend-Implementierung könnte entweder eine native mobile App oder ein responsive Web-Frontend sein.
+Es ist empfohlen, OAuth zur Authentifizierung von Anwendungen über die API-Layer zu verwenden. Dies gewährleistet eine hohes Sicherheitsniveau und ermöglicht Zugriff auf Daten für autorisierte Anwendungen.

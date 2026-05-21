@@ -1,0 +1,4 @@
+- Welche Plattform (Web oder Mobil) soll zuerst implementiert werden?
+- Soll native App oder responsive Web für mobile Endpunkte verwendet werden?
+- Wie wird die Identity Provider Integration umgesetzt? OAuth oder API Keys?
+- Wie wird das Backup und Disaster Recovery umgesetzt?

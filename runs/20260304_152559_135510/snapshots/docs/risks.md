@@ -1,0 +1,3 @@
+- Kein Architekturkonzept führt zu Überlastung während der Entwicklung
+- Ohne Dokumentation kann kein Security Review durchgeführt werden, was den Release-Termin verlängert
+- Komplexe Anforderungen an das Portal könnten den MVP-Mitgliedtermin sprengen

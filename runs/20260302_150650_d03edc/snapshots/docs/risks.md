@@ -1,0 +1,2 @@
+- Keine neue DB Server -> Nutzung von Managed Services notwendig.
+- Security Review in 6 Wochen kann die MVP-Terminschraube sprengen.

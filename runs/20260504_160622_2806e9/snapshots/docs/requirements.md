@@ -1,0 +1,23 @@
+- **Funktionalanforderungen:**
+  - Kundenportal
+    - Web-basiert (zunächst)
+    - Mobilfunkfähigkeit (später?)
+  - Angebote erstellen
+  - Rechnungsdownload für Kunden
+  - Login mit E-Mail und Passwort, optional SSO (Azure AD oder Google)
+  - Rollenmanagement (Admin, normaler User, Manager, Support?)
+  - SAP Integration für Produkt-, Preis- und Rabattlogik
+  - Kein neuer Datenbankserver, Managed Services verwenden
+  - API Layer für Integrierung
+- **Nicht-funktionalanforderungen:**
+  - DSGVO-konform (Double-Opt-In, Logging, Löschkonzepte)
+  - Verschlüsselung (TLS)
+  - Auditierbarkeit (Wer hat wann was geändert?)
+  - Sicherheitsüberprüfung
+  - KPIs messen (Conversion Rate, Zeit bis Angebot)
+  - Skalierbarkeit (200 - 20.000 User)
+  - Backup und Disaster Recovery
+- **Beschränkungen/Compliance:**
+  - EU-only Datenhaltung
+  - Kein Overengineering
+  - Dokumentation für Security Review

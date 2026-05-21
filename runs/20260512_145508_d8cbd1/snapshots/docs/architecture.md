@@ -1,0 +1,3 @@
+- API Layer zur Integration von Diensten.
+- OAuth-basierte Authentifizierung für APIs.
+- Skalierbare Architektur ohne Overengineering.

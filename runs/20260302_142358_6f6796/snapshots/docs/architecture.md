@@ -1,0 +1,3 @@
+- Eine API-Schicht wird benötigt, um die Anwendung skalierbar zu machen.
+- OAuth für sichere Authentifizierung der APIs.
+- Keine neue Datenbankinstallation; Managed Services werden stattdessen genutzt.

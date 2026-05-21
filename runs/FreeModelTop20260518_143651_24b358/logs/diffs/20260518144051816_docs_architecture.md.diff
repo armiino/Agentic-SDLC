@@ -1,0 +1,58 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturübersicht
++ 
++ ## Überblick
++ Das System besteht aus einer **Web‑Frontend**‑Komponente (React/Angular) und optional einer **Mobile‑App** (React‑Native) für das Kundenportal. Das Frontend kommuniziert über einen **API‑Gateway** mit dem **Backend‑Service‑Layer**. Das Backend stellt **REST‑APIs** (OAuth 2.0) bereit und integriert sich über **SAP‑Connectoren** in das bestehende SAP‑ERP für Stammdaten, Produkt‑ und Preis‑Informationen.
++ 
++ ## Komponenten
++ 
++ | Komponente | Beschreibung | Technologie‑Optionen |
++ |------------|--------------|----------------------|
++ | **Web‑Frontend** | Kunden‑ und Sales‑Portal, responsive UI. | React, Angular, Vue (Web‑First) |
++ | **Mobile‑App** (optional) | Native oder hybride App für unterwegs. | React‑Native, Flutter (später) |
++ | **API‑Gateway** | Routing, Authentifizierung, Rate‑Limiting. | Kong, AWS API‑Gateway, Azure API‑Management |
++ | **Backend Service Layer** | Geschäftslogik, Angebotserstellung, Rechnungs‑Download, KPI‑Erfassung. | Spring Boot (Java), .NET Core, Node.js |
++ | **Auth‑Provider** | Identity‑Management für Login & SSO. | Azure AD, Google Identity, Keycloak |
++ | **SAP‑Connector** | Schnittstelle zu SAP‑ERP (Produkt‑/Preis‑Daten). | SAP OData, RFC, SAP Cloud SDK |
++ | **Managed DB / Storage** | Persistenz für Nutzer‑ und Angebotsdaten. | Azure SQL Managed, AWS RDS (PostgreSQL), GCP Cloud SQL |
++ | **Logging & Auditing** | Änderungs‑ und Zugriffs‑Logs, GDPR‑Audit‑Trails. | ELK Stack, Azure Monitor, Splunk |
++ | **Backup / DR** | Regelmäßige Backups, Wiederherstellung. | Cloud‑Provider native Backup‑Lösungen |
++ | **KPI‑Service** | Erfassung und Reporting von Conversion‑Rate, Zeit‑bis‑Angebot. | Grafana, PowerBI, custom DB tables |
++ 
++ ## Datenfluss (Kurz)
++ 1. **Login** – Nutzer authentifiziert über Email/Passwort oder SSO (OAuth). 
++ 2. **Frontend** ruft geschützte APIs über das API‑Gateway auf. 
++ 3. **Backend** greift bei Angebots‑Erstellung auf SAP‑Stammdaten zu, berechnet Preise inkl. Rabattlogik und speichert das Angebot. 
++ 4. **Kunden** können im Portal Bestellungen einsehen und Rechnungen herunterladen (PDF‑Generation). 
++ 5. **Logging** erfasst jede Änderung (Create/Update/Delete) inkl. Nutzer‑ID für Audit‑Trails. 
++ 6. **Backup** wird regelmäßig vom Managed DB Service durchgeführt; Wiederherstellung über DR‑Plan. 
++ 7. **KPI‑Service** sammelt Ereignisse (Angebot erstellt, Bestellung abgeschlossen) für Reporting.
++ 
++ ## Nicht‑funktionale Aspekte
++ - **Sicherheit**: TLS 1.2+, OAuth 2.0, Rollen‑basiertes Zugriffskontrollmodell, Logging, Audit‑Trails.
++ - **Compliance**: EU‑Only Hosting, DSGVO‑konforme Datenverarbeitung, Double‑Opt‑In, Löschkonzept.
++ - **Skalierbarkeit**: Managed Services, horizontale Skalierung des API‑Layers, Cloud‑Auto‑Scaling.
++ - **Verfügbarkeit**: 99,9 % Uptime, Multi‑AZ Deployment, Backup/DR.
++ - **Performance**: Antwortzeit < 2 s für Kern‑APIs, asynchrone Verarbeitung für PDF‑Generierung.
++ 
++ ## Architektur‑Diagramm (Text‑basiert)
++ ```
++ [Client] --> [Web Frontend] --> [API Gateway] --> [Backend Services] --> [SAP Connector]
++                                           |
++                                           v
++                                    [Managed DB / Storage]
++                                           |
++                                           v
++                                    [Logging & Auditing]
++                                           |
++                                           v
++                                    [Backup / DR]
++ ```
++ 
++ ## Annahmen & Offene Punkte
++ - Entscheidung über Mobile‑Strategie (Web‑First vs. native) wird später getroffen.
++ - Auswahl des Cloud‑Providers (Azure, AWS, GCP) erfolgt nach Kosten‑ und Compliance‑Prüfung.
++ - Externer Architekt wird für Detail‑Design und Security Review eingebunden.
++ 

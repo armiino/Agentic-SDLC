@@ -1,0 +1,33 @@
+- **Funktionale Anforderungen:**
+  - Ein Kundenportal zur schnelleren Erstellung von Angeboten.
+  - Rechnungsdownload für Kunden.
+  - Login über E-Mail und Passwort mit Option für SSO (z.B. Azure AD oder Google).
+  - Rollenmanagement (Admin, normaler User, Manager, Support).
+  - SAP Integration für Produkt-, Preis- und Rabattlogik.
+  - Keine neue Datenbank, Managed Services verwenden.
+  - API Layer zur Integration von Diensten.
+
+- **Nicht-funktionale Anforderungen:**
+  - DSGVO-konforme Lösung mit Double-Opt-In, Logging und Löschkonzepte.
+  - Verschlüsselung (TLS).
+  - Auditierbarkeit für personenbezogene Daten.
+  - Kein Overengineering, aber skalierbare Architektur.
+  - EU-only Hosting oder zumindest DSGVO-konforme Lösung.
+
+- **Einschränkungen/Compliance:**
+  - Keine native App ohne Budget.
+  - Kein neuer DB Server.
+  - Security Review in 6 Wochen.
+  - Backup und Disaster Recovery für Kundendaten.
+  - API muss OAuth-basiert sein, aber komplexer als API Keys.
+
+- **Traceability:**
+  - Kundenportal: Anna
+  - Login mit SSO: Anna, Clara
+  - Rollenmanagement: Anna, Clara
+  - SAP Integration: Ben, Anna
+  - Keine neue Datenbank: Ben
+  - DSGVO-konforme Lösung: Clara
+  - Verschlüsselung (TLS): Ben, Anna
+  - Auditierbarkeit: Clara
+  - EU-only Hosting: Anna, Clara

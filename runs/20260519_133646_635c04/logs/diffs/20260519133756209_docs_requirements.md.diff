@@ -1,0 +1,39 @@
+﻿--- before/docs/requirements.md
++++ after/docs/requirements.md
+- 
++ # Anforderungen
++ 
++ ## Functional Requirements
++ - Kundenportal (Web‑first, mobile optional) für Kunden zur Ansicht von Bestellungen und zum Download von Rechnungen.
++ - Angebotserstellung im Portal für Sales inkl. Produkt‑, Preis‑ und Rabattlogik.
++ - Login per E‑Mail/Passwort, optional SSO (Azure AD, Google) – Identity‑Provider‑Integration.
++ - Rollen‑ und Berechtigungskonzept (Admin, User, Manager, Support).
++ - Integration mit SAP für Stammdaten, Produktdaten und Preise.
++ - API‑Layer (REST) zur Anbindung von SAP und zukünftigen Services, gesichert via OAuth (oder API‑Keys).
++ - Logging/Audit‑Trail für Änderungen und Zugriff (DSGVO‑konform).
++ - Lösch‑ und Auftragsverarbeitungs‑Konzept für Kundendaten.
++ - Möglichkeit zum Download von Rechnungen.
++ - KPI‑Erfassung (Conversion Rate, Zeit bis Angebot).
++ - Backup & Disaster Recovery.
++ 
++ ## Non-functional Requirements
++ - DSGVO‑Konformität (EU‑Only Hosting, Datenverschlüsselung TLS, Double‑Opt‑In, Einwilligungs‑Management für Push‑Notifications).
++ - Skalierbarkeit von 200 bis 20 000 gleichzeitigen Nutzern, ohne Over‑Engineering.
++ - Performance‑Ansprüche für schnelle Angebotserstellung.
++ - Managed Services, keine neue Datenbank‑Instanz.
++ - Security Review (inkl. Pen‑Test) – muss im MVP‑Zeitplan berücksichtigt werden.
++ - Verfügbarkeit und Backup (Recovery‑Zeit‑Ziel < 4 h).
++ 
++ ## Constraints/Compliance
++ - Keine neue DB‑Server‑Installation, Nutzung von Managed Services.
++ - EU‑Only Datenhosting, DSGVO‑Erfüllung.
++ - MVP‑Zeitplan: 8 Wochen.
++ - Budget‑Beschränkung (keine teuren nativen Mobile‑Apps, keine parallelen Frontends).
++ 
++ ## Traceability
++ | Quelle (Transkript) | Anforderung |
++ |---------------------|-------------|
++ | Anna (Portal, Angebote, Rechnungen, Rollen, KPIs) | Functional Requirements |
++ | Ben (API‑Layer, OAuth, Security Review, Backup) | Functional & Non‑functional |
++ | Clara (DSGVO, Logging, Audit, Löschkonzept) | Non‑functional & Compliance |
++ 

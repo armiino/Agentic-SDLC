@@ -1,0 +1,3 @@
+- Native App vs. Responsive Web: Welche Technologie ist die beste Wahl?
+- API Layer: OAuth vs. API Keys – welche Option eignet sich besser?
+- Backup/Disaster Recovery: Wird es für MVP notwendig sein?

@@ -1,0 +1,4 @@
+- Soll das Portal Web oder native App sein? Oder beide?
+- Wie werden Push-Benachrichtigungen implementiert (Einwilligung, Tracking)?
+- Welche Technologie wird für die Sicherheit der API verwendet (OAuth vs. API Keys)?
+- Welches Backup- und Disaster-Recovery-Konzept wird eingeführt?

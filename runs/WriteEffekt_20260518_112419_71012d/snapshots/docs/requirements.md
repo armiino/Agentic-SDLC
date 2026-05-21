@@ -1,0 +1,36 @@
+# Functional Requirements
+
+- Kundenportal (Web, mobile optional später)
+- Login per E-Mail und Passwort, optional SSO (Azure AD, Google)
+- Rollen: Admin, User, Manager, Support (optional)
+- Angebote erstellen und verwalten
+- Rechnungen anzeigen und herunterladen
+- Integration mit SAP für Stammdaten, Produktdaten, Preise, Rabattlogik
+- API Layer für Integration
+- Push Notifications (nicht im MVP)
+- KPIs: Conversion Rate, Zeit bis Angebot
+- Löschkonzept für Kundendaten
+- Logging und Audit Trails
+- Backup und Disaster Recovery
+
+# Non-functional Requirements
+
+- DSGVO-konform, EU-only Hosting oder DSGVO-konform
+- Sicherheit: TLS, OAuth für API, Zugriffskontrolle, Rollen- und Berechtigungskonzept
+- Skalierbarkeit für 200 bis 20.000 Nutzer
+- Managed Services, kein neuer DB Server
+- MVP in 8 Wochen
+- Dokumentation für Security Review
+
+# Constraints/Compliance
+
+- DSGVO Anforderungen: Double-Opt-In, Löschkonzept, Auditierbarkeit, Auftragsverarbeitungsverträge
+- Kein neuer DB Server erlaubt
+- EU-only oder DSGVO-konforme Datenhaltung
+- Security Review verpflichtend
+
+# Traceability
+
+- Anforderungen basieren auf Stakeholder-Transkript T9999_chaos.txt
+- Anforderungen zu Login, Rollen, SAP Integration, Angebote, Rechnungen, KPIs, Compliance, Security, Backup, Skalierbarkeit
+- Diskussionen zu MVP-Zeitrahmen und Budget

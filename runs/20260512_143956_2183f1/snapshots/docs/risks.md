@@ -1,0 +1,6 @@
+# Risiken
+1. **Zeitplan:** Security Review dauert 6 Wochen, was den MVP-Zeitplan von 8 Wochen sprengt.
+2. **Budget:** Native App ist teuer und Managed Services müssen günstig sein.
+3. **Komplexität:** OAuth-Autorisierung ist komplexer als API Keys.
+4. **Datenbank:** Kein neuer DB Server, Managed Services sind notwendig.
+5. **Compliance:** DSGVO-Kompatibilität erfordert Double-Opt-In, Löschkonzepte und Auftragsverarbeitungsverträge.

@@ -1,0 +1,4 @@
+- Soll die Anwendung native App oder responsive Web sein?
+- Wie viele User erwarten wir (Performance)?
+- Ist ein Ticketsystem nötig?
+- Welche Backup-Strategie soll implementiert werden?

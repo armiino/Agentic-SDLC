@@ -1,0 +1,4 @@
+- Verzögerungen durch Compliance-Anforderungen (DSGVO, etc.)
+- Skalierbarkeit und Overengineering
+- Fehlende Architektur-Definition führt zu unklarer Implementierung.
+- Zeitbedarf für Security Review könnte das MVP-Timetable sprengen.

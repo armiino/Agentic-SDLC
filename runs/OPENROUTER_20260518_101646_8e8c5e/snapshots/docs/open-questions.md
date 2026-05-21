@@ -1,0 +1,17 @@
+# Offene Fragen
+
+- Soll das Kundenportal zuerst als Webanwendung oder als native mobile App entwickelt werden?
+- Welche Identity Provider sollen für SSO unterstützt werden (Azure AD, Google, andere)?
+- Welche Rollen sind tatsächlich notwendig für den MVP (Admin, User, Manager, Support)?
+- Wie genau soll die SAP-Integration technisch erfolgen?
+- Welche KPIs sollen genau gemessen werden und wie?
+- Wie viele Nutzer werden realistisch erwartet für die MVP-Phase?
+- Wie wird das Löschkonzept technisch umgesetzt?
+- Welche Managed Services sollen verwendet werden?
+- Wie wird das Backup- und Disaster Recovery-Konzept konkret umgesetzt?
+- Wie detailliert muss die Dokumentation für den Security Review sein?
+- Soll Push Notifications im MVP enthalten sein oder erst später?
+- Wie wird die API-Sicherheit genau umgesetzt (OAuth vs. API Keys)?
+- Wer übernimmt die Pflege der Stammdaten?
+- Gibt es ein konkretes Budget für die Entwicklung?
+- Wie wird der Support für das Portal organisiert?

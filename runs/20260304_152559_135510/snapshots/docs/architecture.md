@@ -1,0 +1,2 @@
+- Erstelle ein simples Architekturkonzept zur Bestimmung der wesentlichen Systemkomponenten und deren Interaktionen.
+- Empfehle eine API Layer (z.B. RESTful Webservice) für die Integration verschiedener Frontends.

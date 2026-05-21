@@ -1,0 +1,4 @@
+- Kein zentrales IAM System vorhanden
+- SAP ist uralt, Integration könnte schwierig sein
+- Security Review dauert 6 Wochen, was die MVP-Frist von 8 Wochen sprengt
+- Skalierbarkeit und Overengineering sind ein Spannungsfeld

@@ -1,0 +1,3 @@
+- Welche Plattform soll zuerst implementiert werden? Web oder Mobile?
+- Wie viele User erwarten wir im MVP?
+- Was ist mit Push Notifications und Tracking?

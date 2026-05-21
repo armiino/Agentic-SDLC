@@ -1,0 +1,4 @@
+# Risiken
+- Security Review dauert 6 Wochen, was die Frist für MVP sprengt.
+- Komplexität von OAuth und SSO kann mehr Zeit erfordern.
+- Skalierbarkeit muss berücksichtigt werden, ohne zu overengineern.

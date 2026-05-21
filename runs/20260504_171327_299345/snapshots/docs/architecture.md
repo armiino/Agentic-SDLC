@@ -1,0 +1,5 @@
+**Architektur:**
+- Web-basiertes Kundenportal
+- API Layer für Integrierungen (OAuth für Sicherheit)
+- Managed Services für Datenhaltung ohne neuen DB Server
+- Backup und Disaster Recovery Systeme implementieren

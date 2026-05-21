@@ -1,0 +1,4 @@
+# Architektur
+- API-Schicht für Integrierung
+- Managed Services für Datenhaltung
+- EU-only Datenhaltung

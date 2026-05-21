@@ -1,0 +1,5 @@
+# Risiken
+1. **Zeitliche Verzögerung durch Security Review:**
+   - Der Security Review wird ohne entsprechende Maßnahmen 6 Wochen dauern, was das MVP-Termindatum von 8 Wochen sprengt.
+2. **Datenschutz-Verletzung durch Nicht-Kompatibilität mit DSGVO:**
+   - Die Plattform muss DSGVO-konforme Praktiken und Mechanismen implementieren, um Verletzungen zu vermeiden.

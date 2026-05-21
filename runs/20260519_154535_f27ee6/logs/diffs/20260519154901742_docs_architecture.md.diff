@@ -1,0 +1,63 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturübersicht
++ 
++ ## Überblick
++ Die Lösung besteht aus einer **Web‑First Kundenportal‑Frontend** (responsive, optional native Mobile‑App) und einem **Backend‑Service‑Layer**, das die Integration mit SAP sowie die Bereitstellung einer öffentlichen API ermöglicht. Alle Komponenten werden in einer Cloud‑Umgebung gehostet, wobei ausschließlich EU‑Only‑Regionen verwendet werden, um DSGVO‑Konformität sicherzustellen.
++ 
++ ## Komponenten
++ 
++ 1. **Frontend**
++    - **Web‑App** (React/Angular/Vue) – responsives Design, später optional native Mobile‑App (React‑Native/Flutter).
++    - Authentifizierung via **Login per E‑Mail/Passwort** (JWT) und optional **SSO** (Azure AD, Google) über **OAuth‑2.0**.
++    - Rollen‑basiertes UI‑Rendering (Admin, User, Manager, Support).
++ 
++ 2. **API‑Gateway**
++    - Exponiert REST‑Endpoints für das Frontend und externe Systeme.
++    - **Sicherheitsmechanismen**: OAuth‑2.0 (Authorization‑Code‑Flow), Rate‑Limiting, IP‑Whitelist.
++    - Weiterleitung an Micro‑Services.
++ 
++ 3. **Micro‑Services**
++    - **Auth‑Service** – User‑Management, Passwort‑Reset, Double‑Opt‑In, Token‑Ausgabe.
++    - **Portal‑Service** – Bestell‑ und Rechnungs‑Anzeige, Download‑Funktion.
++    - **Offer‑Service** – Angebotserstellung, Preis‑ und Rabattlogik.
++    - **SAP‑Connector** – Synchronisation von Stammdaten, Produkt‑ und Angebotsdaten mit dem SAP‑ERP (via OData/REST).
++    - **Logging‑Service** – Zentralisiertes Audit‑Trail, GDPR‑konformes Logging.
++    - **Backup/DR‑Service** – Periodische Snapshots, Wiederherstellungs‑Playbooks.
++ 
++ 4. **Datenhaltung**
++    - **Managed relational DB** (z. B. Azure SQL, AWS RDS) – ausschließlich in EU‑Region.
++    - **Object Storage** für Rechnungs‑PDFs und Dokumente (EU‑Only Bucket).
++    - **Cache** (Redis) für häufig genutzte Produkt‑ und Preis‑Daten.
++ 
++ 5. **Security & Compliance**
++    - TLS 1.2+ für alle Verbindungen.
++    - **OAuth‑2.0** für API‑Zugriff, **JWT** für Session‑Management.
++    - **Audit‑Trail** (immutable Log, write‑once storage).
++    - **Data‑Deletion‑Service** – automatisches Löschen von Kundendaten auf Anforderung (GDPR‑Right‑to‑Erase).
++    - **Auftragsverarbeitungsverträge** für SAP‑ und Cloud‑Provider.
++ 
++ ## Deployment‑Pipeline (CI/CD)
++ - **Code‑Repository** → Pull‑Request → **Static Code Analysis** → **Unit/Integration Tests** → **Security Scan** → **Staging Deploy** → **Automatisierte Acceptance Tests** → **Production Deploy**.
++ - **Infrastructure as Code** (Terraform) für Cloud‑Ressourcen, um reproduzierbare Deployments sicherzustellen.
++ 
++ ## Skalierbarkeit & Performance
++ - Horizontal skalierbare Micro‑Services hinter einem Load‑Balancer.
++ - Auto‑Scaling‑Gruppen basierend auf CPU‑Auslastung und Nutzer‑Traffic.
++ - CDN für statische Assets des Frontends.
++ - Datenbank‑Read‑Replicas für Lese‑Intensität (Bestellungen, Rechnungen).
++ 
++ ## Nicht‑funktionale Aspekte
++ - **Verfügbarkeit**: 99,5 % SLA, Multi‑AZ‑Deployment.
++ - **Backup**: Tägliche Snapshots, 30‑Tage‑Retention, Recovery‑Zeit < 4 Stunden.
++ - **Monitoring**: Prometheus + Grafana, Alerting bei SLA‑Verletzungen.
++ - **Dokumentation**: Architektur‑Diagramme, API‑Spec (OpenAPI), Sicherheits‑ und Datenschutz‑Richtlinien.
++ 
++ ## Grenzen des MVP
++ - Mobile‑App wird zunächst nicht entwickelt (optional für späteres Release).
++ - Vollständige Analytics‑ und KPI‑Erfassung wird nach MVP ergänzt.
++ - Umfangreiches Rollen‑ und Berechtigungskonzept wird zunächst auf Kern‑Rollen beschränkt.
++ 
++ ---
++ *Dieses Architektur‑Dokument ist ein initialer Entwurf, der in den nächsten Sprints verfeinert wird.*

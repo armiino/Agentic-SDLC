@@ -1,0 +1,4 @@
+- Fehlende Zeit für komplexe Sicherheitsmaßnahmen (OAuth vs. API Keys).
+- Skalierbarkeit mit günstigen Managed Services.
+- Unklare Zieldefinition und Missverständnisse über Features wie Push-Benachrichtigungen oder Backup.
+- Compliance-Impulse durch DSGVO und SAP-Datenintegration.

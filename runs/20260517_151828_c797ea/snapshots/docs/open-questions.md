@@ -1,0 +1,4 @@
+# Offene Fragen
+- Welche Plattform soll zuerst implementiert werden? Web oder Mobile?
+- Wie sollen Push-Benachrichtigungen und Tracking umgesetzt werden?
+- Welches Authentifizierungsschema wird für die API verwendet? OAuth oder API Keys?

@@ -1,0 +1,7 @@
+# Risiken
+
+## Zeitliche Überforderung
+Die Implementierung von DSGVO-Vorgaben und Security Review kann die 8-Wochen-Frist sprengen.
+
+## Technische Komplexität
+OAuth für API-Sicherheit ist komplizierter als API Keys, was Zeit kosten könnte.

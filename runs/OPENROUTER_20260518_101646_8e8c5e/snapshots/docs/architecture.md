@@ -1,0 +1,29 @@
+# Architektur
+
+## Überblick
+- Web-first Kundenportal mit späterer mobiler Erweiterung
+- API Layer als zentrale Integrationsschicht zwischen Frontend und Backend
+- Backend-Anbindung an SAP für Stammdaten, Produktdaten, Preise und Rabattlogik
+- Nutzung von Managed Services für Datenbank und Infrastruktur
+
+## Sicherheit
+- TLS-Verschlüsselung für Datenübertragung
+- OAuth 2.0 für API-Authentifizierung und Autorisierung
+- Rollen- und Berechtigungskonzept (Admin, User, Manager, Support)
+- Logging und Audit Trails für alle relevanten Aktionen
+
+## Compliance
+- DSGVO-konforme Datenhaltung und Verarbeitung
+- Double-Opt-In für E-Mail-Login
+- Löschkonzept für personenbezogene Daten
+- Hosting in der EU oder DSGVO-konform
+
+## Skalierbarkeit und Performance
+- Skalierbare Managed Services zur Unterstützung von 200 bis 20.000 Nutzern
+- Backup und Disaster Recovery Strategien
+
+## Sonstiges
+- Dokumentation zur Unterstützung des Security Reviews
+- Verzicht auf neuen DB-Server zugunsten von Managed Services
+- MVP-Zeitplan von 8 Wochen berücksichtigt technische und Compliance-Anforderungen
+

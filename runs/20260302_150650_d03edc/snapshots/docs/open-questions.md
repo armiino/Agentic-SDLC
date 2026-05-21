@@ -1,0 +1,3 @@
+- Welche Authentifizierungsmethoden sollen verwendet werden? OAuth oder API Keys?
+- Wie soll der Support implementiert werden, falls nötig?
+- Mögliche Architektur: Native App vs. Responsive Web?

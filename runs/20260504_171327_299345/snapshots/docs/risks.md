@@ -1,0 +1,3 @@
+**Risiken:**
+- **Zeitliche Verzögerung durch Security Review:** Die 6 Wochen für den Security Review könnten die MVP-Frist von 8 Wochen sprengen.
+- **Overengineering und Skalierbarkeit:** Es besteht ein Spannungsfeld zwischen Overengineering und der Notwendigkeit einer skalierbaren Lösung.

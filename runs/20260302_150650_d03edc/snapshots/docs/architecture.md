@@ -1,0 +1,3 @@
+- Ein API Layer für Integrationen (SAP, Backend) ist unbedingt erforderlich.
+- Möglicherweise native App oder responsive Web Entwicklung im Anschluss an MVP.
+- Verschlüsselung und Logging sind notwendig zur DSGVO-Konformität.

@@ -1,0 +1,3 @@
+# Risiken
+- **Zeitplanrisiko:** Security Review dauert 6 Wochen, was den MVP-Zeitplan von 8 Wochen sprengt.
+- **Budgetrisiko:** Native App ist teuer und kein Budget vorhanden.

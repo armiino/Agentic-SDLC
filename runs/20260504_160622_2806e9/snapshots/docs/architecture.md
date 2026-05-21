@@ -1,0 +1,5 @@
+- Kundenportal (Web-basiert)
+- API Layer für Integrierung
+- Managed Services für Datenbanken
+- SAP Integration für Produkt-, Preis- und Rabattlogik
+- Verschlüsselung (TLS)
