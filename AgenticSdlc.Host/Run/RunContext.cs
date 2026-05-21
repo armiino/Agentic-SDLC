@@ -1,8 +1,8 @@
+using System.Text;
 using System.Text.Json;
 
 namespace AgenticSdlc.Host.Run;
 
-//zum tracken der genauen logs etc.
 public sealed class RunContext
 {
     public string RunId { get; }
@@ -10,12 +10,14 @@ public sealed class RunContext
     public string LogsDir => Path.Combine(RunDir, "logs");
     public string SnapshotsDir => Path.Combine(RunDir, "snapshots");
     public string DocsSnapshotDir => Path.Combine(SnapshotsDir, "docs");
+    public string DiffsDir => Path.Combine(LogsDir, "diffs");
 
     public string EventsPath => Path.Combine(LogsDir, "events.jsonl");
     public string ToolDiscoveryPath => Path.Combine(LogsDir, "tool-discovery.json");
     public string ConfigPath => Path.Combine(RunDir, "config.json");
     public string ChangesPath => Path.Combine(LogsDir, "changes.txt");
-    
+    public string DecisionLogPath => Path.Combine(LogsDir, "decision-log.jsonl");
+
     private readonly JsonSerializerOptions _json = new(JsonSerializerDefaults.Web);
 
     public RunContext(string runId)
@@ -30,7 +32,10 @@ public sealed class RunContext
         Directory.CreateDirectory(LogsDir);
         Directory.CreateDirectory(SnapshotsDir);
         Directory.CreateDirectory(DocsSnapshotDir);
+        Directory.CreateDirectory(DiffsDir);
         if (!File.Exists(EventsPath)) File.WriteAllText(EventsPath, "");
+        // erweiterung: separates Log fuer erklaerungspflichtige Agent-Handlungen, damit "warum geschrieben?" nicht in events.jsonl untergeht.
+        if (!File.Exists(DecisionLogPath)) File.WriteAllText(DecisionLogPath, "");
     }
 
     public void WriteConfig(object config)
@@ -43,5 +48,48 @@ public sealed class RunContext
     {
         var line = JsonSerializer.Serialize(evt, _json);
         File.AppendAllText(EventsPath, line + Environment.NewLine);
+    }
+
+    public void AppendDecision(object decision)
+    {
+        // erweiterung: Decision-Events sind keine internen Modellgedanken, sondern deklarierte Handlungsgruende zu beobachtbaren Tool-Effekten.
+        var line = JsonSerializer.Serialize(decision, _json);
+        File.AppendAllText(DecisionLogPath, line + Environment.NewLine);
+    }
+
+    public string WriteDiffFile(string relativePath, string content)
+    {
+        var safeName = relativePath
+            .Replace('\\', '_')
+            .Replace('/', '_')
+            .Replace(':', '_');
+
+        var fileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{safeName}.diff";
+        var full = Path.Combine(DiffsDir, fileName);
+        File.WriteAllText(full, content, Encoding.UTF8);
+        return Path.GetRelativePath(RunDir, full).Replace('\\', '/');
+    }
+
+    public string ApprovalsDir => Path.Combine(RunDir, "approvals");
+
+    public bool ApprovalExists(string action)
+    {
+        var dir = ApprovalsDir;
+        if (!Directory.Exists(dir)) return false;
+
+        foreach (var file in Directory.GetFiles(dir, "approval_*.json"))
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(File.ReadAllText(file));
+                var root = doc.RootElement;
+
+                var act = root.TryGetProperty("action", out var a) ? a.GetString() : null;
+                if (string.Equals(act, action, StringComparison.Ordinal))
+                    return true;
+            }
+            catch { }
+        }
+        return false;
     }
 }

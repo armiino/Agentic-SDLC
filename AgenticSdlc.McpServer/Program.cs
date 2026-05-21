@@ -10,7 +10,7 @@ builder.Logging.AddConsole(o => o.LogToStandardErrorThreshold = LogLevel.Trace);
 builder.Services
     .AddMcpServer()
     .WithStdioServerTransport()
-    .WithTools<FileSystemTools>()
-    .WithTools<ApprovalTools>();
+    .WithTools<FileSystemTools>();
+   // .WithTools<ApprovalTools>();   //aktuell auskommentiert weil DoD von Host..
 
 await builder.Build().RunAsync();
