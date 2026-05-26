@@ -31,6 +31,7 @@ public sealed class ToolCallLoggerMiddleware
         TryGetStringArgument(context.Arguments, "reason", out var reason);
         TryGetStringArgument(context.Arguments, "evidence", out var evidence);
 
+        var agentName = agent?.Name;
         var normalizedPath = string.IsNullOrWhiteSpace(path) ? null : NormalizePath(path!);
         var normalizedIntent = string.IsNullOrWhiteSpace(intent) ? null : NormalizeDecisionText(intent!);
         var normalizedReason = string.IsNullOrWhiteSpace(reason) ? null : NormalizeDecisionText(reason!);
@@ -68,15 +69,19 @@ public sealed class ToolCallLoggerMiddleware
             SetBeforeTags(span, beforeState);
         }
 
-        _run.AppendEvent(new
+        var startedEvent = new
         {
             type = "TOOL_CALL_STARTED",
+            runId = _run.RunId,
+            agentName,
             tool = toolName,
             targetPath = normalizedPath,
             arguments = RedactArguments(context.Arguments),
             toolStep = step,
             timestampUtc = DateTime.UtcNow
-        });
+        };
+
+        AppendToolEvent(agentName, startedEvent);
 
         try
         {
@@ -99,9 +104,11 @@ public sealed class ToolCallLoggerMiddleware
                 span?.SetStatus(ActivityStatusCode.Error, toolResultError);
             }
 
-            _run.AppendEvent(new
+            var finishedEvent = new
             {
                 type = "TOOL_CALL_FINISHED",
+                runId = _run.RunId,
+                agentName,
                 tool = toolName,
                 targetPath = normalizedPath,
                 result = RedactResult(result),
@@ -110,13 +117,17 @@ public sealed class ToolCallLoggerMiddleware
                 toolResultError,
                 toolStep = step,
                 timestampUtc = DateTime.UtcNow
-            });
+            };
+
+            AppendToolEvent(agentName, finishedEvent);
 
             if (toolResultError is not null)
             {
-                _run.AppendEvent(new
+                var errorResultEvent = new
                 {
                     type = "TOOL_CALL_RETURNED_ERROR",
+                    runId = _run.RunId,
+                    agentName,
                     tool = toolName,
                     targetPath = normalizedPath,
                     toolStep = step,
@@ -124,7 +135,9 @@ public sealed class ToolCallLoggerMiddleware
                     reasonCode = "MCP_TOOL_RESULT_ERROR",
                     error = toolResultError,
                     timestampUtc = DateTime.UtcNow
-                });
+                };
+
+                AppendToolEvent(agentName, errorResultEvent);
             }
 
             if (toolName.Equals("fs_write", StringComparison.OrdinalIgnoreCase) &&
@@ -166,9 +179,11 @@ public sealed class ToolCallLoggerMiddleware
                 if (!string.IsNullOrWhiteSpace(diffPath))
                     span?.SetTag("diff.file", diffPath);
 
-                _run.AppendEvent(new
+                var fileWriteAnalyzedEvent = new
                 {
                     type = "FILE_WRITE_ANALYZED",
+                    runId = _run.RunId,
+                    agentName,
                     path = normalizedPath,
                     toolStep = step,
                     writeEffect = effect,
@@ -202,13 +217,15 @@ public sealed class ToolCallLoggerMiddleware
                         file = diffPath
                     },
                     timestampUtc = DateTime.UtcNow
-                });
+                };
 
-                _run.AppendDecision(new
+                AppendToolEvent(agentName, fileWriteAnalyzedEvent);
+
+                var decisionEvent = new
                 {
                     type = "WRITE_DECISION_RECORDED",
                     runId = _run.RunId,
-                    agentName = agent?.Name,
+                    agentName,
                     toolStep = step,
                     path = normalizedPath,
                     // erweiterung: intent/reason/evidence sind model-declared rationale, nicht die garantierte interne Ursache.
@@ -239,7 +256,10 @@ public sealed class ToolCallLoggerMiddleware
                         file = diffPath
                     },
                     timestampUtc = DateTime.UtcNow
-                });
+                };
+
+                _run.AppendDecision(decisionEvent);
+                _run.AppendAgentDecision(agentName, decisionEvent);
             }
 
             if (!string.IsNullOrWhiteSpace(normalizedPath) &&
@@ -248,14 +268,18 @@ public sealed class ToolCallLoggerMiddleware
                  toolName.Equals("fs_list", StringComparison.OrdinalIgnoreCase) ||
                  toolName.Equals("fs_exists", StringComparison.OrdinalIgnoreCase)))
             {
-                _run.AppendEvent(new
+                var artifactTouchedEvent = new
                 {
                     type = "ARTIFACT_TOUCHED",
+                    runId = _run.RunId,
+                    agentName,
                     op = toolName,
                     path = normalizedPath,
                     toolStep = step,
                     timestampUtc = DateTime.UtcNow
-                });
+                };
+
+                AppendToolEvent(agentName, artifactTouchedEvent);
             }
 
             return result;
@@ -272,9 +296,11 @@ public sealed class ToolCallLoggerMiddleware
                 span.SetStatus(ActivityStatusCode.Error, ex.Message);
             }
 
-            _run.AppendEvent(new
+            var failedEvent = new
             {
                 type = "TOOL_CALL_FAILED",
+                runId = _run.RunId,
+                agentName,
                 tool = toolName,
                 targetPath = normalizedPath,
                 toolStep = step,
@@ -283,10 +309,19 @@ public sealed class ToolCallLoggerMiddleware
                 errorType = ex.GetType().FullName,
                 error = ex.Message,
                 timestampUtc = DateTime.UtcNow
-            });
+            };
+
+            AppendToolEvent(agentName, failedEvent);
 
             throw;
         }
+    }
+
+    private void AppendToolEvent(string? agentName, object evt)
+    {
+        _run.AppendEvent(evt);
+        _run.AppendAgentEvent(agentName, evt);
+        _run.AppendAgentToolCall(agentName, evt);
     }
 
     private static void SetBeforeTags(Activity? span, FileState? state)
