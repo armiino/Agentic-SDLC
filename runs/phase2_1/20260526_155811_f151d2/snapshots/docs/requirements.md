@@ -1,0 +1,69 @@
+# Requirements Dokument
+
+## Functional Requirements
+- **FR1 Login**: Nutzer können sich per E‑Mail und Passwort registrieren und einloggen. Double‑Opt‑In per E‑Mail ist obligatorisch.
+- **FR2 Rollen & Berechtigungen**: Rollen `Admin`, `Sales`, `Kunde` und `Support` mit differenziertem Zugriff auf Angebote, Rechnungen und Kundendaten.
+- **FR3 Angebotserstellung**: Sales kann über ein Web‑Portal Angebote anhand von Produkt‑ und Preisdaten aus SAP erstellen. Angebote enthalten nur Standard‑Rabatte (≤ 15 %).
+- **FR4 Angebots‑Workflow**: Zustände `Draft → Pending Approval → Approved → Sent`. Freigabe‑Logik für Sonderrabatte wird erst in Phase 2 implementiert.
+- **FR5 PDF‑Export**: Das erstellte Angebot kann als rechtssicheres PDF mit Versions‑ und Fußnotenexport heruntergeladen werden.
+- **FR6 Rechnungsdownload**: Kunden können ihre Bestellungen einsehen und zugehörige Rechnungen als PDF herunterladen.
+- **FR7 SAP‑Read‑Only‑Integration**: Das Portal ruft Produkt‑, Preis‑ und Rabattdaten aus dem SAP‑System im Lesemodus ab. Schreibzugriff erfolgt erst nach MVP.
+- **FR8 API‑Layer**: Exponiert REST‑Endpoints für Frontend‑ und zukünftige Integrationen, gesichert per OAuth 2.0 (Client‑Credentials) – Grundimplementierung im MVP.
+- **FR9 Auditing**: Minimaler Audit‑Trail protokolliert Änderungen an Angebots‑Status und Login‑Events (kein personenbezogenes Datenlogging).
+- **FR10 Backup & Disaster Recovery**: Automatisiertes tägliches Backup des Managed Service Datenspeichers, Wiederherstellung innerhalb von 24 h.
+- **FR11 EU‑Only Hosting**: Alle Daten werden in einem Managed Service innerhalb der EU gehostet.
+- **FR12 Kontaktformular**: Kunden können über ein einfaches Kontaktformular Support‑Anfragen senden (keine Ticket‑Persistenz).
+- **FR13 KPI‑Erfassung (MVP)**: Erfassung von Conversion‑Rate und Time‑to‑Offer im Frontend (keine externe Analytics‑Infrastruktur).
+
+## Non‑functional Requirements
+- **NFR1 Performance**: Seiten‑Load‑Time < 2 s bei 200 gleichzeitigen Nutzern; skalierbar bis 2 000 Nutzer ohne Architektur‑Änderungen.
+- **NFR2 Security**: TLS 1.2+ für alle Netzwerkverbindungen; OAuth 2.0 für API‑Zugriff; keine personenbezogenen Daten in technischen Logs; Secrets werden über ein Managed Secrets‑Service verwaltet.
+- **NFR3 Compliance**: DSGVO‑Konformität (Double‑Opt‑In, Recht auf Datenlöschung, Auftrags‑Verarbeitungs‑Vertrag, Datenminimierung, Audit‑Logs, EU‑Datenresidenz).
+- **NFR4 Availability**: 99,5 % Verfügbarkeit (inkl. geplante Wartungsfenster). SAP‑Verfügbarkeit wird als kritische Abhängigkeit behandelt – UI zeigt Fehlermeldung bei Ausfall.
+- **NFR5 Scalability**: Architektur kann horizontal skaliert werden (stateless Frontend, Container‑Basis, Managed DB‑Service). 
+- **NFR6 Maintainability**: Code‑Repository mit CI/CD‑Pipeline, automatisierte Tests, dokumentierte Schnittstellen. Testumgebungen nutzen synthetische Daten, keine echten Kundendaten.
+- **NFR7 Localization**: UI unterstützt Deutsch und Englisch im MVP; weitere Sprachen als Erweiterung.
+- **NFR8 Currency**: Preise in EUR angezeigt; CHF‑Unterstützung optional für Pilot‑Kunden, aber nicht verpflichtend.
+
+## Constraints / Compliance
+- **C1 Zeitrahmen**: MVP muss innerhalb von 8 Wochen lieferbar sein – daher werden Mobile‑App, vollständiger SSO, erweitertes Ticket‑System und umfassende Rabatt‑Freigabe bewusst ausgelassen.
+- **C2 Infrastruktur**: Keine neue Datenbank; Nutzung eines EU‑only Managed Service (z. B. PostgreSQL‑aaS). 
+- **C3 API‑Gateway**: Da das zentrale API‑Gateway eine 6‑Wochen‑Warteliste hat, wird im MVP ein eigen‑hosted Proxy eingesetzt und später migriert.
+- **C4 Budget**: EU‑Only Hosting soll kostengünstig sein; konkrete Kosten werden grob geschätzt für den Vorstand.
+- **C5 Security Review**: Vollständiger Security Review dauert ≥ 6 Wochen – im MVP wird ein Minimal‑Security‑Set (TLS, OAuth, Audit‑Log) implementiert, vollständiger Review nach Release.
+- **C6 Data Retention**: Angebote und Rechnungen werden mindestens 2 Jahre archiviert (gesetzliche Vorgaben), Lösch‑Requests werden dokumentiert, aber vollständige Umsetzung nach MVP.
+- **C7 Monitoring**: Technisches Monitoring ohne personenbezogene Daten; separates Audit‑Logging für DSGVO‑relevante Aktionen.
+
+## Traceability
+| Requirement ID | Quelle (Transkript‑Zeile) | Beschreibung |
+|----------------|---------------------------|--------------|
+| FR1 | Anna, Zeile 24‑30 | Login mit E‑Mail/Passwort, Double‑Opt‑In
+| FR2 | Anna, Zeile 46‑52 | Rollen‑Modell (Admin, Sales, Kunde, Manager, Support)
+| FR3 | Ben, Zeile 71‑78 | Angebotserstellung mit SAP‑Produkt‑ und Preisdaten
+| FR4 | Eva, Zeile 134‑142 | Angebots‑Workflow und Freigabe (nur Standard‑Rabatte im MVP)
+| FR5 | Eva, Zeile 194‑202 | PDF‑Export von Angeboten
+| FR6 | Anna, Zeile 115‑122 | Rechnungsanzeige und -download
+| FR7 | Ben, Zeile 140‑148 | SAP‑Read‑Only‑Integration, Verfügbarkeit kritisch
+| FR8 | Ben, Zeile 140‑148 | API‑Layer, OAuth‑Ansatz skizziert
+| FR9 | Clara, Zeile 84‑88 | Minimaler Audit‑Log, keine personenbezogenen Daten in Logs
+| FR10 | Farid, Zeile 222‑230 | Backup & Disaster Recovery
+| FR11 | Farid, Zeile 242‑250 | EU‑Only Managed Hosting
+| FR12 | David, Zeile 122‑128 | Kontaktformular statt Ticket‑System
+| FR13 | Anna, Zeile 98‑104 | KPI‑Erfassung (Conversion Rate, Time‑to‑Offer)
+| NFR1 | Ben, Zeile 140‑148 | Performance‑Ziel (200‑2000 Nutzer)
+| NFR2 | Clara, Zeile 84‑88 | Security‑Grundlagen (TLS, OAuth, Secrets)
+| NFR3 | Clara, Zeile 12‑15 & 46‑52 | DSGVO‑Anforderungen
+| NFR4 | Ben, Zeile 140‑148 | Verfügbarkeit & SAP‑Ausfall‑Hinweis
+| NFR5 | Ben, Zeile 140‑148 | Skalierbarkeit über Container/Stateless
+| NFR6 | Ben, Zeile 140‑148 | Maintainability – CI/CD, Tests
+| NFR7 | Anna, Zeile 168‑176 | Localization (DE/EN)
+| NFR8 | Eva, Zeile 210‑218 | Currency (EUR, optional CHF)
+| C1 | Anna, Zeile 115‑122 | 8‑Wochen‑MVP Zeitrahmen
+| C2 | Ben, Zeile 71‑78 | Kein neuer DB‑Server, Managed Service
+| C3 | Farid, Zeile 242‑250 | API‑Gateway Warteliste, Kurzlösung
+| C4 | Farid, Zeile 222‑230 | Budget‑Schätzung für EU‑Only Hosting
+| C5 | Ben, Zeile 140‑148 | Security Review Dauer
+| C6 | Clara, Zeile 84‑88 & 166‑172 | Retention & Löschkonzept (nach MVP)
+| C7 | Farid, Zeile 242‑250 | Monitoring ohne personenbezogene Daten |
+
+*Alle Anforderungen leiten sich ausschließlich aus dem bereitgestellten Transkript und dem Kontext‑Dokument ab.*

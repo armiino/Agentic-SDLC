@@ -1,0 +1,76 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architektur‑Überblick (frühe SDLC‑Phase)
++ 
++ ## 1. Systemkontext
++ 
++ Das System ist ein **Kundenportal** für das Unternehmen, das primär dem Vertrieb (Sales) dient, Angebotserstellung sowie Rechnung‑ und Bestellungs‑Einblick für Kunden zu ermöglichen. Das Portal muss in die bestehenden ERP‑Systeme (SAP) integriert werden, um Stammdaten (Produkt, Preis, Rabatt) zu nutzen. Es soll als **Web‑First** Anwendung entwickelt werden, mobile Zugriffe (responsive oder native) können später ergänzt werden.
++ 
++ **Akteure / Schnittstellen**
++ - **Kunden / End‑User** – greifen über Browser (Desktop / Tablet / Smartphone) auf das Portal zu, benötigen Login (E‑Mail/Passwort, optional SSO).
++ - **Vertrieb / Sales‑Team** – nutzt das Portal zur schnellen Angebotserstellung und zur Nachverfolgung von KPIs.
++ - **SAP‑System** – liefert Produkt‑ und Kundendaten, muss über eine API‑Schicht angebunden werden (Read‑Only für Stammdaten, Write‑Access für Angebots‑ und Auftragsdaten).
++ - **Identity Provider (optional)** – Azure AD / Google für SSO (falls im MVP realisierbar).
++ - **Managed Service Provider** – stellt Datenbank, Hosting und Backup/DR in einer EU‑Region bereit.
++ - **Compliance / Datenschutz** – prüft DSGVO‑Konformität (Double‑Opt‑In, Lösch‑Workflow, Audit‑Trail).
++ 
++ ## 2. Wesentliche Komponenten
++ 
++ | Komponente | Kurzbeschreibung | Hauptaufgaben | Hinweis* |
++ |-----------|------------------|--------------|----------|
++ | **Web‑Frontend** | React/Angular (oder vergleichbares) SPA, responsive Design | UI für Kunden/Vertrieb, Login, Angebots‑Editor, Rechnungs‑Download, KPI‑Dashboard | Technologieentscheidung nicht festgelegt, da nicht aus Artefakten ableitbar. |
++ | **API‑Gateway / Auth‑Layer** | Zentraler Einstiegspunkt für alle HTTP‑Requests, Terminierung von TLS, Durchsetzung von OAuth‑2.0 (falls gewählt) | Authentifizierung, Autorisierung, Rate‑Limiting, Routing zu Microservices | OAuth empfohlen, aber optional – abhängig vom Zeit‑Budget. |
++ | **Business‑Logic Service** | Microservice (z. B. Node.js/Java Spring) implementiert Kern‑Funktionen: Angebotserstellung, Rechnungsgenerierung, KPI‑Berechnung. | Verarbeitung von Geschäftsregeln, Integration mit SAP, Logging. |
++ | **SAP‑Adapter Service** | Separate Service, der SAP‑Web‑Services / OData nutzt, um Stammdaten zu lesen und ggf. Auftragsdaten zu schreiben. | Entkoppelung des Portals vom ERP, Übersetzung von Datenmodellen. |
++ | **Identity‑Provider‑Connector** (optional) | Wrapper für Azure AD, Google OAuth oder interne IdP. | SSO‑Login, Token‑Umwandlung. |
++ | **Datenbank (Managed Service)** | Relationale DB (z. B. Azure PostgreSQL, AWS RDS EU) – verwaltet, automatisches Backup. | Persistiert Nutzerprofile, Rollen, Angebote, Rechnungen, Audit‑Logs. |
++ | **Audit‑Log Service** | Write‑only Service, speichert unveränderliche Ereignisse (Login, Datenänderungen) in einer tamper‑proof Storage (z. B. Cloud‑Log‑Service). | Unterstützung von DSGVO‑Audit‑Requirements. |
++ | **Backup & DR** | Cloud‑basierte Snapshots / Point‑in‑Time‑Recovery. | Wiederherstellung von Datenbank und Log‑Store im Katastrophenfall. |
++ | **Monitoring / Observability** | Metrics, Tracing, Alerts (z. B. Prometheus/Grafana, CloudWatch). | Performance‑Überwachung, KPI‑Erfassung. |
++ 
++ *Hinweis: Die konkreten Technologien (z. B. React, Spring Boot, PostgreSQL) werden nicht vorgegeben, weil sie nicht aus den vorhandenen Artefakten ableitbar sind.
++ 
++ ## 3. Schnittstellen & Integrationspunkte
++ 
++ 1. **Frontend ↔ API‑Gateway** – HTTPS (TLS 1.2+), JSON‑REST‑API. Authentifizierung via JWT (aus OAuth‑Flow) oder Session‑Cookie (wenn simpler). 
++ 2. **API‑Gateway ↔ Business‑Logic Service** – interne Netzwerkkommunikation, meist ebenfalls HTTP/REST oder gRPC. 
++ 3. **Business‑Logic ↔ SAP‑Adapter** – Aufruf von SAP OData / SOAP‑Services; Authentifizierung über SAP‑Credentials (service account). 
++ 4. **Business‑Logic ↔ Datenbank** – JDBC/ORM (z. B. Hibernate) für CRUD‑Operationen. 
++ 5. **Business‑Logic ↔ Audit‑Log Service** – Append‑only Log‑API (z. B. Cloud‑Log‑Endpoint). 
++ 6. **Identity‑Provider‑Connector ↔ IdP** – OAuth‑2.0 Authorization Code Flow; Token‑Exchange für interne JWTs. 
++ 7. **Backup/DR** – automatisierte Snapshots der Managed DB und des Log‑Stores, konfiguriert für EU‑Regionen. 
++ 8. **Monitoring** – Export von Metriken aus allen Services zu einem zentralen Monitoring‑System.
++ 
++ ## 4. Daten‑ & Sicherheitsaspekte
++ 
++ - **Datenklassifikation**: Kundendaten (personenbezogene Daten), Angebots‑ und Auftragsdaten (personenbezogen), Stammdaten (weniger sensibel). Alle Daten werden **verschlüsselt im Ruhezustand** (Managed DB bietet Transparent Data Encryption) und **über TLS 1.2+** bei Übertragung geschützt.
++ - **Authentifizierung**: Grundlegend E‑Mail/Passwort (hashed with bcrypt). Optional SSO via OAuth‑2.0 (Azure AD / Google). 
++ - **Autorisierung**: Rollen‑basiertes Access‑Control (RBAC) – definiert in der Datenbank (Roles, Permissions). 
++ - **Logging & Audit‑Trail**: Alle sicherheitsrelevanten Aktionen (Login, Datenänderungen) werden unveränderlich in den Audit‑Log Service geschrieben. 
++ - **DSGVO‑Compliance**: 
++   - Double‑Opt‑In bei Registrierung (E‑Mail‑Bestätigung). 
++   - Lösch‑Workflow: Nutzer kann per UI die Anforderung auslösen, Business‑Logic löscht personenbezogene Daten und markiert Records für physisches Löschen nach definiertem Retention‑Period. 
++   - Datenhost in EU‑Region (z. B. Azure West‑Europe). 
++ - **Backup & Disaster Recovery**: tägliche Snapshots, Wiederherstellungszeit (RTO) ≤ 4 Stunden, Datenverlust‑Grenze (RPO) ≤ 15 Minuten. 
++ - **Security Review**: Minimal‑Scope‑Threat‑Model und Code‑Scanning (Static Analysis) während MVP‑Entwicklung, Full‑Review nach MVP‑Go‑Live.
++ 
++ ## 5. Offene Architekturentscheidungen / Unsicherheiten
++ 
++ | Entscheidung | Offene Fragen | Mögliche Optionen | Priorität für MVP |
++ |--------------|---------------|-------------------|-------------------|
++ | **Frontend‑Framework** | Welche Bibliothek (React, Angular, Vue)? | – | Niedrig – kann später entschieden werden. |
++ | **Auth‑Mechanismus** | OAuth‑2.0 vs. einfaches Session‑Cookie | Full‑OAuth mit IdP, oder JWT via simple login | Mittel – OAuth erhöht Aufwand, könnte für MVP verzögert werden. |
++ | **SSO‑Integration** | Ob Azure AD, Google oder beides verwendet werden soll. | – | Niedrig – optional für MVP. |
++ | **Managed DB‑Anbieter** | Kosten‑/Performance‑Trade‑off (z. B. Azure PostgreSQL Standard vs. Basic). | – | Hoch – muss vor Entwicklung festgelegt werden. |
++ | **SAP‑Adapter Technologie** | OData vs. SOAP, Nutzung von Middleware (SAP PI/PO) | – | Mittel – beeinflusst Implementierungsaufwand. |
++ | **Logging‑Infrastructure** | Eigener Service vs. Cloud‑Log‑Service (z. B. Azure Monitor). | – | Mittel – muss für Audit‑Trail definiert werden. |
++ | **Scalability‑Mechanismus** | Auto‑Scaling‑Regeln, Load‑Balancer (z. B. Kubernetes, Azure App Service). | – | Hoch – sollte im MVP‑Design berücksichtigt werden, auch wenn nicht voll ausgereift. |
++ | **Backup‑Strategie** | Frequenz, Aufbewahrungsdauer, Test‑Restore‑Prozess | – | Hoch – DSGVO‑Pflicht, daher früh festlegen. |
++ | **KPI‑Implementation** | Wie wird Conversion Rate technisch gemessen? | Event‑Tracking vs. DB‑Aggregationen | Niedrig – kann zunächst simple DB‑Abfragen sein. |
++ 
++ ## 6. Zusammenfassung
++ 
++ Der vorliegende Entwurf präsentiert eine **modulare, service‑orientierte Architektur** mit einem klaren Fokus auf **Web‑First Frontend**, **API‑Gateway** für Auth‑ und Routing‑Funktionalität, **Business‑Logic** für Kernprozesse, **SAP‑Adapter** für ERP‑Integration und **Managed Services** für Datenpersistenz und Infrastruktur. Sicherheits‑ und Datenschutz‑Anforderungen (TLS, Verschlüsselung, Audit‑Log, DSGVO‑Lösch‑Workflow) sind integriert, wobei ein **Security Review** parallel zum MVP‑Entwicklungszeitplan durchgeführt werden soll. Offene Entscheidungen (Framework‑Wahl, OAuth‑Implementierung, konkreter Managed‑DB‑Anbieter) werden als **Priorität für die MVP‑Phase** gekennzeichnet und sollen in kurzen Zeitfenstern geklärt werden, um den 8‑Wochen‑Zeitplan nicht zu gefährden.
++ 
++ *Dieses Architektur‑Artefakt ist ein initialer Entwurf, der auf den vorhandenen Requirements, Risiken und dem Projekt‑Kontext basiert. Weitere Detail‑Design‑Arbeiten (z. B. OpenAPI‑Spezifikation, Datenmodell‑Diagramme) folgen in den nächsten SDLC‑Phasen.*

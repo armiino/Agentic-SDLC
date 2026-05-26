@@ -1,0 +1,95 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikoanalyse Kundenportal / Angebotsplattform
++ 
++ ## 1. Fachliche Risiken
++ 
++ ### 1.1 Unklare Zieldefinition und Prioritäten
++ - Das Projektziel wurde zu Beginn nicht klar definiert (Angebotserstellung, Rechnungsdownload, Push Notifications). Dies kann zu Scope Creep und Verzögerungen führen.
++ - Unterschiedliche Stakeholderprioritäten (Sales, Marketing, Datenschutz) könnten zu Zielkonflikten führen.
++ 
++ ### 1.2 Unvollständige Datenqualität in SAP
++ - Stammdaten in SAP sind teilweise unvollständig, was die Angebotserstellung und Preiskalkulation beeinträchtigen kann.
++ - Risiko von fehlerhaften Angeboten und Kundenverunsicherung.
++ 
++ ### 1.3 Rollen- und Supportkonzept unsicher
++ - Unklarheit über Rollen (z.B. Support-Rolle) und Verantwortlichkeiten bei Stammdatenpflege.
++ - Fehlende Supportstrukturen können bei Nutzerproblemen zu schlechter User Experience führen.
++ 
++ ## 2. Technische Risiken
++ 
++ ### 2.1 Time-to-market und Security Review im Konflikt
++ - MVP soll in 8 Wochen geliefert werden, Security Review dauert aber ca. 6 Wochen.
++ - Gefahr, dass Sicherheitsprüfungen ausgelassen oder verkürzt werden, was Sicherheitslücken verursachen kann.
++ 
++ ### 2.2 Nicht API-readyes Backend und API-Komplexität
++ - Backend ist aktuell nicht API-ready, API Layer wird aber für Integration benötigt.
++ - API-Security durch OAuth wird als komplex eingeschätzt, könnte Implementierungszeit verlängern.
++ 
++ ### 2.3 Technologische Unklarheiten Frontend und Integration
++ - Entscheidungen zu Frontend-Technologie (native App vs. responsive Web) sind nicht final.
++ - Budgetrestriktionen und Zeitdruck können zu suboptimalen Technologiewahlen führen.
++ 
++ ### 2.4 Ungewissheit bezüglich Skalierbarkeit und Nutzerzahlen
++ - Erwartete Nutzerzahlen schwanken stark (200 bis 20.000), was zu Fehlkalkulationen bei Skalierbarkeit und Performance führen kann.
++ 
++ ### 2.5 Infrastruktur und Managed Services
++ - Verbot neuer DB-Server erfordert Nutzung von Managed Services.
++ - Risiko, dass ausgewählte Managed Services nicht alle Anforderungen erfüllen (Kosten, Performance, Compliance).
++ 
++ ### 2.6 Fehlende Analytics-Infrastruktur
++ - Kein vorhandenes Tracking oder KPIs System, aber KPIs sind für Erfolgsmessung erforderlich.
++ - Risiko mangelhafter Steuerungsdaten für Produktmanagement.
++ 
++ ### 2.7 Backup und Disaster Recovery
++ - Anforderungen an Backup und Disaster Recovery sind vorhanden, aber unklar, wie dies im MVP effizient umgesetzt werden kann.
++ 
++ ## 3. Compliance- und Datenschutzrisiken
++ 
++ ### 3.1 DSGVO-Konformität
++ - Speicherung und Verarbeitung von personenbezogenen Daten erfordert Double-Opt-In, Löschkonzepte, Audit Trails.
++ - Gefahr von Bußgeldern und Imageverlust bei Nichteinhaltung.
++ 
++ ### 3.2 Hosting und Datenlokation
++ - Unklare Anforderungen, ob Hosting tatsächlich ausschließlich EU-only oder „DSGVO-konform“ reicht.
++ - Risiko von nicht konformen Datenverarbeitungen, wenn Hosting-Anbieter nicht sorgfältig geprüft wird.
++ 
++ ### 3.3 Zugriffskontrolle und Rollenmodelle
++ - Unklare und unvollständige Definition von Rollen und Berechtigungen erhöht Risiko unautorisierten Datenzugriffs.
++ 
++ ### 3.4 Einwilligungen und Push Notifications
++ - Push Notifications benötigen ausdrückliche Einwilligung gemäß DSGVO.
++ - Risiko, dass Marketingaktivitäten nicht DSGVO-konform implementiert werden.
++ 
++ ## 4. Widersprüche und Unsicherheiten
++ 
++ - Konflikt zwischen schnellen Markteinführungszeiten und notwendigen Security- und Compliance-Anforderungen.
++ - Unklare Prioritäten bezüglich Funktionen (z.B. Push Notifications, Support, SSO).
++ - Unklare technische Entscheidungen bei Frontend und Backend Architektur.
++ - Unsicherheit über tatsächliche Nutzerzahlen und Skalierbarkeitsanforderungen.
++ 
++ ## 5. Mögliche Auswirkungen
++ 
++ - Verzögerung im Projektverlauf und Überschreitung des Mvp-Zeitplans.
++ - Sicherheitslücken und Datenschutzverletzungen mit rechtlichen und finanziellen Konsequenzen.
++ - Fehlfunktionen oder schlechte User Experience durch unzureichende technische Umsetzung oder Datenqualität.
++ - Image- und Vertrauensverlust bei Kunden und Partnern.
++ - Unklare Verantwortlichkeiten können das Risiko organisatorischer Probleme erhöhen.
++ 
++ ## 6. Gegenmaßnahmen und Klärungsbedarfe
++ 
++ - Klare Zieldefinition und Priorisierung der Funktionen mit allen Stakeholdern.
++ - Frühzeitige Einbindung eines erfahrenen Architekten und Datenschutzbeauftragten.
++ - Strukturierter und pragmatischer Security Review Prozess mit angemessener Zeitplanung.
++ - Entscheidung über Frontend-Technologie und Nutzerzahlen basierend auf Marktforschung und Budget.
++ - Implementierung eines Rollen- und Berechtigungskonzepts mit klaren Verantwortlichkeiten.
++ - Nutzung von etablierten Managed Services mit DSGVO-Konformitätsnachweis.
++ - Entwicklung eines datenschutzkonformen Lösch- und Backupkonzepts.
++ - Klärung der Hosting-Anforderungen und Auswahl zertifizierter Rechenzentren.
++ - Aufbau einer grundlegenden Analytics-Infrastruktur für KPI-Tracking, auch im MVP.
++ - Regelmäßige Reviews und Anpassungen der Projektplanung basierend auf Fortschritt und Feedback.
++ 
++ ---
++ 
++ *Dieses Risikoartefakt basiert auf dem Stakeholder-Transkript (input/transcripts/T9999_chaos.txt), dem projektinternen Kontext (runs/phase2_1/20260526_140545_d7a2f1/state/context.md) sowie den abgeleiteten Anforderungen (docs/requirements.md).*

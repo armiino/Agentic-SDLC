@@ -1,0 +1,42 @@
+# Gemeinsamer Projektkontext
+
+## Projektziel
+Das Hauptziel des Projekts ist die Entwicklung eines Kundenportals beziehungsweise einer Plattform, die primär darauf abzielt, die Angebotserstellung für Kunden zu beschleunigen. Neben der Angebotserstellung sollen Kunden ebenfalls Bestellungen einsehen und Rechnungen herunterladen können. Ein MVP (Minimal Viable Product) ist innerhalb von 8 Wochen geplant.
+
+## Stakeholder / Sprecherrollen
+- Anna: Fokus auf Anforderungen und Business Needs (z.B. Sales, Marketing)
+- Ben: Technische Perspektive (Backend, Infrastruktur, Integration)
+- Clara: Compliance und Datenschutz (DSGVO, Sicherheit)
+
+## Wichtige fachliche Themen
+- Kundenportal mit Web-First-Ansatz, mobiles Arbeiten wird diskutiert, native Apps vs. responsive Web
+- Login-System: E-Mail/Passwort, SSO-Optionen (Azure AD, Google)
+- Datenschutz (DSGVO) mit Anforderungen an Double-Opt-In, Logging, Löschkonzepte, Audit Trails und Auftragsverarbeitungsverträge
+- Integration mit SAP für Stammdaten, Produktdaten, Preise und Rabattlogiken
+- Angebotserstellung als Kernfunktionalität, zusätzlich Rechnungsdownload
+- Rollenmodell: Admin, normaler User, Manager, Support (Support erst nicht geplant, aber mit Ticketsystem diskutiert)
+- Sicherheitsmaßnahmen: Verschlüsselung (TLS ausreichend), OAuth für API-Sicherung, Security-Review (6 Wochen, Konflikt mit MVP-Zeitplan)
+- Infrastruktur: Keine neuen DB-Server, stattdessen Managed Services, EU-only oder DSGVO-konforme Datenhaltung
+- KPIs: Conversion Rate (Angebot zu Bestellung), Zeit bis Angebotserstellung
+- Skalierbarkeitsszenarien unklar (200 bis 20.000 Nutzer möglich)
+- Backup und Disaster Recovery als notwendige Themen
+
+## Erkennbare Konflikte oder Widersprüche
+- Zeitdruck (MVP in 8 Wochen) vs. notwendigem Security-Review und umfassender Dokumentation
+- Wunsch nach schneller Umsetzung vs. komplexe DSGVO-Konformität und Sicherheitsanforderungen
+- Mobile Nutzung: natives App oder responsive Web? Budgetrestriktionen verhindern mehrere Frontends
+- Nutzung und Integration von SAP mit teilweise unvollständigen Stammdaten
+- Managed Services sollen günstig sein, widerspricht aber oft Skalierbarkeit
+- Unsicherheiten bei der genauen Zieldefinition und Nutzeranzahl
+
+## Wichtige Unsicherheiten
+- Genaues Nutzervolumen und Skalierungsbedarf
+- Ob SSO im MVP oder später realisiert wird
+- Umfang der KPIs und Analytics im MVP
+- Art und Umfang des Security Reviews im Kontext der Projektzeit
+- Detaillierung und Pflege der Dokumentation
+- Mobile Umsetzung (Reihenfolge Web/Mobile) und Technologiewahl
+- Backup- und Disaster-Recovery-Pflicht im MVP
+
+## Quellenhinweise
+Alle Angaben basieren auf Auszügen aus dem Transkript der Stakeholder-Diskussion, Datei: input/transcripts/T9999_chaos.txt, Sprecher: Anna, Ben, Clara.

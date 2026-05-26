@@ -1,0 +1,57 @@
+# Architekturüberblick (frühe SDLC‑Phase)
+
+## 1. Systemkontext
+- **Kunden** greifen über ein webbasiertes **Kundenportal** (Responsive Web UI) auf ihre Daten zu (Bestellungen, Rechnungen, Angebote).
+- **Vertrieb / Sales** nutzt das Portal, um schnell Angebote zu erzeugen und den Verkaufs‑Funnel zu unterstützen.
+- **SAP‑System** liefert Stam‑ und Produktdaten (Preis, Rabatt, Material). Das System bleibt das zentrale Daten‑ und ERP‑System.
+- **Identity Provider (optional)** (Azure AD, Google) kann für Single‑Sign‑On (SSO) integriert werden.
+- **Managed Cloud Provider** (EU‑Region) hostet alle Services (App‑Service, Datenbank, Storage, CI/CD, Monitoring).
+- **Compliance / Datenschutz** (DSGVO) fordert Logging, Audit‑Trail, Datenlösch‑Workflow und Hosting ausschließlich in der EU.
+
+## 2. Wichtige Komponenten
+| Ebene | Komponente | Kurzbeschreibung | Hinweis aus Requirements / Risks |
+|-------|------------|------------------|---------------------------------|
+| Frontend | **Web‑Portal** (React / Angular) | Responsive UI, Login (E‑Mail/Passwort), Rollen‑basiertes Menü, Angebots‑ und Rechnungs‑View. | MVP‑Fokus, Mobile‑App optional später.
+| Backend | **API‑Gateway** (z. B. Azure API Management) | Endpunkt‑Exposition, zentrale Authentifizierung (OAuth 2.0), Rate‑Limiting, Monitoring. | OAuth‑Preferred, Fallback API‑Key für interne Nutzung.
+| Service Layer | **Domain Services** (Angebote, Rechnungen, Nutzer‑Management) | Geschäftslogik, Integration zu SAP, Rollen‑ und Berechtigungskontrolle. | Separation für klare Verantwortlichkeiten, erleichtert Testing.
+| Integration | **SAP‑Connector** (REST‑Adapter / OData) | Lese‑Zugriff auf Produkt‑/Preis‑Daten, Schreib‑Zugriff für Admin‑Flows. | SAP ist Daten‑Quelle, muss read‑only für Angebote sein.
+| Identity | **Identity Provider** (Azure AD, ggf. Google) | Optionales SSO, unterstützt OAuth‑Flows. | Optional im MVP, kann später aktiviert werden.
+| Persistence | **Managed DB Service** (z. B. Azure SQL, AWS RDS EU) | Relationale Datenbank für Nutzer, Angebote, Logs. Keine eigene DB‑Instanz. | EU‑Only Hosting, automatische Backups.
+| Storage | **Object Storage** (Blob‑Storage) | Speicherung von Rechnungs‑PDFs, Anhängen. | EU‑Region, TLS‑verschlüsselt.
+| Security | **Security Services** (WAF, IAM, Key‑Vault) | TLS 1.2+, Secrets‑Management, API‑Protection. | Minimal‑Security‑Review vor Go‑Live, später vertiefen.
+| Monitoring | **Observability Stack** (Log‑Analytics, Metrics) | Zentralisiertes Logging, Audit‑Trail, Health‑Checks. | DSGVO‑konforme Aufbewahrung (12 Monate). |
+| Backup/DR | **Backup Service** (Automatisierte Snapshots) | Tägliche Backups, Recovery‑SLA ≤ 4 Stunden. | Muss in Risiko‑Mitigation erfüllt sein.
+
+## 3. Schnittstellen / Integrationspunkte
+1. **Frontend ↔ API‑Gateway** – REST‑Calls, OAuth‑Bearer‑Token (oder API‑Key).  
+2. **API‑Gateway ↔ Domain Services** – interne HTTP/gRPC Kommunikation, Auth‑Check bereits im Gateway.  
+3. **Domain Services ↔ SAP‑Connector** – OData/REST‑Calls, Read‑Only für Produkt‑/Preis‑Daten, Write‑Access nur für Admin‑Rollen.  
+4. **Domain Services ↔ Managed DB** – CRUD‑Operationen für Nutzer, Rollen, Angebote, Log‑Einträge.  
+5. **Domain Services ↔ Object Storage** – Upload/Download von Rechnungs‑PDFs.  
+6. **Identity Provider ↔ API‑Gateway** – OAuth‑Authorization‑Code‑Flow für SSO (optional).  
+7. **Monitoring ↔ sämtliche Komponenten** – Log‑Forwarder, Metrics‑Export, Alerting.  
+8. **Backup/DR ↔ Managed DB & Storage** – automatisierte Snapshots, Wiederherstellungsskripte.
+
+## 4. Daten‑ und Sicherheitsaspekte
+- **Transportverschlüsselung**: TLS 1.2+ für alle Netzwerkverbindungen (Frontend ↔ API, API ↔ SAP, DB‑Verbindungen).
+- **At‑Rest‑Verschlüsselung**: Managed DB und Blob‑Storage bieten server‑seitige Verschlüsselung (customer‑managed keys via Key‑Vault).
+- **Authentifizierung & Autorisierung**: OAuth 2.0 (Bearer‑Token) als primäres Modell, Rollen‑basiertes Access‑Control (RBAC) für Admin, Manager, User, Support.  
+- **Logging & Audit‑Trail**: Zentrale Log‑Aggregation (z. B. Azure Monitor) speichert Login‑Events, Datenänderungen, API‑Aufrufe für mindestens 12 Monate (DSGVO‑Konformität).
+- **DSGVO‑Artifacts**: Double‑Opt‑In bei Registrierung, Recht auf Datenlöschung (Lösch‑Workflow im Backend), Datenexport‑Endpoint, Auftrags‑Verarbeitungs‑Verträge (AVV) für SAP‑ und Cloud‑Provider.
+- **Backup & Disaster Recovery**: Tägliche Snapshots in EU‑Region, Wiederherstellung innerhalb 4 Stunden, Test‑Restore‑Szenario im Sprint‑Review.
+- **Hosting‑Region**: Alle Ressourcen ausschließlich in einer EU‑Region (z. B. Azure West Europe) – erfüllt sowohl "EU‑only" als auch DSGVO‑Anforderungen.
+
+## 5. Offene Architekturentscheidungen (Stand Frühe Phase)
+| Entscheidung | Offene Fragen | Mögliche Optionen |
+|--------------|----------------|-------------------|
+| **Identity Provider / SSO** | Muss SSO im MVP enthalten sein? Welche Provider werden unterstützt? | Azure AD (Enterprise), Google IdP, kein SSO (nur Email/Pass).
+| **Datenbank‑Technologie** | Welche Managed DB wird gewählt (Azure SQL, PostgreSQL, Serverless)? | Kosten‑ vs. Skalierbarkeits‑Analyse, EU‑Compliance prüfen.
+| **API‑Authentifizierung** | OAuth 2.0 komplett implementieren oder zunächst API‑Key‑Fallback nutzen? | Full OAuth (mehr Aufwand) vs. Hybrid (OAuth + API‑Key).
+| **Backup‑Strategie** | Welcher Recovery‑Point‑Objective (RPO) und Recovery‑Time‑Objective (RTO) ist akzeptabel? | RPO = 24 h (tägliches Snapshot), RTO = 4 h (geplant).
+| **Hosting‑Provider** | Azure vs. AWS vs. GCP – welcher erfüllt am besten EU‑only + Managed Service‑Anforderungen? | Vergleich von Preis‑Modellen, vorhandenen Unternehmens‑Verträgen.
+| **Mobile Strategie** | Wird im MVP eine native Mobile App oder nur responsive Web‑Design erwartet? | MVP: Responsive Web only; Mobile App im späteren Release.
+| **Monitoring / SIEM** | Welche Log‑Retention und Analyse‑Tools werden eingesetzt? | Azure Monitor + Log Analytics (DSGVO‑konform) vs. Drittanbieter‑SIEM.
+| **Performance‑Skalierung** | Wie wird Auto‑Scaling für 200 – 20 000 gleichzeitige Nutzer konfiguriert? | Managed App Service Plan mit Autoscale‑Regeln, Load‑Testing im Sprint.
+
+## 6. Zusammenfassung
+Der vorliegende Architekturentwurf stellt ein **modulares, cloud‑basiertes System** dar, das die Kern‑Use‑Cases (Kundenportal, Angebotserstellung, Rechnungs‑Download) innerhalb des 8‑Wochen‑MVP‑Zeitrahmens ermöglicht und gleichzeitig die wichtigsten **DSGVO‑ und Sicherheitsanforderungen** adressiert. Durch den Einsatz von **Managed Services** wird das Risiko einer eigenständigen Datenbank‑Bereitstellung eliminiert, während **Auto‑Scaling** und **EU‑only Hosting** die Skalierbarkeit und Compliance sicherstellen. Offene Entscheidungen (SSO, DB‑Technologie, Provider‑Wahl) wurden identifiziert und können im nächsten Architecture‑Review finalisiert werden.

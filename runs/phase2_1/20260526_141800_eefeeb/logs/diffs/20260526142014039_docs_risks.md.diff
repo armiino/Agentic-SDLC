@@ -1,0 +1,55 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risiken
++ 
++ ## Fachliche Risiken
++ - **Unklare Zieldefinition und Scope Creep**: Unterschiedliche Erwartungen (Angebotserstellung, Rechnungsdownload, Push‑Notifications, Mobile) können zu zusätzlichen Features führen und den 8‑Wochen‑Zeitplan gefährden.
++ - **Fehlende Priorisierung von Kern‑Features**: Ohne klare Trennung von MVP‑ und Nice‑to‑Have‑Features (z.B. Push‑Notifications, Analytics) besteht das Risiko, dass nicht‑kritische Komponenten (Marketing‑Push, KPI‑Tracking) Ressourcen von den Kernfunktionen wegnehmen.
++ - **Unsichere Datenlösch‑ und Auftragsverarbeitungs‑Prozesse**: Kunden verlangen das Recht auf Datenlöschung; ein unzureichendes Löschkonzept kann zu Vertragsverletzungen und Reputationsschäden führen.
++ - **Unvollständige SAP‑Integration**: Stammdaten in SAP sind teilweise unvollständig; daraus resultierende fehlerhafte Angebote können Umsatzverluste und Kundenunzufriedenheit verursachen.
++ - **Unklare Rollen‑ und Berechtigungsmatrix**: Ohne definiertes Rollen‑/Berechtigungskonzept kann es zu unautorisierten Datenzugriffen oder zu ineffizientem Support kommen.
++ - **Fehlende KPI‑Definition für MVP**: Unklare Messgrößen (Conversion Rate, Zeit bis Angebot) erschweren den Erfolg des Projekts und können zu falschen Entscheidungen führen.
++ 
++ ## Technische Risiken
++ - **Backend‑Reifegrad**: Das Backend ist noch nicht API‑ready; das Fehlen einer stabilen API‑Layer verzögert Integration und Frontend‑Entwicklung.
++ - **Security Review vs. Zeitplan**: Der notwendige Security Review (ca. 6 Wochen) kollidiert stark mit dem 8‑Wochen‑MVP‑Zeitfenster – Gefahr von unzureichender Sicherheit oder verpasstem Launch.
++ - **Authentifizierungs‑Komplexität**: Entscheidung zwischen einfachem Email/Passwort‑Login, optionalem SSO und OAuth‑2.0 kann zusätzlichen Entwicklungsaufwand erzeugen und das Risiko von Sicherheitslücken erhöhen.
++ - **Managed Services & Kosten**: Managed Cloud‑Services sollen günstig sein, aber Skalierbarkeit (200 – 20.000 Nutzer) kann zu unerwarteten Kostenspitzen führen.
++ - **Performance‑Unsicherheit**: Unklare erwartete Nutzerzahl führt zu Schwierigkeiten bei Kapazitätsplanung; Risiko von schlechter Performance oder Ausfällen.
++ - **Backup & Disaster Recovery**: Fehlende klare Backup‑Strategie und DR‑Test kann Datenverlust und lange Ausfallzeiten im Produktionsbetrieb nach sich ziehen.
++ - **Logging & Auditing**: Anforderungen an umfassendes Audit‑Logging können Implementierungsaufwand erhöhen und das System verlangsamen, wenn nicht effizient umgesetzt.
++ 
++ ## Compliance‑ und Datenschutzrisiken
++ - **DSGVO‑Konformität**: Double‑Opt‑In, Consent‑Management, EU‑only Hosting und Audit‑Logs müssen vollständig umgesetzt werden; Lücken führen zu Bußgeldern und Rechtsstreitigkeiten.
++ - **Push‑Notification‑Einwilligung**: Fehlende Einwilligungen beim Versand von Push‑Nachrichten brechen die DSGVO‑Vorgaben.
++ - **Daten‑Hosting‑Region**: Unklare Definition von „EU‑only“ kann dazu führen, dass Daten in nicht‑konformen Regionen gespeichert werden.
++ - **Auftragsverarbeitungsverträge (AVV)**: Fehlende AVVs mit Drittanbietern (z.B. Managed Service Provider) stellen ein rechtliches Risiko dar.
++ - **Security Review Ausfall**: Ohne durchgeführten Pen‑Test und Threat‑Model kann das System angreifbar sein, was wiederum DSGVO‑Verstöße (z.B. Datenverlust) nach sich zieht.
++ 
++ ## Widersprüche und Unsicherheiten
++ - **Zeit vs. Sicherheit**: 8‑Wochen‑MVP steht im direkten Widerspruch zu einem 6‑Wochen‑Security‑Review und vollständiger DSGVO‑Umsetzung.
++ - **Frontend‑Strategie**: Unklar, ob Web‑first, Mobile‑first oder responsive; Entscheidung beeinflusst Aufwand und Ressourcen.
++ - **Kosten vs. Skalierbarkeit**: Günstige Managed Services vs. benötigte Auto‑Scaling‑Kapazität für bis zu 20.000 Nutzer.
++ - **Verantwortlichkeiten**: Fehlender Architekt; unklar, wer Rollen‑/Berechtigungskonzept, Sicherheitsreview und Dokumentation übernimmt.
++ - **KPI‑Messung**: Unklar, welche Analytics‑Tools später eingesetzt werden und wie sie DSGVO‑konform integriert werden können.
++ 
++ ## Mögliche Auswirkungen
++ - **Projektverzögerung**: Durch zusätzliche Arbeiten (Security Review, Compliance, SAP‑Korrekturen) kann das MVP‑Datum verpasst werden.
++ - **Budgetüberschreitung**: Skalierbarkeit und Managed‑Service‑Kosten können das geplante Budget sprengen.
++ - **Rechtliche Konsequenzen**: DSGVO‑Verstöße führen zu Bußgeldern und Imageverlust.
++ - **Produktionsausfälle**: Unzureichende Performance‑ oder Backup‑Strategien können zu Serviceunterbrechungen und Kundenunzufriedenheit führen.
++ - **Datenintegritäts‑ und Sicherheitsvorfälle**: Fehlende Audits und ungesicherte Authentifizierung können Datenlecks verursachen.
++ 
++ ## Gegenmaßnahmen / Klärungsbedarf
++ - **Scope‑Festlegung**: Priorisieren Sie Kern‑MVP‑Features (Angebot, Rechnung, Login) und verschieben Sie Nice‑to‑Have (Push‑Notifications, Mobile‑App) auf spätere Releases.
++ - **Security‑Plan**: Frühzeitiges Einbinden eines Sicherheitsexperten; ggf. Mini‑Security‑Review für MVP mit späterem Full‑Review.
++ - **Kompetenz‑Klärung**: Benennen Sie einen Architekten oder Projekt‑Lead, der Rollen‑/Berechtigungskonzept, API‑Design und Sicherheitsanforderungen verantwortet.
++ - **DSGVO‑Checkliste**: Erstellen Sie eine detaillierte Checkliste für Double‑Opt‑In, Consent‑Management, AVVs und EU‑Hosting; prüfen Sie sie vor Go‑Live.
++ - **Performance‑Profiling**: Definieren Sie ein realistisches Nutzer‑Szenario für MVP; führen Sie Last‑Tests durch und planen Sie Auto‑Scaling‑Parameter.
++ - **Backup‑Strategie**: Dokumentieren Sie RPO/RTO‑Ziele, implementieren Sie tägliche Snapshots und führen Sie monatliche Wiederherstellungstests durch.
++ - **Kosten‑Monitoring**: Setzen Sie Monitoring‑Tools für Cloud‑Kosten ein; definieren Sie Guardrails für Skalierungs‑Kosten.
++ - **Klare Verantwortlichkeiten**: Legen Sie fest, wer für Security Review, Compliance, Architektur und Dokumentation verantwortlich ist.
++ - **Iteratives Release‑Modell**: Nutzen Sie ein inkrementelles Vorgehen – erste Release mit minimalen Compliance‑Mindestanforderungen, danach Erweiterungen.
++ 
++ *Dieses Risiko‑Artefakt wurde aus dem bereitgestellten Kontext, den Requirements und dem Transkript abgeleitet.*

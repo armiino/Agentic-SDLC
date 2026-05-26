@@ -1,0 +1,76 @@
+# Functional Requirements
+
+1. Kundenportal
+   - Web-basiert, bevorzugt Web-first, Mobile-Anwendung später optional.
+   - Benutzer können sich per E-Mail und Passwort anmelden (MVP).
+   - Optional: SSO-Integration (Azure AD, Google).
+
+2. Angebotserstellung
+   - Kunden können Angebote schnell und einfach erstellen.
+   - Nutzung von Produktdaten, Preisen und Rabattlogik aus SAP.
+
+3. Rechnungsdownload und Bestellübersicht
+   - Kunden sehen ihre Bestellungen ein und können Rechnungen herunterladen.
+
+4. Rollen- und Berechtigungssystem
+   - Mindestens Rollen: Admin, Manager, normaler User.
+   - Support-Rolle ist optional / derzeit nicht erforderlich.
+
+5. SAP-Integration
+   - Zugriff auf Stammdaten, Produktdaten, Preisinformationen und Rabattlogik.
+
+6. API Layer
+   - Bereitstellung einer API-Schnittstelle für Integrationen.
+   - Absicherung der API mittels OAuth (vorzugsweise) oder API Keys.
+
+7. Logging und Audit Trails
+   - Protokollierung von Benutzeraktionen zur Nachvollziehbarkeit.
+
+8. Löschkonzept
+   - Möglichkeit zur Löschung von personenbezogenen Daten gemäß DSGVO.
+
+9. Backup und Disaster Recovery
+   - Sicherstellung der Datenverfügbarkeit und Wiederherstellung bei Ausfällen.
+
+10. KPIs für den Erfolg
+    - Conversion Rate (Angebot zu Bestellung).
+    - Zeit bis zur Angebotserstellung.
+
+11. Push Notifications (optional, nicht im MVP)
+    - Ermöglichen von Marketing-Push-Benachrichtigungen unter DSGVO-Konformität.
+
+# Non-functional Requirements
+
+1. Datenschutz und Compliance
+   - Strikte Einhaltung der DSGVO, inklusive Double-Opt-In für Login.
+   - Speicherung und Verarbeitung nur in EU-konformen oder DSGVO-konformen Rechenzentren.
+
+2. Sicherheit
+   - Sicherung der Kommunikation mittels TLS.
+   - Security Review ist verpflichtend, auch wenn es Zeitdruck gibt.
+   - Rollen- und Zugriffskontrollen zur Datensicherheit.
+
+3. Performance und Skalierbarkeit
+   - System soll von 200 bis zu 20.000 Nutzern skalierbar sein.
+   - Vermeidung von Overengineering zugunsten schneller Markteinführung.
+
+4. Betrieb
+   - Nutzung von Managed Services, kein eigener Datenbankserver.
+
+5. Dokumentation
+   - Ausreichende Dokumentation zur Unterstützung von Security Review und Wartung.
+   - Dokumentation soll pragmatisch und nicht zu umfangreich sein.
+
+# Constraints/Compliance
+
+- MVP muss in 8 Wochen lieferbar sein.
+- Backend noch nicht API-ready, API Layer ist aber notwendig.
+- Kein eigener Datenbankserver darf aufgesetzt werden, Managed Services bevorzugt.
+- Einhaltung aller Anforderungen der DSGVO, insbesondere bei personenbezogenen Daten.
+- Hosting muss mindestens EU datenschutzkonform sein.
+
+# Traceability
+
+- Alle Anforderungen leiten sich aus dem Transkript input/transcripts/T9999_chaos.txt ab.
+- Kontextzusammenfassung und Stakeholdergespräch protokolliert in runs/phase2_1/20260526_140545_d7a2f1/state/context.md
+

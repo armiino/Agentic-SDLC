@@ -1,0 +1,49 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarf (Phase 2.1)
++ 
++ ## Fachliche Fragen
++ 
++ | # | Frage | Quelle / Auslöser | mögliche Ansprechpartner*innen |
++ |---|-------|--------------------|--------------------------------|
++ | F1 | Welcher genaue Funktionsumfang gehört zum MVP? Insbesondere: Soll **Mobile‑App** oder nur **responsive Web** enthalten sein? Und gehören **Push‑Notifications** zum MVP? | Diskussion im Transkript (Anna vs. Ben) & Requirements (Kapitel „Mobile“/„Push‑Notifications“) | Product Owner (Anna), Technischer Lead (Ben) |
++ | F2 | Welche **KPIs** sollen gemessen werden und wie wird deren Erfassung technisch umgesetzt? (Definition von Conversion Rate, Messzeitpunkt, Reporting‑Dashboard) | Hinweis im Transkript („Conversion Rate, Zeit bis Angebot“) & Requirements (KPIs genannt, aber ohne Messmethodik) | Product Owner (Anna), Business Analyst, Data Engineer |
++ | F3 | Wie detailliert muss das **Rollen‑ und Berechtigungskonzept** sein? Welche Rechte benötigen die einzelnen Rollen (Admin, Manager, User, Support) konkret? | Nennung von Rollen im Transkript & Requirements, aber kein Detail | Compliance (Clara), Technischer Lead (Ben) |
++ | F4 | Welche konkreten **Daten** aus SAP werden benötigt und in welchem Format? Wie ist die **Qualität** der Stammdaten? | Hinweis im Transkript („Produktdaten, Preise, Rabattlogik“, „Stammdaten unvollständig“) | SAP‑Integrator, Business Analyst |
++ | F5 | Wie soll das **Lösch‑ und Export‑Feature** für Kundendaten technisch realisiert werden (Frontend‑Workflow, Backend‑Prozess, Aufbewahrungsfristen)? | Anforderungen an DSGVO‑Löschung im Transkript & Risks | Datenschutzbeauftragte (Clara), Backend‑Team |
++ | F6 | Soll ein **Single‑Sign‑On** bereits im MVP implementiert werden oder erst später? Wenn ja, welcher Provider (Azure AD, Google) und welchen Auth‑Flow (OAuth‑Authorization‑Code, SAML) verwenden wir? | Wunsch nach SSO im Transkript, aber kein IAM vorhanden (Risiko) | Product Owner (Anna), Technischer Lead (Ben) |
++ | F7 | Wie wird das **Backup‑ und Disaster‑Recovery‑Konzept** im Detail aussehen (RPO, RTO, Test‑Restore‑Prozess)? | Risks‑Kapitel nennt tägliche Backups, aber keine Details | Infrastruktur‑Team, Compliance (Clara) |
++ 
++ ## Technische Fragen
++ 
++ | # | Frage | Quelle / Auslöser | mögliche Ansprechpartner*innen |
++ |---|-------|--------------------|--------------------------------|
++ | T1 | Welche **Managed Database** wird verwendet (Azure SQL, PostgreSQL, Serverless‑Option) und wie wird die **EU‑only**‑Hosting‑Anforderung technisch sichergestellt? | Risks („EU‑only vs. DSGVO‑konform“), Architecture (Managed DB) | Cloud‑Architekt, Infrastruktur‑Team |
++ | T2 | Wie wird das **API‑Gateway** konfiguriert: reines OAuth 2.0 oder Hybrid mit API‑Key‑Fallback? Wie sieht das **Token‑Lifetime**‑Management aus? | Requirements (OAuth 2.0 preferred, API‑Key fallback) & Architecture (API‑Gateway) | Technischer Lead (Ben), Security Engineer |
++ | T3 | Welche **Security Review**‑Aktivitäten können parallel zum 8‑Wochen‑MVP durchgeführt werden, um das Risiko zu reduzieren? Gibt es Managed Security Services, die wir einsetzen können? | Konflikt Security Review vs. MVP‑Zeitplan (Transkript) | Security Lead, Compliance (Clara) |
++ | T4 | Wie wird das **Logging‑ und Audit‑Trail**-System implementiert (Zentrale Log‑Aggregation, Aufbewahrungsdauer, Zugriffsbeschränkungen)? | Risks (Logging & Audit‑Trail) & Architecture (Observability Stack) | DevOps, Security Engineer |
++ | T5 | Welche **Auto‑Scaling**‑Regeln sollen für das Frontend‑App‑Service und die Datenbank definiert werden, um die Last von 200 bis 20 000 gleichzeitigen Nutzer*innen zu unterstützen? | Risks (Performance‑Skalierung) & Architecture (Auto‑Scaling) | Cloud‑Architekt, Performance Engineer |
++ | T6 | Wie wird die **Integration zu SAP** technisch umgesetzt (REST‑Adapter, OData, Middleware) und welche Authentifizierung wird dafür benötigt? | Transkript (SAP‑Integration) & Architecture (SAP‑Connector) | SAP‑Integrator, Backend‑Team |
++ | T7 | Welche **Monitoring‑ und SIEM‑Lösung** wird gewählt, um DSGVO‑konforme Log‑Retention (12 Monate) sicherzustellen? | Risks (Monitoring, SIEM) & Architecture (Observability Stack) | DevOps, Compliance (Clara) |
++ | T8 | Gibt es bereits ein **Privacy‑By‑Design**‑Framework oder Checklist, das wir im Projekt anwenden können? | Risks (DSGVO‑Umsetzung) | Datenschutzbeauftragte, Legal Team |
++ 
++ ## Widersprüche / Klärungsbedarf
++ 
++ | # | Widerspruch / Unklarheit | Quelle | Auswirkung | Auflösungsvorschlag |
++ |---|--------------------------|--------|------------|--------------------|
++ | W1 | **Mobile‑First vs. Web‑First** – Anna spricht von Mobile später, Ben betont, dass Sales mobil arbeiten will. | Transkript | Unklare Priorisierung kann Ressourcen binden. | Entscheidung im Scope‑Workshop: MVP = Responsive Web only; Mobile als späteres Release.
++ | W2 | **SSO vs. fehlendes IAM** – Wunsch nach SSO, aber kein zentrales Identity‑Management vorhanden. | Transkript & Risks | Zusätzlicher Aufwand, mögliche Verzögerungen. | Auswahl eines externen IdP (z. B. Azure AD) als Managed Service oder SSO im MVP ausklammern.
++ | W3 | **Security Review Zeitplan** – Ben fordert 6‑Wochen‑Review, Anna möchte MVP ohne Review starten. | Transkript | Risiko von Sicherheits‑ und Compliance‑Verstößen. | Parallel‑Security‑Sprint etablieren, Minimum‑Security‑Check vor Go‑Live, Full Review danach.
++ | W4 | **Hosting‑Region Interpretation** – „EU‑only“ vs. „DSGVO‑konform“ werden unterschiedlich verstanden. | Transkript & Risks | Rechtsunsicherheit, mögliche Strafen. | Klare Vorgabe: Daten ausschließlich in einer EU‑Region (z. B. Azure West Europe) hosten.
++ | W5 | **KPIs Messmethodik** – Conversion Rate und Zeit bis Angebot genannt, aber keine Mess‑ bzw. Reporting‑Details. | Transkript & Requirements | Erfolg des Projekts nicht messbar. | KPI‑Definition mit Messpunkten (z. B. Ereignis‑Tracking im Backend) festlegen.
++ 
++ ## Fehlende Informationen / Artefakte
++ - **Projekt‑Roadmap** mit klaren Milestones (MVP‑Freigabe, Security Review, Compliance‑Abnahme).
++ - **Stakeholder‑Matrix** mit definierten Ansprechpartner*innen für jede Themen‑Domain (z. B. Datenschutz, SAP, Cloud‑Provider).
++ - **Kosten‑ und Anbieter‑Analyse** für Managed DB, Cloud‑Provider und ggf. Managed Security Services.
++ - **Detail‑Design‑Dokument** für API‑Spezifikation (Endpoints, Payload‑Schemas, Error‑Handling).
++ - **Test‑Strategie** inkl. Performance‑ und Security‑Tests, sowie Definition von Acceptance‑Kriterien.
++ 
++ *Hinweis*: Alle oben genannten Fragen sollten im nächsten Architecture‑Review / Sprint‑Planning adressiert werden, um ein konsistentes, DSGVO‑konformes und technisch machbares MVP sicherzustellen.
++ 

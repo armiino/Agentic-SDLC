@@ -1,0 +1,51 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risiken
++ 
++ ## Fachliche Risiken
++ - **Unklare Zieldefinition**: Unterschiedliche Vorstellungen (Angebotserstellung vs. Rechnungsdownload vs. Push‑Notifications) können zu Scope‑Creep führen.
++ - **Unvollständige SAP‑Daten**: Stammdaten sind teilweise unvollständig, was fehlerhafte Angebote bzw. falsche Preise zur Folge haben kann.
++ - **Fehlendes Lösch‑ und Rollen‑Konzept**: Ohne ein definiertes Konzept können Anfragen zur Datenlöschung oder Berechtigungsänderungen nicht erfüllt werden – DSGVO‑Verstoß.
++ - **KPI‑Umsetzung**: Unklare Messmethoden für Conversion‑Rate und "Zeit bis Angebot" können das Reporting erschweren.
++ - **Mobile‑Strategie**: Unentschiedenheit, ob Mobile‑First oder Web‑First, führt zu verzögerter Umsetzung und möglicher Fehlplanung.
++ 
++ ## Technische Risiken
++ - **Mangelndes API‑Ready Backend**: Derzeit ist das Backend nicht API‑bereit; Aufbau einer stabilen API‑Layer erfordert zusätzlichen Aufwand und kann den 8‑Wochen‑Zeitplan gefährden.
++ - **Security Review vs. Timebox**: Das notwendige Security Review (inkl. Pen‑Test, Threat Modeling) dauert ca. 6 Wochen – Risiko, dass es nicht rechtzeitig abgeschlossen wird.
++ - **Managed Services & Skalierbarkeit**: Günstige Managed Services können Skalierbarkeit‑Probleme bei stark steigender Nutzerzahl (bis 20 000) aufweisen.
++ - **Auth‑Komplexität**: Entscheidung zwischen OAuth 2.0, API‑Keys oder einfachem TLS‑Login beeinflusst Implementierungszeit und Sicherheitslevel.
++ - **Backup & Disaster Recovery**: Fehlende Roadmap für DR kann bei Datenverlust zu hohen Wiederherstellungskosten führen.
++ - **Performance‑Unsicherheit**: Erwartete Nutzerzahlen (200‑20 000) sind stark variabel; ohne Last‑Tests riskieren wir >2 s Antwortzeiten.
++ 
++ ## Compliance‑ und Datenschutzrisiken
++ - **DSGVO‑Verpflichtungen**: Double‑Opt‑In, Audit‑Trail, Logging und Datenlöschung müssen vollständig umgesetzt sein – unvollständige Umsetzung führt zu Bußgeldern.
++ - **Datenhosting‑Standort**: Unklare Definition "EU‑only" vs. "DSGVO‑konform" kann zu Rechtsverstößen führen, wenn Daten in Nicht‑EU‑Regionen landen.
++ - **Tracking & Push‑Notifications**: Ohne ausdrückliche Einwilligung (Double‑Opt‑In) ist das Tracking rechtlich riskant.
++ - **Audit‑Trail‑Fehlfunktion**: Fehlende oder lückenhafte Protokollierung kann bei Audits erhebliche Sanktionen auslösen.
++ 
++ ## Widersprüche und Unsicherheiten
++ - **MVP‑Zeitplan vs. notwendige Sicherheits‑ und Compliance‑Maßnahmen** – Risiko, dass das Produkt ohne vollständige Prüfung live geht.
++ - **Budget vs. Infrastruktur**: Wunsch nach günstigen Managed Services kontra Bedarf an skalierbarer, hochverfügbarer Architektur.
++ - **Feature‑Priorisierung**: Push‑Notifications und Analytics sind diskutiert, aber nicht klar im MVP‑Umfang – Gefahr von Scope‑Creep.
++ - **Rollen‑ und Berechtigungskonzept**: Benötigt Dokumentation, aber es gibt keinen definierten Architekten – Unsicherheit über Verantwortlichkeit.
++ 
++ ## Mögliche Auswirkungen
++ - **Projektverzögerungen**: Verzögerungen bei API‑Entwicklung, Security Review oder DSGVO‑Umsetzung können den Go‑Live‑Zeitplan überschreiten.
++ - **Kostenüberschreitung**: Zusätzliche Ressourcen für Sicherheit, Skalierbarkeit und Compliance können das Budget sprengen.
++ - **Rechtliche Konsequenzen**: DSGVO‑Verstöße können zu Bußgeldern und Reputationsschäden führen.
++ - **Qualitätsverlust**: Unvollständige Tests, fehlende Performance‑Optimierung oder mangelhafte Dokumentation führen zu schlechter Nutzererfahrung.
++ - **Business‑Risiko**: Wenn das Portal keine zuverlässige Angebotserstellung liefert, wird das Kernziel (Conversion‑Rate‑Steigerung) nicht erreicht.
++ 
++ ## Gegenmaßnahmen / Klärungsbedarf
++ - **Klare Scope‑Definition**: Priorisierung der Kernfeatures (Kundenportal, Angebot, Rechnung, Login) und Festlegung, dass Push‑Notifications und Analytics erst nach MVP kommen.
++ - **Security Review parallel zum MVP**: Teil‑Review (Threat Modeling, Code‑Scanning) bereits während Entwicklung starten, Full‑Review nach MVP‑Launch.
++ - **DSGVO‑Check‑Liste**: Erstellen einer detaillierten Check‑Liste (Opt‑In, Lösch‑Workflow, Audit‑Trail) und Verantwortliche zuordnen.
++ - **API‑Roadmap**: Kurzfristiger Plan für API‑Layer (Sprint 1) mit Minimal‑Viable‑API, später Erweiterungen (OAuth, erweitertes Scoping).
++ - **Managed Service Evaluation**: Vergleich von Anbietern hinsichtlich Kosten, Auto‑Scaling und EU‑Compliance; ggf. Premium‑Tier für Skalierbarkeit wählen.
++ - **Performance‑Tests**: Frühzeitige Last‑Tests mit simulierten 20 000 Nutzern, um Engpässe zu identifizieren.
++ - **Rollen‑ und Berechtigungskonzept dokumentieren**: Schnell‑Template erstellen, Verantwortlichkeiten (z. B. Product Owner) festlegen.
++ - **Backup‑ und DR‑Plan**: Definieren von RPO/RTO, automatisierte Backups und Wiederherstellungs‑Tests einplanen.
++ - **Stakeholder‑Alignment**: Regelmäßige (z. B. wöchentliche) Abstimmungen, um Widersprüche (z. B. Mobile‑First vs. Web‑First) zeitnah zu klären.
++ 
++ *Dieses Risikoartefakt basiert ausschließlich auf den im Transkript, Kontext und Requirements dokumentierten Informationen.*

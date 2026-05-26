@@ -1,0 +1,42 @@
+# Risiken
+
+## Technische Risiken
+1. **SAP‑Verfügbarkeit** – Das Portal ist stark von SAP‑Read‑Only‑Zugriff abhängig. Ausfall von SAP führt zu fehlenden Produkt‑/Preis‑Daten und blockiert Angebotserstellung.
+2. **API‑Gateway‑Verzögerung** – Das zentrale API‑Gateway hat eine 6‑Wochen‑Warteliste, sodass im MVP direkte API‑Absicherung via OAuth nötig ist, was zu Sicherheits‑ und Skalierbarkeitsproblemen führen kann.
+3. **Daten‑Residenz** – Managed Service muss garantiert EU‑Only‑Datenhaltung bieten. Fehlende Nachweise können zu Compliance‑Verstößen führen.
+4. **Backup & Recovery** – Unzureichende Backup‑Strategie kann Datenverlust bei Ausfällen verursachen und das 8‑Wochen‑MVP gefährden.
+5. **Rate‑Limiting & Missbrauch** – Ohne klare Limits kann das System durch massiven Download von Rechnungen oder API‑Aufrufen überlastet werden.
+6. **Logging vs. Audit‑Log** – Gefahr, personenbezogene Daten in technischen Logs zu speichern, was DSGVO‑Verstöße auslöst.
+7. **Performance‑Skalierung** – Erwartete Nutzerzahl (200‑20 000) kann die geplante Infrastruktur überfordern, wenn nicht rechtzeitig horizontal skaliert wird.
+
+## Organisatorische Risiken
+1. **Rollen‑ und Berechtigungskonflikte** – Unklare Berechtigungen zwischen Sales, Support und Finance können zu Datenlecks oder fehlerhaften Rabatten führen.
+2. **Freigabe‑Workflow für Rabatte** – Fehlender oder verspäteter Freigabe‑Prozess kann zu finanziellen Verlusten und Compliance‑Problemen.
+3. **Support‑Prozess** – Kein Ticket‑System im MVP; manuelle E‑Mail‑Bearbeitung erhöht Fehlerquote und erschwert Nachverfolgbarkeit.
+4. **Budget‑ und Zeitdruck** – 8‑Wochen‑MVP mit umfangreichen Anforderungen kann zu Qualitäts‑ und Sicherheitskompromissen führen.
+5. **Kosten‑Schätzung** – Unklare Kosten für EU‑Only‑Hosting und Managed Services können den Vorstand überraschen.
+6. **Internationalisierung** – Frühzeitige Einbeziehung der Schweiz (CHF) ohne klare rechtliche Klärung erhöht rechtliche Risiken.
+
+## Compliance‑Risiken
+1. **DSGVO‑Konformität** – Fehlendes Double‑Opt‑In, unzureichendes Lösch‑ und Auftragsverarbeitungs‑Konzept oder Daten außerhalb der EU brechen die DSGVO.
+2. **Audit‑ und Revisionssicherheit** – Unvollständige Audit‑Logs können rechtliche Nachweise gefährden.
+3. **Retention‑ und Löschfristen** – Unklare Aufbewahrungsfristen für Angebote, Rechnungen und Logs können zu Verstößen gegen Handels‑ und Steuerrecht führen.
+4. **Auftragsverarbeitungsverträge** – Fehlende AVV mit Managed Service Provider und ggf. SAP‑Partner können Vertragsstrafen nach sich ziehen.
+5. **Export‑Kontrollen** – Bei späterer Ausweitung auf USA müssen zusätzliche rechtliche Prüfungen erfolgen.
+
+## Finanzielle Risiken
+1. **Kosten‑überschreitung** – Managed Services, EU‑Only‑Hosting und ggf. zusätzliche Sicherheits‑Tools können das Budget sprengen.
+2. **Fehlende Rabatt‑Freigabe** – Ohne automatisierten Freigabe‑Workflow können fehlerhafte Angebote zu Umsatzverlusten führen.
+3. **Support‑Aufwand** – Manuelle Support‑Bearbeitung kann höhere Personalkosten verursachen.
+
+## Maßnahmen (Kurzfristig für MVP)
+- Dokumentiertes **Fallback‑Verhalten** bei SAP‑Ausfall (Anzeige Fehlermeldung, keine Angebotserstellung).
+- **OAuth‑Basis‑Implementierung** ohne Gateway, mit klar definierten Scopes.
+- **EU‑Only Managed Service** Auswahl und Nachweis vor Projektstart.
+- **Backup‑Plan**: Tägliche Snapshots, Aufbewahrung 7 Tage, Wiederherstellung <4 h.
+- **Rate‑Limiting**: 100 API‑Calls/Minute pro Nutzer, 10 Rechnungs‑Downloads/Minute.
+- **Logging‑Richtlinie**: Keine personenbezogenen Daten in System‑Logs, nur Nutzer‑ID.
+- **Minimaler Rollen‑Matrix** definieren (Admin, Sales, Kunde) und dokumentieren.
+- **Double‑Opt‑In** für Registrierung implementieren.
+- **Kontaktformular**: E‑Mail‑Versand, keine Persistenz, Hinweis auf Datenverarbeitung.
+- **Retention‑Plan**: Angebote 7 Jahre (Handelsrecht), Logs 1 Jahr, Backup 30 Tage.

@@ -1,0 +1,70 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturüberblick (frühe SDLC‑Phase)
++ 
++ ## 1. Systemkontext
++ - **Akteure**
++   - **Kunden** (End‑User) – greifen über ein Web‑Portal (später ggf. native Mobile‑App) auf Bestellungen, Rechnungen und Angebots‑Erstellung zu.
++   - **Sales‑Mitarbeiter** – nutzen das Portal zur schnellen Erstellung und Versendung von Angeboten.
++   - **Marketing** – sendet (optional) Push‑Notifications, benötigt Einwilligungs‑Management.
++   - **Support‑Team** – (nicht im MVP) potenziell später für Ticket‑Management.
++ - **Externe Systeme**
++   - **SAP ERP** – liefert Stammdaten (Kunden‑, Produkt‑, Preis‑ und Rabattinformationen) und muss über einen API‑Layer angebunden werden.
++   - **Identity Provider (IdP)** – optional Azure AD / Google für SSO.
++   - **Managed Cloud Services** – Datenbank, Hosting, Backup/DR (EU‑only, DSGVO‑konform).
++ - **Kerngeschäftsprozess**: Kunde / Sales erstellt ein Angebot → Angebot wird gespeichert → bei Annahme wird Bestellung erzeugt → Rechnung wird generiert → Kunde kann im Portal Bestellungen einsehen und Rechnungen downloaden.
++ 
++ ## 2. Wichtige Komponenten (high‑level)
++ | Ebene | Komponente | Aufgabe | Hinweis |
++ |------|------------|--------|--------|
++ | **Präsentation** | **Web‑Portal (Frontend)** | UI für Kunden, Sales und ggf. Admins; responsive Design (Web‑first). | Mobile App optional für spätere Releases. |
++ | **Anwendungslogik** | **API‑Gateway** | Endpunkt‑Management, Auth‑Enforcement (OAuth2 / API‑Key), Routing zu Microservices. | Kann als Managed Service (z.B. Azure API Management) realisiert werden. |
++ |  | **Auth Service** | Benutzer‑Registrierung, Login (E‑Mail/Passwort), Double‑Opt‑In, ggf. SSO‑Integration. | Minimal‑MVP: Email/Passwort + Double‑Opt‑In. |
++ |  | **Offer Service** | Geschäftslogik für Angebotserstellung, Preis‑ und Rabattberechnung, Persistenz. |
++ |  | **Order & Invoice Service** | Zugriff auf Bestellungen, Rechnungsgenerierung, Download‑Endpoint. |
++ |  | **SAP Adapter Service** | Synchronisation/Abfrage von SAP‑Stammdaten (Produkt, Preis, Rabatt). | Sollte asynchron (Polling/Message‑Queue) implementiert werden, um SAP‑Verfügbarkeit zu kapseln. |
++ |  | **Compliance Service** | Consent‑Management (Double‑Opt‑In, Push‑Notification‑Einwilligungen), Lösch‑Mechanismus, Audit‑Logging. |
++ | **Datenhaltung** | **Managed DB (EU‑Region)** | Persistenz für Benutzer, Rollen, Angebote, Bestellungen, Audits. | Verschlüsselung at‑rest (AES‑256) durch Provider. |
++ |  | **Log & Monitoring Service** | Zentralisiertes Log‑Management (Audit‑Logs, Access‑Logs), Health‑Checks. |
++ |  | **Backup / DR Service** | Automatisierte Snapshots, Wiederherstellung (RPO ≤ 4 h, RTO ≤ 8 h). |
++ | ** Infrastruktur** | **Managed Cloud Platform** | Hosting der Services (Kubernetes/Container Service oder Serverless). | Keine eigene DB‑Installation, Auto‑Scaling aktiv. |
++ |  | **Security Review / Threat Modeling** | Laufende Sicherheitsprüfungen, Pen‑Test (Mini‑Review für MVP). |
++ 
++ ## 3. Schnittstellen / Integrationspunkte
++ - **Frontend ↔ API‑Gateway** – REST/HTTPS, OAuth2‑Token (Bearer).  
++ - **API‑Gateway ↔ Microservices** – interne HTTP/GRPC Calls, Auth‑Header weitergereicht.  
++ - **Offer/Order Services ↔ SAP Adapter** – SOAP/REST oder IDoc (je nach bestehender SAP‑Schnittstelle), ggf. über Message‑Queue (Kafka/Service Bus).  
++ - **Auth Service ↔ Identity Provider** – OpenID Connect für optionales SSO.  
++ - **Compliance Service ↔ Consent‑DB** – Persistenz von Einwilligungen, Lösch‑Requests.  
++ - **Log Service ↔ Cloud Logging** – Export von strukturierten Logs (JSON) zu einem zentralen Logging‑Backend (z.B. Azure Monitor, Elastic).  
++ - **Backup Service ↔ Managed DB** – automatisierte Snapshots, Restore‑API.  
++ 
++ ## 4. Daten‑ und Sicherheitsaspekte (sofern ableitbar)
++ - **Transportverschlüsselung**: TLS 1.2+ für sämtliche Kommunikation (Frontend ↔ API, Service‑to‑Service).  
++ - **At‑Rest‑Verschlüsselung**: Managed DB übernimmt AES‑256‑Verschlüsselung.  
++ - **Authentifizierung & Autorisierung**: OAuth 2.0 (Authorization‑Code + Client‑Credentials) für Frontend‑Nutzer; API‑Key‑Fallback für interne Systeme. Rollen‑basiertes Access‑Control (RBAC) definiert in Auth‑Service.  
++ - **Audit‑Logging**: Jeder mutierende Aufruf (Create/Update/Delete) wird mit Nutzer‑ID, Timestamp und Payload‑Hash geloggt.  
++ - **DSGVO‑Compliance**: 
++   - Double‑Opt‑In bei Registrierung und bei Push‑Notification‑Einwilligung.  
++   - Recht auf Datenlöschung – Delete‑Endpoint im Compliance Service, das Daten aus allen betroffenen Stores entfernt.  
++   - Datenhost: ausschließlich in EU‑Regionen (z. B. Azure EU‑West).  
++   - Auftragsverarbeitungsverträge (AVV) mit Cloud‑Provider und ggf. SAP‑Partner.  
++ - **Backup / Disaster Recovery**: Tägliche Snapshots, 30‑Tage‑Retention, automatisierte Restore‑Tests.  
++ - **Security Review**: Mini‑Threat‑Model und Risiko‑Scan vor MVP‑Launch; vollständiger Pen‑Test nach MVP.  
++ 
++ ## 5. Offene Architekturentscheidungen (zu klären)
++ 1. **Frontend‑Strategie** – Web‑only (responsive) für MVP oder gleichzeitig native Mobile‑App‑Entwicklung?  
++ 2. **Identity Provider** – Ob SSO (Azure AD / Google) bereits im MVP integriert wird oder erst nach dem ersten Release.  
++ 3. **OAuth vs. API‑Key** – Welcher Auth‑Mechanismus wird als Standard für interne Service‑Calls genutzt?  
++ 4. **SAP‑Anbindungsart** – Direktes REST‑Interface vs. Messaging‑Queue (Event‑Driven) – abhängig von vorhandener SAP‑Infrastruktur.  
++ 5. **Managed Service Provider** – Auswahl zwischen Azure, AWS oder GCP, unter Berücksichtigung von EU‑Only‑Hosting‑Anforderungen und Kosten.  
++ 6. **Umfang des Audit‑Logging** – Vollständiges Field‑Level‑Logging vs. Business‑Event‑Logging – Trade‑off zwischen Detailgrad und Performance.  
++ 7. **MVP‑Scope vs. Security Review** – Ob ein abgespeckter Security‑Review (z. B. automatisierte Scans) ausreicht, um den 8‑Wochen‑Zeitplan zu halten.  
++ 8. **Rollen‑ und Berechtigungskonzept** – Konkretisierung der Rollen (Admin, Manager, User, Support) und zugehöriger Berechtigungen (CRUD‑Operationen).  
++ 9. **KPI‑Erfassung** – Welche Analytics‑Lösung wird später integriert und wie wird diese DSGVO‑konform eingebunden.  
++ 
++ ## 6. Zusammenfassung
++ Der entworfene Architektur‑Entwurf fokussiert sich auf ein **MVP‑Ziel** – ein Web‑basiertes Kunden‑/Sales‑Portal mit Kernfunktionen (Angebotserstellung, Rechnungsdownload, Login) und einer **robusten API‑Layer**‑Integration zu SAP. Sicherheit und DSGVO‑Compliance werden durch TLS, Managed‑DB‑Verschlüsselung, Audit‑Logging und ein separates Compliance‑Service adressiert, wobei ein kompakter Security‑Review vor dem Launch geplant ist. Durch den Einsatz von Managed Cloud Services wird das Verbot, eine eigene Datenbank zu betreiben, eingehalten und ermöglicht Auto‑Scaling für bis zu 20 000 gleichzeitige Nutzer. Offene Entscheidungen (Frontend‑Strategie, IdP‑Integration, SAP‑Anbindung, Umfang des Audits) werden in späteren Phasen geklärt.
++ 
++ *Erstellt von Phase 2.1 ArchitectureAgent (initial_draft).*

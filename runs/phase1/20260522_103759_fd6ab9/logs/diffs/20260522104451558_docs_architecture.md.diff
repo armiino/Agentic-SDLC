@@ -1,0 +1,76 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturüberblick (frühe SDLC‑Phase)
++ 
++ ## 1. Systemkontext
++ - **Primäres Ziel**: Schnellere Angebotserstellung und Bereitstellung eines Kundenportals zum Einsehen von Bestellungen sowie Herunterladen von Rechnungen. (MVP‑Zeitrahmen 8 Wochen) [„Ziel ist schneller Angebote erstellen.“]
++ - **Stakeholder**
++   - **Anna** (Produkt‑/Business‑Owner): Fokus auf Sales‑ und Marketing‑Bedürfnisse (Angebote, Mobile‑Arbeit, KPI‑Messung, Push‑Notifications).
++   - **Ben** (Technischer Lead): Verantwortung für Backend‑Readiness, API‑Layer, Integration zu SAP, Sicherheits‑ und Skalierbarkeitsaspekte.
++   - **Clara** (Compliance/Datenschutz): Sicherstellung DSGVO‑Konformität, Logging, Audit‑Trails, Rollen‑ und Löschkonzepte.
++ - **Externe Systeme**
++   - **SAP ERP** – Quelle für Stammdaten, Produkt‑/Preis‑ und Rabattinformationen.
++   - **Identity Provider** (optional): Azure AD, Google (für SSO).
++   - **Managed Cloud Services** – Datenbank, Hosting, Backup/DR (EU‑Only).
++ - **Nutzergruppen**
++   - **Kunden** – Zugriff über Web‑Portal (später Mobile), können Bestellungen einsehen, Rechnungen downloaden, ggf. Push‑Notifications erhalten.
++   - **Sales‑Mitarbeiter** – Nutzung des Portals zur Angebotserstellung.
++   - **Administrator/Support** – Verwaltung von Rollen, Datenlöschung, Monitoring.
++ 
++ ## 2. Wichtige Komponenten (auf hohem Abstraktions‑Level)
++ | Komponente | Aufgabe | Hinweis / Offene Annahme |
++ |------------|---------|--------------------------|
++ | **Web‑Frontend** | Responsives Kunden‑/Sales‑Portal (Login, Angebots‑Wizard, Bestell‑ und Rechnungs‑Ansicht). | Mobile‑First vs. Web‑First noch nicht final entschieden. [„Web first. Mobile später.“]
++ | **API‑Gateway** | Einheitlicher Einstiegspunkt für alle externen Aufrufe (Frontend, SAP‑Connector, ggf. Future Mobile Apps). | OAuth 2.0 bevorzugt, aber API‑Keys als Alternative – noch zu validieren. [„OAuth wäre besser. Aber komplexer.“]
++ | **Business‑Logic‑Service** | Kernlogik für Angebotserstellung, Preis‑/Rabatt‑Berechnung, KPI‑Erfassung. | Muss über definierte Schnittstelle zu SAP‑Connector verfügen.
++ | **SAP‑Connector** | Adapter‑Layer, der SAP‑Stammdaten (Produkt, Preis, Rabatt) über geeignete SAP‑APIs (z. B. OData) bereitstellt. | SAP‑System ist vorhanden, jedoch nicht API‑ready – ggf. zusätzlicher Middleware‑Wrap‑Layer nötig.
++ | **Identity‑Provider‑Integration** | Authentifizierung per E‑Mail/Passwort (Grundauth) und optional SSO (Azure AD / Google). | Entscheidung über Umfang (MVP = Grundauth, SSO optional). [„SSO wäre schön.“]
++ | **Authorization / RBAC Service** | Rollen‑ und Berechtigungskontrolle (Admin, Manager, User, Support). | Detailliertes Berechtigungsmatrix noch offen.
++ | **Audit‑Logging Service** | Zentralisiertes, tamper‑proof Logging für alle sicherheitsrelevanten Aktionen (Login, Datenänderungen, Löschungen). | Muss DSGVO‑konform sein, inkl. Aufbewahrungsfristen.
++ | **Data Store (Managed DB)** | Persistente Speicherung von Kunden‑ und Angebotsdaten, Rechnungen, Log‑Einträgen. | Keine eigene Datenbank‑Instanz – Nutzung von Managed Service (z. B. Azure PostgreSQL, AWS RDS) – Standort EU‑Only muss gewährleistet sein.
++ | **Backup & Disaster‑Recovery** | Automatisierte Backups, Wiederherstellungs‑SLA für DSGVO‑relevante Daten. | Muss im MVP‑Scope vertraglich abgedeckt sein.
++ | **Metrics & Monitoring** | Erfassung von KPI‑Daten (Conversion Rate, Zeit bis Angebot) und Infrastruktur‑Monitoring. | Umfang wird für MVP klein gehalten; erweiterbar.
++ | **Push‑Notification Service (optional)** | Versand von Push‑Nachrichten an Kunden (nach Einwilligung). | Optional für MVP – rechtliche Einwilligungs‑Logik noch zu klären.
++ 
++ ## 3. Schnittstellen / Integrationspunkte
++ 1. **Frontend ↔ API‑Gateway** – HTTPS (TLS) für alle Aufrufe. Authentifizierung über JWT (aus Identity‑Provider) bzw. Session‑Cookie.
++ 2. **API‑Gateway ↔ Business‑Logic‑Service** – interne, gesicherte Schnittstelle (z. B. gRPC oder HTTP/REST).
++ 3. **Business‑Logic‑Service ↔ SAP‑Connector** – Aufruf von SAP‑APIs (vermutlich OData/ SOAP). Eventuell Transformation‑Layer nötig.
++ 4. **Identity‑Provider ↔ API‑Gateway** – Token‑Validierung (OAuth‑Introspection) oder SAML‑Assertion bei SSO.
++ 5. **Authorization Service ↔ API‑Gateway** – Policy‑Check pro Request (Rollen‑basiert).
++ 6. **Audit‑Logging Service ↔ Alle Services** – Asynchrones Log‑Publishing (z. B. via Message‑Queue) für tamper‑proof Speicherung.
++ 7. **Metrics Service ↔ Business‑Logic & Frontend** – Export von KPI‑Daten (z. B. Prometheus, CloudWatch). 
++ 8. **Backup Service ↔ Managed DB** – Zeitgesteuerte Snapshots, ggf. geografisch redundant innerhalb EU.
++ 9. **Push‑Notification Service ↔ Frontend (Mobile/Web)** – Integration über Web‑Push API oder Firebase/APNs (bei späterer Mobile‑App).
++ 
++ ## 4. Daten‑ und Sicherheitsaspekte (bekannt)
++ - **DSGVO‑Konformität** – Daten ausschließlich in EU‑Regionen gespeichert; Double‑Opt‑In beim Registrieren, Right‑to‑Be‑Forgotten‑Löschkonzept, Audit‑Trails, Rollen‑basierte Zugriffskontrolle. [„DSGVO … EU only.“]
++ - **Transport‑Security** – Alles über TLS 1.2+; keine unverschlüsselte Kanäle.
++ - **Authentifizierung** – Basis‑Login (E‑Mail/Passwort) für MVP; optional SSO (Azure AD/Google) – Entscheidung noch offen.
++ - **Autorisation** – RBAC (Role‑Based Access Control) mit klar definierten Rollen; Fein‑Granularität wird im Detail‑Design festgelegt.
++ - **Logging & Auditing** – Jeder sicherheitsrelevante Vorgang wird unveränderlich geloggt; Log‑Retention gemäß DSGVO‑Vorgaben (z. B. 2 Jahre).
++ - **Backup/DR** – Automatisierte tägliche Backups, Wiederherstellung innerhalb 24 h; Tests im Rahmen des Security Reviews.
++ - **Datenverschlüsselung** – Daten at‑rest werden vom Managed DB‑Service verschlüsselt (transparent); keine zusätzliche End‑to‑End‑Verschlüsselung im MVP.
++ - **API‑Security** – OAuth 2.0 (Client‑Credentials / Authorization‑Code) als bevorzugtes Modell; fallback auf API‑Key für interne Services (muss aber auditierbar sein).
++ 
++ ## 5. Offene Architekturentscheidungen (unsichere Annahmen)
++ | Entscheidung | Aktueller Stand | Auswirkungen | Hinweis |
++ |--------------|----------------|--------------|--------|
++ | **Frontend‑Strategie** – Web‑first vs. Mobile‑first | Keine endgültige Entscheidung; MVP vermutlich Web‑only | Einfluss auf UI‑Framework, Responsiveness, ggf. späterer Native‑App‑Entwicklungsaufwand | [„Web first. Mobile später.“]
++ | **SSO‑Umfang** – Azure AD, Google oder beides | Optional, noch nicht im MVP‑Scope | Zusätzliche IAM‑Integration, ggf. Lizenz‑Kosten | [„SSO wäre schön.“]
++ | **Auth‑Mechanismus für API** – OAuth 2.0 vs. API‑Keys | Präferenz für OAuth, aber Komplexität → Risiko für Zeitplan | Security Review, Token‑Management, Skalierbarkeit | [„OAuth wäre besser. Aber komplexer.“]
++ | **Push‑Notification** – Implementierung im MVP | Optional, rechtliche Einwilligung noch offen | Extra Service, Datenschutz‑Check | [„Push‑Notifications … Einwilligung.“]
++ | **Datenbank‑Typ** – Relational (z. B. PostgreSQL) vs. NoSQL | Managed Service, kein neuer DB‑Server erlaubt, aber Typ nicht definiert | Einfluss auf Datenmodell für Angebote/Rechnungen | [„Kein neuer DB Server … Managed Services.“]
++ | **Hosting‑Standort** – EU‑Only vs. DSGVO‑konform (kann auch außerhalb EU sein) | Unterschied nicht geklärt | Vertragliche und regulatorische Implikationen | [„EU only … oder zumindest DSGVO‑konform.“]
++ | **Security Review Timing** – Parallel zum MVP‑Entwicklungszeitraum oder nach Release | Review dauert 6 Wochen, kollidiert mit 8‑Wochen‑MVP | Risiko, dass Review verkürzt oder ausgelassen wird | [„Security Review dauert 6 Wochen … sprengt die 8 Wochen.“]
++ 
++ ## 6. Nächste Schritte (für das Architektur‑Team)
++ 1. **Stakeholder‑Alignment** – Gemeinsame Ziel‑Definition und Priorisierung (MVP‑Features vs. Nice‑to‑have). 
++ 2. **Entscheidungen fixieren** – Auswahl von Frontend‑Framework, Auth‑Flow (OAuth vs. API‑Key), SSO‑Provider, DB‑Typ und Hosting‑Region.
++ 3. **Proof‑of‑Concept** – Schnell‑Prototyp für API‑Gateway + SAP‑Connector, um Backend‑Readiness zu validieren.
++ 4. **Security‑Plan** – Minimal‑Scope‑Security‑Review für MVP definieren (Threat‑Model, Pen‑Test, GDPR‑Check). 
++ 5. **Roadmap für Skalierbarkeit** – Grundlegende Auto‑Scaling‑Regeln für Managed Services festlegen, um später 20 k Nutzer zu unterstützen.
++ 6. **Documentation‑Kickoff** – Rollen‑ und Löschkonzept, Audit‑Trail‑Design, Backup‑Strategie dokumentieren (wird später im Security Review benötigt).
++ 
++ *Dieses Dokument fasst den aktuellen Architektur‑Überblick zusammen, markiert offene Entscheidungen klar und basiert ausschließlich auf den im Transkript und Kontext vorhandenen Informationen.*

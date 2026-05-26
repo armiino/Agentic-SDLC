@@ -1,0 +1,40 @@
+# Projektkontext
+
+## Projektziel
+- Schnellere Angebotserstellung für das Vertriebsteam (Conversion Rate, Zeit bis Angebot) als Kern‑KPI. 
+- Bereitstellung eines Kundenportals, in dem Kund*innen Bestellungen einsehen und Rechnungen herunterladen können.
+- Weitere Features (Mobile App, Push‑Notifications, umfangreiches Reporting) sind optionale Erweiterungen und nicht Teil des MVP.
+
+## Stakeholder & Rollen
+- **Anna (Product Owner / Vertrieb)** – Fokus auf schnelle MVP‑Lieferung, Kundenportal, Angebots‑ und Rechnungs‑Workflow, Wunsch nach SSO‑Optionen, Mobile‑Zugriff.
+- **Ben (Technischer Lead / Entwicklung)** – Betonung der technischen Machbarkeit, Notwendigkeit einer API‑Schicht, Backend‑Integrität, Security‑Review, Skalierbarkeit und Infrastruktur‑Constraints (keine neue DB, Managed Services, EU‑Hosting).
+- **Clara (Compliance / Datenschutz)** – Verantwortung für DSGVO‑Konformität, Logging, Audit‑Trails, Rollen‑ und Berechtigungskonzept, Lösch‑ und Backup‑Strategien.
+
+## Fachliche Themen
+- **Kundenportal** (Web‑first, responsive, Mobile optional) mit Login per E‑Mail/Passwort, optional SSO (Azure AD, Google).
+- **Angebots‑Workflow**: Erstellung, Speicherung und Versand von Angeboten, Integration von Produkt‑ und Preis‑Daten aus SAP.
+- **Rechnungs‑ und Bestellungs‑View**: Kunden können Bestellungen sehen und Rechnungen herunterladen.
+- **SAP‑Integration**: Stammdaten‑ und Produktdaten‑Sync, Zugriffskontrolle.
+- **API‑Layer**: Notwendig für Front‑ und Backend‑Integration, Authentifizierung (OAuth bevorzugt, ggf. API‑Keys).
+- **Security & Compliance**: TLS‑Verschlüsselung, Logging/Audit‑Trails, Rollen‑/Berechtigungskonzept, Datenlöschung, Backup & Disaster Recovery, EU‑only Hosting.
+- **Performance & Skalierbarkeit**: Erwarteter Nutzerbereich 200‑20 000, daher skalierbare (Managed) Infrastruktur, aber kein Over‑Engineering im MVP.
+- **KPIs**: Conversion Rate (Angebot → Bestellung), Zeit bis Angebot, ggf. später weitere Nutzungs‑Metriken.
+
+## Konflikte & Unsicherheiten
+- **Zeit vs. Sicherheit**: MVP‑Zeitrahmen 8 Wochen kollidiert mit notwendigem Security Review & DSGVO‑Audit. 
+- **Budget & Infrastruktur**: Keine neue Datenbank, Nutzung von Managed Services; jedoch Spannungsfeld zwischen günstiger und skalierbarer Lösung.
+- **Scope**: Unterschiedliche Prioritäten (Anna: schnell, Feature‑reich; Ben: technische Machbarkeit, Stabilität; Clara: Compliance). 
+- **Mobile & Push‑Notifications**: Erwähnt, aber nicht klar, ob im MVP enthalten.
+- **SSO & Identity Management**: Wunsch nach SSO, aber kein zentrales IAM vorhanden.
+- **Hosting‑Region**: EU‑only gefordert, aber nicht exakt definiert (DSGVO‑konform vs. EU‑only).
+
+## Offene Fragen / To‑Do’s
+- Definitive Entscheidung über MVP‑Umfang (welche Features bleiben weg?).
+- Auswahl eines Identity Providers / SSO‑Strategie.
+- Konkrete Architektur‑Entscheidung für API‑Layer (OAuth vs. API‑Keys). 
+- Festlegung des Managed Service‑Anbieters (Kosten, EU‑Hosting, Backup‑Optionen). 
+- Erstellung eines detaillierten Datenschutz‑ und Löschkonzepts.
+- Benennung eines Architekten bzw. Klärung, wer die technische Gesamtdokumentation übernimmt.
+
+## Quellen
+- Transkript `input/transcripts/T9999_chaos.txt` (Stakeholder‑Dialog zwischen Anna, Ben, Clara).

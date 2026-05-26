@@ -1,0 +1,43 @@
+# Offene Fragen und Klärungsbedarfe
+
+## Fachliche Fragen
+- **Priorisierung Frontend**: Soll das Projekt "Web‑First" (responsive Web‑App) oder "Mobile‑First" (native App) priorisieren? Das Transkript zeigt widersprüchliche Erwartungen von Sales (mobile) und Produkt‑Owner (Web).
+- **Detailierte KPI‑Definition**: Welche weiteren Kennzahlen neben Conversion Rate und "Zeit bis Angebot" werden benötigt (z. B. Lead‑Time, Nutzer‑Engagement, Churn)?
+- **Umfang SSO**: Welche Identity Provider (Azure AD, Google) sollen im MVP unterstützt werden und ist ein hybrider Ansatz (Login per E‑Mail + optionales SSO) akzeptabel?
+- **Rollen‑ und Berechtigungskonzept**: Welche konkreten Berechtigungen benötigen die Rollen *Admin*, *User*, *Manager* und *Support*? Gibt es weitere Rollen (z. B. "Finance" für Rechnungen)?
+- **Lösch‑ und Archivierungsprozess**: Wie soll ein Kunden‑Datenlösch‑Request technisch umgesetzt werden (soft‑delete, physisches Löschen, Aufbewahrungsfristen)?
+- **Produkt‑ und Preis‑Logik**: Welche Preis‑ und Rabattregeln müssen im Angebot abgebildet werden und wie komplex dürfen diese im MVP sein?
+- **Push‑Notifications**: Welche Art von Benachrichtigungen (Marketing, Transaktions‑) sind geplant und welche Einwilligungs‑Workflows sind dafür nötig?
+
+## Technische Fragen
+- **API‑Authentifizierung im MVP**: Soll initial OAuth 2.0 implementiert werden oder reicht ein einfacherer API‑Key‑Ansatz, um den Zeitplan von 8 Wochen einzuhalten?
+- **SAP‑Integrationsschnittstelle**: Welche Technologie (IDoc, OData, SOAP, REST) wird von dem bestehenden SAP‑System bereitgestellt und benötigen wir synchrone oder asynchrone Kommunikation?
+- **Datenbank‑Technologie**: Ist eine relationale Managed DB (z. B. PostgreSQL) vorgesehen oder gibt es Anforderungen an eine spezialisierte Datenbank (z. B. NoSQL für Produktkatalog)?
+- **Logging‑Stack**: Welches Logging‑Framework (ELK, Cloud‑Native, Splunk) soll verwendet werden, um die geforderte Audit‑Trail‑Funktionalität zu erfüllen?
+- **Backup‑ und Disaster‑Recovery‑Strategie**: Welche Recovery‑Time‑Objective (RTO) und Recovery‑Point‑Objective (RPO) werden erwartet und wie soll das innerhalb der EU‑Only‑Hosting‑Vorgabe technisch umgesetzt werden?
+- **Skalierbarkeits‑Parameter**: Welche konkreten Nutzer‑ und TPS‑Ziele (z. B. 200 Users vs. 20 000 Users) liegen zugrunde, um Autoscaling‑Regeln zu definieren?
+- **Managed Services Auswahl**: Welche Cloud‑Provider (AWS EU, Azure EU, GCP EU) und welche konkreten Managed Services (Datenbank, Queue, Auth) sind aus Kosten‑ und Compliance‑Sicht präferiert?
+- **Security Review Umfang**: Welche konkreten Prüfschritte (Pen‑Test, Code‑Review, Threat‑Model) sind zwingend erforderlich, und wie kann ein leichtgewichtiger Review parallel zum MVP‑Sprint stattfinden?
+
+## Widersprüche und Klärungsbedarf
+- **Zeitplan vs. Security Review**: MVP in **8 Wochen** vs. notwendiger **6‑Wochen‑Security‑Review** – Wie kann das Review verkürzt oder parallelisiert werden, ohne Compliance zu gefährden?
+- **Kosten vs. Skalierbarkeit**: Wunsch nach **günstigen Managed Services** vs. Anforderung an **hohe Skalierbarkeit** (bis zu 20 000 gleichzeitige Nutzer). Welche Kompromisse sind akzeptabel?
+- **Feature‑Umfang vs. Over‑Engineering**: Wunsch nach **minimalem Aufwand** (Anna) steht im Konflikt mit **komplexen Anforderungen** (OAuth, API‑Layer, SAP‑Integration, DSGVO). Welche Funktionen können für das MVP ausgelagert werden?
+- **Mobile vs. Web**: Unterschiedliche Prioritäten (Sales will mobile, Produkt‑Owner will Web‑First). Wie wird die Roadmap für die mobile Erweiterung definiert?
+
+## Fehlende Informationen
+- **Genaues Budget**: Wie hoch ist das maximal verfügbare Budget für Managed Services und ggf. Lizenzkosten (Identity Provider, Monitoring usw.)?
+- **Verfügbare Ressourcen**: Gibt es intern bereits einen Architekten oder muss extern jemand für die Architektur‑ und Dokumentationsarbeit eingestellt werden?
+- **Hosting‑Provider Präferenz**: Gibt es bereits vertragliche Bindungen an einen bestimmten Cloud‑Provider, der EU‑Only‑Hosting garantiert?
+- **Service‑Level‑Agreements (SLAs)**: Welche Verfügbarkeits‑ und Leistungs‑SLAs sind vom Business gefordert (z. B. 99,5 % Verfügbarkeit, Max‑Response‑Time)?
+- **Release‑Plan**: Welche Meilensteine (Beta, User‑Testing, Go‑Live) sind nach dem MVP geplant?
+
+## Mögliche Ansprechpartner / Rollen
+- **Anna** – Produkt‑Owner / Business‑Vertreterin (Priorisierung, KPI‑Definition, Mobile‑Strategie)
+- **Ben** – Technischer Lead / Architekt (API‑Design, SAP‑Integration, Skalierbarkeit, Security Review)
+- **Clara** – Compliance / Datenschutzbeauftragte (DSGVO, Logging, Audit‑Trail, Backup/DR)
+- **SAP‑Team** – Fachverantwortliche für SAP‑Schnittstellen und Datenmodell
+- **Cloud‑Provider‑Account‑Manager** – Beratung zu EU‑Only Managed Services, Kostenoptimierung
+- **Security‑Team** – Durchführung und Definition des Security Reviews
+
+*Hinweis*: Alle offenen Fragen leiten sich eindeutig aus dem bereitgestellten Transkript, dem Kontext‑Dokument und dem Architektur‑Entwurf ab und sind konkret und beantwortbar formuliert.

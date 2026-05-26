@@ -1,0 +1,45 @@
+﻿--- before/docs/requirements.md
++++ after/docs/requirements.md
+- 
++ # Anforderungen
++ 
++ ## Functional Requirements
++ - **Login**: E‑Mail/Passwort mit Double‑Opt‑In, optional SSO (Azure AD / Google) für MVP nicht verpflichtend.
++ - **Angebotserstellung**: Sales kann über das Kundenportal Angebote erstellen, dabei werden Produkt‑ und Preisdaten aus SAP gelesen (Read‑Only). Sonderrabatte >15 % erfordern einen Freigabe‑Workflow (nicht im MVP, bewusst ausgeschlossen).
++ - **Rechnungsdownload**: Kunden können ihre Bestellungen einsehen und Rechnungen als PDF herunterladen.
++ - **Rollen & Berechtigungen**: Minimalrollen Admin, Sales, Kunde. Rollen bestimmen Zugriff auf Angebote, Rechnungen und Audit‑Logs.
++ - **Audit Trail**: Jeder Zugriff und jede Änderung an Angeboten wird protokolliert (wer, wann, Aktion). Keine personenbezogenen Daten in technischen Logs.
++ - **EU‑only Managed Hosting**: Das System wird auf einem DSGVO‑konformen Managed Service in der EU betrieben, keine eigene Datenbank.
++ - **Backup & Disaster Recovery**: Tägliche Backups, Wiederherstellungszeit < 4 h.
++ - **API Layer**: REST‑API für SAP‑Read‑Only und Portal‑Frontend, gesichert via OAuth (Basis‑Implementierung, kein vollständiges Gateway im MVP).
++ - **KPI‑Erfassung**: Conversion Rate (Angebot → Bestellung) und Zeit bis Angebot, erfasst im System (ohne umfangreiche Analytics).
++ - **Internationalisierung**: UI in Deutsch und Englisch, Währungen EUR und optional CHF (Pilot) – im MVP nur EUR.
++ - **Kontaktformular**: Einfaches Formular für Support‑Anfragen, keine persistente Ticket‑Datenbank.
++ 
++ ## Non-functional Requirements
++ - **Performance**: Antwortzeit < 2 s für Kernfunktionen bei bis zu 2 000 gleichzeitigen Nutzern (Skalierbarkeit geplant, aber nicht über‑engineered).
++ - **Security**: TLS für alle Verbindungen, OAuth‑2 für API, keine personenbezogenen Daten in System‑Logs, Secrets Management über Managed Service.
++ - **Compliance**: DSGVO‑konform (Double‑Opt‑In, Löschkonzept, Auftragsverarbeitungsvertrag, Datenresidenz EU). Audit‑Log muss revisionssicher sein.
++ - **Reliability**: 99,5 % Verfügbarkeit, Backup‑Strategie, Monitoring ohne personenbezogene Daten.
++ - **Scalability**: Architektur unterstützt horizontale Skalierung über Managed Service, jedoch ohne Over‑Engineering im MVP.
++ 
++ ## Constraints/Compliance
++ - **Budget**: Keine neue Datenbank, Nutzung von Managed Services, Kosten müssen bis Freitag geschätzt werden.
++ - **Zeitplan**: MVP in 8 Wochen, Security Review muss parallel laufen, aber kann für MVP auf minimalen Umfang reduziert werden.
++ - **SAP‑Integration**: Nur lesender Zugriff für Produkt‑ und Preis‑Daten. Schreibzugriff (Bestellungen) nicht im MVP.
++ - **API Gateway**: Nicht verfügbar innerhalb 8 Wochen (6‑Wochen‑Warteliste), daher direkte API‑Absicherung via OAuth.
++ - **Data Residency**: Daten ausschließlich in EU‑Rechenzentren, keine globale Replikation.
++ 
++ ## Traceability
++ - **Login** → Functional Requirement 1, Non‑functional Security 1, Compliance DSGVO.
++ - **Angebotserstellung** → Functional Requirement 2, Non‑functional Performance 1, Compliance Audit‑Log.
++ - **Rechnungsdownload** → Functional Requirement 3, Compliance DSGVO.
++ - **Rollen** → Functional Requirement 4, Non‑functional Security 2.
++ - **Audit Trail** → Functional Requirement 5, Non‑functional Security 3, Compliance Audit‑Log.
++ - **EU Hosting** → Constraint 2, Compliance Data Residency.
++ - **Backup** → Functional Requirement 6, Non‑functional Reliability.
++ - **API Layer** → Functional Requirement 7, Constraint API Gateway.
++ - **KPI** → Functional Requirement 8, Non‑functional Performance.
++ - **i18n** → Functional Requirement 9, Constraint Internationalisierung.
++ - **Kontaktformular** → Functional Requirement 10, Constraint Support.
++ 

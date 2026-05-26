@@ -1,0 +1,90 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturueberblick Kundenportal / Angebotsplattform (fruehe SDLC-Phase)
++ 
++ ## 1. Systemkontext
++ 
++ Das System ist eine Kundenportal-Plattform, die primär die schnelle Erstellung von Angeboten unter Einbeziehung von Stammdaten und Rabattlogiken aus SAP ermoeglicht. Weiterhin sollen Kunden ihre Bestellungen einsehen und Rechnungen herunterladen koennen. Marketing-Boersen mit Push Notifications sind fuer spaetere Phasen vorgesehen, nicht jedoch fuer das MVP.
++ 
++ Das System integriert bestehende Backend-Systeme (vor allem SAP) und ermoeglicht den Zugang ueber Webportal (Web-first, mobile spaeter) mit Login-Mechanismen und Rollenverwaltung. Das System muss DSGVO-konform betrieben werden mit Hosting in der EU oder mindestens DSGVO-konform.
++ 
++ 
++ ## 2. Wichtige Komponenten
++ 
++ - **Frontend:**
++   - Webbasiertes Kundenportal (responsive, Web-first Ansatz).
++   - Login via E-Mail/Passwort im MVP.
++   - Optionale SSO-Integration (Azure AD, Google) in spaeteren Phasen.
++ 
++ - **API Layer:**
++   - Schnittstelle zwischen Frontend und Backend.
++   - Absicherung durch OAuth (vorzugsweise) oder API Keys.
++ 
++ - **Backend-Anwendungen:**
++   - Integration mit SAP fuer Stammdaten, Produktdaten, Preise und Rabattlogik.
++   - Angebotserstellung als zentrales Feature.
++   - Zugriff auf Bestelldaten und Rechnungen.
++ 
++ - **Datenmanagement:**
++   - Kein eigener DB-Server laut Restriktionen; Managed Services werden genutzt.
++   - Speicherung und Verarbeitung personenbezogener Daten mit Loeschkonzepten.
++   - Logging und Auditierung aller relevanten Aktionen.
++   - Backup und Disaster Recovery Konzepte sind zu implementieren.
++ 
++ - **Security & Compliance:**
++   - Rollen- und Berechtigungskonzept (Admin, Manager, normaler User; Support ggf. spaeter).
++   - DSGVO-konformitaet inklusive Double-Opt-in, Zugriffskontrolle und Audit-Trails.
++   - TLS fuer Kommunikationssicherheit.
++ 
++ 
++ ## 3. Schnittstellen oder Integrationspunkte
++ 
++ - **SAP:** Stammdaten, Produktdaten, Preise und Rabattlogik.
++ - **Identity Provider:** Optional fuer SSO (Azure AD, Google).
++ - **Managed Services:** Datenbank und Backup, ggf. weitere Cloud Services.
++ - **API Layer:** Schnittstelle fuer Frontend und externe Systeme.
++ 
++ 
++ ## 4. Daten- und Sicherheitsaspekte
++ 
++ - Personenbezogene Daten muessen nach DSGVO verarbeitet werden.
++ - Hosting muss EU-only oder DSGVO-konform sein.
++ - Double-Opt-In Verfahren fuer Nutzerregistrierung.
++ - Audit Trails zur Nachvollziehbarkeit aller Aktionen.
++ - Verschluesselung der Datenuebertragung via TLS.
++ - Rollenbasierte Zugriffskontrolle zur Gewaehrleistung der Datensicherheit.
++ - Verarbeitung von sensiblen Daten in SAP und im Kundenportal.
++ - Backups und Disaster Recovery sind Pflicht, auch im MVP mit begrenztem Umfang.
++ 
++ 
++ ## 5. Offene Architekturentscheidungen
++ 
++ - Frontend-Technologie: Native App oder responsive Web (Web-first) bleibt noch offen.
++ - Umfang und Implementierung des SSO: Nur Azure AD, Google, beide oder spaeter.
++ - Detaillierte Ausgestaltung des Rollen- und Berechtigungssystems, insbesondere Support-Rolle.
++ - Auswahl der Managed Services fuer Datenbank und Backup unter Kosten- und Performance-Aspekten.
++ - Granularitaet und Umfang des Logging und Audit Trails in MVP.
++ - Umfang der Analytics-Infrastruktur fuer KPI-Tracking im MVP und spaeter.
++ - Skalierbarkeit muss flexibel bleiben, konkrete Nutzerzahlen sind unsicher.
++ - Detailfragen zum Sicherheitsreview-Prozess und Integrationskonzept OAuth/API Keys.
++ 
++ 
++ ## 6. Architekturrestriktionen
++ 
++ - Kein eigener DB-Server darf betrieben werden; nur Managed Services.
++ - Projektzeitraum ist eng (8 Wochen MVP).
++ - Backend ist noch nicht API-ready; API Layer ist aber erforderlich.
++ - DSGVO-Konformitaet ist unabdingbar.
++ 
++ 
++ ---
++ 
++ *Dieser Architekturueberblick wurde aus den bereitgestellten Transkripten, Kontext- und Anforderungsdokumenten abgeleitet.*
++ 
++ Quellen:
++ - input/transcripts/T9999_chaos.txt
++ - runs/phase2_1/20260526_140545_d7a2f1/state/context.md
++ - docs/requirements.md
++ - docs/risks.md
++ 

@@ -1,0 +1,52 @@
+﻿**Projektkontext – Zusammenfassung aus den Stakeholder‑Transkripten**  
+*Quelle: `input/transcripts/T9999_chaos.txt` (alle wörtlichen Zitate sind mit Anführungszeichen gekennzeichnet)*  
+
+---
+
+### 1. Projektziel  
+- **Hauptziel:** *„schneller Angebote erstellen“* (Anna). Das Kundenportal ist lediglich ein Mittel, um dieses Ziel zu erreichen.  
+- Sekundäres Ziel: Kunden sollen Bestellungen einsehen und Rechnungen herunterladen.  
+
+### 2. Stakeholder / Sprecherrollen  
+| Sprecher | Rolle (aus Kontext abgeleitet) | Kerninteressen |
+|----------|------------------------------|----------------|
+| **Anna** | Produkt‑Owner / Business‑Vertreterin | Schnell einsetzbares Kunden‑Portal (MVP in 8 Wochen), Optionen für Mobile, SSO, KPI‑Messung, minimaler Aufwand, günstige Managed Services. |
+| **Ben** | Technischer Lead / Architekt | API‑Layer, Backend‑Readiness, Sicherheits‑ und Skalierbarkeits‑Aspekte, Integration zu SAP, Real‑World‑Umsetzung (Budget, Ressourcen). |
+| **Clara** | Compliance / Datenschutz‑Beauftragte | DSGVO‑Konformität (Double‑Opt‑In, Logging, Audit‑Trail, Lösch‑ und Rollen‑Konzept, EU‑Datenhost, Backup/DR), Sicherheit (OAuth, TLS). |
+
+### 3. Wichtige fachliche Themen  
+- **Kundenportal / Plattform:** Web‑first, mobile später (oder umgekehrt).  
+- **Login & Authentifizierung:** E‑Mail/Passwort, optional SSO (Azure AD, Google).  
+- **Rollen‑ und Berechtigungskonzept:** Admin, normaler User, Manager, Support.  
+- **Integration zu SAP:** Stammdaten, Produkt‑/Preisdaten, Angebote, Audit‑Trails.  
+- **API‑Layer:** Notwendig für Integration; Debatte um OAuth vs. API‑Keys.  
+- **DSGVO‑Erfüllung:** Double‑Opt‑In, Logging, Audit‑Trail, Löschkonzept, EU‑Only‑Hosting.  
+- **Security Review & Managed Services:** Konflikt zwischen 8‑Wochen‑MVP und 6‑Wochen‑Security‑Review.  
+- **KPIs:** Conversion Rate (Angebot → Bestellung), Zeit bis Angebot, später eventuell Tracking/Analytics.  
+- **Backup / Disaster Recovery:** Pflicht bei Kundendaten, aber Aufwand für MVP.  
+- **Skalierbarkeit:** Erwartete Nutzerzahlen stark variabel (200 – 20 000).  
+
+### 4. Erkennbare Konflikte & Widersprüche  
+- **Zeit vs. Sicherheit:** MVP in 8 Wochen vs. 6‑Wochen‑Security‑Review (Anna: *„Dann machen wir es ohne Security Review?“*; Clara: *„Das ist keine Option.“*).  
+- **Kosten vs. Skalierbarkeit:** Managed Services sollen günstig sein, aber gleichzeitig skalierbar (Ben: *„Günstig und skalierbar widerspricht sich.“*).  
+- **Feature‑Umfang vs. Over‑Engineering:** Wunsch nach einfacher Lösung (Anna) vs. notwendige komplexe Sicherheits‑ und API‑Architektur (Ben, Clara).  
+- **Mobile vs. Web‑First:** Unterschiedliche Vorstellungen, welches Frontend priorisiert wird (Anna).  
+
+### 5. Wichtige Unsicherheiten  
+- **Priorisierung von Mobile:** Unklar, ob Mobile‑App oder responsive Web zuerst entwickelt wird.  
+- **Endgültige KPI‑Definition:** Nur Conversion Rate und Zeit bis Angebot erwähnt; weitere Metriken (z. B. Tracking) noch offen.  
+- **Ressourcen für Architektur / Dokumentation:** Fehlender Architekt, Unsicherheit, wer die Dokumentation übernimmt (Anna, Ben).  
+- **Exakte Nutzerzahl‑Prognose:** Spannweite von 200 bis 20 000 Nutzern führt zu Unsicherheit bei Skalierbarkeits‑Planung (Ben).  
+
+### 6. Direkte Aussagen aus dem Transkript  
+- *„Also wir brauchen definitiv ein Kundenportal. Aber nicht nur ein Portal, eher so eine Plattform.“* (Anna)  
+- *„Unser Backend noch nicht mal API‑ready.“* (Ben)  
+- *„DSGVO. Wir speichern Kundendaten.“* (Clara)  
+- *„MVP in 8 Wochen wurde versprochen.“* (Anna)  
+- *„Security Review dauert 6 Wochen.“* (Ben)  
+- *„Das ist keine Option.“* (Clara, zu Verzicht auf Security Review)  
+
+---
+
+**Zusammenfassung**  
+Das Projekt soll in acht Wochen ein Minimal‑Viable‑Product (MVP) eines Kundenportals bereitstellen, das vor allem das schnelle Erstellen von Angeboten ermöglicht und Kunden Zugriff auf Bestellungen sowie Rechnungen gibt. Technisch werden ein API‑Layer, SAP‑Integration und ein Grund‑Authentifizierungssystem gefordert. Parallel müssen strenge DSGVO‑Anforderungen (Logging, Audit‑Trail, Lösch‑ und Rollen‑Konzept, EU‑Hosting) erfüllt werden. Es bestehen Spannungen zwischen den ambitionierten Zeit‑ und Kostenzielen und den notwendigen Sicherheits‑ und Skalierbarkeitsmaßnahmen. Offene Punkte sind die endgültige Priorisierung von Mobile‑Features, die detaillierte KPI‑Definition sowie die Ressourcen für Architektur‑ und Dokumentationsaufgaben.
