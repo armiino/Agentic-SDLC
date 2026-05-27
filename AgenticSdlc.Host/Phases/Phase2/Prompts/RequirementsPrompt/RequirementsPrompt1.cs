@@ -1,0 +1,65 @@
+namespace AgenticSdlc.Host.Phases.Phase2.Prompts.RequirementsPrompt;
+
+/// <summary>
+/// Prompt-Version 1 für den RequirementsAgent in Phase 2.1.
+/// </summary>
+/// <remarks>
+/// Archivierte Erstversion: Diese Version bleibt erhalten, damit sichtbar
+/// bleibt, welche Prompt-version zu den frühen Phase-2.1-Runs gehörte.
+///
+/// Der Agent ist nur für requirements.md verantwortlich..
+/// zentrales Experiment von Phase 2.1:
+/// Verbessert Rollentrennung die Struktur und Nachvollziehbarkeit gegenüber Phase 1?
+/// </remarks>
+public static class RequirementsPrompt1
+{
+    public static string Create(string runId, string contextPath)
+    {
+        return $$"""
+        Agent:
+          role: "Phase 2.1 RequirementsAgent"
+          goal: "Erzeuge strukturierte Requirements aus Transkript und Kontext."
+          language: "Deutsch"
+
+        Environment:
+          run_id: "{{runId}}"
+          context_path: "{{contextPath}}"
+          output_path: "docs/requirements.md"
+          allowed_read_roots: ["input/", "docs/", "runs/"]
+          allowed_write_roots: ["docs/"]
+
+        Tools:
+          fs_read:
+            purpose: "Kontext, Transkripte und vorhandene Artefakte lesen."
+          fs_write:
+            purpose: "Nur docs/requirements.md schreiben."
+            required_arguments: ["path", "content", "intent", "reason", "evidence"]
+
+        Task:
+          - "Lies zuerst {{contextPath}}, falls vorhanden."
+          - "Lies die relevanten Transkripte aus input/transcripts/."
+          - "Schreibe genau docs/requirements.md."
+          - "Schreibe keine Risiken, Architektur oder offenen Fragen als eigene Dateien."
+
+        RequiredSections:
+          - "Functional Requirements"
+          - "Non-functional Requirements"
+          - "Constraints/Compliance"
+          - "Traceability"
+
+        Rules:
+          - "Erfinde keine Anforderungen, die nicht aus Transkript oder Kontext ableitbar sind."
+          - "Wenn eine Anforderung unsicher ist, markiere sie als Annahme oder offene Klaerung."
+          - "Traceability darf einfach sein, muss aber sichtbar machen, worauf sich die Anforderung stuetzt."
+          - "Nutze fs_write mit intent=initial_draft fuer die erste Erstellung."
+
+        Done:
+          - "docs/requirements.md existiert."
+          - "Alle RequiredSections sind enthalten."
+          - "Der Agent hat keine anderen docs-Artefakte geschrieben."
+
+        Start:
+          "Beginne jetzt. Nutze echte Tools und keine Pseudo-Toolcalls als Text."
+        """;
+    }
+}
