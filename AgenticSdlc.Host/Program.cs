@@ -1,6 +1,7 @@
 ﻿using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Observability;
 using AgenticSdlc.Host.Phases.Phase1;
+using AgenticSdlc.Host.Phases.Phase2;
 using AgenticSdlc.Host.Run;
 using System.Diagnostics;
 
@@ -15,12 +16,11 @@ DotNetEnv.Env.Load(
     )
 );
 
+var settings = HostSettings.FromEnvironment();
 var runId = RunId.New();
-var run = new RunContext(runId);
+var run = new RunContext(runId, settings.AgentPhase);
 run.EnsureFolders();
 CleanDocsFolder();
-
-var settings = HostSettings.FromEnvironment();
 
 var sourceName = "AgenticSdlc.Host";
 var activitySource = new ActivitySource(sourceName);
@@ -40,7 +40,8 @@ using var otel = AgenticSdlc.Host.Observability.OtelRunExporters.TryCreate(
 var config = new
 {
     runId,
-    phase = Phase1Artifacts.PhaseName,
+    phase = ResolvePhaseName(settings.AgentPhase),
+    phaseSelector = settings.AgentPhase,
     llmProvider = settings.LlmProvider,
     model = settings.ModelId,
     ollamaBaseUrl = settings.OllamaBaseUrl,
@@ -69,22 +70,69 @@ static void WriteRunChangeNote(RunContext run)
         {note}
         """;
 
-    // Speichern unter runs/<runId>/logs/changes.txt
+    // Speichern unter runs/<phase>/<runId>/logs/changes.txt
     File.WriteAllText(run.ChangesPath, content);
 
     //auch als Event (damit es in events.jsonl auffindbar ist)
     run.AppendEvent(new { type = "RUN_CHANGE_NOTE", runId = run.RunId, note, timestampUtc = DateTime.UtcNow });
 }
 
-var runner = new Phase1Runner(
-    settings: settings,
-    run: run,
-    sourceName: sourceName,
-    activitySource: activitySource,
-    repoRoot: repoRoot
-);
+Environment.ExitCode = settings.AgentPhase switch
+{
+    "phase1" => await RunPhase1Async(),
+    "phase2_1" => await RunPhase2_1Async(),
+    _ => UnknownPhase(settings.AgentPhase, run)
+};
 
-Environment.ExitCode = await runner.RunAsync();
+async Task<int> RunPhase1Async()
+{
+    var runner = new Phase1Runner(
+        settings: settings,
+        run: run,
+        sourceName: sourceName,
+        activitySource: activitySource,
+        repoRoot: repoRoot
+    );
+
+    return await runner.RunAsync();
+}
+
+async Task<int> RunPhase2_1Async()
+{
+    var runner = new Phase2Runner(
+        settings: settings,
+        run: run,
+        sourceName: sourceName,
+        activitySource: activitySource,
+        repoRoot: repoRoot
+    );
+
+    return await runner.RunAsync();
+}
+
+static int UnknownPhase(string phase, RunContext run)
+{
+    run.AppendEvent(new
+    {
+        type = "RUN_FAILED",
+        runId = run.RunId,
+        reason = "Unknown AGENT_PHASE.",
+        phase,
+        allowedPhases = new[] { "phase1", "phase2_1" },
+        timestampUtc = DateTime.UtcNow
+    });
+
+    Console.Error.WriteLine($"RUN FAILED - Unknown AGENT_PHASE '{phase}'. Allowed values: phase1, phase2_1.");
+    return 4;
+}
+
+static string ResolvePhaseName(string phase)
+    => phase switch
+    {
+        "phase1" => Phase1Artifacts.PhaseName,
+        "phase2_1" => Phase2Artifacts.PhaseName,
+        _ => phase
+    };
 
 //docs muss vor jedem run "geleert" werden damit keine alten Daten ausversehen bleiben oder sich etwas vermischt.
 static void CleanDocsFolder()
