@@ -1,12 +1,12 @@
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase1;
+using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Agents;
+namespace AgenticSdlc.Host.Phases.Phase1;
 
 /// <summary>
 /// Erstellt den lauffähigen "Phase-1-Agenten" für den aktuellen Single-Agent-Run.
@@ -72,11 +72,22 @@ public static class Phase1AgentFactory
         chat = new ChatDecisionLoggerMiddleware(chat, run);
 
         /*
-         * Der Prompt gehört fachlich zur Phase 1. Aktuell wird bewusst Version
-         * 1_3 genutzt. Ältere Prompt-Versionen bleiben im Phases/Phase1-Ordner
-         * erhalten und können für Vergleichsruns gezielt gewechselt werden
+         * Der Prompt gehört fachlich zur Phase 1, wird aber nicht mehr als
+         * C#-Klasse fest verdrahtet. Der allgemeine PromptProvider lädt die
+         * Textdatei nach dem Schema:
+         * AgenticSdlc.Host/Prompts/<phase>/<agentName>/<promptName>.txt
+         * Dadurch kann ein neuer Phase-1-Prompt später als Textdatei ergänzt
+         * und über run-config.json ausgewählt werden, ohne diese Factory zu ändern.
          */
-        var instructions = Phase1_3Prompt.Create(runId);
+        var instructions = PromptProvider.Load(
+            settings.RepoRoot,
+            settings.AgentPhase,
+            AgentName,
+            settings.Phase1Prompt,
+            new Dictionary<string, string>
+            {
+                ["runId"] = runId
+            });
 
         /*
          * Aus dem ChatClient wird ein "MAF"-Agent. Erst hier werden Name, Prompt
