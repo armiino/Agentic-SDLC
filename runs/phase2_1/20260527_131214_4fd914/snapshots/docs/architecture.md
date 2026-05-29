@@ -1,0 +1,100 @@
+# Architekturüberblick – Kundenportal MVP
+
+## 1. Systemkontext
+
+Das Kundenportal ist das zentrale Front‑End für drei Hauptakteure:
+
+| Akteur | Interaktion mit dem System |
+|--------|----------------------------|
+| **Kunde** | Registriert sich (Double‑Opt‑In), loggt sich ein, erstellt/liest Angebote, lädt Rechnungen herunter, verwaltet sein Profil. |
+| **Sales‑Mitarbeiter** | Loggt sich ein, erstellt Angebote über einen Wizard, sieht Kunden‑ und Bestellhistorie, exportiert Angebote als PDF. |
+| **Support / Finance** (nur Kontakt‑Formular) | Nutzt das Kontakt‑Formular, erhält Anfragen per E‑Mail, greift ggf. auf Kundendaten zu (nur Leserechte). |
+
+Das System muss **SAP** als bestehendes ERP‑System für Produkt‑, Preis‑ und Rabattinformationen ansprechen (Lese‑Only im MVP). Zusätzlich gibt es folgende externe Services/Plattformen:
+- **Managed Cloud‑Provider (EU‑Only)** – Hosting, Managed DB, Backup.
+- **Identity Provider (optional)** – Azure AD / Google für SSO (nicht im MVP verpflichtend).
+- **E‑Mail‑Service** – Versand von Double‑Opt‑In‑Mails, Kontakt‑Formular‑Benachrichtigungen.
+
+## 2. Kernkomponenten
+
+```
++---------------------------------------------------+
+|               Kundenportal (Web‑App)             |
+|  (React/Angular – Frontend, statisch gehostet)    |
++--------------------+------------------------------+
+                     | REST API (OAuth2)
++--------------------v------------------------------+
+|                API‑Gateway (temporär)           |
+|  (Rate‑Limiting, TLS‑Termination)               |
++--------------------+------------------------------+
+                     | Service Layer (Node/Java)
++--------------------v------------------------------+
+|            Angebots‑ &  Rechnungs‑Service         |
+|  – Angebots‑Wizard, PDF‑Export, Audit‑Log        |
+|  – Rechnungs‑Lookup & Download                  |
++--------------------+------------------------------+
+                     | SAP‑Connector (REST/ODATA)
++--------------------v------------------------------+
+|               SAP‑Read‑Adapter (Lese‑Only)       |
++--------------------+------------------------------+
+                     | Managed DB (PostgreSQL‑aaS)
++--------------------v------------------------------+
+|               Persistenz (Offers, Users, Logs)   |
++--------------------+------------------------------+
+                     | Backup‑Service (daily snapshots)
++--------------------v------------------------------+
+|               Monitoring / Health‑Check           |
++---------------------------------------------------+
+```
+
+**Kurzbeschreibung der Module**
+- **Frontend** – Statisches Web‑UI (Deutsch & Englisch), beinhaltet Login, Angebots‑Wizard, Rechnungs‑Übersicht.
+- **API‑Gateway** – Aktuell einfacher Reverse‑Proxy (z. B. NGINX) mit TLS und Rate‑Limiting. Später Migration in das zentrale Unternehmens‑Gateway.
+- **Service Layer** – Business‑Logik für Angebote, PDF‑Generierung, Rollen‑ und Berechtigungskontrolle, Audit‑Logging.
+- **SAP‑Connector** – Thin Wrapper um SAP‑ODATA‑Endpoints, liefert Produkt‑ und Preis‑Stammdaten (keine Schreibrechte). Fehler‑Handling bei SAP‑Ausfall.
+- **Persistenz** – Managed PostgreSQL (oder vergleichbarer Service) für Nutzer, Angebote, Audit‑Logs. Datenbank wird EU‑Only betrieben.
+- **Backup** – Tägliche Snapshots, Aufbewahrung gemäß EU‑Standard, regelmäßige Restore‑Tests.
+- **Monitoring** – Basis‑Metriken (Uptime, Fehler, Rate‑Limits), ohne personenbezogene Daten.
+
+## 3. Schnittstellen / Integrationspunkte
+
+| Schnittstelle | Richtung | Protokoll | Wesentliche Eigenschaften |
+|---------------|----------|-----------|---------------------------|
+| **Frontend ↔ API** | Request/Response | HTTPS/REST (JSON) | OAuth‑2.0 Client‑Credentials, Rollen‑Check, Rate‑Limiting |
+| **API ↔ SAP** | Request/Response | HTTPS/ODATA (Read‑Only) | Nur Lesenzugriff, Fallback bei Nicht‑Erreichbarkeit, Timeout‑Handling |
+| **API ↔ Managed DB** | CRUD | JDBC/ORM | Verschlüsselte Verbindung (TLS), separate Audit‑Log‑Tabelle |
+| **API ↔ E‑Mail‑Service** | Push | SMTP/REST | Double‑Opt‑In‑Mails, Kontakt‑Formular‑Benachrichtigung |
+| **API ↔ Backup Service** | Pull (scheduled) | Cloud‑API | Tägliche Snapshots, verschlüsselt gespeichert |
+| **API ↔ Monitoring** | Push | Prometheus/StatsD | Nur technische Metriken, keine personenbezogenen Daten |
+
+## 4. Daten‑ und Sicherheitsaspekte
+
+| Aspekt | Beschreibung | Umsetzung im MVP |
+|--------|--------------|-----------------|
+| **Authentifizierung** | OAuth‑2.0 (Client‑Credentials) + JWT für Session‑Management. | E‑Mail/Passwort‑Login, Double‑Opt‑In, optionale SSO (Phase 2). |
+| **Autorisation** | Rollenbasiertes Access‑Control (RBAC): Admin, Sales, Kunde. | Implementiert im Service Layer, prüft jede API‑Operation. |
+| **Transport‑Sicherheit** | TLS 1.2+ für alle Kommunikationswege. | Pflicht in Frontend‑API‑Gateway und SAP‑Connector. |
+| **Datenhaltung** | EU‑Only Managed PostgreSQL, Daten‑verschlüsselt at‑rest (cloud‑managed). | Vorgabe aus Compliance (Clara). |
+| **Audit‑Log** | Immutable Log‑Tabelle, speichert *who, what, when* für Angebote. | Minimaler Audit‑Trail, getrennt von technischen Logs. |
+| **Logging** | Technische Logs ohne PII, zentrale Sammlung, Rotations‑Policy. | Konfiguriert im API‑Gateway und Service Layer. |
+| **Backup / DR** | Daily Snapshots, 30‑Tage Aufbewahrung, wöchentlicher Restore‑Test. | Durch Managed Service des Providers. |
+| **Secrets Management** | API‑Keys, DB‑Credentials über Cloud‑KMS / Vault. | Vorhanden, aber noch nicht voll integriert – TODO für Phase 2. |
+| **DSGVO‑Pflichten** | Double‑Opt‑In, Lösch‑Endpoint, Auftragsverarbeitungsvertrag (AVV) mit Provider. | Implementiert Double‑Opt‑In, Grund‑Lösch‑Workflow, AVV‑Check vor Go‑Live. |
+| **Rate‑Limiting** | 10 Requests / Sekunde pro Nutzer, IP‑basiert. | Implementiert im API‑Gateway (temporär). |
+
+## 5. Offene Architekturentscheidungen / offene Fragen
+
+| Entscheidung | Offene Frage | Einfluss auf MVP |
+|-------------|--------------|-------------------|
+| **SSO‑Provider** (Azure AD / Google) | Soll SSO im MVP unterstützt werden oder erst Phase 2? | Wird im MVP weggelassen, um Zeitplan zu halten. |
+| **API‑Gateway-Integration** | Migration in zentrales Unternehmens‑Gateway nach 6‑Wochen‑Warteliste? | Aktuell einfacher Proxy; Migration geplant nach MVP. |
+| **Mehrwährung (CHF, USD)** | Welche Währungen müssen im MVP unterstützt werden? | MVP limitiert auf EUR; Erweiterung später. |
+| **Caching‑Strategie** | Darf Kundenspezifische Preis‑/Rabattdaten im Cache liegen? | Keine Kundendaten im Cache im MVP; nur Produkt‑Stammdaten. |
+| **Backup‑Kosten & Aufbewahrungsdauer** | Welche konkrete Aufbewahrungsfristen (gesetzlich) gelten? | Minimal 30 Tage definiert, rechtliche Prüfung ausstehend. |
+| **Kosten EU‑Only Hosting** | Wie hoch ist das Budget‑Gap gegenüber Standard‑Hosting? | Budget‑Schätzung noch offen – muss vor Go‑Live geklärt werden. |
+| **Support‑Prozess** | Soll ein Ticket‑System später eingeführt werden? | MVP nutzt nur Kontakt‑Formular; Ticket‑System für Phase 2 geplant. |
+| **Rabatt‑Freigabe‑Grenze** | Ist die Schwelle 15 % oder 20 %? | MVP verhindert Sonderrabatte komplett; Schwelle wird später definiert. |
+| **SAP‑Schreibrechte** | Wird in einer späteren Phase Schreib‑Zugriff benötigt? | Aktuell Lese‑Only, Schreib‑Zugriff in Phase 2. |
+
+---
+*Alle Angaben basieren ausschließlich auf den Ausgangsdaten aus `runs/phase2_1/20260527_131214_4fd914/state/context.md` und dem Transkript `input/transcripts/T9999_chaos.txt`.*

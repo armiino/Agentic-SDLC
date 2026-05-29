@@ -1,0 +1,49 @@
+# Offene Fragen und Klärungsbedarf
+
+## 1. Fachliche Fragen
+| ID | Frage | Herkunft (Artefakt/Quelle) | Priorität |
+|----|-------|----------------------------|-----------|
+| FQ-1 | Welche **Pilot‑Kunde** (Schweiz vs. DACH) wird im MVP tatsächlich eingesetzt? | Transkript (Zeile zu Pilotkunde) | Hoch |
+| FQ-2 | Wie soll das **Support‑Kontakt‑Formular** technisch umgesetzt werden (E‑Mail, CRM‑Integration etc.) und welche Daten müssen dabei gespeichert werden? | Transkript (Support‑Diskussion) | Mittel |
+| FQ-3 | Wie hoch ist das **Budget / Kostenschätzung** für EU‑only Managed‑Hosting, Backup und ggf. Managed DB Service? | Risiko‑Artefakt (Kosten‑Schätzung) | Hoch |
+| FQ-4 | Welche **Retention‑ und Löschregeln** gelten für Angebots‑ und Rechnungsdaten (gesetzliche Aufbewahrungsfristen vs. DSGVO‑Löschrecht)? | Risiko‑Artefakt (Retention) | Hoch |
+| FQ-5 | Welche **KPIs** sollen bereits im MVP erfasst werden und wie wird das Tracking technisch umgesetzt? | Kontext (KPI‑Wunsch) | Mittel |
+| FQ-6 | Welche genauen **Rollen‑ und Berechtigungskonzepte** (z. B. Sichtbarkeit von Rabatten, Support‑Zugriff) werden nach dem MVP benötigt? | Risiko‑Artefakt (Rollen‑Risiko) | Mittel |
+| FQ-7 | Gibt es feste **Schwellenwerte** für Rabatt‑Freigaben (z. B. 15 % / 20 % / 30 % ) und wer ist dafür verantwortlich? | Transkript (Rabatt‑Freigabe) | Hoch |
+| FQ-8 | Ist ein **Mehrwährungs‑Support** (CHF, ggf. USD) bereits für den MVP notwendig, weil ein Schweizer Pilotkunde geplant ist? | Transkript (Pilot‑Kunde) | Mittel |
+| FQ-9 | Soll das **Ticket‑System** komplett weggelassen werden oder nur für das MVP reduziert (z. B. simples E‑Mail‑Tracking) werden? | Transkript (Support‑Diskussion) | Mittel |
+| FQ-10 | Wie soll das **Backup‑ und Disaster‑Recovery‑Verfahren** (Wiederherstellungs‑RPO/RTO) konkret aussehen? | Risiko‑Artefakt (Backup) | Mittel |
+
+## 2. Technische Fragen
+| ID | Frage | Herkunft (Artefakt/Quelle) | Priorität |
+|----|-------|----------------------------|-----------|
+| TQ-1 | Welcher **Managed DB Anbieter** (Azure PostgreSQL, AWS RDS, etc.) wird verwendet und wie wird EU‑only Datenresidenz garantiert? | Risiko‑Artefakt (DB‑Auswahl) | Hoch |
+| TQ-2 | Wie wird das **OAuth‑2‑Token‑Management** ohne zentrales API‑Gateway umgesetzt (Grant‑Type, Token‑Laufzeit, Refresh)? | Architektur (API‑Layer) | Mittel |
+| TQ-3 | Welche **Fallback‑Strategie** bei SAP‑Ausfall (z. B. Read‑Only‑Cache) soll im MVP implementiert werden? | Risiko‑Artefakt (SAP‑Verfügbarkeit) | Hoch |
+| TQ-4 | Wie erfolgt das **Secrets‑Management** für Datenbank‑ und API‑Credentials im MVP (Key‑Vault, env‑Vars, etc.)? | Risiko‑Artefakt (Secrets‑Management) | Mittel |
+| TQ-5 | Welche konkreten **Rate‑Limiting**‑Parameter (Requests/Minute, Burst‑Size) werden für das MVP festgelegt? | Risiko‑Artefakt (Rate‑Limiting) | Mittel |
+| TQ-6 | Wie wird das **Audit‑Log** technisch gespeichert (Service, Format, Aufbewahrung) und von technischen Logs getrennt? | Risiko‑Artefakt (Audit‑Log) | Hoch |
+| TQ-7 | Welche **Testing‑Daten** (synthetisch vs. echte SAP‑Daten) dürfen in Dev/Test‑Umgebungen verwendet werden? | Risiko‑Artefakt (Testing‑Daten) | Hoch |
+| TQ-8 | Gibt es bereits eine Entscheidung für **SSO‑Provider** (Azure AD, Google) für das optionale SSO im MVP? | Kontext (SSO‑Diskussion) | Niedrig |
+| TQ-9 | Wie wird das **PDF‑Template‑Versionierung** technisch umgesetzt (Datenbank, Git, CMS)? | Kontext (PDF‑Export) | Mittel |
+| TQ-10 | Welche **Monitoring‑Metriken** (Health, Latency, Error‑Rate) werden bereits im MVP bereitgestellt? | Architektur (Monitoring) | Mittel |
+
+## 3. Widersprüche / Klärungsbedarf
+| ID | Widerspruch | Betroffene Bereiche | Hinweis |
+|----|------------|---------------------|--------|
+| WC-1 | **Mobile‑First vs. Web‑First** – Im Transkript wird beides vorgeschlagen, aber kein klarer Fokus definiert. | Scope, UI‑Design | Für MVP wird ein responsives Web‑Frontend angenommen; Mobile‑App wird später evaluiert. |
+| WC-2 | **SSO (Azure AD / Google) vs. einfaches E‑Mail‑Login** – SSO ist gewünscht, aber nicht verpflichtend. | Authentifizierung | Im MVP nur E‑Mail/Passwort mit Double‑Opt‑In; SSO als optionales Add‑On nach MVP. |
+| WC-3 | **Umfang des Audit‑Trails** – Minimal verlangt, aber Details (Who/When/What) bleiben offen. | Logging, Compliance | Konkrete Felder und Aufbewahrungsdauer müssen definiert werden (siehe TQ‑6). |
+| WC-4 | **Kosten‑Schätzung für Managed Hosting & Backup** – Noch nicht quantifiziert, aber essentiell für Vorstandspräsentation. | Budget, Planung | Sobald DB‑Provider feststeht (TQ‑1), können Kosten ermittelt werden. |
+| WC-5 | **Test‑Umgebung mit echten SAP‑Daten vs. synthetischen Daten** – Risiko von Daten‑Leakage vs. Realitätsnähe. | Testing, Datenschutz | Klärung des Prozesses zur Anonymisierung oder Erzeugung synthetischer Testdaten ist nötig (TQ‑7). |
+
+## 4. Mögliche Ansprechpartner / Rollen
+- **Produkt‑Owner / Business‑Stakeholder** – *Anna* (Klärung von Scope, Pilot‑Kunde, KPI‑Definition). 
+- **Technischer Lead / Architektur** – *Ben* (Entscheidungen zu DB‑Provider, OAuth‑Umsetzung, SAP‑Fallback). 
+- **Datenschutz‑Compliance** – *Clara* (DSGVO‑Ansprüche, Double‑Opt‑In, Lösch‑ und Retention‑Regeln). 
+- **Finance / Controlling** – *Eva* (Rabatt‑Freigabe‑Grenzen, Mehrwährungs‑Bedarf, Kosten‑Schätzung). 
+- **Customer Support** – *David* (Support‑Workflow, Kontakt‑Formular, Ticket‑System‑Bedarf). 
+- **IT Operations** – *Farid* (Hosting‑Region, Backup‑Strategie, Monitoring, Secrets‑Management). 
+
+---
+*Dieses Dokument fasst alle offenen Fragen, Widersprüche und zu klärenden Punkte zusammen, die aus dem Projekt‑Kontext, den Risiko‑ und Architektur‑Artefakten sowie dem Stakeholder‑Transkript abgeleitet wurden.*

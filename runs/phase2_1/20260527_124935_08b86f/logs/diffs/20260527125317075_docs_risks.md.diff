@@ -1,0 +1,61 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risiken für das Kundenportal (MVP)
++ 
++ ## 1. Fachliche Risiken
++ | Risiko | Beschreibung | Mögliche Auswirkung | Gegenmaßnahme / Klärungsbedarf |
++ |--------|--------------|---------------------|--------------------------------|
++ | **Unklare Zieldefinition / Scope‑Creep** | Viele offene Punkte (Support‑Prozess, Sonderrabatte, Internationalisierung, Multi‑Währung) wurden nicht final entschieden. | Verzögerungen beim MVP‑Launch, Budget‑Überschreitungen. | **Klärung**: Entscheidung über Pilot‑Kunde (DE vs. CH), feste Priorisierung der Features vor Sprint‑Planning. |
++ | **Sonderrabatt‑Freigabe fehlt** | Rabatt > 15 % erfordert Freigabe, aber im MVP nicht implementiert. | Gefahr von Preis‑Fehlentscheidungen, finanzielle Verluste, Compliance‑Probleme. | **Maßnahme**: Temporärer technischer Guard (max 15 % im System), klare Kommunikation an Sales. |
++ | **Support‑Prozess nicht definiert** | Kein Ticket‑System, nur Kontakt‑Formular; Support‑Mitarbeiter benötigen Kundendaten. | SLA‑Verletzungen, unsaubere Dokumentation, Datenschutz‑Risiken bei E‑Mail‑Verarbeitung. | **Maßnahme**: Minimal‑Ticket‑Workflow (z. B. gespeichertes Formular in DB) oder klarer Prozess für manuelle Bearbeitung inkl. Aufbewahrungs‑ und Löschregeln. |
++ | **Mehrwährungs‑ und Länder‑Support** | Schweiz (CHF) und evtl. USA als zukünftige Märkte, aber keine abschließende Entscheidung. | Fehlende Währungs‑Konvertierung, rechtliche Probleme (Schweizer Datenschutz, US‑Export‑Compliance). | **Klärung**: Pilot‑Kunde final festlegen; wenn CHF nötig, Währungs‑Modul im nächsten Release planen. |
++ | **Unklare Kosten‑ und Hosting‑Anforderungen** | EU‑Only Managed Service ist notwendig, Kosten sind jedoch noch nicht quantifiziert. | Budget‑Überschreitung, Ablehnung durch Vorstand. | **Maßnahme**: Schnell‑Angebote von möglichen Cloud‑Providern einholen; grobe Ober‑/Untergrenzen festlegen. |
++ 
++ ## 2. Technische Risiken
++ | Risiko | Beschreibung | Mögliche Auswirkung | Gegenmaßnahme / Klärungsbedarf |
++ |--------|--------------|---------------------|--------------------------------|
++ | **SAP‑Verfügbarkeit (kritische Abhängigkeit)** | Das System liest Produkt‑ und Preisdaten nur aus SAP (Read‑Only). | Angebots‑Erstellung kann bei SAP‑Ausfall nicht durchgeführt werden → Verlust von Verkäufen. | **Maßnahme**: Fallback‑Strategie (z. B. Cache nur für nicht‑kundenspezifische Produktdaten) und klare Fehlermeldung. |
++ | **Keine API‑Gateway‑Integration** | API‑Gateway‑Team hat 6‑Wochen‑Warteliste, direkte Service‑Aufrufe werden verwendet. | Sicherheits‑ und Skalierbarkeits‑Probleme (Rate‑Limiting, Auth‑Durchsetzung). | **Maßnahme**: Implementiere lokales Rate‑Limiting und OAuth‑Token‑Check im Service; Migration zum Gateway nach MVP planen. |
++ | **Fehlende Datenbank (New DB)** | Nutzung eines Managed PostgreSQL‑Service, aber keine eigene DB‑Instanz wird aufgesetzt. | Begrenzte Flexibilität, mögliche Performance‑Engpässe bei steigender Nutzerzahl. | **Maßnahme**: Auswahl eines skalierbaren Managed‑DB‑Plans mit automatischer Skalierung; Monitoring von DB‑Metriken. |
++ | **Audit‑Logging vs. technische Logs** | Notwendig ist Trennung von Audit‑Logs (personenbezogene Aktionen) und technischen Logs (keine personenbezogenen Daten). | DSGVO‑Verstoß, wenn personenbezogene Daten in System‑Logs landen. | **Maßnahme**: Konfiguration von Logging‑Frameworks (z. B. Logback) für separate Log‑Outputs; Review vor Release. |
++ | **Secrets Management** | API‑Keys, DB‑Credentials müssen sicher verwaltet werden. | Verlust von Secrets → Kompromittierung, Datenverlust. | **Maßnahme**: Einsatz eines zentralen Secrets‑Stores (z. B. HashiCorp Vault) bereits im MVP; automatisierte Rotation. |
++ | **Backup & Disaster Recovery unzureichend** | Nur Basis‑Backup definiert, kein klarer RTO/RPO. | Datenverlust bei Ausfall, lange Wiederherstellungszeit. | **Maßnahme**: Festlegen von mindestens wöchentlichem Full‑Backup + täglichem Incremental; Recovery‑Test mindestens einmal/Monat. |
++ | **Rate‑Limiting & Missbrauchserkennung** | Nur Grund‑Rate‑Limit (100 Req/Min) geplant, kein umfassendes Abuse‑Monitoring. | Service‑Denial‑of‑Service, unerlaubtes Scraping von Rechnungen. | **Maßnahme**: Implementiere IP‑basiertes Rate‑Limiting und einfache Anomalie‑Erkennung; weitere Maßnahmen nach MVP. |
++ | **Performance‑Skalierung (200‑20 000 Nutzer)** | Erwarteter Nutzer‑Spanne ist groß, aber Architektur ist für MVP leicht ausgelegt. | Slow‑Response, Time‑outs bei hoher Last. | **Maßnahme**: Horizontal skalierbare Komponenten (Stateless Services, Load‑Balancer); Last‑Test mit 20 % des Max‑Werts im Sprint. |
++ | **Testdaten‑Privacy** | SAP‑Testsystem enthält reale Kundendaten, aber Testumgebung braucht pseudonymisierte Daten. | Datenschutz‑Verstoß während Entwicklung/Testing. | **Maßnahme**: Erstelle synthetische Testdatensätze; maskiere echte Daten im Testsystem. |
++ 
++ ## 3. Compliance‑ und Datenschutzrisiken
++ | Risiko | Beschreibung | Mögliche Auswirkung | Gegenmaßnahme / Klärungsbedarf |
++ |--------|--------------|---------------------|--------------------------------|
++ | **Double‑Opt‑In & Löschkonzept nicht umgesetzt** | MVP verlangt Double‑Opt‑In, aber Implementierung ist noch offen. | Nicht‑DSGVO‑konforme Registrierung → Bußgelder. | **Maßnahme**: Schnell‑Implementierung von Double‑Opt‑In per E‑Mail‑Bestätigung; definiere Lösch‑Workflow (Right‑to‑Be‑Forgotten). |
++ | **Personenbezogene Daten in Monitoring‑Logs** | Monitoring darf keine personenbezogenen Daten enthalten. | DSGVO‑Verstoß, Audit‑Risiko. | **Maßnahme**: Filter in Monitoring‑Agent (z. B. Prometheus/Grafana) konfigurieren; separate Audit‑Log. |
++ | **Datenresidenz (EU‑Only) unsicher** | Cloud‑Provider kann Backups global replizieren, wenn nicht explizit deaktiviert. | Daten außerhalb EU → Rechtsverstöße. | **Maßnahme**: Vertragliche SLA mit Provider, technische Einstellung für EU‑Only Replikation, Nachweis (Compliance‑Report). |
++ | **Aufbewahrung vs. Right‑to‑Be‑Forgotten** | Handelsrecht verlangt mehrjährige Aufbewahrung, DSGVO verlangt Löschung auf Anfrage. | Konflikt kann zu Rechtsstreit führen. | **Maßnahme**: Datenklassifikation mit Retention‑Policy (z. B. Angebote 7 Jahre, Kunden‑Profile 1 Jahr nach Kündigung) + Ausnahmen für steuerlich relevante Daten. |
++ | **Support‑E‑Mails mit Kundendaten** | Support‑Anfragen per E‑Mail können personenbezogene Daten enthalten. | Unzureichender Schutz, mögliche Datenlecks. | **Maßnahme**: Verschlüsseltes Ticket‑System oder gesicherte Mail‑Queue; klare Richtlinien für Support‑Mitarbeiter. |
++ | **Mehrwährungs‑ und Länder‑Compliance (Schweiz, USA)** | Schweiz hat eigenes Datenschutzgesetz, USA hat Export‑ und Datenschutzanforderungen. | Rechtsverstöße beim Betrieb in diesen Regionen. | **Klärung**: Pilot‑Kunde final bestimmen; falls Schweiz, ergänze Swiss‑Data‑Protection‑Clause. |
++ 
++ ## 4. Widersprüche & Unsicherheiten (offene Fragen)
++ - **SAP‑Schreibzugriff** – Nur Lese‑Zugriff definiert, aber Angebots‑Freigabe könnte Schreibzugriff benötigen.  
++ - **Support‑Prozess** – Kein Ticket‑System, aber Support‑Mitarbeiter benötigen strukturierten Zugriff auf Kundendaten.  
++ - **Kosten‑Schätzung** – Noch keine konkrete Zahlen für EU‑Only Managed Service und Backup.  
++ - **Pilot‑Kunde & Währung** – Entscheidung zwischen DE (EUR) und CH (CHF) fehlt.  
++ - **API‑Gateway Migration** – Wie wird die spätere Integration ohne erneute Refactoring aussehen?  
++ - **Retention‑ und Löschregeln** – Konkrete Fristen und Zuständigkeiten sind nicht definiert.  
++ - **Performance‑Grenzwert** – Wie wird das System bei 20 000 gleichzeitigen Nutzer technisch skaliert?  
++ 
++ ## 5. Priorisierte Risiko‑Übersicht (nach Eintrittswahrscheinlichkeit & Impact)
++ | Priorität | Risiko | Impact | Wahrscheinlichkeit |
++ |-----------|--------|--------|--------------------|
++ | **H** | SAP‑Verfügbarkeit (kritische Abhängigkeit) | Betriebsunterbrechung, Umsatzverlust | Hoch |
++ | **H** | Unklare Zieldefinition / Scope‑Creep | Projektverzögerung, Budget‑Überschreitung | Hoch |
++ | **M** | Datenschutz (Double‑Opt‑In, Löschkonzept, Monitoring‑Logs) | Bußgelder, Reputationsschaden | Mittel |
++ | **M** | Support‑Prozess ohne Ticket‑System | SLA‑Verletzung, Datenschutz‑Risiko | Mittel |
++ | **M** | Fehlende API‑Gateway‑Sicherheit | Sicherheitslücken, Skalierbarkeits‑Probleme | Mittel |
++ | **L** | Mehrwährungs‑/Länder‑Compliance | Rechtsrisiko bei Expansion | Niedrig |
++ | **L** | Backup & DR unzureichend | Datenverlust bei Katastrophe | Niedrig |
++ 
++ *H = hoch, M = mittel, L = niedrig*.
++ 
++ ---
++ *Dieses Risiko‑Artefakt ist auf Basis des Projekt‑Kontexts (runs/phase2_1/20260527_124935_08b86f/state/context.md) und der Requirements (docs/requirements.md) erstellt. Alle genannten Risiken leiten sich aus konkreten Aussagen, Widersprüchen oder offenen Fragen im Transkript bzw. den Requirements ab.*

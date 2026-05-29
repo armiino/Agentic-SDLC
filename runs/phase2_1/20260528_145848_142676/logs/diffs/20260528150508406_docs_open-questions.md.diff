@@ -1,0 +1,47 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarf
++ 
++ ## Fachliche Fragen
++ - **Zieldefinition / Scope** – Welches konkrete Feature‑Set (z. B. Mobile‑App, Mehrwährung, Support‑Ticket‑System) darf im MVP ausgeschlossen werden? (Quelle: Kontext + Transkript)
++ - **Rabatt‑Freigabeprozess** – Wie genau soll der Freigabe‑Workflow für Rabatte > 15 % nach dem MVP aussehen (Beteiligte, Schwellenwerte, UI)? (Quelle: Transkript / Eva)
++ - **Support‑Workflow** – Welche Informationen muss das Kontaktformular erfassen, und wie soll die Zuordnung zu Kundenkonten technisch erfolgen? (Quelle: Transkript / David)
++ - **Pilot‑Kunde** – Ist der Pilotkunde die Müller AG (Schweiz) oder die Hansa GmbH (Deutschland)? Dies beeinflusst Mehrwährung (CHF) und Datenschutz (Schweizer vs. EU). (Quelle: Transkript / Anna)
++ - **KPI‑Messung** – Welche konkreten Kennzahlen (Conversion Rate, Zeit bis Angebot) sollen im MVP erfasst werden und welche Analytics‑Lösung wird hierfür eingesetzt? (Quelle: Transkript / Anna)
++ - **Preis‑ und Rabatt‑Logik** – Wie soll mit nächtlichen Preis‑Updates umgegangen werden (Fallback, Warnungen, Cache‑Strategie)? (Quelle: Transkript / Ben)
++ - **Lösch‑ und Auskunftsprozesse** – Welche konkreten Schritte und Fristen gelten für das Recht auf Datenlöschung bzw. –auskunft im MVP? (Quelle: Transkript / Clara)
++ - **Aufbewahrungs‑ und Retention‑Policy** – Welche gesetzlich vorgeschriebenen Aufbewahrungsfristen (z. B. 7 Jahre für Rechnungen) gelten und wie werden sie mit dem DSGVO‑Löschrecht vereinbart? (Quelle: Transkript / Clara)
++ - **Rollen‑ und Berechtigungskonzept** – Wie werden feine Berechtigungen (z. B. Support darf nur Status sehen, Finance darf Rabatte sehen) im MVP modelliert? (Quelle: Transkript / Eva / David)
++ - **Produkt‑ und Preis‑Abruf aus SAP** – Welche SAP‑OData‑Endpunkte werden benötigt und wie wird das Read‑Only‑Zugriffs‑Token bereitgestellt? (Quelle: Transkript / Ben)
++ 
++ ## Technische Fragen
++ - **API‑Gateway** – Wie soll das temporäre interne Rate‑Limiting implementiert werden, bis das zentrale API‑Gateway nach 6 Wochen verfügbar ist? (Quelle: Transkript / Ben / Farid)
++ - **Managed DB Provider** – Welcher Managed‑DB‑Service (Azure PostgreSQL, AWS RDS, etc.) wird gewählt und welche Kosten‑ und Performance‑Parameter sind zu erwarten? (Quelle: Transkript / Farid)
++ - **Secrets Management** – Welcher Dienst (Azure Key Vault, HashiCorp Vault, AWS Secrets Manager) wird für die Speicherung von DB‑Passwörtern und API‑Keys verwendet? (Quelle: Transkript / Ben)
++ - **Backup‑Strategie** – Welches RPO/RTO (Recovery‑Point‑Objective / Recovery‑Time‑Objective) ist für das MVP zwingend erforderlich? (Quelle: Transkript / Ben / Clara)
++ - **Testdaten‑Umgebung** – Wie wird das SAP‑Testsystem von realen Kundendaten befreit (Pseudonymisierung vs. synthetische Daten)? (Quelle: Transkript / Ben / Clara)
++ - **Internationalisierung** – Welche Mechanismen (i18n‑Framework, Resource‑Files) werden für die DE/EN‑Lokalisierung im MVP eingesetzt? (Quelle: Transkript / Anna / David)
++ - **PDF‑Template‑Management** – Wie wird die Versionierung von Angebots‑ und Rechnungs‑Templates technisch umgesetzt (Datenbank, Git, CMS)? (Quelle: Transkript / Farid)
++ - **Audit‑Log vs. technische Logs** – Wie wird die Trennung von personenbezogenen Daten in Audit‑Logs und anonymen System‑Logs technisch sichergestellt? (Quelle: Transkript / Clara)
++ - **Rate‑Limiting / Missbrauchserkennung** – Welche konkreten Schwellenwerte (Requests / Minute, Download‑Limits) sollen für MVP‑Nutzer gelten? (Quelle: Transkript / Clara / Ben)
++ - **Hosting‑Region und AVV** – Welcher Provider kann nachweislich EU‑only Hosting mit einem gültigen Auftragsverarbeitungsvertrag (AVV) garantieren? (Quelle: Transkript / Farid)
++ 
++ ## Widersprüche, die geklärt werden müssen
++ - **Mobile‑First vs. Web‑First** – Anna schlägt *Web first* (oder mobile zuerst) – keine klare Entscheidung (Quelle: Transkript). Welche Priorität hat die mobile Variante für das MVP?
++ - **SSO‑Integration** – Ben fordert klare Entscheidung; Anna hält es optional (Quelle: Transkript). Soll SSO im MVP implementiert oder komplett weggelassen werden?
++ - **Budget vs. EU‑only Hosting** – Farid warnt, dass EU‑only teurer sein kann; Anna verlangt es trotzdem (Quelle: Transkript). Wie hoch ist das zulässige Budget für das Hosting?
++ - **Support‑Ticket‑System vs. Kontaktformular** – David fordert ein Ticket‑System, Anna lehnt es für das MVP ab (Quelle: Transkript). Wie wird die Support‑Nachverfolgung im MVP sichergestellt?
++ - **API‑Gateway‑Verfügbarkeit** – 6‑Wochen‑Wartezeit kollidiert mit 8‑Wochen‑MVP‑Deadline (Quelle: Transkript). Wie wird die Security‑ und Rate‑Limiting‑Strategie ohne Gateway realisiert?
++ - **Mehrwährung (CHF) vs. Pilot‑Kunde‑Entscheidung** – Eva fordert CHF, aber Pilot‑Kunde ist noch unklar (Quelle: Transkript). Wird CHF im MVP unterstützt oder erst später?
++ 
++ ## Mögliche Ansprechpartner / Rollen
++ - **Produkt‑Owner / Vertrieb** – Anna (Klärung von Ziel‑ und Prioritäts‑Entscheidungen, Mobile‑First, KPI‑Definition)
++ - **Entwicklung / Architektur** – Ben (Technische Machbarkeit, API‑Design, SAP‑Integration, Rate‑Limiting)
++ - **Compliance / Datenschutz** – Clara (DSGVO‑Pflichten, Lösch‑/Auskunfts‑Prozesse, Audit‑Log‑Strategie)
++ - **Finance** – Eva (Rabatt‑Freigabe, Mehrwährung, PDF‑Rechtstexte)
++ - **Customer Support** – David (Support‑Workflow, Ticket‑System, Kontakt‑Formular)
++ - **IT Operations** – Farid (Hosting‑Region, Managed Services, AVV, Monitoring)
++ - **Legal / Risk Management** – (nicht explizit im Transkript, aber relevant für AVV und Aufbewahrung)
++ 
++ *Diese Fragen leiten sich ausschließlich aus dem Kontext‑File `runs/phase2_1/20260528_145848_142676/state/context.md`, den Dokumenten `docs/requirements.md`, `docs/risks.md`, `docs/architecture.md` und dem ursprünglichen Transkript `input/transcripts/T9999_chaos.txt` ab.*

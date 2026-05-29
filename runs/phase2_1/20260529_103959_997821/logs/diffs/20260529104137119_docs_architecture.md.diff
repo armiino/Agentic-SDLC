@@ -1,0 +1,79 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturüberblick Kundenportal MVP
++ 
++ ## 1. Systemkontext
++ Das Kundenportal MVP ist eine webbasierte Plattform, die als Schnittstelle für Kunden dient, um Angebote zu erstellen, Rechnungen einzusehen und grundlegende Interaktionen mit dem Unternehmen vorzunehmen. Das Portal ist Teil eines größeren Gesamtökosystems, welches SAP als zentrales Backend-System für Stammdaten, Preise und Rabattlogik einbindet.
++ 
++ Das System muss DSGVO-konform betrieben werden mit besonderem Fokus auf personenbezogene Daten und Auditierbarkeit. EU-DSGVO-konformes Hosting ist explizit gefordert, Managed Services sollen genutzt werden, ein eigener Datenbankserver ist im MVP ausgeschlossen.
++ 
++ Das Kundenportal wird primär als Webanwendung mit E-Mail/Passwort-Login (Double Opt-In) entwickelt, SSO wird als optionale zukünftige Erweiterung betrachtet.
++ 
++ ## 2. Wichtige Komponenten
++ 
++ ### 2.1 Frontend
++ - Web-Anwendung (responsive) auf Kundenportal-Basis
++ - Rollenbasierte UI (Admin, Sales, Kunde, Support eingeschränkt)
++ - Angebots- und Rechnungsübersicht
++ - PDF-Export von Angeboten
++ 
++ ### 2.2 Backend / Services
++ - API Layer für Integration mit SAP und weiteren Systemen
++ - Lesender Zugriff auf SAP-Daten: Kundenstammdaten, Produkt- und Preisinformationen
++ - Angebotsmanagement mit Status und Audit Trail 
++ - Rollen- und Berechtigungsmanagement
++ - Logging/Auditservice mit Trennung technischer und auditrelevanter Logs
++ - Backup- und Disaster Recovery Service (Managed)
++ 
++ ### 2.3 Integrationen
++ - SAP ERP-System (lesender Zugriff, keine Schreibzugriffe im MVP)
++ - Identity Provider (für zukünftige SSO-Integration, aktuell nur E-Mail-Passwort)
++ - API Gateway (geplant, aber MVP-zeitlich schwierig umsetzbar)
++ 
++ ### 2.4 Infrastruktur
++ - Hosting in der EU (DSGVO-konform)
++ - Einsatz von Managed Services für Datenhaltung, Backup und Monitoring
++ - Umgebungskonzept: Dev, Test (mit pseudonymisierten/synthetischen Daten), Produktion
++ 
++ ## 3. Schnittstellen und Integrationspunkte
++ 
++ - **SAP ERP:** API-basierter lesender Zugriff auf Produkt-, Preis- und Kundendaten
++ - **Identity Provider:** OAuth-basierte Authentifizierung (Zukunft)
++ - **Externe Managed Services:** Backup, Monitoring, evtl. API Gateway
++ - **Support-Kontaktformular:** E-Mail-basierte Anfrageverwaltung (keine persistente Ticket-Datenbank im MVP)
++ 
++ ## 4. Daten- und Sicherheitsaspekte
++ 
++ - Verschlüsselung der Datenübertragung per TLS
++ - Verwendung von Double Opt-In für Kundendaten und Login
++ - Datenschutzgerechte Speicherung und Löschung personenbezogener Daten gemäß DSGVO
++ - Trennung von technischen Logs, Audit-Logs und Security-Logs mit jeweils eigenen Aufbewahrungsfristen
++ - Minimale Auditierung für Angebotsänderungen und Benutzeraktionen
++ - Keine personenbezogenen Daten in technischen Logs
++ - Backup- und Disaster Recovery-Maßnahmen für Datenverfügbarkeit und -integrität
++ 
++ ## 5. Offene Architekturentscheidungen bzw. Risiken
++ 
++ - Integration eines API Gateways ist aufgrund Warteliste und Zeitrahmen unklar, vorübergehende Alternativen sind nötig
++ - Supportprozess wird im MVP durch Kontaktformular realisiert; Ticketsystem und Persistenz fehlen und sind Risiko
++ - Freigabeprozesse für Rabatte oberhalb des Standardsatzes fehlen im MVP; Risiko von finanziellen Schäden
++ - SSO und zentraler Identity Provider sind geplant, aber nicht im MVP
++ - Handling der Offline-/Fehlersituation bei SAP-Verfügbarkeit muss noch detailliert geklärt werden
++ - Umfang und Umsetzung der mehrsprachigen und mehrwährungsfähigen Unterstützung bleiben offen
++ - Datenschutzkonflikte zwischen Löschanfragen und gesetzlichen Aufbewahrungspflichten müssen noch adressiert werden
++ - Pilotkunde (Deutschland oder Schweiz) und daraus resultierende Auswirkungen auf Datenschutz, Hosting und Währungslogik sind offen
++ - Missing Security Review im MVP-Zeitrahmen stellt ein Risiko dar
++ - Testdaten-Strategie in Bezug auf SAP-Daten muss umgesetzt und überwacht werden
++ 
++ ## 6. Zusammenfassung
++ Das Kundenportal MVP wird als schlanke Webplattform mit einem Fokus auf schnellen Start und minimalem Funktionsumfang realisiert. Wesentliche Integrationen mit SAP und grundlegende Compliance-Maßnahmen sind vorgesehen. Wichtige Risiken und offene Entscheidungen sollen in Folgephasen adressiert werden, insbesondere im Bereich Sicherheit, Supportprozess, Freigaben und erweiterte Authentifizierung.
++ 
++ ---
++ 
++ *Dieses Architekturüberblick basiert auf den Inhalten der unten genannten Quellen.*
++ 
++ **Quellen:**
++ - runs/phase2_1/20260529_103959_997821/state/context.md
++ - input/transcripts/T9999_chaos.txt
++ 

@@ -1,0 +1,72 @@
+﻿--- before/runs/phase2_1/20260529_102448_80a382/state/context.md
++++ after/runs/phase2_1/20260529_102448_80a382/state/context.md
+- 
++ # Projektkontext – Kundenportal (MVP)
++ 
++ ## 1. Projektziel (aus Stakeholder‑Statements)
++ - **Primäres Ziel**: Sales‑Mitarbeitern ermöglichen, *schnell Angebote* zu erstellen und Kunden können ihre *Bestellungen & Rechnungen* im Portal einsehen und herunterladen.  
++ - Das Kundenportal ist das **Mittel**, nicht das eigentliche Endziel.
++ - MVP‑Zeitplan: **8 Wochen** bis zum Launch (Vorstand will Kostenschätzung bis Freitag).
++ 
++ ## 2. Relevante Sprecher & Rollen
++ | Sprecher | Funktion / Kontext |
++ |----------|--------------------|
++ | Anna (Product Owner) | Business‑Anforderungen, Priorisierung, Zeit‑ und Budgetdruck |
++ | Ben (Technical Lead) | Architekt, Integration SAP, API‑Layer, Security & Infrastruktur |
++ | Clara (Compliance / Datenschutz) | DSGVO, Audit‑Log, Lösch‑/Löschkonzept, Rollen‑ und Berechtigungskonzept |
++ | David (Customer Support) | Support‑Prozesse, Kontakt‑Formular, Daten‑Handling |
++ | Eva (Finance) | Angebots‑Freigabe, Rabatt‑Logik, PDF‑Export, rechtliche Vorgaben |
++ | Farid (IT Operations) | Hosting (EU‑only), Managed Services, Monitoring, Secrets‑Management |
++ | (Weitere) | – |
++ 
++ ## 3. Fachliche Themen & Anforderungen (nach Priorität)
++ 1. **Login** – E‑Mail + Passwort, Double‑Opt‑In, optional SSO (Azure AD / Google) → *MVP: E‑Mail‑Login mit Double‑Opt‑In*.
++ 2. **Angebotserstellung**
++    - Daten aus SAP (Produkt, Preis, Standard‑Rabatt).  
++    - Keine manuellen Sonderrabatte im MVP (Rabatt‑Freigabe → Phase 2).  
++    - Workflow‑Status (Draft → Sent) – minimaler Audit‑Trail.
++ 3. **Rechnungs‑ & Bestellungs‑Download** – PDF‑Export, rechtliche Fußnoten, Datenschutzhinweis.
++ 4. **Rollenmodell (Minimal)** – Admin, Sales (Angebote erstellen), Kunde (nur eigene Daten).  
++ 5. **Audit‑Log** – wer hat Angebot/Rechnung eingesehen/geändert; keine personenbezogenen Daten in technischen Logs.
++ 6. **EU‑only Managed Hosting** – DSGVO‑konforme Datenresidenz, Backup & Disaster Recovery (mindestens 1‑Woche).  
++ 7. **API‑Layer** – REST‑API, OAuth‑Preferenz (noch nicht final), Schnittstelle zu SAP (nur Lese‑Zugriff im MVP).  
++ 8. **KPI‑Tracking (basic)** – Conversion Rate (Angebot → Bestellung), Zeit bis Angebot (keine personenbezogenen Daten).
++ 9. **Internationalisierung** – Deutsch + Englisch (Sprach‑Switch); weitere Sprachen später.
++ 10. **Mehrwährung** – EUR standard, CHF optional für Pilot (Schweiz); USD später.
++ 
++ ## 4. Offene Fragen & Unsicherheiten (bewusst nicht gelöst)
++ - **Support‑Prozess**: Kontakt‑Formular ohne Ticket‑System (Risiko: unstrukturierte Daten, DSGVO‑Konformität).  
++ - **Freigabe‑Workflow** für Rabatte > 15 % (Phase 2).  
++ - **SAP‑Schreibzugriff**: Nur Lese‑Zugriff im MVP; Schreib‑/Bestell‑Integration später.  
++ - **Hosting‑Kosten EU‑only** – genaue Kalkulation fehlt.  
++ - **API‑Gateway‑Verfügbarkeit** – 6‑Wochen‑Warteliste, daher evtl. Alternative (direktes API).  
++ - **Retention‑Policy**: Handelsrechtliche Aufbewahrung vs. Recht auf Löschung – nur grobe Vorgabe im MVP.  
++ - **Test‑Umgebung**: Nutzung von SAP‑Testdaten (personenbezogene Daten?) → muss pseudonymisiert werden.  
++ - **Rate‑Limiting / Missbrauchserkennung** – nur einfaches Rate‑Limiting im MVP.  
++ - **Backup‑ und Disaster‑Recovery‑Details** – noch zu spezifizieren.  
++ - **Internationalisierung (USA, Schweiz)** – Datenschutz‑ und Vertrags‑Implikationen (Phase 2).  
++ - **Preis‑Cache / SAP‑Verfügbarkeit** – SAP‑Verfügbarkeit ist kritische Abhängigkeit; kein Cache im MVP.
++ 
++ ## 5. Risiken (explizit gekennzeichnet)
++ - **Zeit‑Risiko**: 8‑Wochen‑MVP vs. zahlreiche technische & rechtliche Abhängigkeiten (API‑Gateway, EU‑Hosting, SAP‑Zugriff).  
++ - **Compliance‑Risiko**: Double‑Opt‑In + Audit‑Log nötig, aber weitere DSGVO‑Pflichten (Löschkonzept, Datenminimierung) werden bewusst **ausgeschlossen** ⇒ mögliche regulatorische Folgen.
++ - **Security‑Risiko**: No full Security Review, minimaler Review + Managed Services; Gefahr von Schwachstellen.
++ - **Integrations‑Risiko**: SAP‑Lese‑Only ≠ vollständige Angebot‑Validierung → fehlerhafte Preise möglich.
++ - **Support‑Risiko**: Fehlendes Ticket‑System → manueller Aufwand, Datenschutz‑Probleme.
++ - **Finanzielles Risiko**: Unklare Kosten für EU‑Hosting, Managed Services, Multi‑Currency.
++ - **Operatives Risiko**: Keine dedizierte Architektur‑Entscheidung, kein Architekt im Team.
++ 
++ ## 6. Konkrete Entscheidungen für das MVP (Bewusste Einschränkungen)
++ - **Kein Sonderrabatt‑Freigabe‑Workflow** (nur Standard‑Rabatte).  
++ - **Kein vollwertiges Ticket‑System** – Kontakt‑Formular, Support‑Anfragen per E‑Mail.  
++ - **Kein OAuth‑Implementierung** – Platzhalter‑Auth (E‑Mail + Double‑Opt‑In).  
++ - **Kein globales CDN / Multi‑Region‑Hosting** – EU‑only Managed Service.
++ - **Kein vollständiges Backup‑/DR‑Konzept** – Grundlegendes Backup (daily) wird implementiert.
++ - **Kein umfangreicher Audit‑Log** – Nur grundlegende Aktionen (Login, Angebot‑Erstellung, Download).
++ 
++ ## 7. Quellen (Beleg‑Angaben)
++ - Transkript `input/transcripts/T9999_chaos.txt` – komplette Gesprächsaufzeichnung aller Stakeholder (Anna, Ben, Clara, David, Eva, Farid).  
++ - Alle extrahierten Fakten lehnen sich direkt an zitierte Aussagen im Transkript, z. B. „MVP in 8 Wochen“, „Login per E‑Mail und Passwort“, „Double‑Opt‑In“, „SAP ist nicht API‑ready“, „DSGVO‑Pflichten“, „Kosten‑Schätzung bis Freitag“, etc.
++ 
++ ---
++ *Dieser Kontext‑Report fasst alle abgeleiteten Projektinformationen zusammen, markiert offene Punkte und Risiken, und bildet die Basis für die Anforderungs‑ und Architektur‑Ableitung in den nachfolgenden Phasen.*

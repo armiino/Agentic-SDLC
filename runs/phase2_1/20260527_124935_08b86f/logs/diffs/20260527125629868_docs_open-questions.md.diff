@@ -1,0 +1,62 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarf (MVP‑Kundenportal)
++ 
++ ## 1. Fachliche Fragen
++ | # | Frage | Quelle / Kontext | Priorität |
++ |---|-------|------------------|-----------|
++ | F1 | **Welcher Pilot‑Kunde wird final gewählt?**<br>Entscheidung zwischen einem deutschen Unternehmen (EUR) und einem Schweizer Unternehmen (CHF). Dies beeinflusst Währungs‑Support, rechtliche Rahmenbedingungen und Kosten für EU‑Only Hosting. | Transkript, Zeilen 354‑390 (Mehrwährung, Internationalisierung) | Hoch |
++ | F2 | **Wie soll das Sonderrabatt‑Freigabe‑Verfahren definiert werden?**<br>Aktuell Max‑Rabatt 15 % ohne Freigabe; es fehlt ein klarer Prozess und technische Guard‑Regeln. | Transkript, Zeilen 232‑250, 268‑285; Requirements FR‑3, CON‑4 | Hoch |
++ | F3 | **Welcher Support‑Prozess wird im MVP umgesetzt?**<br>Nur Kontakt‑Formular geplant, aber Support‑Mitarbeiter benötigen strukturierte Kundendaten und Datenschutz‑Konzept für E‑Mail‑Verarbeitung. | Transkript, Zeilen 140‑147, 177‑184, 247‑254; Risks „Support‑Prozess nicht definiert“ | Mittel |
++ | F4 | **Wie genau soll das Lösch‑ und Retention‑Konzept aussehen?**<br>Aufbewahrungspflicht (Handelsrecht) vs. Right‑to‑Be‑Forgotten – konkrete Fristen und Ausnahmen fehlen. | Transkript, Zeilen 229‑235, 438‑452; Risks „Aufbewahrung vs. Right‑to‑Be‑Forgotten“ | Mittel |
++ | F5 | **Welche konkreten Kosten entstehen durch das EU‑Only Managed Service und Backup?**<br>Preis‑Schätzung für Vorstand bis Freitag ist gefordert, aber noch keine Anbieter‑ oder Preis‑Infos vorliegen. | Transkript, Zeilen 286‑304, 311‑322; Risks „Unklare Kosten‑ und Hosting‑Anforderungen“ | Hoch |
++ | F6 | **Wie wird das API‑Gateway nach dem MVP integriert?**<br>Derzeit wird ein leichter Reverse‑Proxy verwendet, aber Migration zum Unternehmens‑Gateway muss geplant werden (Architektur‑Entscheidung #1). | Architecture §5, Risks „Keine API‑Gateway‑Integration“ | Mittel |
++ | F7 | **Wie wird das Secrets‑Management final umgesetzt?**<br>Vault, AWS Secrets Manager o.ä. – Entscheidung und Rollen‑Zugriff noch offen. | Architecture §4, Risks „Secrets Management“ | Niedrig |
++ | F8 | **Wie wird die Daten‑Residenz bei Backups technisch gewährleistet?**<br>Einige Cloud‑Provider replizieren automatisch global; es muss sichergestellt werden, dass Backups ausschließlich in EU‑Regionen bleiben. | Transkript, Zeilen 286‑304, 311‑322; Risks „Datenresidenz (EU‑Only) unsicher“ | Mittel |
++ | F9 | **Wie wird das Rollen‑ und Berechtigungskonzept im Detail modelliert?**<br>Insbesondere Konflikte zwischen Sales, Support und Finance (z. B. Sichtbarkeit von Sonderkonditionen). | Transkript, Zeilen 42‑48, 158‑165, 210‑218, 298‑306 | Mittel |
++ | F10 | **Wie wird das Fehlertoleranz‑Verhalten bei SAP‑Ausfall definiert?**<br>Aktuell nur Fehlermeldung; ggf. Fallback‑Cache oder Hinweis auf Offline‑Modus nötig. | Transkript, Zeilen 191‑196, 331‑340 (API‑Gateway); Risks „SAP‑Verfügbarkeit (kritische Abhängigkeit)“ | Hoch |
++ 
++ ## 2. Technische Fragen
++ | # | Frage | Quelle / Kontext | Priorität |
++ |---|-------|------------------|-----------|
++ | T1 | **Welcher Managed PostgreSQL‑Service wird gewählt (Azure, AWS, GCP)?**<br>Einfluss auf Kosten, Skalierbarkeit und EU‑Only‑Compliance. | Architecture §1, Risks „Keine neue Datenbank“, Transkript „EU‑Only Hosting“ | Hoch |
++ | T2 | **Welcher Technologie‑Stack wird für das Frontend verwendet?**<br>React, Angular oder Vue – Entscheidung fehlt. | Architecture §2, offener Technologie‑Hinweis | Niedrig |
++ | T3 | **Wie wird das Audit‑Log technisch implementiert (Elasticsearch, OpenSearch, Cloud‑Log‑Service)?** | Architecture §4, Risks „Audit‑Logging vs. technische Logs“ | Mittel |
++ | T4 | **Wie wird das Rate‑Limiting konkret umgesetzt?**<br>NGINX‑Rate‑Limit‑Module, API‑Gateway‑Policy oder Service‑interne Logik? | Architecture §2 (API‑Gateway), Risks „Rate‑Limiting & Missbrauchserkennung“ | Mittel |
++ | T5 | **Welches Message‑Queue‑System wird für Audit‑Events verwendet?**<br>Direkt‑HTTP, RabbitMQ, Kafka – noch offen. | Architecture §4, offene Entscheidung #5 | Niedrig |
++ | T6 | **Wie wird das Caching von produktbezogenen Daten technisch umgesetzt (In‑Memory, Redis, lokal)?** | Architecture §4, Risks „Caching nur für produktbezogene Daten“ | Mittel |
++ | T7 | **Wie wird die Backup‑Strategie technisch realisiert (Snapshot, Cloud‑Backup‑Service, Vault)?** | Risks „Backup & Disaster Recovery unzureichend“, Architecture §4 | Mittel |
++ | T8 | **Wie wird die Multi‑Währungs‑Anzeige ohne Preis‑Berechnung im MVP umgesetzt?**<br>UI‑Toggle vs. komplette Währungs‑Umrechnung. | Transkript „Mehrwährung“, Requirements FR‑10 | Niedrig |
++ | T9 | **Wie wird die Integration von SAP‑BAPIs (REST/ SOAP) realisiert?**<br>Adapter‑Pattern, Fehler‑Handling, Timeout‑Strategie. | Architecture §4 SAP‑Connector, Risks „SAP‑Verfügbarkeit“ | Hoch |
++ | T10 | **Wie wird das Monitoring ohne personenbezogene Daten konfiguriert?**<br>Filter‑Regeln für Prometheus‑Export, Log‑Scrubbing. | Risks „Personenbezogene Daten in Monitoring‑Logs“ | Mittel |
++ 
++ ## 3. Widersprüche, die geklärt werden müssen
++ | # | Widerspruch | Betroffene Artefakte | Klärungsbedarf |
++ |---|-------------|----------------------|----------------|
++ | W1 | **„Keine neue Datenbank" vs. "Managed PostgreSQL‑Service"** – Es wird kein eigenständiger DB‑Server gebaut, aber ein Managed DB‑Service benötigt. | Requirements CON‑1, Architecture §1 | Klärung, dass Managed Service als Service‑Layer akzeptiert wird und nicht als eigenständiger DB‑Server. |
++ | W2 | **„Kein Ticket‑System" vs. "Support‑Mitarbeiter benötigen strukturierte Kundendaten"** – Ohne Ticket‑System fehlt nachvollziehbare Dokumentation. | Risks "Support‑Prozess nicht definiert", Requirements FR‑11 | Entscheidung, ob ein leichtgewichtiges Ticket‑Modul (z. B. DB‑basiertes Formular) eingeführt werden soll. |
++ | W3 | **„Keine SSO im MVP" vs. "SSO optional für spätere Phase"** – SSO‑Anforderungen (Azure AD, Google) werden bereits als mögliche Option genannt, könnten aber spätere Architektur beeinflussen. | Requirements CON‑2, Architecture §5 (offene Entscheidung) | Klarstellung, ob SSO‑Hooks bereits im Auth‑Service vorgesehen werden sollen (z. B. Token‑Endpoint). |
++ | W4 | **„Kosten‑Schätzung bis Freitag" vs. "Kosten‑Unsicherheit"** – Der Vorstand verlangt Zahlen, doch bisher liegen keine konkreten Anbieter‑ oder Preisinformationen vor. | Risks „Unklare Kosten‑ und Hosting‑Anforderungen“, Requirements FR‑9 | Sofortige Anforderung von Angeboten von mindestens zwei EU‑Only Cloud‑Providern. |
++ | W5 | **"Performance‑Skalierung für 20 000 Nutzer" vs. "Basis‑MVP‑Architektur"** – Die aktuelle Architektur ist minimal; keine klare Strategie für horizontale Skalierung bei hohem Traffic. | Architecture §2, Risks „Performance‑Skalierung“ | Definition eines Skalierungs‑Plans (Load‑Balancer, Autoscaling‑Regeln) für spätere Phasen. |
++ 
++ ## 4. Fehlende Informationen (Dokumentationslücken)
++ - **Produkt‑ und Preis‑Logik in SAP** – Welche BAPIs stehen zur Verfügung, wie werden Rabatte berechnet? (Siehe T9).
++ - **Genaues SLA für SAP‑Verfügbarkeit** – Gibt es Service‑Level‑Versprechen, die das Portal einhalten muss?
++ - **Rechtliche Aufbewahrungsfristen** – Konkrete Jahre für Angebote, Rechnungen, Log‑Daten (siehe F4).
++ - **Genauer Budget‑Rahmen** – Ober‑ und Untergrenzen für Hosting, Backup, Lizenzkosten.
++ - **Definition der MVP‑Metriken (KPIs)** – Welche Metriken sollen im Monitoring erfasst werden (Conversion‑Rate, Angebots‑Durchlaufzeit etc.).
++ 
++ ## 5. Mögliche Ansprechpartner / Rollen
++ | Rolle | Name (falls bekannt) | Verantwortungsbereich |
++ |------|----------------------|----------------------|
++ | Product Owner | **Anna** | Feature‑Priorisierung, MVP‑Zeitrahmen, Business‑Goals |
++ | Lead Engineer / Architekt | **Ben** | Technische Machbarkeit, SAP‑Integration, Sicherheit |
++ | Compliance / Datenschutz | **Clara** | DSGVO‑Umsetzung, Logging, Lösch‑ und Retention‑Policy |
++ | Customer Support Lead | **David** | Support‑Prozess, Kontakt‑Formular, Datenschutz bei Support‑Daten |
++ | Finance Lead | **Eva** | Rabatt‑Freigabe, Mehrwährung, rechtliche Aufbewahrungspflichten |
++ | IT Operations / Infrastruktur | **Farid** | Hosting‑Provider, EU‑Only‑Anforderungen, Backup, Monitoring |
++ | (Optional) External Cloud Provider Contact | – | Ansprechpartner für Cost‑Estimation (Azure, AWS, GCP) |
++ 
++ ---
++ *Alle aufgeführten Fragen sind direkt aus den vorhandenen Artefakten (Transkript, Kontext‑MD, Requirements, Risks, Architecture) ableitbar. Sie müssen im weiteren Projektverlauf geklärt werden, bevor das MVP stabilisiert und an den Vorstand präsentiert werden kann.*

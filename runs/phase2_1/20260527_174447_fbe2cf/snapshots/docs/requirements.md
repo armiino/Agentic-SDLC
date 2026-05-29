@@ -1,0 +1,77 @@
+# Functional Requirements
+
+1. Das System muss ein Kundenportal bereitstellen, primär als Web-Portal mit optionale spätere mobile Nutzung.
+2. Benutzer müssen sich per E-Mail und Passwort anmelden können (Login).
+3. Optional soll Single Sign-On (SSO) durch Identity Provider wie Azure AD oder Google unterstützt werden (nicht final).
+4. Rollenmanagement mit mindestens den Rollen Admin, Sales und Kunde.
+5. Kunden sollen Angebote erstellen können basierend auf Produkt- und Preisdaten aus SAP.
+6. Es dürfen im MVP keine manuellen Sonderrabatte erlaubt sein, nur Standardrabatte.
+7. Ein mehrstufiger Freigabeprozess für Rabatte ist für spätere Phasen geplant.
+8. Kunden sollen Bestellungen und Rechnungen einsehen und Rechnungen herunterladen können.
+9. SAP-Integration im Lesemodus ist erforderlich zur Stammdaten-, Produkt- und Preisintegration.
+10. Das System muss einen minimalen Audit-Trail bereitstellen, um nachvollziehen zu können, wer wann welche Änderung durchgeführt hat.
+11. Backup und Disaster Recovery müssen für das MVP sichergestellt werden.
+12. Ein API-Layer muss vorhanden sein, bevorzugt mit OAuth-Absicherung, jedoch noch nicht final definiert.
+13. Kundenportale müssen EU-only hosted werden, das Hosting muss DSGVO-konform und nachweisbar sein.
+14. Test- und Entwicklungsumgebungen müssen pseudonymisierte oder synthetische Daten verwenden.
+15. Support im MVP beschränkt sich auf ein Kontaktformular ohne Ticketpersistenz.
+16. Supportanfragen müssen Datenschutz- und Löschkonzept berücksichtigen.
+
+# Non-functional Requirements
+
+1. Die Datenübertragung muss mindestens TLS-verschlüsselt sein (Ende-zu-Ende-Verschlüsselung ist unrealistisch).
+2. Das System muss DSGVO-konform betrieben werden, inklusive Double-Opt-In, Löschkonzept und Auditierbarkeit.
+3. Systeme und Logs müssen klar zwischen technischen Logs und Audit-Logs trennen mit unterschiedlichen Aufbewahrungsfristen.
+4. Die Skalierbarkeit muss so gestaltet sein, dass Nutzerzahlen von ca. 20 bis 20.000 unterstützt werden können, ohne Overengineering.
+5. Die Performance muss für eine schnelle Angebotserstellung ausreichend sein, auch bei eingeschränkter SAP-Verfügbarkeit (Fallback-Szenarien).
+6. Templates für Angebots-PDFs müssen versioniert und revisionssicher sein.
+7. Die Benutzeroberfläche soll primär Web-basiert und responsive sein mit gutem Nutzererlebnis.
+8. API-Requests müssen Rate Limiting und Missbrauchserkennung unterstützen (API Gateway bevorzugt, aber nicht im MVP verfügbar).
+9. Dokumentation des Systems und der Sicherheitsmaßnahmen ist verpflichtend, jedoch auf das Wesentliche begrenzt.
+
+# Constraints/Compliance
+
+1. Keine neuen eigenen Datenbankserver; Managed Services müssen genutzt werden.
+2. EU-only Hosting ist verpflichtend; globale Datenreplikation ist nur erlaubt, wenn sie deaktivierbar und nachweisbar ist.
+3. Keine Sonderrabatte im MVP ohne Freigabe (Beschränkung zur Risikominimierung).
+4. Löschen von Kundendaten muss technisch möglich und dokumentiert sein.
+5. Backup und Disaster Recovery müssen den geltenden Compliance-Richtlinien entsprechen.
+6. Keine persistente Ticketlösung für Support im MVP; Support wird per E-Mail und Kontaktformular bearbeitet (bewusste Einschränkung mit Risiken).
+7. Datenschutzgemäß müssen Testdaten pseudonymisiert oder synthetisch sein; SAP-Testdaten mit echten Kundendaten dürfen nicht ungeprüft verwendet werden.
+8. Audit-Trails müssen revisionssicher sein und Änderungen nachvollziehbar dokumentieren.
+9. Speicherung von personenbezogenen Daten unterliegt gesetzlichen Aufbewahrungspflichten und darf Löschanfragen widersprechen.
+10. API-Integration muss sich an zentrale API-Gateway-Policies halten, auch wenn Gateway im MVP nicht verfügbar ist.
+11. Mailing bzw. Push-Notifications mit Tracking und Einwilligung sind im MVP ausgeschlossen.
+12. Rechte und Rollen müssen strikt definiert und umgesetzt werden, insbesondere um Preis- und Rabattinformationen zu schützen.
+
+# Traceability
+
+| Anforderung | Quelle |
+| --- | --- |
+| Kundenportal mit Login und Rollen | input/transcripts/T9999_chaos.txt |
+| SSO optional (Azure AD, Google) | input/transcripts/T9999_chaos.txt |
+| Angebotserstellung mit SAP-Daten | input/transcripts/T9999_chaos.txt |
+| Keine Sonderrabatte im MVP | input/transcripts/T9999_chaos.txt |
+| Rechnungsdownload | input/transcripts/T9999_chaos.txt |
+| Audit-Trail minimal im MVP | input/transcripts/T9999_chaos.txt |
+| Backup und Disaster Recovery | input/transcripts/T9999_chaos.txt |
+| EU-only Hosting, Managed Services | input/transcripts/T9999_chaos.txt |
+| Supportkontaktformular ohne Ticketpersistenz | input/transcripts/T9999_chaos.txt |
+| Datenschutz (Double-Opt-In, Löschkonzept) | input/transcripts/T9999_chaos.txt |
+| TLS Verschlüsselung | input/transcripts/T9999_chaos.txt |
+| API Layer mit OAuth bevorzugt | input/transcripts/T9999_chaos.txt |
+| Dokumentation und Compliance | input/transcripts/T9999_chaos.txt |
+| Skalierbarkeit 20-20.000 Nutzer | input/transcripts/T9999_chaos.txt |
+| Keine neuen DB Server | input/transcripts/T9999_chaos.txt |
+| Testdaten pseudonymisiert/synthetisch | input/transcripts/T9999_chaos.txt |
+| Retention und Löschkonzept abgestimmt | input/transcripts/T9999_chaos.txt |
+
+# Annahmen und Risiken
+
+- MVP ist bewusst eingeschränkt; Funktionen wie Rabattfreigabe, Supportticket-System, Push Notifications und umfangreiche Analytics sind ausgenommen, um Zeitrahmen einzuhalten.
+- SAP-Verfügbarkeit ist eine kritische Abhängigkeit und kann die Angebotserstellung und Performance beeinflussen.
+- API-Gateway-Verfügbarkeit für MVP ist nicht gewährleistet (6 Wochen Warteliste).
+- Supportprozesse sind minimal und erzeugen Risiken für Kundenzufriedenheit.
+- Kostenschätzungen für EU-only Hosting sind noch offen und können Einfluss auf Budget haben.
+- Datenschutzkonflikte zwischen Löschung und Aufbewahrungspflichten erfordern spätere Klärungen.
+- Es besteht technisches Risiko bei der Umsetzung von OAuth und SSO im vorgegebenen Zeitrahmen.

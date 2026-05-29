@@ -1,0 +1,43 @@
+# Anforderungen
+
+## Functional Requirements
+- **Login**: E‑Mail/Passwort, Double‑Opt‑In, optional SSO (Azure AD/Google) – MVP implementiert nur E‑Mail/Passwort.
+- **Angebotserstellung**: Sales kann Angebote im Portal erstellen, Daten werden aus SAP (Produkt‑, Preis‑ und Rabattinformationen) gelesen. Keine manuellen Sonderrabatte im MVP (Constraint).
+- **Rechnungsdownload**: Kunden können ihre Rechnungen im PDF‑Format einsehen und herunterladen.
+- **Rollen & Berechtigungen**: Minimalrollen Admin, Sales, Kunde. Rollen bestimmen Zugriff auf Angebote, Rechnungen und Audit‑Logs.
+- **Audit Trail**: Jeder Zugriff und jede Änderung an Angeboten wird protokolliert (Wer, wann, Aktion).
+- **EU‑only Managed Hosting**: Das System muss in einer EU‑konformen Umgebung betrieben werden (keine Daten außerhalb der EU).
+- **Backup & Disaster Recovery**: Tägliche Backups, Wiederherstellungszeit < 4 h.
+- **API Layer**: REST‑API für Frontend‑ und SAP‑Integration, gesichert via OAuth (MVP‑Entwurf, Implementierung später).
+- **DSGVO‑Konformität**: Double‑Opt‑In, Löschkonzept, keine personenbezogenen Daten in technischen Logs, Datenminimierung (nur notwendige Kundendaten).
+- **KPI‑Erfassung**: Conversion Rate (Angebot → Bestellung) und Zeit bis Angebot – Basis‑Tracking im MVP (keine komplexe Analytics‑Infrastruktur).
+
+## Non-functional Requirements
+- **Performance**: Antwortzeit < 2 s für Angebotserstellung bei bis zu 2 000 gleichzeitigen Nutzern (Skalierbarkeit geplant, nicht zwingend im MVP).
+- **Sicherheit**: TLS für alle Verbindungen, OAuth‑basierte API‑Absicherung, Audit‑Logs getrennt von technischen Logs, Secrets Management.
+- **Verfügbarkeit**: 99,5 % im Produktionsbetrieb, 6‑Wochen‑Warteliste für API‑Gateway berücksichtigt – MVP nutzt ggf. internen Reverse‑Proxy.
+- **Compliance**: DSGVO, Schweizer Datenschutz (für Pilot‑Kunde), Aufbewahrungspflichten (Handelsrecht) – minimaler Retention‑Plan definiert.
+- **Internationalisierung**: UI in Deutsch und Englisch, Währungsunterstützung EUR und CHF (USD später).
+
+## Constraints/Compliance
+- **Zeit**: MVP in 8 Wochen, daher bewusst eingeschränkter Funktionsumfang.
+- **Budget**: Keine neue Datenbank, Nutzung von Managed Services (z. B. Managed PostgreSQL) – Kosten müssen geschätzt werden.
+- **SAP‑Integration**: Nur Lese‑Zugriff im MVP, Schreib‑Zugriff (Bestell‑Push) erst Phase 2.
+- **Keine Over‑Engineering**: Features wie vollwertiges Ticket‑System, umfangreiche Analytics, komplexe Multi‑Currency‑Logik, vollständige SSO‑Integration werden bewusst ausgeschlossen.
+- **Hosting**: EU‑only, nachweisbare Datenresidenz, keine globale Replikation.
+
+## Traceability
+| Quelle (Transkript) | Anforderung | Abschnitt |
+|---------------------|-------------|-----------|
+| Anna & Ben (Login‑Diskussion) | Login mit Double‑Opt‑In | Functional Requirements |
+| Clara (DSGVO) | Double‑Opt‑In, Löschkonzept, keine personenbezogenen Daten in Logs | Functional Requirements |
+| Ben (API Layer) | API Layer, OAuth | Functional Requirements |
+| Eva (Freigabe) | Rabatt‑Freigabe ab 15 % – ausgeschlossen im MVP | Constraints/Compliance |
+| David (Support) | Kontaktformular, kein Ticket‑System – bewusst ausgeschlossen | Constraints/Compliance |
+| Farid (Hosting) | EU‑only Managed Hosting | Non‑functional Requirements |
+| Anna (MVP‑Scope) | Kern‑Features (Login, Angebot, Rechnung, Rollen, Audit, Backup) | Functional Requirements |
+| Ben (Backup) | Backup & DR | Non‑functional Requirements |
+| Clara (Logging) | Trennung Audit‑ vs. technische Logs | Non‑functional Requirements |
+| Farid (Secrets) | Secrets Management | Non‑functional Requirements |
+| Anna (Internationalisierung) | Deutsch/Englisch, EUR/CHF | Functional Requirements |
+

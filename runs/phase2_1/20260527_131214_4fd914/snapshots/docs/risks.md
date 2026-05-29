@@ -1,0 +1,49 @@
+# Risiken für das Kundenportal‑MVP
+
+## 1. Fachliche Risiken
+| Risiko | Herkunft / Hinweis | Mögliche Auswirkungen | Gegenmaßnahme / Klärungsbedarf |
+|-------|-------------------|-----------------------|--------------------------------|
+| **Unklare Rabatt‑Freigabe** | Eva fordert Freigabe‑Workflow für Rabatte > 15 % (Zeile 380‑386). Im MVP ist das deaktiviert. | Angebote können fehlerhafte Rabatte enthalten → finanzielle Verluste, Compliance‑Probleme. | Definiere klare Schwellenwerte und implementiere temporären Hard‑Cut (nur Standard‑Rabatte). Dokumentiere im Scope‑Exclusion‑Log. |
+| **Support‑Prozess nicht definiert** | David fordert Kontakt‑Formular, kein Ticket‑System (Zeile 410‑418). | Manuelle Bearbeitung erhöht Fehlerrate, Verzögerungen im Kundenservice. | Risiko‑Registrierung als bewusste Scope‑Ausschluss‑Entscheidung; später Ticket‑System mit Audit‑Log planen. |
+| **Mehrwährung & Schweiz‑Compliance** | Diskussion über CHF, EU‑Only‑Hosting vs. Schweizer Datenschutz (Zeile 300‑340). | Falsche Währungsdarstellung oder DSGVO‑Verstoß bei Schweizer Kunden. | MVP auf EUR limitieren, offene Entscheidung für Schweiz im Phase‑2‑Roadmap festhalten. |
+| **Preis‑Aktualität / SAP‑Nacht‑Jobs** | SAP‑Preise werden nachts aktualisiert, kann zu veralteten Angeboten führen (Zeile 460‑470). | Kunden erhalten falsche Preise → Vertragsrisiko, Kundenzufriedenheit. | Hinweis im UI („Preisstand zum …“), Fallback‑Hinweis bei SAP‑Ausfall, später Echtzeit‑Cache‑Strategie prüfen. |
+| **Kein Sonderrabatt‑Workflow** | Eva verlangt Freigabe ab 15 % Rabatt, aber MVP schließt Sonderrabatte aus (Zeile 380‑386). | Vertrieb könnte unautorisiert Sonderrabatte geben. | Schulung / SOP für Vertrieb, klare Policy im MVP‑Dokument.
+
+## 2. Technische Risiken
+| Risiko | Herkunft / Hinweis | Mögliche Auswirkungen | Gegenmaßnahme / Klärungsbedarf |
+|-------|-------------------|-----------------------|--------------------------------|
+| **API‑Gateway‑Warteliste (6 Wochen)** | Ben nennt 6‑Wochen‑Warteliste (Zeile 430‑435). | Direkt-Expose der API erhöht Angriffsfläche, weniger Infrastruktur‑Sicherheit. | Minimal‑OAuth‑Implementation, IP‑Whitelisting, später Integration ins zentrale Gateway planen. |
+| **SAP‑Verfügbarkeit (kritische Abhängigkeit)** | Ben betont kritische SAP‑Anbindung (Zeile 460‑466). | Bei SAP‑Ausfall keine Angebotserstellung → Projekt‑Delay, Business‑Impact. | Fallback‑Anzeige‑Fehler, Offline‑Modus mit Hinweis, SLA‑Klärung mit SAP‑Team. |
+| **Keine neue Datenbank (Managed Service)** | Budget‑Constraint: keine DB, Managed Service nutzen (Zeile 84‑90). | Beschränkte Datenmodell‑Flexibilität, mögliche Performance‑Grenzen. | Auswahl eines skalierbaren Managed DB‑Service (z. B. PostgreSQL‑aaS) mit automatischem Skalieren. |
+| **Logging‑ und Audit‑Trennung** | Clara fordert keine personenbezogenen Daten in technischen Logs (Zeile 41‑44). | Risiko von Datenleck‑Durchsick‑Logs, DSGVO‑Verstoß. | Implementiere strukturiertes Logging (Maskierung), separate Audit‑Log‑Datenbank. |
+| **Rate‑Limiting & Missbrauchsschutz** | Ben/Clara fordern Rate‑Limiting (Zeile 260‑267). | Ohne ausreichenden Schutz können Bulk‑Downloads DoS auslösen, Datenverlust. | Implementiere API‑Level‑Rate‑Limit, ggf. Throttling im Managed Service. |
+| **Backup & DR nicht getestet** | Farid erwähnt tägliche Backups, aber keine Tests (Zeile 190‑193). | Datenverlust bei Systemausfall, Compliance‑Risiko. | Führe regelmäßige Restore‑Tests, dokumentiere Recovery‑Zeitpunkt‑Ziel (RTO). |
+| **Secrets‑Management fehlt** | Farid nennt Secrets‑Management als nötig (Zeile 352‑357). | Hard‑coded Credentials → Sicherheitslücke. | Nutzung von Cloud‑KMS / Vault, CI‑Pipeline‑Integration. |
+| **Umgebungen mit echten SAP‑Daten** | Clara warnt vor echten Kundendaten in Dev/Test (Zeile 340‑350). | Datenschutz‑Verstoß, Test‑Daten‑Leak. | Datenmaskierung, synthetische Testdaten, strikte Zugangskontrolle. |
+| **Caching von Kundendaten** | Diskussion über Cache‑Risiko für preis‑ und rabattbezogene Daten (Zeile 470‑480). | Veraltete oder falsche Daten könnten ausgeliefert werden. | Keine Kundendaten im Cache, nur Produkt‑Stammdaten; Cache‑Invalidierung ggf. später. |
+| **Internationalisierung (Sprachen, Recht)** | USA‑Ausweitung & rechtliche Änderungen (Zeile 340‑352). | Nicht‑EU‑Recht kann MVP‑Compliance gefährden. | MVP auf DACH‑Region beschränken, klare Roadmap für Expansion. |
+
+## 3. Compliance‑ und Datenschutzrisiken
+| Risiko | Herkunft / Hinweis | Mögliche Auswirkungen | Gegenmaßnahme / Klärungsbedarf |
+|-------|-------------------|-----------------------|--------------------------------|
+| **Double‑Opt‑In & Einwilligungs‑Management** | Clara fordert Double‑Opt‑In (Zeile 20‑23). | Fehlende Einwilligung → DSGVO‑Bußgeld. | Implementiere Double‑Opt‑In‑Workflow, speichern von Einwilligungs‑Timestamp. |
+| **Lösch‑Workflow unvollständig** | Clara & Anna diskutieren Kunden‑Löschung (Zeile 57‑60, 370‑380). | Nicht‑Erfüllung des Rechts auf Datenlöschung. | Minimaler Lösch‑Endpoint, Dokumentation, später automatisierter Prozess. |
+| **EU‑Only‑Hosting vs. Kosten** | Farid betont EU‑Only (Zeile 180‑185) und mögliche höhere Kosten (Zeile 190‑195). | Budget‑Überschreitung, mögliche Nutzung von nicht‑EU‑Rechenzentren → DSGVO‑Verstoß. | Kostenschätzung zeitnah, vertragliche Bindung an EU‑Rechenzentren. |
+| **Auftragsverarbeitungsvertrag (AVV)** | Clara erwähnt AVV nötig (Zeile 20‑23). | Fehlender AVV → Vertragspartner‑Risiko, Bußgeld. | AVV mit Cloud‑Provider abschließen, vor Go‑Live prüfen. |
+| **Datenminimierung & SAP‑Abruf** | Clara hinterfragt Datenminimierung (Zeile 300‑310). | Übermäßige Datenhaltung erhöht Risiko von Datenlecks. | Architektur so gestalten, dass nur notwendige Daten on‑demand aus SAP gezogen werden. |
+| **Retention vs. Löschen (Rechtsvorschriften)** | Clara verweist auf gesetzliche Aufbewahrungspflichten (Zeile 410‑420). | Konflikt zwischen Aufbewahrungspflicht und Löschrecht. | Definition eines Retention‑Plans (z. B. 2 Jahre) mit Ausnahmen für Rechtsvorgaben. |
+| **Personenbezogene Daten in Logs** | Clara betont keine personenbezogenen Daten in Monitoring‑Logs (Zeile 410‑420). | Datenmissbrauch bei Log‑Analyse, DSGVO‑Verstoß. | Log‑Maskierung, getrennte Audit‑Log‑Speicherung. |
+| **Support‑E‑Mails mit Kundendaten** | David/Clara warnen, dass E‑Mails personenbezogene Daten enthalten können (Zeile 410‑418). | E‑Mail‑Archivierung kann DSGVO‑Verstoß sein. | Nutzung von ticket‑systemfreiem, DSGVO‑konformem E‑Mail‑Routing oder anonymisiertem Kontakt‑Formular. |
+
+## 4. Widersprüche & Unsicherheiten
+| Widerspruch / Unsicherheit | Kontext | Risiko | Kommentar |
+|---------------------------|---------|-------|-----------|
+| **Mobile vs. Web‑First** | Anna ist unsicher, ob Mobile‑First oder Web‑First (Zeile 1‑4). | Ressourcen‑Verteilung unklar → mögliche Scope‑Creep. | Entscheide im Sprint‑Planning, dokumentiere Entscheidung. |
+| **SSO (Azure AD / Google) vs. MVP‑Zeitplan** | Anna will optional SSO, Ben sieht Kosten/Komplexität (Zeile 84‑90). | Gefahr, dass SSO‑Implementierung das 8‑Wochen‑Ziel gefährdet. | SSO auf Phase‑2 verschieben, klar im Scope‑Exclusion. |
+| **Kosten EU‑Only‑Hosting** | Farid sagt EU‑Only ist teurer, Kosten unbekannt (Zeile 190‑195). | Budget‑Risiko, mögliche Nicht‑Einhalten des Budgets. | Frühzeitige Kostenschätzung, ggf. Alternativen prüfen. |
+| **SAP‑Testdaten‑Qualität** | Clara warnt vor echten Kundendaten in Test (Zeile 340‑350). | Datenschutz‑Risiko bereits in Entwicklung. | Daten‑Sanitizing‑Prozess definieren, Verantwortlichen bestimmen. |
+| **API‑Gateway‑Warteliste vs. Direct‑Expose** | Ben: 6‑Wochen‑Warteliste, aber MVP‑Deadline 8 Wochen (Zeile 430‑435). | Sicherheits‑ und Governance‑Risiko. | Dokumentiere temporäre Lösung, plane schnelle Migration nach Gateway. |
+| **Angebots‑Freigabe‑Grenze (15 % vs. 20 %)** | Eva unsicher, wo Schwelle liegt (Zeile 380‑390). | Inkonsistente Implementierung, Compliance‑Risiko. | Definiere klare Schwelle im Product‑Backlog, setze im MVP fest. |
+
+---
+*Alle Angaben basieren ausschließlich auf dem Transkript `input/transcripts/T9999_chaos.txt` und dem Kontext‑Dokument `runs/phase2_1/20260527_131214_4fd914/state/context.md`.*

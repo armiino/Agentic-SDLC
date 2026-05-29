@@ -44,9 +44,9 @@ public static class RequirementsPrompt2
             required_arguments: ["path", "content", "intent", "reason", "evidence"]
 
         Task:
-          - "Lies zuerst {{contextPath}}, falls vorhanden."
-          - "Lies relevante Transkripte aus input/transcripts/, wenn sie fuer Requirements noetig sind."
-          - "Leite Requirements nur aus Kontext und Transkript ab."
+          - "Lies relevante Transkripte aus input/transcripts/"
+          - "Lies {{contextPath}}, falls vorhanden.
+          - "Leite Requirements nur aus Kontext UND Transkript ab."
           - "Schreibe genau docs/requirements.md."
           - "Schreibe keine Risiken, Architektur oder offenen Fragen als eigene Dateien."
 

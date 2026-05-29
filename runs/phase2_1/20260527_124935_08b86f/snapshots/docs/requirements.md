@@ -1,0 +1,86 @@
+# Anforderungen für das Kundenportal (MVP)
+
+## Functional Requirements
+1. **Login & Authentifizierung**
+   - E‑Mail/Passwort‑Login mit TLS‑Verschlüsselung.
+   - Double‑Opt‑In Verfahren für neue Benutzer (DSGVO).
+   - Optional: SSO‑Integration (Azure AD / Google) in späteren Phasen.
+2. **Kundenportal**
+   - Dashboard für Kunden zur Ansicht von Bestellungen und Rechnungen.
+   - PDF‑Download von Rechnungen und Bestellungen.
+3. **Angebotserstellung**
+   - Sales‑User können Angebote basierend auf Produkt‑ und Preisdaten aus SAP erstellen.
+   - Nur Standard‑Rabatte zulässig (keine Sonderrabatte >15 % ohne Freigabe – ausgeschlossen im MVP).
+   - Angebot kann als Draft gespeichert und nach erfolgreicher Erstellung als "Approved" markiert werden.
+4. **Rollen‑ und Berechtigungskonzept**
+   - Rollen: **Admin**, **Sales**, **Kunde**.
+   - Admin: Vollzugriff auf Systemkonfiguration, Nutzer‑ und Rollen‑Management.
+   - Sales: Zugriff auf Angebots‑ und Kundendaten, darf keine Sonderrabatte vergeben.
+   - Kunde: Zugriff auf eigene Bestellungen, Rechnungen und eigene Angebots‑Übersicht.
+5. **Audit‑Logging**
+   - Protokollierung von Nutzer‑Actions (Login, Angebotserstellung, Änderungen) mit Zeitstempel.
+   - Trennung von technischer Log‑Datei (keine personenbezogenen Daten) und Audit‑Log.
+6. **SAP‑Integration (Read‑Only)**
+   - Lesen von Produkt‑, Preis‑ und Kundendaten aus SAP.
+   - Fehlertoleranz: Bei SAP‑Ausfall wird dem Nutzer eine klare Fehlermeldung angezeigt.
+7. **Backup & Disaster Recovery**
+   - Basis‑Backup des Anwendung‑ und Daten‑Stores, mindestens wöchentlich getestet.
+8. **Hosting & Datenschutz**
+   - EU‑only Managed Service, nachweisbare Datenresidenz.
+   - DSGVO‑konforme Verarbeitung, Datenminimierung und Löschkonzept (Right‑to‑Be‑Forgotten).
+9. **Performance & Skalierbarkeit (Basis)**
+   - Unterstützung von 200 – 20 000 gleichzeitigen Nutzern (Grund‑Rate‑Limiting, Pagination für Listen).
+   - Caching nur für produktbezogene (nicht‑kundenspezifische) Daten.
+10. **Internationalisierung (MVP)**
+    - Unterstützung von Deutsch und Englisch.
+    - Mehrwährung (EUR, optional CHF) nur für Anzeige, keine Preis‑Berechnung im MVP.
+11. **Kontakt‑Formular (Support)**
+    - Einfaches Kontakt‑Formular, Zuordnung zum Kundenkonto, Speicherung per E‑Mail (keine Ticket‑Datenbank).
+
+## Non-functional Requirements
+- **Sicherheit**: TLS 1.2+ für alle Verbindungen, OAuth 2.0‑Token‑Mechanismus für API‑Zugriff (optional für spätere Phase).
+- **Compliance**: Vollständige DSGVO‑Erfüllung (Double‑Opt‑In, Lösch‑ und Aufbewahrungskonzept, keine personenbezogenen Daten in Monitoring‑Logs).
+- **Verfügbarkeit**: 99,5 % im Produktionsbetrieb, abhängig von SAP‑Verfügbarkeit (kritische Komponente).
+- **Backup**: Tägliche inkrementelle Backups, wöchentliche Vollbackups, Wiederherstellungstest mindestens einmal pro Woche.
+- **Monitoring**: Anwendung‑ und Infrastruktur‑Monitoring ohne personenbezogene Daten, getrennt von Audit‑Logs.
+- **Kosten**: EU‑Only Managed Service ohne eigene DB‑Instanz, Kosten‑Schätzung bis Freitag für Vorstand (grobe Ober‑/Untergrenzen).
+- **Entwicklungs‑ und Testumgebungen**: Dev, Test, Prod; Testdaten pseudonymisiert, keine echten Kundendaten.
+- **Secrets Management**: Nutzung eines zentralen Secrets‑Stores (z. B. Vault) für API‑Keys, DB‑Credentials.
+
+## Constraints / Compliance
+- **Keine neue Datenbank**: Nutzung eines Managed Service (z. B. PostgreSQL‑as‑a‑Service) im EU‑Region.
+- **Keine SSO im MVP**: SSO wird nur als zukünftiges Feature definiert.
+- **Kein vollwertiges Ticket‑System**: Nur ein Kontakt‑Formular, um den MVP‑Zeitrahmen zu halten.
+- **Keine Sonderrabatte**: Rabatt‑Freigabe‑Workflow erst ab Phase 2.
+- **API‑Gateway**: Direkter Service‑Aufruf, da API‑Gateway‑Warteliste 6 Wochen überschreitet.
+- **Datenresidenz**: Alle Daten müssen innerhalb der EU gespeichert werden; EU‑Only Hosting ist zwingend.
+- **Rate‑Limiting**: Grund‑Rate‑Limit von 100 Requests/Minute pro Nutzer, um Missbrauch zu verhindern.
+
+## Traceability
+| ID | Quelle (Transkript‑Zeile) | Beschreibung |
+|----|---------------------------|--------------|
+| FR‑1 | 1‑4, 84‑90 | Login mit E‑Mail/Passwort, Double‑Opt‑In, TLS
+| FR‑2 | 31‑34, 157‑162 | Kundenportal Dashboard & PDF‑Download
+| FR‑3 | 24‑30, 84‑88 | Angebots‑Erstellung aus SAP‑Daten (Read‑Only)
+| FR‑4 | 42‑48, 158‑165 | Rollenmodell Admin/Sales/Kunde
+| FR‑5 | 438‑452, 470‑482 | Audit‑Logging getrennt von technischen Logs
+| FR‑6 | 24‑30, 191‑196 | SAP‑Read‑Only Integration, Fehlermeldung bei Ausfall
+| FR‑7 | 276‑284 | Backup & Disaster Recovery Basis
+| FR‑8 | 286‑304, 311‑322 | EU‑Only Managed Hosting, Kosten‑Unsicherheit
+| FR‑9 | 492‑506, 514‑528 | Rate‑Limiting, Pagination, Performance‑Grundlage
+| FR‑10 | 354‑368, 378‑390 | Internationalisierung DE/EN, optionale CHF
+| FR‑11 | 140‑147, 177‑184 | Kontakt‑Formular für Support
+| NFR‑1 | 12‑15, 63‑70 | DSGVO‑Konformität (Opt‑In, Löschkonzept)
+| NFR‑2 | 438‑452, 470‑482 | Audit‑Log vs. technische Log Trennung
+| NFR‑3 | 438‑452, 470‑482 | Aufbewahrungspflichten vs. Right‑to‑Be‑Forgotten
+| NFR‑4 | 331‑340 | API‑Gateway‑Warteliste → Direktaufruf
+| NFR‑5 | 286‑304, 311‑322 | EU‑Only Hosting Pflicht
+| NFR‑6 | 492‑506, 514‑528 | Rate‑Limiting, Monitoring ohne personenbezogene Daten
+| CON‑1 | 31‑34, 157‑162 | Keine neue DB, Managed Service Nutzung
+| CON‑2 | 84‑90 | Keine SSO im MVP
+| CON‑3 | 140‑147, 177‑184 | Kein Ticket‑System, nur Kontakt‑Formular
+| CON‑4 | 232‑250, 268‑285 | Keine Sonderrabatt‑Freigabe im MVP
+| CON‑5 | 331‑340 | API‑Gateway nicht verfügbar im MVP
+| CON‑6 | 286‑304, 311‑322 | EU‑Only Hosting Kostenrisiko
+
+*Alle Anforderungen leiten sich direkt aus den genannten Transkript‑Abschnitten ab. Offene Punkte (z. B. genaue Kosten, finaler Pilot‑Kunde, detaillierte Lösch‑ und Retention‑Regeln) sind als Annahmen bzw. zukünftige Entscheidungen gekennzeichnet.*

@@ -1,0 +1,54 @@
+# Projektkontext – Kundenportal (MVP)
+
+**Hauptziel**
+- Schnellere Angebotserstellung für das Sales‑Team (Conversion Rate Offer → Order) und Bereitstellung von Rechnungs‑ und Bestellübersichten für Kunden.
+
+**Stakeholder & Rollen**
+- **Anna (Product Owner)** – Fokus auf MVP‑Lieferung in 8 Wochen, definiert Kern‑Features und Prioritäten.
+- **Ben (Architekt/Entwickler)** – Technische Machbarkeiten, API‑Layer, Integration zu SAP, Security‑ und Infrastruktur‑Fragen.
+- **Clara (Compliance/DSGVO)** – Datenschutz, Audit‑Trail, Lösch‑ und Rollen‑Konzept, EU‑Datenresidenz.
+- **David (Customer Support)** – Support‑Prozesse, Kontakt‑Formular vs. Ticket‑System, Datenlöschung.
+- **Eva (Finance)** – Angebots‑Freigabe‑Workflow, Rabatt‑Grenzwerte, PDF‑Export, rechtliche Aufbewahrungspflichten.
+- **Farid (IT Operations)** – Managed Hosting, EU‑Only‑Hosting, Monitoring, Backup, Secrets‑Management.
+- **Weitere (optional)** – weitere Fachbereiche (Marketing, Legal) werden im Laufe des Projekts einbezogen.
+
+**Kernthemen & zentrale Anforderungen**
+| Thema | Aussage im Transcript | MVP‑Umfang / Einschränkung |
+|-------|-----------------------|---------------------------|
+| **Login** | Double‑Opt‑In per E‑Mail, SSO (Azure AD/Google) als optional | **MVP:** E‑Mail/Passwort‑Login mit Double‑Opt‑In. SSO optional, nicht verpflichtend. |
+| **Angebotserstellung** | Nutzung von SAP‑Produkt‑ und Preis‑Daten; schnelle Angebotserstellung ist das Kernziel. | **MVP:** Angebots‑Wizard, SAP‑Lesezugriff, keine Sonderrabatte > Standard‑Rabatt. Freigabe‑Workflow erst in Phase 2. |
+| **Rechnungs‑/Bestell‑Download** | Kunden sollen Rechnungen einsehen & herunterladen. | **MVP:** Rechnungs‑PDF‑Download, keine Inline‑Zahlungsoption. |
+| **Rollen & Berechtigungen** | Admin, Sales, Kunde (evtl. Manager, Support). | **MVP:** Minimal‑Rollenmodell (Admin, Sales, Kunde). Support‑Rolle nur als Kontakt‑Formular (keine Ticket‑Persistenz). |
+| **Audit‑Log / Logging** | Pflicht für Änderungen, DSGVO‑Konformität, getrennte technische Logs. | **MVP:** Minimaler Audit‑Trail (wer hat Angebot erstellt/geändert) und technisches Logging ohne personenbezogene Daten. |
+| **DSGVO / Datenschutz** | Double‑Opt‑In, Löschkonzept, Auftragsverarbeitungsverträge, EU‑Only‑Hosting. | **MVP:** Double‑Opt‑In, Grund‑Lösch‑Workflow (Kunden‑Konto‑Löschung), EU‑Managed‑Service, keine personenbezogenen Daten in System‑Logs. |
+| **API‑Layer** | Notwendig für SAP‑Integration, zukünftiges Gateway. | **MVP:** Eigenständige REST‑API (OAuth‑basiert, einfach gehalten). Nutzung des zentralen API‑Gateways erst nach 6‑Wochen‑Warteliste (Phase 2). |
+| **Backup / Disaster Recovery** | Pflicht bei personenbezogenen Daten. | **MVP:** Daily‑Backup des Managed Service, Aufbewahrung nach EU‑Standard. |
+| **Performance / Skalierbarkeit** | Erwartete Nutzerzahl 200 – 20 000. | **MVP:** Skalierbare Managed‑Service‑Umgebung, aber kein Over‑Engineering; Rate‑Limiting (z. B. 10 Requests / Sekunde pro Nutzer). |
+| **Internationalisierung** | Start DACH, später EU/USA, Mehrwährung (EUR, CHF, USD). | **MVP:** Deutsch + Englisch UI, Währung = EUR (CHF als optionales Feature in Phase 2). |
+| **Support‑Prozess** | Wunsch nach Kontakt‑Formular, kein Ticket‑System im MVP. | **MVP:** Einfaches Kontakt‑Formular, Weiterleitung per E‑Mail, keine Persistenz von Support‑Tickets. |
+| **Freigabe‑Workflow für Rabatte** | > 15 % Rabatt muss freigegeben werden. | **MVP:** Keine manuellen Sonderrabatte erlaubt. Standard‑Rabatt‑Logik aus SAP. Freigabe‑Workflow ab Phase 2. |
+| **PDF‑Export & Vorlagen** | Rechtskonforme PDFs mit Fußnoten, Versions‑Info. | **MVP:** Angebots‑PDF‑Export mit generischer Vorlage, Versions‑ID, minimale rechtliche Hinweise. |
+| **Monitoring & Logging** | Keine personenbezogenen Daten in Monitoring‑Logs, getrennte Audit‑Logs. | **MVP:** Grund‑Monitoring (Uptime, Errors) ohne Nutzer‑Daten; Audit‑Log separat. |
+| **Umgebungen** | Dev / Test / Prod, Testdaten ohne echte Kundendaten. | **MVP:** Drei Umgebungen, synthetische Testdaten, kein Zugriff auf produktive SAP‑Daten in Dev/Test. |
+| **SAP‑Verfügbarkeit** | Kritische Abhängigkeit; keine Schreibrechte im MVP. | **MVP:** Nur Lesenzugriff, Fallback‑Strategie (Anzeige‑Fehler, kein Angebot). |
+| **Caching** | Diskussion über Produkt‑ vs. Kundendaten‑Cache. | **MVP:** Kein Kundendaten‑Cache; Produkt‑ und Preisdaten ggf. im Memory‑Cache (keine personenbezogenen Daten). |
+| **Rate‑Limiting / Missbrauchsschutz** | Bedarf an Schutz bei Bulk‑Downloads. | **MVP:** Einfaches Rate‑Limiting über API‑Gateway‑Mock (falls vorhanden) oder Anwendungsebene. |
+
+**Offene Fragen / Risiken (bewusste Ausschlüsse im MVP)**
+- **Spezialrabatte / Freigabe‑Workflow** – Nicht implementiert, kann zu Fehlangeboten führen.
+- **Ticket‑System / Support‑Persistenz** – Kontakt‑Formular nur, erhöht manuellen Aufwand.
+- **Mehrwährung & Schweiz‑Compliance** – CHF und Schweizer Datenschutz erst in Phase 2.
+- **API‑Gateway‑Warteliste** – Direkt‑Expose der API im MVP, potentiell weniger Sicherheit.
+- **Full‑Text‑Search / Analytics** – Keine Tracking‑/Analytics‑Integration im MVP.
+- **Automatisierte Preis‑Updates (SAP nachts)** – Angebot kann ggf. veraltete Preise enthalten.
+- **Langfristige Aufbewahrung vs. Löschrecht** – Minimaler Retention‑Plan (z. B. 2 Jahre) definiert, detaillierte Rechtsprüfung fehlt.
+- **Umgang mit SAP‑Testdaten** – Gefahr von echten Kundendaten in Testumgebung, muss manuell gesäubert werden.
+- **Hosting‑Kosten EU‑Only** – Kostenschätzung fehlt, könnte das Budget überschreiten.
+- **Internationalisierung (Sprachen, Rechtsrahmen)** – Nicht Teil des MVP.
+- **Backup‑ und Disaster‑Recovery‑Tests** – Noch nicht umgesetzt, Risiko für Datenverlust.
+
+**Quellenhinweise**
+Alle genannten Punkte stammen aus dem Transkript `input/transcripts/T9999_chaos.txt` (Stakeholder‑Gespräch, 2026‑05‑27). Die jeweiligen Aussagen sind im Text eindeutig zugeordnet (z. B. [Anna] → Login‑Anforderungen, [Clara] → DSGVO‑Pflichten, …).
+
+**Zusammenfassung**
+Das MVP fokussiert sich auf ein Kern‑Kundenportal mit Login, Angebots‑Wizard, Rechnungs‑Download und minimalem Rollen‑/Audit‑Modell, das sämtliche rechtlichen und sicherheitsrelevanten Grundanforderungen (DSGVO, Logging, Backup, EU‑Hosting) erfüllt. Alle weiterführenden Features (z. B. Sonderrabatte‑Freigabe, Ticket‑System, Mehrwährung, vollständige API‑Gateway‑Integration) werden bewusst als **Scope‑Ausschlüsse** gekennzeichnet und als Risiken dokumentiert, um spätere Entscheidungen transparent zu halten.

@@ -1,0 +1,43 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarfe
++ 
++ ## Fachliche Fragen
++ - **Rabatt‑Freigabe‑Workflow**: Welche konkrete Schwelle (15 % vs. 20 % vs. 30 %) gilt für die Freigabe und welche Rollen (Manager, Finance) müssen autorisieren? *(Quelle: Eva, Zeilen 380‑390)*
++ - **Mehrwährungs‑Support**: Soll das MVP bereits CHF unterstützen oder ausschließlich EUR? Wie wirken sich mögliche Schweizer Datenschutz‑ und Steueranforderungen auf das Design aus? *(Quelle: Anna/Farid, Zeilen 300‑340)*
++ - **Support‑Prozess**: Wird das Kontakt‑Formular langfristig durch ein Ticket‑System ersetzt? Welche Daten (Kundendaten, Anfrage‑Inhalt) müssen im Support‑Workflow gespeichert und ggf. gelöscht werden? *(Quelle: David, Zeilen 410‑418)*
++ - **Preis‑Aktualität**: Wie soll mit nächtlichen Preisänderungen in SAP umgegangen werden? Benötigen wir einen Hinweis im UI oder ein Fallback‑Verhalten bei SAP‑Ausfall? *(Quelle: Ben, Zeilen 460‑470)*
++ - **Angebots‑Freigabe‑Grenzen**: Wie wird die Policy für Sonderrabatte definiert (z. B. > 15 % → Manager‑Freigabe, > 30 % → Finance)? *(Quelle: Eva, Zeilen 380‑390)*
++ - **KPI‑Definition**: Welche konkreten Kennzahlen (Conversion‑Rate, Zeit bis Angebot, durchschnittlicher Bestellwert) sollen gemessen werden und wie werden sie erhoben? *(Quelle: Anna, Zeilen 120‑124)*
++ - **Mobile‑First vs. Web‑First**: Welche Plattform hat Priorität für das MVP? Wie wirkt sich das auf Ressourcen‑ und Zeitplan aus? *(Quelle: Anna, Zeilen 1‑4)*
++ - **Lösch‑Workflow für Kundenkonten**: Wie detailliert muss das Lösch‑ und Aufbewahrungs‑Modell sein (z. B. sofortige Löschung vs. gesetzliche Aufbewahrungsfristen)? *(Quelle: Clara, Zeilen 57‑60)*
++ 
++ ## Technische Fragen
++ - **API‑Gateway‑Integration**: Wie soll die Migration vom temporären Reverse‑Proxy zum zentralen Unternehmens‑API‑Gateway nach der 6‑Wochen‑Warteliste konkret erfolgen? *(Quelle: Ben, Zeilen 430‑435)*
++ - **Managed‑DB‑Auswahl**: Welcher EU‑Only Managed‑Database‑Service (z. B. Azure PostgreSQL, AWS RDS EU) wird verwendet und welche Kosten entstehen? *(Quelle: Farid, Zeilen 84‑90/190‑195)*
++ - **Secrets‑Management**: Welches Tool (HashiCorp Vault, Cloud‑KMS) wird für die Verwaltung von API‑Keys und DB‑Credentials eingesetzt? *(Quelle: Farid, Zeilen 352‑357)*
++ - **Backup‑ und DR‑Testplan**: Wie häufig sollen Restore‑Tests durchgeführt werden und welches Recovery‑Time‑Objective (RTO) ist akzeptabel? *(Quelle: Farid, Zeilen 190‑193)*
++ - **Caching‑Strategie**: Darf irgendeine Form von Kundendaten‑Cache (z. B. Rabatte) verwendet werden oder ausschließlich Produkt‑Stammdaten? *(Quelle: Ben, Zeilen 470‑480)*
++ - **Rate‑Limiting‑Details**: Welche Grenzwerte (Requests / Sekunde, Burst‑Size) sind für verschiedene Nutzer‑Typen (Kunde, Sales, Admin) sinnvoll? *(Quelle: Ben, Zeilen 260‑267)*
++ - **Umgebungs‑Datenmaskierung**: Wie wird sichergestellt, dass in Dev/Test‑Umgebungen keinerlei reale Kundendaten aus SAP verwendet werden? *(Quelle: Clara, Zeilen 340‑350)*
++ - **Monitoring‑Daten**: Welche konkreten Metriken sollen erfasst werden, ohne personenbezogene Daten zu loggen? *(Quelle: Clara, Zeilen 410‑420)*
++ 
++ ## Widersprüche / Klärungsbedarf
++ - **SSO‑Umfang**: Anna will optional SSO, Ben sieht fehlendes Budget und Zeit. Entscheidung, ob SSO im MVP enthalten ist, fehlt. *(Quelle: Anna/Ben, Zeilen 84‑90)*
++ - **Mobile vs. Web‑First**: Unterschiedliche Meinungen zu Priorität führen zu potenziellem Scope‑Creep. *(Quelle: Anna, Zeilen 1‑4)*
++ - **Kosten EU‑Only‑Hosting**: Farid meint höhere Kosten, aber keine Schätzung liegt vor. Budget‑Impact ist unklar. *(Quelle: Farid, Zeilen 190‑195)*
++ - **Rabatt‑Schwelle**: Eva nennt 15 % als Grenze, später wird 20 % diskutiert. Klare Definition fehlt. *(Quelle: Eva, Zeilen 380‑390)*
++ - **SAP‑Testdaten‑Qualität**: Clara warnt vor echten Kundendaten in Test‑Umgebung, es gibt noch keinen Prozess zur Anonymisierung. *(Quelle: Clara, Zeilen 340‑350)*
++ - **Backup‑Kosten vs. Aufbewahrungsfrist**: Unklare Aufbewahrungsdauer (30 Tage im Draft) vs. gesetzliche Vorgaben (mehrere Jahre). *(Quelle: Clara, Zeilen 410‑420)*
++ 
++ ## Mögliche Ansprechpartner / Rollen
++ - **Produkt Owner (Anna)** – Priorisierung von Mobile/Web‑First, Scope‑Entscheidungen, MVP‑Zeitplan.
++ - **Architekt / Lead Developer (Ben)** – Technische Machbarkeit, API‑Gateway‑Strategie, SAP‑Integration.
++ - **Compliance / DSGVO (Clara)** – Double‑Opt‑In, Lösch‑Workflow, Datenresidenz, Logging‑Richtlinien.
++ - **Finance (Eva)** – Rabatt‑Freigabe‑Policy, KPI‑Definition, Aufbewahrungsfristen.
++ - **Customer Support (David)** – Support‑Prozess, Kontakt‑Formular‑Anforderungen, Datenlöschungen.
++ - **IT Operations (Farid)** – Hosting‑Optionen, Backup‑Strategie, Secrets‑Management, Kostenabschätzung.
++ 
++ ---
++ *Alle offenen Fragen leiten sich direkt aus dem Transkript `input/transcripts/T9999_chaos.txt` sowie dem Kontext‑Dokument `runs/phase2_1/20260527_131214_4fd914/state/context.md` ab.*

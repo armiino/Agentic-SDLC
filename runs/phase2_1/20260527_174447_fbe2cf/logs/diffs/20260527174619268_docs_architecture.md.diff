@@ -1,0 +1,71 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturueberblick Kundenportal MVP
++ 
++ ## 1. Systemkontext
++ Das Kundenportal ist eine webbasierte Anwendung mit Fokus auf schnelle Angebotserstellung und Rechnungsanzeige fuer Kunden. Es dient als Schnittstelle zwischen Kunden, Sales und internen Systemen. Zentrale externe Systeme sind SAP (Datenquelle fuer Produkt- und Preisinformationen) und Identity Provider fuer Authentifizierung (SSO moeglich, noch offen).
++ 
++ Das System wird auf EU-only Managed Hosting betrieben, um DSGVO-Konformitaet und Datenresidenz zu gewaehren. Kein eigener Datenbankserver wird betrieben; statt dessen kommen Managed Services zum Einsatz.
++ 
++ ## 2. Wichtige Komponenten
++ 
++ ### 2.1 Frontend
++ - Web-basiertes, responsives Kundenportal
++ - Funktionen: Login, Angebotsformular, Rechnungsanzeige
++ - Rollenmanagement (Admin, Sales, Kunde)
++ 
++ ### 2.2 Backend / API Layer
++ - Integration mit SAP zum Lesen von Stammdaten, Preisen und Rabattlogiken
++ - API Management mit OAuth (noch offen) oder alternativen Sicherheitsmechanismen
++ - Business Logik fuer Angebotsworkflow, Rollen- und Berechtigungsprüfung
++ - Audit Trail / Logging Komponente fuer Nachvollziehbarkeit
++ - Backup und Disaster Recovery Funktionalitaeten
++ 
++ ### 2.3 Identity und Access Management
++ - Benutzerverifizierung via E-Mail + Passwort
++ - Optionales SSO mit Azure AD oder Google (noch offen)
++ - Rollenbasierte Zugriffskontrolle
++ 
++ ### 2.4 Infrastruktur und Dienste
++ - EU-only Managed Hosting
++ - Backup- und Recovery-Systeme
++ - Sicherheitskomponenten (TLS, Secrets Management)
++ - Test- und Entwicklungsumgebungen mit pseudonymisierten Daten
++ 
++ ## 3. Schnittstellen und Integrationspunkte
++ 
++ - SAP Backend: Lesen von Stammdaten, Preisinformationen, Rabattlogik
++ - Identity Provider: Optional für SSO (Azure AD / Google)
++ - API Gateway: Vorgeschriebener Integrationspunkt, im MVP aber (ggf.) nicht verfuegbar
++ - E-Mail-System: Versand von Double-Opt-In und E-Mail-Benachrichtigungen
++ - Supportkontakt: Kontaktformular ohne persistentes Ticketsystem (bewusste Limitation)
++ 
++ ## 4. Daten- und Sicherheitsaspekte
++ 
++ - Datenhaltung ausschliesslich in EU-konformen Managed Services
++ - DSGVO-konformitaet inklusive Double-Opt-In, Löschkonzept und Auditierbarkeit
++ - Verschluesselung: TLS fuer Transportweg; keine Ende-zu-Ende Verschluesselung
++ - Audit Logs differenziert zwischen technischen Logs und Datenschutz-Logs mit unterschiedlichen Aufbewahrungsfristen
++ - Minimierung personenbezogener Daten in Logs
++ - Backup und Disaster Recovery unter Einhaltung von Compliance-Anforderungen
++ - Rollen- und Berechtigungsmodell mit strenger Zugriffskontrolle, insbesondere fuer Preise und Rabatte
++ - Testdaten sind entweder pseudonymisiert oder synthetisch
++ 
++ ## 5. Offene Architekturentscheidungen
++ 
++ - Identity Management: Endgueltige Entscheidung ueber OAuth, SSO und Identity Provider steht noch aus
++ - API Gateway: Verfuegbarkeit und Integration im MVP sind ungeklärt (Warteliste 6 Wochen)
++ - Supportprozesse: Umgang mit Support ohne Ticketsystem ist eingeschraenkt und bedarf Loesungen fuer Kundenzufriedenheit
++ - Rabattfreigabe: Implementierung eines mehrstufigen Workflows fuer Sonderrabatte erfolgt nach MVP
++ - Pilotkunde: Die Entscheidung ueber Zielregion (DACH oder Schweiz) beeinflusst Datenschutzanforderungen und Waehrungen
++ - SAP-Verfuegbarkeit und Fallback-Strategien fuer Angebotserstellung
++ - Hosting-Kosten und Anbieter fuer EU-only Hosting
++ - Umfassende Dokumentationsanforderungen fuer Sicherheit und Compliance
++ 
++ ## 6. Zusammenfassung
++ Dieser Architekturueberblick bildet die Grundlage fuer die weitere Detailplanung und Umsetzung eines MVP mit Fokus auf Kernfunktionalitaeten, Datenschutz und Minimalanforderungen an Sicherheit. Es bestehen signifikante Unsicherheiten und Zielkonflikte, die bewusst adressiert und transparent dokumentiert werden. Die Architektur strebt eine modulare, sichere und DSGVO-konforme Loesung an, wobei komplexe Features schrittweise nachgereicht werden.
++ 
++ ---
++ 
++ *Dieses Architekturueberblick basiert auf dem Projektkontext und Stakeholdertranskript aus den Dateien runs/phase2_1/20260527_174447_fbe2cf/state/context.md und input/transcripts/T9999_chaos.txt.*

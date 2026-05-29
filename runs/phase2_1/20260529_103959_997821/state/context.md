@@ -1,0 +1,60 @@
+# Projektkontext Kundenportal MVP
+
+## Projektziel
+- Entwicklung eines Kundenportals als MVP (8 Wochen)
+- Hauptfokus: Angebote schneller erstellen, Rechnungen anzeigen
+- Portal als Plattform für Kundeninteraktion (Login, rollenbasierte Zugriffe)
+- Integrationen mit SAP für Produkt-, Preis- und Kundenstammdaten
+- Realisierung eines sicheren, DSGVO-konformen Systems mit Auditierung
+- Managed Services mit EU-only Data Hosting
+- Erfassung von KPIs (Conversion Rate, Zeit bis Angebot)
+- Unterstützung von Web-Frontend (mobile eventuell später)
+
+## Wichtige Sprecherrollen
+- Anna (Projektmanagement / Sales)
+- Ben (Technik / Softwareentwicklung)
+- Clara (Datenschutz / Compliance)
+- David (Customer Support)
+- Eva (Finanzen / Freigabeprozesse)
+- Farid (IT Operations)
+
+## Fachliche Themen
+- Kundenlogin mit SSO optional, aber Start mit E-Mail/Passwort + Double Opt-In
+- Rollenmodelle: mindestens Admin, Sales, Kunde; Support-Rolle geplant, aber eingeschränkt
+- Angebote mit Status (draft, pending approval, approved usw.), aber im MVP ohne Freigabeprozesse oberhalb Standardrabatt
+- Rechnungsdownload und Bestellübersicht
+- SAP als zentrale Quelle für Stammdaten, Preise, Rabattlogik; nur Lesender Zugriff im MVP
+- Keine neue Datenbank, Verwendung von Managed Services
+- Audit Trail und Logging mit minimalem Umfang für MVP
+- Backup und Disaster Recovery als Pflicht
+- DSGVO: Löschkonzepte, Auftragsverarbeitungsverträge, Auditierbarkeit
+- Hosting innerhalb EU oder DSGVO-Konform
+- API Layer als Integrationsbasis; OAuth bevorzugt, aber komplex
+- KPIs messen (Conversion Rate, Zeit bis Angebot)
+- PDF-Export von Angeboten mit rechtlichen und datenschutzrelevanten Fußnoten
+- Internationalisierung (Start DACH, später EU und USA potenziell), Mehrwährung (EUR, CHF möglich)
+- Support mit Kontaktformular ohne persistentes Ticketsystem im MVP (Risiko erkannt)
+- Test-, Entwicklungs- und Produktionsumgebungen mit Pseudonymisierung oder synthetischen Daten
+- Rate Limiting, Pagination, Missbrauchserkennung für Downloads
+
+## Konflikte und Unsicherheiten
+- Mobile App (native vs. responsive Web) unklar, Budget und Backend-APIs nicht final
+- Umfang und Komplexität von Security Review vs. Zeitrahmen MVP (8 Wochen)
+- Freigabeprozesse für Rabatte fehlen im MVP; Risiko finanzieller Fehler erkannt
+- Supportprozess und Ticketsystem ungelöst, Auswirkungen auf Datenschutz und Operatives Support Management
+- API Gateway Warteliste (6 Wochen) vs. Projektzeitplan
+- SAP-Verfügbarkeit kritisch für Angebotserstellung
+- Backup- und Monitoring-Anforderungen nur rudimentär gelöst
+- Datenschutzkonflikte zwischen Auditierbarkeit und Löschpflichten
+- Unterschiedliche Rollenrechte und Berechtigungskonflikte speziell für Support und Sales
+- Hosting-Kosten und Anforderungen an EU-only Data Hosting unklar
+- Definition Pilotkunde (Schweiz oder Deutschland), Einfluss auf Scope, Datenschutz und Währungen offen
+- Umgang mit Echtzeitpreisaktualisierungen und Gültigkeitszeitraum unklar
+- Umfang der Dokumentation und Architekturbeteiligung nicht gesichert
+- Umgang mit Logdaten und Trennung zwischen Application, Audit und Security Logs
+
+## Quellenhinweise
+- Transkript: input/transcripts/T9999_chaos.txt
+- Aussagen von Anna, Ben, Clara, David, Eva, Farid aus Projektmeeting
+- Diskussion zu Funktionalitäten, Anforderungen, Risiken und Zeitplan
+

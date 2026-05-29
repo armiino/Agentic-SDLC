@@ -1,0 +1,60 @@
+# Risikoanalyse Kundenportal MVP
+
+## 1. Fachliche Risiken
+
+- **Unklare Zieldefinition und wechselnder Scope:** Mehrere widersprüchliche Anforderungen (z.B. Mobile App vs. Web, Pilotkunde Schweiz oder Deutschland, Rabatte und Freigabeprozesse) führen zu Planungsunsicherheiten und erschweren die Priorisierung.
+- **Eingeschränkter Support im MVP:** Kein Ticket-System, nur Kontaktformular, was zu schlechter Supporterfahrung und manuellen Prozessen führt. Risiko der Überlastung und fehlender Nachverfolgbarkeit von Supportanfragen.
+- **Rabatt- und Freigabelogik unvollständig:** Ohne klar definierte Rabattfreigabe können falsche Angebote erstellt werden, was finanzielle Risiken und Vertrauensverlust verursacht.
+- **Unvollständige Mehrwährungs- und Länderunterstützung:** Fehlende Abdeckung von Schweiz oder USA zu Beginn wirkt sich negativ auf mögliche Pilotkunden und Markteintritt aus.
+
+## 2. Technische Risiken
+
+- **Nicht API-Ready Backend (SAP):** Echzeitdaten sind limitiert, verzögerte Preisaktualisierung kann zu falschen Angeboten führen.
+- **API Gateway Verzögerungen:** 6 Wochen Wartezeit für API Gateway, was nicht zum 8-Wochen-MVP passt; mögliche Notlösungen mit manuellem Prozess oder fehlender Integration.
+- **Fehlender Architekt und unklarer Dokumentationsgrad:** Keine klare Architekturentscheidung, Risiko von Inkonsistenzen, Sicherheitslücken und späterem Nacharbeitsaufwand.
+- **Security Review vs. MVP-Termin:** Zeitaufwändiger Security Review lässt sich nicht mit dem knappen Zeitrahmen vereinbaren, Risiko von Sicherheitslücken oder Nichteinhaltung von Standards.
+- **Backup und Disaster Recovery:** Anforderungen sind vorhanden, aber Details unklar; Risiko von Datenverlust oder unzureichender Wiederherstellung.
+- **Skalierbarkeit und Performance:** Große Unsicherheit bei Nutzerzahlen kann zu unzureichender Systemdimensionierung führen.
+- **Logging und Audit:** Unklare Trennung und Anforderungen an technische Logs vs. Audit-Logs und deren Datenschutzkonformität.
+
+## 3. Compliance- und Datenschutzrisiken
+
+- **DSGVO-Konformität:** Viele Anforderungen wie Double-Opt-In, Löschkonzept, Auditierbarkeit, Zugriffskontrollen, Datenresidenz in der EU müssen strikt eingehalten werden.
+- **Datenminimierung vs. Verfügbarkeit:** Entscheidung zwischen Abruf in Echtzeit aus SAP oder Speicherung der Daten im Portal mit jeweiligen Risiken für Verfügbarkeit und Datenschutz.
+- **Hosting EU-only:** EU-Datenhosting verursacht Mehrkosten, ist aber notwendig für DSGVO-Konformität; unklare Kostenschätzung stellt Budgetrisiko dar.
+- **Verarbeitung personenbezogener Daten im Support:** Nutzung von E-Mail statt Ticketsystem führt zu unstrukturierten, schwer auditierbaren Datenverarbeitungen.
+- **Retention vs. Löschrecht:** Gesetzliche Aufbewahrungspflichten kollidieren mit Recht auf Löschung auseinander, insbesondere bei Angebots- und Rechnungsdaten.
+- **Mehrländer- und Währungsregeln:** Unterschiedliche Datenschutz- und Vertragsregelungen (z.B. Schweiz, USA) sind unklar und können zu Compliance-Verstößen führen.
+
+## 4. Widersprüche und Unsicherheiten
+
+- **Zeitdruck vs. Sicherheitsanforderungen:** Security Review und umfassende DSGVO-Anforderungen stehen im Konflikt mit dem schnellen 8-Wochen-MVP.
+- **Integrationstiefe vs. verfügbare Infrastruktur:** Forderung nach API Layer, OAuth, SSO vs. vorhandenes System (kein zentrales IAM, SAP Altsysteme).
+- **Feature Umfang vs. Budget und Machbarkeit:** Wünsche nach Push Notifications, KPIs, umfangreichen Rollenmodellen und Supportfunktionen können das Budget sprengen.
+- **Pilotkunden und Zielmärkte unbestimmt:** Unklarheit bzgl. Pilotkunden (Schweiz vs. Deutschland) hat großen Einfluss auf Scope, rechtliche und technische Anforderungen.
+
+## 5. Mögliche Auswirkungen
+
+- Verzögerungen bei der Lieferung des MVP
+- Erhöhter Wartungs- und Nacharbeitsaufwand durch fehlende Architektur und Dokumentation
+- Sicherheits- und Datenschutzverstöße mit rechtlichen Folgen und Reputationsschäden
+- Kostenerhöhungen durch Nachbesserungen, Compliance-Verstöße und unklare Anforderungen
+- Unzufriedenheit bei Kunden, Support und internen Stakeholdern durch unzureichende Funktionen
+
+## 6. Gegenmaßnahmen und Klärungsbedarfe
+
+- Klare Definition und Dokumentation des MVP-Scope mit bewussten Ausschlüssen
+- Priorisierung der Anforderungen nach Risiko und Machbarkeit
+- Einbindung eines erfahrenen Systemarchitekten frühzeitig
+- Detaillierte Datenschutzkonzepte und Einhaltung der DSGVO, insbesondere Löschkonzepte und Datenminimierung
+- Abstimmung und Koordination mit IT für API Gateway, Managed Services und Hosting
+- Planung eines pragmatischen Security Reviews mit vertretbaren Kompromissen
+- Etablierung eines minimalen aber belastbaren Supportprozesses (z.B. Kontaktformular mit Prozessdefinition)
+- Klärung Pilotkunde und zugehörige rechtliche Anforderungen
+- Erarbeitung eines Retention- und Datenklassifikationskonzepts
+- Einsatz von Testumgebungen mit pseudonymisierten oder synthetischen Daten
+- Dokumentation von Widersprüchen und Risiken im Projektverlauf, keine Glättung
+
+---
+
+*Dieses Risikoartefakt basiert auf den verfügbaren Kontext- und Transkriptinformationen. Fehlende Requirements oder weitere Stakeholder-Inputs sollten vor weiteren Projektentscheidungen berücksichtigt werden.*

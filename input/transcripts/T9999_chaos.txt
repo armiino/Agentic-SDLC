@@ -227,3 +227,595 @@ Ohne Dokumentation kein Security Review.
 
 [Anna]
 Okay dann doch.
+
+[David]
+Sorry, ich komme zu spät dazu. Ich bin von Customer Support. Ich habe gehört, es soll kein Ticketsystem geben. Das ist aus Support-Sicht schwierig, weil Kunden uns heute wegen Rechnungen, Lieferstatus und falschen Rabatten ständig schreiben.
+
+[Anna]
+Ticketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.
+
+[David]
+Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst können wir die Anfrage nicht bearbeiten.
+
+[Clara]
+Wenn Support-Anfragen personenbezogene Daten enthalten, dann müssen sie in das Löschkonzept und in die Auskunftspflicht einbezogen werden.
+
+[Ben]
+Und technisch heißt das wieder Persistenz. Wir wollten keine neue Datenbank.
+
+[Anna]
+Managed Service war okay.
+
+[Ben]
+Ja, aber wir haben noch nicht entschieden, welcher. Und SAP kann keine Support-Tickets speichern.
+
+[David]
+Ich will nur verhindern, dass wir nach dem Launch manuell Excel-Listen pflegen.
+
+[Anna]
+Excel ist keine Option.
+
+[Clara]
+Excel mit personenbezogenen Kundendaten wäre aus Compliance-Sicht problematisch.
+
+[Eva]
+Ich bin aus Finance. Mir fehlt ein Punkt: Angebote müssen freigegeben werden, wenn der Rabatt über 15 Prozent liegt. Manche Kunden haben Sonderkonditionen, aber nicht jeder Sales-Mitarbeiter darf die nutzen.
+
+[Anna]
+Das ist wichtig, aber vielleicht später.
+
+[Eva]
+Nein, ohne Freigabeprozess können falsche Angebote rausgehen. Das ist ein finanzielles Risiko.
+
+[Ben]
+Dann brauchen wir Workflow-Status für Angebote: draft, pending approval, approved, sent, accepted, rejected.
+
+[Anna]
+Aber nicht zu kompliziert.
+
+[Eva]
+Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.
+
+[Anna]
+Oder ab 20 Prozent. Ich bin mir nicht sicher.
+
+[Ben]
+Das muss klar definiert werden. Rabattlogik kommt aus SAP, aber Freigabeprozess wäre vermutlich im Portal.
+
+[Clara]
+Wer darf dann die Rabatte sehen? Das ist Rollen- und Berechtigungslogik.
+
+[David]
+Support sollte keine Preise ändern können, aber vielleicht Angebote einsehen dürfen, wenn Kunden anrufen.
+
+[Eva]
+Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind.
+
+[Anna]
+Also Support sieht nur Status, nicht Details?
+
+[David]
+Dann kann Support nicht helfen.
+
+[Ben]
+Das ist ein klassischer Berechtigungskonflikt. Müssen wir modellieren.
+
+[Clara]
+Und protokollieren. Wer hat welches Angebot geöffnet?
+
+[Farid]
+Ich bin aus IT Operations. EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.
+
+[Clara]
+Dann reicht "DSGVO-konform" nicht. Wir brauchen nachweisbare Datenresidenz.
+
+[Anna]
+Aber wenn EU-only teurer ist?
+
+[Farid]
+Ist es wahrscheinlich.
+
+[Eva]
+Wie viel teurer?
+
+[Farid]
+Kann ich noch nicht sagen.
+
+[Anna]
+Wir brauchen aber eine Kostenschätzung für den Vorstand bis Freitag.
+
+[Ben]
+Bis Freitag? Wir haben nicht mal eine Architekturentscheidung.
+
+[Anna]
+Dann schätzen wir grob.
+
+[Eva]
+Eine grobe Schätzung ohne Scope ist gefährlich.
+
+[Clara]
+Und ohne Datenschutzmaßnahmen unvollständig.
+
+[Ben]
+Und ohne SAP-Schnittstelle wertlos.
+
+[Anna]
+Okay, aber der Vorstand will Zahlen.
+
+[Farid]
+Noch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale über das zentrale API Gateway laufen müssen.
+
+[Ben]
+Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.
+
+[Anna]
+Das passt nicht zum 8-Wochen-MVP.
+
+[Ben]
+Genau.
+
+[David]
+Kann man für MVP manuell Angebote hochladen?
+
+[Ben]
+Dann wäre es kein integriertes Portal.
+
+[Anna]
+Vielleicht als Zwischenlösung?
+
+[Eva]
+Manuelle Uploads erhöhen Fehlerwahrscheinlichkeit.
+
+[Clara]
+Und wer prüft, ob keine falschen Kundendaten hochgeladen werden?
+
+[Farid]
+Außerdem haben wir dann ein Berechtigungsproblem im File Storage.
+
+[Ben]
+Wir verschieben gerade vom Portal zu einem Dokumentenmanagementsystem.
+
+[Anna]
+Nein, Portal bleibt Ziel.
+
+[Clara]
+Was ist eigentlich mit Datenminimierung? Müssen alle Kundendaten im Portal liegen oder reicht ein Abruf aus SAP bei Bedarf?
+
+[Ben]
+Abruf aus SAP bei Bedarf wäre besser für Datenminimierung, aber schlechter für Performance und Verfügbarkeit.
+
+[Farid]
+Und SAP hat Wartungsfenster am Wochenende.
+
+[Anna]
+Kunden arbeiten auch am Wochenende.
+
+[David]
+Vor allem internationale Kunden.
+
+[Clara]
+International? Ich dachte nur DACH.
+
+[Anna]
+Zum Start DACH. Später EU. Vielleicht USA, wenn es gut läuft.
+
+[Clara]
+USA ändert Datenschutz und Vertragslage massiv.
+
+[Ben]
+Und Sprachen. Dann brauchen wir Internationalisierung.
+
+[Anna]
+Deutsch und Englisch sollten schon drin sein.
+
+[David]
+Support braucht mindestens Deutsch und Englisch.
+
+[Eva]
+Angebote müssen in der Währung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD später.
+
+[Ben]
+Mehrwährung ist nicht trivial, vor allem mit Rabattlogik und SAP.
+
+[Anna]
+CHF ist für Schweiz wichtig.
+
+[Clara]
+Schweiz ist nicht EU, aber hat eigene Datenschutzthemen.
+
+[Farid]
+Hosting in EU kann Schweizer Kunden bedienen, aber Vertragsprüfung nötig.
+
+[Ben]
+Wir brauchen Länder- und Währungsregeln.
+
+[Anna]
+Nicht im MVP?
+
+[Eva]
+Wenn Schweiz Pilotkunde ist, dann doch.
+
+[Anna]
+Pilotkunde ist noch nicht final.
+
+[David]
+Ich dachte Pilotkunde ist Müller AG aus der Schweiz.
+
+[Anna]
+Vielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales nächste Woche.
+
+[Ben]
+Das beeinflusst Scope massiv.
+
+[Clara]
+Und Datenschutzprüfung.
+
+[Eva]
+Und Währung.
+
+[Anna]
+Okay, notieren als offene Frage.
+
+[Ben]
+Noch ein technischer Punkt: SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.
+
+[Anna]
+Aber Sales will sofort Angebote erstellen.
+
+[Eva]
+Wenn Preise nachts aktualisiert werden, darf ein Angebot tagsüber nicht mit falschen Rabatten rausgehen.
+
+[Ben]
+Dann brauchen wir Preisgültigkeit und vielleicht Warnhinweise.
+
+[Anna]
+Oder wir akzeptieren das Risiko.
+
+[Eva]
+Nein.
+
+[Clara]
+Wenn falsche Preise personenbezogene Kundendaten enthalten, ist das nicht primär Datenschutz, aber trotzdem Audit-relevant.
+
+[David]
+Kunden rufen dann Support an. Wieder Tickets.
+
+[Ben]
+Kreislauf.
+
+[Anna]
+Was ist mit PDF-Export von Angeboten?
+
+[Ben]
+Das wurde bisher nicht genannt.
+
+[Eva]
+Finance braucht PDF mit rechtlichen Fußnoten und Versionsnummer.
+
+[Clara]
+Und Datenschutzhinweise, wenn personenbezogene Daten enthalten sind.
+
+[Anna]
+PDF ist wichtig für Sales.
+
+[Ben]
+Dann haben wir Template-Management.
+
+[Farid]
+Templates müssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.
+
+[Eva]
+Genau. Und Angebote müssen nachträglich revisionssicher nachvollziehbar sein.
+
+[Clara]
+Revisionssicher heißt nicht automatisch unveränderbar, aber Änderungen müssen nachvollziehbar sein.
+
+[Ben]
+Dann brauchen wir Event-History oder Audit-Log pro Angebot.
+
+[Anna]
+Ist das MVP?
+
+[Eva]
+Für Freigabe und rechtliche Nachvollziehbarkeit: ja, zumindest minimal.
+
+[David]
+Kann der Kunde ein Angebot online akzeptieren?
+
+[Anna]
+Das wäre super.
+
+[Ben]
+Das ist ein Vertragsabschluss. Ganz anderes Thema.
+
+[Clara]
+Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz.
+
+[Eva]
+Und dann entsteht eine Bestellung. Das muss sauber nach SAP zurück.
+
+[Ben]
+SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.
+
+[Anna]
+Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP.
+
+[David]
+Aber ohne Online-Akzeptanz ist Conversion Tracking schlechter.
+
+[Anna]
+Stimmt.
+
+[Ben]
+Wir müssen entscheiden.
+
+[Clara]
+Und dokumentieren.
+
+[Farid]
+Noch ein Risiko: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, müssen wir zwischen Audit und technischem Logging unterscheiden.
+
+[Ben]
+Guter Punkt. Application logs, audit logs und security logs sind unterschiedliche Dinge.
+
+[Clara]
+Und unterschiedliche Aufbewahrungsfristen.
+
+[Anna]
+Wie lange müssen wir Angebote speichern?
+
+[Eva]
+Handelsrechtlich möglicherweise mehrere Jahre, aber das muss Legal prüfen.
+
+[Clara]
+Das kollidiert mit Löschanfragen. Recht auf Löschung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen.
+
+[Ben]
+Also brauchen wir Datenklassifikation und Retention Rules.
+
+[Anna]
+Das klingt nicht nach MVP.
+
+[Clara]
+Aber ohne Konzept riskieren wir Fehler.
+
+[David]
+Support braucht auch Einsicht in alte Angebote.
+
+[Eva]
+Finance auch.
+
+[Anna]
+Okay, minimaler Retention-Plan.
+
+[Ben]
+Ich sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrwährung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP.
+
+[Anna]
+Dann müssen wir schneiden. MVP:
+1. Login
+2. Angebote erstellen
+3. Rechnungen anzeigen
+4. SAP lesen
+5. Rollen minimal
+6. Audit minimal
+
+[Clara]
+Double-Opt-In und Löschung fehlen.
+
+[Eva]
+Freigabeprozess fehlt.
+
+[David]
+Support fehlt.
+
+[Farid]
+API Gateway und EU Hosting fehlen.
+
+[Ben]
+Backup fehlt.
+
+[Anna]
+Okay. Dann MVP:
+1. Login mit Double-Opt-In
+2. Angebotserstellung mit SAP-Lesedaten
+3. Rechnungsdownload
+4. Rollen Admin/Sales/Kunde
+5. Minimaler Audit Trail
+6. EU Managed Hosting
+7. Backup
+
+[Eva]
+Und Rabatt-Freigabe?
+
+[Anna]
+Vielleicht Phase 2.
+
+[Eva]
+Dann darf im MVP kein Rabatt über Standardsatz erstellt werden.
+
+[Ben]
+Das wäre eine Constraint: keine manuellen Sonderrabatte im MVP.
+
+[Anna]
+Gut.
+
+[David]
+Support?
+
+[Anna]
+Kontaktformular ohne Ticketpersistenz?
+
+[Clara]
+Dann werden Supportdaten per E-Mail verarbeitet. Auch Datenschutz.
+
+[Farid]
+E-Mail ist unstrukturiert und schlecht auditierbar.
+
+[Ben]
+Aber einfacher.
+
+[David]
+Support wird damit nicht glücklich.
+
+[Anna]
+Notieren als Risiko.
+
+[Clara]
+Bitte nicht "wir ignorieren es", sondern "bewusste Einschränkung".
+
+[Ben]
+Das ist wichtig für Scope.
+
+[Farid]
+Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten dürfen keine echten Kundendaten enthalten.
+
+[Clara]
+Ja, Pseudonymisierung oder synthetische Testdaten.
+
+[Ben]
+SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.
+
+[Clara]
+Dann dürfen die nicht ungeprüft verwendet werden.
+
+[Anna]
+Kann man das später klären?
+
+[Clara]
+Nein, wenn Entwicklung darauf zugreift, ist es sofort relevant.
+
+[Ben]
+Das blockiert Integrationstests.
+
+[Farid]
+Und CI/CD braucht Secrets Management.
+
+[Ben]
+Wir brauchen auch Rate Limits für API.
+
+[David]
+Kunden laden manchmal hunderte Rechnungen auf einmal herunter.
+
+[Ben]
+Dann brauchen wir Pagination und Download-Limits.
+
+[Anna]
+Aber bitte keine schlechte UX.
+
+[Eva]
+Massenexport von Rechnungen kann rechtlich relevant sein.
+
+[Clara]
+Und sicherheitsrelevant.
+
+[Ben]
+Wir brauchen Missbrauchserkennung.
+
+[Anna]
+Das ist zu viel.
+
+[Clara]
+Dann mindestens Rate Limiting und Audit.
+
+[Farid]
+Kann API Gateway übernehmen, wenn wir es bekommen.
+
+[Ben]
+Aber Gateway-Team hat sechs Wochen Warteliste.
+
+[Anna]
+Das ist wieder das Zeitproblem.
+
+[David]
+Was passiert, wenn SAP nicht erreichbar ist?
+
+[Ben]
+Angebote können dann nicht aktuell berechnet werden.
+
+[Eva]
+Dann darf kein Angebot erstellt werden, oder es muss als unverbindlich markiert sein.
+
+[Anna]
+Unverbindliche Angebote sind schlecht.
+
+[Ben]
+Dann brauchen wir Fallback oder Cache.
+
+[Clara]
+Cache enthält Kundendaten?
+
+[Ben]
+Teilweise Produkt- und Preisdaten, vielleicht kundenindividuelle Rabatte.
+
+[Clara]
+Dann wieder Datenschutz und Retention.
+
+[Anna]
+Können wir nur Produktdaten cachen, keine Kundendaten?
+
+[Ben]
+Vielleicht, aber Rabattlogik ist kundenspezifisch.
+
+[Eva]
+Dann ist Cache riskant.
+
+[Farid]
+Und Cache-Invalidierung ist aufwendig.
+
+[Ben]
+Bitte schreibt "SAP-Verfügbarkeit ist kritische Abhängigkeit".
+
+[Anna]
+Notiert.
+
+[Clara]
+Und "keine personenbezogenen Daten in technischen Logs".
+
+[Farid]
+Und "Secrets Management".
+
+[Eva]
+Und "keine Sonderrabatte ohne Freigabe".
+
+[David]
+Und "Supportprozess unklar".
+
+[Anna]
+Wir haben jetzt sehr viele offene Punkte.
+
+[Ben]
+Ja. Für einen Agenten oder ein System, das daraus Requirements ableitet, ist das ein echter Stresstest.
+
+[Clara]
+Wichtig ist, dass Widersprüche nicht einfach glattgebügelt werden. Sie müssen sichtbar bleiben.
+
+[Eva]
+Und Risiken dürfen nicht nur technisch sein, sondern auch finanziell und organisatorisch.
+
+[Farid]
+Architektur darf keine konkreten Cloud-Produkte erfinden, solange wir keinen Provider gewählt haben.
+
+[Anna]
+Genau. Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat.
+
+[Ben]
+Und OAuth ist bevorzugt, aber noch nicht final.
+
+[Clara]
+DSGVO ist nicht optional.
+
+[David]
+Support ist nicht gelöst.
+
+[Eva]
+Freigaben sind nicht gelöst.
+
+[Anna]
+Dann ist das finale Ziel für jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen.
+
+[Ben]
+Und keine falsche Sicherheit erzeugen.
+
+[Clara]
+Genau.

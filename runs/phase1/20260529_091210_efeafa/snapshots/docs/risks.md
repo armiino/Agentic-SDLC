@@ -1,0 +1,19 @@
+# Risiken
+
+- Zeitdruck: 8 Wochen MVP-Zeitplan sehr knapp für alle Anforderungen.
+- DSGVO-Compliance: Komplexe Anforderungen an Löschung, Double-Opt-In, Audit und Datenresidenz.
+- Supportprozess: Kein Ticketsystem im MVP, Risiko ineffizienter Bearbeitung.
+- API Gateway: Warteliste von 6 Wochen blockiert Integration.
+- SAP-Verfügbarkeit: Kritische Abhängigkeit, Ausfall führt zu fehlender Angebotserstellung.
+- Rabattfreigabe: Fehlender Freigabeprozess im MVP erhöht finanzielles Risiko.
+- Datenhosting: EU-only Hosting teurer und komplex.
+- Testdaten: Nutzung echter Kundendaten im SAP-Testsystem problematisch.
+- Rollen- und Berechtigungsmodell: Komplexität und Konflikte.
+- Logging und Audit: Unterschiedliche Anforderungen und Aufbewahrungsfristen.
+- Overengineering vs. Skalierbarkeit: Balance schwer zu finden.
+- Backup und Disaster Recovery: Unklare Details und Aufwand.
+- Supportdaten per E-Mail: Datenschutz- und Auditrisiken.
+- Preisgültigkeit: Risiko falscher Angebote bei verzögerten SAP-Daten.
+- Monitoring: Keine personenbezogenen Daten in Logs erlaubt.
+- Secrets Management: Notwendig für sichere CI/CD-Pipelines.
+- Offene Fragen können zu Scope-Änderungen führen.

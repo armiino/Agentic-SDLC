@@ -1,0 +1,55 @@
+# Offene Fragen und Klärungsbedarfe für das Kundenportal MVP
+
+## 1. Fachliche offene Fragen
+
+- Wer ist der endgültige Pilotkunde (Müller AG Schweiz oder Hansa GmbH Deutschland)?
+- Wie soll der Rabattfreigabeprozess konkret gestaltet werden? Ab welchen Schwellenwerten sind Freigaben erforderlich (15 %, 20 %, 30 %?)
+- Soll und wie kann der Supportprozess für Kundenanfragen im MVP verbessert werden, insbesondere um eine Strukturierung und Nachvollziehbarkeit zu gewährleisten?
+- Welche KPIs sind für das MVP oder spätere Phasen prioritär und wie sollen diese technisch erfasst werden?
+- Welche Mehrwährungen sind im MVP zwingend zu unterstützen (EUR, CHF) und wie soll der Übergang zu weiteren Währungen (USD) erfolgen?
+- Welche Sprachen sind im MVP Pflicht und welche sind erst für spätere Releases vorgesehen?
+- Wie soll der Umgang mit Kunden- und Supportdaten im Hinblick auf Datenschutz und Löschkonzepte organisatorisch und technisch gelöst werden?
+
+## 2. Technische offene Fragen
+
+- Wann steht das zentrale API-Gateway zur Verfügung, und welche temporären Lösungen können bis dahin genutzt werden?
+- Wie wird das Identity- und Access-Management umgesetzt, insbesondere in Bezug auf SSO (Azure AD, Google) und Rollenmodelle?
+- Wie wird das Cache- und Fallback-Verhalten bei SAP-Ausfällen geregelt, insbesondere um Datenschutz und Performance zu balancieren?
+- Welche Managed Services werden konkret ausgewählt für Backup, Logging und Hosting, und wie erfüllen diese EU-Datenresidenz und DSGVO-Anforderungen?
+- Wie wird Secrets Management im CI/CD-Prozess genau umgesetzt?
+- Welche Maßnahmen sind vorgesehen, um API Rate Limiting und Missbrauchserkennung sicherzustellen?
+- Wie soll die API-Sicherung erfolgen: OAuth final oder bleibt API Key eine Option?
+- Wie werden PDF-Templates versioniert und revisionssicher verwaltet?
+- Wie werden Testdaten datenschutzkonform bereitgestellt, insbesondere in Bezug auf SAP-Testsysteme mit echten Kundendaten?
+
+## 3. Widersprüche und Klärungsbedarf
+
+- Wie wird die Diskrepanz zwischen notwendiger Security Review Dauer (ca. 6 Wochen) und 8-Wochen-MVP-Zeitplan gelöst?
+- Wie kann der Wunsch nach mobiler App (native) versus Budget- und Zeitrahmen realistisch adressiert werden?
+- Wie werden gesetzliche Aufbewahrungspflichten mit dem Recht auf Löschung von Daten aus DSGVO vereint?
+- Wie eng ist die Integration in SAP technisch zu gestalten (nur lesend oder später auch schreibend)?
+- Wie wird die Unterstützung von Support bei der Kundenanfrage strukturiert, wenn kein Ticketsystem im MVP vorhanden ist?
+- Wie wird die Datenminimierung im Kundenportal (eigene Datenhaltung vs. On-Demand Abruf aus SAP) technisch und funktional gehandhabt?
+- Besteht eine klare Entscheidung zum API-Sicherheitsstandard (OAuth vs. API Keys)?
+
+## 4. Fehlende Informationen
+
+- Genaue Kostenschätzung für EU-only Hosting und Managed Services bis zur Vorstandspräsentation Freitag.
+- Entscheidungen zu Pilotkunde und Ablaufszenarien, die den Scope stark beeinflussen.
+- Details zum geplanten Rabattfreigabeprozess inklusive Workflow und Zuständigkeiten.
+- Konkrete Auswahl der Managed Services und Cloud-Anbieter/Technologien.
+- Konkrete Anforderungen an das Monitoring und die Trennung der Logarten.
+- Definition und Technik für KPI-Erfassung und spätere Analytics Integration.
+
+## 5. Mögliche Ansprechpartner und Rollen für Klärungen
+
+- Produktmanagement/Projektleitung (Anna) für Priorisierung und Scope-Klärung.
+- Technische Leitung / Architektur (Ben) für Integrations- und Sicherheitsthemen.
+- Datenschutzbeauftragte (Clara) für DSGVO und Compliance-Fragen.
+- Support-Verantwortlicher (David) für Supportprozess und Kundendienst.
+- Finance (Eva) für Rabattfreigabe und finanzielle Risiken.
+- IT Operations (Farid) für Hosting, Backup, Infrastruktur und Security.
+
+---
+
+Diese offenen Fragen wurden aus dem Stakeholder-Transkript, dem Projektkontext und bisherigen Artefakten abgeleitet, um kritische Unklarheiten und Risiken transparent zu machen und weitere Klärungen in der Projektplanung zu fördern.

@@ -1,0 +1,91 @@
+# Requirements für das Kundenportal MVP
+
+## Functional Requirements
+
+1. Kunden-Login:
+   - Anmeldung per E-Mail und Passwort.
+   - Optional: Single Sign-On (SSO) Integration (z.B. Azure AD, Google) als zukünftige Erweiterung.
+2. Angebotsmanagement:
+   - Erstellung von Angeboten mit lesendem Zugriff auf Produkt- und Preisdaten aus SAP.
+   - Statusverwaltung für Angebote: draft, pending approval, approved, sent, accepted, rejected (minimal im MVP).
+   - Keine Erstellung von Sonderrabatten über Standardwerte im MVP (Freigabeprozesse für Rabatte in späteren Phasen).
+3. Rechnungen:
+   - Anzeige und Download von Rechnungen durch Kunden.
+4. Benutzerrollen und Berechtigungen:
+   - Minimal rollenbasierte Zugriffskontrolle: Admin, Sales, Kunde.
+   - Rollenmodelle und Berechtigungskonzepte müssen Datenschutz und Finanzrichtlinien beachten.
+5. Datenschutz- und Compliance-Funktionen:
+   - Double-Opt-In für E-Mail-Registrierung.
+   - Löschkonzepte für personenbezogene Daten gem. DSGVO.
+   - Audit-Trail für wesentliche Aktionen (wer hat wann was geändert).
+6. SAP-Integration:
+   - Lesender Zugriff auf relevante Daten, keine initialen Schreibzugriffe.
+7. API Layer:
+   - Bereitstellung einer gesicherten API-Schicht (OAuth bevorzugt, aber noch nicht final entschieden).
+8. Support:
+   - Kontaktformular ohne Persistenz im MVP (bewusste Einschränkung).
+9. Backup und Disaster Recovery:
+   - Implementierung von Backup-Lösungen als Managed Service, ohne neue eigenständige Datenbank.
+
+## Non-functional Requirements
+
+1. Hosting:
+   - Datenschutzkonformes Hosting innerhalb der EU (EU-only oder nachweisbare DSGVO-Konformität).
+   - Nutzung von Managed Services bevorzugt.
+2. Sicherheit:
+   - TLS für Datenübertragung.
+   - Getrennte Logs für Audit, Security und Application Logging.
+   - Security Review ist verpflichtend, aber in MVP-Zeitrahmen einzuhalten.
+3. Performance und Skalierbarkeit:
+   - System muss skalierbar sein, erwartet werden zwischen 200 bis 20.000 Nutzer.
+   - API Rate Limiting und Missbrauchserkennung.
+4. Internationalisierung/Mehrwährung:
+   - Unterstützung für mindestens Deutsch und Englisch.
+   - Mehrwährungsfähigkeiten (EUR, CHF im MVP, USD geplant später).
+5. Umgebungen:
+   - Getrennte Dev, Test und Prod Umgebungen.
+   - Testdaten müssen pseudonymisiert oder synthetisch sein.
+6. Dokumentation:
+   - Minimaler Dokumentationsaufwand für Security Reviews und Compliance.
+   - Versioniertes Template-Management für Angebots-PDFs.
+
+## Constraints/Compliance
+
+1. MVP-Zeitrahmen: 8 Wochen.
+2. Keine neue Datenbank im Eigenbetrieb erlaubt.
+3. Keine vollständige Integration aller geplanten Features (z.B. Support-Ticketsystem, Rabattfreigabeprozess) im MVP.
+4. Keine Sonderrabatte im MVP ohne Freigabeprozess.
+5. DSGVO-konforme Datenverarbeitung zwingend inklusive Double-Opt-In, Löschkonzept und Auditierbarkeit.
+6. Hosting und Datensicherung müssen EU-Datenresidenz sicherstellen.
+7. Supportanfragen werden im MVP ohne persistente Speicherung behandelt (Kontaktformular, E-Mail), was ein Risiko und bewusste Einschränkung ist.
+8. API Gateway muss verwendet werden, steht aber ggf. erst nach MVP zur Verfügung (Risiko).
+9. SAP-Integration ist initial lesend, kein Schreibzugriff im MVP.
+
+## Traceability
+
+| Requirement ID | Beschreibung                                         | Quelle (Transkript)               |
+|----------------|------------------------------------------------------|----------------------------------|
+| FR-01          | Kundenlogin mit E-Mail/Passwort, optional SSO       | input/transcripts/T9999_chaos.txt |
+| FR-02          | Angebotserstellung mit SAP-Lesedaten                 | input/transcripts/T9999_chaos.txt |
+| FR-03          | Rechnungsanzeige und Download                        | input/transcripts/T9999_chaos.txt |
+| FR-04          | Rollenbasierte Zugriffskontrolle (Admin, Sales, Kunde) | input/transcripts/T9999_chaos.txt |
+| FR-05          | Double-Opt-In und Löschkonzept gemäß DSGVO           | input/transcripts/T9999_chaos.txt |
+| FR-06          | Minimales Audit-Trail für Aktionen                    | input/transcripts/T9999_chaos.txt |
+| FR-07          | API Layer gesichert mit OAuth bevorzugt               | input/transcripts/T9999_chaos.txt |
+| FR-08          | Support via Kontaktformular ohne Persistenz           | input/transcripts/T9999_chaos.txt |
+| FR-09          | Backup & Disaster Recovery über Managed Services      | input/transcripts/T9999_chaos.txt |
+| NFR-01         | EU-only oder DSGVO-konformes Hosting                   | input/transcripts/T9999_chaos.txt |
+| NFR-02         | TLS für Datenübertragung                               | input/transcripts/T9999_chaos.txt |
+| NFR-03         | Getrennte Logs für Audit, Security, Application       | input/transcripts/T9999_chaos.txt |
+| NFR-04         | Skalierbarkeit für 200-20.000 Nutzer                  | input/transcripts/T9999_chaos.txt |
+| NFR-05         | Mehrsprachigkeit Deutsch, Englisch                     | input/transcripts/T9999_chaos.txt |
+| NFR-06         | Pseudonymisierte oder synthetische Testdaten          | input/transcripts/T9999_chaos.txt |
+| C-01           | Kein neuer DB-Server allowed                           | input/transcripts/T9999_chaos.txt |
+| C-02           | Keine Sonderrabatte ohne Freigabe im MVP               | input/transcripts/T9999_chaos.txt |
+| C-03           | Supportanfragen per E-Mail ohne Persistenz (Risiko)  | input/transcripts/T9999_chaos.txt |
+| C-04           | API Gateway Nutzung geplant, verfügbar nach MVP?       | input/transcripts/T9999_chaos.txt |
+| C-05           | SAP-Integration nur lesend im MVP                      | input/transcripts/T9999_chaos.txt |
+
+---
+
+Diese Requirements wurden basierend auf dem Transkript input/transcripts/T9999_chaos.txt und dem Kontext aus runs/phase2_1/20260527_173951_4c7804/state/context.md erstellt. Konflikte, Risiken und offene Fragen sind bewusst als Constraints oder bewusste Einschränkungen oder zukünftige Erweiterungen sichtbar gehalten.

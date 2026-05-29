@@ -1,0 +1,55 @@
+# Projektkontext aus Stakeholder-Transkript
+
+## Projektziel
+- Entwicklung eines Kundenportals (Web-first, mobile optionell) zur schnellen und effizienten Erstellung von Angeboten.
+- Anzeige und Download von Rechnungen.
+- Integration mit SAP zum Lesen von Stammdaten, Produktdaten, Preisen und Rabattlogiken.
+- MVP-Umsetzung in 8 Wochen.
+- Bereitstellung einer minimalen Rollen- und Berechtigungsstruktur (z.B. Admin, Sales, Kunde).
+- Erfüllung von DSGVO-Anforderungen inkl. Double-Opt-In, Logging, Löschkonzept.
+- Sicherstellung von EU-only Hosting und Managed Services ohne eigenen neuen Datenbankserver.
+
+## Sprecherrollen
+- Anna: Projektleitung/Sales (nimmt oft eine koordinierende und wertorientierte Perspektive ein)
+- Ben: IT/Architektur (technische Machbarkeit, Infrastruktur)
+- Clara: Datenschutz/Compliance (DSGVO, Logging, Audit, Löschkonzept)
+- David: Customer Support (Supportprozesse, Kundensicht)
+- Eva: Finance (Rabattfreigabe, finanzielle Risiken)
+- Farid: IT Operations (Hosting, Backup, Monitoring, IT-Sicherheit)
+
+## Fachliche Themen
+- Kundenportal mit Login, Rollen, SSO optional (Azure AD/Google möglich, aber nicht final)
+- Angebotserstellung mit SAP-Datenintegration, keine Rückschreibungen im MVP
+- Mehrstufiger Freigabeprozess von Rabatten (Phase 2, im MVP nur Standardrabatte ohne Sonderrabatte)
+- Rechnungsdownload
+- Push Notifications und Analytics werden nicht im MVP berücksichtigt
+- Sicherheits- und Datenschutzmaßnahmen (Audit Trail, Double Opt-In, Datenminimierung, Verschlüsselung mittels TLS)
+- API Layer als zentrales Integrationsmittel, OAuth bevorzugt aber noch nicht final
+- Backup und Disaster Recovery im MVP erforderlich
+- EU-only Hosting mit nachweisbarer Datenresidenz und DSGVO-Kompatibilität
+- Skalierbarkeit und Performance mit unklaren Nutzerzahlen
+- Test- und Entwicklungsumgebungen mit Pseudonymisierung oder synthetischen Daten
+- Dokumentationspflicht insbesondere für Sicherheit und Compliance
+
+## Konflikte und Unsicherheiten
+- Zielkonflikt zwischen kurzem MVP-Zeitplan (8 Wochen) und notwendigen Sicherheits- und DSGVO-Anforderungen
+- Budgetbeschränkungen und technischer Aufwand für native mobile Apps vs. Web
+- Noch keine finale Entscheidung zum Pilotkunden (DACH oder Schweiz) mit Datenschutz- und Währungsimplikationen
+- SAP-Verfügbarkeit als kritische Abhängigkeit, die Einfluss auf Angebotserstellung und Performance hat
+- Supportprozess unklar; keine persistente Ticketlösung im MVP, nur Kontaktformular (bewusste Einschränkung)
+- Keine finale API-Gateway-Lösung für MVP verfügbar (6 Wochen Warteliste)
+- Konflikte zwischen Datenschutzanforderungen (z.B. Löschung, Audit, Logs) und operativen Anforderungen (Support, Monitoring)
+- Unklarheiten bei Rabattfreigabeprozessen und deren Umsetzung im MVP
+- Risiko von Overengineering vs. Skalierbarkeit und Performance
+- Fehlende abschließende Architekturentscheidungen (z.B. OAuth, SSO, Anbieter für Managed Services)
+- Datenklassifikation und Datenhaltung vs. gesetzliche Aufbewahrungsfristen und Löschanfragen
+- Offene Kostenabschätzung für EU-only Hosting und Managed Services
+- Möglichkeit manueller Uploads als Zwischenlösung, mit Fehler- und Berechtigungsrisiken
+
+## Quellenhinweise
+- Transkript "input/transcripts/T9999_chaos.txt"
+
+## Zusammenfassung
+Der Projektkontext zeigt ein komplexes Vorhaben mit einem sehr ambitionierten Zeitplan und vielfältigen Anforderungen von unterschiedlichen Stakeholdern. Es gibt signifikante Zielkonflikte und technische sowie organisatorische Herausforderungen, die eine klare Priorisierung und kritische Abgrenzung des MVP-Scopes erfordern. Datenschutz und Compliance sind durchgehend kritisch, ebenso wie technologische Abhängigkeiten von SAP und API-Gateway.
+
+Risiken und offene Fragen sind ausdrücklich zu dokumentieren, um keine falsche Sicherheit im Projektverlauf zu erzeugen. Die MVP-Definition umfasst Kernfunktionen mit bewussten Einschränkungen bezüglich Support, Rabattfreigaben und erweiterten Features. Dies bildet die Grundlage für eine realistische Projektplanung und spätere Iterationen.

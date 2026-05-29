@@ -1,0 +1,50 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturüberblick Kundenportal MVP
++ 
++ ## 1. Systemkontext
++ Das Kundenportal wird als Web-Anwendung (primär Web-First, Mobile optional später) konzipiert, um Kunden schnelle Angebotserstellung, Rechnungsübersicht und Login-Funktionalitäten anzubieten. Es ist Teil einer größeren IT-Landschaft mit wesentlicher Integration zum ERP-System SAP, das Stammdaten, Preise und Rabattlogik bereitstellt.
++ 
++ ## 2. Wichtige Komponenten
++ - **Frontend:** Webportal mit responsivem Design für Browserzugriff. Mobile native App ist nicht Teil des MVP.
++ - **Backend / API Layer:** Vermittelt zwischen Frontend und SAP-System. Realisiert Geschäftslogiken rund um Angebote, Rechnungen, Nutzerverwaltung und Rollen.
++ - **SAP-System:** Zentrale Datenquelle für Kunden-, Produkt- und Preisdaten sowie Rabattlogik. Bisher lesend genutzt.
++ - **Authentifizierung:** E-Mail/Passwort-Login mit Double-Opt-In; SSO optional und noch nicht verpflichtend. 
++ - **Rollen- und Berechtigungssystem:** Mindestens Admin, Sales, Kunde. Support nur minimal (Kontaktformular ohne Ticketsystem).
++ - **Audit- und Logging-Komponenten:** Minimaler Audit Trail zur Nachvollziehbarkeit von Änderungen, getrennt von technischen Logs.
++ - **Backup und Disaster Recovery:** Nutzung von Managed Services mit EU-Hosting und DSGVO-konformer Datenresidenz.
++ 
++ ## 3. Schnittstellen und Integrationspunkte
++ - **SAP-Schnittstelle (API-Layer):** Lesender Zugriff auf Produktdaten, Preise und Rabatte. Echzeitdaten sind nur begrenzt verfügbar; Preisaktualisierungen können verzögert sein.
++ - **Authentifizierungs-Schnittstelle:** Optionales SSO über OAuth 2.0 / OpenID Connect.
++ - **API Gateway (geplant):** Soll API-Zugriffe zentral steuern, steht MVP-zeitnah nicht zur Verfügung (6 Wochen Wartezeit).
++ - **Support:** Kontaktformular mit direkter E-Mail-Verarbeitung, keine Persistenz im MVP.
++ 
++ ## 4. Daten- und Sicherheitsaspekte
++ - **Datenschutz:** DSGVO-konforme Datenverarbeitung mit Double-Opt-In, Löschkonzept, Datenminimierung und EU-Datenresidenz.
++ - **Datensicherheit:** Verschlüsselung der Kommunikation via TLS, kein E2E-Verschlüsselung im MVP.
++ - **Auditierbarkeit:** Nachvollziehbarkeit von Datenänderungen und Zugriffen wird gewährleistet, Logging wird DSGVO-konform getrennt behandelt.
++ - **Backup & Disaster Recovery:** Nutzung von Managed Services, Backups und Wiederherstellung sind geplant, Details noch offen.
++ - **Zugriffssteuerung:** Feingranulares Rollen- und Berechtigungssystem für Nutzerrollen entsprechend Projektanforderungen.
++ 
++ ## 5. Offene Architekturentscheidungen
++ - **Pilotkunde und regionale Anforderungen:** Unklarheit bzgl. Startregion (Schweiz vs. Deutschland) und Mehrwährungs-/Mehrländer-Support im MVP.
++ - **API Gateway Nutzung:** Aufgrund Wartezeiten wird für MVP ggf. ein Workaround ohne Gateway genutzt.
++ - **Authentifizierung:** Integration von SSO (Azure AD, Google) ist noch offen und optional.
++ - **Freigabeprozesse für Rabatte:** Nicht im MVP enthalten, sollen in Folgephasen umgesetzt werden.
++ - **Supportprozess:** Kein Ticketsystem im MVP; langfristige Lösung offen.
++ - **Backup- und Disaster Recovery-Konzeption:** Details müssen noch konkretisiert werden.
++ - **Test- und Entwicklungsumgebungen:** Umgang mit Produktivdaten in Tests noch ungeklärt.
++ - **Security Review:** Umfang und Zeitrahmen müssen noch abgestimmt werden.
++ 
++ ## 6. Architekturrestriktionen und bewusste Vereinfachungen
++ - Kein eigener Datenbankserver, stattdessen Nutzung von Managed Services.
++ - MVP fokussiert auf Web-Frontend, keine native Mobile-App im ersten Release.
++ - Kein komplexer Freigabe- und Workflow-Prozess für Angebote im MVP.
++ - Support über ein einfaches Kontaktformular ohne Ticketpersistenz.
++ - Begrenzter Audit Trail, um MVP-Termine einzuhalten.
++ 
++ ---
++ 
++ *Dieser Architekturüberblick basiert auf dem aktuellen Projektkontext und den Anforderungen aus dem Stakeholder-Transkript. Widersprüche und Unklarheiten sind bewusst dokumentiert, um spätere Entscheidungen zu erleichtern.*

@@ -1,0 +1,84 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarfe aus dem Kundenportal MVP Projekt
++ 
++ ## 1. Fachliche offene Fragen
++ 
++ ### 1.1 Zielkunde und Scope
++ - Wer ist der finale Pilotkunde? Deutschland (Hansa GmbH) oder Schweiz (Müller AG)? Dies beeinflusst Datenschutz-, Hosting- und Währungsanforderungen.
++ - Welche Funktionen sind definitiv im MVP enthalten und welche werden bewusst weggelassen (z.B. Support-Ticketsystem, Rabattfreigaben)?
++ - Wie genau soll der Freigabeprozess für Rabatte gestaltet werden? Ab welchen Schwellenwerten greifen welche Freigaben durch Sales, Manager oder Finance?
++ 
++ ### 1.2 Supportprozess
++ - Wie soll der Supportprozess langfristig gestaltet werden? Kontaktformular versus Ticketsystem mit Persistenz?
++ - Wie wird die Zuordnung von Supportanfragen zu Kunden realisiert und dokumentiert?
++ - Wie wird sichergestellt, dass Support-Anfragen DSGVO-konform behandelt und bei Löschungen berücksichtigt werden?
++ 
++ ### 1.3 Angebote und Preise
++ - Wie wird mit der zeitlichen Inkonsistenz der SAP-Preisdaten (Nachtupdates) umgegangen? Gibt es einen Fallback oder Markierung für unverbindliche Angebote?
++ - Sollen Kunden Angebote online akzeptieren können? Welche rechtlichen und technischen Anforderungen wären dafür erforderlich?
++ - Wie genau soll das Template-Management für Angebots-PDFs gestaltet werden, inklusive Versionierung und Rechtskonformität?
++ 
++ ### 1.4 Rollen und Berechtigung
++ - Wie detailliert soll das Rollen- und Berechtigungskonzept sein, insbesondere hinsichtlich unterschiedlicher Rechte für Support, Sales, Finance und Kunden?
++ - Wer darf welche Daten sehen und bearbeiten (z.B. Support darf Preise nicht sehen, aber Angebote einsehen)?
++ 
++ ### 1.5 Internationalisierung und Währung
++ - Welche Sprachen und Länder sollen im MVP unterstützt werden? Es ist von DACH ausgegangen, EU und USA später.
++ - Welche Währungen sind zwingend im MVP nötig (EUR, CHF, USD)? Wie wird der Mehrwährungsprozess technisch umgesetzt?
++ 
++ 
++ ## 2. Technische offene Fragen
++ 
++ ### 2.1 Architektur und Infrastruktur
++ - Welche Managed Services sollen konkret zum Einsatz kommen (z.B. Datenbank, Backup, Monitoring)?
++ - Wie wird mit der API Gateway Warteliste umgegangen? Gibt es kurzfristige Alternativen für das MVP?
++ - Wie wird die SAP-Integration technisch realisiert, insbesondere Lesender Zugriff und Umgang mit SAP-Wartungsfenstern?
++ - Wie erfolgt die Trennung und Implementierung der verschiedenen Log-Typen (technische Logs, Audit-Logs, Security Logs)?
++ - Welche CI/CD- und Secrets-Management-Lösungen kommen zum Einsatz?
++ 
++ ### 2.2 Sicherheit und Datenschutz
++ - Wie wird die Umsetzung der DSGVO-konformen Löschkonzepte technisch realisiert, insbesondere bei Speicher- und Backup-Daten?
++ - Wie wird sichergestellt, dass keine personenbezogenen Daten in technischen Logs landen?
++ - Wie wird das Identity- und Access-Management ohne zentrales IAM im MVP abgebildet?
++ - In welchem Umfang wird das Security Review im MVP durchgeführt, und was wird eventuell ausgespart?
++ 
++ ### 2.3 Testing und Qualitätssicherung
++ - Wie wird mit der Nutzung von SAP-Testsystemen umgegangen, die echte Kundendaten enthalten?
++ - Welche Strategien für Testdaten-Synthese oder Pseudonymisierung werden angewandt?
++ 
++ ### 2.4 Skalierung und Performance
++ - Wie wird die erwartete Nutzerzahl (200 bis 20.000) technisch berücksichtigt und skaliert?
++ - Wie werden Rate Limiting und Pagination für API-Endpunkte konkret umgesetzt, um Missbrauch und schlechte Nutzererfahrung zu vermeiden?
++ 
++ 
++ ## 3. Organisatorische offene Fragen
++ 
++ - Wie wird der Dokumentationsumfang für das MVP und Folgephasen definiert und wer ist dafür verantwortlich?
++ - Wer übernimmt die Rolle des Architekten, und wie wird die Architekturentscheidung und Dokumentation langfristig sichergestellt?
++ - Wie erfolgt die Kostenschätzung und Budgetierung bezogen auf EU-only Hosting und Managed Services?
++ - Wer klärt und entscheidet den endgültigen MVP-Scope und die Priorisierung offener Funktionen?
++ 
++ 
++ ## 4. Widersprüche und Risiken
++ 
++ - Konflikt zwischen Zeitrahmen MVP (8 Wochen) und notwendigem Security Review.
++ - Konflikt zwischen Wunsch nach Support-Ticketsystem und aktuellem MVP-Support über Kontaktformular ohne Persistenz.
++ - Widerspruch zwischen DSGVO Löschpflichten und gesetzlichen Aufbewahrungsfristen, insbesondere bei Audit- und Angebotsdaten.
++ - Spannungsfeld zwischen Skalierbarkeit und Vermeidung von Overengineering.
++ - Budgetrestriktionen kontra Wunsch nach nativer mobiler App und mehreren Frontends.
++ 
++ 
++ ## 5. Mögliche Ansprechpartner und Rollen
++ 
++ - Anna (Projektmanagement / Sales) – Klärung Business Scope, Priorisierung
++ - Ben (Technik / Softwareentwicklung) – Architektur, technische Umsetzung
++ - Clara (Datenschutz / Compliance) – DSGVO, Audit, Löschkonzepte
++ - David (Customer Support) – Supportprozess, Kundenkontakt
++ - Eva (Finanzen / Freigabeprozesse) – Rabattfreigaben, Budget
++ - Farid (IT Operations) – Infrastruktur, Betrieb, Hosting
++ 
++ ---
++ 
++ *Die offenen Fragen basieren auf dem Projektkontext und dem Transkript input/transcripts/T9999_chaos.txt sowie den abgeleiteten Requirements, Risiken und Architekturüberblick.*

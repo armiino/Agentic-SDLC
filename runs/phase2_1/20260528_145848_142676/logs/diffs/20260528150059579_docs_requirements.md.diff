@@ -1,0 +1,83 @@
+﻿--- before/docs/requirements.md
++++ after/docs/requirements.md
+- 
++ # Requirements Document
++ 
++ ## Functional Requirements
++ 
++ 1. **User Authentication**
++    - Users must be able to register and log in using email and password.
++    - Double‑Opt‑In confirmation is required for new accounts. (DSGVO)
++    - Optional SSO integration (Azure AD / Google) may be added later.
++ 2. **Offer Creation**
++    - Sales users can create offers using product and price data read from SAP.
++    - Offers are stored as drafts and can be sent to customers.
++    - No manual special‑discounts (>15 %) are allowed in the MVP.
++ 3. **Invoice Access**
++    - Customers can view and download their invoices as PDF files.
++ 4. **Role & Permission Model (minimal)**
++    - Roles: Admin, Sales, Customer.
++    - Admin can manage users and view all data.
++    - Sales can create offers and view customer invoices.
++    - Customer can view own offers and invoices.
++ 5. **Audit Trail**
++    - Log creation, modification and sending of offers and login events.
++    - Logs must not contain personal data; separate technical logs are kept.
++ 6. **EU‑only Managed Hosting**
++    - The application must run on a managed service with guaranteed EU data residency.
++ 7. **Backup & Disaster Recovery**
++    - Daily backups with ability to restore customer data.
++ 8. **API Layer**
++    - Provide a RESTful API for the frontend to access SAP data and perform the above functions.
++    - OAuth is preferred for authentication; API‑Key fallback may be used.
++ 9. **PDF Generation**
++    - Offers and invoices are exported as PDFs with legal footnotes.
++ 10. **Basic Rate Limiting**
++     - Prevent excessive download of invoices (e.g., limit per minute per user).
++ 
++ ## Non‑functional Requirements
++ 
++ - **Performance**: Offer creation response time < 2 s under normal load (≈200 concurrent users).
++ - **Scalability**: System must be able to scale to 20 000 users after MVP.
++ - **Security**:
++   - TLS for all communication.
++   - No personal data in technical logs.
++   - Secrets management for API credentials.
++ - **Compliance**:
++   - GDPR compliant (double‑opt‑in, data‑minimisation, right‑to‑deletion support).
++   - EU‑only data storage.
++ - **Reliability**: 99.5 % uptime, backups as specified.
++ - **Internationalisation**: UI in German and English.
++ - **Maintainability**: Code versioned, documentation of architecture minimal but present.
++ 
++ ## Constraints / Compliance
++ 
++ - No new database servers – use a managed DB service.
++ - SAP is read‑only during MVP; no write‑back.
++ - API Gateway has a 6‑week waiting period – MVP may start without it, increasing security risk.
++ - No special‑discount workflow (>15 %); to be introduced after MVP.
++ - No full ticketing system for support – only a contact form linked to customer accounts.
++ - Hosting must be EU‑only; cost estimation pending.
++ - Retention policy for offers & invoices is minimal (baseline compliance), detailed rules to be defined later.
++ - Test environment must not contain real customer data – synthetic data required.
++ 
++ ## Traceability
++ 
++ | Requirement | Source |
++ |-------------|--------|
++ | Login with email + Double‑Opt‑In | Transcript – Clara (DSGVO) & Anna (MVP) |
++ | No special discounts in MVP | Transcript – Eva (Finance) & Ben (Constraint) |
++ | Offer creation using SAP data | Transcript – Ben (SAP integration) |
++ | Invoice download PDF | Transcript – Anna & Eva |
++ | Minimal role model | Transcript – Anna (Admin/Sales/Customer) |
++ | Audit trail without personal data | Transcript – Clara (Audit) |
++ | EU‑only managed hosting | Transcript – Farid (EU‑hosting) |
++ | Backup / DR required | Transcript – Ben & Clara |
++ | OAuth preferred for API auth | Transcript – Ben (OAuth vs API‑Key) |
++ | Rate limiting basic | Transcript – Clara (Rate limiting) |
++ | German & English UI | Transcript – Anna & David |
++ | No full ticket system (contact form only) | Transcript – David (Support) |
++ | API layer needed | Transcript – Ben (API Layer) |
++ | GDPR compliance (double‑opt‑in, deletion) | Transcript – Clara (DSGVO) |
++ 
++ *All requirements are derived solely from the transcript **input/transcripts/T9999_chaos.txt** and the mandatory context file.*

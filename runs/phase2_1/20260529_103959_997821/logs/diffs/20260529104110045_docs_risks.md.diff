@@ -1,0 +1,67 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikoartefakt für das Kundenportal MVP
++ 
++ ## 1. Fachliche Risiken
++ 
++ - **Unklare Zieldefinition und Scope:** Unterschiedliche Vorstellungen zu Funktionen (z.B. Supportsystem, Freigabeprozesse für Rabatte) führen zu Scope-Creep oder unklaren Prioritäten.
++ - **Supportprozess unvollständig:** Kontaktformular ohne persistentes Ticketmanagement erhöht das Risiko von ineffizienter Bearbeitung und Compliance-Verstößen.
++ - **Rabattfreigabe und Preisvalidierung fehlen im MVP:** Risiko der Fehleingaben, die finanzielle Schäden verursachen können.
++ - **Unklare Pilotkunden-Definition:** Unterschiedliche Datenschutzanforderungen (Schweiz vs. Deutschland) und Mehrwährungsfragen sind noch offen, was den Scope und Compliance beeinflusst.
++ 
++ ## 2. Technische Risiken
++ 
++ - **Backend noch nicht API-ready:** Verzögerungen oder Mehraufwand bei der Integration von SAP-Daten können Funktionalität oder Zeitplan gefährden.
++ - **API Gateway Warteliste und Verfügbarkeit:** Einführung eines zentralen API Gateways dauert mindestens 6 Wochen, was nicht zum 8-Wochen-MVP-Zeitplan passt.
++ - **Fehlende Security Review:** Zeitrahmen zu knapp für gründliche Security Audits, das MVP könnte Sicherheitslücken enthalten.
++ - **Hosting-Kosten und EU-only Anforderungen unklar:** EU-DSGVO-konforme Datenhaltung könnte teurer sein und Ressourcen binden.
++ - **Backup- und Monitoring-Konzepte unvollständig:** Risiko von Datenverlust und fehlender Erkennung von Systemausfällen.
++ - **Performance und Skalierbarkeit:** Unklare Anzahl zu erwartender Nutzer (200 bis 20.000) erschwert Dimensionierung.
++ - **Logmanagement:** Trennung zwischen technischen Logs, Audit-Logs und Security-Logs noch unklar. Gefahr von Datenschutzverletzungen bei falscher Logkonfiguration.
++ - **SAP-Verfügbarkeit als kritische Abhängigkeit:** System muss mit SAP-Ausfällen umgehen können; fehlende Fallbacks erhöhen Ausfallrisiko.
++ - **Kein zentrales IAM:** Identity Provider für SSO noch nicht vorhanden, Integration ist komplex und nicht MVP-konform.
++ - **Echtdaten in Testumgebungen:** Verwendung tatsächlicher SAP-Kundendaten in Tests ist datenschutzrechtlich problematisch.
++ 
++ ## 3. Compliance- und Datenschutzrisiken
++ 
++ - **DSGVO-Konformität:** Erfüllung von Double Opt-In, Löschkonzept, Auditierbarkeit und Auftragsverarbeitungsverträgen ist anspruchsvoll und teilweise noch offen.
++ - **Datenresidenz:** Hosting in EU oder nachweislicher DSGVO-Konformität nötig, sonst rechtliche Risiken.
++ - **Personenbezogene Daten in Logs:** Gefahr der unbeabsichtigten Speicherung in technischen Logs, Missachtung von Aufbewahrungsfristen.
++ - **Support-Kontaktdaten ohne strukturiertes Ticketsystem:** Erhöht das Risiko von Datenschutzverletzungen.
++ - **Umgang mit Löschanfragen vs. gesetzliche Aufbewahrungspflichten:** Konflikt zwischen Recht auf Löschung und Handelsrecht.
++ 
++ ## 4. Widersprüche und Unsicherheiten
++ 
++ - **Mobile Nutzung:** Unklarheit native App vs. responsive Web, Budget und technische Machbarkeit nicht abgestimmt.
++ - **Freigabeprozesse vs. Zeitplan:** Finanzielle Absicherung der Rabatte durch Freigaben fehlt im MVP wegen Zeitmangel.
++ - **API-Sicherheitsmechanismen:** OAuth bevorzugt, aber zu komplex für MVP, API Keys einfacherer, jedoch unsicherer.
++ - **Support vs. Datenschutz:** Supportrechte konterkarieren Datenschutzprinzipien, Rollen- und Berechtigungskonflikte ungelöst.
++ - **Kosten- und Architekturrisiken:** Fehlen einer finalen Architekturentscheidungen führt zu Unklarheiten bei Kostenschätzung und Planung.
++ - **Pilotkunden und Internationalisierung:** Definition des Pilotkunden und Ausweitung des Kundenkreises beeinflusst Datenschutz, Währung, Sprache und rechtliche Anforderungen.
++ 
++ ## 5. Mögliche Auswirkungen
++ 
++ - Verzögerungen im Projektverlauf durch offene technische und organisatorische Fragen.
++ - Finanzielle Schäden durch unkontrollierte Rabattvergabe oder falsche Preise.
++ - Sicherheitsvorfälle durch unzureichende Security Reviews oder fehlerhafte Berechtigungen.
++ - Compliance-Verstöße und mögliche Bußgelder durch unvollständige DSGVO-Implementierung.
++ - Kundenzufriedenheitsverlust und ineffizienter Support durch unzureichendes Ticketsystem.
++ - Erhöhter Wartungs- und Betriebsaufwand durch unklare Architektur und fehlende Automatisierung.
++ 
++ ## 6. Mögliche Gegenmaßnahmen und Klärungsbedarfe
++ 
++ - Klare Scope-Definition und MVP-Abgrenzung mit bewussten Ausschlüssen dokumentieren.
++ - Priorisierung und sukzessive Implementierung von Support- und Freigabeprozessen.
++ - Nutzung von Managed Services zur Einhaltung von DSGVO und Kosteneffizienz sicherstellen.
++ - Frühzeitige Entscheidung und Reservierung für API Gateway und IAM-Lösungen.
++ - Implementierung von minimal erforderlichen Security Reviews innerhalb des Zeitplans.
++ - Detaillierte Datenschutzkonzepte inkl. Löschkonzepte, Auditlogs und Protokollierung erarbeiten.
++ - Testdatenstrategie mit Pseudonymisierung und synthetischen Daten entwickeln.
++ - Monitoring und Backup-Lösungen von Beginn an planen und einführen.
++ - Pilotkunden und Anforderungsklärung bzgl. Internationalisierung und Währung zeitnah abschließen.
++ - Dokumentation und Rollenmodellierung sauber umsetzen, um Berechtigungskonflikte zu vermeiden.
++ 
++ ---
++ 
++ *Dieses Risikoartefakt wurde abgeleitet aus dem Kontext-Dokument runs/phase2_1/20260529_103959_997821/state/context.md und dem Transkript input/transcripts/T9999_chaos.txt.*
