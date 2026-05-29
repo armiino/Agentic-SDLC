@@ -1,0 +1,67 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ ## Architektur‑Übersicht (frühe SDLC‑Phase)
++ 
++ **Systemkontext**
++ - **Nutzer**: Kunden (Portal‑Zugang), Vertriebs‑Mitarbeiter (Sales), Administratoren, Support‑Mitarbeiter (nur Leserechte), optionales Management für Freigaben (später).
++ - **Externe Systeme**:
++   - **SAP ERP** – lesender API‑Layer für Produkt‑, Preis‑ und Rabatt‑Stammdaten (Schlüssel‑Abhängigkeit).
++   - **Managed Hosting‑Provider** in einer EU‑Only Region (DSGVO‑konform, Backup/DR).
++   - **E‑Mail‑Service** – Double‑Opt‑In, Benachrichtigungen und Support‑Kontaktformular.
++   - **Identity Provider (optional)** – Azure AD / Google SSO (geplant, nicht‑MVP).
++ - **Interne Komponenten**:
++   - **Web‑Frontend** (responsive, Deutsch/Englisch, Web‑first, Mobile‑Support später).
++   - **API‑Gateway / Proxy** (einfacher interner Proxy für MVP, später zentrales API‑Gateway).
++   - **Application‑Backend** (Microservice‑Stil, bietet Auth, Angebots‑Logik, Rechnungs‑Download, Rollen‑Management, Audit‑Logging).
++   - **Authentication Service** (E‑Mail/Passwort, Double‑Opt‑In, TLS, später OAuth/SSO).
++   - **Audit‑Log Service** (immutable, keine PII, speichert Nutzer‑ID, Event‑Typ, Timestamp, Objekt‑ID).
++   - **Backup/DR Service** (tägliche Snapshots, 30‑Tage‑Retention, Wiederherstellungstests).
++   - **Secrets‑Management** (Vault‑ähnlich, verwaltet API‑Keys, DB‑Credentials).
++   - **Monitoring & Alerting** (Technische Logs, getrennt von Audit‑Logs, keine PII, Rate‑Limiting‑Metriken).
++   - **Support Kontaktformular** (Frontend‑Komponente, leitet E‑Mails an Support‑Team weiter).
++ 
++ **Wichtige Komponenten**
++ | Komponente | Aufgabe | Schlüssel‑Entscheidung (falls definiert) |
++ |------------|---------|----------------------------------------|
++ | Frontend | UI für Kunden, Sales, Admin; PDF‑Export, Download | Responsive Web (React/Angular), i18n (de/en) |
++ | Auth Service | Registrierung, Login, Double‑Opt‑In, Token‑Ausgabe | E‑Mail + Passwort, TLS, später OAuth/SSO |
++ | API Proxy / Gateway | Weiterleitung zu internen Services, Grund‑Rate‑Limiting | Einfacher Proxy (MVP), später zentrales API‑Gateway |
++ | Business Service (Angebote) | Angebotserstellung, SAP‑Daten‑Abfrage, PDF‑Generation | Lesender SAP‑API‑Layer, keine Sonderrabatte im MVP |
++ | Rechnung Service | Anzeige & Download von Rechnungen (PDF) | Direktes SAP‑Read (Bestell‑/Rechnungs‑Daten) |
++ | Rollen‑/Berechtigungs‑Engine | Rollen‑Admin, Sales, Kunde, (Support Leserechte) | RBAC, minimal (3 Rollen) |
++ | Audit‑Log Service | Immutable Event‑Log (Login, Angebot, Download, Rollen‑Änderungen) | Keine PII, separates Storage (z.B. immutable object store) |
++ | Backup / DR | Tägliche Snapshots, 30‑Tage‑Retention, Wiederherstellungstests | Managed Service vom Hosting‑Provider |
++ | Secrets‑Management | Sichere Verwaltung von Tokens, DB‑Creds, SAP‑API‑Keys | Vault‑ähnlicher Service (z.B. HashiCorp Vault) |
++ | Monitoring & Alerting | System‑Health, Rate‑Limiting, SAP‑Verfügbarkeit, Security‑Events | Technische Logs (keine PII), Alert on SAP outage |
++ | Support Kontaktformular | Erfassung von Anfragen, Weiterleitung per E‑Mail | Keine Ticket‑DB (MVP), Risiko‑Einschränkung |
++ 
++ **Schnittstellen / Integrationspunkte**
++ - **Frontend � � Backend API** – REST/JSON über HTTPS (Auth‑Token im Header).
++ - **Backend � � SAP** – lesender API‑Call (HTTPS, OAuth‑Client‑Credentials oder Service‑User). Keine Schreibrechte im MVP.
++ - **Backend � � Mail‑Service** – SMTP/REST für Double‑Opt‑In‑Mails, Support‑Benachrichtigungen.
++ - **Backend � � Secrets‑Store** – Secure retrieval of API keys at startup.
++ - **Backend � � Backup‑Service** – Scheduler‑Trigger für Snapshots (Provider API).
++ - **Frontend � � Monitoring** – Export von Metriken (z.B. Prometheus) für UI‑Health‑Dashboard.
++ - **Future API‑Gateway** – zentrale Auth‑ und Rate‑Limiting‑Schicht (Platzhalter im Architektur‑Diagramm).
++ 
++ **Daten‑ und Sicherheitsaspekte**
++ - **Datenschutz**: EU‑Only Hosting, TLS 1.2+, Double‑Opt‑In, minimal gespeicherte PII (nur Nutzer‑ID, E‑Mail, Rollen). Keine PII in Application‑Logs.
++ - **Auditability**: Immutable Audit‑Log speichert Ereignisse ohne PII, ermöglicht Nachweis für DSGVO‑Anfragen.
++ - **Backup**: Tägliche Snapshots, 30‑Tage‑Retention, verschlüsselt im EU‑Datencenter.
++ - **Secrets**: Keine Hard‑Coded Credentials; Nutzung von Vault‑API.
++ - **Rate‑Limiting**: Grund‑Rate‑Limiting im Proxy (z.B. 100 Requests/Minute pro Nutzer) – später erweiterbar.
++ - **Rollback / DR**: Wiederherstellung aus Snapshots, Tests im Staging‑Umfeld.
++ 
++ **Offene Architekturentscheidungen / Risiken**
++ - **API‑Gateway**: Noch nicht verfügbar (6‑Wochen‑Warteliste). Interim‑Proxy wird eingesetzt – Migrationspfad muss definiert werden.
++ - **SSO / OAuth**: Nur als zukünftige Variante geplant, keine konkrete Technologieentscheid.
++ - **Hosting‑Kosten**: EU‑Only Managed Service – genaue Kosten noch zu ermitteln (Risiko für Budget).
++ - **Support‑Workflow**: Kontaktformular‑basiert, kein Ticket‑System – späteres Ticket‑Tool muss integriert werden.
++ - **Rabatt‑Freigabe‑Prozess**: Nicht im MVP, muss in Phase 2 definiert werden (15 %/30 % Schwellen).
++ - **Mehr‑Währung / Internationalisierung**: CHF/USD und weitere Sprachen erst nach MVP – Entscheidung über Pilot‑Kunden (Schweiz) noch offen.
++ - **Backup‑Provider**: Auswahl des konkreten Managed‑Backup‑Anbieters steht aus.
++ - **Retention vs. Löschkonzept**: Konflikt zwischen gesetzlicher Aufbewahrungspflicht und DSGVO‑Löschrecht – detaillierte Policy in späterer Phase.
++ - **Test‑Daten**: Einsatz synthetischer Daten vs. Nutzung von SAP‑Testsystem – klare Policy erforderlich.
++ 
++ *Dieses Architektur‑Artefakt basiert auf dem Kontext (`runs/phase2_1/20260529_110440_365ef4/state/context.md`), den Anforderungen (`docs/requirements.md`) und den identifizierten Risiken (`docs/risks.md`). Es bietet einen groben Überblick über die Systemlandschaft, zentrale Komponenten, Schnittstellen sowie die wichtigsten Daten‑ und Sicherheitsaspekte für die frühe SDLC‑Phase.*

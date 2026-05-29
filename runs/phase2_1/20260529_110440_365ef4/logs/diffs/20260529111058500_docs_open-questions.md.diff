@@ -1,0 +1,54 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ ## Offene Fragen und Klärungsbedarfe
++ 
++ ### Fachliche Fragen
++ - **Rabatt‑Freigabe‑Workflow**: Welche genauen Schwellenwerte (z. B. 15 % / 30 %) und Welche Rollen benötigen Freigaben? (Quelle: Transkript, Eva & Ben) 
++ - **Pilot‑Kunde Schweiz**: Wird der Schweizer Pilot (Müller AG) im MVP bedient und benötigen sie CHF? (Quelle: Transkript, Anna, Eva, David) 
++ - **Support‑Prozess**: Wie soll der Support konkret Anfragen zu Rechnungen, Lieferstatus und Rabatten bearbeiten? Wird ein Ticket‑System später verpflichtend? (Quelle: Transkript, David) 
++ - **Kosten‑Schätzung EU‑Only Hosting**: Welche konkreten Kosten fallen für das gewünschte EU‑Only Managed‑Hosting an? (Quelle: Transkript, Farid) 
++ - **SAP‑Verfügbarkeit & Fallback**: Gibt es einen definierten Fallback‑Mechanismus (Cache, Mock‑Daten) für SAP‑Ausfälle im MVP? (Quelle: Transkript, Ben) 
++ - **Retention‑ vs. Löschkonzept**: Wie wird der Konflikt zwischen gesetzlicher Aufbewahrungspflicht (Handelsrecht) und DSGVO‑Recht‑auf‑Vergessen gelöst? (Quelle: Transkript, Clara) 
++ - **Mehr‑Währungs‑Support**: Ist die Unterstützung von CHF im MVP zwingend oder kann sie zu einem späteren Release verschoben werden? (Quelle: Transkript, Eva, Farid) 
++ - **API‑Gateway‑Strategie**: Wie soll die Migration vom MVP‑Proxy zum zentralen API‑Gateway nach der 6‑Wochen‑Warteliste erfolgen? (Quelle: Transkript, Farid) 
++ - **Backup‑Provider Auswahl**: Welcher Managed‑Backup‑Provider soll eingesetzt werden (Kosten, SLA, EU‑Datenresidenz)? (Quelle: Transkript, Farid) 
++ - **Test‑Datenstrategie**: Wie werden synthetische Testdaten erzeugt und wie wird der Zugriff auf produktive SAP‑Testdaten verhindert? (Quelle: Transkript, Clara) 
++ 
++ ### Technische Fragen
++ - **Secrets‑Management Implementierung**: Welcher konkrete Service (z. B. HashiCorp Vault, Cloud‑Native Secrets) wird verwendet? (Quelle: Transkript, Ben) 
++ - **Rate‑Limiting & Missbrauchserkennung**: Welches konkrete Rate‑Limiting (Requests / Minute) soll im MVP‑Proxy gelten und wie wird Missbrauch später erkannt? (Quelle: Transkript, Ben, Clara) 
++ - **OAuth vs. einfacher Token**: Welches OAuth‑Verfahren (Authorization‑Code, Client‑Credentials) soll nach dem MVP eingesetzt werden? (Quelle: Transkript, Ben) 
++ - **Audit‑Log Speicherung**: Wo wird der immutable Audit‑Log abgelegt (Object‑Store, Append‑Only DB) und wie wird er vor PII geschützt? (Quelle: Transkript, Clara) 
++ - **Monitoring & Alerting Details**: Welche Metriken (SAP‑Verfügbarkeit, API‑Latenz, Backup‑Erfolg) sollen überwacht werden und welche Alert‑Kanäle werden genutzt? (Quelle: Transkript, Farid) 
++ - **Backup‑Strategie Details**: Wie oft sollen Snapshots erstellt werden (täglich, hourly) und welche Wiederherstellungstests sind geplant? (Quelle: Transkript, Farid) 
++ - **Umgebungs‑Setup (Dev/Test/Prod)**: Wie wird die Trennung von Secrets und Konfigurationen zwischen den Umgebungen umgesetzt? (Quelle: Transkript, Clara) 
++ 
++ ### Widersprüche, die geklärt werden müssen
++ - **SSO vs. MVP‑Zeitplan** – SSO wird als Wunsch genannt, aber im MVP ausgeschlossen wegen Zeitbudget. Welche Priorität hat SSO grundsätzlich? (Quelle: Transkript, Anna) 
++ - **Support‑Ticket‑System vs. Kontaktformular** – Support verlangt strukturierte Ticket‑Daten, das MVP sieht nur ein Formular vor. Wie wird die Lücke überbrückt? (Quelle: Transkript, David) 
++ - **Mehr‑Währung vs. Pilot‑Kunde Schweiz** – Der Schweizer Pilot erfordert CHF, das MVP unterstützt nur EUR. Wie wird diese Diskrepanz gelöst? (Quelle: Transkript, Eva, Farid) 
++ - **Kosten‑Schätzung EU‑Hosting vs. Budget** – Fehlende Kosten‑Info verhindert Budgetfreigabe. Welche Schritte sind nötig, um die Schätzung zu erhalten? (Quelle: Transkript, Farid) 
++ - **SAP‑Lesender API‑Layer vs. Schreibbedarf für Bestellungen** – Im MVP nur lesend, aber später Bestell‑Sync nötig. Wie wird die spätere Schreibintegration geplant? (Quelle: Transkript, Ben) 
++ 
++ ### Fehlende Informationen / Dokumente
++ - **Detailliertes Lösch‑ und Double‑Opt‑In‑Verfahren** (DSGVO‑Checkliste). 
++ - **AVV (Auftrags‑Verarbeitungs‑Verträge) mit SAP‑ und Hosting‑Provider**. 
++ - **Kosten‑Kalkulation für EU‑Only Managed‑Hosting und Backup‑Provider**. 
++ - **Klare Definition des Pilot‑Kunden (Schweiz vs. DACH)** und damit verbundene Währungs‑/Sprach‑Anforderungen. 
++ - **Roadmap für API‑Gateway‑Einführung nach MVP**. 
++ - **Auswahl und Konfiguration des Secrets‑Management‑Tools**. 
++ - **Konkrete Retention‑Policy (Jahre) und Ausnahme‑Regeln für Finanzdaten**. 
++ - **Test‑Daten‑Generierungs‑Guidelines** (synthetisch vs. masked). 
++ 
++ ### Mögliche Ansprechpartner / Rollen
++ - **Product Owner / Business Analyst** – Klärung von Rabatt‑Freigabe‑Logik und Pilot‑Kunden‑Entscheidung. 
++ - **Compliance Officer / Datenschutz‑Beauftragter** – Double‑Opt‑In, Löschkonzept, AVV, Retention vs. Löschung. 
++ - **Finance Lead (Eva)** – Freigabe‑Workflow, Mehr‑Währungs‑Anforderungen, Kosten‑Schätzung. 
++ - **IT Operations (Farid)** – Hosting‑Kosten, EU‑Only Anforderungen, Backup‑Provider. 
++ - **SAP Integration Lead (Ben)** – API‑Spezifikationen, Fallback‑Strategie, Schreib‑Zugriff. 
++ - **Support Manager (David)** – Ticket‑System‑Bedarf, Kontaktformular‑Erweiterung. 
++ - **Security Architect (Clara)** – Audit‑Log, Logging‑Richtlinien, PII‑Handhabung, Monitoring. 
++ - **Architecture Lead / CTO** – API‑Gateway‑Migrationsplan, Secrets‑Management, Skalierbarkeits‑Strategie.
++ 
++ *Alle Fragen leiten sich eindeutig aus den bestehenden Artefakten (Transkript `input/transcripts/T9999_chaos.txt`, Kontext `runs/phase2_1/20260529_110440_365ef4/state/context.md`, Requirements `docs/requirements.md`, Risks `docs/risks.md`, Architecture `docs/architecture.md`) ab.*

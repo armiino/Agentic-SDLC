@@ -109,7 +109,7 @@ public sealed record HostSettings(
         {
             ["Phase1SinglePass"] = "Phase1_3Prompt",
             ["Phase2ContextAgent"] = "ContextPrompt2",
-            ["Phase2RequirementsAgent"] = "RequirementsPrompt3",
+            ["Phase2RequirementsAgent"] = "RequirementsPrompt4",
             ["Phase2RisksAgent"] = "RisksPrompt2",
             ["Phase2ArchitectureAgent"] = "ArchitecturePrompt2",
             ["Phase2OpenQuestionsAgent"] = "OpenQuestionsPrompt2"
