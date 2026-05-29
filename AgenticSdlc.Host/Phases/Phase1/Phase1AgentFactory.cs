@@ -83,7 +83,7 @@ public static class Phase1AgentFactory
             settings.RepoRoot,
             settings.AgentPhase,
             AgentName,
-            settings.Phase1Prompt,
+            settings.GetPromptName(AgentName),
             new Dictionary<string, string>
             {
                 ["runId"] = runId

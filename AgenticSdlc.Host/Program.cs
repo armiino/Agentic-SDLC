@@ -16,7 +16,8 @@ DotNetEnv.Env.Load(
     )
 );
 
-var settings = HostSettings.FromEnvironment();
+var runtimeConfig = RunConfig.Load(repoRoot);
+var settings = HostSettings.FromRuntimeConfig(runtimeConfig, repoRoot);
 var runId = RunId.New();
 var run = new RunContext(runId, settings.AgentPhase);
 run.EnsureFolders();
@@ -42,8 +43,22 @@ var config = new
     runId,
     phase = ResolvePhaseName(settings.AgentPhase),
     phaseSelector = settings.AgentPhase,
+    phase2ContextStrategy = settings.AgentPhase == "phase2_1" ? settings.Phase2ContextStrategy : null,
+    prompts = ResolvePromptConfig(settings),
     llmProvider = settings.LlmProvider,
     model = settings.ModelId,
+    observability = new
+    {
+        otelEnabled = settings.OtelEnabled,
+        otelSensitive = settings.OtelSensitive,
+        otelRawEnabled = settings.OtelRawEnabled
+    },
+    llmPreview = new
+    {
+        enabled = settings.AssistantPreviewEnabled,
+        chars = settings.LlmPreviewChars,
+        onlyWhenNoTools = settings.LlmPreviewOnlyWhenNoTools
+    },
     ollamaBaseUrl = settings.OllamaBaseUrl,
     openRouterBaseUrl = settings.LlmProvider == "openrouter" ? settings.OpenRouterBaseUrl : null,
     timestampUtc = DateTime.UtcNow
@@ -133,6 +148,42 @@ static string ResolvePhaseName(string phase)
         "phase2_1" => Phase2Artifacts.PhaseName,
         _ => phase
     };
+
+static object ResolvePromptConfig(HostSettings settings)
+{
+    if (settings.AgentPhase == "phase1")
+    {
+        return new
+        {
+            phase1 = new
+            {
+                agent = "Phase1SinglePass",
+                promptName = settings.GetPromptName("Phase1SinglePass")
+            }
+        };
+    }
+
+    if (settings.AgentPhase == "phase2_1")
+    {
+        return new
+        {
+            phase2_1 = new
+            {
+                contextStrategy = settings.Phase2ContextStrategy,
+                agents = new
+                {
+                    context = settings.GetPromptName(Phase2AgentFactory.ContextAgentName),
+                    requirements = settings.GetPromptName(Phase2AgentFactory.RequirementsAgentName),
+                    risks = settings.GetPromptName(Phase2AgentFactory.RisksAgentName),
+                    architecture = settings.GetPromptName(Phase2AgentFactory.ArchitectureAgentName),
+                    openQuestions = settings.GetPromptName(Phase2AgentFactory.OpenQuestionsAgentName)
+                }
+            }
+        };
+    }
+
+    return new { unknownPhase = settings.AgentPhase };
+}
 
 //docs muss vor jedem run "geleert" werden damit keine alten Daten ausversehen bleiben oder sich etwas vermischt.
 static void CleanDocsFolder()

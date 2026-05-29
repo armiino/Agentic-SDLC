@@ -1,4 +1,3 @@
-using AgenticSdlc.Host.Agents;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Mcp;
 using AgenticSdlc.Host.Run;
@@ -70,6 +69,7 @@ public sealed class Phase1Runner
         runSpan?.SetTag("run.id", _run.RunId);
         runSpan?.SetTag("phase", Phase1Artifacts.PhaseName);
         runSpan?.SetTag("agent.name", AgentName);
+        runSpan?.SetTag("agent.prompt.name", _settings.GetPromptName(AgentName));
         runSpan?.SetTag("llm.provider", _settings.LlmProvider);
         runSpan?.SetTag("gen_ai.request.model", _settings.ModelId);
 
@@ -174,6 +174,7 @@ public sealed class Phase1Runner
             type = "AGENT_STARTED",
             runId = _run.RunId,
             agentName = AgentName,
+            promptName = _settings.GetPromptName(AgentName),
             allowedTools = localTools.Select(t => t.Name).ToArray(),
             timestampUtc = DateTime.UtcNow
         });

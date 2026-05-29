@@ -1,11 +1,7 @@
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.Prompts.ArchitecturePrompt;
-using AgenticSdlc.Host.Phases.Phase2.Prompts.ContextPrompt;
-using AgenticSdlc.Host.Phases.Phase2.Prompts.OpenQuestionsPrompt;
-using AgenticSdlc.Host.Phases.Phase2.Prompts.RequirementsPrompt;
-using AgenticSdlc.Host.Phases.Phase2.Prompts.RisksPrompt;
+using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
@@ -47,44 +43,78 @@ public static class Phase2AgentFactory
         IReadOnlyList<AITool> localTools)
     {
         var contextPath = Phase2Artifacts.ContextPath(run).Replace('\\', '/');
+        var variables = new Dictionary<string, string>
+        {
+            ["runId"] = run.RunId,
+            ["contextPath"] = contextPath
+        };
 
+        /*
+         * Die Promptnamen kommen aus run-config.json. Der PromptProvider lädt
+         * die jeweilige Textdatei nach einem allgemeinen Schema:
+         *
+         * AgenticSdlc.Host/Prompts/<phase>/<agentName>/<promptName>.txt
+         *
+         * Damit bleibt Phase 2.1 nicht von einer eigenen Prompt-Registry abhängig.
+         * Für spätere Phasen reicht es, neue Agent-Ordner unter Prompts/<phase> anzulegen
+         * und deren Promptnamen in der Run-Konfiguration zu referenzieren.
+         */
         return new Phase2Agents(
             Context: CreateSpecialistAgent(
                 settings,
                 run,
                 sourceName,
                 ContextAgentName,
-                ContextPrompt2.Create(run.RunId, contextPath),
+                LoadPrompt(settings, ContextAgentName, variables),
                 localTools),
             Requirements: CreateSpecialistAgent(
                 settings,
                 run,
                 sourceName,
                 RequirementsAgentName,
-                RequirementsPrompt3.Create(run.RunId, contextPath),
+                LoadPrompt(settings, RequirementsAgentName, variables),
                 localTools),
             Risks: CreateSpecialistAgent(
                 settings,
                 run,
                 sourceName,
                 RisksAgentName,
-                RisksPrompt2.Create(run.RunId, contextPath),
+                LoadPrompt(settings, RisksAgentName, variables),
                 localTools),
             Architecture: CreateSpecialistAgent(
                 settings,
                 run,
                 sourceName,
                 ArchitectureAgentName,
-                ArchitecturePrompt2.Create(run.RunId, contextPath),
+                LoadPrompt(settings, ArchitectureAgentName, variables),
                 localTools),
             OpenQuestions: CreateSpecialistAgent(
                 settings,
                 run,
                 sourceName,
                 OpenQuestionsAgentName,
-                OpenQuestionsPrompt2.Create(run.RunId, contextPath),
+                LoadPrompt(settings, OpenQuestionsAgentName, variables),
                 localTools)
         );
+    }
+
+    private static string LoadPrompt(
+        HostSettings settings,
+        string agentName,
+        IReadOnlyDictionary<string, string> variables)
+    {
+        /*
+         * Die Factory kennt nur den Agentnamen. Welche Promptversion dieser
+         * Agent im konkreten Run nutzt, kommt generisch aus HostSettings.
+         * Dadurch bleibt die Factory unabhängig von phase-spezifischen Config-
+         * Klassen und kann für spätere Promptversionen unverändert bleiben.
+         */
+        return PromptProvider.Load(
+            settings.RepoRoot,
+            settings.AgentPhase,
+            agentName,
+            settings.GetPromptName(agentName),
+            variables);
     }
 
     private static AIAgent CreateSpecialistAgent(

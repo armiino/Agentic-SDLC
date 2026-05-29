@@ -75,6 +75,12 @@ public sealed class Phase2Runner
         runSpan?.SetTag("phase", Phase2Artifacts.PhaseName);
         runSpan?.SetTag("llm.provider", _settings.LlmProvider);
         runSpan?.SetTag("gen_ai.request.model", _settings.ModelId);
+        runSpan?.SetTag("phase2.context_strategy", _settings.Phase2ContextStrategy);
+        runSpan?.SetTag("phase2.prompts.context", _settings.GetPromptName(Phase2AgentFactory.ContextAgentName));
+        runSpan?.SetTag("phase2.prompts.requirements", _settings.GetPromptName(Phase2AgentFactory.RequirementsAgentName));
+        runSpan?.SetTag("phase2.prompts.risks", _settings.GetPromptName(Phase2AgentFactory.RisksAgentName));
+        runSpan?.SetTag("phase2.prompts.architecture", _settings.GetPromptName(Phase2AgentFactory.ArchitectureAgentName));
+        runSpan?.SetTag("phase2.prompts.open_questions", _settings.GetPromptName(Phase2AgentFactory.OpenQuestionsAgentName));
         runSpan?.SetTag("workflow.name", Phase2Artifacts.PhaseName);
 
         try
@@ -251,6 +257,7 @@ public sealed class Phase2Runner
                 runId = _run.RunId,
                 phase = Phase2Artifacts.PhaseName,
                 agentName = agent.Name,
+                promptName = ResolvePromptName(agent.Name),
                 allowedTools = localTools.Select(t => t.Name).ToArray(),
                 timestampUtc = DateTime.UtcNow
             };
@@ -359,6 +366,21 @@ public sealed class Phase2Runner
         yield return agents.Risks;
         yield return agents.Architecture;
         yield return agents.OpenQuestions;
+    }
+
+    private string ResolvePromptName(string? agentName)
+    {
+        if (string.IsNullOrWhiteSpace(agentName))
+            return "unknown";
+
+        try
+        {
+            return _settings.GetPromptName(agentName);
+        }
+        catch (InvalidOperationException)
+        {
+            return "unknown";
+        }
     }
 
     private static object? SafeWorkflowEventData(object? data)
