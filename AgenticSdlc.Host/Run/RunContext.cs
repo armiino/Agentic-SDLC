@@ -3,8 +3,20 @@ using System.Text.Json;
 
 namespace AgenticSdlc.Host.Run;
 
+/// <summary>
+/// Verwaltet Pfade und Log-Dateien für einen einzelnen Run.
+/// </summary>
+/// <remarks>
+/// Verantwortlichkeit: Pfade kennen, Verzeichnisse anlegen, JSONL/Text schreiben.
+/// Keine fachliche Logik — kein Wissen über Agenten, Tools oder SDLC-Inhalte.
+/// </remarks>
 public sealed class RunContext
 {
+    // UTF-8 ohne BOM für alle Textdateien.
+    // Utf8NoBom hat in .NET ein BOM-Preamble das Markdown-Renderer
+    // und viele Tools stört — deshalb explizit ohne BOM.
+    private static readonly Encoding Utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
     public string RunId { get; }
     public string PhaseSelector { get; }
     public string RunDir { get; }
@@ -37,8 +49,10 @@ public sealed class RunContext
         Directory.CreateDirectory(DocsSnapshotDir);
         Directory.CreateDirectory(DiffsDir);
         Directory.CreateDirectory(AgentsLogDir);
+
+        // Leere Dateien vorab anlegen, damit sie im Run-Verzeichnis sichtbar sind
+        // auch wenn kein einziges Event geschrieben wurde (z.B. bei frühem Abbruch).
         if (!File.Exists(EventsPath)) File.WriteAllText(EventsPath, "");
-        // erweiterung: separates Log fuer erklaerungspflichtige Agent-Handlungen, damit "warum geschrieben?" nicht in events.jsonl untergeht.
         if (!File.Exists(DecisionLogPath)) File.WriteAllText(DecisionLogPath, "");
     }
 
@@ -56,7 +70,9 @@ public sealed class RunContext
 
     public void AppendDecision(object decision)
     {
-        // erweiterung: Decision-Events sind keine internen Modellgedanken, sondern deklarierte Handlungsgruende zu beobachtbaren Tool-Effekten.
+        // decision-log.jsonl: fokussierter Log für FILE_WRITE_ANALYZED-Events.
+        // Enthält model-declared rationale (intent/reason/evidence) und belegbare
+        // Write-Fakten (SHA256, writeEffect, diff). Kein Ersatz für events.jsonl.
         var line = JsonSerializer.Serialize(decision, _json);
         File.AppendAllText(DecisionLogPath, line + Environment.NewLine);
     }
@@ -97,6 +113,57 @@ public sealed class RunContext
         File.AppendAllText(Path.Combine(agentDir, "decisions.jsonl"), line + Environment.NewLine);
     }
 
+    public void AppendAgentInputContext(string? agentName, object inputContext)
+    {
+        if (string.IsNullOrWhiteSpace(agentName))
+            return;
+
+        var agentDir = GetAgentLogDir(agentName);
+        Directory.CreateDirectory(agentDir);
+
+        var line = JsonSerializer.Serialize(inputContext, _json);
+        File.AppendAllText(Path.Combine(agentDir, "input-context.jsonl"), line + Environment.NewLine);
+    }
+
+    public void AppendAgentInputContextMarkdown(string? agentName, string markdown)
+    {
+        if (string.IsNullOrWhiteSpace(agentName))
+            return;
+
+        var agentDir = GetAgentLogDir(agentName);
+        Directory.CreateDirectory(agentDir);
+
+        File.AppendAllText(Path.Combine(agentDir, "input-context.md"), markdown, Utf8NoBom);
+    }
+
+    /// <summary>
+    /// Hängt einen lesbaren Markdown-Abschnitt an die Response-Text-Datei des Agenten an.
+    /// </summary>
+    /// <remarks>
+    /// response-text.md akkumuliert den Text-Output des Modells pro Chat-Iteration.
+    /// Das ist die direkt lesbare Forschungsquelle für die Frage:
+    /// "Was hat das Modell in dieser Iteration begründet oder formuliert?"
+    ///
+    /// Die Datei wird beim ersten Aufruf mit einem Agentnamen-Header angelegt.
+    /// Jeder weitere Aufruf hängt einen neuen Iterationsabschnitt an.
+    /// </remarks>
+    public void AppendAgentResponseText(string? agentName, string markdown)
+    {
+        if (string.IsNullOrWhiteSpace(agentName))
+            return;
+
+        var agentDir = GetAgentLogDir(agentName);
+        Directory.CreateDirectory(agentDir);
+
+        var filePath = Path.Combine(agentDir, "response-text.md");
+
+        // Header nur beim ersten Schreiben setzen, damit die Datei als eigenständiges Dokument lesbar ist.
+        if (!File.Exists(filePath))
+            File.WriteAllText(filePath, $"# Response Text — {agentName}\n\n", Utf8NoBom);
+
+        File.AppendAllText(filePath, markdown, Utf8NoBom);
+    }
+
     public string? WriteAgentTextFile(string? agentName, string fileName, string content)
     {
         if (string.IsNullOrWhiteSpace(agentName))
@@ -106,7 +173,7 @@ public sealed class RunContext
         Directory.CreateDirectory(agentDir);
 
         var fullPath = Path.Combine(agentDir, fileName);
-        File.WriteAllText(fullPath, content, Encoding.UTF8);
+        File.WriteAllText(fullPath, content, Utf8NoBom);
         return Path.GetRelativePath(RunDir, fullPath).Replace('\\', '/');
     }
 
@@ -119,7 +186,7 @@ public sealed class RunContext
 
         var fileName = $"{DateTime.UtcNow:yyyyMMddHHmmssfff}_{safeName}.diff";
         var full = Path.Combine(DiffsDir, fileName);
-        File.WriteAllText(full, content, Encoding.UTF8);
+        File.WriteAllText(full, content, Utf8NoBom);
         return Path.GetRelativePath(RunDir, full).Replace('\\', '/');
     }
 

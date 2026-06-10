@@ -4,18 +4,9 @@ using System.Text.Json;
 namespace AgenticSdlc.Host.Phases.Phase2;
 
 /// <summary>
-/// Schreibt das Hostseitige Approval-Artefakt für Phase 2.1
+/// Schreibt das host-seitige Approval-Artefakt nach erfolgreich bestandener Phase-2.1-Validation.
+/// Kein Modellurteil — reiner Host-Nachweis dass Workflow und Mindestvalidierung bestanden haben (siehe CL-007).
 /// </summary>
-/// <remarks>
-/// Das Approval bleibt wie in Phase 1 bewusst Host-seitig
-/// Es ist noch keine fachliche Zustimmung des Modells und kein Human in the loop oder so, sondern
-/// ein reproduzierbarer Nachweis:
-///
-/// Der MAF-Workflow wurde ausgeführt, die deterministische Mindestvalidierung
-/// hat bestanden und die erzeugten Dateien können nun vom Entwickler gecheckt werden
-///
-/// Dadurch bleibt vorerst Governance stabil, ohne die eigentliche agentische Artefakterzeugung in den Host zu verlagern.
-/// </remarks>
 public sealed class Phase2ApprovalRecorder
 {
     private readonly RunContext _run;
@@ -41,12 +32,13 @@ public sealed class Phase2ApprovalRecorder
             return;
         }
 
+        var now = DateTime.UtcNow;
         Directory.CreateDirectory(_run.ApprovalsDir);
 
         var validationReportPath = Phase2Artifacts.ValidationReportPath(_run).Replace('\\', '/');
         var contextPath = Phase2Artifacts.ContextPath(_run).Replace('\\', '/');
 
-        var changedFiles = Phase2Artifacts.RequiredDocs
+        var artifactsForReview = Phase2Artifacts.RequiredDocs
             .Concat([contextPath, validationReportPath])
             .ToArray();
 
@@ -64,15 +56,15 @@ public sealed class Phase2ApprovalRecorder
             },
             preview = new
             {
-                changedFiles,
+                artifactsForReview,
                 validationReport = validationReportPath,
                 requiredDocs = Phase2Artifacts.RequiredDocs,
                 contextArtifact = contextPath
             },
-            requestedAtUtc = DateTime.UtcNow
+            requestedAtUtc = now
         };
 
-        var fileName = Path.Combine(_run.ApprovalsDir, $"approval_{DateTime.UtcNow:yyyyMMddHHmmssfff}.json");
+        var fileName = Path.Combine(_run.ApprovalsDir, $"approval_{now:yyyyMMddHHmmssfff}.json");
         File.WriteAllText(fileName, JsonSerializer.Serialize(payloadObj, new JsonSerializerOptions { WriteIndented = true }));
 
         _run.AppendEvent(new
@@ -82,7 +74,7 @@ public sealed class Phase2ApprovalRecorder
             phase = Phase2Artifacts.PhaseName,
             action = Phase2Artifacts.ApprovalAction,
             file = Path.GetRelativePath(_run.RunDir, fileName).Replace('\\', '/'),
-            timestampUtc = DateTime.UtcNow
+            timestampUtc = now
         });
     }
 }

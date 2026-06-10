@@ -51,13 +51,12 @@ var config = new
     {
         otelEnabled = settings.OtelEnabled,
         otelSensitive = settings.OtelSensitive,
-        otelRawEnabled = settings.OtelRawEnabled
+        otelRawEnabled = settings.OtelRawEnabled,
+        innerCycleLogging = settings.InnerCycleLogging
     },
     llmPreview = new
     {
-        enabled = settings.AssistantPreviewEnabled,
         chars = settings.LlmPreviewChars,
-        onlyWhenNoTools = settings.LlmPreviewOnlyWhenNoTools
     },
     ollamaBaseUrl = settings.OllamaBaseUrl,
     openRouterBaseUrl = settings.LlmProvider == "openrouter" ? settings.OpenRouterBaseUrl : null,

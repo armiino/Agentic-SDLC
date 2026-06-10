@@ -207,6 +207,9 @@ public sealed class Phase2Runner
 
     private async Task<string?> TryDiscoverGitHubToolsAsync()
     {
+        // GitHub-Tools werden in Phase 2.1 nur discovered, aber NICHT an Agenten übergeben.
+        // Grund: GitHub-Aktionen (Issue Create, Push) sind erst später vorgeshen und erfordern explizites Approval. 
+        // Frühes Discovery prüft die Verbindung und protokolliert den Status im tool-discovery.json
         try
         {
             await using var githubMcp = await McpConnections.ConnectGitHubAsync();
@@ -325,7 +328,7 @@ public sealed class Phase2Runner
             {
                 /*
                  * MAF liefert Agent-Antworten als WorkflowOutputEvent. Bei Agenten
-                 * können diese Events tokenweise auftreten. (im run beobachet) Für die globale
+                 * können diese Events tokenweise auftreten. (im run beobachtet) Für die globale
                  * Timeline wären tausende einzelne WORKFLOW_OUTPUT-Zeilen nur Noise. 
                  * Deshalb werden sie jetzt pro Executor gesammelt und  am
                  * Ende in eine kompakte Summary geschrieben + eine Textdatei im Agent-Logordner.
@@ -442,6 +445,11 @@ public sealed class Phase2Runner
 
     private static string? ResolveAgentNameFromExecutorId(string executorId)
     {
+        // MAF setzt die ExecutorId als "<AgentName>_<Suffix>" (z.B. "Phase2ContextAgent_0").
+        // Wir extrahieren den Teil vor dem ersten '_' um den Agent-Namen zu erhalten.
+        // Wenn kein '_' vorhanden ist, gilt die gesamte ExecutorId als Agent-Name.
+        // Ändert MAF das Format, liefert diese Methode lautlos falsche Namen..
+        // das wäre in workflow-output.txt und WORKFLOW_OUTPUT_SUMMARY sichtbar.
         var separatorIndex = executorId.IndexOf('_', StringComparison.Ordinal);
         return separatorIndex <= 0 ? executorId : executorId[..separatorIndex];
     }

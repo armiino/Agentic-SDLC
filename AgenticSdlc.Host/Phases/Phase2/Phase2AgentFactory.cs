@@ -25,6 +25,7 @@ namespace AgenticSdlc.Host.Phases.Phase2;
 /// methodisch klar ersichtlich: Geändert wird nur die Orchestrierung/Rollentrennung.
 /// die grundlegende LLM- oder Logging-Infrastruktur bleibt gleich
 /// </remarks>
+
 public static class Phase2AgentFactory
 {
     public const string ContextAgentName = "Phase2ContextAgent";
@@ -132,15 +133,9 @@ public static class Phase2AgentFactory
          */
         IChatClient baseChatClient = ChatClientFactory.Create(settings);
 
-        IChatClient chat = new ChatClientBuilder(baseChatClient)
-            .UseFunctionInvocation()
-            .UseOpenTelemetry(
-                sourceName: sourceName,
-                configure: cfg => cfg.EnableSensitiveData = settings.OtelSensitive
-            )
-            .Build();
-
-        chat = new ChatDecisionLoggerMiddleware(chat, run);
+        // Gemeinsame, phasenunabhängige Observability-Pipeline (Blob- vs. per-cycle-Modus).
+        // Verdrahtung und Middleware-Reihenfolge liegen zentral im AgentChatPipelineBuilder.
+        IChatClient chat = AgentChatPipelineBuilder.Build(baseChatClient, settings, run, agentName, sourceName);
 
         AIAgent baseAgent = chat.AsAIAgent(
             instructions: instructions,

@@ -25,12 +25,20 @@ namespace AgenticSdlc.Host.Phases.Phase2.Validation;
 /// </remarks>
 public sealed class Phase2ArtifactValidator
 {
+    // Pflicht-Sektionen aus RequirementsPrompt (aktuell v5).
+    // Muss mit den RequiredMarkdownHeadings im aktiven Prompt übereinstimmen.
+    //
+    // Regex-Hinweis: Patterns prüfen auf Markdown-Heading-Marker (##) damit
+    // "Functional Requirements" nicht fälschlicherweise durch "Non-functional Requirements"
+    // erfüllt wird — ohne ## würde \bfunctional\s+requirements\b auf beides matchen,
+    // weil der Bindestrich eine Wortgrenze ist.
     private static readonly RequiredSection[] RequiredRequirementsSections =
     [
-        new("Functional Requirements", @"\bfunctional\s+requirements\b"),
-        new("Non-functional Requirements", @"\bnon\s*[-\s]\s*functional\s+requirements\b"),
-        new("Constraints/Compliance", @"\bconstraints\s*/\s*compliance\b"),
-        new("Traceability", @"\btraceability\b")
+        new("Functional Requirements",      @"#{1,6}\s+functional\s+requirements\b"),
+        new("Non-functional Requirements",  @"#{1,6}\s+non\s*[-\s]\s*functional\s+requirements\b"),
+        new("Constraints/Compliance",       @"#{1,6}\s+constraints\s*/\s*compliance\b"),
+        new("Assumptions and Open Points",  @"#{1,6}\s+assumptions\s+and\s+open\s+points\b"),
+        new("Traceability",                 @"#{1,6}\s+traceability\b")
     ];
 
     private readonly RunContext _run;

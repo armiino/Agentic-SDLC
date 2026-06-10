@@ -219,47 +219,16 @@ public sealed class ToolCallLoggerMiddleware
                     timestampUtc = DateTime.UtcNow
                 };
 
-                AppendToolEvent(agentName, fileWriteAnalyzedEvent);
+                // FILE_WRITE_ANALYZED gehört nicht in tool-calls.jsonl.. es ist eine Write-Analyse, kein Tool-Call-Event.
+                // Deshalb direkt schreiben statt AppendToolEvent.
+                _run.AppendEvent(fileWriteAnalyzedEvent);
+                _run.AppendAgentEvent(agentName, fileWriteAnalyzedEvent);
 
-                var decisionEvent = new
-                {
-                    type = "WRITE_DECISION_RECORDED",
-                    runId = _run.RunId,
-                    agentName,
-                    toolStep = step,
-                    path = normalizedPath,
-                    // erweiterung: intent/reason/evidence sind model-declared rationale, nicht die garantierte interne Ursache.
-                    intent = normalizedIntent,
-                    reason = normalizedReason,
-                    evidence = normalizedEvidence,
-                    // erweiterung: Fehlende rationale-Felder sind jetzt ein auswertbarer Befund statt ein harter Tool-Abbruch.
-                    rationaleComplete,
-                    writeEffect = effect,
-                    before = beforeState is null ? null : new
-                    {
-                        exists = true,
-                        size = beforeState.Size,
-                        sha256 = beforeState.Sha256
-                    },
-                    after = afterState is null ? null : new
-                    {
-                        exists = true,
-                        size = afterState.Size,
-                        sha256 = afterState.Sha256
-                    },
-                    diff = summary is null ? null : new
-                    {
-                        changed = summary.HasChanges,
-                        linesAdded = summary.LinesAdded,
-                        linesRemoved = summary.LinesRemoved,
-                        changedLines = summary.ChangedLines,
-                        file = diffPath
-                    },
-                    timestampUtc = DateTime.UtcNow
-                };
-
-                _run.AppendDecision(decisionEvent);
-                _run.AppendAgentDecision(agentName, decisionEvent);
+                // FILE_WRITE_ANALYZED ersetzt WRITE_DECISION_RECORDED in den Decision-Logs.
+                // Ein Event statt zwei.. 
+                // decision-log.jsonl und decisions.jsonl enthalten dasselbe strukturierte Artefakt wie events.jsonl.
+                _run.AppendDecision(fileWriteAnalyzedEvent);
+                _run.AppendAgentDecision(agentName, fileWriteAnalyzedEvent);
             }
 
             if (!string.IsNullOrWhiteSpace(normalizedPath) &&
@@ -279,7 +248,10 @@ public sealed class ToolCallLoggerMiddleware
                     timestampUtc = DateTime.UtcNow
                 };
 
-                AppendToolEvent(agentName, artifactTouchedEvent);
+                // ARTIFACT_TOUCHED ist ein Überblicks-Signal, kein Tool-Call-Event.
+                // Deshalb nur in events.jsonl und agents/events.jsonl.. nicht in tool-calls.jsonl.
+                _run.AppendEvent(artifactTouchedEvent);
+                _run.AppendAgentEvent(agentName, artifactTouchedEvent);
             }
 
             return result;
@@ -317,6 +289,10 @@ public sealed class ToolCallLoggerMiddleware
         }
     }
 
+    // Nur für reine Tool-Call-Events: TOOL_CALL_STARTED, TOOL_CALL_FINISHED,
+    // TOOL_CALL_FAILED, TOOL_CALL_RETURNED_ERROR.
+    // FILE_WRITE_ANALYZED und ARTIFACT_TOUCHED werden direkt geschrieben,
+    // damit tool-calls.jsonl sauber nur Tool-Execution-Events enthält.
     private void AppendToolEvent(string? agentName, object evt)
     {
         _run.AppendEvent(evt);

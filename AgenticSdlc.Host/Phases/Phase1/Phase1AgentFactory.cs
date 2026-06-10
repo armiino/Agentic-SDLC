@@ -48,28 +48,12 @@ public static class Phase1AgentFactory
         IChatClient baseChatClient = ChatClientFactory.Create(settings);
 
         /*
-         * Die Chat-Pipeline erweitert den Basis-Client um Function-Invocation.
-         * Dadurch werden Tool Calls des Modells nicht nur als Text ausgegeben,
-         * sondern vom Framework erkannt, ausgeführt und wieder in den Chatverlauf gegeben
-         * ..
-         * UseOpenTelemetry hängt zusätzlich technische Traces an die Chat-
-         * Kommunikation. "SensitiveData" wird über die Settings gesteuert, damit
-         * Run-Konfiguration und Logging-Verhalten weiterhin aus der .env kommen
+         * Die Chat-Pipeline erweitert den Basis-Client um Function-Invocation, OpenTelemetry
+         * und die projektspezifischen Observability-Middlewares. Verdrahtung und Reihenfolge
+         * (inkl. Blob- vs. per-cycle-Modus) liegen zentral im AgentChatPipelineBuilder, damit
+         * Phase 1 und Phase 2.1 dieselbe Logik teilen.
          */
-        IChatClient chat = new ChatClientBuilder(baseChatClient)
-            .UseFunctionInvocation()
-            .UseOpenTelemetry(
-                sourceName: sourceName,
-                configure: cfg => cfg.EnableSensitiveData = settings.OtelSensitive
-            )
-            .Build();
-
-        /*
-         * Diese Middleware ist projektspezifisch. Sie protokolliert Chat-
-         * Iterationen und erkannte Tool-Call-Anfragen in die Run-Logs. Sie wird
-         * nach der Standard-Pipeline hinzugefügt, damit sie den fertigen ChatClient beobachtet.
-         */
-        chat = new ChatDecisionLoggerMiddleware(chat, run);
+        IChatClient chat = AgentChatPipelineBuilder.Build(baseChatClient, settings, run, AgentName, sourceName);
 
         /*
          * Der Prompt gehört fachlich zur Phase 1, wird aber nicht mehr als

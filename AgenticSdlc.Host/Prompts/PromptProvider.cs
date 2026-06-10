@@ -20,6 +20,7 @@ public static class PromptProvider
     {
         ValidateSegment("phase", phase);
         ValidateSegment("agentName", agentName);
+        ValidateSegment("promptName", promptName);
 
         var relativePromptDirectory = Path.Combine(PromptRoot, phase, agentName);
 

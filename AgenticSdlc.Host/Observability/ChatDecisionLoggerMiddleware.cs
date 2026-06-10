@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using AgenticSdlc.Host.Run;
@@ -8,98 +9,106 @@ using Microsoft.Extensions.AI;
 namespace AgenticSdlc.Host.Observability;
 
 /// <summary>
-/// Loggt beobachtbares Verhalten auf Chat-Ebene des Agenten.
-///
-/// Diese Middleware liegt um den Chat-Client herum. Sie sieht pro GetResponseAsync-Aufruf
-/// eine abgeschlossene Modellantwort und speichert, was daran beobachtbar ist:
-/// - ob das Modell Text geliefert hat,
-/// - ob das Modell strukturierte Toolcalls geliefert hat,
-/// - welche Toolcall-Namen enthalten waren,
-/// - und optional einen kurzen Ausschnitt der Assistant-Antwort fuer Debugging.
-///
-/// Wichtige Grenze:
-/// Diese Klasse führt keine Tools aus und beweist nicht, warum sich das Modell auf eine
-/// bestimmte Weise verhalten hat. Sie speichert nur beobachtbare Antwortsignale. Die echte
-/// Tool-Ausführung wird separat in der ToolCallLoggerMiddleware geloggt.
-///
-/// Warum es diese Klasse zusätzlich zu OpenTelemetry gibt:
-/// Viele GenAI-Integrationen loggen Prompt- und Response-Inhalte standardmässig nicht
-/// vollständig, unter anderem wegen Datenschutz und Provider-Unterschieden. Diese lokalen
-/// Run-Events geben der Masterarbeit ein mögliches Artefakt, auch wenn OTel nur Tokens,
-/// Modell-Metadaten oder Span-Zeiten enthält.
+/// Position dieser Middleware in der Chat-Pipeline bestimmt folgendes:
+/// WELCHE Ebene beobachtet wird und unter welchen Event-Namen das geloggt wird
 /// </summary>
+/// <remarks>
+/// Die Unterscheidung ist nötig, weil dieselbe Middleware-Klasse je nach Pipeline-Position
+/// semantisch unterschiedliche Dinge sieht:
+/// - <see cref="AgentChat"/>: außerhalb von FunctionInvocation. Sieht EINEN Aufruf pro
+///   Agent-Chat (die ganze Pipeline). Markiert Start/Ende des Agenten-Chats.
+/// - <see cref="ModelRound"/>: innerhalb von FunctionInvocation. Sieht JEDEN einzelnen
+///   LLM-Roundtrip (fs_list-Runde, fs_read-Runde, fs_write-Runde, Abschluss-Runde).
+/// Siehe observability-pipeline.md.
+/// </remarks>
+public enum LoggingScope
+{
+    /// <summary>Äußere Ebene: ein Marker pro Agent-Chat (Pipeline-Start/-Ende).</summary>
+    AgentChat,
+
+    /// <summary>Innere Ebene: ein Marker pro LLM-Roundtrip innerhalb des FunctionInvocation-Loops.</summary>
+    ModelRound
+}
+
+/// <summary>
+/// Beobachtet das Verhalten des Modells. Je nach <see cref="LoggingScope"/> auf
+/// Agent-Chat-Ebene (Pipeline-Marker) oder Modell-Runden-Ebene (pro LLM-Roundtrip).
+/// </summary>
+/// <remarks>
+/// Verantwortlichkeit dieser Klasse:
+/// - Scope AgentChat: CHAT_STARTED / CHAT_FINISHED loggen (Pipeline-Marker, 1x pro Agent-Chat)
+/// - Scope ModelRound: MODEL_ROUND_STARTED / MODEL_ROUND_FINISHED loggen (1x pro LLM-Roundtrip)
+/// - CHAT_FAILED loggen (Timing, Fehlerdiagnose)
+/// - Wenn writeResponseText: *_RESPONSE_TEXT / MODEL_ROUND_TEXT loggen + response-text.md schreiben
+///
+/// Warum zwei Scopes: Eine feste Benennung kann nicht für beide Pipeline-Positionen korrekt sein. 
+/// Außen ist ein Aufruf "der ganze Agent-Chat", innen ist ein Aufruf "eine Modell-Runde".
+/// Die Verdrahtung beider Instanzen passiert generisch im AgentChatPipelineBuilder.
+///
+/// Klare Grenze:
+/// Diese Middleware beweist nicht warum das Modell so gehandelt hat.
+/// Sie erfasst ausschließlich beobachtbare Ausgaben.
+/// Die verlässliche Quelle für tatsächlich ausgeführte Tools ist ToolCallLoggerMiddleware.
+///
+/// Wichtig für MAF-Agents: beide Pfade müssen überschrieben sein.
+/// MAF nutzt GetStreamingResponseAsync.. ohne dieses Override wäre die gesamte Chat-Observability wirkungslos.
+/// </remarks>
 public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
 {
     private readonly RunContext _run;
+    private readonly string? _agentName;
+    private readonly LoggingScope _scope;
 
     /*
-     * Zählt Chat-Client-Aufrufe, nicht einzelne Toolcalls.
-     * Eine Chat-Iteration kann mehrere strukturierte Toolcalls enthalten.
+     * Ob diese Instanz den Reasoning-Text erfasst (Event mit Text + response-text.md).
+     * Im per-cycle-Modus erfasst nur die innere ModelRound-Instanz Text..
+     * die äußere AgentChat-Instanz markiert dann nur Start/Ende, um Text-Doppelung zu vermeiden.
+     * Im Blob-Modus erfasst die einzige (AgentChat-)Instanz den Text als Blob.
      */
-    private int _chatIteration = 0;
+    private readonly bool _writeResponseText;
 
     /*
-     * Optionaler Antwort-Ausschnitt.
-     * Standardmässig deaktiviert, weil Modellantworten sensible Daten enthalten können
-     * Aktivierung: ENABLE_LLM_ASSISTANT_PREVIEW=1.
+     * Maximale Zeichenzahl für den geloggten Reasoning-Text.
+     * Schützt vor riesigen Transkript-Echos in den Logs.
+     * Kommt aus HostSettings (konfigurierbar über: run-config.json -> llmPreview.chars)
      */
-    private static readonly bool EnableAssistantPreview =
-        ReadEnvBool("ENABLE_LLM_ASSISTANT_PREVIEW", defaultValue: false);
+    private readonly int _previewChars;
 
     /*
-     * Begrenzt die Größe des Previews..
-     * Dadurch bleibt der Ausschnitt für Debugging nutzbar, ohne vollständige
-     * Modellantworten oder Transkripte in die Logs zu schreiben
+     * Scope AgentChat: zählt Agent-Chat-Aufrufe (in Phase 2.1 genau 1; bei Repair-Loops >1).
+     * Scope ModelRound: zählt LLM-Roundtrips innerhalb des FunctionInvocation-Loops (1..N).
      */
-    private static readonly int PreviewChars =
-        ReadEnvInt("LLM_PREVIEW_CHARS", defaultValue: 800, min: 100, max: 8000);
+    private int _round;
 
-    /*
-     * Standardmäßig wird der Preview nur geloggt, wenn keine Toolcalls erkannt wurden.
-     * Das adressiert einen wichtigen Fehlerfall dieses Projekts: Das Modell beschreibt
-     * einen Plan als Text, ruft aber kein echtes fs_write auf.
-     */
-    private static readonly bool PreviewOnlyWhenNoTools =
-        ReadEnvBool("LLM_PREVIEW_ONLY_WHEN_NO_TOOLS", defaultValue: true);
-
-    public ChatDecisionLoggerMiddleware(IChatClient innerClient, RunContext run)
+    public ChatDecisionLoggerMiddleware(
+        IChatClient innerClient,
+        RunContext run,
+        string? agentName = null,
+        LoggingScope scope = LoggingScope.AgentChat,
+        bool writeResponseText = true,
+        int previewChars = 1200)
         : base(innerClient)
     {
         _run = run;
+        _agentName = string.IsNullOrWhiteSpace(agentName) ? null : agentName;
+        _scope = scope;
+        _writeResponseText = writeResponseText;
+        _previewChars = previewChars;
     }
+
+    // Event-Namen je Scope - eine Stelle, damit die Benennung konsistent bleibt.
+    private string StartedEventType => _scope == LoggingScope.ModelRound ? "MODEL_ROUND_STARTED" : "CHAT_STARTED";
+    private string FinishedEventType => _scope == LoggingScope.ModelRound ? "MODEL_ROUND_FINISHED" : "CHAT_FINISHED";
+    private string TextEventType => _scope == LoggingScope.ModelRound ? "MODEL_ROUND_TEXT" : "CHAT_RESPONSE_TEXT";
 
     public override async Task<ChatResponse> GetResponseAsync(
         IEnumerable<ChatMessage> messages,
         ChatOptions? options = null,
         CancellationToken cancellationToken = default)
     {
-        /*
-         * Diese Zahl beschreibt Chat-Pipeline-Aufrufe, nicht Tool-Ausführungen.
-         * Wenn chatIteration meistens 1 ist, bedeutet das: Der Agent hat nur einen
-         * vollständigen Chat-Zyklus benötigt. Innerhalb dieses Zyklus werden mehrere toolcalls ausgeführt
-         * eig ist es wie der lebenszyclus des agenten..
-         */
-        var chatIteration = Interlocked.Increment(ref _chatIteration);
-
-        /*
-         * Ergänzt den aktuell aktiven OpenTelemetry-Span um Chat-Metadaten.
-         * Diese Tags helfen beim Abgleich zwischen OTel-Traces und lokalen Run-Logs
-         */
-        Activity.Current?.SetTag("agent.iteration", chatIteration);
-        Activity.Current?.SetTag("agent.step.kind", "chat");
-
-        /*
-         * Schreibt ein lokales JSONL-Event in den aktuellen Run-Ordner.
-         * CHAT_STARTED markiert den Zeitpunkt unmittelbar vor dem Modellaufruf
-         */
-        _run.AppendEvent(new
-        {
-            type = "CHAT_STARTED",
-            model = options?.ModelId,
-            temperature = options?.Temperature,
-            maxOutputTokens = options?.MaxOutputTokens,
-            timestampUtc = DateTime.UtcNow
-        });
+        var round = Interlocked.Increment(ref _round);
+        SetOtelTags(round);
+        LogChatStarted(options, round);
 
         ChatResponse response;
         try
@@ -108,118 +117,230 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
         }
         catch (Exception ex)
         {
-            /*
-             * CHAT_FAILED bedeutet, dass die Chat-Pipeline selbst fehlgeschlagen ist,
-             * beispielsweise durch einen unvollständigen Provider-Stream.. 
-             *
-             * Das ist fachlich von Tool-Fehlern zu trennen: Ein Tool kann erfolgreich
-             * aufgerufen werden und trotzdem ein Fehlerergebnis liefern. Solche Tool-
-             * Ergebnisse werden in der ToolCallLoggerMiddleware behandelt.
-             */
-            _run.AppendEvent(new
-            {
-                type = "CHAT_FAILED",
-                model = options?.ModelId,
-                errorType = ex.GetType().FullName,
-                error = ex.Message,
-                timestampUtc = DateTime.UtcNow
-            });
-
-            /*
-             * Hängt die Exception zusätzlich an den aktiven OTel-Span.
-             * Dadurch bleibt derselbe Fehler auch in exportierten Traces sichtbar.
-             */
-            Activity.Current?.AddException(ex);
+            LogChatFailed(options, ex);
             throw;
         }
 
-        /*
-         * Extrahiert ausschließlich beobachtbare Fakten aus der Modellantwort.. 
-         * Es wird keine versteckte Modell-Logik und keine echte Begründung abgeleitet.
-         */
         var toolCallNames = ExtractToolCallNames(response);
+        var assistantText = response.Messages?.LastOrDefault()?.Text ?? string.Empty;
+        LogObservations(round, options?.ModelId, assistantText, toolCallNames, response.FinishReason?.ToString());
+
+        return response;
+    }
+
+    /// <summary>
+    /// Überwacht den Streaming-Pfad, den MAF-Agents standardmäßig verwenden.
+    /// </summary>
+    /// <remarks>
+    /// yield return ist in C# in try/finally erlaubt, aber nicht in try/catch.
+    /// completedNormally unterscheidet daher normalen Abschluss von Abbruch.
+    /// </remarks>
+    public override async IAsyncEnumerable<ChatResponseUpdate> GetStreamingResponseAsync(
+        IEnumerable<ChatMessage> messages,
+        ChatOptions? options = null,
+        [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
+        var round = Interlocked.Increment(ref _round);
+        SetOtelTags(round);
+        LogChatStarted(options, round);
+
+        var textBuilder = new StringBuilder();
+        var toolCallNames = new List<string>();
+        string? finishReason = null;
+        var completedNormally = false;
+
+        try
+        {
+            await foreach (var update in base.GetStreamingResponseAsync(messages, options, cancellationToken).ConfigureAwait(false))
+            {
+                // Text-Chunks über alle inneren Runden akkumulieren.
+                if (!string.IsNullOrEmpty(update.Text))
+                    textBuilder.Append(update.Text);
+
+                // FinishReason erscheint typischerweise nur im letzten Update.
+                if (update.FinishReason.HasValue)
+                    finishReason = update.FinishReason.Value.ToString();
+
+                AccumulateToolCallNamesFromUpdate(update, toolCallNames);
+
+                yield return update;
+            }
+
+            completedNormally = true;
+        }
+        finally
+        {
+            if (!completedNormally)
+            {
+                /*
+                 * Stream wurde unterbrochen zb Provider-Fehler oder CancellationToken.
+                 * Exception kann im finally nicht mehr geworfen werden..
+                 * der fehlende CHAT_FINISHED macht den Abbruch in den Logs sichtbar.
+                 */
+                _run.AppendEvent(new
+                {
+                    type = "CHAT_FAILED",
+                    agentName = _agentName,
+                    scope = _scope.ToString(),
+                    model = options?.ModelId,
+                    errorType = "streaming_interrupted",
+                    error = "Streaming response interrupted before completion.",
+                    round,
+                    timestampUtc = DateTime.UtcNow
+                });
+            }
+            else
+            {
+                LogObservations(round, options?.ModelId, textBuilder.ToString(), toolCallNames, finishReason);
+            }
+        }
+    }
+
+    //hilfsmethodn
+
+    private void SetOtelTags(int round)
+    {
+        // Tag-Name je Scope: model_round innen, agent_chat außen.
+        Activity.Current?.SetTag(_scope == LoggingScope.ModelRound ? "agent.model_round" : "agent.chat_round", round);
+        Activity.Current?.SetTag("agent.step.kind", _scope == LoggingScope.ModelRound ? "model_round" : "agent_chat");
+        Activity.Current?.SetTag("agent.name", _agentName);
+    }
+
+    private void LogChatStarted(ChatOptions? options, int round)
+    {
+        var evt = new
+        {
+            type = StartedEventType,
+            agentName = _agentName,
+            scope = _scope.ToString(),
+            round,
+            model = options?.ModelId,
+            temperature = options?.Temperature,
+            maxOutputTokens = options?.MaxOutputTokens,
+            timestampUtc = DateTime.UtcNow
+        };
+
+        _run.AppendEvent(evt);
+        if (_agentName is not null)
+            _run.AppendAgentEvent(_agentName, evt);   // Konsistenz: auch im Agent-Spiegel (vorher fehlte das)
+    }
+
+    private void LogChatFailed(ChatOptions? options, Exception ex)
+    {
+        /*
+         * CHAT_FAILED: Die Chat-Pipeline selbst ist fehlgeschlagen
+         * Nicht zu verwechseln mit Tool-Fehlern, die ToolCallLoggerMiddleware behandelt
+         */
+        var evt = new
+        {
+            type = "CHAT_FAILED",
+            agentName = _agentName,
+            scope = _scope.ToString(),
+            model = options?.ModelId,
+            errorType = ex.GetType().FullName,
+            error = ex.Message,
+            timestampUtc = DateTime.UtcNow
+        };
+
+        _run.AppendEvent(evt);
+        if (_agentName is not null)
+            _run.AppendAgentEvent(_agentName, evt);
+        Activity.Current?.AddException(ex);
+    }
+
+    /// <summary>
+    /// Kernlogik für Chat-Beobachtungen: geteilt zwischen non-streaming und streaming
+    /// </summary>
+    /// <remarks>
+    /// ACHTUNG: assistantText ist beobachtbarer Model-Output, kein Beweis für interne Kausalität. 
+    /// Das Modell kann plausiblen Text schreiben ohne die genannten Quellen tatsächlich verarbeitet zu haben..
+    /// </remarks>
+    private void LogObservations(
+        int round,
+        string? modelId,
+        string assistantText,
+        List<string> toolCallNames,
+        string? finishReason)
+    {
         var distinctToolCallNames = toolCallNames
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
-        var assistantText = response.Messages?.LastOrDefault()?.Text ?? string.Empty;
         var observedResponseType = DetermineObservedResponseType(toolCallNames, assistantText);
         var observedToolGroups = DetermineObservedToolGroups(toolCallNames);
 
-        /*
-         * Preview-Felder bleiben null, solange die Environment-Konfiguration sie nicht
-         * erlaubt. Der SHA ermöglicht den Vergleich vollständiger Antworten, ohne den
-         * kompletten Antworttext speichern zu muessen.
-         */
-        string? preview = null;
-        string? previewSha = null;
-        int? previewLen = null;
-
-        var shouldPreview = EnableAssistantPreview &&
-                            (!PreviewOnlyWhenNoTools || toolCallNames.Count == 0);
-
-        if (shouldPreview && assistantText.Length > 0)
+        // Text-Event (CHAT_RESPONSE_TEXT bzw. MODEL_ROUND_TEXT): 
+        // nur wenn diese Instanz für Text zuständig ist (_writeResponseText) und Text vorhanden ist.
+        // Im per-cycle-Modus erfasst nur die innere ModelRound-Instanz Text..
+        // die äußere AgentChat-Instanz markiert nur Start/Ende, um Doppelerfassung zu vermeiden.
+        if (_writeResponseText && assistantText.Length > 0)
         {
-            preview = Truncate(assistantText.Trim(), PreviewChars);
-            previewSha = Sha256Hex(assistantText);
-            previewLen = assistantText.Length;
+            var sha = Sha256Hex(assistantText);
+            var truncated = assistantText.Length > _previewChars;
+            var content = Truncate(assistantText.Trim(), _previewChars);
 
-            /*
-             * Spiegelt den Preview zusätzlich in OpenTelemetry.
-             * Dadurch ist dasselbe Debug-Signal sowohl in lokalen Run-Logs als auch
-             * in exportierten Traces sichtbar. TODO: vllt nicht nötig alles überall zu haben.
-             */
-            AddOtelEvent("llm.assistant_preview", new Dictionary<string, object?>
+            var responseTextEvent = new
             {
-                ["llm.assistant.len"] = previewLen,
-                ["llm.assistant.sha256"] = previewSha,
-                ["llm.assistant.preview"] = preview
-            });
+                type = TextEventType,
+                agentName = _agentName,
+                scope = _scope.ToString(),
+                round,
+                // Kontext: neben welchen Tool-Calls entstand dieser Text?
+                toolCallsInThisResponse = distinctToolCallNames,
+                hasToolCalls = toolCallNames.Count > 0,
+                textLength = assistantText.Length,
+                // SHA erlaubt Vergleich zwischen Runs ohne den vollen Text zu laden.
+                textSha256 = sha,
+                text = content,
+                truncated,
+                timestampUtc = DateTime.UtcNow
+            };
+
+            _run.AppendEvent(responseTextEvent);
+
+            if (_agentName is not null)
+            {
+                _run.AppendAgentEvent(_agentName, responseTextEvent);
+                _run.AppendAgentResponseText(
+                    _agentName,
+                    BuildResponseTextMarkdown(round, distinctToolCallNames, content, assistantText.Length, truncated));
+            }
         }
 
-        _run.AppendEvent(new
+        var finishedEvent = new
         {
-            type = "CHAT_FINISHED",
-            model = options?.ModelId,
-            finishReason = response.FinishReason?.ToString(),
+            type = FinishedEventType,
+            agentName = _agentName,
+            scope = _scope.ToString(),
+            round,
+            model = modelId,
+            finishReason,
             toolCallsCount = toolCallNames.Count,
             toolCallNames = distinctToolCallNames,
             assistantChars = assistantText.Length,
-            chatIteration = chatIteration,
-
-            /*
-             * Keine vermeintliche Begründung:
-             * Diese Felder beschreiben nur, welche Antwortform beobachtet wurde.
-             */
+            // Diese Felder beschreiben die beobachtbare Antwortform, keine Modell-Absichten.
             observedResponseType,
             observedToolGroups,
-
-            /*
-             * assistantPreview: kurzer Textausschnitt, falls per Environment aktiviert.
-             * assistantPreviewSha256: Hash der kompletten Antwort zur Wiedererkennung
-             * assistantPreviewLen: Länge der vollständigen Antwort
-             */
-            assistantPreview = preview,
-            assistantPreviewLen = previewLen,
-            assistantPreviewSha256 = previewSha,
-
             timestampUtc = DateTime.UtcNow
-        });
+        };
 
-        /*
-         * Schreibt die kompakte Form derselben Beobachtung nach OpenTelemetry.
-         * Die Daten bleiben bewusst klein und strukturiert, damit Traces auswertbar bleiben
-         */
+        _run.AppendEvent(finishedEvent);
+        if (_agentName is not null)
+            _run.AppendAgentEvent(_agentName, finishedEvent);   // Konsistenz: auch im Agent-Spiegel
+
+        // Kompakte OTel-Metadaten: bewusst klein, damit Traces auswertbar bleiben.
         AddOtelEvent("llm.tool_decision", new Dictionary<string, object?>
         {
-            ["agent.iteration"] = chatIteration,
+            ["agent.name"] = _agentName,
+            ["agent.scope"] = _scope.ToString(),
+            ["agent.round"] = round,
             ["llm.toolcalls.count"] = toolCallNames.Count,
             ["llm.toolcalls.names"] = string.Join(",", distinctToolCallNames),
             ["llm.response.observed_type"] = observedResponseType,
             ["llm.toolcalls.observed_groups"] = string.Join(",", observedToolGroups)
         });
-
-        return response;
     }
+
+    //Toolcall name extrahieren
 
     private static List<string> ExtractToolCallNames(ChatResponse response)
     {
@@ -228,142 +349,145 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
 
         foreach (var msg in response.Messages)
         {
-            /*
-             * Microsoft.Extensions.AI speichert Nachrichteninhalte als AIContent-Elemente.
-             * Je nach Package-Version oder Provider kann der konkrete Toolcall-Typ variieren.
-             * Reflection entkoppelt diesen Logger deshalb von einer exakten Implementierung.
-             *
-             * Wichtig: Das ist nur eine Beobachtung auf Chat-Ebene. Die verlässliche Quelle
-             * für wirklich ausgefuehrte Tools ist die ToolCallLoggerMiddleware, weil sie die
-             * echte Function Invocation umschließt.
-             */
             var contentsProp = msg.GetType().GetProperty("Contents", BindingFlags.Public | BindingFlags.Instance);
-            if (contentsProp?.GetValue(msg) is not System.Collections.IEnumerable contents)
-                continue;
-
-            foreach (var item in contents)
-            {
-                if (item is null) continue;
-
-                var t = item.GetType();
-
-                /*
-                 * Die beobachteten AIContent-Typnamen für strukturierte Tool-/Function-Calls
-                 * enthalten "Call". Wenn die Library ihre interne Benennung aendert, kann
-                 * dieser Logger den Namen verpassen. Die echte Tool-Ausfuehrung wird weiterhin
-                 * von der ToolCallLoggerMiddleware erfasst.
-                 */
-                if (!t.Name.Contains("Call", StringComparison.OrdinalIgnoreCase))
-                    continue;
-
-                /*
-                 * Toolcall-Content stellt den Function-/Tool-Namen über eine öffentliche
-                 * Name-Property bereit. Falls sie nicht verfügbar ist, bleibt das Event mit
-                 * <unknown_call> trotzdem sichtbar.
-                 */
-                var nameProp = t.GetProperty("Name", BindingFlags.Public | BindingFlags.Instance);
-                var n = nameProp?.GetValue(item)?.ToString();
-
-                names.Add(!string.IsNullOrWhiteSpace(n) ? n! : "<unknown_call>");
-            }
+            if (contentsProp?.GetValue(msg) is System.Collections.IEnumerable contents)
+                ExtractNamesFromContents(contents, names);
         }
 
         return names;
     }
 
+    private static void AccumulateToolCallNamesFromUpdate(ChatResponseUpdate update, List<string> names)
+    {
+        var contentsProp = update.GetType().GetProperty("Contents", BindingFlags.Public | BindingFlags.Instance);
+        if (contentsProp?.GetValue(update) is System.Collections.IEnumerable contents)
+            ExtractNamesFromContents(contents, names);
+    }
+
+    /// <summary>
+    /// Gemeinsame Reflection-Logik für GetResponseAsync und GetStreamingResponseAsync.
+    /// </summary>
+    /// <remarks>
+    /// Tool-Call-Typen werden per Reflection erkannt,
+    /// weil Microsoft.Extensions.AI den konkreten AIContent-Typ zwischen Versionen ändern kann.
+    /// Diese Beobachtung ist sekundär..ToolCallLoggerMiddleware ist die verlässliche Quelle.
+    /// </remarks>
+    private static void ExtractNamesFromContents(System.Collections.IEnumerable contents, List<string> names)
+    {
+        foreach (var item in contents)
+        {
+            if (item is null) continue;
+            var t = item.GetType();
+
+            // AIContent-Typen für Tool-Calls enthalten "Call" im Typnamen.
+            if (!t.Name.Contains("Call", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            var nameProp = t.GetProperty("Name", BindingFlags.Public | BindingFlags.Instance);
+            var n = nameProp?.GetValue(item)?.ToString();
+            names.Add(!string.IsNullOrWhiteSpace(n) ? n! : "<unknown_call>");
+        }
+    }
+
     private static string DetermineObservedResponseType(List<string> toolCallNames, string assistantText)
     {
-        /*
-         * Beschreibt nur, was in der Modellantwort beobachtet wurde.
-         * Es wird nicht abgeleitet, warum das Modell so gehandelt hat.
-         */
-        var hasTools = toolCallNames.Count > 0;
-        var hasText = !string.IsNullOrWhiteSpace(assistantText);
-
-        return (hasTools, hasText) switch
+        // Beschreibt nur was beobachtet wurde..keine Aussage über das "Warum"
+        return (toolCallNames.Count > 0, !string.IsNullOrWhiteSpace(assistantText)) switch
         {
-            (true, true) => "tool_calls_with_text",
+            (true, true)  => "tool_calls_with_text",
             (true, false) => "tool_calls_only",
             (false, true) => "text_only",
-            _ => "empty_response"
+            _             => "empty_response"
         };
     }
 
     private static string[] DetermineObservedToolGroups(List<string> toolCallNames)
     {
-        /*
-         * Gruppiert Tool-Nutzung fuer spaetere Auswertungen.
-         * Die Gruppen sind beobachtete Kategorien, keine modellinternen Gedanken,
-         * Absichten oder Entscheidungsursachen.
-         */
+        // Beobachtete Kategorien für schnelle Auswertung — keine Modell-Absichten.
         var groups = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
         foreach (var name in toolCallNames)
         {
             if (name.Equals("fs_read", StringComparison.OrdinalIgnoreCase) ||
                 name.Equals("fs_list", StringComparison.OrdinalIgnoreCase) ||
                 name.Equals("fs_exists", StringComparison.OrdinalIgnoreCase))
-            {
                 groups.Add("file_inspection");
-            }
             else if (name.Equals("fs_write", StringComparison.OrdinalIgnoreCase))
-            {
                 groups.Add("file_write");
-            }
             else
-            {
                 groups.Add("other_tool");
-            }
         }
-
         return groups.Order(StringComparer.OrdinalIgnoreCase).ToArray();
     }
+
+    // md report
+
+    /// <summary>
+    /// Erzeugt einen lesbaren Abschnitt für response-text.md des Agenten.
+    /// </summary>
+    /// <remarks>
+    /// Beantwortet: "Was hat das Modell in Iteration N formuliert, und neben welchen Tool-Calls stand dieser Text?"
+    /// Der Text ist model-declared.. kein Beweis für interne Kausalität.
+    /// </remarks>
+    private string BuildResponseTextMarkdown(
+        int round,
+        string[] toolCallsInResponse,
+        string text,
+        int totalLength,
+        bool truncated)
+    {
+        var sb = new StringBuilder();
+        // Überschrift je Scope: pro Modell-Runde nummeriert, oder ein Block für den ganzen Agent-Chat.
+        var heading = _scope == LoggingScope.ModelRound
+            ? $"## Model Round {round}"
+            : (round == 1 ? "## Agent Chat" : $"## Agent Chat (Turn {round})");
+        sb.AppendLine(heading);
+        sb.AppendLine();
+
+        if (toolCallsInResponse.Length > 0)
+            sb.AppendLine($"- Tool calls in this response: `{string.Join("`, `", toolCallsInResponse)}`");
+        else
+            sb.AppendLine("- No tool calls (standalone text response)");
+
+        sb.AppendLine($"- Text length: {totalLength} chars" +
+                      (truncated ? $" *(truncated to {text.Length})*" : ""));
+        sb.AppendLine();
+
+        foreach (var line in text.Split('\n'))
+            sb.AppendLine($"> {line}");
+
+        if (truncated)
+            sb.AppendLine("> *...[truncated]*");
+
+        sb.AppendLine();
+        sb.AppendLine("---");
+        sb.AppendLine();
+        return sb.ToString();
+    }
+
+    // Hilfsmethode
 
     private static void AddOtelEvent(string name, Dictionary<string, object?> tags)
     {
         var a = Activity.Current;
         if (a is null) return;
 
-        /*
-         * OpenTelemetry-Tags können hier keine null-Werte enthalten.
-         * Optionale Felder werden deshalb übersprungen, wenn sie null sind.
-         */
+        // OTel-Tags dürfen keine null-Werte enthalten.
         var col = new ActivityTagsCollection();
         foreach (var kv in tags)
         {
             if (kv.Value is null) continue;
             col.Add(kv.Key, kv.Value);
         }
-
         a.AddEvent(new ActivityEvent(name, DateTimeOffset.UtcNow, col));
     }
 
     private static string Truncate(string s, int max)
-        => s.Length <= max ? s : s.Substring(0, max) + " ...(truncated)";
+        => s.Length <= max ? s : s[..max] + " ...(truncated)";
 
     private static string Sha256Hex(string s)
     {
-        /*
-         * Der Hash der vollstaendigen Assistant-Antwort erlaubt den Vergleich von Antworten,
-         * ohne den kompletten Text in jedem Event zu speichern.
-         */
+        // SHA erlaubt Vergleich von Antworten ohne vollständigen Text zu speichern
         var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(s));
         return Convert.ToHexString(bytes).ToLowerInvariant();
-    }
-
-    private static bool ReadEnvBool(string key, bool defaultValue)
-    {
-        var v = Environment.GetEnvironmentVariable(key);
-        if (string.IsNullOrWhiteSpace(v)) return defaultValue;
-        return v == "1" || v.Equals("true", StringComparison.OrdinalIgnoreCase) || v.Equals("yes", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private static int ReadEnvInt(string key, int defaultValue, int min, int max)
-    {
-        var v = Environment.GetEnvironmentVariable(key);
-        if (!int.TryParse(v, out var n)) n = defaultValue;
-        if (n < min) n = min;
-        if (n > max) n = max;
-        return n;
     }
 }

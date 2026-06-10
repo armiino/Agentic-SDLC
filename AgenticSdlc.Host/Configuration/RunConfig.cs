@@ -59,11 +59,11 @@ public sealed class ObservabilityConfig
     public bool? EnableOtel { get; set; }
     public bool? EnableOtelSensitive { get; set; }
     public bool? EnableOtelRaw { get; set; }
+    //Pro inner-cycle Reasoning Logging: ChatDecisionLogger innerhalb FunctionInvocation positionieren
+    public bool? InnerCycleLogging { get; set; }
 }
 
 public sealed class LlmPreviewConfig
 {
-    public bool? Enabled { get; set; }
     public int? Chars { get; set; }
-    public bool? OnlyWhenNoTools { get; set; }
 }

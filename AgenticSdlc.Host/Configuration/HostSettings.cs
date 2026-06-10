@@ -13,9 +13,8 @@ public sealed record HostSettings(
     bool OtelEnabled,
     bool OtelSensitive,
     bool OtelRawEnabled,
-    bool AssistantPreviewEnabled,
+    bool InnerCycleLogging,
     int LlmPreviewChars,
-    bool LlmPreviewOnlyWhenNoTools,
     string AgentPhase,
     string Phase2ContextStrategy,
     IReadOnlyDictionary<string, string> Prompts,
@@ -35,9 +34,8 @@ public sealed record HostSettings(
             OtelEnabled: config.Observability.EnableOtel ?? ReadFlag("ENABLE_OTEL"),
             OtelSensitive: config.Observability.EnableOtelSensitive ?? ReadFlag("ENABLE_OTEL_SENSITIVE"),
             OtelRawEnabled: config.Observability.EnableOtelRaw ?? ReadFlag("ENABLE_OTEL_RAW"),
-            AssistantPreviewEnabled: config.LlmPreview.Enabled ?? ReadFlag("ENABLE_LLM_ASSISTANT_PREVIEW"),
-            LlmPreviewChars: Clamp(config.LlmPreview.Chars ?? ReadInt("LLM_PREVIEW_CHARS", 800), 100, 8000),
-            LlmPreviewOnlyWhenNoTools: config.LlmPreview.OnlyWhenNoTools ?? ReadFlag("LLM_PREVIEW_ONLY_WHEN_NO_TOOLS", defaultValue: true),
+            InnerCycleLogging: config.Observability.InnerCycleLogging ?? ReadFlag("INNER_CYCLE_LOGGING"),
+            LlmPreviewChars: Math.Clamp(config.LlmPreview.Chars ?? ReadInt("LLM_PREVIEW_CHARS", 800), 100, 8000),
             AgentPhase: ReadConfigString(config.AgentPhase, "AGENT_PHASE", "phase1").Trim().ToLowerInvariant(),
             Phase2ContextStrategy: ReadConfigString(config.Phase2ContextStrategy, "PHASE2_CONTEXT_STRATEGY", "message_passing").Trim().ToLowerInvariant(),
             Prompts: BuildPromptSelection(config.Prompts),
@@ -48,7 +46,6 @@ public sealed record HostSettings(
             OpenRouterApiKey: Environment.GetEnvironmentVariable("OPENROUTER_API_KEY")
         );
 
-        settings.ApplyEnvironmentCompatibility();
         return settings;
     }
 
@@ -69,17 +66,6 @@ public sealed record HostSettings(
 
         throw new InvalidOperationException(
             $"No prompt configured for agent '{agentName}'. Add an entry under 'prompts' in run-config.json.");
-    }
-
-    /// <summary>
-    /// Spiegelt Config-Werte in Prozess-Environment-Variablen, solange einzelne
-    /// bestehende Komponenten diese Werte noch direkt aus der Umgebung lesen.
-    /// </summary>
-    public void ApplyEnvironmentCompatibility()
-    {
-        Environment.SetEnvironmentVariable("ENABLE_LLM_ASSISTANT_PREVIEW", AssistantPreviewEnabled ? "1" : "0");
-        Environment.SetEnvironmentVariable("LLM_PREVIEW_CHARS", LlmPreviewChars.ToString());
-        Environment.SetEnvironmentVariable("LLM_PREVIEW_ONLY_WHEN_NO_TOOLS", LlmPreviewOnlyWhenNoTools ? "1" : "0");
     }
 
     private static bool ReadFlag(string key, bool defaultValue = false)
@@ -131,7 +117,4 @@ public sealed record HostSettings(
 
     private static int ReadInt(string key, int defaultValue)
         => int.TryParse(Environment.GetEnvironmentVariable(key), out var value) ? value : defaultValue;
-
-    private static int Clamp(int value, int min, int max)
-        => Math.Min(Math.Max(value, min), max);
 }
