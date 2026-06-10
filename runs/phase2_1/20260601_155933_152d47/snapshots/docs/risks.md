@@ -1,0 +1,60 @@
+# Risikoartefakt zum Kundenportal MVP
+
+## Fachliche Risiken
+- Unklare Zieldefinition und Scope: Unterschiedliche Vorstellungen der Stakeholder über Funktionen (z.B. Support, Rabattfreigabe, Push Notifications) führen zu Konflikten und Verzögerungen.
+- Fehlender Freigabeprozess für Rabatte im MVP birgt Gefahr falscher Angebotsausgaben und finanzieller Verluste.
+- Support ohne Ticketsystem im MVP verursacht Risiken bei Bearbeitungsqualität, Nachverfolgbarkeit und Datenschutz.
+- Unklare Pilotkunden (Schweiz vs. Deutschland) beeinflussen rechtliche Anforderungen, Mehrwährungsunterstützung und Datenschutzregionen.
+
+## Technische Risiken
+- Backend noch nicht API-ready, API-Layer und Integration mit SAP sind unvollständig und verzögern die Entwicklung.
+- Zentrales API Gateway mit 6-wöchiger Warteliste: Verzögerung in der Integration, möglicher Umweg oder Kompromisslösung nötig.
+- SAP Verfügbarkeit als kritische Abhängigkeit: Systemausfälle oder Verzögerungen bei SAP mindern Funktionalität des Angebots.
+- Fehlende Architekturressourcen (kein Architekt verfügbar) können zu Designmängeln und technischen Fehlschlägen führen.
+- Backup, Disaster Recovery und Monitoring sind gefordert aber zeitlich schwer umzusetzen.
+- OAuth-Sicherung der API ist bevorzugt, aber noch nicht final; alternative unsichere Methoden wären riskant.
+- Mangelnde Skalierbarkeit trotz unklarer Nutzerzahlen birgt das Risiko von Performanceproblemen.
+- Fehlendes Secrets Management und Rate Limiting können Sicherheitslücken verursachen.
+
+## Compliance- und Datenschutzrisiken
+- DSGVO-konforme Umsetzung bei Nutzer-Login, Double-Opt-In, Löschkonzept, Auditierung und Datenresidenz ist komplex und fehleranfällig.
+- Hosting EU-Only mit nachweisbarer Datenresidenz ist aufwändig und möglicherweise teurer als geplant.
+- Widersprüchliche Anforderungen an Datenlöschung und gesetzliche Aufbewahrungspflichten können Compliance-Lücken schaffen.
+- Einsatz von E-Mail-basiertem Support ohne strukturierte Persistenz stellt Datenschutzrisiko und Nachverfolgbarkeit infrage.
+- Testumgebungen mit Kundendaten aus SAP bergen Risiko von Datenmissbrauch und Verstößen gegen Datenschutz.
+- Protokollierung muss personenbezogene Daten strikt trennen, sonst können Datenschutzverstöße auftreten.
+
+## Widersprüche und Unsicherheiten
+- Wunsch nach schneller MVP Lieferzeit (8 Wochen) vs. notwendige Security Reviews und komplexe DSGVO-Konformität.
+- Feature-Wünsche (Push Notifications, SSO, komplexe Rabattlogik) vs. verfügbaren Ressourcen und Zeitrahmen.
+- Wunsch nach maximaler Skalierbarkeit ohne Overengineering.
+- Nutzung von Managed Services vs. Anforderung nach EU-only Hosting und strenger Datenresidenz.
+- Unklare Anforderungen an Mehrwährung und Internationalisierung im MVP.
+- Offener Pilotkunde beeinflusst Scope, Compliance und technische Details.
+- API Sicherheitsmechanismen (OAuth vs. API Keys) noch ungeklärt.
+
+## Mögliche Auswirkungen
+- Verzögerungen im Projektzeitplan durch ungelöste technische und organisatorische Abhängigkeiten.
+- Rechtliche Risiken und Geldbußen bei fehlender DSGVO-Konformität.
+- Finanzielle Schäden durch falsche Rabattfreigaben oder fehlerhafte Angebote.
+- Negative Kundenerfahrungen durch fehlende oder mangelhafte Supportprozesse.
+- Sicherheitsvorfälle durch unzureichende API-Sicherung und Geheimnisverwaltung.
+- Überlastung oder Ausfälle bei SAP Schnittstellen beeinträchtigen Kernfunktionalität.
+- Erhöhter Aufwand für Nachbesserungen und Dokumentationspflichten bei fehlender Architektur und Security Review.
+
+## Mögliche Gegenmaßnahmen und Klärungsbedarfe
+- Klare Abgrenzung des MVP-Scopes mit bewusster Dokumentation von Ausschlüssen und Risiken.
+- Priorisierung und phasenweise Umsetzung komplexer Features (Rabattfreigabe, Ticketsystem, SSO).
+- Einbindung eines erfahrenen Architekten oder externer Experten zur Unterstützung.
+- Frühzeitige Planung und Durchführung des Security Reviews und Datenschutz-Audits.
+- Evaluierung von Cloud-Anbietern und Managed Services mit Fokus auf EU-Datenresidenz und DSGVO.
+- Entwicklung eines minimalen Lösch- und Aufbewahrungskonzepts unter Einbezug der Rechtsabteilung.
+- Implementierung von API-Sicherheit (OAuth) und Monitoring mit klaren Datenschutzrichtlinien.
+- Testdatenstrategie mit Pseudonymisierung oder synthetischen Daten strikt umsetzen.
+- Backup- und Disaster Recovery Konzepte auch für das MVP sicherstellen.
+- Klärung des Pilotkunden und der daraus resultierenden Anforderungen frühzeitig.
+- Realistische Zeitplanung einhalten und Risiken regelmäßig mit Stakeholdern kommunizieren.
+
+---
+
+_Erstellungsdatum: 2026-06-01_

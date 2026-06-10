@@ -1,0 +1,55 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarfe für Kundenportal / Angebotsplattform
++ 
++ ## 1. Fachliche offene Fragen
++ 
++ - Wer ist der endgültige Pilotkunde? Müller AG (Schweiz), Hansa GmbH (Deutschland) oder ein anderer? Entscheidung und deren Auswirkungen auf Datenschutz, Währung und rechtliche Anforderungen sind offen.
++ - Wie soll der Freigabeprozess für Rabatte im Detail aussehen? Welche Schwellenwerte gelten genau (15%, 20%, 30%) und welche Rollen sind involviert?
++ - Ist der Supportprozess nur ein Kontaktformular im MVP ausreichend oder sollen erweiterte Support-Funktionalitäten (Ticketsystem) geplant werden? Wer übernimmt die Pflege der Supportdaten?
++ - Welche KPIs müssen genau gemessen werden und wie detailliert soll das Tracking (z.B. Conversion Rate, Zeit bis Angebot) erfolgen?
++ - Soll eine Online-Akzeptanz von Angeboten mit elektronischem Nachweis der Zustimmung im MVP unterstützt werden oder erst später?
++ - Wie wird mit Mehrwährungsfähigkeit und Internationalisierung umgegangen, vor allem hinsichtlich Rechnung, Angebot und Währung? Welche Währungen und Sprachen müssen im MVP unterstützt werden?
++ 
++ ## 2. Technische offene Fragen
++ 
++ - Welche konkreten Identity Provider sollen für SSO integriert werden (Azure AD, Google, andere)? Gibt es Präferenzen oder Vorgaben?
++ - Wie soll die API-Security konkret umgesetzt werden? OAuth ist bevorzugt, aber noch nicht final entschieden.
++ - Wie soll der API Layer im MVP ohne API Gateway abgesichert und skaliert werden?
++ - Welche Managed Services sollen für Datenbank, Hosting und Backend verwendet werden? Gibt es eine Liste vorgesehener Provider?
++ - Wie soll mit SAP-Wartungsfenstern umgegangen werden? Gibt es Fallback- oder Caching-Strategien?
++ - Wie werden Testdaten für Dev/Test Umgebungen pseudonymisiert oder synthetisiert, um Datenschutzvorgaben zu erfüllen?
++ - Welche Backup- und Monitoring-Strategien sind konkret vorgesehen, um Compliance-Anforderungen gerecht zu werden?
++ - Wie sollen Secrets Management und Rate Limiting technisch realisiert werden?
++ 
++ ## 3. Widersprüche und zu klärende Konflikte
++ 
++ - MVP-Zeitfenster von 8 Wochen vs. notwendiger Security Review, API Gateway Verfügbarkeit und umfassender GDPR-Compliance (z.B. Auditierung und Löschkonzept).
++ - Wunsch nach Mobile-Native-App vs. Budget- und Zeitrestriktionen; Priorisierung Webfirst oder mobile als MVP?
++ - Supportprozess: Kundenbedürfnis nach Ticketsystem vs. MVP-Ressourcen ausschließlich für Kontaktformular mit E-Mail-Verarbeitung.
++ - Preis- und Rabattlogik aus SAP vs. Echtzeit-Anforderungen und Fallback bei SAP-Ausfällen.
++ - Rollen- und Berechtigungsmodell muss komplexe Anforderungen (z.B. Rabatte, Support-Sichtbarkeit) abbilden, aber MVP soll minimal bleiben.
++ - DSGVO-konforme Datenhaltung vs. Anforderungen an Audit, Logging und Datenaufbewahrung, die sich teilweise widersprechen.
++ 
++ ## 4. Fehlende Informationen und offene Entscheidungen
++ 
++ - Konkrete Kostenschätzung für EU-only Hosting und Managed Services (Deadline Vorstand: bis Freitag).
++ - Entscheidung über Pilotkunde und damit verbundene regulatorische Anforderungen.
++ - Auswahl und Freigabe der spezifischen Cloud-Provider und IAM-Anbieter.
++ - Detaillierte Dokumentation der Freigabeprozesse für Rabatte und Angebote.
++ - Entscheid über Online-Angebotsakzeptanz im MVP oder später.
++ - Strategie und Tools für Datenpseudonymisierung in Entwicklungs- und Testumgebungen.
++ 
++ ## 5. Mögliche Ansprechpartner oder Rollen für Klärungen
++ 
++ - Anna (Projektleiterin/Produktverantwortliche): Entscheidungen zum MVP-Scope, Pilotkunde und Priorisierung.
++ - Ben (Technischer Experte/Entwickler): Technische Architekturen, APIs, Security und Infrastruktur.
++ - Clara (Datenschutz & Compliance): DSGVO-Anforderungen, Audit, Löschkonzept.
++ - Eva (Finance): Rabatte, Freigabeprozesse, Angebotsworkflow.
++ - David (Customer Support): Supportprozesse und Kundenserviceschnittstellen.
++ - Farid (IT Operations): Hosting, Managed Services, Backup, Monitoring und Infrastruktur.
++ 
++ ---
++ 
++ *Diese offenen Fragen sind direkt aus dem Stakeholder-Transkript (input/transcripts/T9999_chaos.txt), dem Projektkontext (runs/phase2_1/20260529_131036_dc98b8/state/context.md) und den Requirements (docs/requirements.md) abgeleitet. Sie bilden die Grundlage für weitere Klärungen und Entscheidungen im Projekt.*

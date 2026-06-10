@@ -1,0 +1,60 @@
+# Architekturüberblick – Kundenportal (MVP)
+
+## 1. Systemkontext
+Das Kundenportal ist ein **web‑basiertes Front‑End** für drei Nutzergruppen (Admin, Sales, Kunde) und dient primär der schnellen Erstellung und Bereitstellung von Angeboten sowie dem Download von Rechnungen. Das System greift **read‑only** auf das bestehende **SAP‑ERP** zu, um Produkt‑, Preis‑ und Rabattinformationen zu beziehen. Alle Daten werden in einem **EU‑only Managed Service** (z. B. verwaltete PostgreSQL‑Datenbank) persistiert. Das Backend stellt eine **REST‑API** bereit, die von dem Front‑End sowie ggf. zukünftigen mobilen Clients konsumiert wird.
+
+## 2. Wichtige Komponenten
+| Komponente | Zweck | Technische Eckpunkte (sofern ableitbar) |
+|------------|-------|----------------------------------------|
+| **Web‑Frontend** | UI für Login, Angebots‑Erstellung, Rechnungs‑Download, Kontakt‑Formular. | React / Angular (Framework‑Entscheidung offen), i18n (Deutsch/Englisch), responsive Design (Web‑first). |
+| **API‑Gateway / Mini‑Gateway** (interim) | Authentifizierung, Rate‑Limiting, Routing zu Backend‑Services. | Eigenes leichtgewichtiges Gateway (z. B. **Kong** oder **API‑Umbrella**) bis das zentrale Gateway verfügbar ist. |
+| **Auth‑Service** | Nutzer‑Management, Double‑Opt‑In, Passwort‑Hashing (TLS überall). | Eigenständiger Service (z. B. **Keycloak** im MVP‑Modus) oder einfacher JWT‑Based Auth ohne SSO. |
+| **Offer‑Service** | Geschäftslogik für Angebotserstellung, Status‑Workflow (Draft → Sent), minimale Validierung (keine Sonderrabatte > Standard). | Zugriffe auf SAP‑Read‑API, Audit‑Log‑Eintrag bei Änderungen. |
+| **Invoice‑Service** | Bereitstellung von Rechnungs‑PDFs, Download‑Endpoint, Pagination / Rate‑Limiting. | PDF‑Generation mittels Template‑Engine (z. B. **Handlebars**/PDF‑Lib). |
+| **SAP‑Adapter** | Adapter‑Layer für den *read‑only* SAP‑Zugriff (z. B. OData‑Call). | Keine Schreibrechte im MVP, Fallback‑Cache für Produktdaten möglich. |
+| **Managed Persistenz** | Speicherung von Benutzer‑ und Angebots‑Daten, Audit‑Log, Kontakt‑Formular‑Einträge. | Managed PostgreSQL / MySQL (EU‑Only Region), automatisierte Backups. |
+| **Backup / DR Service** | Tägliche Backups, 7‑Tage Retention, Wiederherstellung innerhalb 4 h. | Managed Service‑Funktionalität des Datenbank‑Providers. |
+| **Monitoring & Logging** | Technisches Logging (anonymisiert), Audit‑Log (Wer/Was/ wann). | Zentraler Log‑Aggregator (z. B. **ELK** oder Managed Log‑Service), keine personenbezogenen Daten im technischen Log. |
+| **Contact‑Form Service** | Einfache E‑Mail‑basiertes Kontakt‑Formular (kein Ticket‑System). | Serverless Function (z. B. **AWS Lambda**/Azure Function) → E‑Mail an Support‑Team. |
+| **Infrastructure / Hosting** | EU‑Only Managed Cloud (z. B. Azure EU, AWS EU, GCP EU). | Infrastruktur‑Code (IaC) per Terraform/ARM, Deployment‑Pipeline (CI/CD). |
+
+## 3. Schnittstellen & Integrationspunkte
+- **Frontend ↔ API‑Gateway**: HTTPS‑Requests, JWT‑Token für Authentifizierung.
+- **API‑Gateway ↔ Auth‑Service**: Token‑Issuing, Double‑Opt‑In‑Workflow (E‑Mail‑Versand).
+- **API‑Gateway ↔ Offer‑Service / Invoice‑Service**: REST‑Endpoints (`/offers`, `/invoices`).
+- **Offer‑Service ↔ SAP‑Adapter**: Lesender OData‑Aufruf für Produkt‑ und Preisdaten; Fallback‑Cache (optional).
+- **Invoice‑Service ↔ Managed DB**: Abruf von Rechnungs‑Metadaten, PDF‑Template‑Version.
+- **Contact‑Form Service ↔ Support‑E‑Mail**: SMTP‑Versand mit Kundennamen/Betreff, kein Persistieren von personenbezogenen Daten.
+- **Monitoring ↔ All Services**: Export von Metriken (Prometheus‑Export), Logs an zentralen Log‑Service.
+- **Backup Service ↔ Managed DB**: Automatisierte Snapshots, Wiederherstellung über Provider‑API.
+
+## 4. Daten‑ und Sicherheitsaspekte
+| Aspekt | Umsetzung im MVP |
+|--------|------------------|
+| **Authentifizierung** | E‑Mail + Passwort, TLS, Double‑Opt‑In, JWT‑Token. Kein SSO im MVP. |
+| **Autorisierung** | Rollen‑basiert (Admin, Sales, Kunde). Minimaler RBAC‑Check pro Endpoint. |
+| **Transport‑Security** | HTTPS (TLS 1.2+). |
+| **Daten‑at‑Rest** | Verschlüsselung vom Managed DB‑Provider (AES‑256). |
+| **Audit‑Log** | Ereignisse: Angebot erstellt/geändert, Login, Lösch‑Anfrage. Keine personenbezogenen Daten im technischen Log. |
+| **DSGVO‑Compliance** | Double‑Opt‑In, geplantes Lösch‑/Auskunftskonzept (offen), EU‑Only Datenresidenz, keine personenbezogenen Daten in System‑Logs. |
+| **Backup & DR** | Tägliche Snapshots, 7‑Tage Retention, Wiederherstellung < 4 h. |
+| **Secrets‑Management** | Secrets im Managed Secret Store des Cloud‑Providers oder HashiCorp Vault. |
+| **Rate‑Limiting** | Durch Mini‑Gateway: max. 100 Downloads pro Stunde pro Nutzer, Pagination für Rechnungen. |
+| **Monitoring** | Metriken (CPU, Latency, Error‑Rate) + Audit‑Log‑Export, keine PII im Monitoring. |
+
+## 5. Offene Architekturentscheidungen (bewusste Ausschlüsse)
+| Entscheidung | Offene Frage / Risiko |
+|------------|-----------------------|
+| **SSO / OAuth** | Im MVP kein SSO; später Integration von Azure AD/Google IdP. |
+| **Zentrales API‑Gateway** | 6‑Wochen‑Warteliste – interimärer Mini‑Gateway wird eingesetzt. |
+| **Datenbank‑Typ** | Managed relational DB (PostgreSQL) vorgesehen, aber konkreter Provider (Azure, AWS, GCP) noch offen. |
+| **Cache‑Strategie** | Optionales Produkt‑Cache für SAP‑Read‑Fallback – Entscheidung nach Verfügbarkeit von SAP. |
+| **Mehrwährungs‑Support** | MVP limitiert auf EUR; CHF‑Unterstützung für Pilot‑Kunde wird später evaluiert. |
+| **Support‑Ticket‑System** | Nicht im MVP – Kontakt‑Formular nur. Entscheidung über Ticket‑System nach MVP. |
+| **Freigabe‑Workflow für Rabatte** | Keine Sonderrabatte > Standard im MVP; Freigabe‑Logik (15 % → Manager, 30 % → Finance) wird in Phase 2 definiert. |
+| **Internationalisierung** | UI nur DE/EN; weitere Sprachen/Kulturen später. |
+| **Backup SLA** | Grund‑Backup vorhanden, konkrete RPO/RTO noch zu definieren. |
+| **Test‑Daten‑Management** | Pseudonymisierung des SAP‑Testsystems erforderlich – Auswahl eines Maskierungs‑Tools noch offen. |
+
+---
+*Dieser Architekturüberblick basiert ausschließlich auf den im MAF‑Workflow vorhandenen Artefakten: `runs/phase2_1/20260529_120535_d8a666/state/context.md`, `docs/requirements.md`, `docs/risks.md` und dem Stakeholder‑Transkript `input/transcripts/T9999_chaos.txt`.*

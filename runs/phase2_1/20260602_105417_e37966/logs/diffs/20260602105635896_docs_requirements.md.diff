@@ -1,0 +1,71 @@
+﻿--- before/docs/requirements.md
++++ after/docs/requirements.md
+- 
++ ## Functional Requirements
++ - **FR1 Login mit Double-Opt-In**: Kunden können sich über E‑Mail und Passwort anmelden; das System muss bei der Registrierung ein Double-Opt‑In per Bestätigungslink durchführen. *(Quelle: Anna, Clara)*
++ - **FR2 Rollen‑ und Berechtigungskonzept**: Das Portal unterstützt mindestens die Rollen *Admin*, *Sales* und *Kunde*. Jede Rolle hat definierte Berechtigungen (z. B. Admin kann Nutzer verwalten, Sales Angebote erstellen, Kunde kann Angebote einsehen und Rechnungen herunterladen). *(Quelle: Anna, Eva)*
++ - **FR3 Angebotserstellung**: Sales‑Nutzer können Angebote im Portal anlegen. Die Angebotsdaten werden aus dem SAP‑System gelesen (Produkt‑ und Preis‑Info). Das Angebot wird im System gespeichert und kann als PDF exportiert werden. *(Quelle: Ben, Eva)*
++ - **FR4 Rabatt‑Freigabe (MVP‑Ausnahme)**: Im MVP dürfen keine manuellen Sonderrabatte > Standardrabatt verwendet werden. Alle Rabatte > Standard müssen nach dem MVP über einen Freigabe‑Workflow verarbeitet werden. *(Quelle: Eva)*
++ - **FR5 Rechnungsdownload**: Kunden können ihre Rechnungen als PDF herunterladen. Der Download muss einen gültigen Zeitstempel enthalten. *(Quelle: Anna, Eva)*
++ - **FR6 Minimaler Audit‑Trail**: Jede Erstellung, Änderung und Löschung von Angeboten sowie Login‑Ereignisse werden auditierbar protokolliert (wer, wann, was). *(Quelle: Clara, Ben)*
++ - **FR7 API‑Layer**: Das Portal stellt eine REST‑API bereit, die OAuth‑2.0 (Authorization‑Code‑Flow) unterstützt. Die API ermöglicht das Lesen von SAP‑Daten und das Schreiben von Angeboten. *(Quelle: Ben)*
++ - **FR8 EU‑Only Hosting & Managed Service**: Das System wird auf einem Managed Service gehostet, der Daten ausschließlich in der EU speichert. *(Quelle: Farid)*
++ - **FR9 Backup & Disaster Recovery**: Das System führt tägliche Backups durch und ermöglicht im Notfall eine Wiederherstellung innerhalb von 4 Stunden. *(Quelle: Farid)*
++ - **FR10 KPI‑Erfassung**: Das System erfasst die Conversion‑Rate (Angebot → Bestellung) und die durchschnittliche Zeit bis zur Angebotserstellung. *(Quelle: Anna)*
++ - **FR11 Mehrsprachigkeit (Deutsch/Englisch)**: Das UI und die PDFs sind zu Beginn in Deutsch und Englisch verfügbar. *(Quelle: Anna, David)*
++ 
++ ## Non-functional Requirements
++ - **NFR1 Performance**: Das System muss bis zu 2 000 gleichzeitige Nutzer ohne merkliche Verzögerung unterstützen (Response‑Time < 2 s). *(Annahme: Erwartete Nutzerzahl) *
++ - **NFR2 Skalierbarkeit**: Das System muss horizontal skalierbar sein, um zukünftige Lastspitzen (z. B. 20 000 Nutzer) zu bewältigen. *(Offener Punkt) *
++ - **NFR3 Sicherheit**: Alle Netzwerkverbindungen müssen TLS 1.2+ verwenden. Sensitive Daten (Passwörter, persönliche Daten) werden verschlüsselt gespeichert (Hashing + Salt für Passwörter, AES‑256 für weitere Daten). *(Quelle: Ben, Clara)*
++ - **NFR4 Datenschutz‑Compliance**: Das System muss DSGVO‑konform sein (Datenschutz‑Impact‑Assessment, Datenminimierung, Recht auf Löschung, Audit‑Logs ohne personenbezogene Daten). *(Quelle: Clara)*
++ - **NFR5 Verfügbarkeit**: 99,5 % Verfügbarkeit im Produktionsbetrieb (geplante Wartungsfenster < 4 h/Monat). *(Offener Punkt) *
++ - **NFR6 Logging**: Technische Logs dürfen keine personenbezogenen Daten enthalten; Audit‑Logs enthalten notwendige Personenbezogene Angaben und werden für 12 Monate aufbewahrt. *(Quelle: Clara)*
++ - **NFR7 Infrastruktur‑Kosten**: Die Kosten für das EU‑Only Managed Service Hosting müssen < 5.000 € pro Monat liegen (Budget‑Unsicherheit). *(Offener Punkt) *
++ 
++ ## Constraints/Compliance
++ - **C1 DSGVO**: Double‑Opt‑In, Löschkonzept, Datenresidenz (EU), Audit‑Trail, getrennte technische und audit‑Logs. *(Quelle: Clara)*
++ - **C2 Keine neue Datenbank**: Es dürfen nur Managed Services (z. B. Datenbank‑as‑a‑Service) genutzt werden; keine eigenständige DB‑Installation. *(Quelle: Anna, Farid)*
++ - **C3 API‑Gateway‑Warteliste**: Das zentrale API‑Gateway ist erst in 6 Wochen verfügbar; daher muss das MVP vorläufig eigene Rate‑Limiting‑Mechanismen implementieren. *(Quelle: Ben)*
++ - **C4 Sicherheits‑Review**: Das Sicherheits‑Review darf das MVP nicht verzögern; minimale Sicherheitsmaßnahmen (TLS, Auth, Audit) werden sofort umgesetzt, ein vollumfängliches Review folgt nach MVP‑Launch. *(Quelle: Ben, Clara)*
++ - **C5 EU‑Only Hosting**: Alle Daten müssen in EU‑Rechenzentren gespeichert werden; Provider muss DSGVO‑konform sein. *(Quelle: Farid)*
++ - **C6 Keine Sonderrabatte im MVP**: Nur Standardrabatte werden im MVP unterstützt. *(Quelle: Eva)*
++ - **C7 Keine Ticket‑System‑Integration**: Support wird über ein einfaches Kontaktformular abgewickelt; ein vollwertiges Ticket‑System ist außerhalb des MVP. *(Quelle: David)*
++ 
++ ## Assumptions and Open Points
++ - **A1 Mobile‑App**: Mobile‑First wird für spätere Phasen geplant, nicht im MVP enthalten. *(Offener Punkt)*
++ - **A2 SSO / Identity Provider**: SSO (Azure AD, Google) ist optional und wird nach dem MVP evaluiert. *(Offener Punkt)*
++ - **A3 Budget für Managed Services**: Konkrete Kosten stehen noch nicht fest; Annahme, dass das Budget ausreichend ist. *(Offener Punkt)*
++ - **A4 Security Review Dauer**: 6 Wochen geschätzt, könnte das MVP verzögern. *(Offener Punkt)*
++ - **A5 Mehrwährung**: Nur EUR im MVP; CHF / USD werden für spätere Releases geplant. *(Offener Punkt)*
++ - **A6 Daten‑Retention & Löschkonzept**: Grundlegendes Konzept wird definiert, detaillierte Fristen (z. B. 7‑Jahre Aufbewahrung für Rechnungen) fehlen noch. *(Offener Punkt)*
++ - **A7 Test‑Daten**: CI/CD‑Umgebung benötigt synthetische Testdaten; reales SAP‑Testsystem enthält Kundendaten, muss anonymisiert werden. *(Offener Punkt)*
++ - **A8 Backup‑Strategie Details**: Tägliches Backup definiert, aber Speicherort und Wiederherstellungs‑SLA noch offen. *(Offener Punkt)*
++ - **A9 API‑Rate‑Limiting**: Vorläufige Implementierung im MVP, endgültige Lösung über API‑Gateway später. *(Offener Punkt)*
++ 
++ ## Traceability
++ | Requirement | Quelle (Transkript‑Zeile) |
++ |-------------|---------------------------|
++ | FR1 | Anna (Zeile 1‑4), Clara (Zeile 9‑12) |
++ | FR2 | Anna (Zeile 30‑38), Eva (Zeile 180‑187) |
++ | FR3 | Ben (Zeile 23‑26), Eva (Zeile 180‑187) |
++ | FR4 | Eva (Zeile 180‑187) |
++ | FR5 | Anna (Zeile 67‑70), Eva (Zeile 180‑187) |
++ | FR6 | Clara (Zeile 9‑12), Ben (Zeile 292‑295) |
++ | FR7 | Ben (Zeile 292‑295) |
++ | FR8 | Farid (Zeile 260‑270) |
++ | FR9 | Farid (Zeile 260‑270) |
++ | FR10 | Anna (Zeile 70‑73) |
++ | FR11 | Anna (Zeile 145‑148), David (Zeile 142‑144) |
++ | NFR1 | Annahme basierend auf erwartete Nutzerzahl (Diskussion) |
++ | NFR2 | Offener Punkt (Skalierbarkeit) |
++ | NFR3 | Ben (Zeile 23‑26), Clara (Zeile 9‑12) |
++ | NFR4 | Clara (Zeile 9‑12) |
++ | NFR5 | Offener Punkt (Verfügbarkeit) |
++ | NFR6 | Clara (Zeile 9‑12) |
++ | NFR7 | Offener Punkt (Kosten) |
++ | C1‑C7 | Direkt aus Transkript (siehe Kontext) |
++ | A1‑A9 | Offene Punkte im Transkript und Diskussion |
++ 
++ ---
++ *Erstellt aus dem Workflow‑Kontext und dem Transkript T9999_chaos.txt (Evidence: runs/phase2_1/20260602_105417_e37966/state/context.md).*

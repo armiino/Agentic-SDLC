@@ -1,0 +1,71 @@
+﻿--- before/docs/requirements.md
++++ after/docs/requirements.md
+- 
++ ## Functional Requirements
++ - Das System muss einen **Login** per E‑Mail und Passwort unterstützen, inkl. Double‑Opt‑In und TLS‑Verschlüsselung.
++ - Authentifizierte Nutzer (Rolle *Kunde*) können ihre **Bestellungen** einsehen und zugehörige **Rechnungen** im PDF‑Format herunterladen.
++ - **Sales‑Nutzer** können über das Portal Angebote erstellen, wobei Produkt‑ und Preisdaten aus dem SAP‑System ausgelesen werden. Sonderrabatte werden im MVP nicht unterstützt; nur vordefinierte Standard‑Rabatte sind zulässig.
++ - Das System muss ein **minimalistisches Rollen‑ und Berechtigungsmodell** (Admin, Sales, Kunde) bereitstellen. Rollen bestimmen, welche Funktionen (Angebote erstellen, Rechnungen ansehen, Admin‑Aufgaben) sichtbar und ausführbar sind.
++ - Es wird ein **Audit‑Trail** geführt, der protokolliert, welcher Nutzer wann ein Angebot geöffnet oder geändert hat (keine personenbezogenen Daten in technischen Logs).
++ - Das System stellt eine **REST‑API** bereit, die über OAuth (Bevorzugung) abgesichert wird. Die API ermöglicht Front‑ und Backend‑Zugriff für Login, Angebotserstellung, Rechnungsabruf und Rollen‑Management.
++ - Das Portal wird auf einem **EU‑only Managed Hosting** betrieben, das DSGVO‑konforme Datenresidenz und tägliche Backups (Wiederherstellungs‑SLA ≥ 24 h) bietet.
++ - **Backup/Disaster‑Recovery**: Tägliche Sicherungen aller relevanten Daten, Wiederherstellung innerhalb von 24 h.
++ - Das System muss **DSGVO‑konform** sein: Double‑Opt‑In, Lösch‑ und Auskunfts‑Mechanismen (minimaler Retentionsplan für Rechnungen ≥ 7 Jahre), keine personenbezogenen Daten in technischen Logs.
++ - **Performance‑Grundlage**: Das Portal muss für mindestens 200 gleichzeitige Nutzer (Initial‑Load) ausgelegt sein, Skalierbarkeit für höhere Lasten ist zu planen.
++ 
++ ## Non-functional Requirements
++ - **Sicherheit**: TLS 1.2+ für alle Verbindungen, OAuth‑basierte Authentifizierung, getrennte Audit‑ und technische Logs, keine personenbezogenen Daten in System‑Logs.
++ - **Verfügbarkeit**: 99.5 % Monatsverfügbarkeit, inklusive Backup‑Restore und Notfall‑Plan.
++ - **Datenschutz**: DSGVO‑Konformität, EU‑Datenresidenz, Double‑Opt‑In, Möglichkeit zur Datenlöschung auf Anfrage.
++ - **Wartbarkeit**: Dokumentierte API‑Spezifikation, klare Trennung von Front‑ und Backend‑Komponenten, Nutzung von Managed Services für Datenbank/Storage.
++ - **Portabilität**: Keine hard‑codierten Provider‑Spezifika; das System muss später auf einen anderen Cloud‑Provider migrierbar sein.
++ - **Internationalisierung**: UI zu Beginn auf Deutsch, später Erweiterung um Englisch möglich (nicht Teil des MVP).
++ - **Backup**: Tägliche inkrementelle Backups, Aufbewahrung mindestens 7 Tage, Wiederherstellung innerhalb von 24 h.
++ - **Skalierbarkeit**: Architektur erlaubt horizontale Skalierung nach MVP‑Release.
++ 
++ ## Constraints/Compliance
++ - **EU‑only Hosting** muss nachweislich gewährleistet sein.
++ - **Keine neuen Datenbank‑Instanzen** – Nutzung bestehender Managed‑Database‑Services.
++ - **Keine SSO‑Integration** im MVP (Azure AD, Google ID etc. sind optional, aber nicht verpflichtend).
++ - **Keine Mobile‑App** – responsive Web‑Frontend nur.
++ - **Keine Mehrwährungs‑Unterstützung** – ausschließlich EUR.
++ - **Kein externes Ticket‑System** – Support erfolgt über ein einfaches Kontaktformular.
++ - **Keine komplexe Analyse‑ oder Tracking‑Lösung** – KPI‑Erfassung erfolgt manuell.
++ - **API‑Gateway** nicht verfügbar im 8‑Wochen‑Zeitplan; direkte API‑Exposition mit OAuth‑Proxy als Übergangslösung.
++ 
++ ## Assumptions and Open Points
++ - **SAP‑Zugriff**: Es wird nur Lese‑Zugriff auf Produkt‑/Preisdaten benötigt; Schreib‑Zugriff für Bestellungen wird später implementiert.
++ - **Rabatt‑Freigabe**: Sonderrabatte > Standard‑Rabatt werden im MVP nicht unterstützt; ein Freigabe‑Workflow wird in Phase 2 definiert.
++ - **Kosten für EU‑only Managed Service**: Grobe Schätzung bis Freitag erforderlich, genaue Anbieterwahl noch offen.
++ - **Support‑Prozess**: Kontaktformular ohne persistente Ticket‑Datenbank, Datenschutz‑Folgen noch zu prüfen.
++ - **Retention‑Plan**: Minimaler Plan für Rechnungen (7 Jahre) definiert; detaillierte Lösch‑ und Aufbewahrungs‑Regeln werden nach MVP erarbeitet.
++ - **Performance‑Annahmen**: Erwartete Nutzerzahl 200‑500 concurrent; Skalierbarkeit für bis zu 20 000 später zu evaluieren.
++ - **API‑Gateway Migration**: Nach MVP auf Unternehmens‑Gateway umstellen, sobald Warteliste abgelaufen ist.
++ - **Kostenschätzung**: Benötigt für Vorstandspräsentation, noch nicht finalisiert.
++ - **Test‑Daten**: Verwendung synthetischer Daten in Dev/Test; keine echten Kundendaten in nicht‑Produktions‑Umgebungen.
++ - **Backup‑SLA**: 24 h Wiederherstellung vereinbart, genaue RPO/RTO noch zu verfeinern.
++ 
++ ## Traceability
++ - **FR1** – Login, Double‑Opt‑In (aus Transkript, Zeile 1‑4, 19‑23).
++ - **FR2** – Angebots‑Erstellung aus SAP‑Daten (Zeile 28‑34, 78‑84).
++ - **FR3** – Rechnungs‑Download (Zeile 38‑44, 103‑110).
++ - **FR4** – Rollenmodell (Zeile 48‑55, 115‑122).
++ - **FR5** – Audit‑Trail (Zeile 124‑130, 158‑162).
++ - **FR6** – REST‑API mit OAuth (Zeile 136‑140, 166‑170).
++ - **FR7** – EU‑only Managed Hosting & Backup (Zeile 140‑146, 187‑193).
++ - **FR8** – DSGVO‑Konformität, Double‑Opt‑In, Lösch‑Mechanismus (Zeile 8‑15, 118‑124).
++ - **NFR1** – Sicherheit TLS, OAuth (Zeile 136‑140).
++ - **NFR2** – Verfügbarkeit 99.5 % (Implizit aus 8‑Wochen‑MVP‑Zeitplan).
++ - **NFR3** – Wartbarkeit, Dokumentation (Zeile 252‑260).
++ - **NFR4** – Portabilität, keinen Provider‑Lock‑In (Zeile 260‑264).
++ - **Constraint1** – Keine neue DB (Zeile 90‑95).
++ - **Constraint2** – Keine SSO (Zeile 112‑118).
++ - **Constraint3** – Keine Mobile‑App (Zeile 108‑112).
++ - **Open1** – SAP‑Schreibrechte (Diskussion Zeile 242‑250).
++ - **Open2** – Kosten EU‑Hosting (Diskussion Zeile 240‑250).
++ - **Open3** – Support‑Ticket‑System (Diskussion Zeile 260‑270).
++ - **Open4** – Rabatt‑Freigabe‑Workflow (Diskussion Zeile 300‑312).
++ - **Open5** – API‑Gateway Migration (Diskussion Zeile 340‑350).
++ - **Open6** – Retention‑Plan Details (Diskussion Zeile 370‑380).
++ 
++ *Alle Anforderungen, Annahmen und offenen Punkte leiten sich ausschließlich aus dem bereitgestellten Transkript `input/transcripts/T9999_chaos.txt` ab.*

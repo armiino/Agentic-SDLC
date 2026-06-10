@@ -1,0 +1,75 @@
+# Architekturüberblick – Kundenportal MVP (Phase 2.1)
+
+## 1. Systemkontext
+- **Akteure**
+  - **Kunde** – nutzt das Web‑Portal (erstmals über Desktop, später responsive für Mobile).
+  - **Vertrieb (Sales)** – erstellt Angebote im Portal.
+  - **Finance** – prüft und exportiert Angebots‑PDFs, benötigt Rabatt‑Freigabe (nach MVP‑Phase).
+  - **Support** – greift über ein Kontaktformular auf Kundendaten zu (keine Ticket‑Lösung im MVP).
+  - **SAP ERP** – Quelle für Produkt‑, Preis‑ und Kundendaten (Lese‑Zugriff).
+  - **Identity Provider (optional)** – Azure AD / Google für spätere SSO‑Integration.
+  - **Managed Service Provider** – hostet Anwendung in einer EU‑only Umgebung, stellt Backup‑ und Monitoring‑Dienste bereit.
+
+## 2. Wichtige Komponenten
+| Komponente | Verantwortlichkeit | Kurzbeschreibung |
+|------------|--------------------|-------------------|
+| **Web‑Frontend** | Frontend‑Team | Single‑Page‑Application (React/Angular‑ähnlich, noch nicht final technologisch festgelegt). Implementiert Login, Angebots‑Wizard, Rechnungs‑Download, Rollen‑UI. |
+| **API‑Gateway (temporär intern)** | Backend‑Team | Minimaler Reverse‑Proxy mit TLS‑Termination, Rate‑Limiting (bis externes Gateway verfügbar). |
+| **Auth Service** | Backend | E‑Mail/Passwort‑Login, Double‑Opt‑In‑Workflow, JWT‑Token‑Ausgabe. Optional später SSO‑Anbindung. |
+| **Application Service Layer** | Backend | Geschäftslogik: Angebots‑Erstellung, PDF‑Generation, Rechnungs‑Abruf, Rollen‑Prüfung, Audit‑Logging. |
+| **SAP Connector** | Backend | REST‑Client (oder RFC) zum SAP‑System für **Lesen** von Produkt‑ und Preis‑Stammdaten. Schreibzugriff nur in späteren Phasen. |
+| **Audit‑Log Service** | Backend | Schreib‑only Store (z. B. append‑only Log) für sicherheitsrelevante Ereignisse (Erstellung, Änderungen, Download). Trennung von technischen Logs. |
+| **Backup & DR Service** | Operations | Managed Backup des Anwendung‑Containers und Datenbank (Snapshots, EU‑Region). Minimaler RTO/RPO definiert (z. B. 4 h). |
+| **Monitoring & Alerting** | Operations | Infrastruktur‑Monitoring (CPU, Memory, Errors) – keine personenbezogenen Daten. Alerting bei Ausfall von SAP‑Connector oder API‑Gateway. |
+| **Database (Managed)** | Operations | Relationale Managed DB (z. B. Azure‑PostgreSQL, AWS RDS – Provider‑neutral). Enthält Benutzer, Rollen, Angebote, Rechnungen, Audit‑Einträge. Keine zusätzlichen DB‑Server werden für MVP gebaut. |
+| **PDF‑Generator** | Backend | Service (z. B. wkhtmltopdf oder PDF‑Library) zum Erzeugen von Angebots‑PDFs mit rechtlichen Fußnoten und Versions‑Info. |
+| **Environment Management** | DevOps | Drei Umgebungen (Dev, Test, Prod) mit getrennten DB‑Instanzen; Testdaten synthetisch, kein echtes Kundendaten‑Dump. |
+
+## 3. Schnittstellen / Integrationspunkte
+- **Frontend ↔ API‑Gateway** – HTTPS, JSON‑REST, OAuth‑Bearer‑Token (JWT) für Authentifizierung.
+- **API‑Gateway ↔ Auth Service** – Internal call zur Validierung von Credentials, Token‑Issue.
+- **API‑Gateway ↔ Application Service Layer** – Weiterleitung von Business‑Requests.
+- **Application Service ↔ SAP Connector** – REST/RFC‑Calls, **nur Lese‑Zugriff** für Produkt‑/Preis‑Daten (kritische Abhängigkeit). Fallback‑Mechanismus: Fehlermeldung, keine Angebotserstellung.
+- **Application Service ↔ Database** – CRUD‑Operationen für Nutzer, Rollen, Angebote, Rechnungen, Audit‑Logs.
+- **Application Service ↔ PDF‑Generator** – In‑Process oder Microservice‑Aufruf, erzeugt PDF‑Bytes zurück an Frontend.
+- **Application Service ↔ Monitoring** – Metrics (Prometheus‑style) über /metrics‑Endpoint; keine personenbezogenen Daten.
+- **Backup Service ↔ Database** – Periodische Snapshots, EU‑Only Storage.
+- **Optional Future** – **SSO‑Provider** (Azure AD / Google) via OpenID Connect; **API‑Gateway (Zentral)** für globale Rate‑Limiting und zentrale Security Policies.
+
+## 4. Daten‑ und Sicherheitsaspekte (MVP‑Level)
+- **Transportverschlüsselung** – TLS 1.2+ für alle externen Verbindungen (Frontend → Gateway, Gateway → Backend, Backend → SAP). 
+- **At‑Rest‑Verschlüsselung** – Managed DB bietet server‑seitige Verschlüsselung. PDF‑Dateien werden ebenfalls verschlüsselt gespeichert.
+- **Authentifizierung** – JWT mit kurzer Lebensdauer (15 min), Refresh‑Token über HttpOnly‑Cookie.
+- **Autorisation** – Rollen‑basiertes RBAC (Admin, Sales, Kunde). Berechtigungsprüfung in Application Service Layer.
+- **Audit‑Logging** – Write‑only Log für sicherheitsrelevante Events (Login, Angebot‑Erstellung, Download). Keine personenbezogenen Daten in technischen Logs.
+- **DSGVO‑Konformität** –
+  - Double‑Opt‑In für Registrierung.
+  - Lösch‑Endpoint (nur für Customer‑Rolle, nach Retention‑Policy). 
+  - Datenminimierung: Nur notwendige SAP‑Daten (Produkt‑/Preis‑Info) werden gelesen; keine Speicherung von kompletten SAP‑Kundendatensätzen.
+- **Backup & Disaster Recovery** – Tägliche Snapshots, Aufbewahrung 14 Tage, Wiederherstellung in EU‑Region.
+- **Rate‑Limiting (MVP)** – Einfaches Token‑Bucket im internen API‑Gateway (z. B. 100 Requests / Minute pro IP). 
+- **Secrets Management** – Umgebung‑Variablen über Managed Service (z. B. Azure Key Vault, AWS Secrets Manager) – konkrete Lösung wird nach MVP definiert.
+
+## 5. Offene Architekturentscheidungen
+| Entscheidung | Status | Begründung / Offene Fragen |
+|--------------|--------|----------------------------|
+| **Frontend‑Framework** | offen | Noch keine Technologie‑Festlegung (React, Angular, Vue). Einfluss auf Entwickler‑Produktivität. |
+| **Managed DB‑Provider** | offen | EU‑Only Anforderung, Kosten‑Abschätzung nötig (Azure PostgreSQL, AWS RDS, GCP CloudSQL). |
+| **API‑Gateway (zentral)** | postponed | Warteliste 6 Wochen; interim‑Lösung verwendet internes Rate‑Limiting. Entscheidung, wann Wechsel erfolgt. |
+| **SSO‑Integration** | optional | Azure AD & Google IDP geplant, aber nicht im MVP. Entscheidung über Anbieter und Lizenzkosten später. |
+| **Cache‑Strategie für SAP‑Daten** | offen | Nur Produkt‑Stammdaten können gecached werden; TTL und Invalidierung noch zu definieren. |
+| **Backup‑Location (EU‑Only vs. Multi‑Region)** | offen | Managed Service liefert ggf. globale Replikation – muss deaktiviert werden, um DSGVO‑Konformität sicherzustellen. |
+| **PDF‑Generator Technologie** | offen | Bibliothek vs. externer Service; Anforderungen an Rechtskonformität (Digitale Signatur) noch unklar. |
+| **Monitoring‑Tooling** | offen | Auswahl zwischen CloudWatch, Prometheus, Grafana etc.; muss personenbezogene Daten ausschließen. |
+| **Retention‑Policy** | offen | Gesetzliche Aufbewahrung (z. B. 10 Jahre) vs. DSGVO‑Löschrecht – konkrete Regeln noch zu erarbeiten. |
+
+## 6. Zusammenfassung
+Der **architektonische Entwurf** fokussiert sich auf ein **minimal funktionsfähiges Kundenportal (MVP)**, das innerhalb von 8 Wochen ausgeliefert werden kann. Kernpunkte sind:
+1. **Web‑Frontend** mit Login, Angebots‑Wizard, Rechnungs‑Download.
+2. **API‑Layer** über ein intern implementiertes Gateway, das später durch das zentrale Unternehmens‑Gateway ersetzt wird.
+3. **SAP‑Read‑Integration** als einzige kritische externe Abhängigkeit.
+4. **Managed DB** in EU‑Only‑Region, unterstützt RBAC und Audit‑Logging.
+5. **Security‑Grundlagen** (TLS, JWT, Rollen‑RBAC, Minimal‑Audit‑Log, Double‑Opt‑In, Backup).
+6. **Bewusste Ausgrenzungen** (SSO, Sonderrabatte, vollständiges Support‑Ticket‑System, Mehrwährung, tiefes Monitoring) mit klaren offenen Entscheidungen für spätere Phasen.
+
+Damit liefert das Dokument den geforderten Überblick über Systemkontext, Komponenten, Integrationspunkte sowie Daten‑ und Sicherheitsaspekte und listet die noch zu klärenden Architekturentscheidungen für das weitere Vorgehen.

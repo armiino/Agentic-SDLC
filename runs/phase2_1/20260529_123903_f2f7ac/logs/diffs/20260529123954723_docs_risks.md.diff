@@ -1,0 +1,68 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikoartefakt für das Kundenportal MVP
++ 
++ ## 1. Fachliche Risiken
++ 
++ - Unklare und wechselnde Zieldefinition und Scope führen zu Planungsunsicherheit und Verzögerungen.
++ - Fehlender Supportprozess im MVP mit nur einfachem Kontaktformular kann Kundenzufriedenheit und Supporteffizienz beeinträchtigen.
++ - Fehlender Freigabeprozess für Rabatte im MVP birgt finanzielles Risiko durch unbeabsichtigte Rabattgewährung.
++ - Unklare Pilotkunde und damit verbundene Datenschutz-, Währungs- und Sprachanforderungen erhöhen Komplexität und Risiko von späteren Nachbesserungen.
++ 
++ ## 2. Technische Risiken
++ 
++ - Fehlende finale Architekturentscheidung und Auswahl von Cloud-Provider und Identity Provider (SSO, OAuth) können Implementierung verzögern.
++ - SAP Anbindung als kritische Abhängigkeit mit nicht immer Echtzeit-aktuellen Preisdaten birgt Risiko für fehlerhafte Angebote.
++ - API Gateway Verfügbarkeit im MVP-Zeitplan unsicher; Verzögerung beeinträchtigt Integration und Sicherheit.
++ - Fehlende oder unzureichende Auditierung und Logging könnte Compliance-Verstöße und schwerwiegende Sicherheitsprobleme verursachen.
++ - Keine eigene Datenbank, Nutzung von Managed Services kann zu Abhängigkeiten und limitierten Funktionalitäten führen.
++ - Testdatenproblematik: Nutzung echter Kundendaten im SAP-Testsystem verstößt gegen Datenschutz und erschwert Testprozesse.
++ - Skalierbarkeit und Performance Unsicherheiten bei unklarer Benutzerlast und Systemkomplexität.
++ - Fehlendes oder unzureichendes Backup und Disaster Recovery kann zu Datenverlust und Ausfallzeiten führen.
++ - Geheimnisverwaltung (Secrets Management) sowie API Rate Limiting müssen sorgfältig umgesetzt werden, sonst besteht Risiko von Sicherheitslücken und Überlastung.
++ 
++ ## 3. Compliance- und Datenschutzrisiken
++ 
++ - DSGVO Non-Compliance durch fehlende oder unvollständige Umsetzung von Double-Opt-In, Löschkonzepten, Audit-Trails und Datenminimierung.
++ - Hosting in EU nur mit nachweisbarer Datenresidenz; unzureichende Kontrolle kann zu Verstößen führen.
++ - Versicherung, dass keine personenbezogenen Daten in technischen Logs aufgezeichnet werden, ist unklar.
++ - Widersprüche zwischen Löschanfragen und gesetzlichen Aufbewahrungsfristen können rechtliche Risiken verursachen.
++ - E-Mail-basierte Supportanfragen im MVP können Datenschutz- und Nachvollziehbarkeitsprobleme verursachen.
++ - Unklare oder fehlende Retentionsfristen und Datenklassifikationen erhöhen Risiken bei Datenmanagement und Compliance.
++ 
++ ## 4. Widersprüche und Unsicherheiten
++ 
++ - Zeitdruck (8-Wochen-MVP) vs. notwendige Security Reviews und Compliance-Anforderungen.
++ - Wunsch nach einfacher, schneller Entwicklung vs. Anforderungen an Sicherheit, Auditierbarkeit und Datenschutz.
++ - Nutzung von Managed Services vs. Anforderungen an Datenresidenz und Verfügbarkeit.
++ - Umfang des MVP vs. vollständige funktionale und regulatorische Anforderungen.
++ - Unklare Verantwortlichkeiten, z.B. Rollen- und Berechtigungskonzept, Support und Datenpflege.
++ - Unsicherheit bezüglich Einsatz von SSO, OAuth, API Gateway und Pilotkunde-Konfiguration.
++ 
++ ## 5. Mögliche Auswirkungen
++ 
++ - Verzögerung oder Scheitern der MVP-Auslieferung.
++ - Rechtliche Folgen durch Datenschutzverstöße und fehlende Compliance.
++ - Finanzielle Verluste durch unkontrollierte Rabattvergabe oder fehlende Freigabeprozesse.
++ - Schlechte Kundenzufriedenheit und erhöhte Supportaufwände bei fehlendem Ticketsystem.
++ - Erhöhtes Risiko von Sicherheitsvorfällen und Datenverlust.
++ - Erschwerte Wartung, Support und Weiterentwicklung durch fehlende Dokumentation und klare Architektur.
++ 
++ ## 6. Mögliche Gegenmaßnahmen und Klärungsbedarfe
++ 
++ - Klare MVP-Scope-Definition und bewusste Dokumentation von Ausschlüssen und Risiken.
++ - Priorisierung und klare Abgrenzung der Anforderungen, insbesondere für Support und Rabattfreigabe.
++ - Frühzeitige Entscheidung zu Pilotkunde, Hosting und Identity Provider.
++ - Absicherung der SAP-Integration mit Fallback-Strategien und Datenkennzeichnung.
++ - Planung und Sicherstellung der API Gateway-Verfügbarkeit im Zeitplan oder Finden alternativer Lösungen.
++ - Umsetzung eines minimalen Audit Trails mit klarer Trennung von Logs und Datenschutzkonzept.
++ - Datenschutzkonformes Testdatenmanagement und Pseudonymisierung.
++ - Implementierung eines Secrets Managements und API Rate Limiting.
++ - Planung der Backups und Disaster Recovery für MVP und Folgephasen.
++ - Beteiligung von Datenschutzbeauftragten und Legal zur Klärung von Aufbewahrungsfristen und Löschkonzepten.
++ - Dokumentation aller offenen Risiken transparent und regelmäßige Risiko-Reviews.
++ 
++ ---
++ 
++ *Dieses Risikoartefakt basiert auf der Analyse des Stakeholder-Transkripts, der Requirements und des Projektkontexts. Es soll Entscheidungsträger und Projektbeteiligte für die kritischen Punkte sensibilisieren und die Grundlage für Maßnahmen geben.*

@@ -1,0 +1,72 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturüberblick für Kundenportal / Angebotsplattform
++ 
++ ## 1. Systemkontext
++ Das System stellt ein Web-basiertes Kundenportal bereit, das als Plattform für Vertriebs- und Kundenprozesse dient. Es integriert sich lesend in SAP als zentrale Datenquelle für Produkt-, Preis- und Rabattinformationen. Nutzer greifen über Web-Frontend auf das Portal zu, mobil native Apps sind für spätere Phasen vorgesehen.
++ 
++ Das Portal dient primär der schnellen Angebotserstellung, Rechnungsanzeige sowie dem Bestellstatus-Tracking. Für die Integration und Absicherung von Datenaustausch stellt das System einen API Layer bereit, der allerdings im MVP ohne dediziertes API Gateway realisiert wird.
++ 
++ Das System wird in EU-only Managed-Hosting-Umgebungen betrieben, um Datenschutzanforderungen gemäß DSGVO einzuhalten.
++ 
++ ## 2. Wichtige Komponenten
++ 
++ ### 2.1 Frontend
++ - Web-Frontend (responsive Design) für Kunden und interne Rollen (Admin, Sales, Manager)
++ - Login mit E-Mail/Passwort, Double-Opt-In und optionaler SSO-Integration (Azure AD, Google, nicht im MVP finalisiert)
++ 
++ ### 2.2 Backend
++ - Anwendungslogik zur Angebotsverwaltung, Rollen- und Berechtigungssteuerung, sowie Auditierung (minimaler Umfang im MVP)
++ - SAP-Connector für lesenden Datenzugriff auf Produkt- und Preisdaten, Bestellungen und Rechnungen
++ - API Layer zur Kapselung der Backend-Logik und Datenintegration
++ 
++ ### 2.3 Datenhaltung
++ - Nutzung von Managed Services für Persistenz (Datenbank, Dokumentenablage), kein eigener DB-Server
++ - Minimaler Audit-Trail zur Nachvollziehbarkeit von Angebotsänderungen
++ - Backup und Disaster Recovery Mechanismen im Managed Hosting
++ 
++ ### 2.4 Infrastruktur
++ - EU-only Hosting mit nachweislicher Datenresidenz
++ - Getrennte Umgebungen für Entwicklung, Test und Produktion mit Pseudonymisierung in Testdaten
++ - Secrets Management für sichere Verwaltung von Zugangsdaten und API-Schlüsseln
++ 
++ ## 3. Schnittstellen und Integrationspunkte
++ 
++ - SAP-System (lesend): Abruf von Produktstammdaten, Preisen, Rabattlogik und Kundenbestellungen
++ - Identity Provider (optional): für Single Sign-On (OAuth oder andere Protokolle)
++ - Externe API-Clients (Frontend, ggf. Mobile App, künftige Systeme)
++ 
++ ## 4. Daten- und Sicherheitsaspekte
++ 
++ - DSGVO-konformes Login mit Double-Opt-In und Löschkonzept
++ - Auditierung der wichtigsten Geschäftsobjekte mit minimalem Umfang im MVP
++ - Kein Einsatz von personenbezogenen Daten in technischen Logs
++ - Backup und Wiederherstellung als Teil der Systemverfügbarkeit und Compliance
++ - Zugriffskontrolle und Rollenmanagement differenziert nach Funktion (Admin, Sales, Kunde, Manager, Support eingeschränkt im MVP)
++ 
++ ## 5. Offene Architekturentscheidungen
++ 
++ - Wahl der konkreten Identity Provider für SSO und deren Integration (Azure AD, Google, etc.)
++ - API-Security Mechanismus (OAuth bevorzugt, aber noch nicht final festgelegt)
++ - Umgang mit dem API Gateway: MVP-Phase ohne zentrales Gateway, langfristige Integration offen
++ - Supportprozess und seine technische Umsetzung (kein persistentes Ticketsystem im MVP)
++ - Detaillierung des Freigabeprozesses für Rabatte und Angebotserstellung
++ - Umgang mit SAP-Wartungsfenstern und Offline-Szenarien
++ - Mehrwährungs- und Internationalisierungsstrategie (außerhalb MVP)
++ - Genaues Backup- und Monitoring-Konzept zur Einhaltung von Compliance-Anforderungen
++ 
++ ## 6. Architektur-Alternativen und Risiken
++ 
++ - API Gateway fehlende Verfügbarkeit im MVP könnte zu Sicherheits- und Integrationsrisiken führen
++ - Kein Ticketsystem im MVP begrenzt Supportfähigkeiten und erzeugt Datenschutzrisiken bei E-Mail-basiertem Kontakt
++ - Zeitliche Restriktionen können zu unvollständigen Security Reviews führen
++ - Komplexe Rabattlogik und Freigabeprozesse sind historisch schwer und noch offen
++ - SAP als kritische Systemabhängigkeit ohne eigenen Schreibzugriff im MVP
++ 
++ ## 7. Fazit
++ Diese Architektur bietet eine pragmatische Basis für das MVP mit Fokus auf Kernfunktionalität und Einhaltung wesentlicher Compliance-Anforderungen bei gleichzeitigem Bewusstsein der Restriktionen und Risiken. Sie ist flexibel gehalten, um offene technische und prozessuale Entscheidungen sowie zukünftige Erweiterungen aufzunehmen.
++ 
++ ---
++ 
++ *Dieser Architekturüberblick basiert auf der Analyse des Stakeholder-Transkripts (input/transcripts/T9999_chaos.txt), den Requirements (docs/requirements.md) und dem Projektkontext (runs/phase2_1/20260529_131036_dc98b8/state/context.md).*

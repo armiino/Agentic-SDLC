@@ -1,0 +1,195 @@
+# Requirements Specification
+
+## Functional Requirements
+
+**FR-1: User Authentication**
+- Users shall be able to register and log in using email and password.
+- Registration shall require a double‑opt‑in verification email.
+- Source: Context.md – Login & Authentifizierung.
+
+**FR-2: Role‑Based Access Control**
+- System shall support at least the following roles: Admin, Manager, Sales, Support, Customer.
+- Permissions shall be assigned per role (e.g., Admin can manage users, Sales can create quotes, Support can view quote/status but not prices, Customer can view own quotes and invoices).
+- Source: Context.md – Rollen & Berechtigungen.
+
+**FR-3: Quote Creation**
+- Sales users shall be able to create a new quote (offer) by selecting products and quantities.
+- Product and pricing data shall be read‑only sourced from the existing SAP system via an API layer.
+- Source: Context.md – SAP‑Integration, Angebotsworkflow.
+
+**FR-4: Quote Approval Workflow**
+- Quotes shall enter a draft state.
+- If discount percentage exceeds a configurable threshold (e.g., 15 %), the quote shall require Manager approval.
+- If discount exceeds a second threshold (e.g., 30 %), Finance approval shall also be required.
+- Approved quotes transition to “sent” state; customers can accept or reject.
+- Source: Context.md – Angebotsworkshop, Rabatt‑Freigabe.
+
+**FR-5: PDF Quote Generation**
+- Upon approval, the system shall generate a PDF quote that includes:
+  - Legal disclaimer and version number.
+  - Customer‑specific currency and tax information.
+  - Audit‑relevant metadata (quote ID, timestamps, user).
+- Source: Context.md – PDF‑Export, rechtliche Fußnoten.
+
+**FR-6: Invoice Access**
+- Customers shall be able to view and download their invoices (PDF) from the portal.
+- Invoices shall be retrieved from SAP (read‑only) and displayed with appropriate formatting.
+- Source: Context.md – Rechnungsdownload.
+
+**FR-7: Audit Trail**
+- All create, read, update, delete actions on quotes and invoices shall be logged with user ID, timestamp, and action type.
+- Logs shall be segregated into application, audit, and security logs.
+- Source: Context.md – Audit‑Trail, Monitoring & Logging.
+
+**FR-8: Support Contact Form**
+- A contact form shall be available for customers to submit support inquiries.
+- The form shall capture the customer account ID to associate the inquiry with the correct customer.
+- Source: Context.md – Support & Tickets.
+
+**FR-9: Email Fallback for Support**
+- Support inquiries submitted via the contact form shall also generate an email to a support mailbox for tracking.
+- Source: Context.md – Support‑Prozess (E‑Mail‑Fallback).
+
+**FR-10: EU‑Managed Hosting**
+- The application shall be hosted on a managed service provider located exclusively within the EU.
+- No personal data shall be stored or processed outside the EU unless explicitly deactivated.
+- Source: Context.md – EU‑Hosting, Datenresidenz.
+
+**FR-11: Backup and Disaster Recovery**
+- Regular automated backups of the application data and configuration shall be performed.
+- A documented disaster‑recovery process shall exist to restore service within a defined RTO.
+- Source: Context.md – Backup & Disaster Recovery.
+
+**FR-12: Rate Limiting & Download Limits**
+- API endpoints that allow bulk invoice download shall enforce rate limits and pagination to prevent abuse.
+- Configurable limits shall apply per user or IP address.
+- Source: Context.md – Rate Limits, Missbrauchserkennung.
+
+**FR-13: Secrets Management**
+- All secrets (API keys, database credentials, etc.) shall be stored in a dedicated secrets management system and not in source code or plain‑text configuration files.
+- Source: Context.md – Secrets‑Management.
+
+**FR-14: Multilingual Support (DE/EN)**
+- The user interface shall be available in German and English, selectable by the user.
+- Source: Context.md – Internationalisierung (Sprachen).
+
+**FR-15: Multi‑Currency Support (EUR, CHF, USD)**
+- Quotes and invoices shall be displayable in the customer’s currency (EUR, CHF, USD) with proper conversion rates sourced from SAP.
+- *Note: Full multi‑currency may be deferred to a later phase if Swiss pilot is not confirmed.*
+- Source: Context.md – Mehrwährung.
+
+**FR-16: API Layer for Integration**
+- An internal API layer shall encapsulate all SAP read/write interactions, providing a stable interface for the portal and future services.
+- Direct database access to SAP shall be prohibited.
+- Source: Context.md – API‑Layer, API Gateway.
+
+**FR-17: Test Data Strategy**
+- Automated tests shall use synthetic or pseudonymised data; no real customer data shall be used in development or test environments.
+- Source: Context.md – Test‑ und Datenstrategie.
+
+## Non‑Functional Requirements
+
+**NFR-1: Performance**
+- The portal shall support at least 200 concurrent users with response times < 2 s for typical page loads.
+- The architecture shall be horizontally scalable to accommodate peak loads of up to 20 000 users.
+- Source: Context.md – Performance & Skalierbarkeit.
+
+**NFR-2: Availability**
+- The system shall target 99.5 % monthly availability.
+- Fallback behavior shall be defined for temporary SAP unavailability (e.g., show cached product data, block quote creation if pricing cannot be guaranteed).
+- Source: Context.md – Umgang mit SAP‑Verfügbarkeit.
+
+**NFR-3: Security**
+- All communication shall be encrypted using TLS 1.2 or higher.
+- The application shall follow OWASP Top 10 guidelines.
+- A formal security review shall be conducted before production release.
+- Source: Context.md – Sicherheit, Security Review.
+
+**NFR-4: Compliance (DSGVO)**
+- The system shall implement data subject rights: access, rectification, erasure, and portability.
+- No personal data shall be written to application or technical logs.
+- Consent (double‑opt‑in) shall be recorded and retrievable.
+- Source: Context.md – Datenschutz & Compliance.
+
+**NFR-5: Maintainability & Documentation**
+- Code shall be modular and documented; API contracts shall be versioned and publicly available internally.
+- Documentation effort shall be sufficient to enable a security review but avoided over‑engineering.
+- Source: Context.md – Dokumentation.
+
+**NFR-6: Observability**
+- Metrics (request latency, error rates, throughput) shall be exported to a monitoring system.
+- Logs shall be searchable and retained according to policy (application logs: 30 days, audit logs: 2 years, security logs: 1 year).
+- Source: Context.md – Monitoring & Logging, Backup.
+
+**NFR-7: Backup RPO/RTO**
+- Backup point‑in‑time objective (RPO) shall not exceed 4 hours.
+- Recovery time objective (RTO) shall be ≤ 4 hours for critical services.
+- Source: Context.md – Backup & Disaster Recovery.
+
+**NFR-8: Data Retention**
+- Quotes and invoices shall be retained for the period required by commercial law (to be defined by Legal) while honoring deletion requests where no statutory retention obligation exists.
+- Source: Context.md – Rechtliche Aufbewahrungsfristen.
+
+## Constraints & Compliance
+
+- **C-1:** No personal data shall appear in application logs, audit logs shall be access‑controlled and reviewed regularly. *(Clara)*
+- **C-2:** Double‑opt‑in is mandatory for email registration. *(Clara, Anna)*
+- **C-3:** Data subject deletion requests must be honoured unless a statutory retention period overrides the request. *(Clara)*
+- **C-4:** MVP must be deliverable within an 8‑week timebox; therefore features such as SSO, mobile app, push notifications, advanced analytics, and full ticket system are deferred to later phases. *(Anna, Management)*
+- **C-5:** No new dedicated database servers shall be provisioned; only managed database services may be used. *(Ben, Farid)*
+- **C-6:** Direct write access to SAP databases is prohibited; all SAP interaction must go through the defined API layer. *(Ben)*
+- **C-7:** Usage of the central API Gateway is subject to a six‑week waiting list; if unavailable within the MVP window an alternative (e.g., direct API layer with auth) must be employed. *(Farid, Ben)*
+- **C-8:** Manual (ad‑hoc) discount creation above the standard rate is disallowed without triggering the approval workflow. *(Eva, Anna)*
+- **C-9:** Quotes and invoices must display the correct legal footer, version number, and currency as per Finance and Legal requirements. *(Eva, Clara)*
+- **C-10:** Test environments must not contain real customer data; synthetic or pseudonymised data shall be used. *(Farid, Clara)*
+- **C-11:** Hosting must be EU‑only; any backup replication outside the EU must be explicitly disabled to remain DSGVO‑compliant. *(Farid, Clara)*
+- **C-12:** The system shall support at least German and English languages; additional languages are out of scope for MVP. *(Anna, David, Eva)*
+- **C-13:** Currency support for EUR is mandatory; CHF and USD are optional pending pilot confirmation. *(Eva, Anna)*
+- **C-14:** No over‑engineering of documentation; deliverables must be sufficient for security review and future maintenance. *(Anna)*
+
+## Assumptions & Open Points
+
+- **A-1:** Email/password with double‑opt‑in is assumed sufficient for MVP authentication; SSO (Azure AD/Google) will be considered for a later phase.
+- **A-2:** Discount approval thresholds are assumed to be 15 % (Manager) and 30 % (Finance); exact values and responsible roles are to be confirmed by Finance/Legal.
+- **A-3:** Support will be handled via the contact form and email fallback; a dedicated ticketing system is deferred.
+- **A-4:** An EU‑managed hosting service is assumed to be available and within budget.
+- **A-5:** If the central API Gateway is not accessible within the 8‑week window, the team will implement an interim authentication/authorization solution directly in the API layer.
+- **A-6:** A fallback or caching strategy for SAP downtime will be defined during technical design; specifics are TBD.
+- **A-7:** Multi‑currency (CHF/USD) and additional languages (beyond DE/EN) are assumed to be out of MVP scope unless a Swiss pilot is confirmed.
+- **A-8:** Legal retention periods for quotes/invoices are assumed to be provided by the Compliance/Legal team; exact durations are TBD.
+- **A-9:** Synthetic data generation for testing is assumed feasible; detailed methodology will be worked out by the QA team.
+- **A-10:** Mobile app, push notifications, and advanced analytics/KPIs beyond conversion rate and time‑to‑offer are explicitly deferred to post‑MVP phases.
+- **A-11:** The system will be deployed as a single‑tenant SaaS instance; multi‑tenancy is not required for MVP.
+
+## Traceability
+
+| Requirement ID | Source (Context.md Section) | Notes |
+|----------------|----------------------------|-------|
+| FR-1 | Login & Authentifizierung | Double‑opt‑in, email/password |
+| FR-2 | Rollen & Berechtigungen | Role list and permissions |
+| FR-3 | SAP‑Integration, Angebotsworkflow | Read‑only SAP product/price data |
+| FR-4 | Angebotsworkflow, Rabatt‑Freigabe | Discount‑based approval steps |
+| FR-5 | PDF‑Export, rechtliche Fußnoten | Legal disclaimer, version number |
+| FR-6 | Rechnungsdownload | Customer invoice access |
+| FR-7 | Audit‑Trail, Monitoring & Logging | Segregated logs |
+| FR-8 | Support & Tickets | Contact form linked to account |
+| FR-9 | Support‑Prozess (E‑Mail‑Fallback) | Email copy of inquiries |
+| FR-10 | EU‑Hosting, Datenresidenz | EU‑only, no unwanted replication |
+| FR-11 | Backup & Disaster Recovery | Automated backups, DR plan |
+| FR-12 | Rate Limits, Missbrauchserkennung | Throttling & pagination |
+| FR-13 | Secrets‑Management | Central secret store |
+| FR-14 | Internationalisierung (Sprachen) | DE/EN UI |
+| FR-15 | Mehrwährung | EUR mandatory, CHF/USD optional |
+| FR-16 | API‑Layer, API Gateway | Internal API for SAP |
+| FR-17 | Test‑ und Datenstrategie | Synthetic/pseudonymised test data |
+| NFR-1 | Performance & Skalierbarkeit | 200‑20 000 users, <2 s |
+| NFR-2 | Umgang mit SAP‑Verfügbarkeit | Fallback behavior |
+| NFR-3 | Sicherheit, Security Review | TLS, OWASP, review |
+| NFR-4 | Datenschutz & Compliance | DSGVO rights, no logs |
+| NFR-5 | Dokumentation | Sufficient for review |
+| NFR-6 | Monitoring & Logging | Metrics, log retention |
+| NFR-7 | Backup & Disaster Recovery | RPO ≤4 h, RTO ≤4 h |
+| NFR-8 | Rechtliche Aufbewahrungsfristen | Legal‑defined retention |
+| C-1 – C-14 | Various sections (see Constraints) | Derived directly from context |
+
+*All requirements are traceable to the consolidated context captured in `runs/phase2_1/20260529_94e0e8/state/context.md`, which in turn is sourced from the transcript `input/transcripts/T9999_chaos.txt`.*

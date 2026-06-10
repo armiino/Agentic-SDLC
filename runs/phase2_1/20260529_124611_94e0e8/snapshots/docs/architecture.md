@@ -1,0 +1,65 @@
+# Architekturübersicht (Phase 2.1 – Frühstadium)
+
+## Systemkontext
+Das Kundenportal ist eine Web‑Anwendung, die es Kunden ermöglicht, Angebote anzufordern, Angebote zu sehen und zu akzeptieren sowie Rechnungen herunterzuladen. Die Anwendung greift über eine geschützte API‑Schicht auf das vorhandene SAP‑ERP-System zu (Lesen von Produkt‑, Preis‑ und Kundendaten; später möglicher Schreibzugriff für Bestellungen). Alle Komponenten werden in einer EU‑gehosteten, managed‑Service‑Umgebung betrieben, um DSGVO‑Anforderungen zu erfüllen. Das Portal richtet sich an externe Kunden (B2B) sowie an interne Rollen (Admin, Manager, Sales, Support) mit rollenbasierter Zugriffskontrolle.
+
+## Wichtige Komponenten
+| Komponente | Verantwortung | Technologie‑Hinweise (keine festen Entscheidungen) |
+|------------|----------------|---------------------------------------------------|
+| **Frontend (SPA)** | Benutzeroberfläche für Login, Angebotserstellung, Angebot‑ und Rechnungsansicht, Kontaktformular, Sprachwahl (DE/EN). | Moderne JS‑Framework (React/Vue/Angular) oder server‑seitig gerenderte Seiten; responsive Design für spätere Mobile‑Unterstützung. |
+| **API‑Gateway / API‑Layer** | Zentraler Einstiegspunkt für alle Client‑Requests; Authentifizierung, Autorisierung, Rate‑Limiting, Eingabevalidierung, Weiterleitung an interne Services. | Können das zentrale Unternehmens‑API‑Gateway nutzen (falls verfügbar innerhalb von 8 Wochen) oder einen eigenständigen API‑Gateway (z. B. Kong, AWS API Gateway, Azure API Management) als Übergangslösung. |
+| **Authentifizierungs‑ und Autorisierungsdienst** | Verwaltung von Benutzerregistrierung, Double‑Opt‑In‑E‑Mail‑Bestätigung, Session‑Handling (JWT oder opaque Tokens), Rollen‑ und Berechtigungsprüfung. | Eigenständiger Dienst (z. B. basierend auf OIDC/OAuth2) oder Nutzung eines vorhandenen Identity‑Providers (Azure AD, Google) für spätere SSO‑Phase. Für MVP: simple E‑Mail/Passwort mit Double‑Opt‑In. |
+| **Quote‑Service** | Geschäftslogik für Angebotserstellung: Produkt‑ und Preisdaten vom SAP‑Adapter holen, Rabattberechnung, Workflow‑Status (draft → pending approval → sent → accepted/rejected), PDF‑Generierung. | Interne Mikroservice‑Komponente; kann monolithisch starten und später getrennt werden. |
+| **Invoice‑Service** | Abruf von Rechnungsdaten aus SAP (read‑only), Aufbereitung für PDF‑Anzeige, optional Kombinierung mit Zahlungsstatus. |
+| **SAP‑Adapter** | Kapselt sämtliche Les‑ (und später Schreib‑) Zugriffe auf SAP über vorhandene SAP‑OData/REST‑ oder RFC‑Schnittstellen. Stellt eine stabile, versionierte API für interne Services bereit. | Keine direkte Datenbankzugriff; nur über definierte API‑Schicht. |
+| **Audit‑ und Logging‑Service** | Sammelt ereignisbasierte Audit‑Logs (Wer hat welches Angebot wann erstellt/ändert/genehmigt), technische Application‑Logs und Security‑Logs; stellt Sicherstellung, dass keine personenbezogenen Daten in technischen Logs landen. | Separate Log‑Aggregation (z. B. Elasticsearch, Splunk, oder managed Cloud‑Logging) mit Rollenbasiertem Zugriff. |
+| **Benachrichtigungs‑/E‑Mail‑Service** | Versendet Double‑Opt‑In‑Bestätigungsemails, Benachrichtigungen bei Angebotstatusänderungen, Support‑Kopien aus Kontaktformular. | Nutzung eines managed E‑Mail‑Providers (SES, SendGrid, SMTP‑Relay). |
+| **Dateispeicher (Object Storage)** | Ablage von generierten PDF‑Angeboten und -Rechnungen, temporäre Caches, éventuelle Vorlagen. | EU‑regionale Object‑Storage (z. B. AWS S3 EU‑Region, Azure Blob Storage EU, Google Cloud Storage EU) mit Zugriffskontrolle und Verschlüsselung im Ruhezustand. |
+| **Managed Datenbank** | Speicherung von Benutzerprofilen, Rollen, Sitzungen, Angebots‑Metadaten, Audit‑Einträgen (falls nicht ausschließlich im Log‑System), Konfiguration. | Verwaltete relationale Datenbank (PostgreSQL, MySQL) oder NoSQL (abhängig von 요구) – wichtig: keine neuen dedizierten DB‑Server, nur managed Angebot. |
+| **Secrets‑Management** | Sichere Aufbewahrung von Datenbank‑Passwörtern, API‑Schlüsseln, JWT‑Signing‑Keys, SAP‑Anmeldeinformationen. | Dedizierter Dienst (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault) oder managed Service‑Angebot der Cloud. |
+| **Monitoring & Alerting** | Sammelt Metanzen (Latenz, Fehlerraten, Durchsatz), führt Health‑Checks aus, löst Alerts bei Schwellenwertüberschreitungen aus. | Prometheus + Grafana, Datadog, oder managed Cloud‑Monitoring. |
+| **Backup & Disaster Recovery** | Regelmäßige, automatisierte Snapshots der Datenbank und Object‑Storage; dokumentierte Wiederherstellungsprozeduren (RTO/RPO). | Native Backup‑Features des managed Service‑Providers; Sicherstellung, dass keine Backups außerhalb der EU repliziert werden (falls nicht explizit deaktiviert). |
+
+## Schnittstellen bzw. Integrationspunkte
+1. **Frontend ↔ API‑Gateway** – HTTPS (TLS 1.2+), JSON‑REST‑Endpunkte, ggf. GraphQL später. Auth‑Header (Bearer‑Token).
+2. **API‑Gateway ↔ Auth‑Service** – Token‑Validierung, Rollen‑Claims.
+3. **API‑Gateway ↔ Quote‑Service, Invoice‑Service, SAP‑Adapter** – interne REST/gRPC‑Aufrufe, ebenfalls geschützt via Mutual‑TLS oder API‑Keys aus Secrets‑Management.
+4. **Quote‑Service ↔ SAP‑Adapter** – Aufruf von Produkt‑/Preisdaten (read‑only); später möglicherweise Schreibaufruf für Bestellungen.
+5. **Invoice‑Service ↔ SAP‑Adapter** – Lesen von Rechnungskopf‑ und Positionen.
+6. **Alle Services ↔ Logging‑Service** – strukturierte Log‑Events (z. B. über Syslog, NATS, Kafka) mit Trennung von Application‑, Audit‑ und Security‑Logs.
+7. **Alle Services ↔ Secrets‑Management** – Abruf von Zugangsdaten beim Start bzw. periodisch.
+8. **Alle Services ↔ Monitoring** – Export von Metriken (Prometheus‑exporter oder Cloud‑Metrics‑API).
+9. **Frontend ↔ Object Storage (direkt über signed URLs)** – Für effizienten PDF‑Download ohne Umweg über Backend (optional).
+10. **E‑Mail‑Service ↔ Externe SMTP‑Relay** – Versand von Transaktions‑ und Marketing‑E‑Mails (nur unbedingt notwendig, z. B. Double‑Opt‑In, Angebotsstatus).
+
+## Daten‑ und Sicherheitsaspekte (erkennbar)
+- **Datenhaltung**: Persönliche Kunden‑ und Sales‑Daten (Name, E‑Mail, Unternehmen) werden ausschließlich in der managed EU‑Datenbank und im Object‑Storage (verschlüsselt) gespeichert. Keine personenbezogenen Daten in Application‑ oder technischen Logs; Audit‑Logs enthalten nur pseudonyme IDs und Zeitstempel (nach DSGVO‑Leitlinie).
+- **Kommunikation**: Alle Kanäle (Frontend‑Gateway, interne Services, SAP‑Adapter) verpflichten TLS 1.2 oder höher.
+- **Authentifizierung**: Für MVP E‑Mail/Passwort mit bestätigter Double‑Opt‑In‑E‑Mail; Passwörter werden mit einem starken, salt‑basierten Hash (bcrypt/argon2) gespeichert. Zukünftig mögliche Erweiterung zu SSO/OIDC.
+- **Autorisierung**: Rollenbasierte Zugriffskontrolle (RBAC) auf Service‑Ebene; feinkörnige Berechtigungen (z. B. Support darf Quote‑Status sehen, jedoch nicht Preis‑ bzw. Rabattfelder).
+- **Audit‑Trail**: Jede Änderung an Angeboten (Erstellung, Rabatt‑Anpassung, Freigabe, Statuswechsel) wird mit Benutzer‑ID, Timestamp und Immutable‑Hash im Audit‑Log aufgezeichnet; ermöglicht Nachvollziehbarkeit für Compliance und Finanz‑Controlling.
+- **PDF‑Generierung**: Bei Erzeugung werden rechtliche Fußnoten, Versionsnummer und Währung eingefügt; PDFs werden im Object‑Storage abgelegt und über zeitlich begrenzte, signierte URLs bereitgestellt.
+- **Rate‑Limiting & Missbrauchserkennung**: API‑Gateway setzt pro‑User/IP‑Limits für Massen‑Downloads (Rechnungen) und Angebotserstellung, um DoS und Datenexfiltration zu reduzieren.
+- **Backup**: Verschlüsselte Snapshots der Datenbank und des Object‑Speichers; Wiederherstellungstests mindestens quartalsweise; Sicherstellung, dass Backups nicht außerhalb der EU repliziert werden (falls nicht explizit deaktiviert, gemäß DSGVO).
+- **Secrets‑Management**: Alle Zugangsdaten werden niemals im Quellcode oder in Klartext‑Configuration Files gehalten; Drehung (rotation) erfolgt automatisch nach definierten Intervallen.
+- **Vulnerabilitäts‑Management**: Anwendung folgt OWASP Top 10; regelmäßige Dependency‑Scans und Pen‑Testing vor Production‑Release (Security Review).
+- **Datenschutzrechte**: Implementierung von Auskunfts‑, Berichtigungs‑, Lösch‑ und Datenportabilitäts‑Anfragen über dedizierte Endpunkte; Löschanforderungen werden nur ausgeführt, wenn keine gesetzliche Aufbewahrungspflicht besteht (siehe Rückhaltefrist‑Klärung).
+
+## Offene Architekturentscheidungen
+| Entscheidungspunkt | Beschreibung | Offene Fragen / Unsicherheiten |
+|--------------------|--------------|--------------------------------|
+| **Authentifizierungsmethode** | E‑Mail/Passwort mit Double‑Opt‑In vs. später SSO (Azure AD/Google). | Welcher Identity‑Provider wird gewählt? Welche Aufwände für SSO‑Integration? |
+| **API‑Gateway‑Verwendung** | Nutzung des zentralen unternehmensweiten API‑Gateways (6‑Wochen‑Warteliste) vs. Eigen‑API‑Gateway als Übergangslösung. | Können wir innerhalb von 8 Wochen ein eigenes Gateway bereitstellen, das später ersetzt wird? Wie sieht die Migrationsstrategie aus? |
+| **SAP‑Adapter‑Technologie** | Direkter OData/REST‑Aufruf vs. Middleware (z. B. SAP Cloud Platform Integration) vs. eigene Thin‑Wrapper. | Welche Schnittstelle bietet SAP derzeit? Welche Leistungs‑ und Verfügbarkeitsgarantien gibt es? |
+| **Service‑Architektur** | Monolithischer Start mit klarer Modularisierung vs. sofortiger Mikroservice‑Ansatz. | Wie groß ist das Team? Welche DevOps‑Kapazität besteht für Service‑Meshes, eigenständige Deployments? |
+| **Datenbankwahl** | Relationale managed PostgreSQL vs. managed MySQL vs. NoSQL (z. B. DynamoDB‑ähnlich) für Angebots‑Metadaten. | Welche Abfrage‑ und Transaktionsanforderungen bestehen? Wie wichtig sind komplexe Joins und ACID‑Garantien? |
+| **Objekt‑Storage‑Anbieter** | Welcher Cloud‑Provider liefert die beste Kosten‑/Performance‑Balance und garantiert EU‑only‑Storage? | Welche vertraglichen Zusagen bestehen hinsichtlich Datenresidenz und Backup‑Replikation? |
+| **Monitoring‑ und Logging‑Stack** | Aufbau eines eigenen ELK‑Stack vs. Nutzung managed Cloud‑Logging/Monitoring‑Dienste. | Welches Skill‑Set existiert im Team? Welche Kosten entstehen? |
+| **PDF‑Generierungstechnologie** | Nutzung einer Bibliothek (z. B. wkhtmltopdf, Puppeteer, PDF‑Lib) vs. externer Dienst. | Welche Lizenz‑ und Performance‑Implikationen gibt es? Wie soll versioniertes Template‑Management erfolgen? |
+| **Backup‑ und DR‑Strategie** | 정의된 RPO/RTO (4 h) vs. ggf. strengere Vorgaben; Test‑Häufigkeit. | Welche Kosten entstehen für häufigere Snapshots und geografisch getrennte Wiederherstellungssites (innerhalb EU)? |
+| **Rate‑Limiting‑Granularität** | Pro‑User vs. pro‑IP vs. kombiniert; unterschiedliche Limits für unterschiedliche Endpunkte. | Wie sieht das erwartete Nutzungsverhalten aus (z. B. Batch‑Downloads durch Einkaufsabteilung)? |
+| **Internationalisierung & Währung** | DE/EN bei Start; später CHF/USD und weitere Sprachen. | Wann wird ein Schweizer Pilotkunde bestätigt? Wie sollen Währungskurse aus SAP bezogen und gecacht werden? |
+| **Caching‑Strategie bei SAP‑Ausfall** | Read‑Through‑Cache für Produkt‑/Preisdaten (möglicherweise kundenindividuelle Rabatte) vs. keinerlei Cache und lediglich Fehlermeldung bei Nichtverfügbarkeit. | Welche Daten dürfen gecacht werden, ohne DSGVO zu verletzen? Wie erfolgt Cache‑Invalidierung? |
+| **Audit‑Log‑Aufbewahrung** | Aufbewahrungsdauer (gesetzlich, z. B. 10 Jahre) vs. betrieblicher Bedarf. | Welche Vorgaben gibt es von Finance/Legal? Wie sollen Logs gesichert und vor Manipulation geschützt werden? |
+
+*Alle genannten Komponenten, Schnittstellen und Entscheidungspunkte basieren auf den Anforderungen und dem Kontext, die aus dem Transkript `input/transcripts/T9999_chaos.txt` abgeleitet wurden (siehe `docs/requirements.md` und `runs/phase2_1/20260529_94e0e8/state/context.md`).*

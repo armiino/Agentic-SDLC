@@ -1,0 +1,98 @@
+--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikoanalyse für das Kundenportal-Projekt
++ 
++ ## 1. Fachliche Risiken
++ 
++ ### 1.1 Unklare Zieldefinition und Scope-Abgrenzung
++ - Das Projekt hat derzeit keine klare finale Zieldefinition, es gibt widersprüchliche Anforderungen und wechselnde Prioritäten.
++ - Auswirkungen: Verzögerungen, Missverständnisse, Scope Creep.
++ - Gegenmaßnahmen: Klare Priorisierung, MVP-Schnitt definieren, Stakeholder-Alignment.
++ 
++ ### 1.2 Fehlende Supportprozesse
++ - Support wird entweder unzureichend umgesetzt (nur Kontaktformular, kein Ticketsystem).
++ - Auswirkungen: Schlechter Kundensupport, erhöhte manuelle Nachbearbeitung, Compliance-Probleme.
++ - Gegenmaßnahmen: Klare Definition des Supportprozesses, ggf. späteres Ticketsystem, Datenschutzkonforme Abläufe.
++ 
++ ### 1.3 Unzureichende Rabattfreigabe und Angebotsworkflow
++ - Rabattfreigabeprozesse sind komplex und nicht im MVP vorgesehen.
++ - Auswirkungen: Finanzielle Risiken durch falsche Rabatte, fehlerhafte Angebote.
++ - Gegenmaßnahmen: Temporäre Constraints im MVP („keine Sonderrabatte“), späterer Freigabe-Workflow.
++ 
++ ## 2. Technische Risiken
++ 
++ ### 2.1 API Gateway Verfügbarkeit und Wartezeiten
++ - Zentrales API Gateway hat eine Warteliste von 6 Wochen, was den MVP-Termin gefährdet.
++ - Auswirkungen: Verzögerte Integration, Umgehung von Sicherheitskontrollen.
++ - Gegenmaßnahmen: Notfall-Pläne mit temporären Schnittstellen, Priorisierung beim Gateway-Team.
++ 
++ ### 2.2 SAP-Systemverfügbarkeit und Datenaktualität
++ - SAP ist kritisch für Preise und Produktdaten, jedoch ist Echtzeitverfügbarkeit eingeschränkt.
++ - Auswirkungen: Falsche Preisangaben, nicht aktuelle Angebote, Kundenunzufriedenheit.
++ - Gegenmaßnahmen: Fallback-Mechanismen, Cache mit klarer Preisgültigkeit, Warnhinweise.
++ 
++ ### 2.3 Fehlende oder unzureichende Security Reviews
++ - Security-Reviews dauern ca. 6 Wochen, konterkarieren das 8-Wochen-MVP.
++ - Auswirkungen: Sicherheitslücken, Compliance-Verstöße.
++ - Gegenmaßnahmen: Minimalanforderungen an Security Reviews definieren, ggf. Tool-Einsatz zur Automatisierung.
++ 
++ ### 2.4 Komplexität bei OAuth und SSO Integration
++ - OAuth ist bevorzugt, aber bisher nicht final entschieden oder implementiert.
++ - Auswirkungen: Verzögerungen, Sicherheitslücken bei Authentifizierung.
++ - Gegenmaßnahmen: Entscheidungsschlupf mit solider Fallback-Lösung (E-Mail/Passwort).
++ 
++ ### 2.5 Testdaten und Entwicklungsumgebungen
++ - Nutzung von echten Kundendaten in Testumgebungen führt zu Compliance-Risiken.
++ - Auswirkungen: Datenschutzverstöße, Bußgelder.
++ - Gegenmaßnahmen: Einsatz von Pseudonymisierung oder synthetischen Testdaten.
++ 
++ ## 3. Compliance- und Datenschutzrisiken
++ 
++ ### 3.1 DSGVO-Konformität insbesondere bei Login und Datenverarbeitung
++ - Anforderungen an Double-Opt-In, Löschkonzepte, Audit Trails und Datenminimierung sind komplex.
++ - Auswirkungen: Bußgelder, Reputationsverluste.
++ - Gegenmaßnahmen: Frühzeitige Einbindung der Datenschutzabteilung, Dokumentation aller Maßnahmen.
++ 
++ ### 3.2 Hosting und Datenresidenz
++ - EU-only Hosting verlangt Nachweis der Datenlokalität, Standardlösungen replizieren Daten möglicherweise global.
++ - Auswirkungen: Rechtliche Risiken durch unerlaubte Datenübermittlung.
++ - Gegenmaßnahmen: Auswahl datenschutzkonformer Cloud-Provider mit garantierter Datenlokalität.
++ 
++ ### 3.3 Logging und Auditierungsanforderungen
++ - Trennung von technisch notwendigen Logs und personenbezogenen Audit Logs ist nicht trivial.
++ - Auswirkungen: Datenschutzverstöße, fehlende Nachvollziehbarkeit.
++ - Gegenmaßnahmen: Klare Definition und technische Umsetzung differenzierter Logtypen.
++ 
++ ### 3.4 Retention und Löschkonzepte vs. gesetzliche Aufbewahrungspflichten
++ - Konflikt zwischen Recht auf Löschung und handelsrechtlichen Aufbewahrungspflichten.
++ - Auswirkungen: Compliance-Dilemma.
++ - Gegenmaßnahmen: Datenklassifikation, genaue Verfahrensbeschreibungen.
++ 
++ ## 4. Widersprüche und Unsicherheiten
++ 
++ - Zeitlicher Druck vs. notwendige Sicherheits- und Datenschutzmaßnahmen.
++ - Wunsch nach MVP mit vollem Funktionsumfang vs. technische und organisatorische Restriktionen.
++ - Unklare internationale Anforderungen (DACH, Schweiz, EU, USA) mit teils widersprüchlichen Datenschutzanforderungen.
++ - Unklare Pilotkundendefinition beeinflusst Scope und Compliance.
++ 
++ ## 5. Mögliche Auswirkungen
++ 
++ - Projektverzögerungen und Mehrkosten.
++ - Sicherheits- und Datenschutzverstöße mit rechtlichen Konsequenzen.
++ - Schlechter Kundenservice und Kundenunzufriedenheit.
++ - Verlust von Marktchancen durch unvollständigen MVP.
++ 
++ ## 6. Gegenmaßnahmen und Klärungsbedarfe
++ 
++ - Priorisierung und klare Scope-Abgrenzung für MVP.
++ - Frühzeitige Einbindung von Datenschutz und Security Expert:innen.
++ - Klare Definition von Support- und Rabattprozessen, mit dokumentierten Workarounds für MVP.
++ - Enge Abstimmung mit SAP- und API-Gateway-Teams zur Vermeidung von Blockaden.
++ - Auswahl datenschutzkonformer Cloud-Provider mit EU-Datenresidenz.
++ - Einsatz von Testdatenmanagement und Geheimnisverwaltung (Secrets Management).
++ - Dokumentation aller Annahmen, Risiken und offenen Fragen für die Stakeholderkommunikation.
++ 
++ ---
++ 
++ Diese Riskoanalyse basiert auf der vollständigen Auswertung des Stakeholder-Transkripts in input/transcripts/T9999_chaos.txt sowie den darin dokumentierten Anforderungen und Constraints in docs/requirements.md und dem Projektkontext in runs/phase2_1/20260609_152957_0e0804/state/context.md.

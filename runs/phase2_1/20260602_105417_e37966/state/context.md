@@ -1,0 +1,54 @@
+# Projektkontext – Kundenportal MVP (8 Wochen)
+
+## Projektziel
+- **Hauptziel:** Schnellere Angebotserstellung für das Vertriebsteam ermöglichen (Conversion Rate, Zeit bis Angebot). Das Kundenportal dient als Mittel zum Zweck, um Angebote zu erstellen, Rechnungen anzuzeigen und Kunden‑Login zu ermöglichen.
+- **MVP‑Rahmen:** Fertigstellung in 8 Wochen, Fokus auf Kern‑Funktionalitäten (Login, Angebotserstellung, Rechnungsdownload, minimale Rollen‑ und Audit‑Funktionalität). Weitere Features (z. B. Mobile‑App, Push‑Notifications, umfangreiche SSO‑Integration) werden bewusst außerhalb des MVP‑Umfangs gelassen.
+
+## Stakeholder‑Rollen (aus dem Transkript)
+| Rolle | Name | Aufgaben / Interessen |
+|-------|------|-----------------------|
+| Product Owner / Business Lead | Anna | Definition von Ziel, Priorisierung (Portal, Angebote, Rechnungen, KPIs). Entscheidungsfindung zu Umfang und Zeitplan. |
+| Technischer Lead / Entwickler | Ben | Architektur, API‑Layer, Integration mit SAP, Sicherheits‑ und Skalierbarkeitsaspekte, technische Machbarkeit. |
+| Datenschutz / Compliance | Clara | DSGVO‑Anforderungen (Double‑Opt‑In, Logging, Löschkonzept, Datenresidenz, Audit‑Logs). |
+| Customer Support | David | Support‑Prozesse, Kontaktformular vs. Ticket‑System, Datenlöschung, Kundenkommunikation. |
+| Finance | Eva | Rabatt‑Freigabe‑Prozess, Mehrwährungs‑Support, PDF‑Export, rechtliche Aufbewahrungspflichten. |
+| IT Operations / Infrastruktur | Farid | EU‑only Hosting, Managed Services, Backup, Monitoring, Secrets‑Management, CI/CD‑Umgebungen. |
+
+## zentrale fachliche Themen (aus dem Transkript)
+- **Kundenportal** (Login, Rollen, Angebote, Rechnungen, ggf. Mobile). 
+- **Angebotserstellung** (SAP‑Lesezugriff, Preis‑/Rabattlogik, Freigabeprozesse). 
+- **Rechnungsdownload** (PDF‑Export, rechtliche Fußnoten). 
+- **DSGVO / Compliance** (Double‑Opt‑In, Löschkonzept, Audit‑Trail, Datenminimierung, EU‑Datenresidenz). 
+- **API‑Layer** (OAuth vs. API‑Keys, Schnittstelle zu SAP, Rate‑Limiting). 
+- **Managed Services** (keine neue DB, EU‑only, Kosten‑Unsicherheit). 
+- **Monitoring & Logging** (technische vs. Audit‑Logs, Aufbewahrungsfristen). 
+- **Backup & Disaster Recovery** (MVP‑Anforderung). 
+- **KPIs** (Conversion Rate, Zeit bis Angebot). 
+- **Internationalisierung** (Deutsch/Englisch, später EU/USA, Mehrwährung EUR/CHF/USD). 
+- **Support‑Prozess** (Kontaktformular, Ticket‑System, Datenschutz). 
+- **Release‑Risiken** (Security Review, API‑Gateway‑Warteliste, SAP‑Verfügbarkeit, Budget). 
+
+## Konflikte & Unsicherheiten (offene Punkte)
+- **Mobile vs. Web‑First** – noch nicht entschieden, MVP fokussiert auf Web. 
+- **SSO / Identity Provider** – optional, aber nicht im MVP definiert. 
+- **Budget für Managed Services & EU‑Only Hosting** – Kosten noch nicht klar. 
+- **Security Review Zeithorizont** – 6 Wochen, kollidiert mit 8‑Wochen‑MVP. 
+- **API‑Gateway Warteliste (6 Wochen)** – verhindert sofortige Nutzung von Rate‑Limiting/Auth‑Gate. 
+- **Rabatt‑Freigabe** – im MVP keine Sonderrabatte, Freigabeprozess erst später. 
+- **Support‑Ticket‑System** – bewusst aus MVP ausgeschlossen, aber als Risiko notiert. 
+- **Mehrwährung & Internationalisierung** – nur EUR (Deutsch/Englisch) im MVP, weitere Währungen später. 
+- **Daten‑Residenz & Hosting‑Kosten** – EU‑only erforderlich, aber teurer; Entscheidung aussteht. 
+- **Backup & Disaster Recovery** – erforderlich, aber Detailauswahl offen. 
+- **Retention & Löschkonzept** – Grundlegender Ansatz nötig, Detail‑Regeln offen. 
+- **Test‑Umgebungen & Testdaten** – Pseudonymisierte bzw. synthetische Daten notwendig, SAP‑Testsystem enthält reale Daten – Problem für CI/CD. 
+- **Cache‑Strategie** – wegen kundenspezifischer Rabatte riskant, daher im MVP verworfen. 
+- **Monitoring ohne personenbezogene Daten** – klare Trennung zwischen Audit‑ und technischen Logs erforderlich. 
+
+## Quellenangaben (Evidenz)
+- Das gesamte Transkript *T9999_chaos.txt* (Zeilen 1‑300) liefert die zitierten Aussagen von Anna, Ben, Clara, David, Eva und Farid. Beispiele: Zieldefinition (Anna, Zeile 1‑4), DSGVO‑Aspekte (Clara, Zeile 9‑12), SAP‑Integration (Ben, Zeile 23‑26), Rabatt‑Freigabe (Eva, Zeile 180‑187), Hosting‑Problematik (Farid, Zeile 260‑270), API‑Gateway‑Warteliste (Ben, Zeile 292‑295).
+
+## Zusammenfassung
+Der Kontext beschreibt ein **MVP‑Projekt** für ein **Kundenportal** mit zentraler **Angebotserstellung** und **Rechnungsdownload**, das innerhalb von **8 Wochen** bereitgestellt werden muss. Wichtigste Prioritäten sind **Login**, **Rollen‑ und Berechtigungskonzept (Admin, Sales, Kunde)**, **minimaler Audit‑Trail**, **EU‑konformes Hosting** und **Backup**. Alle darüber hinausgehenden Features (Mobile, SSO, umfangreiche Support‑Ticket‑Lösung, Mehrwährungs‑Support, umfangreiche Freigabe‑ und Retentions‑Regeln) werden bewusst als **Aus‑ oder späterer Umfang** gekennzeichnet und mit den jeweiligen **Risiken** dokumentiert.
+
+---
+*Erstellt von Phase 2.1 ContextAgent am 2026‑06‑02.*

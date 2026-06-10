@@ -1,0 +1,47 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarf
++ 
++ ## 1. Fachliche Fragen
++ - **Preis‑/Rabatt‑Logik**: Welche Standard‑Rabatte dürfen im MVP verwendet werden? Wie hoch ist die Grenze für Sonderrabatte, die im MVP überhaupt erlaubt sind? (Quelle: Diskussion um Rabatte, Zeilen 28‑34, 78‑84, 300‑312)
++ - **Support‑Prozess**: Soll ein leichtgewichtiges Ticket‑System eingeführt werden oder reicht das aktuelle Kontaktformular aus? Wie wird der DSGVO‑konforme Umgang mit personenbezogenen Daten in Support‑E‑Mails gewährleistet? (Quelle: Dialog mit David, Zeilen 260‑270)
++ - **SAP‑Schreibrechte**: Wird im MVP überhaupt Schreibzugriff auf SAP benötigt (z. B. für Auftragsdaten) oder reicht reiner Lese‑Zugriff? Welche Fallback‑Strategie gibt es bei SAP‑Ausfällen? (Quelle: Diskussion SAP‑Verfügbarkeit, Zeilen 242‑250, 270‑282)
++ - **Mehrwährungs‑Support**: Ist die Unterstützung von CHF (Schweiz) bereits Teil des MVP oder erst für spätere Phasen geplant? Welche Währungs‑ und Länderregeln gelten konkret? (Quelle: Eva, Zeilen 300‑312, 340‑352)
++ - **Kostenschätzung EU‑Only Managed Service**: Welche Anbieter kommen in Frage und wie hoch sind die voraussichtlichen Kosten? (Quelle: Farid, Zeilen 240‑250)
++ - **Retention‑ und Löschkonzept**: Welcher genaue Aufbewahrungszeitraum gilt für Rechnungen, Angebote und Log‑Daten? Wie werden Löschanfragen technisch umgesetzt? (Quelle: Clara, Zeilen 370‑380)
++ - **Roles & Berechtigungen für Support**: Welche Daten dürfen Support‑Mitarbeiter einsehen (nur Status vs. Angebotsdetails)? Wie lässt sich der Konflikt zwischen Support‑Bedarf und Datenschutz lösen? (Quelle: Diskussion Support vs. Rollen, Zeilen 115‑122, 140‑150)
++ - **API‑Gateway Migration**: Welche konkreten Schritte sind nötig, um nach dem MVP auf das Unternehmens‑API‑Gateway zu migrieren? Wie wird die Übergangsphase ohne Sicherheitslücken gestaltet? (Quelle: Farid/Ben, Zeilen 340‑350)
++ - **Backup‑SLA Details**: Welches RPO/RTO wird final vereinbart? Wie wird die Wiederherstellung im Notfall getestet? (Quelle: Backup‑Diskussion, Zeilen 187‑193)
++ - **Rate‑Limiting und Missbrauchserkennung**: Welche konkreten Grenzwerte (Requests/Minute, Download‑Limits) sollen gelten? Wie wird das Monitoring implementiert? (Quelle: Ben, Zeilen 350‑360)
++ 
++ ## 2. Technische Fragen
++ - **Datenbank‑Provider**: Welcher Managed‑DB‑Service (Azure PostgreSQL, AWS RDS, GCP CloudSQL) wird verwendet, um die EU‑Only‑Anforderung zu erfüllen und gleichzeitig Kosteneffizienz zu gewährleisten? (Quelle: Farid, Zeilen 240‑250)
++ - **Caching‑Strategie für SAP‑Daten**: Soll ein Cache für Produkt‑/Preis‑Informationen eingesetzt werden? Wenn ja, welche Daten dürfen gecached werden (ohne personenbezogene Daten) und wie lange ist die Gültigkeit? (Quelle: Ben, Zeilen 242‑250, 310‑320)
++ - **Test‑ und Entwicklungsumgebungen**: Wie wird sichergestellt, dass keine realen Kundendaten im SAP‑Testsystem verwendet werden? Welche Tools/Prozesse zur Daten‑Anonymisierung werden benötigt? (Quelle: Clara, Zeilen 260‑270)
++ - **Secrets Management**: Welches Tool (z. B. Azure Key Vault, AWS Secrets Manager) wird eingesetzt, um DB‑Credentials und API‑Keys zu schützen? (Quelle: Farid, Zeilen 330‑340)
++ - **Monitoring & Alerting**: Welche Metriken (SAP‑Verfügbarkeit, API‑Latenz, Rate‑Limiting‑Überschreitungen) werden überwacht und wie werden Alerts konfiguriert? (Quelle: Ben, Zeilen 340‑350)
++ - **Audit‑Log‑Speicherung**: Wo werden unveränderliche Audit‑Logs abgelegt (Object Storage, Write‑once Bucket) und wie wird sichergestellt, dass sie keine personenbezogenen Daten enthalten? (Quelle: Clara, Zeilen 124‑130, 158‑162)
++ - **Internationalisierung im MVP**: Soll die UI bereits zweisprachig (Deutsch/Englisch) implementiert werden, oder reicht zunächst rein deutsches Interface? (Quelle: Eva/Ben, Zeilen 340‑352)
++ - **Performance‑Testing**: Welche Lasttests werden durchgeführt, um die Annahme von 200‑500 gleichzeitigen Nutzern zu verifizieren? Wie wird Skalierbarkeit für ggf. 20 000 Nutzer später geplant? (Quelle: Ben, Zeilen 340‑350)
++ - **PDF‑Template‑Management**: Wie wird das statische Angebots‑/Rechnungs‑Template versioniert, ohne komplexes Template‑Management im MVP? (Quelle: Farid, Zeilen 360‑370)
++ - **Disaster‑Recovery‑Plan**: Wie wird das Roll‑Back‑Verfahren bei fehlerhaften Deployments gestaltet? (Quelle: Backup‑Diskussion, Zeilen 187‑193)
++ 
++ ## 3. Widersprüche / Klärungsbedarf
++ - **Mobile‑App vs. Web‑First**: Das Team diskutiert, ob Mobile zuerst oder Web zuerst entwickelt werden soll, aber das MVP legt Web‑First fest. Wie wird dieser Widerspruch dokumentiert, um spätere Re‑Engineering‑Aufwände zu minimieren? (Quelle: Anfangs‑Diskussion, Zeilen 1‑4)
++ - **SSO optional vs. geplante Nutzung**: Azure AD / Google SSO werden von Sales gewünscht, aber im MVP nicht umgesetzt. Wie wird die zukünftige Integration geplant, ohne das aktuelle Design zu brechen? (Quelle: Zeilen 112‑118)
++ - **Mehrwährungs‑Support vs. MVP‑Scope**: Diskussion über CHF und USD, aber MVP limitiert auf EUR. Wie wird die Entscheidung festgehalten, um spätere Änderungen im Datenmodell zu steuern? (Quelle: Zeilen 340‑352)
++ - **Kosten‑Schätzung vs. Budget**: Fehlende Kostenschätzung für EU‑Only‑Hosting kann das Projektbudget gefährden. Welche Schritte sind nötig, um diese Unsicherheit zu beseitigen? (Quelle: Farid, Zeilen 240‑250)
++ - **Retention‑Plan vs. DSGVO‑Löschpflicht**: Minimaler Retentionsplan (7 Jahre für Rechnungen) steht möglicherweise im Konflikt mit individuellen Löschanfragen. Wie wird dieser Konflikt gelöst? (Quelle: Clara, Zeilen 370‑380)
++ 
++ ## 4. Mögliche Ansprechpartner / Rollen
++ - **Product Owner / Sales Lead** – Klärung von Preis‑/Rabatt‑Regeln und Priorisierung von Mobile/SSO. (Anna)
++ - **Finance Lead** – Definition des Freigabe‑Workflows für Rabatte und Kosten‑Schätzung für Hosting. (Eva)
++ - **Data Protection Officer (DSGVO)** – Validierung von Double‑Opt‑In, Lösch‑ und Audit‑Log‑Strategien. (Clara)
++ - **IT Operations / Cloud‑Architekt** – Auswahl des Managed‑DB‑Providers, EU‑Only‑Hosting, Backup‑Strategie. (Farid)
++ - **SAP Integration Specialist** – Festlegung von Lese‑/Schreib‑Zugriffsrechten, Fallback‑Strategie bei SAP‑Ausfällen. (Ben)
++ - **Support Manager** – Entscheidung über Ticket‑System oder Kontaktformular, Datenschutz‑Umsetzung für Support‑Mails. (David)
++ - **Security Engineer** – Implementierung von Rate‑Limiting, Secrets Management, Audit‑Log‑Trennung. (Ben/Clara)
++ 
++ ---
++ *Alle offenen Fragen und Widersprüche resultieren ausschließlich aus dem bereitgestellten Transkript `input/transcripts/T9999_chaos.txt` und den daraus abgeleiteten Artefakten (`docs/requirements.md`, `docs/risks.md`, `docs/architecture.md`).*

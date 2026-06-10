@@ -1,0 +1,58 @@
+﻿--- before/runs/phase2_1/20260529_131036_dc98b8/state/context.md
++++ after/runs/phase2_1/20260529_131036_dc98b8/state/context.md
+- 
++ # Projektkontext Kundenportal / Angebotsplattform
++ 
++ ## Projektziel
++ Das Projektziel ist die Entwicklung eines Kundenportals als MVP innerhalb von 8 Wochen, welches in erster Linie die schnelle Erstellung von Angeboten unterstützt. Weitere Funktionen sind der Download von Rechnungen und die Anzeige von Bestellungen. Das Portal dient als Plattform zur Digitalisierung der Vertriebs- und Kundenprozesse mit SAP-Integration.
++ 
++ ## Sprecherrollen
++ - Anna: Projektleiterin / Produktverantwortliche
++ - Ben: Entwickler / technischer Experte
++ - Clara: Datenschutz & Compliance
++ - David: Customer Support
++ - Eva: Finance
++ - Farid: IT Operations
++ 
++ ## Fachliche Themen und Anforderungen
++ - Kundenportal mit Web-Frontend, mobile Version eventuell später
++ - Login mit E-Mail + Passwort und optional SSO (z.B. Azure AD, Google), mit DSGVO-konformen Double-Opt-In
++ - Rollenmodell: Admin, Sales, Kunde, evtl. Manager, Support (letztlich ohne full Ticketsystem im MVP)
++ - Angebotserstellung mit SAP-Daten (Produktdaten, Preise, Rabattlogik)
++ - Rechnungsdownload und Anzeige der Bestellungen
++ - Audit-Trail für Änderungen an Angeboten (minimaler Umfang im MVP)
++ - SAP-Anbindung hauptsächlich lesend, keine Schreibrechte im MVP
++ - Managed EU-only Hosting zur Einhaltung der DSGVO und Datenresidenz
++ - Backup und Disaster Recovery auch für MVP vorgesehen
++ - KPIs: Conversion Rate (Angebot zu Bestellung), Zeit bis Angebot
++ - API Layer zur Integration und Absicherung (OAuth bevorzugt, aber noch offen)
++ - Kein neuer Datenbankserver, Nutzung von Managed Services
++ - Mehrwährungsfähigkeit und Internationalisierung nicht im MVP, aber als offene Anforderungen vorhanden
++ 
++ ## Konflikte und Spannungsfelder
++ - Zielkonflikt zwischen MVP in 8 Wochen und umfassenden Sicherheits- und Compliance-Anforderungen
++ - API Gateway als zentrale technische Komponente mit 6-Wochen-Warteliste, nicht rechtzeitig für MVP verfügbar
++ - Sicherheit vs. Entwicklungszeit: Security Review ist Pflicht, aber dauert länger als das MVP-Zeitfenster
++ - Rollen- und Berechtigungsmechanismen müssen zwischen Vertrieb, Support und Finance klar differenzieren, insbesondere bei Rabatten und Kundendaten
++ - Datenschutz vs. Performance: API Caching und Datenabruf direkt aus SAP mit Verfügbarkeitsrisiken
++ - Supportprozess unklar: kein persistentes Ticketsystem im MVP, nur Kontaktformular, Datenschutzrisiko bei E-Mail-Verarbeitung
++ - Komplexität der Rabattfreigabe (mehere Stufen, ab 15% bzw. 20-30% Rabatt) noch offen, im MVP keine Sonderrabatte erlaubt
++ - Backup, Monitoring und Logging müssen Datenschutzanforderungen erfüllen und gleichzeitig eine praktikable Implementierung finden
++ - Mangel an Architekturverantwortlichem erschwert klare technische Entscheidungen
++ 
++ ## Offene Fragen und Unsicherheiten
++ - Pilotkunde (Müller AG Schweiz oder Hansa GmbH Deutschland) und Auswirkungen auf Datenschutz und Währung
++ - Umfang und Detailtiefe des Freigabeprozesses für Angebote
++ - Entscheidung zu SSO-Anbietern und technischer Umsetzung
++ - Umgang mit SAP-Wartungszeiten und Fallback-Strategien
++ - Konkrete Kosten für EU-only Hosting und Managed Services
++ - Umfang und Detailgrad der Auditierung und Datenaufbewahrung unter Berücksichtigung gesetzlicher Vorgaben
++ - Supportprozess und Wartung der Supportdaten außerhalb des MVP
++ - API Gateway Verfügbarkeit und mögliche Zwischenlösungen
++ 
++ ## Quellenhinweise
++ Transkript: input/transcripts/T9999_chaos.txt (Stakeholder-Diskussion mit Rollen Anna, Ben, Clara, David, Eva, Farid)
++ 
++ ---
++ 
++ Diese Zusammenfassung basiert ausschließlich auf dem Transkript der Stakeholder-Diskussion. Widersprüche, offene Fragen und Risiken sind bewusst erhalten geblieben, um eine realistische Grundlage für weitere Requirements und Architekturentscheidungen zu schaffen.

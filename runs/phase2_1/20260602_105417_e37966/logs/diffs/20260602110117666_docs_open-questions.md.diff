@@ -1,0 +1,64 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarf
++ 
++ ## 1. Offene fachliche Fragen
++ - **Mobile‑First vs. Web‑First** – Welche Priorität hat die mobile Variante? Wie beeinflusst das die Architektur und das MVP‑Scope? *(Quelle: Kontext, Zeile 1‑4, 145‑148)*
++ - **SSO / Identity Provider** – Soll ein SSO (Azure AD, Google) bereits im MVP integriert werden oder erst später? Welche Provider sind für das Projekt relevant? *(Quelle: Kontext, Zeile 30‑38, 292‑295)*
++ - **Rabatt‑Freigabe‑Prozess** – Wie soll der Freigabe‑Workflow für Sonderrabatte definiert werden (Freigabe‑Stufen, Rollen, Benachrichtigung)? Welche Schwellenwerte gelten? *(Quelle: Eva, Zeile 180‑187)*
++ - **Support‑Ticket‑System** – Wird ein einfaches Kontaktformular ausreichen oder ist ein Ticket‑System nötig (z. B. für SLA‑Tracking, Datenschutz)? *(Quelle: David, Zeile 142‑144)*
++ - **Mehrwährungs‑ und Internationalisierungsstrategie** – Neben EUR, welche weiteren Währungen (CHF, USD) und Sprachen (EN, ggf. weitere) sollen im MVP unterstützt werden? Wie wird die rechtliche Compliance (z. B. Schweiz) sichergestellt? *(Quelle: Kontext, Zeile 260‑270, 145‑148)*
++ - **KPIs – Messung und Reporting** – Wie genau werden Conversion‑Rate und Zeit bis Angebot gemessen (Event‑Tracking, Datenmodell)? Wer ist verantwortlich für das Reporting? *(Quelle: Anna, Zeile 70‑73)*
++ 
++ ## 2. Offene technische Fragen
++ - **API‑Gateway‑Warteliste** – Wie soll das Rate‑Limiting und die Authentifizierung bis zur Verfügbarkeit des zentralen API‑Gateways umgesetzt werden? Welche interim‑Lösung ist akzeptabel? *(Quelle: Ben, Zeile 292‑295)*
++ - **Managed DB‑Provider und Hosting‑Provider** – Welcher Cloud‑Provider (Azure Germany, AWS EU, GCP EU) wird gewählt, um EU‑Only‑Datenresidenz zu garantieren und das Kosten‑Budget (< 5 000 €/Monat) einzuhalten? *(Quelle: Farid, Zeile 260‑270; Kontext, Budget‑Unsicherheit)*
++ - **Backup‑ und Disaster‑Recovery‑Details** – Wo genau (Speicherort, Cloud‑Region) werden die Backups abgelegt? Welche Wiederherstellungs‑SLA (z. B. < 4 Std.) ist garantiert? *(Quelle: Farid, Zeile 260‑270)*
++ - **Test‑Daten‑Strategie** – Wie sollen reale SAP‑Testdaten anonymisiert bzw. durch synthetische Daten ersetzt werden, um Datenschutz‑Risiken in CI/CD zu vermeiden? *(Quelle: Ben, Zeile 292‑295)*
++ - **Secrets‑Management** – Welches Tool (HashiCorp Vault, Cloud‑Provider‑Secrets‑Manager) wird eingesetzt und wie wird es in die CI‑Pipeline integriert? *(Quelle: Farid, Hinweis auf Secrets‑Management)*
++ - **Monitoring‑ und Logging‑Konfiguration** – Wie wird sichergestellt, dass technische Logs keinerlei PII enthalten und Audit‑Logs korrekt aufbewahrt werden (Aufbewahrungsdauer, Zugriffskontrolle)? *(Quelle: Clara, Zeile 9‑12)*
++ - **Retention‑ und Löschkonzept** – Welche konkreten Aufbewahrungsfristen gelten für Rechnungen (z. B. 7 Jahre) vs. Recht‑auf‑Vergessen‑werden? Wie wird das Zusammenspiel von gesetzlichen Aufbewahrungspflichten und DSGVO‑Löschanforderungen umgesetzt? *(Quelle: Clara, Eva, Zeile 9‑12, 180‑187)*
++ - **PDF‑Generator‑Auswahl** – Soll wkhtmltopdf (Open‑Source) oder eine kommerzielle Bibliothek (iText) verwendet werden? Welche Lizenz‑ und Sicherheitsaspekte sind zu beachten? *(Quelle: Kontext, PDF‑Export)*
++ - **Rate‑Limiting‑Implementierung** – In‑Process Token‑Bucket vs. externes Redis‑basiertes System – welche Lösung passt zum geplanten MVP‑Load (bis 2 000 gleichzeitige Nutzer)? *(Quelle: Ben, Hinweis auf Rate‑Limiting)*
++ - **Verfügbarkeits‑Ziel (SLA)** – Wie wird das angestrebte Ziel von 99,5 % definiert (Messintervall, Wartungsfenster, Monitoring‑Metriken)? *(Quelle: Non‑functional Requirement NFR5, offen)*
++ 
++ ## 3. Widersprüche, die geklärt werden müssen
++ - **Security Review Dauer vs. MVP‑Zeitplan** – Das Security Review wird auf 6 Wochen geschätzt, kollidiert aber mit dem 8‑Wochen‑MVP‑Zeitplan. Wie kann ein Minimal‑Security‑Check realisiert werden, ohne das Projekt zu verzögern? *(Quelle: Kontext, Zeile 292‑295)*
++ - **Keine neue Datenbank vs. Managed DB‑Provider** – Es darf keine eigene DB installiert werden, aber ein Managed DB‑Service wird benötigt. Welche Anbieter erfüllen beide Kriterien ohne zusätzliche Lizenz‑/Infrastructure‑Kosten? *(Quelle: C2, Kontext)*
++ - **EU‑Only‑Hosting vs. Kosten‑Unsicherheit** – EU‑Only‑Datenresidenz ist Pflicht, jedoch ist das Budget nicht klar. Wie kann die Compliance sichergestellt werden, ohne das Budget zu überschreiten? *(Quelle: Farid, Kontext)*
++ - **Support‑Prozess vs. Datenschutz** – Nutzung von E‑Mail‑basiertem Support ist schnell, birgt aber das Risiko von ungesicherten personenbezogenen Daten. Wie kann ein DSGVO‑konformes Support‑Modell im MVP umgesetzt werden? *(Quelle: David, Clara)*
++ - **Mehrwährung vs. MVP‑Scope** – Mehrwährungs‑Unterstützung ist für spätere Phasen geplant, jedoch könnte ein Pilotkunde aus der Schweiz (CHF) das MVP beeinflussen. Wie soll mit diesem Sonderfall umgegangen werden? *(Quelle: Eva, Kontext)*
++ 
++ ## 4. Fehlende Informationen
++ - **Kosten‑Schätzung für Managed Services** – Konkrete Zahlen für EU‑Only‑Hosting und Managed DB‑Service fehlen. *(Quelle: Farid, Kontext)*
++ - **Detail‑Spezifikation des Backup‑Speicherorts** – Wo (Region, Anbieter) sollen die Snapshots gespeichert werden? *(Quelle: Farid, Kontext)*
++ - **Genaues KPI‑Erfassungs‑Framework** – Welche Tools (Analytics, Event‑Tracking) werden eingesetzt? *(Quelle: Anna, Kontext)*
++ - **Test‑Daten‑Anonymisierungs‑Prozess** – Wer ist verantwortlich und welche Tools werden genutzt? *(Quelle: Ben, Kontext)*
++ - **Auswahl und Konfiguration des Secrets‑Managers** – Welche Lösung wird letztlich verwendet und wie erfolgt die Rollen‑basierte Zugriffskontrolle? *(Quelle: Farid)*
++ - **Finale Entscheidung über das Auth‑Service‑Design** – JWT‑basiert vs. integrierte SSO‑Lösung? *(Quelle: Ben, Kontext)*
++ 
++ ## 5. Mögliche Ansprechpartner / Rollen
++ | Frage | Möglicher Ansprechpartner |
++ |-------|---------------------------|
++ | Mobile‑First / Web‑First Entscheidung | Anna (Product Owner), Ben (Technical Lead) |
++ | SSO / Identity Provider Auswahl | Ben (Technical Lead), Farid (IT Operations) |
++ | Budget‑ und Kosten‑Klärung (Managed Services, Hosting) | Farid (IT Operations), Anna (Product Owner) |
++ | Security Review Zeitplan | Clara (Compliance), Ben (Technical Lead) |
++ | API‑Gateway & Rate‑Limiting | Ben (Technical Lead), Farid (IT Operations) |
++ | Rabatt‑Freigabe Prozess | Eva (Finance), Clara (Compliance) |
++ | Support‑Ticket System vs. Kontaktformular | David (Customer Support), Clara (Compliance) |
++ | Mehrwährungs‑ und Internationalisierungs‑Strategie | Eva (Finance), Anna (Product Owner) |
++ | KPI‑Messung & Reporting | Anna (Product Owner), Eva (Finance) |
++ | Backup‑Strategie & SLA | Farid (IT Operations) |
++ | Test‑Daten‑Anonymisierung | Ben (Technical Lead), Farid (IT Operations) |
++ | Secrets‑Management Auswahl | Farid (IT Operations), Ben (Technical Lead) |
++ | Monitoring & Logging ohne PII | Clara (Compliance), Ben (Technical Lead) |
++ | Retention‑ und Löschkonzept | Clara (Compliance), Eva (Finance) |
++ | Verfügbarkeits‑SLA Definition | Ben (Technical Lead), Clara (Compliance) |
++ | PDF‑Generator Lizenzwahl | Ben (Technical Lead) |
++ | DB‑Provider Entscheidung | Farid (IT Operations), Ben (Technical Lead) |
++ | Hosting‑Provider Entscheidung | Farid (IT Operations), Anna (Product Owner) |
++ 
++ ---
++ *Evidenz*: Kontext‑Datei `runs/phase2_1/20260602_105417_e37966/state/context.md`, Requirements‑Datei `docs/requirements.md`, Risiko‑Report `docs/risks.md` und das Transkript `input/transcripts/T9999_chaos.txt` (Zeilen‑Referenzen im Kontext‑Dokument).

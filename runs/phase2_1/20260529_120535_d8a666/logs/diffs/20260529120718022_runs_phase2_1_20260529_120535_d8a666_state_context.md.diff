@@ -1,0 +1,74 @@
+﻿--- before/runs/phase2_1/20260529_120535_d8a666/state/context.md
++++ after/runs/phase2_1/20260529_120535_d8a666/state/context.md
+- 
++ # Projektkontext – Kundenportal (MVP)
++ 
++ ## Zieldefinition (aus den Transkripten)
++ - **Primäres Geschäfts‑Goal:** Schnellere Angebotserstellung und -versendung für das Vertriebsteam (Conversion Rate Offer → Order). 
++ - **MVP‑Funktionalitäten:**
++   1. Login (E‑Mail + Password, Double‑Opt‑In, TLS‑Verschlüsselung). 
++   2. Angebotserstellung – Lesender SAP‑Zugriff für Produkt‑, Preis‑ und Rabattdaten (keine Sonderrabatte > Standard‑Rabatt, Freigabe erst in Phase 2). 
++   3. Rechnungs‑ und Bestellungs‑Download (PDF). 
++   4. Rollenmodell (Admin, Sales, Kunde). Minimaler Audit‑Trail (Wer hat was geändert). 
++   5. EU‑only Managed Hosting, Backup & Disaster‑Recovery (Grund‑Backup für MVP). 
++   6. API‑Layer (REST, OAuth‑Ansatz geplant, jedoch nicht final). 
++   7. Grundlegende Datenschutz‑Maßnahmen (DSGVO‑Konformität, Logging ohne Personen‑Daten, Lösch‑ und Auskunftskonzept als offene Punkte).
++ 
++ ## Stakeholder & Rollen
++ - **Anna (Product Owner):** Fokus auf Kundennutzen, Zeitplan (8‑Wochen‑MVP), priorisiert Kern‑Features, akzeptiert bewusste Einschränkungen.
++ - **Ben (Architekt/Entwickler):** Technische Machbarkeit, API‑Layer, SAP‑Integration, Security‑Review, Infrastruktur‑Abhängigkeiten.
++ - **Clara (Compliance/DSGVO):** Datenschutz‑ und Audit‑Anforderungen, Logging, Löschkonzept, Datenresidenz.
++ - **David (Customer Support):** Support‑Prozess, Kontakt‑Formular, Daten‑ und Aufbewahrungspflicht bei Support‑Anfragen.
++ - **Eva (Finance):** Freigabe‑Workflow für Rabatte, Finanz‑Risiken, PDF‑Templates, rechtliche Vorgaben.
++ - **Farid (IT Operations):** Hosting‑Regionen, Managed Services, API‑Gateway‑Warteliste, Monitoring‑Policy.
++ - **Weitere Beteiligte (optional):** Weitere Fachbereiche (Marketing, Legal) werden im weiteren Projektverlauf eingebunden.
++ 
++ ## Fachliche Themen & Anforderungen
++ | Thema | Beschreibung | MVP‑Umfang | Offene Punkte / Risiken |
++ |-------|--------------|-----------|------------------------|
++ | **Login & Auth** | E‑Mail/Passwort, Double‑Opt‑In, TLS. SSO (Azure/Google) optional, nicht im MVP. | Implementiert | Entscheidung über SSO später; Auth‑Provider Auswahl. |
++ | **Angebots‑Workflow** | Erstellung über SAP‑Lesedaten, Rabatt‑Logik ohne Sonderrabatte > Standard. | Draft → Sent (keine Freigabe > 15 %). | Freigabe‑Prozess, Rollen für Rabatt‑Sichtbarkeit, Audit‑Log. |
++ | **Rechnungs‑Download** | PDF‑Export, rechtliche Fußnoten, Hinweis zu Datenschutzhinweisen. | Implementiert | Mehrwährungs‑Support (CHF/EUR) später, Revision‑Sicherheit. |
++ | **Rollen & Berechtigung** | Admin, Sales, Kunde (keine Support‑Rolle). Minimaler Berechtigungs‑Check. | MVP‑Rollenkonzept | Support‑Zugriff, feinkörnige Berechtigungen für Rabatte, späteres Rollen‑Modell. |
++ | **SAP‑Integration** | Lesender Zugriff auf Produkt‑/Preis‑/Rabatt‑Daten; kein Schreib‑Zugriff im MVP. | Implementiert (Read‑Only) | Schreib‑Zugriff für Auftrags‑/Bestellungs‑Export später; Verfügbarkeit von SAP‑System kritische Abhängigkeit. |
++ | **API‑Layer** | REST‑Endpoint, OAuth‑Ansatz geplant, aber Gateway‑Team hat 6‑Wochen‑Warteliste. | Grund‑API (auth, offers, invoices). | Verfügbarkeit des zentralen API‑Gateways, Rate‑Limiting, Secrets‑Management. |
++ | **Datenschutz / DSGVO** | Double‑Opt‑In, Lösch‑ und Auskunftskonzept, keine personenbezogenen Daten in technischen Logs, EU‑Datenresidenz. | Grund‑Compliance vorhanden, aber kein vollständiges Lösch‑/Retention‑Konzept. | Offene Fragen zu Lösch‑Requests vs. gesetzliche Aufbewahrung, Datenklassifikation, Monitoring‑Logs. |
++ | **Backup & DR** | Managed Service Backup, mindestens 1‑Wochen‑Retention. | Vorhanden (Managed). | Kosten‑Schätzung, Test‑/Prod‑Umgebung‑Trennung. |
++ | **Hosting** | EU‑only Managed Service (DSGVO‑konform). | Vorgesehen. | Kosten‑Schätzung (EU‑only teurer), mögliche Schweiz‑Ausnahme. |
++ | **Support** | Kontakt‑Formular (keine Ticket‑DB). | Nicht im MVP. | Risiko: keine strukturierte Nachverfolgung, Datenschutz bei E‑Mail‑Support. |
++ | **Internationalisierung** | Deutsch + Englisch (UI). | MVP‑Sprachen. | Weitere Sprachen, Währungs‑Support (CHF, USD) später. |
++ | **Monitoring & Logging** | Technisches Logging (ohne Personen‑Daten), Audit‑Log (Änderungen an Angeboten). | Grund‑Logging. | Aufbewahrungsfristen, Trennung von Audit‑ vs. Security‑Logs, Secrets‑Management. |
++ | **Umgebungen** | Dev / Test / Prod, synthetische Testdaten, keine echten Kundendaten in Test. | Geplant. | SAP‑Testsystem enthält reale Daten → Pseudonymisierung nötig. |
++ | **Performance / Skalierbarkeit** | Erwartete Nutzerzahl 200–20.000, daher Rate‑Limiting, Pagination für Rechnungs‑Downloads. | Minimal implementiert. | Over‑Engineering‑Risiko vs. spätere Skalierbarkeit. |
++ | **PDF‑Templates & Revision** | Versionierte Angebots‑Templates, rechtliche Fußnoten. | Basis‑Template, keine Versionierung im MVP. | Revision‑Sicherheit, Audit‑Trail für Templates später. |
++ 
++ ## Offene Fragen / Risiken (bewusste Einschränkungen im MVP)
++ - **SSO / OAuth:** Nicht im MVP, aber späterer Bedarf. Entscheidungs‑Deadline: nach MVP‑Freigabe.
++ - **Freigabe‑Workflow für Sonderrabatte:** Im MVP keine Sonderrabatte > Standard; später definieren (15 % → Manager, 30 % → Finance).
++ - **Support‑Ticket‑System:** Aktuell nur Kontakt‑Formular → Risiko für Support‑Effizienz und DSGVO‑Compliance.
++ - **API‑Gateway‑Verfügbarkeit:** 6‑Wochen‑Warteliste → MVP muss evtl. eigenen kleinen Gateway nutzen oder direkte Service‑Calls mit Rate‑Limiting.
++ - **SAP‑Verfügbarkeit:** Kritische Abhängigkeit → Fallback‑Strategie (Cache nur für Produktdaten) noch zu prüfen.
++ - **Daten‑Retention & Löschkonzept:** Grundlegender Ansatz vorhanden, detaillierte Regeln (z. B. handelsrechtliche Aufbewahrung) fehlen.
++ - **Kosten‑Schätzung (EU‑Only Hosting, Managed Services, Multi‑Region):** Noch offen, muss bis Freitag bereitgestellt werden.
++ - **Mehrwährungs‑ und Internationalisierungs‑Support:** Pilot‑Kunde Schweiz unklar → Risiko für Währungs‑ und Datenschutz‑Anforderungen.
++ - **Testdaten‑Strategie:** SAP‑Testsystem enthält reale Daten → Gefahr von Datenschutz‑Verstößen in Dev/Test.
++ - **Monitoring ohne personenbezogene Daten:** Trennung von technischen Logs und Audit‑Logs muss implementiert werden.
++ - **Backup‑ und Disaster‑Recovery‑Plan:** Grund‑Backup vorhanden, aber keine SLA‑Definition.
++ 
++ ## Quellen (Transkript‑Abschnitte)
++ - **MVP‑Ziel & Scope:** Zeilen 1‑18, 23‑31, 72‑84.
++ - **Login & Double‑Opt‑In:** Zeilen 1‑4, 45‑48.
++ - **SAP‑Integration & Daten:** Zeilen 12‑20, 58‑66, 140‑152.
++ - **Rollen & Berechtigungen:** Zeilen 27‑33, 80‑88.
++ - **DSGVO / Logging / Audit:** Zeilen 6‑8, 24‑30, 108‑112, 176‑182.
++ - **Security Review & Backup:** Zeilen 52‑56, 122‑128.
++ - **Hosting / EU‑only:** Zeilen 102‑108, 140‑146.
++ - **Support‑Problematik:** Zeilen 130‑144, 188‑200.
++ - **Finance / Rabatt‑Freigabe:** Zeilen 150‑168, 200‑220.
++ - **Internationalisierung / Währung:** Zeilen 210‑224, 236‑244.
++ - **API‑Gateway Warteliste:** Zeilen 250‑258.
++ - **Risiken & offene Punkte (Bewusste Ausschlüsse):** Zeilen 260‑300.
++ 
++ ## Fazit
++ Der extrahierte Kontext liefert ein klares Bild der **MVP‑Grenzen**, der **kritischen technischen und regulatorischen Abhängigkeiten** sowie der **bewussten Trade‑offs**, die das Projektteam bis zum geplanten Launch in 8 Wochen berücksichtigen muss. Alle offenen Punkte sind als Risiken dokumentiert und müssen nach MVP‑Freigabe priorisiert werden.
++ 

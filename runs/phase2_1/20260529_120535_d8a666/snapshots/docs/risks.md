@@ -1,0 +1,43 @@
+# Risiken für das Kundenportal (MVP)
+
+## 1. Fachliche Risiken
+| ID | Risiko | Ursache / Kontext | Mögliche Auswirkungen | Gegenmaßnahme / Klärungsbedarf |
+|----|--------|-------------------|-----------------------|--------------------------------|
+| FR-1 | Unklare Rabatt‑Freigabe > 15 % | Im MVP keine Sonderrabatte erlaubt, aber Finance verlangt später Freigabe‑Workflow (Transkript Zeilen 150‑168, 200‑220) | Fehlende Kontrolle kann zu finanziellen Verlusten und Compliance‑Verstößen führen | Vorgabe für MVP: Rabatt‑Grenze festlegen, später Freigabe‑Prozess definieren; Dokumentation der Entscheidung. |
+| FR-2 | Support‑Prozess fehlt (kein Ticket‑System) | Nur Kontakt‑Formular vorgesehen (Transkript Zeilen 130‑144) | Ineffiziente Kundenbetreuung, fehlende Nachverfolgbarkeit, DSGVO‑Risiko bei E‑Mail‑Daten | Kurzfristig Service‑Level definieren, später Ticket‑System einführen; Datenschutz‑Check für E‑Mail‑Daten. |
+| FR-3 | Mehrwährungs‑/Internationalisierungs‑Unsicherheit (CHF, EU, ggf. USA) | Pilot‑Kunde Schweiz unklar, internationale Expansion später (Zeilen 210‑244) | Fehlende Preis‑ und Rechts‑Konformität, Kundenabwanderung | MVP auf EUR beschränken, RFC für CHF‑Unterstützung erstellen; rechtliche Prüfung für USA‑Daten. |
+| FR-4 | Unklare Rollen‑/Berechtigungs‑Logik (z. B. Support‑Sicht auf Rabatte) | Diskrepanz zwischen Sales, Support und Finance (Zeilen 80‑100, 190‑210) | Datenlecks, unautorisierte Preisänderungen | Rollen‑Matrix im MVP definieren (Admin, Sales, Kunde); später feinkörnige Rollen ergänzen. |
+| FR-5 | KPI‑Definition und Tracking (Conversion‑Rate, Zeit bis Angebot) | KPI‑Wünsche ohne konkretes Implementierungs‑Konzept (Zeilen 70‑78) | Fehlende Messbarkeit, Projekt‑Erfolg schwer nachweisbar | MVP‑Dashboard mit einfachen Kennzahlen; später erweitern um Analytics. |
+
+## 2. Technische Risiken
+| ID | Risiko | Ursache / Kontext | Mögliche Auswirkungen | Gegenmaßnahme / Klärungsbedarf |
+|----|--------|-------------------|-----------------------|--------------------------------|
+| TE-1 | API‑Gateway‑Verfügbarkeit (6‑Wochen‑Warteliste) | Zentraler API‑Gateway‑Team hat Warteliste (Zeilen 250‑258) | Verzögerung beim Launch, fehlende Rate‑Limiting, Sicherheitslücken | Interim‑Mini‑Gateway oder direkte Service‑Calls mit eigenem Rate‑Limiting implementieren; später Migration. |
+| TE-2 | SAP‑Verfügbarkeit als kritische Abhängigkeit | Lesender SAP‑Zugriff erforderlich, Ausfallrisiko (Zeilen 140‑152, 260‑270) | Keine Angebotserstellung, falsche Preise, Service‑Ausfall | Fallback‑Cache für Produkt‑Daten, SLA mit SAP‑Team, Monitoring + Alerting. |
+| TE-3 | Datenresidenz & EU‑Only Hosting Kosten | EU‑Only Managed Service nötig, teurer (Zeilen 102‑108, 140‑146) | Budget‑Überschreitung, Verzögerungen | Kosten‑Schätzung bis Freitag, ggf. hybride Lösung mit EU‑Regionen; Vertrag prüfen. |
+| TE-4 | Logging‑/Audit‑Trennung (personbezogene Daten in Logs) | Technisches Logging darf keine personenbezogenen Daten enthalten (Zeilen 108‑112, 176‑182) | DSGVO‑Verstoß, Bußgelder | Implementiere separate Audit‑Log (nur Änderungen) und technisches Log (anonymisiert); Review‑Prozess. |
+| TE-5 | Backup & Disaster Recovery nicht SLA‑definiert | Grund‑Backup vorhanden, aber keine RPO/RTO (Zeilen 122‑128) | Datenverlust, lange Wiederherstellungszeit | SLA mit Managed Provider definieren, Test‑Restore‑Prozesse etablieren. |
+| TE-6 | Secrets‑Management & Credential‑Handling | Notwendigkeit von OAuth‑Tokens, DB‑Passwörtern (Zeilen 140‑152, 250‑260) | Kompromittierte Secrets, Sicherheitsvorfall | Use managed secret store (AWS Secrets Manager, Azure Key Vault) oder Vault; implementieren vor MVP‑Release. |
+| TE-7 | Skalierbarkeit vs. Over‑Engineering | Erwartete Nutzerzahl 200‑20 000, Rate‑Limiting nötig (Zeilen 115‑120, 258‑266) | Performance‑Engpässe, höhere Kosten | MVP mit Basis‑Rate‑Limiting, Load‑Testing; Skalierungsplan definieren. |
+| TE-8 | Test‑Umgebung mit echten Kundendaten (SAP‑Testsystem) | SAP‑Testsystem enthält reale Daten (Zeilen 250‑258) | Datenschutz‑Verstoß, Audit‑Risiko | Pseudonymisierung / synthetische Testdaten; Data‑Masking‑Tool einsetzen. |
+
+## 3. Compliance‑ und Datenschutzrisiken
+| ID | Risiko | Ursache / Kontext | Mögliche Auswirkungen | Gegenmaßnahme / Klärungsbedarf |
+|----|--------|-------------------|-----------------------|--------------------------------|
+| CP-1 | Fehlendes vollständiges Lösch‑/Auskunftskonzept | Double‑Opt‑In vorhanden, aber keine klare Lösch‑Policy (Zeilen 6‑8, 108‑112) | Verstoß gegen Art‑6‑Abs.1 DSGVO, Bußgelder | Konzept bis MVP‑Release skizzieren, später detaillieren; automatisierte Lösch‑Jobs. |
+| CP-2 | Datenresidenz‑Nachweis (EU‑Only vs. Schweiz) | Schweiz‑Kunde möglich, aber EU‑Only Hosting (Zeilen 140‑146, 236‑244) | Vertrags‑ und Datenschutz‑Konflikt, mögliche Rechtsstreitigkeiten | Vertragliche Klarstellung, ggf. Separate EU‑ und CH‑Instanz; rechtliche Abstimmung. |
+| CP-3 | Keine DSGVO‑konforme Dokumentation von Auftragsverarbeitungsverträgen (AVV) | Hinweis auf AVV im Transkript (Zeilen 6‑8) aber noch nicht erstellt | Nicht‑konforme Auftragsverarbeitung, Bußgelder | AVV mit Dritt‑Anbietern (Managed Service, IdP) rechtzeitig abschließen. |
+| CP-4 | Tracking / Push‑Notifications ohne Einwilligung | Push‑Notification erwähnt, aber Einwilligung nicht klar (Zeilen 90‑100) | Rechtswidriges Marketing, DSGVO‑Verstoß | Einwilligungs‑Flow definieren, Opt‑In nachweisen; ggf. Funktions‑Deaktivierung im MVP. |
+| CP-5 | Unklare Aufbewahrungsfristen vs. Recht auf Löschung | Handelsrechtliche Aufbewahrung vs. Recht auf Vergessenwerden (Zeilen 180‑190) | Konflikt zwischen gesetzlichen Aufbewahrungspflichten und DSGVO | Retention‑Policy mit Ausnahme‑Klauseln erstellen; Dokumentation. |
+
+## 4. Risiken aus Widersprüchen / Unsicherheiten
+| ID | Widerspruch / Unsicherheit | Risiko | Hinweis für weitere Klärung |
+|----|---------------------------|--------|---------------------------|
+| W-1 | Mobile‑First vs. Web‑First + native App Diskussion | Unklare Priorisierung kann zu Fehlplanungen führen | Entscheidung über Plattform‑Strategie vor Scope‑Festlegung. |
+| W-2 | SSO / Azure AD vs. Google vs. keine SSO | Unterschiedliche Erwartungen, zusätzlicher Aufwand | Klare Entscheidung nach MVP, ggf. externe IdP einbinden. |
+| W-3 | Umfang des Audit‑Trails (minimal vs. komplett) | Unklare Detailtiefe kann zu späteren Compliance‑Lücken führen | Definition minimaler Felder für MVP, Erweiterungsplan. |
+| W-4 | Umfang des KPI‑Trackings (nur Conversion vs. umfangreiche Analytics) | Risiko, dass erforderliche Daten nicht erhoben werden | MVP‑Dashboard festlegen, zukünftige Analytics‑Roadmap. |
+| W-5 | Kosten‑Schätzung für EU‑Only Managed Hosting (offen) | Budget‑Risiko, mögliche Projektverzögerung | Schnelle Angebotseinholung, Entscheidung bis Freitag. |
+
+---
+*Diese Risiken leiten sich ausschließlich aus dem bereitgestellten Kontext (runs/phase2_1/20260529_120535_d8a666/state/context.md), den Requirements (docs/requirements.md) und dem Stakeholder‑Transkript (input/transcripts/T9999_chaos.txt) ab.*

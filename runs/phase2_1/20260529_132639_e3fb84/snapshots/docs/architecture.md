@@ -1,0 +1,85 @@
+# Architekturüberblick – Kundenportal MVP
+
+## 1. Systemkontext
+Das Kundenportal ist das zentrale Front‑End für drei primäre Nutzergruppen:
+- **Kunde** – greift über das Web‑Portal auf Bestellungen, Rechnungen und seine Angebotsgeschichte zu.
+- **Sales** – erstellt Angebote, zieht Produkt‑ und Preisdaten aus dem SAP‑System und nutzt das Portal für Kundendatenpflege.
+- **Administrator** – verwaltet Rollen, überwacht Logs und führt System‑Operations (Backup, Monitoring) aus.
+
+Externe Systeme und Schnittstellen:
+| System / Service | Zweck | Hinweis |
+|-------------------|-------|--------|
+| **SAP ERP** | Lesezugriff auf Produkt‑, Preis‑ und Kundendaten; später Schreibzugriff für Auftragsdaten. | Kritische Abhängigkeit → Verfügbarkeit muss überwacht werden. |
+| **Managed Database Service (EU‑Only)** | Persistente Speicherung von Benutzer‑Accounts, Rollen, Angebots‑ und Rechnungs‑Metadaten. | Keine neue DB‑Instanz; Provider‑wahl noch offen. |
+| **Identity Provider (optional)** | Azure AD / Google für mögliche zukünftige SSO (MVP nicht umgesetzt). | Optional, später zu integrieren. |
+| **Email Service** | Double‑Opt‑In, Passwort‑Reset, Benachrichtigungen. | Muss EU‑konform betrieben werden. |
+| **Backup‑Service** | Tägliche inkrementelle Backups der Datenbank und Storage. | Wiederherstellungs‑SLA ≥ 24 h. |
+| **Monitoring / Logging** | Infrastruktur‑Monitoring, Audit‑Log‑Speicherung (getrennt von technischen Logs). | Keine personenbezogenen Daten in technischen Logs. |
+| **Web‑Hosting (Managed, EU‑Only)** | Betrieb des Front‑Ends + API‑Layer. | DSGVO‑konforme Datenresidenz. |
+
+## 2. Wichtige Komponenten
+1. **Web‑Frontend** (Responsive SPA/SSR)
+   - Authentifizierung (Login, Double‑Opt‑In) über REST‑API.
+   - UI‑Views: Dashboard, Angebots‑Wizard, Rechnungs‑Ansicht, Rollen‑Management.
+   - Internationalisierung‑Ready (Deutsch, später Englisch).  
+2. **API‑Layer** (REST, JSON)
+   - **Auth‑Service** – JWT‑Token‑Ausgabe, OAuth‑Preferenz.  
+   - **Offer‑Service** – Holt Produkt‑/Preis‑Daten von SAP, berechnet Angebot, speichert Angebot‑Metadaten.  
+   - **Invoice‑Service** – Listet Rechnungen, liefert PDF‑Download.  
+   - **User‑&‑Role‑Service** – Verwaltung von Accounts und Rollen.  
+   - **Audit‑Service** – Schreibt unveränderliche Ereignisse (Offer‑Opened, Offer‑Changed, Login).  
+3. **SAP‑Connector** (Read‑Only)
+   - Eingebundener Adapter (z. B. OData/REST) für Produkt‑ und Preis‑Abfragen.  
+   - Fehler‑Handling & Fallback (Abort‑Angebot, Fehlermeldung).  
+4. **Persistenzschicht**
+   - Managed relational DB (z. B. Azure PostgreSQL, AWS RDS) – nur für Metadaten, keine produktiven Stammdaten.
+   - Separate **Audit‑Log‑Store** (Write‑once, immutable, z. B. Cloud‑Object‑Storage).  
+5. **Backup & Disaster Recovery**
+   - Tägliche Snapshots der DB, verschlüsselt im selben EU‑Rechenzentrum.
+   - Wiederherstellung über Managed‑Backup‑Portal, Ziel‑SLA 24 h.  
+6. **Monitoring & Alerting**
+   - Health‑Checks für API, SAP‑Connector, DB‑Verfügbarkeit.
+   - Alerts bei SAP‑Ausfall, ungewöhnlichem Traffic (Rate‑Limiting‑Verstöße).  
+7. **Security‑Boundary**
+   - TLS 1.2+ für alle Netzverbindungen.
+   - Trennung von **Technical Logs** (performance, errors) und **Audit Logs** (Benutzer‑Events).  
+   - Secrets Management (z. B. Managed Key‑Vault) für DB‑Credentials, API‑Keys.  
+
+## 3. Schnittstellen / Integrationspunkte
+- **Frontend ↔ API‑Layer** – HTTPS, JWT‑authentifiziert.
+- **API‑Layer ↔ SAP** – OData/REST über VPN/Private Link; nur Lese‑Operationen im MVP.
+- **API‑Layer ↔ Managed DB** – Standard‑SQL‑Connection über gesicherten Endpunkt.
+- **API‑Layer ↔ Email Service** – SMTP/REST‑API für Double‑Opt‑In Mails.
+- **API‑Layer ↔ Backup Service** – Scheduler‑Trigger (z. B. Cloud‑Function) löst tägliche Snapshots.
+- **Monitoring ↔ API‑Layer & SAP‑Connector** – Prometheus‑Exporter oder Cloud‑Metrics‑API.
+
+## 4. Daten‑ & Sicherheitsaspekte
+| Aspekt | Umsetzung im MVP |
+|--------|-------------------|
+| **Authentifizierung** | E‑Mail + Passwort, Double‑Opt‑In, TLS, JWT‑Token. |
+| **Autorisierung** | Rollen‑basiert (Admin, Sales, Kunde) – geprüft im API‑Gateway/Service‑Layer. |
+| **Datenschutz** | Keine personenbezogenen Daten in technischen Logs, Audit‑Logs getrennt, Datenresidenz EU, Minimal‑Retention (Rechnungen ≥ 7 J) und manuelle Lösch‑Requests. |
+| **Verschlüsselung** | TLS in‑Transit, ruhende Daten verschlüsselt (Managed DB‑Encryption). |
+| **Backup** | Tägliche verschlüsselte Snapshots, Aufbewahrung 7 Tage, Wiederherstellung < 24 h. |
+| **Audit‑Trail** | Unveränderliche Ereignisse (Login, Offer‑Created, Offer‑Modified, Invoice‑Download). |
+| **Rate‑Limiting** | Grundlegendes Throttling pro IP/Token (z. B. 100 Requests/min). |
+| **Secrets Management** | Managed Key‑Vault (Provider‑agnostisch) – nicht im Code hard‑coded. |
+
+## 5. Offene Architekturentscheidungen (für Phase 2)
+| Entscheidung | Offene Frage |
+|--------------|--------------|
+| **API‑Gateway** – Ob ein dediziertes Unternehmens‑Gateway (nach 6‑Wochen‑Warteliste) eingesetzt wird oder ein temporärer OAuth‑Proxy. |
+| **SSO‑Integration** – Azure AD, Google Identity oder andere IdP später einbinden. |
+| **Managed DB‑Provider** – Azure PostgreSQL, AWS RDS, GCP CloudSQL – Kosten‑ und EU‑Only‑Compliance noch zu prüfen. |
+| **Cache‑Strategie für SAP‑Daten** – Direkt‑Live‑Abfrage vs. zeitlich begrenzter Cache für Produkt‑/Preis‑Infos. |
+| **Mehrwährungs‑Support** – CHF, USD – Datenmodell‑Erweiterung und Währungs‑Konvertierung. |
+| **Support‑Ticket‑System** – Leichtgewichtiges SaaS‑Tool vs. eigenständige Implementierung. |
+| **Analytics / Tracking** – Integration von GDPR‑konformer Analytics (z. B. Matomo) nach MVP. |
+| **Retention‑ und Löschkonzept** – Detaillierte rechtliche Aufbewahrungsfristen für unterschiedliche Datentypen. |
+
+## 6. Zusammenfassung
+Der vorliegende Architektur‑Entwurf liefert einen **geringgewichtigen, komponentenbasierten Stack**, der die im MVP definierten Kern‑Features (Login, Angebots‑Erstellung, Rechnungs‑Download, Rollen‑ und Audit‑Management) unterstützt und gleichzeitig die wichtigsten **Sicherheits‑ und DSGVO‑Anforderungen** erfüllt.  
+Offene Punkte werden bewusst als *bewusste Einschränkungen* gekennzeichnet und dürfen im EPIC‑Roadmap‑Planning für Phase 2 adressiert werden.
+
+---
+*Alle genannten Bestandteile, Annahmen und offenen Entscheidungen leiten sich ausschließlich aus dem bereitgestellten Transkript `input/transcripts/T9999_chaos.txt` und den zuvor erstellten Artefakten (`docs/requirements.md`, `docs/risks.md`).*

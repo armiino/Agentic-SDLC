@@ -1,0 +1,51 @@
+# Offene Fragen und Klärungsbedarf zum Kundenportal MVP
+
+## 1. Offene fachliche Fragen
+
+- Wer ist der definitive Pilotkunde (Schweiz, Deutschland, EU, USA)? Dies beeinflusst Datenschutzpflichten, Währungen und Mehrsprachigkeit.
+- Wie detailliert soll der Rabattfreigabeprozess im MVP sein? Sind Sonderrabatte im MVP grundsätzlich ausgeschlossen oder nur eingeschränkt erlaubt?
+- Welche Supportprozesse werden nach dem MVP eingeführt, und wie wird der Übergang vom Kontaktformular zu einem Ticketsystem gestaltet?
+- Welche KPIs sollen genau gemessen und wie im System abgebildet werden (Conversion Rate, Zeit bis Angebot, etc.)?
+- Ist eine Online-Akzeptanz von Angeboten durch Kunden geplant, und wenn ja, wie wird der Nachweis der Zustimmung rechtlich und technisch abgesichert?
+
+## 2. Offene technische Fragen
+
+- Welche konkrete Identity Provider(s) und Authentifizierungsverfahren (SSO, OAuth) sollen implementiert werden?
+- Wie wird die Verfügbarkeit des zentralen API Gateways im Zeitplan gesichert oder was sind mögliche Alternativen?
+- Wie werden Fallback-Mechanismen bei SAP-Ausfällen realisiert, insbesondere in Bezug auf Preisvalidität und Angebotserstellung?
+- Wie wird das Secrets Management für das System umgesetzt (Tools, Prozesse)?
+- Wie erfolgt die Umsetzung von API Rate Limiting und Monitoring, insbesondere ohne frühzeitige Verfügbarkeit des API Gateways?
+- Welche Technologien und Cloud-Provider werden für EU-only Hosting und Managed Services verwendet?
+- Wie wird die Testdatenproblematik gelöst, insbesondere im Umgang mit echten Kundendaten im SAP-Testsystem?
+- Welche Maßnahmen sind bei Logging und Audit Trail vorgesehen, um DSGVO-Vorgaben und Datenschutz zu gewährleisten?
+
+## 3. Widersprüche und Unklarheiten
+
+- Zeitlicher Druck des 8-Wochen MVP vs. notwendiger Umfang und Komplexität der Security Reviews und Compliance-Auflagen.
+- Widerspruch zwischen keiner neuen Datenbank und Persistenzbedarf für Support-Ticketsystem nach MVP.
+- Spannungsfeld zwischen Skalierbarkeit und einfacher, schneller Entwicklung.
+- Unterschiedliche Anforderungen an Rollen- und Berechtigungskonzepte, insbesondere bzgl. Supportzugang und Rabatttransparentz.
+- Diskrepanz zwischen Wunsch nach API Gateway Nutzung und langer Warteliste.
+- Konflikte zwischen Löschanfragen (Recht auf Vergessenwerden) und gesetzlichen Aufbewahrungspflichten.
+
+## 4. Fehlende Informationen
+
+- Genaue Definition der Nutzerzahlen und deren Wachstum im MVP und Folgeprojekten.
+- Detaillierte Anforderungen an Monitoring, Missbrauchserkennung und Sicherheit.
+- Konkrete Vorgaben zu Aufbewahrungsfristen und Datenklassifikation seitens Legal und Datenschutz.
+- Exakte Scope-Definition für MVP-Features und Folgeversionen aus Sicht aller Stakeholder.
+- Kostenabschätzung für EU-only Hosting und Managed Services, basierend auf konkretem Technologie-Stack.
+
+## 5. Mögliche Ansprechpartner oder Rollen für Klärungen
+
+- Projektleitung (Anna) für fachliche Priorisierung und Scope-Entscheidungen.
+- IT-Architekt/Technical Lead (Ben) für technische Entscheidungen und Integrationsfragen.
+- Datenschutzbeauftragter (Clara) für DSGVO-Konformität und Löschkonzepte.
+- Customer Support Manager (David) für Supportprozesse und Kundenservice.
+- Finance Verantwortliche (Eva) für Rabattfreigabeprozesse und finanzielle Risiken.
+- IT Operations (Farid) für Hosting, Infrastruktur und Security-Aspekte.
+- Legal Experten für Aufbewahrungsfristen und Compliance-Themen.
+
+---
+
+*Diese offenen Fragen sind aus der umfassenden Analyse des Stakeholder-Transkripts, der Requirements, Risiken und Architekturzusammenfassung abgeleitet. Sie sind relevant für die nächste Planungs- und Klärungsphase und gewährleisten Transparenz gegenüber den Stakeholdern.*

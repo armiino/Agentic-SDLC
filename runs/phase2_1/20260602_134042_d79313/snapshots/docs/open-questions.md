@@ -1,0 +1,44 @@
+# Offene Fragen und Klärungsbedarfe Kundenportal-Projekt
+
+## 1. Offene fachliche Fragen
+- Wer ist der finale Pilotkunde? (Deutschland, Schweiz oder multinational) Diese Entscheidung beeinflusst Datenschutz, Sprache, Währungen und Compliance.
+- Welche Rollen und Berechtigungen sind im MVP tatsächlich nötig? Insbesondere für Support, Manager und Sales.
+- Soll der Freigabeprozess für Rabatte im MVP enthalten sein oder erst in einer Folgestufe?
+- Welche KPIs (z.B. Conversion Rate) müssen von Beginn an gemessen werden?
+- Wie wird der Support im MVP abgebildet? Nur Kontaktformular oder erste Ticketfunktionen?
+
+## 2. Offene technische Fragen
+- Wird das zentrale API Gateway rechtzeitig für das MVP verfügbar sein?
+- Welches Identity Management und welche SSO-Lösung wird eingesetzt? (Optionalität und Ausgestaltung unklar)
+- Wie wird die SAP-Integration bei Ausfällen oder Wartungsfenstern gehandhabt? Gibt es Caching oder Fallback-Strategien?
+- Wie wird das Backup- und Disaster-Recovery-Konzept im MVP genau umgesetzt?
+- Wie werden Testdaten und Secrets Management in Entwicklungs- und Testumgebungen sichergestellt?
+- Wie erfolgt die Mehrwährungs- und Internationalisierungsunterstützung im MVP und später?
+
+## 3. Widersprüche und Unklarheiten
+- Zeitlicher Zielkonflikt zwischen 8-Wochen-MVP und notwendigen Security Reviews (dauern ca. 6 Wochen).
+- DSGVO-Anforderungen (z.B. Double-Opt-In, Löschkonzept) kontra schneller Markteintritt.
+- Keine neue Datenbankserver vs. Persistenzanforderungen für Support-Tickets und Auditdaten.
+- Anforderungen von Sales (Offline/Online Angebote, Push Notifications) vs. technischer Machbarkeit und Budget.
+
+## 4. Fehlende Informationen und Risiken
+- KPI Anforderungen und Monitoring Details fehlen.
+- Klare Definition der Rabattfreigabeprozesse und deren Umsetzung.
+- Endgültige Entscheidung für Pilotkunden und die damit verbundenen rechtlichen Anforderungen.
+- Kostenabschätzung für EU-only Hosting inklusive Datenresidenznachweis.
+- Umfang und Umfang der Audit- und Loggingfunktionalitäten.
+- Supportprozess und Datenverarbeitung im MVP (manuelles Handling vs. Automatisierung).
+
+## 5. Mögliche Ansprechpartner / Rollen für Klärung
+- Projektmanagement (Anna) für Scope und Priorisierung
+- IT-Architektur (Ben) für technische Entscheidungen und Implementierung
+- Datenschutz/Compliance (Clara) für DSGVO-relevante Fragestellungen
+- Customer Support (David) für Supportprozesse
+- Finance (Eva) für Freigabeprozesse und KPIs
+- IT Operations (Farid) für Hosting, Backup und Infrastruktur
+
+---
+
+Quelle: Stakeholder-Transkript input/transcripts/T9999_chaos.txt, Projektkontext und bisherige Artefakte.
+
+Dieses Dokument fasst die wichtigsten offenen Punkte für weitere Planung und Entscheidungen zusammen.

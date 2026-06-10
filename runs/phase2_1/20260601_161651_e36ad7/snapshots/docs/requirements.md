@@ -1,0 +1,47 @@
+## Functional Requirements
+- Das System muss ein Kundenportal bereitstellen, das über Web erreichbar ist und mobil eventuell später unterstützt wird.
+- Kunden müssen Angebote erstellen können, basierend auf Produkt- und Preisdaten aus SAP.
+- Kunden müssen die Möglichkeit haben, Rechnungen im Portal herunterzuladen.
+- Das System muss eine Benutzerverwaltung mit mindestens den Rollen Admin, Sales/Kunde, Manager und Support besitzen.
+- Login muss via E-Mail und Passwort möglich sein, optional soll für spätere Phasen SSO mittels Identity Providern (z.B. Azure AD, Google) unterstützt werden.
+- Es muss ein Audit- und Logging-Mechanismus für Aktionen im Portal geben, z.B. wer wann Angebote erstellt oder geändert hat.
+- Das System muss die Generierung von PDFs für Angebote unterstützen, inklusive rechtlicher Fußnoten und Versionshistorie.
+- Rabatt-Freigaben müssen im Freigabeprozess validiert werden (mindestens Freigaben ab 15 % Rabatt durch einen Manager).
+- Es soll ein Kontaktformular für Supportanfragen geben, jedoch kein persistierendes Ticketsystem im MVP.
+- Das System muss Anbindung an SAP für Lesedaten (Produkte, Preise, Rabatte) besitzen, Schreibzugriffe im MVP sind ausgeschlossen.
+- Die API-Schnittstelle muss einen OAuth-basierten sicheren Zugang später unterstützen, initial ist dies noch offen.
+
+## Non-functional Requirements
+- Das Kundenportal muss in einer EU-Datenregion gehostet werden (DSGVO-konform).
+- Managed Services sind für Hosting und Datenbanken zu nutzen, ein neuer eigener DB-Server ist nicht zulässig.
+- Backup- und Disaster-Recovery-Maßnahmen müssen implementiert sein.
+- Das System soll in 8 Wochen als MVP realisierbar sein.
+- Die Architektur soll skalierbar sein, um von zunächst ca. 200 Nutzern auf eventuell bis zu 20.000 Nutzer wachsen zu können.
+- Test- und Entwicklungssysteme müssen keine echten personenbezogenen Daten enthalten. Testdaten sollen pseudonymisiert oder synthetisch sein.
+- Das System muss Datenschutzanforderungen hinsichtlich Löschung, Double-Opt-In und Audit erfüllen.
+
+## Constraints/Compliance
+- Es muss eine strikte DSGVO-Konformität eingehalten werden, inklusive Löschkonzept, Einwilligungen, Audit-Trails und Datenresidenz in der EU.
+- Keine Nutzung von konkreten Cloud-Produkten oder Providern ohne finale Entscheidung.
+- Die Systemarchitektur muss bestehende interne Richtlinien erfüllen, z.B. zentrale API-Gateway-Nutzung (mit aktuell 6 Wochen Wartezeit).
+- Im MVP dürfen keine Sonderrabatte ohne Freigabe erstellt werden (Begrenzung auf Standardrabatte).
+- Supportanfragen via Kontaktformular sind zulässig, aber Support-Ticketsysteme werden erst später umgesetzt.
+- Die Produktschnittstelle zu SAP ist nur lesend im MVP; Schreibprozesse (z.B. Online-Akzeptanz) sind ausgeschlossen.
+
+## Assumptions and Open Points
+- Die finale Auswahl des Pilotkunden (DACH vs. EU vs. USA) ist noch offen und bestimmt den späteren Scope (Mehrsprachen, Währungen etc.).
+- Der genaue Identity Provider und die Authentifizierungstechnologie sind noch nicht entschieden.
+- API-Sicherheitsmethode (OAuth vs. API Keys) ist noch offen.
+- Exakte Anforderungen an KPI-Messung und Analytics sind noch unklar und werden im MVP nur minimal adressiert.
+- Supportprozess und Persistenz für Supportanfragen sind E-Mail-basiert und unstrukturiert im MVP, Risiko für Supportqualität und Datenschutz.
+- Skalierbarkeit vs. Einfachheit stellt weiterhin ein Spannungsfeld dar.
+- Freigabeprozess für Rabatte über Standardwert hinaus ist noch nicht final definiert.
+- Umgang mit Systemausfällen und Cachingszenarien (z.B. SAP Nichtverfügbarkeit) sind noch offen.
+- Genaues Backup- und Recovery-Konzept ist nur grob umrissen.
+- Rollen- und Berechtigungskonzept ist minimal und wird im weiteren Verlauf erweitert.
+- API Gateway Nutzung kann sich aufgrund Wartezeiten verzögern und beeinflusst die Architektur.
+
+## Traceability
+- Die Anforderungen wurden aus dem Transkript input/transcripts/T9999_chaos.txt extrahiert.
+- Die Kontextzusammenfassung runs/phase2_1/20260601_161651_e36ad7/state/context.md bildet die Grundlage für die Anforderungsdefinition.
+- Widersprüche, offene Fragen und Risiken wurden bewusst in Annahmen und offene Punkte aufgenommen und nicht geglättet, um Transparenz zu gewährleisten.

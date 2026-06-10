@@ -1,0 +1,68 @@
+﻿--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarfe
++ 
++ ## Fachliche Fragen
++ - **Umfang des Rabatt‑Freigabe‑Workflows**
++   - Welche Rabatt‑Schwellenwerte (in Prozent) erfordern welche Freigaben? (Manager, Finance?) – vgl. Eva, Zeile 124‑134.
++ - **Support‑Prozess**
++   - Wie soll das Kontaktformular technisch umgesetzt werden, damit Anfragen personenbezogener Daten korrekt zugeordnet und später gelöscht werden können? – vgl. David, Zeile 106‑112.
++ - **Mehrwährungs‑ und Schweiz‑Support**
++   - Ist die Schweiz ein Pilot‑Kunde und muss das MVP CHF unterstützen, oder wird ausschließlich EUR verwendet? – vgl. Eva, Zeile 188‑192.
++ - **Online‑Angebots‑Akzeptanz**
++   - Soll das MVP eine digitale Vertrag‑Unterzeichnung bzw. Angebots‑Akzeptanz ermöglichen? – vgl. Anna & Ben, Zeile 214‑224.
++ - **Retention‑ und Lösch‑Policy**
++   - Wie werden gesetzliche Aufbewahrungspflichten (z. B. 10 Jahre für Rechnungen) mit dem DSGVO‑Recht auf Löschung vereinbart? – vgl. Clara, Zeile 138‑144.
++ - **KPI‑Messung**
++   - Welche konkreten KPIs sollen im MVP erfasst werden und wie (Analytics‑Tool, eigene Lösung)? – vgl. Anna, Zeile 96‑104.
++ - **Pilot‑Kunde / Markt**
++   - Welcher Kunde (Deutschland oder Schweiz) ist für das MVP festgelegt? – vgl. Anna & David, Zeile 244‑250.
++ 
++ ## Technische Fragen
++ - **API‑Gateway‑Ersatz**
++   - Welches interimistische Rate‑Limiting bzw. Sicherheits‑Feature soll bis zum zentralen Gateway implementiert werden? – vgl. Ben, Zeile 232‑236.
++ - **Managed DB‑Provider**
++   - Welcher Cloud‑Provider (Azure PostgreSQL, AWS RDS …) erfüllt die EU‑Only‑Anforderung und welche Kosten entstehen? – vgl. Farid, Zeile 166‑172.
++ - **Secrets Management**
++   - Welche Lösung (z. B. HashiCorp Vault, Cloud‑Key‑Vault) soll im MVP eingesetzt werden? – vgl. Ben & Farid, Zeile 248‑252.
++ - **SAP‑Cache‑Strategie**
++   - Welche SAP‑Daten (nur Produkt‑Stammdaten?) dürfen gecached werden, wie lange (TTL) und wie wird die Invalidierung gehandhabt? – vgl. Ben, Zeile 238‑242.
++ - **Backup‑ und DR‑Parameter**
++   - Welches Recovery‑Time‑Objective (RTO) und Recovery‑Point‑Objective (RPO) sind für das MVP akzeptabel? – vgl. Farid, Zeile 166‑172.
++ - **Frontend‑Framework**
++   - Welche Technologie (React, Angular, Vue) wird gewählt und wie beeinflusst das die MVP‑Zeitplanung? – offen, bisher nicht diskutiert.
++ - **PDF‑Generator**
++   - Welche Bibliothek/Service (wkhtmltopdf, PDFBox, Cloud‑Service) soll für rechtlich konforme Angebots‑PDFs genutzt werden? – offen.
++ - **Monitoring‑Tooling**
++   - Welches Monitoring‑System (Prometheus/Grafana, CloudWatch) wird eingesetzt, um sicherzustellen, dass keine personenbezogenen Daten geloggt werden? – offen.
++ - **Test‑Daten‑Policy**
++   - Wie werden synthetische Testdaten erzeugt, um die Nutzung echter SAP‑Produktivdaten im Test‑Environment zu vermeiden? – vgl. Ben & Clara, Zeile 260‑266.
++ 
++ ## Widersprüche, die geklärt werden müssen
++ - **Mobile‑First vs. Web‑First** – Anna schlägt beides vor, es gibt keine Entscheidung, welche Priorität hat. – vgl. Anna, Zeile 1‑4.
++ - **SSO optional / Azure AD vs. Google** – Kein klares Commitment für einen Identity‑Provider; Kosten‑ und Lizenzimplikationen bleiben offen. – vgl. Anna, Zeile 21‑24.
++ - **Preis‑Cache vs. Echtzeit‑Rabatte** – Caching von Produkt‑Daten ist möglich, aber Rabatte sind kundenspezifisch und benötigen Echtzeit‑Daten. – vgl. Ben, Zeile 238‑242.
++ - **Backup‑Kosten vs. EU‑Only‑Hosting** – EU‑Only‑Hosting kann teurer sein; konkrete Kosten müssen ermittelt werden. – vgl. Farid, Zeile 166‑172.
++ - **Support‑Daten per E‑Mail vs. DSGVO** – E‑Mail‑Verarbeitung birgt Risiko personenbezogener Daten ohne strukturierte Löschung. – vgl. David, Zeile 106‑112.
++ - **Retention vs. Löschrecht** – Gesetzliche Aufbewahrungspflichten kollidieren mit dem Recht auf Datenlöschung. – vgl. Clara, Zeile 138‑144.
++ - **API‑Gateway Wartezeit (6 Wochen) vs. 8‑Wochen‑MVP** – Die Wartezeit lässt kaum Spielraum für das Gateway im MVP. – vgl. Ben/Farid, Zeile 232‑236.
++ 
++ ## Fehlende Informationen / Artefakte
++ - **Kosten‑Schätzung für EU‑Only Managed Services und Backup** – benötigt für Vorstandspräsentation (Freitag). – vgl. Anna, Zeile 243‑250.
++ - **Formelles SLA für SAP‑Verfügbarkeit** – ohne definierten Fallback‑Mechanismus. – vgl. Ben, Zeile 232‑236.
++ - **Definierte Rollen‑ und Berechtigungsmatrix** (Detail‑View, Edit‑Rechte für Support, Finance, Sales). – vgl. Anna & Clara, Zeile 31‑34.
++ - **Endgültige Auswahl des Frontend‑Frameworks** – noch nicht dokumentiert.
++ - **Auswahl des PDF‑Generators und eventuelle Signatur‑Anforderungen** – noch offen.
++ - **Detail‑Plan für Monitoring‑ und Alerting‑Regeln** – nur grob beschrieben.
++ 
++ ## Mögliche Ansprechpartner / Rollen
++ - **Produkt‑Owner / Business‑Stakeholder** – Anna (Klärung Scope, Prioritäten, Pilot‑Kunde)
++ - **Technischer Lead / Architektur** – Ben (API‑Gateway, SAP‑Integration, Cache‑Strategie)
++ - **Datenschutz‑Compliance** – Clara (DSGVO‑Umsetzung, Lösch‑/Retention‑Policy)
++ - **Finance Lead** – Eva (Rabatt‑Freigaben, PDF‑Rechtstexte)
++ - **Customer‑Support Lead** – David (Support‑Prozess, Kontaktformular)
++ - **IT Operations / Infrastruktur** – Farid (EU‑Hosting, Backup, Monitoring)
++ - **DevOps / CI‑CD** – noch nicht benannt, für Secrets Management und Test‑Daten‑Policy verantwortlich.
++ 
++ *Diese Fragen ergeben sich aus den bisherigen Artefakten (Transkript, Kontext, Requirements, Risiken, Architektur) und müssen vor dem nächsten Projektschritt geklärt werden.*

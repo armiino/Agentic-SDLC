@@ -1,0 +1,51 @@
+# Projektkontext basierend auf Stakeholder-Transkript T9999_chaos.txt
+
+## Projektziel
+- Entwicklung eines Kundenportals (Web-first; Mobile später) mit dem Hauptziel der schnelleren Angebotserstellung und Rechnungsdownload.
+- MVP innerhalb von 8 Wochen.
+- Integration mit SAP für Produktdaten, Preise und Rabattlogik.
+- Implementierung eines Rollen- und Berechtigungssystems (Admin, Sales, Manager, Support, Kunde).
+- DSGVO-konforme Speicherung und Verarbeitung personenbezogener Daten mit minimalem Audittrail.
+- EU-only Hosting, Nutzung von Managed Services, keine eigene Datenbank.
+- Backup und Security Review erforderlich, jedoch zeitkritisch und herausfordernd im MVP-Zeitrahmen.
+- KPI-Erfassung (Conversion Rate, Zeit bis Angebotserstellung).
+- Aufbau eines API-Layers mit OAuth als bevorzugtem Authentifizierungsmechanismus.
+- Bewusste Scope-Einschränkungen im MVP: keine Rabatt-Freigabeprozesse, kein Ticketsystem (nur Kontaktformular), keine Sonderrabatte ohne Freigabe.
+- Fokus auf Datenminimierung und Compliance.
+
+## Sprecherrollen
+- Anna (vermutlich Product Owner / Sales)
+- Ben (Technischer Architekt / Entwickler)
+- Clara (Datenschutz / Legal)
+- David (Support)
+- Eva (Finance)
+- Farid (IT Operations)
+
+## Fachliche Themen
+- Angebotserstellung inkl. Rabattlogik und Freigabeprozessen
+- Rechnungsanzeige und Kundenbestellungen
+- Authentifizierung, Login, SSO, Rollenmanagement
+- Datenschutz, DSGVO, Löschkonzepte, Audit-Trails
+- Hosting, Infrastruktur: Managed Services, EU-only
+- API und SAP-Integration
+- KPI-Messung, Monitoring
+- Supportprozesse (derzeit unklar / in Scope-Einschränkungen beschrieben)
+
+## Konflikte und Unsicherheiten
+- Zielsetzung / MVP-Umfang uneindeutig, Konflikte zwischen Anforderungen und Zeitrahmen
+- Datenschutz vs. Schnelle Markteinführung
+- Hosting-Kosten vs. Anforderungen
+- Technische Machbarkeit (API Gateway Wartezeit, OAuth-Komplexität, SAP Echtzeitdaten)
+- Supportprozess und Ticketsystem fehlen oder sind unklar
+- Rabattfreigabeprozess komplex und nicht Teil des MVP
+- Internationalisierung und Mehrwährungen offen bzw. für später geplant
+- Testing-Umgebungen mit echten Daten problematisch (Datenschutz)
+- Dokumentationsaufwand vs. Zeitbudget
+- Risiken durch unzureichende Sicherheitsprüfungen im MVP
+
+## Quellenhinweise
+- Vollständiges Stakeholder-Transkript in input/transcripts/T9999_chaos.txt
+
+---
+
+Diese Zusammenfassung dient als belastbare Grundlage für Anforderungen, Architekturentscheidungen und Risikomanagement in den weiteren Projektphasen.

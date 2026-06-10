@@ -1,0 +1,46 @@
+## Functional Requirements
+
+- Das System muss ein Kundenportal bereitstellen, das Web-first funktioniert und ein Login per E-Mail und Passwort unterstützt.
+- Ein erweitertes SSO (Single Sign-On) ist optional und kann später ergänzt werden.
+- Das Kundenportal muss es ermöglichen, Angebote zu erstellen, diese Angebote müssen mit Produktdaten, Preisen und Rabattlogik aus SAP integriert werden.
+- Rechnungen müssen im Kundenportal angezeigt und zum Download bereitgestellt werden.
+- Ein Rollen- und Berechtigungskonzept ist erforderlich mit den Rollen Admin, Sales, Manager und Support, wobei Support eingeschränkte Ansichten hat.
+- Es muss ein Audit Trail geführt werden, der Änderungen, Zugriffe und Freigaben von Angeboten revisionssicher protokolliert.
+- Backup- und Disaster-Recovery-Maßnahmen sind zu implementieren.
+- Eine API-Schicht wird benötigt, die OAuth als bevorzugte Authentifizierung unterstützt.
+
+## Non-functional Requirements
+
+- Das System muss innerhalb von 8 Wochen als MVP (Minimum Viable Product) einsatzbereit sein.
+- Das Hosting muss EU-DSGVO-konform sein und ausschließlich in der EU erfolgen.
+- Managed Services ohne Einsatz neuer Datenbank-Server müssen genutzt werden.
+- Das System muss skalierbar sein, um Benutzerzahlen von mindestens 200 bis zu 20.000 zu unterstützen, wobei dies eine Annahme ist.
+- Die Anwendung muss ein minimal notwendiges Logging bereitstellen, das DSGVO-konform ist und keine personenbezogenen Daten in technischen Logs enthält.
+- Die Performance muss den Geschäftsanforderungen gerecht werden, z.B. Ladezeiten beim Rechnungsladen und Angebotserstellung.
+
+## Constraints/Compliance
+
+- DSGVO-Anforderungen müssen sicher eingehalten werden, inklusive Double-Opt-In, Löschkonzepten und Zugriffskontrolle.
+- Keine Sonderrabatte dürfen im MVP ohne vorherige Freigabe durch definierte Rollen vergeben werden.
+- Das zentrale API Gateway soll genutzt werden, jedoch wird aufgrund langer Wartelisten eine Übergangslösung benötigt.
+- Backup-Intervalle und Datenaufbewahrung müssen gesetzlichen Vorgaben entsprechen.
+- Support-Anfragen werden im MVP ohne Ticketsystem über ein Kontaktformular und E-Mail verarbeitet, mit klarer Dokumentation der Einschränkungen.
+- Das System darf keine neuen Datenbanken installieren, sondern muss bestehende oder Managed Services verwenden.
+
+## Assumptions and Open Points
+
+- Pilotkunde ist noch nicht final entschieden (DACH oder Schweiz), was Datenschutz-, Währungs- und Hostinganforderungen beeinflussen kann.
+- Supportprozess und Ticketsystem sind im MVP nicht enthalten, dies ist eine bewusste Einschränkung mit Risiken.
+- Der genaue Freigabeprozess für Rabatte ist für das MVP nicht vollständig definiert, daher keine Rabatte über Standardwerte erlaubt.
+- API-Sicherheitsmechanismen (OAuth vs. API Keys) sind noch nicht final entschieden.
+- Backup- und Disaster-Recovery-Details müssen noch ausgearbeitet werden.
+- KPI-Messungen und Tracking sind nur rudimentär im MVP geplant.
+- Mobile native App wird im MVP nicht umgesetzt, Webportal hat Priorität.
+- SAP-Verfügbarkeit und Datenaktualität stellen kritische Risiken dar.
+
+## Traceability
+
+- Die Anforderungen basieren auf der Stakeholder-Diskussion aus dem Transkript "T9999_chaos.txt".
+- Projektziele, Rollen und Compliance-Anforderungen sind direkt aus den Aussagen der Stakeholder Anna, Ben, Clara, David, Eva und Farid abgeleitet.
+- Konflikte und offene Fragen bleiben explizit sichtbar, um Annahmen und Einschränkungen transparent zu machen.
+- Die Anforderungen sind auf ein 8-Wochen-MVP fokussiert mit geplanten Erweiterungen in Folgephasen.

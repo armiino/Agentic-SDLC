@@ -1,0 +1,80 @@
+# Requirements für das Kundenportal - MVP
+
+## 1. Functional Requirements
+
+### 1.1 Benutzer-Authentifizierung und Rollen
+- Login per E-Mail und Passwort mit Double-Opt-In (DSGVO-konform).
+- Rollen: Admin, Sales, Kunde (Kunde = Endbenutzer).
+- Supportzugang zunächst nicht im MVP, nur Kontaktformular per E-Mail.
+- Optional: SSO (Azure AD/Google) für Folgephasen, noch nicht final entschieden.
+
+### 1.2 Angebotserstellung
+- Möglichkeit zur Erstellung von Angeboten basierend auf SAP-Lesedaten (Produktdaten, Preise, Rabattlogik).
+- Im MVP keine manuellen Sonderrabatte über Standardrabattsatz hinaus (Freigabeprozess für Rabatte in Folgephasen).
+- Angebotsstatus (Draft, Pending Approval etc.) ist nicht im MVP enthalten.
+- PDF-Export von Angeboten mit rechtlichen Fußnoten wird nicht im MVP umgesetzt.
+
+### 1.3 Rechnungsanzeige
+- Kunden können ihre Rechnungen einsehen und als PDF herunterladen.
+- Pagination und Download-Limits zur Verhinderung von Missbrauch werden mindestens rudimentär umgesetzt.
+
+### 1.4 SAP Integration
+- Lesender Zugriff auf SAP-Daten (Kundenstamm, Produktdaten, Preise).
+- Echtzeit-Verfügbarkeit der Preise kann variieren; Angebote müssen entsprechend gekennzeichnet sein.
+
+### 1.5 API Layer
+- Vorsehen eines API Layers zur Integration; OAuth bevorzugt, aber noch nicht final.
+- Nutzung eines zentralen API Gateways vorgesehen, Verfügbarkeit im Zeitplan ungewiss.
+
+### 1.6 Logging und Audit
+- Minimaler Audit Trail zur Nachvollziehbarkeit von Änderungen und Zugriffen.
+- Trennung von technischen und auditierten Logs, keine personenbezogenen Daten in technischen Logs.
+
+### 1.7 Backup und Disaster Recovery
+- Sicherstellung regelmäßiger Backups und Wiederherstellbarkeit der Daten.
+
+### 1.8 Hosting
+- EU-only Hosting zur Gewährleistung der DSGVO-Konformität und nachweisbarer Datenresidenz.
+- Einsatz von Managed Services, kein eigener Datenbankserver.
+
+## 2. Non-functional Requirements
+
+- MVP Fertigstellungszeitraum: 8 Wochen.
+- Skalierbarkeit für ein erwartetes Benutzeraufkommen von mindestens 200 bis hin zu potenziell 20.000 Nutzern möglich, jedoch mit Fokus auf MVP Minimalität.
+- Performance ausreichend für schnelle Angebotserstellung und Rechnungseinsicht.
+- Sicherstellung von Datenschutz, Datensicherheit und Compliance.
+- Test-, Entwicklungs- und Produktionsumgebungen mit pseudonymisierten oder synthetischen Testdaten.
+- Secrets Management und API Rate Limiting Implementierung.
+
+## 3. Constraints/Compliance
+
+- Einhaltung der DSGVO mit Fokus auf Double-Opt-In, Löschkonzepte, Auditierbarkeit und Datenminimierung.
+- Keine neuen Datenbanken, Nutzung von Managed Services.
+- Keine Integration von Support-Ticketsystemen im MVP.
+- Keine Sonderrabatte ohne Freigabe im MVP.
+- Audit-Logs und Aufbewahrungsfristen gemäß Handels- und Datenschutzrecht, genaue Fristen noch offen.
+- Hosting ausschließlich in EU-Regionen mit nachweisbarer Datenresidenz.
+
+## 4. Assumptions and Open Points
+
+- Pilotkunde und Länderauswahl (DACH/Schweiz/USA) noch offen; beeinflusst Datenschutz, Währungen und Anforderungen.
+- Freigabeprozess für Rabatte wird nach MVP eingeführt.
+- SSO Integration und API Authentifizierungsmethode sind noch nicht final entschieden.
+- API Gateway Verfügbarkeit im MVP-Zeitplan ist unsicher.
+- SAP Preisaktualität und Ausfallsicherheit sind kritisch und benötigen Fallback-Strategien.
+- Supportprozess wird außerhalb des MVPs separat behandelt; Kontaktformular nur einfache E-Mail-Verarbeitung.
+- Mehrwährungsfähigkeit (EUR, CHF, USD) wird erst später behandelt.
+- PDF Export und Vertragsabschlussfunktionen nicht im MVP enthalten.
+- Retentionsfristen und Datenklassifikation sind noch zu klären.
+- Testdatenmanagement und Datenschutz im Entwicklungsprozess müssen noch gelöst werden.
+
+## 5. Traceability
+
+- Functional Requirements basieren auf Stakeholder-Transkript vom input/transcripts/T9999_chaos.txt.
+- Compliance-Anforderungen stammen aus Datenschutz-Expertise (Clara) im Gespräch.
+- Technische Constraints und Risiken aus IT Operations (Farid) und Architektur (Ben).
+- Business-Ziele und Finanz-Risikobetrachtung aus Beiträgen von Anna und Eva.
+
+---
+
+*Diese Requirements sind der erste Entwurf (MVP) basierend auf dem vollständigen Stakeholder-Dialog. Widersprüche und offene Fragen sind bewusst dokumentiert und müssen in weiteren Phasen adressiert werden.*

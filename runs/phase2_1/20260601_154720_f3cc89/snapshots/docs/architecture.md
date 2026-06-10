@@ -1,0 +1,76 @@
+# Architekturüberblick Kundenportal & Angebotsplattform
+
+## 1. Systemkontext
+Das System ist eine webbasierte Kundenportallösung, die als zentrale Plattform für Kunden fungiert, um Angebote zu erstellen, Bestellungen einzusehen und Rechnungen herunterzuladen. Die Plattform interagiert mit dem SAP-System zur Datenversorgung und nutzt Managed Services für Datenhaltung und Betrieb. Ein API Layer wird als Integrations- und Sicherheitsgrenze vorgesehen.
+
+### Beteiligte Systeme und Akteure
+- Kundenportal (Web-Applikation)
+- SAP-System (Produktdaten, Preise, Bestellungen)
+- Managed Services (Datenhaltung, Backup, Hosting)
+- Identitätsmanagement (ggf. SSO, OAuth)
+- Externe Stakeholder: Kunden, Vertrieb, Support, Finance
+
+## 2. Wichtige Komponenten
+
+### 2.1 Frontend
+- Webanwendung, primär für Desktop Browser
+- Mobile Nutzung ist als potenzielle Erweiterung vorgesehen, jedoch nicht Teil des MVP
+- Login-Funktion mit Double-Opt-In (DSGVO-konform)
+- Benutzerrollen: Admin, Sales, Kunde (minimal MVP)
+
+### 2.2 Backend
+- API Layer zur Entkopplung und Integration (OAuth bevorzugt, noch nicht final)
+- Geschäftslogik für Angebotserstellung, Rechnungsanzeige, Rollen- und Berechtigungsmanagement
+- Anbindung an SAP-System für lesenden Datenzugriff
+- Audit-Trail und Logging (minimal für MVP)
+
+### 2.3 Datenhaltung
+- Verwendung von Managed Services für Speicherung und Backup
+- Keine neue eigene Datenbankserver im MVP
+- Datenhaltung muss EU-DSGVO-konform sein, idealerweise mit nachweislicher Datenresidenz in der EU
+
+### 2.4 Sicherheit und Compliance
+- Authentifizierung und Autorisierung über Rollen und Berechtigungen
+- Audit-Log für Änderungen und Zugriffe
+- Backup und Disaster-Recovery-Mechanismen
+- Datenschutzkonforme Protokollierung und Löschkonzept
+
+### 2.5 Infrastruktur
+- Getrennte Entwicklungs-, Test- und Produktionsumgebungen
+- Umgang mit Testdaten (Pseudonymisierung oder synthetisch)
+- Einsatz von Managed Services für Hosting und Datenhaltung
+- API Gateway wird erwogen, aber Verfügbarkeit eng (Warteliste 6 Wochen)
+
+## 3. Schnittstellen und Integrationspunkte
+
+- Schnittstelle zum SAP-System (lesend für Produkt-, Preis- und Bestelldaten)
+- API Endpunkte für Kundenportal Frontend
+- (optional) Identity Provider für SSO (Azure AD, Google) noch offen
+- Backup-Systeme der Managed Services
+
+## 4. Daten- und Sicherheitsaspekte
+
+- Einhaltung der DSGVO durch:
+  - Double-Opt-In beim Login
+  - Rollenbasiertes Zugriffsmanagement
+  - Auditierung von Änderungen und Zugriffen
+  - Aufbewahrungs- und Löschkonzepte zur Erfüllung gesetzlicher Anforderungen
+- Datenresidenz in der EU ist Pflicht; Hosting-Anbieter und Backup-Standorte sind entsprechend auszuwählen
+- Logging unterscheidet zwischen technisch/operativem Logging und audit-relevanten Protokollen (mit unterschiedlichen Aufbewahrungsfristen)
+- API-Sicherheit über OAuth oder alternative Mechanismen
+- Verschlüsselung der Datenübertragung mindestens mit TLS
+
+## 5. Offene Architekturentscheidungen
+
+- Entscheidung für oder gegen SSO und den Umfang des Identity Managements
+- Nutzung und Auswahl eines API Gateways trotz geplanter Warteliste
+- Umgang mit Supportprozess und Integration eines Ticketsystems (derzeit nur Kontaktformular im MVP)
+- Behandlung von Preis- und Rabattaktualisierungen im SAP und deren Auswirkungen auf die Konsistenz der Angebote
+- Definition des finalen Pilotkunden (DACH oder Schweiz) und damit verbundene Datenschutz- und Währungsanforderungen
+- Umfang und technische Umsetzung des Audit-Trails und des Freigabeprozesses für Rabatte
+- Umgang mit Testdaten und deren Datenschutz
+- Spezifische Backup- und Disaster Recovery Konzepte und deren technischer Umfang im MVP
+
+---
+
+*Dieser Architekturüberblick wurde basierend auf den Stakeholderdiskussionen (Transkript T9999_chaos.txt), Projektkontext und Anforderungen abgeleitet. Offene Punkte und Risiken sind explizit aufgeführt, um späteren Entscheidungen und Anpassungen Raum zu geben.*

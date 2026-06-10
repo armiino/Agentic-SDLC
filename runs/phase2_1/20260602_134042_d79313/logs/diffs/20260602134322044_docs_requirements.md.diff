@@ -1,0 +1,50 @@
+--- before/docs/requirements.md
++++ after/docs/requirements.md
+- 
++ ## Functional Requirements
++ - Das System muss ein Kundenportal bereitstellen, das Login mit E-Mail und Passwort ermöglicht.
++ - Das Kundenportal muss die Erstellung von Angeboten unterstützen, die auf Produkt-, Preis- und Rabattdaten aus SAP basieren.
++ - Angebote müssen einen Status-Workflow durchlaufen (z.B. Entwurf, Freigabe, genehmigt).
++ - Das System muss mindestens die Rollen Admin, Sales, Manager und Kunde unterstützen.
++ - Kunden müssen ihre Bestellungen und Rechnungen im Portal einsehen und herunterladen können.
++ - Das System soll ein minimal funktionierendes Audit-Logging bereitstellen, das nachvollzieht, wer wann welche Änderung durchgeführt hat.
++ - Das System muss ein Löschkonzept für personenbezogene Daten entsprechend DSGVO implementieren.
++ - Es soll ein API-Layer vorhanden sein, der sichere Integration via OAuth unterstützt.
++ - Backup- und Disaster-Recovery-Mechanismen müssen für das MVP vorhanden sein.
++ - Das Portal muss EU-basiert oder DSGVO-konform gehostet werden.
++ - Supportanfragen werden im MVP nur über ein Kontaktformular erfasst, persistente Ticketsysteme sind ausgeschlossen.
++ - Das System soll PDF-Export von Angeboten mit Versionskontrolle ermöglichen.
++ 
++ ## Non-functional Requirements
++ - Das System soll in einem Zeitraum von 8 Wochen für das MVP einsatzbereit sein.
++ - Skalierbarkeit muss berücksichtigt werden, jedoch ohne Overengineering im MVP.
++ - Die API und das Portal müssen eine angemessene Performance bieten, die auch bei bis zu 2000 gleichzeitigen Nutzern funktioniert (angenommen).
++ - Sicherheitsmaßnahmen müssen etabliert sein, einschließlich TLS-Verschlüsselung und Auditierbarkeit.
++ - Das System muss bei SAP-Ausfällen einen stabilen Zustand gewährleisten, z. B. durch Warnhinweise oder eingeschränkte Funktionen.
++ - Testumgebungen müssen existieren und dürfen keine echten Kundendaten enthalten.
++ 
++ ## Constraints/Compliance
++ - Das Hosting muss innerhalb der EU erfolgen oder DSGVO-konform sein, inklusive nachweisbarer Datenresidenz.
++ - Es darf kein neuer Datenbankserver betrieben werden; Managed Services müssen genutzt werden.
++ - Für Angebote dürfen im MVP keine Sonderrabatte ohne Freigabeprozess verwendet werden.
++ - Es gilt die vollständige Einhaltung der DSGVO, inklusive Double-Opt-In, Datenlöschung und Zugriffskontrolle.
++ - Alle Audit- und Logdaten müssen datenschutzkonform behandelt und aufbewahrt werden.
++ 
++ ## Assumptions and Open Points
++ - Die Entscheidung über den Pilotkunden (Schweiz oder Deutschland) ist offen und beeinflusst Scope und Compliance.
++ - Die finale Implementierung eines Freigabeprozesses für Rabattstufen erfolgt erst in späteren Phasen.
++ - Single Sign-On (SSO) ist optional und kein MVP-Feature.
++ - API Gateway-Verfügbarkeit und Einbindung bleibt unklar und könnte den MVP-Zeitplan beeinflussen.
++ - Supportprozess und Ticketsystem sind unklar und werden im MVP durch ein einfaches Kontaktformular ersetzt.
++ - Mehrwährungs- und Internationalisierungsfunktionen sind im MVP eingeschränkt bzw. offen.
++ - KPIs und Analytics werden erst nach MVP umgesetzt.
++ - Backup- und Disaster-Recovery-Details sind noch zu spezifizieren.
++ - Es bestehen Risiken bezüglich Datenkonsistenz durch SAP-Nachtprozesse und Echtzeitverfügbarkeit.
++ 
++ ## Traceability
++ - Die funktionalen und nicht-funktionalen Anforderungen basieren auf dem Stakeholder-Transkript "T9999_chaos.txt" (input/transcripts/).
++ - Datenschutz- und Compliance-Anforderungen wurden von Clara formuliert und mehrfach betont.
++ - Technische und IT-Betriebsanforderungen stammen von Ben und Farid.
++ - Nutzer- und Supportanforderungen wurden vor allem von Anna und David eingebracht.
++ - Finanzielle Anforderungen und Freigabeprozesse wurden von Eva eingebracht.
++ 

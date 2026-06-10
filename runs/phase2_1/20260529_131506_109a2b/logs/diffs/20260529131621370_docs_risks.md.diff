@@ -1,0 +1,61 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikoartefakt zum Kundenportal MVP
++ 
++ ## 1. Fachliche Risiken
++ - Unklare und sich widersprechende Zielsetzungen (z.B. Kundenportal vs. Plattform, Web vs. Mobile) können zu Verzögerungen und Scope-Änderungen führen.
++ - Fehlende oder unklare Definition von Rollen und Verantwortlichkeiten, insbesondere beim Support (kein Ticketsystem, manuelle E-Mail-Verarbeitung).
++ - Fehlender Freigabeprozess für Sonderrabatte im MVP erhöht finanzielle Risiken und Fehleranfälligkeit.
++ - Unklare Pilotkunde-Entscheidung (DACH vs. Schweiz) beeinflusst Datenschutz, Währung und Anforderungen erheblich.
++ - Fehlende Integration von Support- und Finance-Anforderungen im MVP kann zu Nacharbeitsaufwand führen.
++ 
++ ## 2. Technische Risiken
++ - Backend ist derzeit nicht API-ready; notwendiger API-Layer und API-Gateway könnten nicht rechtzeitig zur Verfügung stehen (Warteliste 6 Wochen).
++ - Fehlende einheitliche Architektur und IAM; SSO-Integration unklar und zeitkritisch.
++ - Performance- und Skalierungsanforderungen sind unsicher (200 bis 20.000 Nutzer), was zu Über- oder Unterdimensionierung führen kann.
++ - Nutzung von Managed Services ohne neuen DB-Server limitiert technische Freiheitsgrade.
++ - Cache und Fallback-Mechanismen bei SAP-Ausfall sind komplex und bergen Datenschutz- und Konsistenzrisiken.
++ - Testumgebungen mit echten Kundendaten im SAP-Testsystem sind problematisch und können Compliance-Regeln verletzen.
++ - Fehlendes Secrets Management und fehlendes API Rate Limiting erhöhen Sicherheitsrisiken.
++ 
++ ## 3. Compliance- und Datenschutzrisiken
++ - DSGVO-Konformität erfordert Double-Opt-In, Löschkonzept und Auditierung, die im engen MVP-Zeitrahmen schwer zu implementieren sind.
++ - Speicherung personenbezogener Daten im Portal und deren Verarbeitung im Support ohne strukturiertes System bergen Datenschutzrisiken.
++ - Nutzung eines EU-only oder DSGVO-konformen Hostings mit Nachweis ist technisch und finanziell herausfordernd.
++ - Unterschiedliche Datenschutzvorgaben bei internationalen Kunden (Schweiz, USA) sind noch unklar.
++ - Protokollierung und Logging müssen zwischen technisches Logging und Audit Logs getrennt werden, um Datenschutz zu gewährleisten.
++ - Rechtliche Aufbewahrungspflichten kollidieren mit Löschanfragen und sind schwer zu managen.
++ 
++ ## 4. Widersprüche und Unsicherheiten
++ - Gegensätzliche Anforderungen zwischen schneller Umsetzung/MVP und umfassender Sicherheit/Compliance.
++ - Unklare Priorisierung und Scope-Definition für Features wie Rabattfreigabe, Supportsystem und SSO.
++ - Spannungsfeld zwischen Skalierbarkeit (bis 20.000 Nutzer) und Vermeidung von Overengineering.
++ - Diskussionen über mobile native Apps vs. responsive Web App bleiben unentschieden.
++ - Unklare Zuständigkeiten und fehlende Architekturrollen im Team (z.B. fehlender Architekt).
++ - Unbekannte und schwankende Anforderungen bezüglich Pilotkunde, Währungen und Sprachen.
++ 
++ ## 5. Mögliche Auswirkungen
++ - Verzögerungen im MVP-Release durch fehlende technische Komponenten und Sicherheitsreviews.
++ - Compliance-Verstöße mit rechtlichen Folgen und Imageschäden.
++ - Finanzielle Verluste durch fehlerhafte Angebotserstellung und fehlende Rabattkontrollen.
++ - Erhöhte Supportlast und ineffiziente Prozessabläufe wegen fehlendem Ticketsystem.
++ - Technische Instabilitäten durch unzureichende Skalierung und problematische SAP-Integration.
++ - Risiken durch nicht handhabbare Datenschutznachweise und fehlende Datenresidenznachweise.
++ 
++ ## 6. Mögliche Gegenmaßnahmen und Klärungsbedarfe
++ - Klare Scope-Definition mit Dokumentation bewusster Einschränkungen (z.B. Support ohne Ticketsystem).
++ - Frühzeitige Architekturentscheidung und Festlegung der IAM- und SSO-Strategie.
++ - Prüfung und Auswahl von Managed Services mit EU-only Hosting und nachvollziehbarer Datenresidenz.
++ - Entwicklung eines minimal funktionsfähigen Audit- und Löschkonzepts für das MVP.
++ - Risikobewertung und Planung für API Gateway und API Layer mit manuellen Workarounds für MVP.
++ - Detaillierte Klärung der Pilotkunde, Währungs- und Datenschutzanforderungen vor MVP-Release.
++ - Implementierung von API Rate Limiting und Secrets Management als Sicherheitsmaßnahme.
++ - Nutzung von Pseudonymisierung oder synthetischen Testdaten in Testumgebungen.
++ - Priorisierung von Security Review und Compliance-Themen im Projektzeitplan.
++ - Einrichtung klarer Verantwortlichkeiten und ggf. Einbindung eines Architekten.
++ 
++ ---
++ 
++ *Dieses Risikoartefakt wurde aus dem Projektkontext, den Requirements und dem Transkript abgeleitet, um eine fokussierte Übersicht der bestehenden Risiken, Unsicherheiten und Gegenmaßnahmen bereitzustellen.*
++ 

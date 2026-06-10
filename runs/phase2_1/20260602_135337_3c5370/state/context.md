@@ -1,0 +1,58 @@
+# Projektkontext - Kundenportal MVP
+
+## 1. Projektziel
+- Hauptziel ist die schnellere Erstellung von Angeboten für Kunden.
+- Bereitstellung eines Kundenportals (Web-first), das Angebote und Rechnungen übersichtlich darstellt.
+- Integration mit SAP für Produktdaten, Preise und Rabattlogik.
+- MVP mit einer Laufzeit von 8 Wochen, klarer Scope mit bewussten Einschränkungen.
+
+## 2. Sprecherrollen
+- Anna: Projektleitung / Sales, treibende Kraft für schnelles MVP.
+- Ben: Technischer Experte, zuständig für Backend, API, Integrationen.
+- Clara: Datenschutz- und Compliance-Verantwortliche.
+- David: Customer Support-Vertreter.
+- Eva: Finanz- und Freigabeverantwortliche.
+- Farid: IT Operations und Hosting.
+
+## 3. Fachliche Themen
+- Kundenportal mit Login (E-Mail/Passwort, SSO optional).
+- Rollenmodell: Admin, Sales, Manager, Support (eingeschränkte Rechte).
+- Angebote erstellen, mit Freigabeprozessen (Freigabe durch Manager/Finance bei Rabatten über definierten Grenzen) als Phase-2-Item.
+- Rechnungsanzeige und Download.
+- SAP-Integration (lesend, Preis- und Rabattlogik, möglicherweise Schreibzugriffe später).
+- Audit Trails / Logging für Compliance, minimal im MVP.
+- DSGVO: Double-Opt-In, Löschkonzepte, Zugriffskontrolle.
+- Backup und Disaster Recovery als Pflicht.
+- EU-only Hosting, Managed Services, keine neuen DB-Server.
+- API Layer mit OAuth bevorzugt (Gateway hat lange Warteliste).
+- KPI-Messung (Conversion Rate, Angebotszeit).
+
+## 4. Konflikte und offene Fragen
+- Mobile vs. Web: Mobile native App zu teuer, daher Web-first.
+- SSO und IAM fehlen derzeit.
+- Sicherheit vs. Time-to-Market: Security Reviews dauern zu lang für 8-Wochen MVP.
+- Supportprozess unklar, kein Ticketsystem im MVP, Risiko für Supportqualität.
+- Rabattfreigaben immer noch offen, derzeit keine Sonderrabatte im MVP erlaubt.
+- Hosting: EU-only versus Kostenfragen, Datenresidenz unklar.
+- SAP-Verfügbarkeit und Datenaktualität sind kritische Risiken.
+- API Gateway-Verfügbarkeit ist kritisch, Warteliste verzögert Integration.
+- Skalierbarkeit unklar (Userzahlen von 200 bis 20.000 möglich).
+- Datenminimierung und Cache-Strategien gegen Datenschutzkonflikte.
+- Dokumentation vs. Zeitdruck und notwendige Security Review.
+- Internationalisierung, Währungs- und Rechtsfragen noch offen.
+
+## 5. Unsicherheiten
+- Noch keine finale Entscheidung zu Pilotkunde (DACH vs. Schweiz).
+- Supportdatenverarbeitung und Löschung von Kundendaten unklar.
+- Umfang und Tiefe der Auditierung und Monitoring noch unklar.
+- Backup-Konfiguration und Disaster Recovery Details noch offen.
+- KPI-Definitions- und Tracking-Mechanismen noch in Diskussion.
+- API-Sicherheitsmechanismen (OAuth vs. API Keys) noch nicht final.
+
+## 6. Quellenhinweise
+- Basierend auf dem Stakeholder-Transkript "T9999_chaos.txt" mit umfangreichen Diskussionen zwischen Anna, Ben, Clara, David, Eva und Farid.
+- Viele Konflikte und Risiken sind bewusst und müssen transparent gehalten werden.
+
+---
+
+Diese Zusammenfassung bildet die Grundlage für die weitere Projektplanung und Spezifikation. Offene Punkte sollten in Folgephasen geklärt werden.

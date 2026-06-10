@@ -1,0 +1,48 @@
+# Risikoanalyse für das Kundenportal MVP
+
+## 1. Fachliche Risiken
+- **Unklare Zieldefinition und Scope-Konflikte:** Offene Fragen zum Pilotkunden, Freigabeprozessen für Rabatte und Supportprozessen können zu Fehlentwicklungen und Verzögerungen führen.
+- **Support ohne Ticketsystem:** Die Entscheidung, im MVP auf ein Ticketsystem zu verzichten und Support-Anfragen per E-Mail zu handhaben, birgt ein hohes Risiko der Supportüberlastung, schlechter Nachvollziehbarkeit und Compliance-Verstößen bei personenbezogenen Daten.
+- **Rabattfreigaben nicht final definiert:** Fehlende Freigabeprozesse können zu falschen oder nicht genehmigten Angeboten führen, was finanzielle Verluste und Reputationsrisiken birgt.
+
+## 2. Technische Risiken
+- **SAP-Integration und Datenverfügbarkeit:** Die Abhängigkeit von SAP für Produktdaten, Preise und Rabattlogik ist kritisch. SAP-Wartungsfenster und begrenzte Echtzeit-Verfügbarkeit können zu Verzögerungen und falschen Angeboten führen.
+- **API Gateway-Warteliste:** Die verpflichtende Nutzung des zentralen API-Gateways bei einer sechs Wochen langen Warteliste gefährdet den geplanten MVP-Zeitrahmen und zwingt zu unsicheren oder provisorischen Lösungen.
+- **Skalierbarkeit und Performance:** Unklare Nutzerzahlen (200 bis 20.000) erschweren die Planung der Systemperformance und Skalierbarkeit, was zu Überlastungen oder unnötigen Kosten führen kann.
+- **Fehlende IAM- und SSO-Lösungen:** Aktuell kein zentrales Identity-Management und unklare SSO-Pläne erhöhen Komplexität, Entwicklungsaufwand und Sicherheitsrisiken.
+- **Backup und Disaster Recovery:** Unklare Details zu Backup-Strategien können zu Datenverlust bei Ausfällen führen.
+
+## 3. Compliance- und Datenschutzrisiken
+- **DSGVO-Anforderungen:** Double-Opt-In, Löschkonzepte und differenzierte Zugriffskontrollen sind anspruchsvoll. Fehler oder fehlende Umsetzung führen zu erheblichen rechtlichen und finanziellen Risiken.
+- **Datenresidenz und Hosting:** EU-only Hosting ist kostspielig und komplex. Unklare Datenresidenz und möglicher Einsatz von Cloud-Managed Services bergen Risiko von Compliance-Verstößen.
+- **Logging und Audit:** Balance zwischen notwendiger Nachvollziehbarkeit und Datenschutz (keine personenbezogenen Daten in technischen Logs) ist schwierig.
+- **Testdatenmanagement:** Nutzung echter Kundendaten in Testumgebungen ohne Pseudonymisierung oder Genehmigung birgt Datenschutzverstöße.
+
+## 4. Widersprüche und Unsicherheiten
+- **Zeitrahmen vs. Security Review:** Security Prüfung dauert länger als das MVP-Zeitfenster, die Entscheidung zwischen Time-to-Market und Sicherheit führt zu Risiken.
+- **Funktionaler Umfang vs. Ressourcen:** Wunsch nach umfangreichen Features (Mobile App, Freigabeprozesse, KPI-Tracking) steht im Spannungsfeld mit beschränktem Budget und Zeit.
+- **Kundendaten vs. Performance:** Datenminimierung im Portal steht im Konflikt zu Performance-Anforderungen beim Anbieten von Angeboten und Rechnungen.
+
+## 5. Mögliche Auswirkungen
+- Verzug des MVP-Release oder reduzierte Feature-Umsetzung
+- Finanzielle Verluste durch falsche Angebotsfreigaben
+- Rechtliche und datenschutzrechtliche Sanktionen
+- Überlastung von Support und IT
+- Image- und Reputationsverlust bei Kunden
+
+## 6. Gegenmaßnahmen und Klärungsbedarfe
+- **Klare Scope-Definition und Priorisierung:** Explizite Abgrenzung des MVP inkl. bewusster Ausschlüsse und dokumentierter Risiken.
+- **Freigabeprozesse definieren und implementieren:** Minimiere finanzielle Risiken durch abgestimmte Rabattfreigaben.
+- **Provisorische Supportlösung mit klaren Einschränkungen und Migration zu Ticketsystem mittelfristig planen.**
+- **Absicherung der SAP-Integration:** Monitoring, Fallback-Mechanismen und klare SLAs mit SAP-Operations.
+- **Frühzeitige Abstimmung mit Gateway-Team und Planung von Übergangslösungen für API-Sicherheit.**
+- **Strikte Einhaltung von DSGVO-Anforderungen inklusive Double-Opt-In, Löschkonzepten und rollenbasiertem Zugriff.**
+- **Hosting nur mit geprüften EU-Anbietern, Nachweis der Datenresidenz sicherstellen.**
+- **Dokumentation aller Annahmen, Konflikte und noch offener Punkte zur Transparenz im Projektverlauf.**
+- **Testdatenpseudonymisierung und striktes Secrets-Management etablieren.**
+- **Security Reviews frühzeitig und iterativ durchführen, um keine Verzögerungen im Gesamtzeitplan zu riskieren.**
+- **Regelmäßige Risiko-Reviews zur Anpassung an neue Erkenntnisse und zur Steuerung der Projektrisiken.**
+
+---
+
+Diese Risikoanalyse soll als lebendiges Dokument kontinuierlich gepflegt werden, um die erfolgreiche Umsetzung des Kundenportal MVP sicherzustellen.

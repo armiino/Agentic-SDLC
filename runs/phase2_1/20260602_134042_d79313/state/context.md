@@ -1,0 +1,49 @@
+# Projektkontext Kundenportal
+
+## Projektziel
+Das Hauptziel des Projekts ist die schnellere Erstellung von Angeboten für Kunden. Das Kundenportal soll Nutzern ermöglichen, Angebote zu erstellen, Bestellungen und Rechnungen einzusehen sowie grundlegende Funktionen rund um Kundendaten und SAP-Integration bereitzustellen. Das MVP soll innerhalb von 8 Wochen geliefert werden und einen minimalen Funktionsumfang abdecken, der Login, Angebotserstellung, Rechnungsdownload, minimale Rollen und Auditing umfasst.
+
+## Sprecherrollen
+- Anna: Projektmanagement / Sales
+- Ben: IT-Architektur / Entwicklung
+- Clara: Datenschutz / Compliance
+- David: Customer Support
+- Eva: Finance
+- Farid: IT Operations
+
+## Fachliche Themen
+- Kundenportal mit Fokus auf Web, mobile ist Option
+- Login mit E-Mail/Passwort, optional SSO (Azure AD, Google)
+- Rollenmodell: Admin, Sales, Manager, Support (Support teilweise umstritten)
+- SAP-Integration (Lesender Zugriff) für Produkt-, Preis- und Rabattdaten
+- Angebotserstellung mit Freigabeprozessen (Rabattfreigaben erst in Phase 2)
+- Rechnungsansicht und Download
+- Logging, Audit Trails, Security Review (engen Zeitrahmen bedenken)
+- DSGVO: Double-Opt-In, Löschkonzept, Zugriffskontrolle, Datenresidenz (EU Only)
+- Managed Services, kein neuer DB-Server
+- API-Layer für Integration, OAuth bevorzugt
+- Backup, Disaster Recovery
+- KPIs (Conversion Rate, Angebotszeit)
+- Mehrwährung (EUR, CHF, USD später), Internationalisierung (Start DACH)
+- PDF-Export von Angeboten mit Versionskontrolle
+
+## Konflikte und Unsicherheiten
+- Verfügbarkeit und Architektur des API Gateways (Warteliste 6 Wochen)
+- Zeitkonflikt zwischen MVP-Zeitplan (8 Wochen) und Security Review
+- Umfang und Komplexität der Rollen- und Berechtigungskonzepte
+- Supportprozess unklar, keine Ticketsystem im MVP, nur Kontaktformular
+- Datenschutz vs. operative Anforderungen (Logs, Supportdaten, Datenminimierung)
+- Hosting-Kosten und DSGVO-Konformität unter EU-Datenresidenz
+- Preis- und Rabattlogik aus SAP teilweise nicht in Echtzeit
+- Mangel an klarer Zieldefinition bzgl. Pilotkunde (Schweiz vs. Deutschland)
+- Datenmanagement in Test/Systemumgebungen (Testdaten, Secrets)
+- Fallback-Strategie bei SAP-Ausfällen fehlt
+- Umfang von Audit, Backup und Monitoring im MVP vs. Folgephasen
+- Grenzen des MVPs: keine Sonderrabatte, keine Online-Akzeptanz von Angeboten
+- Risiken durch manuelle Prozesse (z.B. manuelle Uploads, Excel)
+
+## Quellenhinweise
+Das Kontextartefakt basiert auf dem Stakeholder-Transkript "T9999_chaos.txt" aus input/transcripts/, das eine tiefgehende Fach- und Prozessdiskussion dokumentiert.
+
+## Zusammenfassung
+Das Projekt steht vor erheblichen Herausforderungen hinsichtlich der Balance zwischen Zeitplan, Compliance, technischer Machbarkeit und Nutzeranforderungen. Ein klar definierter MVP-Scope inklusive bewusster Ausschlüsse und Risikoerfassung ist notwendig, um realistische Erwartungen zu setzen und zukünftige Erweiterungen planen zu können.

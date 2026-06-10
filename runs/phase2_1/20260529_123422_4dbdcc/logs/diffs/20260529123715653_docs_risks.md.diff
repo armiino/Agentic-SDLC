@@ -1,0 +1,55 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikodokument – Kundenportal (MVP)
++ 
++ ## 1. Fachliche Risiken
++ | ID | Risiko | Ursache / Kontext | Mögliche Auswirkung | Priorität* | Gegenmaßnahme / Klärungsbedarf |
++ |----|--------|-------------------|---------------------|-----------|-------------------------------|
++ | F1 | **Unklare Zieldefinition / Scope‑Creep** | Viele widersprüchliche Anforderungen (Mobile, SSO, Sonderrabatte, Support‑Ticket‑System) – im Transcript mehrfach genannt. | Projektverzögerungen, Budgetüberschreitung, MVP‑Ziel (8 Wochen) wird verfehlt. | Hoch | Scope‑Workshop, schriftliche Priorisierung, klare MVP‑Definition (wie im Kontext‑Artifact). |
++ | F2 | **Fehlende Rabatt‑Freigabe‑Prozesse** | Im MVP nur Standard‑Rabatte erlaubt, Sonderrabatte > 15 % nicht definiert (Transcript, Eva). | Finanzielle Fehlkalkulation, Fehlende Compliance, Kundenunzufriedenheit. | Mittel | Dokumentierter Freigabe‑Workflow für Phase‑2, klare Regelungen im MVP (keine Sonderrabatte). |
++ | F3 | **Support‑Prozess unklar** | Kein Ticket‑System, nur Kontakt‑Formular, trotzdem Support‑Anforderungen (David). | Verlust von Audit‑Nachvollziehbarkeit, Verzögerungen im Kundenservice, DSGVO‑Risiko (personenbezogene Daten per E‑Mail). | Mittel | Entscheidung über minimalen Ticket‑Workflow oder strukturierte E‑Mail‑Archivierung; Datenschutz‑Konzept für Support‑Daten. |
++ | F4 | **Mehrwährungs‑ und Pilot‑Kunden‑Unsicherheit** | Schweiz‑Pilot (CHF) vs. DACH (EUR) – nicht final entschieden (Transcript, Eva, Farid). | Fehlende Währungslogik im MVP, falsche Rechnungen, rechtliche Probleme. | Mittel | Entscheidung vor MVP‑Launch; ggf. MVP auf EUR beschränken und klar dokumentieren. |
++ | F5 | **Daten‑Retention / Löschkonzept unvollständig** | Grund‑Lösch‑/Auskunfts‑Prozess geplant, aber gesetzliche Aufbewahrungsfristen noch offen (Clara, Eva). | Rechtsverstöße, Bußgelder, Konflikt zwischen Aufbewahrungspflicht und Recht auf Vergessenwerden. | Hoch | Rechts‑Review, definierter Retention‑Plan, automatisierte Lösch‑/Archiv‑Funktion. |
++ 
++ ## 2. Technische Risiken
++ | ID | Risiko | Ursache / Kontext | Mögliche Auswirkung | Priorität* | Gegenmaßnahme / Klärungsbedarf |
++ |----|--------|-------------------|---------------------|-----------|-------------------------------|
++ | T1 | **SAP‑Verfügbarkeit als kritische Abhängigkeit** | Mehrere Stimmen, dass SAP‑Lesen für Angebote zwingend ist; kein Fallback‑Cache (Transcript, Ben). | Angebotserstellung blockiert → Umsatzverlust, MVP‑Verzögerung. | Hoch | SLA mit SAP, Cache‑Strategie für Produkt‑/Preisdaten, Grace‑Period‑Handling. |
++ | T2 | **API‑Gateway‑Wartezeit (6 Wochen)** | Farid & Ben erwähnen Warteliste; MVP ohne zentrales Gateway (Bewusste Ausnahme). | Sicherheits‑ und Rate‑Limiting‑Mechanismen fehlen, erhöhtes Angriffsrisiko. | Mittel | Direkt‑Endpoint‑Absicherung (OAuth, API‑Keys), späteres Gateway‑Upgrade. |
++ | T3 | **Fehlende Produktions‑Datenbank** | Vorgabe „keine neue DB“, Managed Service soll genutzt werden, aber kein konkretes Produkt gewählt. | Performance‑Probleme, Skalierbarkeits‑Lücken, Datenresidenz‑Unsicherheit. | Mittel | Auswahl eines EU‑Only Managed DB‑Services (z.B. PostgreSQL‑aaS), Dokumentation der Datenresidenz. |
++ | T4 | **Unsichere Logging‑Strategie** | Clara fordert keine personenbezogenen Daten in technischen Logs; Audit‑Logs nötig. | DSGVO‑Verstoß, mögliche Bußgelder, Verlust von forensischen Beweisen. | Hoch | Trennung von Application‑Log, Audit‑Log, Security‑Log; Anonymisierung personenbezogener Felder. |
++ | T5 | **Backup & Disaster Recovery unklar** | Bedarf genannt (Clara, Ben), aber keine Details (Kosten, RPO/RTO). | Datenverlust, Ausfallzeit > SLA, regulatorische Folgen. | Hoch | Basis‑Backup‑Service im Managed Hosting, definiertes RPO/RTO, Backup‑Tests. |
++ | T6 | **Secrets‑Management fehlt** | Farid erwähnt Secrets‑Management; kein Tool ausgewählt. | Leak von API‑Tokens, Datenbank‑Credentials → Sicherheitsvorfall. | Hoch | Einsatz von Vault‑Lösung oder Managed Secrets (z.B. AWS Secrets Manager) bereits im MVP. |
++ | T7 | **Rate‑Limiting & Missbrauchserkennung** | Ben/Clara erwähnen mögliche Massen‑Downloads, aber nur minimale Rate‑Limiting geplant. | Service‑DoS, Datenexfiltration, Compliance‑Risiko. | Mittel | Implementierung von Rate‑Limits pro IP/User; Monitoring für Anomalien. |
++ | T8 | **Test‑Umgebungen mit echten Kundendaten** | Ben/Clara warnen vor Nutzung von SAP‑Test‑System mit realen Daten. | DSGVO‑Verstoß in Entwicklungs‑/Testphase. | Hoch | Synthetische/Test‑Daten, Maskierung oder Anonymisierung, separate Test‑DB. |
++ 
++ ## 3. Compliance‑/Datenschutz‑Risiken
++ | ID | Risiko | Ursache / Kontext | Mögliche Auswirkung | Priorität* | Gegenmaßnahme / Klärungsbedarf |
++ |----|--------|-------------------|---------------------|-----------|-------------------------------|
++ | C1 | **DSGVO‑Konforme Authentifizierung** | Double‑Opt‑In gefordert (Clara, Anna); aber SSO‑Optionen nicht im MVP. | Unzureichende Einwilligung, Bußgelder. | Hoch | Implementierung von Double‑Opt‑In per E‑Mail, klare Consent‑Records. |
++ | C2 | **Datenresidenz (EU‑Only Hosting)** | Farid betont EU‑Only; Standard‑Provider repliziert global. | Verstoß gegen EU‑Datenschutz, mögliche Rechtsstreitigkeiten. | Hoch | Auswahl eines Provider‑Plans mit expliziter EU‑Region, vertragliche Data‑Processing‑Addendum (DPA). |
++ | C3 | **Lösch‑/Auskunfts‑Anfragen** | Clara fordert Löschkonzept; noch nicht definiert. | Verstöße gegen Art‑17 (Recht auf Löschung). | Hoch | Automatisierte Lösch‑Workflow, Dokumentation von Aufbewahrungspflichten vs. Löschrecht. |
++ | C4 | **Personenbezogene Daten in Logs** | Technische Logs könnten Namen, IDs enthalten (Clara). | DSGVO‑Verstoß, erhöhte Audit‑Risiken. | Hoch | Log‑Maskierung, Logging‑Policy, getrennte Audit‑Logs mit Zugriffskontrolle. |
++ | C5 | **Support‑Daten per E‑Mail** | Support‑Anfragen per E‑Mail enthalten Kundendaten (David). | Unverschlüsselte Übertragung, fehlende Audit‑Spur. | Mittel | Verschlüsselte Mail‑Gateway, Speicherung im System mit Audit‑Log, ggf. Ticket‑System. |
++ | C6 | **Mehrwährungs‑ und Länder‑Compliance** | Schweiz (nicht EU) bringt eigene Datenschutz‑Gesetze (Clara). | Unklare Rechtsgrundlage, mögliche DPA‑Verletzung. | Mittel | Separate Rechtsprüfung für Schweiz, ggf. separate Datenhaltung. |
++ 
++ ## 4. Widersprüche & Unsicherheiten (offene Punkte)
++ - **Mobile vs. Web‑First** – Entscheidung noch offen (Transcript). 
++ - **SSO / Identity Provider** – Erwähnt, aber im MVP ausgeschlossen. 
++ - **Kosten für EU‑Only Managed Service** – Noch nicht geschätzt (Farid). 
++ - **Finaler Pilotkunde (DE vs. CH)** – Beeinflusst Währung, Datenschutz, Hosting (Eva, Farid). 
++ - **Detail‑KPI‑Definition** – Noch nicht festgelegt (Anna). 
++ - **Backup‑Strategie (RPO/RTO)** – Noch zu spezifizieren (Clara, Ben). 
++ - **Retention‑ und Aufbewahrungspflichten vs. Löschrecht** – Konflikt noch zu lösen (Clara, Eva). 
++ - **Testdaten‑Strategie** – Wie sollen synthetische Daten bereitgestellt werden? (Ben, Clara). 
++ - **API‑Gateway‑Alternative für MVP** – Welche Sicherheits‑Mechanismen werden jetzt eingesetzt? (Farid, Ben). 
++ 
++ ## 5. Bewertung & Priorisierung (Kurz‑ Überblick)
++ - **Hoch**: Risiken, die rechtliche Konsequenzen, erhebliche Zeitverzögerungen oder totalen Funktionsausfall verursachen können (z. B. SAP‑Verfügbarkeit, DSGVO‑Compliance, Logging, Secrets‑Management).
++ - **Mittel**: Risiken, die das Nutzer‑Erlebnis oder Kosten betreffen, aber mit klaren Gegenmaßnahmen adressierbar sind (Rabatt‑Freigabe, Mehrwährung, Support‑Prozess, Rate‑Limiting).
++ - **Niedrig**: Risiken, die geplante Erweiterungen betreffen und im MVP bewusst ausgeschlossen sind (Mobile App, SSO, umfangreiche Monitoring‑Features).
++ 
++ ---
++ *Priorität ist relativ zum MVP‑Zeitplan (8 Wochen) und den bekannten regulatorischen Anforderungen.*
++ 

@@ -1,0 +1,67 @@
+﻿--- before/docs/requirements.md
++++ after/docs/requirements.md
+- 
++ # Requirements für das Kundenportal / Angebotsplattform
++ 
++ ## 1. Funktionale Anforderungen
++ 
++ ### 1.1 Kundenportal
++ - Web-basiertes Kundenportal als MVP, responsive Design für Web zuerst, mobile native App auf später verschoben
++ - Anzeige von Bestellungen und Download von Rechnungen für Kunden
++ - Angebotserstellung mit direkter SAP-Anbindung (lesend) zur Nutzung von Produktdaten, Preisen und Rabattlogik
++ - Login über E-Mail und Passwort mit Double-Opt-In zur Einhaltung der DSGVO
++ - Rollenmodell mindestens mit den Rollen: Admin, Sales, Kunde, optional Manager und Support
++ - Einschränkung im MVP: keine manuellen Sonderrabatte (z.B. Rabatte über Standard-Satz sind nicht erlaubt)
++ - Kontaktformular für Support-Anfragen (kein Ticketsystem und keine persistente Speicherung im MVP)
++ 
++ ### 1.2 Integrations-API
++ - Bereitstellung eines API Layers für die Integration mit SAP und ggf. anderen Systemen
++ - Absicherung der API bevorzugt via OAuth (optional, noch nicht final entschieden)
++ - Unterstützung von Paging und Download-Limits bei Rechnungen zur Vermeidung von Missbrauch
++ 
++ ## 2. Nicht-funktionale Anforderungen
++ 
++ ### 2.1 Sicherheit & Compliance
++ - Umsetzung eines Security Reviews, mindestens eine minimale Audit-Trail-Funktionalität zur Nachvollziehbarkeit von Änderungen an Angeboten
++ - DSGVO-konformes Datenhandling inklusive Double-Opt-In, Löschkonzept und Auftragsverarbeitungsverträgen
++ - EU-only Hosting bzw. Nachweis der Datenresidenz für alle Kundendaten
++ - Backup- und Disaster-Recovery-Verfahren auch im MVP
++ - Keine personenbezogenen Daten in technischen Logs (Unterscheidung Audit-Logs und Anwendungs-Logs)
++ - Einhaltung der handelsrechtlichen Aufbewahrungspflichten unter Berücksichtigung des Rechts auf Löschung
++ 
++ ### 2.2 Performance & Skalierbarkeit
++ - Skalierbarkeit für mindestens 200 bis ggf. 20000 Nutzer, ohne Overengineering im MVP
++ - Schutz gegen Missbrauch durch Rate Limiting und Monitoring (API Gateway nur verfügbar in späteren Phasen wegen 6-Wochen-Warteliste)
++ 
++ ### 2.3 Betrieb
++ - Nutzung von Managed Services, kein eigener Datenbankserver
++ - Bereitstellung von Dev-, Test- und Produktionsumgebungen mit geeigneter Datenpseudonymisierung für Testsysteme
++ - Secrets Management zur Absicherung von Credentials
++ 
++ ## 3. Einschränkungen und Constraints
++ - MVP-Zeitfenster von 8 Wochen begrenzt Funktionsumfang und Komplexität
++ - Kein Ticketsystem im MVP, nur Kontaktformular und E-Mail-basierte Supportanfragen
++ - Keine manuellen Sonderrabatte im MVP erlaubt
++ - SAP-Integration ist lesend, kein Schreibzugriff im MVP
++ - API Gateway ist für MVP nicht verfügbar (Warteliste 6 Wochen)
++ - Keine konkreten Cloud-Anbieter oder Identity Provider sind im MVP verbindlich ausgewählt
++ 
++ ## 4. Annahmen und offene Punkte
++ - Pilotkunde ist entweder Müller AG (Schweiz) oder Hansa GmbH (Deutschland); Entscheidung offen
++ - SSO-Anbieter (z.B. Azure AD, Google) noch nicht final entschieden
++ - Umgang mit SAP-Wartungsfenstern und Fallback-Strategien unklar
++ - Kosten für EU-only Hosting sind noch unbekannt, grobe Schätzung bis Freitag erforderlich
++ - Umfang und genaue Umsetzung des Freigabeprozesses für Rabatte unklar; Freigabe im MVP nicht enthalten
++ - Support-Prozess und Persistenz der Supportanfragen außerhalb des MVP unklar, Risiko besteht
++ - Mehrwährungsfähigkeit und Internationalisierung sind für zukünftige Phasen vorgesehen
++ - Preisgültigkeit und Warnsysteme bei verzögerten SAP-Daten noch offen
++ - Entscheidung zu Online-Annahme von Angeboten und deren rechtliche Absicherung steht aus
++ - Datenklassifikation und Retention Policies noch zu definieren
++ 
++ ## 5. Rückverfolgbarkeit
++ Die Anforderungen sind direkt aus der Stakeholder-Diskussion im Transkript input/transcripts/T9999_chaos.txt ableitbar.
++ Kontextzusammenfassung in runs/phase2_1/20260529_131036_dc98b8/state/context.md dokumentiert.
++ 
++ ---
++ 
++ Diese Requirements sind ein initialer Entwurf (intent=initial_draft). Sie enthalten eine pragmatische Auswahl für ein 8-Wochen-MVP, markieren bewusst offene Fragen und Risiken, um eine klare Projektgrundlage zu schaffen.

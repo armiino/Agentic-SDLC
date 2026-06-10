@@ -1,0 +1,72 @@
+# Projektkontext – Kundenportal (MVP)
+
+## 1. Zielsetzung (aus Stakeholder‑Aussagen)
+- **Primäres Ziel:** Schnellere Angebotserstellung und -versendung für den Vertrieb (Conversion Rate = Angebot → Bestellung) [Anna].
+- **Sekundäre Ziele:** Rechnung‑ und Bestellungs‑Einblick für Kunden, einfache Authentifizierung, Grund‑Reporting (KPIs) und Einhaltung von DSGVO‑Anforderungen.
+- **Zeitplan:** MVP in **8 Wochen** (Vertrag, Vorstandspräsentation bis Freitag).
+
+## 2. Rollen & Stakeholder
+| Rolle | Beteiligte | Aufgaben / Erwartungen |
+|-------|------------|------------------------|
+| **Produkt‑Owner / Business** | Anna (Projektleitung) | Priorisiert Funktionen, definiert MVP‑Umfang, trägt Risiko‑Kommunikation. |
+| **Entwicklung** | Ben (Technik), Farid (IT‑Operations) | Architektur, API‑Layer, Hosting, Security, CI/CD, Backup. |
+| **Datenschutz / Compliance** | Clara | DSGVO (Double‑Opt‑In, Lösch‑/Auskunfts‑Konzept, Audit‑Logs, keine personenbezogenen Daten in technischen Logs). |
+| **Finanzen** | Eva | Rabatt‑Freigabe‑Prozess, Mehrwährungs‑Support (EUR, CHF, später USD), rechtliche Aufbewahrungspflichten. |
+| **Support** | David | Kontakt‑Formular, Support‑Zugriff auf Kundendaten, Ticket‑Risiken. |
+| **IT‑Operations** | Farid | EU‑only Managed Hosting, Monitoring, Secrets‑Management, Backup/DR. |
+
+## 3. Fachliche Kern‑Themen (aus den Dialogen)
+- **Kundenportal** (Web‑first, Mobile optional) – Login, Rollen, Dashboard.
+- **Angebotserstellung** – Daten aus SAP (Produkt, Preis, Rabatt), **ohne Sonderrabatte** im MVP (Freigabe nur für Standard‑Rabatte) [Ben, Eva].
+- **Rechnungs‑/Bestellungs‑Ansicht** – Download von PDFs, rechtliche Fußnoten, DSGVO‑Hinweise.
+- **SAP‑Integration** – Lese‑Zugriff (API‑Layer) zwingend, Schreib‑Zugriff (Bestell‑Einspielung) nur später.
+- **Rollen‑ und Berechtigungskonzept** – Admin, Sales, Kunde (evtl. Manager, Support). Minimal‑Audit‑Trail pro Angebot.
+- **DSGVO‑Compliance** – Double‑Opt‑In, Lösch‑/Auskunfts‑Prozess, Datenresidenz (EU‑only), keine personenbezogenen Daten in System‑Logs.
+- **KPI‑Tracking** – Conversion‑Rate, Zeit bis Angebot (nicht personenbezogen).
+- **Backup & Disaster Recovery** – Pflicht für Kundendaten.
+- **Hosting & Infrastruktur** – Managed Service, EU‑Region, API‑Gateway (Warteliste 6 Wochen → MVP‑Ausnahme).
+- **Monitoring & Logging** – Trennung von Application‑Log, Audit‑Log, Security‑Log, Aufbewahrungsfristen.
+- **Internationalisierung** – Deutsch + Englisch im MVP; weitere Sprachen/Kulturen später.
+- **Mehrwährung** – EUR (Standard), CHF (Pilot) im MVP‑Scope; USD später.
+- **PDF‑Template‑Management** – Versionierung, rechtlich verbindlich, revisionssicher.
+- **Support‑Prozess** – Kontaktformular (kein Ticket‑System), Daten‑Zuordnung zu Kundenkonto, Risiko‑Hinweis.
+
+## 4. Explizite Konflikte & Unsicherheiten (Markierung)
+- **Mobile vs. Web‑First** – Entscheidung offen, MVP fokussiert auf Web.
+- **SSO / Identity Provider** – Azure AD / Google vorgeschlagen, aber nicht im MVP (nur E‑Mail + Passwort + Double‑Opt‑In).
+- **Backup‑Kosten vs. EU‑Only Hosting** – Kosten noch nicht quantifiziert (Risiko = Budget‑Überschreitung). 
+- **API‑Gateway‑Verfügbarkeit** – 6‑Wochen‑Wartezeit; MVP verzichtet auf zentralen Gateway (Alternative: direkte Service‑Endpoints) → dokumentierte bewusste Einschränkung.
+- **SAP‑Verfügbarkeit** – kritische Abhängigkeit, kein Fallback‑Cache für rabattierte Kundendaten (Risiko = Angebots‑Fehler). 
+- **Rabatt‑Freigabe** – Nur Standard‑Rabatte im MVP, Sonderrabatte > 15 % erst nach Phase 2 (Risiko = Finanzielles Fehl‑Pricing). 
+- **Support‑Ticket‑System** – Nicht Teil des MVP, Support‑Kontakt nur per E‑Mail (Risiko = Verlust von Audit‑Nachvollziehbarkeit). 
+- **Daten‑Retention / Löschkonzept** – Grund‑Lösch‑/Auskunfts‑Prozess definiert, aber gesetzliche Aufbewahrungsfristen (Handelsrecht) noch offen. 
+- **Mehrwährungs‑Support** – CHF als Pilot‑Währung, weitere Währungen später; Im MVP nur EUR‑Rechnungen (Risiko = Verpasster Schweizer Pilot). 
+- **Umgebungen (Dev/Test/Prod)** – Testdaten dürfen keine echten Kundendaten enthalten – aktuell unklare Daten‑Maskierungslösung (Risiko = DSGVO‑Verstoß). 
+- **Rate‑Limiting & Missbrauchserkennung** – Minimal‑Rate‑Limiting geplant (API‑Gateway), erweiterte Missbrauchserkennung später. 
+
+## 5. Offene Fragen / Entscheidungen (Zu klären)
+1. **Endgültiger Pilotkunde** (Deutsch vs. Schweiz) – beeinflusst Währung, Datenschutz und Hosting‑Vertrag. 
+2. **Kosten‑Schätzung für EU‑Only Managed Service** – dringlich für Vorstand bis Freitag. 
+3. **Finale Rollen‑ und Berechtigungsmatrix** (welche Rollen sehen welche Daten – insbesondere Support). 
+4. **Detail‑KPI‑Definition** (Messgröße, Messinstrument). 
+5. **Backup‑Strategie (RPO/RTO)** und Verantwortlichkeiten. 
+6. **Vertragliche Aufbewahrungspflichten** (Jahre) vs. Löschrecht. 
+7. **Auswahl des API‑Gateways** bzw. **Alternativ‑Implementierung für MVP**. 
+8. **Testdaten‑Strategie (synthetisch vs. pseudonymisiert)**. 
+
+## 6. Bewusste Aus‑ und Einschränkungen im MVP (Risiken dokumentiert)
+- **Keine Mobile‑App** – Web‑Portal nur.
+- **Kein SSO / Azure AD** – einfache E‑Mail‑Login mit Double‑Opt‑In.
+- **Kein Sonderrabatt‑Freigabe‑Workflow** – nur Standard‑Rabatte.
+- **Kein Ticket‑System für Support** – Kontakt‑Formular, ggf. E‑Mail‑Weiterleitung.
+- **Kein zentrales API‑Gateway** – direkte Service‑Endpoints, später Austausch.
+- **Keine vollständige Mehrwährungs‑Logik** – EUR‑Standard, CHF optional für Pilot, USD später.
+- **Kein umfangreiches Monitoring/Alerting** – Grund‑Health‑Checks, Audit‑Logs minimal.
+- **Kein vollständiger Backup‑/DR‑Plan** – Basis‑Backup über Managed Service, Details später.
+- **Kein vollständiges Data‑Retention‑/Legal‑Arch‑Konzept** – Grund‑Ansatz definiert, Detailarbeit später.
+
+## 7. Quellen (Belegnachweis)
+- Transkript `input/transcripts/T9999_chaos.txt` (alle Aussagen von Anna, Ben, Clara, David, Eva, Farid).
+
+---
+*Dieses Dokument fasst den derzeitigen, aus den Stakeholder‑Transkripten ableitbaren Projektkontext zusammen. Alle offenen Punkte und bewussten Einschränkungen sind explizit gekennzeichnet, um spätere Fehlannahmen zu vermeiden.*

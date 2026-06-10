@@ -1,0 +1,151 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikoanalyse zum Kundenportal & Angebotsplattform Projekt
++ 
++ ## Einführung
++ Dieses Dokument fasst die wesentlichen Risiken zusammen, die aus dem Projektkontext, den Anforderungen und den Stakeholder-Diskussionen abgeleitet wurden. Ziel ist es, fachliche, technische, Compliance- und Datenschutzrisiken sowie Widersprüche und Unsicherheiten transparent zu machen und erste Gegenmaßnahmen oder Klärungsbedarfe aufzuzeigen.
++ 
++ ---
++ 
++ ## 1. Fachliche Risiken
++ 
++ ### 1.1 Unklare Ziel- und Scope-Definition
++ - Der endgültige Pilotkunde (DACH oder Schweiz) und damit verbundene länderspezifische Datenschutz- und Währungsanforderungen sind noch unklar.
++ - Unterschiedliche Stakeholder erwarten unterschiedliche Hauptfunktionen (Angebotserstellung, Rechnungsdownload, Support, Push Notifications), was den Scope gefährdet.
++ - Widersprüchliche Anforderungen an Rollen und Berechtigungen, vor allem im Umgang mit Sonderkonditionen und Supportzugriffen.
++ 
++ **Auswirkungen:** Verzögerungen bei der Feature-Definition, Scope Creep, Nacharbeit und erhöhter Abstimmungsaufwand.
++ 
++ **Gegenmaßnahmen:** Klare Scope-Definition und Abgrenzung MVP vs. Folgephasen etablieren; offene Fragen priorisiert klären.
++ 
++ ### 1.2 Fehlender Supportprozess im MVP
++ - Support wird im MVP nur über ein Kontaktformular ohne persistentes Ticketsystem realisiert.
++ 
++ **Auswirkungen:** Erhöhter manueller Aufwand, schlechte Nachvollziehbarkeit von Supportanfragen, unzufriedene Kunden und Support-Mitarbeiter.
++ 
++ **Gegenmaßnahmen:** Bewusste Einschränkung kommunizieren, Einführung eines Ticketsystems in Folgephasen planen.
++ 
++ ### 1.3 Unklare Rabattfreigaben im MVP
++ - Sonderrabatte sind im MVP nicht erlaubt, weil Freigabeprozesse fehlen oder nicht definiert sind.
++ 
++ **Auswirkungen:** Finanzielle Risiken durch unkontrollierte Rabatte in Folgephasen oder bei Umgehung des Systems.
++ 
++ **Gegenmaßnahmen:** Klare Regeln im MVP definieren und Umsetzung von Freigabeprozessen in Folgeprojekt sichern.
++ 
++ ---
++ 
++ ## 2. Technische Risiken
++ 
++ ### 2.1 Zeitlicher Engpass für MVP-Umsetzung
++ - Umfangreiche Anforderungen stehen einem 8-Wochen-Zeitfenster gegenüber.
++ - Security Review dauert im Plan 6 Wochen und passt kaum in den MVP-Zeitrahmen.
++ 
++ **Auswirkungen:** Zeitdruck kann zu Kompromissen bei Sicherheit und Qualität führen.
++ 
++ **Gegenmaßnahmen:** MVP-Umfang straffen, Security Review früh starten, ggf. Managed Services und Frameworks nutzen.
++ 
++ ### 2.2 Fehlende API-Gateway-Verfügbarkeit
++ - Zentrales API Gateway hat eine Warteliste von 6 Wochen.
++ 
++ **Auswirkungen:** Verzögerungen bei Integration und API-Sicherheit.
++ 
++ **Gegenmaßnahmen:** Alternative temporäre API-Sicherheitsmechanismen einplanen, Nutzung Managed Services prüfen.
++ 
++ ### 2.3 Unsichere SAP-Integration
++ - SAP-Daten sind nicht in Echtzeit aktuell, Preise und Rabatte können verzögert aktualisiert werden.
++ - Schreibzugriffe auf SAP für Aufträge noch unklar.
++ 
++ **Auswirkungen:** Risiko falscher oder veralteter Angebote, Supportaufwand steigt.
++ 
++ **Gegenmaßnahmen:** Preisgültigkeiten überprüfen, Warnhinweise im System, Klärung SAP-Integration vor Release.
++ 
++ ### 2.4 Fehlendes Rollen- und Berechtigungskonzept
++ - Widersprechende Anforderungen an Zugriffsrechte, z.B. Support darf keine Rabattdetails sehen.
++ 
++ **Auswirkungen:** Compliance-Risiken, mangelhafte Sicherheit.
++ 
++ **Gegenmaßnahmen:** Rollenmodell klar definieren, Rechte streng trennen und auditieren.
++ 
++ ### 2.5 Datenschutz und Testdaten
++ - Verwendung von echten Kundendaten in Testumgebungen (SAP-Testsystem) ohne Klarheit über Pseudonymisierung.
++ 
++ **Auswirkungen:** Datenschutzverstöße, Projektverzögerungen.
++ 
++ **Gegenmaßnahmen:** Klare Richtlinien für Testdaten, evtl. synthetische Daten nutzen.
++ 
++ ### 2.6 Fehlendes Backup und Disaster Recovery Konzept im MVP
++ - Backup ist als Pflicht definiert, aber Umsetzung unklar.
++ 
++ **Auswirkungen:** Gefahr von Datenverlust, Ausfallzeiten.
++ 
++ **Gegenmaßnahmen:** Backup-Lösung früh implementieren, Managed Services evaluieren.
++ 
++ ### 2.7 Monitoring und Logging Differenzierung
++ - Es müssen unterschiedliche Arten von Logs (Anwendungs-, Audit-, Security-Logs) mit verschiedenen Löschfristen berücksichtigt werden.
++ 
++ **Auswirkungen:** Fehlende Logs können zu Compliance-Verstößen führen; zu viele Logs können Datenschutzprobleme verursachen.
++ 
++ **Gegenmaßnahmen:** Log-Strategie entwickeln, technische Umsetzung mit Datenschutz-Team abstimmen.
++ 
++ ### 2.8 Rate Limiting und Missbrauchsschutz unsicher
++ - API-Rate Limiting und Missbrauchserkennung stehen wegen fehlendem Gateway und Zeitmangel auf der Kippe.
++ 
++ **Auswirkungen:** Risiko von Systemüberlastungen und Missbrauch.
++ 
++ **Gegenmaßnahmen:** Temporäre Schutzmechanismen planen, Priorisierung der Gateway-Nutzung.
++ 
++ ---
++ 
++ ## 3. Compliance- und Datenschutzrisiken
++ 
++ ### 3.1 DSGVO-Konformität unvollständig
++ - Anforderungen an Double-Opt-In, Löschkonzepte und Auftragsverarbeitungsvereinbarungen sind bekannt, aber ihre Umsetzung ist noch unklar.
++ 
++ **Auswirkungen:** Bußgelder, Reputationsschäden.
++ 
++ **Gegenmaßnahmen:** Datenschutzkonzept früh finalisieren und in Prozesse integrieren.
++ 
++ ### 3.2 Hosting im EU-Raum
++ - EU-Only Hosting ist gefordert, „DSGVO-konform“ ist aber kein sicheres Äquivalent.
++ 
++ **Auswirkungen:** Rechtliche Risiken und Compliance-Verstöße.
++ 
++ **Gegenmaßnahmen:** Nachweisbare Datenresidenz fordern, Hosting-Anbieter detailliert prüfen.
++ 
++ ### 3.3 Konflikt zwischen Aufbewahrungspflichten und Löschrechten
++ - Handelsrechtliche Aufbewahrungspflichten kollidieren mit Datenschutzrechten auf Löschung.
++ 
++ **Auswirkungen:** Rechtliche Unsicherheiten und technische Komplexität.
++ 
++ **Gegenmaßnahmen:** Datenklassifikation und Retentionsregeln etablieren, juristische Beratung einholen.
++ 
++ ### 3.4 Supportprozess und personenbezogene Daten
++ - Supportanfragen per E-Mail werden ohne strukturierte Persistenz bearbeitet.
++ 
++ **Auswirkungen:** Datenschutzrisiken, Mangel an Transparenz und Nachvollziehbarkeit.
++ 
++ **Gegenmaßnahmen:** Bewusste Einschränkung kommunizieren, mittelfristig strukturierten Supportprozess etablieren.
++ 
++ ---
++ 
++ ## 4. Widersprüche und Unsicherheiten
++ 
++ - Entscheiden über MVP-Umfang: Funktionalitäten wie Rabattfreigaben, Support-Ticketsystem, SSO und API Gateway sind bisher nur teilweise oder gar nicht umgesetzt.
++ - Anforderungen an Sicherheit, Skalierbarkeit und Performance stehen im Spannungsfeld zu Zeit- und Budgetrestriktionen.
++ - Unterschiedliche Kunden- und rechtliche Anforderungen (DACH vs. Schweiz vs. EU vs. USA) schränken Scope und Architektur ein.
++ - Unklare Entscheidungen zu Identity- und Access-Management erhöhen Risiko von spätem Mehraufwand.
++ 
++ ---
++ 
++ ## 5. Zusammenfassung und Empfehlungen
++ 
++ - Priorisierung und klare Abgrenzung des MVP-Scopes sind essenziell, um Liefertermine einzuhalten und Risiken zu minimieren.
++ - Datenschutz und Compliance müssen von Anfang an fest eingeplant und stringent umgesetzt werden.
++ - Technische Abhängigkeiten (SAP, API Gateway) sind potenzielle Blocker, alternative Lösungen sollten früh geprüft werden.
++ - Finanzielle und organisatorische Risiken (z.B. fehlende Rabattfreigaben, Supportprozesse) müssen transparent kommuniziert und in Folgephasen adressiert werden.
++ - Regelmäßige Reviews und enge Abstimmung zwischen Fach- und Technikteams unterstützen die Identifikation und Steuerung von Risiken.
++ 
++ ---
++ 
++ *Dieses Risikoartefakt wurde automatisch aus Kontext und Anforderungen unter Einbeziehung des Transkripts erstellt.*

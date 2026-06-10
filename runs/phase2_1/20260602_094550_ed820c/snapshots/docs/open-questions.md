@@ -1,0 +1,60 @@
+# Offene Fragen und Klärungsbedarfe (Projekt "Kundenportal" – MVP)
+
+## 1. Fachliche Fragen
+- **Rabatt‑Freigabe‑Prozess**: Welche genauen Schwellenwerte (15 %, 30 % etc.) gelten für Freigaben und welche Rollen sind dafür verantwortlich? (Stakeholder: Eva, Ben, Clara)
+- **Support‑Workflow**: Wie soll der Support auf Kundendaten zugreifen können, ohne ein Ticket‑System zu implementieren? Welche Datenschutz‑ und Auditing‑Anforderungen gelten? (Stakeholder: David, Clara)
+- **Mehr‑Währungs‑Unterstützung**: Ist CHF für den Pilotkunden zwingend erforderlich? Welche weiteren Währungen sollen später unterstützt werden? (Stakeholder: Eva, Farid)
+- **Online‑Angebots‑Akzeptanz**: Soll das MVP eine rechtlich verbindliche Online‑Annahme von Angeboten ermöglichen? Wenn ja, welche Nachweisanforderungen (Zeitstempel, AGB‑Akzeptanz) gelten? (Stakeholder: Anna, Eva, Clara)
+- **Backup‑ und Disaster‑Recovery‑Umfang**: Welche Wiederherstellungszeit (RTO) und -punkt (RPO) sind für das MVP akzeptabel? (Stakeholder: Farid)
+- **Retention‑ und Löschkonzept**: Wie lassen sich gesetzliche Aufbewahrungspflichten (z. B. Handelsrecht) mit dem DSGVO‑Recht auf Löschung vereinbaren? (Stakeholder: Clara, Eva)
+- **Test‑Daten‑Strategie**: Wie sollen echte SAP‑Daten in Entwicklungs‑ und Testumgebungen pseudonymisiert bzw. synthetisch ersetzt werden? (Stakeholder: Ben, Farid)
+- **Kosten‑Schätzung EU‑Only‑Hosting**: Welche Anbieter und Preismodelle kommen in Frage, und wie hoch ist das zu erwartende Budget? (Stakeholder: Farid, Anna)
+- **Rollen‑ und Berechtigungskonflikt Support vs. Sales**: Welche Daten darf Support einsehen (z. B. Angebotsdetails, Rabatte) und welche nicht? (Stakeholder: David, Clara, Eva)
+- **API‑Gateway‑Alternative**: Welcher Managed‑API‑Service kann kurzfristig als Ersatz für das zentrale Gateway dienen? (Stakeholder: Ben, Farid)
+
+## 2. Technische Fragen
+- **SAP‑Verfügbarkeit**: Wie soll das System bei SAP‑Ausfällen reagieren (Read‑Only‑Mode, Fehlermeldung, Cache)? (Stakeholder: Ben)
+- **Cache‑Strategie**: Ist ein Cache für Produkt‑/Preisdaten zulässig, und wie kann er DSGVO‑konform gestaltet werden? (Stakeholder: Ben, Clara)
+- **Rate‑Limiting & Missbrauchserkennung**: Welche konkreten Limits (Requests/min/User) und welche Monitoring‑Alarme sollen implementiert werden? (Stakeholder: Ben, Farid)
+- **Secrets‑Management**: Welches Tool (z. B. HashiCorp Vault) soll für die Verwaltung von SAP‑ und API‑Credentials verwendet werden? (Stakeholder: Farid)
+- **Backup‑Mechanismus**: Welche Snap‑Shot‑Frequenz und Aufbewahrungsdauer sind technisch realisierbar im Managed Service? (Stakeholder: Farid)
+- **Monitoring‑Architektur**: Wie werden Audit‑Logs von technischen Logs getrennt und wo werden sie gespeichert? (Stakeholder: Clara, Farid)
+- **Internationalisierung**: Wie wird die Sprach‑ und Länderkonfiguration für UI‑Texte, E‑Mails und PDFs technisch umgesetzt? (Stakeholder: Anna)
+- **PDF‑Template‑Versionierung**: Wie wird die Versionierung von Angebots‑Templates technisch realisiert, um Revisionen nachvollziehen zu können? (Stakeholder: Eva)
+- **API‑Authentifizierung**: Welches Auth‑Verfahren (Basic Auth, API‑Key, OAuth2) wird im MVP verwendet, bis ein vollständiges OAuth‑Setup verfügbar ist? (Stakeholder: Ben)
+
+## 3. Widersprüche, die geklärt werden müssen
+- **Umfang vs. Zeitplan**: Das geforderte Funktionsset (Login, Angebote, Rechnungen, Rollen, Audit, Backup, EU‑Hosting) übersteigt den 8‑Wochen‑MVP‑Plan, während gleichzeitig bewusste Ausschlüsse (keine Sonderrabatte, kein Ticket‑System) definiert wurden – Wie wird die Priorisierung konkret entschieden?
+- **SSO / OAuth**: Wird im MVP überhaupt eine OAuth‑Lösung gefordert, obwohl sie als nicht realistisch angegeben wird?
+- **Kosten vs. EU‑Only‑Hosting**: EU‑Only‑Hosting ist Pflicht, aber die Kosten sind unklar – Wie wird das Budget‑Risiko gemanagt?
+- **Support‑Zugriff vs. Datenschutz**: Support soll Kundendaten einsehen können, darf aber keine Preis‑ oder Rabatt‑Details sehen – Wie lässt sich das Rollen‑Modell ohne Konflikte umsetzen?
+- **Rabatt‑Grenze vs. Finanz‑Anforderungen**: Finanz‑Stakeholder verlangt Freigabe‑Prozesse für Rabatte, während das MVP Sonderrabatte komplett ausschließt – Wie wird die Konsistenz zwischen Business‑ und Finanz‑Bedürfnissen gewährleistet?
+- **Backup‑Umfang vs. MVP‑Definition**: Basis‑Backup ist geplant, aber keine klare Definition von RTO/RPO – Wie definiert man ein akzeptables Minimal‑Backup für das MVP?
+
+## 4. Fehlende Informationen
+- **Finale Rollen‑Matrix**: Detaillierte Rechte für Admin, Sales, Kunde, Support, Manager etc. fehlen noch.
+- **Genaues KPI‑Set**: Welche Kennzahlen (Conversion‑Rate, Zeit‑bis‑Angebot, Nutzer‑Zahl) sollen im MVP gemessen werden und wie?
+- **SAP‑Schreibzugriff**: Ob und wann ein Schreibzugriff auf SAP für Bestellungs‑Synchronisation erforderlich wird.
+- **Hosting‑Provider‑Entscheidung**: Welcher Managed Service Provider wird letztlich verwendet?
+- **Kosten‑Schätzung für MVP**: Gesamtkosten‑Aufstellung inkl. Hosting, Services, Entwicklung, Lizenz.
+- **Legal‑Prüfung Aufbewahrungspflichten**: Welche konkreten gesetzlichen Aufbewahrungsfristen gelten für Angebote und Rechnungen?
+
+## 5. Mögliche Ansprechpartner / Rollen
+| Frage | Möglicher Ansprechpartner |
+|-------|---------------------------|
+| Rabatt‑Freigabe‑Prozess | Eva (Finance) |
+| Support‑Workflow & Datenschutz | David (Support), Clara (Compliance) |
+| Mehr‑Währungs‑Anforderungen | Eva (Finance) |
+| Online‑Angebots‑Akzeptanz | Anna (Product Owner) |
+| Backup‑ und DR‑Umfang | Farid (IT Operations) |
+| Retention‑ & Löschkonzept | Clara (Compliance) |
+| Test‑Daten‑Strategie | Ben (Technical Lead) |
+| Hosting‑Kosten‑Schätzung | Farid (IT Operations) |
+| API‑Gateway‑Alternative | Ben (Technical Lead) |
+| Rollen‑ und Berechtigungskonflikt | Clara (Compliance), David (Support) |
+| KPI‑Definition | Anna (Product Owner) |
+| SAP‑Schreibzugriff | Ben (Technical Lead) |
+| Legal‑Aufbewahrungspflichten | (nicht explizit im Transkript, ggf. Legal‑Team) |
+
+---
+*Evidenz: Alle offenen Punkte leiten sich aus den Stakeholder‑Aussagen im Transkript `input/transcripts/T9999_chaos.txt` sowie den abgeleiteten Artefakten `runs/phase2_1/20260602_094550_ed820c/state/context.md`, `docs/requirements.md`, `docs/risks.md` und `docs/architecture.md`.*

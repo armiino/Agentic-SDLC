@@ -1,0 +1,56 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikodokument – Projekt „Kundenportal“ (MVP)
++ 
++ ## 1. Fachliche Risiken
++ - **Unklare Rabatt‑Freigabe‑Prozesse**: Sonderrabatte > 15 % sind im MVP nicht erlaubt, jedoch werden im Dialog mehrfach Anforderungen an Freigaben (z. B. Manager‑Freigabe ab 15 %, Finance‑Freigabe ab 30 %) genannt. Das Fehlen eines definierten Freigabe‑Workflows kann zu falschen Angeboten und finanziellen Verlusten führen.
++ - **Support‑Prozess**: Es gibt nur ein Kontaktformular, kein Ticket‑System. Ohne strukturierten Prozess ist die Nachverfolgbarkeit von Kundenanfragen und die Einhaltung von Datenschutz‑ und SLA‑Anforderungen unsicher.
++ - **Mehr‑Währungs‑ und Internationalisierungs‑Unsicherheit**: Pilot‑Kunde (Schweiz) vs. DACH‑Region ist nicht abschließend geklärt. Unterschiedliche Währungen (EUR, CHF, später USD) und rechtliche Rahmenbedingungen (Schweiz ≠ EU) können zu Preis‑ und Compliance‑Problemen führen.
++ - **Produkt‑ und Preis‑Aktualität**: SAP‑Preisdaten werden nachts aktualisiert, während Sales sofort Angebote erstellen muss. Ohne Echtzeit‑Synchronisation kann es zu falschen Angeboten kommen.
++ - **Angebots‑Akzeptanz & Vertragsabschluss**: Unklar, ob Online‑Akzeptanz Teil des MVP ist. Fehlende Zustimmung‑Nachweise können rechtliche Risiken erzeugen.
++ 
++ ## 2. Technische Risiken
++ - **SAP‑Verfügbarkeit**: Das System hängt von einer stabilen SAP‑Schnittstelle ab. Ausfälle führen zu nicht‑aktuellen Angeboten und blockieren die Angebotserstellung (kritische Abhängigkeit). 
++ - **Fehlendes API‑Gateway**: Der zentrale API‑Gateway‑Team hat eine 6‑Wochen‑Warteliste. Ohne Gateway fehlen Rate‑Limiting, zentrale Authentifizierung und einheitliches Monitoring – erhöhtes Risiko von Überlastung und Sicherheitslücken.
++ - **Cache‑Strategie**: Ein Cache für Preis‑ und Rabattdaten wurde diskutiert, aber nicht umgesetzt, weil er DSGVO‑Risiken birgt. Das Fehlen eines Caches kann Performance‑Probleme bei hoher Nutzerzahl verursachen.
++ - **Backup & Disaster Recovery**: Nur Basis‑Backup ist geplant. Unklare Wiederherstellungszeit (RTO) und -umfang können bei Datenverlust kritische Geschäftsunterbrechungen erzeugen.
++ - **Scaling & Performance**: Erwartete Nutzerzahlen reichen von 200 bis 20 000. Ohne klare Skalierungs‑Architektur (z. B. Auto‑Scaling, Load‑Balancing) besteht das Risiko von Performance‑Engpässen.
++ - **Secrets‑Management & Logging**: Fehlende Trennung von Audit‑Logs und technischen Logs kann zu versehentlicher Speicherung personenbezogener Daten in Log‑Dateien führen.
++ 
++ ## 3. Compliance‑ und Datenschutz‑Risiken
++ - **DSGVO‑Konformität**: Double‑Opt‑In, Löschkonzept, Auftrags‑Verarbeitungs‑Verträge und Daten‑Minimierung sind gefordert, jedoch nicht vollständig spezifiziert. Unklare Implementierung kann zu Bußgeldern führen.
++ - **Daten‑Residency**: EU‑Only‑Hosting ist nötig, Kosten‑ und Anbieter‑Auswahl sind jedoch offen. Ohne Nachweis über Daten‑Residenz kann das Projekt DSGVO‑Verstöße riskieren.
++ - **Logging‑ und Audit‑Requirements**: Technische Logs dürfen keine personenbezogenen Daten enthalten, aber ein umfassender Audit‑Trail ist erforderlich. Fehlkonfiguration kann zu Verstößen gegen Art. 30 DSGVO führen.
++ - **Retention & Löschkonzept**: Gesetzliche Aufbewahrungspflichten (z. B. Handelsrecht) kollidieren mit dem Recht auf Löschung. Ohne klaren Retention‑Plan können sowohl rechtliche als auch Datenschutz‑Risiken entstehen.
++ - **Test‑Umgebungen**: Nutzung echter SAP‑Daten in Dev/Test birgt das Risiko von unabsichtlicher Datenexposition.
++ 
++ ## 4. Widersprüche und Unsicherheiten
++ - **Umfang vs. 8‑Wochen‑Zeitplan**: Der geforderte Funktionsumfang (Login, Angebote, Rechnungen, Rollen, Audit, Backup, EU‑Hosting) übersteigt das geplante MVP‑Scope. Bewusste Einschränkungen (z. B. keine Sonderrabatte, kein Ticket‑System) wurden definiert, aber ihre Auswirkungen auf Stakeholder‑Erwartungen bleiben unsicher.
++ - **Kosten für EU‑Only‑Hosting**: Noch nicht abschätzbar; mögliche Budget‑Überschreitung kann das Projekt gefährden.
++ - **Rollen‑ und Berechtigungskonflikte**: Support soll Kundendaten einsehen können, jedoch nicht Preis‑ oder Rabattdetails sehen. Ohne klares Rollen‑Modell entstehen Autorisierungs‑ und Compliance‑Risiken.
++ - **Verfügbarkeit von Managed Services**: Managed Service‑Anbieter für Datenbank/Backup sind gewählt, aber SLA‑Details fehlen.
++ - **Rate‑Limiting & Missbrauchserkennung**: Nur Grund‑Rate‑Limiting ist geplant; fehlende umfassende Abuse‑Detection kann zu DoS‑Attacken oder Datenmissbrauch führen.
++ 
++ ## 5. Mögliche Auswirkungen
++ - **Finanziell**: Fehlangebote oder unautorisierte Rabatte können zu Umsatzverlusten und Vertragsstrafen führen.
++ - **Rechtlich**: Verstöße gegen DSGVO, fehlende Auftrags‑Verarbeitungs‑Verträge oder nicht‑eingehaltener Löschpflicht können Bußgelder nach sich ziehen.
++ - **Operativ**: Ausfall der SAP‑Schnittstelle, fehlendes API‑Gateway oder unzureichendes Backup können den Geschäftsbetrieb stoppen.
++ - **Kundenzufriedenheit**: Unklare Support‑Prozesse und fehlende Online‑Akzeptanz können das Nutzererlebnis mindern und die Conversion‑Rate verringern.
++ - **Reputation**: Datenschutz‑Vorfälle oder fehlende Compliance‑Dokumentation schädigen das Markenimage.
++ 
++ ## 6. Gegenmaßnahmen / Klärungsbedarfe
++ - **Rabatt‑Freigabe**: Definiere klar, welche Rabatte im MVP erlaubt sind und implementiere ein automatisches Validierungs‑Rule‑Set.
++ - **Support‑Workflow**: Entscheide zeitnah über ein Minimum‑Ticket‑System oder zumindest ein strukturiertes E‑Mail‑Tracking mit Audit‑Log.
++ - **SAP‑Ausfallszenario**: Plane einen Fallback‑Cache oder ein Read‑Only‑Mode mit Hinweis an Nutzer bei SAP‑Ausfall.
++ - **API‑Gateway‑Alternative**: Evaluieren Sie kurzfristig einen Managed‑API‑Service (z. B. AWS API Gateway) als Übergangslösung.
++ - **DSGVO‑Checkliste**: Erstelle ein detailliertes Datenschutz‑Konzept (Double‑Opt‑In, Löschkonzept, Auftrags‑Verarbeitung, Logging‑Policy).
++ - **Hosting‑Kosten‑Analyse**: Führe eine Kosten‑Analyse für EU‑Only‑Provider durch und erstelle ein Budget‑Controlling.
++ - **Rollen‑ und Berechtigungsmatrix**: Dokumentiere und validiere die Zugriffsrechte für Sales, Support, Admin und Kunde.
++ - **Retention‑Plan**: Kombiniere gesetzliche Aufbewahrungsfristen mit Löschanforderungen und implementiere automatisierte Retention‑Policies.
++ - **Test‑Daten‑Strategie**: Erstelle synthetische Testdaten oder pseudonymisiere SAP‑Daten für Entwicklungs‑ und Testumgebungen.
++ - **Monitoring & Secrets‑Management**: Implementiere ein zentrales Secrets‑Management (z. B. HashiCorp Vault) und trenne Audit‑Logs von technischen Logs.
++ - **Rate‑Limiting & Abuse‑Detection**: Setze Basis‑Rate‑Limits ein und definiere ein Alert‑System für ungewöhnliche Zugriffsmuster.
++ 
++ ---
++ *Evidenz: Dieses Risikodokument leitet sich aus den Aussagen im Transkript `input/transcripts/T9999_chaos.txt` (Stakeholder‑Dialog) sowie den abgeleiteten Requirements in `docs/requirements.md` und dem Kontext‑File `runs/phase2_1/20260602_094550_ed820c/state/context.md` ab.*

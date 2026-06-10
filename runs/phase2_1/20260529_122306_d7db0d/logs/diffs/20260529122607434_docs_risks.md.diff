@@ -1,0 +1,68 @@
+﻿--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risiken für das Kundenportal‑MVP
++ 
++ ## 1. Fachliche Risiken
++ - **Unklare Scope‑Definition**: Viele Anforderungen (z. B. Sonderrabatte, Support‑Ticket‑System, Mehrwährung) werden bewusst aus dem MVP ausgeschlossen, ohne dass ein klarer Übergang definiert ist. → Gefahr von Nachtrags‑ und Scope‑Creep nach MVP‑Rollout.
++ - **Rabatt‑Freigabeprozess fehlt**: Ohne definierte Freigaben können falsche Rabatte angeboten werden (Finanz‑ und Reputationsrisiko). (vgl. Eva, Zeile 124‑134)
++ - **Support‑Prozess unklar**: Kontaktformular ohne Ticket‑Persistenz führt zu manueller Datenverarbeitung, erhöhtes Fehlerrisiko und potenzielle DSGVO‑Verletzungen. (vgl. David, Zeile 106‑112)
++ - **Mehrwährung / Schweiz‑Anforderungen**: Nicht im MVP berücksichtigt, aber bereits als Pilot‑Kunde genannt → spätere Integrations‑ und Rechtsrisiken.
++ - **Internationalisierung**: Nur DE/EN im MVP, bei späterer Erweiterung EU‑/USA‑Datenschutz‑ und Vertragsanforderungen.
++ - **Retention & Löschkonzept**: Konflikt zwischen gesetzlichen Aufbewahrungspflichten und Recht auf Löschung; kein konkretes Konzept im MVP. (vgl. Clara, Zeile 138‑144)
++ - **Conversion‑Tracking**: Ohne Online‑Angebots‑Akzeptanz und Analytics‑Infrastruktur keine verlässlichen KPIs, was die Erfolgsmessung erschwert.
++ 
++ ## 2. Technische Risiken
++ - **SAP‑Verfügbarkeit als kritische Abhängigkeit**: Bei Ausfall kann kein Angebot erstellt werden; kein Fallback‑Mechanismus definiert. (vgl. Ben, Zeile 232‑236)
++ - **API‑Layer / OAuth**: OAuth wird bevorzugt, aber nicht finalisiert; mangelnde Auth‑ und Autorisierungs‑Implementierung erhöht Sicherheitsrisiko.
++ - ** fehlendes API‑Gateway**: 6‑Wochen‑Warteliste verhindert Nutzung von Rate‑Limiting und zentralem Routing im MVP. (vgl. Ben, Zeile 232‑236)
++ - **Backup & Disaster Recovery**: Nur Grund‑Backup geplant, keine definierten RTO/RPO; potenzieller Datenverlust bei Ausfall. (vgl. Farid, Zeile 166‑172)
++ - **Logging & Audit‑Trail**: Minimaler Audit‑Log, aber keine Trennung von technischen Logs → Gefahr von unabsichtlicher Speicherung personenbezogener Daten in Log‑Files. (vgl. Clara, Zeile 86‑92)
++ - **Secrets Management**: Noch keine konkrete Lösung; Zugangsdaten können unsicher gespeichert werden.
++ - **Caching von SAP‑Daten**: Nur Produkt‑Stammdaten können gecached werden; Kundenspezifische Rabatte bleiben kritisch und können bei falscher Implementierung Datenschutz‑ und Konsistenz‑Risiken erzeugen. (vgl. Ben, Zeile 238‑242)
++ - **Rate‑Limiting & Abuse‑Erkennung**: Ohne API‑Gateway kein vollumfängliches Rate‑Limiting; mögliche DoS‑Angriffe oder Datenexfiltration.
++ - **Umgebungen & Testdaten**: Nutzung echter SAP‑Produktivdaten im Test kann DSGVO‑Verletzungen verursachen; fehlende synthetische Testdaten erhöhen Risiko von Produktions‑Leaks.
++ 
++ ## 3. Compliance‑ und Datenschutzrisiken
++ - **Double‑Opt‑In & Logging**: Unklare Umsetzung von Double‑Opt‑In‑Prozessen; Gefahr von Nicht‑Einhalten der DSGVO‑Anforderungen. (vgl. Anna, Zeile 1‑4)
++ - **Datenminimierung**: Offenbar werden umfangreiche Kundendaten aus SAP gelesen; ohne strikte Minimierung wird das Prinzip verletzt.
++ - **Lösch‑ und Auskunftsrecht**: Kein definiertes Lösch‑Konzept im MVP; Support‑E‑Mails mit Kundendaten können unkontrolliert gespeichert werden (David, Zeile 106‑112).
++ - **EU‑Only Hosting**: Nicht garantiert; Managed Service könnte Daten global replizieren, was DSGVO‑Konformität gefährdet. (vgl. Farid, Zeile 166‑172)
++ - **Monitoring ohne personenbezogene Daten**: Risiko, dass Monitoring‑Logs versehentlich personenbezogene Daten enthalten.
++ - **Audit‑Pflichten**: Fehlende detaillierte Audit‑Logs können bei Prüfungen zu Beanstandungen führen.
++ 
++ ## 4. Widersprüche & Unsicherheiten
++ | Widerspruch / Unsicherheit | Quelle | Mögliche Auswirkung |
++ |----------------------------|--------|---------------------|
++ | **Mobile vs. Web‑First** – keine klare Entscheidung | Anna (Zeile 1‑4) | Verzögerungen bei UI‑Entwicklung, Scope‑Creep.
++ | **SSO optional / Azure AD vs. Google** – keine klare Vorgabe | Anna (Zeile 21‑24) | Zusätzlicher Aufwand bei Integration, potenzielle Lizenzkosten.
++ | **Preis‑Cache vs. Echtzeit‑Rabatte** – Datensynchronisation unklar | Ben (Zeile 238‑242) | Falsche Angebote, rechtliche Folgen.
++ | **Backup‑Kosten vs. EU‑Only Hosting** – Kosten‑Unsicherheit | Farid (Zeile 166‑172) | Budget‑Überschreitung, Verzögerungen.
++ | **Support‑Datenverarbeitung per E‑Mail** – DSGVO‑Risiko | David (Zeile 106‑112) | Bußgelder, Reputationsverlust.
++ | **Retention vs. Löschrecht** – keine klare Regel | Clara (Zeile 138‑144) | Rechtsstreitigkeiten, Compliance‑Verstöße.
++ | **API‑Gateway Wartezeit** – 6‑Wochen vs. 8‑Wochen MVP | Ben/Farid (Zeile 232‑236) | Funktionsumfang reduziert, Sicherheitslücken.
++ | **Finanz‑Freigabe für Rabatte** – unklare Schwellenwerte | Eva (Zeile 124‑134) | Finanzielle Verluste, interne Konflikte.
++ 
++ ## 5. Mögliche Auswirkungen
++ - **Projektverzögerungen** durch unklare Entscheidungen (Mobile, SSO, API‑Gateway). 
++ - **Kostenüberschreitungen** (EU‑Only Hosting, Managed Services, Eventual‑Compliance‑Maßnahmen). 
++ - **Rechtliche Konsequenzen** bei DSGVO‑Verstößen (fehlendes Lösch‑/Auskunfts‑Konzept, ungesicherte Logs). 
++ - **Finanzielle Schäden** durch fehlerhafte Rabatt‑Angebote oder fehlende Freigaben. 
++ - **Image‑ und Kundenvertrauensverlust** bei Datenlecks, falschen Rechnungen oder langsamer Support‑Reaktion. 
++ - **Operationales Risiko** bei SAP‑Ausfällen ohne Fallback, was zu Ausfall des Core‑Business‑Features führt.
++ 
++ ## 6. Gegenmaßnahmen / Klärungsbedarfe
++ - **Scope‑Klärung**: Formaler Change‑Request‑Prozess für später hinzuzufügende Funktionen (Rabatte, Support‑Ticket‑System, Mehrwährung). 
++ - **Freigabe‑Workflow definieren**: Schwellenwerte und Rollen für Rabatt‑Freigaben festlegen (z. B. >15 % Manager, >30 % Finance). 
++ - **DSGVO‑Checkliste**: Double‑Opt‑In, Lösch‑ und Auskunftsprozesse, Datenminimierung, Logging‑Richtlinien dokumentieren und vor MVP‑Launch prüfen. 
++ - **SAP‑Verfügbarkeit & Fallback**: Service‑Level‑Agreement (SLA) prüfen, ggf. Read‑Only‑Cache mit kurzer TTL implementieren. 
++ - **API‑Gateway‑Alternativen**: Vorläufiges internes Rate‑Limiting implementieren, bis das zentrale Gateway verfügbar ist. 
++ - **Backup‑Strategie**: Konkrete RTO/RPO festlegen, Backup‑Regionen eindeutig EU‑only definieren. 
++ - **Secrets Management**: Auswahl einer Managed Secrets‑Lösung (z. B. HashiCorp Vault, Azure Key Vault) planen. 
++ - **Testdaten‑Policy**: Erstellung synthetischer Testdaten, kein Produktions‑Dump im Test‑Environment. 
++ - **Monitoring‑Policy**: Log‑Filter definieren, um personenbezogene Daten auszuschließen; Audit‑Log getrennt von technischen Logs. 
++ - **Kosten‑Schätzung**: Für EU‑Only Managed Services, Backup und ggf. externe Identity‑Provider (SSO) zeitnah erstellen (bis Freitag). 
++ - **Support‑Prozess**: Minimaler Ticket‑Workflow im MVP definieren (z. B. JIRA Service Management mit automatischer Kundenzuordnung) oder klare Regelung, dass Support‑Anfragen nur per E‑Mail verarbeitet werden und anschließend gelöscht werden. 
++ - **Retention‑Regeln**: Gesetzliche Aufbewahrungsfristen (z. B. 10 Jahre für Rechnungen) vs. DSGVO‑Löschrecht in einem Policy‑Dokument festhalten.
++ 
++ *Dieses Risiko‑Artefakt fasst die aus dem Kontext, den Requirements und dem Transkript abgeleiteten Risiken zusammen und liefert erste Gegenmaßnahmen sowie offene Klärungsbedarfe für das MVP des Kundenportals.*

@@ -1,0 +1,74 @@
+--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Grober Architekturueberblick fuer das Kundenportal-Projekt
++ 
++ ## Systemkontext
++ Das zu entwickelnde System ist ein Kundenportal, das Kunden, Sales-Mitarbeitern, Managern und Administratoren Zugriff auf Angebots-, Bestell- und Rechnungsdaten bietet. Die Plattform integriert sich mit SAP als zentralem Backend-System und erfüllt strenge DSGVO-Anforderungen. Ein MVP soll innerhalb von 8 Wochen zur Verfügung stehen.
++ 
++ ## Wichtige Komponenten
++ 
++ ### Kundenportal (Frontend)
++ - Webbasierte Benutzeroberfläche mit Login per E-Mail/Passwort
++ - Rollenbasiertes Zugriffssystem (Admin, Sales, Manager, Kunde, Support eingeschränkt)
++ - Funktionen: Angebots-Erstellung, Rechnungsanzeige, Dokumenten-Downloads (PDF), Kontaktformular für Support
++ 
++ ### API Layer
++ - Schnittstellenbereitstellung für das Kundenportal und weitere Integrationen
++ - OAuth-basierte Authentifizierung und Autorisierung (optional, MVP noch offen)
++ - Anbindung an SAP-Backend zur Abfrage von Produkt-, Preis- und Rabattdaten
++ - Realisierung eventuell über zentrales API Gateway (abhängig von Verfügbarkeitszeiten und Zeitplan)
++ 
++ ### SAP-Integration
++ - Lesender Zugriff auf Stammdaten, Preise, Rabatte, Bestellinformationen
++ - Keine Schreibzugriffe im MVP (z.B. keine Online-Angebotsakzeptanz)
++ - Berücksichtigung von SAP-Wartungsfenstern und Datensynchronisationsproblemen
++ 
++ ### Datenmanagement und Sicherheit
++ - Auditierbarkeit von Nutzeraktionen und Änderungen (minimaler Audit-Trail im MVP)
++ - Logging und Monitoring unter DSGVO-Konformitätsbedingungen (keine personenbezogenen Daten in technischen Logs)
++ - Backup- und Disaster-Recovery-Mechanismen für Kundendaten
++ - Löschkonzept gemäß DSGVO, inklusive Double-Opt-In und Datenminimierung
++ 
++ ### Hosting und Infrastruktur
++ - Hosting ausschließlich EU-basiert oder DSGVO-konform mit klarer Datenresidenz
++ - Nutzung von Managed Services ohne neuen Datenbankserver
++ - Entwicklung mit Test-, Staging- und Produktionsumgebungen unter Sicherstellung von Testdaten-Anonymisierung
++ 
++ ### Support-Modul
++ - Integration eines einfachen Kontaktformulars im MVP, kein vollwertiges Ticketsystem
++ - Behandlung von Support-Anfragen außerhalb des Systems per E-Mail, mit begleitendem Datenschutzkonzept
++ 
++ ## Integrationspunkte
++ - SAP Backend für Stammdaten und Preise
++ - (Optional zukünftige) Identity Provider für SSO (z.B. Azure AD, Google)
++ - (Zukünftig) API Gateway für externe und interne Services
++ 
++ ## Daten- und Sicherheitsaspekte
++ - Speicherung und Verarbeitung personenbezogener Daten unter Einhaltung von DSGVO
++ - Verschlüsselung der Kommunikationswege (TLS)
++ - Rollenbasiertes Zugriffs- und Berechtigungskonzept
++ - Umsetzung eines Audit-Trails
++ - Backup und Disaster Recovery für Datenpersistenz
++ - Umgang mit mehrstufigen Freigabeprozessen bei Angebotserstellung erst in späteren Phasen
++ 
++ ## Offene Architekturentscheidungen
++ - Nutzung und Einbindung des zentralen API Gateways aufgrund von Warteliste und Zeitrahmen
++ - Finalisierung der Identity Management Strategie (SSO Ja/Nein)
++ - Ausgestaltung und Erweiterung des Support-Konzepts über das MVP hinaus
++ - Umsetzung von Multiwährungs- und Internationalisierungsfunktionen
++ - Caching- und Fallback-Strategien bei SAP-Ausfällen
++ - Detaillierung des Freigabe- und Rabattprozesses
++ - Aufbau und Umfang von Backup- und Disaster-Recovery-Maßnahmen
++ 
++ ## Einschränkungen und Risiken
++ - Enge Zeitvorgabe (8 Wochen MVP) vs. notwendige Sicherheitstests und Reviews
++ - Unklare Pilotkundenentscheidung (DACH vs. Schweiz) mit Compliance-Auswirkungen
++ - Eingeschränkte Supportmöglichkeiten im MVP können zu Prozessproblemen führen
++ - Technische Abhängigkeiten von SAP-Verfügbarkeit und API Gateway können Verzögerungen verursachen
++ 
++ ---
++ 
++ Dieses Architekturübersichts-Dokument bildet die Grundlage für die weitere Detailplanung und technische Umsetzung des Kundenportals im vorgegebenen Projektzeitraum.
++ 
++ Quelle: Stakeholder-Transkript, Projektkontext, Requirements und Risiken

@@ -1,0 +1,66 @@
+﻿--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturueberblick Kundenportal MVP
++ 
++ ## 1. Systemkontext
++ Das Kundenportal ist eine Webplattform, die Kunden, Sales, Finance und Support verbindet. Es stellt die Funktionen Angebotserstellung, Rechnungsdownload sowie Benutzerverwaltung und rollenbasierte Zugriffssteuerung bereit. Die Plattform interagiert mit einem SAP-System für Produkt-, Preis- und Rabattdaten, nutzt Managed Services für Datenhaltung und Backup und ist auf EU-DSGVO-konformes Hosting ausgelegt.
++ 
++ ## 2. Wichtige Komponenten
++ 
++ ### 2.1 Frontend
++ - Webbasiertes Benutzerportal mit responsivem Design für spätere mobile Nutzung.
++ - Authentifizierung via Login (E-Mail, Passwort) mit Double-Opt-In.
++ - Darstellung von Angeboten, Rechnungen und Benutzerinformationen.
++ 
++ ### 2.2 Backend
++ - API-Layer als Schnittstelle zwischen Frontend und SAP bzw. Managed Services.
++ - Implementierung der Geschäftslogik: Angebotserstellung (ohne Sonderrabatte im MVP), Rollenmanagement, Audit-Logging.
++ - Schnittstellen zu SAP für lesenden Zugriff auf Produkt- und Preisdaten.
++ - Backup- und Disaster-Recovery-Services.
++ 
++ ### 2.3 Integration
++ - Anbindung an SAP-System für Produkt- und Preisdaten via API.
++ - Optionale Nutzung eines zentralen API-Gateways, wenn verfügbar.
++ 
++ ### 2.4 Support-Komponente
++ - Kontaktformular für Supportanfragen ohne persistentes Ticketsystem.
++ 
++ ### 2.5 Sicherheit und Compliance
++ - Rollen- und Berechtigungssystem mit minimalen Rollen.
++ - Auditierung von Nutzerhandlungen und Systemänderungen.
++ - TLS-Verschlüsselung für Datenübertragung.
++ - Einhaltung von DSGVO-Anforderungen, insbesondere Datenminimierung, Double-Opt-In, Löschkonzept.
++ 
++ ## 3. Schnittstellen und Integrationspunkte
++ - SAP API für lesenden Zugriff (Produkte, Preise, Rabatte).
++ - (Optional) zentrales API Gateway als Reverse Proxy und Sicherheitslayer.
++ - Managed Services für Datenbank und Backup.
++ - Benutzer-Authentifizierungs-API (optional SSO in späteren Phasen).
++ 
++ ## 4. Daten- und Sicherheitsaspekte
++ - EU-Only oder DSGVO-konformes Hosting mit Nachweis.
++ - Keine Speicherung personenbezogener Daten in technischen Logs.
++ - Audit-Logs getrennt von Applikations- und Sicherheitslogs.
++ - Backup- und Disaster-Recovery-Regeln zur Sicherstellung der Datenverfügbarkeit.
++ - Secrets Management für API-Schlüssel und Zugangsdaten.
++ - Rollenbasiertes Zugriffskonzept verhindert unbefugten Datenzugriff.
++ - Minimierung der gespeicherten personenbezogenen Daten im MVP.
++ 
++ ## 5. Offene Architekturentscheidungen
++ - Wahl der Authentifizierungsmethode (SSO mit OAuth bevorzugt, noch offen).
++ - API Gateway Nutzung im MVP aufgrund langer Wartezeit unklar.
++ - Exakte SAP-Integrationstiefe (insbesondere Schreibzugriffe) noch zu klären.
++ - Unterstützung nativer mobiler Apps gegenüber reinem Web-Frontend unentschieden.
++ - Festlegung detaillierter Backup- und Disaster-Recovery-Prozesse.
++ - Pilotkunde-Standort (DACH vs. Schweiz) und deren Einfluss auf Währung und Datenschutz.
++ - Umgang mit Testdaten, insbesondere SAP-Testsystem mit realen Daten.
++ - Umsetzung detaillierter Rabattfreigabeprozesse außerhalb des MVP.
++ - Supportprozess mit oder ohne Ticketsystem in späteren Phasen.
++ 
++ ## 6. Zusammenfassung
++ Dieser Architekturüberblick bildet den aktuellen Stand für das MVP des Kundenportals ab und berücksichtigt fachliche Anforderungen, technische Restriktionen, Compliance-Vorgaben und die begrenzte Entwicklungszeit. Er dient als Grundlage für detailliertere Architektur- und Designentscheidungen in den folgenden Phasen.
++ 
++ ---
++ 
++ *Basierend auf Analyse von Projektkontext, Anforderungen, Risiken und Gesprächstranskript (input/transcripts/T9999_chaos.txt). Die Architektur adressiert bekannte Spannungsfelder und dokumentiert offene Punkte offen ohne voreilige technologische Festlegungen.*
