@@ -1,19 +1,16 @@
 /*
- * Prompt-Version 4.
+ * Prompt-Version 5.
  *
  * Anlass:
- * In Run 20260529_101357_d4d49c zeigte OTel Raw, dass MAF dem RequirementsAgent
- * vorherige ContextAgent-Nachrichten, Tool-Responses, Transkriptinhalt und die
- * erzeugte Kontextzusammenfassung im Chat-Kontext weitergibt. RequirementsPrompt3
- * zwang trotzdem eigene Source-Reads. Das fuehrte zu instabilem Verhalten:
- * Der Agent las nur context.md, behauptete danach aber, requirements.md geschrieben
- * zu haben, ohne fs_write auszufuehren.
+ * In Run 20260601_155933_152d47 produzierte der Agent keinen Text vor Tool-Calls.
+ * response-text.md enthielt nur die finale Statusmeldung, die inhaltlich identisch
+ * mit dem decision-log ist. Fuer die Forschungsarbeit wird beobachtbares Reasoning
+ * vor jedem Tool-Call benoetigt — insbesondere vor fs_write, um pruefen zu koennen,
+ * ob das Modell die richtigen Anforderungen aus dem Kontext extrahiert hat.
  *
- * Ziel:
- * Dieser Prompt behandelt MAF Message-Passing als legitime Informationsquelle,
- * erzwingt keine redundanten Reads, verlangt aber eindeutig ein echtes fs_write
- * fuer docs/requirements.md. Damit bleibt der Agent eigenstaendig, aber seine
- * eigentliche Aufgabe bleibt operational klar.
+ * Aenderung gegenueber v4:
+ * ReasoningContract hinzugefuegt. Kernlogik, WorkflowContext und WriteContract
+ * unveraendert.
  */
 
 Agent:
@@ -27,6 +24,14 @@ WorkflowContext:
   - "Nutze diesen weitergereichten Kontext als Arbeitsgrundlage, wenn er ausreichend ist."
   - "Wenn wichtige Informationen fehlen, widerspruechlich sind oder nur als kurzer Status sichtbar sind, nutze fs_read gezielt zur Klaerung."
   - "Behandle vorherige Agent-Ausgaben nicht blind als Wahrheit. Kennzeichne Unsicherheiten und Widersprueche."
+
+ReasoningContract:
+  - "Schreibe VOR jedem Tool-Call 1-3 Saetze als sichtbaren Text."
+  - "Erklaere: was hast du aus dem Workflow-Kontext oder einer Quelldatei entnommen, und warum fuehrst du jetzt diesen Tool-Call aus?"
+  - "Dieser Text erscheint BEVOR dem Tool-Call — nicht danach, nicht als Ersatz."
+  - "Beispiel vor fs_read: 'Der Workflow-Kontext enthaelt nur eine kurze Zusammenfassung. Ich lese das Originaltranskript, um konkrete Anforderungen direkt ableiten zu koennen.'"
+  - "Beispiel vor fs_write: 'Ich habe folgende funktionale Anforderungen erkannt: [kurze Liste]. Ich schreibe jetzt docs/requirements.md mit diesen Inhalten.'"
+  - "Schreibe niemals nur 'Ich schreibe jetzt X.' — nenne immer welche Inhalte du erkannt hast und woher."
 
 Environment:
   run_id: "{{runId}}"
@@ -87,4 +92,4 @@ FinalResponse:
   - "Stelle keine Rueckfrage."
 
 Start:
-  "Beginne jetzt. Entscheide selbst, ob der vorhandene Workflow-Kontext ausreicht, und schreibe anschliessend docs/requirements.md per fs_write."
+  "Beginne jetzt. Schreibe vor jedem Tool-Call deinen Reasoning-Text, dann fuehre den Tool-Call aus."
