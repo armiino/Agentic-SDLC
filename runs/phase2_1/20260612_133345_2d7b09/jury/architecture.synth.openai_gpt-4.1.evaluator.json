@@ -1,0 +1,89 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-12T13:36:58.708765Z",
+  "errorScore": 24,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 24; KRITISCH=4; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 3,
+      "reason": "FALSE_CLAIM: 3 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Mandantenf\u00E4hige, DSGVO-konforme EU-basierte Managed Cloud Infrastruktur, keine neue DB-Installation.\u0022 | Transkript: \u0022\u0022Hosting in EU kann Schweizer Kunden bedienen, aber Vertragspr\u00FCfung n\u00F6tig.\u0022 ... \u0022EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 ... \u0022Dann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u0022\u0022 | Das Artefakt behauptet eine mandantenf\u00E4hige, DSGVO-konforme EU-basierte Managed Cloud Infrastruktur als gesetzt, obwohl im Transkript explizit diskutiert wird, dass EU-only Hosting technisch und vertraglich noch nicht gel\u00F6st ist und DSGVO-Konformit\u00E4t allein nicht ausreicht."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Rollenmanagement mit mind. Admin, Kunde, Sales, Manager und Support.\u0022 | Transkript: \u0022\u0022Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?\u0022 ... \u0022Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen.\u0022 ... \u0022Support sieht nur Status, nicht Details?\u0022 ... \u0022Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren.\u0022\u0022 | Das Artefakt legt die Rollen explizit als Admin, Kunde, Sales, Manager und Support fest, obwohl im Transkript die genaue Rollenaufteilung und die Rolle \u0027Support\u0027 explizit offen und strittig bleibt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Support-Backend (nicht im MVP): K\u00FCnftige Integration f\u00FCr Ticketsystem und Kundenanfragen.\u0022 | Transkript: \u0022\u0022Ticketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u0022 ... \u0022Supportprozess unklar.\u0022 ... \u0022Support wird damit nicht gl\u00FCcklich.\u0022 ... \u0022Notieren als Risiko.\u0022\u0022 | Das Artefakt nennt ein zuk\u00FCnftiges Support-Backend explizit als Komponente, obwohl im Transkript keine Entscheidung f\u00FCr ein Ticketsystem oder Support-Backend getroffen wurde und der Supportprozess als offen/riskant markiert ist."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 1,
+      "reason": "FALSE_CERTAINTY: 1 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Umsetzung mit OAuth (bevorzugt) f\u00FCr Authentifizierung.\u0022 | Transkript: \u0022\u0022API muss abgesichert sein. OAuth? Oder API Keys?\u0022 ... \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 ... \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Artefakt stellt OAuth als bevorzugte L\u00F6sung dar, obwohl im Transkript explizit offen bleibt, ob OAuth oder API Keys verwendet werden."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 8,
+      "reason": "MISSING_TOPIC: 3 Fehler (unveraendert); 5 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022 ... \u0022Dann brauchen wir Pagination und Download-Limits.\u0022 ... \u0022Wir brauchen Missbrauchserkennung.\u0022 ... \u0022Dann mindestens Rate Limiting und Audit.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine Rate Limits, Pagination oder Download-Limits f\u00FCr die API, obwohl diese im Transkript als notwendige Architekturma\u00DFnahme diskutiert werden."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022CI/CD braucht Secrets Management.\u0022 ... \u0022Secrets Management\u0022\u0022 | Das Artefakt enth\u00E4lt keine Erw\u00E4hnung von Secrets Management, obwohl dies im Transkript als notwendige Architekturkomponente f\u00FCr CI/CD und Betrieb genannt wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022PDF-Export von Angeboten\u0022 ... \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 ... \u0022Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine PDF-Exportfunktion f\u00FCr Angebote und kein Template-Management mit Versionierung, obwohl dies im Transkript als relevante Architekturthemen genannt wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "HERABGESTUFT [KRITISCH\u2192MITTEL] (partial: \u0022Audit- und Logging-Komponenten: Protokollierung sicherheitsrelevanter Aktionen zur Einhaltung von DSGVO und Revisionssicherheit.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.\u0022 ... \u0022Application logs, audit logs und security logs sind unterschiedliche Dinge.\u0022 ... \u0022Und unterschiedliche Aufbewahrungsfristen.\u0022\u0022 | Das Artefakt differenziert nicht zwischen Audit-Logs, technischen Logs und Security-Logs sowie deren unterschiedliche Aufbewahrungsfristen, obwohl dies im Transkript als relevante Architektur- und Compliance-Anforderung diskutiert wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Pilotkunden und deren Einfluss auf Datenschutz, Internationalisierung und Mehrw\u00E4hrung.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Mehrw\u00E4hrung ist nicht trivial, vor allem mit Rabattlogik und SAP.\u0022 ... \u0022Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine Architektur\u00FCberlegungen zu Mehrw\u00E4hrungsf\u00E4higkeit, obwohl dies im Transkript als relevante Anforderung und Herausforderung genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Pilotkunden und deren Einfluss auf Datenschutz, Internationalisierung und Mehrw\u00E4hrung.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Internationalisierung\u0022 ... \u0022Deutsch und Englisch sollten schon drin sein.\u0022 ... \u0022Support braucht mindestens Deutsch und Englisch.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine Internationalisierung (z.B. Mehrsprachigkeit), obwohl dies im Transkript als relevante Anforderung f\u00FCr die Architektur genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022DSGVO-Konformit\u00E4t ist zentral: Implementierung von Double-Opt-In, L\u00F6schkonzepten, Datenschutz bei Logging, Audit und Backup.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Datenklassifikation und Retention Rules.\u0022 ... \u0022minimaler Retention-Plan.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine Datenklassifikation oder Retention Rules, obwohl dies im Transkript als relevante Architekturthemen f\u00FCr Compliance und Betrieb genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und m\u00F6glichen Caching-Mechanismen.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wenn SAP nicht erreichbar ist... Dann brauchen wir Fallback oder Cache.\u0022 ... \u0022SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine explizite Behandlung der SAP-Verf\u00FCgbarkeit als kritische Abh\u00E4ngigkeit und keine Fallback-/Caching-Strategie, obwohl dies im Transkript als relevante Architekturthemen genannt wird."
+        }
+      ]
+    }
+  ]
+}

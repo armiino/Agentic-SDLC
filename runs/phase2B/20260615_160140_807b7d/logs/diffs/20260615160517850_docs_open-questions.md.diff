@@ -1,0 +1,55 @@
+--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen für das Kundenportal‑MVP
++ 
++ ## 1. Offene fachliche Fragen
++ | # | Frage | Auslöser/Quelle | Möglicher Ansprechpartner |
++ |---|-------|-----------------|---------------------------|
++ | F1 | Welcher Pilot‑Kunde wird im MVP genutzt (DE‑Kunde mit EUR oder CH‑Kunde mit CHF)? | Konflikt in Projektziel / Requirements (A‑3) | Anna (Business Owner), Eva (Finance) |
++ | F2 | Welche genauen rechtlichen Konsequenzen ergeben sich bei einer Währungs‑ und Steuer‑Unterscheidung zwischen DE und CH? | Offene Entscheidung zu Währungs‑Support (A‑3) | Clara (Compliance), Eva (Finance) |
++ | F3 | Wie soll das Double‑Opt‑In technisch umgesetzt werden (Datenmodell, Aufbewahrung, Verifizierung)? | Unklare Double‑Opt‑In‑Umsetzung (Risiko NFR‑1) | Clara (Compliance) |
++ | F4 | Welche Schritte und Fristen gelten für das Lösch‑/Auskunfts‑Verfahren (DSGVO‑Anfragen)? | Fehlendes Lösch‑/Auskunfts‑Konzept (A‑6) | Clara (Compliance) |
++ | F5 | Wie wird der Freigabe‑Workflow für Sonderrabatte > 15 % in späteren Phasen konkret aussehen? | Hinweis in Requirements (C‑1) und Risiken (Rabatt‑Workflow) | Eva (Finance), Ben (Architekt) |
++ | F6 | Welche Rollen und Berechtigungen benötigt der Support‑Einsicht‑Zugriff im Detail (z. B. nur Ansicht, keine Änderungen)? | Unklare Rollen‑/Berechtigungsmatrix (A‑9) | Clara (Compliance), David (Support) |
++ | F7 | Müssen Angebote und Rechnungen rechtlich signiert werden (z. B. qualifizierte elektronische Signatur) oder reicht ein PDF‑Export? | Fehlende rechtliche Vorgaben im MVP | Anna (Business Owner), Eva (Finance) |
++ 
++ ## 2. Offene technische Fragen
++ | # | Frage | Auslöser/Quelle | Möglicher Ansprechpartner |
++ |---|-------|-----------------|---------------------------|
++ | T1 | Welcher Auth‑Mechanismus wird final gewählt (OAuth 2.0 mit Azure AD/Google, klassisches E‑Mail/Passwort, API‑Key)? | Offene Auth‑Entscheidung (A‑2) | Ben (Technischer Architekt) |
++ | T2 | Wie soll das API‑Gateway umgesetzt werden, solange die 6‑Wochen‑Warteliste besteht (Fallback‑Proxy, Mock‑Gateway)? | API‑Gateway‑Warteliste (Risiko Technisch) | Ben (Architekt), Farid (IT Operations) |
++ | T3 | Welche konkreten Rate‑Limiting‑Schwellenwerte (Requests/Minute/Benutzer) werden eingesetzt? | Fehlende Parameter (A‑5, NFR‑6) | Ben (Architekt) |
++ | T4 | Wie wird das Secrets‑Management konkret implementiert (Vault, Cloud‑KMS, etc.) und in CI/CD integriert? | Offene Lösung (A‑7) | Farid (IT Operations) |
++ | T5 | Welches Backup‑RTO/RPO wird angestrebt und wie wird die Wiederherstellung getestet? | Fehlende Definition (A‑6) | Farid (IT Operations) |
++ | T6 | Wie wird die Trennung von Audit‑Log und technischem Log technisch gewährleistet (spezieller Speicher, Maskierung)? | Compliance‑Risiko (C‑4) | Clara (Compliance), Ben (Architekt) |
++ | T7> | Gibt es ein geplantes Caching‑ Konzept für SAP‑Daten in zukünftigen Phasen und wie wird das im MVP berücksichtigt? | Risiko ohne Cache (A‑10) | Ben (Architekt) |
++ | T8 | Welche konkreten Monitoring‑Metriken werden erfasst, wenn keine personenbezogenen Daten geloggt werden dürfen? | Monitoring‑Risiko (NFR‑5) | Farid (IT Operations) |
++ 
++ ## 3. Widersprüche, die geklärt werden müssen
++ | # | Widerspruch | Betroffene Artefakte | Klärungsbedarf |
++ |---|------------|----------------------|----------------|
++ | W1 | **Security‑Review 6 Wochen** vs. **MVP‑Zeitplan 8 Wochen** – Gefahr von Überschneidungen und Verzögerungen. | Risks.md (Security‑Review), Project Context (MVP‑Zeitplan) | Abstimmung von Review‑Zeitplan und MVP‑Scope mit Ben & Clara |
++ | W2 | **API‑Gateway‑Nutzung optional** vs. **Rate‑Limiting** – Ohne Gateway ist Rate‑Limiting schwer umsetzbar. | Requirements (FR‑6, NFR‑6), Risks (API‑Gateway‑Warteliste) | Entscheidung über Fallback‑Rate‑Limiting (Ben, Farid) |
++ | W3 | **Mobile‑First vs. Web‑First** – Mobile wird zurückgestellt, jedoch könnte ein Kunde bereits Mobile‑Erwartungen haben. | Constraints (C‑5), Risks (Mobile‑First) | Klärung, ob responsive Web‑UI ausreichend ist (Anna, Ben) |
++ | W4 | **Keine neue Datenbank** vs. **Backup & DR** – Ohne eigene DB ist unklar, was genau gesichert wird (Objekt‑Storage, Logs?). | Constraints (C‑2), Requirements (FR‑9) | Definition der zu sichernden Artefakte (Farid) |
++ 
++ ## 4. Fehlende Informationen
++ | # | Fehlende Information | Warum wichtig | Quelle |
++ |---|----------------------|--------------|-------|
++ | M1 | Kosten‑Analyse für den EU‑only Managed Service Provider (AWS, Azure, GCP). | Budget‑Planung, Vertragswahl | A‑4, Constraints (C‑3) |
++ | M2 | Detaillierte SLA‑Parameter für Backup (RTO/RPO, Test‑Frequenz). | Business‑Continuity | A‑6 |
++ | M3 | Konkrete Test‑ und Pseudonymisierungs‑Strategie für SAP‑Testdaten. | Datenschutz, Compliance | Risks (Testdaten) |
++ | M4 | Endgültige Rollen‑/Berechtigungsmatrix (insbesondere für Support‑Einsicht). | Sicherheit, Zugriffskontrolle | A‑9 |
++ | M5 | Definition der rechtlichen Anforderungen an PDFs (z. B. Impressum, Steuer‑Hinweise). | Compliance, Rechnungsstellung | FR‑4, FR‑3 |
++ | M6 | Übersicht über geplante Integrationstests (Unit, Integration, End‑to‑End) inkl. SAP‑Mocking. | Qualitätssicherung | Architecture (SAP‑Adapter) |
++ 
++ ## 5. Mögliche Ansprechpartner / Rollen
++ - **Anna (Business/Product Owner)** – Entscheidungen zu Pilot‑Kunde, Mobile‑Strategie, MVP‑Scope.
++ - **Ben (Technischer Architekt/Entwickler)** – Auth‑Mechanismus, API‑Gateway, Rate‑Limiting, Caching, Rollen‑/Berechtigungsmatrix.
++ - **Clara (Compliance & Datenschutz)** – DSGVO‑Umsetzung, Double‑Opt‑In, Audit‑Log‑Trennung, Lösch‑/Auskunfts‑Verfahren.
++ - **David (Customer Support)** – Support‑Prozess, Ticket‑System, Support‑Berechtigungen.
++ - **Eva (Finance)** – Währungs‑Entscheidung, Rabatt‑Workflow, rechtliche PDF‑Anforderungen.
++ - **Farid (IT Operations)** – Hosting‑Provider, Backup‑RTO/RPO, Secrets‑Management, Monitoring, Rate‑Limiting‑Implementierung.
++ 
++ *Hinweis: Alle Fragen basieren auf den bereits bereitgestellten Artefakten (Projektkontext, requirements.md, risks.md, architecture.md).*

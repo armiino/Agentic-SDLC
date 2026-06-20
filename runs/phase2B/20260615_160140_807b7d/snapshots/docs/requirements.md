@@ -1,0 +1,80 @@
+## Functional Requirements
+
+- **FR-1 Login**: Nutzer können sich mit E‑Mail und Passwort anmelden. Der Login muss Double‑Opt‑In unterstützen. Optional können SSO‑Optionen (Azure AD, Google) integriert werden, jedoch nicht im MVP verpflichtend. *(Quelle: Business/Product Owner, Technischer Architekt)*
+- **FR-2 Rollen‑ & Berechtigungskonzept**: Das System bietet mindestens vier Rollen (Admin, Sales, Kunde, Support‑Einsicht). Jede Rolle hat klar definierte Zugriffsrechte auf Angebote, Rechnungen und Audit‑Logs. *(Quelle: Stakeholder‑Tabelle, Compliance)*
+- **FR-3 Angebots‑Workflow**: Sales kann ein Angebot aus SAP‑Produkt‑ und Preisdaten erstellen, anzeigen und als PDF exportieren. Angebote dürfen im MVP keinen Sonderrabatt > 15 % enthalten. Der Workflow umfasst Status‑Tracking (Draft, Review, Freigegeben). *(Quelle: Business/Product Owner, Finance)*
+- **FR-4 Rechnungs‑Download**: Kunden können nach Freigabe ein PDF‑Rechnung herunterladen. *(Quelle: Business/Product Owner, Finance)*
+- **FR-5 SAP‑Integration (Lesend)**: Das System greift lesend auf Produkt‑ und Preisdaten aus SAP zu. Schreibzugriff (Bestellungen) ist für spätere Phasen vorgesehen. *(Quelle: Technischer Architekt)*
+- **FR-6 API‑Layer**: Bereitstellung eines zentralen API‑Gateways (OAuth 2.0 bevorzugt, ggf. API‑Keys) für externe System‑Anbindungen. Derzeit ist die Nutzung des Gateways wegen Warteliste optional. *(Quelle: Technischer Architekt)*
+- **FR-7 Mehrsprachigkeit**: UI und Benutzerkommunikation in Deutsch und Englisch. *(Quelle: Business/Product Owner)*
+- **FR-8 Mehrwährung**: Unterstützte Währungen im MVP: EUR und CHF. USD ist für spätere Phasen geplant. *(Quelle: Finance)*
+- **FR-9 Backup & Disaster Recovery**: Grundlegende tägliche Backups und Wiederherstellungsmechanismus (RTO/RPO werden später definiert). *(Quelle: IT Operations)*
+- **FR-10 Minimaler Audit‑Trail**: Jeder Angebots‑ und Rechnungs‑Vorgang wird protokolliert (ohne personenbezogene Daten). *(Quelle: Compliance)*
+
+## Non-functional Requirements
+
+- **NFR-1 Datenschutz (DSGVO)**: Double‑Opt‑In, Auftragsverarbeitungsvertrag, Datenminimierung (keine Vollspeicherung von SAP‑Daten), Trennung von technischem Log und Audit‑Log, Lösch‑/Auskunfts‑Konzept. *(Quelle: Compliance)*
+- **NFR-2 Sicherheit**: TLS‑Verschlüsselung für alle Kommunikationswege, Secrets‑Management (konkrete Lösung in späteren Phasen), Security‑Review (geplant, Dauer 6 Wochen). *(Quelle: Security‑Stakeholder)*
+- **NFR-3 Hosting**: EU‑only Managed Service, keine neue Datenbank, Nutzung bestehender Managed Services. *(Quelle: IT Operations)*
+- **NFR-4 Performance & Skalierbarkeit**: Das System muss mindestens 200 gleichzeitige Nutzer im MVP unterstützen; Skalierung auf bis zu 20 000 Nutzer wird später geplant. *(Quelle: Technischer Architekt – offene Skalierbarkeits‑Strategie)*
+- **NFR-5 Monitoring**: Grundlegendes Monitoring ohne Speicherung personenbezogener Daten, inklusive Fehlermeldungen und System‑Health. *(Quelle: IT Operations)*
+- **NFR-6 Rate‑Limiting**: Grundlegende Beschränkungen über das API‑Gateway, genaue Schwellenwerte werden noch definiert. *(Quelle: Technischer Architekt – offene Punkte)*
+
+## Constraints/Compliance
+
+- **C-1 Keine Sonderrabatte > 15 % im MVP** – muss technisch verhindert werden. *(Quelle: Finance)*
+- **C-2 Keine neue Datenbank** – Nutzung von Managed Services, Daten werden nur lesend aus SAP bezogen. *(Quelle: IT Operations)*
+- **C-3 EU‑only Datenresidenz** – Alle Daten und Services müssen innerhalb der EU gehostet werden. *(Quelle: Compliance)*
+- **C-4 Keine personenbezogenen Daten in technischen Logs** – Trennung von Audit‑Log und technischem Log. *(Quelle: Compliance)*
+- **C-5 Mobile‑First wird im MVP zurückgestellt** – Fokus auf Web‑First. *(Quelle: Business/Product Owner – offene Entscheidung)*
+- **C-6 SSO / OAuth optional, nicht verpflichtend im MVP**. *(Quelle: Business/Product Owner – offene Entscheidung)*
+
+## Assumptions and Open Points
+
+- **A-1 Mobile‑First**: Mobile Version wird nach dem MVP entwickelt. (offener Punkt)
+- **A-2 Authentifizierungsansatz**: Finaler Auth‑Mechanismus (OAuth 2.0, Azure AD, Google, API‑Keys) ist noch nicht festgelegt. (offener Punkt)
+- **A-3 Pilot‑Kunde & Währungs‑Support**: Entscheidung zwischen Deutschland (EUR) und Schweiz (CHF) fehlt; Einfluss auf rechtliche Rahmenbedingungen. (offener Punkt)
+- **A-4 Hosting‑Kosten**: Kosten‑Analyse für den EU‑only Managed Service steht noch aus. (offener Punkt)
+- **A-5 Rate‑Limiting‑Parameter**: Schwellenwerte für Anfragen pro Minute/Tag sind nicht definiert. (offener Punkt)
+- **A-6 Backup‑RTO/RPO**: Detaillierte Wiederherstellungszeiten werden noch spezifiziert. (offener Punkt)
+- **A-7 Secrets‑Management‑Lösung**: Auswahl zwischen Vault, Cloud‑Provider‑Lösungen o.Ä. ist offen. (offener Punkt)
+- **A-8 API‑Gateway‑Nutzung**: Das zentrale Gateway hat eine 6‑Wochen‑Warteliste; ggf. eigenständige Lösung später. (offener Punkt)
+- **A-9 Support‑Ticket‑System**: Im MVP nur Kontakt‑Formular, kein Ticket‑System. (offener Punkt)
+- **A-10 Caching‑Strategie**: Kein Cache für kundenspezifische Rabatte im MVP; potenzielle Performance‑Verbesserung später. (offener Punkt)
+
+## Traceability
+
+| ID   | Anforderungstyp | Beschreibung                                   | Quelle/Stakeholder               |
+|------|------------------|-----------------------------------------------|-----------------------------------|
+| FR-1 | Functional       | Login mit E‑Mail/Passwort & Double‑Opt‑In    | Anna, Ben                         |
+| FR-2 | Functional       | Rollen‑ & Berechtigungskonzept               | Anna, Clara                       |
+| FR-3 | Functional       | Angebots‑Workflow ohne > 15 % Rabatt          | Eva, Ben                          |
+| FR-4 | Functional       | Rechnungs‑Download                            | Eva, Anna                         |
+| FR-5 | Functional       | Lesender SAP‑Zugriff                         | Ben                               |
+| FR-6 | Functional       | API‑Layer (OAuth 2.0 bevorzugt)              | Ben                               |
+| FR-7 | Functional       | Mehrsprachigkeit (DE/EN)                     | Anna                              |
+| FR-8 | Functional       | Mehrwährung (EUR, CHF)                        | Eva                               |
+| FR-9 | Functional       | Backup & Disaster Recovery                    | Farid                             |
+| FR-10| Functional       | Minimaler Audit‑Trail                         | Clara                             |
+| NFR-1| Non‑functional   | DSGVO‑Konformität                             | Clara                             |
+| NFR-2| Non‑functional   | TLS & Security‑Review                         | Clara, Ben                        |
+| NFR-3| Non‑functional   | EU‑only Managed Hosting                        | Farid                             |
+| NFR-4| Non‑functional   | Performance/Skalierbarkeit (200 Nutzer)      | Ben                               |
+| NFR-5| Non‑functional   | Monitoring ohne personenbez. Daten            | Farid                             |
+| NFR-6| Non‑functional   | Rate‑Limiting (Grundlage)                     | Ben                               |
+| C-1  | Constraint       | Keine Sonderrabatte > 15 % im MVP             | Eva                               |
+| C-2  | Constraint       | Keine neue Datenbank, Managed Services nutzen | Farid                             |
+| C-3  | Constraint       | EU‑only Datenresidenz                         | Clara                             |
+| C-4  | Constraint       | Keine personenbez. Daten in technischen Logs  | Clara                             |
+| C-5  | Constraint       | Mobile‑First zurückgestellt                   | Anna                              |
+| C-6  | Constraint       | Optionales SSO/OAuth nicht verpflichtend       | Anna                              |
+| A-1  | Assumption       | Mobile‑First später                            | –                                 |
+| A-2  | Open Point       | Finaler Auth‑Ansatz                            | –                                 |
+| A-3  | Open Point       | Pilot‑Kunde & Währungs‑Entscheidung            | –                                 |
+| A-4  | Open Point       | Hosting‑Kostenanalyse                          | –                                 |
+| A-5  | Open Point       | Rate‑Limiting‑Parameter                        | –                                 |
+| A-6  | Open Point       | Backup RTO/RPO                                 | –                                 |
+| A-7  | Open Point       | Secrets‑Management‑Lösung                     | –                                 |
+| A-8  | Open Point       | API‑Gateway‑Nutzung vs eigene Lösung           | –                                 |
+| A-9  | Open Point       | Support‑Ticket‑System                         | –                                 |
+| A-10 | Open Point       | Caching‑Strategie                              | –                                 |

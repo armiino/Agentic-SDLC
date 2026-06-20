@@ -1,0 +1,96 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T09:33:49.332399Z",
+  "evaluationStatus": "ok",
+  "errorScore": 3,
+  "needsRepair": false,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 3; KRITISCH=0; needsRepair=False (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aus): 0 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 3 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 3,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Freigabe-Workflow f\u00FCr Rabatte \u003E 15 %: Vorgesehen f\u00FCr Phase 2, aber Finance fordert bereits klare Prozesse.\u0022): [MITTEL] Artefakt: \u0022\u0022Freigabe-Workflow f\u00FCr Rabatte \u003E 15 %: Vorgesehen f\u00FCr Phase 2, aber Finance fordert bereits klare Prozesse.\u0022\u0022 | Transkript: \u0022Eva: \u0022Das ist wichtig, aber vielleicht sp\u00E4ter.\u0022 / \u0022Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt.\u0022 / Anna: \u0022Oder ab 20 Prozent. Ich bin mir nicht sicher.\u0022 / Ben: \u0022Das muss klar definiert werden.\u0022\u0022 | Das Artefakt stellt den Freigabe-Workflow als f\u00FCr Phase 2 vorgesehen dar, obwohl im Transkript noch Unklarheit und Diskussion \u00FCber Schwellenwerte und Dringlichkeit besteht, somit ist der Status nicht entschieden."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022API-Gateway-Verz\u00F6gerung (6 Wochen-Warteliste): Sicherer API-Gateway-Zugang ist erst nach 6 Wochen verf\u00FCgbar.\u0022): [MITTEL] Artefakt: \u0022\u0022API-Gateway-Verz\u00F6gerung (6 Wochen Warteliste)\u0022 als feststehendes Risiko mit klaren Gegenma\u00DFnahmen.\u0022 | Transkript: \u0022Ben: \u0022Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 / Anna: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022 / Ben: \u0022Genau.\u0022\u0022 | Das Artefakt stellt die 6-Wochen-Warteliste als feststehendes Risiko dar, im Transkript ist dies zwar bekannt, aber es gibt noch keine endg\u00FCltige L\u00F6sung, daher ist der Status noch offen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Rate-Limiting (nur Minimal-Implementierung): Konkrete Schwellenwerte fehlen.\u0022): [MITTEL] Artefakt: \u0022\u0022Rate-Limiting (nur Minimal-Implementierung)\u0022 mit fehlenden Schwellenwerten als Risiko.\u0022 | Transkript: \u0022Ben: \u0022Konkrete Schwellenwerte fehlen.\u0022 / Clara: \u0022Risiko von Over-/Under-Protection.\u0022\u0022 | Im Transkript ist die Rate-Limiting-Policy noch offen und unklar, im Artefakt wird es als Risiko mit minimalen Ma\u00DFnahmen dargestellt, was eine zu hohe Gewissheit suggeriert."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 2,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 1 confirmed; 1 partial (herabgestuft); 3 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 1,
+        "rejected": 3,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 / Clara: \u0022Das ist keine Option.\u0022 / Anna: \u0022Dann machen wir es ohne Security Review?\u0022 / Clara: \u0022Das ist keine Option.\u0022\u0022 | Das Transkript nennt das Risiko, dass ein Security Review von 6 Wochen die MVP-Zeit sprengt und dass ein Verzicht keine Option ist. Dieses Risiko fehlt im Risikodokument."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Support-Workflow ohne Ticket-System: Support wird nur \u00FCber ein Kontaktformular abgewickelt. Unvollst\u00E4ndige Nachverfolgung von Anfragen, Risiko von DSGVO-Verst\u00F6\u00DF\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Support wird nur \u00FCber Kontaktformular abgewickelt.\u0022 / Clara: \u0022Dann werden Supportdaten per E-Mail verarbeitet. Auch Datenschutz.\u0022 / Farid: \u0022E-Mail ist unstrukturiert und schlecht auditierbar.\u0022 / Ben: \u0022Notieren als Risiko.\u0022\u0022 | Das Risiko, dass Support-Daten per E-Mail verarbeitet werden und damit Datenschutz- und Auditierbarkeitsprobleme entstehen, ist im Transkript explizit genannt, fehlt aber im Risikodokument."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Retention- und L\u00F6sch-Policy nicht definiert: Unklare Aufbewahrungsfristen vs. Recht auf Vergessenwerden. Risiko von Verst\u00F6\u00DFen gegen Aufbewahrungspflichten oder \u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022DSGVO ist nicht optional.\u0022 / Clara: \u0022Double-Opt-In und L\u00F6schung fehlen.\u0022 / Anna: \u0022Login mit Double-Opt-In\u0022 im MVP, aber L\u00F6schkonzept als Risiko im Support-Workflow erw\u00E4hnt.\u0022 | Das Risiko, dass ein L\u00F6schkonzept f\u00FCr personenbezogene Daten erforderlich ist und noch offen ist, wird im Transkript mehrfach genannt, fehlt aber als eigenst\u00E4ndiges Risiko im Risikodokument."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Testdaten enthalten reale Kundendaten: SAP-Testsystem k\u00F6nnte echte Daten enthalten. Risiko von Datenleck in Entwicklungs-/CI-Umgebung, Compliance-Versto\u00DF. Anony\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / Clara: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Das Risiko, dass Testdaten reale Kundendaten enthalten und damit Compliance-Verst\u00F6\u00DFe drohen, wird im Transkript klar benannt, fehlt aber im Risikodokument."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Logging-Trennung (technische Logs vs. personenbezogene Audit-Logs): Gefahr, dass PII versehentlich in technische Logs gelangt. DSGVO-Versto\u00DF, Bu\u00DFgelder, Reputat\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.\u0022 / Clara: \u0022Unterschiedliche Logarten und Aufbewahrungsfristen.\u0022\u0022 | Das Risiko, dass Monitoring-Logs keine personenbezogenen Daten enthalten d\u00FCrfen und eine klare Trennung der Logarten erforderlich ist, wird im Transkript genannt, fehlt aber im Risikodokument."
+        }
+      ]
+    }
+  ]
+}

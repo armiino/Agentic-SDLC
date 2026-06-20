@@ -1,0 +1,75 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-14T13:31:27.292491Z",
+  "evaluationStatus": "ok",
+  "errorScore": 13,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 13; KRITISCH=1; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 5,
+      "reason": "FALSE_CLAIM: 5 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Das System wird ausschlie\u00DFlich in einer **EU\u2011Only Managed Cloud** betrieben (z.\u202FB. Azure EU\u2011Region, AWS EU).\u0022 | Transkript: \u0022Architektur darf keine konkreten Cloud-Produkte erfinden, solange wir keinen Provider gew\u00E4hlt haben.\u0022 | Das Artefakt nennt konkrete Cloud\u2011Provider/Regionen als Beispiel, obwohl das Transkript ausdr\u00FCcklich fordert, keine konkreten Cloud\u2011Produktentscheidungen vor Wahl eines Providers zu treffen (Compliance/Organisationsregel)."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Managed Datenbank | Persistenz f\u00FCr Nutzer, Rollen, Angebote, Rechnungen, Audit\u2011Eintr\u00E4ge | EU\u2011Only, relational (PostgreSQL/MySQL) \u2013 konkrete Auswahl offen\u0022 | Transkript: \u0022Ben: Kein neuer DB Server \u2013 IT hat das klar gesagt.\u0022 | Das Artefakt nennt konkrete relationale DB\u2011Engines (PostgreSQL/MySQL), eine Festlegung, die im Transkript nicht getroffen oder diskutiert wurde (es wurde nur festgehalten: kein neuer DB\u2011Server / Managed Services)."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API\u2011Backend \u21C4 SAP\u2011Leseschnittstelle: OData/REST\u2011Read\u2011Only\u2011Calls, Auth \u00FCber Service\u2011Account.\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Das Artefakt beschreibt Authentifizierung zur SAP\u2011Integration per Service\u2011Account, eine konkrete Implementierungsentscheidung, die im Transkript nicht genannt oder vereinbart wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022Frontend \u21C4 Load\u2011Balancer: HTTPS\u2011Terminationspunkt, DNS\u2011Eintrag \u0060portal.example.eu\u0060.\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Das Artefakt nennt einen konkreten DNS\u2011Hostnamen (\u0060portal.example.eu\u0060), eine Implementierungs\u2011/Konfigurationsentscheidung, die im Transkript nicht vorkommt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022API\u2011Backend \u21C4 Managed DB: ORM/SQL\u2011Zugriff, gesichert durch VPC\u2011Isolation.\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Das Artefakt spezifiziert VPC\u2011Isolation als Sicherheitsma\u00DFnahme f\u00FCr die DB\u2011Anbindung, eine konkrete Infrastrukturentscheidung, die im Transkript nicht thematisiert wurde."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 3,
+      "reason": "FALSE_CERTAINTY: 3 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Auth\u2011Service | Authentifizierung per E\u2011Mail/Passwort, Double\u2011Opt\u2011In, sp\u00E4ter Erweiterung f\u00FCr SSO (Azure\u202FAD/Google) | Minimaler Token\u2011Based (z.\u202FB. JWT)\u0022 | Transkript: \u0022Clara: API muss abgesichert sein. OAuth? Oder API Keys? Ben: OAuth w\u00E4re besser. Aber komplexer.\u0022 | Das Artefakt setzt JWT/token\u2011based Authentication als konkrete Wahl fest, obwohl das Transkript die Authentifizierungs\u2011/Autorisierungsmechanismen (OAuth vs. API\u2011Keys, SSO) offen diskutiert hat."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022Rate\u2011Limiting: Grundlegendes Limiting am Reverse\u2011Proxy (z.\u202FB. 100\u202FRequests\u202F/\u202FMinute pro IP) bis ein vollwertiges API\u2011Gateway verf\u00FCgbar ist.\u0022 | Transkript: \u0022Ben: Wir brauchen auch Rate Limits f\u00FCr API.\u0022 | Das Artefakt legt einen konkreten numerischen Grenzwert (100 Requests/Minute/IP) fest, obwohl im Transkript nur die Notwendigkeit von Rate\u2011Limiting besprochen, aber keine konkrete Zahl vereinbart wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022Backup \u0026 Disaster Recovery | T\u00E4gliche Snapshots, Wiederherstellungs\u2011Plan, Retention (z.\u202FB. 30\u202FTage) | Teil des Managed\u2011Hosting\u2011Pakets\u0022 | Transkript: \u0022Clara: Und wir haben noch gar nicht \u00FCber Backup gesprochen.\u0022 | Das Artefakt legt konkrete Backup/Retention\u2011Parameter (z.\u202FB. t\u00E4gliche Snapshots, 30 Tage, monatlicher Wiederherstellungstest) fest, obwohl das Transkript nur die Notwendigkeit von Backup/DR thematisierte und keine konkreten Fristen/Tests vereinbarte."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    }
+  ]
+}

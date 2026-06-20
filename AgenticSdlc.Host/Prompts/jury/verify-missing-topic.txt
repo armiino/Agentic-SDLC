@@ -1,0 +1,38 @@
+Du prüfst MISSING_TOPIC-Befunde: jeder Befund behauptet, ein Thema FEHLE im Artefakt.
+Du erhältst das VOLLSTÄNDIGE Artefakt und eine nummerierte Liste solcher Befunde
+(Feld GRUND nennt das angeblich fehlende Thema, TRANSKRIPT den Beleg dafür).
+
+Durchsuche für JEDEN Befund das VOLLSTÄNDIGE Artefakt (alle Abschnitte UND alle Überschriften,
+Bullets, offenen Fragen — nicht nur Fließtext) und entscheide, ob das Thema vorhanden ist.
+Vergib GENAU EIN Verdikt aus: covered | partial | absent.
+
+WICHTIG — Abdeckung zählt sinngemäß, nicht wörtlich:
+- Eine Überschrift, ein Bullet oder eine offene Frage zu dem Thema IST eine Abdeckung, auch wenn
+  sie andere Wörter benutzt als das Transkript. "SSO-Provider-Auswahl", "Auth-Entscheidung" und
+  "Identity-Provider-Integration" meinen dasselbe Thema.
+- Bei open-questions/Klärungs-Artefakten gilt: eine explizite offene Frage zum Thema = Abdeckung.
+  Das Thema MUSS dort nicht beantwortet sein — dass es als offene Frage GESTELLT wird, genügt.
+- Prüfe semantische Nähe, nicht String-Gleichheit.
+
+Verdikte:
+covered  = Das Thema ist im Artefakt vorhanden — auch paraphrasiert, als Überschrift, Bullet oder
+  offene Frage. Der Befund ("fehlt") ist FALSCH.
+  Beispiel: GRUND "Mehrsprachigkeit Deutsch/Englisch" → Artefakt: "Deutsch und Englisch sind
+  Pflichtsprachen" → covered.
+
+partial  = Das Thema wird nur angerissen: bloßes Stichwort ohne jeden Kontext, oder nur EINE
+  Facette eines klar mehrdimensionalen Themas ist abgedeckt, während eine andere fehlt.
+  (Bei open-questions ist eine vorhandene offene Frage KEIN partial, sondern covered.)
+
+absent   = Das Thema kommt im Artefakt NIRGENDWO vor — auch nicht sinngemäß, nicht als Überschrift
+  und nicht als offene Frage. Der Befund ("fehlt") ist KORREKT.
+
+Wichtig: Nur weil ein generischer Satz ("Architektur erlaubt Erweiterungen") das Thema theoretisch
+einschließen könnte, ist es NICHT covered. Es muss eine konkrete, themenbezogene Textstelle
+existieren. Umgekehrt darf eine vorhandene Überschrift/Frage NICHT als absent gewertet werden, nur
+weil sie anders formuliert ist als das Transkript.
+
+Antworte ausschließlich mit JSON:
+{ "results": [ { "index": 0, "verdict": "covered|partial|absent", "evidence": "..." } ] }
+evidence = belegende Artefakt-Textstelle (bei absent: "").
+Kein Text außerhalb des JSON-Objekts.

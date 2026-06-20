@@ -1,0 +1,97 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-17T16:25:55.244375Z",
+  "evaluationStatus": "ok",
+  "errorScore": 8,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 8; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 5,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 1 confirmed; 4 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 4,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022SSO ist im MVP ausgeschlossen, sp\u00E4tere Implementierung unklar.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 Clara: \u0022Und wir haben noch gar nicht \u00FCber Backup gesprochen.\u0022 Anna: \u0022Backup?\u0022 ... Anna: \u0022Okay, notieren als Risiko.\u0022\u0022 | Im Transkript wird SSO als Wunsch und Option diskutiert, aber nicht als ausgeschlossen im MVP dargestellt. Das Artefakt behauptet, SSO sei im MVP ausgeschlossen, was so nicht im Transkript best\u00E4tigt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Ben sagt: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 Anna: \u0022Komplexer hei\u00DFt mehr Zeit.\u0022 Es gibt keine finale Entscheidung, aber eine Pr\u00E4ferenz wird angedeutet. Das Ar\u2026\u0022): [GERING] Artefakt: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022 | Transkript: \u0022Ben: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 Anna: \u0022Komplexer hei\u00DFt mehr Zeit.\u0022 Ben: \u0022Ja.\u0022 Clara: \u0022Und wir haben noch gar nicht \u00FCber Backup gesprochen.\u0022\u0022 | Im Transkript wird OAuth als bessere, aber komplexere Option genannt, ohne eine finale Pr\u00E4ferenz oder Entscheidung. Das Artefakt gibt eine Pr\u00E4ferenz als Fakt an, die im Transkript nicht best\u00E4tigt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Farid sagt: \u0022EU-only Hosting ist teuer und hat begrenzte Auswahl.\u0022 Anna fragt: \u0022Aber wenn EU-only teurer ist?\u0022 Farid antwortet: \u0022Ist es wahrscheinlich.\u0022 Es ist \u2026\u0022): [GERING] Artefakt: \u0022EU-only Managed Service \u0026 Kosten: EU-only Hosting ist teuer und hat begrenzte Auswahl.\u0022 | Transkript: \u0022Farid: \u0022EU-only Hosting ist teuer und hat begrenzte Auswahl.\u0022 Anna: \u0022Aber wenn EU-only teurer ist?\u0022 Farid: \u0022Ist es wahrscheinlich.\u0022\u0022 | Im Transkript wird nur vermutet, dass EU-only Hosting teurer sein k\u00F6nnte, keine definitive Aussage. Das Artefakt stellt es als Fakt dar, was eine ungesicherte Konkretisierung ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Ben sagt: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 Clara: \u0022Das ist keine Option.\u0022 Es wird als Problem dargestellt, aber keine endg\u00FCltige\u2026\u0022): [GERING] Artefakt: \u0022Security Review (6 Wochen) vs. 8-Wochen-MVP: Umfangreicher Security-Review \u00FCberschneidet sich mit knappem Zeitplan.\u0022 | Transkript: \u0022Ben: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 Anna: \u0022Dann machen wir es ohne Security Review?\u0022 Clara: \u0022Das ist keine Option.\u0022\u0022 | Im Transkript ist der Security Review als 6 Wochen Dauer genannt, aber es gibt keine abschlie\u00DFende Festlegung, dass er so umfangreich sein muss oder nicht angepasst werden kann. Das Artefakt stellt es als festen Fakt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Ben sagt: \u0022Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 Anna: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022 Es wird als Problem dargestellt, aber kein\u2026\u0022): [GERING] Artefakt: \u0022API-Gateway-Warteliste (6 Wochen): Das gew\u00FCnschte API-Gateway ist erst nach 6 Wochen verf\u00FCgbar.\u0022 | Transkript: \u0022Ben: \u0022Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 Anna: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022\u0022 | Im Transkript wird die Warteliste genannt, aber keine abschlie\u00DFende Festlegung, dass das API-Gateway erst nach 6 Wochen verf\u00FCgbar ist und keine Alternative m\u00F6glich ist. Das Artefakt stellt es als unumst\u00F6\u00DFliches Faktum dar."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022MVP: 1. Login mit Double-Opt-In ... 6. EU Managed Hosting 7. Backup - Die Aufz\u00E4hlung zeigt eine minimal umgesetzte Version (z.B. minimaler Audit Trail), und im \u2026\u0022): [MITTEL] Artefakt: \u0022MVP:\n1. Login mit Double-Opt-In\n2. Angebotserstellung mit SAP-Lesedaten\n3. Rechnungsdownload\n4. Rollen Admin/Sales/Kunde\n5. Minimaler Audit Trail\n6. EU Managed Hosting\n7. Backup\u0022 | Transkript: \u0022Anna: \u0022Okay, aber der Vorstand will Zahlen.\u0022\nBen: \u0022Dann m\u00FCssen wir schneiden. MVP: ...\u0022\nClara: \u0022Double-Opt-In und L\u00F6schung fehlen.\u0022\nEva: \u0022Freigabeprozess fehlt.\u0022\nDavid: \u0022Support fehlt.\u0022\nFarid: \u0022API Gateway und EU Hosting fehlen.\u0022\nBen: \u0022Backup fehlt.\u0022\nAnna: \u0022Okay. Dann MVP: 1. Login mit Double-Opt-In ... 6. EU Managed Hosting 7. Backup\u0022\nEva: \u0022Und Rabatt-Freigabe?\u0022\nAnna: \u0022Vielleicht Phase 2.\u0022\nEva: \u0022Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.\u0022\nBen: \u0022Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u0022\u0022 | Das Artefakt stellt den MVP-Umfang mit Double-Opt-In, EU Managed Hosting und Backup als gesetzt dar, obwohl im Transkript diese Punkte noch offen und strittig sind (z.B. Double-Opt-In Details offen, EU-only Hosting Kosten unklar, Backup/DR Umfang unklar). Die Darstellung suggeriert eine Entscheidung, die im Transkript als noch nicht final gekl\u00E4rt und mit Risiken verbunden ist."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 1,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 1 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 | Das Risiko, dass das Kontaktformular ohne Ticketpersistenz zu unzufriedener Support-Situation f\u00FChrt, ist im Artefakt nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Compliance\u2011 und Datenschutz\u2011Risiken: Verwendung von SAP\u2011Testdaten mit echten Kundendaten \u2013 Nutzung von Testsystemen kann reale personenbezogene Daten enthalten.\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 | Das Risiko der Verwendung von echten Kundendaten in SAP-Testsystemen und die daraus resultierenden Datenschutzprobleme sind im Artefakt nicht erw\u00E4hnt."
+        }
+      ]
+    }
+  ]
+}

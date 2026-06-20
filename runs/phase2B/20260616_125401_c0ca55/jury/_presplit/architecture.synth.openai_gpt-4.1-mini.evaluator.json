@@ -1,0 +1,95 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260616_125401_c0ca55",
+  "artifact": "architecture.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-17T11:26:04.616Z",
+  "evaluationStatus": "ok",
+  "errorScore": 4,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 4; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 1,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 1 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Monitoring \u0026 Logging: Technische Logs (ELK/AWS CloudWatch) getrennt von Audit-Logs, Alerts, Dashboard.\u0022 | Transkript: \u0022Farid: \u0022EU-only Hosting ist nicht einfach.\u0022 Anna: \u0022Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat.\u0022\u0022 | Das Artefakt nennt konkrete Produkte (ELK, AWS CloudWatch) f\u00FCr Monitoring, obwohl im Transkript keine konkrete Cloud-Provider-Entscheidung getroffen wurde und solche Produktnennungen als erfunden gelten."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 1,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 1 confirmed; 0 partial (herabgestuft); 5 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 0,
+        "rejected": 5,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Auth-Service: Authentifizierung via E-Mail/Passwort, Double-Opt-In, OAuth2-Token-Ausgabe.\u0022 | Transkript: \u0022Ben: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 Clara: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Artefakt beschreibt OAuth2-Token-Ausgabe als gesetzt, obwohl im Transkript OAuth als bevorzugt, aber noch nicht final entschieden wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022API-Gateway (optional)\u0022).\u0022): [MITTEL] Artefakt: \u0022API-Gateway (optional)\u0022 | Transkript: \u0022Farid: \u0022Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.\u0022 Ben: \u0022Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 Anna: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022\u0022 | Das Artefakt stellt das API-Gateway als optionale Komponente dar, obwohl im Transkript die Verf\u00FCgbarkeit des zentralen API-Gateways als kritisch und mit langer Warteliste (6 Wochen) beschrieben wird, was die MVP-Zeitplanung gef\u00E4hrdet. Die Entscheidung ist offen und nicht final."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Mobile-Strategie: Responsives Web-UI (React/Angular) \u2013 MVP fokussiert auf Browser, Mobile optional sp\u00E4ter.\u0022).\u0022): [MITTEL] Artefakt: \u0022Mobile-Strategie: Responsives Web-UI (React/Angular) \u2013 MVP fokussiert auf Browser, Mobile optional sp\u00E4ter.\u0022 | Transkript: \u0022Anna: \u0022Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.\u0022 Ben: \u0022Moment, mobile hei\u00DFt native App oder responsive Web?\u0022 Clara: \u0022Mobile vielleicht.\u0022\u0022 | Das Artefakt stellt responsives Web-UI als MVP-Fokus dar, obwohl im Transkript die Mobile-Strategie offen und noch nicht entschieden ist (native App vs. responsive Web)."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022SSO-Integration \u2013 Vorbereitung der Auth-Komponente f\u00FCr sp\u00E4tere Azure AD/Google-SSO-Anbindung.\u0022): [MITTEL] Artefakt: \u0022SSO-Integration \u2013 Vorbereitung der Auth-Komponente f\u00FCr sp\u00E4tere Azure AD/Google-SSO-Anbindung.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u0022 Clara: \u0022Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat.\u0022\u0022 | Das Artefakt beschreibt SSO-Integration als Vorbereitung, obwohl im Transkript die SSO-Integration offen und unentschieden ist, und konkrete Cloud-Provider-Entscheidungen ausdr\u00FCcklich vermieden werden sollen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Backup \u0026 DR Service: T\u00E4gliche Backups, 4-Stunden RTO, Aufbewahrung von 30 Tagen (Produktivdaten) \u2013 noch zu detailieren.\u0022): [MITTEL] Artefakt: \u0022Backup \u0026 DR Service: T\u00E4gliche Backups, 4-Stunden RTO, Aufbewahrung von 30 Tagen (Produktivdaten) \u2013 noch zu detailieren.\u0022 | Transkript: \u0022Ben: \u0022Backup fehlt.\u0022 Clara: \u0022Backup?\u0022 Anna: \u0022Backup \u0026 DR Details offen.\u0022\u0022 | Das Artefakt gibt konkrete Backup-Parameter (4-Stunden RTO, 30 Tage Aufbewahrung) an, obwohl im Transkript Backup- und DR-Details als offen und noch zu definieren genannt werden."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Support-Kontakt: Einfaches E-Mail-basiertes Formular (sp\u00E4ter Ticket-System).\u0022).\u0022): [MITTEL] Artefakt: \u0022Support-Kontakt: Einfaches E-Mail-basiertes Formular (sp\u00E4ter Ticket-System).\u0022 | Transkript: \u0022Anna: \u0022Kontaktformular ohne Ticketpersistenz.\u0022 David: \u0022Support ist nicht gel\u00F6st.\u0022 Clara: \u0022Supportprozess unklar.\u0022\u0022 | Das Artefakt beschreibt ein Support-Kontaktformular als Komponente, obwohl im Transkript Support-L\u00F6sung und Ticketsystem offen und ungel\u00F6st sind, mit Risiken und Einschr\u00E4nkungen."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    }
+  ]
+}

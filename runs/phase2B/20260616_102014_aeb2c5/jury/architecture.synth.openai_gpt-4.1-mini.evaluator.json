@@ -1,0 +1,91 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T10:24:29.144455Z",
+  "evaluationStatus": "ok",
+  "errorScore": 0,
+  "needsRepair": false,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 0; KRITISCH=0; needsRepair=False (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 7 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 7,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Auth Service: Kein SSO im MVP; sp\u00E4ter erweiterbar.\u0022).\u0022): [MITTEL] Artefakt: \u0022Auth Service: Kein SSO im MVP; sp\u00E4ter erweiterbar.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u0022 Clara: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Transkript zeigt, dass SSO und Identity Provider Integration noch offen und nicht final entschieden sind, das Artefakt stellt jedoch \u0027Kein SSO im MVP\u0027 als gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022SAP-Connector: Direkter Service-Aufruf (keine API-Gateway im MVP).\u0022): [MITTEL] Artefakt: \u0022SAP-Connector: Direkter Service-Aufruf (keine API-Gateway im MVP).\u0022 | Transkript: \u0022Farid: \u0022Unser zentrales API Gateway hat eine Warteliste von sechs Wochen.\u0022 Ben: \u0022API Gateway ist noch offen, keine Entscheidung f\u00FCr MVP.\u0022\u0022 | Das Transkript zeigt, dass die Nutzung des API-Gateways im MVP offen ist und es eine Warteliste gibt, das Artefakt stellt jedoch die direkte SAP-Anbindung ohne API-Gateway als gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Backup Service: Kein vollst\u00E4ndiger Disaster-Recovery-Plan im MVP.\u0022): [MITTEL] Artefakt: \u0022Backup Service: Kein vollst\u00E4ndiger Disaster-Recovery-Plan im MVP.\u0022 | Transkript: \u0022Clara: \u0022Backup?\u0022 Ben: \u0022Disaster Recovery.\u0022 Anna: \u0022Brauchen wir das f\u00FCr MVP?\u0022 Clara: \u0022Ja, wenn Kundendaten drin sind.\u0022 Ben: \u0022Security Review dauert 6 Wochen, sprengt MVP.\u0022\u0022 | Das Transkript zeigt Unsicherheit und Diskussion \u00FCber Backup und Disaster Recovery im MVP, das Artefakt stellt Backup Service mit definierten Wiederherstellungszeiten als gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Rabatt-Freigabe-Workflow: Minimaler Workflow, offene Entscheidung bez\u00FCglich Automatisierung.\u0022).\u0022): [MITTEL] Artefakt: \u0022Rabatt-Freigabe-Workflow: Minimaler Workflow, offene Entscheidung bez\u00FCglich Automatisierung.\u0022 | Transkript: \u0022Eva: \u0022Freigabeprozess ist wichtig, muss klar definiert werden.\u0022 Anna: \u0022Vielleicht sp\u00E4ter.\u0022 Ben: \u0022Muss klar definiert werden.\u0022\u0022 | Das Transkript zeigt, dass der Rabatt-Freigabe-Workflow noch offen und nicht final ist, das Artefakt stellt ihn als vorhandene Komponente mit Statusmanagement dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Web-Frontend (Responsive UI): Mobile-First vs. Web-First ist noch offen.\u0022).\u0022): [MITTEL] Artefakt: \u0022Web-Frontend (Responsive UI): Mobile-First vs. Web-First ist noch offen.\u0022 | Transkript: \u0022Anna: \u0022Web first. Mobile sp\u00E4ter. Oder andersrum?\u0022 Ben: \u0022Mobile hei\u00DFt native App oder responsive Web?\u0022\u0022 | Das Artefakt nennt Mobile-First vs. Web-First als offen, was korrekt ist, aber die Erw\u00E4hnung eines Responsive UI als gesetzt k\u00F6nnte eine zu fr\u00FChe Festlegung sein."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Monitoring \u0026 Logging: Logging ohne personenbezogene Daten.\u0022): [MITTEL] Artefakt: \u0022Monitoring \u0026 Logging: Logging ohne personenbezogene Daten.\u0022 | Transkript: \u0022Farid: \u0022Zentrales Monitoring darf keine personenbezogenen Daten enthalten.\u0022 Clara: \u0022Unterschiedliche Logs mit unterschiedlichen Aufbewahrungsfristen.\u0022\u0022 | Das Artefakt stellt Logging ohne PII als gesetzt dar, obwohl im Transkript noch Diskussionen \u00FCber genaue Log-Typen und Aufbewahrung laufen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022E-Mail Service: Double-Opt-In, Benachrichtigungen, PDF-Zustellung.\u0022): [MITTEL] Artefakt: \u0022E-Mail Service: Double-Opt-In, Benachrichtigungen, PDF-Zustellung.\u0022 | Transkript: \u0022Clara: \u0022Double-Opt-In ist Pflicht.\u0022 Anna: \u0022Login per E-Mail und Passwort, SSO optional.\u0022\u0022 | Das Artefakt stellt Double-Opt-In als implementiert dar, obwohl im Transkript noch Unsicherheiten \u00FCber SSO und Authentifizierung bestehen."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    }
+  ]
+}

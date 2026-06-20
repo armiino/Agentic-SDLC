@@ -1,0 +1,116 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260617_162205_950a9a",
+  "artifact": "architecture.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-17T19:24:18.40469Z",
+  "evaluationStatus": "ok",
+  "errorScore": 14,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 14; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 4,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 4 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Managed Services (z.\u202FB. Cloud\u2011Functions, Object\u2011Storage) werden genutzt, keine eigene relational\u2011DB.\u0022 | Transkript: \u0022Ben sagt: \u0022Managed Services sind okay. Aber bitte g\u00FCnstig.\u0022 Farid sagt: \u0022Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u0022 Ben sagt: \u0022Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022\u0022 | Das Transkript nennt keine konkreten Cloud-Services wie Cloud-Functions oder Object-Storage. Die Architektur nennt diese als Beispiele, was eine ungesicherte Konkretisierung ist, da kein Provider gew\u00E4hlt wurde."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API\u2011Layer / Proxy: Tempor\u00E4rer Server\u2011less Proxy bis API\u2011Gateway verf\u00FCgbar.\u0022 | Transkript: \u0022Farid sagt: \u0022Unser zentrales API Gateway hat eine Warteliste von sechs Wochen.\u0022 Ben sagt: \u0022Tempor\u00E4rer Proxy bis API-Gateway verf\u00FCgbar.\u0022\u0022 | Das Transkript erw\u00E4hnt keine konkrete Technologie oder Architektur f\u00FCr den tempor\u00E4ren Proxy, insbesondere nicht als serverless. Die Architektur nennt explizit einen serverless Proxy, was eine nicht belegte Konkretisierung ist."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup \u0026 Disaster Recovery: T\u00E4gliche Snapshots, 24\u2011h RTO (MVP\u2011Minimal), EU\u2011Region Storage.\u0022 | Transkript: \u0022Ben sagt: \u0022Backup fehlt.\u0022 Farid sagt: \u0022Backup-Strategie (RPO/RTO) muss finalisiert werden.\u0022 Anna sagt: \u0022Backup?\u0022 Clara sagt: \u0022Wenn Kundendaten drin sind: ja.\u0022 Keine konkrete RTO oder RPO genannt.\u0022 | Das Transkript nennt keine konkreten Zahlen f\u00FCr RTO oder RPO. Die Architektur nennt 24h RTO und 4h RPO, was eine erfundene Konkretisierung darstellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Currency Service: Unterst\u00FCtzt EUR, CHF (Pilot), sp\u00E4ter USD; W\u00E4hrungs\u2011Umrechnung \u0026 Formatierung.\u0022 | Transkript: \u0022Anna sagt: \u0022Pilotkunde ist noch nicht final.\u0022 Eva sagt: \u0022CHF ist f\u00FCr Schweiz wichtig.\u0022 Ben sagt: \u0022Pilotkunde-Region Schweiz vs. Deutschland noch offen.\u0022\u0022 | Das Transkript l\u00E4sst die Pilotkunde-Region offen, die Architektur nennt CHF als Pilotw\u00E4hrung und USD sp\u00E4ter, was eine zu konkrete Festlegung ist, die im Transkript nicht final beschlossen wurde."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 5 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 5,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Authentifizierung erfolgt per E\u2011Mail/Passwort mit Double\u2011Opt\u2011In; SSO (Azure AD, Google) ist f\u00FCr sp\u00E4tere Phasen geplant.\u0022): [MITTEL] Artefakt: \u0022Authentifizierung erfolgt per E\u2011Mail/Passwort mit Double\u2011Opt\u2011In; SSO (Azure AD, Google) ist f\u00FCr sp\u00E4tere Phasen geplant.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u0022 Anna: \u0022...\u0022 Ben: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Artefakt stellt SSO mit Azure AD und Google als geplant dar, obwohl im Transkript die SSO-Integration noch offen und nicht final entschieden ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022API\u2011Layer / Proxy: Tempor\u00E4rer Server\u2011less Proxy bis API\u2011Gateway verf\u00FCgbar\u0022): [MITTEL] Artefakt: \u0022API\u2011Layer / Proxy: Tempor\u00E4rer Server\u2011less Proxy bis API\u2011Gateway verf\u00FCgbar\u0022 | Transkript: \u0022Ben: \u0022Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 Anna: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022 Ben: \u0022Genau.\u0022\u0022 | Das Artefakt beschreibt den tempor\u00E4ren Proxy als gesetzt, obwohl im Transkript die Verf\u00FCgbarkeit des API-Gateways und die Nutzung des Proxys als \u00DCbergangsl\u00F6sung noch offen und problematisch sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Offer\u2011Workflow Service: Rabatt\u2011Freigabe\u2011Logik; Schwellenwert (15\u202F%) noch zu finalisieren\u0022): [MITTEL] Artefakt: \u0022Offer\u2011Workflow Service: Rabatt\u2011Freigabe\u2011Logik; Schwellenwert (15\u202F%) noch zu finalisieren\u0022 | Transkript: \u0022Eva: \u0022Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.\u0022 Anna: \u0022Oder ab 20 Prozent. Ich bin mir nicht sicher.\u0022 Ben: \u0022Das muss klar definiert werden.\u0022\u0022 | Das Artefakt gibt 15% als Schwellenwert an, obwohl im Transkript die genaue Rabattfreigabe-Schwelle und Verantwortlichkeiten noch offen und nicht final sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Pilotkunde\u2011Region: Schweiz (CHF) vs. Deutschland (EUR) beeinflusst W\u00E4hrungs\u2011 und Rechtsaspekte.\u0022): [MITTEL] Artefakt: \u0022Pilotkunde\u2011Region: Schweiz (CHF) vs. Deutschland (EUR) beeinflusst W\u00E4hrungs\u2011 und Rechtsaspekte.\u0022 | Transkript: \u0022Anna: \u0022Pilotkunde ist noch nicht final.\u0022 David: \u0022Ich dachte Pilotkunde ist M\u00FCller AG aus der Schweiz.\u0022 Anna: \u0022Vielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche.\u0022\u0022 | Das Artefakt nennt die Pilotkunde-Region als Schweiz vs. Deutschland als festen Punkt, obwohl im Transkript die Entscheidung noch offen ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Consent\u2011Management\u2011Tool \u2013 Auswahl einer DSGVO\u2011konformen L\u00F6sung vor Aktivierung von Analytics.\u0022): [MITTEL] Artefakt: \u0022Consent\u2011Management\u2011Tool \u2013 Auswahl einer DSGVO\u2011konformen L\u00F6sung vor Aktivierung von Analytics.\u0022 | Transkript: \u0022Ben: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022 Clara: \u0022Consent-Management ist noch offen.\u0022\u0022 | Das Artefakt stellt die Auswahl eines Consent-Management-Tools als anstehende Entscheidung dar, obwohl im Transkript die konkrete L\u00F6sung und Zeitpunkt noch offen sind."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 3,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 3 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 3,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 | Das Transkript diskutiert ausf\u00FChrlich den Supportprozess, inklusive Kontaktformular, Ticketsystem, Datenschutz und Zuordnung von Supportanfragen zum Kundenkonto, was im Artefakt nicht behandelt wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen einen Architekten.\u0022 | Das Transkript nennt explizit das Fehlen eines Architekten und die Notwendigkeit, die Architektur sauber zu dokumentieren, was im Artefakt nicht erw\u00E4hnt wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 | Das Transkript spricht \u00FCber Entwicklungs-, Test- und Produktionsumgebungen sowie den Umgang mit Testdaten und Pseudonymisierung, was im Artefakt fehlt."
+        }
+      ]
+    }
+  ]
+}

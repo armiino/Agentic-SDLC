@@ -1,0 +1,49 @@
+--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturüberblick - Frühphase
++ 
++ ## Systemkontext
++ Das geplante System ist ein Kundenportal, das primär die Sales-Abteilung unterstützt, um Angebote schneller zu erstellen. Das Portal ermöglicht Kunden Zugriff auf ihre Bestellungen, Rechnungen und Angebote. Die Datenbasis und zentrale Integrationsquelle ist das SAP-System, welches allerdings technische Restriktionen und Verfügbarkeitsaspekte aufweist. Die Lösung soll DSGVO-konform in der EU gehostet werden und Managed Services einsetzen.
++ 
++ ## Wichtige Komponenten
++ - Kundenportal (Web-first, mobile Erweiterung später)
++ - SAP-Integration (Lesender Zugriff für Angebots- und Rechnungsdaten)
++ - Identitäts- und Rollenmanagement (Login mit E-Mail, Double-Opt-In, einfache Rollen: Admin, Sales, Kunde)
++ - API-Layer für Systemintegration (OAuth bevorzugt, API Gateway als Ziel, aber evtl. Verzögerung)
++ - Audit- und Logging-Komponenten (Aufzeichnung von Änderungen, Zugriffen)
++ - Managed Hosting (EU-DSGVO-konform)
++ - Backup und Disaster Recovery (Basisfunktionalität für MVP)
++ 
++ ## Schnittstellen / Integrationspunkte
++ - SAP ERP System (Datenabruf für Stammdaten, Preise, Bestellungen)
++ - Identity Provider (optionale SSO Integration, z.B. Azure AD oder Google)
++ - Externe Managed Services für Hosting und Datenhaltung
++ - (zukünftige) API Gateway zur Absicherung von Schnittstellen
++ 
++ ## Daten- und Sicherheitsaspekte
++ - Strikte Einhaltung der DSGVO mit Fokus auf Datenschutz, Zugriffskontrolle und Löschkonzept
++ - Minimaler Double-Opt-In Prozess für Nutzerregistrierung
++ - Audit Trails für Angebotserstellung und Änderungen
++ - TLS-Verschlüsselung minimum, kein Ende-zu-Ende Verschlüsselung für MVP
++ - Rollenbasierte Zugriffskontrolle mit klaren Berechtigungsgrenzen
++ - Backup-Konzept durch Managed Services
++ - Keine neue Datenbank, Nutzung vorhandener Backends / SAP-Daten
++ 
++ ## Offene Architekturentscheidungen
++ - Umfang und Details der SSO Integration (OAuth vs. API Keys)
++ - Nutzung und Bereitstellung des API Gateways abhängig von Teamverfügbarkeit
++ - Supportprozess ohne Ticketsystem im MVP (Kontaktformular als Übergang)
++ - Umgang mit Rabatt- und Freigabeprozessen im MVP (Einschränkung auf Standardrabatte)
++ - Handling von Mehrwährungen und Internationalisierung (vorerst DACH, später EU/USA unsicher)
++ - Genaue Anforderungen an Data Retention und Audit im Kontext gesetzlicher Vorgaben
++ - Technische Machbarkeit der SAP-Integration bezüglich Echtzeitdaten und Fallback
++ - Hosting-Entscheidung und Kostenabschätzung für EU-only Managed Services
++ - Umfang und Tiefe der Logging- und Monitoringmaßnahmen im MVP
++ 
++ ## Quellen und Hinweise
++ Die Architektur basiert primär auf den umfassenden Stakeholder-Diskussionen im Transkript T9999_chaos.txt. Offizielle Requirements und weitere Dokumente stehen nicht oder nur eingeschränkt zur Verfügung. Die Architektur spiegelt aktuelle Unsicherheiten und Konflikte wider, die im Projekt noch geklärt werden müssen.
++ 
++ ---
++ 
++ _Dieser Architekturüberblick wurde als initialer Entwurf auf Basis verfügbarer Informationen für die frühe SDLC-Phase erstellt._

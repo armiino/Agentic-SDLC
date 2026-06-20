@@ -126,14 +126,25 @@ public sealed class Phase2ArtifactValidator
         var info = new FileInfo(absolutePath);
         files.Add(new Phase2ValidatedFile(displayPath, role, Exists: true, SizeBytes: info.Length));
 
+        // Gemeinsames Gültigkeits-Gate (K1/K3): leer bzw offensichtlich unbrauchbar (Placeholder/trivial).
+        // Bewusst in BEIDEN Strategien (A wie B laufen diesen Validator) -> identische Latte = fairer Vergleich.
         var content = File.ReadAllText(absolutePath);
-        if (string.IsNullOrWhiteSpace(content))
+        var gate = ArtifactQualityGate.Evaluate(content);
+        if (gate.Verdict == ArtifactQualityVerdict.Empty)
         {
             findings.Add(new Phase2ValidationFinding(
                 Severity: "error",
                 Code: "EMPTY_FILE",
                 Path: displayPath,
                 Message: "Required Phase 2.1 file exists but is empty."));
+        }
+        else if (gate.Verdict == ArtifactQualityVerdict.Invalid)
+        {
+            findings.Add(new Phase2ValidationFinding(
+                Severity: "error",
+                Code: "INVALID_ARTIFACT",
+                Path: displayPath,
+                Message: $"Required Phase 2.1 file is present but unusable: {gate.Reason}."));
         }
     }
 

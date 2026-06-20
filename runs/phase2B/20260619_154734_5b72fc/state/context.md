@@ -1,0 +1,73 @@
+# Projektkontext – Kundenportal (MVP)
+
+## 1. Projektziel
+- **Hauptziel:** Schnellere Angebotserstellung für das Vertriebsteam und gleichzeitige Bereitstellung von Rechnungs‑ und Auftragsinformationen für Kunden über ein zentrales Kundenportal.
+- **Unterziele (MVP‑Scope):**
+  1. Benutzer‑Login mit Double‑Opt‑In (E‑Mail + Passwort) – SSO optional.
+  2. Angebotserstellung basierend auf SAP‑Produkt‑ und Preisdaten (Lesender Zugriff).
+  3. Rechnungs‑ und Bestellungs‑Download für Kunden.
+  4. Minimaler Rollen‑ und Berechtigungskonzept (Admin, Sales, Kunde).
+  5. Grundlegender Audit‑Trail (Erstellung/Änderung von Angeboten, Login‑Events).
+  6. EU‑konformes Managed‑Hosting, Backup und Disaster‑Recovery.
+- **Zeitplan:** MVP in **8 Wochen**; danach Ausbau zu Mobile, Push‑Notifications, Freigabe‑Workflow, Mehrwährung etc.
+
+## 2. Sprecherrollen (Stakeholder)
+- **Anna** – Product Owner / Business Lead (Kundenportal‑Vision, Priorisierung, Zeitplan).
+- **Ben** – Architekt / Entwickler (Technische Machbarkeit, API‑Layer, SAP‑Anbindung, Infrastruktur).
+- **Clara** – Datenschutz / Compliance (DSGVO, Logging, Audit, Löschkonzept, Datenresidenz).
+- **David** – Customer Support (Support‑Prozesse, Kontaktformular, Ticket‑Handling).
+- **Eva** – Finance (Angebots‑Freigabe, Rabatt‑Logik, PDF‑Export, rechtliche Anforderungen).
+- **Farid** – IT Operations (Hosting‑Region, Managed Services, Monitoring, Secrets‑Management).
+
+## 3. Fachliche Themen (aus dem Dialog)
+| Thema | Kurzbeschreibung |
+|-------|-------------------|
+| Kundenportal / Plattform | Web‑first, später mobile, MVP‑Fokus auf Angebote und Rechnungen. |
+| Login & Authentifizierung | E‑Mail/Passwort, Double‑Opt‑In, optionale SSO (Azure AD / Google). |
+| Rollen & Berechtigungen | Admin, Sales, Kunde, später Manager, Support – Rollen‑ und Zugriffskontrolle. |
+| DSGVO / Compliance | Double‑Opt‑In, Logging, Audit‑Trail, Lösch‑ und Auftragsverarbeitungs‑Verträge, Datenminimierung. |
+| SAP‑Integration | Lesender Zugriff auf Produkt, Preis‑ und Rabattdaten; Schreibzugriff später für Bestellungen. |
+| API‑Layer & Gateway | Notwendig für Integration, jedoch 6‑Wochen‑Warteliste beim API‑Gateway‑Team. |
+| Managed Services & EU‑Hosting | Keine neue DB, Managed‑DB‑Service, aber EU‑only‑Hosting muss nachgewiesen werden. |
+| Backup & Disaster Recovery | Verpflichtend für MVP wegen personenbezogener Daten. |
+| Sicherheit & Review | Security‑Review >6 Wochen, Konflikt mit 8‑Wochen‑Deadline. |
+| KPIs | Conversion Rate (Angebot → Bestellung), Zeit bis Angebot. |
+| Mobile / Push‑Notifications | Wunsch, aber nicht im MVP. |
+| Mehrsprachigkeit | Deutsch + Englisch im MVP. |
+| Mehrwährung | EUR zwingend, CHF/CHF optional – offen, da Pilotkunde ggf. Schweiz. |
+| PDF‑Export & Freigabe | PDF‑Templates, rechtliche Fußnoten, Freigabe bei >15 % Rabatt (Phase 2). |
+| Support‑Prozess | Kontaktformular (keine Ticket‑DB), Datenlöschung, Datenschutz bei Support‑Anfragen. |
+| Logging & Monitoring | Trennung technisches Log, Audit‑Log, Aufbewahrungsfristen, keine personenbezogenen Daten im Monitoring. |
+| Rate‑Limiting & Missbrauchserkennung | Grundlegendes Rate‑Limiting (API‑Gateway), später erweiterte Missbrauchserkennung. |
+| Daten‑Retention & Löschkonzept | Rechtliche Aufbewahrung vs. Recht auf Vergessenwerden – noch offen. |
+| Test‑Umgebungen | Dev/Test/Prod, synthetische Testdaten, keine echten Kundendaten in Tests. |
+
+## 4. Erkennbare Konflikte & Spannungsfelder
+- **Zeit vs. Umfang:** 8‑Wochen‑MVP vs. umfangreiche Compliance‑, Security‑ und Infrastruktur‑Anforderungen.
+- **Budget:** Managed Services und EU‑only‑Hosting sind potenziell teuer, aber nötig für DSGVO.
+- **Security Review:** Dauer >6 Wochen kollidiert mit MVP‑Deadline.
+- **API‑Gateway:** 6‑Wochen‑Warteliste verhindert Nutzung im MVP.
+- **Datenbank:** Keine neue DB gewünscht, aber Persistenz für Angebote/Logs nötig.
+- **Rabatt‑Freigabe:** Keine Sonderrabatte im MVP, aber Finance‑Risiko bei unnötigen Rabatten.
+- **Support:** Kein Ticket‑System, aber Support‑Bedarf wird betont – Risiko für Kundenzufriedenheit.
+- **SAP‑Verfügbarkeit:** Kritische Abhängigkeit, kein Fallback‑Cache im MVP.
+- **Internationalisierung:** Pilotkunde evtl. Schweiz → unterschiedliche Datenschutz‑ und Währungsanforderungen, nicht im MVP definiert.
+- **Monitoring & Logging:** Technisches Logging darf keine personenbezogenen Daten enthalten – erfordert klare Trennung.
+
+## 5. Offene Fragen / Unsicherheiten
+1. **Pilotkunde:** Deutschland (Hansa GmbH) oder Schweiz (Müller AG) – beeinflusst Währung, Hosting und Datenschutz.
+2. **Genaues KPI‑Set:** Welche Kennzahlen werden endgültig gemessen?
+3. **Kosten‑Schätzung:** Für EU‑only Managed Services, Security Review, API‑Gateway, Hosting – bis Freitag gefordert.
+4. **Umfang der Freigabe‑Logik:** Schwellenwerte (15 % / 20 % / 30 %) und beteiligte Rollen.
+5. **Support‑Integration:** Wie wird das Kontaktformular technisch umgesetzt und welche Daten werden gespeichert?
+6. **Retention‑Fristen:** Wie lange müssen Angebote, Rechnungen und Log‑Daten aufbewahrt werden?
+7. **Backup‑Strategie:** RPO/RTO‑Anforderungen für das MVP.
+8. **Test‑Datenstrategie:** Wie werden echte SAP‑Produkt‑ und Preis‑Daten in Testumgebungen sicher verwendet?
+9. **API‑Gateway‑Alternative:** Gibt es kurzfristige Work‑around‑Lösungen für das MVP?
+10. **Mehrsprachigkeit & Mehrwährung:** Sind Englisch‑UI‑Elemente und CHF‑Preise im MVP nötig?
+
+## 6. Quellen
+- Transkript **T9999_chaos.txt** (Stakeholder‑Meeting, 2026‑06‑19) – vollständiger Dialog aller oben genannten Sprecher.
+
+---
+*Diese Zusammenfassung dient als neutrales Kontext‑Artefakt für den weiteren Anforderungs‑ und Architektur‑Prozess.*

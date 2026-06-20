@@ -1,0 +1,43 @@
+# Architekturueberblick Kundenportal
+
+## 1. Systemkontext
+Das Kundenportal ist ein webbasiertes System, das Kunden die Erstellung von Angeboten und den Download von Rechnungen ermöglicht. Das Portal ist eingebettet in eine bestehende IT-Landschaft, insbesondere mit einer SAP-Backend-Integration für Produkt-, Preis- und Rabattdaten. Weitere essentielle angrenzende Systeme sind Identity-Provider (SSO optional), E-Mail-Systeme für Double-Opt-In und Supportkontakt, sowie Managed Services für Hosting, Backup und API Gateway.
+
+## 2. Wichtige Komponenten
+- **Frontend:** Webanwendung (Web-first, mobile Erweiterung später), die Kundeninteraktionen ermöglicht (Login, Angebotsprozess, Rechnungsanzeige).
+- **Identity & Access Management:** Login mit E-Mail/Passwort und Double-Opt-In, optionale SSO-Integration. Rollenverwaltung mit mindestens Admin, Sales, Kunde.
+- **API Layer:** Zentraler, gesicherter Zugangspunkt für interne und externe Systeme via OAuth oder API Keys. Ermöglicht Integrationen, z.B. zu SAP.
+- **SAP Connector:** Schnittstelle zu SAP-Systemen zur Synchronisation von Produktdaten, Preisen, Rabatten und Rechnungsinformationen. Lesender Zugriff im MVP, Schreibzugriff unklar.
+- **Audit & Logging:** Komponente zur Protokollierung von Nutzeraktionen und Änderungen an Angeboten, ohne personenbezogene Daten in technischen Logs. Revisionssichere Speicherung.
+- **Support-Kontaktformular:** Einfaches Formular zur Kontaktaufnahme, ohne Persistenz oder Ticketsystem im MVP.
+- **Hosting & Infrastruktur:** EU-konformes Managed Hosting mit Backup- und Disaster-Recovery, mindestens drei Umgebungen (Dev, Test, Prod) mit abgesicherten Testdaten.
+
+## 3. Schnittstellen und Integrationspunkte
+- **SAP-Backend:** Leseschnittstelle für Produkt- und Preisdaten, Rabattlogik, Rechnungsdaten.
+- **Identity Provider:** Optionale Integration mit Azure AD, Google oder anderen SSO-Systemen.
+- **API Gateway:** Zentraler Zugangspunkt für Backend- und externe Schnittstellen mit Sicherheitsmechanismen wie OAuth.
+- **E-Mail-System:** Für Double-Opt-In, Benachrichtigungen und Support-Kontakte.
+
+## 4. Daten- und Sicherheitsaspekte
+- DSGVO-konforme Speicherung und Verarbeitung aller personenbezogenen Daten.
+- Double-Opt-In für Registrierung.
+- Audit-Trails speichern Zugriffe und Änderungen revisionssicher.
+- TLS-Verschlüsselung im Transport.
+- Keine Speicherung personenbezogener Daten in technischen Logs.
+- Löschkonzepte für personenbezogene Daten unter Einhaltung gesetzlicher Aufbewahrungspflichten.
+- Hosting und Backup ausschließlich in der EU mit gesicherter Datenresidenz.
+
+## 5. Offene Architekturentscheidungen
+- SSO-Integration: Technologie und Umfang sind noch nicht festgelegt.
+- API Gateway Verfügbarkeit und Alternativen zur Einhaltung des MVP-Zeitplans.
+- Art und Umfang des Security Reviews unter Zeitdruck.
+- Umgang mit Preis- und Rabattlogik, insbesondere mit SAP-Spezifika und möglichen Verzögerungen.
+- Supportlösung jenseits des Kontaktformulars, integrierte Ticket-Systeme sind ausgeschlossen im MVP.
+- Freigabeprozesse für Rabatte sind für spätere Projektphasen geplant.
+- Auswahl der Managed Services für Hosting und Backup unter Kosten- und Compliance-Gesichtspunkten.
+- Umgang mit Mehrwährungs- und Mehrsprachigkeitsanforderungen außerhalb des MVP.
+- Umgang mit Testdaten aus SAP-Testumgebungen unter Datenschutzgesichtspunkten.
+
+---
+
+Diese Architektur basiert auf den Anforderungen und Risiken, die im Transkript erarbeitet wurden, und ist auf den schnellen MVP-Zeitrahmen von 8 Wochen ausgerichtet. Die Architektur erlaubt Erweiterungen und Nachjustierungen, um spätere Anforderungen und Compliance sicher umzusetzen.

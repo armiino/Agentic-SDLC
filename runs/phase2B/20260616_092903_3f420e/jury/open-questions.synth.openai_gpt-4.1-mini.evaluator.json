@@ -1,0 +1,96 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "open-questions.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T09:34:45.220975Z",
+  "evaluationStatus": "ok",
+  "errorScore": 0,
+  "needsRepair": false,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 0; KRITISCH=0; needsRepair=False (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aus): 0 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 4 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 4,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022- **MVP\u2011Umfang**: Welche optionalen Features (SSO, Rabatt\u2011Freigabe, Mobile\u2011App, Mehrw\u00E4hrung) werden letztlich im MVP enthalten sein?\u0022): [MITTEL] Artefakt: \u0022- **MVP\u2011Umfang**: Welche optionalen Features (SSO, Rabatt\u2011Freigabe, Mobile\u2011App, Mehrw\u00E4hrung) werden letztlich im MVP enthalten sein?\u0022 | Transkript: \u0022Im Transkript wird SSO als optional und noch nicht final beschrieben, Mobile als unklar, Rabatt-Freigabe als m\u00F6glicherweise erst Phase 2, Mehrw\u00E4hrung als unklar und abh\u00E4ngig vom Pilotkunden.\u0022 | Das Artefakt stellt diese Punkte als offene Fragen dar, was korrekt ist. Allerdings wird im Transkript auch mehrfach Unsicherheit und Widerspr\u00FCche genannt, die im Artefakt nicht als solche hervorgehoben werden. Die Darstellung als reine offene Fragen ohne Hinweis auf Widerspr\u00FCche kann zu falscher Sicherheit f\u00FChren."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022- **Rabatt\u2011Freigabe\u202F\u003E\u202F15\u202F%**: Wird ein tempor\u00E4rer manueller Freigabe\u2011Prozess f\u00FCr das MVP implementiert?\u0022): [MITTEL] Artefakt: \u0022- **Rabatt\u2011Freigabe\u202F\u003E\u202F15\u202F%**: Wird ein tempor\u00E4rer manueller Freigabe\u2011Prozess f\u00FCr das MVP implementiert?\u0022 | Transkript: \u0022Im Transkript wird diskutiert, dass Rabatt-Freigabe \u003E15% erst in Phase 2 vorgesehen ist, Finance fordert aber bereits Freigabe im MVP, was ein Widerspruch ist.\u0022 | Das Artefakt listet die Frage als offen, aber ohne Hinweis auf den Widerspruch zwischen Requirements und Risiko, was eine falsche Sicherheit \u00FCber die Klarheit der Situation erzeugt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022- **EU\u2011Only Datenresidenz vs. Schweizer Datenschutz**: Hosting\u2011Requirement verlangt EU\u2011Only, das Risiko wirft aber die Frage auf, ob dies f\u00FCr Schweizer Kunden z\u2026\u0022): [MITTEL] Artefakt: \u0022- **EU\u2011Only Datenresidenz vs. Schweizer Datenschutz**: Hosting\u2011Requirement verlangt EU\u2011Only, das Risiko wirft aber die Frage auf, ob dies f\u00FCr Schweizer Kunden zul\u00E4ssig ist.\u0022 | Transkript: \u0022Im Transkript wird mehrfach diskutiert, dass EU-only Hosting f\u00FCr Schweizer Kunden problematisch sein kann und eine separate Pr\u00FCfung n\u00F6tig ist.\u0022 | Das Artefakt stellt dies als offene Frage dar, aber ohne den Widerspruch zwischen EU-only und Schweizer Datenschutz klar hervorzuheben, was eine falsche Sicherheit \u00FCber die Probleml\u00F6sung suggeriert."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022- **Backup\u2011Anforderungen**: Requirements verlangen t\u00E4gliche Backups, das Risiko fordert konkrete RPO/RTO\u2011Werte \u2013 \u2026\u0022): [MITTEL] Artefakt: \u0022- **Backup\u2011Anforderungen**: Requirements verlangen t\u00E4gliche Backups, das Risiko fordert konkrete RPO/RTO\u2011Werte \u2013 diese sind noch nicht definiert.\u0022 | Transkript: \u0022Im Transkript wird mehrfach gefordert, dass konkrete Werte f\u00FCr RPO und RTO noch offen sind und definiert werden m\u00FCssen.\u0022 | Das Artefakt listet die Frage nach RPO und RTO als offen, aber ohne den Widerspruch zwischen allgemeinen Backup-Anforderungen und fehlenden konkreten Werten zu betonen, was eine falsche Sicherheit erzeugt."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 4 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 4,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Unter Abschnitt 3. Widerspr\u00FCche, die gekl\u00E4rt werden m\u00FCssen: \u0022SSO: Requirements beschreiben SSO als optional und nicht im MVP, w\u00E4hrend das Risiko die m\u00F6gliche Au\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Im Transkript wurde mehrfach diskutiert, ob SSO im MVP enthalten sein soll (optional, noch offen).\u0022 | Das Artefakt listet keine offene Frage zur finalen Entscheidung \u00FCber SSO im MVP, obwohl das im Transkript als offen und unklar dargestellt wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Unter Abschnitt 4. Fehlende Informationen: \u0022Security-Review-Zeitplan und Ressourcen-Zuweisung im Verh\u00E4ltnis zum MVP-Zeitplan.\u0022\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Im Transkript wurde mehrfach die Frage nach der finalen Entscheidung zum Security Review im Verh\u00E4ltnis zum 8-Wochen-MVP-Zeitplan diskutiert und als offen benannt.\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zum Security-Review-Zeitplan und Ressourcen, obwohl dies im Transkript als offener Punkt genannt wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Unter Abschnitt 1. Offene fachliche Fragen: \u0022Support-Workflow: Ist ein minimal-Ticket-System (z.\u202FB. Jira Service Management) erforderlich, um DSGVO-Konformit\u00E4t \u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Im Transkript wurde mehrfach der Support-Workflow und die Frage nach einem minimalen Ticketsystem diskutiert und als offen benannt.\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zur finalen Entscheidung \u00FCber ein minimal-Ticketsystem oder Support-Workflow, obwohl dies im Transkript als offen dargestellt wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Unter Abschnitt 2. Offene technische Fragen: \u0022Interims-API-Gateway/Proxy: Wie soll die IP-Allowlist, das API-Key-Management und ggf. Basis-OAuth konkret umgeset\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Im Transkript wurde die Frage nach der finalen Entscheidung zu API Gateway und dessen Nutzung im MVP diskutiert und als offen benannt.\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zur konkreten Umsetzung oder tempor\u00E4ren L\u00F6sung des API Gateways, obwohl dies im Transkript als offener Punkt genannt wurde."
+        }
+      ]
+    }
+  ]
+}

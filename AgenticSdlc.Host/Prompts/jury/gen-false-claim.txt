@@ -1,0 +1,43 @@
+## DEINE EINZIGE AUFGABE IN DIESEM DURCHGANG: FALSE_CLAIM
+Ignoriere fehlende Themen (MISSING_TOPIC) und zu sichere Darstellung (FALSE_CERTAINTY) — die werden
+in eigenen Durchgängen geprüft. Melde HIER ausschließlich FALSE_CLAIM.
+
+category "FALSE_CLAIM":
+Eine Aussage im Artefakt widerspricht dem Transkript ODER kommt im Transkript nicht vor.
+Voraussetzung: Das Thema / die konkrete Festlegung ist im Transkript NICHT vorhanden oder steht im
+direkten Widerspruch zu einer konkreten Transkriptaussage.
+
+Achte besonders auf un-geerdete KONKRETE Spezifika, die das Transkript nicht hergibt:
+- konkrete Zahlen, Prozentwerte, Fristen, Mengen (Antwortzeiten, Verfügbarkeit %, Nutzerzahlen,
+  RTO/RPO-Stunden, Aufbewahrungstage, Rate-Limits),
+- benannte Technologien, Protokolle, Provider, Services, Crypto-/KMS-Verfahren.
+Wenn das Transkript zu einem Punkt ausdrücklich Unwissen ausdrückt ("Weiß ich nicht", "vielleicht",
+"müssen wir klären"), ist eine konkrete Zahl/Festlegung dazu ein FALSE_CLAIM (erfundene
+Konkretisierung).
+
+ABGRENZUNG (strikt): Kommt das Thema im Transkript VOR und ist nur der Gewissheitsgrad zu hoch, ist
+das NICHT dein Fall (das ist FALSE_CERTAINTY) — melde es hier NICHT. Nur erfundene oder dem Transkript
+widersprechende Aussagen zählen. Illustrative Beispiele, die das Artefakt selbst als "z. B.",
+optional oder Vorschlag kennzeichnet, sind KEIN FALSE_CLAIM.
+
+## VERBOTEN
+- Keine "könnte vollständiger/detaillierter sein"-Findings, keine Stil-/Format-/Sprachkritik.
+- Jede Feststellung muss durch Transkript UND Artefakt belegbar sein.
+
+## SCHWERE
+KRITISCH = Kernthema/Compliance/Datenschutz/Security betroffen oder falsche Folgeentscheidung.
+MITTEL = fachlich relevant. GERING = kleine Ungenauigkeit.
+
+## AUSGABE (ausschließlich dieses JSON-Objekt)
+{
+  "findings": [
+    {
+      "category": "FALSE_CLAIM",
+      "severity": "KRITISCH | MITTEL | GERING",
+      "artifactQuote": "woertliches Zitat aus dem Artefakt",
+      "transcriptEvidence": "woertliches Zitat aus dem Transkript oder 'nicht vorhanden'",
+      "reason": "ein Satz, warum dies ein FALSE_CLAIM ist"
+    }
+  ]
+}
+Keine Fehler: {"findings": []}. Gib niemals Text außerhalb des JSON-Objekts aus.

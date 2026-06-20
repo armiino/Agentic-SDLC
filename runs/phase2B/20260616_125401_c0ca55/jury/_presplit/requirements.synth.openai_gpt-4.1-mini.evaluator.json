@@ -1,0 +1,107 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260616_125401_c0ca55",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-17T11:25:21.194617Z",
+  "evaluationStatus": "ok",
+  "errorScore": 4,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 4; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 2,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 2 confirmed; 0 partial (herabgestuft); 5 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 0,
+        "rejected": 5,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Verf\u00FCgbarkeit: Systemverf\u00FCgbarkeit von 99,5 % im Produktionsbetrieb, mit geplanten Wartungsfenstern von maximal 4 Stunden pro Monat.\u0022 | Transkript: \u0022Im Transkript wird Verf\u00FCgbarkeit als wichtig genannt, aber keine konkrete Prozentzahl oder Wartungsfenster spezifiziert.\u0022 | Das Artefakt gibt eine konkrete Verf\u00FCgbarkeitsanforderung an, die im Transkript nicht festgelegt wurde, daher falsche Gewissheit."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Security Review: Der Security-Review ist f\u00FCr 6 Wochen geplant und kollidiert potenziell mit der 8-Wochen-MVP-Deadline.\u0022 | Transkript: \u0022Im Transkript wird diskutiert, dass Security Review 6 Wochen dauert und mit MVP-Zeit kollidiert, aber keine finale Entscheidung getroffen wurde.\u0022 | Das Artefakt stellt den Security Review als geplant und kollidierend dar, obwohl im Transkript die Entscheidung offen ist, ob er gemacht wird oder nicht."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Rollen- und Berechtigungskonzept: Unterst\u00FCtzt mindestens die Rollen Admin, Sales, Kunde (und optional Support/Man\u2026\u0022): [MITTEL] Artefakt: \u0022Rollen- und Berechtigungskonzept: Unterst\u00FCtzt mindestens die Rollen Admin, Sales, Kunde (und optional Support/Manager) mit differenzierten Zugriffsrechten auf Portalfunktionen.\u0022 | Transkript: \u0022Support-Rollen und Berechtigungen sind im Transkript offen, z.B. ob Support Preise sehen darf oder nur Status, mit Berechtigungskonflikten und noch zu modellierenden Regeln.\u0022 | Das Artefakt stellt Rollen und Berechtigungen als gesetzt dar, obwohl im Transkript noch offene Fragen und Konflikte zur Support-Rolle und Berechtigungen bestehen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022SSO / Identity Provider: Azure AD/Google-SSO ist ein Wunsch, wird aber im MVP nicht implementiert.\u0022): [MITTEL] Artefakt: \u0022SSO / Identity Provider: Azure AD/Google-SSO ist ein Wunsch, wird aber im MVP nicht implementiert.\u0022 | Transkript: \u0022Im Transkript ist SSO Integration offen, mit unklarer Entscheidung und Aufwand, keine finale Festlegung.\u0022 | Das Artefakt stellt SSO als nicht im MVP implementiert dar, was zwar korrekt ist, aber die Entscheidung und Aufwand sind noch offen, daher ist die Darstellung als gesetzt eine falsche Gewissheit."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Backup \u0026 Disaster Recovery: T\u00E4gliche Backups mit einer Wiederherstellungszeit von maximal 4 Stunden; Aufbewahrung\u2026\u0022): [MITTEL] Artefakt: \u0022Backup \u0026 Disaster Recovery: T\u00E4gliche Backups mit einer Wiederherstellungszeit von maximal 4 Stunden; Aufbewahrungsfrist von 30 Tagen f\u00FCr produktive Daten. (Offener Punkt: Detail-Definition)\u0022 | Transkript: \u0022Backup-Strategie und Disaster Recovery sind im Transkript offen, Details und Aufbewahrungsfristen m\u00FCssen noch spezifiziert werden.\u0022 | Das Artefakt gibt konkrete Backup-Zeiten und Aufbewahrungsfristen an, obwohl diese im Transkript als offen und noch zu definieren beschrieben werden."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Performance: Angebotserstellung und Datenanzeige sollen innerhalb von 2 Sekunden nach Benutzerinteraktion reagier\u2026\u0022): [MITTEL] Artefakt: \u0022Performance: Angebotserstellung und Datenanzeige sollen innerhalb von 2 Sekunden nach Benutzerinteraktion reagieren. (Annahme: definiert in MVP-Sprint)\u0022 | Transkript: \u0022Im Transkript wird Performance nicht explizit mit 2 Sekunden genannt, sondern nur als wichtiges Thema diskutiert.\u0022 | Das Artefakt gibt eine konkrete Performance-Anforderung an, die im Transkript nicht explizit genannt wird, daher ist die Festlegung als gesetzt eine falsche Gewissheit."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Scalability: Architektur muss horizontal skalieren k\u00F6nnen, um bis zu 10.000 gleichzeitige Nutzer zu unterst\u00FCtzen.\u2026\u0022): [MITTEL] Artefakt: \u0022Scalability: Architektur muss horizontal skalieren k\u00F6nnen, um bis zu 10.000 gleichzeitige Nutzer zu unterst\u00FCtzen. (Annahme f\u00FCr MVP-Erweiterung)\u0022 | Transkript: \u0022Im Transkript werden Nutzerzahlen als sehr unsicher genannt (20 bis 20.000), Skalierbarkeit ist ein Spannungsfeld und noch offen.\u0022 | Das Artefakt gibt eine konkrete Skalierbarkeitsanforderung an, obwohl im Transkript die Nutzerzahl und Skalierbarkeit noch offen und unsicher sind."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 3 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 3,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Assumptions and Open Points: Support-Ticket-System: Nutzung eines strukturierten Ticket-Systems versus einfaches E-Mail-basiertes Verfahren ist noch offen. (Off\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Support-Ticket-System: Nutzung eines strukturierten Ticket-Systems versus einfaches E-Mail-basiertes Verfahren ist noch offen.\u0022 | Das Transkript diskutiert offen, ob ein Support-Ticket-System oder nur ein Kontaktformular genutzt wird, inklusive Risiken und Datenschutz, was im Artefakt nur als Kontaktformular mit E-Mail erw\u00E4hnt wird, aber die offene Entscheidung und Risiken fehlen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Assumptions and Open Points: Detailierte Rabatt-Freigabe-Workflow f\u00FCr \u003E15 % Rabatt: Im MVP ausgeschlossen, sp\u00E4ter zu definieren. (Offener Punkt)\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Rabatt-Freigabe-Workflow f\u00FCr \u003E15 % Rabatt: Diskussion \u00FCber Freigabeprozesse, unterschiedliche Schwellenwerte und Rollen, die Freigaben erteilen d\u00FCrfen.\u0022 | Das Transkript beschreibt detailliert den Rabatt-Freigabe-Workflow als wichtiges Thema mit offenen Punkten, der im Artefakt nur als offener Punkt erw\u00E4hnt wird, aber keine funktionalen Anforderungen oder Constraints dazu dokumentiert sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Non-functional Requirements: DSGVO-Konformit\u00E4t: Das System muss Double-Opt-In, ein L\u00F6schkonzept, Audit-Logs, Datenminimierung und Datenresidenz in der EU sicher\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Datenminimierung: Diskussion, ob alle Kundendaten im Portal liegen m\u00FCssen oder nur bei Bedarf aus SAP abgerufen werden sollen.\u0022 | Das Transkript behandelt Datenminimierung als wichtiges Thema, das im Artefakt nur allgemein unter DSGVO-Konformit\u00E4t genannt wird, aber keine konkrete Anforderung oder Annahme zur Datenminimierung enth\u00E4lt."
+        }
+      ]
+    }
+  ]
+}

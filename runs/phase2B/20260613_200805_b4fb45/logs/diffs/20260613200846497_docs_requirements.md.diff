@@ -1,0 +1,88 @@
+--- before/docs/requirements.md
++++ after/docs/requirements.md
+- - Das Kundenportal muss einen **Login** per E‑Mail mit **Double‑Opt‑In** ermöglichen (Stakeholder: Anna, Clara).
++ - Login per E‑Mail mit Double‑Opt‑In (Anna, Clara).
+- - Rollenbasierte Zugriffskontrolle für **Admin**, **Sales** und **Kunde** ist zu implementieren (Anna, Ben).
++ - Rollenbasierte Zugriffskontrolle (Admin, Sales, Kunde) (Anna, Ben).
+- - **Angebotserstellung**: Sales‑Nutzer können Angebote erstellen, dabei werden Produkt‑ und Preisdaten aus SAP gelesen (Ben, Eva). Das Schreiben von Angeboten in SAP ist noch ungeklärt (offener Punkt).
++ - Angebotserstellung: Lesen von Produkt‑ und Preisdaten aus SAP (Ben, Eva).
+- - **Rechnungsanzeige**: Kunden können Rechnungen einsehen und als PDF herunterladen (Anna, Eva).
++ - Rechnungsanzeige und Download als PDF (Anna, Eva).
+- - **Kundendaten‑Login**: Kunden können nach dem Login ihre Profildaten einsehen und bearbeiten (Anna, Clara).
++ - Kundendaten‑Login und Bearbeitung (Anna, Clara).
+- - **Integration mit SAP**: Lesender Zugriff auf Produkt‑, Preis‑ und Kundendaten; mögliche Schreibzugriffe für Angebote sind offen (Ben).
++ - Integration SAP: Lesender Zugriff (Ben).
+- - **Push‑Notifications** (optional, nicht zwingend für MVP) zur Benachrichtigung über neue Angebote oder Rechnungen (Anna).
++ - Optional Push‑Notifications (Anna).
+- - **Support‑Kontaktformular** statt vollständigem Ticket‑System für den MVP (David).
++ - Kontaktformular für Support (David).
+- - **DSGVO‑Konformität**: Double‑Opt‑In, Lösch‑ und Aufbewahrungskonzepte, Audit‑Logs ohne personenbezogene Daten, Trennung technischer und Audit‑Logs (Clara).
++ - DSGVO‑Konformität: Double‑Opt‑In, Lösch‑ und Aufbewahrungskonzepte, Audit‑Logs (Clara).
+- - **Sicherheitsanforderungen**: Authentifizierung über ein sicheres Verfahren (OAuth oder API‑Key – Entscheidung offen), Verschlüsselung von Daten in Ruhe und Transit (Ben).
++ - Sicherheit: Authentifizierung (OAuth oder API‑Key – Entscheidung offen), Verschlüsselung (Ben).
+- - **Hosting**: EU‑only Managed Service Hosting, inkl. Backup und Disaster Recovery (Farid).
++ - Hosting: EU‑only Managed Service, Backup, DR (Farid).
+- - **Performance & Verfügbarkeit**: System muss innerhalb von 8 Wochen ein MVP bereitstellen, daher minimalistische Architektur ohne API‑Gateway; Rate‑Limiting und Missbrauchserkennung sind erforderlich (Ben, offene Entscheidung).
++ - Performance: MVP in 8 Wochen, Rate‑Limiting erforderlich (Ben).
+- - **Skalierbarkeit**: Das Portal muss mindestens 100 gleichzeitige Nutzer unterstützen (Schätzung, Annahme).
++ - Skalierbarkeit: mind. 100 gleichzeitige Nutzer (Annahme).
+- - **Mehrwährungs‑Support**: Unterstützung von EUR und ggf. CHF (USD optional) – finale Entscheidung offen (Eva).
++ - Mehrwährungs‑Support: EUR, ggf. CHF (Eva).
+- - **Test‑Umgebungen**: Separate Dev/Test/Prod‑Umgebungen, wobei Test‑Umgebungen keine echten Kundendaten enthalten dürfen (Farid).
++ - Test‑Umgebungen ohne reale Daten (Farid).
+- - **Zeitplan**: MVP muss in 8 Wochen fertig gestellt werden (Anna).
++ - Zeitplan 8 Wochen (Anna).
+- - **Budget**: EU‑only Managed Services sind kostenintensiv; Budgetrestriktionen sind noch nicht final (Farid).
++ - Budget für EU‑only Managed Services (Farid).
+- - **API‑Gateway**: Warteliste von 6 Wochen, daher nicht im MVP‑Umfang (Ben).
++ - API‑Gateway nicht im MVP (Ben).
+- - **Keine Cloud‑Provider‑Spezifikationen** dürfen festgeschrieben werden, solange EU‑Only‑Hosting gefordert ist (Clara).
++ - Keine Cloud‑Provider‑Spezifikationen (Clara).
+- - **Logging**: Technische Logs dürfen keine personenbezogenen Daten enthalten; separate Audit‑Logs für Nachvollziehbarkeit (Clara).
++ - Logging: Trennung technischer und Audit‑Logs (Clara).
+- - **SAP‑Schreibzugriff** für Angebote: Noch nicht entschieden, wird im späteren Projektverlauf geklärt.
++ - SAP‑Schreibzugriff für Angebote (offen).
+- - **Währungen** im MVP: Ob CHF (und USD) inkludiert werden, ist offen.
++ - Währungen CHF/USD im MVP (offen).
+- - **Rate‑Limiting‑Lösung** ohne API‑Gateway: Noch zu bestimmen (z. B. Cloud‑WAF, eigene Middleware).
++ - Rate‑Limiting‑Lösung ohne API‑Gateway (offen).
+- - **Authentifizierungsmechanismus**: OAuth vs. API‑Key – Entscheidung ausstehend.
++ - Authentifizierungsmechanismus OAuth vs. API‑Key (offen).
+- - **Backup‑ und DR‑Details**: Genaues Verfahren und Aufbewahrungsfristen müssen noch definiert werden.
++ - Backup‑ und DR‑Details (offen).
+- - **Kosten‑Schätzung**: Bis Freitag zu finalisieren, Auswirkungen auf Infrastrukturentscheidungen.
++ - Kosten‑Schätzung bis Freitag (offen).
+- - **Support‑Prozess**: Kontaktformular vs. Ticket‑System und daraus resultierende Datenschutzimplikationen.
++ - Support‑Prozess Kontaktformular vs. Ticket‑System (offen).
+- - **Umgang mit echten Kundendaten in Testumgebungen**: Vorgehensweise noch offen.
++ - Umgang mit Kundendaten in Testumgebungen (offen).
+- - FR‑Login & Double‑Opt‑In – **Anna**, **Clara** (Projektziel, DSGVO).
++ - FR‑Login & Double‑Opt‑In – Anna, Clara.
+- - FR‑Rollenmanagement – **Anna**, **Ben** (Projektziel, Sicherheit).
++ - FR‑Rollenmanagement – Anna, Ben.
+- - FR‑Angebotserstellung – **Ben**, **Eva** (Integration SAP, Finanz).
++ - FR‑Angebotserstellung – Ben, Eva.
+- - FR‑Rechnungsdownload – **Anna**, **Eva** (Projektziel, Finance).
++ - FR‑Rechnungsdownload – Anna, Eva.
+- - FR‑Kundendaten‑Login – **Anna**, **Clara**.
++ - FR‑Kundendaten‑Login – Anna, Clara.
+- - FR‑SAP‑Integration – **Ben** (Technik), **Eva** (Finance).
++ - FR‑SAP‑Integration – Ben.
+- - FR‑Push‑Notifications – **Anna** (optional).
++ - FR‑Push‑Notifications – Anna.
+- - FR‑Support‑Kontaktformular – **David** (Support).
++ - FR‑Support‑Kontaktformular – David.
+- - NFR‑DSGVO – **Clara** (Compliance).
++ - NFR‑DSGVO – Clara.
+- - NFR‑Sicherheit/Authentifizierung – **Ben**, **Clara**.
++ - NFR‑Sicherheit – Ben, Clara.
+- - NFR‑Hosting/Backup – **Farid** (Operations).
++ - NFR‑Hosting/Backup – Farid.
+- - NFR‑Performance & Rate‑Limiting – **Ben**, **Farid** (offene Entscheidung).
++ - NFR‑Performance – Ben.
+- - NFR‑Mehrwährung – **Eva** (Finance).
++ - NFR‑Mehrwährung – Eva.
+- - Constraints – **Anna**, **Ben**, **Farid**, **Clara** (Zeit, Budget, API‑Gateway, Logging).
++ - Constraints – Anna, Ben, Farid, Clara.
+- - Assumptions – Alle offenen Punkte wurden aus den **unsicheren** Bereichen im Projektkontext extrahiert.
++ - Assumptions – siehe offene Punkte.

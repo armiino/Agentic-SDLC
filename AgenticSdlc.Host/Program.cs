@@ -18,10 +18,63 @@ DotNetEnv.Env.Load(
 
 var runtimeConfig = RunConfig.Load(repoRoot);
 var settings = HostSettings.FromRuntimeConfig(runtimeConfig, repoRoot);
+
+// Offline-Evaluator (isolierter Bewertungs-Pfad): bewertet ein bestehendes Artefakt mit dem
+// Evaluator, ohne neuen Generierungs-Run / Workflow / Run-Ordner / Change-Note
+// ziel: Re-Scoren alter Runs oder zum Testen eines anderen Judge-Modells (evtl später weg..)
+if (args.Length > 0 && string.Equals(args[0], "eval-offline", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.OfflineEvaluatorRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// DISK-14 Phase 1 (additiv, isoliert): Artefakte deterministisch in Pruefeinheiten zerlegen (kein LLM).
+// Verwerfen des Per-Item-Ansatzes = PerItem-Ordner loeschen + diese Zeile entfernen.
+if (args.Length > 0 && string.Equals(args[0], "parse-units", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.UnitParseRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// DISK-14 Phase 2 (additiv, isoliert): Per-Item-Klassifikation → paralleler GroundingScore (echter LLM-Call)
+// Verwerfen = PerItem-Ordner löschen + diese Zeile entfernen.
+if (args.Length > 0 && string.Equals(args[0], "classify-units", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClassifyUnitsRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// DISK-14 MISSING/Coverage-Achse (additiv, isoliert): Transkript-Turns -> covered/missing je Artefakt
+if (args.Length > 0 && string.Equals(args[0], "coverage-units", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.CoverageRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// PILOTtest (isoliert): echter MAF-Agent als Reviewer (vs. post-hoc IEvaluator). Verwerfen = ReviewAgent-Ordner + diese Zeile.
+if (args.Length > 0 && string.Equals(args[0], "review-agent", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.ReviewAgent.ReviewAgentRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 var runId = RunId.New();
-var run = new RunContext(runId, settings.AgentPhase);
+// Output-Ordner unter runs/. Logisch bleibt es Phase 2.1 (AgentPhase); die Strategie-Varianten
+// bekommen aber eigene Unterordner, damit A/B/C-Runs auf der Platte getrennt liegen
+var run = new RunContext(runId, ResolveRunFolder(settings));
 run.EnsureFolders();
 CleanDocsFolder();
+
+// runs/<folder>/<runId>. Strategie B/C erhalten eigene Ordner.. A bleibt aus Historie-Gruenden in phase2_1.
+static string ResolveRunFolder(HostSettings settings)
+    => settings.AgentPhase == "phase2_1"
+        ? settings.Phase2ContextStrategy switch
+        {
+            "artifact_state" => "phase2B",
+            "independent_source_reads" => "phase2C",
+            _ => "phase2_1"   // message_passing (A)
+        }
+        : settings.AgentPhase;
 
 var sourceName = "AgenticSdlc.Host";
 var activitySource = new ActivitySource(sourceName);
@@ -38,11 +91,24 @@ using var otel = AgenticSdlc.Host.Observability.OtelRunExporters.TryCreate(
     rawTracesPath: settings.OtelRawEnabled ? rawTracesPath : null
 );
 
+// Code-Stand-Stempel: gegen welchen Git-Commit lief dieser Run, war der Arbeitsbaum dirty?
+// Macht run -> Code rekonstruierbar, ohne pro Run committen zu müssen (siehe commit-rules.md)
+var codeVersion = AgenticSdlc.Host.Run.GitStamp.Capture(run, repoRoot);
+if (codeVersion.Available)
+{
+    var state = codeVersion.Dirty
+        ? $"DIRTY ({codeVersion.ChangedFiles} Datei(en); Diff -> {codeVersion.TrackedDiffFile})"
+        : "clean";
+    Console.WriteLine($"[git] {codeVersion.ShortCommit} @ {codeVersion.Branch} — {state}");
+}
+
 var config = new
 {
     runId,
     phase = ResolvePhaseName(settings.AgentPhase),
     phaseSelector = settings.AgentPhase,
+    // Code-Stand dieses Runs (Commit/Branch/dirty). Bei dirty liegt der Diff unter code-version/.
+    codeVersion,
     phase2ContextStrategy = settings.AgentPhase == "phase2_1" ? settings.Phase2ContextStrategy : null,
     prompts = ResolvePromptConfig(settings),
     llmProvider = settings.LlmProvider,
@@ -58,6 +124,35 @@ var config = new
     {
         chars = settings.LlmPreviewChars,
     },
+    jury = new
+    {
+        enabled = settings.JuryEnabled,
+        judgeModel = settings.JuryJudgeModel,
+        structuredOutput = settings.JuryStructuredOutput,
+        // DISK-12/G3: Call-1 pro Kategorie gesplittet (Mess-Instrument-Parameter, einfrieren für Vergleiche).
+        splitGeneration = settings.JurySplitGeneration,
+        // DISK-12/B22: effektive aktive Kategorien je Artefakttyp (Default-Profil + run-config-Override).
+        categories = new AgenticSdlc.Host.Phases.Phase2.Evaluation.JuryCategoryProfile(
+            settings.JuryCategoriesByArtifact).Describe(),
+        // DISK-7: aktive Verifikations-Policy pro Kategorie (für reproduzierbare A/B/C-Vergleiche).
+        verification = new
+        {
+            falseClaim = settings.JuryVerifyFalseClaim,
+            falseCertainty = settings.JuryVerifyFalseCertainty,
+            missingTopic = settings.JuryVerifyMissingTopic,
+            custom = settings.JuryVerifyCustom,
+            // DISK-9: Batch-Limit des MISSING_TOPIC-Verifiers (Mess-Instrument-Parameter, einfrieren für Vergleiche).
+            missingTopicBatchSize = settings.JuryMissingTopicBatchSize
+        }
+    },
+    // Nur für Phase 2.1B (artifact_state) relevant: dokumentiert die aktive Shared-State-Policy.
+    phase2BState = (settings.AgentPhase == "phase2_1" && settings.Phase2ContextStrategy == "artifact_state")
+        ? new
+        {
+            writeArtifacts = settings.Phase2BWriteArtifacts,
+            reads = settings.Phase2BReads
+        }
+        : null,
     ollamaBaseUrl = settings.OllamaBaseUrl,
     openRouterBaseUrl = settings.LlmProvider == "openrouter" ? settings.OpenRouterBaseUrl : null,
     timestampUtc = DateTime.UtcNow

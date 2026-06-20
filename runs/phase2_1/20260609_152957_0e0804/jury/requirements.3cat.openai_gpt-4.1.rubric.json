@@ -1,0 +1,78 @@
+{
+  "spike": "RubricEvaluator",
+  "scheme": "ThreeCategory",
+  "phase": "phase2_1",
+  "runId": "20260609_152957_0e0804",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-11T15:01:57.505642Z",
+  "categories": [
+    {
+      "key": "1",
+      "label": "Kat.1 Falsche Behauptung",
+      "metric": "FalseClaim",
+      "count": 1,
+      "reason": "Kat.1 Falsche Behauptung: 1 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Nutzerrollen m\u00FCssen mindestens folgende umfassen: Admin, Sales, Manager, Support, Kunde.\u0022 | Transkript: \u0022\u0022Anna: Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support? Wer pflegt eigentlich Stammdaten?\u0022 ... \u0022Anna: Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde\u0022\u0022 | Im MVP wurden explizit nur Admin, Sales und Kunde als Rollen festgelegt; Manager und Support sind nicht gesetzt, sondern offen/strittig."
+        }
+      ]
+    },
+    {
+      "key": "2",
+      "label": "Kat.2 Falsche Sicherheit",
+      "metric": "FalseCertainty",
+      "count": 3,
+      "reason": "Kat.2 Falsche Sicherheit: 3 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss DSGVO-konform sein, insbesondere beim Login, der Datenspeicherung, beim Logging und bei Datenl\u00F6schungen.\u0022 | Transkript: \u0022\u0022Clara: DSGVO ist nicht optional.\u0022 ... \u0022Anna: DSGVO-konform.\u0022 ... \u0022Farid: Dann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u0022\u0022 | Im Transkript wird mehrfach betont, dass DSGVO-Konformit\u00E4t komplex ist und Details (z.B. Datenresidenz, L\u00F6schkonzepte) noch offen sind; das Artefakt stellt es als vollst\u00E4ndig gesetzt dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Hosting muss in der EU erfolgen (EU-only), um Datenschutzanforderungen zu gen\u00FCgen.\u0022 | Transkript: \u0022\u0022Anna: Ja EU only. Oder zumindest DSGVO-konform.\u0022 ... \u0022Farid: EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 ... \u0022Clara: Dann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u0022\u0022 | Im Transkript ist EU-only Hosting als Ziel genannt, aber mit erheblichen Unsicherheiten und offenen Punkten; das Artefakt stellt es als gesetzt dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das API Layer muss abgesichert sein, OAuth wird bevorzugt, API Keys sind Alternativen.\u0022 | Transkript: \u0022\u0022Clara: API muss abgesichert sein. OAuth? Oder API Keys?\u0022 ... \u0022Ben: OAuth w\u00E4re besser. Aber komplexer.\u0022 ... \u0022Ben: Und OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Im Transkript ist OAuth als bevorzugt, aber explizit nicht final entschieden; das Artefakt formuliert es als gesetzt."
+        }
+      ]
+    },
+    {
+      "key": "3",
+      "label": "Kat.3 Fehlendes Thema",
+      "metric": "MissingTopic",
+      "count": 5,
+      "reason": "Kat.3 Fehlendes Thema: 5 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Anna: Double-Opt-In und L\u00F6schung fehlen.\u0022 ... \u0022Clara: Double-Opt-In und L\u00F6schung fehlen.\u0022 ... \u0022Clara: Dann brauchen wir ein L\u00F6schkonzept.\u0022\u0022 | Das Artefakt erw\u00E4hnt zwar DSGVO und L\u00F6schungen, aber ein explizites L\u00F6schkonzept als eigene Anforderung fehlt, obwohl es im Transkript als kritisch und explizit gefordert wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Ben: Wir brauchen Missbrauchserkennung.\u0022 ... \u0022Clara: Dann mindestens Rate Limiting und Audit.\u0022 ... \u0022Ben: Wir brauchen auch Rate Limits f\u00FCr API.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine expliziten Anforderungen zu Rate Limiting oder Missbrauchserkennung, obwohl dies im Transkript als notwendig f\u00FCr die API gefordert wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Anna: PDF ist wichtig f\u00FCr Sales.\u0022 ... \u0022EVA: Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 ... \u0022Farid: Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022\u0022 | Das Artefakt enth\u00E4lt keine explizite Anforderung zu PDF-Export von Angeboten und Template-Management, obwohl dies mehrfach als wichtig genannt wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Clara: Und wir haben noch gar nicht \u00FCber Backup gesprochen.\u0022 ... \u0022Ben: Ja Disaster Recovery.\u0022 ... \u0022Farid: Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022\u0022 | Das Artefakt erw\u00E4hnt Backup und Disaster Recovery nur als offene Punkte, aber keine konkreten Anforderungen oder Ma\u00DFnahmen, obwohl im Transkript die Notwendigkeit und Risiken konkretisiert werden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Ben: Wir brauchen Datenklassifikation und Retention Rules.\u0022 ... \u0022Anna: Okay, minimaler Retention-Plan.\u0022\u0022 | Das Artefakt erw\u00E4hnt, dass Datenklassifikation und Retention-Richtlinien fehlen, aber es fehlt eine explizite Anforderung oder ein Plan, dies zu adressieren, obwohl es im Transkript als notwendig erkannt wird."
+        }
+      ]
+    }
+  ]
+}

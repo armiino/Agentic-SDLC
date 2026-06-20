@@ -1,0 +1,128 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260616_125401_c0ca55",
+  "artifact": "architecture.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-17T15:48:47.066278Z",
+  "evaluationStatus": "ok",
+  "errorScore": 21,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 21; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 5,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 5 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 5,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Web\u2011Frontend: Responsives Web\u2011UI (React/Angular)\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Im Transkript werden keine konkreten Frontend-Technologien wie React oder Angular genannt; die Nennung dieser Frameworks ist eine erfundene Spezifikation."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Monitoring \u0026 Logging: Technische Logs (ELK/AWS CloudWatch)\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Das Transkript erw\u00E4hnt keine konkreten Monitoring- oder Logging-Technologien wie ELK oder AWS CloudWatch; diese sind somit erfundene Details."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup \u0026 DR Service: T\u00E4gliche Backups, 4\u2011Stunden RTO, Aufbewahrung von 30\u202FTagen (Produktivdaten)\u0022 | Transkript: \u0022Ben: \u0022Backup fehlt.\u0022 Farid: \u0022Backup Details noch offen.\u0022 Anna: \u0022Noch zu detailieren.\u0022\u0022 | Das Artefakt gibt konkrete Backup-RTO und Aufbewahrungszeiten an, w\u00E4hrend im Transkript diese Details als offen und noch zu kl\u00E4ren genannt werden; somit sind diese Zahlen erfunden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API\u2011Gateway (optional): Eingangsfilter f\u00FCr alle internen APIs, zentraler Ort f\u00FCr Rate\u2011Limiting, Monitoring.\u0022 | Transkript: \u0022Farid: \u0022API Gateway hat sechs Wochen Warteliste.\u0022 Ben: \u0022API Layer brauchen wir, aber Gateway-Team hat Warteliste.\u0022\u0022 | Das Artefakt stellt das API-Gateway als optionale zentrale Komponente dar, obwohl im Transkript klar ist, dass das Gateway-Team eine lange Warteliste hat und die Nutzung noch unklar ist; die konkrete Einbindung ist somit eine erfundene Festlegung."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Daten\u2011und Sicherheitsaspekte: Verschl\u00FCsselung: TLS\u202F1.2\u002B f\u00FCr alle Netzwerkverbindungen; ruhende Daten verschl\u00FCsselt (AES\u2011256).\u0022 | Transkript: \u0022Anna: \u0022Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS?\u0022 Ben: \u0022TLS reicht. E2E ist unrealistisch.\u0022\u0022 | Das Artefakt gibt AES-256 f\u00FCr ruhende Daten als gesetzt an, w\u00E4hrend im Transkript keine konkrete Verschl\u00FCsselung f\u00FCr ruhende Daten genannt wird; diese konkrete Festlegung ist erfunden."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 3 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 3,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Auth\u2011Service: Authentifizierung via E\u2011Mail/Passwort, Double\u2011Opt\u2011In, OAuth2\u2011Token\u2011Ausgabe.\u0022): [MITTEL] Artefakt: \u0022Auth\u2011Service: Authentifizierung via E\u2011Mail/Passwort, Double\u2011Opt\u2011In, OAuth2\u2011Token\u2011Ausgabe.\u0022 | Transkript: \u0022Anna: \u0022Also erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 Clara: \u0022Und wir haben noch gar nicht \u00FCber Backup gesprochen.\u0022 Ben: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Artefakt stellt OAuth2-Token-Ausgabe als gesetzt dar, obwohl im Transkript die OAuth-Integration als bevorzugt, aber noch nicht final entschieden wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022API\u2011Gateway (optional)\u0022).\u0022): [MITTEL] Artefakt: \u0022API\u2011Gateway (optional)\u0022 | Transkript: \u0022Farid: \u0022Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 Ben: \u0022Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 Anna: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022 Ben: \u0022Genau.\u0022\u0022 | Das Artefakt beschreibt das API-Gateway als optionale Komponente mit Rate-Limiting und Monitoring, ohne klarzustellen, dass die Entscheidung und Verf\u00FCgbarkeit des Gateways noch offen und problematisch ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Backup \u0026 DR Service: T\u00E4gliche Backups, 4\u2011Stunden RTO, Aufbewahrung von 30\u202FTagen (Produktivdaten) \u2013 noch zu detailieren.\u0022): [MITTEL] Artefakt: \u0022Backup \u0026 DR Service: T\u00E4gliche Backups, 4\u2011Stunden RTO, Aufbewahrung von 30\u202FTagen (Produktivdaten) \u2013 noch zu detailieren.\u0022 | Transkript: \u0022Ben: \u0022Backup fehlt.\u0022 Clara: \u0022Und ohne Datenschutzma\u00DFnahmen unvollst\u00E4ndig.\u0022 Anna: \u0022Backup?\u0022 Ben: \u0022Ja Disaster Recovery.\u0022 Clara: \u0022Wenn Kundendaten drin sind: ja.\u0022 Anna: \u0022Okay also doch.\u0022 Ben: \u0022Noch zu detailieren.\u0022\u0022 | Das Artefakt gibt Backup \u0026 DR mit konkreten RTO und Aufbewahrung als gesetzt an, obwohl im Transkript Details noch offen und nicht final entschieden sind."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 7,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 4 confirmed; 3 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 3,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Und wer pr\u00FCft, ob keine falschen Kundendaten hochgeladen werden?\u0022\u0022 | Das Thema der Validierung und Pr\u00FCfung von Kundendaten bei manuellen Uploads wurde im Transkript als wichtig genannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Bitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u0022\u0022 | Die bewusste Einschr\u00E4nkung und Dokumentation von Scope-Entscheidungen und Risiken wird im Transkript als wichtig hervorgehoben, fehlt aber als Thema im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022\u0022 | Das Thema der Testdaten-Pseudonymisierung oder synthetischen Testdaten und der Umgang mit SAP-Testsystemen mit echten Kundendaten wird im Transkript angesprochen, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Eva: \u0022Freigabeprozess fehlt.\u0022\u0022 | Der Freigabeprozess f\u00FCr Rabatte und Angebote wird im Transkript als wichtig und offen genannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Rate\u2011Limiting: Grundlegendes Limit (z.\u202FB. 100\u202FRequests/Min. pro Nutzer) \u00FCber API\u2011Gateway \u2013 Detailausgestaltung noch offen.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022\u0022 | Das Thema Rate Limiting wird zwar erw\u00E4hnt, aber die Notwendigkeit von Pagination und Download-Limits f\u00FCr Massenexporte (z.B. Rechnungen) fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Backup\u2011 und DR\u2011Details \u2013 RPO, Aufbewahrungsfristen f\u00FCr verschiedene Datenklassen (z.\u202FB. Buchhaltungsdaten) und Test\u2011Restore\u2011Prozesse.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Und unterschiedliche Aufbewahrungsfristen.\u0022\u0022 | Das Thema der unterschiedlichen Aufbewahrungsfristen f\u00FCr verschiedene Logarten (Audit, Security, technische Logs) wird im Transkript genannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Support\u2011Kontakt: Einfaches E\u2011Mail\u2011basiertes Formular (sp\u00E4ter Ticket\u2011System). Offene Architekturentscheidung: Support\u2011Ticket\u2011L\u00F6sung \u2013 Ob ein leichtgewichtiges Ti\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Support ist nicht gel\u00F6st.\u0022\u0022 | Das Thema Supportprozess, insbesondere die Problematik eines Ticketsystems versus Kontaktformular und die damit verbundenen Datenschutz- und Persistenzfragen, wird im Transkript ausf\u00FChrlich diskutiert, fehlt aber im Artefakt."
+        }
+      ]
+    }
+  ]
+}

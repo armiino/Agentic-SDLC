@@ -1,0 +1,108 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T15:54:07.857856Z",
+  "evaluationStatus": "ok",
+  "errorScore": 31,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 31; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 2,
+      "reason": "FALSE_CLAIM: 2 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Monitoring \u0026 Alerting unterst\u00FCtzt das SLA von \u2265 99 % Verf\u00FCgbarkeit (NFR3) und liefert Daten f\u00FCr das Basis-Audit-Trail (FR7).\u0022 | Transkript: \u0022Anna: \u0022Security Review dauert 6 Wochen, sprengt MVP.\u0022 / Clara: \u0022Security Review ist keine Option, aber wichtig.\u0022\u0022 | Das Artefakt nennt Monitoring \u0026 Alerting mit SLA \u2265 99 % als gesetzt, w\u00E4hrend im Transkript Security Review und SLA noch offen und kritisch diskutiert werden, daher wird hier eine Sicherheit vorget\u00E4uscht."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Email-Service wird f\u00FCr Double-Opt-In, Konto-Best\u00E4tigung und optionale Push-Notifications verwendet (FR1, FR8).\u0022 | Transkript: \u0022Ben: \u0022Push Notifications hatten wir nie besprochen.\u0022 / Anna: \u0022Doch, im letzten Meeting, glaube ich.\u0022 / Clara: \u0022Push hei\u00DFt Einwilligung, DSGVO.\u0022\u0022 | Das Artefakt nennt Push-Notifications als Option im Email-Service, obwohl im Transkript Push-Notifications unklar und nicht final sind, daher wird eine Sicherheit vorget\u00E4uscht."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 11,
+      "reason": "FALSE_CERTAINTY: 11 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022SAP-System stellt eine rein lesende Schnittstelle f\u00FCr Produkt- und Preisdaten bereit (Requirement FR6, Constraint C2 \u2013 kein zentrales API-Gateway im MVP).\u0022 | Transkript: \u0022Ben: \u0022SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.\u0022\u0022 | Das Transkript zeigt, dass der SAP-Schreibzugriff noch nicht entschieden ist, das Artefakt stellt jedoch die SAP-Schnittstelle als rein lesend und festgelegt dar, was eine offene Entscheidung im Transkript ist."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022OAuth2 vs. eigenes Session-Management \u2013 offene Entscheidung\u0022 | Transkript: \u0022Ben: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 / \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Artefakt stellt OAuth2 als offene Entscheidung dar, was korrekt ist, daher kein Fehler."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Rabatt-Freigabe-Grenzwerte (A2) noch offen\u0022 | Transkript: \u0022Eva: \u0022Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.\u0022 / Anna: \u0022Oder ab 20 Prozent. Ich bin mir nicht sicher.\u0022\u0022 | Das Artefakt kennzeichnet Rabatt-Freigabe-Grenzwerte als offen, was dem Transkript entspricht, daher kein Fehler."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Support-Mitarbeitende erhalten nur Leserechte ohne Rabatt-Details (offene Entscheidung).\u0022 | Transkript: \u0022David: \u0022Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen.\u0022 / Eva: \u0022Support darf Sonderkonditionen nicht sehen.\u0022\u0022 | Das Artefakt stellt die Support-Berechtigungen als offene Entscheidung dar, was dem Transkript entspricht, daher kein Fehler."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API-Gateway-Strategie \u2013 Direktzugriff auf Services (wie aktuell geplant) vs. leichte Proxy-L\u00F6sung (z. B. Service-Mesh) als \u00DCbergang f\u00FCr zentrale Sicherheits-Controls (Risiko C2).\u0022 | Transkript: \u0022Farid: \u0022Unser zentrales API Gateway hat eine Warteliste von sechs Wochen.\u0022 / Ben: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022\u0022 | Das Artefakt stellt die API-Gateway-Strategie als offene Entscheidung dar, was dem Transkript entspricht, daher kein Fehler."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Hosting-Provider \u0026 Kosten \u2013 Auswahl des EU-only Managed-Service-Providers und Budgetfreigabe (Risiko C7, A8).\u0022 | Transkript: \u0022Farid: \u0022EU-only Hosting ist nicht einfach.\u0022 / Anna: \u0022Wir brauchen eine Kostensch\u00E4tzung.\u0022 / Ben: \u0022Wir haben nicht mal eine Architekturentscheidung.\u0022\u0022 | Das Artefakt kennzeichnet Hosting-Provider und Kosten als offene Entscheidung, was dem Transkript entspricht, daher kein Fehler."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup / DR Service \u2013 Detailgrad (RPO, Aufbewahrungsfristen) noch offen\u0022 | Transkript: \u0022Clara: \u0022Backup wurde noch nicht besprochen.\u0022 / Ben: \u0022Backup fehlt.\u0022 / Anna: \u0022Backup ist im MVP.\u0022\u0022 | Das Artefakt stellt Backup-Details als offen dar, was dem Transkript entspricht, daher kein Fehler."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022PDF-Engine (z. B. wkhtmltopdf) \u2013 Entscheidung ausstehend\u0022 | Transkript: \u0022Eva: \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten.\u0022 / Ben: \u0022PDF wurde bisher nicht genannt.\u0022\u0022 | Das Artefakt kennzeichnet PDF-Engine als offene Entscheidung, was dem Transkript entspricht, daher kein Fehler."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Multi-W\u00E4hrungs- und Internationalisierungs-Unterst\u00FCtzung \u2013 Entscheidung \u00FCber unterst\u00FCtzte W\u00E4hrungen (EUR, CHF, evtl. USD) und Sprach-Fallback (A7).\u0022 | Transkript: \u0022Eva: \u0022Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden.\u0022 / Anna: \u0022Pilotkunde noch nicht final.\u0022 / Ben: \u0022Das beeinflusst Scope massiv.\u0022\u0022 | Das Artefakt stellt Multi-W\u00E4hrung und Internationalisierung als offene Entscheidung dar, was dem Transkript entspricht, daher kein Fehler."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Support-Workflow-Integration \u2013 Einfaches Kontakt-Formular vs. Ticket-System (z. B. Jira Service Management) und zugeh\u00F6rige Berechtigungen (A4).\u0022 | Transkript: \u0022Anna: \u0022Kein Ticketsystem im MVP, nur Kontaktformular.\u0022 / David: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 / Clara: \u0022Supportprozess unklar.\u0022\u0022 | Das Artefakt stellt Support-Workflow als offene Entscheidung dar, was dem Transkript entspricht, daher kein Fehler."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Caching-Strategie f\u00FCr SAP-Daten \u2013 In-Memory Cache (Redis) vs. API-seitiges Caching, Eviktionspolicy.\u0022 | Transkript: \u0022Ben: \u0022Cache enth\u00E4lt Kundendaten, Rabattlogik ist kundenspezifisch.\u0022 / Clara: \u0022Datenschutz und Retention.\u0022 / Farid: \u0022Cache-Invalidierung ist aufwendig.\u0022\u0022 | Das Artefakt stellt Caching-Strategie als offene Entscheidung dar, was dem Transkript entspricht, daher kein Fehler."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 3,
+      "reason": "MISSING_TOPIC: 2 Fehler (unveraendert); 1 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / Ben: \u0022SAP-Testsystem hat echte alte Kundendaten.\u0022 / Clara: \u0022Darf nicht ungepr\u00FCft verwendet werden.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine Test- oder Entwicklungsumgebungen mit Pseudonymisierung oder synthetischen Testdaten, obwohl im Transkript als wichtiges Thema genannt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Secrets Management wird f\u00FCr CI/CD ben\u00F6tigt.\u0022 / Ben: \u0022Wir brauchen Secrets Management.\u0022\u0022 | Das Artefakt erw\u00E4hnt kein Secrets Management, obwohl im Transkript als wichtige Sicherheitsanforderung genannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Offene Architekturentscheidung 5: Multi-W\u00E4hrungs- und Internationalisierungs-Unterst\u00FCtzung \u2013 Entscheidung \u00FCber unterst\u00FCtzte W\u00E4hrungen (EUR, CHF, evtl. USD) und \u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Support braucht mindestens Deutsch und Englisch.\u0022 / Anna: \u0022Deutsch und Englisch sollten drin sein.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine Internationalisierung der Sprachen f\u00FCr Support oder Frontend, obwohl im Transkript mehrsprachige Unterst\u00FCtzung explizit genannt wird."
+        }
+      ]
+    }
+  ]
+}

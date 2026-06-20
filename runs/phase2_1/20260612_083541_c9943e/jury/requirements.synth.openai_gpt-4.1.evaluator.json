@@ -1,0 +1,104 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-12T08:37:28.58808Z",
+  "errorScore": 28,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 28; KRITISCH=1; needsRepair=True (Schwelle 4).",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 3,
+      "reason": "FALSE_CLAIM: 3 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Angebote m\u00FCssen einen Freigabeprozess unterst\u00FCtzen, bei dem Rabatte \u00FCber 15 Prozent mindestens eine Managerfreigabe erfordern; Rabatte \u00FCber 30 Prozent m\u00F6glicherweise zus\u00E4tzlich Freigabe von Finance (Details offen).\u0022 | Transkript: \u0022\u0022[Anna] Vielleicht Phase 2. [Eva] Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden. [Ben] Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u0022\u0022 | Im Transkript wurde explizit festgelegt, dass im MVP keine Sonderrabatte/Freigabeprozesse umgesetzt werden, sondern diese erst in einer sp\u00E4teren Phase kommen sollen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss eine API-Schicht bereitstellen, die OAuth unterst\u00FCtzt (finale Entscheidung offen).\u0022 | Transkript: \u0022\u0022[Ben] OAuth w\u00E4re besser. Aber komplexer. [Ben] Und OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Im Transkript ist die Bereitstellung einer API-Schicht mit OAuth nicht als MUSS-Anforderung f\u00FCr das MVP festgelegt, sondern als bevorzugt und noch nicht final entschieden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022KPI-Messungen sind erforderlich, insbesondere Conversion Rate und Zeit von Angebot bis Bestellung.\u0022 | Transkript: \u0022\u0022[Anna] Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen.\u0022\u0022 | Im Transkript ist die KPI-Messung f\u00FCr das MVP explizit offen bzw. als \u0027vielleicht sp\u00E4ter\u0027 diskutiert, nicht als zwingende Anforderung f\u00FCr das MVP."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 11,
+      "reason": "MISSING_TOPIC: 11 Fehler (verifiziert); 2 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Farid] Und CI/CD braucht Secrets Management. [Ben] Wir brauchen auch Rate Limits f\u00FCr API.\u0022\u0022 | Secrets Management als explizite Anforderung f\u00FCr CI/CD ist im Artefakt nicht enthalten."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Ben] Wir brauchen Missbrauchserkennung. [Anna] Das ist zu viel. [Clara] Dann mindestens Rate Limiting und Audit. [Farid] Kann API Gateway \u00FCbernehmen, wenn wir es bekommen.\u0022\u0022 | Missbrauchserkennung als explizit diskutierte Anforderung (mindestens als Risiko oder offener Punkt) fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Clara] Und wir haben noch keine klare Zieldefinition. [Anna] Ziel ist schneller Angebote erstellen.\u0022\u0022 | Die explizite Zieldefinition \u0027schneller Angebote erstellen\u0027 als Hauptziel des Portals fehlt als Anforderung oder Kontext im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Clara] Schweiz ist nicht EU, aber hat eigene Datenschutzthemen. [Farid] Hosting in EU kann Schweizer Kunden bedienen, aber Vertragspr\u00FCfung n\u00F6tig.\u0022\u0022 | Die Anforderung, dass f\u00FCr Schweizer Kunden eine gesonderte Vertragspr\u00FCfung bzgl. Datenschutz und Hosting erfolgen muss, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Ben] Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise. [Anna] Oder wir akzeptieren das Risiko. [Eva] Nein.\u0022\u0022 | Die Anforderung, dass Angebote nur mit aktuellen/preisg\u00FCltigen SAP-Daten erstellt werden d\u00FCrfen und ggf. Warnhinweise bei veralteten Preisen angezeigt werden m\u00FCssen, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Ben] Dann haben wir Template-Management. [Farid] Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022\u0022 | Template-Management und Versionierung von Angebotsvorlagen als explizite Anforderung fehlen im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Anna] Deutsch und Englisch sollten schon drin sein. [David] Support braucht mindestens Deutsch und Englisch.\u0022\u0022 | Internationalisierung (mindestens Deutsch und Englisch) als explizite Anforderung fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Eva] Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022\u0022 | Mehrw\u00E4hrungsf\u00E4higkeit (mindestens EUR, ggf. CHF) als explizite Anforderung fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Anna] PDF ist wichtig f\u00FCr Sales. [Ben] Dann haben wir Template-Management. [Eva] Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022\u0022 | PDF-Export von Angeboten mit rechtlichen Fu\u00DFnoten und Versionsnummer als explizite Anforderung fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Ben] SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend. [Anna] Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP.\u0022\u0022 | Die explizite Einschr\u00E4nkung, dass im MVP kein SAP-Schreibzugriff erfolgt (nur lesend), fehlt als Constraint im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Farid] Architektur darf keine konkreten Cloud-Produkte erfinden, solange wir keinen Provider gew\u00E4hlt haben. [Anna] Genau. Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat.\u0022\u0022 | Die Anforderung, dass keine Vorfestlegung auf konkrete Cloud-Produkte/Provider erfolgen darf, fehlt als expliziter Constraint im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Hosting muss in der EU erfolgen, mit nachweisbarer Datenresidenz.\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Clara] Und wir haben noch gar nicht \u00FCber Backup gesprochen. [Ben] Ja Disaster Recovery. [Anna] Brauchen wir das f\u00FCr MVP? [Clara] Wenn Kundendaten drin sind: ja. [Anna] Okay also doch.\u0022\u0022 | Das Artefakt erw\u00E4hnt Backup- und Disaster-Recovery-Verfahren als erforderlich, aber es fehlt die explizite Anforderung, dass Backups keine personenbezogenen Daten au\u00DFerhalb der EU enthalten d\u00FCrfen (Datenresidenz f\u00FCr Backups)."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Handelsrechtliche Aufbewahrungsfristen und DSGVO- L\u00F6schrechte sind konflikt\u00E4r und m\u00FCssen f\u00FCr Datenklassifikation und Retention ber\u00FCcksichtigt werden.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Clara] Und unterschiedliche Aufbewahrungsfristen. [Anna] Wie lange m\u00FCssen wir Angebote speichern? [Eva] Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen. [Clara] Das kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen. [Ben] Also brauchen wir Datenklassifikation und Retention Rules.\u0022\u0022 | Die Notwendigkeit einer Datenklassifikation zur Unterscheidung von Aufbewahrungsfristen und L\u00F6schpflichten ist im Artefakt nicht als explizite Anforderung enthalten."
+        }
+      ]
+    }
+  ]
+}

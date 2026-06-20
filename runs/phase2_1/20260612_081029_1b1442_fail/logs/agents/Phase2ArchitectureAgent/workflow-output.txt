@@ -1,0 +1,56 @@
+Ich habe den Projektkontext, die Requirements und das Risikoartefakt intensiv analysiert und daraus für die frühe SDLC-Phase einen groben Architekturüberblick abgeleitet. Die Architektur umfasst folgende wesentliche Systemkomponenten: Kundenportal Frontend (Web, später Mobile), Backend mit SAP-Integration und API Layer mit OAuth-Sicherheit, Rollen- und Berechtigungssystem, Audit- und Logging-Komponente, Identity Management mit Login/SSO, EU-konformes Managed Hosting (keine neue DB-Server), Backup und Sicherheitsfunktionalitäten.
+
+Als Schnittstellen wurden SAP, Identity Provider (z.B. Azure AD, Google), eventuell externes Support- oder Kontaktformular sowie das API Gateway identifiziert. Eindeutige Daten- und Sicherheitsaspekte wie DSGVO-konformes Handling, Double-Opt-In, Lösch- und Auditkonzepte sind zentral, allerdings noch mit offenen Architekturentscheidungen (etwa Support-Ticketsystem, Cache für SAP-Daten, OAuth-Integration, SSO-Option, Freigabeprozess).
+
+Offene Architekturentscheidungen bestehen insbesondere hinsichtlich des Pilotkunden (DSGVO und Währung), Umfang mobile Nutzung, API Gateway-Verfügbarkeit, Security Review Zeitplan, Support-Integration und Datenmanagement im Testumfeld.
+
+Ich schreibe jetzt docs/architecture.md mit diesem groben Überblick, der als Grundlage für weiterführende Architekturbetrachtungen dient und die anstehenden Entscheidungen klar benennt.
+
+---
+
+# Architekturüberblick für Kundenportal MVP
+
+## 1. Systemkontext
+
+Das Kundenportal dient als zentrale Plattform für Kunden, um Angebote zu erstellen, Rechnungen einzusehen und grundlegende Supportanfragen zu stellen. Es integriert SAP-Systeme zur Datenversorgung und erfordert eine sichere Authentifizierung (Login mit E-Mail/Passwort, optional SSO). Ziel ist ein MVP mit beschränktem Scope für den Start im DACH-Raum.
+
+## 2. Wichtige Komponenten
+
+- **Frontend:** Webbasiertes Kundenportal; Mobile App ist Folgephase.
+- **Backend & API Layer:** Schnittstelle zu SAP, Authentifizierung, Business-Logik, Processing von Angeboten und Rechnungen.
+- **Identity Management:** Login, Double-Opt-In, optionale SSO Integration (Azure AD, Google).
+- **Rollenverwaltung & Berechtigungen:** Admin, Sales, Kunde, Support (mit beschränkter Funktion im MVP).
+- **Audit- und Logging-Komponenten:** Minimaler Audit Trail zur Nachvollziehbarkeit mit Schutz personenbezogener Daten.
+- **Hosting & Infrastruktur:** EU-konformes Managed Hosting ohne neue lokale DB-Server; Backup und Disaster Recovery.
+- **Support-Komponente:** Kontaktformular ohne Ticketsystem im MVP.
+
+## 3. Schnittstellen / Integrationspunkte
+
+- **SAP:** Lesende Integration zur Datenversorgung von Produktdaten, Preisen und Rabatten.
+- **Identity Provider:** OAuth-basierte Schnittstelle für SSO (optional).
+- **API Gateway:** Vorgeschalteter API-Zugangspunkt, derzeit Warteliste - alternative Übergangslösung nötig.
+- **Support-Kontaktformular:** Externe Infrastruktur für Kundenanfragen (ohne Persistenz im MVP).
+
+## 4. Daten- und Sicherheitsaspekte
+
+- Strikte Einhaltung der DSGVO, inklusive Double-Opt-In, Löschkonzepte, Datenschutz bei Audit-Logs.
+- Keine Speicherung personenbezogener Daten in technischen Logs.
+- Datenresidenz in der EU.
+- Freigabeprozesse für Rabatte künftig vorgesehen (ab 15 % Rabatt).
+- Security Review geplant, Zeitplan kritisch.
+
+## 5. Offene Architekturentscheidungen
+
+- Finaler Pilotkunde (Deutschland vs. Schweiz) und damit verbundene Datenschutz- und Währungsfragen.
+- Umfang und Technik von SSO/OAuth Integration.
+- Umgang mit SAP-Datenverfügbarkeit und Cache-Strategie.
+- Support-Ticketsystem oder reines Kontaktformular.
+- API Gateway Nutzung im MVP oder alternative Übergangslösung.
+- Backup- und Monitoring-Lösung.
+- Internationalisierung und Mehrwährungsfähigkeit (Folgephasen).
+
+---
+
+Dieser Architekturüberblick basiert auf dem Stakeholder-Transkript, dem strukturierten Projektkontext sowie den abgeleiteten Requirements und Risikobetrachtungen. Er dient als Grundlage für vertiefende architekturrelevante Entscheidungen im weiteren SDLC.
+
+Ich schreibe nun docs/architecture.md.docs/architecture.md wurde geschrieben. Der grobe Architekturüberblick umfasst Systemkontext, wichtige Komponenten, Integrationsschnittstellen, relevante Daten- und Sicherheitsaspekte sowie offene Architekturentscheidungen, basierend auf dem Stakeholder-Transkript, dem Projektkontext, den Requirements und dem Risikoartefakt. Dies bildet eine belastbare Grundlage für die weitere architekturrelevante Arbeit im SDLC.

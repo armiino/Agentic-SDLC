@@ -1,0 +1,103 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T20:37:27.451132Z",
+  "evaluationStatus": "ok",
+  "errorScore": 5,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 5; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aus): 0 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 3,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 2 confirmed; 1 partial (herabgestuft); 7 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 1,
+        "rejected": 7,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Discount-Freigaben: \u003E15\u202F% Rabatt erfordert Freigabe durch einen Manager; \u003E30\u202F% Rabatt erfordert Freigabe durch Finance (Eva).\u0022 | Transkript: \u0022Anna: \u0022Oder ab 20 Prozent. Ich bin mir nicht sicher.\u0022 Eva: \u0022Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.\u0022 Ben: \u0022Das muss klar definiert werden.\u0022\u0022 | Im Transkript ist die genaue Rabattfreigabe-Schwelle offen und wird diskutiert, im Artefakt wird sie als final und entschieden dargestellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup- und Disaster-Recovery-Strategie f\u00FCr personenbezogene Daten.\u0022 | Transkript: \u0022Clara: \u0022Backup?\u0022 Ben: \u0022Security Review dauert 6 Wochen.\u0022 Anna: \u0022Brauchen wir Backup f\u00FCr MVP?\u0022 Clara: \u0022Ja, wenn Kundendaten drin sind.\u0022\u0022 | Im Transkript ist Backup/DR als notwendig f\u00FCr personenbezogene Daten diskutiert, aber nicht final entschieden; im Artefakt wird es als gesetzt dargestellt, was die Unsicherheit nicht widerspiegelt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Hosting \u0026 Datenresidenz: EU-only Managed Hosting wird gefordert; Daten d\u00FCrfen nicht au\u00DFerhalb der EU gespeichert werden.\u0022): [GERING] Artefakt: \u0022Hosting \u0026 Datenresidenz: EU-only Managed Hosting gefordert; Daten d\u00FCrfen nicht au\u00DFerhalb der EU gespeichert werden.\u0022 | Transkript: \u0022Anna: \u0022Ja EU only. Oder zumindest DSGVO-konform.\u0022 Farid: \u0022DSGVO-konform reicht nicht, wir brauchen nachweisbare Datenresidenz.\u0022\u0022 | Im Transkript wird EU-only Hosting als Forderung genannt, aber auch als teurer und mit Unsicherheiten diskutiert; im Artefakt wird EU-only als gesetzt dargestellt, was die Unsicherheit nicht widerspiegelt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Optional muss eine SSO-Anbindung (Azure AD oder Google) unterst\u00FCtzt werden, wenn dies im Projekt beschlossen wird.\u0022): [MITTEL] Artefakt: \u0022Rollen- und Berechtigungskonzept: Es sind die Rollen Admin, Sales, Manager, Support und Kunde zu definieren.\u0022 | Transkript: \u0022Anna: \u0022Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?\u0022\u0022 | Im Transkript ist die Rolle \u0027Sales\u0027 nicht explizit als Rolle genannt, sondern nur \u0027Admin\u0027, \u0027normaler User\u0027, \u0027Manager\u0027 und \u0027Support\u0027 werden diskutiert. Die Rolle \u0027Sales\u0027 wird im Artefakt als gesetzt dargestellt, obwohl im Transkript unklar ist, ob \u0027Sales\u0027 als eigene Rolle definiert wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022SSO-Anbindung (Azure AD oder Google) optional, wenn im Projekt beschlossen.\u0022).\u0022): [MITTEL] Artefakt: \u0022SSO-Anbindung (Azure AD oder Google) optional, wenn im Projekt beschlossen.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u0022\u0022 | Im Transkript ist die SSO-Provider-Auswahl offen und unentschieden, im Artefakt wird sie als Option mit Azure AD und Google konkret genannt, was eine zu hohe Gewissheit darstellt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022API-Layer / Gateway: Backend stellt REST-APIs bereit, gesch\u00FCtzt via OAuth 2.0 (alternativ API-Keys). Zentrales AP\u2026\u0022): [MITTEL] Artefakt: \u0022API-Layer / Gateway: Backend stellt REST-APIs bereit, gesch\u00FCtzt via OAuth 2.0 (alternativ API-Keys). Zentrales API-Gateway nach 6 Wochen verf\u00FCgbar \u2013 offener Punkt.\u0022 | Transkript: \u0022Ben: \u0022OAuth w\u00E4re besser, aber komplexer.\u0022 Farid: \u0022API-Gateway hat 6 Wochen Warteliste.\u0022 Anna: \u0022Passt nicht zum 8-Wochen-MVP.\u0022\u0022 | Im Transkript ist OAuth bevorzugt, aber noch nicht final entschieden; im Artefakt wird OAuth als gesetzt dargestellt, was die Unsicherheit aus dem Transkript nicht widerspiegelt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Support-Kontakt: Kontaktformular integriert; m\u00F6gliche Erweiterung zu Ticketsystem offen.\u0022).\u0022): [MITTEL] Artefakt: \u0022Support-Kontakt: Kontaktformular integriert; m\u00F6gliche Erweiterung zu Ticketsystem offen.\u0022 | Transkript: \u0022Anna: \u0022Kontaktformular ohne Ticketpersistenz.\u0022 David: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 Clara: \u0022Supportprozess unklar.\u0022\u0022 | Im Transkript ist der Supportprozess offen und unklar, im Artefakt wird das Kontaktformular als gesetzt dargestellt, was eine zu hohe Gewissheit ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Echtzeit-Preis-Abruf ist ein offener Punkt; nur n\u00E4chtliche SAP-Synchronisation geplant.\u0022).\u0022): [MITTEL] Artefakt: \u0022Echtzeit-Preis-Abruf ist ein offener Punkt; nur n\u00E4chtliche SAP-Synchronisation geplant.\u0022 | Transkript: \u0022Ben: \u0022Echtzeit-Preisabruf muss evaluiert werden.\u0022 Anna: \u0022Sales will sofort Angebote erstellen.\u0022\u0022 | Im Artefakt wird die n\u00E4chtliche Synchronisation als gesetzt dargestellt, der Echtzeit-Preisabruf als offener Punkt, was dem Transkript entspricht; kein Fehler."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Rate-Limiting zum Schutz vor Missbrauch beim Rechnungs-Download.\u0022): [MITTEL] Artefakt: \u0022Rate-Limiting zum Schutz vor Missbrauch beim Rechnungs-Download.\u0022 | Transkript: \u0022Ben: \u0022Wir brauchen Rate Limits f\u00FCr API.\u0022 David: \u0022Kunden laden manchmal hunderte Rechnungen.\u0022 Ben: \u0022Missbrauchserkennung n\u00F6tig.\u0022\u0022 | Im Transkript sind Details zu Rate-Limiting offen und noch zu definieren; im Artefakt wird Rate-Limiting als gesetzt dargestellt, was die Offenheit nicht widerspiegelt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Internationalisierung: UI in Deutsch und Englisch; W\u00E4hrungen EUR, CHF (sp\u00E4ter USD).\u0022).\u0022): [MITTEL] Artefakt: \u0022Internationalisierung: UI in Deutsch und Englisch; W\u00E4hrungen EUR, CHF (sp\u00E4ter USD).\u0022 | Transkript: \u0022Anna: \u0022Deutsch und Englisch sollten drin sein.\u0022 Eva: \u0022Angebote in W\u00E4hrung des Kunden, EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022\u0022 | Im Transkript sind Sprachen und W\u00E4hrungen als Ziel genannt, aber noch nicht final; im Artefakt werden sie als gesetzt dargestellt, was die Unsicherheit nicht widerspiegelt."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    }
+  ]
+}

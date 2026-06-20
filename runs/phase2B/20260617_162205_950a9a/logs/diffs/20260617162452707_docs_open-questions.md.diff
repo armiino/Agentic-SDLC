@@ -1,0 +1,61 @@
+--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen (Initial Draft)
++ 
++ ## 1. Fachliche Fragen
++ 
++ | Frage | Quelle / Auslöser | Möglicher Ansprechpartner / Rolle |
++ |-------|-------------------|-----------------------------------|
++ | **Welche konkrete Rabatt‑Freigabe‑Schwelle gilt?** (15 % / 20 % / 30 %) und wer ist dafür verantwortlich (Manager, Finance, beide?) | requirements.md (Angebots‑Workflow) / risks.md (Unklare Rabatt‑Freigabe‑Schwelle) | **Anna** (Product Owner), **Eva** (Finance), **David** (Support) |
++ | **Welcher Pilotkunde wird gewählt?** Schweiz (CHF) oder Deutschland (EUR) – beeinflusst Währung, rechtliche Vorgaben und DSGVO‑Umfang. | project context (Pilotkunde) / risks.md (Pilotkunde) | **Anna**, **Clara** (Compliance) |
++ | **Wie soll das Rollen‑/Berechtigungskonzept im Detail aussehen?** Insbesondere: Support‑Mitarbeiter dürfen Kundendaten, aber keine Preis‑/Rabatt‑Details sehen. | requirements.md (Rollen & Berechtigungen) / risks.md (Rollen‑Konflikt) | **Ben** (Tech Lead), **Clara** (Compliance) |
++ | **Muss das Kundenportal mobil‑first gestaltet werden oder reicht ein responsive Web‑Design für das MVP?** | project context (Web‑first vs. Mobile‑first) / risks.md (Web‑first vs. Mobile‑first) | **Anna**, **Ben** |
++ | **Wie wird das Double‑Opt‑In technisch umgesetzt?** Welche Schritte, Bestätigungsmails, Zeitfenster? | requirements.md (DSGVO‑Konformität) / risks.md (Double‑Opt‑In Umsetzung) | **Clara**, **Ben** |
++ | **Wie soll das Consent‑Management für Analytics aussehen?** Auswahl des Tools, Integration, Zeitpunkt. | risks.md (Analytics / Consent‑Management) | **Clara**, **Ben** |
++ 
++ ## 2. Technische Fragen
++ 
++ | Frage | Quelle / Auslöser | Möglicher Ansprechpartner / Rolle |
++ |-------|-------------------|-----------------------------------|
++ | **Wie wird die SAP‑Read‑Integration technisch realisiert, solange das API‑Gateway noch nicht verfügbar ist?** (Temporärer Proxy, Direkt‑Anbindung?) | architecture.md (SAP‑Read Adapter, API‑Gateway Warteliste) / risks.md (API‑Gateway‑Warteliste) | **Ben**, **Farid** |
++ | **Welche Cache‑Strategie wird für SAP‑Daten eingesetzt?** Direkt‑Abfrage vs. anonymisierter Produkt‑Cache – unter Berücksichtigung von Performance und Datenminimierung. | architecture.md (Cache‑Strategie offen) / risks.md (Keine eigene Datenbank – Cache‑Strategie offen) | **Ben**, **Clara** |
++ | **Wie werden technische Logs und Audit‑Logs getrennt und welche Aufbewahrungsfristen gelten konkret?** | architecture.md (Logging & Audit Service) / risks.md (Monitoring & Logging Trennung) | **Ben**, **Clara** |
++ | **Welche minimalen Backup‑/DR‑Parameter (RPO/RTO) werden im MVP definiert?** | architecture.md (Backup & DR) / risks.md (Backup / Disaster Recovery Umfang unklar) | **Farid** |
++ | **Wie wird das Security Review in den 8‑Wochen‑Zeitplan integriert?** Welche Teil‑Reviews können parallel laufen, welche nach dem MVP? | risks.md (Security Review vs. 8‑Wochen‑MVP) / architecture.md (Security) | **Ben**, **Clara** |
++ | **Welches Consent‑Management‑Tool wird DSGVO‑konform eingesetzt und wie wird es in den Analytics‑Flow eingebunden?** | risks.md (Consent‑Management) | **Clara**, **Ben** |
++ | **Wie wird das Rate‑Limiting und Pagination für Downloads technisch umgesetzt?** | requirements.md (Performance) | **Ben** |
++ 
++ ## 3. Widersprüche, die geklärt werden müssen
++ 
++ | Widerspruch | Beschreibung | Klärungsbedarf |
++ |-----------|--------------|----------------|
++ | **Security Review (6 Wochen) vs. MVP‑Zeitplan (8 Wochen)** | Umfangreicher Review könnte das MVP verzögern. | Entscheidung, welche Sicherheits‑Checks zwingend vor Go‑Live sein müssen und welche nachgelagert erfolgen können. |
++ | **Web‑first vs. Mobile‑first** | Unterschiedliche Aussagen im Projekt‑ und Architektur‑Dokument. | Festlegung des Design‑Ansatzes für das MVP. |
++ | **EU‑only Managed Service Kosten vs. Budget** | Hosting‑Kosten sind unbekannt, könnte Budget überschreiten. | Kosten‑Analyse und ggf. Anpassung des Umfangs. |
++ | **SSO‑Integration im MVP** | Im Projekt‑Kontext als optional erwähnt, aber technische Architektur plant zukünftige Integration. | Bestätigung, dass SSO vollständig im Post‑MVP‑Umfang bleibt. |
++ | **Support‑Rollen vs. Datenschutz** | Support‑Mitarbeiter benötigen Kundendaten, dürfen aber Preis‑Details nicht sehen – widersprüchliche Anforderungen ohne Detail‑Design. | Detailliertes ABAC‑Modell definieren. |
++ 
++ ## 4. Fehlende Informationen
++ 
++ - **Kosten‑Schätzung für EU‑only Managed Service** (Hosting, Daten‑Transfer, etc.)
++ - **Definition des minimalen Audit‑Log‑Speichers und Löschintervalls** (z. B. 30 Tage)
++ - **Genauer Ablauf des Double‑Opt‑In‑Flows** (E‑Mail‑Template, Token‑Lebensdauer)
++ - **Details zur temporären Proxy‑Lösung** (Technologie, Skalierbarkeit, Sicherheit)
++ - **Auswahlkriterien für das Consent‑Management‑Tool** (Open‑Source vs. kommerziell, Integration)
++ - **Endgültige Rollen‑ und Berechtigungs-Matrix** inkl. feingranularer Rechte für Support.
++ 
++ ## 5. Mögliche Ansprechpartner / Rollen
++ 
++ | Rolle | Verantwortungsbereich |
++ |------|------------------------|
++ | **Anna** (Business Owner / Product Owner) | Gesamt‑Projektziel, Priorisierung, Entscheidung über Pilotkunde und Rabatt‑Schwelle |
++ | **Ben** (Technischer Lead / Architektur) | Technische Umsetzung, API‑Layer, Cache‑Strategie, Security Review Planung |
++ | **Clara** (Datenschutz / Compliance) | DSGVO‑Umsetzung, Double‑Opt‑In, Audit‑Trail, Consent‑Management |
++ | **David** (Customer Support) | Support‑Prozess, Rollen‑ und Berechtigungskonzept für Support |
++ | **Eva** (Finance / Controlling) | Rabatt‑Freigabe‑Schwelle, Finanz‑Kontrollen |
++ | **Farid** (IT Operations / Infrastruktur) | Hosting, Backup/DR, Monitoring, Kostenanalyse |
++ 
++ ---
++ 
++ *Dieses Dokument fasst offene Fragen aus den bisherigen Artefakten zusammen und dient als Basis für weitere Klärungs‑Workshops.*

@@ -1,0 +1,82 @@
+{
+  "spike": "RubricEvaluator",
+  "scheme": "ThreeCategory",
+  "phase": "phase2_1",
+  "runId": "20260609_152957_0e0804",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-11T14:36:41.511035Z",
+  "categories": [
+    {
+      "key": "1",
+      "label": "Kat.1 Falsche Behauptung",
+      "metric": "FalseClaim",
+      "count": 2,
+      "reason": "Kat.1 Falsche Behauptung: 2 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Nutzerrollen m\u00FCssen mindestens folgende umfassen: Admin, Sales, Manager, Support, Kunde.\u0022 | Transkript: \u0022Anna: \u0022Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?\u0022 ... Anna: \u0022Rollen Admin/Sales/Kunde\u0022 im finalen MVP.\u0022 | Im Transkript ist \u0027Sales\u0027 als Rolle nicht explizit genannt, sondern nur Admin, normaler User, Manager und Support. Im finalen MVP wird Sales als Rolle genannt, aber im Artefakt ist \u0027Sales\u0027 als Rolle gesetzt, was im Transkript nicht klar als Mindestrolle definiert wurde."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Nutzer mit entsprechenden Rechten m\u00FCssen Angebote erstellen, ansehen, speichern und herunterladen k\u00F6nnen.\u0022 | Transkript: \u0022Anna: \u0022Angebote schneller erstellen. Das ist eigentlich das Hauptziel.\u0022 Eva: \u0022Freigabeprozess fehlt im MVP.\u0022 Ben: \u0022Keine manuellen Sonderrabatte im MVP.\u0022\u0022 | Im Transkript ist der Freigabeprozess f\u00FCr Angebote und Rabattlogik im MVP nicht enthalten, daher ist die Aussage, dass Nutzer Angebote speichern und herunterladen k\u00F6nnen, nur teilweise korrekt und zu sicher formuliert."
+        }
+      ]
+    },
+    {
+      "key": "2",
+      "label": "Kat.2 Falsche Sicherheit",
+      "metric": "FalseCertainty",
+      "count": 3,
+      "reason": "Kat.2 Falsche Sicherheit: 3 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Single Sign-On (SSO) ist optional.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Im Transkript ist SSO und OAuth Integration noch offen und nicht final entschieden, daher ist die Aussage im Artefakt zu sicher formuliert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Security Reviews sind notwendig, auch wenn der MVP-Zeitplan dies erschwert.\u0022 | Transkript: \u0022Ben: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 Clara: \u0022Das ist keine Option.\u0022 Anna: \u0022Dann machen wir es ohne Security Review?\u0022 Clara: \u0022Das ist keine Option.\u0022\u0022 | Im Transkript ist unklar, ob Security Reviews im MVP stattfinden k\u00F6nnen; es wird als notwendig gesehen, aber der Zeitplan erschwert es stark. Das Artefakt stellt es als gesetzt dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss DSGVO-konform sein, insbesondere beim Login, der Datenspeicherung, beim Logging und bei Datenl\u00F6schungen.\u0022 | Transkript: \u0022Clara: \u0022DSGVO ist nicht optional.\u0022 Anna: \u0022Double-Opt-In und L\u00F6schung fehlen im MVP.\u0022\u0022 | Im Transkript wird deutlich, dass DSGVO-Konformit\u00E4t zwar Pflicht ist, aber einige Ma\u00DFnahmen wie Double-Opt-In und L\u00F6schung im MVP fehlen und als Risiko mitgef\u00FChrt werden. Das Artefakt suggeriert vollst\u00E4ndige Konformit\u00E4t im MVP."
+        }
+      ]
+    },
+    {
+      "key": "3",
+      "label": "Kat.3 Fehlendes Thema",
+      "metric": "MissingTopic",
+      "count": 5,
+      "reason": "Kat.3 Fehlendes Thema: 5 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Support ist nicht gel\u00F6st.\u0022 Clara: \u0022Supportdaten per E-Mail verarbeitet, Datenschutz relevant.\u0022 Anna: \u0022Kontaktformular ohne Ticketpersistenz.\u0022\u0022 | Das Artefakt erw\u00E4hnt zwar Support und Kontaktformular, aber es fehlt eine klare Darstellung der Datenschutzrisiken und der offenen Supportprozesse, die im Transkript ausf\u00FChrlich diskutiert wurden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Eva: \u0022Angebote m\u00FCssen freigegeben werden, wenn Rabatt \u00FCber 15% liegt.\u0022 Ben: \u0022Workflow-Status f\u00FCr Angebote.\u0022\u0022 | Das Artefakt erw\u00E4hnt zwar, dass Rabatt-Freigabeprozesse f\u00FCr sp\u00E4ter vorgesehen sind, aber es fehlt die detaillierte Diskussion \u00FCber Workflow-Status und Freigabestufen, die im Transkript als wichtig und risikobehaftet dargestellt wurden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022API Gateway hat 6 Wochen Warteliste.\u0022 Ben: \u0022API Gateway ist zentrale Schnittstelle.\u0022\u0022 | Das Artefakt erw\u00E4hnt die API Gateway Nutzung als angedacht mit Wartezeit, aber es fehlt die kritische Diskussion \u00FCber die Auswirkungen der langen Wartezeit auf den MVP-Zeitplan."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 Clara: \u0022Pseudonymisierung oder synthetische Testdaten.\u0022 Ben: \u0022SAP-Testsystem hat echte alte Kundendaten.\u0022\u0022 | Das Artefakt erw\u00E4hnt Test- und Entwicklungsumgebungen mit synthetischen Daten, aber es fehlt die Problematik der echten Kundendaten im SAP-Testsystem und die daraus resultierenden Risiken."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022PDF-Export von Angeboten ist wichtig.\u0022 Eva: \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 Clara: \u0022Datenschutzhinweise.\u0022\u0022 | Das Artefakt erw\u00E4hnt PDF nicht, obwohl im Transkript PDF-Export und Template-Management als wichtige Anforderungen und Compliance-Themen genannt wurden."
+        }
+      ]
+    }
+  ]
+}

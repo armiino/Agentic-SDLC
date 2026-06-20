@@ -1,0 +1,59 @@
+# Architekturüberblick – Frühe SDLC‑Phase
+
+## 1. Systemkontext
+Der **Kundenportal‑MVP** soll als Web‑First Anwendung (später Mobile‑First) in der EU über einen Managed Service Provider gehostet werden. Das System greift lesend auf SAP‑Produkt‑ und Preisdaten zu, erzeugt Angebote, stellt Rechnungen zum Download bereit und liefert minimalen Audit‑Trail. Alle Kommunikationswege nutzen TLS, Daten werden ausschließlich innerhalb der EU gespeichert (EU‑only Hosting). Datenschutz‑ und Compliance‑Anforderungen (DSGVO, Double‑Opt‑In, Trennung von technischen Logs und Audit‑Logs) sind von Anfang an zu berücksichtigen.
+
+## 2. Wichtige Komponenten
+| Komponente | Aufgabe | Hinweis / offene Entscheidung |
+|------------|---------|-------------------------------|
+| **Web‑Frontend (Kundenportal)** | UI für Login, Angebotserstellung, Angebots‑ und Rechnungs‑Ansicht/Download; Mehrsprachigkeit (DE/EN) | Web‑First, Mobile später 
+| **Auth‑/Identity‑Service** | Benutzer‑ und Rollen‑Management (Admin, Sales, Kunde, Support‑Einsicht); Double‑Opt‑In; ggf. SSO (Azure AD, Google) | Auth‑Strategie (OAuth 2.0, SSO, API‑Keys) noch offen 
+| **API‑Layer / Gateway** | Zentraler Zugang zu allen Backend‑Services, Durchsetzung von Rate‑Limiting, Auth‑Token‑Validierung | Nutzung externen API‑Gateways (Warteliste) vs. interne Proxy‑Lösung 
+| **Angebots‑Service** | Geschäftslogik für Angebots‑Workflow (Draft → Review → Freigabe); Validierung, dass Rabatt ≤ 15 % bleibt; Status‑Tracking | 
+| **SAP‑Adapter (lesend)** | Service zum Abruf von Produkt‑ und Preisdaten aus SAP (keine Schreibrechte im MVP) | Performance‑Risiko ohne Caching, Verfügbarkeit von SAP 
+| **PDF‑Export‑Service** | Generierung von Angebots‑ und Rechnungs‑PDFs inkl. rechtlicher Hinweise | 
+| **Rechnungs‑Download‑Service** | Bereitstellung von PDF‑Rechnungen für Kunden | 
+| **Audit‑Log‑Service** | Protokollierung von Angebot‑ und Rechnungs‑Events ohne personenbezogene Daten; separate Speicherorte für Audit‑Logs und technische Logs | 
+| **Backup & Disaster Recovery** | Tägliche Backups, Wiederherstellungsmechanismus (RTO/RPO später zu definieren) | 
+| **Monitoring‑Service** | Grundlegendes System‑Health‑Monitoring, Fehlermeldungen, ohne Speicherung personenbezogener Daten | 
+| **Secrets‑Management** | Sicherer Umgang mit Credentials, API‑Keys, Zertifikaten | Lösung (Vault, Cloud‑Provider) offen 
+| **Object‑Storage** (Managed Service) | Ablage von PDFs und ggf. Audit‑Logs, EU‑Resident | 
+
+## 3. Schnittstellen / Integrationspunkte
+- **Frontend ↔ Auth‑Service**: HTTP(S) mit JWT/OAuth‑Token, Double‑Opt‑In‑Workflow.  
+- **Frontend ↔ API‑Layer**: REST‑/GraphQL‑Endpunkte für Angebots‑Workflow, Rechnungs‑Download.  
+- **API‑Layer ↔ Angebots‑Service & PDF‑Export**: interne Service‑Calls (z.B. gRPC oder HTTP).  
+- **Angebots‑Service ↔ SAP‑Adapter**: lesende API‑Calls zum SAP‑System (z. B. OData).  
+- **PDF‑Export ↔ Object‑Storage**: Speicherung von generierten PDFs.  
+- **Audit‑Log‑Service ↔ Object‑Storage / Log‑Sink**: Persistenz von Audit‑Einträgen, getrennt von technischen Logs.  
+- **Monitoring ↔ All Services**: Export von Metriken & Health‑Checks (z. B. Prometheus‑Export).  
+- **Backup‑Service ↔ Object‑Storage / Managed DB**: regelmäßige Snapshots der gespeicherten Artefakte.  
+
+## 4. Daten‑ und Sicherheitsaspekte
+- **Datenresidenz**: Alle Daten (User‑Profile, PDFs, Logs) werden in EU‑regionen gehostet (Managed Service Provider).  
+- **Transportverschlüsselung**: TLS 1.2+ für alle externen und internen Kommunikationswege.  
+- **At‑Rest‑Verschlüsselung**: Objekt‑Storage und ggf. Datenbanken verschlüsselt (Provider‑seitig).  
+- **DSGVO‑Compliance**:
+  - Double‑Opt‑In für Nutzerregistrierung, Speicherung des Opt‑In‑Status im User‑Profile.
+  - Keine personenbezogenen Daten in technischen Logs; Trennung von Audit‑Log (geschäftsrelevant) und System‑Log.
+  - Recht auf Auskunft/Löschung wird durch ein (später zu implementierendes) Lösch‑Modul unterstützt.
+- **Rollen‑basiertes Zugriffsmanagement (RBAC)**: Granulare Berechtigungen für Admin, Sales, Kunde, Support‑Einsicht.
+- **Secrets‑Management**: Zentraler Vault/Cloud‑Key‑Store für Datenbank‑Credentials, API‑Keys, TLS‑Zertifikate (Auswahl offen).
+- **Rate‑Limiting**: Grundlegende Beschränkungen über API‑Layer (Parameter noch zu definieren, z. B. 100 Anfragen/min/Benutzer).
+- **Backup / DR**: Tägliche Snapshots, Wiederherstellung innerhalb definierter RTO/RPO (später festzulegen).
+
+## 5. Offene Architekturentscheidungen
+| Entscheidung | Mögliche Optionen | Bisherige Hinweise / Constraints |
+|--------------|-------------------|-----------------------------------|
+| **Auth‑Mechanismus** | OAuth 2.0 (mit Azure AD/Google), klassisches E‑Mail/Passwort, API‑Key‑basiert | Optional, nicht verpflichtend im MVP; Entscheidung muss vor Go‑Live getroffen werden. |
+| **API‑Gateway** | Externes Managed API‑Gateway (Warteliste 6 Wochen) vs. interne Proxy‑Lösung | Durch Warteliste Verzögerung; Fallback‑Plan nötig. |
+| **Managed Service Provider** | AWS EU (Frankfurt), Azure EU, GCP EU | Kosten‑Analyse fehlt, muss EU‑Only garantieren. |
+| **Secrets‑Management** | HashiCorp Vault, Cloud‑Provider‑KMS, AWS Secrets Manager etc. | Lösung muss DSGVO‑konform sein; Auswahl offen. |
+| **Rate‑Limiting‑Parameter** | 100 req/min/User, 1000 req/min/Client etc. | Werte noch zu definieren. |
+| **Backup RTO/RPO** | RTO 4 h / RPO 15 min (Beispiel) | Zielwerte noch nicht verbindlich. |
+| **Caching‑Strategie** | Kein Cache im MVP, später Redis/Edge‑Cache | Performance‑Risiko bei SAP‑Abfragen. |
+| **Support‑Ticket‑System** | Minimaler Ticket‑Workflow vs. reines Kontakt‑Formular | Im MVP nur Kontakt‑Formular; später ggf. Ticket‑System. |
+| **Mobile‑Strategie** | Separate native App (später) vs. responsive Web‑UI | MVP Web‑First, Mobile später. |
+
+---
+*Hinweis: Dieses Dokument ist ein erster Entwurf (initial_draft). Weitere Detailentscheidungen und technische Spezifikationen folgen in den nächsten Phasen.*

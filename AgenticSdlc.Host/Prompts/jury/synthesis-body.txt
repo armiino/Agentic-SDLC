@@ -1,0 +1,51 @@
+## FEHLERKATEGORIEN (genau eine pro Fehler — artefakt-spezifische Bedeutung: siehe Profil oben)
+
+category "FALSE_CLAIM":
+Eine Aussage im Artefakt widerspricht dem Transkript ODER kommt im Transkript nicht vor.
+Voraussetzung: Das Thema / die Richtung ist im Transkript NICHT vorhanden oder steht im
+direkten Widerspruch zu einer konkreten Transkriptaussage.
+
+category "FALSE_CERTAINTY":
+Das Artefakt stellt etwas als entschieden/gesetzt dar, obwohl das Transkript es offen/strittig
+ließ. Voraussetzung: Das Thema / die Richtung kommt im Transkript VOR — der Fehler liegt
+ausschließlich im Gewissheitsgrad der Darstellung, nicht im Inhalt selbst.
+ABER: Wenn das Artefakt die Aussage SELBST als offen, bevorzugt, „noch nicht final" oder
+als Annahme/offenen Punkt kennzeichnet, ist es KEIN Fehler.
+
+category "MISSING_TOPIC":
+Status ABSENT laut Phase 2 (auch keine sinngemäße/paraphrasierte Entsprechung im Artefakt).
+Bei MISSING_TOPIC ist artifactQuote = "nicht vorhanden".
+
+## KATEGORIEN-ABGRENZUNG FALSE_CLAIM vs. FALSE_CERTAINTY (strikt einzuhalten)
+Diese beiden Kategorien schließen sich gegenseitig aus — ein Befund kann nicht beides sein:
+- Kommt das Thema im Transkript VOR, wird aber im Artefakt als entschieden dargestellt,
+  obwohl es offen ist → ausschließlich FALSE_CERTAINTY, NIEMALS auch FALSE_CLAIM.
+- Kommt das Thema im Transkript NICHT VOR oder widerspricht ihm direkt → ausschließlich
+  FALSE_CLAIM, NIEMALS auch FALSE_CERTAINTY.
+Prüfe vor jedem Finding: Ist das Thema im Transkript vorhanden? Ja → FALSE_CERTAINTY-Kandidat.
+Nein → FALSE_CLAIM-Kandidat. Nie beides für denselben Sachverhalt melden.
+
+## VERBOTEN
+- KEINE „könnte vollständiger/detaillierter sein"-Findings. Ein vorhandenes, aber knapp
+  beschriebenes Thema ist KEIN Fehler.
+- Keine Stil-/Format-/Sprachkritik, keine Verbesserungsvorschläge.
+- Kein Befund darf gleichzeitig als FALSE_CLAIM und FALSE_CERTAINTY gemeldet werden.
+- Jede Feststellung muss durch Transkript UND Artefakt belegbar sein.
+
+## SCHWERE
+KRITISCH = Kernthema/Compliance/Datenschutz/Security betroffen oder falsche Folgeentscheidung.
+MITTEL = fachlich relevant. GERING = kleine Ungenauigkeit.
+
+## AUSGABE (ausschließlich dieses JSON-Objekt)
+{
+  "findings": [
+    {
+      "category": "FALSE_CLAIM | FALSE_CERTAINTY | MISSING_TOPIC",
+      "severity": "KRITISCH | MITTEL | GERING",
+      "artifactQuote": "woertliches Zitat aus dem Artefakt oder 'nicht vorhanden'",
+      "transcriptEvidence": "woertliches Zitat aus dem Transkript oder 'nicht vorhanden'",
+      "reason": "ein Satz, warum dies ein Fehler ist"
+    }
+  ]
+}
+Keine Fehler: {"findings": []}. Gib niemals Text außerhalb des JSON-Objekts aus.

@@ -1,0 +1,91 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-14T13:30:12.724345Z",
+  "evaluationStatus": "ok",
+  "errorScore": 23,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 23; KRITISCH=1; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 1,
+      "reason": "FALSE_CLAIM: 1 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022**DB\u2011Auswahl**: Kosten\u2011Analyse f\u00FCr EU\u2011Only Managed\u2011DB\u2011Services (z.\u202FB. Azure PostgreSQL EU\u2011Region, AWS RDS EU).\u0022 | Transkript: \u0022[Farid]\nArchitektur darf keine konkreten Cloud\u2011Produkte erfinden, solange wir keinen Provider gew\u00E4hlt haben.\u0022 | Das Artefakt nennt konkrete Cloud\u2011Services als Beispiele, was dem ausdr\u00FCcklichen Transkript\u2011Hinweis widerspricht, dass keine konkreten Cloud\u2011Produkte erfunden/benannt werden sollen."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 11,
+      "reason": "MISSING_TOPIC: 8 Fehler (unveraendert); 3 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid]\nUnd CI/CD braucht Secrets Management.\u0022 | Das Risiko von fehlendem Secrets\u2011Management f\u00FCr CI/CD/Umgebungen wurde im Transkript genannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna]\n...Marketing will Push Notifications.\n\n[Clara]\nPush hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.\u0022 | Das Artefakt nennt Tracking/Analytics nicht und behandelt Push\u2011Benachrichtigungen/Einwilligungen nicht als Datenschutzrisiko, obwohl dies im Meeting ausdr\u00FCcklich thematisiert wurde."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben]\nSAP\u2011Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.\n\n[Ben]\nBitte schreibt \u0027SAP\u2011Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0027.\u0022 | Das Artefakt enth\u00E4lt keine Risikoanalyse zu SAP\u2011Verf\u00FCgbarkeit und veralteten Preisen, obwohl das Transkript dieses als kritische Abh\u00E4ngigkeit mit finanziellen Risiken (falsche Angebote) hervorhebt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[EVA]\nFinance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\n\n[Farid]\nTemplates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022 | Das Artefakt erw\u00E4hnt nicht das Risiko/Requirement von PDF\u2011Export, Template\u2011Versionierung und revisionssicherer Nachvollziehbarkeit, das im Transkript als Compliance\u2011 und Finanzanforderung genannt wurde."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid]\nNoch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\n\n[Ben]\n...unseres Gateway\u2011Team hat gerade eine Warteliste von sechs Wochen.\u0022 | Das Artefakt benennt das Fehlen eines API\u2011Gateways, nennt aber nicht die im Transkript beschriebene Warteliste des Gateway\u2011Teams (6 Wochen) als Schedule\u2011/Abh\u00E4ngigkeitsrisiko, das das 8\u2011Wochen\u2011MVP gef\u00E4hrdet."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna]\nJa kein neuer DB Server. Managed Services sind okay. Aber bitte g\u00FCnstig.\u0022 | Das klare Constraint \u201Akein neuer DB\u2011Server\u2018 (IT\u2011Vorgabe) aus dem Transkript fehlt im Artefakt; dies ist eine relevante Architektur\u2011/Betriebsbedingung."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna]\nWir brauchen einen Architekten.\n\n[Anna]\nWir haben keinen.\n\n[Clara]\nDann m\u00FCssen wir das sauber dokumentieren.\u0022 | Das Risiko der fehlenden Architekturverantwortung und die daraus folgende Notwendigkeit zus\u00E4tzlicher Dokumentation wurde im Meeting explizit genannt, ist im Artefakt aber nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[David]\nWenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u0022 | Das Artefakt behandelt Datenschutz des Kontaktformulars, aber erw\u00E4hnt nicht das funktionale Risiko, dass Anfragen ohne Zuordnung zum Kundenkonto von Support nicht bearbeitet werden k\u00F6nnen."
+        },
+        {
+          "severity": "Warning",
+          "message": "HERABGESTUFT [KRITISCH\u2192MITTEL] (partial: \u0022Support\u2011Datenschutz: Das einfache Kontaktformular k\u00F6nnte personenbezogene Daten erfassen, ohne ausreichende DSGVO\u2011Konformit\u00E4t (Open\u202F5). / Support\u2011Datenschutz: D\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Clara]\nBevor wir \u00FCber Frontends reden: DSGVO. Wir speichern Kundendaten. Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.\u0022 | Das Artefakt enth\u00E4lt keine Erw\u00E4hnung von Double\u2011Opt\u2011In oder Auftragsverarbeitungsvertr\u00E4gen, obwohl dies im Transkript als zwingende DSGVO\u2011Anforderung und Risiko genannt wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Fehlender API\u2011Gateway: Ohne Gateway fehlen zentrale Sicherheits\u2011 und Skalierbarkeits\u2011Mechanismen (Rate\u2011Limiting, Auth\u2011Proxy); ein leichter Proxy ist nur als Not\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben]\nMoment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\n\n[Clara]\nAPI muss abgesichert sein. OAuth? Oder API Keys?\u0022 | Das Artefakt behandelt API\u2011Gateway allgemein, aber erw\u00E4hnt nicht das Risiko/Offenheit rund um SSO/Identity\u2011Provider, zentrales IAM und die Wahl OAuth vs. API\u2011Keys, die im Transkript explizit als Unsicherheit genannt wurden."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Unkontrollierte Rabatte: Der im MVP ausgeschlossene Freigabe\u2011Workflow f\u00FCr Rabatte \u003E\u202F15\u202F% kann zu unerw\u00FCnschten Preisnachl\u00E4ssen f\u00FChren (vgl. Open\u202F4). / Rabatt\u2011Fr\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben]\nDann brauchen wir Workflow\u2011Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected.\u0022 | Das Artefakt fehlt eine Erw\u00E4hnung des Risikos durch unklaren Angebots\u2011Workflow und Statusmodell, obwohl konkrete Status und Freigabeprozesse im Treffen besprochen wurden."
+        }
+      ]
+    }
+  ]
+}

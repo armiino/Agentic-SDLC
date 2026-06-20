@@ -1,0 +1,101 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-16T13:02:02.708821Z",
+  "evaluationStatus": "ok",
+  "errorScore": 16,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 16; KRITISCH=1; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 3,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 3 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 3,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Skalierbarkeit \u0026 Performance | Ziel: 10.000 gleichzeitige Nutzer, Antwortzeit \u2264\u202F2\u202Fs.\u0022 | Transkript: \u0022[Ben] Performance. Wie viele User erwarten wir?\n[Anna] Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.\u0022 | Das Artefakt nennt eine konkrete Zielgr\u00F6\u00DFe (10.000 concurrent, \u22642s), die so nicht im Transkript genannt wurde; die Zahlen sind nicht durch das Meeting belegt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Definition von RPO/RTO bis Sprint\u20112, t\u00E4gliche Backups mit 4\u2011Stunden RTO, Test\u2011Restore\u2011Prozesse etablieren.\u0022 | Transkript: \u0022[Ben] Backup?\n[Anna] Backup?\n[Ben] Ja Disaster Recovery.\n[Anna] Brauchen wir das f\u00FCr MVP?\n[Clara] Wenn Kundendaten drin sind: ja.\u0022 | Das Artefakt spezifiziert RTO/RPO und einen 4\u2011Stunden RTO, w\u00E4hrend das Transkript lediglich das Vorhandensein von Backup/DR als offenes Thema erw\u00E4hnt \u2014 keine konkreten RTO/RPO wurden im Meeting genannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022Minimal\u2011Rate\u2011Limit (z.\u202FB. 100\u202FRequests/Min pro User) in Sprint\u20112 implementieren, sp\u00E4ter anpassen.\u0022 | Transkript: \u0022[Ben] Wir brauchen auch Rate Limits f\u00FCr API.\n[David] Kunden laden manchmal hunderte Rechnungen auf einmal herunter.\n[Ben] Dann brauchen wir Pagination und Download\u2011Limits.\u0022 | Das Artefakt nennt eine konkrete Rate\u2011Limit\u2011Zahl (100 Requests/Min), was im Transkript nicht spezifiziert wurde."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 1,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 1 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Parallel\u2011Running von Review\u2011 und Entwicklungs\u2011Sprints, minimale Sicherheits\u2011MVP\u2011Kriterien (HTTPS, OAuth2, Input\u2011Validation) fr\u00FChzeitig umsetzen.\u0022 | Transkript: \u0022[Anna] Also brauchen wir Verschl\u00FCsselung. Ende\u2011zu\u2011Ende? Oder reicht TLS?\n[Ben] TLS reicht. E2E ist unrealistisch.\n[Clara] API muss abgesichert sein. OAuth? Oder API Keys?\n[Ben] OAuth w\u00E4re besser. Aber komplexer.\u0022 | Das Artefakt schreibt OAuth2 als Teil der minimalen Sicherheits\u2011MVP\u2011Kriterien fest, obwohl im Transkript OAuth vs. TLS/complexity offen diskutiert wurde; dies stellt eine unberechtigte Gewissheit in einer sicherheitsrelevanten Entscheidung dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022SSO / Identity Provider | Azure\u202FAD/Google\u2011SSO wird im MVP ausgeschlossen, k\u00F6nnte sp\u00E4ter nachtr\u00E4glich integriert w\u2026\u0022): [MITTEL] Artefakt: \u0022SSO / Identity Provider | Azure\u202FAD/Google\u2011SSO wird im MVP ausgeschlossen, k\u00F6nnte sp\u00E4ter nachtr\u00E4glich integriert werden m\u00FCssen.\u0022 | Transkript: \u0022[Anna] SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\n[Ben] Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u0022 | Im Transkript bleibt SSO offen/ungekl\u00E4rt; das Artefakt stellt die Ausklammerung im MVP als entschieden dar und gibt damit einen nicht getroffenen Entschluss vor."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 4,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 4 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna] ...Und Marketing will Push Notifications.\n[Clara] Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.\u0022 | Das Transkript nennt Push\u2011Notifications und die DSGVO\u2011Einwilligungsanforderung/Tracking als Risiko, dieser Punkt fehlt komplett im Risikodokument."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Eva] Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\n[Ben] Dann haben wir Template\u2011Management.\n[Farid] Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022 | Das Transkript nennt PDF\u2011Export, Template\u2011Management und Versionierung als Risiken/Anforderungen; diese Punkte fehlen im Risikodokument."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Ohne Dokumentation kein Security Review.\n[Anna] Okay dann doch.\n[Ben] Wir brauchen einen Architekten.\n[Anna] Wir haben keinen.\n[Clara] Dann m\u00FCssen wir das sauber dokumentieren.\u0022 | Das Fehlen einer benannten Architekturverantwortung (kein Architekt vorhanden) und das damit verbundene organisatorische Risiko sind im Transkript deutlich, werden im Dokument aber nicht als eigenes Risiko adressiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] Und CI/CD braucht Secrets Management.\u0022 | Secrets/Secrets\u2011Management f\u00FCr CI/CD ist im Transkript als technisches Risiko genannt, aber im Risikodokument nicht aufgef\u00FChrt."
+        }
+      ]
+    }
+  ]
+}

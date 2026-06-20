@@ -1,0 +1,103 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T09:33:27.323765Z",
+  "evaluationStatus": "ok",
+  "errorScore": 7,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 7; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aus): 0 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 6,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 1 confirmed; 5 partial (herabgestuft); 4 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 5,
+        "rejected": 4,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Verf\u00FCgbarkeit: Ziel-Verf\u00FCgbarkeit von 99,5 % im Produktionsbetrieb.\u0022 | Transkript: \u0022Im Transkript wird keine konkrete Verf\u00FCgbarkeitszahl genannt oder diskutiert.\u0022 | Das Artefakt nennt eine konkrete Verf\u00FCgbarkeitsanforderung, die im Transkript nicht explizit genannt oder beschlossen wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Sicherheit: TLS-Verschl\u00FCsselung f\u00FCr alle Daten\u00FCbertragungen, Rate-Limiting (minimal-Implementierung im MVP) und Secrets-Management f\u00FCr Credentials.\u0022): [GERING] Artefakt: \u0022Sicherheit: TLS-Verschl\u00FCsselung f\u00FCr alle Daten\u00FCbertragungen, Rate-Limiting (minimal-Implementierung im MVP) und Secrets-Management f\u00FCr Credentials.\u0022 | Transkript: \u0022Ben: \u0022TLS reicht. E2E ist unrealistisch.\u0022 Clara: \u0022Rate-Limiting minimal im MVP.\u0022 Ben: \u0022Secrets Management wird gebraucht.\u0022\u0022 | Obwohl TLS und Rate-Limiting diskutiert werden, ist die konkrete Umsetzung und Umfang noch offen, das Artefakt stellt es als gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Datenschutz / DSGVO: Double-Opt-In, L\u00F6sch- und Audit-Konzepte, Datenresidenz ausschlie\u00DFlich in der EU, Trennung von technischen Logs und personenbezogenen Audit\u2026\u0022): [GERING] Artefakt: \u0022Datenschutz / DSGVO: Double-Opt-In, L\u00F6sch- und Audit-Konzepte, Datenresidenz ausschlie\u00DFlich in der EU, Trennung von technischen Logs und personenbezogenen Audit-Logs.\u0022 | Transkript: \u0022Clara: \u0022DSGVO ist nicht optional.\u0022 Farid: \u0022EU-only Hosting ist nicht einfach.\u0022 Anna: \u0022EU only oder zumindest DSGVO-konform.\u0022\u0022 | Im Transkript sind Datenschutzma\u00DFnahmen als wichtig, aber Details und Umsetzung sind noch offen, das Artefakt stellt sie als vollst\u00E4ndig gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Hosting: Managed Service Hosting innerhalb der EU (EU-Only), Kosten- und Vertrags-Unsicherheit beachten.\u0022): [GERING] Artefakt: \u0022Hosting: Managed Service Hosting innerhalb der EU (EU-Only), Kosten- und Vertrags-Unsicherheit beachten.\u0022 | Transkript: \u0022Farid: \u0022EU-only Hosting ist teuer und kompliziert.\u0022 Anna: \u0022Kosten- und Vertragsdetails sind offen.\u0022\u0022 | Das Artefakt stellt EU-Only Hosting als gesetzt dar, obwohl im Transkript Kosten und Provider noch offen sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Monitoring: Grundlegendes Monitoring ohne personenbezogene Daten, inkl. Alarmierung bei Ausf\u00E4llen.\u0022): [GERING] Artefakt: \u0022Monitoring: Grundlegendes Monitoring ohne personenbezogene Daten, inkl. Alarmierung bei Ausf\u00E4llen.\u0022 | Transkript: \u0022Farid: \u0022Monitoring darf keine personenbezogenen Daten enthalten.\u0022 Ben: \u0022Alarmierung bei Ausf\u00E4llen.\u0022\u0022 | Das Artefakt stellt Monitoring als gesetzt dar, im Transkript sind Details und Umfang noch offen."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Scalability: Architektur muss horizontale Skalierung erm\u00F6glichen, jedoch komplexe Skalierbarkeits-Architektur ist f\u00FCr das MVP nicht vorgesehen.\u0022): [GERING] Artefakt: \u0022Scalability: Architektur muss horizontale Skalierung erm\u00F6glichen, jedoch komplexe Skalierbarkeits-Architektur ist f\u00FCr das MVP nicht vorgesehen.\u0022 | Transkript: \u0022Ben: \u0022Overengineering und Skalierbarkeit sind Spannungsfelder.\u0022 Anna: \u0022Bitte kein Overengineering.\u0022\u0022 | Im Transkript ist Skalierbarkeit als wichtig, aber Komplexit\u00E4t und Umsetzung sind offen, das Artefakt stellt es als gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Optionales SSO: Das System unterst\u00FCtzt optional SSO via Azure AD oder Google, jedoch ist SSO im MVP nicht verpfli\u2026\u0022): [MITTEL] Artefakt: \u0022Optionales SSO: Das System unterst\u00FCtzt optional SSO via Azure AD oder Google, jedoch ist SSO im MVP nicht verpflichtend.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Im Transkript ist die SSO-Integration als offen und nicht final gekennzeichnet, das Artefakt stellt sie jedoch als optional unterst\u00FCtzt dar, was eine zu hohe Gewissheit suggeriert."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Audit-Trail: Das System protokolliert, welcher Nutzer welche \u00C4nderungen oder Ansichten durchgef\u00FChrt hat (ohne personenbezogene Daten in technischen Logs).\u0022): [MITTEL] Artefakt: \u0022Audit-Trail: Das System protokolliert, welcher Nutzer welche \u00C4nderungen oder Ansichten durchgef\u00FChrt hat (ohne personenbezogene Daten in technischen Logs).\u0022 | Transkript: \u0022Clara: \u0022Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u0022 Anna: \u0022Ja Logging. Aber bitte nicht zu komplex.\u0022 Farid: \u0022Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.\u0022\u0022 | Das Artefakt stellt Audit-Trail und Logging als gesetzt dar, obwohl im Transkript die genaue Ausgestaltung und Trennung zwischen Audit- und technischen Logs noch offen und mit Vorsicht diskutiert wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Backup \u0026 Disaster Recovery: Automatisierte t\u00E4gliche Backups und ein DR-Plan m\u00FCssen vorhanden sein, um Produktionsdaten zu sch\u00FCtzen.\u0022): [MITTEL] Artefakt: \u0022Backup \u0026 Disaster Recovery: Automatisierte t\u00E4gliche Backups und ein DR-Plan m\u00FCssen vorhanden sein, um Produktionsdaten zu sch\u00FCtzen.\u0022 | Transkript: \u0022Clara: \u0022Backup?\u0022 Ben: \u0022Security Review dauert 6 Wochen.\u0022 Anna: \u0022Dann machen wir es ohne Security Review?\u0022 Clara: \u0022Das ist keine Option.\u0022 Farid: \u0022Wir brauchen Backup.\u0022\u0022 | Im Transkript ist Backup und DR als notwendig erkannt, aber Details und Umfang sind noch offen, das Artefakt stellt es als vollst\u00E4ndig gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Performance: Das System muss 200\u201320.000 gleichzeitige Nutzer unterst\u00FCtzen, Pagination und Download-Limits nutzen, um Lastspitzen zu bew\u00E4ltigen.\u0022): [MITTEL] Artefakt: \u0022Performance: Das System muss 200\u201320.000 gleichzeitige Nutzer unterst\u00FCtzen, Pagination und Download-Limits nutzen, um Lastspitzen zu bew\u00E4ltigen.\u0022 | Transkript: \u0022Ben: \u0022Wie viele User erwarten wir?\u0022 Anna: \u0022Vielleicht 200. Vielleicht 20.000.\u0022 Ben: \u0022Das ist ein Unterschied.\u0022\u0022 | Im Transkript ist die Nutzerzahl sehr unklar und schwankend, das Artefakt gibt eine konkrete Spanne vor, was eine zu hohe Gewissheit darstellt."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    }
+  ]
+}

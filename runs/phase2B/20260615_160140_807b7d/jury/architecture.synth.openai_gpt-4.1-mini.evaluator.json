@@ -1,0 +1,78 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T16:06:14.750535Z",
+  "evaluationStatus": "ok",
+  "errorScore": 18,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 18; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 9,
+      "reason": "FALSE_CERTAINTY: 9 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Auth-/Identity-Service ... ggf. SSO (Azure AD, Google) | Auth-Strategie (OAuth 2.0, SSO, API-Keys) noch offen\u0022 | Transkript: \u0022Anna: SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides? ... Ben: Auth-Strategie (OAuth 2.0, SSO, API-Keys) noch offen\u0022 | Das Artefakt stellt SSO mit Azure AD und Google als Optionen dar, aber im Transkript ist die Auth-Strategie noch offen und nicht entschieden, daher ist die Darstellung als gesetzt zu sicher."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API-Layer / Gateway ... Nutzung externen API-Gateways (Warteliste) vs. interne Proxy-L\u00F6sung\u0022 | Transkript: \u0022Ben: API Gateway hat Warteliste von sechs Wochen ... Anna: passt nicht zum 8-Wochen-MVP ... Ben: Fallback-Plan n\u00F6tig\u0022 | Das Artefakt stellt die Nutzung eines externen API-Gateways mit Warteliste und interne Proxy-L\u00F6sung als Alternativen dar, aber im Transkript ist die Entscheidung offen, daher ist die Darstellung als gesetzt zu sicher."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Secrets-Management ... L\u00F6sung (Vault, Cloud-Provider) offen\u0022 | Transkript: \u0022Ben: Wir brauchen auch Rate Limits f\u00FCr API ... Farid: CI/CD braucht Secrets Management ... Ben: L\u00F6sung offen\u0022 | Das Artefakt nennt konkrete L\u00F6sungen (Vault, Cloud-Provider-KMS, AWS Secrets Manager) als Optionen, aber im Transkript ist die Auswahl offen, daher ist die Darstellung als gesetzt zu sicher."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup \u0026 Disaster Recovery ... Wiederherstellungsmechanismus (RTO/RPO sp\u00E4ter zu definieren)\u0022 | Transkript: \u0022Ben: Security Review dauert 6 Wochen ... Anna: Dann machen wir es ohne Security Review? Clara: Keine Option ... Farid: Backup und Disaster Recovery sind n\u00F6tig ... Ben: RTO/RPO sp\u00E4ter festzulegen\u0022 | Das Artefakt stellt Backup und DR mit sp\u00E4ter zu definierenden RTO/RPO als gesetzt dar, obwohl im Transkript die Details offen sind, daher zu sicher dargestellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Mobile-Strategie ... MVP Web-First, Mobile sp\u00E4ter\u0022 | Transkript: \u0022Anna: Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht ... Ben: native App teuer ... Anna: MVP Web-First, Mobile sp\u00E4ter\u0022 | Das Artefakt stellt Mobile-Strategie als Web-First mit Mobile sp\u00E4ter fest, obwohl im Transkript noch Unsicherheit besteht, daher zu sicher dargestellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Rollen-basiertes Zugriffsmanagement (RBAC): Admin, Sales, Kunde, Support-Einsicht\u0022 | Transkript: \u0022Anna: Rollen Admin, normaler User, Manager, Support? ... David: Support soll nur Einsicht, keine \u00C4nderung ... Clara: Rollen- und Berechtigungslogik muss modelliert werden ...\u0022 | Das Artefakt stellt Rollen und Berechtigungen als definiert dar, obwohl im Transkript noch offene Fragen und Konflikte bestehen, daher zu sicher dargestellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Angebots-Service ... Validierung, dass Rabatt \u2264 15 % bleibt; Status-Tracking\u0022 | Transkript: \u0022Eva: Freigabeprozess f\u00FCr Rabatte ab 15 % n\u00F6tig ... Anna: Vielleicht Phase 2 ... Ben: Constraint: keine manuellen Sonderrabatte im MVP\u0022 | Das Artefakt stellt Rabattvalidierung \u2264 15 % als gesetzt dar, obwohl im Transkript die Freigabeprozesse noch offen und nicht final sind, daher zu sicher dargestellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Support-Ticket-System: Minimaler Ticket-Workflow vs. reines Kontakt-Formular; Im MVP nur Kontakt-Formular\u0022 | Transkript: \u0022David: Support braucht Ticketsystem ... Anna: Nein erstmal nicht ... Clara: Datenschutz bei Kontaktformular ... Ben: Notieren als Risiko\u0022 | Das Artefakt stellt Kontaktformular ohne Ticketsystem im MVP als gesetzt dar, obwohl im Transkript Supportprozess noch unklar und als Risiko notiert ist, daher zu sicher dargestellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Datenresidenz: Alle Daten werden in EU-Regionen gehostet (Managed Service Provider)\u0022 | Transkript: \u0022Farid: EU-only Hosting ist nicht einfach ... Anna: EU only oder DSGVO-konform ... Farid: EU-only teurer, Vertragspr\u00FCfung n\u00F6tig\u0022 | Das Artefakt stellt EU-only Hosting als gesetzt dar, obwohl im Transkript noch Unsicherheiten und Kostenrisiken bestehen, daher zu sicher dargestellt."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    }
+  ]
+}

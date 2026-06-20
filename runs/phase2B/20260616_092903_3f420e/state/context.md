@@ -1,0 +1,68 @@
+# Projektkontext – Zusammenfassung aus Stakeholder‑Transkripten (T9999_chaos.txt)
+
+## 1. Projektziel
+- **Hauptziel:** Schnelle Erstellung und Bereitstellung von Angeboten für Kunden (Conversion Rate Offer → Order) über ein **Kundenportal**.
+- **MVP‑Umfang (8 Wochen):**
+  - Login (E‑Mail + Passwort) mit Double‑Opt‑In, optional SSO (Azure AD/Google) – nicht zwingend.
+  - Angebotserstellung unter Nutzung von SAP‑Produkt‑ und Preis‑Daten (Lesenzugriff).
+  - Rechnungs‑ und Bestellungs‑Einblick für Kunden (Download).
+  - Minimaler Rollen‑ und Berechtigungs‑Mechanismus (Admin, Sales, Kunde).
+  - Grundlegender Audit‑Trail (Wer hat was geändert/gesehen) und Logging (technisch, nicht personenbezogen).
+  - EU‑konforme Managed‑Service‑Hosting, Backup & Disaster‑Recovery.
+- **Ausgeschlossen im MVP:**
+  - Vollständige SSO‑Integration, Mobile‑App, Mehrwährungs‑Support, umfangreicher Freigabe‑Workflow für Rabatte > 15 %, vollwertiges Ticket‑System, umfangreiche Analytics, umfangreiche Internationalisierung, komplexe Skalierbarkeit‑Architektur.
+
+## 2. Sprecherrollen (Stakeholder)
+| Sprecher | Rolle / Verantwortungsbereich |
+|----------|------------------------------|
+| **Anna** | Produkt‑/Projektleitung, definiert Business‑Ziele, Prioritäten (Portal, Angebote, Rechnungen). |
+| **Ben**  | Technische Entwicklung, Backend‑/API‑Architektur, Infrastruktur‑ und Integrationsfragen. |
+| **Clara**| Datenschutz / Compliance (DSGVO, Logging, Lösch‑ und Audit‑Konzepte). |
+| **David**| Customer Support, klärt Anforderungen an Support‑Workflow und Datenzugriff. |
+| **Eva**  | Finance, definiert Freigabe‑Prozess für Rabatte, rechtliche Anforderungen (PDF‑Export, Audits). |
+| **Farid**| IT Operations, Hosting‑ und Infrastruktur‑Policy (EU‑Only, Managed Services, API‑Gateway). |
+| **Weitere**| (implizit) Stakeholder aus Sales, Architekturbereich (nicht explizit genannt). |
+
+## 3. Zentrale fachliche Themen
+- **Kundenportal & UI** – Web‑first, Mobile später, responsive vs native.
+- **Authentifizierung** – Login, Double‑Opt‑In, optional SSO (Azure AD / Google) und Rollen‑Modelle.
+- **SAP‑Integration** – Lesender Zugriff für Produkt‑, Preis‑ und Rabatt‑Daten; später Schreib‑Zugriff für Bestellungen.
+- **Angebots‑Workflow** – Draft, Pending‑Approval, Approved, Sent, Accepted, Rejected; Freigabe bei Rabatten > 15 % (geplant für Phase 2).
+- **Rechnungs‑ und Bestellungs‑Ansicht** – Download, PDF‑Template‑Management, rechtliche Fußnoten.
+- **Datenschutz / DSGVO** – Double‑Opt‑In, Lösch‑konzept, Audit‑Logs, Keine personenbezogenen Daten in technischen Logs, Datenresidenz (EU‑Only), Rechtsgrundlagen für Aufbewahrung vs Recht auf Vergessenwerden.
+- **Sicherheit** – TLS, Logging, Audit‑Trail, Rate‑Limiting, Secrets‑Management, Monitoring (ohne personenbezogene Daten).
+- **Hosting & Infrastruktur** – Managed Services, EU‑Only, Kosten‑Unsicherheit, API‑Gateway‑Warteliste (6 Wochen).
+- **Internationalisierung** – Deutsch/Englisch, Mehrwährung (EUR, CHF, später USD), Schweiz‑Spezifika (Datenschutz, Hosting).
+- **Backup / Disaster Recovery** – Pflicht für Produktionsdaten.
+- **Umgebungen** – Dev / Test / Prod, synthetische Testdaten, Pseudonymisierung.
+- **Performance & Skalierbarkeit** – Erwartete Nutzerzahl 200 – 20 000, Pagination/Download‑Limits, Caching‑Risiken.
+
+## 4. Konflikte / offene Fragen (Risiken)
+- **Zeitplan vs Umfang:** 8‑Wochen‑MVP vs zahlreiche nicht‑kritische, aber notwendige Features (SSO, API‑Gateway, Full‑Security‑Review). 
+- **Budget & Ressourcen:** Keine neue DB, Managed Services sollen günstig sein – Kosten‑ und Vertrags‑Unsicherheit (EU‑Only, Schweiz). 
+- **SAP‑Verfügbarkeit:** Kritische Abhängigkeit, Wartungsfenster am Wochenende, fehlender Schreib‑Zugriff im MVP. 
+- **Rabatt‑Freigabe:** Keine Sonderrabatte im MVP, aber Finance fordert klare Freigabe‑Prozess. 
+- **Support‑Workflow:** Kein Ticket‑System, nur Kontaktformular – Konflikt mit Support‑Bedarf und DSGVO (Datenlöschung, Logging). 
+- **Hosting‑Policy:** EU‑Only Datenresidenz vs Kosten, Schweizer Kunden. 
+- **Security Review:** 6‑Wochen‑Dauer kollidiert mit MVP‑Deadline. 
+- **Internationalisierung & Mehrwährung:** Noch nicht festgelegt, mögliche Pilot‑Kunde (Schweiz) beeinflusst Scope. 
+- **API‑Gateway‑Warteliste:** Verzögert sichere API‑Absicherung (OAuth, Rate‑Limiting). 
+- **Backup / DR:** Noch nicht definiert, aber rechtlich nötig. 
+- **Logging & Audit:** Trennung von technischem Logging und personenbezogenen Audit‑Logs muss gewährleistet sein. 
+- **Testdaten:** SAP‑Testsystem enthält echte Kundendaten – Risiko für Entwicklungs‑ und CI‑Umgebung. 
+
+## 5. Unsicherheiten & offene Entscheidungen
+- **Finaler Umfang des MVP:** Welche der genannten Features bleiben bewusst außer‑Scope? (z. B. SSO, Mobile, Full‑Freigabe‑Workflow). 
+- **Pilot‑Kunde:** Deutschland vs. Schweiz – beeinflusst Währungs‑ & Datenschutz‑Anforderungen. 
+- **Hosting‑Provider:** Auswahl und Kosten für EU‑Only Managed Services. 
+- **API‑Gateway‑Strategie:** Ob ein alternatives Schnell‑Umweg (z. B. interne Proxy‑Lösung) genutzt werden kann. 
+- **Backup‑ und Disaster‑Recovery‑Strategie:** Detail‑Umsetzung (RPO/RTO). 
+- **Retention‑ und Lösch‑Policy:** Rechtliche Aufbewahrungspflichten vs. Recht auf Vergessenwerden. 
+- **Rate‑Limiting & Missbrauchserkennung:** Minimal‑Implementierung für MVP. 
+- **Preis‑ und Rabatt‑Logik:** Wie mit nächtlichen Preis‑Updates umgegangen wird (Fallback/Cache). 
+
+## 6. Quellenhinweise
+- Alle Aussagen basieren auf dem Transkript **T9999_chaos.txt** (Zeilen von Anna, Ben, Clara, David, Eva, Farid). Die einzelnen Zitate wurden im Kontext zusammengefasst, um das oben dargestellte Bild zu erzeugen.
+
+---
+*Erstellt von Phase 2.1 ContextAgent, Run 20260616_092903_3f420e*

@@ -1,0 +1,99 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260616_125401_c0ca55",
+  "artifact": "risks.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-17T11:25:48.254177Z",
+  "evaluationStatus": "ok",
+  "errorScore": 3,
+  "needsRepair": false,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 3; KRITISCH=0; needsRepair=False (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 3 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 3,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022SSO / Identity Provider: Azure AD/Google-SSO wird im MVP ausgeschlossen, k\u00F6nnte sp\u00E4ter nachtr\u00E4glich integriert we\u2026\u0022): [MITTEL] Artefakt: \u0022SSO / Identity Provider: Azure AD/Google-SSO wird im MVP ausgeschlossen, k\u00F6nnte sp\u00E4ter nachtr\u00E4glich integriert werden m\u00FCssen.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022OAuth w\u00E4re besser, aber komplexer.\u0022 Clara: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Artefakt stellt SSO als im MVP ausgeschlossen dar, w\u00E4hrend das Transkript den Wunsch nach SSO und die Unsicherheit \u00FCber die finale Entscheidung offen l\u00E4sst, somit wird eine offene Entscheidung als entschieden dargestellt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Rabatt-Freigabe-Workflow (\u003E15 % Rabatt): Workflow wird im MVP bewusst weggelassen. | Gegenma\u00DFnahmen: Definieren, ob tempor\u00E4re manuelle Prozesse ausreichen, sp\u00E4t\u2026\u0022): [MITTEL] Artefakt: \u0022Rabatt-Freigabe-Workflow (\u003E15 % Rabatt): Workflow wird im MVP bewusst weggelassen.\u0022 | Transkript: \u0022Eva: \u0022Freigabeprozess ist wichtig, darf nicht fehlen.\u0022 Anna: \u0022Vielleicht sp\u00E4ter.\u0022 Ben: \u0022Muss klar definiert werden.\u0022 Anna: \u0022Oder ab 20 Prozent, ich bin mir nicht sicher.\u0022\u0022 | Das Artefakt stellt den Rabatt-Freigabe-Workflow als bewusst weggelassen dar, obwohl im Transkript die genaue Ausgestaltung und der Zeitpunkt offen und strittig sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Support-Ticket-System: Entscheidung bis Sprint-3, ggf. Integration eines leichtgewichtigen Ticket-Tools.\u0022).\u0022): [MITTEL] Artefakt: \u0022Support-Ticket-System: Entscheidung bis Sprint-3, ggf. Integration eines leichtgewichtigen Ticket-Tools.\u0022 | Transkript: \u0022Anna: \u0022Kein Ticketsystem im MVP, nur Kontaktformular.\u0022 David: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 Clara: \u0022Supportprozess unklar.\u0022\u0022 | Das Artefakt gibt eine klare Deadline f\u00FCr die Entscheidung zum Support-Ticket-System vor, w\u00E4hrend das Transkript die Unsicherheit und den offenen Konflikt \u00FCber Supportprozesse betont."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 2,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 1 confirmed; 1 partial (herabgestuft); 3 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 1,
+        "rejected": 3,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Secrets Management wird ben\u00F6tigt.\u0022 Ben: \u0022CI/CD braucht Secrets Management.\u0022\u0022 | Das Transkript nennt Secrets Management als technisches Risiko, das im Artefakt nicht aufgef\u00FChrt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u00222. Technische Risiken: Rate\u2011Limiting \u0026 Missbrauchserkennung \u2013 Mechanismus muss noch definiert werden, Implementierung ist aufw\u00E4ndig. Risiken: API\u2011Missbrauch, Se\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022API Gateway hat 6 Wochen Warteliste.\u0022 Anna: \u0022Passt nicht zum 8-Wochen-MVP.\u0022 Farid: \u0022API Gateway kann Rate Limiting \u00FCbernehmen.\u0022\u0022 | Das Risiko der langen Warteliste f\u00FCr das zentrale API Gateway und die daraus resultierenden Verz\u00F6gerungen sind im Transkript deutlich, fehlen aber als Risiko im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u00223. Compliance\u2011 und Datenschutz\u2011Risiken: DSGVO\u2011Pflichten (Double\u2011Opt\u2011In, L\u00F6schkonzept, Audit\u2011Log) \u2013 Vorgaben sind definiert, aber konkrete technische Umsetzung f\u2026\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Double-Opt-In und L\u00F6schung fehlen.\u0022 Anna: \u0022Dann muss das gehen.\u0022 Ben: \u0022Also brauchen wir ein L\u00F6schkonzept.\u0022\u0022 | Das Transkript benennt explizit das Risiko der fehlenden Double-Opt-In und L\u00F6schkonzepte als Compliance-Risiko, das im Artefakt nur unzureichend adressiert wird, da keine klare Risikozeile zu L\u00F6schkonzepten oder Double-Opt-In als Risiko vorhanden ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u00221. Fachliche Risiken: Support\u2011Ticket\u2011System \u2013 Unklar, ob ein strukturiertes Ticket\u2011System oder reines E\u2011Mail\u2011basiertes Verfahren verwendet wird. Risiken: Ineffi\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Support wird nicht im MVP mit Ticketsystem umgesetzt.\u0022 David: \u0022Support braucht Zuordnung zum Kundenkonto.\u0022 Clara: \u0022Supportdaten sind personenbezogen und m\u00FCssen in L\u00F6schkonzept einbezogen werden.\u0022 Ben: \u0022Supportprozess unklar.\u0022\u0022 | Das Transkript beschreibt das Risiko eines unklaren Supportprozesses mit Datenschutzproblemen bei E-Mail-basiertem Support, das im Artefakt nur als unklare Support-Ticket-System-Entscheidung erw\u00E4hnt wird, aber die Datenschutzrisiken und die bewusste Einschr\u00E4nkung fehlen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u00223. Compliance\u2011 und Datenschutz\u2011Risiken: Testdaten mit echten Kundendaten \u2013 Nutzung von SAP\u2011Testsystemen enth\u00E4lt reale Kundendaten. Risiken: Datenschutz\u2011Verletzu\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022SAP-Testsystem enth\u00E4lt echte Kundendaten.\u0022 Clara: \u0022Testdaten d\u00FCrfen nicht ungepr\u00FCft verwendet werden.\u0022 Ben: \u0022Blockiert Integrationstests.\u0022\u0022 | Das Risiko der Verwendung echter Kundendaten in Testumgebungen und die damit verbundenen Datenschutzprobleme sind im Transkript klar benannt, fehlen aber im Artefakt vollst\u00E4ndig."
+        }
+      ]
+    }
+  ]
+}

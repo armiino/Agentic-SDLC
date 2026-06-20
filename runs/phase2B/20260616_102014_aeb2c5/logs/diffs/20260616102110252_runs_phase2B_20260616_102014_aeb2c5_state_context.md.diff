@@ -1,0 +1,70 @@
+--- before/runs/phase2B/20260616_102014_aeb2c5/state/context.md
++++ after/runs/phase2B/20260616_102014_aeb2c5/state/context.md
+- 
++ # Projektkontext – Zusammenfassung
++ 
++ ## 1. Projektziel (aus Sicht von **Anna**)
++ - **Primäres Ziel:** Schnell Angebote erstellen können (Conversion Rate ↑, Zeit bis Angebot ↓).
++ - **Sekundäre Ziele:** Kundenportal für Bestellungen & Rechnungsdownload, später ggf. Push‑Notifications, Mobile‑Zugriff.
++ - **Zeitplan:** MVP in **8 Wochen**.
++ 
++ ## 2. Stakeholder‑ und Sprecherrollen
++ | Sprecher | Rolle / Fachgebiet |
++ |----------|--------------------|
++ | **Anna** | Produkt‑/Business Owner, Koordination zwischen Sales & Management |
++ | **Ben**  | Technischer Lead / Architekt (Backend, API‑Layer, Integration) |
++ | **Clara**| Datenschutz‑ & Compliance‑Expertin |
++ | **David**| Customer Support |
++ | **Eva**  | Finance / Controlling |
++ | **Farid**| IT Operations / Infrastruktur |
++ 
++ ## 3. Fachliche Themen (aus dem Dialog)
++ - **Portal‑Funktionalität**: Login, Rollen (Admin, Sales, Kunde, ggf. Manager/Support), Angebots‑Erstellung, Rechnungs‑Download, ggf. Mobile‑App/Responsive Web.
++ - **Integration**: SAP (Produkt‑/Preisdaten, Stammdaten), API‑Layer (OAuth‑ oder API‑Key), Managed Services (keine neue DB).
++ - **Compliance & Sicherheit**: DSGVO (Double‑Opt‑In, Löschkonzept, Audit‑Trail, Logging, Daten‑Residenz EU‑only), Verschlüsselung (TLS), Backup & Disaster Recovery, Monitoring ohne personenbezogene Daten.
++ - **Freigabe‑Workflow**: Rabatt‑Freigabe ab 15 % (Manager, ggf. Finance), Angebot‑Status (Draft, Pending, Approved …).
++ - **Mehrsprachigkeit & Internationalisierung**: Deutsch + Englisch, später EU/US, Währungen EUR, CHF, USD.
++ - **Performance & Skalierbarkeit**: Erwartete Nutzer von 200 bis 20 000, Rate‑Limiting, Pagination, API‑Gateway (6‑Wochen‑Warteliste).
++ - **Support**: Kontaktformular, aber kein vollwertiges Ticket‑System im MVP; Risiko‑Hinweis für Support‑Daten.
++ - **Reporting & KPIs**: Conversion Rate, Zeit bis Angebot, später Analytics.
++ - **Dokumentenvorlagen**: PDF‑Export mit rechtlichen Fußnoten, Versionierung, Audit‑Log pro Angebot.
++ - **Umgebungen**: Dev/Test/Prod, synthetische Testdaten, Secrets‑Management.
++ 
++ ## 4. Identifizierte Konflikte & Spannungsfelder
++ - **Mobile vs. Web‑First** – widersprüchliche Vorstellungen von Sales.
++ - **Budget vs. Feature‑Umfang** – keine neue Datenbank, Managed Services, aber gleichzeitig API‑Gateway nötig.
++ - **Security Review (6 Wochen) vs. 8‑Wochen‑MVP** – potenzielle Kürzung oder Auslagerung.
++ - **SSO (Azure AD/Google) vs. einfacher E‑Mail‑Login** – optional, aber Komplexität.
++ - **Datenschutz (DSGVO) vs. schnelle Umsetzung** – Double‑Opt‑In zwingend, aber Timeline eng.
++ - **Support‑Prozess** – Wunsch nach Ticket‑System, aber nicht im MVP.
++ - **Rabatt‑Freigabe** – notwendige Kontrolle, aber erhöht Workflow‑Komplexität.
++ - **Hosting‑Kosten (EU‑only) vs. Budget** – Unsicherheit über Preis.
++ - **API‑Gateway‑Warteliste** vs. notwendige API‑Sicherheit.
++ - **SAP‑Verfügbarkeit** – kritische Abhängigkeit, mögliche Fallback‑Strategien.
++ 
++ ## 5. Offene Fragen & Unsicherheiten
++ - **Pilotkunde**: Müller AG (Schweiz) oder Hansa GmbH (Deutschland) – Einfluss auf Währung, Datenschutz (CH vs. EU).
++ - **Kosten‑Schätzung**: EU‑only Hosting, Managed Services – noch ungeklärt.
++ - **Umfang des MVP**: Genau welche Features (z. B. Push‑Notifications, Support‑Ticket‑System) werden bewusst ausgeschlossen?
++ - **API‑Gateway‑Verfügbarkeit** innerhalb des MVP‑Zeitrahmens.
++ - **Retention‑Regeln** für Angebote, Rechnungen und Logs (gesetzliche Aufbewahrung vs. Löschrecht).
++ - **Testdatenstrategie**: Verwendung von echten SAP‑Daten vs. synthetische Daten.
++ - **Mehrwährungs‑Support**: Entscheidung für CHF im MVP?
++ 
++ ## 6. Bewusste Einschränkungen im MVP (nach Diskussion)
++ 1. **Login** mit Double‑Opt‑In, keine SSO.
++ 2. **Angebotserstellung** über SAP‑Lesedaten, **keine Sonderrabatte** ohne Freigabe.
++ 3. **Rechnungsdownload** für Kunden.
++ 4. **Rollen**: Admin, Sales, Kunde (minimal).
++ 5. **Audit‑Trail**: Minimal (Wer hat was getan).
++ 6. **EU‑Managed‑Hosting** (keine neue DB).
++ 7. **Backup** (grundlegend, kein Disaster‑Recovery‑Plan).
++ 8. **Support** nur über Kontaktformular (keine persistente Ticket‑Lösung).
++ 9. **Kein API‑Gateway** im MVP – direkter Service‑Aufruf; Rate‑Limiting wird später ergänzt.
++ 
++ ## 7. Quellen
++ - Das gesamte Transkript **T9999_chaos.txt** (input/transcripts/).
++ 
++ ---
++ *Diese Zusammenfassung dient als neutraler Projektkontext für die weitere Anforderungsanalyse.*
++ 

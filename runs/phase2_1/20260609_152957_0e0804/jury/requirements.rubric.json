@@ -1,0 +1,77 @@
+{
+  "spike": "RubricEvaluator",
+  "phase": "phase2_1",
+  "runId": "20260609_152957_0e0804",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-11T14:13:46.001157Z",
+  "categories": [
+    {
+      "category": 1,
+      "label": "Falsche Behauptung",
+      "metric": "FalseClaim",
+      "count": 3,
+      "reason": "Kategorie 1 (Falsche Behauptung): 3 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Nutzerrollen m\u00FCssen mindestens folgende umfassen: Admin, Sales, Manager, Support, Kunde.\u0022 | Transkript: \u0022Anna: \u0022Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?\u0022 ... David: \u0022Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen.\u0022\u0022 | Im Transkript ist \u0027Sales\u0027 als Nutzerrolle nicht explizit genannt, sondern nur \u0027Admin\u0027, \u0027normaler User\u0027, \u0027Manager\u0027 und \u0027Support\u0027. \u0027Kunde\u0027 als Rolle wird implizit erw\u00E4hnt, aber \u0027Sales\u0027 als Rolle ist nicht klar definiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022KPI-Metriken wie Conversion Rate und Zeit bis Angebotserstellung sollen erfasst werden.\u0022 | Transkript: \u0022Anna: \u0022Brauchen wir KPIs? Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 ... Ben: \u0022Zeit bis Angebot ist kein personenbezogenes Datum. Das ist gut.\u0022 ... Anna: \u0022Brauchen wir Verschl\u00FCsselung.\u0022\u0022 | Im Transkript ist die KPI-Erfassung als offen und noch nicht final gekl\u00E4rt dargestellt, mit Unsicherheiten bez\u00FCglich Datenschutz und Umfang. Das Artefakt stellt es als Soll-Anforderung dar, was eine zu starke Sicherheit suggeriert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Nutzer mit entsprechenden Rechten m\u00FCssen Angebote erstellen, ansehen, speichern und herunterladen k\u00F6nnen.\u0022 | Transkript: \u0022Anna: \u0022Angebote schneller erstellen. Das ist eigentlich das Hauptziel.\u0022 ... Eva: \u0022Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.\u0022 ... Diskussion \u00FCber Freigabeprozess als nicht im MVP.\u0022 | Im Transkript ist der Freigabeprozess f\u00FCr Angebote mit Rabatten ein kritischer Punkt, der im MVP nicht enthalten sein soll. Das Artefakt erw\u00E4hnt zwar keine Freigabe hier, aber impliziert durch \u0027speichern und herunterladen\u0027 eine vollst\u00E4ndige Angebotsfunktion, ohne die Freigabe-Constraint klar zu machen."
+        }
+      ]
+    },
+    {
+      "category": 2,
+      "label": "Falsche Sicherheit",
+      "metric": "FalseCertainty",
+      "count": 3,
+      "reason": "Kategorie 2 (Falsche Sicherheit): 3 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss DSGVO-konform sein, insbesondere beim Login, der Datenspeicherung, beim Logging und bei Datenl\u00F6schungen.\u0022 | Transkript: \u0022Clara: \u0022DSGVO ist nicht optional.\u0022 ... Anna: \u0022Ja aber das darf uns jetzt nicht blockieren. MVP in 8 Wochen wurde versprochen.\u0022 ... Diskussion \u00FCber Risiken und Komplexit\u00E4t.\u0022 | Im Transkript wird DSGVO-Konformit\u00E4t als Pflicht gesehen, aber es wird auch diskutiert, dass manche Ma\u00DFnahmen im MVP nicht vollst\u00E4ndig umgesetzt werden k\u00F6nnen. Das Artefakt stellt DSGVO-Konformit\u00E4t als gesetzt dar, ohne die im Transkript thematisierte Unsicherheit und Kompromisse im MVP zu reflektieren."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Security Reviews sind notwendig, auch wenn der MVP-Zeitplan dies erschwert.\u0022 | Transkript: \u0022Ben: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 ... Clara: \u0022Das ist keine Option.\u0022 ... Anna: \u0022Dann machen wir es ohne Security Review?\u0022\u0022 | Im Transkript ist unklar, ob Security Reviews im MVP realistisch sind; es wird als Problem und Risiko diskutiert. Das Artefakt stellt Security Reviews als notwendig dar, was eine zu starke Sicherheit suggeriert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss DSGVO-konform sein, insbesondere beim Login, der Datenspeicherung, beim Logging und bei Datenl\u00F6schungen.\u0022 | Transkript: \u0022Clara: \u0022Double-Opt-In und L\u00F6schung fehlen.\u0022 ... Anna: \u0022Login mit Double-Opt-In\u0022 im MVP.\u0022 | Im Transkript ist Double-Opt-In und L\u00F6schung als noch offen und kritisch dargestellt, im Artefakt wird es als Pflicht im MVP gesetzt, was die Unsicherheit aus dem Transkript nicht widerspiegelt."
+        }
+      ]
+    },
+    {
+      "category": 3,
+      "label": "Fehlendes wichtiges Thema",
+      "metric": "MissingTopic",
+      "count": 3,
+      "reason": "Kategorie 3 (Fehlendes wichtiges Thema): 3 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 ... Diskussion \u00FCber Supportprozesse, Ticketsystem, Kontaktformular, Datenschutz und Risiken.\u0022 | Das Artefakt erw\u00E4hnt zwar Support und Kontaktformular, aber es fehlt eine ausf\u00FChrliche Darstellung der Support-Problematik, der Risiken und der Datenschutzprobleme bei fehlendem Ticketsystem, die im Transkript ausf\u00FChrlich diskutiert werden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Eva: \u0022Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.\u0022 ... Diskussion \u00FCber Workflow-Status, Freigabeprozesse, Rollen und Berechtigungen.\u0022 | Das Artefakt erw\u00E4hnt zwar Rabatt-Freigabe als Constraint, aber es fehlt eine detaillierte Darstellung des Freigabe-Workflows und der damit verbundenen Risiken und Rollen, die im Transkript ausf\u00FChrlich besprochen werden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022EU-only Hosting ist nicht einfach.\u0022 ... Diskussion \u00FCber Datenresidenz, Kosten, Vertragspr\u00FCfung, Backup, Disaster Recovery, Secrets Management, Monitoring, Rate Limits, Cache, CI/CD, Testdaten, Internationalisierung, Mehrw\u00E4hrung, Pilotkunde, SAP-Verf\u00FCgbarkeit.\u0022 | Das Artefakt deckt viele dieser Themen nur oberfl\u00E4chlich ab oder gar nicht, insbesondere fehlen detaillierte Risiken und technische Herausforderungen, die im Transkript ausf\u00FChrlich diskutiert werden."
+        }
+      ]
+    }
+  ]
+}

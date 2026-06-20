@@ -1,0 +1,48 @@
+# Risikoanalyse für das Kundenportal-Projekt
+
+## 1. Fachliche Risiken
+
+- **Unzureichend definierte Supportprozesse im MVP:** Da das MVP keinen vollwertigen Support mit Ticketsystem bietet, besteht das Risiko, dass Kundenanfragen unzureichend bearbeitet werden, was die Kundenzufriedenheit beeinträchtigt.
+- **Eingeschränkte Rabattfreigaben:** Die eingeschränkte Umsetzung von Rabatt- und Freigabeprozessen im MVP kann zu Umsatzeinbußen oder internen Abstimmungsproblemen führen.
+- **Unklarer Pilotkunde und unterschiedliche Datenschutzanforderungen:** Unterschiedliche regionale Datenschutzanforderungen (DACH, Schweiz, USA) erschweren die rechtssichere Umsetzung und können zu Fehlumsetzungen führen.
+
+## 2. Technische Risiken
+
+- **Nicht API-readyes SAP Backend:** Die fehlende vollständige API-Fähigkeit von SAP kann Echtzeit-Angebotszeiten negativ beeinflussen und zu inkonsistenten Preisdaten führen.
+- **API-Gateway als Engpass:** Wartelisten beim API-Gateway könnten Integrationsverzögerungen verursachen und damit den MVP-Termin gefährden.
+- **Kein Einsatz neuer Datenbanken:** Die Verpflichtung, keine neue Datenbank einzuführen, schränkt technologische Flexibilität und Skalierbarkeit ein.
+- **EU-only Hosting-Anforderungen:** Einschränkung auf EU-Datenhosting limitiert Auswahl und unter Umständen Kosteneffizienz der Managed Services.
+- **Zeitdruck durch 8-Wochen-MVP:** Der enge Zeitrahmen kann Qualitätssicherung, Sicherheitsreviews und Tests beeinträchtigen.
+
+## 3. Compliance- und Datenschutzrisiken
+
+- **DSGVO-Konformität unter Zeitdruck:** Anforderungen wie Double Opt-In, Audit-Trails und Löschkonzepte müssen zeitgerecht und vollständig umgesetzt werden, sonst drohen Sanktionen.
+- **Unklare Audit- und Löschkonzepte:** Fehlende finalisierte Konzepte können zu Compliance-Verstößen führen.
+- **Regionale Datenschutzunsicherheit:** Wechselndes Datenschutzregime je nach Pilotkunde erhöht Risiko von Fehlkonfigurationen.
+
+## 4. Widersprüche und Unsicherheiten
+
+- **Konflikt zwischen MVP-Zeitdruck und Sicherheitsreviews:** Aus Zeitgründen könnten Sicherheitsprüfungen verkürzt werden, was zu Schwachstellen führt.
+- **Widerspruch: rudimentärer Support vs. Kundenzufriedenheit:** Fehlendes Ticketsystem widerspricht dem Ziel einer guten Kundenbetreuung.
+- **Unklarheit über Pilotkunde:** Verzögert fundierte Datenschutz- und Funktionsentscheidungen.
+- **Rabattfreigaben nur eingeschränkt im MVP:** Kann spätere Nacharbeiten und Mehraufwand verursachen.
+
+## Mögliche Auswirkungen
+
+- Verzögerungen im Projektverlauf und gefährdete MVP-Freigabe
+- Erhöhte Betriebskosten und technische Schulden durch Kompromisse
+- Rechtliche Risiken durch Nichteinhaltung von DSGVO
+- Kundenzufriedenheitsverluste durch mangelhafte Supportprozesse
+- Funktionale Einschränkungen und interne Abstimmungsprobleme bei Rabattprozessen
+
+## Gegenmaßnahmen und Klärungsbedarfe
+
+- Klare und frühzeitige Definition der Supportprozesse mit iterativem Rollout
+- Priorisierung und engmaschiges Monitoring der API-Gateway-Integration und SAP-Anbindung
+- Frühzeitige Klärung des Pilotkunden und der regionalen Datenschutzanforderungen
+- Sicherstellung ausreichender Zeit und Ressourcen für Security Reviews trotz Zeitdruck
+- Implementierung eines MVP-tauglichen Support-Monitorings auch ohne Ticketsystem
+- Dokumentation und Abstimmung der Audit- und Löschkonzepte vor MVP-Freigabe
+
+---
+Dieses Risikoartefakt basiert auf einer Analyse des Projektkontexts, der Anforderungen und der bisher bekannten Unsicherheiten im Kundenportal-Projekt.

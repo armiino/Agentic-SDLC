@@ -1,0 +1,79 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-13T16:46:01.770822Z",
+  "errorScore": 19,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 19; KRITISCH=2; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 10,
+      "reason": "MISSING_TOPIC: 8 Fehler (unveraendert); 2 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden. Aber Sales will Angebote erstellen. Und Marketing will Push Notifications.\nClara: Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.\u0022 | Das Transkript benennt Push Notifications und Tracking als DSGVO-relevantes Thema (Erfordernis der Einwilligung); das Dokument enth\u00E4lt keine Risikoanalyse zu Einwilligung/Consent f\u00FCr Push/Tracking."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.\nBen: Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer. Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends.\u0022 | Das Transkript thematisiert die Entscheidung native vs. responsive und Budget-Risiko f\u00FCr zwei Frontends; das Dokument enth\u00E4lt kein Risiko zu Mobile-Frontend-Optionen/kostenbedingten Scope-Einfl\u00FCssen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Ja kein neuer DB Server. Managed Services sind okay.\nBen: Kein neuer DB Server \u2013 IT hat das klar gesagt.\nBen: Und technisch hei\u00DFt das wieder Persistenz. Wir wollten keine neue Datenbank.\u0022 | Das Transkript nennt die Restriktion, keinen neuen DB-Server zu bekommen, mit direkten Auswirkungen auf Persistenzanforderungen (Support-Tickets etc.); das Dokument behandelt \u0027Backups/Managed Services\u0027 allgemein, aber nicht die spezifische \u0027kein neuer DB\u0027 Constraint und deren Folgen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Tracking? Wir haben keine Analytics Infrastruktur.\nAnna: Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen.\nAnna: Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 | Das Transkript nennt fehlende Analytics-Infrastruktur und die Notwendigkeit, KPIs zu messen; das Dokument enth\u00E4lt keine explizite Risikoanalyse zur fehlenden Analytics/ KPI-Infrastruktur und deren Auswirkung auf Messbarkeit."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Das ist ein Vertragsabschluss. Ganz anderes Thema.\nClara: Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz.\u0022 | Das Transkript warnt, dass eine Online-Akzeptanz rechtlich einen Vertragsabschluss darstellt und Nachweispflichten verursacht; das Dokument f\u00FChrt kein Risiko zu rechtlicher Wirkung und Nachweispflichten bei Online-Akzeptanz auf."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Wir brauchen einen Architekten.\nAnna: Wir haben keinen.\nClara: Dann m\u00FCssen wir das sauber dokumentieren.\u0022 | Das Transkript benennt explizit das Fehlen eines Architekten als organisatorisches Problem; das Dokument geht nicht auf das Staffing-/Governance-Risiko (fehlende Architekturverantwortung) ein."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Dann brauchen wir Pagination und Download-Limits.\nDavid: Kunden laden manchmal hunderte Rechnungen auf einmal herunter.\nBen: Dann brauchen wir Missbrauchserkennung.\u0022 | Das Transkript nennt Rate-Limiting/Pagination und Missbrauchserkennung als betriebliche Risiken bei Massen-Downloads; das Dokument erw\u00E4hnt diese Operational-Risiken nicht explizit."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022EVA: Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\nFarid: Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\nEVA: Genau. Und Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.\u0022 | Das Transkript fordert Risiko- und Governance-\u00DCberlegungen zu PDF-Export, Template-Management und Versionierung; das Dokument enth\u00E4lt keine spezifische Risikoanalyse zu Template-/PDF-Versionierung und revisionssicherer Dokumentation."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Betroffene Anforderungen: FR-03 (Angebots-Erstellung), FR-09 (Support-Kontakt), AOP-05 (Freigabeschwellen).\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Contact form without ticket persistence?\nDavid: If it is only a contact form, we still need an association to the customer account, otherwise we cannot handle the request.\nClara: If support-requests contain personal data they must be included in deletion and access requests.\u0022 | Das Transkript beschreibt das Risiko, Support via Kontaktformular per E-Mail zu verarbeiten (fehlende Persistenz, Datenschutz-/Auskunftsfolgen); das Dokument enth\u00E4lt keine spezifische Risikoanalyse zur Verarbeitung von Support-Anfragen via E-Mail/Kontaktformular."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022M\u00F6gliche Gegenma\u00DFnahmen: Parallelroute pr\u00FCfen (tempor\u00E4res Direkt-API, BFF, Mock-Service); Priorisierung im Gate-Request; Eskalation an Integrations-Team; klares\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Und ehrlich gesagt ist unser Backend noch nicht mal API-ready.\nAnna/Ben discussion: We need definitely an API Layer. Otherwise we cannot integrate anything.\u0022 | Das Transkript macht deutlich, dass das bestehende Backend nicht API-ready ist (ein eigenst\u00E4ndiges Integrationsrisiko); das Dokument behandelt API-Gateway-Warteliste, aber nennt nicht explizit das Risiko, dass das Backend selbst noch nicht API-ready ist."
+        }
+      ]
+    }
+  ]
+}

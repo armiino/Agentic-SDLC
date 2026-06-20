@@ -1,0 +1,91 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-12T08:37:48.458931Z",
+  "errorScore": 20,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 20; KRITISCH=2; needsRepair=True (Schwelle 4).",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 10,
+      "reason": "MISSING_TOPIC: 10 Fehler (verifiziert); 3 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 | Das Risiko, dass im Testsystem echte Kundendaten verwendet werden und dadurch Datenschutzprobleme entstehen, wird im Artefakt nicht erw\u00E4hnt."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022CI/CD braucht Secrets Management.\u0022 | Das Risiko bez\u00FCglich fehlendem oder unsicherem Secrets Management (z.B. f\u00FCr CI/CD) wird im Artefakt nicht adressiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022 | Das Risiko fehlender Rate Limits und damit verbundener Missbrauchsm\u00F6glichkeiten (z.B. Massen-Download von Rechnungen) wird nicht explizit als Risiko genannt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Cache enth\u00E4lt Kundendaten? ... Dann ist Cache riskant.\u0022 | Das Risiko, dass ein Cache personenbezogene Daten enth\u00E4lt und dadurch Datenschutz- und Retention-Probleme entstehen, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022 | Das Risiko fehlender Template-Versionierung und damit verbundener Nachvollziehbarkeitsprobleme bei Angeboten wird nicht erw\u00E4hnt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen. ... Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind. ... Das ist ein klassischer Berechtigungskonflikt.\u0022 | Das Risiko von Berechtigungskonflikten, insbesondere im Support-Kontext (z.B. Einsicht in Angebote, Preise, Sonderkonditionen), wird nicht explizit als Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen. ... Das kollidiert mit L\u00F6schanfragen.\u0022 | Das Risiko eines Konflikts zwischen gesetzlichen Aufbewahrungspflichten und L\u00F6schanfragen (Retention vs. L\u00F6schung) wird nicht explizit als Risiko genannt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 | Das Risiko, dass in Test- und Entwicklungsumgebungen versehentlich echte Kundendaten verwendet werden, ist nicht explizit als Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Deutsch und Englisch sollten schon drin sein. ... Support braucht mindestens Deutsch und Englisch.\u0022 | Das Risiko, dass Internationalisierung (z.B. fehlende Sprachunterst\u00FCtzung) zu Problemen im Support oder bei Kunden f\u00FChrt, wird nicht explizit genannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Massenexport von Rechnungen kann rechtlich relevant sein.\u0022 | Das Risiko, dass Massenexporte von Rechnungen rechtliche oder sicherheitsrelevante Probleme verursachen, wird nicht explizit als Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Pilotkunde und geografische Zielgruppe: Schweiz vs. DACH/Europa mit unterschiedlichen Datenschutz- und W\u00E4hrungsanforderungen f\u00FChrt zu Unsicherheit.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen L\u00E4nder- und W\u00E4hrungsregeln.\u0022 | Das Risiko, dass l\u00E4nderspezifische und w\u00E4hrungsspezifische Anforderungen nicht rechtzeitig oder korrekt umgesetzt werden, ist nicht explizit als Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022SAP-Integration und Datenverf\u00FCgbarkeit: SAP-Preisdaten sind nicht in Echtzeit aktuell; Offline- oder Ausfall-Szenarien sind unzureichend gekl\u00E4rt.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wenn SAP nicht erreichbar ist ... Dann brauchen wir Fallback oder Cache.\u0022 | Das Risiko, dass bei SAP-Ausfall keine Angebote erstellt werden k\u00F6nnen oder falsche/unverbindliche Angebote entstehen, wird nicht explizit als Risiko benannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Auditierung und Logging: Notwendigkeit differenzierter Logs, um personenbezogene Daten nicht im technischen Logging zu speichern, ist komplex und fehleranf\u00E4llig\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Application logs, audit logs und security logs sind unterschiedliche Dinge. ... unterschiedliche Aufbewahrungsfristen.\u0022 | Das Risiko, dass unterschiedliche Log-Typen und deren Aufbewahrungsfristen nicht korrekt umgesetzt werden und dadurch Compliance-Probleme entstehen, fehlt."
+        }
+      ]
+    }
+  ]
+}

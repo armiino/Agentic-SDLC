@@ -1,0 +1,97 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-13T20:13:39.152798Z",
+  "errorScore": 26,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 26; KRITISCH=3; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 2,
+      "reason": "FALSE_CLAIM: 2 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Verschl\u00FCsselung: TLS\u202F1.2\u002B f\u00FCr Daten in Transit, AES\u2011256 at\u2011rest f\u00FCr Datenbanken und Backups.\u0022 | Transkript: \u0022Anna: Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS?\nBen: TLS reicht. E2E ist unrealistisch.\u0022 | Im Transkript wurde nur die Frage nach Verschl\u00FCsselung / TLS diskutiert; eine konkrete Festlegung auf AES\u2011256 f\u00FCr At\u2011Rest\u2011Verschl\u00FCsselung wurde nicht besprochen und ist damit eine erfundene technologische Festlegung."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Logging: Technische Logs ohne personenbezogene Daten, Audit\u2011Logs pseudonymisiert.\u0022 | Transkript: \u0022Clara: Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\nClara: Und protokollieren. Wer hat welches Angebot ge\u00F6ffnet?\u0022 | Das Transkript fordert nachvollziehbare Audit\u2011Trails mit Angaben \u0027wer hat wann was ge\u00E4ndert\u0027. Das Artefakt behauptet Audit\u2011Logs seien pseudonymisiert, was der geforderten Identifizierbarkeit widerspricht und somit der Transkriptaussage direkt widerspricht."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 2,
+      "reason": "FALSE_CERTAINTY: 2 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Backup \u0026 DR Service | T\u00E4gliche Snapshots, EU\u2011Only Managed Service, Wiederherstellungstest\n\n...Backup \u0026 DR: EU\u2011Only Managed Service, t\u00E4gliche Snapshots, Aufbewahrung \u2265\u202F30\u202FTage, regelm\u00E4\u00DFige Wiederherstellungstests.\u0022 | Transkript: \u0022Ben: Backup?\n...\nAnna: Wie lange m\u00FCssen wir Angebote speichern?\nEVA: Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.\u0022 | Das Transkript hat Backup/DR als offenes Thema (h\u00E4ufigkeit/Retention unklar, gesetzliche Aufbewahrungsfristen m\u00F6glich). Das Artefakt legt t\u00E4gliche Snapshots und eine konkrete Aufbewahrung (\u226530 Tage) fest und stellt damit offene Entscheidungen als gesetzt dar, was Compliance\u2011/rechtliche Konflikte erzeugen kann."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Rate\u2011Limiting / Abuse\u2011Protection | Middleware\u2011basiertes Schutz\u2011Mechanismus (API\u2011Gateway nicht im MVP)\u0022 | Transkript: \u0022Farid: Unsere interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\nBen: Das habe ich vorhin API Layer genannt. Aber unser Gateway\u2011Team hat gerade eine Warteliste von sechs Wochen.\nAnna: Das passt nicht zum 8\u2011Wochen\u2011MVP.\u0022 | Im Transkript besteht eine verbindliche Policy f\u00FCr das zentrale API\u2011Gateway und kein abschlie\u00DFender Entschluss, das Gateway im MVP auszuschlie\u00DFen. Das Artefakt stellt das Fehlen des API\u2011Gateways im MVP als Entscheidung dar, obwohl das offen/konfliktbehaftet war."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 10,
+      "reason": "MISSING_TOPIC: 6 Fehler (unveraendert); 4 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Eva: Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt. ... Ab 30 Prozent vielleicht Finance.\nBen: Dann brauchen wir Workflow\u2011Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected.\u0022 | Das Transkript beschreibt einen Freigabe\u2011/Approval\u2011Workflow mit konkreten Rabatt\u2011Schwellen (finanzielles Risiko). Das Artefakt enth\u00E4lt kein Angebot\u2011Freigabe\u2011Workflow oder Regeln f\u00FCr Rabattfreigaben."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Kein neuer DB Server \u2013 IT hat das klar gesagt.\u0022 | Das Transkript enth\u00E4lt die Constraint, dass kein neuer DB\u2011Server aufgestellt werden darf; das Artefakt erw\u00E4hnt keinen solchen Architektur\u2011/Betriebszwang."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\nClara: Ja, Pseudonymisierung oder synthetische Testdaten.\nBen: SAP\u2011Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 | Die Notwendigkeit von getrennten Umgebungen und Regeln f\u00FCr Testdaten (Pseudonymisierung/synthetische Daten, Einschr\u00E4nkungen bei SAP\u2011Testsystemen) wird im Transkript klar gefordert, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022EVA: Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\nFarid: Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\nEVA: Genau. Und Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.\u0022 | Das Transkript fordert PDF\u2011Template\u2011Management, Versionierung und Revisionssicherheit f\u00FCr Angebote; das Artefakt erw\u00E4hnt nur PDF\u2011Rechnungen, nicht Template\u2011Versionierung oder revisionssichere Angebotsdokumente."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Wir m\u00FCssen KPIs messen. Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 | KPI\u2011/Analytics\u2011Anforderungen wurden im Transkript genannt (Conversion, Zeit bis Angebot), aber das Artefakt enth\u00E4lt keine Analytics/Tracking\u2011Komponente oder KPI\u2011Anforderungen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\nAnna: Dann machen wir es ohne Security Review?\nClara: Das ist keine Option.\u0022 | Der Transkript\u2011Diskurs \u00FCber den Security\u2011Review (Dauer, nicht skippen) ist betrieblich relevant; das Artefakt beschreibt Sicherheitsma\u00DFnahmen, erw\u00E4hnt aber nicht den Security\u2011Review\u2011Prozess oder dessen Zeitrahmen/Impact."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Support\u2011Kontaktformular | Einfache Kontaktaufnahme, Speicherung DSGVO\u2011konform; Autorisation: Rollen\u2011basiertes RBAC (Admin, Sales, Kunde)\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support.\u0022 | Das Transkript nennt zus\u00E4tzlich zu Admin/Sales/Kunde die Rollen \u0027Manager\u0027 und \u0027Support\u0027 mit spezifischen Berechtigungsanforderungen; das Artefakt listet nur Admin, Sales, Kunde und deckt die Manager/Support\u2011Rollen nicht ab."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Offene Architekturentscheidungen: 4. W\u00E4hrungsunterst\u00FCtzung \u2013 CHF und ggf. USD im MVP noch offen.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Deutsch und Englisch sollten schon drin sein.\nEVA: Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\nBen: Mehrw\u00E4hrung ist nicht trivial, vor allem mit Rabattlogik und SAP.\u0022 | Internationalisierung (Deutsch/Englisch) und Mehrw\u00E4hrungsanforderungen (z. B. CHF) sind im Transkript thematisiert und wirken auf Architektur/Integration; das Artefakt dokumentiert Sprache/W\u00E4hrungsanforderungen nicht."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022SAP\u2011Connector | Lesender Zugriff auf Produkt\u2011, Preis\u2011 und Kundendaten; Schreibzugriff f\u00FCr Angebote optional; Schnittstellen: API\u2011Layer \u2194 SAP\u2011Connector: OData/RE\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Was passiert, wenn SAP nicht erreichbar ist?\nBen: Angebote k\u00F6nnen dann nicht aktuell berechnet werden.\nAnna: Dann brauchen wir Fallback oder Cache.\nBen: Cache enth\u00E4lt Kundendaten? ... Dann wieder Datenschutz und Retention.\u0022 | Das Transkript macht SAP\u2011Verf\u00FCgbarkeit zur kritischen Abh\u00E4ngigkeit und diskutiert Fallback/Cache\u2011Strategien mit Datenschutzimplikationen; das Artefakt erw\u00E4hnt m\u00F6gliches Caching, aber nicht die SAP\u2011Verf\u00FCgbarkeits\u2011Abh\u00E4ngigkeit oder die damit verbundenen Fallback/Policy\u2011Entscheidungen explizit."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Frontend \u2194 Notification Service: Web\u2011Push API (optional); DSGVO: Double\u2011Opt\u2011In, Recht auf Vergessenwerden, getrennte technische und Audit\u2011Logs, Datenminimierung\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Marketing will Push Notifications.\nClara: Push hei\u00DFt Einwilligung. Wieder DSGVO.\u0022 | Das Transkript verlangt ausdr\u00FCckliche Ber\u00FCcksichtigung von Einwilligung/DSGVO f\u00FCr Push\u2011Benachrichtigungen; das Artefakt nennt einen optionalen Notification Service (Web\u2011Push API) aber dokumentiert nicht die Einwilligungs/Consent\u2011Anforderung."
+        }
+      ]
+    }
+  ]
+}

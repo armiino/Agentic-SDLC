@@ -1,0 +1,49 @@
+--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturüberblick (frühe SDLC‑Phase)
++ 
++ ## Systemkontext
++ Das Kundenportal wird als web‑basiertes Frontend für **Sales‑Mitarbeiter** und **Kunden** bereitgestellt. Es greift auf interne Systeme (SAP für Produkt‑, Preis‑ und Kundendaten) sowie auf Infrastruktur‑Services (Authentifizierungs‑/Autoriserungs‑Service, Audit‑Log‑Service, Backup/DR) zu. Das System muss EU‑only gehostet werden, DSGVO‑konform sein und innerhalb von 8 Wochen ein MVP liefern.
++ 
++ ## Wichtige Komponenten
++ | Komponente | Aufgabe | Hinweis |
++ |------------|---------|--------|
++ | **Frontend (Web UI)** | Kunden‑ und Sales‑Portal, Login, Rollen‑basiertes UI, Angebotserstellung, Rechnungsanzeige, Profilverwaltung | React/Angular‑ähnliches Framework (technologie‑neutral) |
++ | **API‑Layer / Backend** | Orchestriert Geschäftslogik, validiert Eingaben, ruft SAP‑Daten ab, erzeugt Angebote, stellt PDFs bereit | REST‑basiert, stateless, kann später um GraphQL erweitert werden |
++ | **Auth‑Service** | Authentifizierung (OAuth 2.0 oder API‑Key) und Autorisierung (RBAC) | Offene Entscheidung, muss DSGVO‑konform sein |
++ | **SAP‑Connector** | Lesender Zugriff auf Produkt‑, Preis‑ und Kundendaten; Schreibzugriff für Angebote optional | Schnittstelle via OData/REST, ggf. Caching für Performance |
++ | **Audit‑Log‑Service** | Aufzeichnung von sicherheitsrelevanten Aktionen (Login, Angebotserstellung, Datenlöschung) ohne personenbezogene Daten in technischen Logs | Separate Log‑Speicher, immutable |
++ | **Backup & Disaster Recovery** | Sicherung von Datenbank‑ und Dateispeicher, Wiederherstellung im EU‑Region‑Umfeld | Offene Details zu Frequenz/Retention |
++ | **Rate‑Limiting / Abuse‑Protection** | Schutz vor Überlastung, da kein API‑Gateway im MVP | Eigen‑implemented Middleware oder Cloud‑WAF (Entscheidung offen) |
++ | **Notification Service (optional)** | Push‑Benachrichtigungen für neue Angebote/Rechnungen | MVP‑Phase optional |
++ | **Support‑Kontaktformular** | Einfache Kontaktaufnahme, kein Ticket‑System im MVP | Speicherung gemäß DSGVO |
++ 
++ ## Schnittstellen / Integrationspunkte
++ - **Frontend ↔ API‑Layer**: HTTPS/REST JSON API, gesichert über TLS.
++ - **API‑Layer ↔ Auth‑Service**: Token‑Validierung (OAuth‑Introspektion oder API‑Key Lookup).
++ - **API‑Layer ↔ SAP‑Connector**: OData/REST Aufrufe; ggf. Batch‑Abrufe, Caching.
++ - **API‑Layer ↔ Audit‑Log‑Service**: Asynchrone Log‑Einträge (z. B. via Message Queue oder direktes Schreiben).
++ - **API‑Layer ↔ Backup Service**: Periodische Snapshots, Trigger über Cron‑Jobs.
++ - **Frontend ↔ Notification Service**: Web‑Push API (optional).
++ - **Frontend ↔ Support‑Formular**: E‑Mail‑Versand oder Ticket‑System‑Hook (nach MVP).
++ 
++ ## Daten‑ und Sicherheitsaspekte
++ - **DSGVO‑Konformität**: Double‑Opt‑In bei Registration, Recht auf Vergessenwerden (Lösch‑Mechanismus), getrennte technische und Audit‑Logs, Datenminimierung.
++ - **Verschlüsselung**: TLS 1.2+ für Daten in Transit; Verschlüsselung at‑rest (z. B. AES‑256) für Datenbanken und Backup.
++ - **Authentifizierung**: Offen – Entscheidung zwischen OAuth 2.0 (mit Authorization Code Flow) oder API‑Key (für interne Services). Beide müssen sicher gespeicherte Secrets nutzen.
++ - **Autorisation**: Rollen‑basiertes Zugriffskontrollmodell (Admin, Sales, Kunde).
++ - **Rate‑Limiting**: Ohne API‑Gateway wird ein Middleware‑Filter eingesetzt; Schwellenwerte noch zu definieren.
++ - **Backup & DR**: EU‑Only Managed Service, tägliche Snapshots, Aufbewahrung mindestens 30 Tage, Wiederherstellungstest geplant.
++ - **Logging**: Technische Logs enthalten keine personenbezogenen Daten; Audit‑Logs enthalten Ereignisse mit Pseudonymisierung.
++ 
++ ## Offene Architekturentscheidungen
++ 1. **Authentifizierungsmechanismus** – OAuth 2.0 (empfohlen) vs. API‑Key – noch nicht final.
++ 2. **Rate‑Limiting‑Strategie** – Eigen‑built Middleware, Cloud‑WAF oder Service‑Mesh – Entscheidung ausstehend.
++ 3. **SAP‑Schreibzugriff** – Lesender Zugriff steht, Schreibzugriff für Angebotserstellung muss noch geklärt werden.
++ 4. **Währungsunterstützung** – EUR ist sicher, CHF und ggf. USD sind offen.
++ 5. **Backup‑ und Disaster‑Recovery‑Details** – Frequenz, Retention, Test‑Procedures noch zu spezifizieren.
++ 6. **Notification Service** – ob Push‑Benachrichtigungen im MVP enthalten sind.
++ 7. **Hosting‑Provider‑Details** – EU‑only Managed Service, Kosten‑ und Leistungsdetails noch offen.
++ 
++ *Dieses Dokument stellt den ersten Entwurf des Architektur‑Überblicks dar und dient als Basis für weitere Detail‑Design‑ und Entscheidungsschritte.*

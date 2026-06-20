@@ -1,0 +1,94 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "open-questions.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-14T14:04:43.368112Z",
+  "evaluationStatus": "ok",
+  "errorScore": 26,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 26; KRITISCH=2; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 13,
+      "reason": "MISSING_TOPIC: 10 Fehler (unveraendert); 3 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Moment, mobile hei\u00DFt native App oder responsive Web? ... Und ehrlich gesagt ist unser Backend noch nicht mal API-ready.\u0022\u0022 | Das Artefakt nennt nicht die offene Entscheidung zu SSO/Identity-Providern (Azure AD / Google / SSO-Optionen) und zur konkreten Authentifizierungsarchitektur, die im Gespr\u00E4ch thematisiert wurde."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022API muss abgesichert sein. OAuth? Oder API Keys?\u0022 / \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022\u0022 | Die konkrete offene Frage zur API-Authentifizierung (OAuth vs. API-Keys) fehlt im Dokument."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Was ist mit PDF-Export von Angeboten?\u0022 / \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022\u0022 | Es fehlt eine offene Frage zu PDF-Export, Template-Management und Revisionssicherheit f\u00FCr Angebots-PDFs, die im Transkript als offen genannt wurden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen Rate Limits f\u00FCr API.\u0022 / \u0022Kunden laden manchmal hunderte Rechnungen auf einmal herunter. Dann brauchen wir Pagination und Download-Limits.\u0022\u0022 | Technische Fragen zu Rate-Limiting, Pagination und Limits beim Rechnungsdownload fehlen, obwohl sie als offene Risiken genannt wurden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Was passiert, wenn SAP nicht erreichbar ist?\u0022 / \u0022Dann brauchen wir Fallback oder Cache.\u0022 / \u0022Cache enth\u00E4lt Kundendaten?\u0022\u0022 | Das offene Thema zu Caching/Fallback-Strategien bei SAP-Ausfall (inkl. Datenschutzimplikationen) ist nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Fragen zu Umgebungen (Dev/Test/Prod) und zum Umgang mit Testdaten (Pseudonymisierung/synthetische Daten) wurden angesprochen, fehlen aber im Artefakt und sind datenschutzkritisch."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022CI/CD braucht Secrets Management.\u0022\u0022 | Das offene Thema Secrets Management f\u00FCr CI/CD und Integrationen wurde im Meeting genannt, ist aber nicht im Dokument enthalten (Sicherheitsrisiko)."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Was sind die KPIs?\u0022 / \u0022Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 / \u0022Wie viele User erwarten wir? ... 200, 2000, 20000\u0022\u0022 | Offene Fragen zu KPIs, erwarteter Nutzerzahl/Performance-Anforderungen und damit Dimensionierung sind im Artefakt nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen aber eine Kostensch\u00E4tzung f\u00FCr den Vorstand bis Freitag.\u0022\u0022 | Die konkrete, zeitkritische Anforderung an eine Kostensch\u00E4tzung (Deadline Freitag) wurde genannt, fehlt aber als offener Kl\u00E4rungsbedarf."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022\u0022Anna (Projekt-/Produktverantwortliche) \u2013 fachliche Priorisierung und MVP-Scope\n- Ben (Technischer Experte/Architekt) \u2013 SAP-Integration, API-Layer, technische Infrastruktur\n- Clara (Datenschutz/Compliance) \u2013 DSGVO, Audit-Trails, L\u00F6schkonzepte\n- Eva (Finanzen) \u2013 Rabattlogiken, Freigabeprozesse\n- Farid (IT Operations) \u2013 Managed Hosting, Backup, Infrastruktur\u0022,\u0022transcriptEvidence\u0022:\u0022\u0022David\u0022 (Customer Support) tr\u00E4gt konkrete Supportanforderungen vor und muss als Ansprechpartner ber\u00FCcksichtigt werden.\u0022\u0022 | Transkript: \u0022\u0022Ich bin von Customer Support. ...\u0022 / \u0022Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto\u0022\u0022 | Der in der Diskussion aktive Stakeholder David (Customer Support) wurde im Abschnitt Ansprechpartner nicht aufgef\u00FChrt, obwohl er relevante offene Fragen zum Support hatte."
+        },
+        {
+          "severity": "Warning",
+          "message": "HERABGESTUFT [KRITISCH\u2192MITTEL] (partial: \u0022Wie wird die Integration mit dem nicht vollst\u00E4ndig API-readyen SAP Backend technisch erfolgen, insbesondere im Hinblick auf Echtzeit-Angebote und Preisdatenaktu\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Kann der Kunde ein Angebot online akzeptieren?\u0022 / \u0022Das ist ein Vertragsabschluss. Ganz anderes Thema.\u0022 / \u0022SAP-Schreibzugriff hatten wir noch gar nicht entschieden.\u0022\u0022 | Ob Online-Akzeptanz von Angeboten und damit SAP-Schreibzugriff gestattet/gew\u00FCnscht ist, wurde offen diskutiert, ist aber nicht in den offenen Fragen enthalten; das ist rechtlich/organisatorisch kritisch."
+        },
+        {
+          "severity": "Warning",
+          "message": "HERABGESTUFT [KRITISCH\u2192MITTEL] (partial: \u0022Wie werden Audit-Trails, L\u00F6schkonzepte und DSGVO-konforme Nachweise final definiert und umgesetzt?\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. ... Application logs, audit logs und security logs sind unterschiedliche Dinge.\u0022\u0022 | Die Anforderung, Logs/Monitoring von personenbezogenen Daten zu trennen (keine PII in zentralem Monitoring) und unterschiedliche Log-Klassen, wurde diskutiert, fehlt jedoch als offene Frage."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Wer ist der Pilotkunde konkret (DACH, Schweiz, USA) und welche konkreten Datenschutzvorgaben ergeben sich daraus?\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022 / \u0022Wenn Schweiz Pilotkunde ist, dann doch.\u0022\u0022 | Offene Fragen zu Mehrw\u00E4hrungsunterst\u00FCtzung, L\u00E4nder-/W\u00E4hrungsregeln und Internationalisierung (Sprachen, Schweiz vs. EU vs. USA) sind im Dokument nicht aufgenommen."
+        }
+      ]
+    }
+  ]
+}

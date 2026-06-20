@@ -1,0 +1,88 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-13T20:10:58.394044Z",
+  "errorScore": 26,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 26; KRITISCH=3; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 4,
+      "reason": "FALSE_CLAIM: 4 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022DSGVO\u2011Konformit\u00E4t: Double\u2011Opt\u2011In, L\u00F6sch\u2011 und Aufbewahrungskonzepte, Audit\u2011Logs ohne personenbezogene Daten, Trennung technischer und Audit\u2011Logs (Clara).\u0022 | Transkript: \u0022Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u0022 | Das Transkript verlangt revisionssichere Audit\u2011Trails mit Nachvollziehbarkeit (wer/was/ wann); das Artefakt behauptet hingegen, Audit\u2011Logs d\u00FCrften keine personenbezogenen Daten enthalten, was dem ge\u00E4u\u00DFerten Compliance\u2011Anspruch widerspricht."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Sicherheitsanforderungen: Authentifizierung \u00FCber ein sicheres Verfahren (OAuth oder API\u2011Key \u2013 Entscheidung offen), Verschl\u00FCsselung von Daten in Ruhe und Transit (Ben).\u0022 | Transkript: \u0022Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS? Ben: TLS reicht.\u0022 | Im Transkript wurde TLS als ausreichend genannt; das Artefakt erg\u00E4nzt eigenst\u00E4ndig die Forderung nach Verschl\u00FCsselung \u0027in Ruhe\u0027, was so nicht beschlossen oder gefordert wurde."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Skalierbarkeit: Das Portal muss mindestens 100 gleichzeitige Nutzer unterst\u00FCtzen (Sch\u00E4tzung, Annahme).\u0022 | Transkript: \u0022Wie viele User erwarten wir? ... Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.\u0022 | Die konkrete Zahl \u0027mindestens 100\u0027 ist nicht aus dem Transkript ableitbar; die Stakeholder gaben andere (h\u00F6here/unsichere) Sch\u00E4tzungen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Kundendaten\u2011Login: Kunden k\u00F6nnen nach dem Login ihre Profildaten einsehen und bearbeiten (Anna, Clara).\u0022 | Transkript: \u0022Kunden sollen Bestellungen sehen und Rechnungen downloaden.\u0022 | Das Transkript nennt das Anzeigen von Bestellungen/Rechnungen, aber es enth\u00E4lt keine Anforderung, dass Kunden ihre Profildaten selbst bearbeiten d\u00FCrfen; diese Schreibfunktion wird im Artefakt hinzugef\u00FCgt ohne Grundlage."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 8,
+      "reason": "MISSING_TOPIC: 6 Fehler (unveraendert); 2 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Login per E\u2011Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.\u0022 | Das Transkript nennt Auftragsverarbeitungsvertr\u00E4ge (AVV) als erforderliche DSGVO\u2011Ma\u00DFnahme; das Artefakt enth\u00E4lt diesen Punkt nicht."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ja kein neuer DB Server. Managed Services sind okay.\u0022 | Im Transkript ist die Vorgabe \u0027kein neuer DB\u2011Server / Managed Services\u0027 klar formuliert, im Artefakt fehlt eine entsprechende Constraint/Anforderung."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP. ... Dann machen wir es ohne Security Review? ... Das ist keine Option.\u0022 | Das Transkript macht den Security\u2011Review (6 Wochen) als echte, blockierende Abh\u00E4ngigkeit geltend; das Artefakt nennt diese verpflichtende Pr\u00FCfungsdauer bzw. deren Auswirkungen auf den Zeitplan nicht."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt. ... Ab 30 Prozent vielleicht Finance.\u0022 | Der im Transkript beschriebene Freigabeprozess und Schwellen (z.\u202FB. \u003E15% Manager, \u003E30% Finance) fehlen im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer. ... Und Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.\u0022 | Das Transkript fordert PDF\u2011Templates mit rechtlichen Fu\u00DFnoten, Versionsnummern und Revisionssicherheit; das Artefakt beschreibt nur \u0027PDF\u2011Download\u0027 ohne diese Anforderungen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Und CI/CD braucht Secrets Management.\u0022 | Das Transkript nennt Secrets Management f\u00FCr CI/CD als notwendiges Operational Item; das Artefakt enth\u00E4lt dazu keine Anforderung oder Constraint."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022FR: \u0022Support\u2011Kontaktformular statt vollst\u00E4ndigem Ticket\u2011System f\u00FCr den MVP (David).\u0022 / Assumptions: \u0022Support\u2011Prozess: Kontaktformular vs. Ticket\u2011System und dara\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u0022 | Das Artefakt listet ein Kontaktformular f\u00FCrs MVP, dokumentiert aber nicht die im Transkript geforderte Zuordnung von Kontaktanfragen zum Kundenkonto."
+        },
+        {
+          "severity": "Warning",
+          "message": "HERABGESTUFT [KRITISCH\u2192MITTEL] (partial: \u0022FR: \u0022Integration mit SAP: Lesender Zugriff auf Produkt\u2011, Preis\u2011 und Kundendaten; m\u00F6gliche Schreibzugriffe f\u00FCr Angebote bleiben offen (Ben).\u0022 / Assumptions/Open \u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Bitte schreibt \u0027SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0027.\u0022 | Die Stakeholder hoben SAP\u2011Verf\u00FCgbarkeit als kritische Abh\u00E4ngigkeit hervor (Auswirkungen auf Angebotserstellung und G\u00FCltigkeit); das Artefakt dokumentiert keine klare Anforderung/Constraint oder Fallback/Cache\u2011Verhalten."
+        }
+      ]
+    }
+  ]
+}

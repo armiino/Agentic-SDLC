@@ -1,0 +1,84 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "open-questions.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-19T15:51:05.521066Z",
+  "evaluationStatus": "ok",
+  "errorScore": 5,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 5; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM f\u00FCr diesen Artefakttyp deaktiviert (DISK-12/B22) \u2014 nicht generiert/bewertet.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 4,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 1 confirmed; 3 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 3,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Login mit Double-Opt-In\u0022 | Transkript: \u0022Anna: \u0022Also erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 und Clara: \u0022Double-Opt-In ...\u0022 aber Anna sagt: \u0022Ja aber das darf uns jetzt nicht blockieren. MVP in 8 Wochen wurde versprochen.\u0022\u0022 | Im Transkript ist Double-Opt-In als DSGVO-Anforderung genannt, aber es wird offen gelassen, ob es im MVP umgesetzt wird, da es den Zeitplan blockieren k\u00F6nnte. Das Artefakt stellt es als gesetzt dar, obwohl es offen ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Das Artefakt nennt \u0022EU Managed Hosting\u0022 als gesetzt, aber im Text wird nicht explizit gesagt, dass es final ist. Es gibt Hinweise auf Unsicherheiten bez\u00FCglich K\u2026\u0022): [GERING] Artefakt: \u0022EU Managed Hosting\u0022 | Transkript: \u0022Anna: \u0022Ja EU only. Oder zumindest DSGVO-konform.\u0022 Farid: \u0022EU-only Hosting ist nicht einfach...\u0022 und \u0022Wenn EU-only teurer ist?\u0022 Anna: \u0022Wir brauchen aber eine Kostensch\u00E4tzung...\u0022 Farid: \u0022Kann ich noch nicht sagen.\u0022\u0022 | Im Transkript ist EU-Only Hosting als Ziel genannt, aber es ist offen, ob und wie es umgesetzt wird, da Kosten und technische Details noch unklar sind. Das Artefakt stellt EU Managed Hosting als gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Das Artefakt listet \u0022Backup\u0022 als gesetzt, aber im Text ist die Notwendigkeit f\u00FCr das MVP noch offen diskutiert. Im Artefakt wird Backup unter technische Fragen \u2026\u0022): [GERING] Artefakt: \u0022Backup\u0022 | Transkript: \u0022Clara: \u0022Backup?\u0022 Anna: \u0022Brauchen wir das f\u00FCr MVP?\u0022 Clara: \u0022Wenn Kundendaten drin sind: ja.\u0022 Anna: \u0022Okay also doch.\u0022 Ben: \u0022Backup fehlt.\u0022\u0022 | Im Transkript ist Backup als offen diskutiert und noch nicht final entschieden, ob und wie es im MVP umgesetzt wird. Das Artefakt listet Backup als gesetzt, ohne Kennzeichnung als offen."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Das Artefakt stellt \u0022Minimaler Audit Trail\u0022 als gesetzt dar, aber im Transkript wird die Auditierbarkeit als Pflicht genannt, gleichzeitig gibt es Konflikte mit\u2026\u0022): [GERING] Artefakt: \u0022Minimaler Audit Trail\u0022 | Transkript: \u0022Clara: \u0022Auditierbarkeit ist Pflicht.\u0022 Anna: \u0022Ja Logging. Aber bitte nicht zu komplex. Wir haben keine Zeit.\u0022 Ben: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 Anna: \u0022Dann machen wir es ohne Security Review?\u0022 Clara: \u0022Das ist keine Option.\u0022\u0022 | Das Transkript zeigt, dass Audit Trail und Security Review noch offen und problematisch sind, mit Konflikten zum Zeitplan. Das Artefakt stellt minimalen Audit Trail als gesetzt dar, ohne die offenen Risiken zu kennzeichnen."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022| Welche Aufbewahrungsfristen (Retention\u2011Policy) gelten f\u00FCr Angebote, Rechnungen und Audit\u2011Logs? | Risks, Architecture | Clara (Compliance), Farid (IT Operation\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wie lange m\u00FCssen wir Angebote speichern?\u0022 / \u0022Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.\u0022 / \u0022Das kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen.\u0022\u0022 | Das Artefakt enth\u00E4lt keine offene Frage oder Kl\u00E4rungsbedarf zur Aufbewahrungsfrist (Retention-Policy) f\u00FCr Angebote, Rechnungen und Audit-Logs, obwohl dies im Transkript als offene Frage mit hoher Priorit\u00E4t genannt wird."
+        }
+      ]
+    }
+  ]
+}

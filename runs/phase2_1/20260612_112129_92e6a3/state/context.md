@@ -1,0 +1,32 @@
+# Projektkontext Kundenportal
+
+## Projektziel
+Das Ziel ist die Entwicklung eines Kundenportals mit Schwerpunkt auf schneller Angebotserstellung und Rechnungsdownload. Priorisiert wird ein MVP in 8 Wochen, das erste Funktionen für Login, Angebotsprozess, Rechnungsanzeige, SAP-Datenintegration, minimale Rollenverwaltung und Audit bietet. Nicht im MVP enthalten sind Support-Ticketsystem, komplexe Freigabeprozesse für Rabatte, detaillierte Analytics, mehrsprachige und Mehrwährungsunterstützung sowie umfassende Sicherheitsreviews.
+
+## Sprecherrollen
+- Anna: Product Owner / Sales, treibt MVP und Features voran
+- Ben: IT / Architektur, technisch versiert, warnt vor Komplexität und Zeit
+- Clara: Datenschutz / Compliance, fokussiert auf DSGVO und Audit
+- David: Support, kritisch zu Ticketsystem und Supportprozessen
+- Eva: Finance, Schwerpunkt Rabattfreigabe und Finanzen
+- Farid: IT Operations, Infrastruktur, Hosting, Sicherheit
+
+## Fachliche Hauptthemen und Konflikte
+- **Login & Identity:** Einfache Login mit Double-Opt-In geplant, SSO optional und noch unklar
+- **Angebotserstellung:** Kernziel, Schnittstellen zu SAP für Produkt- und Preisdaten sind kritisch, Rabattlogik und Freigabeprozesse noch ungeklärt
+- **Rechnungsdownload:** Muss im Portal verfügbar sein, PDF-Export mit rechtlicher Nachvollziehbarkeit notwendig
+- **Rollen & Berechtigungen:** Minimale Rollen (Admin, Sales, Kunde) im MVP, aber komplexe Konflikte um Datenzugriff und Sichtbarkeit
+- **Compliance & DSGVO:** Datenschutzkonforme Datenhaltung, Audit- und Löschkonzepte sind Pflicht, aber komplizieren schnelle Umsetzung
+- **Technik & Architektur:** Kein neues DB-Server, Managed Services bevorzugt, API Layer und OAuth als Standards, aber Gateway-Warteliste problematisch
+- **Hosting & Infrastruktur:** EU-only Hosting wird gefordert, Datenresidenz und Backup sind Risiken
+- **Support:** Kontaktformular geplant, kein Ticketsystem, Datenschutz und Prozess-Risiken
+- **Risiken & Unsicherheiten:** Zeitdruck (8-Wochen-MVP) kontra notwendige Security Reviews, offene Fragen zu Pilotkunden, Budget, Skalierung, SAP-Anbindung und Retention
+
+## Quellenhinweise
+- Transkript von Meeting mit sechs Stakeholdern, das viele unterschiedliche Perspektiven und offene Fragen abbildet
+- Widersprüche und Risiken müssen im Kontext sichtbar bleiben und dürfen nicht geglättet werden
+- MVP wird als bewusster Scope mit Ausklammerungen und Risiken dargestellt
+
+---
+
+_Dieser Kontext basiert ausschließlich auf dem Transkript input/transcripts/T9999_chaos.txt und wurde sorgfältig extrahiert, um den aktuellen Projektstatus und die Spannungsfelder neutral widerzugeben._

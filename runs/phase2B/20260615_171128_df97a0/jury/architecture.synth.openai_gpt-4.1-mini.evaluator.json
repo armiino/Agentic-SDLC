@@ -1,0 +1,78 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T17:14:25.434052Z",
+  "evaluationStatus": "ok",
+  "errorScore": 18,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 18; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 9,
+      "reason": "FALSE_CERTAINTY: 9 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Identity Provider (Azure AD / Google) \u2013 optional f\u00FCr SSO.\u0022 | Transkript: \u0022\u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 ... \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Artefakt stellt die SSO-Provider Azure AD und Google als gesetzt und optional dar, obwohl im Transkript die Entscheidung f\u00FCr SSO-Provider noch offen und nicht final ist."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup \u0026 DR Service: Details (RPO 4 h, RTO 2 h) noch zu best\u00E4tigen\u0022 | Transkript: \u0022\u0022Backup?\u0022 ... \u0022Backup \u0026 DR.\u0022 ... \u0022Details (RPO 4 h, RTO 2 h) noch zu best\u00E4tigen\u0022\u0022 | Das Artefakt gibt konkrete RPO/RTO Werte an, obwohl diese im Transkript als noch offen und zu best\u00E4tigen genannt werden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Managed Hosting (EU-Only) \u2013 Infrastruktur, Skalierung, Monitoring | Kosten-Analyse noch offen\u0022 | Transkript: \u0022\u0022EU only. Oder zumindest DSGVO-konform.\u0022 ... \u0022EU-only Hosting ist nicht einfach.\u0022 ... \u0022Kosten-Analyse noch offen.\u0022\u0022 | Das Artefakt stellt EU-only Managed Hosting als gesetzt dar, obwohl im Transkript noch Unsicherheiten und Kostenfragen offen sind."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API-Layer / Interim-Gateway: Interim-Proxy (z. B. Nginx \u002B Lua) bis offizielles API-Gateway verf\u00FCgbar\u0022 | Transkript: \u0022\u0022Wir brauchen definitiv eine API Layer.\u0022 ... \u0022Interim-Gateway muss sp\u00E4ter migriert werden.\u0022 ... \u0022Gateway-Team hat sechs Wochen Warteliste.\u0022\u0022 | Das Artefakt beschreibt eine konkrete Interim-Gateway-Technologie (Nginx \u002B Lua), obwohl im Transkript keine konkrete Technologie genannt wurde und die endg\u00FCltige Gateway-L\u00F6sung offen ist."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Rollen- \u0026 Berechtigung-Engine: RBAC f\u00FCr Admin, Sales, Kunde, Manager (und ggf. Support) | Berechtigungs-Matrix muss noch detailliert werden\u0022 | Transkript: \u0022\u0022Rollen minimal: Admin, normaler User, Manager, Support?\u0022 ... \u0022Berechtigungslogik muss modelliert werden.\u0022 ... \u0022Support-Berechtigungen sind unklar.\u0022\u0022 | Das Artefakt stellt Rollen und RBAC als gesetzt dar, obwohl im Transkript die Rollen- und Berechtigungslogik noch offen und unklar ist."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Audit-Log-Service: Immutable Log von \u00C4nderungen, ohne personenbezogene Daten\u0022 | Transkript: \u0022\u0022Auditierbarkeit ist Pflicht.\u0022 ... \u0022Audit-Logs ohne personenbezogene Daten.\u0022 ... \u0022Unterschiedliche Logs und Aufbewahrungsfristen.\u0022\u0022 | Das Artefakt stellt Audit-Log-Service als gesetzt dar, obwohl im Transkript noch Details zu Aufbewahrung und Datenschutz offen sind."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Caching-Layer f\u00FCr Performance, Fallback-Strategie noch offen\u0022 | Transkript: \u0022\u0022Caching von Produkt- und Preisdaten.\u0022 ... \u0022Kundendaten-Cache zun\u00E4chst deaktiviert.\u0022 ... \u0022Fallback oder Cache noch offen.\u0022\u0022 | Das Artefakt beschreibt Caching als implementiert, obwohl im Transkript die Strategie und Datenschutz f\u00FCr Caching noch offen sind."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022PDF-Export-Service: Template-Engine, noch nicht spezifiziert\u0022 | Transkript: \u0022\u0022PDF-Export wichtig f\u00FCr Sales.\u0022 ... \u0022Templates m\u00FCssen versioniert werden.\u0022 ... \u0022Revisionssicherheit minimal im MVP.\u0022\u0022 | Das Artefakt stellt PDF-Export-Service als vorhanden dar, obwohl im Transkript noch Details zur Umsetzung offen sind."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022OAuth-2.0 / OpenID Connect, sp\u00E4tere Erweiterung um Azure AD/Google\u0022 | Transkript: \u0022\u0022OAuth w\u00E4re besser, aber komplexer.\u0022 ... \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Artefakt stellt OAuth-2.0 als gesetzt dar, obwohl im Transkript die Entscheidung noch offen ist."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "open-questions.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-14T13:33:12.021739Z",
+  "evaluationStatus": "ok",
+  "errorScore": 18,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 18; KRITISCH=1; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 5,
+      "reason": "FALSE_CLAIM: 5 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- **Rabatt\u2011Freigabe\u2011Workflow**: Wie soll im MVP mit Angeboten umgehen werden, die einen Rabatt \u003E\u202F15\u202F% enthalten? Gibt es einen manuellen Pr\u00FCfprozess oder ein technisches Limit?\u0022 | Transkript: \u0022EVA: Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden. BEN: Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP. ANNA: Gut.\u0022 | Das Artefakt listet die Rabatt\u2011Freigabe \u003E15% als offene Frage, obwohl im Meeting beschlossen wurde, im MVP keine manuellen Sonderrabatte zuzulassen (konkrete Einschr\u00E4nkung wurde vereinbart)."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022- **Managed DB Auswahl**: Welcher EU\u2011Only Managed\u2011DB\u2011Service (z.\u202FB. Azure PostgreSQL, AWS RDS EU) erf\u00FCllt die Anforderungen an Kosten, Performance und DSGVO\u2011Compliance?\u0022 | Transkript: \u0022BEN: Vielleicht k\u00F6nnen wir Managed Services nehmen. Kein neuer DB Server \u2013 IT hat das klar gesagt. ANNA: Ja kein neuer DB Server. Managed Services sind okay.\u0022 | Das Artefakt nennt konkrete Provider\u2011Beispiele (Azure PostgreSQL, AWS RDS), die im Transkript nicht genannt wurden; die Auswahl der konkreten Anbieter wurde nicht diskutiert."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022- **API\u2011Gateway Ersatz**: Welche konkreten Konfigurationen (Rate\u2011Limiting, Auth\u2011Proxy) soll ein leichter Reverse\u2011Proxy (Nginx, Traefik) bieten, bis das API\u2011Gateway verf\u00FCgbar ist?\u0022 | Transkript: \u0022FARID: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen. BEN: Das habe ich vorhin API Layer genannt. Aber unser Gateway\u2011Team hat gerade eine Warteliste von sechs Wochen.\u0022 | Das Artefakt schl\u00E4gt konkrete Reverse\u2011Proxy\u2011Produkte (Nginx, Traefik) vor, die im Meeting nicht erw\u00E4hnt wurden; das ist eine erfundene Detaillierung im Kontext der offenen Frage."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- **Retention\u2011Policy**: Welche Aufbewahrungsfristen gelten f\u00FCr Angebote, Rechnungen und Audit\u2011Logs (z.\u202FB. 7\u202FJahre f\u00FCr Rechnungen, 30\u202FTage f\u00FCr Logs) und wie wird das L\u00F6sch\u2011 bzw. Auskunftsrecht technisch umgesetzt?\u0022 | Transkript: \u0022EVA: Wie lange m\u00FCssen wir Angebote speichern? Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen. CLARA: Das kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen.\u0022 | Das Artefakt f\u00FChrt konkrete Fristen (7 Jahre, 30 Tage) an, die im Transkript nicht genannt wurden; die Zahlen sind damit nicht aus dem Meeting abgeleitet, sondern hinzugef\u00FCgt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- **Backup\u2011 und Disaster\u2011Recovery\u2011Aufwand**: Wie hoch ist der tats\u00E4chliche Aufwand f\u00FCr t\u00E4gliche Snapshots, Aufbewahrung (30\u202FTage) und monatliche Wiederherstellungstests?\u0022 | Transkript: \u0022BEN: Backup? FARID: Ja Disaster Recovery. ANNA: Brauchen wir das f\u00FCr MVP? CLARA: Wenn Kundendaten drin sind: ja.\u0022 | Das Artefakt spezifiziert Snapshot\u2011Intervalle und Aufbewahrungszeiten (t\u00E4glich, 30 Tage, monatliche Tests), die im Transkript nicht festgelegt wurden; diese konkreten Werte sind nicht besprochen worden."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 5,
+      "reason": "MISSING_TOPIC: 3 Fehler (unveraendert); 2 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022BEN: SAP\u2011Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend. EVA: Und dann entsteht eine Bestellung. Das muss sauber nach SAP zur\u00FCck.\u0022 | Der offene Punkt, ob und wie Schreibzugriff/Write\u2011Back nach SAP (z.\u202FB. f\u00FCr Bestellung/Akzeptanz) erfolgen soll, wurde im Transcript als kritische Unklarheit genannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022ANNA: Was ist mit PDF\u2011Export von Angeboten? BEN: Das wurde bisher nicht genannt. EVA: Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer. FARID: Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022 | PDF\u2011Export, Template\u2011Management und Versions\u2011/Revisionssicherheit f\u00FCr Angebote wurden im Meeting als offene Themen genannt, sind aber im Artefakt nicht erfasst."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022ANNA: Was sind die KPIs? ANNA: Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 | KPIs (z.\u202FB. Conversion Rate, Zeit bis Angebot) wurden im Meeting als zu messende Metriken genannt but are not captured as an open question in the artefact."
+        },
+        {
+          "severity": "Warning",
+          "message": "HERABGESTUFT [KRITISCH\u2192MITTEL] (partial: \u0022- **API\u2011Gateway Ersatz**: Welche konkreten Konfigurationen (Rate\u2011Limiting, Auth\u2011Proxy) soll ein leichter Reverse\u2011Proxy (Nginx, Traefik) bieten, bis das API\u2011Gate\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022ANNA: SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? BEN: Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. CLARA: API muss abgesichert sein. OAuth? Oder API Keys?\u0022 | Fragen zur Authentifizierung/SSO (Identity Provider, Azure AD/Google) und zur API\u2011Absicherung (OAuth vs. API\u2011Keys) wurden im Meeting mehrfach offen diskutiert, sind aber im Artefakt nicht aufgenommen."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022- **Support\u2011Datenschutz**: Welche konkreten Daten d\u00FCrfen im Kontaktformular erhoben werden und wie wird die DSGVO\u2011Konformit\u00E4t (Zweckbindung, Hinweis, Einwilligu\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022BEN: Was ist mit Support? Ticketsystem? ANNA: Nein erstmal nicht. DAVID: Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u0022 | Die grunds\u00E4tzliche offene Frage zum Support\u2011Workflow (Kontaktformular vs. echtes Ticketsystem und Zuordnung/Persistenz von Supportanfragen) wurde im Meeting diskutiert, fehlt aber als separater offenen Punkt im Artefakt."
+        }
+      ]
+    }
+  ]
+}

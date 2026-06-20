@@ -1,0 +1,67 @@
+--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikoartefakt
++ 
++ ## 1. Fachliche Risiken
++ 
++ | Risiko | Beschreibung | Mögliche Auswirkungen | Erste Gegenmaßnahme / Klärungsbedarf |
++ |--------|--------------|----------------------|--------------------------------------|
++ | **Unklare Rabatt‑Freigabe‑Schwelle** | Schwellenwert (15 % / 20 % / 30 %) und verantwortliche Rollen (Manager vs. Finance) sind nicht definiert. | Fehlentscheidungen im Angebots‑Workflow, rechtliche Probleme bei fehlerhaften Rabatten, Verzögerungen im Freigabe‑Prozess. | Klare Definition und Dokumentation der Schwelle inkl. Verantwortlichkeiten im nächsten Refinement‑Meeting. |
++ | **Rollen‑Konflikt Support vs. Datenschutz** | Support‑Mitarbeiter sollen Kundendaten einsehen, dürfen aber keine Preis‑/Rabatt‑Details sehen. | Datenlecks, Verletzung von DSGVO‑Prinzipien, Vertrauensverlust bei Kunden. | Implementierung fein granularer Berechtigungen (z. B. Attribute‑Based Access Control) und Review durch Datenschutz‑Expertin. |
++ | **Web‑first vs. Mobile‑first Entscheidung** | Keine feste Entscheidung, beeinflusst UI‑Design und Aufwand. | Nachträgliche Nacharbeit, höhere Kosten, verzögerte Markteinführung. | Entscheidung im Sprint‑Planning treffen, ggf. Prototyp‑Spike für Mobile‑Usability. |
++ | **Pilotkunde (Schweiz vs. Deutschland)** | Unterschiedliche rechtliche Vorgaben (CHF, lokales Datenschutz) wirken sich auf Währung und Compliance aus. | Fehlende Rechtskonformität, zusätzlicher Entwicklungsaufwand für Mehrwährung/Region. | Early‑Stage Entscheidung über Pilotkunde, inkl. rechtlicher Prüfung. |
++ | **Analytics / Consent‑Management** | Bedarf an Tracking für KPIs, aber noch keine Infrastruktur definiert. | Fehlende Datenbasis für Erfolgsmessung, Verstoß gegen DSGVO (fehlende Einwilligung). | Auswahl einer DSGVO‑konformen Analytics‑Lösung und Implementierung eines Consent‑Managers vor Go‑Live. |
++ 
++ ## 2. Technische Risiken
++ 
++ | Risiko | Beschreibung | Mögliche Auswirkungen | Erste Gegenmaßnahme / Klärungsbedarf |
++ |--------|--------------|----------------------|--------------------------------------|
++ | **Security Review (6 Wochen) vs. 8‑Wochen‑MVP** | Umfangreicher Security‑Review überschneidet sich mit knappem Zeitplan. | Projektverzug, mögliche Release‑Verzögerung, unvollständige Sicherheitsmaßnahmen. | Priorisieren kritischer Sicherheits‑Checks (z. B. Pen‑Test für Auth), ggf. parallele Durchführung, späteres Review für Feature‑Erweiterungen. |
++ | **API‑Gateway‑Warteliste (6 Wochen)** | Das gewünschte API‑Gateway ist erst nach 6 Wochen verfügbar. | Verzögerung bei API‑Layer‑Implementierung, mögliche Work‑Arounds erhöhen Komplexität. | Nutzung eines temporären Proxy‑Service oder Direkt‑Anbindung an SAP‑Read‑API bis Gateway bereitsteht. |
++ | **EU‑only Managed Service & Kosten** | EU‑only Hosting ist teuer und hat begrenzte Auswahl. | Budget‑Überschreitung, ggf. Ressourcenkürzungen im MVP. | Frühzeitige Kosten‑Analyse, Auswahl kosteneffizienter Managed Services, ggf. Cloud‑Kosten‑Optimierung. |
++ | **Keine eigene Datenbank – Cache‑Strategie offen** | Daten‑Minimierung vs. Performance‑Anforderungen (Echtzeit‑SAP‑Abfrage vs. Cache). | Performance‑Probleme, potenzieller Datenschutz‑Risk bei Caching personenbezogener Daten. | Klare Entscheidung für Cache‑Mechanismus (z. B. anonymisierte Produkt‑Cache) und Prüfung des Datenschutzes. |
++ | **Backup / Disaster Recovery Umfang unklar** | Unklare Definition von RPO/RTO im MVP. | Datenverlust, lange Ausfallzeiten, Compliance‑Risiko. | Definition minimaler Backup‑Strategie (z. B. tägliche Snapshots, 24‑h‑RTO) und Integration in MVP‑Plan. |
++ | **Monitoring & Logging Trennung** | Technische Logs vs. Audit‑Logs müssen getrennt und Aufbewahrungsfristen beachtet werden. | Fehlende Audit‑Nachweise, DSGVO‑Verstoß bei zu langer Aufbewahrung. | Einrichtung separater Log‑Pipelines, automatisierte Aufbewahrungsrichtlinien. |
++ 
++ ## 3. Compliance‑ und Datenschutz‑Risiken
++ 
++ | Risiko | Beschreibung | Mögliche Auswirkungen | Erste Gegenmaßnahme / Klärungsbedarf |
++ |--------|--------------|----------------------|--------------------------------------|
++ | **Double‑Opt‑In Umsetzung** | Minimal implementiert, Details noch offen. | Nicht‑konforme Einwilligungen, Bußgelder. | Technische Umsetzung mit bestätigtem Double‑Opt‑In‑Flow testen, rechtliche Validierung. |
++ | **Audit‑Trail & Löschkonzept** | Vorgaben vorhanden, aber keine konkrete Architektur. | Unvollständige Nachvollziehbarkeit, Problem bei Nutzer‑Löschanfragen. | Design eines zentralen Audit‑Log‑Stores mit automatischer Löschung nach gesetzlichen Fristen. |
++ | **Verwendung von SAP‑Testdaten mit echten Kundendaten** | Nutzung von Testsystemen kann reale personenbezogene Daten enthalten. | DSGVO‑Verstoß, Reputationsschaden. | Anonymisierung oder Maskierung der Daten vor Testeinsatz, ggf. Genehmigung einholen. |
++ | **Daten‑Minimierung vs. Caching** | Caching kann mehr personenbezogene Daten speichern als nötig. | Erhöhtes Risiko bei Datenpannen. | Daten‑Minimierung prüfen, nur notwendige Felder cachen, Verschlüsselung im Cache. |
++ | **Consent‑Management für Analytics** | Fehlende Lösung zur Einholung von Einwilligungen. | Ungültige Analysedaten, DSGVO‑Risiko. | Auswahl und Integration eines Consent‑Management‑Tools vor Tracking‑Start. |
++ 
++ ## 4. Widersprüche und Unsicherheiten
++ 
++ - **Mobile‑First vs. Web‑First**: Keine Entscheidung, beeinflusst UI‑Entwurf und Ressourcen.
++ - **SSO‑Integration (Azure AD, Google)**: Im MVP ausgeschlossen, spätere Implementierung unklar.
++ - **Scope‑Abgrenzung**: Viele Features (native App, Full‑Ticket‑System, automatisierte Rabatt‑Freigabe) bewusst verschoben – das kann zu Nachforderungen führen.
++ - **Kosten für EU‑only Managed Service**: Noch nicht quantifiziert, könnte Budget überschreiten.
++ - **Ressourcen für Security Review**: Unklar, ob Team genug Kapazität hat, um Review parallel zum MVP zu erledigen.
++ 
++ ## 5. Mögliche Auswirkungen (Zusammenfassung)
++ 
++ - **Projektverzögerungen**: Durch Security Review, API‑Gateway‑Warteliste und unklare Entscheidungen.
++ - **Budgetüberschreitungen**: EU‑only Hosting, zusätzliche Sicherheits‑ und Compliance‑Maßnahmen.
++ - **Rechtliche Konsequenzen**: Nicht‑eingehaltener DSGVO‑Umfang (Double‑Opt‑In, Löschkonzept, Daten‑Minimierung).
++ - **Qualitäts‑ und UX‑Risiken**: Unklare Plattform‑Strategie (Web vs. Mobile) führt zu Suboptimalem Nutzererlebnis.
++ - **Betriebs‑ und Verfügbarkeitsrisiken**: Unklare Backup/DR‑Strategie und Monitoring‑Implementierung können zu längeren Ausfallzeiten führen.
++ 
++ ## 6. Erste Gegenmaßnahmen / Klärungsbedarfe (Priorisiert)
++ 
++ 1. **Klärung der Rabatt‑Freigabe‑Schwelle und Verantwortlichkeiten** – Business‑Meeting mit Anna, Eva, David.
++ 2. **Entscheidung über Pilotkunde (Schweiz vs. Deutschland)** – Rechtliche Prüfung durch Clara.
++ 3. **Security Review‑Plan & Ressourcen‑Abstimmung** – Abstimmung mit Ben und Clara, ggf. Teil‑Review vor MVP.
++ 4. **Definition einer minimalen Backup‑/DR‑Strategie** – Abstimmung mit Farid.
++ 5. **Auswahl und Implementierung eines Consent‑Management‑Tools** – Vorbereitung für Analytics‑Tracking.
++ 6. **Cache‑Strategie für SAP‑Daten festlegen** – Technischer Spike mit Ben.
++ 7. **Kosten‑Analyse für EU‑only Managed Service** – Budget‑Check mit Farid.
++ 8. **Festlegung Web‑first / Mobile‑first Ansatz** – UI‑Workshop mit Anna & Ben.
++ 9. **Erstellung eines detaillierten Audit‑Log‑ und Löschkonzepts** – Zusammenarbeit Clara & Ben.
++ 10. **Plan für temporäre API‑Gateway‑Ersatzlösung** – Kurzfristige Integration über Server‑less Proxy.
++ 
++ > **Hinweis:** Die genannten Gegenmaßnahmen sind als initiale Vorschläge zu verstehen und müssen im weiteren Projektverlauf detailliert ausgearbeitet und priorisiert werden.
++ 

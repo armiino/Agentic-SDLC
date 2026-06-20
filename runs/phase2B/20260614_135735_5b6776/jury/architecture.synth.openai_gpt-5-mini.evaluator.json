@@ -1,0 +1,91 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-14T14:03:35.850808Z",
+  "evaluationStatus": "ok",
+  "errorScore": 19,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 19; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 1,
+      "reason": "FALSE_CERTAINTY: 1 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- **Authentifizierungsservice (OAuth):** Sichere Nutzeranmeldung und Rechteverwaltung \u00FCber OAuth f\u00FCr rollenbasierte Zug\u00E4nge.\u0022 | Transkript: \u0022[Clara] API muss abgesichert sein. OAuth? Oder API Keys? / [Ben] OAuth w\u00E4re besser. Aber komplexer.\u0022 | Das Artefakt stellt OAuth als gew\u00E4hlte Authentifizierungsl\u00F6sung dar, im Transkript war OAuth zwar bevorzugt, die Entscheidung wurde aber nicht final getroffen (offen/strittig)."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 10,
+      "reason": "MISSING_TOPIC: 7 Fehler (unveraendert); 3 herabgestuft (partial); 1 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna] Web first. Mobile later. Or andersrum? I don\\\u0027t know, Sales wants to work mobile. / [Ben] mobile hei\u00DFt native App oder responsive Web? Because native would be expensive.\u0022 | Die Architektur fehlt jede Aussage zur Mobile-Strategie (Web-first vs. native vs. responsive), die im Meeting als relevante Architektur-/Frontend-Entscheidung diskutiert wurde."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Tracking? We have no Analytics infrastructure. / [Anna] We need KPIs: Conversion Rate, Angebot \u2192 Bestellung, and Time to Offer.\u0022 | Tracking/Analytics-Infrastruktur und KPI-Erfassung wurden als relevante Betriebsanforderungen genannt, sind im Architektur\u00FCberblick aber nicht adressiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna] Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS? / [Ben] TLS reicht.\u0022 | Im Transkript wurde konkret entschieden, dass TLS ausreichend ist; das Artefakt erw\u00E4hnt keine konkrete Verschl\u00FCsselungsannahme (z.B. TLS) f\u00FCr die Daten\u00FCbertragung."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten. / [Ben] SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 | Umgebungsstruktur (Dev/Test/Prod) und Anforderungen an pseudonymisierte/synthetische Testdaten sowie das SAP-Testsystem-Problem fehlen im Architekturdokument."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Und CI/CD braucht Secrets Management.\u0022 | Secrets-Management f\u00FCr CI/CD / Deployments wurde im Meeting als notwendiger Betriebsaspekt genannt, aber fehlt im Architektur\u00FCberblick."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] PDF was not mentioned earlier. / [Eva] Finance needs PDF with legal footnotes and version number. / [Farid] Templates must be versioned.\u0022 | PDF-Exportanforderungen, Template-Management und Versions-/Revisionssicherheit f\u00FCr Angebote (wichtig f\u00FCr rechtliche Nachvollziehbarkeit) sind im Transkript klar thematisiert, im Artefakt aber nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna] Deutsch und Englisch should be included. / [Eva] Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF maybe, USD later. / [Ben] Mehrw\u00E4hrung ist not trivial.\u0022 | Internationalisierung (Sprache) und Mehrw\u00E4hrungsanforderungen (z.B. CHF, EUR) sowie deren Auswirkungen auf Architektur/Integration sind im Dokument nicht abgebildet."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022DSGVO-konforme Datenhaltung mit speziellem Fokus auf Double Opt-In, Audit-Trails und L\u00F6schkonzepte.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna] Marketing will Push Notifications. / [Clara] Push hei\u00DFt Einwilligung. Wieder DSGVO.\u0022 | Push-Notifications (und die daraus folgenden Consent-/DSGVO-Anforderungen) wurden besprochen, aber das Artefakt nennt weder Push-Integration noch Consent-Handling."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022DSGVO-konforme Datenhaltung mit speziellem Fokus auf Double Opt-In, Audit-Trails und L\u00F6schkonzepte. Sicherheitsreviews und ausf\u00FChrliches Logging sind vorgesehen\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden. / [Ben] Application logs, audit logs und security logs sind unterschiedliche Dinge.\u0022 | Die notwendige Trennung zwischen technischen Logs und revisionsrelevanten Audit-Logs (zur Vermeidung von PII im zentralen Monitoring) wird im Artefakt nicht erw\u00E4hnt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022API-Gateway: Eingeschr\u00E4nkte Kapazit\u00E4ten und Warteliste k\u00F6nnen Integration verz\u00F6gern.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Wir brauchen Rate Limits f\u00FCr API. / [David] Kunden laden manchmal hunderte Rechnungen auf einmal herunter. / [Ben] Dann brauchen wir Pagination and Download-Limits.\u0022 | Api-Betriebsanforderungen wie Rate-Limiting, Pagination und Missbrauchserkennung (Download-Limits) wurden diskutiert, sind aber nicht im Artefakt enthalten."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Vollst\u00E4ndige Umsetzung von Rabatt- und Freigabeprozessen wird erst nach MVP realisiert.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Then that would be a Constraint: no manual Sonderrabatte im MVP. / [Anna] Good.\u0022 | Im Meeting wurde als MVP-Constraint festgehalten, dass im MVP keine manuellen Sonderrabatte erlaubt sein sollen; dieser explizite Constraint fehlt im Architektur\u00FCberblick."
+        }
+      ]
+    }
+  ]
+}

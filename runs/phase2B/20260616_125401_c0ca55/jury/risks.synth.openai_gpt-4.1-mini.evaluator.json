@@ -1,0 +1,116 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260616_125401_c0ca55",
+  "artifact": "risks.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-17T15:34:58.318653Z",
+  "evaluationStatus": "ok",
+  "errorScore": 11,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 11; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 4,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 4 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup \u0026 Disaster Recovery (DR): Definition von RPO/RTO bis Sprint\u20112, t\u00E4gliche Backups mit 4\u2011Stunden RTO, Test\u2011Restore\u2011Prozesse etablieren.\u0022 | Transkript: \u0022Ben: \u0022Backup?\u0022 Anna: \u0022Brauchen wir das f\u00FCr MVP?\u0022 Clara: \u0022Wenn Kundendaten drin sind: ja.\u0022 Anna: \u0022Okay also doch.\u0022 Es gibt keine konkrete Festlegung zu RPO/RTO oder Backup-Frequenz im Transkript.\u0022 | Das Artefakt nennt konkrete Backup-Zeiten und Prozesse, die im Transkript nicht konkret festgelegt oder diskutiert wurden, sondern offen blieben."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Skalierbarkeit \u0026 Performance: Ziel: 10.000 gleichzeitige Nutzer, Antwortzeit \u2264\u202F2\u202Fs.\u0022 | Transkript: \u0022Anna: \u0022Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.\u0022 Ben: \u0022Das ist ein Unterschied.\u0022 Es gibt keine konkrete Zielzahl oder Antwortzeit im Transkript.\u0022 | Das Artefakt nennt eine konkrete Nutzerzahl und Antwortzeit als Ziel, die im Transkript nicht festgelegt oder best\u00E4tigt wurden, sondern als unsicher und offen dargestellt sind."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Rate\u2011Limiting \u0026 Missbrauchserkennung: Early\u2011Design eines API\u2011Gateways (z.\u202FB. Kong, AWS API GW) mit Grund\u2011Rate\u2011Limits, sp\u00E4ter Feintuning.\u0022 | Transkript: \u0022Ben: \u0022Rate Limits f\u00FCr API brauchen wir.\u0022 Farid: \u0022Kann API Gateway \u00FCbernehmen, wenn wir es bekommen.\u0022 Ben: \u0022Gateway-Team hat sechs Wochen Warteliste.\u0022 Es gibt keine konkrete Nennung von Kong oder AWS API Gateway im Transkript.\u0022 | Das Artefakt nennt konkrete Technologien (Kong, AWS API GW) als Beispiele, die im Transkript nicht genannt wurden, somit eine erfundene Konkretisierung."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Support\u2011Ticket\u2011System: Entscheidung bis Sprint\u20113, ggf. Integration eines leichtgewichtigen Ticket\u2011Tools (z.\u202FB. Jira Service Management) mit DSGVO\u2011Konformit\u00E4t.\u0022 | Transkript: \u0022David: \u0022Ich will nur verhindern, dass wir nach dem Launch manuell Excel-Listen pflegen.\u0022 Anna: \u0022Kontaktformular ohne Ticketpersistenz?\u0022 Ben: \u0022Wir haben noch nicht entschieden, welcher Managed Service.\u0022 Es gibt keine konkrete Nennung von Jira Service Management oder Sprint-Termin im Transkript.\u0022 | Das Artefakt nennt konkrete Tools und Termine, die im Transkript nicht genannt oder beschlossen wurden."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 2 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 2,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022SSO / Identity Provider: Azure\u202FAD/Google\u2011SSO wird im MVP ausgeschlossen, k\u00F6nnte sp\u00E4ter nachtr\u00E4glich integriert we\u2026\u0022): [MITTEL] Artefakt: \u0022SSO / Identity Provider: Azure\u202FAD/Google\u2011SSO wird im MVP ausgeschlossen, k\u00F6nnte sp\u00E4ter nachtr\u00E4glich integriert werden m\u00FCssen.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 Anna: \u0022Komplexer hei\u00DFt mehr Zeit.\u0022 Ben: \u0022Ja.\u0022 Clara: \u0022Und wir haben noch gar nicht \u00FCber Backup gesprochen.\u0022 ... Anna: \u0022SSO optional\u0022 ... Ben: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022 Clara: \u0022Und wir haben noch keine klare Zieldefinition.\u0022\u0022 | Das Artefakt stellt die SSO-Ausklammerung als entschieden dar, obwohl im Transkript die SSO-Integration noch offen, optional und nicht final ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Support\u2011Ticket\u2011System: Unklar, ob ein strukturiertes Ticket\u2011System oder reines E\u2011Mail\u2011basiertes Verfahren verwend\u2026\u0022): [MITTEL] Artefakt: \u0022Support\u2011Ticket\u2011System: Unklar, ob ein strukturiertes Ticket\u2011System oder reines E\u2011Mail\u2011basiertes Verfahren verwendet wird.\u0022 | Transkript: \u0022Anna: \u0022Nein erstmal nicht.\u0022 David: \u0022Ticketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular?\u0022 Clara: \u0022Dann werden Supportdaten per E\u2011Mail verarbeitet. Auch Datenschutz.\u0022 Farid: \u0022E-Mail ist unstrukturiert und schlecht auditierbar.\u0022 Ben: \u0022Aber einfacher.\u0022 David: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 Anna: \u0022Notieren als Risiko.\u0022 Clara: \u0022Bitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u0022 Ben: \u0022Das ist wichtig f\u00FCr Scope.\u0022\u0022 | Das Artefakt stellt die Support-Ticket-System-L\u00F6sung als unklar dar, aber im Transkript ist der Support-Prozess bewusst offen und nicht entschieden, daher ist die Darstellung als unklar eine zu sichere Festlegung."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 2,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 1 confirmed; 1 partial (herabgestuft); 4 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 1,
+        "rejected": 4,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Datenminimierung? M\u00FCssen alle Kundendaten im Portal liegen oder reicht Abruf aus SAP?\u0022 / \u0022Cache enth\u00E4lt Kundendaten?\u0022 / \u0022Datenschutz und Retention.\u0022\u0022 | Das Transkript thematisiert Datenschutzrisiken durch Caching und Datenminimierung, die im Artefakt nicht als eigenst\u00E4ndiges Risiko mit Auswirkungen auf Datenschutz und Compliance aufgef\u00FChrt sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Unter Technische Risiken: Rate-Limiting \u0026 Missbrauchserkennung - Mechanismus muss noch definiert werden, Implementierung ist aufw\u00E4ndig. M\u00F6gliche Auswirkungen: A\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022API Gateway hat sechs Wochen Warteliste.\u0022 / \u0022Rate-Limiting \u0026 Missbrauchserkennung m\u00FCssen noch definiert werden.\u0022 / \u0022API Gateway und EU Hosting fehlen.\u0022\u0022 | Das Transkript weist auf Risiken durch fehlendes API-Gateway und unklare Rate-Limiting-Mechanismen hin, die im Artefakt zwar erw\u00E4hnt sind, aber die konkrete Auswirkung der langen Warteliste und daraus resultierende Verz\u00F6gerungen sind nicht als Risiko explizit dargestellt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Unter Fachliche Risiken: Support-Ticket-System - Unklar, ob ein strukturiertes Ticket-System oder reines E-Mail-basiertes Verfahren verwendet wird. M\u00F6gliche Aus\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Support wird damit nicht gl\u00FCcklich.\u0022 / \u0022Supportprozess unklar.\u0022 / \u0022Support braucht auch Einsicht in alte Angebote.\u0022 / \u0022Support ist nicht gel\u00F6st.\u0022\u0022 | Das Transkript benennt mehrfach Risiken und Unklarheiten bez\u00FCglich des Supportprozesses, insbesondere die fehlende Ticketl\u00F6sung, Datenschutzprobleme bei E-Mail-basiertem Support und unklare Verantwortlichkeiten, die im Artefakt nicht explizit als Risiko aufgef\u00FChrt sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Unter Fachliche Risiken: Rabatt-Freigabe-Workflow (\u003E15 % Rabatt) wird im MVP bewusst weggelassen. M\u00F6gliche Auswirkungen: Manuelle Freigaben, Compliance-Risiko b\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Freigabeprozess fehlt.\u0022 / \u0022Rabatt-Freigabe?\u0022 / \u0022Ohne Freigabeprozess k\u00F6nnen falsche Angebote rausgehen. Das ist ein finanzielles Risiko.\u0022 / \u0022Rabatt-Freigabe-Workflow (\u003E15 % Rabatt) wird im MVP bewusst weggelassen.\u0022\u0022 | Das Transkript beschreibt ein finanzielles Risiko durch fehlenden Freigabeprozess f\u00FCr Rabatte, das im Artefakt zwar erw\u00E4hnt, aber nicht als Risiko mit finanziellen Auswirkungen und Compliance-Risiko klar dargestellt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Unter Technische Risiken: Backup \u0026 Disaster Recovery (DR) - Detaillierte Backup-Strategie, Aufbewahrungsfristen und Wiederherstellungszeit (RTO) sind offen. M\u00F6g\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Backup?\u0022 / \u0022Backup \u0026 Disaster Recovery.\u0022 / \u0022Detaillierte Backup-Strategie, Aufbewahrungsfristen und Wiederherstellungszeit (RTO) sind offen.\u0022\u0022 | Das Transkript nennt Backup und Disaster Recovery als Risiko und offenen Punkt, im Artefakt ist zwar Backup \u0026 DR als Risiko genannt, aber es fehlt eine klare Darstellung der Risiken durch fehlende Backup-Details und deren Auswirkungen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Unter Compliance- und Datenschutz-Risiken: Testdaten mit echten Kundendaten - Nutzung von SAP-Testsystemen enth\u00E4lt reale Kundendaten. M\u00F6gliche Auswirkungen: Dat\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Testdaten mit echten Kundendaten.\u0022 / \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 / \u0022Pseudonymisierung oder Generierung synthetischer Testdaten.\u0022\u0022 | Das Transkript benennt Datenschutzrisiken durch Verwendung echter Kundendaten in Testumgebungen, die im Artefakt zwar erw\u00E4hnt werden, aber die konkreten Risiken und Auswirkungen auf Integrationstests und Compliance sind nicht ausreichend als Risiko dargestellt."
+        }
+      ]
+    }
+  ]
+}

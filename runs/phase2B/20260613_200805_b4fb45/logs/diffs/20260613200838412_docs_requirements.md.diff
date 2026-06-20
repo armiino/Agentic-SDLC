@@ -1,0 +1,55 @@
+--- before/docs/requirements.md
++++ after/docs/requirements.md
+- 
++ ## Functional Requirements
++ - Das Kundenportal muss einen **Login** per E‑Mail mit **Double‑Opt‑In** ermöglichen (Stakeholder: Anna, Clara).
++ - Rollenbasierte Zugriffskontrolle für **Admin**, **Sales** und **Kunde** ist zu implementieren (Anna, Ben).
++ - **Angebotserstellung**: Sales‑Nutzer können Angebote erstellen, dabei werden Produkt‑ und Preisdaten aus SAP gelesen (Ben, Eva). Das Schreiben von Angeboten in SAP ist noch ungeklärt (offener Punkt).
++ - **Rechnungsanzeige**: Kunden können Rechnungen einsehen und als PDF herunterladen (Anna, Eva).
++ - **Kundendaten‑Login**: Kunden können nach dem Login ihre Profildaten einsehen und bearbeiten (Anna, Clara).
++ - **Integration mit SAP**: Lesender Zugriff auf Produkt‑, Preis‑ und Kundendaten; mögliche Schreibzugriffe für Angebote sind offen (Ben).
++ - **Push‑Notifications** (optional, nicht zwingend für MVP) zur Benachrichtigung über neue Angebote oder Rechnungen (Anna).
++ - **Support‑Kontaktformular** statt vollständigem Ticket‑System für den MVP (David).
++ 
++ ## Non-functional Requirements
++ - **DSGVO‑Konformität**: Double‑Opt‑In, Lösch‑ und Aufbewahrungskonzepte, Audit‑Logs ohne personenbezogene Daten, Trennung technischer und Audit‑Logs (Clara).
++ - **Sicherheitsanforderungen**: Authentifizierung über ein sicheres Verfahren (OAuth oder API‑Key – Entscheidung offen), Verschlüsselung von Daten in Ruhe und Transit (Ben).
++ - **Hosting**: EU‑only Managed Service Hosting, inkl. Backup und Disaster Recovery (Farid).
++ - **Performance & Verfügbarkeit**: System muss innerhalb von 8 Wochen ein MVP bereitstellen, daher minimalistische Architektur ohne API‑Gateway; Rate‑Limiting und Missbrauchserkennung sind erforderlich (Ben, offene Entscheidung).
++ - **Skalierbarkeit**: Das Portal muss mindestens 100 gleichzeitige Nutzer unterstützen (Schätzung, Annahme).
++ - **Mehrwährungs‑Support**: Unterstützung von EUR und ggf. CHF (USD optional) – finale Entscheidung offen (Eva).
++ - **Test‑Umgebungen**: Separate Dev/Test/Prod‑Umgebungen, wobei Test‑Umgebungen keine echten Kundendaten enthalten dürfen (Farid).
++ 
++ ## Constraints/Compliance
++ - **Zeitplan**: MVP muss in 8 Wochen fertig gestellt werden (Anna).
++ - **Budget**: EU‑only Managed Services sind kostenintensiv; Budgetrestriktionen sind noch nicht final (Farid).
++ - **API‑Gateway**: Warteliste von 6 Wochen, daher nicht im MVP‑Umfang (Ben).
++ - **Keine Cloud‑Provider‑Spezifikationen** dürfen festgeschrieben werden, solange EU‑Only‑Hosting gefordert ist (Clara).
++ - **Logging**: Technische Logs dürfen keine personenbezogenen Daten enthalten; separate Audit‑Logs für Nachvollziehbarkeit (Clara).
++ 
++ ## Assumptions and Open Points
++ - **SAP‑Schreibzugriff** für Angebote: Noch nicht entschieden, wird im späteren Projektverlauf geklärt.
++ - **Währungen** im MVP: Ob CHF (und USD) inkludiert werden, ist offen.
++ - **Rate‑Limiting‑Lösung** ohne API‑Gateway: Noch zu bestimmen (z. B. Cloud‑WAF, eigene Middleware).
++ - **Authentifizierungsmechanismus**: OAuth vs. API‑Key – Entscheidung ausstehend.
++ - **Backup‑ und DR‑Details**: Genaues Verfahren und Aufbewahrungsfristen müssen noch definiert werden.
++ - **Kosten‑Schätzung**: Bis Freitag zu finalisieren, Auswirkungen auf Infrastrukturentscheidungen.
++ - **Support‑Prozess**: Kontaktformular vs. Ticket‑System und daraus resultierende Datenschutzimplikationen.
++ - **Umgang mit echten Kundendaten in Testumgebungen**: Vorgehensweise noch offen.
++ 
++ ## Traceability
++ - FR‑Login & Double‑Opt‑In – **Anna**, **Clara** (Projektziel, DSGVO).
++ - FR‑Rollenmanagement – **Anna**, **Ben** (Projektziel, Sicherheit).
++ - FR‑Angebotserstellung – **Ben**, **Eva** (Integration SAP, Finanz).
++ - FR‑Rechnungsdownload – **Anna**, **Eva** (Projektziel, Finance).
++ - FR‑Kundendaten‑Login – **Anna**, **Clara**.
++ - FR‑SAP‑Integration – **Ben** (Technik), **Eva** (Finance).
++ - FR‑Push‑Notifications – **Anna** (optional).
++ - FR‑Support‑Kontaktformular – **David** (Support).
++ - NFR‑DSGVO – **Clara** (Compliance).
++ - NFR‑Sicherheit/Authentifizierung – **Ben**, **Clara**.
++ - NFR‑Hosting/Backup – **Farid** (Operations).
++ - NFR‑Performance & Rate‑Limiting – **Ben**, **Farid** (offene Entscheidung).
++ - NFR‑Mehrwährung – **Eva** (Finance).
++ - Constraints – **Anna**, **Ben**, **Farid**, **Clara** (Zeit, Budget, API‑Gateway, Logging).
++ - Assumptions – Alle offenen Punkte wurden aus den **unsicheren** Bereichen im Projektkontext extrahiert.

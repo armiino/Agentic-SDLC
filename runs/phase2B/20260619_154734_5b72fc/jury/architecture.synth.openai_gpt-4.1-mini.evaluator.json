@@ -1,0 +1,117 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-19T15:50:50.075586Z",
+  "evaluationStatus": "ok",
+  "errorScore": 13,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 13; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 4,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 4 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup \u0026 DR Service: T\u00E4gliche Snapshots, Wiederherstellung innerhalb 4\u202Fh, Datenverlust \u2264\u202F1\u202Fh.\u0022 | Transkript: \u0022Farid: \u0022Backup?\u0022 / Anna: \u0022Brauchen wir das f\u00FCr MVP?\u0022 / Clara: \u0022Wenn Kundendaten drin sind: ja.\u0022 / Ben: \u0022Backup fehlt.\u0022 / Offene Architekturentscheidung Backup-Dienst: \u0022Welche konkreten Service-Level-Agreements (SLA) und Kosten-Modelle werden akzeptiert?\u0022 / Farid: \u0022Kann ich noch nicht sagen.\u0022\u0022 | Das Transkript enth\u00E4lt keine konkrete SLA-Festlegung f\u00FCr Backup und Disaster Recovery. Die im Artefakt genannten Wiederherstellungszeiten und Datenverlustgrenzen sind daher eine erfundene Konkretisierung."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Monitoring \u0026 Alerting: Export von Metriken (Prometheus) und Logs (ELK) \u2013 Trennung von technischen und audit\u2011relevanten Daten.\u0022 | Transkript: \u0022Im Transkript wird Monitoring erw\u00E4hnt, aber keine konkreten Technologien wie Prometheus oder ELK genannt.\u0022 | Die Nennung konkreter Monitoring-Technologien (Prometheus, ELK) ist im Transkript nicht vorhanden und stellt eine erfundene Festlegung dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Secrets\u2011Management via Cloud\u2011KMS (Passw\u00F6rter, DB\u2011Credentials, JWT\u2011Signing\u2011Key).\u0022 | Transkript: \u0022Im Transkript wird nur allgemein \u0022Secrets Management\u0022 erw\u00E4hnt, aber keine konkrete Cloud-KMS-L\u00F6sung genannt.\u0022 | Die konkrete Festlegung auf Cloud-KMS als Secrets-Management-L\u00F6sung ist im Transkript nicht vorhanden und daher eine erfundene Konkretisierung."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API\u2011Gateway / Proxy: Ersatz\u2011Proxy (z.\u202FB. Nginx) wird bis zum API\u2011Gateway\u2011Release eingesetzt.\u0022 | Transkript: \u0022Im Transkript wird nur allgemein von einem API Layer und einem zentralen API Gateway gesprochen, aber keine konkrete Proxy-Technologie wie Nginx genannt.\u0022 | Die konkrete Nennung von Nginx als Ersatz-Proxy ist im Transkript nicht vorhanden und stellt eine erfundene Festlegung dar."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 4 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 4,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Identity Provider (optional) \u2013 Azure AD oder Google f\u00FCr zuk\u00FCnftiges SSO.\u0022).\u0022): [MITTEL] Artefakt: \u0022Identity Provider (optional) \u2013 Azure AD oder Google f\u00FCr zuk\u00FCnftiges SSO.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 ... Ben: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022 ... \u0022Und OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Artefakt stellt Azure AD oder Google als geplante SSO-Optionen dar, ohne klar zu kennzeichnen, dass die Entscheidung noch offen ist und keine finale Festlegung vorliegt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Managed DB (EU\u2011Only) \u2013 Persistenz f\u00FCr Nutzer\u2011, Angebots\u2011, Rechnungs\u2011 und Audit\u2011Daten. Keine neue Datenbank, bestehender Managed\u2011Service wird genutzt.\u0022): [MITTEL] Artefakt: \u0022Managed DB (EU\u2011Only) \u2013 Persistenz f\u00FCr Nutzer\u2011, Angebots\u2011, Rechnungs\u2011 und Audit\u2011Daten. Keine neue Datenbank, bestehender Managed\u2011Service wird genutzt.\u0022 | Transkript: \u0022Ben: \u0022Kein neuer DB Server \u2013 IT hat das klar gesagt.\u0022 ... \u0022Wir haben noch nicht entschieden, welcher.\u0022 ... \u0022Managed Services sind okay. Aber bitte g\u00FCnstig.\u0022 ... \u0022Managed DB-Anbieter: Welcher EU-only Managed-DB-Service (z. B. Azure-PostgreSQL, AWS-RDS EU-Region) wird final gew\u00E4hlt?\u0022 (offene Entscheidung)\u0022 | Das Artefakt beschreibt die Nutzung eines Managed DB Services als gesetzt, obwohl im Transkript die Auswahl des Anbieters und die finale Entscheidung noch offen sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Backup \u0026 DR Service \u2013 T\u00E4gliche Snapshots, Wiederherstellung innerhalb 4\u202Fh, Datenverlust \u2264\u202F1\u202Fh.\u0022): [MITTEL] Artefakt: \u0022Backup \u0026 DR Service \u2013 T\u00E4gliche Snapshots, Wiederherstellung innerhalb 4\u202Fh, Datenverlust \u2264\u202F1\u202Fh.\u0022 | Transkript: \u0022Farid: \u0022Backup?\u0022 ... \u0022Backup Service fehlt.\u0022 ... \u0022Backup \u0026 Disaster Recovery: RPO = 1 Stunde, RTO = 4 Stunden (nach Freigabe durch Operations).\u0022 (offene Punkte)\u0022 | Das Artefakt gibt konkrete Backup- und DR-Ziele an, obwohl im Transkript noch keine finale Festlegung erfolgt ist und SLA/Kostenmodelle offen sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022API\u2011Gateway / Proxy \u2013 Einstiegspunkt f\u00FCr alle REST\u2011Aufrufe, \u00FCbernimmt Auth\u2011Validierung, Rate\u2011Limiting, TLS\u2011Termination. Ersatz\u2011Proxy (z.\u202FB. Nginx) wird bis zum \u2026\u0022): [MITTEL] Artefakt: \u0022API\u2011Gateway / Proxy \u2013 Einstiegspunkt f\u00FCr alle REST\u2011Aufrufe, \u00FCbernimmt Auth\u2011Validierung, Rate\u2011Limiting, TLS\u2011Termination. Ersatz\u2011Proxy (z.\u202FB. Nginx) wird bis zum API\u2011Gateway\u2011Release eingesetzt.\u0022 | Transkript: \u0022Farid: \u0022Unser zentrales API Gateway hat eine Warteliste von sechs Wochen.\u0022 ... \u0022Ersatz-API-Gateway: Welcher Proxy (NGINX, Traefik, API-Management-Lite) wird bis zum offiziellen Gateway eingesetzt?\u0022 (offen)\u0022 | Das Artefakt beschreibt den Ersatz-Proxy als gesetzt (z. B. Nginx), obwohl im Transkript die Auswahl noch offen ist."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 3,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 2 confirmed; 1 partial (herabgestuft); 2 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 1,
+        "rejected": 2,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Wir haben keine Analytics Infrastruktur.\u0022 / Anna: \u0022Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen.\u0022 / Anna: \u0022Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022\u0022 | Das Thema Analytics und KPI-Messung wurde im Transkript als relevant genannt, ist aber im Architektur-Dokument nicht erw\u00E4hnt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Bitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u0022 / Ben: \u0022Das ist wichtig f\u00FCr Scope.\u0022 / Farid: \u0022Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / Clara: \u0022Ja, Pseudonymisierung oder synthetische Testdaten.\u0022 / Ben: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Das Thema Entwicklungs- und Testumgebungen mit Datenschutzanforderungen und Testdaten wurde im Transkript als relevant genannt, fehlt aber im Architektur-Dokument."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022## 1. Systemkontext\n- **Identity Provider (optional)** \u2013 Azure AD oder Google f\u00FCr zuk\u00FCnftiges SSO.\n\n## 2. Wichtige Komponenten\n- **API\u2011Gateway / Proxy**: Einsti\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u0022 / Ben: \u0022Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 / Anna: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022\u0022 | Das zentrale API Gateway als verpflichtende Infrastruktur wurde im Transkript als Policy genannt, aber im Artefakt wird nur ein Ersatz-Proxy erw\u00E4hnt, keine klare Aussage zur Nutzung des zentralen API Gateways."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022## 2. Wichtige Komponenten\n- **Backup \u0026 DR Service**: T\u00E4gliche Snapshots, Wiederherstellung innerhalb 4\u202Fh, Datenverlust \u2264\u202F1\u202Fh.\n\n## 4. Daten\u2011 und Sicherheitsaspe\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Und wir haben noch gar nicht \u00FCber Backup gesprochen.\u0022 / Ben: \u0022Backup?\u0022 / Clara: \u0022Ja Disaster Recovery.\u0022 / Anna: \u0022Brauchen wir das f\u00FCr MVP?\u0022 / Clara: \u0022Wenn Kundendaten drin sind: ja.\u0022 / Anna: \u0022Okay also doch.\u0022\u0022 | Das Thema Backup und Disaster Recovery wurde im Transkript als wichtig f\u00FCr den Betrieb genannt, aber im Artefakt fehlt eine klare Beschreibung oder Erw\u00E4hnung von Backup/DR-Konzepten."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022## 5. Offene Architekturentscheidungen\n10. **Support\u2011Kontaktformular**: Wie werden dort erhobene Daten gespeichert, welche L\u00F6schfristen gelten?\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 / Anna: \u0022Kontaktformular ohne Ticketpersistenz?\u0022 / Clara: \u0022Dann werden Supportdaten per E-Mail verarbeitet. Auch Datenschutz.\u0022 / Farid: \u0022E-Mail ist unstrukturiert und schlecht auditierbar.\u0022 / Ben: \u0022Aber einfacher.\u0022 / David: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 / Anna: \u0022Notieren als Risiko.\u0022\u0022 | Das Thema Support und die Verarbeitung von Supportanfragen (Kontaktformular, E-Mail, L\u00F6schkonzept) wurde im Transkript ausf\u00FChrlich diskutiert, ist aber im Architektur-Dokument nur als offene Frage zum Support-Kontaktformular erw\u00E4hnt, ohne Details zur Speicherung oder L\u00F6schfristen."
+        }
+      ]
+    }
+  ]
+}

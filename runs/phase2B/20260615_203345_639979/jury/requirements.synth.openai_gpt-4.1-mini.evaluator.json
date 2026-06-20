@@ -1,0 +1,110 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260615_203345_639979",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T08:44:58.538997Z",
+  "evaluationStatus": "ok",
+  "errorScore": 6,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 6; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aus): 0 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 5,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 1 confirmed; 4 partial (herabgestuft); 6 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 4,
+        "rejected": 6,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Performance \u0026 Skalierbarkeit: Das System muss 200 bis 20\u202F000 gleichzeitige Nutzer unterst\u00FCtzen, ohne \u00FCber\u00ADengineering.\u0022 | Transkript: \u0022Performance und Skalierbarkeit sind ein Spannungsfeld, genaue Nutzerzahlen sind unklar (Anna, Ben).\u0022 | Im Transkript sind die genauen Anforderungen an Performance und Skalierbarkeit noch unklar, im Artefakt werden sie als festgelegt dargestellt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Discount\u2011Freigaben: \u003E15\u202F% Rabatt erfordert Freigabe durch einen Manager. \u003E30\u202F% Rabatt erfordert Freigabe durch Finance (Eva). (konkret genannt, aber im Artefakt\u2026\u0022): [GERING] Artefakt: \u0022Discount\u2011Freigaben: \u003E15\u202F% Rabatt erfordert Freigabe durch einen Manager. \u003E30\u202F% Rabatt erfordert Freigabe durch Finance (Eva).\u0022 | Transkript: \u0022Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance. Oder ab 20 Prozent. Ich bin mir nicht sicher. Das muss klar definiert werden.\u0022 | Die Rabatt-Freigabe-Schwellenwerte und Rollen sind im Transkript noch offen und nicht final, im Artefakt werden sie jedoch als festgelegt dargestellt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Backup\u2011 und Disaster\u2011Recovery\u2011Strategie f\u00FCr personenbezogene Daten. (im Artefakt als gesetzt, aber im Abschnitt \u0027Backup/DR\u0027 als offen diskutiert; keine explizit\u2026\u0022): [GERING] Artefakt: \u0022Backup\u2011 und Disaster\u2011Recovery\u2011Strategie f\u00FCr personenbezogene Daten.\u0022 | Transkript: \u0022Backup und Disaster Recovery sind diskutiert, aber Umfang und Details noch offen (Clara, Ben, Anna).\u0022 | Im Artefakt wird Backup und DR als gesetzt dargestellt, im Transkript sind Details und Umfang noch offen."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Hosting \u0026 Datenresidenz: EU\u2011only Managed Hosting wird gefordert; Daten d\u00FCrfen nicht au\u00DFerhalb der EU gespeichert werden. (im Artefakt als gesetzt, aber Kosten u\u2026\u0022): [GERING] Artefakt: \u0022Hosting \u0026 Datenresidenz: EU\u2011only Managed Hosting wird gefordert; Daten d\u00FCrfen nicht au\u00DFerhalb der EU gespeichert werden.\u0022 | Transkript: \u0022EU-only Hosting ist gefordert, aber Kosten und Umsetzung sind noch offen (Farid, Anna).\u0022 | Im Artefakt wird EU-only Hosting als gesetzt dargestellt, im Transkript sind Kosten und finale Entscheidung noch offen."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Testing \u0026 Environments: Separate Dev/Test/Prod\u2011Umgebungen; Testdaten aus SAP m\u00FCssen pseudonymisiert sein. (im Artefakt als gesetzt, aber im Transkript \u0027Testdate\u2026\u0022): [GERING] Artefakt: \u0022Testing \u0026 Environments: Separate Dev/Test/Prod\u2011Umgebungen; Testdaten aus SAP m\u00FCssen pseudonymisiert sein.\u0022 | Transkript: \u0022Testdaten-Pseudonymisierung und Umgebungen sind diskutiert, aber noch nicht final (Farid, Clara).\u0022 | Im Artefakt wird dies als gesetzt dargestellt, im Transkript sind Details noch offen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Optional muss eine SSO\u2011Anbindung (Azure AD oder Google) unterst\u00FCtzt werden, wenn dies im Projekt beschlossen wird\u2026\u0022): [MITTEL] Artefakt: \u0022Optional muss eine SSO\u2011Anbindung (Azure AD oder Google) unterst\u00FCtzt werden, wenn dies im Projekt beschlossen wird.\u0022 | Transkript: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides? ... Auswahl zwischen Azure AD, Google oder keiner SSO\u2011L\u00F6sung ist offen (Anna \u2194 Ben).\u0022 | Im Transkript ist die SSO-Anbindung noch offen und nicht entschieden, das Artefakt stellt sie jedoch als optional gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Der Lese\u2011Zugriff muss n\u00E4chtlich synchronisiert werden; Echtzeit\u2011Preisabruf ist ein offener Punkt.\u0022).\u0022): [MITTEL] Artefakt: \u0022Der Lese\u2011Zugriff muss n\u00E4chtlich synchronisiert werden; Echtzeit\u2011Preisabruf ist ein offener Punkt.\u0022 | Transkript: \u0022Echtzeit\u2011Preis\u2011Abruf ist ein offener Punkt (Ben).\u0022 | Das Artefakt stellt die n\u00E4chtliche SAP-Synchronisation als gesetzt dar, obwohl im Transkript der Echtzeit-Preisabruf noch offen ist und die Synchronisationsart nicht final entschieden wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Der zentrale API\u2011Gateway ist erwartungsgem\u00E4\u00DF nach 6\u202FWochen verf\u00FCgbar \u2013 derzeit ein offener Punkt.\u0022).\u0022): [MITTEL] Artefakt: \u0022Der zentrale API\u2011Gateway ist erwartungsgem\u00E4\u00DF nach 6\u202FWochen verf\u00FCgbar \u2013 derzeit ein offener Punkt.\u0022 | Transkript: \u0022API Gateway Verf\u00FCgbarkeit nach 6 Wochen ist angenommen, aber nicht gesichert (Farid, Ben).\u0022 | Im Transkript ist die Verf\u00FCgbarkeit des API-Gateways unsicher, im Artefakt wird sie als erwartet und gesetzt dargestellt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Support\u2011Kontakt: Ein Kontaktformular muss integriert werden; eine m\u00F6gliche Erweiterung zu einem Ticket\u2011System ist\u2026\u0022): [MITTEL] Artefakt: \u0022Support\u2011Kontakt: Ein Kontaktformular muss integriert werden; eine m\u00F6gliche Erweiterung zu einem Ticket\u2011System ist noch offen.\u0022 | Transkript: \u0022Support wird damit nicht gl\u00FCcklich. Kontaktformular ohne Ticketpersistenz? Dann werden Supportdaten per E-Mail verarbeitet. ... Support\u2011Prozess unklar (David).\u0022 | Das Artefakt stellt das Kontaktformular als gesetzt dar, obwohl im Transkript der Supportprozess und die Erweiterung zum Ticketsystem noch offen und unklar sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Internationalisierung: UI in Deutsch und Englisch; W\u00E4hrungen EUR, CHF (sp\u00E4ter USD). Rechtskonforme Anpassungen f\u00FC\u2026\u0022): [MITTEL] Artefakt: \u0022Internationalisierung: UI in Deutsch und Englisch; W\u00E4hrungen EUR, CHF (sp\u00E4ter USD). Rechtskonforme Anpassungen f\u00FCr Schweiz/USA sind zu ber\u00FCcksichtigen.\u0022 | Transkript: \u0022Pilot\u2011Kunde: Zielmarkt (DE vs. CH) ist offen; beeinflusst W\u00E4hrung und rechtliche Vorgaben (Anna, David, Eva).\u0022 | Im Transkript ist der Pilotkunde und damit die Internationalisierung noch offen, im Artefakt wird die Internationalisierung jedoch als gesetzt dargestellt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Security: OAuth\u202F2.0 f\u00FCr API\u2011Zugriff, optional API\u2011Key fallback, Rate\u2011Limiting zum Schutz vor Missbrauch beim Rech\u2026\u0022): [MITTEL] Artefakt: \u0022Security: OAuth\u202F2.0 f\u00FCr API\u2011Zugriff, optional API\u2011Key fallback, Rate\u2011Limiting zum Schutz vor Missbrauch beim Rechnungs\u2011Download.\u0022 | Transkript: \u0022OAuth bevorzugt, aber noch nicht final. Rate-Limiting Details fehlen (Ben, David).\u0022 | Im Artefakt wird OAuth und Rate-Limiting als gesetzt dargestellt, im Transkript sind diese Punkte noch offen."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    }
+  ]
+}

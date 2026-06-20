@@ -1,0 +1,47 @@
+Aus dem umfangreichen Stakeholdertranskript, den zusammengefassten Anforderungen und der Risikoanalyse erkenne ich mehrere wesentliche Architekturkomponenten, Schnittstellen und wichtige Qualitätsaspekte. Diese sind:
+
+1. Systemkontext: 
+   - Das Kundenportal als zentrales System.
+   - SAP-System als Stammdaten- und Preisdatenquelle.
+   - Identity Provider (Azure AD, Google) für Single Sign On, optional.
+   - Managed Cloud Services als Infrastruktur.
+   - Externe Kunden und interne Rollen (Admin, Sales, Manager, Support).
+
+2. Wichtige Komponenten:
+   - Frontend: primär Webportal, mobile Anbindung unsicher.
+   - Backend: Anwendung mit API Layer, Businesslogik für Angebote, Freigaben, Rechnungen.
+   - Authentifizierungs- und Autorisierungssystem.
+   - SAP-Integrationsschnittstelle.
+   - Datenhaltung und Logging/Audit-Komponente (Managed Services).
+   - Backup und Disaster Recovery.
+   - Support Kontaktformular (kein Ticketsystem im MVP).
+
+3. Schnittstellen/Integrationspunkte:
+   - REST-API zwischen Frontend und Backend.
+   - API Gateway als Reverse Proxy und Security Layer.
+   - SAP Anbindung für Stammdaten, Preise, Rabatte.
+   - Identity Provider Anbindung für SSO.
+   - Managed Cloud Services Infrastruktur (Hosting, Backup).
+
+4. Daten- und Sicherheitsaspekte:
+   - DSGVO-Konformität (Double-Opt-In, Löschkonzepte).
+   - Rollen- und Berechtigungskonzept.
+   - Audit-Trails und Logging mit Trennung technischer und personenbezogener Daten.
+   - EU-Datenresidenz.
+   - Verschlüsselung (TLS).
+   - Kein neuer Datenbankserver, Nutzung von Managed Services.
+   - Security Review (Zeitkritisch für MVP).
+
+5. Offene Architekturentscheidungen:
+   - Konkrete Technologie für SSO (OAuth oder API Keys).
+   - Wahl und Einbindung des API Gateways (Warteliste).
+   - Umgang mit Offline- und SAP-Ausfall-Szenarien.
+   - Hosting konkret (Cloud-Anbieter, EU-only vs. andere Länder).
+   - Mobile Strategie (native App oder responsive Web).
+   - Supportprozess (Ticketsystem ja/nein, später oder nicht).
+   - Detaillierung der Freigabeprozesse für Rabatte.
+   - Backup- und Disaster-Recovery-Konzepte im Detail.
+
+Ich werde diese Erkenntnisse nun in einem groben Architekturüberblick dokumentieren, der Systemkontext, Komponenten, Schnittstellen, Sicherheitsaspekte und offene Punkte klar beschreibt.
+
+Ich schreibe jetzt docs/architecture.md mit den erkannten Komponenten und Entscheidungen.docs/architecture.md wurde geschrieben. Es enthält eine strukturierte Darstellung des Systemkontexts, der wichtigsten Komponenten, der Integrationsschnittstellen, der Daten- und Sicherheitsaspekte sowie der offenen Architekturentscheidungen. Damit ist der grobe Architekturüberblick für das Kundenportal-MVP basierend auf den Stakeholderinformationen, dem Kontext und den abgeleiteten Anforderungen und Risiken erstellt.

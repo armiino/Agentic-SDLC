@@ -1,0 +1,82 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "open-questions.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T15:54:33.137944Z",
+  "evaluationStatus": "ok",
+  "errorScore": 0,
+  "needsRepair": false,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 0; KRITISCH=0; needsRepair=False (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC: 0 Fehler (unveraendert); 0 herabgestuft (partial); 10 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Authentifizierungs-Mechanismus: OAuth2 mit Authorization-Code-Flow vs. einfacheres JWT-basiertes Session-Management? (Quelle: docs/architecture.md \u2013 Offene Ents\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022 Clara: \u0022OAuth? Oder API Keys?\u0022 Ben: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022\u0022 | Das Artefakt listet die Authentifizierungs-Mechanismen nicht als offene Frage, obwohl im Transkript die Entscheidung zwischen OAuth2 und JWT-basiertem Session-Management offen ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Prozess f\u00FCr Test-Daten aus SAP: Nutzung von pseudonymisierten oder synthetischen Daten? Wie wird die Datenqualit\u00E4t sichergestellt? (Quelle: A9)\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 Clara: \u0022Pseudonymisierung oder synthetische Testdaten.\u0022 Ben: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zum Umgang mit Testdaten aus SAP, obwohl dies im Transkript als offenes Thema genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Rate-Limiting-Parameter: Welche genauen Schwellenwerte, Burst-Handling-Strategien und Strafmechanismen sollen implementiert werden? (Quelle: NFR5, A6)\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Rate Limits f\u00FCr API.\u0022 Clara: \u0022Welche genauen Schwellenwerte, Burst-Handling-Strategien und Strafmechanismen sollen implementiert werden?\u0022\u0022 | Das Artefakt nennt keine offene Frage zu Rate-Limiting-Parametern, obwohl im Transkript die Details zu Schwellenwerten und Strafmechanismen offen sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Backup- und Disaster-Recovery-Detailgrad: Welche RPO- und Aufbewahrungsfristen gelten f\u00FCr unterschiedliche Datentypen (Datenbank, Logs, PDFs)? (Quelle: docs/req\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Backup und Disaster Recovery.\u0022 Anna: \u0022Brauchen wir das f\u00FCr MVP?\u0022 Clara: \u0022Wenn Kundendaten drin sind: ja.\u0022\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zum Detailgrad von Backup- und Disaster-Recovery-Anforderungen, obwohl dies im Transkript als offenes Thema genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022PDF-Generierungstechnologie: wkhtmltopdf, Puppeteer oder ein Cloud-Service? Welche Anforderungen an Layout und Signatur bestehen? (Quelle: docs/architecture.md \u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022PDF-Export von Angeboten.\u0022 Eva: \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 Clara: \u0022Und Datenschutzhinweise.\u0022\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zur PDF-Generierungstechnologie und Anforderungen, obwohl im Transkript diese Punkte offen diskutiert werden."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Caching-Strategie f\u00FCr SAP-Daten: In-Memory (Redis) vs. API-seitiges Caching? Eviktionspolicy? (Quelle: docs/architecture.md \u2013 Offene Entscheidung 9)\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Caching-Strategie f\u00FCr SAP-Daten?\u0022 Clara: \u0022Datenminimierung vs. direkter SAP-Zugriff.\u0022\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zur Caching-Strategie f\u00FCr SAP-Daten, obwohl im Transkript diese technische Entscheidung offen ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Hosting-Kosten: Welche konkrete Kostensch\u00E4tzung f\u00FCr die EU-only Managed-Hosting-Umgebung liegt vor? Wer muss die Freigabe erteilen? (Quelle: C7, A8)\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022EU-only Hosting ist nicht einfach.\u0022 Clara: \u0022Dann reicht DSGVO-konform nicht.\u0022 Anna: \u0022Wir brauchen Kostensch\u00E4tzung.\u0022\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zur konkreten Kostensch\u00E4tzung f\u00FCr EU-only Hosting, obwohl im Transkript die Kostenunsicherheit als offenes Thema genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022API-Gateway-Strategie: Wird ein leichtes API-Proxy / Service-Mesh als \u00DCbergangsl\u00F6sung eingesetzt, oder bleibt die direkte SAP-Anbindung bestehen? (Quelle: docs/\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022API Gateway hat sechs Wochen Warteliste.\u0022 Anna: \u0022Passt nicht zum 8-Wochen-MVP.\u0022\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zur API-Gateway-Strategie als \u00DCbergangsl\u00F6sung, obwohl im Transkript diese technische Entscheidung offen ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Security Review (6 Wochen) vs. MVP-Deadline (8 Wochen): Kann das MVP ohne vollst\u00E4ndige Security-Review ver\u00F6ffentlicht werden, oder muss ein tempor\u00E4rer Review-Pl\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Security Review dauert 6 Wochen.\u0022 Ben: \u0022Sprengt die 8 Wochen MVP.\u0022 Clara: \u0022Muss ein tempor\u00E4rer Review-Plan definiert werden?\u0022\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zum Konflikt zwischen Security Review Dauer und MVP-Deadline, obwohl im Transkript dieser Widerspruch offen diskutiert wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Support-Workflow: Reicht ein einfaches Kontakt-Formular oder ist ein Ticket-System (z.\u202FB. Jira Service Management) erforderlich? Welche Berechtigungen ben\u00F6tigen\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Support wird nicht gel\u00F6st.\u0022 Anna: \u0022Kontaktformular ohne Ticketpersistenz.\u0022 Clara: \u0022Supportdaten per E-Mail, Datenschutz beachten.\u0022\u0022 | Das Artefakt enth\u00E4lt keine offene Frage zum Support-Workflow und den Berechtigungen der Support-Mitarbeiter, obwohl im Transkript diese Punkte offen sind."
+        }
+      ]
+    }
+  ]
+}

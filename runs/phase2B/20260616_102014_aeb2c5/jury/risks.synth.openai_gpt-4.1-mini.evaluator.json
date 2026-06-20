@@ -1,0 +1,83 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T10:23:49.263989Z",
+  "evaluationStatus": "ok",
+  "errorScore": 4,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 4; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 2,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 2 confirmed; 0 partial (herabgestuft); 3 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 0,
+        "rejected": 3,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 / \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Risiko der noch nicht finalen Entscheidung \u00FCber OAuth als API-Sicherheitsmechanismus wird im Transkript als offen dargestellt, fehlt aber im Risikoartefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022SAP-Preise sind nicht immer in Echtzeit aktuell.\u0022 / \u0022Wenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen.\u0022 / \u0022Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise.\u0022\u0022 | Das Risiko von inkonsistenten oder veralteten Preisdaten aus SAP und daraus resultierenden fehlerhaften Angeboten wird im Transkript als Risiko genannt, fehlt aber im Risikoartefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Support-Prozess (Kontaktformular) | Kein Ticket-System im MVP; unklare Nachverfolgung von Anfragen. | Unzufriedene Kunden, fehlende SLA-Einblicke. | Definiere S\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Support wird damit nicht gl\u00FCcklich.\u0022 / \u0022Supportprozess unklar.\u0022 / \u0022Support ist nicht gel\u00F6st.\u0022\u0022 | Das Risiko, dass der Supportprozess mit Kontaktformular ohne Ticketpersistenz unzufriedenstellend und unklar bleibt, wird im Transkript mehrfach als Risiko genannt, fehlt aber im Risikoartefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Widerspr\u00FCche und Unsicherheiten\n- Security-Review (6 Wochen) vs. 8-Wochen-MVP: Der Review k\u00F6nnte Anpassungen erfordern, die den Zeitplan gef\u00E4hrden.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 / \u0022Dann machen wir es ohne Security Review?\u0022 / \u0022Das ist keine Option.\u0022\u0022 | Das Risiko, dass der Security-Review-Zeitrahmen den MVP-Zeitplan gef\u00E4hrdet, wird im Transkript als offener Konflikt dargestellt, fehlt aber im Risikoartefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Widerspr\u00FCche und Unsicherheiten\n- Testdaten-Strategie: Nutzung echter SAP-Daten vs. synthetische Daten ist offen, beeinflusst Testabdeckung und Compliance.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 / \u0022Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u0022\u0022 | Das Risiko der Verwendung echter Kundendaten in Testumgebungen und die daraus resultierenden Compliance-Probleme wird im Transkript thematisiert, fehlt aber im Risikoartefakt."
+        }
+      ]
+    }
+  ]
+}

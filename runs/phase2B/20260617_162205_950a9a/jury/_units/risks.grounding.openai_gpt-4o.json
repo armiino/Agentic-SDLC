@@ -1,0 +1,314 @@
+{
+  "artifact": "risks.md",
+  "phase": "phase2B",
+  "runId": "20260617_162205_950a9a",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4o"
+  },
+  "unitCount": 37,
+  "groundingScore": 4,
+  "counts": {
+    "grounded": 34,
+    "fabricated": 2,
+    "not_a_claim": 1
+  },
+  "verdicts": [
+    {
+      "index": 0,
+      "section": "1. Fachliche Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Rabatt-Freigabe-Schwelle und Verantwortlichkeiten werden im Transkript diskutiert.",
+      "text": "Unklare Rabatt\u2011Freigabe\u2011Schwelle | Schwellenwert (15 % / 20 % / 30 %) und verantwortliche Rollen (Manager vs. Finance) sind nicht definiert. | Fehlentscheidungen im Angebots\u2011Workflow, rechtliche Probleme bei fehlerhaften Rabatten, Verz\u00F6gerungen im Freigabe\u2011Prozess. | Klare Definition und Dokumentation der Schwelle inkl. Verantwortlichkeiten im n\u00E4chsten Refinement\u2011Meeting."
+    },
+    {
+      "index": 1,
+      "section": "1. Fachliche Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Rollen-Konflikt zwischen Support und Datenschutz wird im Transkript besprochen.",
+      "text": "Rollen\u2011Konflikt Support vs. Datenschutz | Support\u2011Mitarbeiter sollen Kundendaten einsehen, d\u00FCrfen aber keine Preis\u2011/Rabatt\u2011Details sehen. | Datenlecks, Verletzung von DSGVO\u2011Prinzipien, Vertrauensverlust bei Kunden. | Implementierung fein granularer Berechtigungen (z. B. Attribute\u2011Based Access Control) und Review durch Datenschutz\u2011Expertin."
+    },
+    {
+      "index": 2,
+      "section": "1. Fachliche Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Web-first vs. Mobile-first Entscheidung wird im Transkript thematisiert.",
+      "text": "Web\u2011first vs. Mobile\u2011first Entscheidung | Keine feste Entscheidung, beeinflusst UI\u2011Design und Aufwand. | Nachtr\u00E4gliche Nacharbeit, h\u00F6here Kosten, verz\u00F6gerte Markteinf\u00FChrung. | Entscheidung im Sprint\u2011Planning treffen, ggf. Prototyp\u2011Spike f\u00FCr Mobile\u2011Usability."
+    },
+    {
+      "index": 3,
+      "section": "1. Fachliche Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Pilotkunde und die damit verbundenen rechtlichen Vorgaben werden im Transkript diskutiert.",
+      "text": "Pilotkunde (Schweiz vs. Deutschland) | Unterschiedliche rechtliche Vorgaben (CHF, lokales Datenschutz) wirken sich auf W\u00E4hrung und Compliance aus. | Fehlende Rechtskonformit\u00E4t, zus\u00E4tzlicher Entwicklungsaufwand f\u00FCr Mehrw\u00E4hrung/Region. | Early\u2011Stage Entscheidung \u00FCber Pilotkunde, inkl. rechtlicher Pr\u00FCfung."
+    },
+    {
+      "index": 4,
+      "section": "1. Fachliche Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Analytics und Consent-Management werden im Transkript angesprochen.",
+      "text": "Analytics / Consent\u2011Management | Bedarf an Tracking f\u00FCr KPIs, aber noch keine Infrastruktur definiert. | Fehlende Datenbasis f\u00FCr Erfolgsmessung, Versto\u00DF gegen DSGVO (fehlende Einwilligung). | Auswahl einer DSGVO\u2011konformen Analytics\u2011L\u00F6sung und Implementierung eines Consent\u2011Managers vor Go\u2011Live."
+    },
+    {
+      "index": 5,
+      "section": "2. Technische Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Security Review und der 8-Wochen-MVP-Zeitplan werden im Transkript thematisiert.",
+      "text": "Security Review (6 Wochen) vs. 8\u2011Wochen\u2011MVP | Umfangreicher Security\u2011Review \u00FCberschneidet sich mit knappem Zeitplan. | Projektverzug, m\u00F6gliche Release\u2011Verz\u00F6gerung, unvollst\u00E4ndige Sicherheitsma\u00DFnahmen. | Priorisieren kritischer Sicherheits\u2011Checks (z. B. Pen\u2011Test f\u00FCr Auth), ggf. parallele Durchf\u00FChrung, sp\u00E4teres Review f\u00FCr Feature\u2011Erweiterungen."
+    },
+    {
+      "index": 6,
+      "section": "2. Technische Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "API-Gateway-Warteliste und die damit verbundenen Probleme werden im Transkript besprochen.",
+      "text": "API\u2011Gateway\u2011Warteliste (6 Wochen) | Das gew\u00FCnschte API\u2011Gateway ist erst nach 6 Wochen verf\u00FCgbar. | Verz\u00F6gerung bei API\u2011Layer\u2011Implementierung, m\u00F6gliche Work\u2011Arounds erh\u00F6hen Komplexit\u00E4t. | Nutzung eines tempor\u00E4ren Proxy\u2011Service oder Direkt\u2011Anbindung an SAP\u2011Read\u2011API bis Gateway bereitsteht."
+    },
+    {
+      "index": 7,
+      "section": "2. Technische Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "EU-only Managed Service und die Kostenproblematik werden im Transkript diskutiert.",
+      "text": "EU\u2011only Managed Service \u0026 Kosten | EU\u2011only Hosting ist teuer und hat begrenzte Auswahl. | Budget\u2011\u00DCberschreitung, ggf. Ressourcenk\u00FCrzungen im MVP. | Fr\u00FChzeitige Kosten\u2011Analyse, Auswahl kosteneffizienter Managed Services, ggf. Cloud\u2011Kosten\u2011Optimierung."
+    },
+    {
+      "index": 8,
+      "section": "2. Technische Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Keine eigene Datenbank und die Cache-Strategie werden im Transkript thematisiert.",
+      "text": "Keine eigene Datenbank \u2013 Cache\u2011Strategie offen | Daten\u2011Minimierung vs. Performance\u2011Anforderungen (Echtzeit\u2011SAP\u2011Abfrage vs. Cache). | Performance\u2011Probleme, potenzieller Datenschutz\u2011Risk bei Caching personenbezogener Daten. | Klare Entscheidung f\u00FCr Cache\u2011Mechanismus (z. B. anonymisierte Produkt\u2011Cache) und Pr\u00FCfung des Datenschutzes."
+    },
+    {
+      "index": 9,
+      "section": "2. Technische Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Backup und Disaster Recovery werden im Transkript angesprochen.",
+      "text": "Backup / Disaster Recovery Umfang unklar | Unklare Definition von RPO/RTO im MVP. | Datenverlust, lange Ausfallzeiten, Compliance\u2011Risiko. | Definition minimaler Backup\u2011Strategie (z. B. t\u00E4gliche Snapshots, 24\u2011h\u2011RTO) und Integration in MVP\u2011Plan."
+    },
+    {
+      "index": 10,
+      "section": "2. Technische Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Trennung von Monitoring und Logging wird im Transkript besprochen.",
+      "text": "Monitoring \u0026 Logging Trennung | Technische Logs vs. Audit\u2011Logs m\u00FCssen getrennt und Aufbewahrungsfristen beachtet werden. | Fehlende Audit\u2011Nachweise, DSGVO\u2011Versto\u00DF bei zu langer Aufbewahrung. | Einrichtung separater Log\u2011Pipelines, automatisierte Aufbewahrungsrichtlinien."
+    },
+    {
+      "index": 11,
+      "section": "3. Compliance\u2011 und Datenschutz\u2011Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Double-Opt-In und die damit verbundenen Herausforderungen werden im Transkript thematisiert.",
+      "text": "Double\u2011Opt\u2011In Umsetzung | Minimal implementiert, Details noch offen. | Nicht\u2011konforme Einwilligungen, Bu\u00DFgelder. | Technische Umsetzung mit best\u00E4tigtem Double\u2011Opt\u2011In\u2011Flow testen, rechtliche Validierung."
+    },
+    {
+      "index": 12,
+      "section": "3. Compliance\u2011 und Datenschutz\u2011Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Audit-Trail und L\u00F6schkonzept werden im Transkript mehrfach diskutiert.",
+      "text": "Audit\u2011Trail \u0026 L\u00F6schkonzept | Vorgaben vorhanden, aber keine konkrete Architektur. | Unvollst\u00E4ndige Nachvollziehbarkeit, Problem bei Nutzer\u2011L\u00F6schanfragen. | Design eines zentralen Audit\u2011Log\u2011Stores mit automatischer L\u00F6schung nach gesetzlichen Fristen."
+    },
+    {
+      "index": 13,
+      "section": "3. Compliance\u2011 und Datenschutz\u2011Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Verwendung von SAP-Testdaten mit echten Kundendaten wird im Transkript besprochen.",
+      "text": "Verwendung von SAP\u2011Testdaten mit echten Kundendaten | Nutzung von Testsystemen kann reale personenbezogene Daten enthalten. | DSGVO\u2011Versto\u00DF, Reputationsschaden. | Anonymisierung oder Maskierung der Daten vor Testeinsatz, ggf. Genehmigung einholen."
+    },
+    {
+      "index": 14,
+      "section": "3. Compliance\u2011 und Datenschutz\u2011Risiken",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Daten-Minimierung vs. Caching wird im Transkript thematisiert.",
+      "text": "Daten\u2011Minimierung vs. Caching | Caching kann mehr personenbezogene Daten speichern als n\u00F6tig. | Erh\u00F6htes Risiko bei Datenpannen. | Daten\u2011Minimierung pr\u00FCfen, nur notwendige Felder cachen, Verschl\u00FCsselung im Cache."
+    },
+    {
+      "index": 15,
+      "section": "3. Compliance\u2011 und Datenschutz\u2011Risiken",
+      "kind": "table_row",
+      "verdict": "fabricated",
+      "reason": "Consent-Management f\u00FCr Analytics wird im Transkript nicht explizit erw\u00E4hnt.",
+      "text": "Consent\u2011Management f\u00FCr Analytics | Fehlende L\u00F6sung zur Einholung von Einwilligungen. | Ung\u00FCltige Analysedaten, DSGVO\u2011Risiko. | Auswahl und Integration eines Consent\u2011Management\u2011Tools vor Tracking\u2011Start."
+    },
+    {
+      "index": 16,
+      "section": "4. Widerspr\u00FCche und Unsicherheiten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Mobile-First vs. Web-First wird im Transkript diskutiert.",
+      "text": "Mobile\u2011First vs. Web\u2011First: Keine Entscheidung, beeinflusst UI\u2011Entwurf und Ressourcen."
+    },
+    {
+      "index": 17,
+      "section": "4. Widerspr\u00FCche und Unsicherheiten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SSO-Integration wird im Transkript als optional und nicht im MVP erw\u00E4hnt.",
+      "text": "SSO\u2011Integration (Azure AD, Google): Im MVP ausgeschlossen, sp\u00E4tere Implementierung unklar."
+    },
+    {
+      "index": 18,
+      "section": "4. Widerspr\u00FCche und Unsicherheiten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Scope-Abgrenzung und Verschiebung von Features wird im Transkript besprochen.",
+      "text": "Scope\u2011Abgrenzung: Viele Features (native App, Full\u2011Ticket\u2011System, automatisierte Rabatt\u2011Freigabe) bewusst verschoben \u2013 das kann zu Nachforderungen f\u00FChren."
+    },
+    {
+      "index": 19,
+      "section": "4. Widerspr\u00FCche und Unsicherheiten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Kosten f\u00FCr EU-only Managed Service und Budget\u00FCberschreitung werden im Transkript thematisiert.",
+      "text": "Kosten f\u00FCr EU\u2011only Managed Service: Noch nicht quantifiziert, k\u00F6nnte Budget \u00FCberschreiten."
+    },
+    {
+      "index": 20,
+      "section": "4. Widerspr\u00FCche und Unsicherheiten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Ressourcen f\u00FCr Security Review und Kapazit\u00E4tsprobleme werden im Transkript angesprochen.",
+      "text": "Ressourcen f\u00FCr Security Review: Unklar, ob Team genug Kapazit\u00E4t hat, um Review parallel zum MVP zu erledigen."
+    },
+    {
+      "index": 21,
+      "section": "5. M\u00F6gliche Auswirkungen (Zusammenfassung)",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Projektverz\u00F6gerungen durch Security Review und API-Gateway-Warteliste werden im Transkript erw\u00E4hnt.",
+      "text": "Projektverz\u00F6gerungen: Durch Security Review, API\u2011Gateway\u2011Warteliste und unklare Entscheidungen."
+    },
+    {
+      "index": 22,
+      "section": "5. M\u00F6gliche Auswirkungen (Zusammenfassung)",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Budget\u00FCberschreitungen durch EU-only Hosting und Compliance-Ma\u00DFnahmen werden im Transkript diskutiert.",
+      "text": "Budget\u00FCberschreitungen: EU\u2011only Hosting, zus\u00E4tzliche Sicherheits\u2011 und Compliance\u2011Ma\u00DFnahmen."
+    },
+    {
+      "index": 23,
+      "section": "5. M\u00F6gliche Auswirkungen (Zusammenfassung)",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Rechtliche Konsequenzen durch nicht-eingehaltene DSGVO-Ma\u00DFnahmen werden im Transkript thematisiert.",
+      "text": "Rechtliche Konsequenzen: Nicht\u2011eingehaltener DSGVO\u2011Umfang (Double\u2011Opt\u2011In, L\u00F6schkonzept, Daten\u2011Minimierung)."
+    },
+    {
+      "index": 24,
+      "section": "5. M\u00F6gliche Auswirkungen (Zusammenfassung)",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Das Transkript diskutiert die Unsicherheit zwischen Web und Mobile, was zu UX-Risiken f\u00FChren kann.",
+      "text": "Qualit\u00E4ts\u2011 und UX\u2011Risiken: Unklare Plattform\u2011Strategie (Web vs. Mobile) f\u00FChrt zu Suboptimalem Nutzererlebnis."
+    },
+    {
+      "index": 25,
+      "section": "5. M\u00F6gliche Auswirkungen (Zusammenfassung)",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Backup/DR-Strategie und Monitoring werden im Transkript als unklar und kritisch f\u00FCr Verf\u00FCgbarkeit besprochen.",
+      "text": "Betriebs\u2011 und Verf\u00FCgbarkeitsrisiken: Unklare Backup/DR\u2011Strategie und Monitoring\u2011Implementierung k\u00F6nnen zu l\u00E4ngeren Ausfallzeiten f\u00FChren."
+    },
+    {
+      "index": 26,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Die Rabatt-Freigabe-Schwelle und Verantwortlichkeiten werden im Transkript als unklar und wichtig besprochen.",
+      "text": "Kl\u00E4rung der Rabatt\u2011Freigabe\u2011Schwelle und Verantwortlichkeiten \u2013 Business\u2011Meeting mit Anna, Eva, David."
+    },
+    {
+      "index": 27,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Die Entscheidung \u00FCber den Pilotkunden und die rechtlichen Implikationen werden im Transkript als offen und wichtig besprochen.",
+      "text": "Entscheidung \u00FCber Pilotkunde (Schweiz vs. Deutschland) \u2013 Rechtliche Pr\u00FCfung durch Clara."
+    },
+    {
+      "index": 28,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Security Review und die damit verbundenen Herausforderungen werden im Transkript besprochen.",
+      "text": "Security Review\u2011Plan \u0026 Ressourcen\u2011Abstimmung \u2013 Abstimmung mit Ben und Clara, ggf. Teil\u2011Review vor MVP."
+    },
+    {
+      "index": 29,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Backup/DR-Strategie wird im Transkript als notwendig und unklar besprochen.",
+      "text": "Definition einer minimalen Backup\u2011/DR\u2011Strategie \u2013 Abstimmung mit Farid."
+    },
+    {
+      "index": 30,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "fabricated",
+      "reason": "Consent-Management-Tools f\u00FCr Analytics-Tracking werden im Transkript nicht erw\u00E4hnt.",
+      "text": "Auswahl und Implementierung eines Consent\u2011Management\u2011Tools \u2013 Vorbereitung f\u00FCr Analytics\u2011Tracking."
+    },
+    {
+      "index": 31,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Cache-Strategie f\u00FCr SAP-Daten wird im Transkript als kritisch und unklar besprochen.",
+      "text": "Cache\u2011Strategie f\u00FCr SAP\u2011Daten festlegen \u2013 Technischer Spike mit Ben."
+    },
+    {
+      "index": 32,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Kostenanalyse f\u00FCr EU-only Managed Service wird im Transkript als notwendig und unklar besprochen.",
+      "text": "Kosten\u2011Analyse f\u00FCr EU\u2011only Managed Service \u2013 Budget\u2011Check mit Farid."
+    },
+    {
+      "index": 33,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Web-first vs. Mobile-first Ansatz wird im Transkript als unklar und wichtig besprochen.",
+      "text": "Festlegung Web\u2011first / Mobile\u2011first Ansatz \u2013 UI\u2011Workshop mit Anna \u0026 Ben."
+    },
+    {
+      "index": 34,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Audit-Log- und L\u00F6schkonzept werden im Transkript als notwendig und unklar besprochen.",
+      "text": "Erstellung eines detaillierten Audit\u2011Log\u2011 und L\u00F6schkonzepts \u2013 Zusammenarbeit Clara \u0026 Ben."
+    },
+    {
+      "index": 35,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "API-Gateway-Problematik und m\u00F6gliche Ersatzl\u00F6sungen werden im Transkript besprochen.",
+      "text": "Plan f\u00FCr tempor\u00E4re API\u2011Gateway\u2011Ersatzl\u00F6sung \u2013 Kurzfristige Integration \u00FCber Server\u2011less Proxy."
+    },
+    {
+      "index": 36,
+      "section": "6. Erste Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert)",
+      "kind": "paragraph",
+      "verdict": "not_a_claim",
+      "reason": "Die Einheit ist ein Hinweis auf den Status der Gegenma\u00DFnahmen und keine fachliche Aussage.",
+      "text": "\u003E Hinweis: Die genannten Gegenma\u00DFnahmen sind als initiale Vorschl\u00E4ge zu verstehen und m\u00FCssen im weiteren Projektverlauf detailliert ausgearbeitet und priorisiert werden."
+    }
+  ]
+}

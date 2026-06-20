@@ -1,0 +1,87 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-13T15:54:13.728359Z",
+  "errorScore": 18,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 18; KRITISCH=2; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 12,
+      "reason": "MISSING_TOPIC: 5 Fehler (unveraendert); 7 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 | Das Risiko, dass im Testsystem echte Kundendaten verwendet werden (Versto\u00DF gegen Datenschutz/Testdatenproblem), fehlt im Artefakt."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022CI/CD braucht Secrets Management.\u0022 | Das Risiko fehlenden oder unsicheren Secrets Managements (z.B. f\u00FCr CI/CD) wird im Artefakt nicht genannt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen auch Rate Limits f\u00FCr API. ... Dann brauchen wir Pagination und Download-Limits. ... Wir brauchen Missbrauchserkennung.\u0022 | Das Risiko von Missbrauch durch fehlende Rate Limits/Pagination/Download-Limits (z.B. Massenexport von Rechnungen) fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Deutsch und Englisch sollten schon drin sein. ... Support braucht mindestens Deutsch und Englisch.\u0022 | Das Risiko, dass fehlende Internationalisierung/Mehrsprachigkeit zu Problemen im Support oder bei Kunden f\u00FChrt, ist nicht explizit als Risiko genannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022PDF ist wichtig f\u00FCr Sales. ... Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022 | Das Risiko fehlender Versionierung und Nachvollziehbarkeit von Angebotsdokumenten (PDF-Templates) ist nicht explizit als Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "HERABGESTUFT [KRITISCH\u2192MITTEL] (partial: \u0022Umfang des Audit- und Logging-Konzepts unklar (Balance zwischen Minimal- und Vollanforderungen) ... Risiko von Compliance-Verst\u00F6\u00DFen oder Overengineering mit Per\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.\u0022 | Das Risiko, dass personenbezogene Daten versehentlich in technische Logs gelangen (Trennung Audit/technisches Logging, unterschiedliche Aufbewahrungsfristen), wird im Artefakt nicht adressiert."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Unklare SAP-Datenaktualit\u00E4t und Fallbacks bei Nichtverf\u00FCgbarkeit ... Gegenma\u00DFnahme: Definition robuster Fallback-Strategien und Monitoring der SAP-Schnittstelle\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wenn SAP nicht erreichbar ist ... Dann brauchen wir Fallback oder Cache. ... Cache enth\u00E4lt Kundendaten? ... Dann ist Cache riskant. ... Und Cache-Invalidierung ist aufwendig.\u0022 | Das Risiko, dass ein Cache personenbezogene Daten enth\u00E4lt und dadurch Datenschutz-/Invalidierungsprobleme entstehen, wird nicht adressiert."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Strikte Einhaltung der DSGVO mit Datenminimierung, L\u00F6schkonzepten und Auditierbarkeit ... Komplexe Anforderungen k\u00F6nnen Umsetzung verz\u00F6gern und Fehler in Datens\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen Datenklassifikation und Retention Rules. ... Das kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen.\u0022 | Das Risiko von Zielkonflikten zwischen L\u00F6schpflichten und gesetzlichen Aufbewahrungspflichten (Retention vs. L\u00F6schung) fehlt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Offene Frage nach Pilotkunde und regionalen Anforderungen (Schweiz vs. Deutschland) ... M\u00F6gliche Nachr\u00FCstung oder Anpassungen verz\u00F6gern Release. Gegenma\u00DFnahme: \u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Mehrw\u00E4hrung ist nicht trivial, vor allem mit Rabattlogik und SAP. ... Schweiz ist nicht EU, aber hat eigene Datenschutzthemen. ... Hosting in EU kann Schweizer Kunden bedienen, aber Vertragspr\u00FCfung n\u00F6tig.\u0022 | Das Risiko, dass Mehrw\u00E4hrungsf\u00E4higkeit und l\u00E4nderspezifische Datenschutz-/Vertragsanforderungen (z.B. Schweiz) zu Problemen f\u00FChren, ist nicht explizit als Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Offene Frage nach Pilotkunde und regionalen Anforderungen (Schweiz vs. Deutschland) ... M\u00F6gliche Nachr\u00FCstung oder Anpassungen verz\u00F6gern Release. Gegenma\u00DFnahme: \u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen L\u00E4nder- und W\u00E4hrungsregeln. ... Wenn Schweiz Pilotkunde ist, dann doch.\u0022 | Das Risiko, dass die Auswahl des Pilotkunden (z.B. Schweiz) zus\u00E4tzliche Anforderungen und Risiken (z.B. W\u00E4hrung, Datenschutz) erzeugt, wird nicht ausreichend als eigenst\u00E4ndiges Risiko behandelt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Mangel an dedizierten Architekturressourcen ... Kein fest zugeteilter Architekt, was zu inkonsistenten Designentscheidungen und technischen Schulden f\u00FChren kann\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen einen Architekten. ... Wir haben keinen.\u0022 | Das Risiko fehlender Architekturverantwortung ist zwar als \u0027Mangel an dedizierten Architekturressourcen\u0027 genannt, aber das daraus resultierende Risiko inkonsistenter Dokumentation und fehlender Security Review ist nicht explizit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Knappes Zeitfenster (ca. 8 Wochen) f\u00FCr MVP bei gleichzeitigem Bedarf an Sicherheitsreviews, Architektur- und API-Gateway-Entscheidungen ... Risiko von Verz\u00F6geru\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP. ... Dann machen wir es ohne Security Review? ... Das ist keine Option.\u0022 | Das Risiko, dass der Security Review nicht rechtzeitig abgeschlossen werden kann und dadurch das MVP gef\u00E4hrdet ist, wird nicht explizit als Risiko benannt."
+        }
+      ]
+    }
+  ]
+}

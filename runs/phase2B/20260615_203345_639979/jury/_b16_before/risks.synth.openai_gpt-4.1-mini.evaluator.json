@@ -1,0 +1,104 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T20:37:49.40234Z",
+  "evaluationStatus": "ok",
+  "errorScore": 8,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 8; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aus): 0 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 4 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 4,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Rabatt-Freigabe-Workflow unvollst\u00E4ndig definiert: Schwellenwerte (\u003E15\u202F% Manager, \u003E30\u202F% Finance) genannt, aber keine detaillierte Genehmigungslogik.\u0022): [MITTEL] Artefakt: \u0022Rabatt-Freigabe-Workflow unvollst\u00E4ndig definiert: Schwellenwerte (\u003E15\u202F% Manager, \u003E30\u202F% Finance) genannt, aber keine detaillierte Genehmigungslogik.\u0022 | Transkript: \u0022Eva: \u0022Oder ab 20 Prozent. Ich bin mir nicht sicher.\u0022 Ben: \u0022Das muss klar definiert werden.\u0022 Anna: \u0022Vielleicht sp\u00E4ter.\u0022\u0022 | Das Artefakt stellt Schwellenwerte als gesetzt dar, obwohl im Transkript die genaue Freigabelogik und Schwellenwerte noch offen und unsicher sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Zielmarkt (DE vs. CH) nicht gekl\u00E4rt: Unterschiedliche W\u00E4hrungen, rechtliche Vorgaben und Datenschutz-Bestimmungen.\u0022): [MITTEL] Artefakt: \u0022Zielmarkt (DE vs. CH) nicht gekl\u00E4rt: Unterschiedliche W\u00E4hrungen, rechtliche Vorgaben und Datenschutz-Bestimmungen.\u0022 | Transkript: \u0022Anna: \u0022Pilotkunde ist noch nicht final.\u0022 David: \u0022Ich dachte Pilotkunde ist M\u00FCller AG aus der Schweiz.\u0022 Anna: \u0022Vielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche.\u0022\u0022 | Das Artefakt stellt Zielmarkt-Konflikt als Risiko dar, aber im Transkript ist die Entscheidung noch offen und nicht final, was das Artefakt nicht ausreichend reflektiert."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022API-Gateway Warteliste 6 Wochen als kritische Abh\u00E4ngigkeit f\u00FCr MVP.\u0022): [MITTEL] Artefakt: \u0022API-Gateway Warteliste 6 Wochen als kritische Abh\u00E4ngigkeit f\u00FCr MVP.\u0022 | Transkript: \u0022Ben: \u0022Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 Anna: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022\u0022 | Das Artefakt stellt die API-Gateway-Verz\u00F6gerung als feststehendes Risiko dar, obwohl im Transkript noch offen ist, wie damit umgegangen wird (z.B. Minimal-API-Layer als Fallback)."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Hosting-Kosten und EU-Only Constraint als Budget-Entscheidung offen.\u0022).\u0022): [MITTEL] Artefakt: \u0022Hosting-Kosten und EU-Only Constraint als Budget-Entscheidung offen.\u0022 | Transkript: \u0022Anna: \u0022Aber wenn EU-only teurer ist?\u0022 Farid: \u0022Ist es wahrscheinlich.\u0022 Anna: \u0022Wir brauchen aber eine Kostensch\u00E4tzung f\u00FCr den Vorstand bis Freitag.\u0022\u0022 | Das Artefakt stellt Hosting-Kosten als Risiko dar, aber im Transkript ist die Budgetentscheidung noch offen und wird als Kl\u00E4rungsbedarf dargestellt."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 5,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 3 confirmed; 2 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 3,
+        "partial": 2,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u0022 Clara: \u0022SAP? Wenn SAP involviert ist, dann reden wir von personenbezogenen Daten im ERP. Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.\u0022\u0022 | Das Risiko der fehlenden oder veralteten Identity Provider Integration (SSO) und die damit verbundenen Compliance- und Sicherheitsrisiken sind im Transkript klar benannt, fehlen aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Backup?\u0022 Ben: \u0022Ja Disaster Recovery.\u0022 Clara: \u0022Wenn Kundendaten drin sind: ja.\u0022 Anna: \u0022Okay also doch.\u0022\u0022 | Das Risiko und die Notwendigkeit von Backup und Disaster Recovery f\u00FCr Kundendaten werden im Transkript diskutiert, sind aber im Artefakt nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 Ben: \u0022Ja.\u0022 Clara: \u0022API muss abgesichert sein. OAuth? Oder API Keys?\u0022\u0022 | Das Risiko der Komplexit\u00E4t und Unsicherheit bei der API-Security (OAuth vs. API Keys) wird im Transkript genannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u00221. Fachliche Risiken: Support\u2011Prozess nur Kontaktformular - Keine Ticket\u2011Nachverfolgung, unklare SLA; Evaluierung eines Ticket\u2011Systems als sp\u00E4teres Upgrade; Dat\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Support?\u0022 Ben: \u0022Nein erstmal nicht.\u0022 David: \u0022Ich bin von Customer Support. Ich habe geh\u00F6rt, es soll kein Ticketsystem geben. Das ist aus Support-Sicht schwierig.\u0022 Clara: \u0022Supportdaten per E-Mail verarbeitet. Auch Datenschutz.\u0022\u0022 | Das Risiko der unzureichenden Support-Prozesse und der Datenschutzproblematik bei fehlendem Ticketsystem wird im Transkript klar benannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u00226. Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe (Priorisiert): Punkt 10 - Testdaten\u2011Pseudonymisierung \u2013 Verfahren etablieren, um Testumgebungen DSGVO\u2011konform zu halten.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 Clara: \u0022Pseudonymisierung oder synthetische Testdaten.\u0022 Ben: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Das Risiko der Verwendung echter Kundendaten in Testumgebungen und die Notwendigkeit von Pseudonymisierung sind im Transkript benannt, fehlen aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u00221. Fachliche Risiken: Unklare Frontend\u2011Strategie (Web\u2011first vs. Mobile\u2011first) - Noch nicht entschieden, welche UI\u2011Plattform priorisiert wird.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Mobile vielleicht\u0022 Ben: \u0022Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer. Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends.\u0022 Anna: \u0022MVP in 8 Wochen.\u0022\u0022 | Das Risiko der unklaren Frontend-Strategie bez\u00FCglich Mobile (native App vs. Web) und Budgetkonflikte wird im Transkript thematisiert, fehlt aber als Risiko im Artefakt."
+        }
+      ]
+    }
+  ]
+}

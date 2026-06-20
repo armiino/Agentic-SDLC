@@ -1,0 +1,18 @@
+--- before/docs/architecture.md
++++ after/docs/architecture.md
+- Das Kundenportal wird als web‑basiertes Frontend für **Sales‑Mitarbeiter** und **Kunden** bereitgestellt. Es muss über ein Auth‑/Autorisation‑System verfügen, auf SAP‑Daten zugreifen und die Infrastruktur EU‑only hosten. DSGVO‑Konformität (Double‑Opt‑In, getrennte Audit‑Logs, Löschkonzept) ist zwingend.
++ Das Kundenportal wird als web‑basiertes Frontend für **Sales‑Mitarbeiter** und **Kunden** bereitgestellt. Es greift auf interne Systeme (SAP für Produkt‑, Preis‑ und Kundendaten) sowie auf Infrastruktur‑Services (Authentifizierungs‑/Autoriserungs‑Service, Audit‑Log‑Service, Backup/DR) zu. Das System muss EU‑only gehostet werden, DSGVO‑konform sein und innerhalb von 8 Wochen ein MVP liefern.
+- - Frontend ↔ API‑Layer: HTTPS/REST JSON, TLS 1.2+ 
++ - **Frontend ↔ API‑Layer**: HTTPS/REST JSON, TLS 1.2+ 
+- - API‑Layer ↔ Auth‑Service: Token‑Validierung (OAuth‑Introspektion oder API‑Key‑Lookup) 
++ - **API‑Layer ↔ Auth‑Service**: Token‑Validierung (OAuth‑Introspektion oder API‑Key‑Lookup) 
+- - API‑Layer ↔ SAP‑Connector: OData/REST Aufrufe, mögliches Caching 
++ - **API‑Layer ↔ SAP‑Connector**: OData/REST Aufrufe, mögliches Caching 
+- - API‑Layer ↔ Audit‑Log‑Service: Asynchrone Log‑Einträge (z. B. via Message Queue) 
++ - **API‑Layer ↔ Audit‑Log‑Service**: Asynchrone Log‑Einträge (z.B. via Message Queue) 
+- - API‑Layer ↔ Backup Service: Periodische Snapshots über Cron‑Jobs 
++ - **API‑Layer ↔ Backup Service**: Periodische Snapshots über Cron‑Jobs 
+- - Frontend ↔ Notification Service: Web‑Push API (optional) 
++ - **Frontend ↔ Notification Service**: Web‑Push API (optional) 
+- - Frontend ↔ Support‑Formular: E‑Mail‑Versand 
++ - **Frontend ↔ Support‑Formular**: E‑Mail‑Versand 

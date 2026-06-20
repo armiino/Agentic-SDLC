@@ -268,15 +268,18 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
         var observedResponseType = DetermineObservedResponseType(toolCallNames, assistantText);
         var observedToolGroups = DetermineObservedToolGroups(toolCallNames);
 
-        // Text-Event (CHAT_RESPONSE_TEXT bzw. MODEL_ROUND_TEXT): 
+        var hasText = assistantText.Length > 0;
+        var hasToolCalls = toolCallNames.Count > 0;
+
+        // Text-Event (CHAT_RESPONSE_TEXT bzw. MODEL_ROUND_TEXT):
         // nur wenn diese Instanz für Text zuständig ist (_writeResponseText) und Text vorhanden ist.
         // Im per-cycle-Modus erfasst nur die innere ModelRound-Instanz Text..
         // die äußere AgentChat-Instanz markiert nur Start/Ende, um Doppelerfassung zu vermeiden.
-        if (_writeResponseText && assistantText.Length > 0)
+        if (_writeResponseText && hasText)
         {
             var sha = Sha256Hex(assistantText);
-            var truncated = assistantText.Length > _previewChars;
-            var content = Truncate(assistantText.Trim(), _previewChars);
+            var truncatedEvt = assistantText.Length > _previewChars;
+            var contentEvt = Truncate(assistantText.Trim(), _previewChars);
 
             var responseTextEvent = new
             {
@@ -286,24 +289,33 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
                 round,
                 // Kontext: neben welchen Tool-Calls entstand dieser Text?
                 toolCallsInThisResponse = distinctToolCallNames,
-                hasToolCalls = toolCallNames.Count > 0,
+                hasToolCalls,
                 textLength = assistantText.Length,
                 // SHA erlaubt Vergleich zwischen Runs ohne den vollen Text zu laden.
                 textSha256 = sha,
-                text = content,
-                truncated,
+                text = contentEvt,
+                truncated = truncatedEvt,
                 timestampUtc = DateTime.UtcNow
             };
 
             _run.AppendEvent(responseTextEvent);
-
             if (_agentName is not null)
-            {
                 _run.AppendAgentEvent(_agentName, responseTextEvent);
-                _run.AppendAgentResponseText(
-                    _agentName,
-                    BuildResponseTextMarkdown(round, distinctToolCallNames, content, assistantText.Length, truncated));
-            }
+        }
+
+        // response-text.md-Abschnitt: für JEDE beobachtbare Runde (Text ODER Tool-Calls), damit auch
+        // Tool-only-Runden (zB stille fs_write ohne Reasoning-Text) sichtbar bleiben. Die Lücke
+        // wurde in Run 20260613_200805_b4fb45 (Phase 2.1B) sichtbar: der RisksAgent schrieb docs/risks.md
+        // in zwei fs_write-Runden OHNE Assistant-Text -> beide fehlten in response-text.md, nur die finale
+        // Status-Runde war zu sehen. Damit war der zweite (kaputte) Write im lesbaren Log unsichtbar.
+        // Das "Warum" jedes Writes bleibt zusätzlich in tool-calls.jsonl (reason/evidence der fs_write-Args).
+        if (_writeResponseText && _agentName is not null && (hasText || hasToolCalls))
+        {
+            var truncated = assistantText.Length > _previewChars;
+            var content = Truncate(assistantText.Trim(), _previewChars);
+            _run.AppendAgentResponseText(
+                _agentName,
+                BuildResponseTextMarkdown(round, distinctToolCallNames, content, assistantText.Length, truncated));
         }
 
         var finishedEvent = new
@@ -452,11 +464,19 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
                       (truncated ? $" *(truncated to {text.Length})*" : ""));
         sb.AppendLine();
 
-        foreach (var line in text.Split('\n'))
-            sb.AppendLine($"> {line}");
+        // Tool-only-Runde: kein Assistant-Text, aber die Runde (zb ein fs_write) bleibt sichtbar.
+        if (string.IsNullOrWhiteSpace(text))
+        {
+            sb.AppendLine("> *(kein sichtbarer Assistant-Text — Tool-only-Runde; reason/evidence siehe tool-calls.jsonl)*");
+        }
+        else
+        {
+            foreach (var line in text.Split('\n'))
+                sb.AppendLine($"> {line}");
 
-        if (truncated)
-            sb.AppendLine("> *...[truncated]*");
+            if (truncated)
+                sb.AppendLine("> *...[truncated]*");
+        }
 
         sb.AppendLine();
         sb.AppendLine("---");

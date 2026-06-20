@@ -1,0 +1,85 @@
+{
+  "spike": "RubricEvaluator",
+  "scheme": "TwoCategory",
+  "phase": "phase2_1",
+  "runId": "20260609_152957_0e0804",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-11T14:37:05.8571Z",
+  "categories": [
+    {
+      "key": "NICHT_GEDECKT",
+      "label": "Nicht gedeckt",
+      "metric": "Unsupported",
+      "count": 5,
+      "reason": "Nicht gedeckt: 5 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Nutzerrollen m\u00FCssen mindestens folgende umfassen: Admin, Sales, Manager, Support, Kunde.\u0022 | Transkript: \u0022Anna: \u0022Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?\u0022 ... David: \u0022Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen...\u0022\u0022 | Im Transkript ist unklar, ob die Rolle \u0027Sales\u0027 als eigenst\u00E4ndige Rolle definiert wurde; \u0027normaler User\u0027 wurde genannt, aber \u0027Sales\u0027 explizit nicht als Rolle genannt. Die Rollen sind nicht abschlie\u00DFend definiert, daher ist die Aussage im Artefakt zu konkret."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022KPI-Metriken wie Conversion Rate und Zeit bis Angebotserstellung sollen erfasst werden.\u0022 | Transkript: \u0022Anna: \u0022Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch?\u0022 ... Ben: \u0022Was sind die KPIs?\u0022 ... Anna: \u0022Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 ... Eva: \u0022KPI-Erfassung wird nur rudiment\u00E4r im MVP unterst\u00FCtzt.\u0022\u0022 | Im Transkript ist KPI-Erfassung unklar und als optional bzw. rudiment\u00E4r im MVP dargestellt, im Artefakt wird es als klare Anforderung formuliert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Security Reviews sind notwendig, auch wenn der MVP-Zeitplan dies erschwert.\u0022 | Transkript: \u0022Ben: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 ... Anna: \u0022Dann machen wir es ohne Security Review?\u0022 ... Clara: \u0022Das ist keine Option.\u0022 ... Anna: \u0022Dokumentation ist wichtig, aber bitte nicht zu viel.\u0022 ... Ben: \u0022Ohne Dokumentation kein Security Review.\u0022\u0022 | Im Transkript ist Security Review als kritisch, aber im MVP-Zeitplan problematisch dargestellt; es ist offen, wie es umgesetzt wird. Im Artefakt wird es als notwendige Anforderung formuliert, was eine Entscheidung suggeriert, die im Transkript offen ist."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss skalierbar sein, um bei unterschiedlicher Nutzerzahl performant zu bleiben.\u0022 | Transkript: \u0022Anna: \u0022Aber bitte kein Overengineering.\u0022 ... Ben: \u0022Overengineering und skalierbar sind ein Spannungsfeld.\u0022 ... Clara: \u0022Skalierbarkeit muss ber\u00FCcksichtigt werden.\u0022\u0022 | Im Transkript wird Skalierbarkeit als wichtig, aber als Spannungsfeld mit Overengineering dargestellt, ohne klare Entscheidung. Im Artefakt wird Skalierbarkeit als verpflichtend formuliert, was eine Entscheidung darstellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss Rechnungen einsehen und downloaden k\u00F6nnen.\u0022 | Transkript: \u0022Anna: \u0022Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden.\u0022 ... David: \u0022Support braucht mindestens Deutsch und Englisch.\u0022 ... Eva: \u0022Massenexport von Rechnungen kann rechtlich relevant sein.\u0022\u0022 | Im Transkript ist Rechnungsdownload erw\u00E4hnt, aber Details wie Massenexport, rechtliche Relevanz und Performance sind offen und kritisch. Im Artefakt wird es als klare Anforderung formuliert ohne diese Einschr\u00E4nkungen."
+        }
+      ]
+    },
+    {
+      "key": "FEHLT",
+      "label": "Fehlt",
+      "metric": "Missing",
+      "count": 8,
+      "reason": "Fehlt: 8 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Eva: \u0022Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.\u0022 ... Ben: \u0022Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected.\u0022 ... Anna: \u0022Das ist wichtig, aber vielleicht sp\u00E4ter.\u0022 ... Eva: \u0022Nein, ohne Freigabeprozess k\u00F6nnen falsche Angebote rausgehen. Das ist ein finanzielles Risiko.\u0022\u0022 | Der Freigabeprozess f\u00FCr Rabatte und Workflow-Status f\u00FCr Angebote ist ein zentrales Thema im Transkript, fehlt aber vollst\u00E4ndig im Artefakt."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Double-Opt-In und L\u00F6schung fehlen.\u0022 ... Anna: \u0022Login mit Double-Opt-In\u0022 (im Artefakt erw\u00E4hnt), aber L\u00F6schkonzept und Datenl\u00F6schung als Anforderungen fehlen explizit.\u0022 | Das L\u00F6schkonzept und die Anforderungen an Datenl\u00F6schung sind im Transkript mehrfach betont, fehlen aber als klare Anforderungen im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Backup?\u0022 ... Ben: \u0022Backup fehlt.\u0022 ... Anna: \u0022Backup-Mechanismus f\u00FCr Kundendaten erforderlich.\u0022 (im Artefakt erw\u00E4hnt), aber Disaster Recovery Details fehlen.\u0022 | Disaster Recovery wird im Transkript als wichtig genannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 ... Anna: \u0022Kontaktformular ohne Ticketpersistenz.\u0022 ... Clara: \u0022Supportdaten per E-Mail verarbeitet. Datenschutz.\u0022 ... Farid: \u0022E-Mail ist unstrukturiert und schlecht auditierbar.\u0022\u0022 | Das Risiko und die Einschr\u00E4nkungen des Supportprozesses mit Kontaktformular statt Ticketsystem sind im Transkript ausf\u00FChrlich diskutiert, fehlen aber als Risiko oder Einschr\u00E4nkung im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 ... Clara: \u0022Pseudonymisierung oder synthetische Testdaten.\u0022 ... Ben: \u0022SAP-Testsystem hat echte alte Kundendaten. Problem.\u0022\u0022 | Test- und Entwicklungsumgebungen mit Anforderungen an Testdaten sind im Transkript wichtig, fehlen aber als klare Anforderungen im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Eva: \u0022PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 ... Clara: \u0022Datenschutzhinweise in PDF.\u0022 ... Farid: \u0022Templates m\u00FCssen versioniert werden.\u0022 ... Ben: \u0022Event-History oder Audit-Log pro Angebot.\u0022\u0022 | PDF-Export von Angeboten mit rechtlichen und audit-relevanten Anforderungen wird im Transkript ausf\u00FChrlich diskutiert, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Mobile vielleicht\u0022 (im Artefakt erw\u00E4hnt), aber keine Entscheidung ob native App oder responsive Web, Budget und Backend-API-Readiness sind offen.\u0022 | Die Unklarheit und Risiken bez\u00FCglich mobiler Umsetzung (native vs. responsive) und Backend-API-Readiness sind im Transkript wichtig, fehlen als Risiko oder Einschr\u00E4nkung im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022API Gateway Nutzung mit 6 Wochen Warteliste.\u0022 ... Ben: \u0022Passt nicht zum 8-Wochen-MVP.\u0022\u0022 | Die kritische Abh\u00E4ngigkeit und Wartezeit f\u00FCr das zentrale API Gateway sind im Transkript als Risiko genannt, fehlen aber als Risiko oder Constraint im Artefakt."
+        }
+      ]
+    }
+  ]
+}

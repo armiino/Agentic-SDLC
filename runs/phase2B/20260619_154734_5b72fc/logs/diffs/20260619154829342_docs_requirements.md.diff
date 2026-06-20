@@ -1,0 +1,59 @@
+--- before/docs/requirements.md
++++ after/docs/requirements.md
+- 
++ ## Functional Requirements
++ - **FR1 Benutzer‑Login**: Das System muss einen Login per E‑Mail und Passwort unterstützen, inklusive Double‑Opt‑In (Bestätigungs‑E‑Mail). Optional kann ein Single‑Sign‑On (Azure AD oder Google) integriert werden, wenn es bis zum MVP‑Rollout verfügbar ist. (Quelle: Projektziel, Stakeholder Anna & Ben)
++ - **FR2 Rollen‑ und Berechtigungskonzept**: Drei Rollen werden im MVP definiert: *Admin* (voller Zugriff), *Sales* (Angebotserstellung, Ansicht von Kunden‑ und Rechnungsdaten) und *Kunde* (Einblick in eigene Angebote, Rechnungen und Bestellungen). Rollenbasierte Zugriffskontrollen müssen auf allen API‑Endpunkten durchgesetzt werden. (Quelle: Unterziele, Stakeholder Anna, Ben)
++ - **FR3 Angebotserstellung**: Vertriebsmitarbeiter können ein Angebot erstellen. Das System greift lesend auf SAP‑Produkt‑ und Preisdaten zu, um Artikel, Preise und mögliche Rabatte anzuzeigen. Das erstellte Angebot wird im System gespeichert und kann vom Kunden eingesehen werden. (Quelle: Unterziele, Stakeholder Eva, Ben)
++ - **FR4 Rechnungs‑ und Bestellungs‑Download**: Kunden können ihre Rechnungen und Bestellungen als PDF herunterladen. Der Download‑Link ist nur für authentifizierte Kunden sichtbar. (Quelle: Unterziele, Stakeholder David)
++ - **FR5 Audit‑Trail**: Das System protokolliert mindestens die folgenden Ereignisse: Benutzer‑Login, Angebotserstellung, Angebotsänderung, Rechnungs‑/Bestellungs‑Download. Protokolle müssen unveränderbar und für die Dauer der gesetzlich geforderten Aufbewahrung aufbewahrt werden. (Quelle: Unterziele, Stakeholder Clara)
++ - **FR6 Mehrsprachigkeit (Deutsch/Englisch)**: Das UI muss zumindest deutsche und englische Texte bereitstellen. (Quelle: Fachliche Themen, Stakeholder Anna)
++ 
++ ## Non-functional Requirements
++ - **NFR1 DSGVO‑Konformität**: Alle personenbezogenen Daten müssen gemäß DSGVO verarbeitet werden. Double‑Opt‑In ist Pflicht, Datenminimierung ist zu beachten, und es muss ein Löschkonzept geben. (Quelle: DSGVO / Compliance, Stakeholder Clara)
++ - **NFR2 EU‑Only Hosting**: Das System muss ausschließlich in einer EU‑Region gehostet werden und ein Managed‑DB‑Service nutzen, der EU‑Datenschutz garantiert. (Quelle: Managed Services & EU‑Hosting, Stakeholder Farid)
++ - **NFR3 Backup & Disaster Recovery**: Tägliche Backups mit einer Wiederherstellungszeit von max. 4 Stunden (RTO) und einem maximalen Datenverlust von 1 Stunde (RPO) sind für sämtliche produktiven Daten vorzusehen. (Quelle: Backup & Disaster Recovery, Stakeholder Farid)
++ - **NFR4 Sicherheit**: Das System muss ein Rate‑Limiting auf API‑Ebene implementieren und sicherstellen, dass technische Logs keine personenbezogenen Daten enthalten. Ein Security‑Review muss vor dem Go‑Live abgeschlossen sein. (Quelle: Sicherheit & Review, Stakeholder Clara)
++ - **NFR5 Verfügbarkeit**: Ziel‑Verfügbarkeit von 99,5 % im Produktionsbetrieb während des MVP‑Zeitraums. (abgeleitet aus 8‑Wochen‑Deadline und kritischer Business‑Funktion)
++ - **NFR6 Performance**: Das Laden von Angebots‑ und Rechnungs‑Detailseiten darf nicht länger als 2 Sekunden bei durchschnittlicher Netzwerk‑Latenz von 100 ms dauern. (Annahme, da keine expliziten Vorgaben vorliegen)
++ 
++ ## Constraints/Compliance
++ - **C1 Zeitrahmen**: Das MVP muss innerhalb von 8 Wochen bereitgestellt werden – dies begrenzt Umfang und Priorisierung. (Quelle: Projektziel, Zeitplan)
++ - **C2 Infrastruktur‑Warteliste**: Das zentrale API‑Gateway steht erst nach 6 Wochen zur Verfügung; das MVP muss daher entweder mit einem vereinfachten Gateway‑Proxy starten oder eine Alternative evaluieren. (Quelle: API‑Layer & Gateway)
++ - **C3 Keine neue Datenbank**: Es dürfen keine eigens neu eingeführten Datenbanken genutzt werden; stattdessen wird ein bestehender Managed‑DB‑Service verwendet. (Quelle: Managed Services & EU‑Hosting)
++ - **C4 Security Review Dauer**: Der Security Review dauert >6 Wochen und überschneidet sich mit dem MVP‑Zeitplan – notwendige Maßnahmen müssen frühzeitig eingeleitet werden. (Quelle: Sicherheit & Review)
++ - **C5 Budgetrestriktion**: Managed Services und EU‑Only‑Hosting sind kostenintensiv; die Kosten müssen bis zum Freitag geschätzt werden. (Quelle: Offene Fragen)
++ 
++ ## Assumptions and Open Points
++ - **A1 Pilotkunde**: Es ist unklar, ob der Pilotkunde in Deutschland (EUR) oder in der Schweiz (CHF) ansässig ist – beeinflusst Währung, Hosting‑Region und ggf. zusätzliche Datenschutz‑Anforderungen.
++ - **A2 Rabatt‑Freigabelogik**: Die Schwelle für Freigaben (z. B. >15 % Rabatt) ist für das MVP noch nicht festgelegt; das System muss flexibel konfigurierbar sein.
++ - **A3 KPI‑Set**: Konkrete Kennzahlen (Conversion‑Rate, Time‑to‑Offer) sind noch nicht definiert – wird später vom Product Owner geliefert.
++ - **A4 Support‑Prozess**: Das Kontaktformular wird ohne Ticket‑System implementiert; Details zur Datenhaltung und Löschfristen bleiben offen.
++ - **A5 Retention‑Fristen**: Gesetzliche Aufbewahrungsfristen für Angebote, Rechnungen und Logs sind noch nicht spezifiziert.
++ - **A6 Backup‑RPO/RTO**: Vorgeschlagene Werte (RPO 1 h, RTO 4 h) basieren auf üblichen Praxis‑Standards, jedoch nicht final bestätigt.
++ - **A7 Testdatenstrategie**: Wie synthetische SAP‑Daten sicher in Test‑Umgebungen verwendet werden können, ist noch offen.
++ - **A8 API‑Gateway‑Alternative**: Kurzfristige Alternative (z. B. interner Reverse‑Proxy) wird noch geprüft.
++ - **A9 Mehrsprachigkeit & Mehrwährung**: Englisch‑UI wird bereitgestellt, CHF‑Preis‑Anzeige hängt vom Pilotkunden ab und ist noch offen.
++ 
++ ## Traceability
++ | ID | Requirement | Stakeholder(s) | Quelle |
++ |----|-------------|----------------|--------|
++ | FR1 | Benutzer‑Login mit Double‑Opt‑In | Anna, Ben | Projektziel – Unterziele 1 |
++ | FR2 | Rollen‑ und Berechtigungskonzept | Anna, Ben | Unterziele 4 |
++ | FR3 | Angebotserstellung (SAP‑Lesenzugriff) | Eva, Ben | Unterziele 2 |
++ | FR4 | Rechnungs‑/Bestellungs‑Download | David, Ben | Unterziele 3 |
++ | FR5 | Audit‑Trail für kritische Aktionen | Clara, Ben | Unterziele 5 |
++ | FR6 | Mehrsprachigkeit (DE/EN) | Anna | Fachliche Themen – Mehrsprachigkeit |
++ | NFR1 | DSGVO‑Konformität (Double‑Opt‑In, Löschkonzept) | Clara | DSGVO / Compliance |
++ | NFR2 | EU‑Only Hosting, Managed‑DB | Farid | Managed Services & EU‑Hosting |
++ | NFR3 | Backup & DR (RPO/RTO) | Farid | Backup & Disaster Recovery |
++ | NFR4 | Sicherheit (Rate‑Limiting, kein PII im Monitoring) | Clara | Sicherheit & Review |
++ | NFR5 | Verfügbarkeit 99,5 % | Anna, Ben | Projektziel – Zeitplan |
++ | NFR6 | Performance ≤2 s Seitenladezeit | Ben | Annahme basierend auf Usability‑Erwartungen |
++ | C1 | 8‑Wochen‑MVP‑Deadline | Anna | Projektziel – Zeitplan |
++ | C2 | API‑Gateway‑Warteliste 6 Wochen | Ben | API‑Layer & Gateway |
++ | C3 | Keine neue Datenbank | Farid | Managed Services & EU‑Hosting |
++ | C4 | Security Review >6 Wochen | Clara | Sicherheit & Review |
++ | C5 | Kosten‑Schätzung bis Freitag | Anna, Farid | Offene Fragen 3 |
++ | A1‑A9 | Offene Punkte (Pilotkunde, Rabatt‑Logik, KPIs, Support, Retention, Backup‑Details, Testdaten, Gateway‑Alternative, Mehrwährung) | Alle | Offene Fragen / Erkennbare Konflikte |
++ 

@@ -1,0 +1,49 @@
+# Projektkontext – Zusammenfassung aus Stakeholder‑Transkripten
+
+## Projektziel
+- Bereitstellung eines **Kundenportals** zum **Erstellen von Angeboten**, **Anzeigen von Rechnungen** und **Kundendaten‑Login** innerhalb von **8 Wochen (MVP)**.
+- Das Portal soll als **Mittel** dienen, damit Sales schneller Angebote erstellen kann und der Kunde Bestellungen/Rechnungen einsehen kann.
+- Gleichzeitig muss das System **DSGVO‑konform** sein (Double‑Opt‑In, Löschkonzept, Audit‑Logs, keine personenbezogenen Daten in technischen Logs).
+
+## Sprecherrollen (aus dem Transkript)
+| Sprecher | Rolle / Fachgebiet |
+|----------|--------------------|
+| Anna     | Produkt‑/Business‑Owner (Projektleitung, definiert Ziel & MVP‑Umfang) |
+| Ben      | Technischer Lead / Architektur (Frontend, API‑Layer, Integration) |
+| Clara    | Datenschutz / Compliance (DSGVO, Auditing, Logging) |
+| David    | Customer Support (Support‑Prozesse, Ticket‑/Kontakt‑Management) |
+| Eva      | Finance / Controlling (Rabatt‑Freigabe, Finanz‑Risiken, Währungen) |
+| Farid    | IT Operations / Infrastruktur (Hosting, Backup, Monitoring, Secrets) |
+
+## Fachliche Themen (Hauptthemen)
+1. **Kundenportal‑Funktionen** – Login (E‑Mail + Double‑Opt‑In), Rollen (Admin, Sales, Kunde), Angebotserstellung, Rechnungsdownload, ggf. Push‑Notifications.
+2. **Integration mit SAP** – Lesender Zugriff auf Produkt‑/Preis‑ und Kundendaten, spätere Schreib‑/Schreib‑Freigabe für Angebote.
+3. **DSGVO & Compliance** – Double‑Opt‑In, Lösch‑ und Aufbewahrungspflichten, Audit‑Trail, Trennung von technischen‑ und Audit‑Logs, Daten‑Minimierung.
+4. **MVP‑Scope‑Abgrenzung** – Welche Features bewusst weggelassen werden (z. B. Sonderrabatte, Ticket‑System, umfangreiche Internationalisierung, mehrsprachige UI, vollständige API‑Gateway‑Integration).
+5. **Technische Infrastruktur** – EU‑only Managed Service Hosting, Backup/Disaster‑Recovery, Rate‑Limiting, Secrets‑Management, Dev/Test/Prod‑Umgebungen.
+6. **Risiken & Konflikte** – Zeitplan (8 Wochen) vs. Security‑Review, Budget‑Beschränkungen, fehlende API‑Gateway‑Kapazität, SAP‑Verfügbarkeit, Daten‑ und Log‑Compliance.
+7. **Finanzielle Aspekte** – Kostenschätzung bis Freitag, Mehrwährung (EUR, CHF, ggf. USD), Rabatt‑Freigabe‑Prozesse (≥ 15 % Rabatt → Manager‑Freigabe), Rechnungs‑PDF‑Templates.
+
+## Konflikte & kritische Punkte (Beobachtete Widersprüche)
+- **Zeit vs. Security**: Security‑Review dauert 6 Wochen → kollidiert mit 8‑Wochen‑MVP.
+- **Budget & Managed Services**: EU‑only Hosting ist potenziell teuer, aber erforderlich.
+- **API‑Gateway**: Warteliste von 6 Wochen → nicht im MVP‑Zeitplan.
+- **Feature‑Abgrenzung**: Wunsch nach Mobile‑App, Internationalisierung, Support‑Ticket‑System vs. MVP‑Zeit.
+- **Rabatt‑Freigabe**: Finanz‑Team verlangt Freigabe ab 15 % Rabatt, aber im MVP ohne Sonderrabatte.
+- **SAP‑Schreibzugriff**: Unklar, ob Schreibrechte für Angebote nötig sind.
+- **Backup & Disaster Recovery**: Notwendig für DSGVO, aber zusätzlicher Aufwand.
+- **Logging**: Technische Logs dürfen keine personenbezogenen Daten enthalten → erfordert getrennte Audit‑Logs.
+
+## Unsicherheiten & offene Fragen (Markierung als Risiko)
+- **Hosting‑Provider‑Kosten** und genaue EU‑Only‑Erfüllung.
+- **Finale Entscheidung zu Währungen** (ob CHF im MVP enthalten ist).
+- **Support‑Prozess**: Kontaktformular vs. Ticket‑System und damit verbundene Datenschutz‑Implikationen.
+- **Rate‑Limiting & Missbrauchserkennung** – welche Lösung wird ohne API‑Gateway eingesetzt?
+- **Retention‑ und Lösch‑Regeln** für Angebote & Rechnungen (gesetzliche Aufbewahrung vs. Recht auf Vergessenwerden).
+- **Verfügbarkeit von SAP** (kritische Abhängigkeit, Fallback‑Strategie, Cache‑Einsatz).
+- **Umgebungs‑Setup** (Dev/Test/Prod) und Umgang mit echten Kundendaten im Testsystem.
+- **OAuth vs. API‑Key** für API‑Sicherheit – Entscheidung noch offen.
+- **Kosten‑Schätzung für das gesamte MVP** bis Freitag – noch nicht final.
+
+## Quellen / Evidenz
+- Transkriptdatei: `input/transcripts/T9999_chaos.txt` (vollständiger Dialog aller genannten Stakeholder).

@@ -1,0 +1,91 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-14T14:00:29.324762Z",
+  "evaluationStatus": "ok",
+  "errorScore": 24,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 24; KRITISCH=2; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 2,
+      "reason": "FALSE_CERTAINTY: 2 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- Es muss eine sichere Authentifizierung des Nutzers \u00FCber OAuth erfolgen.\u0022 | Transkript: \u0022Anna: \u0022Also erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022\nBen: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022\u0022 | Das Artefakt stellt OAuth als verpflichtende Authentifizierung dar, obwohl im Transkript die Authentifizierungsart offen war (E-Mail/Passwort als MVP-Option, SSO/Provider-Optionen und OAuth wurden nur als m\u00F6glich/pr\u00E4feriert, nicht final beschlossen)."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022- Die Datenhaltung und das Hosting m\u00FCssen ausschlie\u00DFlich in der EU erfolgen.\u0022 | Transkript: \u0022Anna: \u0022Ja EU only. Oder zumindest DSGVO-konform.\u0022\nBen: \u0022Das ist nicht dasselbe.\u0022\nClara: \u0022Genau.\u0022\u0022 | Das Artefakt macht EU-only-Hosting zur festen Forderung, obwohl im Transkript hierzu widerspr\u00FCchliche Aussagen und keine eindeutige Entscheidung vorlagen (Ansicht \u0022EU only\u0022 war umstritten/offen)."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 10,
+      "reason": "MISSING_TOPIC: 9 Fehler (unveraendert); 1 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Also erstmal Login per E-Mail und Passwort.\u0022\u0022 | Die im Transkript klar genannte MVP-Option \u0022Login per E-Mail und Passwort\u0022 fehlt im Artefakt (es wird nur OAuth genannt)."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer. Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends.\u0022\u0022 | Im Transkript wurde die Mobile-Strategie (Web-first vs. native/responsive, Budget- und Priorisierungsfragen) diskutiert; das Artefakt enth\u00E4lt dazu keine Aussage oder Entscheidung."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Aber Sales will Angebote erstellen. Und Marketing will Push Notifications.\u0022\u0022 | Push-Notifications (Marketing-Anforderung) wurden im Transkript genannt, sind im Artefakt jedoch nicht adressiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Eva: \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022\u0022 | Der Wunsch nach PDF-Export von Angeboten sowie Template-/Versionsmanagement wird im Transkript explizit genannt, im Artefakt fehlen Anforderungen dazu (nur Rechnungs-PDFs sind erw\u00E4hnt)."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u0022\u0022 | Im Transkript wird gefordert, Kontaktformulare/Support-Anfragen dem Kundenkonto zuzuordnen; das Artefakt beschreibt nur allgemein rudiment\u00E4re Support-Unterst\u00FCtzung ohne diese notwendige Zuordnungsanforderung."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022\nBen: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Im Transkript sind Test-/Staging-Umgebungen, Pseudonymisierung bzw. Verbot echter Kundendaten in Tests und das Problem mit SAP-Testdaten zentrale Compliance-Risiken; das Artefakt erw\u00E4hnt Umgebungen/Testdaten nicht."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Dann brauchen wir Pagination und Download-Limits.\u0022\u0022 | Anforderungen an Rate-Limits, Pagination und Download-Limits (z.B. f\u00FCr Rechnungs-Downloads) werden im Transkript genannt, fehlen im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Eva: \u0022Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022\nAnna: \u0022Deutsch und Englisch sollten schon drin sein.\u0022\u0022 | Mehrw\u00E4hrungs- und Internationalisierungsanforderungen (W\u00E4hrungen, Sprachen) wurden im Transkript besprochen, sind im Artefakt nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Kann der Kunde ein Angebot online akzeptieren?\u0022\nClara: \u0022Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz.\u0022\u0022 | Online-Akzeptanz von Angeboten (rechtliche Nachweisanforderungen) wurde im Transkript als m\u00F6gliches, aber kritisches Thema genannt; das Artefakt enth\u00E4lt dazu keine Anforderung oder Einschr\u00E4nkung."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [GERING\u2192GERING] (partial: \u0022Die Performance der Angebotserstellung soll eine m\u00F6glichst kurze Angebotszeit sicherstellen, relevant f\u00FCr KPI-Reporting.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022\u0022 | Konkrete KPIs (Conversion Rate, Zeit bis Angebot) wurden im Transkript genannt, im Artefakt fehlen diese konkreten Metriken."
+        }
+      ]
+    }
+  ]
+}

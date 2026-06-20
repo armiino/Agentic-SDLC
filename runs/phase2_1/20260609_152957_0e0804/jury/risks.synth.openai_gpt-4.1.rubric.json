@@ -1,0 +1,90 @@
+{
+  "spike": "RubricEvaluator",
+  "scheme": "Synthesis",
+  "phase": "phase2_1",
+  "runId": "20260609_152957_0e0804",
+  "artifact": "risks.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-11T16:38:22.057335Z",
+  "errorScore": 11,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 11; KRITISCH=0; needsRepair=True (Schwelle 4).",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 6,
+      "reason": "MISSING_TOPIC: 6 Fehler (verifiziert); 6 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen auch Rate Limits f\u00FCr API. ... Dann brauchen wir Pagination und Download-Limits. ... Wir brauchen Missbrauchserkennung.\u0022 | Das Risiko von Missbrauch durch fehlende Rate Limits, Download-Limits und fehlende Missbrauchserkennung (z.B. Massenexport von Rechnungen) wird im Artefakt nicht explizit als Risiko adressiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wenn SAP nicht erreichbar ist ... Dann brauchen wir Fallback oder Cache. ... Cache enth\u00E4lt Kundendaten? ... Dann ist Cache riskant. ... Und Cache-Invalidierung ist aufwendig.\u0022 | Das Risiko, dass ein Cache personenbezogene Daten enth\u00E4lt und dadurch neue Datenschutz- und Invalidierungsprobleme entstehen, wird im Artefakt nicht explizit als Risiko benannt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022 | Das Risiko, dass fehlende Versionierung von Angebots-/PDF-Templates zu Nachvollziehbarkeits- und Compliance-Problemen f\u00FChrt, wird im Artefakt nicht explizit als Risiko adressiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen. ... Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind. ... Das ist ein klassischer Berechtigungskonflikt.\u0022 | Das Risiko von Berechtigungskonflikten und unklaren Rollen-/Rechtekonzepten (insbesondere f\u00FCr Support, Sonderkonditionen, Angebotsdetails) wird im Artefakt nicht explizit als Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen einen Architekten. ... Wir haben keinen.\u0022 | Das Risiko, dass fehlende Architekturverantwortung/Architekt zu unklaren oder fehlerhaften Architekturentscheidungen f\u00FChrt, wird im Artefakt nicht explizit als Risiko benannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Deutsch und Englisch sollten schon drin sein. ... Support braucht mindestens Deutsch und Englisch.\u0022 | Das Risiko, dass fehlende Internationalisierung/Mehrsprachigkeit zu Problemen im Support und bei Kunden f\u00FChrt, wird im Artefakt nicht explizit als Risiko adressiert."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Trennung von technisch notwendigen Logs und personenbezogenen Audit Logs ist nicht trivial. Auswirkungen: Datenschutzverst\u00F6\u00DFe, fehlende Nachvollziehbarkeit. Geg\u2026\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.\u0022 | Das spezifische Risiko, dass Monitoring-L\u00F6sungen versehentlich personenbezogene Daten in technische Logs aufnehmen (und damit Datenschutzverst\u00F6\u00DFe verursachen), wird im Artefakt nicht explizit als Risiko benannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Nutzung von echten Kundendaten in Testumgebungen f\u00FChrt zu Compliance-Risiken. Auswirkungen: Datenschutzverst\u00F6\u00DFe, Bu\u00DFgelder. Gegenma\u00DFnahmen: Einsatz von Pseudony\u2026\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 | Das konkrete Risiko, dass das SAP-Testsystem produktive/echte Kundendaten enth\u00E4lt und dadurch Compliance-Verst\u00F6\u00DFe in der Entwicklung/Test entstehen, wird im Artefakt nicht explizit als eigenst\u00E4ndiges Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Einsatz von Testdatenmanagement und Geheimnisverwaltung (Secrets Management).\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022CI/CD braucht Secrets Management.\u0022 | Das Risiko, dass fehlendes oder unsicheres Secrets Management in CI/CD-Pipelines zu Sicherheitsl\u00FCcken f\u00FChrt, wird im Artefakt nicht explizit als Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Unklare internationale Anforderungen (DACH, Schweiz, EU, USA) mit teils widerspr\u00FCchlichen Datenschutzanforderungen.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen L\u00E4nder- und W\u00E4hrungsregeln. ... Schweiz ist nicht EU, aber hat eigene Datenschutzthemen. ... Hosting in EU kann Schweizer Kunden bedienen, aber Vertragspr\u00FCfung n\u00F6tig.\u0022 | Das Risiko, dass l\u00E4nderspezifische Datenschutz- und Vertragsanforderungen (z.B. Schweiz, EU, USA) nicht ausreichend ber\u00FCcksichtigt werden und dadurch rechtliche Probleme entstehen, wird im Artefakt nicht explizit als eigenst\u00E4ndiges Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022SAP ist kritisch f\u00FCr Preise und Produktdaten, jedoch ist Echtzeitverf\u00FCgbarkeit eingeschr\u00E4nkt. Auswirkungen: Falsche Preisangaben, nicht aktuelle Angebote, Kunde\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen. ... Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise.\u0022 | Das Risiko, dass Angebote mit veralteten/falschen Preisen oder Rabatten erstellt werden, weil SAP-Daten nicht aktuell sind, wird im Artefakt nicht explizit als Risiko benannt (nur allgemein als SAP-Datenaktualit\u00E4t, aber nicht die konkrete Folge f\u00FCr Angebote)."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Dokumentation aller Annahmen, Risiken und offenen Fragen f\u00FCr die Stakeholderkommunikation.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Dokumentation ist wichtig, aber bitte nicht zu viel. ... Ohne Dokumentation kein Security Review.\u0022 | Das Risiko, dass unzureichende Dokumentation zu Problemen bei Security Review und Compliance f\u00FChrt, wird im Artefakt nicht explizit als Risiko benannt."
+        }
+      ]
+    }
+  ]
+}

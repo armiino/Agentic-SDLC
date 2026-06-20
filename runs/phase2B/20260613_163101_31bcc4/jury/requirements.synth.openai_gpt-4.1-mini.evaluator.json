@@ -1,0 +1,75 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-13T16:32:52.683654Z",
+  "errorScore": 18,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 18; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 9,
+      "reason": "FALSE_CERTAINTY: 9 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System unterst\u00FCtzt Mehrw\u00E4hrung und Mehrsprachigkeit vorrangig f\u00FCr die DACH-Region im MVP; sp\u00E4tere Erweiterungen sind vorgesehen.\u0022 | Transkript: \u0022Anna: \u0022Nicht im MVP?\u0022 / Eva: \u0022Wenn Schweiz Pilotkunde ist, dann doch.\u0022 / Anna: \u0022Pilotkunde ist noch nicht final.\u0022 / David: \u0022Ich dachte Pilotkunde ist M\u00FCller AG aus der Schweiz.\u0022 / Anna: \u0022Vielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche.\u0022\u0022 | Im Transkript ist die Mehrw\u00E4hrungs- und Mehrsprachunterst\u00FCtzung f\u00FCr das MVP offen und abh\u00E4ngig vom noch nicht finalen Pilotkunden; das Artefakt stellt dies jedoch als gesetzt dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Security Reviews m\u00FCssen durchgef\u00FChrt werden, Umfang und Dauer sind noch zu kl\u00E4ren.\u0022 | Transkript: \u0022Ben: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 / Anna: \u0022Dann machen wir es ohne Security Review?\u0022 / Clara: \u0022Das ist keine Option.\u0022\u0022 | Das Transkript l\u00E4sst offen, wie und ob ein Security Review im MVP realisiert wird; das Artefakt stellt die Durchf\u00FChrung als gesetzt dar, obwohl Details noch offen sind."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup- und Managed Hosting erfolgen ausschlie\u00DFlich in der EU.\u0022 | Transkript: \u0022Farid: \u0022EU-only Hosting ist nicht einfach... Unser Standardanbieter repliziert Backups manchmal global...\u0022 / Anna: \u0022Ja EU only. Oder zumindest DSGVO-konform.\u0022 / Clara: \u0022Dann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u0022\u0022 | Im Transkript ist EU-only Hosting und Backup als Ziel genannt, aber mit Unsicherheiten und Risiken; das Artefakt stellt es als gesetzt dar, ohne die Komplexit\u00E4t und Risiken zu kennzeichnen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das Kundenportal muss einen Login mit Double-Opt-In-Verfahren unterst\u00FCtzen.\u0022 | Transkript: \u0022Anna: \u0022Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n.\u0022 / Clara: \u0022Login per E-Mail? Dann brauchen wir Double-Opt-In.\u0022 / Anna: \u0022Ja aber das darf uns jetzt nicht blockieren.\u0022 / Sp\u00E4ter: MVP: \u0022Login mit Double-Opt-In\u0022\u0022 | Im Transkript wird Double-Opt-In als notwendig f\u00FCr DSGVO genannt, aber Anna betont, dass es das MVP nicht blockieren darf; im Artefakt wird Double-Opt-In als verpflichtend f\u00FCr das MVP dargestellt, was die Offenheit im Transkript nicht widerspiegelt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System implementiert Audit- und Logging-Funktionalit\u00E4ten, die DSGVO-konform und minimal im MVP ausgelegt sind.\u0022 | Transkript: \u0022Clara: \u0022Auditierbarkeit ist Pflicht.\u0022 / Anna: \u0022Logging, aber bitte nicht zu komplex.\u0022 / Ben: \u0022Security Review dauert 6 Wochen.\u0022 / Anna: \u0022Dann machen wir es ohne Security Review?\u0022 / Clara: \u0022Keine Option.\u0022\u0022 | Das Transkript zeigt Unsicherheiten und Spannungen bez\u00FCglich Umfang und Komplexit\u00E4t von Audit und Logging im MVP; das Artefakt stellt Audit- und Logging als gesetzt und DSGVO-konform dar, ohne die offenen Punkte zu kennzeichnen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022SAP-Anbindung erfolgt lesend, zur Verf\u00FCgungstellung von Preis- und Rabattlogik gem\u00E4\u00DF Anforderungen.\u0022 | Transkript: \u0022Ben: \u0022SAP hat kein Schreibzugriff im MVP.\u0022 / Anna: \u0022Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP.\u0022 / Diskussion \u00FCber Preisg\u00FCltigkeit, Cache, und kritische Abh\u00E4ngigkeiten.\u0022 | Im Transkript ist die SAP-Anbindung lesend im MVP klar, aber Preis- und Rabattlogik sind komplex und teilweise offen; das Artefakt stellt die Bereitstellung von Rabattlogik als gesetzt dar, obwohl Rabattfreigabeprozesse und Sonderrabatte im MVP ausgeschlossen sind."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das MVP muss innerhalb eines Zeitrahmens von 8 Wochen geliefert werden.\u0022 | Transkript: \u0022Anna: \u0022MVP in 8 Wochen wurde versprochen.\u0022 / Ben: \u0022Security Review dauert 6 Wochen, passt nicht.\u0022 / Diskussion \u00FCber Umfang und Komplexit\u00E4t, viele offene Punkte und Risiken.\u0022 | Das Transkript zeigt, dass der 8-Wochen-Zeitrahmen stark unter Druck steht und viele Anforderungen nicht realistisch sind; das Artefakt stellt den 8-Wochen-Zeitrahmen als gesetzt dar, ohne die Risiken und Spannungen ausreichend zu kennzeichnen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System unterst\u00FCtzt Mehrw\u00E4hrung und Mehrsprachigkeit vorrangig f\u00FCr die DACH-Region im MVP; sp\u00E4tere Erweiterungen sind vorgesehen.\u0022 | Transkript: \u0022Anna: \u0022Pilotkunde ist noch nicht final.\u0022 / Eva: \u0022Wenn Schweiz Pilotkunde ist, dann doch.\u0022 / Diskussion \u00FCber Mehrw\u00E4hrung, Datenschutz Schweiz, und Pilotkunde offen.\u0022 | Das Artefakt stellt Mehrw\u00E4hrung und Mehrsprachigkeit f\u00FCr das MVP als gesetzt dar, obwohl im Transkript dies als offen und abh\u00E4ngig vom Pilotkundenstatus dargestellt wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup- und Managed Hosting erfolgen ausschlie\u00DFlich in der EU.\u0022 | Transkript: \u0022Farid: \u0022EU-only Hosting ist nicht einfach... Replikation global...\u0022 / Diskussion \u00FCber Kosten und Risiken.\u0022 | Im Transkript wird EU-only Hosting als Ziel genannt, aber mit Risiken und Unsicherheiten; das Artefakt stellt es als gesetzt dar, ohne diese Risiken zu reflektieren."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    }
+  ]
+}

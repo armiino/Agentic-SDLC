@@ -1,0 +1,40 @@
+--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen zum Kundenportal (MVP)
++ 
++ ## 1. Offene fachliche Fragen
++ - **Rabatt‑Freigabe‑Workflow**: Wie soll im MVP mit Angeboten umgehen werden, die einen Rabatt > 15 % enthalten? Gibt es einen manuellen Prüfprozess oder ein technisches Limit?
++ - **Support‑Datenschutz**: Welche konkreten Daten dürfen im Kontaktformular erhoben werden und wie wird die DSGVO‑Konformität (Zweckbindung, Hinweis, Einwilligung) sichergestellt?
++ - **Pilot‑Kunde & Währungsunterstützung**: Wird der Schweizer Pilot‑Kunde tatsächlich einbezogen? Wenn ja, muss CHF zusätzlich zu EUR unterstützt werden – welche Auswirkungen hat das auf UI, Angebotserstellung und rechtliche Vorgaben?
++ - **Retention‑Policy**: Welche Aufbewahrungsfristen gelten für Angebote, Rechnungen und Audit‑Logs (z. B. 7 Jahre für Rechnungen, 30 Tage für Logs) und wie wird das Lösch‑ bzw. Auskunftsrecht technisch umgesetzt?
++ - **Kosten‑ und Budget‑Abschätzung**: Wie hoch sind die erwarteten Kosten für das EU‑Only Managed Hosting und die ausgewählte Managed DB? Welche Budget‑Freigaben sind nötig?
++ 
++ ## 2. Offene technische Fragen
++ - **Managed DB Auswahl**: Welcher EU‑Only Managed‑DB‑Service (z. B. Azure PostgreSQL, AWS RDS EU) erfüllt die Anforderungen an Kosten, Performance und DSGVO‑Compliance?
++ - **API‑Gateway Ersatz**: Welche konkreten Konfigurationen (Rate‑Limiting, Auth‑Proxy) soll ein leichter Reverse‑Proxy (Nginx, Traefik) bieten, bis das API‑Gateway verfügbar ist?
++ - **Minimaler Security‑Check**: Welche Schritte (Threat‑Model, Pen‑Test, Code‑Review) sind im 8‑Wochen‑Zeitplan realistisch, um den Security‑Review zu gewährleisten?
++ - **Testdaten‑Strategie**: Wie werden pseudonymisierte oder synthetische Testdaten für die SAP‑Leseschnittstelle in Dev/Test‑Umgebungen erzeugt und verwaltet?
++ - **Backup‑ und Disaster‑Recovery‑Aufwand**: Wie hoch ist der tatsächliche Aufwand für tägliche Snapshots, Aufbewahrung (30 Tage) und monatliche Wiederherstellungstests?
++ 
++ ## 3. Widersprüche, die geklärt werden müssen
++ - **Zeitplan vs. Security‑Review**: Der 8‑Wochen‑MVP‑Zeitplan kollidiert mit dem 6‑Wochen‑Security‑Review – kann ein minimaler Sicherheits‑Check innerhalb des Zeitrahmens realisiert werden?
++ - **Budget vs. EU‑Only Hosting**: Fehlende Kosten‑Schätzung könnte zu Budget‑Überschreitungen führen, obwohl EU‑Only Hosting verpflichtend ist.
++ - **Pilot‑Kunde & Währung vs. MVP‑Scope**: Die Entscheidung über CHF‑Unterstützung beeinflusst die Internationalisierung, die im MVP nur begrenzt vorgesehen ist.
++ 
++ ## 4. Fehlende Informationen
++ - **Detailierte Kosten‑Schätzung** für Managed Hosting, Managed DB und ggf. Proxy‑Lösung.
++ - **Klare Definition** der Retention‑Policy für alle Datenkategorien.
++ - **Konkretes Verfahren** für das manuelle oder automatisierte Handling von Rabatten > 15 %.
++ - **Datenschutz‑Check** für das Kontaktformular (Einwilligung, Hinweistext, Datenminimierung).
++ - **Testdaten‑Verfahren**: Wie wird sichergestellt, dass in Testumgebungen keine echten Kundendaten verwendet werden?
++ 
++ ## 5. Mögliche Ansprechpartner / Rollen
++ - **Anna (Product Owner)** – Entscheidung über MVP‑Scope, Priorisierung, Budget‑Freigaben.
++ - **Ben (Entwickler)** – Technische Umsetzung, DB‑Auswahl, Integration SAP, Testdaten.
++ - **Clara (Datenschutz)** – DSGVO‑Compliance, Security‑Review, Retention‑Policy, Kontaktformular.
++ - **David (Customer Support)** – Anforderungen an Support‑Prozess, Kontaktformular.
++ - **Eva (Finance)** – Rabatt‑Freigabe‑Regeln, Finanz‑Risiken.
++ - **Farid (IT Operations)** – Hosting‑Kosten, Managed Services, Proxy‑Lösung.
++ 
++ *Erstellt von Phase 2.1 OpenQuestionsAgent (intent=initial_draft, reason=Erstellung offener Fragen, evidence=Projektkontext, requirements, risks, architecture).*

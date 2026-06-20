@@ -1,0 +1,100 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260615_203345_639979",
+  "artifact": "architecture.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T08:45:13.124371Z",
+  "evaluationStatus": "ok",
+  "errorScore": 7,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 7; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 1,
+      "reason": "FALSE_CLAIM (Verifikation aus): 1 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 1
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Auth-Service ... Optional SSO-Anbindung (Azure AD, Google).\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 ... Ben: \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022 ... Farid: \u0022Architektur darf keine konkreten Cloud-Produkte erfinden, solange wir keinen Provider gew\u00E4hlt haben.\u0022\u0022 | Das Artefakt nennt konkrete SSO-Provider (Azure AD, Google) als Option, obwohl im Transkript keine finale Entscheidung getroffen wurde und explizit keine konkreten Cloud-Produkte vor Providerwahl genannt werden sollen."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 2 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 2,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022API-Gateway (z.\u202FB. Kong, AWS API-GW) ... Momentan in Warteliste (Verf\u00FCgbarkeit nach ~6\u202FWochen).\u0022): [MITTEL] Artefakt: \u0022API-Gateway (z.\u202FB. Kong, AWS API-GW) ... Momentan in Warteliste (Verf\u00FCgbarkeit nach ~6\u202FWochen).\u0022 | Transkript: \u0022Ben: \u0022API Gateway ... Warteliste von sechs Wochen.\u0022 ... Offene Architekturentscheidung: \u0022API-Gateway Verf\u00FCgbarkeit\u0022 mit Nutzung eines Minimal-API-Layers als Fallback.\u0022 | Das Artefakt stellt die Nutzung eines konkreten API-Gateways als gesetzt dar, obwohl im Transkript die Verf\u00FCgbarkeit des zentralen API-Gateways offen ist und ein Minimal-API-Layer als Fallback vorgesehen ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Audit-Log-Service ... Speichert \u00C4nderungen und Freigaben (ohne PII) in einem separaten Log-Store.\u0022): [MITTEL] Artefakt: \u0022Audit-Log-Service ... Speichert \u00C4nderungen und Freigaben (ohne PII) in einem separaten Log-Store.\u0022 | Transkript: \u0022Farid: \u0022Zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.\u0022 ... Clara: \u0022Unterschiedliche Logs mit unterschiedlichen Aufbewahrungsfristen.\u0022\u0022 | Das Artefakt stellt die Trennung und Speicherung von Audit-Logs ohne PII als gesetzt dar, obwohl im Transkript noch offene Fragen zur genauen Umsetzung und Aufbewahrung bestehen."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 3,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 2 confirmed; 1 partial (herabgestuft); 2 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 1,
+        "rejected": 2,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Secrets Management\u0022 wird als notwendig genannt.\u0022 | Das Thema Secrets Management, das im Transkript als wichtig f\u00FCr CI/CD und Sicherheit genannt wird, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 ... Ben: \u0022SAP-Testsystem hat echte alte Kundendaten, Problem f\u00FCr Integrationstests.\u0022\u0022 | Das Thema Umgang mit Testdaten und Pseudonymisierung, das im Transkript als kritisch f\u00FCr Datenschutz bei Tests genannt wird, fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u00222. Wichtige Komponenten: Support-Service: Kontaktformular-Handler, sp\u00E4ter erweiterbar zu Ticket-System. 5. Offene Architekturentscheidungen: Support-Prozess: Ak\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Support ist nicht gel\u00F6st.\u0022 ... Support-Prozess mit Ticketsystem unklar, nur Kontaktformular vorgesehen.\u0022 | Das Support-Ticketsystem und der Umgang mit Supportdaten, die im Transkript als kritisch f\u00FCr Kundenservice und Datenschutz genannt werden, fehlen im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u00224. Daten- und Sicherheitsaspekte: Datenschutz / DSGVO: Double-Opt-In bei Registrierung, automatisierte L\u00F6schfristen, minimal notwendige Datenspeicherung.\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Double-Opt-In und L\u00F6schung fehlen.\u0022 ... Anna: \u0022Login mit Double-Opt-In\u0022 wird genannt, aber L\u00F6schkonzept fehlt explizit im Artefakt.\u0022 | Das L\u00F6schkonzept f\u00FCr personenbezogene Daten, das im Transkript mehrfach als notwendig und kritisch genannt wird, fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u00222. Wichtige Komponenten: Angebots-Service: Kernlogik f\u00FCr Angebotserstellung, Status-Workflow, Rabatt-Freigaben, Audit-Trail.\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Freigabeprozess fehlt.\u0022 ... Eva: \u0022Rabatt-Freigabe ist wichtig.\u0022 ... Ben: \u0022Rabattlogik aus SAP, Freigabeprozess im Portal.\u0022\u0022 | Der Freigabeprozess f\u00FCr Rabatte, der im Transkript als finanziell und rechtlich wichtig erachtet wird, ist im Artefakt nicht enthalten."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260615_203345_639979",
+  "artifact": "risks.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T08:44:35.964427Z",
+  "evaluationStatus": "ok",
+  "errorScore": 11,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 11; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aus): 0 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 3 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 3,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Rabatt-Freigabe-Workflow unvollst\u00E4ndig definiert | Schwellenwerte (\u003E15 % Manager, \u003E30 % Finance) genannt, aber keine detaillierte Genehmigungslogik. | Formalen \u2026\u0022): [MITTEL] Artefakt: \u0022\u0022Rabatt-Freigabe-Workflow unvollst\u00E4ndig definiert\u0022 mit Schwellenwerten \u003E15% Manager, \u003E30% Finance genannt.\u0022 | Transkript: \u0022Im Transkript wird diskutiert, dass Schwellenwerte unklar sind (15%, 20%, 30%), und Freigabeprozess ist offen.\u0022 | Das Artefakt stellt Schwellenwerte als gegeben dar, obwohl im Transkript diese noch offen und unsicher sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Zielmarkt (DE vs. CH) nicht gekl\u00E4rt | Unterschiedliche W\u00E4hrungen, rechtliche Vorgaben und Datenschutz-Bestimmungen. | Klare Zielmarkt-Definition vor MVP; Modal-\u2026\u0022): [MITTEL] Artefakt: \u0022\u0022Zielmarkt (DE vs. CH) nicht gekl\u00E4rt\u0022 mit klaren Auswirkungen und Gegenma\u00DFnahmen.\u0022 | Transkript: \u0022Im Transkript ist Zielmarkt noch offen, Pilotkunde nicht final, Entscheidung steht noch aus.\u0022 | Das Artefakt stellt Zielmarkt-Konflikt als feststehendes Risiko dar, obwohl im Transkript noch offen und unentschieden."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022\u0022Frontend-Strategie unklar\u0022 als Risiko mit klarer Empfehlung zur Entscheidung.\u0022).\u0022): [MITTEL] Artefakt: \u0022\u0022Frontend-Strategie unklar\u0022 als Risiko mit klarer Empfehlung zur Entscheidung.\u0022 | Transkript: \u0022Im Transkript wird Frontend-Strategie als offen und unentschieden dargestellt, mit Unsicherheit zwischen Web-first und Mobile-first.\u0022 | Das Artefakt stellt Frontend-Strategie als Risiko dar, aber gibt eine klare Empfehlung zur Entscheidung, was im Transkript noch offen ist."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 7,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 4 confirmed; 3 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 3,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Backup?\u0022 ... \u0022Wenn Kundendaten drin sind: ja.\u0022 ... \u0022Backup\u0022 als Risiko und notwendige Ma\u00DFnahme.\u0022 | Das Transkript benennt Backup/Disaster Recovery als Risiko, das Artefakt listet dieses Risiko nicht."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Ohne Dokumentation kein Security Review.\u0022 ... \u0022Dokumentation ist wichtig.\u0022\u0022 | Das Transkript nennt fehlende Dokumentation als Risiko f\u00FCr Security Review, das Artefakt erw\u00E4hnt Dokumentation nicht als Risiko."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Secrets Management\u0022 wird als notwendige Ma\u00DFnahme genannt.\u0022 | Das Transkript nennt Secrets Management als Risiko/Ma\u00DFnahme, das Artefakt erw\u00E4hnt es nicht."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022SAP-Schreibzugriff hatten wir noch gar nicht entschieden.\u0022 ... \u0022Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP.\u0022\u0022 | Das Transkript zeigt Unsicherheit bzgl. SAP-Schreibzugriff und Online-Akzeptanz als Risiko, das Artefakt erw\u00E4hnt dies nicht."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Im Abschnitt 4 (Widerspr\u00FCche und Unsicherheiten) wird erw\u00E4hnt: \u0022Zeitplan vs. DSGVO-Umsetzung: 8-Wochen-MVP steht im Konflikt mit notwendigen Sicherheits-Reviews\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 und \u0022Das ist keine Option.\u0022\u0022 | Das Transkript nennt die Notwendigkeit eines Security Reviews als Risiko und Zeitkonflikt, das Artefakt erw\u00E4hnt dieses Risiko nicht."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Im Abschnitt 1 (Fachliche Risiken) ist \u0022Support-Prozess nur Kontaktformular\u0022 als Risiko mit fehlender Ticket-Nachverfolgung und unklarer SLA genannt. Datenschut\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Support wird damit nicht gl\u00FCcklich.\u0022 ... \u0022Supportprozess unklar.\u0022 ... \u0022Kontaktformular ohne Ticketpersistenz\u0022 als Risiko.\u0022 | Das Transkript beschreibt Supportprozess als Risiko mit unklarer SLA und fehlender Ticketnachverfolgung, das Artefakt erw\u00E4hnt zwar Support, aber nicht die Datenschutz- und Nachvollziehbarkeitsrisiken des Kontaktformulars."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022In Abschnitt 6 (Gegenma\u00DFnahmen) Punkt 10 wird \u0022Testdaten-Pseudonymisierung\u0022 als Ma\u00DFnahme genannt, jedoch wird das Risiko der Verwendung echter Kundendaten in Te\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 ... \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Das Transkript benennt Risiko der Verwendung echter Kundendaten in Testumgebungen, das Artefakt erw\u00E4hnt Testdaten-Pseudonymisierung nur als Gegenma\u00DFnahme, aber nicht als Risiko."
+        }
+      ]
+    }
+  ]
+}

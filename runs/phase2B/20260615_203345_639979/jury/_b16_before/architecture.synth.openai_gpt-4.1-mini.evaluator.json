@@ -1,0 +1,107 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T20:38:06.2999Z",
+  "evaluationStatus": "ok",
+  "errorScore": 9,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 9; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aus): 0 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 5,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 4 confirmed; 1 partial (herabgestuft); 6 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 1,
+        "rejected": 6,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup / Disaster Recovery: T\u00E4gliches Snapshot\u2011Backup, 30\u2011Tage\u2011Retention, Wiederherstellungs\u2011SLAs definiert (RPO \u003C\u202F4\u202Fh, RTO \u003C\u202F2\u202Fh).\u0022 | Transkript: \u0022Backup und Disaster Recovery sind notwendig, aber Details und SLAs nicht final definiert.\u0022 | Das Artefakt gibt konkrete Backup-RPO/RTO Werte an, obwohl im Transkript keine finale Entscheidung oder Details dazu getroffen wurden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Audit\u2011Log\u2011Service: Speichert \u00C4nderungen und Freigaben (ohne PII) in einem separaten Log\u2011Store.\u0022 | Transkript: \u0022Audit-Logs m\u00FCssen revisionssicher sein, aber Details zu PII-Ausschluss und Log-Store offen.\u0022 | Das Artefakt stellt Audit-Log-Service mit PII-freier Speicherung als gesetzt dar, obwohl im Transkript noch offene Fragen zur Auditierbarkeit und Datenschutz bestehen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Rollen (Admin, Sales, Manager, Support, Kunde) und Berechtigungen.\u0022 | Transkript: \u0022Rollenmodell mit Admin, normaler User, Manager, Support diskutiert, aber Support-Rollen und Berechtigungen noch offen und konfliktbehaftet.\u0022 | Das Artefakt stellt Rollen und Berechtigungen als definiert dar, obwohl im Transkript noch Unklarheiten und Konflikte bzgl. Support-Rollen bestehen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022EU\u2011only Managed Hosting ... Daten d\u00FCrfen die EU nicht verlassen.\u0022 | Transkript: \u0022EU-only Hosting mit nachweisbarer Datenresidenz gefordert, aber Kosten und Anbieter noch offen.\u0022 | Das Artefakt stellt EU-only Managed Hosting als gesetzt dar, obwohl im Transkript der finale Provider und Kosten noch offen sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Monitoring \u0026 Logging: Infrastruktur\u2011 und Applikations\u2011Monitoring, technische Logs (ohne PII) \u002B Audit\u2011Logs.\u0022): [GERING] Artefakt: \u0022Monitoring \u0026 Logging: technische Logs (ohne PII) \u002B Audit\u2011Logs.\u0022 | Transkript: \u0022Zentrales Monitoring darf keine personenbezogenen Daten enthalten, Unterscheidung zwischen Audit- und technischen Logs offen.\u0022 | Das Artefakt stellt Logging und Monitoring mit PII-freien Logs als gesetzt dar, obwohl im Transkript noch offene Fragen zur Trennung und Datenschutz bestehen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Auth\u2011Service ... Optional SSO\u2011Anbindung (Azure AD, Google).\u0022).\u0022): [MITTEL] Artefakt: \u0022Auth\u2011Service ... Optional SSO\u2011Anbindung (Azure AD, Google).\u0022 | Transkript: \u0022SSO optional, Auswahl zwischen Azure AD, Google oder keine SSO\u2011Integration f\u00FCr MVP (offen).\u0022 | Das Artefakt stellt die SSO-Anbindung mit Azure AD und Google als Option dar, obwohl im Transkript die SSO-Provider-Auswahl noch offen ist und nicht entschieden wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022API-Gateway (z.\u202FB. Kong, AWS API-GW) ... Momentan in Warteliste (Verf\u00FCgbarkeit nach ~6 Wochen).\u0022): [MITTEL] Artefakt: \u0022API\u2011Gateway (z.\u202FB. Kong, AWS API\u2011GW) ... Momentan in Warteliste (Verf\u00FCgbarkeit nach ~6\u202FWochen).\u0022 | Transkript: \u0022Zentrales API Gateway hat Warteliste von sechs Wochen, Nutzung eines Minimal-API-Layers als Fallback offen.\u0022 | Das Artefakt nennt konkrete Produkte (Kong, AWS API-GW), obwohl im Transkript keine konkreten Cloud-Produkte oder Anbieter genannt werden d\u00FCrfen, solange kein Provider gew\u00E4hlt ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022OAuth\u202F2.0 (alternativ API\u2011Key) ... OAuth w\u00E4re besser, aber komplexer, noch nicht final.\u0022).\u0022): [MITTEL] Artefakt: \u0022OAuth\u202F2.0 (alternativ API\u2011Key) ... OAuth w\u00E4re besser, aber komplexer, noch nicht final.\u0022 | Transkript: \u0022OAuth bevorzugt, aber noch nicht final entschieden.\u0022 | Das Artefakt stellt OAuth 2.0 als Standard dar, obwohl im Transkript die Entscheidung noch offen ist und OAuth nur bevorzugt, aber nicht final ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Frontend: React/Angular\u2011Basis (Technologie noch nicht festgelegt).\u0022).\u0022): [MITTEL] Artefakt: \u0022Frontend: React/Angular\u2011Basis (Technologie noch nicht festgelegt).\u0022 | Transkript: \u0022Frontend-Technologie noch offen, Web-first oder Mobile-first unentschieden.\u0022 | Das Artefakt nennt konkrete Frameworks (React/Angular), obwohl im Transkript keine finale Technologieentscheidung getroffen wurde."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Support\u2011Service: Kontaktformular\u2011Handler, sp\u00E4ter erweiterbar zu Ticket\u2011System.\u0022).\u0022): [MITTEL] Artefakt: \u0022Support\u2011Service: Kontaktformular\u2011Handler, sp\u00E4ter erweiterbar zu Ticket\u2011System.\u0022 | Transkript: \u0022Support mit Kontaktformular ohne Ticketpersistenz im MVP, Ticket-System offen und ungel\u00F6st.\u0022 | Das Artefakt stellt Support-Service als Kontaktformular-Handler dar, obwohl im Transkript Support-Prozess und Ticketsystem noch offen und ungel\u00F6st sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Caching: F\u00FCr SAP\u2011Preis\u2011Daten eventuell kurzer TTL\u2011Cache (5\u201115\u202Fmin) mit Pseudonymisierung\u2011Mechanismus, um Datensch\u2026\u0022): [MITTEL] Artefakt: \u0022Caching: F\u00FCr SAP\u2011Preis\u2011Daten eventuell kurzer TTL\u2011Cache (5\u201115\u202Fmin) mit Pseudonymisierung\u2011Mechanismus, um Datenschutz\u2011Risiken zu minimieren (offene Entscheidung).\u0022 | Transkript: \u0022Caching und Datenschutz sind offen, wie personenbezogene Daten im Cache behandelt werden.\u0022 | Das Artefakt nennt konkrete Cache-TTL und Pseudonymisierung als Option, obwohl im Transkript die Cache-Strategie und Datenschutzma\u00DFnahmen noch offen sind."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    }
+  ]
+}

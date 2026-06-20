@@ -1,0 +1,97 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-17T16:25:25.146055Z",
+  "evaluationStatus": "ok",
+  "errorScore": 8,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 8; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 3,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 2 confirmed; 1 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 1,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Availability: Ziel\u2011Uptime 99,5\u202F% (Annahme).\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Im Transkript wird keine konkrete Ziel-Uptime genannt oder diskutiert. Die Angabe von 99,5% Verf\u00FCgbarkeit im Artefakt ist eine erfundene konkrete Zahl."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022SSO\u2011Integration (Azure AD, Google) wird im MVP nicht umgesetzt.\u0022 | Transkript: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides? (Anna) SAP hat uraltes IAM, kein zentrales IAM. (Ben) OAuth bevorzugt, aber noch nicht final. (Ben) Keine finale Entscheidung, noch offen.\u0022 | Das Artefakt nennt konkrete SSO-Provider (Azure AD, Google) als nicht im MVP umgesetzt, obwohl im Transkript keine finale Entscheidung getroffen wurde und Azure AD nur als Beispiel genannt wurde, ohne Festlegung."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022[Farid] Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\n[Farid] Noch ein Punkt: Unser zentrales Monitoring da\u2026\u0022): [GERING] Artefakt: \u0022Performance: API\u2011Gateway (Verf\u00FCgbarkeit nach 6\u2011Wochen\u2011Warteliste), Rate\u2011Limiting und Pagination f\u00FCr Downloads.\u0022 | Transkript: \u0022API Gateway hat 6 Wochen Warteliste. Rate Limits und Pagination werden diskutiert als notwendig, aber noch offen. (Ben, Farid)\u0022 | Das Artefakt stellt API-Gateway mit 6-Wochen-Warteliste als gesetzt dar, obwohl im Transkript die Verf\u00FCgbarkeit und Umsetzung noch unklar und offen ist."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 2,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 1 confirmed; 1 partial (herabgestuft); 2 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 1,
+        "rejected": 2,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Rollen \u0026 Berechtigungen: Rollen Admin, Sales, Manager, Support. Support\u2011Mitarbeiter d\u00FCrfen Kundendaten einsehen, jedoch keine Preis\u2011/Rabatt\u2011Details.\u0022 | Transkript: \u0022Anna: \u0022Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support? Wer pflegt eigentlich Stammdaten?\u0022 / David: \u0022Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen.\u0022 / Eva: \u0022Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind.\u0022 / Anna: \u0022Also Support sieht nur Status, nicht Details?\u0022 / David: \u0022Dann kann Support nicht helfen.\u0022 / Ben: \u0022Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren.\u0022\u0022 | Das Artefakt stellt die Rollen und deren Berechtigungen als festgelegt dar, obwohl im Transkript die Support-Rollenrechte noch unklar und strittig sind und ein Berechtigungskonflikt explizit genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Analytics/KPIs: Erfassung von Conversion\u2011Rate, Zeit bis Angebot, Nutzung\u2011Statistiken; Consent\u2011Management f\u00FCr Tracking ist erforderlich.\u0022): [GERING] Artefakt: \u0022Analytics/KPIs: Erfassung von Conversion\u2011Rate, Zeit bis Angebot, Nutzung\u2011Statistiken; Consent\u2011Management f\u00FCr Tracking ist erforderlich.\u0022 | Transkript: \u0022Anna: \u0022Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen.\u0022 / Ben: \u0022Was sind die KPIs?\u0022 / Anna: \u0022Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 / Clara: \u0022Consent-Management f\u00FCr Tracking ist erforderlich.\u0022 / Anna: \u0022Analytics/Tracking-Infrastruktur (Consent-Management) muss noch spezifiziert werden.\u0022\u0022 | Das Artefakt stellt Consent-Management und KPI-Erfassung als gesetzt dar, obwohl im Transkript diese Anforderungen noch offen und nicht final spezifiziert sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Freigabe erforderlich bei Rabatt \u003E 15\u202F% (Schwellenwert muss noch best\u00E4tigt werden).\u0022): [MITTEL] Artefakt: \u0022Angebots\u2011Workflow: Zust\u00E4nde Draft \u2192 Pending Approval \u2192 Approved \u2192 Sent. Freigabe erforderlich bei Rabatt \u003E 15\u202F% (Schwellenwert muss noch best\u00E4tigt werden).\u0022 | Transkript: \u0022Eva: \u0022Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.\u0022 / Anna: \u0022Oder ab 20 Prozent. Ich bin mir nicht sicher.\u0022 / Ben: \u0022Das muss klar definiert werden.\u0022\u0022 | Das Artefakt gibt den Freigabeprozess mit 15% Schwellenwert als gesetzt an, obwohl im Transkript der Schwellenwert und Verantwortlichkeiten noch offen und nicht final entschieden sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Security: TLS\u2011Verschl\u00FCsselung, grunds\u00E4tzlicher Security Review (Detail\u2011Review ggf. nach MVP).\u0022).\u0022): [MITTEL] Artefakt: \u0022Security: TLS\u2011Verschl\u00FCsselung, grunds\u00E4tzlicher Security Review (Detail\u2011Review ggf. nach MVP).\u0022 | Transkript: \u0022Ben: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 / Anna: \u0022Dann machen wir es ohne Security Review?\u0022 / Clara: \u0022Das ist keine Option.\u0022 / Ben: \u0022Vielleicht k\u00F6nnen wir Managed Services nehmen.\u0022 / Anna: \u0022Okay, aber Security Review ist noch nicht final entschieden.\u0022 / Security Review als m\u00F6gliche Verschiebung im Assumptions/Open Points Abschnitt.\u0022 | Das Artefakt stellt den Security Review als gesetzt dar, obwohl im Transkript klar ist, dass der Umfang und Zeitpunkt des Security Reviews noch offen und strittig sind."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022## Functional Requirements\n- Support\u2011Kontakt: Kontaktformular f\u00FCr Kunden; kein Ticket\u2011System im MVP.\n\n## Assumptions and Open Points\n- Support\u2011Prozess: Kein Tic\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Support wird damit nicht gl\u00FCcklich.\u0022 (David) und \u0022Supportprozess unklar\u0022 (David)\u0022 | Das Transkript thematisiert, dass der Supportprozess unklar ist und Support mit dem Kontaktformular ohne Ticketpersistenz nicht zufrieden sein wird, was im Artefakt nicht adressiert oder als offener Punkt genannt wird."
+        }
+      ]
+    }
+  ]
+}

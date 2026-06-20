@@ -1,0 +1,58 @@
+--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturübersicht – Kundenportal (MVP)
++ 
++ ## 1. Systemkontext
++ - **Endnutzer*innen (Kunden, Sales, Admin)** greifen über einen Web‑Browser auf das Kundenportal zu.
++ - Das **Frontend** (SPA, z. B. React/Angular) kommuniziert über HTTPS mit den Backend‑APIs.
++ - Das **Backend** hostet mehrere fachliche Services (Auth, Offer, Invoice, PDF‑Generator, Audit‑Log, Monitoring) in einer **EU‑only Managed‑Hosting‑Umgebung** (Constraint C1).
++ - **SAP‑System** stellt eine rein lesende Schnittstelle für Produkt‑ und Preisdaten bereit (Requirement FR6, Constraint C2 – kein zentrales API‑Gateway im MVP).
++ - **E‑Mail‑Service** wird für Double‑Opt‑In, Konto‑Bestätigung und optionale Push‑Notifications verwendet (FR1, FR8).
++ - **Backup/Disaster‑Recovery‑Komponente** sorgt für tägliche Backups und ein RTO ≤ 4 h (NFR6).
++ - **Monitoring & Alerting** (Logs, Metriken) unterstützt das SLA von ≥ 99 % Verfügbarkeit (NFR3) und liefert Daten für das Basis‑Audit‑Trail (FR7).
++ 
++ ## 2. Wichtige Komponenten
++ | Komponente | Aufgabe | Hinweis / Offene Entscheidung |
++ |------------|---------|------------------------------|
++ | **Frontend** | UI für Login, Angebotserstellung, Rechnung‑Download | Technologie‑Stack (React/Angular) noch nicht festgelegt |
++ | **Auth‑Service** | Benutzer‑Authentifizierung (E‑Mail/Passwort), Double‑Opt‑In, Token‑Ausgabe (z. B. JWT) | OAuth2 vs. eigenes Session‑Management – offene Entscheidung |
++ | **Offer‑Service** | Erstellung, Speicherung und Versionierung von Angeboten, Anwendung von Standard‑Rabatten | Rabatt‑Freigabe‑Grenzwerte (A2) noch offen |
++ | **Invoice‑Service** | Generierung von Rechnungen, PDF‑Export (FR9) | PDF‑Engine (z. B. wkhtmltopdf) – Entscheidung ausstehend |
++ | **SAP‑Connector** | Direktes Lesen von Produkt‑ und Preisdaten aus SAP (FR6) | Direkte Anbindung ohne API‑Gateway (Constraint C2) – Risiko der Kopplung |
++ | **Audit‑Log Service** | Protokollierung kritischer Aktionen (Login, Angebot, Rechnung, Löschung) (FR7) | Speicherort (EU‑only) und Verschlüsselung – noch zu spezifizieren |
++ | **Backup / DR Service** | Tägliche Backups, Wiederherstellung ≤ 4 h (NFR6) | Detailgrad (RPO, Aufbewahrungsfristen) noch offen |
++ | **Monitoring & Alerting** | System‑Metriken, Fehlermeldungen, Rate‑Limiting‑Alarme (NFR7, NFR5) | Schwellenwerte für Rate‑Limiting (A6) noch zu definieren |
++ | **Email‑Service** | Double‑Opt‑In, Benachrichtigungen, ggf. Push‑Notifications (FR8, FR10) | Opt‑In‑Flow und DSGVO‑Konformität – bereits definiert |
++ 
++ ## 3. Schnittstellen / Integrationspunkte
++ - **Frontend ↔ Backend APIs** – HTTPS, JSON, token‑basierte Authentifizierung.
++ - **Backend ↔ SAP** – REST/OData Leseschnittstelle (nur GET), ggf. über Service‑Mesh‑Proxy für zusätzliche Sicherheit.
++ - **Backend ↔ E‑Mail‑Provider** – SMTP/REST‑API für Double‑Opt‑In und Rechnungs‑Versand.
++ - **Backend ↔ PDF‑Generator** – Interner Service‑Aufruf (z. B. HTTP‑POST mit Angebots‑Daten, Rückgabe PDF‑Bytes).
++ - **Backup Service ↔ Datenbanken** – Sicherungs‑Jobs, verschlüsselte Speicherung in EU‑Region.
++ - **Monitoring ↔ Infrastruktur** – Export von Metriken (Prometheus) und Log‑Streams (ELK) an zentralen Dashboard‑Service.
++ 
++ ## 4. Daten‑ und Sicherheitsaspekte
++ - **Datenresidenz**: Alle Daten (Kunden‑, Angebots‑, Rechnungs‑, Log‑Daten) verbleiben innerhalb der EU (Constraint C1, C4).
++ - **Verschlüsselung**: TLS 1.2+ für Daten in Übertragung; AES‑256 für Daten at rest (Datenbanken, Backups).
++ - **DSGVO‑Konformität**: Double‑Opt‑In (FR8), Datenminimierung (C6), Recht auf Vergessenwerden (A5) – konkrete Lösch‑Jobs noch zu definieren.
++ - **Rollen‑ & Berechtigungskonzept**: Admin, Sales, Kunde, (optional Support) mit feingranularen Berechtigungen (FR2). Support‑Mitarbeitende erhalten nur Leserechte ohne Rabatt‑Details (offene Entscheidung).
++ - **Audit‑Trail**: Unveränderliche Protokollierung kritischer Aktionen, getrennt von operativen Logs, speicherort EU.
++ - **Backup / DR**: Tägliche Snapshots, Aufbewahrung mindestens 30 Tage, Wiederherstellung innerhalb von 4 Stunden (NFR6).
++ - **Rate‑Limiting**: Provisorisch 100 Requests/Minute pro Nutzer (NFR5, A6) – Anpassung nach Last‑Tests.
++ - **Monitoring & Alerting**: Echtzeit‑Überwachung von Verfügbarkeit, Antwortzeiten, SAP‑Connector‑Status; automatisierte Alarme bei SLA‑Verletzungen.
++ 
++ ## 5. Offene Architekturentscheidungen
++ 1. **API‑Gateway‑Strategie** – Direktzugriff auf Services (wie aktuell geplant) vs. leichte Proxy‑Lösung (z. B. Service‑Mesh) als Übergang für zentrale Sicherheits‑Controls (Risiko C2).
++ 2. **Authentifizierungs‑Mechanismus** – OAuth2 mit Authorization‑Code‑Flow vs. einfacheres JWT‑basiertes Session‑Management.
++ 3. **Hosting‑Provider & Kosten** – Auswahl des EU‑only Managed‑Service‑Providers und Budgetfreigabe (Risiko C7, A8).
++ 4. **Rate‑Limiting‑Parameter** – Konkrete Schwellenwerte, Burst‑Handling und Bestrafungsstrategien (A6).
++ 5. **Multi‑Währungs‑ und Internationalisierungs‑Unterstützung** – Entscheidung über unterstützte Währungen (EUR, CHF, evtl. USD) und Sprach‑Fallback (A7).
++ 6. **Support‑Workflow‑Integration** – Einfaches Kontakt‑Formular vs. Ticket‑System (z. B. Jira Service Management) und zugehörige Berechtigungen (A4).
++ 7. **Backup‑ und DR‑Detailgrad** – Definition von RPO, Aufbewahrungsfristen für unterschiedliche Datentypen (A3).
++ 8. **PDF‑Generierungstechnologie** – Wahl zwischen serverseitigem Rendering (wkhtmltopdf, Puppeteer) oder Cloud‑Service.
++ 9. **Caching‑Strategie für SAP‑Daten** – In‑Memory Cache (Redis) vs. API‑seitiges Caching, Eviktionspolicy.
++ 
++ *Evidence*: Die oben genannten Punkte leiten sich aus dem bereitgestellten Projektkontext, den funktionalen und nicht‑funktionalen Requirements (docs/requirements.md) sowie der Risikobewertung (docs/risks.md) ab.
++ 

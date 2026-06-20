@@ -1,0 +1,77 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-13T16:47:23.480956Z",
+  "errorScore": 17,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 17; KRITISCH=1; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 2,
+      "reason": "FALSE_CLAIM: 2 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022MVP-Verf\u00FCgbarkeitsziel als Annahme: 99% (NFR-03) \u2014 final zu best\u00E4tigen\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Im Transkript wurde kein konkretes Verf\u00FCgbarkeitsziel (z. B. 99%) genannt; diese konkrete SLA-Zahl ist eine neu eingef\u00FChrte Aussage ohne Grundlage im Meeting."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022Single-Page-App oder serverseitig gerenderte Webapp\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Das Dokument nennt eine konkrete Frontend-Rendering-Option (SPA vs. serverseitig gerendert), eine Detaillierung, die im Meeting nicht diskutiert wurde und daher als nicht aus dem Transkript ableitbar gilt."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 1,
+      "reason": "FALSE_CERTAINTY: 1 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Separate, append-only Audit-Log-Datenbank/Storage (Zugriffs- und \u00C4nderungsnachweis)\u0022 | Transkript: \u0022[Farid] Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\n[Eva] Genau. Und Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.\n[Clara] Revisionssicher hei\u00DFt nicht automatisch unver\u00E4nderbar, aber \u00C4nderungen m\u00FCssen nachvollziehbar sein.\u0022 | Audit-/Revisionsanforderungen sind im Transkript vorhanden, aber die konkrete Implementationsfestlegung auf ein \u0022append-only\u0022 Audit-Log-Storage wurde nicht beschlossen und ist eine konkrete technische Wahl, die im Meeting offen war."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 6,
+      "reason": "MISSING_TOPIC: 5 Fehler (unveraendert); 1 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna] Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.\n[Ben] Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer. Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends.\u0022 | Das Transkript diskutiert explizit Mobile-Strategie (web-first vs. mobile, native vs. responsive) und das Budget/Constraint f\u00FCr zwei Frontends; das Dokument enth\u00E4lt keine Erw\u00E4hnung dieses Themas oder einer Entscheidung/Annahme dazu."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna] ... Marketing will Push Notifications.\n[Clara] Push hei\u00DFt Einwilligung. Wieder DSGVO.\u0022 | Push-Benachrichtigungen und die daraus folgenden DSGVO-Einwilligungsanforderungen wurden im Meeting genannt, sind aber im Architektur\u00FCberblick nicht adressiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Anna] Wir m\u00FCssen KPIs messen.\n[Ben] Was sind die KPIs?\n[Anna] Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 | KPI-/Analytics-Anforderungen (Conversion, Zeit bis Angebot) wurden als relevante Anforderungen genannt, sind aber im Dokument nicht als Anforderung oder Integrationsthema aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. ...\n[Ben] Wir brauchen auch Rate Limits f\u00FCr API.\n[Anna] Kunden laden manchmal hunderte Rechnungen auf einmal herunter.\u0022 | Konkrete Operational-Themen wie API-Rate-Limiting / Pagination / Download-Limits f\u00FCr Massenexporte (Schutz vor Missbrauch, Performance) wurden im Transkript genannt, aber fehlen im Architekturdokument."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u0022 | Das Transkript nennt als Constraint, dass kein zentrales IAM existiert und SAP ein veraltetes System hat; dieses operative Constraint bzw. seine Konsequenzen wird im Architekturentwurf nicht als Annahme/Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Support / Finance (eingeschr\u00E4nkte Einsicht / Aktionen im MVP) \u2014 Finalisierung der Rollenmatrix f\u00FCr MVP (Admin, Sales, Kunde; tempor\u00E4re Support/Finance-Ausnahmep\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[David] Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\n[Anna] Kontaktformular ohne Ticketpersistenz?\n[David] Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto...\u0022 | Das Meeting beschreibt konkret Support-/Ticketing-Handling (Kontaktformular vs. Ticketsystem, Zuordnung zu Kundenkonto, Persistenz) und die damit verbundenen Compliance-/Operational-Risiken; das Dokument behandelt Support nur sehr allgemein und erw\u00E4hnt nicht die konkrete Kontaktformular-/Ticket-Persistenz-/Zuordnungsentscheidung."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+--- before/docs/risks.md
++++ after/docs/risks.md
+- # Risikobericht
++ # Test Write
+- ## 1. Fachliche Risiken
++ This is a test.
+- - **Unklare SAP‑Schreibrechte für Angebotserstellung**: Unklar, ob das System Schreibzugriff auf SAP benötigt; fehlende Entscheidung kann zu Funktionslücken oder Compliance‑Problemen führen.
+- - **Zeitplan vs. Security Review**: Der Security Review benötigt 6 Wochen, das MVP hat nur 8 Wochen. Das Risiko von Verzögerungen und Qualitätsmängeln ist hoch.
+- - **Mehrwährungsunterstützung (CHF/​USD) unentschieden**: Fehlende Entscheidung kann zu falschen Preisberechnungen und Kundenunzufriedenheit führen.
+- - **Support‑Kontaktformular statt Ticket‑System**: Kann zu unzureichender Nachverfolgung von Kundenanfragen führen und Datenschutzimplikationen haben.
+- - **Rabatt‑Freigabe‑Prozess**: Finanz‑Team verlangt Freigabe ab 15 % Rabatt, jedoch ist das im MVP nicht vorgesehen – Risiko von Vertrags‑ oder Finanz‑Verstößen.
+- 
+- ## 2. Technische Risiken
+- - **Fehlendes API‑Gateway**: Keine eingebaute Rate‑Limiting‑ und DDoS‑Schutz‑Lösung; erhöhtes Risiko von Missbrauch und Performance‑Problemen.
+- - **EU‑only Managed Service Hosting**: Kostspielig und noch nicht final beschlossen – Gefahr von Budgetüberschreitung und Verzögerungen bei der Infrastruktur‑Bereitstellung.
+- - **Authentifizierungsmechanismus (OAuth vs. API‑Key) ungeklärt**: Unsichere Wahl kann zu Authentifizierungs‑Schwachstellen führen.
+- - **Backup / Disaster Recovery nicht definiert**: Risiko von Datenverlust und Verstößen gegen DSGVO‑Aufbewahrungspflichten.
+- - **Trennung von technischen und Audit‑Logs nicht implementiert**: Gefahr, dass personenbezogene Daten in technischen Logs landen.
+- 
+- ## 3. Compliance‑ und Datenschutzrisiken
+- - **Double‑Opt‑In‑Implementierung**: Unvollständige Umsetzung kann DSGVO‑Konformität gefährden.
+- - **Logging‑Strategie**: Technische Logs dürfen keine personenbezogenen Daten enthalten – ohne klare Trennung drohen Verstöße.
+- - **Retention‑ und Lösch‑Regeln**: Unklare Aufbewahrungsfristen vs. Recht auf Vergessenwerden können zu regulatorischen Sanktionen führen.
+- - **Testumgebungen mit echten Kundendaten**: Gefahr von Datenexposition während Entwicklung und Tests.
+- - **Hosting‑Provider EU‑Only‑Nachweis**: Fehlende Zertifizierung könnte Datenübermittlung außerhalb der EU implizieren.
+- 
+- ## 4. Widersprüche und Unsicherheiten
+- - **Security Review (6 Wochen) vs. MVP‑Zeitplan (8 Wochen).**
+- - **Budget für EU‑only Managed Services** noch nicht final.
+- - **API‑Gateway Warteliste (6 Wochen) vs. MVP‑Zeitplan**.
+- - **Entscheidung zu OAuth vs. API‑Key** noch offen.
+- - **Rate‑Limiting‑Lösung ohne API‑Gateway** noch nicht bestimmt.
+- - **Währungsunterstützung (CHF, ggf. USD)** unklar.
+- - **SAP‑Schreibzugriff** offen.
+- - **Kosten‑Schätzung** bis Freitag fehlt.
+- 
+- ## 5. Mögliche Auswirkungen
+- - Projektverzögerungen und -budgetüberschreitungen.
+- - Nicht‑Einhaltung von DSGVO → Bußgelder, Reputationsverlust.
+- - Datenverlust oder -korruption bei fehlender Backup‑Strategie.
+- - Sicherheitslücken (z. B. fehlende Rate‑Limiting, schwache Authentifizierung).
+- - Kundenunzufriedenheit durch falsche Preisberechnungen oder mangelhafte Support‑Prozesse.
+- - Rechtliche Risiken durch fehlende Dokumentation von Audit‑Logs und Lösch‑Prozessen.
+- 
+- ## 6. Gegenmaßnahmen / Klärungsbedarfe
+- - **Security Review parallel zum Development** starten; Minimal‑Security‑Mindestanforderungen festlegen.
+- - **Schnelle Entscheidung zu Authentifizierung** (OAuth bevorzugen) und zu Rate‑Limiting (z. B. Cloud‑WAF) treffen.
+- - **Kosten‑ und Anbieter‑Analyse** für EU‑only Managed Services abschließen; ggf. alternative günstigere Anbieter prüfen.
+- - **SAP‑Schreibrechte definieren** (z. B. read‑only im MVP, später Schreibzugriff nach Freigabe).
+- - **Klare Retention‑ und Lösch‑Policy** erstellen und technische Umsetzung (automatisierte Lösch‑Jobs, Audit‑Log‑Archivierung) planen.
+- - **Logging‑Konzept** implementieren: Separate Pipelines für technische Logs und Audit‑Logs, PII‑Maskierung.
+- - **Testdaten‑Anonymisierung** sicherstellen; keine echten Kundendaten in Dev/Test.
+- - **Währungs‑Entscheidung** vor Development finalisieren; ggf. zunächst nur EUR unterstützen.
+- - **Budget‑Freigabe** für Hosting und Security‑Review beschaffen; Priorisierung von Kernfeatures gegenüber optionalen Features (z. B. Push‑Notifications).
+- - **Support‑Prozess** klar definieren (Kontaktformular mit DSGVO‑konformer Datenverarbeitung) und späteren Übergang zu Ticket‑System planen.
+- 

@@ -1,0 +1,55 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T15:53:25.973629Z",
+  "evaluationStatus": "ok",
+  "errorScore": 6,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 6; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 1,
+      "reason": "FALSE_CLAIM: 1 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- **FR4**: Kunden k\u00F6nnen ihr Angebot einsehen, akzeptieren und eine Bestellung ausl\u00F6sen. *(Quelle: Projektziel, Stakeholder\u2011Anna)*\u0022 | Transkript: \u0022[Ben] Das ist ein Vertragsabschluss. Ganz anderes Thema.\n[Anna] Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP.\u0022 | Das Transkript zeigt, dass die Online-Akzeptanz von Angeboten und Bestellausl\u00F6sung im MVP nicht entschieden oder ausgeschlossen ist, sondern als separates, komplexes Thema betrachtet wird. Das Artefakt stellt dies jedoch als gesetzt dar."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 2,
+      "reason": "FALSE_CERTAINTY: 2 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- **FR10 (optional)**: Push\u2011Notifications k\u00F6nnen Kunden \u00FCber Status\u00E4nderungen informieren (nicht zwingend f\u00FCr MVP). *(Quelle: Fachliche Themen, Stakeholder\u2011Alle)\u0022 | Transkript: \u0022[Ben] Push Notifications? Das hatten wir nie besprochen.\n[Anna] Doch, im letzten Meeting. Also ich glaube zumindest.\n[Clara] Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.\n[Anna] Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch?\u0022 | Im Transkript ist unklar, ob Push-Notifications im MVP enthalten sind; es wird als offen und unsicher dargestellt. Das Artefakt stellt Push-Notifications als optional, aber mit unklarer MVP-Zugeh\u00F6rigkeit dar, was eine zu sichere Darstellung der Option ist."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- **NFR3**: Verf\u00FCgbarkeit soll hoch sein; Ziel\u2011Verf\u00FCgbarkeitsgrad \u2265\u202F99\u202F% im Produktionsbetrieb. *(Quelle: Diskussion Security vs. MVP, Stakeholder\u2011Clara, Ben \u2013 Annahme)*\u0022 | Transkript: \u0022[Ben] Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\n[Anna] Dann machen wir es ohne Security Review?\n[Clara] Das ist keine Option.\n[Ben] Guter Punkt. Application logs, audit logs und security logs sind unterschiedliche Dinge.\n[Anna] Wie lange m\u00FCssen wir Angebote speichern?\n[Eva] Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.\n[Clara] Das kollidiert mit L\u00F6schanfragen.\n[Ben] Also brauchen wir Datenklassifikation und Retention Rules.\n[Anna] Das klingt nicht nach MVP.\u0022 | Das Transkript zeigt, dass Verf\u00FCgbarkeitsziele und Security-Reviews f\u00FCr das MVP noch offen und problematisch sind. Das Artefakt stellt eine konkrete Verf\u00FCgbarkeitsanforderung als gesetzt dar, obwohl dies im Transkript nicht final entschieden ist."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    }
+  ]
+}

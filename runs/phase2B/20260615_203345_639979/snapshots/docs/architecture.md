@@ -1,0 +1,60 @@
+# Architekturüberblick (frühe SDLC‑Phase)
+
+## 1. Systemkontext
+Der **Kundenportal‑MVP** wird als zentraler Zugang für End‑ und Geschäftskunden bereitgestellt. Das System muss Benutzer authentifizieren, Angebote erstellen, Rechnungen anzeigen, PDFs generieren und Basis‑Support‑Interaktionen ermöglichen. Es interagiert mit einem bestehenden **SAP‑System** (nur Lese‑Zugriff für Produkt‑, Preis‑ und Kundendaten) und nutzt ein **EU‑only Managed Hosting**‑Umfeld, das Backup‑/Disaster‑Recovery‑ und DSGVO‑Konformität gewährleistet.
+
+## 2. Wichtige Komponenten
+| Ebene | Komponente | Kurzbeschreibung |
+|------|------------|-------------------|
+| **Frontend** | Web‑First (oder Mobile‑First) UI | React/Angular‑Basis (Technologie noch nicht festgelegt). Stellt Login, Angebots‑Workflow, Rechnungs‑Anzeige, PDF‑Download und Support‑Kontaktformular bereit. |
+| **Identity & Access Management** | Auth‑Service | Unterstützt E‑Mail/Passwort‑Login mit Double‑Opt‑In. Optional SSO‑Anbindung (Azure AD, Google). Verwaltet Rollen (Admin, Sales, Manager, Support, Kunde) und Berechtigungen. |
+| **API‑Gateway** | API‑Gateway (z. B. Kong, AWS API‑GW) | Exponiert REST‑APIs, sichert sie via OAuth 2.0 (alternativ API‑Key). Momentan in Warteliste (Verfügbarkeit nach ~6 Wochen). |
+| **Backend‑Microservices** | Angebots‑Service | Kernlogik für Angebotserstellung, Status‑Workflow, Rabatt‑Freigaben, Audit‑Trail. |
+| | Rechnungs‑Service | Anzeige und Download von Kundenrechnungen. |
+| | SAP‑Connector | Lese‑Zugriff auf Produkt‑/Preis‑/Kundendaten aus SAP; nächtliche Synchronisation (echter Echtzeit‑Abruf noch offen). |
+| | PDF‑Generator | Erzeugt rechtssichere Angebots‑PDFs aus Templates, versieht sie mit Versions‑ und Fußnoten‑Informationen. |
+| | Audit‑Log‑Service | Speichert Änderungen und Freigaben (ohne PII) in einem separaten Log‑Store. |
+| | Support‑Service | Kontaktformular‑Handler, später erweiterbar zu Ticket‑System. |
+| **Datenhaltung** | Kundendaten‑Store (relational) | Speichert nicht‑personengebundene Kundendaten, Rollen, Zugriffs‑Infos. |
+| | Angebots‑Store (relational) | Persistiert Angebotssätze, Status, Historie. |
+| | Audit‑Log‑Store (append‑only) | Immutable Speicherung von Audit‑Events, getrennt von technischen Logs. |
+| **Infrastruktur** | Managed Hosting (EU‑Only) | Stellt Compute, Netzwerk, Storage, Backup/DR bereit; Daten dürfen die EU nicht verlassen. |
+| | Monitoring & Logging | Infrastruktur‑ und Applikations‑Monitoring, technische Logs (ohne PII) + Audit‑Logs. |
+
+## 3. Schnittstellen / Integrationspunkte
+- **Frontend ↔ Auth‑Service**: OAuth‑2.0 Authorization Code Flow (bzw. OpenID Connect) für Token‑Based Authentifizierung.
+- **Frontend ↔ API‑Gateway**: REST‑Aufrufe für Angebots‑Workflow, Rechnungs‑Download, PDF‑Export, Support‑Formular.
+- **API‑Gateway ↔ Microservices**: Interner Service‑zu‑Service‑Aufruf (HTTP/REST) innerhalb des privaten Netzwerkes.
+- **Microservices ↔ SAP‑Connector**: SAP‑RFC / OData‑Aufrufe (nur Lese‑Zugriff). Aktuell nächtliche Batch‑Sync, optional direkter Echtzeit‑Aufruf.
+- **Microservices ↔ Datenbanken**: JDBC/ORM‑Zugriff (SQL) auf dedizierte Schemas.
+- **Monitoring ↔ Infrastruktur**: Prometheus/Grafana (oder Cloud‑Native) für Metriken, Alertmanager für Incident‑Meldungen.
+
+## 4. Daten‑ und Sicherheitsaspekte
+- **Datenschutz / DSGVO**: Double‑Opt‑In bei Registrierung, automatisierte Löschfristen, minimal notwendige Datenspeicherung. Technische Logs ohne PII; Audit‑Logs enthalten nur Meta‑Daten (Aktion, Nutzer‑ID, Timestamp). AVV mit SAP‑ und Hosting‑Provider wird vor Go‑Live abgeschlossen.
+- **Datenresidenz**: Alle Datenbanken und Backups befinden sich in EU‑Regionen (nach Vorgabe von Farid). Keine Datenübertragung in Nicht‑EU‑Regionen.
+- **Authentifizierung & Autorisierung**: OAuth 2.0 + Rollen‑basiertes Access‑Control (RBAC). Optional API‑Key‑Fallback für interne System‑zu‑System‑Calls.
+- **Transport‑Sicherheit**: TLS 1.2+ für sämtliche Kommunikation (Frontend↔Backend, interne Service‑Calls, SAP‑Connector).
+- **Backup / Disaster Recovery**: Tägliches Snapshot‑Backup, 30‑Tage‑Retention, Wiederherstellungs‑SLAs definiert (RPO < 4 h, RTO < 2 h).
+- **Rate‑Limiting**: Grundlegendes Throttling (z. B. 10 Requests/min pro Nutzer für Rechnungs‑Download) – genaue Schwellenwerte noch zu definieren (offene Entscheidung).
+- **Caching**: Für SAP‑Preis‑Daten eventuell kurzer TTL‑Cache (5‑15 min) mit Pseudonymisierung‑Mechanismus, um Datenschutz‑Risiken zu minimieren (offene Entscheidung).
+
+## 5. Offene Architekturentscheidungen
+| Entscheidung | Offene Punkte |
+|--------------|----------------|
+| **Frontend‑Strategie** | Web‑first vs. Mobile‑first – beeinflusst Technologie‑Stack & UI‑Design. |
+| **SSO‑Provider** | Auswahl zwischen Azure AD, Google oder keine SSO‑Integration für MVP. |
+| **Preis‑Abruf** | Echtzeit‑Abfrage aus SAP vs. nächtliche Batch‑Sync + Cache‑Strategie. |
+| **API‑Gateway Verfügbarkeit** | Nutzung eines Minimal‑API‑Layers bis das zentrale Gateway bereitsteht. |
+| **Rate‑Limiting Details** | Konkrete Schwellenwerte und Durchsetzungsmechanismus (IP‑basiert, Nutzer‑basiert). |
+| **Caching & Datenschutz** | Wie werden personenbezogene Daten im Cache behandelt (Anonymisierung, TTL). |
+| **Support‑Prozess** | Aktuell nur Kontaktformular – mögliche spätere Migration zu Ticket‑System. |
+| **Hosting‑Kosten‑Entscheidung** | Finaler EU‑Only Managed Service Provider und Kostenmodell. |
+
+## 6. Nächste Schritte (Hinweis für weitere Phasen)
+- Schnellentscheidungen zu Frontend‑Strategie und SSO treffen, um den UI‑ und Auth‑Stack festzulegen.
+- Minimal‑API‑Layer implementieren (authentifiziert, CRUD‑Endpoints) als Fallback bis das zentrale API‑Gateway verfügbar ist.
+- Detail‑Spezifikation für Rate‑Limiting und Caching erarbeiten (Security‑ und DSGVO‑Review). 
+- AVV mit SAP‑ und Hosting‑Provider abschließen.
+- Prototyp‑Evaluation für PDF‑Generator (z. B. wkhtmltopdf vs. PDF‑Lib). 
+
+*Dieser Architekturüberblick ist ein initialer Entwurf (intent=initial_draft) basierend auf den bereitgestellten Requirements, Risks und Projektkontext.*

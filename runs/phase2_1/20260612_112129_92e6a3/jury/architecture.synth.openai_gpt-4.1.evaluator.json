@@ -1,0 +1,73 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-12T11:24:27.244154Z",
+  "errorScore": 17,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 17; KRITISCH=5; needsRepair=True (Schwelle 4).",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 1,
+      "reason": "FALSE_CLAIM: 1 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Hosting und Backup ausschlie\u00DFlich in der EU mit gesicherter Datenresidenz.\u0022 | Transkript: \u0022\u0022Farid: EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 ... \u0022Clara: Dann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u0022 ... \u0022Anna: Aber wenn EU-only teurer ist?\u0022 ... \u0022Farid: Ist es wahrscheinlich.\u0022\u0022 | Das Artefakt behauptet, Hosting und Backup seien ausschlie\u00DFlich in der EU, obwohl im Transkript explizit diskutiert wird, dass dies noch nicht gesichert ist und mit Kosten- und Umsetzungsfragen verbunden ist."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 3,
+      "reason": "FALSE_CERTAINTY: 3 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022API Layer: Zentraler, gesicherter Zugangspunkt f\u00FCr interne und externe Systeme via OAuth oder API Keys.\u0022 | Transkript: \u0022\u0022Clara: API muss abgesichert sein. OAuth? Oder API Keys?\u0022 ... \u0022Ben: OAuth w\u00E4re besser. Aber komplexer.\u0022 ... \u0022Ben: Und OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Im Artefakt wird die Absicherung via OAuth oder API Keys als gesetzt dargestellt, obwohl im Transkript explizit offen bleibt, welche Methode gew\u00E4hlt wird."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Audit \u0026 Logging: Komponente zur Protokollierung von Nutzeraktionen und \u00C4nderungen an Angeboten, ohne personenbezogene Daten in technischen Logs. Revisionssichere Speicherung.\u0022 | Transkript: \u0022\u0022Farid: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.\u0022 ... \u0022Ben: Application logs, audit logs und security logs sind unterschiedliche Dinge.\u0022 ... \u0022Clara: Und unterschiedliche Aufbewahrungsfristen.\u0022\u0022 | Das Artefakt stellt die revisionssichere Speicherung und Trennung von Logs als gel\u00F6st dar, obwohl im Transkript die genaue Umsetzung und Abgrenzung noch offen und als Problem diskutiert wird."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Hosting \u0026 Infrastruktur: EU-konformes Managed Hosting mit Backup- und Disaster-Recovery, mindestens drei Umgebungen (Dev, Test, Prod) mit abgesicherten Testdaten.\u0022 | Transkript: \u0022\u0022Farid: EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 ... \u0022Clara: Dann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u0022 ... \u0022Ben: SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 ... \u0022Clara: Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u0022\u0022 | Das Artefakt stellt die Einhaltung von EU-Hosting und abgesicherten Testdaten als gegeben dar, obwohl im Transkript diese Punkte als ungel\u00F6st und kritisch diskutiert werden."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 2,
+      "reason": "MISSING_TOPIC: 2 Fehler (verifiziert); 2 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Ben: Wir brauchen auch Rate Limits f\u00FCr API.\u0022 ... \u0022David: Kunden laden manchmal hunderte Rechnungen auf einmal herunter.\u0022 ... \u0022Ben: Dann brauchen wir Pagination und Download-Limits.\u0022 ... \u0022Clara: Und sicherheitsrelevant.\u0022 ... \u0022Ben: Wir brauchen Missbrauchserkennung.\u0022 ... \u0022Clara: Dann mindestens Rate Limiting und Audit.\u0022\u0022 | Das Artefakt enth\u00E4lt keine Erw\u00E4hnung von Rate Limiting, Pagination oder Download-Limits f\u00FCr die API, obwohl dies im Transkript als sicherheitsrelevante Anforderung explizit genannt wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Farid: Und CI/CD braucht Secrets Management.\u0022 ... \u0022Farid: Und Cache-Invalidierung ist aufwendig.\u0022 ... \u0022Ben: Bitte schreibt \u0027SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0027.\u0022 ... \u0022Clara: Und \u0027keine personenbezogenen Daten in technischen Logs\u0027.\u0022 ... \u0022Farid: Und \u0027Secrets Management\u0027.\u0022\u0022 | Das Artefakt erw\u00E4hnt kein Secrets Management und keine explizite Behandlung der SAP-Verf\u00FCgbarkeit als kritische Abh\u00E4ngigkeit, obwohl dies im Transkript als relevante Architekturthemen genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022SAP Connector: Schnittstelle zu SAP-Systemen zur Synchronisation von Produktdaten, Preisen, Rabatten und Rechnungsinformationen. Lesender Zugriff im MVP, Schrei\u2026\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Ben: SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.\u0022 ... \u0022Anna: Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP.\u0022 ... \u0022David: Aber ohne Online-Akzeptanz ist Conversion Tracking schlechter.\u0022 ... \u0022Ben: Wir m\u00FCssen entscheiden.\u0022\u0022 | Das Artefakt geht nicht auf die offene Entscheidung zur Online-Akzeptanz von Angeboten und deren Auswirkungen auf die Architektur ein, obwohl dies im Transkript als wichtiger offener Punkt diskutiert wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Die Architektur erlaubt Erweiterungen und Nachjustierungen, um sp\u00E4tere Anforderungen und Compliance sicher umzusetzen.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Anna: Deutsch und Englisch sollten schon drin sein.\u0022 ... \u0022David: Support braucht mindestens Deutsch und Englisch.\u0022 ... \u0022Ben: Wir brauchen L\u00E4nder- und W\u00E4hrungsregeln.\u0022 ... \u0022EVA: Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022\u0022 | Das Artefakt erw\u00E4hnt zwar, dass Mehrw\u00E4hrungs- und Mehrsprachigkeitsanforderungen au\u00DFerhalb des MVP liegen, aber nicht, dass diese Anforderungen f\u00FCr sp\u00E4tere Phasen explizit als Architektur-Erweiterbarkeit zu ber\u00FCcksichtigen sind."
+        }
+      ]
+    }
+  ]
+}

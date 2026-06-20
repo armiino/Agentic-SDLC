@@ -1,0 +1,1071 @@
+diff --git a/.gitignore b/.gitignore
+index a2a2da3..94588c6 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -43,6 +43,11 @@ Icon?
+ .env
+ .env.local
+ .env.old
++
++# --- Local working notes ---
++todos.md
++infoforclaude.txt
++CLAUDE.md
+ Phasen_KNOWHOW
+ phase1notes
+ phase2notes
+diff --git a/AgenticSdlc.Host/AgenticSdlc.Host.csproj b/AgenticSdlc.Host/AgenticSdlc.Host.csproj
+index ea695fe..99fee34 100644
+--- a/AgenticSdlc.Host/AgenticSdlc.Host.csproj
++++ b/AgenticSdlc.Host/AgenticSdlc.Host.csproj
+@@ -13,6 +13,7 @@
+     <PackageReference Include="Microsoft.Agents.AI.Hosting" Version="1.0.0-preview.260219.1" />
+     <PackageReference Include="Microsoft.Agents.AI.OpenAI" Version="1.0.0-rc1" />
+     <PackageReference Include="Microsoft.Extensions.AI" Version="10.3.0" />
++    <PackageReference Include="Microsoft.Extensions.AI.Evaluation" Version="10.3.0" />
+     <PackageReference Include="Microsoft.Extensions.AI.OpenAI" Version="10.3.0" />
+     <PackageReference Include="ModelContextProtocol" Version="0.9.0-preview.1" />
+     <PackageReference Include="OllamaSharp" Version="5.4.16" />
+diff --git a/AgenticSdlc.Host/Configuration/HostSettings.cs b/AgenticSdlc.Host/Configuration/HostSettings.cs
+index 3ded1a4..1f77c57 100644
+--- a/AgenticSdlc.Host/Configuration/HostSettings.cs
++++ b/AgenticSdlc.Host/Configuration/HostSettings.cs
+@@ -22,13 +22,30 @@ public sealed record HostSettings(
+     string ModelId,
+     string OllamaBaseUrl,
+     string OpenRouterBaseUrl,
+-    string? OpenRouterApiKey)
++    string? OpenRouterApiKey,
++    bool JuryEnabled,
++    string? JuryJudgeModel,
++    bool JuryStructuredOutput,
++    bool JurySplitGeneration,
++    bool JuryVerifyFalseClaim,
++    bool JuryVerifyFalseCertainty,
++    bool JuryVerifyMissingTopic,
++    bool JuryVerifyCustom,
++    int JuryMissingTopicBatchSize,
++    IReadOnlyDictionary<string, IReadOnlyList<string>>? JuryCategoriesByArtifact,
++    bool Phase2BWriteArtifacts,
++    IReadOnlyDictionary<string, IReadOnlyList<string>>? Phase2BReads)
+ {
+     /// <summary>
+     /// Erstellt die Settings aus den aktuell gesetzten Umgebungsvariablen.
+     /// </summary>
+     public static HostSettings FromRuntimeConfig(RunConfig config, string repoRoot)
+     {
++        // Phase und Strategie zuerst aufloesen, damit die Prompt-Auswahl die aktive
++        // Phase->Strategie-Section ziehen kann.
++        var agentPhase = ReadConfigString(config.AgentPhase, "AGENT_PHASE", "phase1").Trim().ToLowerInvariant();
++        var phase2Strategy = ReadConfigString(config.Phase2ContextStrategy, "PHASE2_CONTEXT_STRATEGY", "message_passing").Trim().ToLowerInvariant();
++
+         var settings = new HostSettings(
+             RepoRoot: repoRoot,
+             OtelEnabled: config.Observability.EnableOtel ?? ReadFlag("ENABLE_OTEL"),
+@@ -36,19 +53,78 @@ public sealed record HostSettings(
+             OtelRawEnabled: config.Observability.EnableOtelRaw ?? ReadFlag("ENABLE_OTEL_RAW"),
+             InnerCycleLogging: config.Observability.InnerCycleLogging ?? ReadFlag("INNER_CYCLE_LOGGING"),
+             LlmPreviewChars: Math.Clamp(config.LlmPreview.Chars ?? ReadInt("LLM_PREVIEW_CHARS", 800), 100, 8000),
+-            AgentPhase: ReadConfigString(config.AgentPhase, "AGENT_PHASE", "phase1").Trim().ToLowerInvariant(),
+-            Phase2ContextStrategy: ReadConfigString(config.Phase2ContextStrategy, "PHASE2_CONTEXT_STRATEGY", "message_passing").Trim().ToLowerInvariant(),
+-            Prompts: BuildPromptSelection(config.Prompts),
++            AgentPhase: agentPhase,
++            Phase2ContextStrategy: phase2Strategy,
++            Prompts: BuildPromptSelection(config.Prompts, agentPhase, phase2Strategy),
+             LlmProvider: ReadConfigString(config.LlmProvider, "LLM_PROVIDER", "ollama").Trim().ToLowerInvariant(),
+             ModelId: ReadConfigString(config.AgentModel, "AGENT_MODEL", "qwen2.5:14b"),
+             OllamaBaseUrl: ReadString("OLLAMA_BASE_URL", "http://localhost:11434/"),
+             OpenRouterBaseUrl: ReadString("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
+-            OpenRouterApiKey: Environment.GetEnvironmentVariable("OPENROUTER_API_KEY")
++            OpenRouterApiKey: Environment.GetEnvironmentVariable("OPENROUTER_API_KEY"),
++            JuryEnabled: config.Jury.Enabled ?? false,
++            JuryJudgeModel: string.IsNullOrWhiteSpace(config.Jury.JudgeModel) ? null : config.Jury.JudgeModel.Trim(),
++            JuryStructuredOutput: config.Jury.StructuredOutput ?? true,
++            // DISK-12/G3: Call-1-Split pro Kategorie. Default true (validiert B20).
++            JurySplitGeneration: config.Jury.SplitGeneration ?? true,
++            // Konservative DISK-7-Defaults, falls der verification-Block fehlt.
++            JuryVerifyFalseClaim: config.Jury.Verification?.FalseClaim ?? false,
++            JuryVerifyFalseCertainty: config.Jury.Verification?.FalseCertainty ?? true,
++            JuryVerifyMissingTopic: config.Jury.Verification?.MissingTopic ?? true,
++            JuryVerifyCustom: config.Jury.Verification?.Custom ?? false,
++            // DISK-9: MISSING_TOPIC-Batch begrenzen (Default 8, min. 1) gegen Verifier-Kollaps bei großen Listen.
++            JuryMissingTopicBatchSize: Math.Max(1, config.Jury.Verification?.MissingTopicBatchSize ?? 8),
++            // DISK-12/B22: optionale Kategorie-Overrides je Artefakttyp (null = nur Code-Defaults).
++            JuryCategoriesByArtifact: BuildJuryCategories(config.Jury.Categories),
++            Phase2BWriteArtifacts: config.Phase2BState.WriteArtifacts ?? true,
++            Phase2BReads: BuildPhase2BReads(config.Phase2BState.Reads)
+         );
+ 
+         return settings;
+     }
+ 
++    // DISK-12/B22: run-config-Kategorie-Overrides (Artefakttyp -> Kategorien) in den Settings-Typ wandeln.
++    private static IReadOnlyDictionary<string, IReadOnlyList<string>>? BuildJuryCategories(
++        IDictionary<string, List<string>>? configured)
++    {
++        if (configured is null || configured.Count == 0)
++            return null;
++
++        var map = new Dictionary<string, IReadOnlyList<string>>(StringComparer.OrdinalIgnoreCase);
++        foreach (var (artifactType, categories) in configured)
++        {
++            if (string.IsNullOrWhiteSpace(artifactType) || categories is null)
++                continue;
++
++            map[artifactType.Trim()] = categories
++                .Where(c => !string.IsNullOrWhiteSpace(c))
++                .Select(c => c.Trim())
++                .ToArray();
++        }
++
++        return map.Count == 0 ? null : map;
++    }
++
++    private static IReadOnlyDictionary<string, IReadOnlyList<string>>? BuildPhase2BReads(
++        IDictionary<string, List<string>>? configuredReads)
++    {
++        if (configuredReads is null || configuredReads.Count == 0)
++            return null;
++
++        var reads = new Dictionary<string, IReadOnlyList<string>>(StringComparer.Ordinal);
++        foreach (var (agentName, keys) in configuredReads)
++        {
++            if (string.IsNullOrWhiteSpace(agentName) || keys is null)
++                continue;
++
++            reads[agentName.Trim()] = keys
++                .Where(k => !string.IsNullOrWhiteSpace(k))
++                .Select(k => k.Trim())
++                .ToArray();
++        }
++
++        return reads.Count == 0 ? null : reads;
++    }
++
+     /// <summary>
+     /// Liefert den in `run-config.json` ausgewählten Promptnamen für einen Agenten.
+     /// </summary>
+@@ -83,14 +159,21 @@ public sealed record HostSettings(
+     private static string ReadConfigString(string? configValue, string envKey, string defaultValue)
+         => string.IsNullOrWhiteSpace(configValue) ? ReadString(envKey, defaultValue) : configValue;
+ 
+-    private static IReadOnlyDictionary<string, string> BuildPromptSelection(IDictionary<string, string>? configuredPrompts)
++    /// <summary>
++    /// Loest die aktive Prompt-Auswahl (Agent -> Promptname) aus der nach
++    /// Phase -> Strategie -> Agent gruppierten Config auf.
++    /// </summary>
++    /// <remarks>
++    /// Die Code-Defaults halten bestehende/teilweise Configs lauffaehig. Darueber wird die Section der
++    /// aktiven Phase gelegt: fuer phase2_1 die der aktiven <paramref name="phase2Strategy"/>, sonst die
++    /// Pseudo-Strategie "default". Das Ergebnis ist ein flaches Agent->Name-Dict; GetPromptName bleibt
++    /// dadurch unveraendert und alle Aufrufer (Runner, Factories, Snapshot) funktionieren weiter.
++    /// </remarks>
++    private static IReadOnlyDictionary<string, string> BuildPromptSelection(
++        IDictionary<string, Dictionary<string, Dictionary<string, string>>>? configuredPrompts,
++        string agentPhase,
++        string phase2Strategy)
+     {
+-        /*
+-         * Defaults halten bestehende Runs lauffähig, falls run-config.json noch
+-         * keinen neuen `prompts`-Block enthält. Die aktive Auswahl wird trotzdem
+-         * zentral über Agentnamen modelliert und ist damit für spätere Phasen
+-         * erweiterbar, ohne HostSettings erneut phase-spezifisch zu ändern.
+-         */
+         var prompts = new Dictionary<string, string>(StringComparer.Ordinal)
+         {
+             ["Phase1SinglePass"] = "Phase1_3Prompt",
+@@ -104,12 +187,19 @@ public sealed record HostSettings(
+         if (configuredPrompts is null)
+             return prompts;
+ 
+-        foreach (var (agentName, promptName) in configuredPrompts)
++        // phase2_1 waehlt die Section der aktiven Kontextstrategie; alle anderen Phasen "default".
++        var strategyKey = agentPhase == "phase2_1" ? phase2Strategy : "default";
++
++        if (configuredPrompts.TryGetValue(agentPhase, out var byStrategy) && byStrategy is not null
++            && byStrategy.TryGetValue(strategyKey, out var byAgent) && byAgent is not null)
+         {
+-            if (string.IsNullOrWhiteSpace(agentName) || string.IsNullOrWhiteSpace(promptName))
+-                continue;
++            foreach (var (agentName, promptName) in byAgent)
++            {
++                if (string.IsNullOrWhiteSpace(agentName) || string.IsNullOrWhiteSpace(promptName))
++                    continue;
+ 
+-            prompts[agentName.Trim()] = promptName.Trim();
++                prompts[agentName.Trim()] = promptName.Trim();
++            }
+         }
+ 
+         return prompts;
+diff --git a/AgenticSdlc.Host/Configuration/RunConfig.cs b/AgenticSdlc.Host/Configuration/RunConfig.cs
+index 4bbaa3b..77f2b2b 100644
+--- a/AgenticSdlc.Host/Configuration/RunConfig.cs
++++ b/AgenticSdlc.Host/Configuration/RunConfig.cs
+@@ -20,17 +20,28 @@ public sealed class RunConfig
+     public string? AgentModel { get; set; }
+ 
+     /*
+-     * Die Prompt-Auswahl ist bewusst phasenübergreifend generisch.
+-     * Key   = Agentname, zB "Phase2RequirementsAgent"
+-     * Value = Promptdateiname ohne .txt, zB "RequirementsPrompt3"
++     * Prompt-Auswahl, gruppiert nach Phase -> Strategie -> Agent -> Promptname.
+      *
+-     * Dadurch muss für neue Phasen kein neuer Config-Typ wie "Phase3Prompts" gebaut werden. 
+-     * Ein neuer Agent braucht nur einen Prompt-Ordner und einen Eintrag in run-config.json.
++     *   "prompts": {
++     *     "phase1":    { "default":         { "Phase1SinglePass": "Phase1_3Prompt" } },
++     *     "phase2_1":  { "message_passing": { "Phase2ContextAgent": "ContextPrompt3", ... },
++     *                    "artifact_state":  { "Phase2ContextAgent": "ContextPrompt3", ... } }
++     *   }
++     *
++     * Vorteil: A<->B wird allein durch "phase2ContextStrategy" umgeschaltet — kein manuelles
++     * Tauschen einzelner Agent-Prompts mehr. Phase 1 nutzt die Pseudo-Strategie "default",
++     * damit die Struktur einheitlich 3-stufig bleibt.
++     *
++     * Aufgeloest wird das in HostSettings.BuildPromptSelection zu einem flachen Agent->Name-Dict;
++     * alle Aufrufer fragen weiterhin generisch ueber GetPromptName(agentName).
+      */
+-    public Dictionary<string, string> Prompts { get; set; } = new(StringComparer.Ordinal);
++    public Dictionary<string, Dictionary<string, Dictionary<string, string>>> Prompts { get; set; }
++        = new(StringComparer.Ordinal);
+ 
+     public ObservabilityConfig Observability { get; set; } = new();
+     public LlmPreviewConfig LlmPreview { get; set; } = new();
++    public JuryConfig Jury { get; set; } = new();
++    public Phase2BStateConfig Phase2BState { get; set; } = new();
+ 
+     /// <summary>
+     /// Lädt `run-config.json` aus dem Repo-Root
+@@ -67,3 +78,97 @@ public sealed class LlmPreviewConfig
+ {
+     public int? Chars { get; set; }
+ }
++
++public sealed class JuryConfig
++{
++    /// <summary>Jury nach jedem erfolgreichen Run automatisch ausführen.</summary>
++    public bool? Enabled { get; set; }
++
++    /// <summary>
++    /// Optionales Judge-Modell (z.B. "openai/gpt-4.1"). Wenn leer, wird das Run-Modell verwendet.
++    /// </summary>
++    public string? JudgeModel { get; set; }
++
++    /// <summary>
++    /// Strukturierte Judge-Ausgabe (response_format = json_schema) erzwingen. Default: true.
++    /// Bei Judge-Modellen, die kein json_schema unterstuetzen (z.B. manche OpenRouter-Modelle),
++    /// auf false setzen — dann faengt der evaluation_failed-Pfad (B8) ungueltiges JSON ab.
++    /// </summary>
++    public bool? StructuredOutput { get; set; }
++
++    /// <summary>
++    /// DISK-12/G3: Call 1 (Finding-Generierung) pro Kategorie in fokussierte Einzel-Judges splitten
++    /// (FALSE_CLAIM / FALSE_CERTAINTY / MISSING_TOPIC) statt eines 3-in-1-Calls. Hebt den Recall
++    /// schwacher Modelle (B20). Default: true. false = altes 3-in-1-Verhalten (für Instrument-Vergleich).
++    /// </summary>
++    public bool? SplitGeneration { get; set; }
++
++    /// <summary>
++    /// DISK-12/B22: aktive Fehlerkategorien PRO ARTEFAKTTYP (requirements/risks/architecture/
++    /// open-questions/generic) → Werte aus FALSE_CLAIM / FALSE_CERTAINTY / MISSING_TOPIC. Überschreibt
++    /// den Code-Default (der FALSE_CLAIM für open-questions deaktiviert). Fehlt der Block → nur Defaults.
++    /// Gilt für Generierung UND Verifikation. Landet im Snapshot (reproduzierbare Policy, FORSCH-2).
++    /// </summary>
++    public Dictionary<string, List<string>>? Categories { get; set; }
++
++    /// <summary>
++    /// Pro Fehlerkategorie steuerbarer zweiter Verifikations-Pass (DISK-7). Fehlt der Block,
++    /// gelten die konservativen Defaults (missingTopic=true, falseCertainty=true, falseClaim=false).
++    /// </summary>
++    public JuryVerificationConfig? Verification { get; set; }
++}
++
++/// <summary>
++/// Schaltet den kategoriespezifischen Verifikations-Pass der Jury pro Fehlerkategorie (DISK-7).
++/// </summary>
++/// <remarks>
++/// Jede aktivierte Kategorie bekommt einen eigenen Batch-Verifikations-Call (nur bei vorhandenen
++/// Kandidaten). Die Flags landen im Config-Snapshot, damit A/B/C-Vergleichsruns reproduzierbar
++/// dieselbe Jury-Policy verwenden.
++/// </remarks>
++public sealed class JuryVerificationConfig
++{
++    /// <summary>FALSE_CLAIM verifizieren. Default: false (teurer Transkript-Re-Read; konservativer Verifier).</summary>
++    public bool? FalseClaim { get; set; }
++
++    /// <summary>FALSE_CERTAINTY verifizieren. Default: true (größter False-Positive-Treiber).</summary>
++    public bool? FalseCertainty { get; set; }
++
++    /// <summary>MISSING_TOPIC verifizieren. Default: true (bewährt seit v3).</summary>
++    public bool? MissingTopic { get; set; }
++
++    /// <summary>
++    /// Max. Anzahl MISSING_TOPIC-Kandidaten pro Verifikations-Call (DISK-9). Default: 8.
++    /// Größere Batches in mehrere Calls aufteilen (Index-Remapping pro Chunk), weil der Verifier
++    /// bei großen Listen die Trennschärfe verliert und auf „fehlt" defaultet (Run 639979: 23/23
++    /// fälschlich confirmed). Betrifft NUR MISSING_TOPIC; FALSE_CERTAINTY/FALSE_CLAIM unverändert.
++    /// </summary>
++    public int? MissingTopicBatchSize { get; set; }
++
++    /// <summary>
++    /// Custom-Verifier (Default: false). Wenn true: ein einziger ausgelagerter Prompt
++    /// (<c>Prompts/jury/verify-custom.txt</c>) prüft ALLE Kandidaten und ersetzt die drei
++    /// eingebauten Verifier. Nur zum Experimentieren/Kalibrieren — nicht für A/B/C-Vergleiche.
++    /// </summary>
++    public bool? Custom { get; set; }
++}
++
++/// <summary>
++/// Steuert die Shared-State-Policy der Phase-2.1B-Strategie (`artifact_state`).
++/// </summary>
++/// <remarks>
++/// Nur relevant, wenn `phase2ContextStrategy = artifact_state`. Steuert, wie viel/was in den
++/// MAF-Shared-State geschrieben und von welchem Specialist gelesen wird.
++/// Fehlt der Block, gilt der Default β-full (jeder Specialist liest Context + alle Upstream-Artefakte).
++/// </remarks>
++public sealed class Phase2BStateConfig
++{
++    /// <summary>Schreiben die Specialists ihr Artefakt zusätzlich in den Shared State? Default: true.</summary>
++    public bool? WriteArtifacts { get; set; }
++
++    /// <summary>
++    /// Per-Agent-Lesepolicy: Agentname -> Liste der State-Keys, die der Agent liest
++    /// (z.B. "Phase2RisksAgent": ["context","requirements"]). Fehlt der Eintrag, gilt der β-full-Default.
++    /// </summary>
++    public Dictionary<string, List<string>>? Reads { get; set; }
++}
+diff --git a/AgenticSdlc.Host/Observability/ChatDecisionLoggerMiddleware.cs b/AgenticSdlc.Host/Observability/ChatDecisionLoggerMiddleware.cs
+index 26f078c..bf26cd8 100644
+--- a/AgenticSdlc.Host/Observability/ChatDecisionLoggerMiddleware.cs
++++ b/AgenticSdlc.Host/Observability/ChatDecisionLoggerMiddleware.cs
+@@ -268,15 +268,18 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
+         var observedResponseType = DetermineObservedResponseType(toolCallNames, assistantText);
+         var observedToolGroups = DetermineObservedToolGroups(toolCallNames);
+ 
+-        // Text-Event (CHAT_RESPONSE_TEXT bzw. MODEL_ROUND_TEXT): 
++        var hasText = assistantText.Length > 0;
++        var hasToolCalls = toolCallNames.Count > 0;
++
++        // Text-Event (CHAT_RESPONSE_TEXT bzw. MODEL_ROUND_TEXT):
+         // nur wenn diese Instanz für Text zuständig ist (_writeResponseText) und Text vorhanden ist.
+         // Im per-cycle-Modus erfasst nur die innere ModelRound-Instanz Text..
+         // die äußere AgentChat-Instanz markiert nur Start/Ende, um Doppelerfassung zu vermeiden.
+-        if (_writeResponseText && assistantText.Length > 0)
++        if (_writeResponseText && hasText)
+         {
+             var sha = Sha256Hex(assistantText);
+-            var truncated = assistantText.Length > _previewChars;
+-            var content = Truncate(assistantText.Trim(), _previewChars);
++            var truncatedEvt = assistantText.Length > _previewChars;
++            var contentEvt = Truncate(assistantText.Trim(), _previewChars);
+ 
+             var responseTextEvent = new
+             {
+@@ -286,24 +289,33 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
+                 round,
+                 // Kontext: neben welchen Tool-Calls entstand dieser Text?
+                 toolCallsInThisResponse = distinctToolCallNames,
+-                hasToolCalls = toolCallNames.Count > 0,
++                hasToolCalls,
+                 textLength = assistantText.Length,
+                 // SHA erlaubt Vergleich zwischen Runs ohne den vollen Text zu laden.
+                 textSha256 = sha,
+-                text = content,
+-                truncated,
++                text = contentEvt,
++                truncated = truncatedEvt,
+                 timestampUtc = DateTime.UtcNow
+             };
+ 
+             _run.AppendEvent(responseTextEvent);
+-
+             if (_agentName is not null)
+-            {
+                 _run.AppendAgentEvent(_agentName, responseTextEvent);
+-                _run.AppendAgentResponseText(
+-                    _agentName,
+-                    BuildResponseTextMarkdown(round, distinctToolCallNames, content, assistantText.Length, truncated));
+-            }
++        }
++
++        // response-text.md-Abschnitt: für JEDE beobachtbare Runde (Text ODER Tool-Calls), damit auch
++        // Tool-only-Runden (z. B. stille fs_write ohne Reasoning-Text) sichtbar bleiben. Die Luecke
++        // wurde in Run 20260613_200805_b4fb45 (Phase 2.1B) sichtbar: der RisksAgent schrieb docs/risks.md
++        // in zwei fs_write-Runden OHNE Assistant-Text — beide fehlten in response-text.md, nur die finale
++        // Status-Runde war zu sehen. Damit war der zweite (kaputte) Write im lesbaren Log unsichtbar.
++        // Das "Warum" jedes Writes bleibt zusaetzlich in tool-calls.jsonl (reason/evidence der fs_write-Args).
++        if (_writeResponseText && _agentName is not null && (hasText || hasToolCalls))
++        {
++            var truncated = assistantText.Length > _previewChars;
++            var content = Truncate(assistantText.Trim(), _previewChars);
++            _run.AppendAgentResponseText(
++                _agentName,
++                BuildResponseTextMarkdown(round, distinctToolCallNames, content, assistantText.Length, truncated));
+         }
+ 
+         var finishedEvent = new
+@@ -452,11 +464,19 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
+                       (truncated ? $" *(truncated to {text.Length})*" : ""));
+         sb.AppendLine();
+ 
+-        foreach (var line in text.Split('\n'))
+-            sb.AppendLine($"> {line}");
++        // Tool-only-Runde: kein Assistant-Text, aber die Runde (z. B. ein fs_write) bleibt sichtbar.
++        if (string.IsNullOrWhiteSpace(text))
++        {
++            sb.AppendLine("> *(kein sichtbarer Assistant-Text — Tool-only-Runde; reason/evidence siehe tool-calls.jsonl)*");
++        }
++        else
++        {
++            foreach (var line in text.Split('\n'))
++                sb.AppendLine($"> {line}");
+ 
+-        if (truncated)
+-            sb.AppendLine("> *...[truncated]*");
++            if (truncated)
++                sb.AppendLine("> *...[truncated]*");
++        }
+ 
+         sb.AppendLine();
+         sb.AppendLine("---");
+diff --git a/AgenticSdlc.Host/Phases/Phase2/Phase2Runner.cs b/AgenticSdlc.Host/Phases/Phase2/Phase2Runner.cs
+index 9483540..d3b5237 100644
+--- a/AgenticSdlc.Host/Phases/Phase2/Phase2Runner.cs
++++ b/AgenticSdlc.Host/Phases/Phase2/Phase2Runner.cs
+@@ -1,5 +1,6 @@
+ using AgenticSdlc.Host.Configuration;
+ using AgenticSdlc.Host.Mcp;
++using AgenticSdlc.Host.Phases.Phase2.Evaluation;
+ using AgenticSdlc.Host.Phases.Phase2.Validation;
+ using AgenticSdlc.Host.Run;
+ using Microsoft.Agents.AI;
+@@ -90,7 +91,14 @@ public sealed class Phase2Runner
+             var githubConnectError = await TryDiscoverGitHubToolsAsync();
+             var localTools = await LoadLocalToolsAsync(localMcp, githubConnectError);
+             var agents = CreateAgents(localTools);
+-            var workflow = Phase2Workflow.Build(agents);
++            var workflow = _settings.Phase2ContextStrategy switch
++            {
++                "artifact_state" => Phase2B.Phase2BWorkflow.Build(
++                    agents, _run, Phase2B.Phase2BStatePolicy.FromConfig(_settings), _repoRoot),
++                "message_passing" => Phase2Workflow.Build(agents),
++                var other => throw new InvalidOperationException(
++                    $"Phase 2.1 context strategy '{other}' is not implemented. Use 'message_passing' or 'artifact_state'.")
++            };
+ 
+             var workflowRun = await RunWorkflowAsync(workflow);
+             var hasFailedExecutor = RecordWorkflowEvents(workflowRun);
+@@ -150,6 +158,21 @@ public sealed class Phase2Runner
+             });
+ 
+             CopyDirectory(Path.Combine(_repoRoot, "docs"), _run.DocsSnapshotDir);
++
++            if (_settings.JuryEnabled)
++            {
++                _run.AppendEvent(new { type = "JURY_STARTED", runId = _run.RunId, judgeModel = _settings.JuryJudgeModel ?? _settings.ModelId, timestampUtc = DateTime.UtcNow });
++                try
++                {
++                    var jury = new Phase2JuryRunner(_settings, _run, _repoRoot);
++                    await jury.RunAsync();
++                }
++                catch (Exception ex)
++                {
++                    _run.AppendEvent(new { type = "JURY_FAILED", runId = _run.RunId, error = ex.Message, errorType = ex.GetType().FullName, timestampUtc = DateTime.UtcNow });
++                }
++            }
++
+             _run.AppendEvent(new { type = "RUN_FINISHED", runId = _run.RunId, status = "completed", timestampUtc = DateTime.UtcNow });
+             return 0;
+         }
+diff --git a/AgenticSdlc.Host/Phases/Phase2/Validation/Phase2ArtifactValidator.cs b/AgenticSdlc.Host/Phases/Phase2/Validation/Phase2ArtifactValidator.cs
+index a53d7e5..e710fb8 100644
+--- a/AgenticSdlc.Host/Phases/Phase2/Validation/Phase2ArtifactValidator.cs
++++ b/AgenticSdlc.Host/Phases/Phase2/Validation/Phase2ArtifactValidator.cs
+@@ -126,8 +126,11 @@ public sealed class Phase2ArtifactValidator
+         var info = new FileInfo(absolutePath);
+         files.Add(new Phase2ValidatedFile(displayPath, role, Exists: true, SizeBytes: info.Length));
+ 
++        // Gemeinsames Gültigkeits-Gate (K1/K3): leer ODER offensichtlich unbrauchbar (Placeholder/trivial).
++        // Bewusst in BEIDEN Strategien (A wie B laufen diesen Validator) → identische Latte = fairer Vergleich.
+         var content = File.ReadAllText(absolutePath);
+-        if (string.IsNullOrWhiteSpace(content))
++        var gate = ArtifactQualityGate.Evaluate(content);
++        if (gate.Verdict == ArtifactQualityVerdict.Empty)
+         {
+             findings.Add(new Phase2ValidationFinding(
+                 Severity: "error",
+@@ -135,6 +138,14 @@ public sealed class Phase2ArtifactValidator
+                 Path: displayPath,
+                 Message: "Required Phase 2.1 file exists but is empty."));
+         }
++        else if (gate.Verdict == ArtifactQualityVerdict.Invalid)
++        {
++            findings.Add(new Phase2ValidationFinding(
++                Severity: "error",
++                Code: "INVALID_ARTIFACT",
++                Path: displayPath,
++                Message: $"Required Phase 2.1 file is present but unusable: {gate.Reason}."));
++        }
+     }
+ 
+     private void ValidateRequirementsSections(List<Phase2ValidationFinding> findings)
+diff --git a/AgenticSdlc.Host/Program.cs b/AgenticSdlc.Host/Program.cs
+index af18fc9..8ec3600 100644
+--- a/AgenticSdlc.Host/Program.cs
++++ b/AgenticSdlc.Host/Program.cs
+@@ -18,11 +18,64 @@ DotNetEnv.Env.Load(
+ 
+ var runtimeConfig = RunConfig.Load(repoRoot);
+ var settings = HostSettings.FromRuntimeConfig(runtimeConfig, repoRoot);
++
++// Offline-Evaluator (isolierter Bewertungs-Pfad): bewertet ein bestehendes Artefakt mit dem
++// Evaluator, ohne neuen Generierungs-Run / Workflow / Run-Ordner / Change-Note.
++// Nuetzlich zum Re-Scoren alter Runs oder zum Testen eines anderen Judge-Modells.
++if (args.Length > 0 && string.Equals(args[0], "eval-offline", StringComparison.OrdinalIgnoreCase))
++{
++    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.OfflineEvaluatorRunner.RunAsync(args, settings, repoRoot);
++    return;
++}
++
++// DISK-14 Phase 1 (additiv, isoliert): Artefakte deterministisch in Pruefeinheiten zerlegen (kein LLM).
++// Verwerfen des Per-Item-Ansatzes = PerItem-Ordner loeschen + diese Zeile entfernen.
++if (args.Length > 0 && string.Equals(args[0], "parse-units", StringComparison.OrdinalIgnoreCase))
++{
++    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.UnitParseRunner.RunAsync(args, repoRoot);
++    return;
++}
++
++// DISK-14 Phase 2 (additiv, isoliert): Per-Item-Klassifikation → paralleler GroundingScore (echter LLM-Call).
++// Verwerfen = PerItem-Ordner loeschen + diese Zeile entfernen.
++if (args.Length > 0 && string.Equals(args[0], "classify-units", StringComparison.OrdinalIgnoreCase))
++{
++    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClassifyUnitsRunner.RunAsync(args, settings, repoRoot);
++    return;
++}
++
++// DISK-14 MISSING/Coverage-Achse (additiv, isoliert): Transkript-Turns → covered/missing je Artefakt.
++if (args.Length > 0 && string.Equals(args[0], "coverage-units", StringComparison.OrdinalIgnoreCase))
++{
++    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.CoverageRunner.RunAsync(args, settings, repoRoot);
++    return;
++}
++
++// PILOT (isoliert): echter MAF-Agent als Reviewer (vs. post-hoc IEvaluator). Verwerfen = ReviewAgent-Ordner + diese Zeile.
++if (args.Length > 0 && string.Equals(args[0], "review-agent", StringComparison.OrdinalIgnoreCase))
++{
++    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.ReviewAgent.ReviewAgentRunner.RunAsync(args, settings, repoRoot);
++    return;
++}
++
+ var runId = RunId.New();
+-var run = new RunContext(runId, settings.AgentPhase);
++// Output-Ordner unter runs/. Logisch bleibt es Phase 2.1 (AgentPhase); die Strategie-Varianten
++// bekommen aber eigene Unterordner, damit A/B/C-Runs auf der Platte getrennt liegen.
++var run = new RunContext(runId, ResolveRunFolder(settings));
+ run.EnsureFolders();
+ CleanDocsFolder();
+ 
++// runs/<folder>/<runId>. Strategie B/C erhalten eigene Ordner; A bleibt aus Historie-Gruenden in phase2_1.
++static string ResolveRunFolder(HostSettings settings)
++    => settings.AgentPhase == "phase2_1"
++        ? settings.Phase2ContextStrategy switch
++        {
++            "artifact_state" => "phase2B",
++            "independent_source_reads" => "phase2C",
++            _ => "phase2_1"   // message_passing (A)
++        }
++        : settings.AgentPhase;
++
+ var sourceName = "AgenticSdlc.Host";
+ var activitySource = new ActivitySource(sourceName);
+ var tracesPath = Path.Combine(run.LogsDir, "otel-traces.jsonl");
+@@ -38,11 +91,24 @@ using var otel = AgenticSdlc.Host.Observability.OtelRunExporters.TryCreate(
+     rawTracesPath: settings.OtelRawEnabled ? rawTracesPath : null
+ );
+ 
++// Code-Stand-Stempel: gegen welchen Git-Commit lief dieser Run, war der Arbeitsbaum dirty?
++// Macht run -> Code rekonstruierbar, ohne pro Run committen zu muessen (siehe commit-rules.md).
++var codeVersion = AgenticSdlc.Host.Run.GitStamp.Capture(run, repoRoot);
++if (codeVersion.Available)
++{
++    var state = codeVersion.Dirty
++        ? $"DIRTY ({codeVersion.ChangedFiles} Datei(en); Diff -> {codeVersion.TrackedDiffFile})"
++        : "clean";
++    Console.WriteLine($"[git] {codeVersion.ShortCommit} @ {codeVersion.Branch} — {state}");
++}
++
+ var config = new
+ {
+     runId,
+     phase = ResolvePhaseName(settings.AgentPhase),
+     phaseSelector = settings.AgentPhase,
++    // Code-Stand dieses Runs (Commit/Branch/dirty). Bei dirty liegt der Diff unter code-version/.
++    codeVersion,
+     phase2ContextStrategy = settings.AgentPhase == "phase2_1" ? settings.Phase2ContextStrategy : null,
+     prompts = ResolvePromptConfig(settings),
+     llmProvider = settings.LlmProvider,
+@@ -58,6 +124,35 @@ var config = new
+     {
+         chars = settings.LlmPreviewChars,
+     },
++    jury = new
++    {
++        enabled = settings.JuryEnabled,
++        judgeModel = settings.JuryJudgeModel,
++        structuredOutput = settings.JuryStructuredOutput,
++        // DISK-12/G3: Call-1 pro Kategorie gesplittet (Mess-Instrument-Parameter, einfrieren für Vergleiche).
++        splitGeneration = settings.JurySplitGeneration,
++        // DISK-12/B22: effektive aktive Kategorien je Artefakttyp (Default-Profil + run-config-Override).
++        categories = new AgenticSdlc.Host.Phases.Phase2.Evaluation.JuryCategoryProfile(
++            settings.JuryCategoriesByArtifact).Describe(),
++        // DISK-7: aktive Verifikations-Policy pro Kategorie (für reproduzierbare A/B/C-Vergleiche).
++        verification = new
++        {
++            falseClaim = settings.JuryVerifyFalseClaim,
++            falseCertainty = settings.JuryVerifyFalseCertainty,
++            missingTopic = settings.JuryVerifyMissingTopic,
++            custom = settings.JuryVerifyCustom,
++            // DISK-9: Batch-Limit des MISSING_TOPIC-Verifiers (Mess-Instrument-Parameter, einfrieren für Vergleiche).
++            missingTopicBatchSize = settings.JuryMissingTopicBatchSize
++        }
++    },
++    // Nur für Phase 2.1B (artifact_state) relevant: dokumentiert die aktive Shared-State-Policy.
++    phase2BState = (settings.AgentPhase == "phase2_1" && settings.Phase2ContextStrategy == "artifact_state")
++        ? new
++        {
++            writeArtifacts = settings.Phase2BWriteArtifacts,
++            reads = settings.Phase2BReads
++        }
++        : null,
+     ollamaBaseUrl = settings.OllamaBaseUrl,
+     openRouterBaseUrl = settings.LlmProvider == "openrouter" ? settings.OpenRouterBaseUrl : null,
+     timestampUtc = DateTime.UtcNow
+diff --git a/AgenticSdlc.Host/Run/RunContext.cs b/AgenticSdlc.Host/Run/RunContext.cs
+index 79be685..3325273 100644
+--- a/AgenticSdlc.Host/Run/RunContext.cs
++++ b/AgenticSdlc.Host/Run/RunContext.cs
+@@ -125,6 +125,26 @@ public sealed class RunContext
+         File.AppendAllText(Path.Combine(agentDir, "input-context.jsonl"), line + Environment.NewLine);
+     }
+ 
++    /// <summary>
++    /// Protokolliert einen MAF-Shared-State-Zugriff (Lesen/Schreiben) eines Agenten.
++    /// </summary>
++    /// <remarks>
++    /// B-Pendant zu input-context: State-Zugriffe sind KEINE MCP-Tool-Calls und erscheinen daher
++    /// nicht in tool-calls.jsonl. Dieses Log belegt, welchen State-Inhalt jeder Agent in Phase 2.1B
++    /// (artifact_state) erhalten bzw. erzeugt hat (Key, Scope, Hash, Laenge, Preview).
++    /// </remarks>
++    public void AppendAgentStateAccess(string? agentName, object stateAccess)
++    {
++        if (string.IsNullOrWhiteSpace(agentName))
++            return;
++
++        var agentDir = GetAgentLogDir(agentName);
++        Directory.CreateDirectory(agentDir);
++
++        var line = JsonSerializer.Serialize(stateAccess, _json);
++        File.AppendAllText(Path.Combine(agentDir, "state-access.jsonl"), line + Environment.NewLine);
++    }
++
+     public void AppendAgentInputContextMarkdown(string? agentName, string markdown)
+     {
+         if (string.IsNullOrWhiteSpace(agentName))
+@@ -191,6 +211,7 @@ public sealed class RunContext
+     }
+ 
+     public string ApprovalsDir => Path.Combine(RunDir, "approvals");
++    public string JuryDir => Path.Combine(RunDir, "jury");
+ 
+     private string GetAgentLogDir(string agentName)
+     {
+diff --git a/docs/architecture.md b/docs/architecture.md
+deleted file mode 100644
+index 35bc33b..0000000
+--- a/docs/architecture.md
++++ /dev/null
+@@ -1,66 +0,0 @@
+-# Architekturüberblick Kundenportal
+-
+-## 1. Systemkontext
+-Das zu entwickelnde Kundenportal ist eine Web-basierte Plattform (Web-first), die später um mobile Zugänge erweitert werden soll. Kernaufgabe ist die effiziente Erstellung und Verwaltung von Angeboten sowie das Bereitstellen von Rechnungen für Kunden. Das Portal wird in engem Zusammenspiel mit dem SAP-System als Backend aufgebaut, wobei SAP primär Produkt-, Preis- und Rabattinformationen bereitstellt.
+-
+-Die Systemumgebung sieht vor:
+-- Hosting ausschließlich in der EU unter Berücksichtigung der DSGVO.
+-- Nutzung von Managed Services zur Datenhaltung und Infrastruktur, ohne eigenen Datenbankserver.
+-
+-## 2. Wichtige Komponenten
+-
+-### 2.1 Web-Frontend
+-- Responsive Web-Anwendung für Kunden, Sales und Administratoren.
+-- Funktionen: Benutzer-Authentifikation, Anzeige und Erstellung von Angeboten, Rechnungsanzeige, Download von Dokumenten.
+-
+-### 2.2 API Layer
+-- Vermittler zwischen Frontend und Backend.
+-- Zuständig für SAP-Integration, Authentifizierung, Autorisierung und Serviceabstraktion.
+-- Realisierung einer sicheren API mit OAuth als bevorzugtem Authentifizierungsverfahren (alternativ E-Mail/Passwort).
+-
+-### 2.3 Backend SAP-Integration
+-- Primär lesender Zugriff auf SAP-Daten (Produkt, Preis, Rabatt).
+-- Verwendung von Caching und Fallback-Mechanismen zur Abmilderung von Verfügbarkeitsproblemen.
+-
+-### 2.4 Authentifizierungs- und Rollenmanagement
+-- Verwaltung der Nutzerrollen (Admin, Sales, Manager, Support, Kunde).
+-- Unterstützung von Single Sign-On optional.
+-- Umsetzung von Sicherheitsrichtlinien entsprechend DSGVO (Double-Opt-In, Löschkonzepte).
+-
+-### 2.5 Logging und Audit
+-- Differenzierung zwischen technischen Logs und audit-konformen Protokollen.
+-- Speicherung von Benutzeraktionen sowie Änderungshistorien zur Revisionssicherheit.
+-
+-### 2.6 Backup und Security Review
+-- Backup der Kundendaten über Managed Services.
+-- Geplante Sicherheitsprüfungen, auch wenn MVP-Zeitrahmen diese erschwert.
+-
+-## 3. Schnittstellen und Integrationspunkte
+-
+-- API Gateway (zentraler Zugriffspunkt; Nutzung steht auf Warteliste, temporäre Alternativen bedenken).
+-- SAP-Backend (Datenquelle für Preise, Produkte, Rabatte).
+-- Identity Provider (optional für SSO, z.B. Azure AD, Google ID).
+-
+-## 4. Daten- und Sicherheitsaspekte
+-
+-- Einhaltung der DSGVO-Anforderungen, insbesondere bei personenbezogenen Daten (Login, Angebote, Rechnungen).
+-- EU-only Hosting, Sicherstellung der Datenresidenz.
+-- Datenminimierung: nur notwendige Kundendaten werden gespeichert, ergänzende Daten fließen dynamisch aus SAP.
+-- Rollenbasierte Zugriffskontrolle mit feingranularen Berechtigungen.
+-- Audit- und Löschkonzepte, Retention Policies abgestimmt auf gesetzliche und Compliance-Anforderungen.
+-
+-## 5. Offene Architekturentscheidungen
+-
+-- Nutzung und Termin der API Gateway Integration aufgrund der aktuellen Warteliste.
+-- Endgültige Authentifizierungsmethode: OAuth vs. einfacheres Login-Verfahren.
+-- Ausgestaltung und Umfang des Supportprozesses im MVP (Kontaktformular vs. Ticketsystem).
+-- Implementierung der Rabattfreigabeprozesse und Workflow-Status im Angebotssystem.
+-- Umgang mit Mehrwährung und Internationalisierung (initial DACH, Erweiterung unklar).
+-- Handhabung von Testdaten und Geheimnisverwaltung in Entwicklungs- und Testumgebungen.
+-
+-## 6. Zusammenfassung
+-Diese Architektur bietet einen modularen Aufbau mit klarem Fokus auf ein MVP im Zeitrahmen von 8 Wochen unter Berücksichtigung der Compliance und technischer Restriktionen. Die erkannten Risiken und offenen Fragen sind transparent dokumentiert und werden durch iterative Abstimmung mit den Stakeholdern adressiert.
+-
+----
+-
+-Diese erste Architekturübersicht basiert auf der Auswertung des vollständigen Transkripts input/transcripts/T9999_chaos.txt, den daraus abgeleiteten Requirements in docs/requirements.md sowie der Risikoanalyse in docs/risks.md.
+diff --git a/docs/open-questions.md b/docs/open-questions.md
+deleted file mode 100644
+index f7669d0..0000000
+--- a/docs/open-questions.md
++++ /dev/null
+@@ -1,47 +0,0 @@
+-# Offene Fragen und Klärungsbedarfe
+-
+-## 1. Fachliche Fragen
+-
+-- Wie genau ist die finale Zieldefinition für das MVP? Welche Features müssen zwingend enthalten sein, welche können verschoben werden?
+-- Wie soll der Supportprozess konkret umgesetzt werden? Ist ein Kontaktformular mit manueller Bearbeitung ausreichend oder wird ein Ticketsystem benötigt?
+-- Wie wird der Rabattfreigabeprozess ausgestaltet? Welche Rollen sind beteiligt und wie wird die Freigabe technisch unterstützt?
+-- Wer übernimmt die Pflege der Stammdaten und Angebotsinhalte?
+-- Gibt es eine klare Entscheidung zu Pilotkunde(n) und damit verbundener regionaler Ausdehnung (DACH, Schweiz, EU, USA)?
+-
+-## 2. Technische Fragen
+-
+-- Wird das zentrale API Gateway für den MVP genutzt, trotz aktueller Warteliste von 6 Wochen?
+-- Falls nein, welche temporären Alternativen sind vorgesehen?
+-- Welche Authentifizierungsmethode wird final gewählt? OAuth oder lediglich E-Mail/Passwort-Login?
+-- Wie wird der Fallback bei SAP-System-Ausfällen realisiert?
+-- Welche Managed Services sind für Datenhaltung und Backup konkret vorgesehen?
+-- Wie werden Test- und Entwicklungsumgebungen mit Blick auf Datenschutz gestaltet? Welche Daten dürfen dort verwendet werden?
+-- Welche Mechanismen für Secrets Management werden eingesetzt?
+-- Wie werden Rate Limits, Paging und Missbrauchserkennung technisch umgesetzt?
+-
+-## 3. Datenschutz und Compliance
+-
+-- Wie wird die EU-only-Datenresidenz technisch sichergestellt und nachgewiesen?
+-- Welche Datenklassifikation und Retentionsrichtlinien gelten konkret?
+-- Wie wird das Löschkonzept mit gesetzlichen Aufbewahrungspflichten in Einklang gebracht?
+-- Welche Logging- und Audit-Standards werden implementiert?
+-- Welche konkreten Maßnahmen sind für Double-Opt-In, Löschung und Nachvollziehbarkeit erforderlich?
+-
+-## 4. Organisatorische Fragen
+-
+-- Wer verantwortet Architektur und Security im Projekt, wenn derzeit keine dedizierten Architekten vorhanden sind?
+-- Wie wird die Dokumentation organisiert, um Security Review und Compliance sicherzustellen?
+-- Wer ist Ansprechpartner für Datenschutzfragen?
+-- Gibt es definierte Prozesse für die Abstimmung mit SAP-, API Gateway- und Hosting-Teams?
+-- Wie wird die Kostenschätzung für EU-Hosting und Managed Services genau erstellt?
+-
+-## 5. Risiken und Widersprüche
+-
+-- Wie sollen die Zielkonflikte zwischen Zeitrahmen (8 Wochen MVP) und notwendigen Sicherheitsprüfungen gehandhabt werden?
+-- Wie werden Widersprüche zwischen Wunsch nach Funktionalität (z.B. Rabattfreigabe, Support) und MVP-Scope gelöst?
+-- Wie wird mit Unsicherheiten bei SAP-Verfügbarkeit und SAP-Datenintegrität umgegangen?
+-- Wie wird internationaler Datenschutz (z.B. Schweiz, USA) im Projektverlauf adressiert?
+-
+----
+-
+-Diese Liste basiert auf der Auswertung des Stakeholder-Transkripts, der Anforderungen, Risikoanalyse und Architekturübersicht. Sie soll als Grundlage für gezielte Klärungen und Projektsteuerung dienen.
+diff --git a/docs/requirements.md b/docs/requirements.md
+deleted file mode 100644
+index e96debc..0000000
+--- a/docs/requirements.md
++++ /dev/null
+@@ -1,51 +0,0 @@
+-## Functional Requirements
+-
+-- Das System muss ein Kundenportal bereitstellen, zunächst als Webanwendung (Web-first) mit späterer mobiler Unterstützung.
+-- Ein Benutzer-Login mit E-Mail/Passwort ist Pflicht; Single Sign-On (SSO) ist optional.
+-- Nutzerrollen müssen mindestens folgende umfassen: Admin, Sales, Manager, Support, Kunde.
+-- Nutzer mit entsprechenden Rechten müssen Angebote erstellen, ansehen, speichern und herunterladen können.
+-- Das System muss Rechnungen einsehen und downloaden können.
+-- Integration mit SAP-Systemen zur Nutzung von Produktdaten, Preisen und Rabattlogik ist erforderlich.
+-- Es muss eine API-Schicht (API Layer) für Integration und Datenzugriffe geben.
+-- KPI-Metriken wie Conversion Rate und Zeit bis Angebotserstellung sollen erfasst werden.
+-- Es ist ein Backup-Mechanismus für Kundendaten erforderlich.
+-- Ein minimaler Audit Trail muss festhalten, wer wann welche Daten geändert hat.
+-
+-## Non-functional Requirements
+-
+-- Das System muss DSGVO-konform sein, insbesondere beim Login, der Datenspeicherung, beim Logging und bei Datenlöschungen.
+-- Hosting muss in der EU erfolgen (EU-only), um Datenschutzanforderungen zu genügen.
+-- Es dürfen nur Managed Services genutzt werden, ein eigener Datenbankserver ist ausgeschlossen.
+-- Die Lösung muss skalierbar sein, um bei unterschiedlicher Nutzerzahl performant zu bleiben.
+-- Security Reviews sind notwendig, auch wenn der MVP-Zeitplan dies erschwert.
+-- Das API Layer muss abgesichert sein, OAuth wird bevorzugt, API Keys sind Alternativen.
+-- Logging und Audit müssen zwischen technischen Logs und Datenschutz-konformen Audit-Logs unterscheiden.
+-- Test- und Entwicklungsumgebungen müssen keine Echtkundendaten enthalten, sondern synthetische oder pseudonymisierte Daten.
+-
+-## Constraints/Compliance
+-
+-- Das MVP hat eine Zeithorizont von 8 Wochen.
+-- Im MVP sind keine manuellen Sonderrabatte erlaubt; eine Rabatt-Freigabe ist nicht implementiert.
+-- Ein Support-Ticketsystem ist im MVP nicht vorgesehen, stattdessen nur ein Kontaktformular.
+-- Der Zugriff auf SAP-Systeme erfolgt zunächst nur lesend.
+-- Es darf kein neuer Datenbank-Server eingeführt werden; nur Managed Services sind erlaubt.
+-- Hosting- und Backup-Lösungen müssen DSGVO-konform sein und im EU-Raum verbleiben.
+-
+-## Assumptions and Open Points
+-
+-- Supportprozesse sind derzeit unklar und werden als Risiko mitgeführt.
+-- Rabatt-Freigabeprozesse und Workflow-Status für Angebote sind für später vorgesehen.
+-- SSO und OAuth-Integration sind noch nicht final entschieden.
+-- Internationalisierung (mehrsprachig, Mehrwährung) ist für später geplant; initial nur DACH-Region.
+-- SAP-Systemverfügbarkeit ist kritisch und kann Einfluss auf die Echtzeitdaten und Preisvalidität nehmen.
+-- API Gateway Nutzung als zentrale Schnittstelle ist angedacht, aber mit erheblicher Wartezeit verbunden.
+-- Die genaue Pilotkunde und damit verbundene Anforderungen wie Schweiz vs. EU sind offen.
+-- Backup- und Disaster Recovery Details müssen noch spezifiziert werden.
+-- Dokumentationsaufwand und Security Reviews müssen mit dem Zeitplan abgestimmt werden.
+-- Datenklassifikation und Retention-Richtlinien fehlen noch.
+-- KPI-Erfassung wird nur rudimentär im MVP unterstützt.
+-
+-## Traceability
+-
+-- Die Anforderungen basieren auf ausführlichen Diskussionen und Analysen aus dem Transkript input/transcripts/T9999_chaos.txt.
+-- Zusätzlich wurde der strukturierte Projektkontext in runs/phase2_1/20260609_152957_0e0804/state/context.md erfasst.
+diff --git a/docs/risks.md b/docs/risks.md
+deleted file mode 100644
+index 7510ac9..0000000
+--- a/docs/risks.md
++++ /dev/null
+@@ -1,95 +0,0 @@
+-# Risikoanalyse für das Kundenportal-Projekt
+-
+-## 1. Fachliche Risiken
+-
+-### 1.1 Unklare Zieldefinition und Scope-Abgrenzung
+-- Das Projekt hat derzeit keine klare finale Zieldefinition, es gibt widersprüchliche Anforderungen und wechselnde Prioritäten.
+-- Auswirkungen: Verzögerungen, Missverständnisse, Scope Creep.
+-- Gegenmaßnahmen: Klare Priorisierung, MVP-Schnitt definieren, Stakeholder-Alignment.
+-
+-### 1.2 Fehlende Supportprozesse
+-- Support wird entweder unzureichend umgesetzt (nur Kontaktformular, kein Ticketsystem).
+-- Auswirkungen: Schlechter Kundensupport, erhöhte manuelle Nachbearbeitung, Compliance-Probleme.
+-- Gegenmaßnahmen: Klare Definition des Supportprozesses, ggf. späteres Ticketsystem, Datenschutzkonforme Abläufe.
+-
+-### 1.3 Unzureichende Rabattfreigabe und Angebotsworkflow
+-- Rabattfreigabeprozesse sind komplex und nicht im MVP vorgesehen.
+-- Auswirkungen: Finanzielle Risiken durch falsche Rabatte, fehlerhafte Angebote.
+-- Gegenmaßnahmen: Temporäre Constraints im MVP („keine Sonderrabatte“), späterer Freigabe-Workflow.
+-
+-## 2. Technische Risiken
+-
+-### 2.1 API Gateway Verfügbarkeit und Wartezeiten
+-- Zentrales API Gateway hat eine Warteliste von 6 Wochen, was den MVP-Termin gefährdet.
+-- Auswirkungen: Verzögerte Integration, Umgehung von Sicherheitskontrollen.
+-- Gegenmaßnahmen: Notfall-Pläne mit temporären Schnittstellen, Priorisierung beim Gateway-Team.
+-
+-### 2.2 SAP-Systemverfügbarkeit und Datenaktualität
+-- SAP ist kritisch für Preise und Produktdaten, jedoch ist Echtzeitverfügbarkeit eingeschränkt.
+-- Auswirkungen: Falsche Preisangaben, nicht aktuelle Angebote, Kundenunzufriedenheit.
+-- Gegenmaßnahmen: Fallback-Mechanismen, Cache mit klarer Preisgültigkeit, Warnhinweise.
+-
+-### 2.3 Fehlende oder unzureichende Security Reviews
+-- Security-Reviews dauern ca. 6 Wochen, konterkarieren das 8-Wochen-MVP.
+-- Auswirkungen: Sicherheitslücken, Compliance-Verstöße.
+-- Gegenmaßnahmen: Minimalanforderungen an Security Reviews definieren, ggf. Tool-Einsatz zur Automatisierung.
+-
+-### 2.4 Komplexität bei OAuth und SSO Integration
+-- OAuth ist bevorzugt, aber bisher nicht final entschieden oder implementiert.
+-- Auswirkungen: Verzögerungen, Sicherheitslücken bei Authentifizierung.
+-- Gegenmaßnahmen: Entscheidungsschlupf mit solider Fallback-Lösung (E-Mail/Passwort).
+-
+-### 2.5 Testdaten und Entwicklungsumgebungen
+-- Nutzung von echten Kundendaten in Testumgebungen führt zu Compliance-Risiken.
+-- Auswirkungen: Datenschutzverstöße, Bußgelder.
+-- Gegenmaßnahmen: Einsatz von Pseudonymisierung oder synthetischen Testdaten.
+-
+-## 3. Compliance- und Datenschutzrisiken
+-
+-### 3.1 DSGVO-Konformität insbesondere bei Login und Datenverarbeitung
+-- Anforderungen an Double-Opt-In, Löschkonzepte, Audit Trails und Datenminimierung sind komplex.
+-- Auswirkungen: Bußgelder, Reputationsverluste.
+-- Gegenmaßnahmen: Frühzeitige Einbindung der Datenschutzabteilung, Dokumentation aller Maßnahmen.
+-
+-### 3.2 Hosting und Datenresidenz
+-- EU-only Hosting verlangt Nachweis der Datenlokalität, Standardlösungen replizieren Daten möglicherweise global.
+-- Auswirkungen: Rechtliche Risiken durch unerlaubte Datenübermittlung.
+-- Gegenmaßnahmen: Auswahl datenschutzkonformer Cloud-Provider mit garantierter Datenlokalität.
+-
+-### 3.3 Logging und Auditierungsanforderungen
+-- Trennung von technisch notwendigen Logs und personenbezogenen Audit Logs ist nicht trivial.
+-- Auswirkungen: Datenschutzverstöße, fehlende Nachvollziehbarkeit.
+-- Gegenmaßnahmen: Klare Definition und technische Umsetzung differenzierter Logtypen.
+-
+-### 3.4 Retention und Löschkonzepte vs. gesetzliche Aufbewahrungspflichten
+-- Konflikt zwischen Recht auf Löschung und handelsrechtlichen Aufbewahrungspflichten.
+-- Auswirkungen: Compliance-Dilemma.
+-- Gegenmaßnahmen: Datenklassifikation, genaue Verfahrensbeschreibungen.
+-
+-## 4. Widersprüche und Unsicherheiten
+-
+-- Zeitlicher Druck vs. notwendige Sicherheits- und Datenschutzmaßnahmen.
+-- Wunsch nach MVP mit vollem Funktionsumfang vs. technische und organisatorische Restriktionen.
+-- Unklare internationale Anforderungen (DACH, Schweiz, EU, USA) mit teils widersprüchlichen Datenschutzanforderungen.
+-- Unklare Pilotkundendefinition beeinflusst Scope und Compliance.
+-
+-## 5. Mögliche Auswirkungen
+-
+-- Projektverzögerungen und Mehrkosten.
+-- Sicherheits- und Datenschutzverstöße mit rechtlichen Konsequenzen.
+-- Schlechter Kundenservice und Kundenunzufriedenheit.
+-- Verlust von Marktchancen durch unvollständigen MVP.
+-
+-## 6. Gegenmaßnahmen und Klärungsbedarfe
+-
+-- Priorisierung und klare Scope-Abgrenzung für MVP.
+-- Frühzeitige Einbindung von Datenschutz und Security Expert:innen.
+-- Klare Definition von Support- und Rabattprozessen, mit dokumentierten Workarounds für MVP.
+-- Enge Abstimmung mit SAP- und API-Gateway-Teams zur Vermeidung von Blockaden.
+-- Auswahl datenschutzkonformer Cloud-Provider mit EU-Datenresidenz.
+-- Einsatz von Testdatenmanagement und Geheimnisverwaltung (Secrets Management).
+-- Dokumentation aller Annahmen, Risiken und offenen Fragen für die Stakeholderkommunikation.
+-
+----
+-
+-Diese Riskoanalyse basiert auf der vollständigen Auswertung des Stakeholder-Transkripts in input/transcripts/T9999_chaos.txt sowie den darin dokumentierten Anforderungen und Constraints in docs/requirements.md und dem Projektkontext in runs/phase2_1/20260609_152957_0e0804/state/context.md.
+\ No newline at end of file
+diff --git a/run-config.json b/run-config.json
+index a26fae4..4904060 100644
+--- a/run-config.json
++++ b/run-config.json
+@@ -2,19 +2,38 @@
+ {
+   "agentPhase": "phase2_1",
+ //"agentPhase": "phase1",
+-  "phase2ContextStrategy": "message_passing",
++ // "phase2ContextStrategy": "message_passing",
++  "phase2ContextStrategy": "artifact_state",   // Phase 2.1B: MAF Shared State. Umschalten genuegt — Prompts werden automatisch gewaehlt.
+   "llmProvider": "openrouter",
+-  "agentModel": "openai/gpt-4.1-mini",
++ // "agentModel": "openai/gpt-4.1-mini",
+  // "agentModel": "openai/gpt-oss-120b:free",
+- // "agentModel": "openai/gpt-oss-120b",
++   "agentModel": "openai/gpt-oss-120b",
+  //langsam: "agentModel": "nvidia/nemotron-3-super-120b-a12b:free",
++
++  // Prompts gruppiert nach Phase -> Strategie -> Agent.
++  // A<->B wird allein ueber "phase2ContextStrategy" oben umgeschaltet; hier nichts tauschen.
+   "prompts": {
+-    "Phase1SinglePass": "Phase1_3Prompt",
+-    "Phase2ContextAgent": "ContextPrompt3",
+-    "Phase2RequirementsAgent": "RequirementsPrompt5",
+-    "Phase2RisksAgent": "RisksPrompt3",
+-    "Phase2ArchitectureAgent": "ArchitecturePrompt3",
+-    "Phase2OpenQuestionsAgent": "OpenQuestionsPrompt3"
++    "phase1": {
++      "default": {
++        "Phase1SinglePass": "Phase1_3Prompt"
++      }
++    },
++    "phase2_1": {
++      "message_passing": {
++        "Phase2ContextAgent": "ContextPrompt3",
++        "Phase2RequirementsAgent": "RequirementsPrompt5",
++        "Phase2RisksAgent": "RisksPrompt3",
++        "Phase2ArchitectureAgent": "ArchitecturePrompt3",
++        "Phase2OpenQuestionsAgent": "OpenQuestionsPrompt3"
++      },
++      "artifact_state": {
++        "Phase2ContextAgent": "ContextPrompt3",
++        "Phase2RequirementsAgent": "RequirementsPromptB1",
++        "Phase2RisksAgent": "RisksPromptB1",
++        "Phase2ArchitectureAgent": "ArchitecturePromptB1",
++        "Phase2OpenQuestionsAgent": "OpenQuestionsPromptB1"
++      }
++    }
+   },
+   "observability": {
+     "enableOtel": true,
+@@ -24,5 +43,52 @@
+   },
+   "llmPreview": {
+     "chars": 1200
++  },
++  "jury": {
++    "enabled": true,
++    "judgeModel": "openai/gpt-4.1-mini",
++    // Strukturierte Judge-Ausgabe (json_schema) erzwingen. Default true.
++    // Bei Judges ohne json_schema-Support (z. B. manche OpenRouter-Modelle) auf false setzen;
++    // dann faengt der evaluation_failed-Pfad (B8) ungueltiges JSON ab.
++    "structuredOutput": true,
++    // DISK-12/G3: Call 1 (Finding-Generierung) pro Kategorie splitten (FALSE_CLAIM/FALSE_CERTAINTY/
++    // MISSING_TOPIC) statt eines 3-in-1-Calls. Hebt Recall schwacher Modelle (B20). Default true;
++    // false = altes 3-in-1-Verhalten (für Instrument-Vergleich). Verifier-Pass bleibt unveraendert.
++    "splitGeneration": true,
++    // DISK-12/B22: aktive Fehlerkategorien PRO ARTEFAKTTYP (Generierung + Verifikation). Ohne Block
++    // gilt der Code-Default: open-questions = nur FALSE_CERTAINTY + MISSING_TOPIC (FALSE_CLAIM passt
++    // dort nicht — Optionen/Beispiele in offenen Fragen sind keine Claims). Hier nur setzen, um den
++    // Default zu ueberschreiben; die effektive Policy steht reproduzierbar im config.json-Snapshot.
++    // Beispiel:
++    // "categories": {
++    //   "open-questions": ["FALSE_CERTAINTY", "MISSING_TOPIC"],
++    //   "requirements":   ["FALSE_CLAIM", "FALSE_CERTAINTY", "MISSING_TOPIC"]
++    // },
++    // DISK-7: zweiter Verifikations-Pass pro Fehlerkategorie. Pro aktivierter Kategorie ein
++    // eigener Batch-Call (nur bei vorhandenen Kandidaten). Verdikt: confirmed/partial/rejected.
++    // Defaults (ohne Block): missingTopic=true, falseCertainty=true, falseClaim=false.
++    // falseClaim ist teurer (Transkript-Re-Read) und bewusst konservativ -> standardmaessig aus.
++    "verification": {
++      "falseClaim": true,
++      "falseCertainty": true,
++      "missingTopic": true,
++      // custom=true ersetzt die 3 Verifier durch EINEN ausgelagerten Prompt
++      // (Prompts/jury/verify-custom.txt). Nur zum Experimentieren — NICHT fuer A/B/C-Vergleiche.
++      "custom": false,
++      // DISK-9: max. MISSING_TOPIC-Kandidaten pro Verifikations-Call (Default 8). Groessere Listen
++      // werden in Folge-Calls aufgeteilt (Verifier-Kollaps-Schutz, Run 639979). Nur MISSING_TOPIC.
++      "missingTopicBatchSize": 8
++    }
++  },
++  // Nur fuer Phase 2.1B (artifact_state) wirksam. Default (ohne Block) = beta-full.
++  // beta-minimal: "writeArtifacts": false + reads je Agent auf ["context"] kuerzen.
++  "phase2BState": {
++    "writeArtifacts": true,
++    "reads": {
++      "Phase2RequirementsAgent": ["context"],
++      "Phase2RisksAgent": ["context", "requirements"],
++      "Phase2ArchitectureAgent": ["context", "requirements", "risks"],
++      "Phase2OpenQuestionsAgent": ["context", "requirements", "risks", "architecture"]
++    }
+   }
+ }

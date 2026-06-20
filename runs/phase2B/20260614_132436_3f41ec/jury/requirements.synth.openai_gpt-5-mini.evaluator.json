@@ -1,0 +1,100 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-14T13:28:36.365766Z",
+  "evaluationStatus": "ok",
+  "errorScore": 28,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 28; KRITISCH=2; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 2,
+      "reason": "FALSE_CLAIM: 2 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Durchg\u00E4ngiges TLS, Double\u2011Opt\u2011In, minimale Audit\u2011Logs ohne personenbezogene Daten, und DSGVO\u2011Konformit\u00E4t (Logging, L\u00F6schkonzept\u2011Hinweis).\u0022 | Transkript: \u0022Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert? / Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.\u0022 | Das Artefakt behauptet pauschal, Audit\u2011Logs w\u00FCrden ohne personenbezogene Daten auskommen; das widerspricht der Forderung nach pr\u00FCfbarer Auditierbarkeit (\u0027wer hat wann was ge\u00E4ndert\u0027) im Transkript (und setzt damit eine nicht vereinbare Einschr\u00E4nkung)."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u002299,5\u202F% monatliche Verf\u00FCgbarkeit, betrieben auf einem EU\u2011Only Managed Hosting Service.\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Das Artefakt benennt eine konkrete SLA (99,5%) die im Transkript nicht genannt oder vereinbart wurde (Protokoll enth\u00E4lt keine Festlegung dieser Verf\u00FCgbarkeits\u2011Zahl)."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 1,
+      "reason": "FALSE_CERTAINTY: 1 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss 200 bis 20.000 gleichzeitige Nutzer unterst\u00FCtzen, mit Pagination f\u00FCr Rechnungs\u2011Downloads.\u0022 | Transkript: \u0022Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.\u0022 | Die im Transkript unsichere/ungef\u00E4hre Nutzer\u2011Sch\u00E4tzung wurde im Artefakt als feste Performance\u2011Anforderung formuliert."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 11,
+      "reason": "MISSING_TOPIC: 10 Fehler (unveraendert); 1 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022MVP in 8 Wochen wurde versprochen.\u0022 | Das 8\u2011Wochen\u2011MVP\u2011Zeitfenster wurde im Transkript als verbindliche Vorgabe genannt, fehlt aber komplett im Artefakt (Scope/Timeline nicht dokumentiert)."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022API muss abgesichert sein. OAuth? Oder API Keys?\u0022 | Im Transkript wurde ausdr\u00FCcklich die Absicherung der API und die Option OAuth vs. API\u2011Keys diskutiert; das Artefakt nennt keine verbindliche oder offene Anforderung zur API\u2011Authentifizierung."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022 | Rate\u2011Limiting / Missbrauchserkennung wurde im Transkript als notwendige Ma\u00DFnahme genannt, ist im Artefakt nicht dokumentiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022 | Das Transkript fordert Template\u2011Versionierung / Revisionssicherheit f\u00FCr Angebote/PDFs; das Artefakt beschreibt PDF\u2011Export, enth\u00E4lt aber keine Anforderungen zur Versionierung oder revisionssicheren Nachverfolgbarkeit."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Dann brauchen wir Workflow\u2011Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected.\u0022 | Die im Transkript vorgeschlagenen Angebots\u2011Workflow\u2011Status wurden nicht in den Anforderungen festgehalten (Artefakt schlie\u00DFt \u201Akomplexe Workflows\u2018 aus, nennt aber keine minimalen Status)."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ja kein neuer DB Server \u2013 IT hat das klar gesagt.\u0022 | Das Verbot eines neuen DB\u2011Servers / Hinweis auf kein neues DB\u2011Server\u2011Setup wurde im Transkript explizit genannt, fehlt aber als Constraint im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022ehrlich gesagt ist unser Backend noch nicht mal API\u2011ready. / Stammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig.\u0022 | Im Transkript wurden technische Abh\u00E4ngigkeiten/Restriktionen genannt (Backend nicht API\u2011ready, unvollst\u00E4ndige SAP\u2011Stammdaten) die Einfluss auf Scope und Integrationsaufwand haben; diese Risiken/Abh\u00E4ngigkeiten fehlen im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 | KPIs (Conversion Rate, Zeit bis Angebot) wurden im Transkript als zu messende Metriken genannt, sind im Artefakt nicht dokumentiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Und CI/CD braucht Secrets Management.\u0022 | Secrets\u2011/Secrets\u2011Management f\u00FCr CI/CD wurde im Transkript als notwendiges Thema genannt; das Artefakt enth\u00E4lt hierzu keine Anforderung oder Hinweis."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u0022 | Der Stakeholder\u2011Wunsch, dass Support\u2011Anfragen aus dem Kontaktformular einer Kunden\u2011ID zugeordnet werden m\u00FCssen, ist im Artefakt nicht dokumentiert (nur generisches Kontaktformular)."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Sicherheit: Durchg\u00E4ngiges TLS, Double\u2011Opt\u2011In, minimale Audit\u2011Logs ohne personenbezogene Daten, und DSGVO\u2011Konformit\u00E4t (Logging, L\u00F6schkonzept\u2011Hinweis).\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. / Application logs, audit logs and security logs are different.\u0022 | Die klare Forderung, zentrale Monitoring\u2011Logs d\u00FCrfen keine personenbezogenen Daten enthalten und die Trennung von Audit/Anwendungs/Security\u2011Logs wurde im Transkript genannt, ist im Artefakt nicht explizit festgehalten."
+        }
+      ]
+    }
+  ]
+}

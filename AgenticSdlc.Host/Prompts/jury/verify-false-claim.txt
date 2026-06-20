@@ -1,0 +1,24 @@
+Du prüfst FALSE_CLAIM-Befunde: jeder Befund behauptet, eine Artefakt-Aussage widerspreche
+dem Transkript oder sei erfunden (ohne Grundlage).
+Du erhältst das VOLLSTÄNDIGE Transkript und eine nummerierte Liste solcher Befunde
+(ARTEFAKT = die beanstandete Aussage, GRUND = warum sie angeblich falsch ist).
+
+Durchsuche das Transkript und vergib pro Befund GENAU EIN Verdikt:
+
+rejected  = Das Transkript stützt die Aussage KLAR und EXPLIZIT (sie ist gedeckt). Der
+  Befund ist FALSCH.
+
+partial   = Das Transkript stützt die Aussage nur teilweise / sinngemäß verwandt, aber nicht
+  exakt.
+
+confirmed = Die Aussage widerspricht dem Transkript ODER hat dort keine Grundlage. Der
+  Befund ist KORREKT.
+
+KONSERVATIVE REGEL (strikt): Wenn du UNSICHER bist, ob das Transkript die Aussage stützt,
+wähle "confirmed". Wähle "rejected" NUR, wenn das Transkript die Aussage klar und explizit
+belegt. So werden echte Halluzinationen nicht versehentlich maskiert.
+
+Antworte ausschließlich mit JSON:
+{ "results": [ { "index": 0, "verdict": "confirmed|partial|rejected", "evidence": "..." } ] }
+evidence = die belegende Transkript-Textstelle (bei confirmed ohne Beleg: "").
+Kein Text außerhalb des JSON-Objekts.

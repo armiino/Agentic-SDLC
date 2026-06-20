@@ -1,0 +1,61 @@
+# Offene Fragen und Klärungsbedarf für das Kundenportal-Projekt
+
+## 1. Offene fachliche Fragen
+
+- **Freigabeprozesse für Rabatte:**
+  - Welche exakte Rabattgrenze gilt für eine Freigabe (15 %, 20 % oder andere Schwelle)?
+  - Wer ist genau für die Freigabe verantwortlich (Manager, Finance, beide oder andere)?
+  - Wie soll der Freigabeprozess technisch im MVP umgesetzt werden (Workflow, Historisierung, Eskalation)?
+
+- **Supportprozess im MVP:**
+  - Wie wird der Supportkontakt genau gehandhabt ohne Ticketsystem?
+  - Gibt es Anforderungen an Nachverfolgbarkeit und Compliance im Supportformular?
+  - Wie wird der Zugriff von Support-Mitarbeitern auf sensible Angebotsdaten geregelt, um Datenschutzverletzungen zu verhindern?
+
+- **Regionale Anforderungen:**
+  - Wer ist der Pilotkunde und auf welche Region(en) genau soll das MVP initial ausgerichtet sein?
+  - Wie sollen Mehrsprachigkeit und Multiwährung im MVP behandelt werden, insbesondere vor dem Hinzufügen von Schweiz oder EU-Ländern?
+
+## 2. Offene technische Fragen
+
+- **Identity Provider Auswahl:**
+  - Welcher Identity Provider wird final eingesetzt (Azure AD, Google, andere)?
+  - Welche Auswirkungen hat die Auswahl auf die Architektur und Integrationskomplexität?
+
+- **SAP-Datenintegration:**
+  - Wie aktuell sind die Daten aus SAP?
+  - Welche Fallbackmechanismen sind vorgesehen bei Nichtverfügbarkeit oder Fehlern im SAP-System?
+  - Wie soll die SAP-Anbindung technisch genau realisiert werden (REST, SOAP, Batch)?
+
+- **Audit- und Logging-Konzepte:**
+  - Wie detailliert müssen Audit Trails im MVP sein?
+  - Werden minimalistische oder umfassende Logging-Anforderungen umgesetzt?
+  - Wie sollen Auditdaten gespeichert und ausgewertet werden?
+
+- **Infrastruktur und Hosting:**
+  - Wie wird der EU-only Hosting-Anspruch mit Kostendruck und möglichen Ressourcenengpässen balanciert?
+  - Welche Managed Services werden bevorzugt genutzt, um Infrastrukturbelastung zu minimieren?
+
+- **Zeitplanung und Architekturkapazitäten:**
+  - Wie werden die notwendigen Sicherheitsreviews und Architektur-Entscheidungen im engen MVP-Zeitplan koordiniert?
+  - Wie soll der Mangel an dedizierten Architekturressourcen kompensiert werden?
+
+## 3. Widersprüche und Risiken
+
+- Der ambitionierte 8-Wochen-MVP-Zeitplan steht im Widerspruch zu notwendigen Sicherheit- und Architektur-Reviews, was zu möglichen Abstrichen führen kann.
+- Supportprozess ohne Ticketsystem kann zu ineffizientem Support und Compliance-Verstößen führen.
+- Zugriff von Support-Rollen auf sensible Angebotsdaten ist ein Konflikt zwischen Datenschutz und Supportanforderungen.
+- Es besteht Unsicherheit bei der finalen Definition von regionalen Anforderungen und Pilotkunden, was spätere Nachrüstungen erforderlich machen könnte.
+- Gefahr von Overengineering durch Skalierbarkeitsanforderungen vs. MVP-Prinzip.
+
+## 4. Fehlende Informationen und Ansprechpartner
+
+- Es fehlt eine finale Entscheidungsgrundlage für den Identity Provider. Ansprechpartner: Backend/Architektur-Team (Ben).
+- Freigabeprozess und Rabattgrenzen sollten mit Product Management (Anna) und Finance (Eva) abgestimmt werden.
+- Supportprozesse und Datenschutzregeln in Bezug auf Supportrolle sollten mit Customer Support (David) und Datenschutz (Clara) geklärt werden.
+- Hosting-Strategie und Kosten-Nutzen-Analysen sollten mit IT Operations (Farid) diskutiert werden.
+- Regionale Anforderungsklärung mit Produktmanagement (Anna) und Pilotkunde erforderlich.
+
+---
+
+Diese offenen Punkte sind priorisiert und sollten frühzeitig geklärt werden, um Risiken zu minimieren und den MVP-Zeitplan realistisch zu gestalten.

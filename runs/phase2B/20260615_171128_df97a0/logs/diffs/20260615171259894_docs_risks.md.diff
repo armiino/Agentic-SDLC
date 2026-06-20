@@ -1,0 +1,60 @@
+--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risiken – Kundenportal & Angebots‑MVP
++ 
++ ## 1. Fachliche Risiken
++ - **Abhängigkeit von SAP (Read‑Only)**: Das System greift für Produkt‑ und Preisdaten ausschließlich auf das SAP‑System zu. Bei Ausfall oder Verzögerungen im SAP kann das MVP keine Angebote erstellen.
++ - **Unklare Rabatt‑Freigabe‑Prozesse**: Schwellenwerte (15 % / 20 % / 30 %) und Verantwortlichkeiten sind nicht definiert. Fehlende Kontrollen können zu fehlerhaften Angeboten und finanziellen Verlusten führen.
++ - **Pilot‑Kunde‑Entscheidung (Schweiz vs. Deutschland)**: Unterschiedliche Währungen (CHF/EUR) und Datenschutz‑Bestimmungen (Schweiz ≠ EU) können die MVP‑Umsetzung verzögern und zusätzliche rechtliche Anpassungen erfordern.
++ - **Rollen‑ und Berechtigungskonzept**: Vier Rollen (Admin, Sales, Kunde, Manager) sind definiert, jedoch fehlen detaillierte Berechtigungs‑Matrixen, was zu unautorisierten Zugriffen führen kann.
++ - **Support‑Integration**: Das Kontaktformular ohne Persistenz bietet keine Nachverfolgbarkeit. Bei Beschwerden fehlt ein Ticket‑System, wodurch Service‑Qualität und Datenschutz gefährdet sein können.
++ 
++ ## 2. Technische Risiken
++ - **Zeit vs. Umfang**: 8‑Wochen‑Zeitplan steht im Konflikt zu umfangreichen Anforderungen (SSO, API‑Gateway, Multi‑Währung, Backup, Security Review). Gefahr von Scope‑Creep oder unvollständiger Implementierung.
++ - **Security Review (6 Wochen)**: Der geplante Review überschneidet sich stark mit der MVP‑Deadline. Risiko, dass das Release ohne vollständige Sicherheitsprüfung erfolgt.
++ - **API‑Gateway‑Verzögerung (6 Wochen)**: Ohne Gateway fehlen zentrale Features wie Rate‑Limiting und zentrale Authentifizierung. Nutzung eines Interim‑Gateways birgt Integrations‑ und Sicherheitsrisiken.
++ - **Hosting‑Kosten & EU‑Only Managed Service**: Unklare Kosten können das Budget sprengen und zu Kompromissen bei Skalierbarkeit oder Verfügbarkeit führen.
++ - **Keine neue Datenbank**: Verzicht auf neue DB könnte die Skalierbarkeit und Datenisolation beeinträchtigen, besonders bei Mehrwährung und Mehrsprachigkeit.
++ - **Caching‑Strategie**: Unklare DSGVO‑Konformität beim Cachen von Kundendaten kann zu Datenlecks führen.
++ - **Backup‑ & DR‑Strategie (RPO/RTO undefiniert)**: Ohne klare Ziele ist Wiederherstellung im Notfall unsicher.
++ 
++ ## 3. Compliance‑ oder Datenschutzrisiken
++ - **DSGVO‑Umsetzung (Double‑Opt‑In, Löschkonzept)**: Fehlende konkrete Prozesse können zu Verstößen führen, insbesondere bei Kunden aus der Schweiz.
++ - **Logging vs. Audit‑Logging**: Technische Logs dürfen keine personenbezogenen Daten enthalten, jedoch fehlen klare Trennungs‑ und Aufbewahrungsregeln.
++ - **Test‑Daten in SAP**: Nutzung realer Kundendaten in Test‑Umgebungen ohne Pseudonymisierung verletzt Datenschutzvorgaben.
++ - **Push‑Notifications / Tracking**: Unklare Implementierung kann gegen DSGVO‑Bestimmungen zum Nutzer‑Tracking verstoßen.
++ - **Mehrsprachigkeit & Internationalisierung**: Spätere Sprach‑ und Länder‑Rollouts können weitere Datenschutz‑ und Rechtsanforderungen erzeugen.
++ 
++ ## 4. Widersprüche und Unsicherheiten
++ - **Mobile‑First vs. Web‑First**: Priorisierung unklar – könnte Ressourcen vom MVP‑Kern abziehen.
++ - **SSO‑Provider (Azure AD, Google, beides)**: Entscheidung offen; Implementierung erhöht Komplexität und potenzielle Sicherheitslücken.
++ - **Kosten für EU‑Only Hosting**: Noch nicht quantifiziert – beeinflusst Budget‑ und Technologie‑Auswahl.
++ - **Rate‑Limiting‑Schwellenwerte**: Noch nicht festgelegt – Risiko von Missbrauch oder legitimen Nutzer‑Blockierungen.
++ - **Caching‑Regeln für Kundendaten**: Unklar, welche Daten sicher gecached werden dürfen.
++ - **Pilot‑Kunde‑Auswahl**: Unterschiedliche rechtliche Rahmenbedingungen (Schweiz vs. EU) können das gesamte Daten‑ und Compliance‑Design beeinflussen.
++ 
++ ## 5. Mögliche Auswirkungen
++ - **Produktionsausfall** bei SAP‑Störung → keine Angebotserstellung → Umsatzverlust.
++ - **Finanzielle Verluste** durch falsch freigegebene Rabatte.
++ - **Rechtliche Konsequenzen** bei DSGVO‑Verstößen (Bußgelder, Reputationsschaden).
++ - **Verzögerungen** im Release‑Zeitplan → Vertrauensverlust bei Stakeholdern.
++ - **Kundenunzufriedenheit** durch fehlendes Ticket‑System und langsame Support‑Reaktionen.
++ - **Kostenüberschreitung** durch unerwartete Hosting‑ oder Sicherheits‑Ausgaben.
++ 
++ ## 6. Mögliche Gegenmaßnahmen oder Klärungsbedarfe
++ - **SAP‑Fallback‑Plan**: Simulierter Datendienst oder Caching‑Layer für kritische Produkt‑/Preis‑Daten definieren.
++ - **Rabatt‑Freigabe‑Policy**: Schwellenwerte und Genehmigungs‑Workflows klar dokumentieren und im System implementieren.
++ - **Priorisierungs‑Workshop**: Entscheidung zu Mobile‑First vs. Web‑First sowie SSO‑Provider zeitnah treffen.
++ - **Interim‑API‑Gateway**: Schnell einfache Proxy‑Lösung mit Grund‑Rate‑Limiting implementieren, um den Review‑Zeitplan zu entlasten.
++ - **Security Review Parallelisierung**: Teil‑Reviews (z. B. Code‑Scan, Pen‑Test) früh starten, um den 6‑Wochen‑Zeitplan zu verkürzen.
++ - **Kosten‑Analyse EU‑Only Hosting**: Budget‑Abteilung beauftragen, konkrete Kostenschätzungen zu liefern.
++ - **Datenschutz‑Check für Test‑Daten**: Pseudonymisierungskonzept erstellen, Test‑SAP‑Daten sichern.
++ - **Logging‑ und Audit‑Log‑Konzept**: Trennung definieren, Aufbewahrungsfristen festlegen, automatisierte Löschung implementieren.
++ - **Backup‑&‑DR‑Definition**: RPO/RTO‑Ziele (z. B. RPO 4 h, RTO 2 h) festlegen und Verantwortlichkeiten zuweisen.
++ - **Rate‑Limiting‑Parameter festlegen**: Schwellenwerte mit Fachbereichen abstimmen, dynamisches Throttling prüfen.
++ - **Pilot‑Kunde‑Entscheidung**: Kurzfristig wählen, um Währungs‑ und Rechtsaspekte zu finalisieren.
++ - **Support‑Strategie**: Minimal‑Ticket‑System (z. B. Jira Service Management) bereits im MVP integrieren, um Daten‑Nachvollziehbarkeit zu gewährleisten.
++ 
++ *Hinweis*: Die genannten Risiken basieren ausschließlich auf den bereitgestellten Kontext‑ und Requirements‑Informationen.
++ 

@@ -1,0 +1,85 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-13T15:54:02.880628Z",
+  "errorScore": 23,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 23; KRITISCH=4; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 4,
+      "reason": "FALSE_CLAIM: 4 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Hosting ausschlie\u00DFlich in EU-Datenzentren (EU-only).\u0022 | Transkript: \u0022\u0022[Farid] Ich bin aus IT Operations. EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 / \u0022[Clara] Dann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u0022 / \u0022[Anna] Aber wenn EU-only teurer ist?\u0022 / \u0022[Farid] Ist es wahrscheinlich.\u0022\u0022 | Das Artefakt stellt EU-only Hosting als zwingend und entschieden dar, obwohl im Transkript explizit diskutiert wird, dass dies technisch und finanziell noch offen ist und nicht final entschieden wurde."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Es gibt definierte Rollen und Berechtigungen: Admin, Sales, Manager, Support.\u0022 | Transkript: \u0022\u0022[Anna] Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support? Wer pflegt eigentlich Stammdaten?\u0022 / \u0022[David] Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen.\u0022 / \u0022[Eva] Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind.\u0022 / \u0022[Anna] Also Support sieht nur Status, nicht Details?\u0022 / \u0022[David] Dann kann Support nicht helfen.\u0022 / \u0022[Ben] Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren.\u0022\u0022 | Im Transkript ist die genaue Ausgestaltung der Rollen und insbesondere die Rolle \u0027Support\u0027 und deren Berechtigungen explizit offen und strittig, das Artefakt stellt sie als fest definiert dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API-Layer mit OAuth-Authentifizierung, bevorzugt Managed Services und API Gateway.\u0022 | Transkript: \u0022\u0022[Clara] API muss abgesichert sein. OAuth? Oder API Keys?\u0022 / \u0022[Ben] OAuth w\u00E4re besser. Aber komplexer.\u0022 / \u0022[Ben] Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 / \u0022[Farid] Noch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u0022 / \u0022[Ben] Aber Gateway-Team hat sechs Wochen Warteliste.\u0022\u0022 | Im Transkript ist OAuth als bevorzugt, aber nicht final entschieden genannt, und die Nutzung des API Gateway ist eine Policy, aber f\u00FCr das MVP wegen Zeitrestriktionen explizit offen/strittig. Das Artefakt stellt beides als gesetzt dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Mehrsprachigkeit und Multiw\u00E4hrung initial f\u00FCr DACH, sp\u00E4tere Erweiterung auf Schweiz, EU und USD geplant.\u0022 | Transkript: \u0022\u0022[Anna] Zum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft.\u0022 / \u0022[Ben] Mehrw\u00E4hrung ist nicht trivial, vor allem mit Rabattlogik und SAP.\u0022 / \u0022[Anna] CHF ist f\u00FCr Schweiz wichtig.\u0022 / \u0022[EVA] Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022 / \u0022[Ben] Mehrw\u00E4hrung ist nicht trivial, vor allem mit Rabattlogik und SAP.\u0022 / \u0022[Anna] Pilotkunde ist noch nicht final.\u0022\u0022 | Im Transkript ist die initiale Unterst\u00FCtzung von Mehrw\u00E4hrung und Mehrsprachigkeit (insbesondere CHF und Schweiz) explizit offen und abh\u00E4ngig vom Pilotkunden, nicht als gesetzt f\u00FCr MVP."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 1,
+      "reason": "FALSE_CERTAINTY: 1 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Rabattgew\u00E4hrung erfordert eine Freigabe durch Manager oder Finance bei Rabatten \u00FCber 15\u201320 %.\u0022 | Transkript: \u0022\u0022[Eva] Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.\u0022 / \u0022[Anna] Oder ab 20 Prozent. Ich bin mir nicht sicher.\u0022 / \u0022[Ben] Das muss klar definiert werden.\u0022 / \u0022[EVA] Und Rabatt-Freigabe?\u0022 / \u0022[Anna] Vielleicht Phase 2.\u0022 / \u0022[Ben] Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u0022\u0022 | Im Transkript ist die genaue Schwelle und der Freigabeprozess f\u00FCr Rabatte explizit offen und nicht final entschieden, das Artefakt stellt es jedoch als gesetzt dar."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 6,
+      "reason": "MISSING_TOPIC: 3 Fehler (unveraendert); 3 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Farid] Und CI/CD braucht Secrets Management.\u0022 / \u0022[Ben] Wir brauchen auch Rate Limits f\u00FCr API.\u0022 / \u0022[David] Kunden laden manchmal hunderte Rechnungen auf einmal herunter.\u0022 / \u0022[Ben] Dann brauchen wir Pagination und Download-Limits.\u0022 / \u0022[Clara] Und sicherheitsrelevant.\u0022 / \u0022[Ben] Wir brauchen Missbrauchserkennung.\u0022\u0022 | Das Artefakt enth\u00E4lt keine Anforderungen zu Secrets Management, API Rate Limiting, Pagination/Download-Limits oder Missbrauchserkennung, obwohl diese im Transkript explizit als Anforderungen und Risiken genannt werden."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Farid] Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / \u0022[Clara] Ja, Pseudonymisierung oder synthetische Testdaten.\u0022 / \u0022[Ben] SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 / \u0022[Clara] Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u0022\u0022 | Das Artefakt enth\u00E4lt keine Anforderungen zu Testumgebungen, Umgang mit Testdaten, Pseudonymisierung oder Verbot der Nutzung echter Kundendaten in Testsystemen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Clara] Und wir haben noch keine klare Zieldefinition.\u0022 / \u0022[Anna] Ziel ist schneller Angebote erstellen.\u0022\u0022 | Das Artefakt enth\u00E4lt keine explizite Zieldefinition, dass das Hauptziel die Beschleunigung der Angebotserstellung ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022SAP-Daten werden in Echtzeit oder mit definiertem Fallback abgerufen. [...] SAP-Datenaktualit\u00E4t und Fallbackmechanismen bei Nichtverf\u00FCgbarkeit sind noch zu defi\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Ben] Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise.\u0022 / \u0022[Anna] Oder wir akzeptieren das Risiko.\u0022 / \u0022[EVA] Nein.\u0022\u0022 | Das Artefakt enth\u00E4lt keine Anforderung zu Preisg\u00FCltigkeit oder Warnhinweisen bei nicht aktuellen SAP-Preisen, obwohl dies im Transkript als notwendige Funktion diskutiert wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Sicherheitsma\u00DFnahmen: TLS-verschl\u00FCsselte Kommunikation, Audit Trails, Logging, Backup und Disaster Recovery. [...] Security- und Auditlog-Umfang wird zwischen M\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Ben] Dann brauchen wir Event-History oder Audit-Log pro Angebot.\u0022 / \u0022[Clara] Revisionssicher hei\u00DFt nicht automatisch unver\u00E4nderbar, aber \u00C4nderungen m\u00FCssen nachvollziehbar sein.\u0022 / \u0022[Eva] Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 / \u0022[Farid] Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022\u0022 | Das Artefakt erw\u00E4hnt Audit Trails, aber nicht explizit die Anforderungen an Event-History, Angebotsversionierung und revisionssichere Nachvollziehbarkeit von Angebots\u00E4nderungen."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Hosting ausschlie\u00DFlich in EU-Datenzentren (EU-only). [...] EU-Datenresidenz ist zwingend vorgeschrieben.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022[Clara] Und wir haben noch gar nicht \u00FCber Backup gesprochen.\u0022 / \u0022[Ben] Ja Disaster Recovery.\u0022 / \u0022[Anna] Backup?\u0022 / \u0022[Clara] Wenn Kundendaten drin sind: ja.\u0022 / \u0022[Anna] Okay also doch.\u0022\u0022 | Das Artefakt erw\u00E4hnt Backup und Disaster Recovery, aber nicht die Anforderung, dass Backups keine personenbezogenen Daten au\u00DFerhalb der EU enthalten d\u00FCrfen (Datenresidenz f\u00FCr Backups)."
+        }
+      ]
+    }
+  ]
+}

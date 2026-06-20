@@ -1,0 +1,95 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "open-questions.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-12T11:24:57.248079Z",
+  "errorScore": 19,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 19; KRITISCH=2; needsRepair=True (Schwelle 4).",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 9,
+      "reason": "MISSING_TOPIC: 9 Fehler (verifiziert); 5 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wer macht das? [Rollen- und Berechtigungskonzept] / Wir brauchen einen Architekten. / Dann m\u00FCssen wir das sauber dokumentieren.\u0022 | Das Artefakt listet keine offene Frage zur Verantwortlichkeit f\u00FCr die Erstellung des Rollen- und Berechtigungskonzepts und der Dokumentation, obwohl dies im Transkript explizit als ungekl\u00E4rt diskutiert wurde."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022OAuth ist bevorzugt, aber noch nicht final.\u0022 / \u0022API muss abgesichert sein. OAuth? Oder API Keys?\u0022\u0022 | Die offene Entscheidung, ob OAuth oder API Keys zur Absicherung der API verwendet werden, fehlt als explizite offene Frage im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022 / \u0022Dann brauchen wir Pagination und Download-Limits.\u0022 / \u0022Wir brauchen Missbrauchserkennung.\u0022\u0022 | Die offenen Fragen zu Rate Limiting, Pagination, Download-Limits und Missbrauchserkennung f\u00FCr APIs und Rechnungsdownloads werden im Artefakt nicht als offene Punkte aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022PDF ist wichtig f\u00FCr Sales.\u0022 / \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 / \u0022Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022\u0022 | Die offene Frage zur Umsetzung und Versionierung von PDF-Exporten und Templates f\u00FCr Angebote fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Kunden sollen Bestellungen sehen und Rechnungen downloaden. Aber Sales will Angebote erstellen. Und Marketing will Push Notifications.\u0022 / \u0022Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.\u0022 / \u0022Tracking? Wir haben keine Analytics Infrastruktur.\u0022\u0022 | Die offenen Fragen zu Push Notifications (ob, wie, wann, Einwilligung) und Analytics/Tracking (ob, wann, wie, KPIs) fehlen als explizite offene Punkte."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wer pflegt eigentlich Stammdaten?\u0022 / \u0022Stammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig.\u0022\u0022 | Die offene Frage zur Pflege und Qualit\u00E4tssicherung der Stammdaten (insbesondere bei SAP-Integration) ist nicht als offene Frage im Artefakt enthalten."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022K\u00F6nnen wir nur Produktdaten cachen, keine Kundendaten?\u0022 / \u0022Cache enth\u00E4lt Kundendaten?\u0022 / \u0022Dann ist Cache riskant.\u0022\u0022 | Die offene Frage zur Caching-Strategie (insbesondere bzgl. personenbezogener Daten und Datenschutz) fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022CI/CD braucht Secrets Management.\u0022 / \u0022Secrets Management\u0022\u0022 | Die offene Frage zur Umsetzung von Secrets Management (z.B. f\u00FCr CI/CD, API Keys) ist nicht als offene Frage im Artefakt enthalten."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Dokumentation ist wichtig, aber bitte nicht zu viel.\u0022 / \u0022Ohne Dokumentation kein Security Review.\u0022\u0022 | Die offene Frage zum Umfang und zur Verantwortlichkeit der Dokumentation (insbesondere f\u00FCr Security Review) fehlt als explizite offene Frage."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Wie wird das L\u00F6schkonzept umgesetzt, insbesondere in Ber\u00FCcksichtigung handelsrechtlicher Aufbewahrungspflichten?\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen einen minimalen Retention-Plan.\u0022 / \u0022Wie lange m\u00FCssen wir Angebote speichern?\u0022 / \u0022Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.\u0022\u0022 | Die offene Frage zur konkreten Dauer und Ausgestaltung der Aufbewahrungsfristen (Retention Rules) f\u00FCr Angebote und andere Daten ist nicht als eigene offene Frage im Artefakt aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Gibt es klare Richtlinien f\u00FCr den Umgang mit Testdaten aus SAP-Testumgebungen, um DSGVO-Verst\u00F6\u00DFe zu vermeiden?\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 / \u0022Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u0022\u0022 | Die offene Frage, wie mit echten Kundendaten in SAP-Testsystemen umzugehen ist (Testdatenstrategie, Pseudonymisierung), fehlt als explizite offene Frage."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Wie werden Audit-Logs technisch getrennt von personenbezogenen Daten gef\u00FChrt?\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Application logs, audit logs und security logs sind unterschiedliche Dinge.\u0022 / \u0022Und unterschiedliche Aufbewahrungsfristen.\u0022\u0022 | Die offene Frage zur Unterscheidung und Aufbewahrung von verschiedenen Log-Typen (Application, Audit, Security) fehlt als explizite offene Frage."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Wer ist der definitive Pilotkunde? DACH, Schweiz oder international? Diese Entscheidung beeinflusst stark Datenschutzanforderungen, Mehrw\u00E4hrung und Mehrsprachig\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen L\u00E4nder- und W\u00E4hrungsregeln.\u0022 / \u0022Pilotkunde ist noch nicht final.\u0022 / \u0022Das beeinflusst Scope massiv.\u0022\u0022 | Die offene Frage, wie L\u00E4nder- und W\u00E4hrungsregeln konkret ausgestaltet werden (insbesondere bei Pilotkunde Schweiz), ist nicht als eigene offene Frage enthalten."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Wer ist der definitive Pilotkunde? DACH, Schweiz oder international? Diese Entscheidung beeinflusst stark Datenschutzanforderungen, Mehrw\u00E4hrung und Mehrsprachig\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022International? Ich dachte nur DACH.\u0022 / \u0022Zum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft.\u0022\u0022 | Die offene Frage zur Internationalisierung (Sprachen, L\u00E4nder, Datenschutz) \u00FCber den MVP hinaus ist nicht als offene Frage enthalten."
+        }
+      ]
+    }
+  ]
+}

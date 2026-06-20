@@ -1,0 +1,93 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-19T15:50:12.580146Z",
+  "evaluationStatus": "ok",
+  "errorScore": 2,
+  "needsRepair": false,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 2; KRITISCH=0; needsRepair=False (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 1,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 1 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup \u0026 DR Parameter unsicher: RPO 1\u202Fh / RTO 4\u202Fh sind Annahmen, nicht best\u00E4tigt \u2013 kann zu Datenverlust oder langen Ausfallzeiten f\u00FChren.\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Im Transkript wird keine konkrete Angabe zu RPO (Recovery Point Objective) oder RTO (Recovery Time Objective) gemacht, daher ist die Angabe von RPO 1h und RTO 4h eine erfundene Spezifikation ohne Transkriptgrundlage."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 2 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 2,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Der Artefakttext formuliert die Security-Review-Dauer als \u00DCberschneidung mit der Deadline und nennt die Folge unvollst\u00E4ndiger Reviews als Risiko, ohne eine fina\u2026\u0022): [MITTEL] Artefakt: \u0022Security-Review \u003E6 Wochen: Der Review \u00FCberschneidet sich mit der 8-Wochen-Deadline \u2013 unvollst\u00E4ndige Reviews k\u00F6nnen zu ungepr\u00FCften Schwachstellen f\u00FChren.\u0022 | Transkript: \u0022Ben: Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\nAnna: Dann machen wir es ohne Security Review?\nClara: Das ist keine Option.\u0022 | Das Artefakt stellt die Security-Review-Dauer als feststehend dar, obwohl im Transkript offen blieb, wie mit dem Konflikt umgegangen wird; es wurde keine endg\u00FCltige Entscheidung getroffen, sondern nur die Problematik benannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Das Artefakt beschreibt die 6-Wochen-Warteliste und nennt als Folge, dass das MVP mit einem Ersatz starten muss, was zu erh\u00F6htem Aufwand und Risiken f\u00FChren kann\u2026\u0022): [MITTEL] Artefakt: \u0022API-Gateway-Warteliste (6 Wochen): Der geplante Gateway steht erst nach 6 Wochen zur Verf\u00FCgung \u2013 das MVP muss mit einem Ersatz (z. B. Reverse-Proxy) starten, was zu erh\u00F6htem Entwicklungsaufwand und Sicherheitsl\u00FCcken f\u00FChren kann.\u0022 | Transkript: \u0022Farid: Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\nBen: Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\nAnna: Das passt nicht zum 8-Wochen-MVP.\u0022 | Im Transkript ist die Warteliste des API-Gateways klar, aber es wurde offen gelassen, wie das MVP damit umgehen soll; das Artefakt stellt die L\u00F6sung mit Ersatz als gesetzt dar, obwohl dies noch offen ist."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 4 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 4,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Fachliche Risiken: Support-Prozess ohne Ticket-System: Das reine Kontaktformular kann zu un\u00FCbersichtlichen Anfragen und schlechter Service-Qualit\u00E4t f\u00FChren.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Support wird damit nicht gl\u00FCcklich.\u0022 / \u0022Supportprozess unklar.\u0022 / \u0022Support braucht auch Einsicht in alte Angebote.\u0022\u0022 | Das Risiko der unzureichenden Support-Prozessgestaltung und die daraus resultierenden Probleme mit Support-Anfragen und Kundenzufriedenheit sind im Transkript klar benannt, fehlen aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Technische Risiken: Backup \u0026 DR Parameter unsicher: RPO 1 h / RTO 4 h sind Annahmen, nicht best\u00E4tigt \u2013 kann zu Datenverlust oder langen Ausfallzeiten f\u00FChren.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Backup?\u0022 / \u0022Disaster Recovery.\u0022 / \u0022Brauchen wir das f\u00FCr MVP?\u0022 / \u0022Wenn Kundendaten drin sind: ja.\u0022\u0022 | Das Risiko und die Unsicherheit bez\u00FCglich Backup- und Disaster-Recovery-Parametern sind im Transkript explizit angesprochen, aber im Artefakt nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u00224. Widerspr\u00FCche und Unsicherheiten: Zeitplan vs. Umfang: 8-Wochen-Deadline kollidiert mit umfangreichen Compliance- und Sicherheitsanforderungen.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Keine falsche Sicherheit erzeugen.\u0022 / \u0022Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben.\u0022\u0022 | Das Risiko, dass widerspr\u00FCchliche Anforderungen und Unsicherheiten nicht ausreichend transparent bleiben und dadurch falsche Sicherheit entsteht, wird im Transkript thematisiert, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u00226. M\u00F6gliche Gegenma\u00DFnahmen / Kl\u00E4rungsbedarfe: Testdaten-Strategie: Nutzung von synthetischen SAP-Daten in isolierten Testumgebungen, ggf. Maskierung echter Date\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 / \u0022Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u0022\u0022 | Das Risiko bez\u00FCglich der Verwendung echter Kundendaten in Testumgebungen und die damit verbundenen Datenschutzprobleme sind im Transkript genannt, aber im Artefakt nicht enthalten."
+        }
+      ]
+    }
+  ]
+}

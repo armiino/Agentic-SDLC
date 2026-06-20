@@ -1,0 +1,60 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "open-questions.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-13T16:48:41.961157Z",
+  "errorScore": 11,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 11; KRITISCH=1; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 2,
+      "reason": "FALSE_CLAIM: 2 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Monitoring/DR SLAs: Ist die Annahme von 99% Verf\u00FCgbarkeit f\u00FCr MVP verbindlich? Welche Wiederherstellzeiten (RTO/RPO) gelten vor Produktion? (docs/requirements.md)\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Das Artefakt stellt eine konkrete Annahme/Fragestellung zu \u002799% Verf\u00FCgbarkeit\u0027 dar, die im Transkript nicht genannt wurde; die Zahl wird erfunden und ist damit eine unberechtigte Behauptung im Fragenkatalog."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- Entscheidung Pilotmarkt \u0026 SSO: Anna \u002B Eva \u002B Rechts/Procurement (Mittel/hoch). (H4/H5)\u0022 | Transkript: \u0022\u0022Pilotkunde ist noch nicht final.\u0022 / \u0022Das entscheidet Sales n\u00E4chste Woche.\u0022\u0022 | Das Artefakt weist konkrete Owner f\u00FCr die Entscheidung zu Pilotmarkt \u0026 SSO zu, obwohl das Transkript explizit sagt, dass der Pilotkunde noch nicht final ist und Sales die Entscheidung n\u00E4chste Woche treffen soll; die Zuordnung der Entscheider ist nicht aus dem Transkript ableitbar."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 3,
+      "reason": "MISSING_TOPIC: 3 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Kann der Kunde ein Angebot online akzeptieren?\u0022 / \u0022Das ist ein Vertragsabschluss. Ganz anderes Thema.\u0022 / \u0022Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz.\u0022\u0022 | Die Frage, ob Kunden Angebote online akzeptieren k\u00F6nnen (mit den rechtlichen/Beweis-Anforderungen wie Zeitstempel und AGB-Akzeptanz), wurde im Transkript als offene, entscheidungsrelevante Frage diskutiert, fehlt jedoch im offenen Fragenkatalog."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022 / \u0022Kunden laden manchmal hunderte Rechnungen auf einmal herunter.\u0022 / \u0022Dann brauchen wir Pagination und Download-Limits.\u0022\u0022 | Im Meeting wurde offen diskutiert, wie mit Massen-Downloads und API-Abfragen (Rate-Limiting, Pagination, Download-Limits) umzugehen ist; diese technische/Abuse-Frage fehlt im Dokument."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Was sind die KPIs?\u0022 / \u0022Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022\u0022 | KPIs (z. B. Conversion Rate, Zeit bis Angebot) wurden explizit als zu messende Metriken genannt und offen gelassen; das Dokument listet keine offene Frage zur finalen KPI-Entscheidung/Verantwortlichkeit."
+        }
+      ]
+    }
+  ]
+}

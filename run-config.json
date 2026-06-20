@@ -2,19 +2,38 @@
 {
   "agentPhase": "phase2_1",
 //"agentPhase": "phase1",
-  "phase2ContextStrategy": "message_passing",
+ // "phase2ContextStrategy": "message_passing",
+  "phase2ContextStrategy": "artifact_state",   // Phase 2.1B: MAF Shared State. Umschalten reicht..Prompts werden automatisch gewählt.
   "llmProvider": "openrouter",
-  "agentModel": "openai/gpt-4.1-mini",
+ // "agentModel": "openai/gpt-4.1-mini",
  // "agentModel": "openai/gpt-oss-120b:free",
- // "agentModel": "openai/gpt-oss-120b",
+   "agentModel": "openai/gpt-oss-120b",
  //langsam: "agentModel": "nvidia/nemotron-3-super-120b-a12b:free",
+
+  // Prompts gruppiert nach Phase -> Strategie -> Agent.
+  // A<->B wird allein über "phase2ContextStrategy" oben umgeschaltet.. hier nichts tauschen
   "prompts": {
-    "Phase1SinglePass": "Phase1_3Prompt",
-    "Phase2ContextAgent": "ContextPrompt3",
-    "Phase2RequirementsAgent": "RequirementsPrompt5",
-    "Phase2RisksAgent": "RisksPrompt3",
-    "Phase2ArchitectureAgent": "ArchitecturePrompt3",
-    "Phase2OpenQuestionsAgent": "OpenQuestionsPrompt3"
+    "phase1": {
+      "default": {
+        "Phase1SinglePass": "Phase1_3Prompt"
+      }
+    },
+    "phase2_1": {
+      "message_passing": {
+        "Phase2ContextAgent": "ContextPrompt3",
+        "Phase2RequirementsAgent": "RequirementsPrompt5",
+        "Phase2RisksAgent": "RisksPrompt3",
+        "Phase2ArchitectureAgent": "ArchitecturePrompt3",
+        "Phase2OpenQuestionsAgent": "OpenQuestionsPrompt3"
+      },
+      "artifact_state": {
+        "Phase2ContextAgent": "ContextPrompt3",
+        "Phase2RequirementsAgent": "RequirementsPromptB1",
+        "Phase2RisksAgent": "RisksPromptB1",
+        "Phase2ArchitectureAgent": "ArchitecturePromptB1",
+        "Phase2OpenQuestionsAgent": "OpenQuestionsPromptB1"
+      }
+    }
   },
   "observability": {
     "enableOtel": true,
@@ -24,5 +43,52 @@
   },
   "llmPreview": {
     "chars": 1200
+  },
+  "jury": {
+    "enabled": true,
+    "judgeModel": "openai/gpt-4.1-mini",
+    // Strukturierte Judge-Ausgabe (json_schema) erzwingen. Default true.
+    // Bei Judges ohne json_schema-Support (zb manche OpenRouter-Modelle) auf false setzen..
+    // dann fängt der evaluation_failed-Pfad (B8) ungültiges JSON ab.
+    "structuredOutput": true,
+    // DISK-12/G3: Call 1 (Finding-Generierung) pro Kategorie splitten (FALSE_CLAIM/FALSE_CERTAINTY/
+    // MISSING_TOPIC) statt von einem 3-in-1-Calls. Hebt Recall schwacher Modelle (B20). Default true;
+    // false = altes 3-in-1-Verhalten (für Instrument-Vergleich). Verifier-Pass bleibt unverändert.
+    "splitGeneration": true,
+    // DISK-12/B22: aktive Fehlerkategorien PRO ARTEFAKTTYP (Generierung + Verifikation). Ohne Block
+    // gilt der Code-Default: open-questions = nur FALSE_CERTAINTY + MISSING_TOPIC (FALSE_CLAIM passt
+    // dort nicht — Optionen/Beispiele in offenen Fragen sind keine Claims). Hier nur setzen, um den
+    // Default zu überschreiben; die effektive Policy steht reproduzierbar im config.json-Snapshot.
+    // Beispiel:
+    // "categories": {
+    //   "open-questions": ["FALSE_CERTAINTY", "MISSING_TOPIC"],
+    //   "requirements":   ["FALSE_CLAIM", "FALSE_CERTAINTY", "MISSING_TOPIC"]
+    // },
+    // DISK-7: zweiter Verifikations-Pass pro Fehlerkategorie. Pro aktivierter Kategorie ein
+    // eigener Batch-Call (nur bei vorhandenen Kandidaten). Verdikt: confirmed/partial/rejected.
+    // Defaults (ohne Block): missingTopic=true, falseCertainty=true, falseClaim=false.
+    // falseClaim ist teurer (Transkript-Re-Read) und bewusst konservativ -> standardmässig aus.
+    "verification": {
+      "falseClaim": true,
+      "falseCertainty": true,
+      "missingTopic": true,
+      // custom=true ersetzt die 3 Verifier durch EINEN ausgelagerten Prompt
+      // (Prompts/jury/verify-custom.txt). Nur zum Experimentieren — NICHT für A/B/C-Vergleiche.
+      "custom": false,
+      // DISK-9: max. MISSING_TOPIC-Kandidaten pro Verifikations-Call (Default 8). Grössere Listen
+      // werden in Folge-Calls aufgeteilt (Verifier-Kollaps-Schutz, Run 639979). Nur MISSING_TOPIC.
+      "missingTopicBatchSize": 8
+    }
+  },
+  // Nur für Phase 2.1B (artifact_state) wirksam. Default (ohne Block) = beta-full.
+  // beta-minimal: "writeArtifacts": false + reads je Agent auf ["context"] kürzen.
+  "phase2BState": {
+    "writeArtifacts": true,
+    "reads": {
+      "Phase2RequirementsAgent": ["context"],
+      "Phase2RisksAgent": ["context", "requirements"],
+      "Phase2ArchitectureAgent": ["context", "requirements", "risks"],
+      "Phase2OpenQuestionsAgent": ["context", "requirements", "risks", "architecture"]
+    }
   }
 }

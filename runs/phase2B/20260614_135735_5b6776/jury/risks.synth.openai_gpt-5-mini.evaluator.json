@@ -1,0 +1,74 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-14T14:01:52.499486Z",
+  "evaluationStatus": "ok",
+  "errorScore": 19,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 19; KRITISCH=3; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 8,
+      "reason": "MISSING_TOPIC: 6 Fehler (unveraendert); 2 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u0022 | Das Risiko der Identity/SSO/Identity-Provider-Integration und das Fehlen eines zentralen IAM (Komplexit\u00E4t, Kosten, Sicherheitsfolgen, OAuth vs API Keys) wird im Transkript klar benannt, erscheint aber nicht in der Risikoanalyse."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] Und CI/CD braucht Secrets Management.\u0022 | Secrets- und Credentials-Management f\u00FCr CI/CD wurde als relevantes Risiko/Anforderung im Meeting genannt, fehlt jedoch in der Analyse."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Backup? ... [Ben] Ja Disaster Recovery.\u0022 | Backup / Disaster-Recovery wurde explizit als notwendiges Thema und Risiko genannt, taucht aber nicht in der Risiko\u00FCbersicht auf."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten. / [Ben] SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 | Der explizite Testdaten-Risikopunkt (Pseudonymisierung/synthetische Daten, SAP-Testsystem mit echten Daten) wurde als Blocker genannt, ist aber nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Wir brauchen auch Rate Limits f\u00FCr API. / [David] Kunden laden manchmal hunderte Rechnungen auf einmal herunter.\u0022 | Risiken rund um Rate-Limiting, Pagination und Missbrauch bei Massendownloads (Performance/Availability/Abuse) sind im Transkript vorhanden, fehlen jedoch in der Risikoanalyse."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Eva] Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer. / [Farid] Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022 | Das Risiko/Anforderung bez\u00FCglich PDF-Export, Template-Management und revisionssicherer Versionierung von Angeboten (rechtliche/finanzielle Nachvollziehbarkeit) wurde diskutiert, ist aber nicht als Risiko aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "HERABGESTUFT [KRITISCH\u2192MITTEL] (partial: \u0022EU-only Hosting-Anforderungen: Einschr\u00E4nkung auf EU-Datenhosting limitiert Auswahl und unter Umst\u00E4nden Kosteneffizienz der Managed Services.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 | Das spezifische Risiko, dass Standardanbieter Backups global replizieren und somit Datenresidenz/DSGVO-Anforderungen verletzen k\u00F6nnen, ist im Transkript genannt, aber nicht im Dokument ber\u00FCcksichtigt."
+        },
+        {
+          "severity": "Warning",
+          "message": "HERABGESTUFT [KRITISCH\u2192MITTEL] (partial: \u0022DSGVO-Konformit\u00E4t unter Zeitdruck: Anforderungen wie Double Opt-In, Audit-Trails und L\u00F6schkonzepte m\u00FCssen zeitgerecht und vollst\u00E4ndig umgesetzt werden, sonst dr\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] Noch ein Risiko: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.\u0022 | Das Risiko, dass zentrales Monitoring/Logs personenbezogene Daten enthalten k\u00F6nnten und daher getrennt/gesichert werden m\u00FCssen, ist im Transkript genannt, fehlt aber in der Analyse."
+        }
+      ]
+    }
+  ]
+}

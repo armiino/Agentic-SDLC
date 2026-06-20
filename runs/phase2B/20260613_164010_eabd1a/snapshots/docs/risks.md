@@ -1,0 +1,119 @@
+# Risiken – Kundenportal / Angebotsportal (Initial Draft)
+
+Kurzbeschreibung
+
+Dieses Dokument fasst die aus dem MAF-Shared-State (Transkript + initiales Requirements-Dokument) ableitbaren Risiken zusammen. Ziel ist eine priorisierte, handlungsorientierte Übersicht für das Steering Board / Architektenteam, um Entscheidungsbedarfe, Gegenmaßnahmen und kritische Pfade für das MVP (8 Wochen) zu adressieren.
+
+Priorisierung: H = Hoch, M = Mittel, L = Niedrig
+
+1) Fachliche Risiken
+
+- Risiko: Unvollständiger oder zu restriktiver MVP-Scope verhindert Kernziel (schnellere Angebotserstellung).
+  - Beschreibung: Einschränkungen (z. B. Deaktivierung manueller Sonderrabatte, reduzierte Support-Funktionalität) könnten die Nutzbarkeit für Sales und Pilotkunden so stark reduzieren, dass Conversion-Ziele nicht erreicht werden.
+  - Betroffene Anforderungen: FR-03 (Angebots-Erstellung), FR-09 (Support-Kontakt), AOP-05 (Freigabeschwellen).
+  - Wahrscheinlichkeit / Auswirkung: M / H (Möglich, dass Kunden zentrale Funktionen vermissen; hohe Geschäfts-Auswirkung).
+  - Mögliche Gegenmaßnahmen: Klare MVP-Akzeptanzkriterien mit Stakeholdern (Sales, Finance); Pilot-Use-Cases definieren; minimaler, kontrollierter Mechanismus für begrenzte Sonderrabatte (z. B. temporäre Admin-Freigabe statt voller Workflow).
+
+- Risiko: Unklare Rollen- und Berechtigungsausprägungen führen zu Fehlzugriffen oder fehlenden Workflows.
+  - Beschreibung: Minimales Rollenmodell (Admin, Sales, Kunde) kann Support- und Finance-Bedürfnisse (z. B. Einsicht für Support, Freigaben für Finance) nicht abdecken.
+  - Betroffene Anforderungen: FR-07, FR-08, FR-09.
+  - Wahrscheinlichkeit / Auswirkung: H / M.
+  - Mögliche Gegenmaßnahmen: Detaillierte Rollenmatrix für MVP, klar definierte temporäre Ausnahmeregeln für Support und Finance; Logging/Audit der privilegierten Aktionen.
+
+2) Technische Risiken
+
+- Risiko: API-Gateway-Warteliste / Integrations-Blocker verzögert SAP-Integration.
+  - Beschreibung: Zentrales API-Gateway ist kritisch für Anbindung an SAP; Warteliste (~6 Wochen) gefährdet 8-Wochen-MVP und Live-Preisanzeige.
+  - Betroffene Anforderungen: FR-06 (SAP Read-Only), FR-03.
+  - Wahrscheinlichkeit / Auswirkung: H / H (direkter kritischer Pfad).
+  - Mögliche Gegenmaßnahmen: Parallelroute prüfen (temporäres Direkt-API, BFF, Mock-Service); Priorisierung im Gate-Request; Eskalation an Integrations-Team; klares Fallback-Verhalten in UI (Degraded Mode / Caching / Hinweis auf fehlende Live-Preise).
+
+- Risiko: Security-Review (6 Wochen) kollidiert mit Time-to-Market.
+  - Beschreibung: Umfang und Dauer der Security-Review könnten MVP-Release verzögern.
+  - Betroffene Anforderungen: NFR-01, C-01, C-04.
+  - Wahrscheinlichkeit / Auswirkung: H / H.
+  - Mögliche Gegenmaßnahmen: Paralleles, risikobasiertes Review (kritische Komponenten zuerst); reduzierte Scope-Review für MVP mit expliziten A/Ps; Nutzung von hardened managed services mit Zertifikaten; „security gates“ nur für Produktions-Promotion.
+
+- Risiko: Infrastruktur- und Betriebslücken (Secrets-Management, Backups, EU-Residenz) erhöhen Ausfall- und Compliance-Risiko.
+  - Beschreibung: Fehlt ein bewährtes Secrets-Management oder sind Backups nicht EU-only, drohen Sicherheits- und Compliance-Verletzungen sowie Betriebsunterbrechungen.
+  - Betroffene Anforderungen: NFR-01, NFR-02, NFR-03, C-02.
+  - Wahrscheinlichkeit / Auswirkung: M / H.
+  - Mögliche Gegenmaßnahmen: Managed-Services mit EU-Regionen auswählen; kurzfristige Deployment-Checkliste (TLS, KMS/Secrets, Backup-Konfiguration); Testwiederherstellung / DR Smoke-Test vor Release.
+
+- Risiko: Nutzung realer Kundendaten in Testumgebungen.
+  - Beschreibung: Ohne anonymisierte Testdaten besteht Risiko von Datenexposition und DSGVO-Verletzungen.
+  - Betroffene Anforderungen: NFR-02, C-01, C-03.
+  - Wahrscheinlichkeit / Auswirkung: M / H.
+  - Mögliche Gegenmaßnahmen: Datenanonymisierung / synthetische Datensätze bereitstellen; Zugangskontrollen für Testsysteme; Dokumentation erlaubter Testdaten.
+
+3) Compliance- und Datenschutzrisiken
+
+- Risiko: Unklare Retention- vs. Löschregeln (Löschanfrage vs. gesetzliche Aufbewahrungspflicht).
+  - Beschreibung: Es besteht Unklarheit, wie Löschanfragen mit gesetzlichen Aufbewahrungsfristen interagieren; falsche Umsetzung kann DSGVO-Verstöße oder rechtliche Probleme verursachen.
+  - Betroffene Anforderungen: C-01, AOP-06, NFR-05.
+  - Wahrscheinlichkeit / Auswirkung: H / H.
+  - Mögliche Gegenmaßnahmen: Rechtliche Klärung (Legal/Compliance) der Retention-Anforderungen; Implementierbare Löschprozesse mit Ersetzungs-/Anonymisierungsoptionen; Audit-Mechanismen für Lösch-/Restore-Entscheidungen.
+
+- Risiko: Datenresidenz nicht nachgewiesen (Backups oder managed services außerhalb EU).
+  - Beschreibung: Fehlende Belegbarkeit der EU-only-Residenz birgt regulatorisches Risiko.
+  - Betroffene Anforderungen: NFR-02, C-02.
+  - Wahrscheinlichkeit / Auswirkung: M / H.
+  - Mögliche Gegenmaßnahmen: Auswahl und Verträge mit EU-Region-Anbietern; Dokumentation der Regionen; technische Controls, die Geo-Restrictions erzwingen.
+
+- Risiko: Audit- und Log-Policy nicht finalisiert (PII in technischen Logs).
+  - Beschreibung: Fehlende oder unklare Logging-Richtlinie kann zu PII-Exfiltration in Logs oder unzureichender Auditierbarkeit führen.
+  - Betroffene Anforderungen: FR-08, C-03, NFR-05.
+  - Wahrscheinlichkeit / Auswirkung: H / M.
+  - Mögliche Gegenmaßnahmen: Logging-Policy und Implementierungs-Checklist (Maskierung, Redaction, Audit-Log-Separation); Logging-Tests; klare Retention-Fristen.
+
+4) Widersprüche und Unsicherheiten (Ableitbar aus Kontext / Requirements)
+
+- Widerspruch: MVP-Timeline (8 Wochen) vs. Security-Review (~6 Wochen) und API-Gateway-Wartezeit (~6 Wochen).
+  - Wirkung: Parallele kritische Pfade, hoher Koordinationsbedarf.
+
+- Unsicherheit: SAP-Scope – Read-only vs. Write (MVP-Annahme: read-only) beeinflusst Testdaten, Schnittstellenaufwand, Zuständigkeiten.
+
+- Unsicherheit: Pilotmarkt (Schweiz vs. DACH) beeinflusst Währung, rechtliche Texte, evtl. lokale Hosting-Anforderungen.
+
+- Unsicherheit: SSO-Anbieter (Azure AD / Google / optional) — Implementationsaufwand abhängig von Entscheidung.
+
+- Unsicherheit: Freigabeschwellen für Rabatte (15%/20%/andere) — beeinflusst Workflow-Komplexität.
+
+5) Mögliche Auswirkungen (Wirtschaftlich, Operativ, Rechtlich)
+
+- Verzögerung des MVP-Starts → Umsatzeinbußen / verzögerte Conversion-Verbesserungen.
+- Reputations- und Vertragsrisiken bei DSGVO-Verstößen oder Datenlecks.
+- Operative Belastung des Supports/Finance durch manuelle Prozesse, falls automatisierte Workflows fehlen.
+- Erhöhter Wartungs- und Infrastrukturaufwand bei späteren Änderungen der Integrationsarchitektur.
+
+6) Handlungsempfehlungen / Gegenmaßnahmen (Kurzfristig für MVP / mittelfristig)
+
+Kurzfristig (MVP):
+- Klarer MVP-Entscheidungs-Katalog: Was ist zwingend vs. optional (inkl. Use-Cases für Pilotkunden).
+- Alternative Integrationspfade: temporäre Mock-APIs oder BFFs, Eskalation API-Gateway-Priorisierung.
+- Risikobasierte Security-Review: minimaler Scope für MVP, harte Sicherheitsanforderungen für Produktion.
+- Temporary operational controls: temporäre Admin-Freigabe für Sonderrabatte mit strengem Audit.
+- Sicherstellung EU-Residenz für Produktion/Backups (Vertragliche Nachweise vor Go-Live).
+- Testdaten-Strategie: synthetische/anon. Daten; Sperren für Verwendung echter Kundendaten in Test.
+
+Mittelfristig / Governance:
+- Finalisierung von Retention- und Löschprozessen mit Legal.
+- Rollen- und Berechtigungsmatrix erweitern (Support, Finance, Manager) mit granularer Auditierung.
+- Einführung Managed Secrets & KMS, regelmäßige DR-Tests.
+- Logging-Policy, Retention-Policy und automatisierte Maskierung/Redaction-Mechanismen.
+- Architekturbewertung für Produktionsintegration (SAP-Write-Plan, API-Gateway-Placement).
+
+7) Offene Klärungsbedarfe (Priorisiert)
+
+- Höchste Priorität: API-Gateway-Access-Plan / temporäre Integration (kritischer Pfad).
+- Höchste Priorität: Umfang & Zeitplan des Security-Reviews (Eskalation, parallele Prüfpfade).
+- Hohe Priorität: Legal-Klärung zur Retention vs. Löschung.
+- Mittlere Priorität: Entscheidung Pilotmarkt (Schweiz vs. DACH) und SSO-Provider.
+- Mittlere Priorität: Freigabeschwellen für Rabatte und vorläufige Workflows für MVP.
+
+Anhänge / Evidence
+
+- Primäre Quellen: input/transcripts/T9999_chaos.txt (Transkript), docs/requirements.md (initialer Requirements-Entwurf).
+- Extraktionsdatum / run_id: 2026-06-13 / 20260613_164010_eabd1a
+
+-- Ende Initial Draft --

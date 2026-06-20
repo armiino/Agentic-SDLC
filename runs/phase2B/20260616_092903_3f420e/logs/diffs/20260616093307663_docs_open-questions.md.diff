@@ -1,0 +1,55 @@
+--- before/docs/open-questions.md
++++ after/docs/open-questions.md
+- 
++ # Offene Fragen und Klärungsbedarfe
++ 
++ ## 1. Offene fachliche Fragen
++ - **MVP‑Umfang**: Welche optionalen Features (SSO, Rabatt‑Freigabe, Mobile‑App, Mehrwährung) werden letztlich im MVP enthalten sein?
++ - **Pilot‑Kunde**: Wird der Pilotkunde in Deutschland oder in der Schweiz angesiedelt? Welche währungs‑ und datenschutzrechtlichen Konsequenzen ergeben sich daraus?
++ - **Hosting‑Provider**: Welcher EU‑Only Managed Service Provider wird gewählt und welche Kosten‑ und SLA‑Details sind zu erwarten?
++ - **Backup‑Strategie**: Welche konkreten Werte für RPO (Recovery Point Objective) und RTO (Recovery Time Objective) sollen gelten?
++ - **Retention‑ und Lösch‑Policy**: Wie sollen Aufbewahrungsfristen und das Recht auf Vergessenwerden technisch umgesetzt werden?
++ - **Rate‑Limiting‑Schwellenwerte**: Welche genauen Limits (Requests pro Minute/Tag, pro User) sollen im MVP gelten?
++ - **Preis‑ und Rabatt‑Logik**: Wie wird mit nächtlichen Preis‑Updates umgegangen (Cache‑Invalidierung, Fallback‑Strategie)?
++ - **Support‑Workflow**: Ist ein minimal‑Ticket‑System (z. B. Jira Service Management) erforderlich, um DSGVO‑Konformität sicherzustellen?
++ - **Rabatt‑Freigabe > 15 %**: Wird ein temporärer manueller Freigabe‑Prozess für das MVP implementiert?
++ - **Datenresidenz für Schweizer Kunden**: Ist die Speicherung in EU‑Rechenzentren für Schweizer Daten zulässig oder wird ein separates Hosting benötigt?
++ 
++ ## 2. Offene technische Fragen
++ - **Frontend‑Technologie‑Stack**: Angular oder React? Welche Kriterien entscheiden?
++ - **Interims‑API‑Gateway/Proxy**: Wie soll die IP‑Allowlist, das API‑Key‑Management und ggf. Basis‑OAuth konkret umgesetzt werden?
++ - **JWT‑Management**: Wie werden Token‑Erstellung, -Ablauf und -Erneuerung über die Micro‑Services hinweg gehandhabt?
++ - **Audit‑Log vs. technisches Logging**: Welche Speichertechnologie (z. B. Elasticsearch, separate DB) und welche Pseudonymisierungs‑Methoden werden verwendet?
++ - **Secrets‑Management**: Welches Tool (HashiCorp Vault, AWS Secrets Manager etc.) wird eingesetzt und wie wird es in die Services integriert?
++ - **Monitoring‑Stack**: Welche Tools (Prometheus/Grafana, Loki etc.) und welche Alert‑Kriterien werden definiert?
++ - **Double‑Opt‑In‑Implementierung**: Wie wird der Email‑Verifizierungs‑Flow technisch realisiert?
++ - **Rate‑Limiting‑Implementierung im Proxy**: Welche Bibliotheken/Mechanismen werden genutzt, um die definierten Limits durchzusetzen?
++ - **SAP‑Adapter**: Welche API‑Technologie (OData, SOAP, REST) wird verwendet und wie wird das Caching mit Invalidation bei Preis‑Updates gesteuert?
++ - **Backup & DR‑Umsetzung**: Wie erfolgt die verschlüsselte Speicherung der Backups, und welches Verfahren wird für regelmäßige Wiederherstellungstests genutzt?
++ - **Logging‑Governance**: Wie wird die automatische Maskierung von PII in technischen Logs gewährleistet?
++ 
++ ## 3. Widersprüche, die geklärt werden müssen
++ - **SSO**: Requirements beschreiben SSO als optional und nicht im MVP, während das Risiko die mögliche Aufnahme im MVP als Unsicherheit nennt.
++ - **Rabatt‑Freigabe**: Im Requirements‑Dokument steht, dass der Freigabe‑Workflow > 15 % erst für Phase 2 vorgesehen ist, das Risiko weist jedoch auf bereits bestehende Forderungen von Finance hin.
++ - **EU‑Only Datenresidenz vs. Schweizer Datenschutz**: Hosting‑Requirement verlangt EU‑Only, das Risiko wirft aber die Frage auf, ob dies für Schweizer Kunden zulässig ist.
++ - **Backup‑Anforderungen**: Requirements verlangen tägliche Backups, das Risiko fordert konkrete RPO/RTO‑Werte – diese sind noch nicht definiert.
++ 
++ ## 4. Fehlende Informationen
++ - **Kosten‑ und SLA‑Details des Managed Service Providers** (Vertrag, Preis‑Modelle, Verfügbarkeits‑Garantien).
++ - **Genaues Nutzer‑Last‑Profil** für Load‑Testing (Peak‑User‑Zahlen, erwartete Transaktionsrate).
++ - **Detail‑Spezifikation für Double‑Opt‑In (rechtliche Grundlagen, UI‑Flows).
++ - **Vollständige API‑Spezifikation für den SAP‑Adapter (Endpunkte, Authentifizierung, Fehlertoleranz).
++ - **Security‑Review‑Zeitplan** und Ressourcen‑Zuweisung im Verhältnis zum MVP‑Zeitplan.
++ - **Konkrete Rollen‑ und Verantwortungszuweisungen für die Klärung der oben genannten Punkte.
++ 
++ ## 5. Mögliche Ansprechpartner / Rollen
++ - **Anna** – Produkt‑/Projektleitung (MVP‑Umfang, Pilot‑Kunde‑Entscheidung).
++ - **Ben** – Technische Entwicklung (API‑Gateway, Frontend‑Stack, SAP‑Integration).
++ - **Clara** – Datenschutz / Compliance (DSGVO, Double‑Opt‑In, Audit‑Log‑Governance).
++ - **Eva** – Finance (Rabatt‑Freigabe‑Prozess, Aufbewahrungspflichten).
++ - **Farid** – IT Operations (Hosting‑Provider, Backup & DR, Kosten).
++ - **David** – Customer Support (Support‑Workflow, Ticket‑System).
++ - **Weitere** – Security‑Team (Security Review, Rate‑Limiting), Legal‑Team (Datenschutz‑ und Vertragsfragen).
++ 
++ ---
++ *Dieses Dokument fasst die offenen fachlichen und technischen Fragen, identifizierte Widersprüche, fehlende Informationen sowie potenzielle Ansprechpartner zusammen, basierend auf den bereitgestellten Artefakten (Projektkontext, Requirements, Risks, Architecture).*

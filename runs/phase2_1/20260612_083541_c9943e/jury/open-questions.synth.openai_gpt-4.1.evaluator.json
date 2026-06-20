@@ -1,0 +1,91 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "open-questions.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-12T08:39:19.169573Z",
+  "errorScore": 16,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 16; KRITISCH=1; needsRepair=True (Schwelle 4).",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 8,
+      "reason": "MISSING_TOPIC: 8 Fehler (verifiziert); 5 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.\u0022 ... \u0022Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP.\u0022\u0022 | Die offene Frage, ob das Portal nur lesend auf SAP zugreift oder auch schreibend (z.B. f\u00FCr Bestellungen nach Angebotsannahme), fehlt im Artefakt, obwohl sie im Transkript explizit als ungekl\u00E4rt bleibt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 ... \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 ... \u0022Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u0022\u0022 | Die offene Frage, wie mit echten Kundendaten im SAP-Testsystem umgegangen wird (Testdaten-Handling, Pseudonymisierung), wird im Artefakt nicht als offene Frage aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Kann man f\u00FCr MVP manuell Angebote hochladen?\u0022 ... \u0022Vielleicht als Zwischenl\u00F6sung?\u0022 ... \u0022Manuelle Uploads erh\u00F6hen Fehlerwahrscheinlichkeit.\u0022 ... \u0022Wer pr\u00FCft, ob keine falschen Kundendaten hochgeladen werden?\u0022\u0022 | Die offene Frage, ob und wie ein manueller Angebots-Upload als Zwischenl\u00F6sung im MVP m\u00F6glich ist und wie damit verbundene Risiken (Fehler, Berechtigungen) adressiert werden, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022PDF-Export von Angeboten\u0022 ... \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 ... \u0022Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022\u0022 | Die offene Frage, wie PDF-Export, Template-Management und Versionierung f\u00FCr Angebote umgesetzt werden, wird im Artefakt nicht als offene Frage gef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Kann der Kunde ein Angebot online akzeptieren?\u0022 ... \u0022Das ist ein Vertragsabschluss. Ganz anderes Thema.\u0022 ... \u0022Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz.\u0022 ... \u0022SAP-Schreibzugriff hatten wir noch gar nicht entschieden.\u0022\u0022 | Die offene Frage, ob und wie eine Online-Akzeptanz von Angeboten durch Kunden im MVP m\u00F6glich ist und welche Implikationen das hat, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wie lange m\u00FCssen wir Angebote speichern?\u0022 ... \u0022Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.\u0022 ... \u0022Das kollidiert mit L\u00F6schanfragen.\u0022\u0022 | Die offene Frage zur konkreten Dauer der Aufbewahrung von Angeboten und zur Abstimmung mit Legal/Compliance ist im Artefakt nicht als offene Frage enthalten."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022 ... \u0022Kunden laden manchmal hunderte Rechnungen auf einmal herunter.\u0022 ... \u0022Dann brauchen wir Pagination und Download-Limits.\u0022\u0022 | Die offene Frage, wie API Rate Limiting, Pagination und Download-Limits technisch umgesetzt werden, wird im Artefakt nicht als offene Frage gef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen Missbrauchserkennung.\u0022 ... \u0022Dann mindestens Rate Limiting und Audit.\u0022\u0022 | Die offene Frage, wie Missbrauchserkennung (Abuse Detection) im System umgesetzt wird, fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Welche konkrete Technologie wird f\u00FCr das SSO eingesetzt? OAuth, API Keys oder andere?\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.\u0022 ... \u0022API muss abgesichert sein. OAuth? Oder API Keys?\u0022 ... \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 ... \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Die offene Entscheidung, ob OAuth oder API Keys f\u00FCr die API-Absicherung verwendet werden, wird im Artefakt nicht explizit als offene Frage gef\u00FChrt, obwohl sie im Transkript mehrfach als ungekl\u00E4rt diskutiert wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Welche Kunden sind Pilotkunden und in welchen Regionen? Welche Auswirkungen hat das auf Datenschutz, W\u00E4hrung und Sprache?\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen L\u00E4nder- und W\u00E4hrungsregeln.\u0022 ... \u0022Nicht im MVP?\u0022 ... \u0022Wenn Schweiz Pilotkunde ist, dann doch.\u0022 ... \u0022Pilotkunde ist noch nicht final.\u0022\u0022 | Die offene Frage, ob und wie L\u00E4nder- und W\u00E4hrungsregeln (insbesondere f\u00FCr Pilotkunden) im MVP umgesetzt werden, wird im Artefakt nicht explizit als offene Frage gef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Wie werden Test-, Entwicklungs- und Produktionsumgebungen technisch aufgesetzt und mit Daten respektive Geheimnissen versorgt?\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 ... \u0022CI/CD braucht Secrets Management.\u0022\u0022 | Die offene Frage, wie Secrets Management f\u00FCr CI/CD und Umgebungen konkret umgesetzt wird, fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Wie wird die SAP-Integration umgesetzt, insbesondere im Fall von Nichtverf\u00FCgbarkeit oder verz\u00F6gerten Daten?\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Was passiert, wenn SAP nicht erreichbar ist?\u0022 ... \u0022Dann brauchen wir Fallback oder Cache.\u0022 ... \u0022K\u00F6nnen wir nur Produktdaten cachen, keine Kundendaten?\u0022\u0022 | Die offene Frage, wie mit SAP-Ausf\u00E4llen umgegangen wird (Fallback, Caching, Datenminimierung), fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Welche Kunden sind Pilotkunden und in welchen Regionen? Welche Auswirkungen hat das auf Datenschutz, W\u00E4hrung und Sprache?\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Deutsch und Englisch sollten schon drin sein.\u0022 ... \u0022Support braucht mindestens Deutsch und Englisch.\u0022\u0022 | Die offene Frage, wie Internationalisierung (Sprachen) im MVP umgesetzt wird, ist im Artefakt nicht als offene Frage enthalten."
+        }
+      ]
+    }
+  ]
+}

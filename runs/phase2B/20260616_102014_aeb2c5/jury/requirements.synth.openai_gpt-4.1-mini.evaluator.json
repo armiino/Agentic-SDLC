@@ -1,0 +1,92 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T10:23:32.069404Z",
+  "evaluationStatus": "ok",
+  "errorScore": 10,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 10; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 5,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 5 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 5,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Functional Requirements 6: Mehrsprachigkeit: Deutsch und Englisch im MVP\u0022 | Transkript: \u0022Anna: \u0022Deutsch und Englisch sollten schon drin sein.\u0022 / David: \u0022Support braucht mindestens Deutsch und Englisch.\u0022 / Keine finale Entscheidung, aber klare Pr\u00E4ferenz\u0022 | Das Transkript zeigt eine klare Pr\u00E4ferenz f\u00FCr Deutsch und Englisch, aber keine endg\u00FCltige Festlegung. Das Artefakt stellt Mehrsprachigkeit mit Deutsch und Englisch als gesetzt dar, obwohl es im Transkript noch offen und nicht final entschieden ist."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Non-functional Requirements 5: Backup mit Wiederherstellung innerhalb 12 Stunden; kein vollumf\u00E4nglicher Disaster-Recovery-Plan im MVP\u0022 | Transkript: \u0022Ben: \u0022Security Review dauert 6 Wochen, sprengt 8 Wochen MVP.\u0022 / Anna: \u0022Dann machen wir es ohne Security Review?\u0022 / Clara: \u0022Keine Option.\u0022 / Farid: \u0022Kein neuer DB Server, Managed Services okay.\u0022 / Backup und Disaster Recovery wurden als kritisch und offen diskutiert\u0022 | Das Artefakt stellt Backup mit definierten Wiederherstellungszeiten als gesetzt dar, obwohl im Transkript Backup und Disaster Recovery noch offen und kritisch diskutiert werden. Die Sicherheit der Backup-Anforderungen ist zu hoch dargestellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Constraints: Kein API-Gateway im MVP; Direktaufrufe an Backend zul\u00E4ssig\u0022 | Transkript: \u0022Farid: \u0022API Gateway hat 6 Wochen Warteliste.\u0022 / Ben: \u0022Passt nicht zum 8-Wochen-MVP.\u0022 / Anna: \u0022Das ist wieder das Zeitproblem.\u0022 / Offener Punkt zur Verf\u00FCgbarkeit des API-Gateways\u0022 | Das Artefakt stellt das Fehlen eines API-Gateways im MVP als gesetzt dar, obwohl im Transkript die Verf\u00FCgbarkeit des Gateways unklar und offen ist. Die Festlegung ist zu sicher."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Functional Requirements 4: Rabatt-Freigabe-Workflow mit klaren Schwellenwerten (\u226515%) und Freigabe durch Manager oder Finance\u0022 | Transkript: \u0022Eva: \u0022Freigabeprozess ist wichtig, aber vielleicht sp\u00E4ter.\u0022 / Anna: \u0022Oder ab 20 Prozent. Ich bin mir nicht sicher.\u0022 / Diskussion \u00FCber Schwellenwerte und Freigabestufen offen\u0022 | Das Artefakt stellt einen klaren Freigabeprozess mit Schwellenwerten als gesetzt dar, obwohl im Transkript die genauen Schwellenwerte und Freigabestufen noch offen und nicht final entschieden sind."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Functional Requirements 10: Kontaktformular f\u00FCr Support, kein Ticket-System im MVP\u0022 | Transkript: \u0022David: \u0022Support will Ticketsystem.\u0022 / Anna: \u0022Kontaktformular ohne Ticketpersistenz.\u0022 / Clara: \u0022Supportdaten per E-Mail, Datenschutzrisiko.\u0022 / Offener Punkt und Risiko dokumentiert\u0022 | Das Artefakt stellt das Kontaktformular ohne Ticketsystem als gesetzt dar, obwohl im Transkript der Supportprozess noch offen und als Risiko diskutiert wird. Die Festlegung ist zu sicher."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Functional Requirements 7: Mehrw\u00E4hrungs-Support (optional): Im MVP mindestens EUR, CHF offen\u0022).\u0022): [MITTEL] Artefakt: \u0022Functional Requirements 7: Mehrw\u00E4hrungs-Support (optional): Im MVP mindestens EUR, CHF offen\u0022 | Transkript: \u0022Anna: \u0022CHF ist f\u00FCr Schweiz wichtig.\u0022 / Eva: \u0022Wenn Schweiz Pilotkunde ist, dann doch.\u0022 / Anna: \u0022Pilotkunde ist noch nicht final.\u0022 / Ben: \u0022Das beeinflusst Scope massiv.\u0022\u0022 | Das Artefakt stellt EUR als gesetzt und CHF als offen dar, obwohl im Transkript die Mehrw\u00E4hrungsunterst\u00FCtzung noch offen und abh\u00E4ngig vom Pilotkunden ist. Die Festlegung im Artefakt ist zu sicher, da die Entscheidung noch offen ist."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022## Assumptions and Open Points\n- **Mobile\u2011First vs. Web\u2011First**: Entscheidung \u00FCber Priorisierung der mobilen UI ist noch nicht getroffen.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Wir haben eigentlich kein Budget f\u00FCr zwei Frontends.\u0022 / Anna: \u0022Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.\u0022 / \u0022Mobile vielleicht\u0022 als offener Punkt\u0022 | Das Transkript diskutiert die Priorisierung von Mobile-First vs. Web-First und die Unsicherheit dazu, die im Artefakt nur als offener Punkt erw\u00E4hnt wird, aber keine klare Anforderung oder Priorisierung enth\u00E4lt. Das Artefakt enth\u00E4lt keine funktionale Anforderung oder klare Entscheidung zum Thema Mobile-First oder Mobile-Unterst\u00FCtzung im MVP."
+        }
+      ]
+    }
+  ]
+}

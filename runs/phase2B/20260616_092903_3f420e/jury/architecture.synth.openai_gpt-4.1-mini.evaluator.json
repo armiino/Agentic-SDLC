@@ -1,0 +1,116 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-16T09:34:21.175982Z",
+  "evaluationStatus": "ok",
+  "errorScore": 10,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 10; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM (Verifikation aus): 0 unverifiziert gez\u00E4hlt.",
+      "verification": {
+        "enabled": false,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 4,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 2 confirmed; 2 partial (herabgestuft); 5 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 2,
+        "rejected": 5,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Managed Service Hosting (EU-Only): Bereitstellung von Compute, Storage und Datenbanken innerhalb der EU, inkl. Backup \u0026 Disaster-Recovery.\u0022 | Transkript: \u0022Farid: \u0022EU-only Hosting ist nicht einfach... Unser Standardanbieter repliziert Backups manchmal global.\u0022 Anna: \u0022EU only oder zumindest DSGVO-konform.\u0022\u0022 | Das Artefakt stellt EU-Only Hosting als gesetzt dar, obwohl im Transkript noch Unsicherheiten und offene Fragen zur Datenresidenz bestehen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Secrets-Management: Sichere Speicherung von Credentials, API-Keys (z. B. Vault-\u00E4hnliche L\u00F6sung).\u0022 | Transkript: \u0022Farid: \u0022CI/CD braucht Secrets Management.\u0022\u0022 | Das Artefakt stellt Secrets Management als gesetzt dar, obwohl im Transkript keine finale Entscheidung oder Details getroffen wurden."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Backup \u0026 DR Service: Automatisierte t\u00E4gliche Backups, Wiederherstellung (RPO\u22484 h, RTO\u22482 h) innerhalb EU-Rechenzentrum.\u0022): [GERING] Artefakt: \u0022Backup \u0026 DR Service: Automatisierte t\u00E4gliche Backups, Wiederherstellung (RPO\u22484 h, RTO\u22482 h) innerhalb EU-Rechenzentrum.\u0022 | Transkript: \u0022Ben: \u0022Backup fehlt.\u0022 Farid: \u0022Backup-RPO/RTO m\u00FCssen finalisiert werden.\u0022\u0022 | Das Artefakt gibt konkrete Backup-RPO/RTO Werte an, obwohl diese im Transkript als noch offen und zu finalisieren beschrieben werden."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Rate-Limiting: Basis-Limits (z. B. 100 Requests/Minute/User) \u00FCber Interims-Proxy, Monitoring zur Anpassung.\u0022): [GERING] Artefakt: \u0022Rate-Limiting: Basis-Limits (z. B. 100 Requests/Minute/User) \u00FCber Interims-Proxy, Monitoring zur Anpassung.\u0022 | Transkript: \u0022Ben: \u0022Rate Limits f\u00FCr API werden gebraucht.\u0022 Clara: \u0022Konkrete Schwellenwerte m\u00FCssen definiert werden.\u0022\u0022 | Das Artefakt gibt konkrete Rate-Limiting Werte an, obwohl diese im Transkript noch offen und zu definieren sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022SSO im MVP optional \u2013 Entscheidung ausstehend.\u0022).\u0022): [MITTEL] Artefakt: \u0022SSO im MVP optional \u2013 Entscheidung ausstehend.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM.\u0022\u0022 | Das Transkript zeigt, dass SSO-Integration offen und unentschieden ist; das Artefakt stellt es als optional im MVP dar, was eine vorschnelle Festlegung ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022API-Gateway / Proxy: ... (Interims-L\u00F6sung). Endg\u00FCltiges API-Gateway erst nach 6-Wochen-Warteliste.\u0022): [MITTEL] Artefakt: \u0022API-Gateway / Proxy: Eingangs-Punkt f\u00FCr alle Backend-Aufrufe, Grund-Rate-Limiting \u0026 IP-Allowlist (Interims-L\u00F6sung). Endg\u00FCltiges API-Gateway erst nach 6-Wochen-Warteliste.\u0022 | Transkript: \u0022Farid: \u0022Unser zentrales API Gateway hat eine Warteliste von sechs Wochen.\u0022 Ben: \u0022Das passt nicht zum 8-Wochen-MVP.\u0022\u0022 | Das Artefakt beschreibt eine Interimsl\u00F6sung, aber stellt die API-Gateway-Nutzung als gesetzt dar, obwohl die endg\u00FCltige L\u00F6sung offen und mit Wartezeit behaftet ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Rabatt-Freigabe \u003E 15 % erst f\u00FCr Phase 2; tempor\u00E4re manuelle Freigabe optional.\u0022).\u0022): [MITTEL] Artefakt: \u0022Rabatt-Freigabe \u003E 15 % erst f\u00FCr Phase 2; tempor\u00E4re manuelle Freigabe optional.\u0022 | Transkript: \u0022Eva: \u0022Freigabeprozess ist wichtig und muss klar definiert werden.\u0022 Anna: \u0022Vielleicht sp\u00E4ter.\u0022\u0022 | Das Artefakt stellt Rabatt-Freigabe als Phase-2-Feature dar, obwohl im Transkript die genaue Umsetzung und Zeitplanung offen und strittig ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Audit-Log-Service: Erfasst Nutzeraktionen pseudonymisiert, getrennt von technischen Logs.\u0022): [MITTEL] Artefakt: \u0022Audit-Log-Service: Erfasst Nutzeraktionen pseudonymisiert, getrennt von technischen Logs.\u0022 | Transkript: \u0022Clara: \u0022Auditierbarkeit ist Pflicht.\u0022 Farid: \u0022Zentrales Monitoring darf keine PII enthalten.\u0022\u0022 | Das Artefakt beschreibt Audit-Logging als gesetzt, obwohl im Transkript noch Details zu Logging-Governance und Trennung offen sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Pilot-Kunde (Deutschland vs. Schweiz): Beeinflusst Hosting und Datenschutz.\u0022): [MITTEL] Artefakt: \u0022Pilot-Kunde (Deutschland vs. Schweiz): Beeinflusst Hosting und Datenschutz.\u0022 | Transkript: \u0022Anna: \u0022Pilotkunde ist noch nicht final.\u0022 Ben: \u0022Das beeinflusst Scope massiv.\u0022\u0022 | Das Artefakt stellt Pilotkunde als Thema mit Optionen dar, aber die Entscheidung ist im Transkript noch offen."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 3,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 1 confirmed; 2 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 2,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 Clara: \u0022Pseudonymisierung oder synthetische Testdaten.\u0022 Ben: \u0022SAP-Testsystem hat echte Kundendaten, Problem f\u00FCr Integrationstests.\u0022\u0022 | Das Artefakt erw\u00E4hnt keine Testumgebungen, Testdaten oder Pseudonymisierung, obwohl diese im Transkript als wichtiges Thema genannt werden."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Im Abschnitt 1. Systemkontext wird \u0022Support-Kontaktformulare\u0022 erw\u00E4hnt, jedoch fehlen Details zu ungel\u00F6sten Supportprozessen, Risiken und fehlender Ticketpersist\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Support wird nicht gel\u00F6st im MVP, Kontaktformular ohne Ticketpersistenz.\u0022 Clara: \u0022Supportdaten per E-Mail, Datenschutzrisiko.\u0022\u0022 | Das Artefakt erw\u00E4hnt Support-Kontaktformulare, aber behandelt nicht die ungel\u00F6sten Supportprozesse, Risiken und fehlende Ticketpersistenz, die im Transkript deutlich sind."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Im Abschnitt 4. Daten- und Sicherheitsaspekte ist Double-Opt-In beschrieben, aber ein klares L\u00F6schkonzept und Datenschutzanforderungen f\u00FCr L\u00F6schung und Auskunft\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Double-Opt-In und L\u00F6schung fehlen im MVP.\u0022 Anna: \u0022L\u00F6schkonzept wird gebraucht.\u0022\u0022 | Das Artefakt beschreibt Double-Opt-In, aber es fehlt eine klare Darstellung des L\u00F6schkonzepts und der Datenschutzanforderungen f\u00FCr L\u00F6schung und Auskunftspflichten."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Im Abschnitt 2. Wichtige Komponenten wird unter Angebots-Service erw\u00E4hnt, dass Rabatt-Freigabe \u003E 15 % erst f\u00FCr Phase 2 vorgesehen ist, was die fehlende Freigabe\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Eva: \u0022Freigabeprozess f\u00FCr Rabatte ist nicht gel\u00F6st im MVP.\u0022 Anna: \u0022Vielleicht Phase 2.\u0022\u0022 | Das Artefakt erw\u00E4hnt Rabattfreigabe f\u00FCr Phase 2, aber es fehlt eine klare Darstellung der Risiken und Constraints bez\u00FCglich fehlender Freigabe im MVP."
+        }
+      ]
+    }
+  ]
+}

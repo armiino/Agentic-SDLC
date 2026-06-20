@@ -1,0 +1,78 @@
+--- before/runs/phase2B/20260613_164010_eabd1a/state/context.md
++++ after/runs/phase2B/20260613_164010_eabd1a/state/context.md
+- 
++ Kontextzusammenfassung — Kundenportal / Angebotsportal
++ Quelle: input/transcripts/T9999_chaos.txt
++ 
++ Kurzbeschreibung
++ Das Vorhaben zielt darauf ab, ein Kundenportal zu entwickeln, das insbesondere die Erstellung von Angeboten beschleunigt und Kund*innen Zugriff auf Bestellungen und Rechnungen bietet. Die Diskussion im Transkript zeigt starke Interessenkonflikte zwischen Time-to-Market (MVP in 8 Wochen), Compliance-Anforderungen (DSGVO), technischen Abhängigkeiten (SAP, API-Gateway) und Budget/Operational-Restriktionen.
++ 
++ Projektziel (explizit/implizit genannt)
++ - Primäres Ziel: Angebote schneller erstellen (höhere Conversion, geringere Time-to-Quote).
++ - Sekundärziele: Kundenportal zur Anzeige von Bestellungen und Rechnungen, einfache Login/Account-Verwaltung.
++ 
++ Sprecherrollen (aus dem Transkript identifizierbar)
++ - Anna: Produkt/Business-Vertreterin (Sales/Produkt), treibt MVP-Timeline und Funktionalität voran.
++ - Ben: Technische Leitung / Developer, fokussiert auf API-Layer, Backend-Readiness und technische Machbarkeit.
++ - Clara: Datenschutz/Compliance-Vertreterin, betont DSGVO, Löschkonzepte, Audit und Logging.
++ - David: Support-Vertreter, stellt Kunden-Support-Anforderungen und Ticketing-Szenarien dar.
++ - Eva: Finance, fokussiert auf Rabattfreigaben, finanzielle Risiken und rechtliche Anforderungen an Dokumente.
++ - Farid: IT Operations, adressiert Hosting, Backups, Datenresidenz und Infrastruktur-Policies.
++ 
++ Fachliche Themen und Anforderungen (extrahiert)
++ - Funktional: Login (E-Mail/Passwort, SSO optional), Angebotserstellung, Rechnungsdownload, Anzeige von Bestellungen, PDF-Export von Angeboten.
++ - Integration: Lesender Zugriff auf SAP für Produkt-/Preis-/Kundendaten; später möglicher Schreibzugriff für Bestellungen/Abschluss.
++ - Rollen/Berechtigungen: Mindestens Admin, Kunde, Sales; Vorschlag zusätzlicher Rollen (Manager, Support) mit differenzierten Sicht- und Bearbeitungsrechten.
++ - Compliance/Security: DSGVO (Double-Opt-In, Löschkonzept, Datenresidenz EU-only), Audit-Trail, Logging-Richtlinien (keine personenbezogenen Daten in technischen Logs), Verschlüsselung (TLS minimal).
++ - Betrieb/Nicht-funktional: EU-only Hosting, Managed Services (kein eigener DB-Server), Backup/Disaster Recovery, Secrets Management, Skalierbarkeit (unsicher erwartete Nutzerzahlen).
++ - Prozess/Workflow: Freigabeprozess für Rabatte (z. B. Manager ab 15–20 %, Finance ab höherem Schwellenwert), Angebots-Status-Workflow (draft → pending approval → approved → sent → …).
++ 
++ Konflikte und Spannungsfelder
++ - Timeline vs. Security/Compliance: Security-Review wird mit ~6 Wochen Dauer genannt und gefährdet das 8-Wochen-MVP.
++ - API-Gateway/Organisation: Zentrales API-Gateway hat eine Warteliste (6 Wochen) und ist damit ein kritischer Pfad für Integration.
++ - SAP-Verfügbarkeit und Scope: SAP ist zentrale Datenquelle; Live-Preise, Rabatte und Schreiboperationen sind teilweise unklar oder nicht in Echtzeit sicher.
++ - Budget vs. Features: Native Mobile vs. Responsive Web, Managed Services-Kosten, EU-only Hosting teuerer.
++ - Support vs. Datenschutz: Support benötigt Einsicht in Kundendaten, wodurch Rollen-/Berechtigungsfragen und Löschkonzepte komplexer werden.
++ - Freigabeprozesse vs. Time-to-Market: Finanzielle Freigaben (Rabatte) sind erforderlich, erschweren aber schnelles Ausrollen.
++ 
++ Offene Fragen / Unsicherheiten (aus Stakeholder-Statements)
++ - Welcher Pilotkunde wird verwendet (Schweiz vs. DACH) — beeinflusst Währung, Datenschutz/Verträge.
++ - Hosting-Provider / Cloud-Region (EU-only, konkrete Anbieter noch offen).
++ - SSO: Azure AD, Google oder beides — Entscheidung offen.
++ - SAP: Nur lesen oder auch schreiben? Gibt es ein geeignetes Testsystem (und wie werden Testdaten behandelt)?
++ - API-Gateway-Zugang: Gibt es eine temporäre Alternative für MVP?
++ - Freigabeschwellen für Rabatte: 15 %, 20 % oder andere? Wer final entscheidet?
++ - Umgang mit Löschanfragen vs. gesetzlicher Aufbewahrungspflicht (Retention Rules).
++ - Umfang von Audit/Logging: welche Daten sind verpflichtend zu protokollieren, welche dürfen nicht in technischen Logs erscheinen?
++ - Support-Workflow im MVP: Kontaktformular vs. Ticketpersistenz.
++ 
++ Risiken (zusammengefasst)
++ - Compliance-Risiko bei unklarer Datenresidenz, Löschkonzepten oder Nutzung von Nicht-EU-Backups.
++ - Finanzrisiko durch unkontrollierte Rabatte ohne Freigabeprozess.
++ - Projektverzögerung durch Abhängigkeiten (API-Gateway, Security-Review, SAP-Integrationen).
++ - Operative Risiken: fehlendes Secrets Management, ungetestete Backup/DR-Prozesse, Nutzung realer Kundendaten in Testumgebungen.
++ 
++ Vorgeschlagener MVP-Schnitt (im Transkript als Vorschlag formuliert)
++ Enthalten:
++ - Login mit Double-Opt-In (E-Mail/Passwort), optionale SSO-Betrachtung für später
++ - Angebotsfunktionalität (Erstellen von Angeboten, PDF-Export, eingeschränkte Rabattlogik: keine manuellen Sonderrabatte im MVP)
++ - Rechnungsanzeige / Rechnungsdownload
++ - SAP-Lesedatenintegration (read-only für Produkt- und Preisinfos im MVP)
++ - Minimales Rollenmodell: Admin, Sales, Kunde
++ - Minimaler Audit-Trail für rechtliche Nachvollziehbarkeit
++ - EU Managed Hosting und Backup (grundlegende DR)
++ Ausgeschlossen / bewusst eingeschränkt (für MVP):
++ - Vollständiger Freigabe-Workflow für Sonderrabatte (Phase-2)
++ - Voller Support-Ticket-Workflow (nur Kontaktformular oder E-Mail als bewusste Einschränkung)
++ - Native Mobile App (Web-first)
++ 
++ Empfehlungen / Hinweise (neutral formuliert)
++ - Offene Punkte, Widersprüche und Risiken sollten dokumentiert und als Entscheidungspunkte für Vorstand/Steering-Board klar benannt werden.
++ - Ein dedizierter Architekt/Integrator wird im Transkript als notwendig erachtet, da viele technische Abhängigkeiten und Compliance-Anforderungen bestehen.
++ 
++ Quellenhinweis / Evidence
++ - Vollständiges Quell-Transkript: input/transcripts/T9999_chaos.txt (gesamte Datei gelesen).
++ - Die Zusammenfassung basiert ausschließlich auf den Aussagen und Diskussionspunkten in dieser Transkriptdatei; widersprüchliche Aussagen wurden bewusst als Konflikte bzw. Unsicherheiten ausgewiesen.
++ 
++ Datum der Extraktion: 2026-06-13 (run_id: 20260613_164010_eabd1a)
++ 

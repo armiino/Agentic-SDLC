@@ -1,0 +1,113 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "architecture.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-16T13:03:51.051251Z",
+  "evaluationStatus": "ok",
+  "errorScore": 23,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 23; KRITISCH=4; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 3,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 2 confirmed; 1 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 1,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022**Monitoring \u0026 Logging** | Technische Logs (ELK/AWS CloudWatch) getrennt von Audit\u2011Logs, Alerts, Dashboard.\u0022 | Transkript: \u0022[Farid] Architektur darf keine konkreten Cloud-Produkte erfinden, solange kein Provider gew\u00E4hlt ist.\u0022 | Das Artefakt nennt konkrete Provider\u2011/Produktnamen (z.\u202FB. AWS CloudWatch, ELK) obwohl das Transkript explizit festh\u00E4lt, keine konkreten Cloud\u2011Produkte zu erfinden, solange kein Provider gew\u00E4hlt ist."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022**API\u2011Gateway** (optional) | Eingangsfilter f\u00FCr alle internen APIs, zentraler Ort f\u00FCr Rate\u2011Limiting, Monitoring.\u0022 | Transkript: \u0022[Farid] Noch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen. [Ben] Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022 | Im Transkript wird das zentrale API\u2011Gateway als interne Pflicht/Constraint und mit einer 6\u2011Wochen\u2011Warteliste dargestellt; das Artefakt beschreibt das Gateway hingegen als optional, was der Aussage im Transkript widerspricht."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022[Anna] Also wir brauchen definitiv ein Kundenportal. ... Web first. Mobile sp\u00E4ter.\n[Ben] Moment, mobile hei\u00DFt native App oder responsive Web? Because Ben questi\u2026\u0022): [GERING] Artefakt: \u0022**Web\u2011Frontend** | Responsives Web\u2011UI (React/Angular) \u2013 MVP fokussiert auf Browser, Mobile optional sp\u00E4ter.\u0022 | Transkript: \u0022[Anna] Also wir brauchen definitiv ein Kundenportal. ... Web first. Mobile sp\u00E4ter. [Ben] Moment, mobile hei\u00DFt native App oder responsive Web?\u0022 | Das Artefakt nennt konkrete Frontend\u2011Frameworks (React/Angular), die im Transkript nicht genannt oder beschlossen wurden; Frameworkentscheidungen wurden nicht diskutiert."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 3,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 3 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 3,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022**Auth\u2011Service** | Authentifizierung via E\u2011Mail/Passwort, Double\u2011Opt\u2011In, OAuth2\u2011Token\u2011Ausgabe.\u0022 | Transkript: \u0022[Anna] Also erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? [Clara] API muss abgesichert sein. OAuth? Oder API Keys? [Ben] OAuth w\u00E4re besser. Aber komplexer.\u0022 | Das Artefakt stellt OAuth2\u2011Token\u2011Ausgabe als gesetzt dar, obwohl das Transkript OAuth als eine m\u00F6gliche/pr\u00E4ferierte, aber noch offene/komplexe Option darstellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022**SAP\u2011Read\u2011Adapter** | Lesender Adapter zum SAP\u2011System, inkl. Caching\u2011Layer f\u00FCr Produkt\u2011/Preis\u2011Daten.\u0022 | Transkript: \u0022[Ben] SAP\u2011Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend. [Anna] Dann vielleicht nur Angebotsdownload, keine Online\u2011Akzeptanz im MVP.\u0022 | Das Artefakt nimmt eine endg\u00FCltige Entscheidung f\u00FCr einen rein lesenden SAP\u2011Adapter an, obwohl im Transkript der Schreibzugriff auf SAP (bzw. R\u00FCckschreiben von Angeboten/Bestellungen) ausdr\u00FCcklich noch offen und zu kl\u00E4ren ist."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022**Audit\u2011Logs**: Write\u2011Once\u2011Read\u2011Many (WORM) Speicher, digitale Signaturen, getrennt von technischen Logs.\u0022 | Transkript: \u0022[Clara] Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert? [Ben] Application logs, audit logs and security logs sind unterschiedliche Dinge.\u0022 | Das Artefakt setzt spezifische Implementierungen (WORM\u2011Storage, digitale Signaturen) fest, w\u00E4hrend das Transkript lediglich Auditierbarkeit und getrennte Logs forderte; die konkrete Technik wurde nicht beschlossen."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Backup \u0026 DR Service | T\u00E4gliche Backups, 4\u2011Stunden RTO, Aufbewahrung von 30\u202FTagen (Produktivdaten) \u2013 noch zu detailieren.\u0022): [MITTEL] Artefakt: \u0022**Backup \u0026 DR Service** | T\u00E4gliche Backups, 4\u2011Stunden RTO, Aufbewahrung von 30\u202FTagen (Produktivdaten) \u2013 noch zu detailieren.\u0022 | Transkript: \u0022[Ben] Backup? [Ben] Ja Disaster Recovery. [Clara] Wenn Kundendaten drin sind: ja. [Farid] Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 | Konkrete RTO\u2011/Aufbewahrungszahlen (4\u202FStunden RTO, 30\u202FTage) werden im Transkript nicht genannt; das Artefakt stellt diese Werte jedoch als gesetzt, obwohl Backup/DR\u2011Details offen blieben."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 5,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 3 confirmed; 2 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 3,
+        "partial": 2,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Und CI/CD braucht Secrets Management.\u0022 | Secrets/Secrets\u2011Management (f\u00FCr CI/CD, Deployments, Credentials) wurde im Transkript explizit genannt, fehlt im Architekturdokument jedoch vollst\u00E4ndig (kein Abschnitt/Erw\u00E4hnung)."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten. [Clara] Ja, Pseudonymisierung oder synthetische Testdaten. [Ben] SAP\u2011Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 | Das Transkript benennt Umgebungen (Dev/Test/Prod) und die Notwendigkeit pseudonymisierter/synthetischer Testdaten als wichtig f\u00FCr DSGVO\u2011Konformit\u00E4t; das Artefakt enth\u00E4lt hierzu keine Ausf\u00FChrung oder Erw\u00E4hnung."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Eva] Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt. [Ben] Das muss klar definiert werden. [Anna] Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden. [Ben] Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u0022 | Der Freigabe\u2011/Genehmigungsprozess f\u00FCr Rabatte (Schwellen, Verantwortliche) und die im Meeting vereinbarte MVP\u2011Constraint, keine manuellen Sonderrabatte zuzulassen, werden im Transkript explizit genannt, fehlen jedoch als klarer Constraint oder Requirement im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Wichtige Komponenten: Web\u2011Frontend \u2013 MVP fokussiert auf Browser, Mobile optional sp\u00E4ter. | Relevante Anforderungen: PDF\u2011Download\nDaten\u2011 und Sicherheitsaspekte: \u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Ben] Dann brauchen wir Pagination und Download\u2011Limits. [David] Kunden laden manchmal hunderte Rechnungen auf einmal herunter.\u0022 | Im Transkript wird das Thema Pagination / Download\u2011Limits f\u00FCr Massenexporte explizit angesprochen; das Artefakt nennt Rate\u2011Limiting allgemein, behandelt aber nicht Pagination oder massenbezogene Download\u2011Beschr\u00E4nkungen."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Wichtige Komponenten: Angebots\u2011 \u0026 Rechnungsservice \u2013 Business\u2011Logik zur Erstellung, Anzeige und PDF\u2011Export von Angeboten/Rechnungen.\nWichtige Komponenten: Audit\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022[Farid] Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging. [Eva] Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.\u0022 | Versionierung von PDF\u2011/Angebots\u2011Templates und Nachvollziehbarkeit konkreter Angebotsversionen wurden im Transkript als Anforderung genannt, fehlen im Artefakt (PDF\u2011Generator ohne Template\u2011Versionierung)."
+        }
+      ]
+    }
+  ]
+}

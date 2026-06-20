@@ -1,0 +1,411 @@
+{
+  "artifact": "architecture.md",
+  "phase": "phase2B",
+  "runId": "20260617_162205_950a9a",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4o"
+  },
+  "unitCount": 49,
+  "groundingScore": 17,
+  "counts": {
+    "grounded": 36,
+    "overstated": 7,
+    "fabricated": 5,
+    "not_a_claim": 1
+  },
+  "verdicts": [
+    {
+      "index": 0,
+      "section": "1. Systemkontext",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Das Transkript diskutiert die Unsicherheit zwischen Web-First und Mobile-First, was in der Einheit reflektiert wird.",
+      "text": "Kunden greifen \u00FCber einen Browser (Web\u2011First, sp\u00E4ter Mobile\u2011First) auf das Kundenportal zu."
+    },
+    {
+      "index": 1,
+      "section": "1. Systemkontext",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Das Transkript erw\u00E4hnt EU-only Hosting als Ziel, aber nicht als entschieden. Die Einheit stellt es als gesetzt dar.",
+      "text": "Das Portal kommuniziert \u00FCber HTTPS mit einem API\u2011Layer, der in einem EU\u2011only Managed Service gehostet wird."
+    },
+    {
+      "index": 2,
+      "section": "1. Systemkontext",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Das Transkript erw\u00E4hnt E-Mail/Passwort mit Double-Opt-In und SSO als optional f\u00FCr sp\u00E4ter.",
+      "text": "Authentifizierung erfolgt per E\u2011Mail/Passwort mit Double\u2011Opt\u2011In; SSO (Azure AD, Google) ist f\u00FCr sp\u00E4tere Phasen geplant."
+    },
+    {
+      "index": 3,
+      "section": "1. Systemkontext",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Das Transkript bespricht die Notwendigkeit der SAP-Anbindung f\u00FCr Lesedaten.",
+      "text": "Das System muss SAP f\u00FCr Produkt\u2011 und Preisdaten lesend anbinden (Schreibzugriff erst in sp\u00E4teren Phasen)."
+    },
+    {
+      "index": 4,
+      "section": "1. Systemkontext",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Das Transkript erw\u00E4hnt Managed Services und keine neue DB als Ziel.",
+      "text": "Managed Services (z. B. Cloud\u2011Functions, Object\u2011Storage) werden genutzt, keine eigene relational\u2011DB."
+    },
+    {
+      "index": 5,
+      "section": "1. Systemkontext",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Das Transkript behandelt DSGVO, EU-Datenresidenz und Backup/DR.",
+      "text": "Compliance\u2011Umgebung: DSGVO\u2011Konformit\u00E4t, EU\u2011Datenresidenz, getrennte technische/Audit\u2011Logs, Backup \u0026 DR."
+    },
+    {
+      "index": 6,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Das Transkript diskutiert Web-First und sp\u00E4ter Mobile, was die Einheit widerspiegelt.",
+      "text": "Responsive Web\u2011Frontend | UI f\u00FCr Kunden (Angebote, Bestellungen, Rechnungen) | Web\u2011First, sp\u00E4ter responsive f\u00FCr Mobile"
+    },
+    {
+      "index": 7,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "overstated",
+      "reason": "Das Transkript erw\u00E4hnt API-Layer und Gateway, aber nicht als tempor\u00E4ren Server-less Proxy.",
+      "text": "API\u2011Layer / Proxy | Exponiert REST\u2011Endpoints f\u00FCr Frontend; \u00FCbernimmt Routing, Rate\u2011Limiting, Auth\u2011Checks | Tempor\u00E4rer Server\u2011less Proxy bis API\u2011Gateway verf\u00FCgbar"
+    },
+    {
+      "index": 8,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Das Transkript behandelt Benutzerverwaltung, Double-Opt-In und DSGVO-Konformit\u00E4t.",
+      "text": "Auth\u2011Service | Benutzerverwaltung, Double\u2011Opt\u2011In, Passwort\u2011Reset, zuk\u00FCnftige SSO\u2011Anbindung | DSGVO\u2011konforme Speicherung von Anmeldedaten"
+    },
+    {
+      "index": 9,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "overstated",
+      "reason": "Das Transkript erw\u00E4hnt Rollen, aber nicht explizit ABAC oder feingranulare Berechtigungen.",
+      "text": "Role \u0026 Permission Service | Rollen (Admin, Sales, Manager, Support) \u0026 feingranulare Berechtigungen (z. B. Support ohne Preis\u2011Details) | ABAC\u2011Ansatz empfohlen"
+    },
+    {
+      "index": 10,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Das Transkript diskutiert den Offer-Workflow und die Rabatt-Freigabe-Logik.",
+      "text": "Offer\u2011Workflow Service | Zustandsmaschine f\u00FCr Draft \u2192 Pending Approval \u2192 Approved \u2192 Sent; Rabatt\u2011Freigabe\u2011Logik | Schwellenwert (15 %) noch zu finalisieren"
+    },
+    {
+      "index": 11,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Das Transkript erw\u00E4hnt PDF-Export und rechtliche Anforderungen.",
+      "text": "PDF\u2011Export Service | Generiert rechtlich konforme PDFs mit Footer\u2011Hinweisen f\u00FCr Angebote \u0026 Rechnungen | Nutzt Managed PDF\u2011Generator"
+    },
+    {
+      "index": 12,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "W\u00E4hrungen EUR und CHF werden im Transkript besprochen, USD ist f\u00FCr sp\u00E4ter geplant.",
+      "text": "Currency Service | Unterst\u00FCtzt EUR, CHF (Pilot), sp\u00E4ter USD; W\u00E4hrungs\u2011Umrechnung \u0026 Formatierung"
+    },
+    {
+      "index": 13,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "SAP-Lesezugriff und Caching-Strategie werden im Transkript diskutiert.",
+      "text": "SAP\u2011Read Adapter | Lesezugriff auf Produkt\u2011 und Preisdaten via SAP OData/REST | Caching\u2011Strategie offen (Performance vs. DSGVO)"
+    },
+    {
+      "index": 14,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Analytics und KPIs wie Conversion-Rate und Zeit bis Angebot werden im Transkript erw\u00E4hnt.",
+      "text": "Analytics / KPI Service | Erfasst Conversion\u2011Rate, Zeit bis Angebot, Nutzungsstatistiken; erfordert Consent\u2011Management"
+    },
+    {
+      "index": 15,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Unterschied zwischen technischen Logs und Audit-Logs sowie Aufbewahrung wird im Transkript behandelt.",
+      "text": "Logging \u0026 Audit Service | Technische Logs vs. Audit\u2011Logs, Aufbewahrung nach Vorgaben, Verschl\u00FCsselung"
+    },
+    {
+      "index": 16,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "grounded",
+      "reason": "Backup und Disaster Recovery werden im Transkript als notwendig f\u00FCr MVP diskutiert.",
+      "text": "Backup \u0026 Disaster Recovery | T\u00E4gliche Snapshots, 24\u2011h RTO (MVP\u2011Minimal), EU\u2011Region Storage"
+    },
+    {
+      "index": 17,
+      "section": "2. Wichtige Komponenten",
+      "kind": "table_row",
+      "verdict": "fabricated",
+      "reason": "Monitoring und Alerting werden im Transkript nicht explizit erw\u00E4hnt.",
+      "text": "Monitoring \u0026 Alerting | Health\u2011Checks, Latency\u2011Monitoring, automatisierte Alerts"
+    },
+    {
+      "index": 18,
+      "section": "3. Schnittstellen / Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "HTTPS/REST und Authentifizierung werden im Transkript besprochen.",
+      "text": "Frontend \u2194 API\u2011Layer: HTTPS/REST, JWT\u2011basiertes Auth\u2011Token."
+    },
+    {
+      "index": 19,
+      "section": "3. Schnittstellen / Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Login und Double-Opt-In werden im Transkript als Teil des MVP diskutiert.",
+      "text": "API\u2011Layer \u2194 Auth\u2011Service: Aufruf von Login, Double\u2011Opt\u2011In\u2011Flows."
+    },
+    {
+      "index": 20,
+      "section": "3. Schnittstellen / Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Rollen und Berechtigungen werden im Transkript mehrfach thematisiert.",
+      "text": "API\u2011Layer \u2194 Role/Permission Service: Authorisierungs\u2011Check pro Request."
+    },
+    {
+      "index": 21,
+      "section": "3. Schnittstellen / Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Angebots-Workflow und Freigabe-Logik werden im Transkript besprochen.",
+      "text": "API\u2011Layer \u2194 Offer\u2011Workflow Service: CRUD\u2011Operationen f\u00FCr Angebote, Freigabe\u2011Logik."
+    },
+    {
+      "index": 22,
+      "section": "3. Schnittstellen / Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "PDF-Export und rechtliche Anforderungen werden im Transkript erw\u00E4hnt.",
+      "text": "API\u2011Layer \u2194 PDF\u2011Export Service: Aufruf zur PDF\u2011Erstellung, R\u00FCckgabe eines Signed URLs."
+    },
+    {
+      "index": 23,
+      "section": "3. Schnittstellen / Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SAP-Lesezugriff und tempor\u00E4re L\u00F6sungen bis zur API-Gateway-Verf\u00FCgbarkeit werden im Transkript diskutiert.",
+      "text": "API\u2011Layer \u2194 SAP\u2011Read Adapter: GET\u2011Requests f\u00FCr Produkt\u2011/Preis\u2011Daten; ggf. tempor\u00E4rer Proxy bis API\u2011Gateway verf\u00FCgbar."
+    },
+    {
+      "index": 24,
+      "section": "3. Schnittstellen / Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Push Notifications und Analytics wurden im Transkript als unsicher und nicht im MVP besprochen.",
+      "text": "API\u2011Layer \u2194 Analytics Service: Event\u2011Senden (nach Einwilligung)."
+    },
+    {
+      "index": 25,
+      "section": "3. Schnittstellen / Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Zentrale Log-Verwaltung und Trennung von Logs wurden im Transkript besprochen.",
+      "text": "Logging/Audit Service \u2194 All Services: Zentraler Log\u2011Sink (z. B. Cloud\u2011Log\u2011Service) mit getrennten Streams."
+    },
+    {
+      "index": 26,
+      "section": "3. Schnittstellen / Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Backup und Verschl\u00FCsselung wurden im Transkript als notwendig f\u00FCr DSGVO und MVP besprochen.",
+      "text": "Backup Service \u2194 Managed Storage: Automatisierte Snapshots, Verschl\u00FCsselung."
+    },
+    {
+      "index": 27,
+      "section": "4. Daten\u2011 und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "TLS wurde im Transkript als ausreichend f\u00FCr Transportverschl\u00FCsselung besprochen.",
+      "text": "Transport: Durchg\u00E4ngig TLS 1.2\u002B."
+    },
+    {
+      "index": 28,
+      "section": "4. Daten\u2011 und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Verschl\u00FCsselung wurde im Transkript besprochen, aber nicht f\u00FCr alle gespeicherten Daten als gesetzt.",
+      "text": "At\u2011Rest: Verschl\u00FCsselung aller gespeicherten Daten (Objekt\u2011Storage, Logs)."
+    },
+    {
+      "index": 29,
+      "section": "4. Daten\u2011 und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Double-Opt-In, Audit-Trail und L\u00F6schkonzept wurden im Transkript besprochen.",
+      "text": "DSGVO: Double\u2011Opt\u2011In f\u00FCr Benutzerregistrierung, Audit\u2011Trail f\u00FCr alle kritischen Aktionen, automatisiertes L\u00F6schkonzept (Richtlinien\u2011basiert, z. B. 30 Tage)."
+    },
+    {
+      "index": 30,
+      "section": "4. Daten\u2011 und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Zugriffskontrolle und Rollen wurden im Transkript besprochen.",
+      "text": "Zugriffskontrolle: Role\u2011Based \u002B Attribute\u2011Based Access Control (z. B. Support\u2011Rolle darf Kundendaten, aber nicht Preis/Daten sehen)."
+    },
+    {
+      "index": 31,
+      "section": "4. Daten\u2011 und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Trennung von technischen und Audit-Logs wurde im Transkript besprochen.",
+      "text": "Logging: Trennung von technischen Logs (Performance) und Audit\u2011Logs (Datenschutz\u2011relevant). Aufbewahrungsfristen gem\u00E4\u00DF Compliance."
+    },
+    {
+      "index": 32,
+      "section": "4. Daten\u2011 und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "EU-Only Storage und Backup wurden besprochen, aber nicht mit konkreten RTO/RPO-Zahlen.",
+      "text": "Backup/DR: EU\u2011Only Storage, t\u00E4gliche Snapshots, Wiederherstellungszeit \u003C 24 h, RPO = 4 h (MVP\u2011Minimal)."
+    },
+    {
+      "index": 33,
+      "section": "4. Daten\u2011 und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "fabricated",
+      "reason": "Separate Pipelines f\u00FCr Betriebs- und Sicherheits-Alerts wurden im Transkript nicht besprochen.",
+      "text": "Monitoring: Separate Pipelines f\u00FCr Betriebs\u2011 und Sicherheits\u2011Alerts."
+    },
+    {
+      "index": 34,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Mobile-First vs. Web-First wurde im Transkript als unklar und zu kl\u00E4ren besprochen.",
+      "text": "Mobile\u2011First vs. Web\u2011First \u2013 Kl\u00E4rung im UI\u2011Workshop, beeinflusst UI\u2011Framework und sp\u00E4tere native App\u2011Strategie."
+    },
+    {
+      "index": 35,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "SSO-Integration wurde im Transkript als optional und nach MVP besprochen.",
+      "text": "SSO\u2011Integration \u2013 Zeitpunkt und Provider (Azure AD, Google) nach MVP\u2011Release."
+    },
+    {
+      "index": 36,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Cache-Strategie wird im Transkript besprochen, insbesondere im Kontext von SAP-Daten und Performance vs. Datenminimierung.",
+      "text": "Cache\u2011Strategie f\u00FCr SAP\u2011Daten \u2013 Direktzugriff vs. anonymisierter Produkt\u2011Cache (Performance vs. Datenminimierung)."
+    },
+    {
+      "index": 37,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "API-Gateway und tempor\u00E4re L\u00F6sungen werden im Transkript diskutiert, insbesondere die Warteliste von sechs Wochen.",
+      "text": "API\u2011Gateway Auswahl \u2013 Tempor\u00E4rer Proxy bis offizielles Gateway nach 6 Wochen bereitsteht."
+    },
+    {
+      "index": 38,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Rabatt-Freigabe und Verantwortlichkeiten werden im Transkript besprochen, inklusive der Schwelle von 15%.",
+      "text": "Rabatt\u2011Freigabe\u2011Schwelle \u0026 Verantwortlichkeiten \u2013 15 % vorgeschlagen, muss final mit Finance \u0026 Management abgestimmt werden."
+    },
+    {
+      "index": 39,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Pilotkunde-Region und deren Einfluss auf W\u00E4hrungs- und Rechtsaspekte werden im Transkript diskutiert.",
+      "text": "Pilotkunde\u2011Region \u2013 Schweiz (CHF) vs. Deutschland (EUR) beeinflusst W\u00E4hrungs\u2011 und Rechtsaspekte."
+    },
+    {
+      "index": 40,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "fabricated",
+      "reason": "Consent-Management-Tool wird im Transkript nicht explizit erw\u00E4hnt.",
+      "text": "Consent\u2011Management\u2011Tool \u2013 Auswahl einer DSGVO\u2011konformen L\u00F6sung vor Aktivierung von Analytics."
+    },
+    {
+      "index": 41,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "grounded",
+      "reason": "Backup-Strategie und deren Wichtigkeit f\u00FCr MVP werden im Transkript besprochen.",
+      "text": "Backup\u2011Strategie (RPO/RTO) \u2013 Minimal\u2011MVP\u2011Definition finalisieren mit IT\u2011Operations."
+    },
+    {
+      "index": 42,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "fabricated",
+      "reason": "Monitoring-Tooling wird im Transkript nicht explizit als Cloud-Native vs. Drittanbieter diskutiert.",
+      "text": "Monitoring\u2011Tooling \u2013 Cloud\u2011Native vs. Drittanbieter\u2011L\u00F6sungen."
+    },
+    {
+      "index": 43,
+      "section": "5. Offene Architekturentscheidungen (MVP\u2011Status)",
+      "kind": "numbered",
+      "verdict": "fabricated",
+      "reason": "Logging-Pipeline und spezifische Tools wie Elastic oder CloudWatch werden im Transkript nicht erw\u00E4hnt.",
+      "text": "Logging\u2011Pipeline \u2013 Zentraler Log\u2011Service (z. B. Elastic, CloudWatch) vs. spezialisierte Audit\u2011Log\u2011Store."
+    },
+    {
+      "index": 44,
+      "section": "6. Constraints / Annahmen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "EU-only Hosting wird im Transkript besprochen, inklusive der Herausforderungen.",
+      "text": "EU\u2011only Hosting \u2013 Alle Dienste laufen in EU\u2011Regionen."
+    },
+    {
+      "index": 45,
+      "section": "6. Constraints / Annahmen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Managed Services Only und keine eigene DB werden im Transkript besprochen.",
+      "text": "Managed Services Only \u2013 Keine eigene DB, Nutzung von Cloud\u2011Storage \u0026 Functions."
+    },
+    {
+      "index": 46,
+      "section": "6. Constraints / Annahmen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "DSGVO-Compliance und die Notwendigkeit von Double-Opt-In, Audit-Log und L\u00F6schkonzept werden im Transkript besprochen.",
+      "text": "DSGVO\u2011Compliance ist ein Muss (Double\u2011Opt\u2011In, Audit\u2011Log, L\u00F6schkonzept)."
+    },
+    {
+      "index": 47,
+      "section": "6. Constraints / Annahmen",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "MVP-Umfang ist im Transkript diskutiert, aber Grund-Analytics nach Consent wird nicht explizit als Teil des MVP genannt.",
+      "text": "MVP\u2011Umfang beschr\u00E4nkt sich auf Web\u2011Portal, E\u2011Mail/Passwort\u2011Login, Rollen\u2011 und Angebots\u2011Workflow, SAP\u2011Read\u2011Integration, PDF\u2011Export, Grund\u2011Analytics (nach Consent)."
+    },
+    {
+      "index": 48,
+      "section": "6. Constraints / Annahmen",
+      "kind": "paragraph",
+      "verdict": "not_a_claim",
+      "reason": "Einleitungssatz ohne fachlichen Claim.",
+      "text": "*Dieses Dokument stellt den fr\u00FChen Architektur\u00FCberblick dar und dient als Ausgangspunkt f\u00FCr weitere Detail\u2011Design\u2011 und Entscheidungs\u2011Workshops.*"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+# Risikenübersicht
+
+## 1. Fachliche Risiken
+
+| Risiko | Beschreibung | mögliche Auswirkungen | Gegenmaßnahmen / Klärungsbedarf |
+|--------|--------------|-----------------------|---------------------------------|
+| Unklare Frontend‑Strategie (Web‑first vs. Mobile‑first) | Noch nicht entschieden, welche UI‑Plattform priorisiert wird. | Verzögerungen beim MVP‑Launch, gestiegene Kosten, Scope‑Creep. | Frühzeitige Entscheidung im Projekt‑Steering‑Board; Prototyp‑Evaluation beider Varianten. |
+| Rabatt‑Freigabe‑Workflow unvollständig definiert | Schwellenwerte (>15 % Manager, >30 % Finance) genannt, aber keine detaillierte Genehmigungslogik. | Fehlende Kontrollen führen zu Preis‑Abweichungen, Compliance‑Probleme. | Formalen Freigabe‑Prozess mit Rollen‑Mapping und Auditing implementieren. |
+| Zielmarkt (DE vs. CH) nicht geklärt | Unterschiedliche Währungen, rechtliche Vorgaben und Datenschutz‑Bestimmungen. | Fehlkonfiguration von Preisen, juristische Risiken, Kundenzufriedenheit. | Klare Zielmarkt‑Definition vor MVP; Modal‑Logik für unterschiedliche Länder. |
+| Support‑Prozess nur Kontaktformular | Keine Ticket‑Nachverfolgung, unklare SLA. | Unzufriedene Kunden, fehlende Nachvollziehbarkeit. | Evaluierung eines Ticket‑Systems als späteres Upgrade; Dokumentation von Anfragen. |
+
+## 2. Technische Risiken
+
+| Risiko | Beschreibung | mögliche Auswirkungen | Gegenmaßnahmen / Klärungsbedarf |
+|--------|--------------|-----------------------|---------------------------------|
+| Fehlender API‑Layer / Verzögerung beim API‑Gateway (6 Wochen) | Backend‑APIs noch nicht bereit, Gateway‑Warteliste. | MVP‑Zeitplan Gefahr, Integration mit SAP verzögert. | Parallel‑Entwicklung eines Minimal‑API‑Layers; Nutzung von Proxy‑Lösungen bis Gateway verfügbar. |
+| SAP‑Preis‑Synchronisation nur nachts, kein Echtzeit‑Abruf | Preisaktualität für Angebote ungewiss. | Angebotsfehler, Kundenunzufriedenheit, Umsatzverluste. | Evaluierung von Caching‑Strategie mit kurzen TTL; ggf. direkte SAP‑Abfrage für kritische Fälle. |
+| Hosting‑Kosten und EU‑Only Constraint | EU‑only Managed Service ist teurer, Budget‑Entscheidung offen. | Budget‑Überschreitung, mögliche Verschiebung von Features. | Kosten‑Analyse verschiedener Provider; ggf. Verhandlung von Hybrid‑Lösungen mit EU‑Datensicherheit. |
+| Skalierbarkeit vs. Over‑Engineering | Nutzerzahl stark variabel (200‑20 000). | Ressourcenunter‑ oder -überprovisionierung, Performance‑Probleme. | Architektur‑Design mit autoskalierenden Komponenten; Last‑Tests frühzeitig durchführen. |
+| Rate‑Limiting nicht spezifiziert | Gefahr von Missbrauch beim Rechnungs‑Download. | Service‑Ausfall, rechtliche Folgen bei Datenexfiltration. | Definition von Schwellenwerten (z. B. 10 Downloads/Minute); Implementierung von throttling‑Mechanismen. |
+| Caching‑Strategie bei SAP‑Ausfall birgt Datenschutz‑Risiko | Cache könnte personenbezogene Daten enthalten. | DSGVO‑Verstoß, Datenlecks. | Anonymisierung/Pseudonymisierung im Cache; kurze Cache‑Lebensdauer; audit‑loggt Cache‑Zugriffe. |
+
+## 3. Compliance‑ und Datenschutzrisiken
+
+| Risiko | Beschreibung | mögliche Auswirkungen | Gegenmaßnahmen / Klärungsbedarf |
+|--------|--------------|-----------------------|---------------------------------|
+| Unvollständige DSGVO‑Umsetzung (Double‑Opt‑In, Löschkonzept) | Double‑Opt‑In ist gefordert, aber Umsetzung im Zeitplan kritisch. | Bußgelder, Vertrauensverlust. | Implementierung eines konformen Opt‑In‑Workflows; klare Löschfristen definieren und automatisieren. |
+| Trennung technischer Logs und Audit‑Logs nicht garantiert | Technische Logs dürfen keine PII enthalten, aber Umsetzung unklar. | Datenschutzverletzungen, rechtliche Risiken. | Logging‑Framework mit Klassen für PII‑freie und audit‑spezifische Logs einrichten. |
+| Auftrags‑Verarbeitungs‑Vertrag (AVV) mit SAP/Hosting‑Provider fehlt | Datenverarbeitung durch Drittanbieter muss vertraglich geregelt sein. | Vertragsverletzungen, Compliance‑Risiko. | AVV vor Produktiv‑Go‑Live abschließen; Nachweis im Projekt‑Dossier. |
+| EU‑Only Datenresidenz vs. geplante Internationalisierung | Spätere Erweiterung zu USA/CHF kann Daten außerhalb EU bringen. | Rechtsverletzungen, GDPR‑Verstöße. | Data‑Residency‑Strategie definieren; ggf. separate EU‑Instanz für EU‑Kunden. |
+
+## 4. Widersprüche und Unsicherheiten
+
+- **Zeitplan vs. DSGVO‑Umsetzung**: 8‑Wochen‑MVP steht im Konflikt mit notwendigen Sicherheits‑Reviews (6 Wochen). 
+- **API‑Gateway Verfügbarkeit**: Erwartete Bereitstellung nach 6 Wochen, jedoch kritische Abhängigkeit für MVP. 
+- **Hosting‑Kosten**: EU‑Only Managed Service ist teurer, aber Budget‑Entscheidung bleibt offen. 
+- **Frontend‑Strategie**: Keine klare Entscheidung, könnte zu Scope‑Änderungen führen. 
+- **Echtzeit‑Preis‑Abruf**: Noch nicht definiert, könnte das Kern‑Feature beeinträchtigen.
+
+## 5. Mögliche Auswirkungen (Zusammenfassung)
+
+- **Projektverzögerungen**: Durch unklare technische Voraussetzungen (API‑Gateway, SAP‑Echtzeit) und Compliance‑Prüfungen.
+- **Kostenüberschreitungen**: Hosting‑Kosten, zusätzliche Entwicklungsarbeit für fehlende Komponenten.
+- **Rechtliche Konsequenzen**: DSGVO‑Verstöße, fehlende AVVs, nicht‑EU‑Datenhaltung.
+- **Qualitäts‑ und Kundenzufriedenheits‑Risiken**: Unvollständige Rabatt‑Freigaben, unklare Support‑Prozesse, Preis‑Inkonsistenzen.
+
+## 6. Gegenmaßnahmen / Klärungsbedarfe (Priorisiert)
+
+1. **Schnelle Entscheidung zu Frontend‑Strategie** – Impact auf UI‑Entwicklung und Ressourcen.
+2. **API‑Layer + Gateway‑Plan** – Minimal‑API für MVP bereitstellen, fallback‑Strategie ausarbeiten.
+3. **DSGVO‑Checkliste finalisieren** – Double‑Opt‑In, Löschkonzept, Trennung von Logs.
+4. **Hosting‑Kosten‑Analyse** – Vergleich EU‑Only Anbieter, Kosten‑Nutzen‑Abwägung.
+5. **Rabatt‑Freigabe‑Workflow dokumentieren** – Rollen, Schwellenwerte, Audit‑Log.
+6. **Rate‑Limiting‑Spezifikation** – Schwellenwerte, Implementierungsplan.
+7. **Support‑Prozess‑Roadmap** – Pilot‑Ticket‑System definieren.
+8. **SAP‑Preis‑Strategie klären** – Echtzeit‑Option vs. nächtliche Sync, ggf. Hybrid‑Ansatz.
+9. **Daten‑Residenz‑Strategie für Internationalisierung** – Rechtliche Anforderungen für CH/US klären.
+10. **Testdaten‑Pseudonymisierung** – Verfahren etablieren, um Testumgebungen DSGVO‑konform zu halten.
+
+*Diese Risikoübersicht basiert auf dem bereitgestellten Projektkontext und den Anforderungen (docs/requirements.md).*

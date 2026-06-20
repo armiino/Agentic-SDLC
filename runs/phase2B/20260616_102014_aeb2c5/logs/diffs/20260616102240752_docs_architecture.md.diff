@@ -1,0 +1,53 @@
+--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturüberblick (frühe SDLC‑Phase)
++ 
++ ## 1. Systemkontext
++ - **Akteure**: Sales‑Mitarbeiter, Kunden, Administratoren, Finanz‑/Finance‑Team, Support (via Kontaktformular).
++ - **Umgebung**: EU‑Managed‑Hosting (keine eigene Datenbank), separate Dev/Test/Prod‑Umgebungen, Secrets‑Management.
++ - **Regulatorischer Kontext**: DSGVO (Double‑Opt‑In, Datenresidenz EU, Audit‑Trail, Löschrecht), Compliance‑Checks (Security‑Review nach 6 Wochen).
++ - **Pilotkunde**: Noch offen (Schweiz oder Deutschland) – beeinflusst Währungs‑ und Daten‑Residenz‑Entscheidungen.
++ 
++ ## 2. Wichtige Komponenten
++ | Komponente | Aufgabe | Hinweis |
++ |------------|---------|--------|
++ | **Web‑Frontend** (Responsive UI) | Angebotserstellung, Rechnungsdownload, Login | Muss Mehrsprachigkeit (DE/EN) unterstützen; Mobile‑First vs. Web‑First ist noch offen. |
++ | **Auth Service** | Registrierung, Double‑Opt‑In, Passwort‑Management | Kein SSO im MVP; später erweiterbar. |
++ | **Rollen‑ & Berechtigungs‑Management** | Zugriffskontrolle für Admin, Sales, Kunde | Rollen bestimmen Zugriff auf Freigabe‑Workflow und Daten. |
++ | **Angebots‑Engine** | Erstellung, Versionierung, PDF‑Export von Angeboten | Nutzt SAP‑Produkt‑/Preisdaten, generiert PDFs mit rechtlichen Fußnoten. |
++ | **Rabatt‑Freigabe‑Workflow** | Statusmanagement (Draft → Pending → Approved) für Rabatte ≥ 15 % | Minimaler Workflow, offene Entscheidung bezüglich Automatisierung. |
++ | **SAP‑Connector** | Lesezugriff auf Produkt‑ und Preisdaten | Direkter Service‑Aufruf (keine API‑Gateway im MVP). |
++ | **E‑Mail Service** | Double‑Opt‑In, Benachrichtigungen, PDF‑Zustellung | Muss DSGVO‑konform sein. |
++ | **Audit‑Trail Service** | Protokollierung von Aktionen (Erstellung, Änderung, Freigabe) | Minimal, später erweiterbar. |
++ | **Backup Service** | Tägliche Backups, Wiederherstellung ≤ 12 h | Kein vollständiger Disaster‑Recovery‑Plan im MVP. |
++ | **Monitoring & Logging** | Basis‑Health‑Checks, Performance‑Metriken | Logging ohne personenbezogene Daten. |
++ 
++ ## 3. Schnittstellen / Integrationspunkte
++ - **REST‑API** (interne Nutzung durch Frontend & Mobile‑App) → Auth, Rollen, Angebots‑Engine, PDF‑Export.
++ - **SAP‑API** (Read‑Only) → Angebots‑Engine für Produkt‑ und Preisdaten.
++ - **E‑Mail‑Provider** (SMTP/HTTP) → Double‑Opt‑In, Benachrichtigungen.
++ - **External Storage** (Managed EU‑Object‑Store) → PDF‑Dokumente, Backup‑Archives.
++ - **Future API‑Gateway** (nach MVP) → zentrale Auth‑ und Rate‑Limiting‑Schicht.
++ 
++ ## 4. Daten‑ und Sicherheitsaspekte
++ - **Transport‑Sicherheit**: TLS 1.2+ für alle Verbindungen.
++ - **Daten‑at‑Rest**: Verschlüsselung via Managed Service (AES‑256). Aufbewahrung in EU‑Regionen; separate Entscheidung für Schweizer Pilot nötig.
++ - **Identity & Access**: Rollen‑basierte Zugriffskontrolle, Double‑Opt‑In bei Registrierung, minimaler Auth‑Flow ohne SSO.
++ - **Audit‑Trail**: Minimaler Log von Nutzeraktionen, ohne PII‑Details; erweiterbar.
++ - **Backup**: Tägliche Snapshots, Wiederherstellung innerhalb 12 h; kein Hot‑Standby.
++ - **Compliance**: DSGVO‑Konformität (Opt‑In, Recht auf Vergessen, Retention‑Policy noch zu definieren).
++ 
++ ## 5. Offene Architekturentscheidungen
++ | Entscheidung | Offene Punkte / Risiken |
++ |--------------|--------------------------|
++ | **Mobile‑First vs. Web‑First** | Priorisierung der UI‑Entwicklung; Ressourcenallokation. |
++ | **Mehrwährungs‑Support (CHF)** | Entscheidung bis Sprint 2; mögliche Auswirkungen auf Preislogik und UI. |
++ | **API‑Gateway** | Kein Gateway im MVP → Sicherheits‑ und Skalierbarkeits‑Risiko; geplante Proxy‑Lösung als Zwischenlösung. |
++ | **Datenresidenz für Schweiz** | Muss geklärt werden, ob Daten in EU‑Regionen zulässig sind oder separate Hosting‑Umgebung nötig ist. |
++ | **Retention‑Policy** | Gesetzliche Aufbewahrungsfristen vs. DSGVO‑Löschrecht – noch zu spezifizieren. |
++ | **Rate‑Limiting** | Grundlegendes Rate‑Limiting jetzt, später erweiterte Regeln über API‑Gateway. |
++ | **Secrets‑Management & Rotation** | Implementierung von automatisierter Schlüsselrotation über Cloud‑KMS ist geplant, aber noch nicht konkretisiert. |
++ 
++ *Hinweis*: Alle Entscheidungen basieren auf den aktuell bekannten Anforderungen und Risiken. Weitere Detailentscheidungen folgen in den kommenden Sprints.
++ 

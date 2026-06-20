@@ -1,0 +1,67 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T17:14:14.530585Z",
+  "evaluationStatus": "ok",
+  "errorScore": 2,
+  "needsRepair": false,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 2; KRITISCH=0; needsRepair=False (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 1,
+      "reason": "FALSE_CERTAINTY: 1 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Vier Rollen (Admin, Sales, Kunde, Manager) sind definiert, jedoch fehlen detaillierte Berechtigungs-Matrixen, was zu unautorisierten Zugriffen f\u00FChren kann.\u0022 | Transkript: \u0022Anna: \u0022Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?\u0022 David: \u0022Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen.\u0022 Clara: \u0022Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren.\u0022\u0022 | Das Artefakt stellt die Rollen als definiert dar, obwohl im Transkript noch Unsicherheiten und Konflikte bzgl. Rollen und Berechtigungen offen sind."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC: 0 Fehler (unveraendert); 0 herabgestuft (partial); 5 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022SSO-Provider (Azure\u202FAD, Google, beides): Entscheidung offen; Implementierung erh\u00F6ht Komplexit\u00E4t und potenzielle Sicherheitsl\u00FCcken.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 Clara: \u0022SSO-Provider (Azure AD, Google, beides): Entscheidung offen; Implementierung erh\u00F6ht Komplexit\u00E4t und potenzielle Sicherheitsl\u00FCcken.\u0022\u0022 | Das Risiko der offenen SSO-Provider-Entscheidung und der damit verbundenen Komplexit\u00E4t und Sicherheitsrisiken wird im Transkript klar benannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Mobile-First vs. Web-First: Priorisierung unklar \u2013 k\u00F6nnte Ressourcen vom MVP-Kern abziehen.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Mobile vielleicht\u0022 Ben: \u0022Mobile-First vs. Web-First: Priorisierung unklar \u2013 k\u00F6nnte Ressourcen vom MVP-Kern abziehen.\u0022\u0022 | Das Risiko der unklaren Priorisierung zwischen Mobile-First und Web-First, das Ressourcenprobleme verursachen kann, ist im Transkript vorhanden, aber im Artefakt nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Backup- \u0026 DR-Strategie (RPO/RTO undefiniert): Ohne klare Ziele ist Wiederherstellung im Notfall unsicher.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Backup?\u0022 Clara: \u0022Wenn Kundendaten drin sind: ja.\u0022 Ben: \u0022Backup- \u0026 DR-Strategie (RPO/RTO undefiniert): Ohne klare Ziele ist Wiederherstellung im Notfall unsicher.\u0022\u0022 | Das Risiko einer unklaren Backup- und Disaster-Recovery-Strategie mit undefinierten RPO/RTO-Zielen wird im Transkript genannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Test-Daten in SAP: Nutzung realer Kundendaten in Test-Umgebungen ohne Pseudonymisierung verletzt Datenschutzvorgaben.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 Clara: \u0022Test-Daten in SAP: Nutzung realer Kundendaten in Test-Umgebungen ohne Pseudonymisierung verletzt Datenschutzvorgaben.\u0022\u0022 | Das Risiko der Verwendung echter Kundendaten in Testumgebungen ohne Pseudonymisierung ist im Transkript klar benannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (sufficient: \u0022Support-Integration: Das Kontaktformular ohne Persistenz bietet keine Nachverfolgbarkeit. Bei Beschwerden fehlt ein Ticket-System, wodurch Service-Qualit\u00E4t und \u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Support wird damit nicht gl\u00FCcklich.\u0022 David: \u0022Support-Integration: Das Kontaktformular ohne Persistenz bietet keine Nachverfolgbarkeit. Bei Beschwerden fehlt ein Ticket-System, wodurch Service-Qualit\u00E4t und Datenschutz gef\u00E4hrdet sein k\u00F6nnen.\u0022\u0022 | Das Risiko, dass das Fehlen eines Ticket-Systems im Support zu Qualit\u00E4ts- und Datenschutzproblemen f\u00FChrt, ist im Transkript vorhanden, aber im Artefakt nicht genannt."
+        }
+      ]
+    }
+  ]
+}

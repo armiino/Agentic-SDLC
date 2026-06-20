@@ -1,0 +1,75 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T16:05:58.691031Z",
+  "evaluationStatus": "ok",
+  "errorScore": 12,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 12; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 3,
+      "reason": "FALSE_CERTAINTY: 3 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Mobile-First zur\u00FCckgestellt \u2013 M\u00F6gliche Markt- und Kundenzufriedenheit, wenn sp\u00E4ter ein Mobile-Produkt nachger\u00FCstet werden muss.\u0022 | Transkript: \u0022Anna: \u0027Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.\u0027 Ben: \u0027Moment, mobile hei\u00DFt native App oder responsive Web? ...\u0027\u0022 | Im Transkript ist die Mobile-Strategie offen und unklar, es gibt unterschiedliche Meinungen und Unsicherheiten. Im Artefakt wird \u0027Mobile-First zur\u00FCckgestellt\u0027 als Fakt dargestellt, was eine falsche Gewissheit \u00FCber die Entscheidung suggeriert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Authentifizierungs-Ansatz noch offen \u2013 Gefahr, dass ein unsicheres Verfahren gew\u00E4hlt wird oder zus\u00E4tzliche Entwicklungszeit n\u00F6tig wird.\u0022 | Transkript: \u0022Anna: \u0027SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0027 Ben: \u0027Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM.\u0027 Clara: \u0027OAuth w\u00E4re besser. Aber komplexer.\u0027 Ben: \u0027Komplexer hei\u00DFt mehr Zeit.\u0027\u0022 | Das Transkript zeigt, dass die Authentifizierungsstrategie offen und noch nicht entschieden ist, mit verschiedenen Optionen und Unsicherheiten. Im Artefakt wird dies zwar als offen genannt, aber die Formulierung \u0027Gefahr, dass ein unsicheres Verfahren gew\u00E4hlt wird\u0027 ist eine Interpretation, die im Transkript nicht explizit so genannt wird und k\u00F6nnte als zu sicher dargestellt gelten."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup-RTO/RPO undefiniert \u2013 Unsicherheit \u00FCber Wiederherstellungszeiten im Katastrophenfall.\u0022 | Transkript: \u0022Ben: \u0027Backup?\u0027 Clara: \u0027Wenn Kundendaten drin sind: ja.\u0027 Anna: \u0027Okay also doch.\u0027 Sp\u00E4ter: \u0027Backup-RTO/RPO noch nicht spezifiziert.\u0027\u0022 | Im Transkript ist Backup und Disaster Recovery als Thema offen und noch nicht spezifiziert. Im Artefakt wird \u0027Backup-RTO/RPO undefiniert\u0027 als Risiko genannt, aber die Unsicherheit wird als Fakt dargestellt, ohne die offene Diskussion und den Konflikt im Zeitplan zu reflektieren."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 5,
+      "reason": "MISSING_TOPIC: 1 Fehler (unveraendert); 4 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Excel ist keine Option. Excel mit personenbezogenen Kundendaten w\u00E4re aus Compliance-Sicht problematisch.\u0022 | Im Transkript wird das Risiko der Verwendung von Excel-Listen f\u00FCr Supportdaten als Compliance- und Datenschutzrisiko explizit genannt. Im Artefakt fehlt ein entsprechendes Risiko bez\u00FCglich unstrukturierter oder unsicherer Datenhaltung im Supportprozess."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Support\u2011Prozess ohne Ticket\u2011System \u2013 Risiko von verz\u00F6gerten Antworten, unvollst\u00E4ndiger Nachverfolgung und fehlender Audit\u2011Spur f\u00FCr Support\u2011Interaktionen.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Support wird damit nicht gl\u00FCcklich. Notieren als Risiko. Bitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u0022 | Das Transkript benennt klar, dass der Support-Prozess mit Kontaktformular ohne Ticketpersistenz ein Risiko darstellt und eine bewusste Einschr\u00E4nkung ist, was im Artefakt nur unzureichend als Risiko \u0027Support-Prozess ohne Ticket-System\u0027 erfasst ist, ohne die bewusste Einschr\u00E4nkung und die daraus resultierenden Datenschutz- und Auditrisiken explizit zu nennen."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Security\u2011Review (6\u202FWochen) \u00FCberschneidet sich mit 8\u2011Wochen\u2011MVP\u2011Zeitplan.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP. Dann machen wir es ohne Security Review? Das ist keine Option.\u0022 | Das Transkript beschreibt den Konflikt, dass der Security Review mit 6 Wochen Dauer nicht in den 8-Wochen-MVP-Zeitrahmen passt und dass ein Verzicht keine Option ist. Im Artefakt wird zwar \u0027Security-Review (6 Wochen) \u00FCberschneidet sich mit 8-Wochen-MVP-Zeitplan\u0027 als Unsicherheit genannt, aber es fehlt die klare Darstellung des ungel\u00F6sten Konflikts und der daraus resultierenden Risiken."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Verwendung von SAP\u2011Testdaten mit realen Personen\u2011informationen \u2013 Potenzieller Datenschutzversto\u00DF.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden. Kann man das sp\u00E4ter kl\u00E4ren? Nein, wenn Entwicklung darauf zugreift, ist es sofort relevant.\u0022 | Das Transkript benennt das Risiko der Verwendung von echten personenbezogenen Daten in SAP-Testsystemen und die Notwendigkeit von Pseudonymisierung oder synthetischen Testdaten. Im Artefakt ist zwar \u0027Verwendung von SAP-Testdaten mit realen Personen-Informationen\u0027 genannt, aber es fehlt die Dringlichkeit und der Konflikt, dass dies nicht sp\u00E4ter gekl\u00E4rt werden kann und sofort relevant ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Support\u2011Prozess ohne Ticket\u2011System \u2013 Risiko von verz\u00F6gerten Antworten, unvollst\u00E4ndiger Nachverfolgung und fehlender Audit\u2011Spur f\u00FCr Support\u2011Interaktionen.\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Support wird damit nicht gl\u00FCcklich. Notieren als Risiko. Bitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u0022 | Das Transkript fordert, dass die Einschr\u00E4nkung des Supportprozesses bewusst dokumentiert wird, um keine falsche Sicherheit zu erzeugen. Im Artefakt fehlt eine klare Darstellung dieser bewussten Einschr\u00E4nkung und der damit verbundenen Risiken."
+        }
+      ]
+    }
+  ]
+}

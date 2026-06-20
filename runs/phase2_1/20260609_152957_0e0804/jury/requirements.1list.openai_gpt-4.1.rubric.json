@@ -1,0 +1,120 @@
+{
+  "spike": "RubricEvaluator",
+  "scheme": "SingleList",
+  "phase": "phase2_1",
+  "runId": "20260609_152957_0e0804",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-11T15:02:49.695253Z",
+  "categories": [
+    {
+      "key": "FEHLER",
+      "label": "Fehler",
+      "metric": "Error",
+      "count": 24,
+      "reason": "Fehler: 24 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Nutzerrollen m\u00FCssen mindestens folgende umfassen: Admin, Sales, Manager, Support, Kunde.\u0022 | Transkript: \u0022\u0022Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support? Wer pflegt eigentlich Stammdaten?\u0022 ... \u0022Support?\u0022 ... \u0022Supportprozess unklar\u0022 ... \u0022Support-Ticketsystem ist im MVP nicht vorgesehen, stattdessen nur ein Kontaktformular.\u0022\u0022 | Im Transkript ist die Rolle \u0027Support\u0027 im MVP explizit offen/umstritten und nicht als gesetzt entschieden; das Artefakt stellt sie als Pflicht dar."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022KPI-Metriken wie Conversion Rate und Zeit bis Angebotserstellung sollen erfasst werden.\u0022 | Transkript: \u0022\u0022Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen.\u0022 ... \u0022KPI-Erfassung wird nur rudiment\u00E4r im MVP unterst\u00FCtzt.\u0022\u0022 | Im Transkript ist die KPI-Erfassung f\u00FCr das MVP explizit offen und nicht als Anforderung beschlossen; das Artefakt stellt sie als Pflicht dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Hosting muss in der EU erfolgen (EU-only), um Datenschutzanforderungen zu gen\u00FCgen.\u0022 | Transkript: \u0022\u0022Ja EU only. Oder zumindest DSGVO-konform.\u0022 ... \u0022Dann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u0022 ... \u0022EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022\u0022 | Im Transkript ist EU-only Hosting als Ziel, aber nicht als harte Anforderung festgelegt; es gibt Diskussionen \u00FCber Kosten und technische Machbarkeit."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss Rechnungen einsehen und downloaden k\u00F6nnen.\u0022 | Transkript: \u0022\u0022Kunden sollen Bestellungen sehen und Rechnungen downloaden.\u0022\u0022 | Im Transkript wird auch das Einsehen von Bestellungen als Anforderung genannt, was im Artefakt fehlt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Internationalisierung (mehrsprachig, Mehrw\u00E4hrung) ist f\u00FCr sp\u00E4ter geplant; initial nur DACH-Region.\u0022 | Transkript: \u0022\u0022Deutsch und Englisch sollten schon drin sein.\u0022 ... \u0022Support braucht mindestens Deutsch und Englisch.\u0022 ... \u0022Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022\u0022 | Im Transkript wird Deutsch und Englisch als initiale Anforderung genannt, nicht erst f\u00FCr sp\u00E4ter; das Artefakt verschiebt dies auf sp\u00E4ter."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Ein Support-Ticketsystem ist im MVP nicht vorgesehen, stattdessen nur ein Kontaktformular.\u0022 | Transkript: \u0022\u0022Ticketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u0022 ... \u0022Kontaktformular ohne Ticketpersistenz?\u0022 ... \u0022Dann werden Supportdaten per E-Mail verarbeitet. Auch Datenschutz.\u0022\u0022 | Im Transkript ist die genaue Ausgestaltung des Supportprozesses (Kontaktformular, E-Mail, Zuordnung zum Kundenkonto) offen und als Risiko markiert; das Artefakt stellt das Kontaktformular als gesetzt dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Nutzer mit entsprechenden Rechten m\u00FCssen Angebote erstellen, ansehen, speichern und herunterladen k\u00F6nnen.\u0022 | Transkript: \u0022\u0022PDF ist wichtig f\u00FCr Sales.\u0022 ... \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 ... \u0022Dann haben wir Template-Management.\u0022\u0022 | Im Transkript wird explizit der PDF-Export von Angeboten als Anforderung genannt, im Artefakt fehlt diese Spezifizierung."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Integration mit SAP-Systemen zur Nutzung von Produktdaten, Preisen und Rabattlogik ist erforderlich.\u0022 | Transkript: \u0022\u0022SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.\u0022 ... \u0022Der Zugriff auf SAP-Systeme erfolgt zun\u00E4chst nur lesend.\u0022\u0022 | Im Artefakt wird nicht klar zwischen Lese- und Schreibzugriff unterschieden; im Transkript ist Schreibzugriff explizit offen und nicht Teil des MVP."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Das System muss DSGVO-konform sein, insbesondere beim Login, der Datenspeicherung, beim Logging und bei Datenl\u00F6schungen.\u0022 | Transkript: \u0022\u0022Double-Opt-In und L\u00F6schung fehlen.\u0022 ... \u0022Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte.\u0022\u0022 | Das Artefakt erw\u00E4hnt DSGVO-Konformit\u00E4t, aber nicht explizit die Anforderung nach Double-Opt-In und ein L\u00F6schkonzept als Teil des MVP."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Ein minimaler Audit Trail muss festhalten, wer wann welche Daten ge\u00E4ndert hat.\u0022 | Transkript: \u0022\u0022Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u0022 ... \u0022Audit minimal\u0022 ... \u0022Audit-Log pro Angebot.\u0022\u0022 | Im Transkript wird die Auditierbarkeit auch f\u00FCr das \u00D6ffnen von Angeboten und f\u00FCr Support-Zugriffe gefordert; das Artefakt beschr\u00E4nkt sich auf Daten\u00E4nderungen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API Gateway Nutzung als zentrale Schnittstelle ist angedacht, aber mit erheblicher Wartezeit verbunden.\u0022 | Transkript: \u0022\u0022Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u0022 ... \u0022Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u0022\u0022 | Im Transkript ist die Nutzung des API Gateways als Policy und nicht optional, das Artefakt formuliert es als \u0027angedacht\u0027."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup- und Disaster Recovery Details m\u00FCssen noch spezifiziert werden.\u0022 | Transkript: \u0022\u0022Backup?\u0022 ... \u0022Ja Disaster Recovery.\u0022 ... \u0022Wenn Kundendaten drin sind: ja.\u0022\u0022 | Im Transkript wird Disaster Recovery als Pflicht f\u00FCr MVP genannt, das Artefakt stellt es als offenen Punkt dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Test- und Entwicklungsumgebungen m\u00FCssen keine Echtkundendaten enthalten, sondern synthetische oder pseudonymisierte Daten.\u0022 | Transkript: \u0022\u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 ... \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Im Transkript wird das Problem der SAP-Testdaten mit echten Kundendaten als ungel\u00F6stes Risiko benannt, das Artefakt stellt es als Anforderung dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Die L\u00F6sung muss skalierbar sein, um bei unterschiedlicher Nutzerzahl performant zu bleiben.\u0022 | Transkript: \u0022\u0022Skalierbarkeit muss ber\u00FCcksichtigt werden.\u0022 ... \u0022Overengineering und skalierbar sind ein Spannungsfeld.\u0022\u0022 | Im Transkript wird Skalierbarkeit als Ziel, aber mit dem Risiko von Overengineering und Kosten diskutiert; das Artefakt stellt es als harte Anforderung dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Security Reviews sind notwendig, auch wenn der MVP-Zeitplan dies erschwert.\u0022 | Transkript: \u0022\u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 ... \u0022Das ist keine Option.\u0022 ... \u0022Ohne Dokumentation kein Security Review.\u0022\u0022 | Im Transkript ist der Security Review als Pflicht, aber mit Zeitrisiko und Abh\u00E4ngigkeit von Dokumentation diskutiert; das Artefakt stellt ihn als gesetzt dar, ohne die Risiken zu benennen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Datenklassifikation und Retention-Richtlinien fehlen noch.\u0022 | Transkript: \u0022\u0022Also brauchen wir Datenklassifikation und Retention Rules.\u0022 ... \u0022Das klingt nicht nach MVP.\u0022 ... \u0022minimaler Retention-Plan.\u0022\u0022 | Im Transkript wird ein minimaler Retention-Plan f\u00FCr das MVP gefordert, das Artefakt listet es nur als offenen Punkt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API Layer muss abgesichert sein, OAuth wird bevorzugt, API Keys sind Alternativen.\u0022 | Transkript: \u0022\u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 ... \u0022OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Im Transkript ist OAuth als bevorzugt, aber nicht final entschieden; das Artefakt stellt es als gesetzt dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Dokumentationsaufwand und Security Reviews m\u00FCssen mit dem Zeitplan abgestimmt werden.\u0022 | Transkript: \u0022\u0022Dokumentation ist wichtig, aber bitte nicht zu viel.\u0022 ... \u0022Ohne Dokumentation kein Security Review.\u0022\u0022 | Im Transkript ist der Umfang der Dokumentation als Spannungsfeld und Risiko diskutiert, das Artefakt stellt es als offene Abstimmung dar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Im MVP sind keine manuellen Sonderrabatte erlaubt; eine Rabatt-Freigabe ist nicht implementiert.\u0022 | Transkript: \u0022\u0022Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.\u0022 ... \u0022Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u0022\u0022 | Im Transkript ist die Definition des Standardsatzes nicht explizit festgelegt; das Artefakt \u00FCbernimmt die Einschr\u00E4nkung ohne Definition."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022Traceability: Die Anforderungen basieren auf ausf\u00FChrlichen Diskussionen und Analysen aus dem Transkript input/transcripts/T9999_chaos.txt.\u0022 | Transkript: \u0022\u0022Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben.\u0022\u0022 | Das Artefakt erw\u00E4hnt Traceability, geht aber nicht auf die im Transkript geforderte Sichtbarkeit von Widerspr\u00FCchen und offenen Risiken ein."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022 ... \u0022Dann brauchen wir Pagination und Download-Limits.\u0022 ... \u0022Missbrauchserkennung.\u0022\u0022 | Im Artefakt fehlen Anforderungen zu Rate Limiting, Pagination und Missbrauchserkennung, die im Transkript explizit genannt werden."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Secrets Management\u0022\u0022 | Im Artefakt fehlt die explizite Anforderung nach Secrets Management, die im Transkript als notwendig genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0022\u0022 | Im Artefakt fehlt die explizite Benennung der SAP-Verf\u00FCgbarkeit als kritische Abh\u00E4ngigkeit."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022keine personenbezogenen Daten in technischen Logs\u0022\u0022 | Im Artefakt fehlt die explizite Anforderung, dass keine personenbezogenen Daten in technischen Logs gespeichert werden d\u00FCrfen."
+        }
+      ]
+    }
+  ]
+}

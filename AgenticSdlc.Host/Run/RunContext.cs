@@ -125,6 +125,26 @@ public sealed class RunContext
         File.AppendAllText(Path.Combine(agentDir, "input-context.jsonl"), line + Environment.NewLine);
     }
 
+    /// <summary>
+    /// Protokolliert einen MAF-Shared-State-Zugriff (Lesen/Schreiben) eines Agenten.
+    /// </summary>
+    /// <remarks>
+    /// B-Pendant zu input-context: State-Zugriffe sind KEINE MCP-Tool-Calls und erscheinen daher
+    /// nicht in tool-calls.jsonl. Dieses Log belegt, welchen State-Inhalt jeder Agent in Phase 2.1B
+    /// (artifact_state) erhalten bzw. erzeugt hat (Key, Scope, Hash, Laenge, Preview).
+    /// </remarks>
+    public void AppendAgentStateAccess(string? agentName, object stateAccess)
+    {
+        if (string.IsNullOrWhiteSpace(agentName))
+            return;
+
+        var agentDir = GetAgentLogDir(agentName);
+        Directory.CreateDirectory(agentDir);
+
+        var line = JsonSerializer.Serialize(stateAccess, _json);
+        File.AppendAllText(Path.Combine(agentDir, "state-access.jsonl"), line + Environment.NewLine);
+    }
+
     public void AppendAgentInputContextMarkdown(string? agentName, string markdown)
     {
         if (string.IsNullOrWhiteSpace(agentName))
@@ -191,6 +211,7 @@ public sealed class RunContext
     }
 
     public string ApprovalsDir => Path.Combine(RunDir, "approvals");
+    public string JuryDir => Path.Combine(RunDir, "jury");
 
     private string GetAgentLogDir(string agentName)
     {

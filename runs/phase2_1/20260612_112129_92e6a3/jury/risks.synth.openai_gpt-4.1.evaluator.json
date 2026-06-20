@@ -1,0 +1,91 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-12T11:24:11.584953Z",
+  "errorScore": 17,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 17; KRITISCH=1; needsRepair=True (Schwelle 4).",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 9,
+      "reason": "MISSING_TOPIC: 9 Fehler (verifiziert); 4 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: Und CI/CD braucht Secrets Management. [...] Farid: Und \u0027Secrets Management\u0027.\u0022 | Das Risiko bez\u00FCglich fehlendem oder unsicherem Secrets Management (z.B. f\u00FCr CI/CD, Umgebungen) wird im Artefakt nicht als Risiko oder Unsicherheit adressiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Wir brauchen auch Rate Limits f\u00FCr API. [...] Dann brauchen wir Pagination und Download-Limits. [...] Wir brauchen Missbrauchserkennung.\u0022 | Das Risiko von Missbrauch durch fehlende Rate Limits, Download-Limits oder Missbrauchserkennung f\u00FCr APIs wird im Artefakt nicht als Risiko oder Unsicherheit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Angebot selbst enth\u00E4lt personenbezogene Daten. [...] Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS? [...] TLS reicht. E2E ist unrealistisch.\u0022 | Das Risiko, dass die Verschl\u00FCsselung der Angebote (TLS vs. E2E) nicht ausreichend ist oder falsch eingesch\u00E4tzt wird, wird im Artefakt nicht als explizites Risiko oder Unsicherheit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 | Das spezifische Risiko, dass Backups trotz EU-only Hosting-Anforderung global repliziert werden k\u00F6nnten, wenn Einstellungen nicht korrekt gesetzt werden, wird im Artefakt nicht explizit als Risiko benannt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.\u0022 | Das Risiko, dass der SAP-Schreibzugriff nicht gekl\u00E4rt ist und dies Auswirkungen auf Angebotsakzeptanz und Bestellprozesse hat, wird im Artefakt nicht explizit als Risiko oder Unsicherheit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Vielleicht als Zwischenl\u00F6sung? [...] Manuelle Uploads erh\u00F6hen Fehlerwahrscheinlichkeit. [...] Au\u00DFerdem haben wir dann ein Berechtigungsproblem im File Storage.\u0022 | Das Risiko, dass eine manuelle Zwischenl\u00F6sung (z.B. Angebots-Uploads) zu Fehlern und Berechtigungsproblemen im File Storage f\u00FChrt, wird im Artefakt nicht explizit als Risiko oder Unsicherheit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: Datenminimierung? M\u00FCssen alle Kundendaten im Portal liegen oder reicht ein Abruf aus SAP bei Bedarf? [...] Abruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit.\u0022 | Das Risiko, dass Datenminimierung und Performance/Verf\u00FCgbarkeit im Widerspruch stehen (Kundendatenhaltung vs. Abruf aus SAP), wird im Artefakt nicht explizit als Risiko oder Unsicherheit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Overengineering und skalierbar sind ein Spannungsfeld.\u0022 | Das Risiko eines Overengineerings im Spannungsfeld zu Skalierbarkeit wird im Artefakt nicht explizit als Risiko oder Unsicherheit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: Dokumentation ist wichtig, aber bitte nicht zu viel. [...] Ohne Dokumentation kein Security Review.\u0022 | Das Risiko, dass zu wenig oder zu viel Dokumentation den Security Review behindert, wird im Artefakt nicht explizit als Risiko oder Unsicherheit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Audit und Logging: Balance zwischen ausreichender Auditierbarkeit und Vermeidung der Protokollierung personenbezogener Daten ist schwierig und birgt Risiken bei\u2026\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden. [...] unterschiedliche Aufbewahrungsfristen.\u0022 | Das Artefakt erw\u00E4hnt zwar Audit und Logging, aber das spezifische Risiko, dass Monitoring/technische Logs keine personenbezogenen Daten enthalten d\u00FCrfen und unterschiedliche Aufbewahrungsfristen haben, wird nicht explizit als Risiko oder Unsicherheit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Testdaten und Umgebungen: Nutzung von SAP-Testsystem mit echten Kundendaten birgt Datenschutzrisiken; fehlende Pseudonymisierung k\u00F6nnte Compliance-Verst\u00F6\u00DFe veru\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem. [...] Das blockiert Integrationstests.\u0022 | Das Risiko, dass Integrationstests durch Datenschutzprobleme mit echten Kundendaten im SAP-Testsystem blockiert werden, wird im Artefakt nicht explizit als Risiko oder Unsicherheit benannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Pilotkunde und Markt: Unklare Pilotkundenwahl (DACH vs. Schweiz) beeinflusst Datenschutz, W\u00E4hrung, Sprache und Infrastruktur.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: Wir brauchen L\u00E4nder- und W\u00E4hrungsregeln. [...] Wenn Schweiz Pilotkunde ist, dann doch.\u0022 | Das Risiko, dass l\u00E4nderspezifische und w\u00E4hrungsspezifische Anforderungen (z.B. Schweiz, CHF) nicht rechtzeitig erkannt oder umgesetzt werden, wird im Artefakt nicht explizit als Risiko oder Unsicherheit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Preis- und Rabattlogik: Komplexit\u00E4t der Rabattfreigaben und Aktualit\u00E4t der SAP-Preise sind nicht final gekl\u00E4rt, was finanzielle Risiken birgt.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: SAP-Preise sind nicht immer in Echtzeit aktuell. [...] Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise.\u0022 | Das Risiko, dass SAP-Preise und Rabatte nicht in Echtzeit aktuell sind und dadurch falsche Angebote entstehen, wird im Artefakt nicht explizit als Risiko oder Unsicherheit aufgef\u00FChrt."
+        }
+      ]
+    }
+  ]
+}

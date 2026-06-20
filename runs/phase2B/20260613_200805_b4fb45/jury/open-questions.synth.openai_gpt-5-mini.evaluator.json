@@ -1,0 +1,67 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "open-questions.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-13T20:15:04.572723Z",
+  "errorScore": 11,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 11; KRITISCH=1; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 7,
+      "reason": "MISSING_TOPIC: 4 Fehler (unveraendert); 3 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022Was ist mit PDF-Export von Angeboten?\u0022 / Eva: \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 / Farid: \u0022Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u0022\u0022 | Die Anforderung an PDF-Export, Template\u2011Management und Versions-/Revisionssicherheit von Angeboten wird im Artefakt nicht als offene Frage aufgef\u00FChrt."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Kann der Kunde ein Angebot online akzeptieren?\u0022 / Ben: \u0022Das ist ein Vertragsabschluss. Ganz anderes Thema.\u0022 / Clara: \u0022Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz.\u0022\u0022 | Die rechtlich kritische Frage, ob Online-Akzeptanz von Angeboten im MVP erlaubt sein soll (und welche Nachweisanforderungen sich daraus ergeben), fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022\u0022 | Die im Meeting explizit genannten SSO\u2011Optionen (Azure AD vs. Google / ob beide) sind im Artefakt nicht als offene Entscheidung vermerkt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Dann brauchen wir Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected.\u0022\u0022 | Der vorgeschlagene Offer\u2011Workflow mit konkreten Statuswerten aus dem Transkript ist im Artefakt nicht als offene Frage oder zu kl\u00E4render Punkt enthalten."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Budget vs. EU\u2011only Managed Services: EU\u2011Only Hosting ist kostenintensiv, das Budget ist noch nicht final. Welche Kosten liegen vor und darf das Hosting\u2011Modell a\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Kein neuer DB Server \u2013 IT hat das klar gesagt.\u0022 / Anna: \u0022Ja kein neuer DB Server. Managed Services sind okay. Aber bitte g\u00FCnstig.\u0022\u0022 | Die Transkriptaussage \u00FCber das harte Constraint \u0027kein neuer DB-Server / Einsatz von Managed Services\u0027 fehlt als offene Frage/Entscheidungspunkt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022W\u00E4hrungsunterst\u00FCtzung im MVP: Soll neben EUR auch CHF (und ggf. USD) unterst\u00FCtzt werden? (Quelle: Projektkontext, NFR\u2011Mehrw\u00E4hrung \u2013 **Eva**)\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Ich dachte Pilotkunde ist M\u00FCller AG aus der Schweiz\u0022 / Anna: \u0022Vielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche.\u0022\u0022 | Die konkrete offene Entscheidung, welcher Pilotkunde (CH vs DE) gew\u00E4hlt wird und die daraus resultierenden Scope-/DSGVO-/W\u00E4hrungsfolgen ist im Artefakt nicht aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Support\u2011Kontaktformular DSGVO\u2011Konformit\u00E4t: Welche personenbezogenen Daten werden erfasst und wie werden sie gel\u00F6scht? (Quelle: Projektkontext, Support\u2011Prozess \u2013\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022David: \u0022Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u0022\u0022 | Die konkrete offene Frage, ob und wie das Kontaktformular Support\u2011Anfragen mit Kundenkonten verkn\u00FCpft werden muss (Ticket\u2011Persistenz/Zuordnung), ist nicht im Artefakt enthalten."
+        }
+      ]
+    }
+  ]
+}

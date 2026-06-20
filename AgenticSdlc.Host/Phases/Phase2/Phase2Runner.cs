@@ -1,5 +1,6 @@
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Mcp;
+using AgenticSdlc.Host.Phases.Phase2.Evaluation;
 using AgenticSdlc.Host.Phases.Phase2.Validation;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
@@ -90,7 +91,14 @@ public sealed class Phase2Runner
             var githubConnectError = await TryDiscoverGitHubToolsAsync();
             var localTools = await LoadLocalToolsAsync(localMcp, githubConnectError);
             var agents = CreateAgents(localTools);
-            var workflow = Phase2Workflow.Build(agents);
+            var workflow = _settings.Phase2ContextStrategy switch
+            {
+                "artifact_state" => Phase2B.Phase2BWorkflow.Build(
+                    agents, _run, Phase2B.Phase2BStatePolicy.FromConfig(_settings), _repoRoot),
+                "message_passing" => Phase2Workflow.Build(agents),
+                var other => throw new InvalidOperationException(
+                    $"Phase 2.1 context strategy '{other}' is not implemented. Use 'message_passing' or 'artifact_state'.")
+            };
 
             var workflowRun = await RunWorkflowAsync(workflow);
             var hasFailedExecutor = RecordWorkflowEvents(workflowRun);
@@ -150,6 +158,21 @@ public sealed class Phase2Runner
             });
 
             CopyDirectory(Path.Combine(_repoRoot, "docs"), _run.DocsSnapshotDir);
+
+            if (_settings.JuryEnabled)
+            {
+                _run.AppendEvent(new { type = "JURY_STARTED", runId = _run.RunId, judgeModel = _settings.JuryJudgeModel ?? _settings.ModelId, timestampUtc = DateTime.UtcNow });
+                try
+                {
+                    var jury = new Phase2JuryRunner(_settings, _run, _repoRoot);
+                    await jury.RunAsync();
+                }
+                catch (Exception ex)
+                {
+                    _run.AppendEvent(new { type = "JURY_FAILED", runId = _run.RunId, error = ex.Message, errorType = ex.GetType().FullName, timestampUtc = DateTime.UtcNow });
+                }
+            }
+
             _run.AppendEvent(new { type = "RUN_FINISHED", runId = _run.RunId, status = "completed", timestampUtc = DateTime.UtcNow });
             return 0;
         }

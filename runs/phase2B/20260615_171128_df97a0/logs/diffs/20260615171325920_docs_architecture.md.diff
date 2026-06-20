@@ -1,0 +1,64 @@
+--- before/docs/architecture.md
++++ after/docs/architecture.md
+- 
++ # Architekturüberblick – Kundenportal & Angebots‑MVP
++ 
++ ## 1. Systemkontext
++ - **Akteure**:
++   - **Vertrieb (Sales)**: Nutzt das Kundenportal zum Erstellen und Freigeben von Angeboten.
++   - **Kunden**: Greifen über das Web‑Frontend auf ihre Angebote und Rechnungen zu.
++   - **Finance / Rechnungswesen**: Nutzt das System für Rechnungs‑Download und Rabatt‑Freigabe‑Prozesse.
++   - **Compliance (DSGVO)**: Prüft Double‑Opt‑In, Lösch‑ und Audit‑Anforderungen.
++   - **IT Operations**: Verantwortlich für EU‑only Managed Hosting, Backup & DR.
++ - **Externe Systeme**:
++   - **SAP (Read‑Only)** – liefert Produkt‑ und Preisdaten.
++   - **Identity Provider (Azure AD / Google)** – optional für SSO.
++   - **Event‑Logging‑Infrastruktur** – zentralisiertes Logging/Audit‑Trail.
++ - **Umgebungen**: Dev, Test (mit pseudonymisierten Daten) und Prod (EU‑Only Managed Service).
++ 
++ ## 2. Wichtige Komponenten
++ | Komponente | Verantwortung | Hinweis |
++ |------------|----------------|---------|
++ | **Web‑Frontend** | UI in Deutsch/Englisch (Web‑First, Mobile optional) | SPA (z. B. React/Angular) – Technologie nicht festgelegt |
++ | **Auth‑Service** | Registrierung per E‑Mail + Double‑Opt‑In, Passwort‑Management, ggf. SSO | OAuth‑2.0 / OpenID Connect, spätere Erweiterung um Azure AD/Google |
++ | **API‑Layer / Interim‑Gateway** | Exponiert REST‑Endpoints, zentrale Auth‑Durchsetzung, grundlegend Rate‑Limiting | Interim‑Proxy (z. B. Nginx + Lua) bis offizielles API‑Gateway verfügbar |
++ | **Angebots‑ & Rechnungs‑Service** | Geschäftslogik für Draft → Approval → Sent, PDF‑Export, Versionierung |
++ | **Rollen‑ & Berechtigung‑Engine** | RBAC für Admin, Sales, Kunde, Manager (und ggf. Support) | Berechtigungs‑Matrix muss noch detailliert werden |
++ | **SAP‑Adapter (Read‑Only)** | Holt Produkt‑ und Preis‑Informationen aus SAP | Caching‑Layer für Performance, Fallback‑Strategie noch offen |
++ | **Audit‑Log‑Service** | Immutable Log von Änderungen, ohne personenbezogene Daten | Speichert Ereignisse für Compliance, Aufbewahrung gemäß DSGVO |
++ | **Backup & DR Service** | Regelmäßige Snapshots, Wiederherstellung nach definierten RPO/RTO | Details (RPO 4 h, RTO 2 h) noch zu bestätigen |
++ | **Managed Hosting (EU‑Only)** | Infrastruktur, Skalierung, Monitoring | Kosten‑Analyse noch offen |
++ 
++ ## 3. Schnittstellen / Integrationspunkte
++ - **Auth → API‑Layer**: OAuth‑2.0 Token‑Validierung (interner Key‑Validator). 
++ - **API‑Layer → Angebots/ Rechnungs‑Service**: REST‑Endpoints (`/offers`, `/invoices`). 
++ - **Angebots‑Service → SAP‑Adapter**: Synchronous GET‑Calls für Produkt‑/Preis‑Daten.
++ - **PDF‑Export‑Service**: Generiert PDFs aus Angebots‑/Rechnungs‑Daten (Template‑Engine, noch nicht spezifiziert).
++ - **Audit‑Log → Logging‑Infrastruktur**: Syslog/ELK‑Stack oder vergleichbare Lösung (keine personenbezogenen Daten).
++ - **Backup‑Service → Managed Hosting**: Nutzung von Cloud‑Snapshot‑APIs des Providers.
++ - **Optional SSO Provider**: Azure AD / Google OpenID Connect → Auth‑Service (Future‑Feature).
++ 
++ ## 4. Daten‑ und Sicherheitsaspekte
++ - **Datenhaltung**: Keine neue Datenbank eingeführt (Constraint). Stattdessen wird ein vorhandenes relationales DB‑System (z. B. PostgreSQL) weitergenutzt bzw. ein Managed DB‑Service des Hosts.
++ - **DSGVO‑Konformität**:
++   - Double‑Opt‑In bei Registrierung.
++   - Trennung von technischen Logs und Audit‑Logs (letztere enthalten keine personenbezogenen Daten).
++   - Lösch‑ und Auftragsverarbeitungs‑Verträge für Kunden‑ und Finanzdaten.
++ - **Verschlüsselung**: TLS 1.2+ für alle Verbindungen; Daten‑at‑Rest verschlüsselt durch Hosting‑Provider.
++ - **Rate‑Limiting & Missbrauchserkennung**: Basis‑Limit 100 Requests/Minute pro Nutzer (konfigurierbar), Implementierung im Interim‑Gateway.
++ - **Caching**: Produkt‑ und Preis‑Daten dürfen gecached werden (TTL ≤ 15 Min). Kundendaten‑Cache nur nach GDPR‑Prüfung, daher zunächst deaktiviert.
++ - **Backup/DR**: Regelmäßige tägliche Snapshots, wöchentliche Off‑site‑Kopien; RPO/RTO definieren in späterem Detail‑Design.
++ 
++ ## 5. Offene Architekturentscheidungen
++ 1. **Welches API‑Gateway wird nach 6 Wochen eingesetzt?** – Entscheidung zwischen Cloud‑Native (z. B. AWS API Gateway) vs. on‑prem (Kong, Apigee). Interim‑Gateway muss später migriert werden.
++ 2. **SSO‑Provider** – Azure AD, Google oder beide? Auswirkungen auf Identity‑Management und Lizenz‑Kosten.
++ 3. **Datenbank‑Strategie** – Nutzung bestehender relationaler DB vs. Managed DB‑Service (z. B. Azure‑PostgreSQL) unter Berücksichtigung „keine neue DB“ Constraint.
++ 4. **Caching‑Mechanismus** – Welcher Cache (Redis, In‑Memory) ist DSGVO‑konform für Produktdaten? Wie wird Invalidation gehandhabt?
++ 5. **Backup‑/DR‑Zielwerte (RPO/RTO)** – Konkrete Zahlen müssen noch abgestimmt werden.
++ 6. **Rate‑Limiting‑Parameter** – Feine Abstimmung der Schwellenwerte (Requests/Minute, Download‑Limits) nach Business‑Requirements.
++ 7. **Pilot‑Kunde (Schweiz vs. Deutschland)** – Beeinflusst Währungs‑ und Datenschutz‑Design (CHF‑Support, Swiss‑Data‑Residency).
++ 
++ *Hinweis*: Diese offenen Punkte werden im nächsten Architecture‑Review‑Sprint geklärt, um das MVP‑Release nicht zu gefährden.
++ 
++ ---
++ *Dieses Architektur‑Dokument ist ein erster Entwurf (intent=initial_draft) und basiert auf den bereitgestellten Requirements, Risks und Projekt‑Context.*

@@ -1,0 +1,36 @@
+# Architekturüberblick für das Kundenportal-Projekt
+
+## Systemkontext
+Das System ist ein Kundenportal, das verschiedene Nutzerrollen (Admin, Sales, Kunde, Manager, optional Support) unterstützt und als zentrale Plattform für die Angebotserstellung, Rechnungsübersicht und Bestellverwaltung dient. Die Lösung integriert bestehende Backend-Systeme, insbesondere SAP für Produkt- und Preisdaten, und muss datenschutzkonform in der EU betrieben werden.
+
+## Wichtige Komponenten
+- **Kundenportal Frontend:** Benutzeroberfläche für Kunden und interne Rollen. Ermöglicht Login, Darstellung von Angeboten, Rechnungen und Bestellungen.
+- **Authentifizierungsservice (OAuth):** Sichere Nutzeranmeldung und Rechteverwaltung über OAuth für rollenbasierte Zugänge.
+- **API-Layer:** Vermittler zwischen Frontend und Backend-Systemen. Aufgrund Engpass API-Gateway muss Integration zeitlich gut geplant werden.
+- **SAP-Integration:** Zugriff auf Produktdaten, Preise und Rabattlogiken. SAP Backend ist nicht vollständig API-ready, was Komplexität und potenzielle Verzögerungen bedeutet.
+- **Datenhaltung:** Keine neue Datenbank im MVP erlaubt; bestehende Datenbanken und Systeme müssen genutzt werden. Konkrete Umsetzung noch offen.
+- **Managed Hosting:** Datenhosting ausschließlich in der EU mit Backup- und Disaster-Recovery-Mechanismen unter Einhaltung der DSGVO.
+
+## Schnittstellen und Integrationspunkte
+- **OAuth-Service:** Authentifizierung und Autorisierung.
+- **SAP-System:** Für Produkt- und Preisdaten, mit potentiellen Einschränkungen durch begrenzte API-Verfügbarkeit.
+- **API-Gateway:** Eingeschränkte Kapazitäten und Warteliste können Integration verzögern.
+- **Externe Systeme für Rechnungs- und Bestelldaten:** Bestehende Systeme müssen über API-Layer integriert werden.
+
+## Daten- und Sicherheitsaspekte
+- DSGVO-konforme Datenhaltung mit speziellem Fokus auf Double Opt-In, Audit-Trails und Löschkonzepte.
+- Sicherheitsreviews und ausführliches Logging sind vorgesehen, aber aufgrund Zeitdruck noch nicht abschließend finalisiert.
+- Hosting und Backup ausschließlich in der EU zur Erfüllung der Compliance-Vorgaben.
+- Unterschiedliche Datenschutzanforderungen je nach Pilotkunde (DACH, Schweiz, USA) sind zu berücksichtigen.
+
+## Offene Architekturentscheidungen
+- Nutzung der bestehenden Datenbanken und konkrete Umsetzung der Datenhaltung im MVP noch unklar.
+- Detaillösung zur SAP-Integration, insbesondere Umgang mit nicht API-ready Backend, muss noch spezifiziert werden.
+- Gestaltung und Erweiterung der Supportprozesse im Kundensupport bleiben nach MVP offen.
+- Vollständige Umsetzung von Rabatt- und Freigabeprozessen wird erst nach MVP realisiert.
+- Detaillierte Konzepte für Audit-Trails, Löschkonzepte und Sicherheitstests sind noch in Ausarbeitung.
+- Umgang mit dem Pilotkunden und dadurch resultierende Datenschutzregeln müssen final geklärt werden.
+
+---
+
+Dieser Architekturüberblick fasst die Anforderungen, technischen Rahmenbedingungen sowie Risiken und offenen Punkte zusammen und bildet eine Grundlage für die weitere Detaillierung und Umsetzung im Projektverlauf.

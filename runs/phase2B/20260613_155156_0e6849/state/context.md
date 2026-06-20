@@ -1,0 +1,51 @@
+# Projektkontext aus Stakeholder-Transkript T9999_chaos.txt
+
+## Projektziel
+- Entwicklung eines Kundenportals/Plattform mit Fokus auf schnelle Angebotserstellung und Anzeige von Rechnungen.
+- MVP (Minimal Viable Product) soll in ca. 8 Wochen fertig sein.
+- Priorisierung von Login, Angebotserstellung, Rechnungsanzeige und SAP-Integration.
+- Ziel ist Effizienzsteigerung im Sales-Prozess.
+
+## Sprecherrollen
+- Anna: Produktmanagement/Projektkoordination, treibt MVP und Zieldefinition voran.
+- Ben: Technische Architektur/Entwicklung, Backend/API-Spezialist.
+- Clara: Datenschutz/Compliance, verantwortlich für DSGVO-Anforderungen.
+- David: Customer Support, bringt Support-Perspektive ein.
+- Eva: Finance, fokussiert auf Freigabeprozesse und finanzielle Risiken.
+- Farid: IT Operations, Infrastruktur und Hosting-Experte.
+
+## Fachliche Themen
+- Kundenlogin (E-Mail/Passwort, Double-Opt-In, optional SSO).
+- Rollen und Berechtigungen (Admin, Sales, Manager, Support).
+- SAP-Integration (Lesender Zugriff für Produkt-, Preis- und Rabattdaten).
+- Angebotserstellung mit Rabatt- und Freigabeprozessen (Freigabe durch Manager/Finance bei Rabatten über 15-20%).
+- Rechnungsanzeige und Download (PDF mit rechtlichen Fußnoten).
+- DSGVO-Konformität (Datenminimierung, Löschkonzepte, Auditierbarkeit, EU-only Hosting).
+- Security (Audit Trails, Logging, Verschlüsselung mittels TLS, Backup, Disaster Recovery).
+- Technische Architektur (API-Layer, OAuth bevorzugt, Managed Services, API Gateway mit Warteliste).
+- KPIs und Analytics (Conversion Rate, Zeit bis Angebot, initial nicht im MVP).
+- Supportprozesse unklar (Kontaktformular geplant, kein Ticketsystem im MVP).
+- Multiwährung und Internationalisierung (DACH initial, evtl. Schweiz und EU, USD später).
+
+## Konflikte & Unsicherheiten
+- Zeitrahmen MVP (8 Wochen) kontra notwendige Sicherheitsreviews, Architekturentscheidungen und API-Gateway-Verfügbarkeit.
+- Supportprozess ohne Ticketsystem birgt Risiken für Compliance und Effizienz.
+- Hosting mit EU-Datenresidenz vs. Kosten.
+- Freigabeprozess für Rabatte und Angebotsworkflow noch nicht final definiert.
+- SAP-Datenaktualität und Fallbacks bei Nichtverfügbarkeit unklar.
+- Umfang des Audit- und Logging-Konzeptes: Balance zwischen Minimalanforderungen und vollständiger Nachvollziehbarkeit.
+- Rollen- und Berechtigungskonflikte, z.B. Support-Zugriff auf sensible Angebotsinformationen.
+- Mangel an Architekturressourcen (kein dedizierter Architekt).
+- Testdatenmanagement und Umgebungen.
+- Gefahr von Overengineering bei Skalierbarkeit.
+- Keine finale Entscheidung zu Identity Provider (Azure AD / Google / andere).
+- Offene Frage nach Pilotkunde und konkreten Anforderungen (Schweiz vs. Deutschland).
+
+## Quellenhinweise
+- Transkript: input/transcripts/T9999_chaos.txt
+- Gespräche der Stakeholder Anna, Ben, Clara, David, Eva, Farid
+
+## Anmerkungen
+- Viele Widersprüche und offenen Fragen existieren, die bewusst dokumentiert werden, um keine falsche Sicherheit zu erzeugen.
+- MVP-Schnitt wird angestrebt, bei dem nicht alle Anforderungen sofort aufgenommen werden (z.B. Support Ticketsystem, komplexe Freigabeprozesse).
+- Risiken und offene Punkte sind explizit benannt.

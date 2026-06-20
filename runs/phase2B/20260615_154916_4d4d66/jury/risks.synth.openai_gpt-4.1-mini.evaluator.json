@@ -1,0 +1,75 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-15T15:53:41.430138Z",
+  "evaluationStatus": "ok",
+  "errorScore": 15,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 15; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 2,
+      "reason": "FALSE_CERTAINTY: 2 Fehler (unveraendert); 0 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- **Backup\u2011 und Disaster\u2011Recovery\u2011Strategie**: Der Detailgrad (z.\u202FB. RTO \u2264\u202F4\u202Fh) ist noch nicht festgelegt, dadurch Gefahr von Datenverlust oder langen Ausfallzeiten.\u0022 | Transkript: \u0022Ben: \u0022Backup?\u0022 Anna: \u0022Brauchen wir das f\u00FCr MVP?\u0022 Clara: \u0022Wenn Kundendaten drin sind: ja.\u0022 Anna: \u0022Okay also doch.\u0022\u0022 | Im Transkript ist die Backup- und DR-Strategie noch offen und wird diskutiert, im Risiko-Artefakt wird sie jedoch als Risiko mit Detailgrad dargestellt, ohne die Offenheit zu kennzeichnen."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022- **Security Review (6\u202FWochen) vs. 8\u2011Wochen\u2011MVP\u2011Deadline** \u2013 Risiko, dass das MVP ohne vollst\u00E4ndige Sicherheitspr\u00FCfung ver\u00F6ffentlicht wird.\u0022 | Transkript: \u0022Ben: \u0022Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u0022 Anna: \u0022Dann machen wir es ohne Security Review?\u0022 Clara: \u0022Das ist keine Option.\u0022\u0022 | Das Risiko ist im Transkript offen und strittig, im Risiko-Artefakt wird es als klares Risiko dargestellt, aber ohne die Unsicherheit oder den Konflikt hervorzuheben."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 6,
+      "reason": "MISSING_TOPIC: 5 Fehler (unveraendert); 1 herabgestuft (partial); 0 verworfen (sufficient).",
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u0022\u0022 | Das Risiko und die Unsicherheit bez\u00FCglich der SSO-Integration und fehlendem zentralen IAM werden im Transkript klar benannt, fehlen aber im Risiko-Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022SAP? Wenn SAP involviert ist, dann reden wir von personenbezogenen Daten im ERP. Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.\u0022\u0022 | Das Risiko der personenbezogenen Daten im SAP-ERP und die daraus resultierenden Compliance-Anforderungen (Audit Trails, Zugriffskontrolle) sind im Transkript genannt, fehlen aber explizit im Risiko-Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Clara: \u0022Wenn Support-Anfragen personenbezogene Daten enthalten, dann m\u00FCssen sie in das L\u00F6schkonzept und in die Auskunftspflicht einbezogen werden.\u0022\u0022 | Das Risiko, dass Support-Daten personenbezogene Daten enthalten und damit L\u00F6sch- und Auskunftspflichten ausl\u00F6sen, ist im Transkript genannt, aber im Risiko-Artefakt nicht explizit aufgef\u00FChrt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 Clara: \u0022Ja, Pseudonymisierung oder synthetische Testdaten.\u0022 Ben: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Das Risiko bez\u00FCglich Testumgebungen und Umgang mit echten Kundendaten in Testsystemen wird im Transkript diskutiert, fehlt aber im Risiko-Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Farid: \u0022Und CI/CD braucht Secrets Management.\u0022\u0022 | Das Risiko und die Notwendigkeit von Secrets Management im CI/CD-Prozess werden im Transkript genannt, fehlen aber im Risiko-Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022- Rate-Limiting / Missbrauchserkennung: Noch nicht spezifiziert (z. B. 100 Anfragen/Minute). Unzureichende Begrenzung kann zu Denial-of-Service-Angriffen f\u00FChren\u2026\u0022): [GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Ben: \u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022 Clara: \u0022Dann mindestens Rate Limiting und Audit.\u0022 Farid: \u0022Kann API Gateway \u00FCbernehmen, wenn wir es bekommen.\u0022 Ben: \u0022Aber Gateway-Team hat sechs Wochen Warteliste.\u0022\u0022 | Das Risiko der fehlenden oder verz\u00F6gerten API-Gateway-Verf\u00FCgbarkeit und die daraus resultierenden Probleme mit Rate Limiting und Missbrauchserkennung sind im Transkript genannt, aber im Risiko-Artefakt nur teilweise und nicht vollst\u00E4ndig abgedeckt."
+        }
+      ]
+    }
+  ]
+}

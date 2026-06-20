@@ -1,0 +1,110 @@
+{
+  "spike": "RubricEvaluator",
+  "scheme": "Synthesis",
+  "phase": "phase2_1",
+  "runId": "20260609_152957_0e0804",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-11T16:44:39.568704Z",
+  "errorScore": 22,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 22; KRITISCH=2; needsRepair=True (Schwelle 4).",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler (verifiziert); 0 per Verifikation verworfen.",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 11,
+      "reason": "MISSING_TOPIC: 11 Fehler (verifiziert); 6 per Verifikation verworfen.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Double-Opt-In\u0022 (mehrfach, z.B. Clara: \u0022Login per E-Mail? Dann brauchen wir Double-Opt-In.\u0022)\u0022 | Das explizite Erfordernis eines Double-Opt-In beim Login per E-Mail wird im Artefakt nirgends erw\u00E4hnt, obwohl es im Transkript als zwingend genannt wird."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Auftragsverarbeitungsvertr\u00E4ge\u0022 (Clara: \u0022Und Auftragsverarbeitungsvertr\u00E4ge.\u0022)\u0022 | Die Notwendigkeit von Auftragsverarbeitungsvertr\u00E4gen (AVV) wird im Artefakt nicht erw\u00E4hnt, obwohl sie im Transkript als Compliance-Anforderung explizit genannt wird."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022PDF-Export von Angeboten\u0022 (Anna, Eva, Ben: \u0022PDF ist wichtig f\u00FCr Sales.\u0022, \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022)\u0022 | Die Anforderung, Angebote als PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer zu exportieren, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Datenschutzhinweise im PDF\u0022 (Clara: \u0022Und Datenschutzhinweise, wenn personenbezogene Daten enthalten sind.\u0022)\u0022 | Die Pflicht, bei PDF-Exporten von Angeboten Datenschutzhinweise einzubinden, wird im Artefakt nicht erw\u00E4hnt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Rate Limits f\u00FCr API\u0022 (Ben: \u0022Wir brauchen auch Rate Limits f\u00FCr API.\u0022)\u0022 | Die Anforderung, API-Rate-Limiting zu implementieren, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Pagination und Download-Limits\u0022 (Ben: \u0022Dann brauchen wir Pagination und Download-Limits.\u0022)\u0022 | Die Anforderung, Pagination und Download-Limits f\u00FCr Massenexporte (z.B. Rechnungen) zu implementieren, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Missbrauchserkennung\u0022 (Ben, Clara: \u0022Wir brauchen Missbrauchserkennung.\u0022)\u0022 | Die Anforderung, Missbrauchserkennung (z.B. bei Massenexporten) zu implementieren, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Secrets Management\u0022 (Farid, Ben: \u0022CI/CD braucht Secrets Management.\u0022)\u0022 | Die Anforderung, Secrets Management f\u00FCr CI/CD und Betrieb zu ber\u00FCcksichtigen, fehlt im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Fallback oder Cache bei SAP-Ausfall\u0022 (Ben, Anna, Clara: \u0022Dann brauchen wir Fallback oder Cache.\u0022)\u0022 | Die Anforderung, einen Fallback-Mechanismus oder Cache f\u00FCr SAP-Ausf\u00E4lle vorzusehen, fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Kontaktformular muss Zuordnung zum Kundenkonto erm\u00F6glichen\u0022 (David: \u0022brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u0022)\u0022 | Die Anforderung, dass das Kontaktformular Support-Anfragen eindeutig einem Kundenkonto zuordnet, fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Internationalisierung: Deutsch und Englisch initial\u0022 (Anna, David: \u0022Deutsch und Englisch sollten schon drin sein.\u0022)\u0022 | Die Anforderung, dass initial Deutsch und Englisch unterst\u00FCtzt werden, fehlt im Artefakt (es steht nur \u0027mehrsprachig sp\u00E4ter\u0027)."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Das System muss DSGVO-konform sein, insbesondere beim Login, der Datenspeicherung, beim Logging und bei Datenl\u00F6schungen.\u0022): [KRITISCH] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022L\u00F6schkonzepte\u0022 (Clara: \u0022Und L\u00F6schkonzepte.\u0022, mehrfach Thema L\u00F6schanfragen und Auskunftspflicht, z.B. Anna: \u0022Dann muss das gehen.\u0022)\u0022 | Ein explizites L\u00F6schkonzept f\u00FCr personenbezogene Daten und die Umsetzung von L\u00F6schanfragen wird im Artefakt nicht als Anforderung genannt, obwohl es im Transkript mehrfach gefordert wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Ein minimaler Audit Trail muss festhalten, wer wann welche Daten ge\u00E4ndert hat.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u0022 (Clara), \u0022Audit Trail\u0022 wird zwar erw\u00E4hnt, aber nicht die explizite Anforderung nach revisionssicherer Nachvollziehbarkeit und Event-History f\u00FCr Angebote (Eva, Farid, Clara: \u0022Templates m\u00FCssen versioniert werden\u0022, \u0022Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.\u0022)\u0022 | Die revisionssichere Nachvollziehbarkeit und Versionierung von Angebotsdokumenten wird im Artefakt nicht explizit als Anforderung genannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Test- und Entwicklungsumgebungen m\u00FCssen keine Echtkundendaten enthalten, sondern synthetische oder pseudonymisierte Daten.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 (Farid, Clara: \u0022Pseudonymisierung oder synthetische Testdaten.\u0022)\u0022 | Die explizite Anforderung nach Pseudonymisierung oder synthetischen Testdaten in Testumgebungen wird im Artefakt nicht genannt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Logging und Audit m\u00FCssen zwischen technischen Logs und Datenschutz-konformen Audit-Logs unterscheiden.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Keine personenbezogenen Daten in technischen Logs\u0022 (Clara, Farid: \u0022Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.\u0022)\u0022 | Die explizite Anforderung, dass technische Logs keine personenbezogenen Daten enthalten d\u00FCrfen, fehlt im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Datenklassifikation und Retention-Richtlinien fehlen noch.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Datenklassifikation und Retention Rules\u0022 (Ben, Anna, Clara: \u0022Datenklassifikation und Retention Rules.\u0022)\u0022 | Die Anforderung, Datenklassifikation und Aufbewahrungs-/L\u00F6schregeln zu definieren, wird im Artefakt nur als offener Punkt, nicht als Anforderung gef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (Verifikation: abgedeckt durch \u0022Im MVP sind keine manuellen Sonderrabatte erlaubt; eine Rabatt-Freigabe ist nicht implementiert.\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Keine Sonderrabatte ohne Freigabe\u0022 (Eva, Ben: \u0022Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.\u0022)\u0022 | Die explizite Constraint, dass im MVP keine Sonderrabatte ohne Freigabe m\u00F6glich sind, fehlt als Anforderung (nur als Constraint f\u00FCr Workflow, nicht f\u00FCr Angebotslogik)."
+        }
+      ]
+    }
+  ]
+}

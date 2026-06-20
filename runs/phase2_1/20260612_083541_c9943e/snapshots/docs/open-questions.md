@@ -1,0 +1,43 @@
+# Offene Fragen und Klärungsbedarfe für das Kundenportal-Projekt
+
+## 1. Fachliche Fragen
+- Welcher genaue Umfang ist für den MVP final vorgesehen? (z.B. Supportfunktionalität, Rabattfreigaben, mobile App)
+- Wie soll der Freigabeprozess für Rabatte detailliert ausgestaltet werden? Welche Schwellenwerte und welche Rollen sind verantwortlich?
+- Welche Kunden sind Pilotkunden und in welchen Regionen? Welche Auswirkungen hat das auf Datenschutz, Währung und Sprache?
+- Wie wird der Support im MVP organisiert? Wird es ein Ticketsystem geben oder nur ein Kontaktformular?
+- Welche KPIs sollen genau gemessen werden und wie werden diese technisch umgesetzt?
+
+## 2. Technische Fragen
+- Welche konkrete Technologie wird für das SSO eingesetzt? OAuth, API Keys oder andere?
+- Wie wird das API Gateway realisiert, und was sind Alternativen bei der Warteliste von 6 Wochen?
+- Wie wird die SAP-Integration umgesetzt, insbesondere im Fall von Nichtverfügbarkeit oder verzögerten Daten?
+- Wie wird das Backup- und Disaster-Recovery-Verfahren konkret operationalisiert?
+- Wie erfolgt die Trennung und Umsetzung von Audit-Logs versus technische Logs zur Wahrung der Datenschutzanforderungen?
+- Wie werden Test-, Entwicklungs- und Produktionsumgebungen technisch aufgesetzt und mit Daten respektive Geheimnissen versorgt?
+
+## 3. Datenschutz und Compliance
+- Wie genau wird das Double-Opt-In-Verfahren umgesetzt und dokumentiert?
+- Welches Löschkonzept ist vorgesehen, insbesondere bei gesetzlichen Aufbewahrungsfristen?
+- Wie wird die EU-only Datenresidenz technisch und organisatorisch sichergestellt?
+- Wie wird das Security Review zeitlich in den engen MVP-Zeitplan integriert? Gibt es Alternativen?
+
+## 4. Organisatorische Fragen
+- Wer übernimmt die Architekturverantwortung als dedizierter Architekt?
+- Wie wird die Dokumentation so gestaltet, dass sie für Security Review und Betrieb angemessen ist?
+
+## 5. Widersprüche und Risiken
+- Wie wird der Konflikt zwischen Zeitdruck (8 Wochen MVP) und notwendigen Sicherheitsprüfungen gelöst?
+- Wie wird mit dem Risiko unzureichender Supportprozesse im MVP umgegangen?
+- Wie wird sichergestellt, dass keine falschen Rabatte ohne Freigabe vergeben werden?
+
+## 6. Ansprechpartner und Rollen
+- Projektleitung / Anna (Vertrieb)
+- Technische Leitung / Ben (Entwicklung, Architektur)
+- Datenschutzbeauftragte / Clara
+- Customer Support / David
+- Finance / Eva
+- IT Operations / Farid
+
+---
+
+*Diese offenen Fragen basieren auf der Analyse des Stakeholder-Transkripts, Kontextes, Requirements und Risikoanalyse. Sie sind wichtig für die weitere Planung und Klärung im Projekt.*

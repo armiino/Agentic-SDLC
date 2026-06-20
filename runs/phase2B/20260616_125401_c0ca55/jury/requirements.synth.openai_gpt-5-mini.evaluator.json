@@ -1,0 +1,113 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5-mini"
+  },
+  "timestampUtc": "2026-06-16T13:00:26.855453Z",
+  "evaluationStatus": "ok",
+  "errorScore": 23,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 23; KRITISCH=2; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 4,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 4 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Performance: Angebotserstellung und Datenanzeige sollen innerhalb von 2\u202FSekunden nach Benutzerinteraktion reagieren. (Annahme: definiert in MVP\u2011Sprint)\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Eine feste Performance\u2011Anforderung von 2\u202FSekunden wurde im Transkript nicht genannt; diese konkrete SLA wurde ohne Grundlage eingef\u00FCgt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Verf\u00FCgbarkeit: Systemverf\u00FCgbarkeit von 99,5\u202F% im Produktionsbetrieb, mit geplanten Wartungsfenstern von maximal 4\u202FStunden pro Monat. (Quelle: Ben)\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Die konkrete Verf\u00FCgbarkeitsanforderung 99,5% und das genannte Wartungsfenster wurden im Transkript nicht genannt und sind daher eine unbegr\u00FCndete Festlegung im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup \u0026 Disaster Recovery: T\u00E4gliche Backups mit einer Wiederherstellungszeit von maximal 4\u202FStunden; Aufbewahrungsfrist von 30\u202FTagen f\u00FCr produktive Daten. (Offener Punkt: Detail\u2011Definition)\u0022 | Transkript: \u0022nicht vorhanden\u0022 | Der Transkript\u2011Diskurs best\u00E4tigt Bedarf an Backup/DR, nennt aber keine konkreten Kennzahlen (RTO 4h, 30 Tage Aufbewahrung). Diese konkreten Werte sind im Artefakt erfunden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Scalability: Architektur muss horizontal skalieren k\u00F6nnen, um bis zu 10.000 gleichzeitige Nutzer zu unterst\u00FCtzen. (Annahme f\u00FCr MVP\u2011Erweiterung)\u0022 | Transkript: \u0022Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.\u0022 | Die konkrete Zahl von 10.000 gleichzeitigen Nutzern wurde im Transkript nicht genannt; die Teilnehmer nannten unsichere Bandbreiten (200/2000/20.000), daher ist die konkrete Festlegung eine Erfindung im Artefakt."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 2,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 2 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Audit\u2011Trail / Audit\u2011Log: Jeder relevanten Aktion (Login, Daten\u00E4nderung, Angebotserstellung) muss ein unver\u00E4nderbarer Audit\u2011Log zugeordnet werden. (Quelle: Clara, Ben)\u0022 | Transkript: \u0022Revisionssicher hei\u00DFt nicht automatisch unver\u00E4nderbar, aber \u00C4nderungen m\u00FCssen nachvollziehbar sein.\u0022 | Im Transkript wurde nur Revisionssicherheit / Nachvollziehbarkeit gefordert; Unver\u00E4nderbarkeit (immutable log) wurde nicht als verbindliche Entscheidung getroffen \u2014 das Artefakt stellt dies jedoch fest."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022EU\u2011Only Hosting: Alle Daten m\u00FCssen ausschlie\u00DFlich in EU\u2011basierten Rechenzentren gespeichert werden. (Quelle: Farid)\u0022 | Transkript: \u0022Ja EU only. Oder zumindest DSGVO\u2011konform.\u0022 | Im Transkript blieb Datenresidenz offen/strittig (Diskussion \u00FCber \u0027EU only\u0027 vs. \u0027DSGVO\u2011konform\u0027, Kosten und Nachweisbarkeit). Das Artefakt stellt \u0027EU\u2011Only\u0027 als verbindliche Forderung dar, obwohl dies nicht final entschieden war."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Sicherheit: Nutzung von HTTPS, OAuth\u202F2.0 f\u00FCr API\u2011Zugriff, und optional API\u2011Keys; Rate\u2011Limiting zum Schutz vor Mis\u2026\u0022): [MITTEL] Artefakt: \u0022Sicherheit: Nutzung von HTTPS, OAuth\u202F2.0 f\u00FCr API\u2011Zugriff, und optional API\u2011Keys; Rate\u2011Limiting zum Schutz vor Missbrauch (Mechanismus noch zu definieren). (Quelle: Ben)\u0022 | Transkript: \u0022API muss abgesichert sein. OAuth? Oder API Keys?\u0022 | Im Transkript wurde OAuth als bevorzugt, aber nicht final entschieden (es wurde als komplex und offen beschrieben). Das Artefakt nimmt OAuth\u202F2.0 als verbindliche Sicherheitsl\u00F6sung an und stellt dies f\u00E4lschlich als entschieden dar."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 5,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 4 confirmed; 1 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 1,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise.\u0022 | Im Transkript wurde gefordert, dass bei nicht\u2011aktuellen SAP\u2011Preisen Preisg\u00FCltigkeit/Warnhinweise angezeigt werden; das Artefakt enth\u00E4lt hierzu keine Anforderung oder Ausweisung eines Preisg\u00FCltigkeits-/Warnmechanismus."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u0022 | Das Transkript fordert PDF\u2011Templates mit Versionsnummern / revisionssichere Template\u2011Versionierung; das Artefakt beschreibt nur PDF\u2011Export allgemein und erw\u00E4hnt kein Template\u2011Management oder Versionierung/Revisionssicherheit."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Und CI/CD braucht Secrets Management.\u0022 | Das Transkript nennt Secret/Secrets\u2011Management f\u00FCr CI/CD und Deployment als relevantes Thema; das Artefakt enth\u00E4lt hierzu keine Anforderung oder Hinweis."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Deutsch und Englisch sollten schon drin sein.\u0022 | Die im Transkript klar ge\u00E4u\u00DFerte Anforderung an mindestens Deutsch und Englisch als Sprachen fehlt im Artefakt (Internationalisierung/Wording spricht nur \u00FCber W\u00E4hrungen, nicht \u00FCber Sprachen)."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022- **Support\u2011Kontaktformular**: Kunden k\u00F6nnen \u00FCber ein einfaches Formular Support\u2011Anfragen stellen; diese werden per E\u2011Mail an das Support\u2011Team weitergeleitet. (\u2026\u0022): [GERING] Artefakt: \u0022Support\u2011Kontaktformular: Kunden k\u00F6nnen \u00FCber ein einfaches Formular Support\u2011Anfragen stellen; diese werden per E\u2011Mail an das Support\u2011Team weitergeleitet. (Quelle: David)\u0022 | Transkript: \u0022Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u0022 | Das Artefakt beschreibt nur Weiterleitung per E\u2011Mail, deckt aber nicht die im Transkript geforderte Zuordnung/Verkn\u00FCpfung von Support\u2011Anfragen mit dem Kundenkonto ab."
+        }
+      ]
+    }
+  ]
+}

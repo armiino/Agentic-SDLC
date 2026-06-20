@@ -1,0 +1,48 @@
+# Architekturüberblick – Kundenportal (MVP)
+
+## 1. Systemkontext
+Der Kunde (Vertriebsteam, Endkunden) greift über das Internet auf ein webbasiertes Portal zu. Das System wird ausschließlich in einer **EU‑Only Managed Cloud** betrieben (z. B. Azure EU‑Region, AWS EU). Alle Daten bleiben innerhalb der EU, um DSGVO‑ und Daten‑Residenz‑Anforderungen zu erfüllen. Das Portal integriert lesend das bestehende **SAP‑ERP** für Produkt‑, Preis‑ und Rabattinformationen.
+
+## 2. Wichtige Komponenten
+| Komponente | Verantwortlichkeit | Hinweis |
+|------------|-------------------|--------|
+| **Web‑Frontend** | Präsentations‑ und UI‑Logik (Login, Rollen‑UI, Angebotserstellung, Rechnungs‑Download, Kontaktformular) | SPA, internationalisiert (DE/EN, optional CHF) |
+| **Auth‑Service** | Authentifizierung per E‑Mail/Passwort, Double‑Opt‑In, später Erweiterung für SSO (Azure AD/Google) | Minimaler Token‑Based (z. B. JWT) |
+| **API‑Backend** | Geschäftslogik, Koordination der übrigen Services | REST‑Endpunkte, JSON, Pagination für Listen |
+| **SAP‑Leseschnittstelle** | Read‑Only‑Connector zu SAP (Produkt‑, Preis‑, Rabattdaten) | Keine Schreibrechte im MVP |
+| **PDF‑Generator** | Erzeugt Angebots‑ und Rechnungs‑PDFs aus Vorlagen | Server‑seitig, stateless |
+| **Audit‑Log Service** | Minimaler Ereignis‑Log (wer hat was gesehen/geändert) | Keine personenbezogenen Daten, DSGVO‑konform |
+| **Managed Datenbank** | Persistenz für Nutzer, Rollen, Angebote, Rechnungen, Audit‑Einträge | EU‑Only, relational (PostgreSQL/MySQL) – konkrete Auswahl offen |
+| **Backup & Disaster Recovery** | Tägliche Snapshots, Wiederherstellungs‑Plan, Retention (z. B. 30 Tage) | Teil des Managed‑Hosting‑Pakets |
+| **Load‑Balancer / Reverse‑Proxy** | Einstiegspunkt für das Frontend & API, Basis‑Rate‑Limiting | Leichter Proxy (z. B. Nginx) als Ersatz für ein API‑Gateway |
+
+## 3. Schnittstellen / Integrationspunkte
+- **Frontend ⇄ Auth‑Service**: Login‑/Logout‑Aufrufe, Token‑Austausch (HTTPS, TLS 1.2+).
+- **Frontend ⇄ API‑Backend**: REST‑Aufrufe für Angebots‑CRUD, Rechnungs‑Download, Kontaktformular.
+- **API‑Backend ⇄ SAP‑Leseschnittstelle**: OData/REST‑Read‑Only‑Calls, Auth über Service‑Account.
+- **API‑Backend ⇄ PDF‑Generator**: Aufruf via interne Bibliothek oder HTTP‑Endpoint, übergeben von Angebots‑/Rechnungsdaten.
+- **API‑Backend ⇄ Managed DB**: ORM/SQL‑Zugriff, gesichert durch VPC‑Isolation.
+- **API‑Backend ⇄ Audit‑Log Service**: Asynchrones Schreiben von Ereignissen.
+- **Frontend ⇄ Load‑Balancer**: HTTPS‑Terminationspunkt, DNS‑Eintrag `portal.example.eu`.
+
+## 4. Daten‑ und Sicherheitsaspekte
+- **Transportverschlüsselung**: Durchgängiges TLS 1.2+ für alle externen und internen HTTP‑Kommunikationen.
+- **Authentifizierung & Autorisierung**: Rollen‑basiertes Zugriffskontrollmodell (Admin, Sales, Kunde). Minimal‑Scope‑Tokens, später erweiterbar für SSO.
+- **Audit‑Log**: Nur Nutzer‑ID, Aktion, Zeitstempel – keine personenbezogenen Inhalte. Log‑Daten werden ebenfalls in der Managed DB gespeichert und nach definierten Retention‑Regeln gelöscht.
+- **Backup & DR**: Tägliche, automatisierte Snapshots des Datenbank‑ und Anwendungszustands, Aufbewahrung mindestens 30 Tage, Wiederherstellungstest monatlich.
+- **DSGVO‑Compliance**: Double‑Opt‑In beim Registrieren, Hinweis auf Datenlösch‑Konzept, kein Logging von Klartext‑Passwörtern, pseudonymisierte Testdaten.
+- **Rate‑Limiting**: Grundlegendes Limiting am Reverse‑Proxy (z. B. 100 Requests / Minute pro IP) bis ein vollwertiges API‑Gateway verfügbar ist.
+
+## 5. Offene Architekturentscheidungen
+| Entscheidung | Offene Punkte / offene Fragen |
+|--------------|--------------------------------|
+| **Managed DB Auswahl** | Welche EU‑Only Managed‑DB (Azure PostgreSQL, AWS RDS EU, etc.) liefert das beste Kosten‑/Performance‑Verhältnis? |
+| **API‑Gateway Ersatz** | Einsatz eines leichten Reverse‑Proxy (Nginx, Traefik) als interimistisches Sicherheits‑ und Rate‑Limiting‑Element. |
+| **Minimaler Security‑Check** | Wie kann ein Threat‑Model und ein kurzer Pen‑Test in den 8‑Wochen‑Plan integriert werden, ohne den Release zu gefährden? |
+| **Retention‑Policy** | Konkrete Aufbewahrungsfristen für Angebote, Rechnungen und Audit‑Logs (z. B. 7 Jahre für Rechnungen, 30 Tage für Logs). |
+| **CHF‑Unterstützung** | Ob der Schweizer Pilot‑Kunde unterstützt wird – Einfluss auf Währungs‑Handling und rechtliche Vorgaben. |
+| **Support‑Datenschutz** | Wie wird das Kontaktformular DSGVO‑konform gestaltet (z. B. Hinweis, Zweckbindung, minimale Datenerhebung)? |
+| **Testing‑Datenstrategie** | Welche Maßnahmen (Pseudonymisierung, synthetische Daten) werden in Dev/Test‑Umgebungen eingesetzt, um Datenschutz‑Risiken zu vermeiden? |
+
+---
+*Dieses Dokument ist ein initialer Entwurf (intent=initial_draft) basierend auf dem bereitgestellten Projekt‑ und Anforderungs‑Kontext sowie den identifizierten Risiken.*

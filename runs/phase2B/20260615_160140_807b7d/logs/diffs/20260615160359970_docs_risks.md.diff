@@ -1,0 +1,66 @@
+--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risikoanalyse
++ 
++ ## Fachliche Risiken
++ - **Unklare Entscheidung für Pilot‑Kunde (DE vs. CH)** – Unterschiedliche Währungs‑ und rechtliche Rahmenbedingungen können zu Fehlkalkulationen bei Angeboten führen.
++ - **Rabatt‑Workflow nicht implementiert (> 15 %)** – Gefahr, dass versehentlich höhere Rabatte gewährt werden und damit finanzielle und compliance‑technische Vorgaben verletzt werden.
++ - **Support‑Prozess ohne Ticket‑System** – Risiko von verzögerten Antworten, unvollständiger Nachverfolgung und fehlender Audit‑Spur für Support‑Interaktionen.
++ - **Mobile‑First zurückgestellt** – Mögliche Markt‑ und Kundenunzufriedenheit, wenn später ein Mobile‑Produkt nachgerüstet werden muss.
++ 
++ ## Technische Risiken
++ - **API‑Gateway‑Warteliste (6 Wochen)** – Verzögerungen bei der Anbindung von externen Systemen; es muss ein Fallback (z. B. internes Proxy) geplant werden.
++ - **Authentifizierungs‑Ansatz noch offen** – Gefahr, dass ein unsicheres Verfahren gewählt wird oder zusätzliche Entwicklungszeit nötig wird.
++ - **SAP‑Lesender Zugriff ohne Caching** – Performance‑Engpässe und Abhängigkeit von SAP‑Verfügbarkeit; kein Fail‑over‑Mechanismus definiert.
++ - **Keine neue Datenbank (Managed Services only)** – Beschränkung auf bestehende Services kann Flexibilitäts‑ und Skalierbarkeitsprobleme verursachen.
++ - **Secrets‑Management noch nicht entschieden** – Risiko von Credential‑Leakage und unautorisiertem Zugriff.
++ - **Rate‑Limiting‑Parameter nicht definiert** – Mögliche Überlastung oder Missbrauch des API‑Layers.
++ - **Monitoring ohne personenbezogene Daten** – Eingeschränkte Möglichkeit zur forensischen Analyse bei Vorfällen.
++ - **Backup‑RTO/RPO undefiniert** – Unsicherheit über Wiederherstellungszeiten im Katastrophenfall.
++ 
++ ## Compliance‑ und Datenschutz‑Risiken
++ - **Double‑Opt‑In‑Umsetzung unsicher** – Gefahr von Verstößen gegen DSGVO, wenn das Opt‑In nicht korrekt gespeichert wird.
++ - **Audit‑Log ohne personenbezogene Daten** – Technische Trennung muss garantiert werden; Fehlkonfiguration könnte zu Datenlecks führen.
++ - **EU‑only Datenresidenz** – Managed Service Provider muss die EU‑Daten­residenz garantieren; Vertrags‑ und Prüfungsaufwand.
++ - **Lösch‑/Auskunfts‑Konzept unklar** – Risiko, Anfragen von Betroffenen nicht fristgerecht zu erfüllen.
++ - **Verwendung von SAP‑Testdaten mit realen Personen‑informationen** – Potenzieller Datenschutzverstoß.
++ 
++ ## Widersprüche und Unsicherheiten
++ - **Mobile‑First vs. Web‑First** – Unterschiedliche Prioritäten im MVP‑Zeitplan.
++ - **SSO / OAuth optional, aber eventuell von Enterprise‑Kunden gefordert**.
++ - **Hosting‑Kosten‑Analyse fehlt** – Budget‑ und Ressourcenplanung unsicher.
++ - **Security‑Review (6 Wochen) überschneidet sich mit 8‑Wochen‑MVP‑Zeitplan**.
++ - **Rate‑Limiting‑Schwellenwerte nicht definiert**.
++ - **Backup‑RTO/RPO noch nicht spezifiziert**.
++ - **Secrets‑Management‑Lösung offen**.
++ - **API‑Gateway‑Nutzung vs. eigene Lösung**.
++ - **Support‑Ticket‑System nicht vorgesehen**.
++ - **Caching‑Strategie nicht vorhanden**.
++ 
++ ## Mögliche Auswirkungen
++ - Projektverzögerungen und Budgetüberschreitungen.
++ - Rechtliche Konsequenzen bei DSGVO‑Verstößen (Bußgelder, Reputationsverlust).
++ - Finanzielle Verluste durch falsche Rabatt‑Anwendung.
++ - Kundenzufriedenheits‑ und Konversions‑Einbußen bei schlechter Performance oder fehlender Mobile‑Unterstützung.
++ - Operative Risiken durch unzureichende Backup‑ und Wiederherstellungsprozesse.
++ - Sicherheitsvorfälle bei fehlendem Secrets‑Management.
++ 
++ ## Mögliche Gegenmaßnahmen / Klärungsbedarfe
++ - **Pilot‑Kunden‑Entscheidung**: Frühe Festlegung auf DE oder CH, inklusive Währungs‑ und rechtlicher Analyse.
++ - **Rabatt‑Validierung**: Technische Kontrolle im Angebot‑Workflow, um > 15 % Rabatt zu blockieren.
++ - **Support‑Prozess**: Minimal‑Ticket‑System oder klar definierte Eskalations‑ und Dokumentationsrichtlinien.
++ - **Auth‑Strategie**: Entscheidung zwischen OAuth 2.0, Azure AD, Google oder API‑Keys; ggf. fallback zu klassischem E‑Mail/Passwort.
++ - **API‑Gateway‑Plan B**: Interner Proxy oder temporäres Mock‑Gateway für MVP.
++ - **Secrets‑Management**: Auswahl von HashiCorp Vault oder Cloud‑Provider‑Lösung und Integration in CI/CD.
++ - **Rate‑Limiting**: Definition konkreter Schwellenwerte (z. B. 100 Anfragen/Minute/User) und Implementierung in API‑Gateway.
++ - **Backup‑RTO/RPO**: Festlegung von Zielwerten (z. B. RTO = 4 Stunden, RPO = 15 Minuten) und Testen des Wiederherstellungs‑Workflows.
++ - **DSGVO‑Audit**: Datenschutz‑Folgenabschätzung, Dokumentation von Double‑Opt‑In‑Prozess und Lösch‑/Auskunfts‑Verfahren.
++ - **Testdaten‑Pseudonymisierung**: Sicherstellen, dass SAP‑Testumgebung keine echten Personen‑daten enthält.
++ - **Hosting‑Kosten‑Analyse**: Vergleich von Managed‑Service‑Anbietern und Budget‑Freigabe.
++ - **Mobile‑Strategie**: Roadmap für Mobile‑First nach MVP definieren, um spätere Umstellung zu planen.
++ - **Monitoring‑Erweiterung**: Möglichkeit zur Anreicherung von Logs für forensische Zwecke unter Einhaltung von C‑4.
++ - **Rollen‑ und Berechtigungsmatrix**: Feinabstimmung zwischen Finance, Support und Admin für Zugriff auf Angebote und Audits.
++ 
++ *Diese Risikoanalyse ist ein initialer Entwurf, basierend auf dem bereitgestellten Kontext und den Anforderungen. Weitere Details und Priorisierungen sollten in den nächsten Phasen ergänzt werden.*
++ 

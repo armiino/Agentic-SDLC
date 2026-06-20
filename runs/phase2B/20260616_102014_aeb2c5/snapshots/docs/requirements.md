@@ -1,0 +1,52 @@
+## Functional Requirements
+
+1. **Login mit Double‑Opt‑In**: Nutzer können sich per E‑Mail und Passwort registrieren und müssen einen Double‑Opt‑In‑Prozess durchlaufen. Keine Single‑Sign‑On (SSO) im MVP.
+2. **Rollen‑ und Berechtigungsmanagement**: Das System unterstützt mindestens die Rollen *Admin*, *Sales* und *Kunde*. Rollen bestimmen Zugriff auf Angebots‑Erstellung, Freigabe‑Workflow und Rechnungs‑Download.
+3. **Angebots‑Erstellung**: Sales‑Nutzer können Angebote basierend auf Produkt‑ und Preisdaten aus dem SAP‑System anlegen. Angebote werden im System gespeichert und können als PDF exportiert werden.
+4. **Rabatt‑Freigabe‑Workflow**: Rabatte ≥ 15 % erfordern eine Freigabe durch einen Manager (oder Finance). Der Workflow muss den Status des Angebots (Draft, Pending, Approved) abbilden.
+5. **Rechnungs‑Download**: Kunden können ihre Rechnungen im PDF‑Format herunterladen.
+6. **Mehrsprachigkeit**: Das UI und die generierten PDFs stehen in Deutsch und Englisch zur Verfügung. Weitere Sprachen können später hinzugefügt werden.
+7. **Mehrwährungs‑Support (optional)**: Im MVP wird mindestens EUR unterstützt; Entscheidung über CHF‑Support ist offen.
+8. **PDF‑Export mit rechtlichen Fußnoten**: Angebote können als PDF mit gesetzlich erforderlichen Hinweisen exportiert werden; jede Version wird versioniert.
+9. **Audit‑Trail (minimal)**: Das System protokolliert, wer welche Aktionen (Erstellung, Änderung, Freigabe) durchgeführt hat.
+10. **Kontakt‑Formular für Support**: Kunden können über ein einfaches Kontakt‑Formular Anfragen stellen. Ein Ticket‑System wird im MVP nicht bereitgestellt.
+
+## Non-functional Requirements
+
+1. **Performance & Skalierbarkeit**: Das System muss 200 bis 20.000 gleichzeitige Nutzer unterstützen. Antwortzeiten ≤ 2 s für UI‑Interaktionen, ≤ 5 s für PDF‑Export.
+2. **Rate‑Limiting**: Grundlegendes Rate‑Limiting wird implementiert; erweiterte Rate‑Limiting über ein API‑Gateway folgt in späteren Releases.
+3. **Verfügbarkeit**: Ziel‑Uptime von 99,5 % im Produktiv‑Umfeld.
+4. **Datensicherheit**: Alle Datenübertragungen erfolgen über TLS 1.2 oder höher. Daten werden ausschließlich in EU‑Regionen gehostet.
+5. **Backup**: Tägliche Backups der Anwendungsdaten; Wiederherstellung innerhalb von 12 Stunden. Kein vollumfänglicher Disaster‑Recovery‑Plan im MVP.
+6. **Compliance (DSGVO)**: Double‑Opt‑In, Recht auf Vergessen‑werden, Audit‑Log, Daten‑Residenz EU‑only, Verschlüsselung ruhender Daten.
+7. **Logging & Monitoring**: Grundlegendes Logging (ohne personenbezogene Daten) und Monitoring für System‑Health.
+8. **Entwicklungs‑ und Betriebsumgebungen**: Separate Dev/Test/Prod‑Umgebungen, synthetische Testdaten, Secrets‑Management für API‑Keys.
+
+## Constraints/Compliance
+
+- **EU‑Managed‑Hosting**: Das System muss auf einem Managed Service mit Datenhaltung in der EU betrieben werden; keine neue Datenbank wird eingeführt.
+- **Kein API‑Gateway im MVP**: Direktaufrufe an die Backend‑Services sind zulässig; ein API‑Gateway wird erst nach dem MVP implementiert.
+- **Budget‑Beschränkungen**: Nutzung von Managed Services, aber keine komplexen Zusatzkomponenten (z. B. SSO, Ticket‑System).
+- **DSGVO‑Anforderungen**: Double‑Opt‑In beim Registration, Aufbewahrungspflichten für Angebote und Rechnungen, Möglichkeit zur Datenlöschung auf Anforderung.
+- **Zeitplan**: MVP muss in 8 Wochen lieferbar sein; Security‑Review (6 Wochen) darf den Zeitplan nicht gefährden.
+
+## Assumptions and Open Points
+
+- **Pilotkunde**: Noch nicht entschieden (Müller AG Schweiz oder Hansa GmbH Deutschland) – beeinflusst Währungs‑ und Datenschutz‑Umfang.
+- **Mehrwährungs‑Support**: Entscheidung, ob CHF neben EUR bereits im MVP unterstützt wird, steht offen.
+- **Kosten‑Schätzung für EU‑Hosting & Managed Services**: Noch nicht finalisiert.
+- **API‑Gateway Verfügbarkeit**: Unklar, ob das Gateway rechtzeitig für das MVP bereitsteht.
+- **Retention‑Regeln**: Konkrete Aufbewahrungsfristen für Angebote, Rechnungen und Logs (gesetzlich vs. Löschrecht) müssen noch definiert werden.
+- **Testdaten‑Strategie**: Nutzung synthetischer Daten vs. echte SAP‑Daten im Test‑Setup ist offen.
+- **Support‑Prozess**: Ob ein einfaches Kontakt‑Formular ausreicht oder ein minimaler Ticket‑Workflow integriert werden muss.
+- **Mobile‑First vs. Web‑First**: Entscheidung über Priorisierung der mobilen UI ist noch nicht getroffen.
+
+## Traceability
+
+- **Projektziel (Anna)** – Schnellere Angebotserstellung → *Functional Requirements* 1, 3, 4, 5.
+- **Stakeholder Ben (Technischer Lead)** – Nutzung von SAP‑Daten, Managed Services, keine neue DB → *Functional Requirements* 3, *Constraints* 1.
+- **Clara (Compliance)** – DSGVO, Double‑Opt‑In, Audit‑Trail → *Non-functional Requirements* 4‑6, *Constraints* 4.
+- **David (Support)** – Kontakt‑Formular, kein Ticket‑System im MVP → *Functional Requirements* 10.
+- **Eva (Finance)** – Rabatt‑Freigabe, Kosten‑Kontrolle → *Functional Requirements* 4, *Constraints* 2‑3.
+- **Farid (Operations)** – EU‑Only Hosting, Backup → *Non-functional Requirements* 4‑5, *Constraints* 1.
+- **Offene Punkte** werden als *Assumptions and Open Points* dokumentiert, um spätere Entscheidungen nachzuverfolgen.

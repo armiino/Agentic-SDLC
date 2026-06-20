@@ -1,0 +1,116 @@
+{
+  "spike": "RubricEvaluator",
+  "scheme": "PhasedFour",
+  "phase": "phase2_1",
+  "runId": "20260609_152957_0e0804",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1"
+  },
+  "timestampUtc": "2026-06-11T15:45:39.586023Z",
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 0,
+      "reason": "FALSE_CLAIM: 0 Fehler gefunden.",
+      "findings": []
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY: 0 Fehler gefunden.",
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC: 0 Fehler gefunden.",
+      "findings": []
+    },
+    {
+      "key": "INCOMPLETE_COVERAGE",
+      "label": "INCOMPLETE_COVERAGE",
+      "metric": "IncompleteCoverage",
+      "count": 17,
+      "reason": "INCOMPLETE_COVERAGE: 17 Fehler gefunden.",
+      "findings": [
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Das System muss DSGVO-konform sein, insbesondere beim Login, der Datenspeicherung, beim Logging und bei Datenl\u00F6schungen.\u0022 | Transkript: \u0022Clara: DSGVO. Wir speichern Kundendaten. Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.\u0022 | Das Artefakt erw\u00E4hnt DSGVO-Konformit\u00E4t, aber wesentliche Aspekte wie Double-Opt-In, L\u00F6schkonzepte, Auftragsverarbeitungsvertr\u00E4ge und explizite Einwilligungen (z.B. f\u00FCr Push Notifications) werden nicht ausreichend abgedeckt."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Logging und Audit m\u00FCssen zwischen technischen Logs und Datenschutz-konformen Audit-Logs unterscheiden.\u0022 | Transkript: \u0022Farid: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.\u0022 | Das Artefakt erw\u00E4hnt die Unterscheidung, aber konkrete Anforderungen zu Aufbewahrungsfristen, Datenminimierung in Logs und Missbrauchserkennung fehlen trotz expliziter Diskussion im Transkript."
+        },
+        {
+          "severity": "Error",
+          "message": "[KRITISCH] Artefakt: \u0022Test- und Entwicklungsumgebungen m\u00FCssen keine Echtkundendaten enthalten, sondern synthetische oder pseudonymisierte Daten.\u0022 | Transkript: \u0022Clara: Ja, Pseudonymisierung oder synthetische Testdaten. Ben: SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem. Clara: Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u0022 | Das Artefakt erw\u00E4hnt synthetische/pseudonymisierte Daten, aber das explizite Verbot der Nutzung echter SAP-Testdaten und die Notwendigkeit von Pr\u00FCfprozessen werden nicht abgebildet."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Internationalisierung (mehrsprachig, Mehrw\u00E4hrung) ist f\u00FCr sp\u00E4ter geplant; initial nur DACH-Region.\u0022 | Transkript: \u0022Anna: Deutsch und Englisch sollten schon drin sein. Eva: Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022 | Das Artefakt erw\u00E4hnt Internationalisierung und Mehrw\u00E4hrung nur als sp\u00E4tere Option, obwohl konkrete Anforderungen f\u00FCr Deutsch/Englisch und EUR/CHF im MVP diskutiert wurden."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022KPI-Metriken wie Conversion Rate und Zeit bis Angebotserstellung sollen erfasst werden.\u0022 | Transkript: \u0022Anna: Wir m\u00FCssen KPIs messen. Ben: Was sind die KPIs? Anna: Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 | Das Artefakt erw\u00E4hnt KPI-Erfassung, aber die konkrete Definition und Messung der KPIs (Conversion Rate, Zeit bis Angebot) sowie deren technische Umsetzung bleiben unklar."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API Gateway Nutzung als zentrale Schnittstelle ist angedacht, aber mit erheblicher Wartezeit verbunden.\u0022 | Transkript: \u0022Farid: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u0022 | Das Artefakt erw\u00E4hnt das API Gateway, aber die interne Policy und deren zwingende Natur sowie die Auswirkungen auf Architektur und Zeitplan werden nicht ausreichend dargestellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Backup- und Disaster Recovery Details m\u00FCssen noch spezifiziert werden.\u0022 | Transkript: \u0022Clara: Wenn Kundendaten drin sind: ja. Anna: Okay also doch. Ben: Und Performance. Wie viele User erwarten wir?\u0022 | Das Artefakt erw\u00E4hnt Backup, aber Anforderungen an Disaster Recovery, Datenresidenz bei Backups und die Problematik globaler Replikation werden nicht ausreichend abgedeckt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Die L\u00F6sung muss skalierbar sein, um bei unterschiedlicher Nutzerzahl performant zu bleiben.\u0022 | Transkript: \u0022Ben: Aber Angebot selbst enth\u00E4lt personenbezogene Daten. Anna: Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS? Ben: TLS reicht. E2E ist unrealistisch.\u0022 | Das Artefakt erw\u00E4hnt Skalierbarkeit, aber die Spannungsfelder zwischen Kosten, Overengineering und konkreten Nutzerzahlen (200 bis 20.000) sowie Performance- und Rate-Limiting-Anforderungen werden nicht ausreichend behandelt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Ein minimaler Audit Trail muss festhalten, wer wann welche Daten ge\u00E4ndert hat.\u0022 | Transkript: \u0022Clara: Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert? ... Farid: Application logs, audit logs und security logs sind unterschiedliche Dinge. ... Eva: Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.\u0022 | Das Artefakt erw\u00E4hnt einen Audit Trail, aber Anforderungen an Revisionssicherheit, Event-History, Aufbewahrungsfristen und Unterscheidung verschiedener Log-Typen werden nicht vollst\u00E4ndig abgedeckt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Der Zugriff auf SAP-Systeme erfolgt zun\u00E4chst nur lesend.\u0022 | Transkript: \u0022Ben: SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.\u0022 | Das Artefakt stellt SAP-Zugriff als \u0027zun\u00E4chst nur lesend\u0027 dar, ohne die Unsicherheit und die offenen Diskussionen zu Schreibzugriffen und deren Auswirkungen auf Scope und Compliance zu reflektieren."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Supportprozesse sind derzeit unklar und werden als Risiko mitgef\u00FChrt.\u0022 | Transkript: \u0022David: Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten. Clara: Wenn Support-Anfragen personenbezogene Daten enthalten, dann m\u00FCssen sie in das L\u00F6schkonzept und in die Auskunftspflicht einbezogen werden.\u0022 | Das Artefakt erw\u00E4hnt unklare Supportprozesse, aber die Anforderungen an Zuordnung von Supportanfragen zum Kundenkonto, Datenschutzpflichten und Risiken bei E-Mail-basiertem Support werden nicht ausreichend abgedeckt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Datenklassifikation und Retention-Richtlinien fehlen noch.\u0022 | Transkript: \u0022Ben: Also brauchen wir Datenklassifikation und Retention Rules. Anna: Das klingt nicht nach MVP. Clara: Aber ohne Konzept riskieren wir Fehler.\u0022 | Das Artefakt erw\u00E4hnt fehlende Retention-Richtlinien, aber die Konflikte zwischen L\u00F6schpflichten und gesetzlichen Aufbewahrungspflichten sowie die Notwendigkeit einer Datenklassifikation werden nicht ausreichend dargestellt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022API Layer muss abgesichert sein, OAuth wird bevorzugt, API Keys sind Alternativen.\u0022 | Transkript: \u0022Clara: API muss abgesichert sein. OAuth? Oder API Keys? Ben: OAuth w\u00E4re besser. Aber komplexer.\u0022 | Das Artefakt erw\u00E4hnt OAuth und API Keys, aber die Unsicherheit und die noch offene Entscheidung sowie die Auswirkungen auf Zeitplan und Komplexit\u00E4t werden nicht ausreichend reflektiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Security Reviews sind notwendig, auch wenn der MVP-Zeitplan dies erschwert.\u0022 | Transkript: \u0022Ben: Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP. Anna: Dann machen wir es ohne Security Review? Clara: Das ist keine Option.\u0022 | Das Artefakt erw\u00E4hnt Security Reviews, aber die explizite Diskussion um Zeitkonflikte, Risiken bei Verzicht und die Notwendigkeit einer abgestimmten L\u00F6sung werden nicht ausreichend abgebildet."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022KPI-Erfassung wird nur rudiment\u00E4r im MVP unterst\u00FCtzt.\u0022 | Transkript: \u0022Anna: Wir m\u00FCssen KPIs messen. Ben: Was sind die KPIs? Anna: Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot.\u0022 | Das Artefakt erw\u00E4hnt rudiment\u00E4re KPI-Erfassung, aber die konkreten KPIs und deren Bedeutung f\u00FCr das Projektziel werden nicht ausreichend dokumentiert."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022Ein Support-Ticketsystem ist im MVP nicht vorgesehen, stattdessen nur ein Kontaktformular.\u0022 | Transkript: \u0022Anna: Ticketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u0022 | Das Artefakt gibt korrekt wieder, dass kein Ticketsystem vorgesehen ist, aber die Diskussion um die Notwendigkeit einer Zuordnung zum Kundenkonto und die Risiken bei E-Mail-Support werden nicht ausreichend abgebildet."
+        },
+        {
+          "severity": "Informational",
+          "message": "[GERING] Artefakt: \u0022Im MVP sind keine manuellen Sonderrabatte erlaubt; eine Rabatt-Freigabe ist nicht implementiert.\u0022 | Transkript: \u0022Ben: Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u0022 | Das Artefakt gibt die Constraint korrekt wieder, aber die Diskussion um die Notwendigkeit eines Freigabeprozesses und die Risiken bei fehlender Freigabe werden nicht ausreichend dokumentiert."
+        }
+      ]
+    }
+  ]
+}
