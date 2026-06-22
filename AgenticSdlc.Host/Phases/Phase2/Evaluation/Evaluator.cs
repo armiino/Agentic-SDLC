@@ -31,6 +31,19 @@ public enum EvaluationScheme
 public sealed record EvaluationCategory(string Key, string MetricName, string Label);
 
 /// <summary>
+/// Z2.2-Hook: ein gewertetes (kept) Finding des letzten Laufs in strukturierter Form -> effektive
+/// Severity + Verifikations-Verdikt, ohne fragiles Parsen der Diagnostic-Texte. Eingabe für den
+/// Jury→<c>ReviewResult</c>-Adapter (Review/).
+/// </summary>
+public sealed record ScoredFinding(
+    string? Category,
+    string? Severity,
+    string Verdict,              // -> "confirmed" | "partial" | "unverified"
+    string? ArtifactQuote,
+    string? TranscriptEvidence,
+    string? Reason);
+
+/// <summary>
 /// DISK-9 (M4/F6): rohe Verifier-Antwort eines Kategorie-/Chunk-Calls samt gerendertem Kandidaten-Batch.
 /// Persistiert als .raw.json damit Verifier-Fehler
 /// (LLM vs. Prompt vs. Mapping vs. Batchgröße) ohne erneuten Run nachvollziehbar sind.
@@ -178,6 +191,9 @@ public sealed class Evaluator : IEvaluator
     // DISK-12/G3: rohe Generierungs-Antworten des letzten Laufs, pro Kategorie (nur im Split-Modus).
     private readonly List<VerifierRawLog> _generationRawLogs = new();
 
+    // Z2.2: gewertete (kept) Findings des letzten Laufs strukturiert (für den Review-Adapter / ReviewResult).
+    private readonly List<ScoredFinding> _scoredFindings = new();
+
     public EvaluationScheme Scheme { get; }
     public IReadOnlyList<EvaluationCategory> Categories { get; }
 
@@ -201,6 +217,12 @@ public sealed class Evaluator : IEvaluator
     /// (nur im Split-Modus). Leer im 3-in-1-Modus (dann steht die Rohantwort in LastRawJudgeResponse).
     /// </summary>
     public IReadOnlyList<VerifierRawLog> LastGenerationRawLogs => _generationRawLogs;
+
+    /// <summary>
+    /// Z2.2: die gewerteten (kept) Findings des letzten <see cref="EvaluateAsync"/> strukturiert
+    /// (Kategorie, effektive Severity, Verdikt, Zitate) ..Eingabe für den Jury->ReviewResult-Adapter.
+    /// </summary>
+    public IReadOnlyList<ScoredFinding> LastScoredFindings => _scoredFindings;
 
     public Evaluator(
         EvaluationScheme scheme,
@@ -261,6 +283,7 @@ public sealed class Evaluator : IEvaluator
         var artifactText = modelResponse.Text;
         _verifierRawLogs.Clear();    // DISK-9: Rohlogs des vorherigen Laufs verwerfen.
         _generationRawLogs.Clear();  // DISK-12: dito für Generierungs-Rohlogs.
+        _scoredFindings.Clear();     // Z2.2: gewertete Findings des vorherigen Laufs verwerfen.
 
         // Call 1 (Finding-Generierung). DISK-12/G3: im Split-Modus pro Kategorie ein fokussierter Call
         // (höherer Recall schwacher Modelle, B20); sonst ein 3-in-1-Call (Legacy/Nicht-Synthese).
@@ -376,6 +399,7 @@ public sealed class Evaluator : IEvaluator
                             break;
                         default: // confirmed
                             kept.Add(findings[i]);
+                            _scoredFindings.Add(ToScored(findings[i], "confirmed"));
                             confirmedCount++;
                             break;
                     }
@@ -385,6 +409,7 @@ public sealed class Evaluator : IEvaluator
                     // Verifikation deaktiviert -> unverifiziert. (Aktiv-aber-kein-Verdikt kann nicht auftreten: 
                     // VerifyCategoryAsync liefert für jeden Kandidaten ein Verdikt.)
                     kept.Add(findings[i]);
+                    _scoredFindings.Add(ToScored(findings[i], "unverified"));
                     unverifiedCount++;
                 }
             }
@@ -418,6 +443,7 @@ public sealed class Evaluator : IEvaluator
                     $"HERABGESTUFT [{original.Severity}→{effective.Severity}]"
                     + $" (partial: \"{Truncate(evidence, 160)}\"): {FormatFinding(effective)}"));
                 allKept.Add(effective);
+                _scoredFindings.Add(ToScored(effective, "partial"));
             }
 
             // Verworfene Findings bleiben transparent sichtbar (Evidenz-Disziplin), zählen nicht.
@@ -493,6 +519,10 @@ public sealed class Evaluator : IEvaluator
 
     private static string FormatFinding(Finding f)
         => $"[{f.Severity}] Artefakt: \"{f.ArtifactQuote}\" | Transkript: \"{f.TranscriptEvidence}\" | {f.Reason}";
+
+    // Z2.2: gewertetes Finding strukturiert für den Review-Adapter (effektive Severity + Verdikt).
+    private static ScoredFinding ToScored(Finding f, string verdict)
+        => new(f.Category, f.Severity, verdict, f.ArtifactQuote, f.TranscriptEvidence, f.Reason);
 
     private static bool MatchesCategory(string? findingCategory, string key)
     {

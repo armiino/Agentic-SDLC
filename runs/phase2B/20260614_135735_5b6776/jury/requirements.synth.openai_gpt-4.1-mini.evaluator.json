@@ -1,0 +1,104 @@
+{
+  "evaluator": "OfflineEvaluatorRunner",
+  "scheme": "Synthesis",
+  "phase": "phase2B",
+  "runId": "20260614_135735_5b6776",
+  "artifact": "requirements.md",
+  "transcript": "T9999_chaos.txt",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-21T13:11:27.762595Z",
+  "evaluationStatus": "ok",
+  "errorScore": 14,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 14; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 3,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 2 confirmed; 1 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 2,
+        "partial": 1,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Es muss eine sichere Authentifizierung des Nutzers \u00FCber OAuth erfolgen.\u0022 | Transkript: \u0022Anna: \u0022SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u0022 Ben: \u0022OAuth w\u00E4re besser. Aber komplexer. ... Und OAuth ist bevorzugt, aber noch nicht final.\u0022\u0022 | Das Transkript zeigt, dass OAuth als bevorzugte Option diskutiert wird, aber noch nicht final entschieden ist. Die Aussage im Artefakt, dass OAuth zwingend eingesetzt wird, widerspricht dem offenen Stand im Transkript."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022Die L\u0000sung muss hinsichtlich Skalierbarkeit und Betriebskosten kosteneffizient sein.\u0022 | Transkript: \u0022Ben: \u0022G\u0000nstig und skalierbar widerspricht sich.\u0022 Anna: \u0022Bitte kein Overengineering.\u0022\u0022 | Im Transkript wird ein Zielkonflikt zwischen Skalierbarkeit und Kosteneffizienz beschrieben, ohne dass eine klare Festlegung getroffen wird. Die Aussage im Artefakt stellt dies als verbindliche Anforderung dar, was nicht dem offenen Diskussionsstand entspricht."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Ben: \u0022SAP Backend ist nicht vollst\u00E4ndig API-ready, was Auswirkungen auf Angebotserstellung und Preisdatenaktualit\u00E4t haben kann.\u0022 Anna: \u0022SAP-Verf\u00FCgbarkeit ist kr\u2026\u0022): [GERING] Artefakt: \u0022Das System muss eine hohe Verf\u00FCgbarkeit gew\u00E4hrleisten, insbesondere im Hinblick auf SAP-Verf\u00FCgbarkeit.\u0022 | Transkript: \u0022Ben: \u0022SAP Backend ist nicht vollst\u0000ndig API-ready, was Auswirkungen auf Angebotserstellung und Preisdatenaktualit\u0000t haben kann.\u0022 Anna: \u0022SAP-Verf\u0000gbarkeit ist kritische Abh\u0000ngigkeit.\u0022\u0022 | Im Transkript wird die SAP-Verf\u0000gbarkeit als Risiko und kritische Abh\u0000ngigkeit genannt, aber keine verbindliche Anforderung an hohe Verf\u0000gbarkeit formuliert. Die Formulierung im Artefakt ist eine zu sichere Festlegung."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 1,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 1 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 1,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022- Es muss eine sichere Authentifizierung des Nutzers \u00FCber OAuth erfolgen. (stellt es als verbindlich dar) vs. Assumptions and Open Points: Annahme: OAuth wird a\u2026\u0022): [GERING] Artefakt: \u0022- Es muss eine sichere Authentifizierung des Nutzers \u00FCber OAuth erfolgen.\u0022 | Transkript: \u0022Ben: \u0022OAuth w\u00E4re besser. Aber komplexer.\u0022 / Anna: \u0022Komplexer hei\u00DFt mehr Zeit.\u0022 / Ben: \u0022Ja.\u0022 / Assumptions: \u0022OAuth wird als bevorzugtes Authentifizierungsverfahren eingesetzt.\u0022\u0022 | Im Transkript ist OAuth als bevorzugt, aber noch nicht final entschieden, daher ist die Aussage im Artefakt zu sicher formuliert."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 4,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 4 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 4,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen einen Architekten.\u0022 / \u0022Wir haben keinen.\u0022\u0022 | Das Thema der fehlenden Architektenrolle und deren Bedeutung f\u00FCr die Dokumentation und Planung wird im Transkript explizit genannt, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022\u0022 | Das Thema der Entwicklungs- und Testumgebungen sowie der Umgang mit Testdaten und Datenschutz in diesen Umgebungen wird im Transkript besprochen, fehlt aber im Artefakt."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen Secrets Management.\u0022\u0022 | Das Thema Secrets Management als Sicherheitsanforderung wird im Transkript genannt, ist aber im Artefakt nicht dokumentiert."
+        },
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Wir brauchen Rate Limits f\u00FCr API.\u0022 / \u0022Dann brauchen wir Pagination und Download-Limits.\u0022 / \u0022Missbrauchserkennung.\u0022\u0022 | Anforderungen an API-Rate-Limiting, Pagination, Download-Limits und Missbrauchserkennung werden im Transkript diskutiert, fehlen aber im Artefakt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Constraints/Compliance: \u0022Supportprozesse d\u00FCrfen im MVP nur rudiment\u00E4r abgebildet werden (kein Ticketsystem).\u0022; Functional Requirements: \u0022Die Funktionen der Supp\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022\u0022Support wird damit nicht gl\u00FCcklich.\u0022 / \u0022Supportprozess unklar.\u0022 / \u0022Supportdaten per E-Mail verarbeitet.\u0022 / \u0022Bewusste Einschr\u00E4nkung.\u0022\u0022 | Das Thema der Supportprozesse, insbesondere die Einschr\u00E4nkungen und Risiken bei rudiment\u00E4rer Unterst\u00FCtzung ohne Ticketsystem, wird im Transkript ausf\u00FChrlich behandelt, fehlt aber als klarer Punkt im Artefakt."
+        }
+      ]
+    }
+  ]
+}

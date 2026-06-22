@@ -95,6 +95,14 @@ public static class CoverageRunner
             var outFile = Path.Combine(outDir, $"{Path.GetFileNameWithoutExtension(artifact)}.coverage.{modelSlug}.json");
             await File.WriteAllTextAsync(outFile, JsonSerializer.Serialize(payload, JsonOptions)).ConfigureAwait(false);
 
+            // Z3.2: zusätzlich das gemeinsame ReviewResult-Format (nur Coverage-Achse, ohne Grounding).
+            var perItemCov = turns
+                .Select(t => new Review.PerItemCoverage(t.Speaker, t.Text, byIndex[t.Index].Verdict, byIndex[t.Index].Reason))
+                .ToList();
+            var review = Review.PerItemReviewMapper.Map(artifact, artifactType, units: null, coverage: perItemCov, judgeModel: judgeSettings.ModelId);
+            var reviewFile = Path.Combine(outDir, $"{Path.GetFileNameWithoutExtension(artifact)}.coverage.{modelSlug}.review.json");
+            await File.WriteAllTextAsync(reviewFile, JsonSerializer.Serialize(review, Review.ReviewJson.Options)).ConfigureAwait(false);
+
             var c = (string k) => counts.TryGetValue(k, out var n) ? n : 0;
             Console.WriteLine(
                 $"[coverage-units] {artifact}: CoverageScore={coverageScore}  missing={c("missing")} " +

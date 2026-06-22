@@ -110,6 +110,14 @@ public static class ClassifyUnitsRunner
             var outFile = Path.Combine(outDir, $"{Path.GetFileNameWithoutExtension(artifact)}.grounding.{modelSlug}.json");
             await File.WriteAllTextAsync(outFile, JsonSerializer.Serialize(payload, JsonOptions)).ConfigureAwait(false);
 
+            // Z3.2: zusätzlich das gemeinsame ReviewResult-Format (Grounding/Certainty-Achse, ohne Coverage).
+            var perItemUnits = units
+                .Select(u => new Review.PerItemUnit(u.Section, u.Text, byIndex[u.Index].Verdict, byIndex[u.Index].Reason))
+                .ToList();
+            var review = Review.PerItemReviewMapper.Map(artifact, artifactType, perItemUnits, coverage: null, judgeSettings.ModelId);
+            var reviewFile = Path.Combine(outDir, $"{Path.GetFileNameWithoutExtension(artifact)}.grounding.{modelSlug}.review.json");
+            await File.WriteAllTextAsync(reviewFile, JsonSerializer.Serialize(review, Review.ReviewJson.Options)).ConfigureAwait(false);
+
             var c = (string k) => counts.TryGetValue(k, out var n) ? n : 0;
             Console.WriteLine(
                 $"[classify-units] {artifact}: GroundingScore={groundingScore}  " +

@@ -62,9 +62,14 @@ public static class OfflineEvaluatorRunner
         var artifactText = await File.ReadAllTextAsync(artifactPath).ConfigureAwait(false);
         var transcript = await File.ReadAllTextAsync(transcriptPath).ConfigureAwait(false);
 
-        // Optionaler Judge-Modell-Override (6. Argument): anderes Judge-Modell testen, ohne run-config.json
-        // zu aendern. Sonst gilt das Modell aus den Settings.
-        var judgeSettings = args.Length >= 6 ? settings with { ModelId = args[5] } : settings;
+        // Judge-Modell: 6. Argument (Override) > jury.judgeModel aus der Config > settings.ModelId.
+        // Wichtig: settings.ModelId ist das GENERATOR-Modell. Ohne diesen Fallback würde eval-offline ohne
+        // 6. Arg fälschlich mit dem Generator-Modell bewerten (B32-Befund). Verhält sich nun wie Phase2JuryRunner.
+        var judgeSettings = args.Length >= 6
+            ? settings with { ModelId = args[5] }
+            : string.IsNullOrWhiteSpace(settings.JuryJudgeModel)
+                ? settings
+                : settings with { ModelId = settings.JuryJudgeModel! };
         var modelSlug = judgeSettings.ModelId.Replace('/', '_').Replace(':', '_');
 
         var chatClient = ChatClientFactory.Create(judgeSettings);
@@ -122,6 +127,23 @@ public static class OfflineEvaluatorRunner
             .WriteGenerationRawLogsAsync(juryDir, fileBase, evaluator, CancellationToken.None)
             .ConfigureAwait(false);
 
+        // Z2.3: zusaetzlich das gemeinsame ReviewResult-Format schreiben (zusätzlich neben evaluator.json).
+        var reviewRequest = new Review.ReviewRequest(
+            RunId: runId,
+            ArtifactType: JuryCategoryProfile.ArtifactType(artifactFileName),
+            ArtifactId: artifactFileName,
+            ArtifactVersion: 0,
+            ArtifactText: artifactText,
+            RepairAttempt: 0);
+        var reviewResult = Review.JuryReviewAdapter.FromEvaluator(
+            evaluator, result, reviewRequest, judgeSettings.ModelId);
+        var reviewFile = Path.Combine(juryDir, $"{fileBase}.review.json");
+        await File.WriteAllTextAsync(
+                reviewFile,
+                JsonSerializer.Serialize(reviewResult, Review.ReviewJson.Options),
+                CancellationToken.None)
+            .ConfigureAwait(false);
+
         var score = EvaluatorOutput.ReadScore(result);
         var counts = string.Join("  ", evaluator.Categories
             .Select(c => $"{c.Label}={result.Get<NumericMetric>(c.MetricName).Value}"));
@@ -132,6 +154,10 @@ public static class OfflineEvaluatorRunner
         if (score.EvaluationStatus != "ok")
             Console.WriteLine($"[eval-offline][synthesis] WARN: evaluation_failed -> {fileBase}.rawfail.txt (parseError: {evaluator.LastParseError})");
         Console.WriteLine($"[eval-offline][synthesis] Bericht: {Path.GetRelativePath(repoRoot, outFile)}");
+        Console.WriteLine(
+            $"[eval-offline][review] status={reviewResult.Status} decision={reviewResult.Decision} "
+            + $"axes=[{string.Join(",", reviewResult.EvaluatedAxes)}] defects={reviewResult.Defects.Count} "
+            + $"-> {Path.GetRelativePath(repoRoot, reviewFile)}");
 
         return 0;
     }
