@@ -58,6 +58,13 @@ if (args.Length > 0 && string.Equals(args[0], "review-agent", StringComparison.O
     return;
 }
 
+// Z4.2-light (additiv, isoliert, kein LLM): achsen-spezifische *.review.json eines Runs zu EINEM mergen.
+if (args.Length > 0 && string.Equals(args[0], "merge-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.Review.ReviewMergeRunner.RunAsync(args, repoRoot);
+    return;
+}
+
 var runId = RunId.New();
 // Output-Ordner unter runs/. Logisch bleibt es Phase 2.1 (AgentPhase); die Strategie-Varianten
 // bekommen aber eigene Unterordner, damit A/B/C-Runs auf der Platte getrennt liegen

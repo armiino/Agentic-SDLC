@@ -58,13 +58,13 @@ public static class PerItemReviewMapper
                 switch (u.Verdict)
                 {
                     case "fabricated":
-                        defects.Add(new ReviewDefect($"PI-{++n:D3}", ReviewAxis.Grounding, "Fabricated",
+                        defects.Add(new ReviewDefect($"PI-{++n:D3}", ReviewAxis.Grounding, "Grounding.Fabricated",
                             DefectSeverity.Critical, VerificationStatus.Confirmed, u.Reason,
                             ArtifactQuote: u.Text, TargetSection: u.Section, Repairable: true));
                         groundingScore += 2;
                         break;
                     case "overstated":
-                        defects.Add(new ReviewDefect($"PI-{++n:D3}", ReviewAxis.Certainty, "Overstated",
+                        defects.Add(new ReviewDefect($"PI-{++n:D3}", ReviewAxis.Certainty, "Certainty.Overstated",
                             DefectSeverity.Medium, VerificationStatus.Confirmed, u.Reason,
                             ArtifactQuote: u.Text, TargetSection: u.Section, Repairable: true));
                         groundingScore += 1;
@@ -89,7 +89,7 @@ public static class PerItemReviewMapper
                 switch (c.Verdict)
                 {
                     case "missing":
-                        defects.Add(new ReviewDefect($"PI-{++n:D3}", ReviewAxis.Coverage, "MissingCoverage",
+                        defects.Add(new ReviewDefect($"PI-{++n:D3}", ReviewAxis.Coverage, "Coverage.MissingCoverage",
                             DefectSeverity.Medium, VerificationStatus.Confirmed, c.Reason,
                             SourceQuote: c.Text, Repairable: true));
                         coverageScore += 1;
@@ -115,14 +115,9 @@ public static class PerItemReviewMapper
             RejectedCandidateCount: 0);
 
         var status = partial ? ReviewStatus.Partial : ReviewStatus.Succeeded;
-        var decision = defects.Count > 0
-            ? GateDecision.Repair
-            : status == ReviewStatus.Partial
-                ? GateDecision.HumanReview     // unvollständig gemessen, keine Defekte → kein sauberer Pass
-                : GateDecision.Pass;
 
         return new ReviewResult(
-            artifactName, artifactType, status, decision, metrics,
+            artifactName, artifactType, status, metrics,
             axes, defects, diagnostics, evaluatorVersion, judgeModel, createdAt ?? DateTimeOffset.UtcNow);
     }
 

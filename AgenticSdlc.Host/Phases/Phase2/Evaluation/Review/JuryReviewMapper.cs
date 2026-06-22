@@ -85,13 +85,10 @@ public static class JuryReviewMapper
             ? ReviewStatus.Failed
             : ReviewStatus.Succeeded;
 
-        var decision = ResolveDecision(status, input.NeedsRepair, defects);
-
         return new ReviewResult(
             ArtifactName: input.ArtifactName,
             ArtifactType: input.ArtifactType,
             Status: status,
-            Decision: decision,
             Metrics: metrics,
             EvaluatedAxes: evaluatedAxes,
             Defects: defects,
@@ -101,25 +98,13 @@ public static class JuryReviewMapper
             CreatedAt: input.CreatedAt ?? DateTimeOffset.UtcNow);
     }
 
-    // Invarianten-sicherer Platzhalter bis zur echten GatePolicy:
-    // Status=Failed -> Failed; Repair nur bei vorhandenem Confirmed/Partial-Defekt.
-    private static GateDecision ResolveDecision(ReviewStatus status, bool needsRepair, IReadOnlyList<ReviewDefect> defects)
-    {
-        if (status == ReviewStatus.Failed)
-            return GateDecision.Failed;
-        if (!needsRepair)
-            return GateDecision.Pass;
-        var hasActionable = defects.Any(d => d.VerificationStatus is VerificationStatus.Confirmed or VerificationStatus.Partial);
-        return hasActionable ? GateDecision.Repair : GateDecision.HumanReview;
-    }
-
     private static (ReviewAxis Axis, string Category) MapCategory(string juryCategory)
         => juryCategory?.Trim().ToUpperInvariant() switch
         {
-            "FALSE_CLAIM" => (ReviewAxis.Grounding, "FalseClaim"),
-            "FALSE_CERTAINTY" => (ReviewAxis.Certainty, "FalseCertainty"),
-            "MISSING_TOPIC" => (ReviewAxis.Coverage, "MissingTopic"),
-            _ => (ReviewAxis.Validity, "Unknown")
+            "FALSE_CLAIM" => (ReviewAxis.Grounding, "Grounding.FalseClaim"),
+            "FALSE_CERTAINTY" => (ReviewAxis.Certainty, "Certainty.FalseCertainty"),
+            "MISSING_TOPIC" => (ReviewAxis.Coverage, "Coverage.MissingTopic"),
+            _ => (ReviewAxis.Validity, "Validity.Unknown")
         };
 
     private static DefectSeverity MapSeverity(string severity)

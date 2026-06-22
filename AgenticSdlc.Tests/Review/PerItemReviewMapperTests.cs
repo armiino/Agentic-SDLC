@@ -55,7 +55,7 @@ public sealed class PerItemReviewMapperTests
 
         Assert.Equal(ReviewStatus.Partial, r.Status);   // wegen unclassified
         Assert.Equal(2, r.Diagnostics.Count);            // 1 Unit + 1 Turn unclassified
-        Assert.Equal(GateDecision.Repair, r.Decision);   // es gibt Defekte
+        Assert.Equal(GateDecision.Repair, new GatePolicy().Evaluate(r).Decision);   // es gibt Defekte
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public sealed class PerItemReviewMapperTests
         Assert.Null(r.Metrics.CoverageScore);            // Coverage-Achse lief nicht -> null (Fake-0-Schutz)
         Assert.DoesNotContain(ReviewAxis.Coverage, r.EvaluatedAxes);
         Assert.Equal(ReviewStatus.Succeeded, r.Status);
-        Assert.Equal(GateDecision.Repair, r.Decision);
+        Assert.Equal(GateDecision.Repair, new GatePolicy().Evaluate(r).Decision);
     }
 
     [Fact]
@@ -79,6 +79,6 @@ public sealed class PerItemReviewMapperTests
 
         Assert.Empty(r.Defects);
         Assert.Equal(0, r.Metrics.GroundingScore);
-        Assert.Equal(GateDecision.Pass, r.Decision);
+        Assert.Equal(GateDecision.Pass, new GatePolicy().Evaluate(r).Decision);
     }
 }

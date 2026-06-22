@@ -40,7 +40,7 @@ public sealed class JuryReviewMapperTests
 
         Assert.Equal(ReviewAxis.Grounding, r.Defects[0].Axis);   // FALSE_CLAIM
         Assert.Equal(ReviewAxis.Coverage, r.Defects[1].Axis);    // MISSING_TOPIC
-        Assert.Equal("FalseClaim", r.Defects[0].Category);
+        Assert.Equal("Grounding.FalseClaim", r.Defects[0].Category);
         // EvaluatedAxes deckt alle drei laufenden Kategorien ab.
         Assert.Equal(
             new[] { ReviewAxis.Grounding, ReviewAxis.Certainty, ReviewAxis.Coverage },
@@ -78,7 +78,7 @@ public sealed class JuryReviewMapperTests
     {
         var r = JuryReviewMapper.Map(Input(TwoFindings, needsRepair: true));
         Assert.Equal(ReviewStatus.Succeeded, r.Status);
-        Assert.Equal(GateDecision.Repair, r.Decision);
+        Assert.Equal(GateDecision.Repair, new GatePolicy().Evaluate(r).Decision);
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public sealed class JuryReviewMapperTests
     public void Decision_Pass_When_No_Repair_Needed()
     {
         var r = JuryReviewMapper.Map(Input(System.Array.Empty<JuryFinding>(), errorScore: 0, needsRepair: false));
-        Assert.Equal(GateDecision.Pass, r.Decision);
+        Assert.Equal(GateDecision.Pass, new GatePolicy().Evaluate(r).Decision);
     }
 
     [Fact]
@@ -107,6 +107,6 @@ public sealed class JuryReviewMapperTests
         // Invariante: Status=Failed => Decision in {Failed, HumanReview}, nie Pass/Repair.
         var r = JuryReviewMapper.Map(Input(TwoFindings, status: "failed", needsRepair: true));
         Assert.Equal(ReviewStatus.Failed, r.Status);
-        Assert.Equal(GateDecision.Failed, r.Decision);
+        Assert.Equal(GateDecision.Failed, new GatePolicy().Evaluate(r).Decision);
     }
 }

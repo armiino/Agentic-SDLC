@@ -38,7 +38,7 @@ public sealed class JuryReviewAdapterTests
 
         Assert.Equal(5, r.Metrics.ErrorScore);
         Assert.Null(r.Metrics.GroundingScore);   // Per-Item lief nicht
-        Assert.Equal(GateDecision.Repair, r.Decision);
+        Assert.Equal(GateDecision.Repair, new GatePolicy().Evaluate(r).Decision);
         Assert.Equal("requirements.md", r.ArtifactName);
     }
 
@@ -54,7 +54,7 @@ public sealed class JuryReviewAdapterTests
             new[] { ReviewAxis.Grounding, ReviewAxis.Certainty, ReviewAxis.Coverage },
             r.EvaluatedAxes);
         Assert.Empty(r.Defects);
-        Assert.Equal(GateDecision.Pass, r.Decision);
+        Assert.Equal(GateDecision.Pass, new GatePolicy().Evaluate(r).Decision);
     }
 
     [Fact]

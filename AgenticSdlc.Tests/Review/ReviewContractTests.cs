@@ -15,7 +15,6 @@ public sealed class ReviewContractTests
         ArtifactName: "requirements.md",
         ArtifactType: "requirements",
         Status: ReviewStatus.Succeeded,
-        Decision: GateDecision.Repair,
         Metrics: new ReviewMetrics(
             ErrorScore: null,        // synthesis-Achse lief nicht -> null, NICHT 0
             GroundingScore: 2,
@@ -79,7 +78,7 @@ public sealed class ReviewContractTests
 
         Assert.Contains("\"Coverage\"", json);   // ReviewAxis als String
         Assert.Contains("\"Critical\"", json);    // DefectSeverity als String
-        Assert.Contains("\"Repair\"", json);      // GateDecision als String
+        Assert.Contains("\"Confirmed\"", json);    // VerificationStatus als String
     }
 
     [Fact]

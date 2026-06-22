@@ -154,8 +154,9 @@ public static class OfflineEvaluatorRunner
         if (score.EvaluationStatus != "ok")
             Console.WriteLine($"[eval-offline][synthesis] WARN: evaluation_failed -> {fileBase}.rawfail.txt (parseError: {evaluator.LastParseError})");
         Console.WriteLine($"[eval-offline][synthesis] Bericht: {Path.GetRelativePath(repoRoot, outFile)}");
+        var reviewGate = new Review.GatePolicy().Evaluate(reviewResult);
         Console.WriteLine(
-            $"[eval-offline][review] status={reviewResult.Status} decision={reviewResult.Decision} "
+            $"[eval-offline][review] status={reviewResult.Status} decision={reviewGate.Decision} (policy={reviewGate.PolicyVersion}) "
             + $"axes=[{string.Join(",", reviewResult.EvaluatedAxes)}] defects={reviewResult.Defects.Count} "
             + $"-> {Path.GetRelativePath(repoRoot, reviewFile)}");
 
