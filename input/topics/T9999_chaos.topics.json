@@ -1,0 +1,629 @@
+{
+  "transcript": "T9999_chaos.txt",
+  "model": "openai/gpt-5.4",
+  "topics": [
+    {
+      "topicId": "TOPIC-MVP-SCOPE-001",
+      "summary": "Das Team ringt um den MVP-Schnitt und priorisiert schlie\u00DFlich grob Login, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, minimale Rollen, minimalen Audit Trail, EU-Managed-Hosting und Backup, bei gleichzeitig bewusst offenem bzw. ausgeschlossenen Umfang weiterer Themen.",
+      "status": "decision_open",
+      "sourceTurns": [
+        0,
+        3,
+        8,
+        9,
+        10,
+        15,
+        34,
+        43,
+        45,
+        52,
+        53,
+        54,
+        55,
+        56,
+        82,
+        104,
+        105,
+        108,
+        111,
+        115,
+        120,
+        166,
+        174,
+        191,
+        192,
+        198,
+        200,
+        210,
+        211,
+        212,
+        228,
+        251,
+        261,
+        262,
+        263
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-CLIENT-CHANNEL-002",
+      "summary": "Ob das Kundenportal web-first, mobile-responsive oder native werden soll, ist nicht entschieden und steht im Spannungsfeld von Sales-Bedarf, Kosten und Backend-Reife.",
+      "status": "unresolved",
+      "sourceTurns": [
+        0,
+        1,
+        34
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-AUTH-SSO-003",
+      "summary": "F\u00FCr das MVP wird Login per E-Mail und Passwort erwogen, w\u00E4hrend SSO \u00FCber einen noch unentschiedenen Identity Provider wegen fehlendem zentralem IAM optional und offen bleibt.",
+      "status": "decision_open",
+      "sourceTurns": [
+        2,
+        3,
+        4,
+        34,
+        256
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-GDPR-COMPLIANCE-004",
+      "summary": "DSGVO-Anforderungen wie Double-Opt-In, L\u00F6schkonzept, Auftragsverarbeitung, Auskunftspflichten, Datenminimierung und nachweisbare Datenschutzma\u00DFnahmen sind verpflichtend und d\u00FCrfen nicht ignoriert werden.",
+      "status": "resolved",
+      "sourceTurns": [
+        2,
+        13,
+        18,
+        30,
+        31,
+        32,
+        33,
+        60,
+        61,
+        62,
+        74,
+        80,
+        97,
+        106,
+        121,
+        126,
+        128,
+        135,
+        136,
+        159,
+        184,
+        193,
+        206,
+        214,
+        216,
+        218,
+        258
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "topicId": "TOPIC-ROLES-PERMISSIONS-005",
+      "summary": "Ein Rollen- und Berechtigungskonzept wird ben\u00F6tigt, mindestens f\u00FCr Admin, Sales und Kunde, ist aber in Details wie Manager- und Support-Rechten sowie Sichtbarkeit sensibler Rabattinformationen noch ungekl\u00E4rt.",
+      "status": "unresolved",
+      "sourceTurns": [
+        5,
+        6,
+        22,
+        34,
+        63,
+        89,
+        90,
+        91,
+        92,
+        93,
+        94,
+        95,
+        192,
+        198
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-SAP-INTEGRATION-006",
+      "summary": "SAP ist die zentrale Quelle f\u00FCr Stammdaten, Produktdaten, Preise und Rechnungen, aber Datenqualit\u00E4t, fehlende API-Reife und die Frage nach rein lesender versus schreibender Integration machen die Schnittstelle kritisch.",
+      "status": "unresolved",
+      "sourceTurns": [
+        4,
+        5,
+        7,
+        34,
+        35,
+        77,
+        88,
+        107,
+        122,
+        123,
+        147,
+        172,
+        173,
+        192,
+        198,
+        233,
+        234,
+        245
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-API-GATEWAY-LAYER-007",
+      "summary": "Eine abgesicherte API-Layer \u00FCber das zentrale API-Gateway ist architektonisch verpflichtend, kollidiert jedoch mit der sechs Wochen langen Warteliste und damit mit dem 8-Wochen-MVP.",
+      "status": "unresolved",
+      "sourceTurns": [
+        34,
+        35,
+        36,
+        37,
+        109,
+        110,
+        111,
+        196,
+        230,
+        231
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-SECURITY-REVIEW-008",
+      "summary": "Ein Security Review ist zwingend erforderlich, gef\u00E4hrdet mit seiner Dauer aber den zugesagten MVP-Termin und setzt ausreichende Dokumentation voraus.",
+      "status": "unresolved",
+      "sourceTurns": [
+        24,
+        25,
+        26,
+        34,
+        69,
+        70
+      ],
+      "relevantFor": [
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-HOSTING-DATA-RESIDENCY-009",
+      "summary": "Neue Datenbanken sind ausgeschlossen, Managed Services sind erlaubt, und Hosting muss mindestens nachweisbare EU-Datenresidenz erf\u00FCllen, was Kosten und Providerwahl beeinflusst.",
+      "status": "decision_open",
+      "sourceTurns": [
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        96,
+        97,
+        98,
+        99,
+        100,
+        101,
+        196,
+        198,
+        255
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-BACKUP-DR-010",
+      "summary": "Backup und Disaster Recovery werden f\u00FCr das MVP als notwendig anerkannt, sobald Kundendaten verarbeitet werden.",
+      "status": "resolved",
+      "sourceTurns": [
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        197,
+        198
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "topicId": "TOPIC-SCALABILITY-PERFORMANCE-011",
+      "summary": "Die erwartete Nutzerzahl ist unklar, weshalb Anforderungen an Performance und Skalierbarkeit im Spannungsfeld zu Kosten und Overengineering offen bleiben.",
+      "status": "unresolved",
+      "sourceTurns": [
+        46,
+        47,
+        48,
+        49,
+        50,
+        51
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-OFFER-WORKFLOW-012",
+      "summary": "Das Hauptziel ist die schnellere Angebotserstellung, wof\u00FCr ein Angebotsworkflow mit Statusmodell, SAP-basierter Rabattlogik und zumindest minimaler fachlicher Nachvollziehbarkeit ben\u00F6tigt wird.",
+      "status": "resolved",
+      "sourceTurns": [
+        7,
+        8,
+        10,
+        17,
+        81,
+        84,
+        88,
+        147,
+        148,
+        150,
+        156,
+        160,
+        163,
+        165,
+        167,
+        192,
+        198
+      ],
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "topicId": "TOPIC-INVOICES-ORDERS-VIEW-013",
+      "summary": "Kunden sollen Bestellungen einsehen und insbesondere Rechnungen herunterladen k\u00F6nnen, inklusive Anforderungen rund um Massenabrufe und Missbrauchsschutz.",
+      "status": "resolved",
+      "sourceTurns": [
+        9,
+        10,
+        71,
+        222,
+        223,
+        225
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "topicId": "TOPIC-SUPPORT-PROCESS-014",
+      "summary": "Ein vollwertiges Ticketsystem ist nicht im MVP, aber Support braucht mindestens einen bearbeitbaren Kanal mit Kundenzuordnung; die Zwischenl\u00F6sung Kontaktformular bzw. E-Mail bleibt bewusst riskant und ungel\u00F6st.",
+      "status": "decision_open",
+      "sourceTurns": [
+        58,
+        59,
+        71,
+        72,
+        73,
+        75,
+        77,
+        78,
+        79,
+        113,
+        154,
+        195,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        250,
+        259
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-DISCOUNT-APPROVALS-015",
+      "summary": "F\u00FCr Rabatte \u00FCber einem Schwellenwert wird ein Freigabeprozess gefordert, die genauen Schwellen und Rollen sind aber offen; f\u00FCr den MVP wird deshalb als Einschr\u00E4nkung festgelegt, dass keine manuellen Sonderrabatte ohne Freigabe erlaubt sind.",
+      "status": "decision_open",
+      "sourceTurns": [
+        81,
+        83,
+        84,
+        86,
+        87,
+        88,
+        89,
+        149,
+        167,
+        194,
+        199,
+        200,
+        201,
+        202,
+        249,
+        260
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-PILOT-LOCALE-CURRENCY-016",
+      "summary": "Zielmarkt, Pilotkunde, Sprachen und Mehrw\u00E4hrung h\u00E4ngen zusammen und sind noch offen, beeinflussen aber Scope erheblich, insbesondere wegen m\u00F6glichem Schweiz-Bezug und sp\u00E4terer Internationalisierung.",
+      "status": "decision_open",
+      "sourceTurns": [
+        124,
+        125,
+        126,
+        127,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        145,
+        146
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-PDF-DOCUMENT-VERSIONING-017",
+      "summary": "Angebote sollen als PDF mit rechtlichen Fu\u00DFnoten erzeugt werden, wof\u00FCr Template-Management, Versionierung und revisionssichere Nachvollziehbarkeit erforderlich sind.",
+      "status": "resolved",
+      "sourceTurns": [
+        156,
+        158,
+        159,
+        160,
+        161,
+        162,
+        163,
+        164,
+        165
+      ],
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "topicId": "TOPIC-ONLINE-ACCEPTANCE-018",
+      "summary": "Ob Kunden Angebote online akzeptieren d\u00FCrfen, bleibt offen, da dies Vertragsabschluss, Zustimmungsnachweise, AGB-Akzeptanz und potenziellen SAP-Schreibzugriff nach sich zieht.",
+      "status": "decision_open",
+      "sourceTurns": [
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176,
+        177,
+        178
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-LOGGING-AUDIT-RETENTION-019",
+      "summary": "Audit- und Logging-Anforderungen sind Pflicht, m\u00FCssen fachliche Nachvollziehbarkeit, getrennte Log-Arten ohne personenbezogene Daten in technischen Logs sowie Aufbewahrungs- und L\u00F6schregeln abdecken.",
+      "status": "unresolved",
+      "sourceTurns": [
+        2,
+        5,
+        19,
+        20,
+        21,
+        22,
+        23,
+        95,
+        153,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        190,
+        247
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-ANALYTICS-KPIS-020",
+      "summary": "KPIs wie Conversion Rate und Zeit bis Angebot sind benannt, aber Umfang und technische Umsetzung von Analytics und Tracking sind f\u00FCr den MVP noch offen.",
+      "status": "decision_open",
+      "sourceTurns": [
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        175
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-TESTDATA-ENVIRONMENTS-SECRETS-021",
+      "summary": "F\u00FCr Dev-, Test- und Prod-Umgebungen werden pseudonymisierte oder synthetische Testdaten sowie Secrets Management ben\u00F6tigt, wobei echte Kundendaten im SAP-Testsystem aktuell ein akutes Problem darstellen.",
+      "status": "unresolved",
+      "sourceTurns": [
+        213,
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        248
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-API-ABUSE-LIMITS-022",
+      "summary": "Die API ben\u00F6tigt Schutzmechanismen wie Auth-Absicherung, Rate Limits, Pagination, Download-Limits und Missbrauchserkennung, insbesondere f\u00FCr Massenabrufe von Rechnungen.",
+      "status": "unresolved",
+      "sourceTurns": [
+        36,
+        37,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227,
+        229,
+        230
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-SAP-AVAILABILITY-CACHING-023",
+      "summary": "Die Verf\u00FCgbarkeit von SAP ist eine kritische Abh\u00E4ngigkeit, und m\u00F6gliche Fallbacks oder Caches stehen im Konflikt mit Datenaktualit\u00E4t, Datenschutz und Komplexit\u00E4t.",
+      "status": "unresolved",
+      "sourceTurns": [
+        121,
+        122,
+        123,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        233,
+        234,
+        235,
+        236,
+        237,
+        238,
+        239,
+        240,
+        241,
+        242,
+        243,
+        244,
+        245
+      ],
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "topicId": "TOPIC-COST-ESTIMATE-024",
+      "summary": "F\u00FCr den Vorstand wird kurzfristig eine Kostensch\u00E4tzung verlangt, obwohl Scope, Datenschutzma\u00DFnahmen, SAP-Schnittstelle und Architektur noch nicht ausreichend gekl\u00E4rt sind.",
+      "status": "unresolved",
+      "sourceTurns": [
+        98,
+        100,
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108
+      ],
+      "relevantFor": [
+        "risks",
+        "open-questions"
+      ]
+    }
+  ]
+}

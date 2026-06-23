@@ -65,6 +65,34 @@ if (args.Length > 0 && string.Equals(args[0], "merge-review", StringComparison.O
     return;
 }
 
+// Z6.2 (DISK-COV): Topics eines Transkripts EINMAL extrahieren (LLM) → eingefrorene Fixture input/topics/.
+if (args.Length > 0 && string.Equals(args[0], "extract-topics", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ExtractTopicsRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Z6.3 (DISK-COV): topic-basierte Coverage gegen ein Artefakt → <base>.topic-coverage.<model>.review.json.
+if (args.Length > 0 && string.Equals(args[0], "coverage-topics", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.CoverageTopicsRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Z7 (DISK-COV-2, kein LLM): Topic-Fixture-Audit (formale Checks + Jury-Cross-Check/Capture-Recapture).
+if (args.Length > 0 && string.Equals(args[0], "topic-audit", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.TopicAuditRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Z8 (DISK-COV-5): begrenzter Topic-Completeness-Verifier (1 LLM-Pass) → input/topics/<base>.verify-candidates.json.
+if (args.Length > 0 && string.Equals(args[0], "topic-verify", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.TopicVerifyRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 var runId = RunId.New();
 // Output-Ordner unter runs/. Logisch bleibt es Phase 2.1 (AgentPhase); die Strategie-Varianten
 // bekommen aber eigene Unterordner, damit A/B/C-Runs auf der Platte getrennt liegen
