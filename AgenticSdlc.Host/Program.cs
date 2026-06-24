@@ -93,6 +93,13 @@ if (args.Length > 0 && string.Equals(args[0], "topic-verify", StringComparison.O
     return;
 }
 
+// C1: zusammengesetzter Review (Grounding + Coverage) → EIN ReviewResult pro Artefakt (offline, ReviewService).
+if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 var runId = RunId.New();
 // Output-Ordner unter runs/. Logisch bleibt es Phase 2.1 (AgentPhase); die Strategie-Varianten
 // bekommen aber eigene Unterordner, damit A/B/C-Runs auf der Platte getrennt liegen

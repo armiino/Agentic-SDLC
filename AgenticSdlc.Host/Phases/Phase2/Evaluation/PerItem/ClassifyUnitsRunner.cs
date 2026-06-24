@@ -33,11 +33,12 @@ public static class ClassifyUnitsRunner
         var phase = args[1];
         var runId = args[2];
 
-        string? artifactArg = null, judgeArg = null, transcriptArg = null;
+        string? artifactArg = null, judgeArg = null, transcriptArg = null, version = "v1";
         foreach (var a in args.Skip(3))
         {
             if (a.EndsWith(".md", StringComparison.OrdinalIgnoreCase)) artifactArg = a;
             else if (a.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)) transcriptArg = a;
+            else if (a is "v1" or "v2") version = a;
             else judgeArg = a;
         }
 
@@ -62,16 +63,16 @@ public static class ClassifyUnitsRunner
             judgeArg is not null ? settings with { ModelId = judgeArg }
             : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! }
             : settings;
-        var modelSlug = judgeSettings.ModelId.Replace('/', '_').Replace(':', '_');
+        var modelSlug = judgeSettings.ModelId.Replace('/', '_').Replace(':', '_') + (version == "v2" ? ".v2" : "");
 
         var client = ChatClientFactory.Create(judgeSettings);
-        var classifier = new UnitClassifier(client, settings.JuryStructuredOutput);
+        var classifier = new UnitClassifier(client, settings.JuryStructuredOutput, version);
 
         var outDir = Path.Combine(repoRoot, "runs", phase, runId, "jury", "_units");
         Directory.CreateDirectory(outDir);
 
         var artifacts = artifactArg is not null ? [artifactArg] : DefaultArtifacts;
-        Console.WriteLine($"[classify-units] Judge: {judgeSettings.LlmProvider} / {judgeSettings.ModelId}  (chunk={UnitClassifier.ChunkSize})");
+        Console.WriteLine($"[classify-units] Judge: {judgeSettings.LlmProvider} / {judgeSettings.ModelId}  prompt={version}  (chunk={UnitClassifier.ChunkSize})");
 
         foreach (var artifact in artifacts)
         {

@@ -99,13 +99,81 @@ public sealed class UnitClassifier
         "peritem_classification",
         "Per-Item-Klassifikation von SDLC-Artefakt-Einheiten gegen das Transkript.");
 
+    // --- v2: Evidenz-gebunden, Reason-VOR-Verdikt, themen-tolerantes Kriterium (B40-Befund: v1 über-flaggt
+    //     inferenzielle/offene Artefakte, weil es „wörtlich im Transkript?" prüft statt „Thema besprochen?").
+    //     v1 bleibt UNVERÄNDERT; Auswahl über Konstruktor/Flag. ---
+    private const string BasePromptV2 = """
+        Du pruefst Einheiten eines SDLC-Artefakts gegen das originale Stakeholder-Transkript (Ground Truth).
+        Du bekommst das VOLLSTAENDIGE Transkript und eine NUMMERIERTE Liste von Artefakt-Einheiten.
+
+        Arbeite PRO Einheit in GENAU dieser Reihenfolge (erst belegen + denken, DANN urteilen):
+        1) evidence: Suche im Transkript die KONKRETE Stelle (woertliches Teilzitat einer Sprecher-Aussage),
+           die das THEMA der Einheit stuetzt ODER ihr widerspricht. Findest du KEINE Stelle zum Thema:
+           schreibe exakt "KEIN BELEG".
+        2) reasoning: kurze Begruendung auf Basis der evidence.
+        3) verdict: ERST JETZT entscheiden.
+
+        VERDIKTE:
+        grounded    = Das THEMA der Einheit wird im Transkript besprochen (auch sinngemaess/paraphrasiert/
+          nur angerissen). WICHTIG: Eine Anforderung, ein Risiko, eine Gegenmassnahme oder eine OFFENE FRAGE
+          DARF ueber den Wortlaut hinausgehen (extrapolieren, konkretisieren, eine Massnahme/Frage
+          formulieren), solange ihr Thema im Transkript vorkommt. Unsicherheits-/Offenheitssprache ist KEIN Fehler.
+        overstated  = Das Thema kommt vor, ABER die Einheit stellt etwas als entschieden/gesetzt dar (konkrete
+          Zahl/Technologie/Frist), das das Transkript so nicht hergibt — OHNE Annahme-/Offen-Markierung.
+        fabricated  = NUR wenn das THEMA im Transkript UEBERHAUPT NICHT vorkommt (evidence = "KEIN BELEG")
+          oder die Einheit dem Transkript direkt widerspricht.
+        not_a_claim = kein fachlicher Claim (Metadaten, reine Ueberschrift/Label, Owner-Mapping). Zaehlt NICHT.
+
+        ENTSCHEIDUNGSREGEL: evidence-Stelle zum Thema gefunden -> grounded (oder overstated, wenn als gesetzt
+        dargestellt). NUR bei evidence = "KEIN BELEG" -> fabricated. Im Zweifel, wenn das Thema irgendwo
+        vorkommt: grounded.
+
+        [PROFIL]
+
+        Antworte ausschliesslich mit JSON:
+        { "results": [ { "index": 0, "evidence": "...", "reasoning": "...",
+          "verdict": "grounded|overstated|fabricated|not_a_claim" } ] }
+        Genau ein Ergebnis pro Einheit (Index = die Nummer aus der Liste). Kein Text ausserhalb des JSON.
+        """;
+
+    private const string SchemaJsonV2 = """
+        {
+          "type": "object",
+          "properties": {
+            "results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "index": { "type": "integer" },
+                  "evidence": { "type": "string" },
+                  "reasoning": { "type": "string" },
+                  "verdict": { "type": "string" }
+                },
+                "required": ["index", "evidence", "reasoning", "verdict"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["results"],
+          "additionalProperties": false
+        }
+        """;
+
+    private static readonly ChatResponseFormat ResponseFormatV2 = ChatResponseFormat.ForJsonSchema(
+        JsonDocument.Parse(SchemaJsonV2).RootElement.Clone(),
+        "peritem_classification_v2",
+        "Per-Item-Klassifikation (Evidenz-gebunden, Reason-vor-Verdikt).");
+
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
+    private readonly string _promptVersion;
 
-    public UnitClassifier(IChatClient client, bool structuredOutput = true)
+    public UnitClassifier(IChatClient client, bool structuredOutput = true, string promptVersion = "v1")
     {
         _client = client;
         _structuredOutput = structuredOutput;
+        _promptVersion = string.Equals(promptVersion, "v2", StringComparison.OrdinalIgnoreCase) ? "v2" : "v1";
     }
 
     /// <summary>Gewicht je Verdikt fuer den GroundingScore.</summary>
@@ -119,7 +187,8 @@ public sealed class UnitClassifier
     public async Task<IReadOnlyList<UnitVerdict>> ClassifyAsync(
         string transcript, string artifactType, IReadOnlyList<ArtifactUnit> units, CancellationToken ct)
     {
-        var system = BasePrompt.Replace("[PROFIL]", ProfileFor(artifactType));
+        var basePrompt = _promptVersion == "v2" ? BasePromptV2 : BasePrompt;
+        var system = basePrompt.Replace("[PROFIL]", ProfileFor(artifactType));
         var verdicts = new Dictionary<int, UnitVerdict>();
 
         for (var offset = 0; offset < units.Count; offset += ChunkSize)
@@ -150,7 +219,7 @@ public sealed class UnitClassifier
 
         var options = new ChatOptions { Temperature = 0.0f };
         if (_structuredOutput)
-            options.ResponseFormat = ResponseFormat;
+            options.ResponseFormat = _promptVersion == "v2" ? ResponseFormatV2 : ResponseFormat;
 
         var response = await _client.GetResponseAsync(messages, options, ct).ConfigureAwait(false);
         var json = ExtractJson(response.Text);
@@ -158,12 +227,27 @@ public sealed class UnitClassifier
 
         try
         {
-            var parsed = JsonSerializer.Deserialize<Envelope>(json, Json);
-            if (parsed?.Results is null) return;
-            foreach (var r in parsed.Results)
-                if (r.Index >= 0 && r.Index < chunk.Count)
-                    result[chunk[r.Index].Index] =
-                        new UnitVerdict(chunk[r.Index].Index, Normalize(r.Verdict), r.Reason ?? string.Empty);
+            if (_promptVersion == "v2")
+            {
+                var parsed = JsonSerializer.Deserialize<EnvelopeV2>(json, Json);
+                if (parsed?.Results is null) return;
+                foreach (var r in parsed.Results)
+                    if (r.Index >= 0 && r.Index < chunk.Count)
+                    {
+                        // Evidenz + Begründung in den Reason-String falten (Output-Typ bleibt stabil).
+                        var reason = $"[{(string.IsNullOrWhiteSpace(r.Evidence) ? "—" : r.Evidence)}] {r.Reasoning}".Trim();
+                        result[chunk[r.Index].Index] = new UnitVerdict(chunk[r.Index].Index, Normalize(r.Verdict), reason);
+                    }
+            }
+            else
+            {
+                var parsed = JsonSerializer.Deserialize<Envelope>(json, Json);
+                if (parsed?.Results is null) return;
+                foreach (var r in parsed.Results)
+                    if (r.Index >= 0 && r.Index < chunk.Count)
+                        result[chunk[r.Index].Index] =
+                            new UnitVerdict(chunk[r.Index].Index, Normalize(r.Verdict), r.Reason ?? string.Empty);
+            }
         }
         catch (JsonException) { /* Chunk unbeantwortet -> oben als 'unclassified' sichtbar */ }
     }
@@ -195,4 +279,12 @@ public sealed class UnitClassifier
         [property: JsonPropertyName("index")] int Index,
         [property: JsonPropertyName("verdict")] string? Verdict,
         [property: JsonPropertyName("reason")] string? Reason);
+
+    private sealed record EnvelopeV2([property: JsonPropertyName("results")] List<ResultV2>? Results);
+
+    private sealed record ResultV2(
+        [property: JsonPropertyName("index")] int Index,
+        [property: JsonPropertyName("evidence")] string? Evidence,
+        [property: JsonPropertyName("reasoning")] string? Reasoning,
+        [property: JsonPropertyName("verdict")] string? Verdict);
 }

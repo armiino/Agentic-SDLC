@@ -1,0 +1,81 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-23T15:50:36.314665Z",
+  "evaluationStatus": "ok",
+  "errorScore": 4,
+  "needsRepair": true,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 4; KRITISCH=0; needsRepair=True (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 2,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 0 confirmed; 2 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 2,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [GERING\u2192GERING] (partial: \u0022Im Transkript wird Flutter Version 3.13.9 und Flutter 3.1.5 genannt (Abschnitt 6), wobei 3.1.5 eine \u00E4ltere Version ist. Es wird empfohlen, dass alle dieselben V\u2026\u0022): [GERING] Artefakt: \u0022Flutter Version 3.13.9 und Flutter 3.1.5\u0022 | Transkript: \u0022Flutter Version 3.13.9 und Flutter 3.1.5 werden im Transkript genannt, aber Flutter 3.1.5 ist eine \u00E4ltere Version und die Kombination der beiden Versionen ist inkonsistent bzw. nicht plausibel.\u0022 | Die im Transkript genannten Flutter-Versionen sind widerspr\u00FCchlich und nicht konsistent, daher ist die konkrete Angabe im Artefakt als falsche Festlegung zu werten."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [GERING\u2192GERING] (partial: \u0022Im Transkript wird Firebase Firestore als Datenbank empfohlen und als einfach zu nutzen beschrieben (Abschnitt 6). Es wird aber auch erw\u00E4hnt, dass man zun\u00E4chst \u2026\u0022): [GERING] Artefakt: \u0022Firebase Firestore von Google als Datenbank\u0022 | Transkript: \u0022Im Transkript wird Firebase Firestore als Empfehlung genannt, aber es gibt keine abschlie\u00DFende Entscheidung oder Festlegung, ob diese Datenbank tats\u00E4chlich verwendet wird.\u0022 | Die Risikoanalyse nennt Firebase Firestore als Datenbank, obwohl im Transkript keine finale Entscheidung getroffen wurde, somit ist die konkrete Festlegung im Artefakt nicht durch das Transkript gedeckt."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 1 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 1,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Das Artefakt formuliert die Nutzerkontenvergabe als kritisch und sicherheitsrelevant, nennt aber keine abschlie\u00DFende oder finale L\u00F6sung. Es spricht von \u0027kritisc\u2026\u0022): [MITTEL] Artefakt: \u0022Kontrollierte Nutzerkontenvergabe ohne \u00F6ffentliche Registrierung\nDie sichere Verwaltung der Nutzerkonten ist kritisch, insbesondere um unbefugten Zugriff zu verhindern.\u0022 | Transkript: \u0022Speaker 2: \u0027Wir haben uns das aber so \u00FCberlegt, dass wir eine Login-Seite programmieren, auf der man sich nur einloggen kann, wenn man einen Account zugewiesen bekommen hat. Man hat also nicht die M\u00F6glichkeit, sich die App runterzuladen und sich zu registrieren und sich so einen Account anzulegen.\u0027\n\nSpeaker 1: \u0027Ich denke, es w\u00E4re echt sicherer, wenn nur der Admin die Accounts erstellt und verwaltet.\u0027\n\nEs wurde jedoch offen gelassen, wie genau die Rechteverwaltung und die Umsetzung der Zugriffskontrolle erfolgen soll, und es wurde kein abschlie\u00DFender Entschluss oder eine finale L\u00F6sung pr\u00E4sentiert.\u0022 | Das Artefakt stellt die Nutzerkontenvergabe als kontrolliert und sicher dar, obwohl im Transkript die genaue Umsetzung und Rechteverwaltung noch offen und nicht final gekl\u00E4rt sind."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 1,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 1 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Das Thema der Zugriffsrechte und Sichtbarkeit der Profile je nach Einrichtung: \u0022Wie wird das geregelt zwischen den unterschiedlichen Einrichtungen? ... Also hat jeder Mitarbeiter in jeder Einrichtung Einsicht auf alle Profile der Beeintr\u00E4chtigten oder nur auf die in dem Haus, in dem er t\u00E4tig ist?\u0022 und \u0022Aufgrund von Datenschutz sollte es so geregelt sein, dass es nicht \u00FCbergreifend ist. Also ein Mitarbeiter aus dem Salzburger sollte nur diese Profile sehen von den Bewohnern, die auch tats\u00E4chlich im Salzburger Weg sind.\u0022\u0022 | Das Risiko bez\u00FCglich der differenzierten Zugriffsrechte und Sichtbarkeit der Profile je nach Einrichtung ist im Transkript als Unsicherheit/Konflikt erkennbar, aber im Artefakt nicht aufgef\u00FChrt."
+        }
+      ]
+    }
+  ]
+}

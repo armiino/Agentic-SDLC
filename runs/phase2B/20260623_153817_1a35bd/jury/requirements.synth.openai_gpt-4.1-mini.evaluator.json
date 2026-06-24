@@ -1,0 +1,89 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "requirements.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-23T15:41:56.323282Z",
+  "evaluationStatus": "ok",
+  "errorScore": 3,
+  "needsRepair": false,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 3; KRITISCH=0; needsRepair=False (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 1,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 0 confirmed; 1 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 1,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Speaker 2: \u0022Ja, daf\u00FCr habe ich dann die NoSQLite Datenbank verwendet. Ich habe mir das so vorgestellt, dass die App beim Aufrufen einer Seite die Sachen aus Fir\u2026\u0022): [GERING] Artefakt: \u0022Verwendung von Firebase Firestore als Cloud-Datenbank mit lokaler Zwischenspeicherung.\u0022 | Transkript: \u0022Speaker 2: \u0022Ja, daf\u00FCr habe ich dann die NoSQLite Datenbank verwendet. Ich habe mir das so vorgestellt, dass die App beim Aufrufen einer Seite die Sachen aus Firebase l\u00E4dt und dann lokal speichert und nicht immer alles erneut aus Firebase l\u00E4dt.\u0022 Speaker 1: \u0022Oh, okay. Also du meinst die NoSQLite Datenbank.\u0022\u0022 | Im Transkript wird die lokale Zwischenspeicherung mit einer NoSQLite-Datenbank erw\u00E4hnt, die als Erg\u00E4nzung zu Firebase genutzt wird. Das Artefakt nennt nur Firebase Firestore mit lokaler Zwischenspeicherung, ohne die NoSQLite-Datenbank zu erw\u00E4hnen, was eine unvollst\u00E4ndige oder falsche Darstellung der geplanten Architektur ist."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 4 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 4,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Mehrstufiges Accountsystem mit den Rollen Admin, User und Bewohner.\u0022): [MITTEL] Artefakt: \u0022Mehrstufiges Accountsystem mit den Rollen Admin, User und Bewohner.\u0022 | Transkript: \u0022Dieser Bewohner-Account sollte aber spezielle Rechte haben und auch nur sein eigenes Profil in der Profil\u00FCbersicht, wo alle Profile gelistet sind, sehen.\u0022 | Das Transkript l\u00E4sst offen, wie genau die Rechte der Bewohner-Accounts ausgestaltet werden, insbesondere ob sie nur ihr eigenes Profil sehen d\u00FCrfen. Das Artefakt stellt dies als gesetzt dar, obwohl es noch nicht final gekl\u00E4rt ist."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Unterst\u00FCtzung mehrerer Einrichtungen mit differenziertem Zugriff auf Daten.\u0022): [MITTEL] Artefakt: \u0022Unterst\u00FCtzung mehrerer Einrichtungen mit differenziertem Zugriff auf Daten.\u0022 | Transkript: \u0022Wir werden uns einen Weg \u00FCberlegen, wie man das l\u00F6sen k\u00F6nnte und bis zum n\u00E4chsten Treffen erarbeiten.\u0022 | Im Transkript ist die genaue Regelung der differenzierten Zugriffsrechte bei mehreren Einrichtungen noch offen und wird erst erarbeitet. Das Artefakt stellt diese Anforderung jedoch als gesetzt dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Die Nutzung von Firebase Firestore als Cloud-Datenbank ist vorgegeben.\u0022): [MITTEL] Artefakt: \u0022Die Nutzung von Firebase Firestore als Cloud-Datenbank ist vorgegeben.\u0022 | Transkript: \u0022Wir m\u00FCssen kl\u00E4ren, ob die Daten aus der Cloud dann lokal auf dem Handy gespeichert werden k\u00F6nnen oder wie das l\u00E4uft.\u0022 | Die Entscheidung f\u00FCr Firebase Firestore ist im Transkript noch nicht final getroffen, sondern wird vorgeschlagen und diskutiert. Das Artefakt stellt die Nutzung als verbindlich dar."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022Precheck: Offenheitsmarker im Artefakt-Zitat (\u0022Die Einbindung von Videos in den Kommunikationsseiten wird noch abgestimmt und ist nicht final entschieden.\u0022).\u0022): [MITTEL] Artefakt: \u0022Die Einbindung von Videos in den Kommunikationsseiten wird noch abgestimmt und ist nicht final entschieden.\u0022 | Transkript: \u0022Wir sollten die Videofunktionalit\u00E4ten in die Kommunikationsseiten einbauen ... Das nehmen wir in die Anforderungen auf.\u0022 | Das Transkript zeigt, dass die Integration der Videos in die Kommunikationsseiten noch abgestimmt wird und nicht final ist. Das Artefakt gibt dies als feststehende Anforderung an."
+        }
+      ]
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 1,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 1 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 1,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Warning",
+          "message": "[MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Wir k\u00F6nnen auch gerne in mehrere Einrichtungen fahren, um ein gr\u00F6\u00DFeres Gesamtbild der Einrichtung-NoName zu schaffen.\u0022 | Das Artefakt erw\u00E4hnt zwar Unterst\u00FCtzung mehrerer Einrichtungen, aber es fehlt eine explizite Anforderung zur Erfassung oder Ber\u00FCcksichtigung eines gr\u00F6\u00DFeren Gesamtbilds \u00FCber mehrere Einrichtungen hinweg, wie im Transkript als M\u00F6glichkeit genannt."
+        }
+      ]
+    }
+  ]
+}

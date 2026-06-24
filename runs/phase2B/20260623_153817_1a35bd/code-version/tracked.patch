@@ -1,0 +1,476 @@
+diff --git a/.gitignore b/.gitignore
+index a2a2da3..f315b6c 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -43,6 +43,14 @@ Icon?
+ .env
+ .env.local
+ .env.old
++
++# --- Local working notes ---
++todos.md
++infoforclaude.txt
++CLAUDE.md
+ Phasen_KNOWHOW
+ phase1notes
+ phase2notes
++analyse
++commit-rules.md
++NextStep
+\ No newline at end of file
+diff --git a/AgenticSdlc.Host/Phases/Phase2/Evaluation/Review/GatePolicy.cs b/AgenticSdlc.Host/Phases/Phase2/Evaluation/Review/GatePolicy.cs
+index 406daa0..725739f 100644
+--- a/AgenticSdlc.Host/Phases/Phase2/Evaluation/Review/GatePolicy.cs
++++ b/AgenticSdlc.Host/Phases/Phase2/Evaluation/Review/GatePolicy.cs
+@@ -15,42 +15,67 @@ public sealed record GateResult(
+ /// Leitet deterministisch eine <see cref="GateResult"/> aus einem <see cref="ReviewResult"/> ab.
+ /// </summary>
+ /// <remarks>
+-/// **Platzhalter-Policy (V1).** Einheitliche, mess-basierte Regel; die echte, konfigurierbare und
+-/// **pro Artefakttyp** eingefrorene Policy (Schwellen, Repair-Limits) ist Phase-3-/A-B-C-Arbeit.
+-/// Regel: technisch fehlgeschlagen → Failed; mind. ein bestätigter/partieller Defekt → Repair;
+-/// nur unverifizierte Kandidaten oder unvollständige Messung (Partial) -> HumanReview.. sonst Pass.
+-/// Unverifizierte Findings lösen bewusst **kein** auto-Repair aus (erst Verifikation/Mensch).
++/// **v2 — severity-gestuft.** Motivation (EXP-REVIEW-1 Teil A): die V1-Regel „irgendein bestätigter Defekt
++/// → Repair" ignorierte die Severity → da Coverage/Per-Item ubiquitär bestätigte Defekte erzeugen,
++/// entschied sie für JEDES Artefakt Repair (12/12) und trug keine Information mehr. v2 macht die **Severity
++/// zur Hauptachse**: nur ein **kritischer** geglaubter Defekt (z. B. Halluzination) erzwingt auto-Repair;
++/// die allgegenwärtigen Medium/Low-Defekte werden sichtbar gemacht (PassWithWarnings), nicht blockierend.
++///
++/// Präzedenz (von oben): Failed → Repair(kritisch) → HumanReview(unverifiziert/unvollständig) →
++/// PassWithWarnings(Medium/Low) → Pass. „Geglaubt" = <see cref="VerificationStatus.Confirmed"/> oder
++/// <see cref="VerificationStatus.Partial"/>; <see cref="VerificationStatus.Unverified"/> löst bewusst KEIN
++/// auto-Repair aus (erst Verifikation/Mensch); <see cref="DefectSeverity.Info"/> ist unter der Warn-Schwelle.
++///
++/// Das ist eine **Policy-Wahl, kein an Daten optimiertes Schwellenwerk** (es gibt keine Ground Truth für
++/// „hätte repariert werden müssen"). Zahlen-Schwellen (z. B. „viele Mediums → eskalieren") + pro-Artefakttyp
++/// eingefrorene Policy bleiben bewusst offen (Phase-3-/A-B-C-Arbeit), bis gelabelte Daten existieren.
+ /// </remarks>
+ public sealed class GatePolicy
+ {
+-    public const string Version = "placeholder-v1";
++    public const string Version = "v2-severity";
+ 
+     public GateResult Evaluate(ReviewResult review)
+     {
+         var reasons = new List<string>();
+ 
++        // 1. Technisch fehlgeschlagene Messung → Failed (überstimmt alles).
+         if (review.Status == ReviewStatus.Failed)
+         {
+             reasons.Add("ReviewStatus=Failed: Messung technisch nicht belastbar.");
+             return new GateResult(GateDecision.Failed, Version, reasons);
+         }
+ 
+-        var actionable = review.Defects
+-            .Count(d => d.VerificationStatus is VerificationStatus.Confirmed or VerificationStatus.Partial);
+-        if (actionable > 0)
++        // "Geglaubt" = der Defekt wird für (mindestens teilweise) real gehalten.
++        static bool IsBelieved(ReviewDefect d) =>
++            d.VerificationStatus is VerificationStatus.Confirmed or VerificationStatus.Partial;
++
++        // 2. Kritischer geglaubter Defekt (z. B. Grounding.Fabricated) → Repair (unstrittig must-fix).
++        var critical = review.Defects.Count(d => IsBelieved(d) && d.Severity == DefectSeverity.Critical);
++        if (critical > 0)
+         {
+-            reasons.Add($"{actionable} bestätigte/partielle Defekte → Repair.");
++            reasons.Add($"{critical} kritische(r) bestätigte Defekt(e) → Repair.");
+             return new GateResult(GateDecision.Repair, Version, reasons);
+         }
+ 
++        // 3. Nicht auto-entscheidbar: unverifizierte Kandidaten ODER unvollständige Messung → HumanReview.
+         var unverified = review.Defects.Count(d => d.VerificationStatus == VerificationStatus.Unverified);
+         if (unverified > 0 || review.Status == ReviewStatus.Partial)
+         {
+             if (unverified > 0) reasons.Add($"{unverified} unverifizierte Kandidaten → erst Verifikation/Mensch.");
+-            if (review.Status == ReviewStatus.Partial) reasons.Add("Messung unvollständig (Partial).");
++            if (review.Status == ReviewStatus.Partial) reasons.Add("Messung unvollständig (Partial) → Mensch.");
+             return new GateResult(GateDecision.HumanReview, Version, reasons);
+         }
+ 
++        // 4. Nur nicht-kritische geglaubte Defekte (Medium/Low), Messung vollständig → PassWithWarnings.
++        var minor = review.Defects.Count(d => IsBelieved(d)
++            && d.Severity is DefectSeverity.Medium or DefectSeverity.Low);
++        if (minor > 0)
++        {
++            reasons.Add($"{minor} nicht-kritische Defekte (Medium/Low) → PassWithWarnings.");
++            return new GateResult(GateDecision.PassWithWarnings, Version, reasons);
++        }
++
++        // 5. Keine actionable Defekte (höchstens Info), Messung vollständig → Pass.
+         reasons.Add("Keine actionable Defekte, Messung vollständig.");
+         return new GateResult(GateDecision.Pass, Version, reasons);
+     }
+diff --git a/AgenticSdlc.Host/Program.cs b/AgenticSdlc.Host/Program.cs
+index 559046c..b0601a7 100644
+--- a/AgenticSdlc.Host/Program.cs
++++ b/AgenticSdlc.Host/Program.cs
+@@ -93,6 +93,13 @@ if (args.Length > 0 && string.Equals(args[0], "topic-verify", StringComparison.O
+     return;
+ }
+ 
++// C1: zusammengesetzter Review (Grounding + Coverage) → EIN ReviewResult pro Artefakt (offline, ReviewService).
++if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.OrdinalIgnoreCase))
++{
++    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ReviewRunner.RunAsync(args, settings, repoRoot);
++    return;
++}
++
+ var runId = RunId.New();
+ // Output-Ordner unter runs/. Logisch bleibt es Phase 2.1 (AgentPhase); die Strategie-Varianten
+ // bekommen aber eigene Unterordner, damit A/B/C-Runs auf der Platte getrennt liegen
+diff --git a/AgenticSdlc.Tests/Review/GatePolicyTests.cs b/AgenticSdlc.Tests/Review/GatePolicyTests.cs
+index 8bf145b..626d592 100644
+--- a/AgenticSdlc.Tests/Review/GatePolicyTests.cs
++++ b/AgenticSdlc.Tests/Review/GatePolicyTests.cs
+@@ -4,17 +4,17 @@ using Xunit;
+ namespace AgenticSdlc.Tests.Review;
+ 
+ /// <summary>
+-/// Z5.1-Nachweis: Die GatePolicy leitet die Workflow-Entscheidung deterministisch aus einem
+-/// ReviewResult ab (getrennt von der Messung). Unverifizierte Kandidaten lösen kein Auto-Repair aus.
++/// GatePolicy-v2-Nachweis (severity-gestuft): die Entscheidung wird deterministisch aus einem ReviewResult
++/// abgeleitet (getrennt von der Messung). Nur ein KRITISCHER geglaubter Defekt erzwingt Repair; Medium/Low
++/// → PassWithWarnings; unverifiziert/unvollständig → HumanReview; unverifizierte lösen kein Auto-Repair aus.
+ /// </summary>
+ public sealed class GatePolicyTests
+ {
+-    private static ReviewResult R(ReviewStatus status, params VerificationStatus[] verdicts)
++    private static ReviewDefect Defect(DefectSeverity sev, VerificationStatus vs, int i = 0)
++        => new($"D{i}", ReviewAxis.Grounding, "Grounding.X", sev, vs, "reason");
++
++    private static ReviewResult R(ReviewStatus status, params ReviewDefect[] defects)
+     {
+-        var defects = verdicts
+-            .Select((v, i) => new ReviewDefect($"D{i}", ReviewAxis.Grounding, "Grounding.X",
+-                DefectSeverity.Medium, v, "reason"))
+-            .ToList();
+         var metrics = new ReviewMetrics(null, null, null, 0, 0, 0, 0, 0);
+         return new ReviewResult("a.md", "a", status, metrics, new[] { ReviewAxis.Grounding },
+             defects, System.Array.Empty<ReviewDiagnostic>(), "v", "m", System.DateTimeOffset.UtcNow);
+@@ -24,18 +24,35 @@ public sealed class GatePolicyTests
+ 
+     [Fact]
+     public void Failed_Status_Wins_Over_Defects()
+-        => Assert.Equal(GateDecision.Failed, Policy.Evaluate(R(ReviewStatus.Failed, VerificationStatus.Confirmed)).Decision);
++        => Assert.Equal(GateDecision.Failed,
++            Policy.Evaluate(R(ReviewStatus.Failed, Defect(DefectSeverity.Critical, VerificationStatus.Confirmed))).Decision);
++
++    [Fact]
++    public void Critical_Confirmed_Triggers_Repair()
++        => Assert.Equal(GateDecision.Repair,
++            Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Critical, VerificationStatus.Confirmed))).Decision);
+ 
+     [Fact]
+-    public void Confirmed_Defect_Triggers_Repair()
+-        => Assert.Equal(GateDecision.Repair, Policy.Evaluate(R(ReviewStatus.Succeeded, VerificationStatus.Confirmed)).Decision);
++    public void Critical_Wins_Over_Partial_Measurement()
++        => Assert.Equal(GateDecision.Repair,
++            Policy.Evaluate(R(ReviewStatus.Partial, Defect(DefectSeverity.Critical, VerificationStatus.Confirmed))).Decision);
++
++    [Fact]
++    public void Medium_Or_Low_Confirmed_Is_PassWithWarnings_Not_Repair()
++    {
++        Assert.Equal(GateDecision.PassWithWarnings,
++            Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Medium, VerificationStatus.Confirmed))).Decision);
++        Assert.Equal(GateDecision.PassWithWarnings,
++            Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Low, VerificationStatus.Confirmed))).Decision);
++    }
+ 
+     [Fact]
+     public void Unverified_Only_Goes_To_HumanReview()
+-        => Assert.Equal(GateDecision.HumanReview, Policy.Evaluate(R(ReviewStatus.Succeeded, VerificationStatus.Unverified)).Decision);
++        => Assert.Equal(GateDecision.HumanReview,
++            Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Medium, VerificationStatus.Unverified))).Decision);
+ 
+     [Fact]
+-    public void Partial_Without_Actionable_Goes_To_HumanReview()
++    public void Partial_Without_Critical_Goes_To_HumanReview()
+         => Assert.Equal(GateDecision.HumanReview, Policy.Evaluate(R(ReviewStatus.Partial)).Decision);
+ 
+     [Fact]
+@@ -45,7 +62,7 @@ public sealed class GatePolicyTests
+     [Fact]
+     public void Result_Carries_PolicyVersion_And_Reasons()
+     {
+-        var g = Policy.Evaluate(R(ReviewStatus.Succeeded, VerificationStatus.Confirmed));
++        var g = Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Critical, VerificationStatus.Confirmed)));
+         Assert.Equal(GatePolicy.Version, g.PolicyVersion);
+         Assert.NotEmpty(g.Reasons);
+     }
+diff --git a/docs/architecture.md b/docs/architecture.md
+deleted file mode 100644
+index 85f09e5..0000000
+--- a/docs/architecture.md
++++ /dev/null
+@@ -1,72 +0,0 @@
+-# Architekturüberblick – Kundenportal (MVP)
+-
+-## 1. Systemkontext
+-
+-- **Endnutzer**: Vertriebsmitarbeiter (Sales), Administratoren, Kunden (via Browser/App).
+-- **Externe Systeme**:
+-  - **SAP ERP** – Lesezugriff auf Produkt‑, Preis‑ und Rabattdaten (keine Schreibrechte im MVP).
+-  - **E‑Mail‑Provider** – Versand von Double‑Opt‑In‑Mails, Benachrichtigungen und PDF‑Download‑Links.
+-  - **Identity Provider (optional)** – Azure AD oder Google für zukünftiges SSO.
+-  - **Hosting‑Provider (EU‑Only Managed Service)** – Bereitstellung von Compute, Managed‑DB und Storage in einer EU‑Region.
+-- **Interne Stakeholder**: Product Owner, Architekt, Datenschutz, Finance, IT‑Operations, Support.
+-
+-## 2. Wichtige Komponenten
+-
+-| Komponente | Verantwortung | Hinweis |
+-|-----------|---------------|--------|
+-| **Web‑Frontend** | React‑/Vue‑basierte SPA, liefert UI in DE/EN, greift über HTTPS auf das API‑Gateway zu. | UI‑Internationalisierung (i18n) für DE/EN bereits vorgesehen. |
+-| **API‑Gateway / Proxy** | Einstiegspunkt für alle REST‑Aufrufe, übernimmt Auth‑Validierung, Rate‑Limiting, TLS‑Termination. | Ersatz‑Proxy (z. B. Nginx) wird bis zum API‑Gateway‑Release eingesetzt. |
+-| **Auth‑Service** | Verwaltung von Benutzerkonten, Double‑Opt‑In‑Workflow, Passwort‑Hashing, Token‑Ausgabe (JWT). | Optionaler SSO‑Connector wird als Plug‑in geplant. |
+-| **RBAC‑Service** | Rollen‑ und Berechtigungsprüfung (Admin, Sales, Kunde). | Konfiguration über Policy‑Store (z. B. JSON‑Datei, später DB). |
+-| **Offer‑Service** | Geschäftslogik für Angebotserstellung, liest Produkt‑/Preisdaten aus SAP, speichert Angebote im DB. | Rabatt‑Freigabelogik muss später konfigurierbar sein (offene Entscheidung). |
+-| **Invoice/Order Service** | Stellt Rechnungs‑ und Bestellungs‑PDFs bereit, verwaltet Download‑Links. | PDF‑Erzeugung via templating engine (z. B. wkhtmltopdf). |
+-| **Audit‑Log Service** | Unveränderbare Protokollierung von Login, Angebots‑/Rechnungs‑Events. | Schreib‑only, immutable storage (z. B. Append‑Only‑Log). |
+-| **Managed DB (EU‑Only)** | Persistenz für Nutzer‑, Angebots‑, Rechnungs‑ und Audit‑Daten. | Keine neue Datenbank, bestehender Managed‑Service wird genutzt. |
+-| **Backup & DR Service** | Tägliche Snapshots, Wiederherstellung innerhalb 4 h, Datenverlust ≤ 1 h. |
+-| **Monitoring & Alerting** | Technisches Monitoring (Performance, Infrastruktur) und separates Audit‑Monitoring (keine PII). |
+-
+-## 3. Schnittstellen / Integrationspunkte
+-
+-- **Frontend ↔ API‑Gateway**: HTTPS/REST (JSON), JWT‑basiert für Authentifizierung.
+-- **API‑Gateway ↔ Microservices**: interne HTTP‑Aufrufe (REST) innerhalb des privaten Netzwerks.
+-- **Offer‑Service ↔ SAP**: REST‑ oder OData‑Client, read‑only Zugriff auf Produkt‑/Preis‑Endpunkte.
+-- **Invoice Service ↔ Storage**: Schreib‑/Lesezugriff auf Blob‑Storage (z. B. S3‑kompatibel) für PDFs.
+-- **Auth‑Service ↔ E‑Mail‑Provider**: SMTP / API für Double‑Opt‑In‑Mails.
+-- **Optional SSO‑Connector ↔ Identity Provider**: OpenID Connect / SAML.
+-- **Backup Service ↔ Managed DB**: automatisierte Snapshot‑API des Cloud‑Providers.
+-- **Monitoring ↔ Services**: Export von Metriken (Prometheus) und Logs (ELK) – Trennung von technischen und audit‑relevanten Daten.
+-
+-## 4. Daten‑ und Sicherheitsaspekte
+-
+-- **Datenschutz (DSGVO)**:
+-  - Double‑Opt‑In bei Registrierung, klare Einwilligungs‑Logs.
+-  - Datenminimierung: Nur notwendige personenbezogene Daten werden gespeichert (E‑Mail, Name, Rollen). 
+-  - Löschen‑Mechanismus für Kunden‑ und Log‑Daten gemäß noch zu definierender Retention‑Policy.
+-  - Audit‑Log ist unveränderlich, verschlüsselt im Speicher und nur lesbar durch autorisierte Rollen.
+-- **Sicherheit**:
+-  - TLS 1.2+ für alle Netzwerkverbindungen.
+-  - JWT‑Signatur mit kurzen Lebenszeiten, Refresh‑Token‑Mechanismus.
+-  - Basis‑Rate‑Limiting im API‑Gateway (z. B. 100 Requests/Minute pro IP).
+-  - Secrets‑Management via Cloud‑KMS (Passwörter, DB‑Credentials, JWT‑Signing‑Key).
+-  - Regelmäßige Security‑Reviews (Threat‑Modelling, Pen‑Tests) – Ziel < 6 Wochen vor Go‑Live.
+-- **Backup & Disaster Recovery**:
+-  - Tägliche vollständige Backups, Aufbewahrung 30 Tage.
+-  - RPO = 1 Stunde, RTO = 4 Stunden (nach Freigabe durch Operations).
+-- **Verfügbarkeit**:
+-  - Ziel‑Uptime 99,5 % im Produktions‑Umfeld, redundante Pods/Instanzen hinter Load‑Balancer.
+-
+-## 5. Offene Architekturentscheidungen
+-
+-1. **Ersatz‑API‑Gateway**: Welcher Proxy (NGINX, Traefik, API‑Management‑Lite) wird bis zum offiziellen Gateway eingesetzt?
+-2. **Managed DB‑Anbieter**: Welcher EU‑only Managed‑DB‑Service (z. B. Azure‑PostgreSQL, AWS‑RDS EU‑Region) wird final gewählt?
+-3. **SSO‑Integration**: Ob Azure AD, Google oder ein anderer IdP unterstützt wird und wie das Fallback‑Login ohne SSO aussehen soll.
+-4. **Mehrwährung**: Ob CHF‑Preisanzeige bereits im MVP unterstützt wird oder erst in Phase 2.
+-5. **Retention‑Policy**: Konkrete Aufbewahrungsfristen für Angebote, Rechnungen und Audit‑Logs (z. B. 10 Jahre für Rechnungen).
+-6. **Audit‑Log‑Speicher**: Ob ein Append‑Only‑Log‑Service (z. B. Cloud‑Watch Logs, Azure Log Analytics) oder ein relationaler Table verwendet wird.
+-7. **Backup‑Dienst**: Welche konkreten Service‑Level‑Agreements (SLA) und Kosten‑Modelle werden akzeptiert?
+-8. **Monitoring‑Trennung**: Wie wird sichergestellt, dass PII nicht in das technische Monitoring‑System gelangt?
+-9. **Rate‑Limiting Details**: Ob IP‑basiert, Nutzer‑basiert oder kombinierte Policies eingesetzt werden.
+-10. **Support‑Kontaktformular**: Wie werden dort erhobene Daten gespeichert, welche Löschfristen gelten?
+-
+----
+-*Dieser Architekturüberblick basiert auf den bereitgestellten Anforderungen, Risiken und Annahmen. Weitere Detailentwürfe (Komponenten‑Diagramme, Datenfluss‑Diagramme) werden in nachfolgenden Phasen erstellt.*
+diff --git a/docs/open-questions.md b/docs/open-questions.md
+deleted file mode 100644
+index 0eaff88..0000000
+--- a/docs/open-questions.md
++++ /dev/null
+@@ -1,51 +0,0 @@
+-# Offene Fragen und Klärungsbedarfe
+-
+-## Fachliche Fragen
+-
+-| Frage | Quelle | Mögliche Ansprechpartner* | Priorität |
+-|------|--------|---------------------------|----------|
+-| Welche Region (Deutschland oder Schweiz) ist der Pilotkunde? Wie wirkt sich das auf Währung (EUR/CHF) und EU‑Only‑Hosting aus? | Kontext, Risks, Architecture | Anna (Product Owner), Farid (IT Operations) | Hoch |
+-| Welche Schwellenwerte und Rollen sind für die Rabatt‑Freigabelogik erforderlich? (z. B. >15 % Rabatt, Freigabe durch Finance‑ oder Admin‑Rolle) | Requirements, Risks | Eva (Finance), Ben (Architekt) | Hoch |
+-| Welche konkreten KPIs sollen gemessen werden (Conversion‑Rate, Time‑to‑Offer, etc.)? | Kontext, Requirements | Anna (Product Owner) | Mittel |
+-| Wie soll das Support‑Kontaktformular technisch umgesetzt werden und welche Daten werden dort gespeichert? | Requirements, Risks | David (Customer Support), Clara (Compliance) | Mittel |
+-| Welche Aufbewahrungsfristen (Retention‑Policy) gelten für Angebote, Rechnungen und Audit‑Logs? | Risks, Architecture | Clara (Compliance), Farid (IT Operations) | Hoch |
+-| Müssen für das MVP weitere Sprachen oder Währungen unterstützt werden (Englisch‑UI, CHF‑Preise)? | Kontext, Risks | Anna (Product Owner), Ben (Architekt) | Mittel |
+-
+-## Technische Fragen
+-
+-| Frage | Quelle | Mögliche Ansprechpartner* | Priorität |
+-|------|--------|---------------------------|----------|
+-| Welche kurzfristige Alternative zum geplanten API‑Gateway wird bis zum MVP‑Release eingesetzt (z. B. Nginx, Traefik)? | Architecture, Risks | Ben (Architekt), Farid (IT Operations) | Hoch |
+-| Welcher Managed‑DB‑Service (EU‑only) wird letztlich verwendet? Welche Kosten entstehen? | Constraints, Risks | Farid (IT Operations) | Hoch |
+-| Wie werden Backup‑Parameter finalisiert (RPO = 1 h, RTO = 4 h) und welche SLA‑Verträge werden benötigt? | NFR3, Risks | Farid (IT Operations) | Hoch |
+-| Wie wird das Rate‑Limiting im Ersatz‑Proxy umgesetzt (IP‑basiert, Nutzer‑basiert)? | NFR4, Architecture | Ben (Architekt) | Mittel |
+-| Wie wird die Trennung von technischem Monitoring und Audit‑Logs technisch garantiert (keine PII im Monitoring)? | NFR4, Architecture | Clara (Compliance), Ben (Architekt) | Hoch |
+-| Welche Testdaten‑Strategie (synthetische SAP‑Daten, Maskierung) wird in Dev/Test‑Umgebungen verwendet? | Risks, Architecture | Ben (Architekt), Eva (Finance) | Mittel |
+-| Wie wird das SSO‑Fallback‑Login ohne Azure AD/Google realisiert? | Requirements | Ben (Architekt) | Niedrig |
+-
+-## Widersprüche, die geklärt werden müssen
+-
+-- **Zeitplan vs. Security‑Review**: Das Security‑Review dauert >6 Wochen, kollidiert stark mit der 8‑Wochen‑MVP‑Deadline. Wie kann das Review beschleunigt oder parallelisiert werden? (Clara, Ben)
+-- **API‑Gateway‑Warteliste vs. MVP‑Start**: Der geplante API‑Gateway ist erst nach 6 Wochen verfügbar – das MVP muss mit einem Ersatz starten, was zusätzlichen Aufwand und mögliche Sicherheitslücken bedeutet. (Ben, Farid)
+-- **Budget vs. Managed Services**: Kosten für EU‑Only‑Hosting und Security‑Review sind noch nicht geschätzt – Gefahr von Budgetüberschreitung. (Anna, Farid)
+-- **Keine neue Datenbank vs. Persistenzanforderungen**: Nutzung eines bestehenden Managed‑DB‑Service kann bei steigendem Datenvolumen zu Performance‑Problemen führen. (Ben, Farid)
+-
+-## Fehlende Informationen
+-
+-- **Finale Kosten‑Schätzung** für Managed Services, Security‑Review und ggf. zusätzliche Infrastruktur (bis Freitag gefordert). 
+-- **Detailierte Retention‑Policy** für alle datenschutzrelevanten Artefakte. 
+-- **Konkretes SLA‑Modell** für Backup‑ und Disaster‑Recovery‑Service. 
+-- **Definition der KPI‑Metriken** für Erfolgsmessung. 
+-- **Auswahl und Konfiguration des Ersatz‑API‑Gateways** (Software, Sicherheitskonfiguration). 
+-- **Implementierungsdetails für das Support‑Kontaktformular** (Speicherort, Löschfristen). 
+-
+-## Mögliche Ansprechpartner / Rollen
+-
+-- **Anna** – Product Owner / Business Lead
+-- **Ben** – Architekt / Entwickler
+-- **Clara** – Datenschutz / Compliance
+-- **David** – Customer Support
+-- **Eva** – Finance
+-- **Farid** – IT Operations
+-
+-*Hinweis: Die genannten Ansprechpartner basieren auf den im Kontext angegebenen Rollen und können je nach Frage variieren.*
+diff --git a/docs/requirements.md b/docs/requirements.md
+deleted file mode 100644
+index 954ec35..0000000
+--- a/docs/requirements.md
++++ /dev/null
+@@ -1,55 +0,0 @@
+-## Functional Requirements
+-- **FR1 Benutzer‑Login**: Das System muss einen Login per E‑Mail und Passwort unterstützen, inklusive Double‑Opt‑In (Bestätigungs‑E‑Mail). Optional kann ein Single‑Sign‑On (Azure AD oder Google) integriert werden, wenn es bis zum MVP‑Rollout verfügbar ist. (Quelle: Projektziel, Stakeholder Anna & Ben)
+-- **FR2 Rollen‑ und Berechtigungskonzept**: Drei Rollen werden im MVP definiert: *Admin* (voller Zugriff), *Sales* (Angebotserstellung, Ansicht von Kunden‑ und Rechnungsdaten) und *Kunde* (Einblick in eigene Angebote, Rechnungen und Bestellungen). Rollenbasierte Zugriffskontrollen müssen auf allen API‑Endpunkten durchgesetzt werden. (Quelle: Unterziele, Stakeholder Anna, Ben)
+-- **FR3 Angebotserstellung**: Vertriebsmitarbeiter können ein Angebot erstellen. Das System greift lesend auf SAP‑Produkt‑ und Preisdaten zu, um Artikel, Preise und mögliche Rabatte anzuzeigen. Das erstellte Angebot wird im System gespeichert und kann vom Kunden eingesehen werden. (Quelle: Unterziele, Stakeholder Eva, Ben)
+-- **FR4 Rechnungs‑ und Bestellungs‑Download**: Kunden können ihre Rechnungen und Bestellungen als PDF herunterladen. Der Download‑Link ist nur für authentifizierte Kunden sichtbar. (Quelle: Unterziele, Stakeholder David)
+-- **FR5 Audit‑Trail**: Das System protokolliert mindestens die folgenden Ereignisse: Benutzer‑Login, Angebotserstellung, Angebotsänderung, Rechnungs‑/Bestellungs‑Download. Protokolle müssen unveränderbar und für die Dauer der gesetzlich geforderten Aufbewahrung aufbewahrt werden. (Quelle: Unterziele, Stakeholder Clara)
+-- **FR6 Mehrsprachigkeit (Deutsch/Englisch)**: Das UI muss zumindest deutsche und englische Texte bereitstellen. (Quelle: Fachliche Themen, Stakeholder Anna)
+-
+-## Non-functional Requirements
+-- **NFR1 DSGVO‑Konformität**: Alle personenbezogenen Daten müssen gemäß DSGVO verarbeitet werden. Double‑Opt‑In ist Pflicht, Datenminimierung ist zu beachten, und es muss ein Löschkonzept geben. (Quelle: DSGVO / Compliance, Stakeholder Clara)
+-- **NFR2 EU‑Only Hosting**: Das System muss ausschließlich in einer EU‑Region gehostet werden und ein Managed‑DB‑Service nutzen, der EU‑Datenschutz garantiert. (Quelle: Managed Services & EU‑Hosting, Stakeholder Farid)
+-- **NFR3 Backup & Disaster Recovery**: Tägliche Backups mit einer Wiederherstellungszeit von max. 4 Stunden (RTO) und einem maximalen Datenverlust von 1 Stunde (RPO) sind für sämtliche produktiven Daten vorzusehen. (Quelle: Backup & Disaster Recovery, Stakeholder Farid)
+-- **NFR4 Sicherheit**: Das System muss ein Rate‑Limiting auf API‑Ebene implementieren und sicherstellen, dass technische Logs keine personenbezogenen Daten enthalten. Ein Security‑Review muss vor dem Go‑Live abgeschlossen sein. (Quelle: Sicherheit & Review, Stakeholder Clara)
+-- **NFR5 Verfügbarkeit**: Ziel‑Verfügbarkeit von 99,5 % im Produktionsbetrieb während des MVP‑Zeitraums. (abgeleitet aus 8‑Wochen‑Deadline und kritischer Business‑Funktion)
+-- **NFR6 Performance**: Das Laden von Angebots‑ und Rechnungs‑Detailseiten darf nicht länger als 2 Sekunden bei durchschnittlicher Netzwerk‑Latenz von 100 ms dauern. (Annahme, da keine expliziten Vorgaben vorliegen)
+-
+-## Constraints/Compliance
+-- **C1 Zeitrahmen**: Das MVP muss innerhalb von 8 Wochen bereitgestellt werden – dies begrenzt Umfang und Priorisierung. (Quelle: Projektziel, Zeitplan)
+-- **C2 Infrastruktur‑Warteliste**: Das zentrale API‑Gateway steht erst nach 6 Wochen zur Verfügung; das MVP muss daher entweder mit einem vereinfachten Gateway‑Proxy starten oder eine Alternative evaluieren. (Quelle: API‑Layer & Gateway)
+-- **C3 Keine neue Datenbank**: Es dürfen keine eigens neu eingeführten Datenbanken genutzt werden; stattdessen wird ein bestehender Managed‑DB‑Service verwendet. (Quelle: Managed Services & EU‑Hosting)
+-- **C4 Security Review Dauer**: Der Security Review dauert >6 Wochen und überschneidet sich mit dem MVP‑Zeitplan – notwendige Maßnahmen müssen frühzeitig eingeleitet werden. (Quelle: Sicherheit & Review)
+-- **C5 Budgetrestriktion**: Managed Services und EU‑Only‑Hosting sind kostenintensiv; die Kosten müssen bis zum Freitag geschätzt werden. (Quelle: Offene Fragen)
+-
+-## Assumptions and Open Points
+-- **A1 Pilotkunde**: Es ist unklar, ob der Pilotkunde in Deutschland (EUR) oder in der Schweiz (CHF) ansässig ist – beeinflusst Währung, Hosting‑Region und ggf. zusätzliche Datenschutz‑Anforderungen.
+-- **A2 Rabatt‑Freigabelogik**: Die Schwelle für Freigaben (z. B. >15 % Rabatt) ist für das MVP noch nicht festgelegt; das System muss flexibel konfigurierbar sein.
+-- **A3 KPI‑Set**: Konkrete Kennzahlen (Conversion‑Rate, Time‑to‑Offer) sind noch nicht definiert – wird später vom Product Owner geliefert.
+-- **A4 Support‑Prozess**: Das Kontaktformular wird ohne Ticket‑System implementiert; Details zur Datenhaltung und Löschfristen bleiben offen.
+-- **A5 Retention‑Fristen**: Gesetzliche Aufbewahrungsfristen für Angebote, Rechnungen und Logs sind noch nicht spezifiziert.
+-- **A6 Backup‑RPO/RTO**: Vorgeschlagene Werte (RPO 1 h, RTO 4 h) basieren auf üblichen Praxis‑Standards, jedoch nicht final bestätigt.
+-- **A7 Testdatenstrategie**: Wie synthetische SAP‑Daten sicher in Test‑Umgebungen verwendet werden können, ist noch offen.
+-- **A8 API‑Gateway‑Alternative**: Kurzfristige Alternative (z. B. interner Reverse‑Proxy) wird noch geprüft.
+-- **A9 Mehrsprachigkeit & Mehrwährung**: Englisch‑UI wird bereitgestellt, CHF‑Preis‑Anzeige hängt vom Pilotkunden ab und ist noch offen.
+-
+-## Traceability
+-| ID | Requirement | Stakeholder(s) | Quelle |
+-|----|-------------|----------------|--------|
+-| FR1 | Benutzer‑Login mit Double‑Opt‑In | Anna, Ben | Projektziel – Unterziele 1 |
+-| FR2 | Rollen‑ und Berechtigungskonzept | Anna, Ben | Unterziele 4 |
+-| FR3 | Angebotserstellung (SAP‑Lesenzugriff) | Eva, Ben | Unterziele 2 |
+-| FR4 | Rechnungs‑/Bestellungs‑Download | David, Ben | Unterziele 3 |
+-| FR5 | Audit‑Trail für kritische Aktionen | Clara, Ben | Unterziele 5 |
+-| FR6 | Mehrsprachigkeit (DE/EN) | Anna | Fachliche Themen – Mehrsprachigkeit |
+-| NFR1 | DSGVO‑Konformität (Double‑Opt‑In, Löschkonzept) | Clara | DSGVO / Compliance |
+-| NFR2 | EU‑Only Hosting, Managed‑DB | Farid | Managed Services & EU‑Hosting |
+-| NFR3 | Backup & DR (RPO/RTO) | Farid | Backup & Disaster Recovery |
+-| NFR4 | Sicherheit (Rate‑Limiting, kein PII im Monitoring) | Clara | Sicherheit & Review |
+-| NFR5 | Verfügbarkeit 99,5 % | Anna, Ben | Projektziel – Zeitplan |
+-| NFR6 | Performance ≤2 s Seitenladezeit | Ben | Annahme basierend auf Usability‑Erwartungen |
+-| C1 | 8‑Wochen‑MVP‑Deadline | Anna | Projektziel – Zeitplan |
+-| C2 | API‑Gateway‑Warteliste 6 Wochen | Ben | API‑Layer & Gateway |
+-| C3 | Keine neue Datenbank | Farid | Managed Services & EU‑Hosting |
+-| C4 | Security Review >6 Wochen | Clara | Sicherheit & Review |
+-| C5 | Kosten‑Schätzung bis Freitag | Anna, Farid | Offene Fragen 3 |
+-| A1‑A9 | Offene Punkte (Pilotkunde, Rabatt‑Logik, KPIs, Support, Retention, Backup‑Details, Testdaten, Gateway‑Alternative, Mehrwährung) | Alle | Offene Fragen / Erkennbare Konflikte |
+diff --git a/docs/risks.md b/docs/risks.md
+deleted file mode 100644
+index fb1c404..0000000
+--- a/docs/risks.md
++++ /dev/null
+@@ -1,53 +0,0 @@
+-# Risiken für das Kundenportal (MVP)
+-
+-## 1. Fachliche Risiken
+-- **Unklare Pilotkunden‑Region**: Unklar, ob der Pilotkunde in Deutschland (EUR) oder Schweiz (CHF) sitzt → kann zu falscher Währungs‑ und Hosting‑Auswahl führen.
+-- **Rabatt‑Freigabelogik nicht definiert**: Fehlende Schwellenwerte (z. B. >15 % Rabatt) können zu fehlerhaften Freigaben oder Vertriebs‑Risiken führen.
+-- **Support‑Prozess ohne Ticket‑System**: Das reine Kontaktformular kann zu unübersichtlichen Anfragen und schlechter Service‑Qualität führen.
+-- **KPIs und Reporting offen**: Ohne klare KPI‑Definition ist Erfolgsmessung erschwert, was das Stakeholder‑Management gefährdet.
+-- **Mehrsprachigkeit / Mehrwährung**: Englisch‑UI ist geplant, CHF‑Preisanzeige unklar – kann zu Missverständnissen bei internationalen Nutzern führen.
+-
+-## 2. Technische Risiken
+-- **API‑Gateway‑Warteliste (6 Wochen)**: Der geplante Gateway steht erst nach 6 Wochen zur Verfügung – das MVP muss mit einem Ersatz (z. B. Reverse‑Proxy) starten, was zu erhöhtem Entwicklungsaufwand und Sicherheitslücken führen kann.
+-- **Security‑Review >6 Wochen**: Der Review überschneidet sich mit der 8‑Wochen‑Deadline – unvollständige Reviews können zu ungeprüften Schwachstellen führen.
+-- **Keine neue Datenbank**: Nutzung eines bestehenden Managed‑DB‑Service kann zu Leistungs‑ und Skalierbarkeitsproblemen führen, wenn das Datenvolumen wächst.
+-- **Rate‑Limiting & Missbrauchserkennung**: Nur ein Basis‑Rate‑Limiting ist geplant; fehlende erweiterte Missbrauchserkennung erhöht das Risiko von DDoS‑Angriffen.
+-- **Backup & DR Parameter unsicher**: RPO 1 h / RTO 4 h sind Annahmen, nicht bestätigt – kann zu Datenverlust oder langen Ausfallzeiten führen.
+-
+-## 3. Compliance‑ und Datenschutzrisiken
+-- **DSGVO‑Konformität (Double‑Opt‑In, Löschkonzept)**: Offene Fragen zu Aufbewahrungsfristen und Recht auf Vergessenwerden → Risiko von Verstößen gegen DSGVO.
+-- **EU‑Only Hosting**: Unklare Hosting‑Region (Pilotkunde Schweiz) kann gegen EU‑Only‑Anforderung verstoßen.
+-- **Audit‑Trail & unveränderbare Logs**: Implementierung muss sicherstellen, dass Logs nicht manipuliert werden – technische Umsetzung unsicher.
+-- **Technisches Monitoring ohne PII**: Fehlende klare Trennung zwischen technischer und personenbezogener Überwachung kann Datenschutzverletzungen verursachen.
+-- **Datenminimierung im Support‑Formular**: Unklare Datenerhebung im Kontaktformular kann überflüssige personenbezogene Daten sammeln.
+-
+-## 4. Widersprüche und Unsicherheiten
+-- **Zeitplan vs. Umfang**: 8‑Wochen‑Deadline kollidiert mit umfangreichen Compliance‑ und Sicherheitsanforderungen.
+-- **Budget vs. Managed Services**: Kosten für EU‑Only‑Hosting und Security‑Review sind noch nicht geschätzt – kann zu Budgetüberschreitungen führen.
+-- **SAP‑Zugriff ohne Cache**: Kritische Abhängigkeit vom SAP‑System ohne Fallback‑Cache erhöht Ausfallrisiko.
+-- **Retention‑Fristen unklar**: Fehlende Vorgaben für Aufbewahrungsdauer von Angeboten, Rechnungen und Logs.
+-- **Testing mit echten SAP‑Daten**: Unsicherheit, wie synthetische Testdaten sicher verwendet werden können.
+-
+-## 5. Mögliche Auswirkungen
+-- Projektverzögerungen & verpasste MVP‑Release‑Frist.
+-- Rechtsfolgen bei DSGVO‑Verstößen (Bußgelder, Reputationsschaden).
+-- Kundenunzufriedenheit durch fehlerhafte Rabatt‑Freigaben, fehlende Support‑Nachverfolgung oder falsche Währungsdarstellung.
+-- Finanzielle Mehrkosten durch Nachbesserungen, zusätzliche Sicherheits‑ oder Infrastruktur‑Maßnahmen.
+-- Verlust von Daten bei unzureichenden Backup‑/DR‑Strategien.
+-
+-## 6. Mögliche Gegenmaßnahmen / Klärungsbedarfe
+-- **Pilotkunde‑Klärung**: Frühzeitige Entscheidung über Region, Währung und Hosting‑Standort.
+-- **Rabatt‑Freigabelogik definieren**: Klare Schwellenwerte und Rollen für Freigaben festlegen.
+-- **Alternative API‑Gateway‑Lösung**: Schnell umsetzbare Proxy‑ oder Service‑Mesh‑Option evaluieren und sichern.
+-- **Security‑Review beschleunigen**: Parallel zum Entwicklungs‑Sprint Early‑Security‑Checks, Threat‑Modelling und Pen‑Test‑Planung.
+-- **Backup‑ und DR‑SLA finalisieren**: Vorgaben prüfen und entsprechende Service‑Level vertraglich festhalten.
+-- **Compliance‑Checkliste**: Detaillierte Prüfpunkte für DSGVO, Audit‑Trail, Logging und Datenlöschung erarbeiten.
+-- **Support‑Prozess spezifizieren**: Datenflüsse, Aufbewahrung und Löschfristen für das Kontaktformular definieren.
+-- **Kosten‑Schätzung einholen**: Bis Freitag konkrete Zahlen für Managed Services, Security‑Review und eventuell zusätzliche Infrastruktur sammeln.
+-- **Retention‑Policy definieren**: Gesetzliche Vorgaben (z. B. 10 Jahre für Rechnungen) übernehmen und technisch umsetzen.
+-- **Testdaten‑Strategie**: Nutzung von synthetischen SAP‑Daten in isolierten Testumgebungen, ggf. Maskierung echter Daten.
+-- **Monitoring‑Design**: Separate Pipelines für technisches Monitoring und Audit‑Logs, PII‑Maskierung sicherstellen.
+-- **Risikopriorisierung**: Kritische Risiken (Security Review, API‑Gateway, DSGVO) hoch priorisieren, mitigierende Maßnahmen früh einplanen.
+-
+----
+-*Dieses Risiko‑Artefakt wurde aus dem bereitgestellten Projekt‑Kontext, den fachlichen und nicht‑funktionalen Requirements sowie den erkannten Konflikten und offenen Fragen abgeleitet.*
+\ No newline at end of file
+diff --git a/input/transcripts/T9999_chaos.txt b/input/transcripts_backup/T9999_chaos.txt
+similarity index 100%
+rename from input/transcripts/T9999_chaos.txt
+rename to input/transcripts_backup/T9999_chaos.txt
+diff --git a/run-config.json b/run-config.json
+index 0d80980..747ad74 100644
+--- a/run-config.json
++++ b/run-config.json
+@@ -5,9 +5,9 @@
+  // "phase2ContextStrategy": "message_passing",
+   "phase2ContextStrategy": "artifact_state",   // Phase 2.1B: MAF Shared State. Umschalten reicht..Prompts werden automatisch gewählt.
+   "llmProvider": "openrouter",
+- // "agentModel": "openai/gpt-4.1-mini",
++  "agentModel": "openai/gpt-4.1-mini",
+  // "agentModel": "openai/gpt-oss-120b:free",
+-   "agentModel": "openai/gpt-oss-120b",
++ //  "agentModel": "openai/gpt-oss-120b",
+  //langsam: "agentModel": "nvidia/nemotron-3-super-120b-a12b:free",
+ 
+   // Prompts gruppiert nach Phase -> Strategie -> Agent.

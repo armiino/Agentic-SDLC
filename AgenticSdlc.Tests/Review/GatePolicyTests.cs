@@ -4,17 +4,17 @@ using Xunit;
 namespace AgenticSdlc.Tests.Review;
 
 /// <summary>
-/// Z5.1-Nachweis: Die GatePolicy leitet die Workflow-Entscheidung deterministisch aus einem
-/// ReviewResult ab (getrennt von der Messung). Unverifizierte Kandidaten lösen kein Auto-Repair aus.
+/// GatePolicy-v2-Nachweis (severity-gestuft): die Entscheidung wird deterministisch aus einem ReviewResult
+/// abgeleitet (getrennt von der Messung). Nur ein KRITISCHER geglaubter Defekt erzwingt Repair; Medium/Low
+/// → PassWithWarnings; unverifiziert/unvollständig → HumanReview; unverifizierte lösen kein Auto-Repair aus.
 /// </summary>
 public sealed class GatePolicyTests
 {
-    private static ReviewResult R(ReviewStatus status, params VerificationStatus[] verdicts)
+    private static ReviewDefect Defect(DefectSeverity sev, VerificationStatus vs, int i = 0)
+        => new($"D{i}", ReviewAxis.Grounding, "Grounding.X", sev, vs, "reason");
+
+    private static ReviewResult R(ReviewStatus status, params ReviewDefect[] defects)
     {
-        var defects = verdicts
-            .Select((v, i) => new ReviewDefect($"D{i}", ReviewAxis.Grounding, "Grounding.X",
-                DefectSeverity.Medium, v, "reason"))
-            .ToList();
         var metrics = new ReviewMetrics(null, null, null, 0, 0, 0, 0, 0);
         return new ReviewResult("a.md", "a", status, metrics, new[] { ReviewAxis.Grounding },
             defects, System.Array.Empty<ReviewDiagnostic>(), "v", "m", System.DateTimeOffset.UtcNow);
@@ -24,18 +24,35 @@ public sealed class GatePolicyTests
 
     [Fact]
     public void Failed_Status_Wins_Over_Defects()
-        => Assert.Equal(GateDecision.Failed, Policy.Evaluate(R(ReviewStatus.Failed, VerificationStatus.Confirmed)).Decision);
+        => Assert.Equal(GateDecision.Failed,
+            Policy.Evaluate(R(ReviewStatus.Failed, Defect(DefectSeverity.Critical, VerificationStatus.Confirmed))).Decision);
 
     [Fact]
-    public void Confirmed_Defect_Triggers_Repair()
-        => Assert.Equal(GateDecision.Repair, Policy.Evaluate(R(ReviewStatus.Succeeded, VerificationStatus.Confirmed)).Decision);
+    public void Critical_Confirmed_Triggers_Repair()
+        => Assert.Equal(GateDecision.Repair,
+            Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Critical, VerificationStatus.Confirmed))).Decision);
+
+    [Fact]
+    public void Critical_Wins_Over_Partial_Measurement()
+        => Assert.Equal(GateDecision.Repair,
+            Policy.Evaluate(R(ReviewStatus.Partial, Defect(DefectSeverity.Critical, VerificationStatus.Confirmed))).Decision);
+
+    [Fact]
+    public void Medium_Or_Low_Confirmed_Is_PassWithWarnings_Not_Repair()
+    {
+        Assert.Equal(GateDecision.PassWithWarnings,
+            Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Medium, VerificationStatus.Confirmed))).Decision);
+        Assert.Equal(GateDecision.PassWithWarnings,
+            Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Low, VerificationStatus.Confirmed))).Decision);
+    }
 
     [Fact]
     public void Unverified_Only_Goes_To_HumanReview()
-        => Assert.Equal(GateDecision.HumanReview, Policy.Evaluate(R(ReviewStatus.Succeeded, VerificationStatus.Unverified)).Decision);
+        => Assert.Equal(GateDecision.HumanReview,
+            Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Medium, VerificationStatus.Unverified))).Decision);
 
     [Fact]
-    public void Partial_Without_Actionable_Goes_To_HumanReview()
+    public void Partial_Without_Critical_Goes_To_HumanReview()
         => Assert.Equal(GateDecision.HumanReview, Policy.Evaluate(R(ReviewStatus.Partial)).Decision);
 
     [Fact]
@@ -45,7 +62,7 @@ public sealed class GatePolicyTests
     [Fact]
     public void Result_Carries_PolicyVersion_And_Reasons()
     {
-        var g = Policy.Evaluate(R(ReviewStatus.Succeeded, VerificationStatus.Confirmed));
+        var g = Policy.Evaluate(R(ReviewStatus.Succeeded, Defect(DefectSeverity.Critical, VerificationStatus.Confirmed)));
         Assert.Equal(GatePolicy.Version, g.PolicyVersion);
         Assert.NotEmpty(g.Reasons);
     }
