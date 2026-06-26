@@ -111,11 +111,16 @@ public static class ReviewRunner
             var outFile = Path.Combine(outDir, $"{Path.GetFileNameWithoutExtension(artifact)}.review.{modelSlug}.json");
             await File.WriteAllTextAsync(outFile, JsonSerializer.Serialize(result, ReviewJson.Options)).ConfigureAwait(false);
 
+            // Gate-Entscheidung als EIGENE Datei persistieren (statt nur Konsole) → direkt auswert-/zitierbar
+            // (Decision/PolicyVersion/Reasons), ohne das ReviewResult-Format zu verändern.
+            var gateFile = Path.Combine(outDir, $"{Path.GetFileNameWithoutExtension(artifact)}.gate.{modelSlug}.json");
+            await File.WriteAllTextAsync(gateFile, JsonSerializer.Serialize(decision, ReviewJson.Options)).ConfigureAwait(false);
+
             Console.WriteLine(
                 $"[review] {artifact}: status={result.Status} axes=[{string.Join(",", result.EvaluatedAxes)}] " +
                 $"grounding={result.Metrics.GroundingScore?.ToString() ?? "-"} coverage={result.Metrics.CoverageScore?.ToString() ?? "-"} " +
                 $"defects={result.Defects.Count} (crit={result.Metrics.CriticalDefectCount}) gate={decision.Decision} " +
-                $"-> {Path.GetRelativePath(repoRoot, outFile)}");
+                $"-> {Path.GetRelativePath(repoRoot, outFile)} (+ .gate.{modelSlug}.json)");
         }
 
         return 0;
