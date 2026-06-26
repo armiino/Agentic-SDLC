@@ -27,11 +27,12 @@ public static class CoverageTopicsRunner
 
         var phase = args[1];
         var runId = args[2];
-        string? artifactArg = null, judgeArg = null, transcriptArg = null;
+        string? artifactArg = null, judgeArg = null, transcriptArg = null, relevanceArg = null;
         foreach (var a in args.Skip(3))
         {
             if (a.EndsWith(".md", StringComparison.OrdinalIgnoreCase)) artifactArg = a;
             else if (a.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)) transcriptArg = a;
+            else if (a.EndsWith(".json", StringComparison.OrdinalIgnoreCase)) relevanceArg = a;  // Test D: relevantFor-Override (v02-Sidecar)
             else judgeArg = a;
         }
 
@@ -55,6 +56,36 @@ public static class CoverageTopicsRunner
         {
             Console.Error.WriteLine($"[coverage-topics] Fixture leer/ungültig: {Path.GetRelativePath(repoRoot, fixturePath)}");
             return 2;
+        }
+
+        // Test D (Z10): optionaler relevantFor-Override aus dem v02-Sidecar — gleiche Topics/Judge/Artefakte,
+        // NUR das Relevanz-Gate wechselt (kein Confound). Die Frozen-Fixture bleibt unberührt (nur in-memory ersetzt).
+        var relevanceTag = "";
+        if (relevanceArg is not null)
+        {
+            var relPath = Path.IsPathRooted(relevanceArg) ? relevanceArg : Path.Combine(repoRoot, "input", "topics", relevanceArg);
+            if (!File.Exists(relPath))
+            {
+                Console.Error.WriteLine($"[coverage-topics] relevantFor-Override nicht gefunden: {Path.GetRelativePath(repoRoot, relPath)}");
+                return 2;
+            }
+            var relSet = JsonSerializer.Deserialize<TopicRelevanceSet>(await File.ReadAllTextAsync(relPath).ConfigureAwait(false), ReviewJson.Options);
+            if (relSet is null || relSet.Topics.Count == 0)
+            {
+                Console.Error.WriteLine($"[coverage-topics] relevantFor-Override leer/ungültig: {Path.GetRelativePath(repoRoot, relPath)}");
+                return 2;
+            }
+            var relMap = relSet.Topics.ToDictionary(t => t.TopicId, t => t.RelevantFor, StringComparer.OrdinalIgnoreCase);
+            int overridden = 0, kept = 0;
+            var newTopics = new List<TopicItem>(topicSet.Topics.Count);
+            foreach (var t in topicSet.Topics)
+            {
+                if (relMap.TryGetValue(t.TopicId, out var rf)) { newTopics.Add(t with { RelevantFor = rf }); overridden++; }
+                else { newTopics.Add(t); kept++; }
+            }
+            topicSet = topicSet with { Topics = newTopics };
+            relevanceTag = ".relv02";
+            Console.WriteLine($"[coverage-topics] relevantFor-Override AKTIV: {Path.GetRelativePath(repoRoot, relPath)} (überschrieben={overridden}, beibehalten={kept})");
         }
 
         var judgeSettings =
@@ -84,7 +115,7 @@ public static class CoverageTopicsRunner
             var verdicts = await classifier.ClassifyAsync(artifactText, relevant, CancellationToken.None).ConfigureAwait(false);
             var review = TopicCoverageMapper.Map(artifact, artifactType, relevant, verdicts, judgeSettings.ModelId);
 
-            var outFile = Path.Combine(outDir, $"{Path.GetFileNameWithoutExtension(artifact)}.topic-coverage.{modelSlug}.review.json");
+            var outFile = Path.Combine(outDir, $"{Path.GetFileNameWithoutExtension(artifact)}.topic-coverage.{modelSlug}{relevanceTag}.review.json");
             await File.WriteAllTextAsync(outFile, JsonSerializer.Serialize(review, ReviewJson.Options)).ConfigureAwait(false);
 
             var counts = verdicts.GroupBy(v => v.Verdict).ToDictionary(g => g.Key, g => g.Count());

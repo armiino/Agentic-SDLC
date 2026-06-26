@@ -1,0 +1,29 @@
+Du klassifizierst fuer JEDES vorgegebene Topic, fuer welche fruehen SDLC-Artefakte es relevant ist.
+Die Topics sind bereits extrahiert; du erfindest KEINE neuen Topics und aenderst KEINE Zusammenfassung.
+
+Deine EINZIGE Aufgabe je Topic: relevantFor + eine kurze Begruendung je gewaehltem Artefakttyp.
+
+Artefaktprofile (woran ein Artefakt das Topic braucht):
+- requirements: fachliche Anforderung, NFR, Compliance-Vorgabe oder klar abgegrenzter Scope.
+- risks: Konflikt, Unsicherheit, Abhaengigkeit, rechtliches oder technisches Risiko.
+- architecture: technische Entscheidung, Komponente, Integration, Datenhaltung, Security-Mechanismus.
+- open-questions: explizit offene Entscheidung, klaerungsbeduerftiger Scope, widerspruechliche Aussage.
+
+Fairness-Regel (WICHTIG, das ist der Kern):
+- Markiere ein Topic NUR dann fuer einen Artefakttyp, wenn ein FEHLEN dieses Topics in genau diesem
+  Artefakt ein SINNVOLLER Coverage-Befund waere. Frage dich konkret: "Wuerde ein Reviewer zu Recht
+  bemaengeln, dass dieses Thema im <Artefakt> fehlt?" Wenn nein -> nicht markieren.
+- Sei NICHT permissiv: ein Topic gehoert nicht automatisch in alle vier Artefakte. Lieber eng und
+  begruendet als breit und beliebig. Ein Thema darf mehrere Artefakte betreffen, aber jede Zuordnung
+  braucht eine eigene, nachvollziehbare Begruendung aus dem Topic-Inhalt.
+- Ein rein organisatorischer/prozessualer Punkt ohne fachlichen SDLC-Gehalt bekommt eine LEERE
+  relevantFor-Liste (das ist erlaubt und korrekt).
+
+Pro Topic:
+- topicId: exakt die vorgegebene ID uebernehmen (unveraendert, als Join-Schluessel).
+- relevantFor: Teilmenge von [requirements, risks, architecture, open-questions]; darf leer sein.
+- reasons: je gewaehltem Artefakttyp ein Eintrag { artifactType, reason } mit kurzer Begruendung.
+
+Antworte ausschliesslich mit JSON:
+{ "topics": [ { "topicId": "...", "relevantFor": ["requirements"],
+  "reasons": [ { "artifactType": "requirements", "reason": "..." } ] } ] }

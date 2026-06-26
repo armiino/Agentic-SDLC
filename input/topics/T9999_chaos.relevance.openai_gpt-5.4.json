@@ -1,0 +1,324 @@
+{
+  "transcript": "T9999_chaos.txt",
+  "extractModel": "openai/gpt-5.4",
+  "classifyModel": "openai/gpt-5.4",
+  "promptVersion": "classify-topic-relevance-v01",
+  "topics": [
+    {
+      "topicId": "TOPIC-MVP-SCOPE-001",
+      "relevantFor": [
+        "requirements",
+        "open-questions"
+      ],
+      "reasons": {
+        "requirements": "Definiert den groben MVP-Umfang mit konkreten Muss-Bausteinen und bewussten Ausschl\u00FCssen f\u00FCr den fr\u00FChen Scope.",
+        "open-questions": "Mehrere Punkte bleiben bewusst offen oder optional, z. B. Mobile, SSO und weitere Themen au\u00DFerhalb des MVP."
+      }
+    },
+    {
+      "topicId": "TOPIC-CLIENT-CHANNEL-002",
+      "relevantFor": [
+        "open-questions",
+        "architecture",
+        "risks"
+      ],
+      "reasons": {
+        "open-questions": "Web-first, responsive oder native ist noch nicht entschieden und damit eine explizite Kl\u00E4rungsfrage.",
+        "architecture": "Die Kanalentscheidung beeinflusst Frontend-Strategie, API-Bedarf und Backend-Anbindung grundlegend.",
+        "risks": "Es besteht ein Zielkonflikt zwischen Sales-Bedarf, Budget und fehlender API-Reife des Backends."
+      }
+    },
+    {
+      "topicId": "TOPIC-AUTH-SSO-003",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "open-questions",
+        "risks"
+      ],
+      "reasons": {
+        "requirements": "Login f\u00FCr das MVP ist fachlicher Mindestumfang; SSO ist als optionaler Umfang benannt.",
+        "architecture": "SSO betrifft die technische Authentifizierungsarchitektur und m\u00F6gliche IdP-Integration.",
+        "open-questions": "Der Identity Provider und die SSO-Entscheidung sind ausdr\u00FCcklich offen.",
+        "risks": "Fehlendes zentrales IAM schafft Abh\u00E4ngigkeiten und Umsetzungsrisiken f\u00FCr SSO."
+      }
+    },
+    {
+      "topicId": "TOPIC-GDPR-COMPLIANCE-004",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ],
+      "reasons": {
+        "requirements": "DSGVO-Pflichten wie L\u00F6schung, AVV, Auskunft und Datenminimierung sind verbindliche Compliance-Anforderungen.",
+        "risks": "Nichtbeachtung erzeugt unmittelbare rechtliche und betriebliche Risiken.",
+        "open-questions": "Details wie Hosting-Ausgestaltung und Umgang mit L\u00F6schanfragen sind noch kl\u00E4rungsbed\u00FCrftig."
+      }
+    },
+    {
+      "topicId": "TOPIC-ROLES-PERMISSIONS-005",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "open-questions",
+        "risks"
+      ],
+      "reasons": {
+        "requirements": "Ein Rollen- und Berechtigungskonzept mit mindestens grundlegenden Rollen geh\u00F6rt zum funktionalen und Compliance-relevanten Umfang.",
+        "architecture": "Die Umsetzung von Zugriffskontrolle und Sichtbarkeiten ist ein technischer Designbestandteil.",
+        "open-questions": "Rollen, Rechte und Sichtbarkeit sensibler Rabatte sind noch nicht abschlie\u00DFend definiert.",
+        "risks": "Falsch gesetzte Berechtigungen gef\u00E4hrden Vertraulichkeit und korrekte Bearbeitung."
+      }
+    },
+    {
+      "topicId": "TOPIC-SAP-INTEGRATION-006",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks",
+        "open-questions"
+      ],
+      "reasons": {
+        "requirements": "Der MVP st\u00FCtzt sich fachlich auf SAP-Daten f\u00FCr Stammdaten, Preise, Produkte und Rechnungen.",
+        "architecture": "Die SAP-Anbindung ist eine zentrale Integrations- und Datenhaltungsentscheidung.",
+        "risks": "Datenqualit\u00E4t und fehlende API-Reife machen die Schnittstelle zu einem wesentlichen Liefer- und Qualit\u00E4tsrisiko.",
+        "open-questions": "Lesende versus schreibende Integration und genaue Abgrenzung der Verantwortlichkeiten sind offen."
+      }
+    },
+    {
+      "topicId": "TOPIC-API-GATEWAY-LAYER-007",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "requirements"
+      ],
+      "reasons": {
+        "architecture": "Eine API-Layer \u00FCber das zentrale Gateway ist eine konkrete Architekturvorgabe f\u00FCr externe Integration.",
+        "risks": "Die Gateway-Warteliste kollidiert direkt mit dem 8-Wochen-Termin und ist damit ein Lieferabh\u00E4ngigkeitsrisiko.",
+        "requirements": "Die interne Policy macht die Nutzung des zentralen API-Gateways zu einer verbindlichen Vorgabe."
+      }
+    },
+    {
+      "topicId": "TOPIC-SECURITY-REVIEW-008",
+      "relevantFor": [
+        "requirements",
+        "risks"
+      ],
+      "reasons": {
+        "requirements": "Der Security Review ist als verpflichtende Governance-/Compliance-Vorgabe benannt.",
+        "risks": "Dauer und Dokumentationsbedarf bedrohen den MVP-Termin unmittelbar."
+      }
+    },
+    {
+      "topicId": "TOPIC-HOSTING-DATA-RESIDENCY-009",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ],
+      "reasons": {
+        "requirements": "Kein neuer DB-Server, erlaubte Managed Services und nachweisbare EU-Datenresidenz sind klare Randbedingungen.",
+        "architecture": "Providerwahl, Datenhaltung und Backup-Replikation betreffen die technische Betriebsarchitektur.",
+        "risks": "Globale Backups und unklare Datenresidenz schaffen Compliance- und Kostenrisiken."
+      }
+    },
+    {
+      "topicId": "TOPIC-BACKUP-DR-010",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ],
+      "reasons": {
+        "requirements": "Backup/Disaster Recovery wird f\u00FCr den MVP mit Kundendaten als notwendige Vorgabe festgelegt.",
+        "architecture": "Backup- und Wiederherstellungsmechanismen sind Teil der L\u00F6sungs- und Betriebsarchitektur."
+      }
+    },
+    {
+      "topicId": "TOPIC-SCALABILITY-PERFORMANCE-011",
+      "relevantFor": [
+        "open-questions",
+        "risks",
+        "requirements"
+      ],
+      "reasons": {
+        "open-questions": "Erwartete Nutzerzahlen und damit das Zielniveau f\u00FCr Performance und Skalierung sind unklar.",
+        "risks": "Die Unsicherheit erzeugt das Risiko von Unterdimensionierung oder Overengineering.",
+        "requirements": "Performance und Skalierbarkeit sind nicht-funktionale Anforderungen, auch wenn sie noch zu sch\u00E4rfen sind."
+      }
+    },
+    {
+      "topicId": "TOPIC-OFFER-WORKFLOW-012",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "open-questions",
+        "risks"
+      ],
+      "reasons": {
+        "requirements": "Schnellere Angebotserstellung mit Statusmodell und Nachvollziehbarkeit ist ein zentrales fachliches Ziel.",
+        "architecture": "Workflow-Status, Portalprozess und Einbindung von SAP-Rabattlogik pr\u00E4gen die L\u00F6sungsarchitektur.",
+        "open-questions": "Die genaue fachliche Definition des Workflows und die Trennung SAP versus Portal sind noch nicht fertig gekl\u00E4rt.",
+        "risks": "Unvollst\u00E4ndige Stammdaten und verz\u00F6gerte Preisaktualisierung gef\u00E4hrden korrekte Angebote."
+      }
+    },
+    {
+      "topicId": "TOPIC-INVOICES-ORDERS-VIEW-013",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ],
+      "reasons": {
+        "requirements": "Bestellungen einsehen und Rechnungen herunterladen ist klarer fachlicher Umfang.",
+        "architecture": "Pagination und Download-Begrenzungen beeinflussen API- und UI-Ausgestaltung.",
+        "risks": "Massenabrufe und Missbrauch k\u00F6nnen rechtliche sowie betriebliche Probleme verursachen."
+      }
+    },
+    {
+      "topicId": "TOPIC-SUPPORT-PROCESS-014",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions",
+        "architecture"
+      ],
+      "reasons": {
+        "requirements": "Auch ohne Ticketsystem braucht Support mindestens einen bearbeitbaren Kanal mit Kundenzuordnung.",
+        "risks": "Die Notl\u00F6sung per Formular oder E-Mail birgt operative Risiken und manuelle Nacharbeit nach Launch.",
+        "open-questions": "Die konkrete Zwischenl\u00F6sung und ihre Datenablage sind noch nicht entschieden.",
+        "architecture": "Kundenzuordnung und Persistenzbedarf haben unmittelbare technische Auswirkungen."
+      }
+    },
+    {
+      "topicId": "TOPIC-DISCOUNT-APPROVALS-015",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions",
+        "architecture"
+      ],
+      "reasons": {
+        "requirements": "Freigaben f\u00FCr hohe Rabatte und die MVP-Einschr\u00E4nkung ohne manuelle Sonderrabatte sind fachliche Regeln.",
+        "risks": "Fehlende Freigaben k\u00F6nnen zu finanziell falschen Angeboten f\u00FChren.",
+        "open-questions": "Schwellenwerte und beteiligte Rollen sind noch nicht abschlie\u00DFend festgelegt.",
+        "architecture": "Der Freigabeprozess erfordert Workflow- und Berechtigungsumsetzung im System."
+      }
+    },
+    {
+      "topicId": "TOPIC-PILOT-LOCALE-CURRENCY-016",
+      "relevantFor": [
+        "open-questions",
+        "requirements",
+        "architecture"
+      ],
+      "reasons": {
+        "open-questions": "Pilotmarkt, Sprachen und W\u00E4hrungen sind noch nicht abschlie\u00DFend entschieden.",
+        "requirements": "Sprach- und W\u00E4hrungsunterst\u00FCtzung beeinflussen den fachlichen Scope wesentlich.",
+        "architecture": "Internationalisierung und Mehrw\u00E4hrungsf\u00E4higkeit haben Auswirkungen auf UI, Dokumente und Datenmodell."
+      }
+    },
+    {
+      "topicId": "TOPIC-PDF-DOCUMENT-VERSIONING-017",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ],
+      "reasons": {
+        "requirements": "PDF-Erzeugung mit rechtlichen Fu\u00DFnoten und nachvollziehbaren Versionen ist ein klarer fachlicher Bedarf.",
+        "architecture": "Template-Management, Versionierung und revisionssichere Nachvollziehbarkeit sind technische L\u00F6sungsbausteine.",
+        "risks": "Ohne Versionierung ist nicht nachvollziehbar, welche Dokumentfassung an Kunden ging."
+      }
+    },
+    {
+      "topicId": "TOPIC-ONLINE-ACCEPTANCE-018",
+      "relevantFor": [
+        "open-questions",
+        "requirements",
+        "risks",
+        "architecture"
+      ],
+      "reasons": {
+        "open-questions": "Ob Online-Akzeptanz \u00FCberhaupt Teil des Umfangs wird, ist ausdr\u00FCcklich offen bzw. eher aus dem MVP herausgenommen.",
+        "requirements": "Falls enthalten, w\u00E4ren Zustimmung, AGB-Akzeptanz und Nachweisf\u00FChrung fachliche Pflichtanforderungen.",
+        "risks": "Online-Akzeptanz ber\u00FChrt Vertragsabschluss und damit rechtliche sowie prozessuale Risiken.",
+        "architecture": "Sie w\u00FCrde Nachweismechanismen und vermutlich SAP-Schreibintegration erfordern."
+      }
+    },
+    {
+      "topicId": "TOPIC-LOGGING-AUDIT-RETENTION-019",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ],
+      "reasons": {
+        "requirements": "Auditierbarkeit, Protokollierung und Aufbewahrungs-/L\u00F6schregeln sind verbindliche Compliance- und Nachvollziehbarkeitsanforderungen.",
+        "architecture": "Getrennte Log-Arten und datensparsame technische Logs sind konkrete technische Designthemen.",
+        "risks": "Ungeeignete Logs k\u00F6nnen Datenschutzverst\u00F6\u00DFe oder fehlende Nachvollziehbarkeit verursachen."
+      }
+    },
+    {
+      "topicId": "TOPIC-ANALYTICS-KPIS-020",
+      "relevantFor": [
+        "requirements",
+        "open-questions",
+        "architecture"
+      ],
+      "reasons": {
+        "requirements": "KPIs wie Conversion Rate und Zeit bis Angebot sind fachliche Messanforderungen.",
+        "open-questions": "MVP-Umfang und konkrete Tracking-Ausgestaltung sind noch nicht entschieden.",
+        "architecture": "Fehlende Analytics-Infrastruktur macht die technische Umsetzung zu einer Architekturfrage."
+      }
+    },
+    {
+      "topicId": "TOPIC-TESTDATA-ENVIRONMENTS-SECRETS-021",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ],
+      "reasons": {
+        "requirements": "Pseudonymisierte oder synthetische Testdaten sowie getrennte Umgebungen sind Compliance- und Lieferanforderungen f\u00FCr die Entwicklung.",
+        "risks": "Echte Kundendaten im SAP-Testsystem und fehlendes Secrets Management sind akute Datenschutz- und Lieferrisiken.",
+        "architecture": "Umgebungssetup, Testdatenstrategie und Secrets Management betreffen die technische Delivery-Architektur."
+      }
+    },
+    {
+      "topicId": "TOPIC-API-ABUSE-LIMITS-022",
+      "relevantFor": [
+        "architecture",
+        "requirements",
+        "risks"
+      ],
+      "reasons": {
+        "architecture": "Auth-Absicherung, Rate Limits, Pagination und Missbrauchserkennung sind konkrete API-Designmechanismen.",
+        "requirements": "F\u00FCr externe Rechnungsabrufe sind Schutzmechanismen als nicht-funktionale Sicherheitsanforderungen relevant.",
+        "risks": "Massenabrufe bringen Sicherheits-, Rechts- und Betriebsrisiken mit sich."
+      }
+    },
+    {
+      "topicId": "TOPIC-SAP-AVAILABILITY-CACHING-023",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "open-questions"
+      ],
+      "reasons": {
+        "architecture": "Abruf bei Bedarf, Caching, Fallbacks und Preisg\u00FCltigkeit sind zentrale Integrations- und Datenhaltungsentscheidungen.",
+        "risks": "SAP-Wartungsfenster und nicht echtzeitf\u00E4hige Preise gef\u00E4hrden Verf\u00FCgbarkeit und fachliche Korrektheit.",
+        "open-questions": "Ob Caches/Fallbacks eingef\u00FChrt oder Risiken akzeptiert werden, ist noch offen."
+      }
+    },
+    {
+      "topicId": "TOPIC-COST-ESTIMATE-024",
+      "relevantFor": [
+        "risks"
+      ],
+      "reasons": {
+        "risks": "Eine kurzfristige Kostensch\u00E4tzung trotz ungekl\u00E4rtem Scope, Datenschutz und Architektur ist ein klares Planungs- und Erwartungsrisiko."
+      }
+    }
+  ]
+}

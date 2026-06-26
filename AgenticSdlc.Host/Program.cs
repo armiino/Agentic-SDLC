@@ -93,6 +93,14 @@ if (args.Length > 0 && string.Equals(args[0], "topic-verify", StringComparison.O
     return;
 }
 
+// Z10 / v02 (Call 2, separat): relevantFor je Topic separat klassifizieren → Sidecar
+// input/topics/<base>.relevance.<model>.json (Frozen-Fixture bleibt unberührt). Test B: v01 vs v02.
+if (args.Length > 0 && string.Equals(args[0], "classify-topic-relevance", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClassifyTopicRelevanceRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // C1: zusammengesetzter Review (Grounding + Coverage) → EIN ReviewResult pro Artefakt (offline, ReviewService).
 if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.OrdinalIgnoreCase))
 {
