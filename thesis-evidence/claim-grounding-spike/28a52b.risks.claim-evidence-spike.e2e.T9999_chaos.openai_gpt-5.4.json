@@ -1,0 +1,387 @@
+{
+  "fixture": "input/eval-labels/28a52b.risks.claim-evidence-spike.json",
+  "transcript": "T9999_chaos.txt",
+  "judge": "openai/gpt-5.4",
+  "mode": "end-to-end (auto evidence selection)",
+  "total": 10,
+  "matchesExpected": 8,
+  "accuracyVsHandlabel": 0.8,
+  "comparedToManual": 10,
+  "sameAsManual": 7,
+  "results": [
+    {
+      "id": "28a52b-RISK-28",
+      "artifact": "risks",
+      "claim": "Die Datenschutzanforderungen sind noch nicht abschliessend definiert.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        2,
+        13,
+        30,
+        60,
+        97,
+        106,
+        193,
+        251
+      ],
+      "selectionReason": "Diese Turns zeigen, dass Datenschutzanforderungen laufend erg\u00E4nzt und pr\u00E4zisiert werden (DSGVO, Einwilligung, Hosting/Datenresidenz, L\u00F6schkonzept) und explizit als noch unvollst\u00E4ndig/offen markiert sind, z. B. durch fehlende Ma\u00DFnahmen im MVP und viele offene Punkte.",
+      "autoEvidence": [
+        "[Clara] (T2): Bevor wir \u00FCber Frontends reden: DSGVO. Wir speichern Kundendaten. Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.",
+        "[Clara] (T13): Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.",
+        "[Clara] (T30): Und wo werden Daten gehostet? EU only?",
+        "[Clara] (T60): Aber wenn ein Kunde seine Daten l\u00F6schen will?",
+        "[Clara] (T97): Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "[Clara] (T106): Und ohne Datenschutzma\u00DFnahmen unvollst\u00E4ndig.",
+        "[Clara] (T193): Double-Opt-In und L\u00F6schung fehlen.",
+        "[Anna] (T251): Wir haben jetzt sehr viele offene Punkte."
+      ],
+      "verdict": {
+        "verdict": "permissible_inference",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Die Evidence nennt mehrfach offene DSGVO-/Datenschutzthemen und fehlende Ma\u00DFnahmen (z.B. Double-Opt-In, L\u00F6schung, Datenresidenz) sowie \u0027sehr viele offene Punkte\u0027. Damit ist nachvollziehbar inferierbar, dass Datenschutzanforderungen noch nicht abschlie\u00DFend gekl\u00E4rt sind. Der Wortlaut \u0027nicht abschlie\u00DFend definiert\u0027 steht jedoch nicht explizit in der Evidence."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "28a52b-RISK-14",
+      "artifact": "risks",
+      "claim": "Die plattformuebergreifende Umsetzung mit Flutter/Dart birgt Performance- und Umsetzungsrisiken.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        46,
+        47,
+        122,
+        123,
+        191,
+        251,
+        261
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt bzw. \u00FCber offene Risiken: 46-47 thematisieren Performance/Skalierung bei unklarer Nutzerzahl; 122-123 benennen den Trade-off SAP-Abruf vs. Performance/Verf\u00FCgbarkeit; 191 fasst die hohe technische Komplexit\u00E4t und den unrealistischen MVP-Umfang als Umsetzungsrisiko zusammen; 251 und 261 halten fest, dass viele offene Punkte/Risiken bestehen. Flutter/Dart wird zwar nicht explizit genannt, aber die plattform\u00FCbergreifende/mobile Unsicherheit und die allgemeine Umsetzungs- und Performance-Risikolage werden hier sichtbar.",
+      "autoEvidence": [
+        "[Ben] (T46): Und Performance. Wie viele User erwarten wir?",
+        "[Anna] (T47): Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.",
+        "[Ben] (T122): Abruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit.",
+        "[Farid] (T123): Und SAP hat Wartungsfenster am Wochenende.",
+        "[Ben] (T191): Ich sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrw\u00E4hrung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP.",
+        "[Anna] (T251): Wir haben jetzt sehr viele offene Punkte.",
+        "[Anna] (T261): Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen."
+      ],
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "reason": "Evidence st\u00FCtzt allgemeine Performance-Risiken (E1, E3) und Umsetzungs-/Scope-Risiken bzw. viele offene Punkte (E5-E7), aber die spezifische Ursache \u0027plattform\u00FCbergreifende Umsetzung mit Flutter/Dart\u0027 wird nirgends erw\u00E4hnt. Der Technologie-/Scope-Bezug ist hinzugef\u00FCgt."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "28a52b-RISK-12",
+      "artifact": "risks",
+      "claim": "Gegenmassnahme: Priorisierung von Funktionen und schrittweise Einfuehrung.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        191,
+        192,
+        198,
+        200,
+        201,
+        210,
+        211,
+        261
+      ],
+      "selectionReason": "Diese Turns pruefen die Gegenmassnahme direkt: Es wird explizit festgestellt, dass der Scope zu gross ist (191), danach ein MVP-Schnitt mit priorisierten Funktionen definiert (192, 198), Funktionen in spaetere Phasen verschoben bzw. bewusst eingeschraenkt (200, 201), offene Risiken bzw. bewusste Einschraenkungen festgehalten (210, 211) und das Ziel eines klaren MVP-Schnitts mit In-/Out-of-Scope und Risiken zusammengefasst (261).",
+      "autoEvidence": [
+        "[Ben] (T191): Ich sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrw\u00E4hrung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP.",
+        "[Anna] (T192): Dann m\u00FCssen wir schneiden. MVP: 1. Login 2. Angebote erstellen 3. Rechnungen anzeigen 4. SAP lesen 5. Rollen minimal 6. Audit minimal",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup",
+        "[Anna] (T200): Vielleicht Phase 2.",
+        "[Eva] (T201): Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.",
+        "[Anna] (T210): Notieren als Risiko.",
+        "[Clara] (T211): Bitte nicht \u0022wir ignorieren es\u0022, sondern \u0022bewusste Einschr\u00E4nkung\u0022.",
+        "[Anna] (T261): Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen."
+      ],
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Die Evidence st\u00FCtzt eine Gegenma\u00DFnahme durch Funktionspriorisierung und phasenweise Begrenzung: E2/E3 definieren einen MVP-Schnitt mit priorisierten Funktionen, E4 verschiebt Punkte auf \u0027Phase 2\u0027, und E8 beschreibt explizit einen MVP-Schnitt mit bewusst Ausgeschlossenem. \u0027Schrittweise Einf\u00FChrung\u0027 ist als zul\u00E4ssige Verdichtung aus MVP jetzt \u002B Phase 2 ableitbar."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "28a52b-RISK-16",
+      "artifact": "risks",
+      "claim": "Risiko: Verzoegerungen im Zeitplan durch technische Probleme.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        24,
+        34,
+        38,
+        103,
+        110,
+        111,
+        191,
+        251
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen das Risiko von Zeitplanverz\u00F6gerungen durch technische Probleme direkt: Security Review sprengt die Timeline, technische Komplexit\u00E4t bedeutet mehr Zeit, fehlende Architekturentscheidung und API-Gateway-Warteliste kollidieren mit dem 8-Wochen-MVP, und Ben fasst die technische \u00DCberladung als nicht in 8 Wochen machbar zusammen; zudem wird der hohe Anteil offener Punkte sichtbar.",
+      "autoEvidence": [
+        "[Ben] (T24): Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+        "[Anna] (T34): Okay also: - Kundenportal - Angebote - Rechnungen - Login - Rollen - Logging - SAP Integration - Keine neue DB - MVP in 8 Wochen - Security Review irgendwie - DSGVO - KPIs - Mobile vielleicht - SSO optional - API Layer?",
+        "[Anna] (T38): Komplexer hei\u00DFt mehr Zeit.",
+        "[Ben] (T103): Bis Freitag? Wir haben nicht mal eine Architekturentscheidung.",
+        "[Ben] (T110): Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "[Anna] (T111): Das passt nicht zum 8-Wochen-MVP.",
+        "[Ben] (T191): Ich sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrw\u00E4hrung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP.",
+        "[Anna] (T251): Wir haben jetzt sehr viele offene Punkte."
+      ],
+      "verdict": {
+        "verdict": "permissible_inference",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Die Evidence st\u00FCtzt wiederholt ein Zeitplanrisiko f\u00FCr das 8-Wochen-MVP (Security Review 6 Wochen, Gateway-Warteliste 6 Wochen, keine Architekturentscheidung, \u0027mehr Zeit\u0027, viele offene Punkte). \u0027durch technische Probleme\u0027 ist jedoch nicht explizit so benannt; die technischen/blockierenden Ursachen sind nur indirekt erkennbar. Daher als zul\u00E4ssige Inferenz, nicht explizit."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "28a52b-RISK-23",
+      "artifact": "risks",
+      "claim": "Risiko: Fehleranfaelligkeit und instabile App-Versionen.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        103,
+        105,
+        116,
+        147,
+        149,
+        151,
+        191,
+        251
+      ],
+      "selectionReason": "Diese Turns belegen bzw. pr\u00FCfen das Risiko instabiler/fehleranf\u00E4lliger App-Versionen: fehlende Architektur und unscharfer Scope (103, 191, 251), Warnung vor gef\u00E4hrlichen Sch\u00E4tzungen ohne Scope (105), explizit erh\u00F6hte Fehlerwahrscheinlichkeit bei manuellen Workarounds (116) sowie konkrete fachlich-technische Instabilit\u00E4ts-/Fehlerrisiken durch nicht aktuelle SAP-Preise und falsche Rabatte inkl. teils offener Akzeptanz des Risikos (147, 149, 151).",
+      "autoEvidence": [
+        "[Ben] (T103): Bis Freitag? Wir haben nicht mal eine Architekturentscheidung.",
+        "[Eva] (T105): Eine grobe Sch\u00E4tzung ohne Scope ist gef\u00E4hrlich.",
+        "[Eva] (T116): Manuelle Uploads erh\u00F6hen Fehlerwahrscheinlichkeit.",
+        "[Ben] (T147): Noch ein technischer Punkt: SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.",
+        "[Eva] (T149): Wenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen.",
+        "[Anna] (T151): Oder wir akzeptieren das Risiko.",
+        "[Ben] (T191): Ich sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrw\u00E4hrung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP.",
+        "[Anna] (T251): Wir haben jetzt sehr viele offene Punkte."
+      ],
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "reason": "Evidence st\u00FCtzt einen Risikokern zu Fehleranf\u00E4lligkeit explizit (E3; zus\u00E4tzlich Preis-/Rabattfehler in E4-E6). Der zweite Teil \u201Einstabile App-Versionen\u201C wird jedoch nirgends erw\u00E4hnt. Der Claim f\u00FCgt damit einen nicht belegten Risikobestandteil und eine spezifische Scope-Einengung auf App-Versionen hinzu."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "28a52b-RISK-24",
+      "artifact": "risks",
+      "claim": "Risiko: hoeherer Wartungsaufwand durch dynamisches Wachstum und viele Funktionen.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        10,
+        34,
+        47,
+        49,
+        71,
+        81,
+        127,
+        191
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim, weil sie den Funktionsumfang schrittweise ausweiten (Portal, Angebote, Rechnungen, Push, Rollen, Logging, SAP, Mobile etc.), weiteres Wachstum/Skalierung und Expansion andeuten sowie explizit zeigen, dass immer neue Bereiche hinzukommen. Turn 191 fasst die stark gewachsene Funktionsbreite zusammen und st\u00FCtzt damit direkt das Risiko eines h\u00F6heren Wartungsaufwands.",
+      "autoEvidence": [
+        "[Anna] (T10): Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden. Aber Sales will Angebote erstellen. Und Marketing will Push Notifications.",
+        "[Anna] (T34): Okay also: - Kundenportal - Angebote - Rechnungen - Login - Rollen - Logging - SAP Integration - Keine neue DB - MVP in 8 Wochen - Security Review irgendwie - DSGVO - KPIs - Mobile vielleicht - SSO optional - API Layer?",
+        "[Anna] (T47): Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.",
+        "[Clara] (T49): Skalierbarkeit muss ber\u00FCcksichtigt werden.",
+        "[David] (T71): Sorry, ich komme zu sp\u00E4t dazu. Ich bin von Customer Support. Ich habe geh\u00F6rt, es soll kein Ticketsystem geben. Das ist aus Support-Sicht schwierig, weil Kunden uns heute wegen Rechnungen, Lieferstatus und falschen Rabatten st\u00E4ndig schreiben.",
+        "[Eva] (T81): Ich bin aus Finance. Mir fehlt ein Punkt: Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt. Manche Kunden haben Sonderkonditionen, aber nicht jeder Sales-Mitarbeiter darf die nutzen.",
+        "[Anna] (T127): Zum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft.",
+        "[Ben] (T191): Ich sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrw\u00E4hrung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP."
+      ],
+      "verdict": {
+        "verdict": "permissible_inference",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Die Evidence zeigt viele geplante Funktionen/Komplexit\u00E4t (E1, E2, E6, E8) sowie unsicheres Wachstum/Skalierbarkeit (E3, E4, E7). Ein daraus abgeleiteter h\u00F6herer Wartungsaufwand ist nachvollziehbar, wird aber nirgends explizit als Wartungsrisiko benannt; daher nur zul\u00E4ssige Inferenz, nicht explizit."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "28a52b-RISK-31",
+      "artifact": "risks",
+      "claim": "Risiko: Verlust von Nutzervertrauen bei Datenschutzverletzungen.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        2,
+        13,
+        26,
+        30,
+        96,
+        97,
+        187,
+        261
+      ],
+      "selectionReason": "Diese Turns belegen direkt Datenschutz-/DSGVO-Risiken rund um Kundendaten, Einwilligung und Datenresidenz (2,13,30,96,97), zeigen dass Sicherheits-/Datenschutzabstriche nicht akzeptabel sind (26), dass ohne sauberes Konzept Fehler drohen (187), und fassen zusammen, dass aus dem MVP-Schnitt bewusst entstehende Risiken benannt werden m\u00FCssen (261). Das pr\u00FCft den Claim eines Risikos f\u00FCr Nutzervertrauen bei Datenschutzverletzungen bzw. die Offenheit des Umgangs damit.",
+      "autoEvidence": [
+        "[Clara] (T2): Bevor wir \u00FCber Frontends reden: DSGVO. Wir speichern Kundendaten. Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.",
+        "[Clara] (T13): Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.",
+        "[Clara] (T26): Das ist keine Option.",
+        "[Clara] (T30): Und wo werden Daten gehostet? EU only?",
+        "[Farid] (T96): Ich bin aus IT Operations. EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "[Clara] (T97): Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "[Clara] (T187): Aber ohne Konzept riskieren wir Fehler.",
+        "[Anna] (T261): Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen."
+      ],
+      "verdict": {
+        "verdict": "permissible_inference",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "reason": "Die Evidence st\u00FCtzt klar ein Datenschutz/DSGVO-bezogenes Risiko und m\u00F6gliche Fehler ohne Konzept (E1, E2, E6, E7). Der konkrete Schaden \u0027Verlust von Nutzervertrauen\u0027 wird jedoch nirgends explizit genannt; das ist eine naheliegende, aber zus\u00E4tzliche Konkretisierung des Risikos."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "28a52b-RISK-26",
+      "artifact": "risks",
+      "claim": "Gegenmassnahme: klare Architektur- und Schnittstellenplanung.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        34,
+        35,
+        65,
+        67,
+        103,
+        253,
+        261
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt: 34/35 benennen explizit einen API-Layer bzw. Schnittstellenbedarf; 65/67 zeigen Bedarf an Architektur bzw. sauberer Dokumentation; 103 macht deutlich, dass noch keine Architekturentscheidung vorliegt; 253 und 261 betonen, dass Widerspr\u00FCche/Offenheiten sichtbar bleiben und ein klarer MVP-Schnitt n\u00F6tig ist. Das st\u00FCtzt die Gegenma\u00DFnahme \u0027klare Architektur- und Schnittstellenplanung\u0027 und zeigt zugleich, dass sie noch nicht umgesetzt ist.",
+      "autoEvidence": [
+        "[Anna] (T34): Okay also: - Kundenportal - Angebote - Rechnungen - Login - Rollen - Logging - SAP Integration - Keine neue DB - MVP in 8 Wochen - Security Review irgendwie - DSGVO - KPIs - Mobile vielleicht - SSO optional - API Layer?",
+        "[Ben] (T35): Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.",
+        "[Ben] (T65): Wir brauchen einen Architekten.",
+        "[Clara] (T67): Dann m\u00FCssen wir das sauber dokumentieren.",
+        "[Ben] (T103): Bis Freitag? Wir haben nicht mal eine Architekturentscheidung.",
+        "[Clara] (T253): Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben.",
+        "[Anna] (T261): Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen."
+      ],
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Die Evidence st\u00FCtzt als verdichtete Gegenma\u00DFnahme eine klare Architektur- und Schnittstellenplanung: API-Layer/Schnittstellenbedarf wird explizit genannt (E1, E2), fehlende Architekturentscheidung bzw. Bedarf nach Architekturarbeit wird benannt (E3, E5), und saubere Dokumentation/Klarheit \u00FCber Scope wird gefordert (E4, E7). Der Claim fasst diese Punkte ohne relevante Bedeutungsverschiebung zusammen."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "28a52b-RISK-33",
+      "artifact": "risks",
+      "claim": "Gegenmassnahme: fruehzeitige Zusammenarbeit mit Datenschutzbeauftragten.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        2,
+        13,
+        26,
+        106,
+        144,
+        218,
+        258
+      ],
+      "selectionReason": "Diese Turns pruefen den Claim, weil sie Datenschutz als fruehes und fortlaufendes Thema stark machen: Clara bringt DSGVO direkt zu Beginn ein (2, 13), lehnt das Uebergehen von Security/Compliance ab (26), weist auf fehlende Datenschutzmassnahmen in der Schaetzung hin (106), markiert Datenschutzpruefung als scopesensitiv/offen (144) und betont sofortige Relevanz statt spaeter Klaerung (218). Turn 258 verdichtet dies zu \u0027DSGVO ist nicht optional\u0027. Das stuetzt die Gegenmassnahme einer fruehzeitigen Einbindung von Datenschutzverantwortlichen.",
+      "autoEvidence": [
+        "[Clara] (T2): Bevor wir \u00FCber Frontends reden: DSGVO. Wir speichern Kundendaten. Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.",
+        "[Clara] (T13): Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.",
+        "[Clara] (T26): Das ist keine Option.",
+        "[Clara] (T106): Und ohne Datenschutzma\u00DFnahmen unvollst\u00E4ndig.",
+        "[Clara] (T144): Und Datenschutzpr\u00FCfung.",
+        "[Clara] (T218): Nein, wenn Entwicklung darauf zugreift, ist es sofort relevant.",
+        "[Clara] (T258): DSGVO ist nicht optional."
+      ],
+      "verdict": {
+        "verdict": "permissible_inference",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "reason": "Die Evidence zeigt klar, dass Datenschutz/DSGVO frueh und verbindlich relevant ist (z.B. DSGVO vor Frontends, Datenschutzpruefung, nicht optional). Sie nennt aber weder explizit einen Datenschutzbeauftragten noch die konkrete Gegenmassnahme \u0027fruehzeitige Zusammenarbeit\u0027 mit dieser Rolle. Das ist nur als naheliegende Massnahme inferierbar, fuegt jedoch eine nicht genannte Entitaet und einen fruehen Zeitbezug hinzu."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "28a52b-RISK-40",
+      "artifact": "risks",
+      "claim": "Es erfolgt eine Auditierung der Zugriffskontrollen.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        5,
+        22,
+        63,
+        95,
+        165,
+        179,
+        192,
+        198
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim am besten: Sie belegen Anforderungen an Zugriffskontrolle und Auditierbarkeit (5, 22, 63, 95, 165), differenzieren Audit/Logging und damit die Form der Auditierung (179), und zeigen den Status im MVP als nur minimal/offen formuliert (\u0027Audit minimal\u0027, \u0027Minimaler Audit Trail\u0027 in 192, 198) statt als klar etablierte Auditierung der Zugriffskontrollen.",
+      "autoEvidence": [
+        "[Clara] (T5): SAP? Wenn SAP involviert ist, dann reden wir von personenbezogenen Daten im ERP. Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.",
+        "[Clara] (T22): Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?",
+        "[Clara] (T63): Und ein Rollen- und Berechtigungskonzept.",
+        "[Clara] (T95): Und protokollieren. Wer hat welches Angebot ge\u00F6ffnet?",
+        "[Ben] (T165): Dann brauchen wir Event-History oder Audit-Log pro Angebot.",
+        "[Farid] (T179): Noch ein Risiko: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.",
+        "[Anna] (T192): Dann m\u00FCssen wir schneiden. MVP: 1. Login 2. Angebote erstellen 3. Rechnungen anzeigen 4. SAP lesen 5. Rollen minimal 6. Audit minimal",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+      ],
+      "verdict": {
+        "verdict": "overstated",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "reason": "Die Evidence fordert Audit-Trails/Auditierbarkeit und nennt \u0027Audit minimal\u0027 bzw. \u0027Minimaler Audit Trail\u0027. Sie belegt damit Protokollierung/\u00C4nderungsnachverfolgbarkeit, aber nicht explizit eine tats\u00E4chliche \u0027Auditierung der Zugriffskontrollen\u0027. Der Claim versch\u00E4rft von Logging/Auditierbarkeit zu einer durchgef\u00FChrten Auditierung der Zugriffskontrollen."
+      },
+      "manualLabel": "violation"
+    }
+  ]
+}

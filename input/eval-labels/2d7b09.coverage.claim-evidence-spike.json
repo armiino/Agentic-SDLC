@@ -1,0 +1,89 @@
+{
+  "cases": [
+    {
+      "id": "2d7b09-FP-BESTELLUEBERSICHT",
+      "artifact": "architecture",
+      "claim": "Das Kundenportal-Frontend zeigt Angebote, Bestellungen und Rechnungen an.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "explicit (alte v1-Pedanterie-FP)",
+      "note": "ALTES PROBLEM: v1 flaggte das als fabricated (Pedanterie). Bestellungen sehen + Rechnungen downloaden steht woertlich im Transkript.",
+      "evidence": [
+        "Anna (T32): Also Kunden sollen Bestellungen sehen und Rechnungen downloaden.",
+        "Anna (T26): Angebote schneller erstellen. Das ist eigentlich das Hauptziel. Portal ist nur Mittel zum Zweck."
+      ]
+    },
+    {
+      "id": "2d7b09-FP-BACKUP-EU",
+      "artifact": "architecture",
+      "claim": "Backup und Disaster Recovery muessen den Anforderungen der EU-Datenresidenz genuegen.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "grounded (alte v1-Pedanterie-FP)",
+      "note": "ALTES PROBLEM: v1 flaggte das als overstated. Farid verknuepft Backups explizit mit globaler Replikation/Datenresidenz → Verknuepfung ist belegt.",
+      "evidence": [
+        "Farid (T307): Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "Clara (T310): Dann reicht 'DSGVO-konform' nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "Clara (T149): Wenn Kundendaten drin sind: ja. [Backup/DR noetig]"
+      ]
+    },
+    {
+      "id": "2d7b09-FN-SAP-WRITE",
+      "artifact": "requirements",
+      "claim": "SAP-Schreibzugriffe sind fuer spaetere Phasen geplant.",
+      "expectedLabel": "violation",
+      "originHandLabel": "overstated/violation (von BEIDEN unit-Judges verfehlt)",
+      "note": "HAERTESTER FALL: v1 UND v2 (unit-level, architecture) verfehlten das. SAP-Schreibzugriff wurde NICHT entschieden; 'geplant fuer spaetere Phasen' ueberbehauptet die Aufloesung.",
+      "evidence": [
+        "Ben (T538): SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "Anna (T541): Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+      ]
+    },
+    {
+      "id": "2d7b09-ROLES-OVERCOMMIT",
+      "artifact": "requirements",
+      "claim": "Das Rollenmodell umfasst mindestens Admin, Sales, Kunde, Manager und Support.",
+      "expectedLabel": "violation",
+      "originHandLabel": "overstated/violation",
+      "note": "ALTES PROBLEM: Manager/Support nur tentativ diskutiert; finale MVP-Liste nennt nur Admin/Sales/Kunde → 'mindestens ... Manager und Support' ueberfestlegt.",
+      "evidence": [
+        "Anna (T20): Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?",
+        "Anna (T623): 4. Rollen Admin/Sales/Kunde"
+      ]
+    },
+    {
+      "id": "2d7b09-OK-LOGIN",
+      "artifact": "requirements",
+      "claim": "Login erfolgt per E-Mail und Passwort; SSO ist optional.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "explicit",
+      "note": "Kontrolle: klar belegt.",
+      "evidence": [
+        "Anna (T11): Also erstmal Login per E-Mail und Passwort. SSO waere schoen. Vielleicht Azure AD. Oder Google?"
+      ]
+    },
+    {
+      "id": "2d7b09-OK-SECURITY",
+      "artifact": "risks",
+      "claim": "Ein Security Review ist zwingend erforderlich und gefaehrdet mit seiner Dauer den MVP-Termin.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "synthesis",
+      "note": "Kontrolle: belegt (Review noetig + Dauer sprengt MVP).",
+      "evidence": [
+        "Ben (T74): Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+        "Clara (T80): Das ist keine Option. [zu 'ohne Security Review']"
+      ]
+    },
+    {
+      "id": "2d7b09-UNSUPPORTED-PUSH-PII",
+      "artifact": "architecture",
+      "claim": "Push-Notifications sind im MVP enthalten und versenden personenbezogene Inhalte.",
+      "expectedLabel": "violation",
+      "originHandLabel": "unsupported",
+      "note": "Kontrolle: Push wurde diskutiert, aber 'im MVP enthalten' + 'versendet personenbezogene Inhalte' ist nicht gedeckt.",
+      "evidence": [
+        "Anna (T32): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Clara (T41): Push heisst Einwilligung. Wieder DSGVO."
+      ]
+    }
+  ]
+}

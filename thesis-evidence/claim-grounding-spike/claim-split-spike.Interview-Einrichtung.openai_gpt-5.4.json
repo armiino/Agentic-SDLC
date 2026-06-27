@@ -1,0 +1,302 @@
+{
+  "fixture": "input/eval-labels/claim-split-spike.json",
+  "transcript": "Interview-Einrichtung",
+  "judge": "openai/gpt-5.4",
+  "fullChain": true,
+  "units": [
+    {
+      "id": "SPLIT-BESTELLUEBERSICHT",
+      "artifact": "architecture",
+      "unit": "Das Kundenportal-Frontend zeigt Angebote, Bestellungen und Rechnungen an.",
+      "note": "MOTIVATION: Compound. Erwartet ~3 atomare Claims. \u0027Bestellungen/Rechnungen\u0027 sollten grounded werden, \u0027Angebote anzeigen\u0027 violation \u2192 loest die E2E-Miss auf.",
+      "atomCount": 3,
+      "claims": [
+        {
+          "claim": "Das Kundenportal-Frontend zeigt Angebote an.",
+          "selectedTurns": [],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Es wurde keine Evidence angegeben. Ohne explizite Evidence kann der Claim nicht lokal verifiziert werden."
+        },
+        {
+          "claim": "Das Kundenportal-Frontend zeigt Bestellungen an.",
+          "selectedTurns": [],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Es wurde keine Evidence bereitgestellt. Damit ist der Claim, dass das Kundenportal-Frontend Bestellungen anzeigt, durch die vorliegenden Belege nicht getragen."
+        },
+        {
+          "claim": "Das Kundenportal-Frontend zeigt Rechnungen an.",
+          "selectedTurns": [],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Es wurde keine Evidence angegeben. Ohne explizite Belegstellen ist der Claim nicht gest\u00FCtzt."
+        }
+      ]
+    },
+    {
+      "id": "SPLIT-EU-COMPOUND",
+      "artifact": "requirements",
+      "unit": "Speicherung und Verarbeitung von Daten duerfen nur innerhalb der EU erfolgen, inklusive Backup und Hosting.",
+      "note": "Compound \u002B Modalitaet \u0027nur\u0027. Modalitaet muss in den atomaren Claims ERHALTEN bleiben (nicht abtrennen).",
+      "atomCount": 4,
+      "claims": [
+        {
+          "claim": "Die Speicherung von Daten darf nur innerhalb der EU erfolgen.",
+          "selectedTurns": [
+            58,
+            59,
+            60,
+            62,
+            63,
+            103,
+            104,
+            105
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Die Evidence behandelt Datenschutz allgemein, rollen-/einrichtungsbezogene Zugriffsbeschr\u00E4nkung sowie Firebase/Cloud und lokale Zwischenspeicherung. Es gibt keinerlei explizite oder hinreichend ableitbare Aussage, dass Datenspeicherung nur innerhalb der EU erfolgen darf. Der Claim f\u00FCgt eine konkrete geografische Beschr\u00E4nkung hinzu, die in der Evidence nicht vorkommt."
+        },
+        {
+          "claim": "Die Verarbeitung von Daten darf nur innerhalb der EU erfolgen.",
+          "selectedTurns": [
+            103,
+            104,
+            105,
+            106
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Die Evidence spricht nur \u00FCber Firebase/Cloud, lokales Caching auf dem Handy und eine m\u00F6gliche Umsetzungsidee. Es gibt keinerlei explizite oder implizite Aussage, dass Datenverarbeitung nur innerhalb der EU erfolgen darf oder soll. Der Claim f\u00FCgt einen geografischen/regulatorischen Scope hinzu, der in der Evidence nicht vorkommt."
+        },
+        {
+          "claim": "Das Backup von Daten darf nur innerhalb der EU erfolgen.",
+          "selectedTurns": [
+            58,
+            59,
+            60,
+            62,
+            63,
+            103,
+            104
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Die Evidence behandelt Datenschutz, rollen-/einrichtungsbezogene Zugriffsrechte sowie die Diskussion um Firebase/Cloud und lokale Speicherung. Es gibt keinerlei explizite oder ableitbare Aussage zu Backups, deren Speicherort oder einer Beschr\u00E4nkung auf die EU."
+        },
+        {
+          "claim": "Das Hosting von Daten darf nur innerhalb der EU erfolgen.",
+          "selectedTurns": [
+            58,
+            59,
+            60,
+            62,
+            63,
+            103,
+            104
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Die Evidence behandelt Datenschutz, Rollen/Rechte, einrichtungsbezogene Sichtbarkeit sowie den Vorschlag Firebase/Cloud zu nutzen. Es gibt keine explizite oder implizite Aussage, dass Hosting nur innerhalb der EU erfolgen darf. Der Claim f\u00FChrt die EU als neuen geografischen Scope ein, der in der Evidence nicht vorkommt."
+        }
+      ]
+    },
+    {
+      "id": "SPLIT-ATOMIC-LOGIN",
+      "artifact": "requirements",
+      "unit": "Login erfolgt per E-Mail und Passwort.",
+      "note": "Kontrolle: bereits atomar \u2192 soll EIN Claim bleiben (kein Ueber-Splitten).",
+      "atomCount": 2,
+      "claims": [
+        {
+          "claim": "Login erfolgt per E-Mail.",
+          "selectedTurns": [
+            117,
+            118
+          ],
+          "label": "grounded",
+          "verdict": "explicit",
+          "support": "full",
+          "reason": "Die Evidence nennt explizit einen Login-Screen mit E-Mail- und Passwort-Feld sowie Login-Button. Daraus ist direkt gest\u00FCtzt, dass der Login per E-Mail erfolgt."
+        },
+        {
+          "claim": "Login erfolgt per Passwort.",
+          "selectedTurns": [
+            117,
+            118
+          ],
+          "label": "grounded",
+          "verdict": "permissible_inference",
+          "support": "partial",
+          "reason": "Die Evidence nennt explizit E-Mail- und Passwort-Feld sowie einen Login-Button auf dem Login-Screen. Daraus ist nachvollziehbar inferierbar, dass der Login mittels Passwort erfolgt. Explizit gesagt wird die Authentifizierungsmethode jedoch nicht; es wird nur die UI beschrieben."
+        }
+      ]
+    },
+    {
+      "id": "SPLIT-ROLES",
+      "artifact": "requirements",
+      "unit": "Das Rollenmodell umfasst mindestens Admin, Sales, Kunde, Manager und Support.",
+      "note": "Aufzaehlung mit Modalitaet \u0027mindestens\u0027. Atomare Rollen-Claims, Modalitaet erhalten.",
+      "atomCount": 5,
+      "claims": [
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Admin.",
+          "selectedTurns": [
+            42,
+            43,
+            59,
+            78,
+            79,
+            87
+          ],
+          "label": "grounded",
+          "verdict": "explicit",
+          "support": "full",
+          "reason": "Die Evidence nennt Admin explizit als Account-/Rollen-Typ mehrfach (\u0027User und Admin\u0027, \u0027Admin-Rechten\u0027, \u0027Power-Nutzer-Admin\u0027). Damit ist direkt gest\u00FCtzt, dass das Rollenmodell mindestens Admin umfasst."
+        },
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Sales.",
+          "selectedTurns": [],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Es wurde keine Evidence angegeben. Damit ist nicht belegt, dass das Rollenmodell mindestens die Rolle Sales umfasst."
+        },
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Kunde.",
+          "selectedTurns": [
+            33,
+            35,
+            36,
+            42,
+            59,
+            78,
+            79
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Die Evidence nennt als Rollen/Account-Typen Mitarbeiter, Angeh\u00F6rige, Admin, User/Betreuer und zus\u00E4tzlich Bewohner. \u0027Kunde\u0027 wird nirgends explizit erw\u00E4hnt; \u0027Bewohner\u0027 kann nicht ohne Weiteres mit \u0027Kunde\u0027 gleichgesetzt werden."
+        },
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Manager.",
+          "selectedTurns": [
+            42,
+            59,
+            79,
+            87,
+            129
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Die Evidence nennt Rollen wie Admin, User und Bewohner sowie Betreuer/Angeh\u00F6rige als User-Typen, aber nirgends explizit oder implizit eine Rolle \u0027Manager\u0027. Der Claim f\u00FCgt damit eine nicht belegte Entit\u00E4t hinzu."
+        },
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Support.",
+          "selectedTurns": [
+            33,
+            34,
+            35,
+            36,
+            42,
+            59,
+            78,
+            79
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Die Evidence nennt Mitarbeiter/Angeh\u00F6rige, sp\u00E4ter Admin/User sowie Bewohner-Account. Eine Rolle bzw. ein Account-Typ \u0027Support\u0027 wird nirgends explizit erw\u00E4hnt oder eindeutig ableitbar gemacht."
+        }
+      ]
+    },
+    {
+      "id": "SPLIT-RISK-SAP",
+      "artifact": "risks",
+      "unit": "Die Verfuegbarkeit von SAP ist eine kritische Abhaengigkeit, und moegliche Fallbacks oder Caches stehen im Konflikt mit Datenaktualitaet und Datenschutz.",
+      "note": "Compound Risiko: SAP-Verfuegbarkeit-Risiko \u002B Cache-Konflikt. Erwartet 2 atomare Claims.",
+      "atomCount": 5,
+      "claims": [
+        {
+          "claim": "Die Verfuegbarkeit von SAP ist eine kritische Abhaengigkeit.",
+          "selectedTurns": [],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Es wurde keine Evidence bereitgestellt. Der Claim ueber die kritische Abhaengigkeit von der SAP-Verfuegbarkeit ist daher lokal nicht belegt."
+        },
+        {
+          "claim": "Moegliche Fallbacks stehen im Konflikt mit der Datenaktualitaet.",
+          "selectedTurns": [
+            24,
+            25,
+            76,
+            77,
+            104,
+            105
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Die Evidence belegt dynamische Aktualisierung, Cloud/Lokalspeicherung und m\u00F6gliche lokale Caches (E3\u2013E6), aber nennt keinen Konflikt zwischen Fallbacks und Datenaktualit\u00E4t. \u0027Fallbacks\u0027 werden in der Evidence nicht explizit erw\u00E4hnt, und ein solcher Zielkonflikt wird nicht ausgesprochen."
+        },
+        {
+          "claim": "Moegliche Fallbacks stehen im Konflikt mit dem Datenschutz.",
+          "selectedTurns": [
+            19,
+            25,
+            28,
+            29,
+            44,
+            58,
+            59,
+            66
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "partial",
+          "reason": "Die Evidence thematisiert wiederholt Datenschutz als Schwierigkeit/Thema (E1, E3, E5, E6, E8), aber sie benennt keine \u0027m\u00F6glichen Fallbacks\u0027 und sagt nicht explizit, dass solche Fallbacks in Konflikt mit dem Datenschutz stehen. Der Claim f\u00FCgt den spezifischen Bezug auf Fallbacks und eine st\u00E4rkere Konfliktaussage hinzu."
+        },
+        {
+          "claim": "Moegliche Caches stehen im Konflikt mit der Datenaktualitaet.",
+          "selectedTurns": [
+            76,
+            77,
+            103,
+            104,
+            105
+          ],
+          "label": "grounded",
+          "verdict": "permissible_inference",
+          "support": "partial",
+          "reason": "E4-E5 belegen lokales Speichern bzw. Caching von aus Firebase geladenen Daten. E1-E2 belegen zugleich den Bedarf an sofortigen/aktuellen Updates. Ein ausdruecklicher \u0027Konflikt\u0027 wird nicht gesagt, folgt aber nachvollziehbar als moegliches Risiko aus lokaler Speicherung bei gleichzeitigem Aktualitaetsanspruch."
+        },
+        {
+          "claim": "Moegliche Caches stehen im Konflikt mit dem Datenschutz.",
+          "selectedTurns": [
+            19,
+            28,
+            33,
+            44,
+            58,
+            59,
+            62,
+            104
+          ],
+          "label": "violation",
+          "verdict": "assumption",
+          "support": "partial",
+          "reason": "Die Evidence belegt mehrfach Datenschutzbedenken zu sensiblen Daten, Zugriffen und m\u00F6glicher lokaler Speicherung/Cloud (E3\u2013E8). Ein expliziter Bezug auf \u0027Caches\u0027 fehlt jedoch; E8 spricht nur allgemein davon, ob Daten lokal auf dem Handy gespeichert werden k\u00F6nnen. Der Claim f\u00FChrt damit die konkrete technische Entit\u00E4t \u0027Caches\u0027 ein, die in der Evidence nicht genannt oder klar impliziert wird."
+        }
+      ]
+    }
+  ]
+}

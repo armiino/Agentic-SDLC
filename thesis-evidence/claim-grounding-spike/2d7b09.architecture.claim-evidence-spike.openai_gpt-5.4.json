@@ -1,0 +1,162 @@
+{
+  "fixture": "input/eval-labels/2d7b09.architecture.claim-evidence-spike.json",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4"
+  },
+  "total": 6,
+  "matches": 4,
+  "accuracy": 0.6667,
+  "results": [
+    {
+      "id": "arch-001-frontend-orders-invoices",
+      "artifact": "architecture.md",
+      "claim": "Das Kundenportal-Frontend zeigt Angebote, Bestellungen und Rechnungen an.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "grounded",
+      "note": "B46 #1: alter Judge flaggte fabricated; Handlabel wertet als Pedanterie-FP.",
+      "verdict": {
+        "verdict": "overstated",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "E2 st\u00FCtzt explizit nur, dass Kunden Bestellungen sehen und Rechnungen herunterladen sollen. F\u00FCr Angebote sagt die Evidence, dass Sales Angebote erstellen will bzw. dass man Angebote generieren m\u00F6chte; sie belegt nicht, dass das Kundenportal-Frontend Angebote anzeigt."
+      },
+      "evidence": [
+        "T23: Stammdaten liegen in SAP. Aber die sind teilweise unvollstaendig. Also wenn wir Angebote generieren wollen ... dann brauchen wir Produktdaten, Preise, Rabattlogik.",
+        "T32: Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden. Aber Sales will Angebote erstellen."
+      ]
+    },
+    {
+      "id": "arch-003-sap-write-later",
+      "artifact": "architecture.md",
+      "claim": "SAP-Schreibzugriffe, zum Beispiel fuer Bestellungen, sind fuer spaetere Phasen vorgesehen.",
+      "expectedLabel": "violation",
+      "originHandLabel": "violation",
+      "note": "B46 #3: echter FN des alten Judges; offen/eher lesend wurde zu geplant/later phase.",
+      "verdict": {
+        "verdict": "assumption",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "temporalContextPreserved": false,
+        "reason": "Die Evidence sagt nur, dass SAP-Schreibzugriff noch nicht entschieden ist (E1), im 8-Wochen-MVP nicht enthalten ist (E2) und aktuell Lesedaten f\u00FCr Angebotserstellung genutzt werden (E3). Daraus folgt nicht explizit, dass Schreibzugriffe wie Bestellungen f\u00FCr sp\u00E4tere Phasen vorgesehen sind; das ist h\u00F6chstens eine Annahme. Der Claim versch\u00E4rft Status und Zeitbezug zu einer Planung f\u00FCr sp\u00E4tere Phasen."
+      },
+      "evidence": [
+        "T538: SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "T592: Wir sprechen von ... SAP-Schreibzugriff ... Das ist kein 8-Wochen-MVP.",
+        "T621: Angebotserstellung mit SAP-Lesedaten."
+      ]
+    },
+    {
+      "id": "arch-004-roles-manager-support",
+      "artifact": "architecture.md",
+      "claim": "Das Rollenmanagement umfasst mindestens Admin, Kunde, Sales, Manager und Support.",
+      "expectedLabel": "violation",
+      "originHandLabel": "borderline",
+      "note": "Autor-Label wurde in der Nachpruefung als zu mild bewertet: Manager/Support diskutiert, aber nicht finaler MVP-Scope.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "Evidence nennt Admin, Kunde, Sales sowie Manager und Support nur als diskutierte/moegliche Rollen. E1/E3 formulieren Manager/Support unsicher (\u0027Vielleicht\u0027, \u0027brauchen wir Support?\u0027), E4 sagt sogar, Support sei nicht geloest. Der Claim verhaertet das zu einem feststehenden \u0027umfasst mindestens\u0027."
+      },
+      "evidence": [
+        "T20: Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?",
+        "T623: Rollen Admin/Sales/Kunde.",
+        "T644: Support?",
+        "T809: Support ist nicht geloest."
+      ]
+    },
+    {
+      "id": "arch-007-multitenant-hosting",
+      "artifact": "architecture.md",
+      "claim": "Das Hosting erfolgt auf einer mandantenfaehigen, DSGVO-konformen EU-basierten Managed-Cloud-Infrastruktur.",
+      "expectedLabel": "violation",
+      "originHandLabel": "violation",
+      "note": "B46 #7: mandantenfaehig ist unbelegt; EU Managed Hosting ist belegt.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "Evidence supports parts of the claim only as preferences/requirements (\u0027Managed Services\u0027, \u0027EU only/DSGVO-konform\u0027, \u0027EU Managed Hosting\u0027). It does not explicitly support \u0027mandantenfaehig\u0027, does not establish that hosting \u0027erfolgt\u0027 already on such infrastructure, and E2 is disjunctive (\u0027EU only. Oder zumindest DSGVO-konform\u0027) rather than the combined stronger claim \u0027DSGVO-konforme EU-basierte\u0027."
+      },
+      "evidence": [
+        "T83: Vielleicht koennen wir Managed Services nehmen. Kein neuer DB Server - IT hat das klar gesagt.",
+        "T95: Ja EU only. Oder zumindest DSGVO-konform.",
+        "T307: EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "T310: Dann reicht DSGVO-konform nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "T625: EU Managed Hosting."
+      ]
+    },
+    {
+      "id": "arch-016-backup-eu-residency",
+      "artifact": "architecture.md",
+      "claim": "Backup und Disaster Recovery muessen den Anforderungen der Datenresidenz in der EU genuegen.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "grounded",
+      "note": "B46 #16: alter Judge flaggte overstated; Handlabel wertet als zulaessige Synthese/Inferenz.",
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "E1/E2 etablieren den Scope Backup und Disaster Recovery. E3 konditioniert dies auf den Fall, dass Kundendaten enthalten sind. E4 beschreibt das konkrete Risiko global replizierter Backups, und E5 fordert deshalb nachweisbare Datenresidenz statt blo\u00DFer DSGVO-Konformit\u00E4t. Damit tr\u00E4gt die Evidence in zul\u00E4ssiger Synthese, dass Backup und DR den EU-Datenresidenzanforderungen gen\u00FCgen m\u00FCssen."
+      },
+      "evidence": [
+        "T137: Und wir haben noch gar nicht ueber Backup gesprochen.",
+        "T143: Ja Disaster Recovery.",
+        "T149: Wenn Kundendaten drin sind: ja.",
+        "T307: EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "T310: Dann reicht DSGVO-konform nicht. Wir brauchen nachweisbare Datenresidenz."
+      ]
+    },
+    {
+      "id": "arch-025-summary-component-separation",
+      "artifact": "architecture.md",
+      "claim": "Die vorlaeufige Architektur fokussiert sich auf ein webbasiertes MVP mit klarer Trennung von Komponenten, strikter DSGVO-Konformitaet und Nutzung bewaehrter Managed Services.",
+      "expectedLabel": "borderline",
+      "originHandLabel": "borderline",
+      "note": "B46 #25: Web-MVP, DSGVO und Managed Services sind belegt; klare Komponententrennung ist eher Synthese/Architekturformulierung.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "Evidence st\u00FCtzt Web-first/MVP-Richtung (E1) und die starke Relevanz von DSGVO (E3, E5) teilweise. Aber \u201Eklare Trennung von Komponenten\u201C wird nirgends erw\u00E4hnt, und \u201ENutzung bew\u00E4hrter Managed Services\u201C ist zu stark: E2 formuliert nur eine M\u00F6glichkeit (\u201EVielleicht k\u00F6nnten wir Managed Services nehmen\u201C). Zudem sch\u00E4rft der Claim den vorl\u00E4ufigen Status zu einer fokussierten Architektur mit strikter DSGVO-Konformit\u00E4t und Managed-Services-Nutzung, was so nicht explizit belegt ist."
+      },
+      "evidence": [
+        "T2: Kundenportal ... Web first. Mobile spaeter.",
+        "T83: Vielleicht koennen wir Managed Services nehmen. Kein neuer DB Server.",
+        "T115: DSGVO.",
+        "T797: Architektur darf keine konkreten Cloud-Produkte erfinden, solange wir keinen Provider gewaehlt haben.",
+        "T806: DSGVO ist nicht optional."
+      ]
+    }
+  ]
+}

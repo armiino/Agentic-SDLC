@@ -1,0 +1,251 @@
+{
+  "fixture": "input/eval-labels/2d7b09.coverage.claim-evidence-spike.json",
+  "transcript": "T9999_chaos.txt",
+  "judge": "openai/gpt-5.4",
+  "mode": "end-to-end (auto evidence selection)",
+  "total": 7,
+  "matchesExpected": 6,
+  "accuracyVsHandlabel": 0.8571,
+  "comparedToManual": 7,
+  "sameAsManual": 7,
+  "results": [
+    {
+      "id": "2d7b09-FP-BESTELLUEBERSICHT",
+      "artifact": "architecture",
+      "claim": "Das Kundenportal-Frontend zeigt Angebote, Bestellungen und Rechnungen an.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        10,
+        34,
+        71,
+        192,
+        198,
+        253
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt bzgl. der angezeigten Portal-Inhalte und deren Status: Turn 10 nennt explizit Bestellungen und Rechnungen im Kundenportal; Turn 34 fasst Angebote und Rechnungen als Scope zusammen. Turn 71 best\u00E4tigt Rechnungen als Support-relevanten Portalinhalt. Zugleich zeigen 192 und 198 den MVP-Schnitt: Angebote und Rechnungen sind drin, Bestellungen aber nicht explizit. Turn 253 mahnt, Widerspr\u00FCche/offene Punkte sichtbar zu lassen, was die Unsicherheit beim Claim st\u00FCtzt.",
+      "autoEvidence": [
+        "[Anna] (T10): Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden. Aber Sales will Angebote erstellen. Und Marketing will Push Notifications.",
+        "[Anna] (T34): Okay also: - Kundenportal - Angebote - Rechnungen - Login - Rollen - Logging - SAP Integration - Keine neue DB - MVP in 8 Wochen - Security Review irgendwie - DSGVO - KPIs - Mobile vielleicht - SSO optional - API Layer?",
+        "[David] (T71): Sorry, ich komme zu sp\u00E4t dazu. Ich bin von Customer Support. Ich habe geh\u00F6rt, es soll kein Ticketsystem geben. Das ist aus Support-Sicht schwierig, weil Kunden uns heute wegen Rechnungen, Lieferstatus und falschen Rabatten st\u00E4ndig schreiben.",
+        "[Anna] (T192): Dann m\u00FCssen wir schneiden. MVP: 1. Login 2. Angebote erstellen 3. Rechnungen anzeigen 4. SAP lesen 5. Rollen minimal 6. Audit minimal",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup",
+        "[Clara] (T253): Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben."
+      ],
+      "verdict": {
+        "verdict": "overstated",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "reason": "Evidence nennt f\u00FCr Kunden explizit Bestellungen sehen (E1) sowie Rechnungen anzeigen/downloaden (E1, E4, E5). Angebote werden jedoch in der Evidence nur als allgemeiner Punkt im Kundenportal (E2) bzw. als von Sales zu erstellen (E1) und im MVP als Angebotserstellung (E4, E5) erw\u00E4hnt, nicht explizit als vom Kundenportal-Frontend anzuzeigende Liste/Ansicht. Der Claim verallgemeinert daher die Angebotsfunktion zu einer Anzeige im Frontend."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "2d7b09-FP-BACKUP-EU",
+      "artifact": "architecture",
+      "claim": "Backup und Disaster Recovery muessen den Anforderungen der EU-Datenresidenz genuegen.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        40,
+        42,
+        44,
+        96,
+        97,
+        198
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt: 40/42/44 etablieren, dass Backup und Disaster Recovery f\u00FCr Kundendaten relevant bzw. erforderlich sind; 96/97 zeigen explizit das EU-Datenresidenz-Risiko bei Backups und die Forderung nach nachweisbarer Datenresidenz; 198 nimmt EU Managed Hosting und Backup in den MVP auf, st\u00FCtzt aber nur teilweise, da DR dort nicht explizit genannt wird.",
+      "autoEvidence": [
+        "[Clara] (T40): Und wir haben noch gar nicht \u00FCber Backup gesprochen.",
+        "[Ben] (T42): Ja Disaster Recovery.",
+        "[Clara] (T44): Wenn Kundendaten drin sind: ja.",
+        "[Farid] (T96): Ich bin aus IT Operations. EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "[Clara] (T97): Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+      ],
+      "verdict": {
+        "verdict": "permissible_inference",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "E1-E3 thematisieren Backup/Disaster Recovery fuer kundendatenhaltige Systeme; E4-E5 fordern nachweisbare EU-Datenresidenz und nennen explizit global replizierte Backups als Risiko. Daraus folgt zulaessig, dass Backup und DR den EU-Datenresidenz-Anforderungen genuegen muessen, auch wenn dies nicht in genau dieser Form explizit gesagt wird."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "2d7b09-FN-SAP-WRITE",
+      "artifact": "requirements",
+      "claim": "SAP-Schreibzugriffe sind fuer spaetere Phasen geplant.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        172,
+        173,
+        174,
+        191,
+        192,
+        198,
+        200
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen direkt, ob SAP-Schreibzugriffe geplant sind und mit welcher Modalit\u00E4t: 172 bringt den Bedarf eines R\u00FCckschreibens nach SAP bei Online-Akzeptanz auf, 173 sagt explizit, dass SAP-Schreibzugriff noch nicht entschieden war und bisher eher lesend gedacht wurde. 174 begrenzt das MVP daraufhin. 191 nennt SAP-Schreibzugriff als Themenpunkt, 192 und 198 definieren MVP explizit mit SAP lesen, nicht schreiben. 200 verschiebt weitere Funktionen in Phase 2, was die Formulierung \u0027f\u00FCr sp\u00E4tere Phasen geplant\u0027 teilweise st\u00FCtzt, aber eher indirekt/offen zeigt.",
+      "autoEvidence": [
+        "[Eva] (T172): Und dann entsteht eine Bestellung. Das muss sauber nach SAP zur\u00FCck.",
+        "[Ben] (T173): SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "[Anna] (T174): Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP.",
+        "[Ben] (T191): Ich sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrw\u00E4hrung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP.",
+        "[Anna] (T192): Dann m\u00FCssen wir schneiden. MVP: 1. Login 2. Angebote erstellen 3. Rechnungen anzeigen 4. SAP lesen 5. Rollen minimal 6. Audit minimal",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup",
+        "[Anna] (T200): Vielleicht Phase 2."
+      ],
+      "verdict": {
+        "verdict": "assumption",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": true,
+        "reason": "Die Evidence sagt explizit, dass SAP-Schreibzugriff \u0027noch gar nicht entschieden\u0027 war und im MVP auf SAP-Lesen reduziert wurde; \u0027Vielleicht Phase 2\u0027 ist unspezifisch und nicht eindeutig auf SAP-Schreibzugriffe bezogen. Damit ist \u0027geplant fuer spaetere Phasen\u0027 nicht belastbar gestuetzt und verschaerft den Status zu einer Planung."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "2d7b09-ROLES-OVERCOMMIT",
+      "artifact": "requirements",
+      "claim": "Das Rollenmodell umfasst mindestens Admin, Sales, Kunde, Manager und Support.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        6,
+        63,
+        81,
+        86,
+        90,
+        198,
+        204
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt \u00FCber die genannten Rollen und deren Status: Turn 6 nennt zun\u00E4chst Admin, normaler User, Manager und Support als unsichere/fr\u00FChe Rollenidee; Turn 63 best\u00E4tigt Bedarf f\u00FCr Rollen-/Berechtigungskonzept; Turns 81 und 86 belegen Sales und Manager/Freigaberolle; Turn 90 konkretisiert Support als Rolle; Turn 198 nennt im MVP explizit Admin, Sales, Kunde; Turn 204 zeigt, dass Support im MVP noch offen bzw. nicht gekl\u00E4rt ist. Damit ist der Claim nur teilweise gest\u00FCtzt und bzgl. Support/Umfang offen.",
+      "autoEvidence": [
+        "[Anna] (T6): Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support? Wer pflegt eigentlich Stammdaten?",
+        "[Clara] (T63): Und ein Rollen- und Berechtigungskonzept.",
+        "[Eva] (T81): Ich bin aus Finance. Mir fehlt ein Punkt: Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt. Manche Kunden haben Sonderkonditionen, aber nicht jeder Sales-Mitarbeiter darf die nutzen.",
+        "[Eva] (T86): Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.",
+        "[David] (T90): Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen.",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup",
+        "[David] (T204): Support?"
+      ],
+      "verdict": {
+        "verdict": "overstated",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "reason": "Evidence nennt f\u00FCr den MVP explizit nur Admin/Sales/Kunde (E6). Manager, Support und teils auch Rollenbedarf werden nur als vielleicht/offen diskutiert (E1, E5, E7), nicht als fest umfasste Rollen. Der Claim verfestigt offene/optionale Rollen zu einem finalen Mindestumfang."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "2d7b09-OK-LOGIN",
+      "artifact": "requirements",
+      "claim": "Login erfolgt per E-Mail und Passwort; SSO ist optional.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        3,
+        4,
+        34,
+        198,
+        256
+      ],
+      "selectionReason": "Turn 3 nennt explizit \u0027Login per E-Mail und Passwort\u0027 und dass SSO nur \u0027sch\u00F6n w\u00E4re\u0027 (optional/offen). Turn 4 relativiert SSO wegen fehlendem IAM. Turn 34 fasst \u0027Login\u0027 und \u0027SSO optional\u0027 zusammen. Turn 198 konkretisiert den MVP mit Login, ohne SSO als Pflicht zu nennen. Turn 256 warnt davor, aus Azure AD eine Entscheidung abzuleiten, also bleibt SSO unentschieden/optional.",
+      "autoEvidence": [
+        "[Anna] (T3): Ja aber das darf uns jetzt nicht blockieren. MVP in 8 Wochen wurde versprochen. Also erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?",
+        "[Ben] (T4): Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.",
+        "[Anna] (T34): Okay also: - Kundenportal - Angebote - Rechnungen - Login - Rollen - Logging - SAP Integration - Keine neue DB - MVP in 8 Wochen - Security Review irgendwie - DSGVO - KPIs - Mobile vielleicht - SSO optional - API Layer?",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup",
+        "[Anna] (T256): Genau. Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat."
+      ],
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "E1 sagt explizit \u0027erstmal Login per E-Mail und Passwort\u0027. E3 sagt explizit \u0027SSO optional\u0027. Zusammen tragen die Spans den Claim ohne Bedeutungsverschiebung; E5 st\u00FCtzt zudem, dass keine konkrete SSO-Technologie festgelegt ist."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "2d7b09-OK-SECURITY",
+      "artifact": "risks",
+      "claim": "Ein Security Review ist zwingend erforderlich und gefaehrdet mit seiner Dauer den MVP-Termin.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        24,
+        25,
+        26,
+        69,
+        70
+      ],
+      "selectionReason": "Turn 24 nennt explizit, dass das Security Review 6 Wochen dauert und den 8-Wochen-MVP sprengt. Turn 26 macht klar, dass ein Verzicht keine Option ist, also faktisch erforderlich. Turns 25 sowie 69-70 zeigen die Diskussion um Pflicht/Notwendigkeit und dass ohne Dokumentation kein Security Review m\u00F6glich ist.",
+      "autoEvidence": [
+        "[Ben] (T24): Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+        "[Anna] (T25): Dann machen wir es ohne Security Review?",
+        "[Clara] (T26): Das ist keine Option.",
+        "[Ben] (T69): Ohne Dokumentation kein Security Review.",
+        "[Anna] (T70): Okay dann doch."
+      ],
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "E1 sagt explizit, dass der Security Review 6 Wochen dauert und den 8-Wochen-MVP sprengt; E2/E3 machen klar, dass ein Vorgehen ohne Security Review keine Option ist. Daraus folgt als zul\u00E4ssige Verdichtung: Der Review ist erforderlich und seine Dauer gef\u00E4hrdet den MVP-Termin."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "2d7b09-UNSUPPORTED-PUSH-PII",
+      "artifact": "architecture",
+      "claim": "Push-Notifications sind im MVP enthalten und versenden personenbezogene Inhalte.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        10,
+        11,
+        13,
+        15,
+        192,
+        198
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen beide Teile des Claims: Push-Notifications werden in 10 nur als Wunsch von Marketing erw\u00E4hnt, in 11 direkt als bisher unbesprochen hinterfragt und in 15 eher auf sp\u00E4ter bzw. nicht im MVP verschoben. Die MVP-Zuschnitte in 192 und 198 listen Push-Notifications nicht auf, was gegen \u0027im MVP enthalten\u0027 spricht. Turn 13 zeigt nur die Compliance-/Einwilligungsmodalit\u00E4t von Push, aber keine Festlegung auf personenbezogene Inhalte.",
+      "autoEvidence": [
+        "[Anna] (T10): Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden. Aber Sales will Angebote erstellen. Und Marketing will Push Notifications.",
+        "[Ben] (T11): Push Notifications? Das hatten wir nie besprochen.",
+        "[Clara] (T13): Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.",
+        "[Anna] (T15): Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen.",
+        "[Anna] (T192): Dann m\u00FCssen wir schneiden. MVP: 1. Login 2. Angebote erstellen 3. Rechnungen anzeigen 4. SAP lesen 5. Rollen minimal 6. Audit minimal",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+      ],
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "none",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "reason": "Die Evidence nennt Push Notifications nur als Marketing-Wunsch und diskutiert DSGVO/Einwilligung; Anna sagt zudem \u0027vielleicht sp\u00E4ter\u0027 und \u0027nicht im MVP\u0027, und die finalen MVP-Listen enthalten keine Push Notifications. Personenbezogene Inhalte werden nirgends erw\u00E4hnt. Der Claim f\u00FCgt daher sowohl MVP-Status als auch PII-Inhalt unbelegt hinzu."
+      },
+      "manualLabel": "violation"
+    }
+  ]
+}

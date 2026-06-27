@@ -1,0 +1,141 @@
+{
+  "cases": [
+    {
+      "id": "92e6a3-REQ-09",
+      "artifact": "requirements",
+      "claim": "Das Kundenportal muss innerhalb von 8 Wochen als MVP einsatzbereit sein.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "explicit",
+      "note": "explizit zugesagt im Transkript.",
+      "evidence": [
+        "Anna (T11): MVP in 8 Wochen wurde versprochen.",
+        "Anna (T113): - MVP in 8 Wochen"
+      ]
+    },
+    {
+      "id": "92e6a3-REQ-04",
+      "artifact": "requirements",
+      "claim": "Eine API-Schicht bindet SAP zur Abfrage von Produkt- und Preisdaten an.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "synthesis",
+      "note": "Synthese aus API-Layer + SAP-Produkt/Preisdaten.",
+      "evidence": [
+        "Ben (T122): Wir brauchen definitiv eine API Layer. Sonst koennen wir nichts integrieren.",
+        "Ben (T23): Stammdaten liegen in SAP ... dann brauchen wir Produktdaten, Preise, Rabattlogik."
+      ]
+    },
+    {
+      "id": "92e6a3-REQ-33",
+      "artifact": "requirements",
+      "claim": "Im MVP gibt es keinen Echtzeit-Zugriff auf SAP-Sonderpreise; Preisaktualitaet ist eingeschraenkt.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "permissible_inference",
+      "note": "folgt aus 'SAP-Preise nicht in Echtzeit, nachts berechnet'.",
+      "evidence": [
+        "Ben (T460): SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.",
+        "Ben (T469): Dann brauchen wir Preisgueltigkeit und vielleicht Warnhinweise."
+      ]
+    },
+    {
+      "id": "92e6a3-REQ-25",
+      "artifact": "requirements",
+      "claim": "Freigabeprozesse fuer Rabatte sind nicht im MVP enthalten und in spaeteren Phasen zu klaeren.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "grounded",
+      "note": "explizit auf Phase 2 verschoben.",
+      "evidence": [
+        "Eva (T629): Und Rabatt-Freigabe?",
+        "Anna (T632): Vielleicht Phase 2.",
+        "Ben (T638): Das waere eine Constraint: keine manuellen Sonderrabatte im MVP."
+      ]
+    },
+    {
+      "id": "92e6a3-ARCH-OAUTH",
+      "artifact": "architecture",
+      "claim": "OAuth ist die bevorzugte, aber noch nicht final entschiedene Methode zur API-Authentifizierung.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "explicit",
+      "note": "Modalitaet ('bevorzugt, nicht final') korrekt erhalten.",
+      "evidence": [
+        "Ben (T128): OAuth waere besser. Aber komplexer.",
+        "Ben (T803): Und OAuth ist bevorzugt, aber noch nicht final."
+      ]
+    },
+    {
+      "id": "92e6a3-ARCH-05",
+      "artifact": "architecture",
+      "claim": "Audit- und Logging-Komponenten protokollieren sicherheitsrelevante Aktionen, ohne personenbezogene Daten in technischen Logs.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "synthesis",
+      "note": "Synthese aus Auditpflicht + 'keine PII in technischen Logs'.",
+      "evidence": [
+        "Clara (T68): Auditierbarkeit ist Pflicht. Wer hat wann was geaendert?",
+        "Farid (T556): Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten."
+      ]
+    },
+    {
+      "id": "92e6a3-ARCH-23",
+      "artifact": "architecture",
+      "claim": "Ein integriertes Ticketsystem ist im MVP ausgeschlossen; Support laeuft ueber ein Kontaktformular.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "grounded",
+      "note": "explizit: kein Ticketsystem im MVP.",
+      "evidence": [
+        "Anna (T196): Nein erstmal nicht. [zu Ticketsystem]",
+        "Anna (T647): Kontaktformular ohne Ticketpersistenz?"
+      ]
+    },
+    {
+      "id": "92e6a3-REQ-19",
+      "artifact": "requirements",
+      "claim": "Speicherung und Verarbeitung von Daten duerfen nur innerhalb der EU erfolgen, inklusive Backup und Hosting.",
+      "expectedLabel": "violation",
+      "originHandLabel": "overstated/violation",
+      "note": "EU-only ist OFFEN (vs DSGVO-konform, 'nicht dasselbe'); 'nur'/'inklusive Backup' ueberschaerft die Modalitaet.",
+      "evidence": [
+        "Anna (T95): Ja EU only. Oder zumindest DSGVO-konform.",
+        "Ben (T98): Das ist nicht dasselbe.",
+        "Farid (T307): Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "Anna (T625): 6. EU Managed Hosting 7. Backup"
+      ]
+    },
+    {
+      "id": "92e6a3-ARCH-18",
+      "artifact": "architecture",
+      "claim": "Hosting und Backup erfolgen ausschliesslich in der EU mit gesicherter Datenresidenz.",
+      "expectedLabel": "violation",
+      "originHandLabel": "overstated/violation",
+      "note": "'ausschliesslich' stellt die offene EU-only-Frage als entschieden dar; Datenresidenz ist gefordert, aber nicht gesichert.",
+      "evidence": [
+        "Ben (T98): Das ist nicht dasselbe. [EU only vs DSGVO-konform]",
+        "Clara (T310): Dann reicht 'DSGVO-konform' nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "Farid (T307): ... repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert."
+      ]
+    },
+    {
+      "id": "92e6a3-REQ-21",
+      "artifact": "requirements",
+      "claim": "Ein Security Review ist erforderlich, darf jedoch den MVP nicht verzoegern; pragmatische Umsetzungen sind erlaubt.",
+      "expectedLabel": "violation",
+      "originHandLabel": "overstated/violation",
+      "note": "Transkript: Review dauert 6 Wochen und sprengt den MVP; eine 'pragmatische, nicht-verzoegernde' Aufloesung wurde NICHT beschlossen.",
+      "evidence": [
+        "Ben (T74): Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+        "Anna (T77): Dann machen wir es ohne Security Review?",
+        "Clara (T80): Das ist keine Option."
+      ]
+    },
+    {
+      "id": "92e6a3-ARCH-MANDANT",
+      "artifact": "architecture",
+      "claim": "Die Hosting-Infrastruktur ist mandantenfaehig.",
+      "expectedLabel": "violation",
+      "originHandLabel": "unsupported",
+      "note": "Kontrolle: 'mandantenfaehig' (Multi-Tenancy) kommt in der Evidence NICHT vor → unsupported.",
+      "evidence": [
+        "Ben (T83): Vielleicht koennen wir Managed Services nehmen. Kein neuer DB Server.",
+        "Anna (T95): Ja EU only. Oder zumindest DSGVO-konform."
+      ]
+    }
+  ]
+}

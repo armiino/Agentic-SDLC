@@ -1,0 +1,411 @@
+{
+  "fixture": "input/eval-labels/92e6a3.req-arch.claim-evidence-spike.json",
+  "transcript": "T9999_chaos.txt",
+  "judge": "openai/gpt-5.4",
+  "mode": "end-to-end (auto evidence selection)",
+  "total": 11,
+  "matchesExpected": 11,
+  "accuracyVsHandlabel": 1,
+  "comparedToManual": 11,
+  "sameAsManual": 11,
+  "results": [
+    {
+      "id": "92e6a3-REQ-09",
+      "artifact": "requirements",
+      "claim": "Das Kundenportal muss innerhalb von 8 Wochen als MVP einsatzbereit sein.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        3,
+        24,
+        26,
+        34,
+        110,
+        111,
+        191,
+        251
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den 8-Wochen-MVP-Claim direkt: Turn 3 und 34 nennen das Ziel/Versprechen \u201AMVP in 8 Wochen\u2018. Mehrere Turns widersprechen der Realisierbarkeit bzw. zeigen Offenheit/Risiko: Security Review sprengt laut 24 die 8 Wochen, 26 macht ein Weglassen unm\u00F6glich, 110/111 zeigen zus\u00E4tzliche 6 Wochen Warteliste beim API-Gateway, 191 fasst zusammen, dass der Scope kein 8-Wochen-MVP ist, und 251 betont viele offene Punkte.",
+      "autoEvidence": [
+        "[Anna] (T3): Ja aber das darf uns jetzt nicht blockieren. MVP in 8 Wochen wurde versprochen. Also erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?",
+        "[Ben] (T24): Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+        "[Clara] (T26): Das ist keine Option.",
+        "[Anna] (T34): Okay also: - Kundenportal - Angebote - Rechnungen - Login - Rollen - Logging - SAP Integration - Keine neue DB - MVP in 8 Wochen - Security Review irgendwie - DSGVO - KPIs - Mobile vielleicht - SSO optional - API Layer?",
+        "[Ben] (T110): Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "[Anna] (T111): Das passt nicht zum 8-Wochen-MVP.",
+        "[Ben] (T191): Ich sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrw\u00E4hrung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP.",
+        "[Anna] (T251): Wir haben jetzt sehr viele offene Punkte."
+      ],
+      "verdict": {
+        "verdict": "explicit",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "E1 sagt explizit \u201EMVP in 8 Wochen wurde versprochen\u201C, und E4 wiederholt \u201EMVP in 8 Wochen\u201C in der zusammengefassten Liste zum Kundenportal. Der Claim fasst dies als Anforderung/Zielzustand f\u00FCr das Kundenportal zusammen. Zwar zeigen E2/E6/E7 Risiken bzw. Zweifel an der Machbarkeit, sie widersprechen aber nicht, dass das 8-Wochen-MVP als gesetzte Vorgabe besteht."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "92e6a3-REQ-04",
+      "artifact": "requirements",
+      "claim": "Eine API-Schicht bindet SAP zur Abfrage von Produkt- und Preisdaten an.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        7,
+        34,
+        35,
+        107,
+        110,
+        122,
+        192,
+        198
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt: 7 nennt SAP als Quelle f\u00FCr Stammdaten/Produktdaten/Preise; 34 und 35 bringen die API Layer explizit auf; 107 betont, dass ohne SAP-Schnittstelle die L\u00F6sung wertlos ist; 110 konkretisiert die API Layer \u00FCber das zentrale API Gateway; 122 zeigt die Modalit\u00E4t des SAP-Abrufs bei Bedarf; 192 und 198 grenzen den MVP explizit auf \u0027SAP lesen\u0027 bzw. \u0027SAP-Lesedaten\u0027 ein. Das st\u00FCtzt eine lesende API-/Integrationsschicht f\u00FCr Produkt- und Preisdaten, zeigt aber auch, dass Details/Umsetzung noch im Fluss sind.",
+      "autoEvidence": [
+        "[Ben] (T7): Stammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig. Also wenn wir Angebote generieren wollen \u2013 was Sales unbedingt will \u2013 dann brauchen wir Produktdaten, Preise, Rabattlogik.",
+        "[Anna] (T34): Okay also: - Kundenportal - Angebote - Rechnungen - Login - Rollen - Logging - SAP Integration - Keine neue DB - MVP in 8 Wochen - Security Review irgendwie - DSGVO - KPIs - Mobile vielleicht - SSO optional - API Layer?",
+        "[Ben] (T35): Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.",
+        "[Ben] (T107): Und ohne SAP-Schnittstelle wertlos.",
+        "[Ben] (T110): Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "[Ben] (T122): Abruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit.",
+        "[Anna] (T192): Dann m\u00FCssen wir schneiden. MVP: 1. Login 2. Angebote erstellen 3. Rechnungen anzeigen 4. SAP lesen 5. Rollen minimal 6. Audit minimal",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+      ],
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Die Evidence tr\u00E4gt beide Teile des Claims in Kombination: E2/E3/E5 nennen explizit eine ben\u00F6tigte API-Layer, E4 sowie E7/E8 belegen die SAP-Anbindung bzw. SAP-Lesedaten im MVP. E1 spezifiziert, dass aus SAP Produktdaten, Preise und Rabattlogik ben\u00F6tigt werden. Damit ist die Aussage, dass eine API-Schicht SAP zur Abfrage von Produkt- und Preisdaten anbindet, als zul\u00E4ssige Verdichtung mehrerer Spans gedeckt."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "92e6a3-REQ-33",
+      "artifact": "requirements",
+      "claim": "Im MVP gibt es keinen Echtzeit-Zugriff auf SAP-Sonderpreise; Preisaktualitaet ist eingeschraenkt.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        147,
+        149,
+        150,
+        192,
+        198,
+        201,
+        202,
+        233
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt: 147 sagt explizit, dass SAP-Preise nicht immer in Echtzeit aktuell sind; 149-150 thematisieren das Risiko veralteter Preise und n\u00F6tige Preisg\u00FCltigkeit/Warnhinweise. 192 und 198 definieren den MVP nur mit SAP-Lesedaten, ohne Echtzeit-Zusicherung. 201-202 zeigen eine MVP-Einschr\u00E4nkung bei Sonderrabatten. 233 ff. zeigt zus\u00E4tzlich die kritische Abh\u00E4ngigkeit von SAP-Verf\u00FCgbarkeit f\u00FCr aktuelle Preisberechnung.",
+      "autoEvidence": [
+        "[Ben] (T147): Noch ein technischer Punkt: SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.",
+        "[Eva] (T149): Wenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen.",
+        "[Ben] (T150): Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise.",
+        "[Anna] (T192): Dann m\u00FCssen wir schneiden. MVP: 1. Login 2. Angebote erstellen 3. Rechnungen anzeigen 4. SAP lesen 5. Rollen minimal 6. Audit minimal",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup",
+        "[Eva] (T201): Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.",
+        "[Ben] (T202): Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.",
+        "[David] (T233): Was passiert, wenn SAP nicht erreichbar ist?"
+      ],
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "E1 sagt explizit, dass SAP-Preise nicht immer in Echtzeit aktuell sind und Rabatte teils nachts berechnet werden; E4/E5 grenzen den betrachteten Umfang auf das MVP mit SAP-Lesedaten ein. Daraus ergibt sich zul\u00E4ssig verdichtet f\u00FCr das MVP eine eingeschr\u00E4nkte Preisaktualit\u00E4t statt Echtzeit-Zugriff auf Sonderpreise. Der Claim f\u00FCgt keine ungetragenen Details hinzu."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "92e6a3-REQ-25",
+      "artifact": "requirements",
+      "claim": "Freigabeprozesse fuer Rabatte sind nicht im MVP enthalten und in spaeteren Phasen zu klaeren.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        81,
+        82,
+        86,
+        87,
+        194,
+        199,
+        200,
+        260
+      ],
+      "selectionReason": "Diese Turns behandeln direkt den Rabatt-Freigabeprozess: Eva bringt ihn als Anforderung ein (81, 86), Anna verschiebt ihn mehrfach auf sp\u00E4ter bzw. zeigt Unsicherheit bei Details (82, 87, 200), im MVP-Abgleich wird sein Fehlen explizit benannt (194, 199), und am Ende bleibt festgehalten, dass Freigaben noch nicht gel\u00F6st sind (260).",
+      "autoEvidence": [
+        "[Eva] (T81): Ich bin aus Finance. Mir fehlt ein Punkt: Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt. Manche Kunden haben Sonderkonditionen, aber nicht jeder Sales-Mitarbeiter darf die nutzen.",
+        "[Anna] (T82): Das ist wichtig, aber vielleicht sp\u00E4ter.",
+        "[Eva] (T86): Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.",
+        "[Anna] (T87): Oder ab 20 Prozent. Ich bin mir nicht sicher.",
+        "[Eva] (T194): Freigabeprozess fehlt.",
+        "[Eva] (T199): Und Rabatt-Freigabe?",
+        "[Anna] (T200): Vielleicht Phase 2.",
+        "[Eva] (T260): Freigaben sind nicht gel\u00F6st."
+      ],
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Die Evidence sagt, dass ein Rabatt-Freigabeprozess fehlt bzw. nicht gel\u00F6st ist (E5, E8) und dass er \u0027vielleicht sp\u00E4ter\u0027 bzw. \u0027vielleicht Phase 2\u0027 behandelt wird (E2, E7). Daraus folgt zul\u00E4ssig verdichtet, dass er nicht im MVP enthalten ist und in sp\u00E4teren Phasen zu kl\u00E4ren ist. Die Unsicherheit zu Schwellenwerten (E3, E4) \u00E4ndert den Kern des Claims nicht."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "92e6a3-ARCH-OAUTH",
+      "artifact": "architecture",
+      "claim": "OAuth ist die bevorzugte, aber noch nicht final entschiedene Methode zur API-Authentifizierung.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        36,
+        37,
+        38,
+        257
+      ],
+      "selectionReason": "Diese Turns behandeln direkt die API-Authentifizierung: 36 nennt die Optionen OAuth vs. API Keys, 37 bewertet OAuth als besser/bevorzugt, 38 macht den Zeit-/Komplexit\u00E4tsvorbehalt sichtbar, und 257 fasst explizit zusammen, dass OAuth bevorzugt, aber noch nicht final entschieden ist.",
+      "autoEvidence": [
+        "[Clara] (T36): API muss abgesichert sein. OAuth? Oder API Keys?",
+        "[Ben] (T37): OAuth w\u00E4re besser. Aber komplexer.",
+        "[Anna] (T38): Komplexer hei\u00DFt mehr Zeit.",
+        "[Ben] (T257): Und OAuth ist bevorzugt, aber noch nicht final."
+      ],
+      "verdict": {
+        "verdict": "explicit",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "E4 sagt w\u00F6rtlich, dass OAuth bevorzugt, aber noch nicht final ist; E1 verortet dies im Kontext der API-Authentifizierung/Absicherung."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "92e6a3-ARCH-05",
+      "artifact": "architecture",
+      "claim": "Audit- und Logging-Komponenten protokollieren sicherheitsrelevante Aktionen, ohne personenbezogene Daten in technischen Logs.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        22,
+        179,
+        180,
+        192,
+        198,
+        247
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt: 22 fordert Auditierbarkeit sicherheitsrelevanter \u00C4nderungen, 179-180 differenzieren Audit-, Security- und technische Logs und sagen explizit, dass zentrales Monitoring keine personenbezogenen Daten enthalten darf. 192 und 198 zeigen den geplanten Status (\u0027Audit minimal\u0027 / \u0027Minimaler Audit Trail\u0027) und damit die noch begrenzte bzw. offene Ausgestaltung. 247 h\u00E4lt die Anforderung \u0027keine personenbezogenen Daten in technischen Logs\u0027 nochmals explizit fest.",
+      "autoEvidence": [
+        "[Clara] (T22): Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?",
+        "[Farid] (T179): Noch ein Risiko: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.",
+        "[Ben] (T180): Guter Punkt. Application logs, audit logs und security logs sind unterschiedliche Dinge.",
+        "[Anna] (T192): Dann m\u00FCssen wir schneiden. MVP: 1. Login 2. Angebote erstellen 3. Rechnungen anzeigen 4. SAP lesen 5. Rollen minimal 6. Audit minimal",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup",
+        "[Clara] (T247): Und \u0022keine personenbezogenen Daten in technischen Logs\u0022."
+      ],
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "E1 und E4/E5 belegen Audit/Audit-Trail f\u00FCr Nachvollziehbarkeit von \u00C4nderungen bzw. minimale Audit-Funktion. E2 und E6 sagen explizit, dass technische/zentralen Monitoring-Logs keine personenbezogenen Daten enthalten d\u00FCrfen, und E2/E3 unterscheiden Audit von technischem Logging. Der Claim fasst diese Punkte ohne Bedeutungsverschiebung zusammen."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "92e6a3-ARCH-23",
+      "artifact": "architecture",
+      "claim": "Ein integriertes Ticketsystem ist im MVP ausgeschlossen; Support laeuft ueber ein Kontaktformular.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        58,
+        59,
+        71,
+        72,
+        204,
+        205,
+        209,
+        210
+      ],
+      "selectionReason": "Diese Turns adressieren direkt die Support-/Ticketsystem-Entscheidung im MVP: 58-59 verwerfen ein Ticketsystem zun\u00E4chst, 71-72 best\u00E4tigen ausdr\u00FCcklich, dass es nicht im MVP ist und eher nur ein Kontaktformular gedacht ist, 204-205 konkretisieren dies als \u0027Kontaktformular ohne Ticketpersistenz\u0027, und 209-210 zeigen die bewusste Einschr\u00E4nkung bzw. das Risiko statt einer voll integrierten Ticketl\u00F6sung.",
+      "autoEvidence": [
+        "[Ben] (T58): Was ist mit Support? Ticketsystem?",
+        "[Anna] (T59): Nein erstmal nicht.",
+        "[David] (T71): Sorry, ich komme zu sp\u00E4t dazu. Ich bin von Customer Support. Ich habe geh\u00F6rt, es soll kein Ticketsystem geben. Das ist aus Support-Sicht schwierig, weil Kunden uns heute wegen Rechnungen, Lieferstatus und falschen Rabatten st\u00E4ndig schreiben.",
+        "[Anna] (T72): Ticketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.",
+        "[David] (T204): Support?",
+        "[Anna] (T205): Kontaktformular ohne Ticketpersistenz?",
+        "[David] (T209): Support wird damit nicht gl\u00FCcklich.",
+        "[Anna] (T210): Notieren als Risiko."
+      ],
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Die Evidence st\u00FCtzt beide Teile des Claims in Kombination: E2/E4 schlie\u00DFen ein Ticketsystem zun\u00E4chst bzw. im MVP aus (\u0022Nein erstmal nicht\u0022, \u0022Ticketsystem war nicht im MVP\u0022, \u0022kein richtiges Ticketsystem\u0022); E4/E6 nennen als Alternative ein Kontaktformular bzw. \u0022Kontaktformular ohne Ticketpersistenz\u0022. Der Claim verdichtet diese Spans ohne Bedeutungsverschiebung."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "92e6a3-REQ-19",
+      "artifact": "requirements",
+      "claim": "Speicherung und Verarbeitung von Daten duerfen nur innerhalb der EU erfolgen, inklusive Backup und Hosting.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        30,
+        31,
+        40,
+        96,
+        97,
+        198
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt: 30/31 thematisieren EU-only Hosting, wobei Anna dies nur mit \u0027oder zumindest DSGVO-konform\u0027 relativiert; 40 zeigt, dass Backup zun\u00E4chst noch gar nicht betrachtet war; 96/97 konkretisieren, dass EU-only inkl. Backup/Replication schwierig ist und nachweisbare Datenresidenz braucht; 198 nennt \u0027EU Managed Hosting\u0027 und \u0027Backup\u0027 explizit im MVP, best\u00E4tigt aber nicht vollst\u00E4ndig \u0027nur innerhalb der EU\u0027 f\u00FCr Backup/Verarbeitung, sondern zeigt den Ziel-/Beschlusscharakter.",
+      "autoEvidence": [
+        "[Clara] (T30): Und wo werden Daten gehostet? EU only?",
+        "[Anna] (T31): Ja EU only. Oder zumindest DSGVO-konform.",
+        "[Clara] (T40): Und wir haben noch gar nicht \u00FCber Backup gesprochen.",
+        "[Farid] (T96): Ich bin aus IT Operations. EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "[Clara] (T97): Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+      ],
+      "verdict": {
+        "verdict": "overstated",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "reason": "Evidence supports EU-only/managed hosting as a requirement direction (E1, E2, E5, E6), but it does not explicitly state that all data storage and processing may only occur within the EU. Backup is mentioned as a separate MVP item (E6) and as a risk of global replication unless disabled (E4), not explicitly as confirmed EU-only. The claim strengthens scope from hosting/data residency to all storage and processing, including backup."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "92e6a3-ARCH-18",
+      "artifact": "architecture",
+      "claim": "Hosting und Backup erfolgen ausschliesslich in der EU mit gesicherter Datenresidenz.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        30,
+        31,
+        32,
+        40,
+        96,
+        97,
+        198
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt: 30\u201332 zeigen, dass EU-only zwar gefordert, aber noch nicht sauber gekl\u00E4rt ist; 40 zeigt, dass Backup zun\u00E4chst noch gar nicht besprochen war; 96\u201397 widersprechen einer bereits gesicherten EU-Datenresidenz, weil globale Backup-Replikation beim Standardanbieter m\u00F6glich ist und nachweisbare Residenz erst gefordert wird; 198 nennt EU Managed Hosting und Backup erst als MVP-Plan, also als beabsichtigte Entscheidung statt als bereits gesicherte Tatsache.",
+      "autoEvidence": [
+        "[Clara] (T30): Und wo werden Daten gehostet? EU only?",
+        "[Anna] (T31): Ja EU only. Oder zumindest DSGVO-konform.",
+        "[Ben] (T32): Das ist nicht dasselbe.",
+        "[Clara] (T40): Und wir haben noch gar nicht \u00FCber Backup gesprochen.",
+        "[Farid] (T96): Ich bin aus IT Operations. EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "[Clara] (T97): Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "[Anna] (T198): Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+      ],
+      "verdict": {
+        "verdict": "contradicted",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "contradicted",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "reason": "Die Evidence tr\u00E4gt weder \u0027ausschliesslich in der EU\u0027 f\u00FCr Hosting und Backup noch \u0027gesicherte Datenresidenz\u0027. E2 relativiert bereits zu \u0027EU only. Oder zumindest DSGVO-konform\u0027, E5 sagt explizit, dass Backups beim Standardanbieter manchmal global repliziert werden, wenn nicht deaktiviert, und E6 formuliert Datenresidenz nur als Bedarf. E7 nennt nur \u0027EU Managed Hosting\u0027 und separat \u0027Backup\u0027, ohne EU-Backup oder gesicherte Residenz festzulegen."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "92e6a3-REQ-21",
+      "artifact": "requirements",
+      "claim": "Ein Security Review ist erforderlich, darf jedoch den MVP nicht verzoegern; pragmatische Umsetzungen sind erlaubt.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        24,
+        25,
+        26,
+        34,
+        69,
+        70,
+        208,
+        211
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt: 24 zeigt, dass ein Security Review den MVP zeitlich gef\u00E4hrden kann; 25/26 kl\u00E4ren, dass es trotzdem erforderlich ist und nicht weggelassen werden darf; 34 und 70 zeigen die noch offene/pragmatische Formulierung (\u0027Security Review irgendwie\u0027, Dokumentation nur soweit n\u00F6tig); 69 verkn\u00FCpft das Review mit minimal n\u00F6tiger Doku; 208 sowie 211 zeigen, dass pragmatische bzw. vereinfachte L\u00F6sungen grunds\u00E4tzlich erlaubt sind, aber als bewusste Einschr\u00E4nkung/Risiko kenntlich gemacht werden m\u00FCssen statt ignoriert zu werden.",
+      "autoEvidence": [
+        "[Ben] (T24): Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+        "[Anna] (T25): Dann machen wir es ohne Security Review?",
+        "[Clara] (T26): Das ist keine Option.",
+        "[Anna] (T34): Okay also: - Kundenportal - Angebote - Rechnungen - Login - Rollen - Logging - SAP Integration - Keine neue DB - MVP in 8 Wochen - Security Review irgendwie - DSGVO - KPIs - Mobile vielleicht - SSO optional - API Layer?",
+        "[Ben] (T69): Ohne Dokumentation kein Security Review.",
+        "[Anna] (T70): Okay dann doch.",
+        "[Ben] (T208): Aber einfacher.",
+        "[Clara] (T211): Bitte nicht \u0022wir ignorieren es\u0022, sondern \u0022bewusste Einschr\u00E4nkung\u0022."
+      ],
+      "verdict": {
+        "verdict": "overstated",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "reason": "Evidence st\u00FCtzt, dass ein vollst\u00E4ndiges Ignorieren des Security Reviews keine Option ist (E2\u2013E3) und dass eine vereinfachte/bewusste Einschr\u00E4nkung diskutiert wird (E7\u2013E8). Nicht explizit belegt ist jedoch die normative Formulierung \u201Eist erforderlich\u201C sowie die konkrete Aussage, dass es den MVP nicht verz\u00F6gern darf; E1 zeigt nur den Konflikt mit dem 8\u2011Wochen\u2011MVP, E4 nur \u201ESecurity Review irgendwie\u201C. \u201EPragmatische Umsetzungen sind erlaubt\u201C ist nur als vereinfachtes Vorgehen inferierbar."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "92e6a3-ARCH-MANDANT",
+      "artifact": "architecture",
+      "claim": "Die Hosting-Infrastruktur ist mandantenfaehig.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        96,
+        109,
+        121,
+        127,
+        196,
+        213,
+        251
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen Mandantenf\u00E4higkeit nur indirekt und vor allem \u00FCber offene Architektur-/Hosting-Fragen: Hosting ist bzgl. EU-Residenz und Providerdetails noch offen (96), zentrale Gateway-/Infrastrukturvorgaben werden genannt (109), Datenhaltung vs. Abruf aus SAP ist offen (121), Zielausweitung auf weitere Regionen ist nur perspektivisch (127), im MVP wird nur EU Managed Hosting erw\u00E4hnt, aber keine Mandantentrennung (196), Umgebungen/Testdaten werden diskutiert statt Tenant-Isolation (213), und am Ende werden viele offene Punkte best\u00E4tigt (251). Es gibt damit keine belastbare Best\u00E4tigung der Mandantenf\u00E4higkeit; der Status ist eher offen/nicht entschieden.",
+      "autoEvidence": [
+        "[Farid] (T96): Ich bin aus IT Operations. EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "[Farid] (T109): Noch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.",
+        "[Clara] (T121): Was ist eigentlich mit Datenminimierung? M\u00FCssen alle Kundendaten im Portal liegen oder reicht ein Abruf aus SAP bei Bedarf?",
+        "[Anna] (T127): Zum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft.",
+        "[Farid] (T196): API Gateway und EU Hosting fehlen.",
+        "[Farid] (T213): Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "[Anna] (T251): Wir haben jetzt sehr viele offene Punkte."
+      ],
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "none",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "reason": "Die Evidence erw\u00E4hnt keine Mandantenf\u00E4higkeit der Hosting-Infrastruktur. Es werden EU-Hosting, API-Gateway, Umgebungen und offene Punkte genannt, aber nichts zu Multi-Tenancy/Mandantenf\u00E4higkeit. Der Claim f\u00FCgt damit eine nicht belegte Eigenschaft hinzu."
+      },
+      "manualLabel": "violation"
+    }
+  ]
+}

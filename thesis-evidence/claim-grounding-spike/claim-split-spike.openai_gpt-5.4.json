@@ -1,0 +1,341 @@
+{
+  "fixture": "input/eval-labels/claim-split-spike.json",
+  "judge": "openai/gpt-5.4",
+  "fullChain": true,
+  "units": [
+    {
+      "id": "SPLIT-BESTELLUEBERSICHT",
+      "artifact": "architecture",
+      "unit": "Das Kundenportal-Frontend zeigt Angebote, Bestellungen und Rechnungen an.",
+      "note": "MOTIVATION: Compound. Erwartet ~3 atomare Claims. \u0027Bestellungen/Rechnungen\u0027 sollten grounded werden, \u0027Angebote anzeigen\u0027 violation \u2192 loest die E2E-Miss auf.",
+      "atomCount": 3,
+      "claims": [
+        {
+          "claim": "Das Kundenportal-Frontend zeigt Angebote an.",
+          "selectedTurns": [
+            34,
+            54,
+            84,
+            88,
+            168,
+            174,
+            192,
+            198
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "none",
+          "reason": "Die Evidence nennt zwar \u0027Kundenportal\u0027 und mehrfach \u0027Angebote\u0027, konkret aber Angebotserstellung, Workflow, SAP-Lesedaten bzw. Download. Es wird nicht explizit gesagt, dass das Kundenportal-Frontend Angebote anzeigt; der Frontend-/Anzeige-Aspekt und diese genaue Funktion werden nicht getragen."
+        },
+        {
+          "claim": "Das Kundenportal-Frontend zeigt Bestellungen an.",
+          "selectedTurns": [
+            10,
+            34,
+            71,
+            192,
+            198
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "partial",
+          "reason": "E1 sagt explizit, dass Kunden Bestellungen sehen sollen. Die Evidence nennt aber kein Frontend und E4/E5 zeigen zudem, dass im MVP Rechnungen/Angebote priorisiert sind, nicht Bestellanzeige. Der Teil \u0027Kundenportal-Frontend\u0027 bzw. die Zuordnung zur Architekturkomponente wird durch die Evidence nicht getragen."
+        },
+        {
+          "claim": "Das Kundenportal-Frontend zeigt Rechnungen an.",
+          "selectedTurns": [
+            9,
+            10,
+            34,
+            192,
+            198,
+            222
+          ],
+          "label": "violation",
+          "verdict": "overstated",
+          "support": "partial",
+          "reason": "Evidence nennt sowohl \u201ERechnungen anzeigen\u201C (E4) als auch \u201ERechnungen downloaden\u201C/\u201ERechnungsdownload\u201C (E2, E5). Der Claim reduziert dies auf das Frontend zeigt Rechnungen an; der Frontend-Bezug ist nur indirekt \u00FCber \u201EKundenportal\u201C/MVP-Kontext ableitbar und l\u00E4sst den mehrfach expliziten Download-Aspekt weg. Daher thematisch nah, aber nicht exakt durch die Evidence in dieser Form gest\u00FCtzt."
+        }
+      ]
+    },
+    {
+      "id": "SPLIT-EU-COMPOUND",
+      "artifact": "requirements",
+      "unit": "Speicherung und Verarbeitung von Daten duerfen nur innerhalb der EU erfolgen, inklusive Backup und Hosting.",
+      "note": "Compound \u002B Modalitaet \u0027nur\u0027. Modalitaet muss in den atomaren Claims ERHALTEN bleiben (nicht abtrennen).",
+      "atomCount": 4,
+      "claims": [
+        {
+          "claim": "Die Speicherung von Daten darf nur innerhalb der EU erfolgen.",
+          "selectedTurns": [
+            30,
+            31,
+            32,
+            96,
+            97,
+            198
+          ],
+          "label": "violation",
+          "verdict": "overstated",
+          "support": "partial",
+          "reason": "Die Evidence zeigt eine Pr\u00E4ferenz/Anforderung in Richtung EU-only bzw. nachweisbare Datenresidenz (T31, T97) und sp\u00E4ter \u0027EU Managed Hosting\u0027 im MVP (T198). Sie belegt aber nicht explizit die starke normative Formulierung \u0027darf nur innerhalb der EU erfolgen\u0027. Zudem relativiert T31 mit \u0027Oder zumindest DSGVO-konform\u0027, und T96 zeigt operative Probleme statt final beschlossener Regel."
+        },
+        {
+          "claim": "Die Verarbeitung von Daten darf nur innerhalb der EU erfolgen.",
+          "selectedTurns": [
+            30,
+            31,
+            32,
+            96,
+            97,
+            98,
+            196,
+            198
+          ],
+          "label": "violation",
+          "verdict": "overstated",
+          "support": "partial",
+          "reason": "Die Evidence thematisiert EU-only/EU Managed Hosting bzw. nachweisbare Datenresidenz, aber nicht explizit den finalen normativen Requirement-Claim, dass jede Verarbeitung von Daten nur innerhalb der EU erfolgen darf. Zudem sagt E2 \u0027EU only. Oder zumindest DSGVO-konform\u0027, E4 relativiert die Umsetzbarkeit wegen globaler Backups, und E8 nennt \u0027EU Managed Hosting\u0027 f\u00FCr das MVP. Das tr\u00E4gt Hosting/Residenz teilweise, nicht pauschal jede Datenverarbeitung innerhalb der EU."
+        },
+        {
+          "claim": "Backup darf nur innerhalb der EU erfolgen.",
+          "selectedTurns": [
+            30,
+            31,
+            32,
+            96,
+            97,
+            198
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "partial",
+          "reason": "Evidence supports EU-only/EU managed hosting and notes that backups may replicate globally unless explicitly disabled, plus a need for provable data residency. It does not explicitly state the requirement \u0027Backup darf nur innerhalb der EU erfolgen\u0027; the claim narrows hosting/data residency to backups specifically and turns a risk/warning into a finalized backup-only requirement."
+        },
+        {
+          "claim": "Hosting darf nur innerhalb der EU erfolgen.",
+          "selectedTurns": [
+            30,
+            31,
+            32,
+            96,
+            97,
+            196,
+            198
+          ],
+          "label": "violation",
+          "verdict": "overstated",
+          "support": "partial",
+          "reason": "Die Evidence zeigt eine Pr\u00E4ferenz/Anforderung in Richtung EU-only bzw. EU Managed Hosting (E2, E5, E7), aber nicht explizit die versch\u00E4rfte normative Formulierung \u201Edarf nur innerhalb der EU erfolgen\u201C. Zudem relativiert E2 mit \u201EOder zumindest DSGVO-konform\u201C, sodass die Exklusivit\u00E4t nicht eindeutig festgelegt ist."
+        }
+      ]
+    },
+    {
+      "id": "SPLIT-ATOMIC-LOGIN",
+      "artifact": "requirements",
+      "unit": "Login erfolgt per E-Mail und Passwort.",
+      "note": "Kontrolle: bereits atomar \u2192 soll EIN Claim bleiben (kein Ueber-Splitten).",
+      "atomCount": 2,
+      "claims": [
+        {
+          "claim": "Login erfolgt per E-Mail.",
+          "selectedTurns": [
+            2,
+            3,
+            34,
+            198
+          ],
+          "label": "grounded",
+          "verdict": "synthesis",
+          "support": "full",
+          "reason": "E1 thematisiert ausdr\u00FCcklich \u0027Login per E-Mail\u0027, E2 konkretisiert f\u00FCr das MVP \u0027erstmal Login per E-Mail und Passwort\u0027, und E4 best\u00E4tigt Login als MVP-Bestandteil. Der Claim \u0027Login erfolgt per E-Mail\u0027 ist damit als knappe Verdichtung der Evidence gedeckt, ohne Modalit\u00E4t, Scope oder Zeitbezug zu versch\u00E4rfen."
+        },
+        {
+          "claim": "Login erfolgt per Passwort.",
+          "selectedTurns": [
+            2,
+            3,
+            4,
+            34,
+            198
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "partial",
+          "reason": "E2 nennt explizit \u201ELogin per E-Mail und Passwort\u201C. Der Claim reduziert dies auf \u201Eper Passwort\u201C und l\u00E4sst den E-Mail-Bestandteil weg. E5 erw\u00E4hnt \u201ELogin mit Double-Opt-In\u201C, aber nicht Passwort. Damit ist der konkrete Mechanismus \u201Enur Passwort\u201C nicht exakt durch die Evidence getragen."
+        }
+      ]
+    },
+    {
+      "id": "SPLIT-ROLES",
+      "artifact": "requirements",
+      "unit": "Das Rollenmodell umfasst mindestens Admin, Sales, Kunde, Manager und Support.",
+      "note": "Aufzaehlung mit Modalitaet \u0027mindestens\u0027. Atomare Rollen-Claims, Modalitaet erhalten.",
+      "atomCount": 5,
+      "claims": [
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Admin.",
+          "selectedTurns": [
+            6,
+            63,
+            198
+          ],
+          "label": "grounded",
+          "verdict": "explicit",
+          "support": "full",
+          "reason": "E1 nennt explizit die Rolle \u0027Admin\u0027 (\u0027Admin und normaler User\u0027), E3 best\u00E4tigt zus\u00E4tzlich \u0027Rollen Admin/Sales/Kunde\u0027. Der Claim ist auf \u0027mindestens Admin\u0027 begrenzt und wird direkt getragen."
+        },
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Sales.",
+          "selectedTurns": [
+            7,
+            10,
+            142,
+            198
+          ],
+          "label": "grounded",
+          "verdict": "explicit",
+          "support": "full",
+          "reason": "E4 nennt explizit im MVP die Rollen \u201EAdmin/Sales/Kunde\u201C. Damit ist direkt belegt, dass das Rollenmodell mindestens Sales umfasst."
+        },
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Kunde.",
+          "selectedTurns": [
+            5,
+            6,
+            34,
+            63,
+            198
+          ],
+          "label": "grounded",
+          "verdict": "permissible_inference",
+          "support": "partial",
+          "reason": "E5 nennt im MVP explizit die Rollen \u201EAdmin/Sales/Kunde\u201C. Damit ist \u201EKunde\u201C als Rolle belegt. Der allgemeinere Begriff \u201ERollenmodell\u201C ist in E1/E2/E3/E4 thematisiert, aber nicht explizit mit \u201EKunde\u201C verkn\u00FCpft; die Aussage ergibt sich als zul\u00E4ssige Verkn\u00FCpfung, jedoch nicht direkt w\u00F6rtlich."
+        },
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Manager.",
+          "selectedTurns": [
+            6,
+            81,
+            86,
+            192,
+            198
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "partial",
+          "reason": "E1 nennt \u0022Vielleicht noch Manager\u0022 nur als unsichere Option, nicht als enthaltene Rolle. E3 verlangt eine Manager-Freigabe ab 15% Rabatt, belegt aber nicht explizit, dass das Rollenmodell einen Manager als Rolle umfasst. Sp\u00E4tere MVP-Rollen in E5 sind Admin/Sales/Kunde und nennen Manager gerade nicht."
+        },
+        {
+          "claim": "Das Rollenmodell umfasst mindestens Support.",
+          "selectedTurns": [
+            6,
+            58,
+            71,
+            90,
+            198,
+            204,
+            259
+          ],
+          "label": "violation",
+          "verdict": "unsupported",
+          "support": "partial",
+          "reason": "Support wird zwar mehrfach diskutiert (E1, E2, E4, E6, E7), aber nicht als Bestandteil des Rollenmodells festgelegt. E1 ist fragend/unsicher (\u0027Oder brauchen wir Support?\u0027), E5 nennt f\u00FCr das MVP nur Admin/Sales/Kunde, und E7 sagt explizit, Support sei nicht gel\u00F6st. Der Claim behauptet final, das Rollenmodell umfasse mindestens Support; das wird durch die Evidence nicht getragen."
+        }
+      ]
+    },
+    {
+      "id": "SPLIT-RISK-SAP",
+      "artifact": "risks",
+      "unit": "Die Verfuegbarkeit von SAP ist eine kritische Abhaengigkeit, und moegliche Fallbacks oder Caches stehen im Konflikt mit Datenaktualitaet und Datenschutz.",
+      "note": "Compound Risiko: SAP-Verfuegbarkeit-Risiko \u002B Cache-Konflikt. Erwartet 2 atomare Claims.",
+      "atomCount": 5,
+      "claims": [
+        {
+          "claim": "Die Verfuegbarkeit von SAP ist eine kritische Abhaengigkeit.",
+          "selectedTurns": [
+            122,
+            123,
+            124,
+            233,
+            234,
+            235,
+            237,
+            245
+          ],
+          "label": "grounded",
+          "verdict": "explicit",
+          "support": "full",
+          "reason": "E8 formuliert den Claim nahezu w\u00F6rtlich: \u201ESAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u201C. E1-E7 liefern zus\u00E4tzlichen Kontext zu Verf\u00FCgbarkeitsrisiken und Auswirkungen bei SAP-Ausfall."
+        },
+        {
+          "claim": "Moegliche Fallbacks stehen im Konflikt mit der Datenaktualitaet.",
+          "selectedTurns": [
+            147,
+            149,
+            150,
+            233,
+            235,
+            237,
+            242,
+            244
+          ],
+          "label": "grounded",
+          "verdict": "permissible_inference",
+          "support": "partial",
+          "reason": "Die Evidence nennt zwei Punkte: Preise/Rabatte sind teils nicht echtzeitaktuell bzw. nachts berechnet (E1-E3) und bei SAP-Ausfall werden Fallback/Cache erwogen (E4-E8). Ein direkter \u0027Konflikt\u0027 zwischen Fallbacks und Datenaktualit\u00E4t wird nicht explizit gesagt, folgt aber nachvollziehbar aus Cache/Fallback plus aufwendiger Cache-Invalidierung und kundenspezifischer Rabattlogik."
+        },
+        {
+          "claim": "Moegliche Fallbacks stehen im Konflikt mit dem Datenschutz.",
+          "selectedTurns": [
+            237,
+            238,
+            239,
+            240,
+            241,
+            242,
+            243
+          ],
+          "label": "grounded",
+          "verdict": "synthesis",
+          "support": "full",
+          "reason": "Die Evidence verkn\u00FCpft den m\u00F6glichen Fallback/Cache explizit mit Datenschutzrisiken: Fallback oder Cache wird vorgeschlagen (E1), Cache k\u00F6nnte Kundendaten bzw. kundenspezifische Rabatte enthalten (E2\u2013E3, E6), und Clara benennt daraus direkt \u0027Datenschutz und Retention\u0027 als Problem (E4). Der Claim verdichtet diese Spans zul\u00E4ssig zu einem m\u00F6glichen Konflikt mit dem Datenschutz."
+        },
+        {
+          "claim": "Moegliche Caches stehen im Konflikt mit der Datenaktualitaet.",
+          "selectedTurns": [
+            233,
+            234,
+            237,
+            238,
+            239,
+            242,
+            243,
+            244
+          ],
+          "label": "grounded",
+          "verdict": "synthesis",
+          "support": "full",
+          "reason": "Die Evidence verknuepft Cache als moeglichen Fallback (E3) mit dem Risiko veralteter bzw. nicht aktuell berechneter Angebots-/Preis-/Rabattdaten (E2, E5, E6) sowie der Aussage, dass Cache riskant ist und Invalidierung aufwendig ist (E7, E8). Der Claim verdichtet dies zulaessig zu einem Konflikt zwischen moeglichen Caches und Datenaktualitaet."
+        },
+        {
+          "claim": "Moegliche Caches stehen im Konflikt mit dem Datenschutz.",
+          "selectedTurns": [
+            121,
+            122,
+            179,
+            180,
+            237,
+            238,
+            239,
+            240
+          ],
+          "label": "grounded",
+          "verdict": "synthesis",
+          "support": "full",
+          "reason": "E5-E8 verkn\u00FCpfen Cache/Fallback mit enthaltenen Daten (u.a. ggf. kundenindividuelle Rabatte) und Claras explizitem Einwand \u0027Dann wieder Datenschutz und Retention\u0027. Der Claim verdichtet dies zul\u00E4ssig zu einem m\u00F6glichen Konflikt von Caches mit Datenschutz."
+        }
+      ]
+    }
+  ]
+}

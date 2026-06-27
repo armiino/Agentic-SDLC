@@ -1,0 +1,338 @@
+{
+  "artifact": "requirements.md",
+  "phase": "phase2_1",
+  "runId": "20260612_112129_92e6a3",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4"
+  },
+  "unitCount": 40,
+  "groundingScore": 8,
+  "counts": {
+    "grounded": 27,
+    "overstated": 8,
+    "not_a_claim": 5
+  },
+  "verdicts": [
+    {
+      "index": 0,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Kundenportal, Angebotserstellung als Hauptziel und Rechnungen/Bestellungen einsehen bzw. Rechnungen downloaden werden besprochen.",
+      "text": "Das System muss ein Kundenportal bereitstellen, in dem Kunden ihre Angebote erstellen und Rechnungen einsehen k\u00F6nnen."
+    },
+    {
+      "index": 1,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SAP als Quelle f\u00FCr Stammdaten, Produktdaten, Preise und Rabattlogik wird genannt; im MVP sp\u00E4ter explizit SAP-Lesedaten.",
+      "text": "Die Angebotserstellung muss eine Integration zu SAP f\u00FCr Produkt- und Preisdaten besitzen (lesend)."
+    },
+    {
+      "index": 2,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Login per E-Mail und Passwort sowie Double-Opt-In werden explizit genannt; im MVP-Schnitt steht Login mit Double-Opt-In.",
+      "text": "Kunden m\u00FCssen sich per E-Mail und Passwort anmelden k\u00F6nnen; ein Double-Opt-In f\u00FCr DSGVO-Konformit\u00E4t ist verpflichtend."
+    },
+    {
+      "index": 3,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Admin/Sales/Kunde werden im MVP genannt, aber Support ist nicht entschieden, sondern als unklarer Punkt/Risiko diskutiert, nicht klar ausgeschlossen.",
+      "text": "Rollen m\u00FCssen mindestens Admin, Sales und Kunde abdecken. Support-Rollen sind im MVP ausgeschlossen."
+    },
+    {
+      "index": 4,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Rechnungen/Bestellungen und PDF f\u00FCr Angebote kommen vor, aber \u0027rechtliche Nachvollziehbarkeit\u0027 via PDF-Export ist nicht als feststehende Funktion f\u00FCr Rechnungen so beschlossen.",
+      "text": "Kunden sollen ihre Bestellungen und Rechnungen herunterladen k\u00F6nnen, inklusive PDF-Export mit rechtlicher Nachvollziehbarkeit."
+    },
+    {
+      "index": 5,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Minimales Audit/Logging, Audit Trail und Nachvollziehbarkeit von Nutzeraktionen/Angebots\u00E4nderungen werden mehrfach gefordert.",
+      "text": "Das System soll minimale Audit- und Logging-Funktionalit\u00E4ten f\u00FCr Nutzeraktionen und Angebots\u00E4nderungen haben."
+    },
+    {
+      "index": 6,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Im MVP sollen keine manuellen Sonderrabatte erlaubt sein; Freigabeprozess wird eher Phase 2, daher passt die Einschr\u00E4nkung.",
+      "text": "Es soll eine einfache Rabattlogik ohne manuelle Sonderrabatte im MVP unterst\u00FCtzen (keine Freigabeprozesse im MVP)."
+    },
+    {
+      "index": 7,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "API Layer wird als definitiv notwendig genannt; OAuth wird bevorzugt, API Keys als Alternative diskutiert.",
+      "text": "Ein API-Layer muss implementiert werden, der die Integration mit externen Systemen erm\u00F6glicht; OAuth ist bevorzugt, API Keys sind m\u00F6glich."
+    },
+    {
+      "index": 8,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Kontaktformular statt vollst\u00E4ndigem Ticketsystem wird explizit als m\u00F6gliche MVP-L\u00F6sung diskutiert.",
+      "text": "Das Kundenportal muss ein Kontaktformular f\u00FCr Supportanfragen bieten, jedoch kein vollst\u00E4ndiges Ticketsystem im MVP."
+    },
+    {
+      "index": 9,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "MVP in 8 Wochen wird mehrfach explizit genannt, auch wenn die Machbarkeit bezweifelt wird.",
+      "text": "Das System muss innerhalb von 8 Wochen als MVP bereitgestellt werden."
+    },
+    {
+      "index": 10,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "EU-Hosting bzw. nachweisbare Datenresidenz wird ausdr\u00FCcklich gefordert; EU-only vs. DSGVO-konform wird differenziert.",
+      "text": "Hosting muss in der EU erfolgen, um DSGVO-Vorschriften einzuhalten, inklusive nachweisbarer Datenresidenz."
+    },
+    {
+      "index": 11,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Kein neuer DB-Server ist klar genannt; Managed Services sind okay/bevorzugt.",
+      "text": "Es d\u00FCrfen keine neuen Datenbankserver betrieben werden; Managed Services sind zu bevorzugen."
+    },
+    {
+      "index": 12,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Nutzerzahl 200 bis 20.000 ist genannt; Skalierbarkeit vs. Overengineering wird explizit diskutiert und als unsicher markiert.",
+      "text": "Die Performance muss so beschaffen sein, dass zwischen 200 und (unsicher) 20.000 Nutzer ohne Overengineering bedient werden k\u00F6nnen."
+    },
+    {
+      "index": 13,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Backup und Disaster Recovery werden als f\u00FCr MVP notwendig besprochen.",
+      "text": "Backup- und Disaster-Recovery-Konzepte m\u00FCssen umgesetzt werden."
+    },
+    {
+      "index": 14,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "API-Sicherheit, Audit/Logging, keine personenbezogenen Daten in technischen Logs und TLS statt E2E werden genannt.",
+      "text": "API und Portal m\u00FCssen sicher betrieben werden mit Audit-Log-Funktionalit\u00E4t, Logging ohne personenbezogene Daten, und Verschl\u00FCsselung auf Transportebene (TLS)."
+    },
+    {
+      "index": 15,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Dev/Test/Prod sowie pseudonymisierte oder synthetische Testdaten werden explizit gefordert.",
+      "text": "Es sind mindestens drei Umgebungen (Dev, Test, Prod) mit pseudonymisierten oder synthetischen Testdaten zu etablieren."
+    },
+    {
+      "index": 16,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "DSGVO, personenbezogene Daten, L\u00F6schkonzept und Double-Opt-In werden klar thematisiert.",
+      "text": "Das System muss vollst\u00E4ndig DSGVO-konform sein, insbesondere im Umgang mit personenbezogenen Daten, L\u00F6schkonzepten und Double-Opt-In."
+    },
+    {
+      "index": 17,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Revisionssichere Nachvollziehbarkeit und Protokollierung von \u00C4nderungen/\u00D6ffnungen an Angeboten werden besprochen.",
+      "text": "Audit Trails m\u00FCssen revisionssicher sein und \u00C4nderungen an Angeboten protokollieren."
+    },
+    {
+      "index": 18,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Manuelle Uploads werden nur als Zwischenl\u00F6sung diskutiert und wegen Risiken kritisiert, aber kein ausdr\u00FCckliches Verbot im MVP beschlossen.",
+      "text": "Kein manueller Upload von Angebotsdaten im MVP, um Datenqualit\u00E4t und Compliance sicherzustellen."
+    },
+    {
+      "index": 19,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "EU-only wird stark diskutiert und als MVP-Punkt genannt, aber zugleich als teuer/schwierig/offen problematisiert; \u0027darf nur\u0027 ist zu entschieden.",
+      "text": "Speicherung und Verarbeitung von Daten darf nur innerhalb der EU erfolgen, inklusive Backup und Hosting."
+    },
+    {
+      "index": 20,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Es wird festgelegt: im MVP keine manuellen Sonderrabatte bzw. kein Rabatt \u00FCber Standardsatz ohne Freigabe.",
+      "text": "Keine Sonderrabatte ohne vorherige Freigabe au\u00DFerhalb des MVP."
+    },
+    {
+      "index": 21,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Security Review wird als n\u00F6tig bezeichnet, aber \u0027darf den MVP nicht verz\u00F6gern\u0027 widerspricht der Aussage, dass es 6 Wochen dauert und die 8 Wochen sprengt; nur \u0027irgendwie\u0027 offen.",
+      "text": "Ein Security Review ist erforderlich, darf jedoch den MVP nicht verz\u00F6gern; pragmatische Umsetzungen sind erlaubt."
+    },
+    {
+      "index": 22,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Kontaktformular statt Ticketsystem wird diskutiert; Datenschutzbezug der Supportdaten wird ausdr\u00FCcklich genannt.",
+      "text": "Supportanfragen \u00FCber das Kontaktformular sind datenschutzkonform zu behandeln, da kein Ticketsystem besteht."
+    },
+    {
+      "index": 23,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Aufbewahrung \u00FCber Jahre, Konflikt mit L\u00F6schanfragen und Bedarf an Retention Rules werden explizit besprochen.",
+      "text": "Retention Policies sind zu beachten, die L\u00F6schung personenbezogener Daten m\u00FCssen mit handelsrechtlichen Aufbewahrungspflichten abgewogen werden."
+    },
+    {
+      "index": 24,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SSO wurde als optional genannt; Azure AD/Google wurden als m\u00F6gliche, nicht entschiedene Optionen diskutiert.",
+      "text": "SSO-Integration (Azure AD, Google) ist optional und noch nicht final definiert."
+    },
+    {
+      "index": 25,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Rabatt-Freigaben wurden zwar teils auf Phase 2 geschoben, aber nur mit der Einschr\u00E4nkung, dass im MVP dann keine manuellen Sonderrabatte erlaubt sind; pauschal \u0027sp\u00E4ter zu kl\u00E4ren\u0027 ist zu stark vereinfacht.",
+      "text": "Freigabeprozesse f\u00FCr Rabatte sind nicht im MVP enthalten und in sp\u00E4teren Phasen zu kl\u00E4ren."
+    },
+    {
+      "index": 26,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Ticketsystem wurde f\u00FCr MVP verneint; Kontaktformular wurde als m\u00F6gliche Zwischenl\u00F6sung diskutiert.",
+      "text": "Support-Ticketsystem wird im MVP nicht realisiert; Kontaktformular ist tempor\u00E4re L\u00F6sung."
+    },
+    {
+      "index": 27,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Es wurden unsichere Nutzerzahlen von 200, 2000 und 20.000 genannt.",
+      "text": "Skalierung und erwartete Nutzerzahlen sind sehr unsicher (200 bis 20.000 Nutzer)."
+    },
+    {
+      "index": 28,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Pilotkunde ist offen; Mehrw\u00E4hrung und Mehrsprachigkeit wurden diskutiert und als scope-relevant beschrieben.",
+      "text": "Pilotkunde, Mehrw\u00E4hrungen und Mehrsprachigkeit sind noch offen und beeinflussen Scope und Anforderungen."
+    },
+    {
+      "index": 29,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Zentrales API Gateway ist laut Policy n\u00F6tig; sechs Wochen Warteliste wurde als Problem f\u00FCr den 8-Wochen-MVP genannt.",
+      "text": "API Gateway Nutzung ist geplant, aber Wartezeit von 6 Wochen k\u00F6nnte den MVP gef\u00E4hrden."
+    },
+    {
+      "index": 30,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SAP wurde als kritische Abh\u00E4ngigkeit besprochen; Wartungsfenster am Wochenende und Auswirkungen auf Performance/Verf\u00FCgbarkeit wurden genannt.",
+      "text": "SAP-Schnittstellen sind kritisch und k\u00F6nnen Wartungsfenster haben, was Verf\u00FCgbarkeit beeinflussen kann."
+    },
+    {
+      "index": 31,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Echte Kundendaten im SAP-Testsystem wurden als Datenschutzproblem benannt und als sofort kl\u00E4rungsbed\u00FCrftig dargestellt.",
+      "text": "Datenschutzrisiken im Umgang mit Testdaten aus SAP-Testumgebungen sind noch unklar und zu kl\u00E4ren."
+    },
+    {
+      "index": 32,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Tracking und Push wurden als Themen diskutiert, aber nicht klar als \u0027f\u00FCr MVP zur\u00FCckgestellt\u0027 entschieden; KPIs/Tracking blieben teils offen.",
+      "text": "Datenschutzrechtliche Abw\u00E4gungen bez\u00FCglich Protokollierung, Tracking und Push Notifications sind f\u00FCr MVP zur\u00FCckgestellt."
+    },
+    {
+      "index": 33,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Preisaktualit\u00E4t und n\u00E4chtliche Rabattberechnung in SAP wurden besprochen, aber ein fehlender Echtzeit-Zugriff auf SAP-Sonderpreise im MVP wurde so nicht beschlossen.",
+      "text": "Preisaktualit\u00E4t und Rabattlogik sind eingeschr\u00E4nkt; es gibt keinen Echtzeit-Zugriff auf SAP-Sonderpreise im MVP."
+    },
+    {
+      "index": 34,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "not_a_claim",
+      "reason": "Metadaten/Quellenverweis statt fachlicher Aussage.",
+      "text": "Anforderungen basieren auf dem Transkript input/transcripts/T9999_chaos.txt, welches umfangreiche Diskussionen zwischen Stakeholdern Anna, Ben, Clara, David, Eva und Farid dokumentiert."
+    },
+    {
+      "index": 35,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "not_a_claim",
+      "reason": "Metadaten/Dateiverweis statt fachlicher Aussage.",
+      "text": "Zielsetzung, Rollen, Hauptthemen, Konflikte und Risiken sind im Kontextruns/phase2_1/20260612_112129_92e6a3/state/context.md zusammengefasst."
+    },
+    {
+      "index": 36,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Im Transkript wird mehrfach ein MVP-Schnitt diskutiert, mit bewussten Ein-/Ausschl\u00FCssen und Risiken wegen 8-Wochen-Zeitrahmen/Machbarkeit.",
+      "text": "Beim Umgang mit widerspr\u00FCchlichen Anforderungen wurden bewusste Abgrenzungen f\u00FCr das MVP getroffen, um den Zeitrahmen und Machbarkeit zu sichern."
+    },
+    {
+      "index": 37,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "not_a_claim",
+      "reason": "Traceability-/Owner-Zuordnung zu Clara und allgemeine Dokumentationsaussage statt fachlichem Sach-Claim.",
+      "text": "Compliance-Anforderungen und Datenschutz stammen insbesondere aus den Beitr\u00E4gen von Clara und sind im Kontext dokumentiert."
+    },
+    {
+      "index": 38,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "not_a_claim",
+      "reason": "Ebenfalls prim\u00E4r Stakeholder-Zuordnung/Meta-Aussage (\u0027von Ben und Farid\u0027) statt konkreter fachlicher Behauptung.",
+      "text": "Technische und operationelle Randbedingungen insbesondere von Ben und Farid sind im Kontext ber\u00FCcksichtigt."
+    },
+    {
+      "index": 39,
+      "section": "Traceability",
+      "kind": "paragraph",
+      "verdict": "not_a_claim",
+      "reason": "Reine Metadaten \u00FCber Dokumentherkunft und Schreibweise, kein fachlicher Inhalt \u00FCber das System.",
+      "text": "_Dieses Dokument wurde erstellt basierend auf MAF Workflow Kontext und dem Transkript input/transcripts/T9999_chaos.txt. Anforderungen sind als testbar formuliert, offene Punkte und Annahmen explizit gekennzeichnet._"
+    }
+  ]
+}

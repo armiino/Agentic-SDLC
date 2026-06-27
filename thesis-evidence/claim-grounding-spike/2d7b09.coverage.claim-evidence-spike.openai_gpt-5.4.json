@@ -1,0 +1,174 @@
+{
+  "fixture": "input/eval-labels/2d7b09.coverage.claim-evidence-spike.json",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4"
+  },
+  "total": 7,
+  "matches": 6,
+  "accuracy": 0.8571,
+  "results": [
+    {
+      "id": "2d7b09-FP-BESTELLUEBERSICHT",
+      "artifact": "architecture",
+      "claim": "Das Kundenportal-Frontend zeigt Angebote, Bestellungen und Rechnungen an.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "explicit (alte v1-Pedanterie-FP)",
+      "note": "ALTES PROBLEM: v1 flaggte das als fabricated (Pedanterie). Bestellungen sehen \u002B Rechnungen downloaden steht woertlich im Transkript.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "E1 st\u00FCtzt explizit nur, dass Kunden Bestellungen sehen und Rechnungen herunterladen k\u00F6nnen. F\u00FCr das Frontend-Anzeigen von Rechnungen gibt es nur indirekte N\u00E4he \u00FCber \u0027downloaden\u0027, und f\u00FCr das Anzeigen von Angeboten gibt E2 lediglich das Ziel \u0027Angebote schneller erstellen\u0027 an, nicht dass das Portal Angebote anzeigt."
+      },
+      "evidence": [
+        "Anna (T32): Also Kunden sollen Bestellungen sehen und Rechnungen downloaden.",
+        "Anna (T26): Angebote schneller erstellen. Das ist eigentlich das Hauptziel. Portal ist nur Mittel zum Zweck."
+      ]
+    },
+    {
+      "id": "2d7b09-FP-BACKUP-EU",
+      "artifact": "architecture",
+      "claim": "Backup und Disaster Recovery muessen den Anforderungen der EU-Datenresidenz genuegen.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "grounded (alte v1-Pedanterie-FP)",
+      "note": "ALTES PROBLEM: v1 flaggte das als overstated. Farid verknuepft Backups explizit mit globaler Replikation/Datenresidenz \u2192 Verknuepfung ist belegt.",
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "E1 beschreibt das Risiko global replizierter Backups, E2 fordert daher nachweisbare Datenresidenz statt blo\u00DFer DSGVO-Konformit\u00E4t, und E3 best\u00E4tigt die Relevanz f\u00FCr Backup/DR bei Kundendaten. Daraus folgt als zul\u00E4ssige Verdichtung, dass Backup und Disaster Recovery EU-Datenresidenz-Anforderungen gen\u00FCgen m\u00FCssen."
+      },
+      "evidence": [
+        "Farid (T307): Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "Clara (T310): Dann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "Clara (T149): Wenn Kundendaten drin sind: ja. [Backup/DR noetig]"
+      ]
+    },
+    {
+      "id": "2d7b09-FN-SAP-WRITE",
+      "artifact": "requirements",
+      "claim": "SAP-Schreibzugriffe sind fuer spaetere Phasen geplant.",
+      "expectedLabel": "violation",
+      "originHandLabel": "overstated/violation (von BEIDEN unit-Judges verfehlt)",
+      "note": "HAERTESTER FALL: v1 UND v2 (unit-level, architecture) verfehlten das. SAP-Schreibzugriff wurde NICHT entschieden; \u0027geplant fuer spaetere Phasen\u0027 ueberbehauptet die Aufloesung.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "none",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": true,
+        "temporalContextPreserved": false,
+        "reason": "Die Evidence sagt nur, dass SAP-Schreibzugriff noch nicht entschieden ist und zuvor eher lesender Zugriff im Raum stand; zudem wird fuer das MVP eher ein eingeschraenkter Umfang ohne Online-Akzeptanz diskutiert. Eine Planung von SAP-Schreibzugriffen fuer spaetere Phasen wird nirgends explizit oder belastbar abgeleitet."
+      },
+      "evidence": [
+        "Ben (T538): SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "Anna (T541): Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+      ]
+    },
+    {
+      "id": "2d7b09-ROLES-OVERCOMMIT",
+      "artifact": "requirements",
+      "claim": "Das Rollenmodell umfasst mindestens Admin, Sales, Kunde, Manager und Support.",
+      "expectedLabel": "violation",
+      "originHandLabel": "overstated/violation",
+      "note": "ALTES PROBLEM: Manager/Support nur tentativ diskutiert; finale MVP-Liste nennt nur Admin/Sales/Kunde \u2192 \u0027mindestens ... Manager und Support\u0027 ueberfestlegt.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "Die Evidence nennt teils unsichere/kandidative Rollen (\u0027Vielleicht noch Manager\u0027, \u0027Oder brauchen wir Support?\u0027) und sp\u00E4ter explizit nur \u0027Rollen Admin/Sales/Kunde\u0027. Der Claim behauptet final, dass das Rollenmodell mindestens alle f\u00FCnf Rollen umfasst; das f\u00FCgt Manager und Support als gesichert hinzu und versch\u00E4rft den Status/Scope gegen\u00FCber der Evidence."
+      },
+      "evidence": [
+        "Anna (T20): Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?",
+        "Anna (T623): 4. Rollen Admin/Sales/Kunde"
+      ]
+    },
+    {
+      "id": "2d7b09-OK-LOGIN",
+      "artifact": "requirements",
+      "claim": "Login erfolgt per E-Mail und Passwort; SSO ist optional.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "explicit",
+      "note": "Kontrolle: klar belegt.",
+      "verdict": {
+        "verdict": "explicit",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "Die Evidence sagt explizit \u0027Login per E-Mail und Passwort\u0027. \u0027SSO waere schoen\u0027 beschreibt SSO als optional/nicht verpflichtend; die Beispiele Azure AD oder Google aendern den Claim nicht."
+      },
+      "evidence": [
+        "Anna (T11): Also erstmal Login per E-Mail und Passwort. SSO waere schoen. Vielleicht Azure AD. Oder Google?"
+      ]
+    },
+    {
+      "id": "2d7b09-OK-SECURITY",
+      "artifact": "risks",
+      "claim": "Ein Security Review ist zwingend erforderlich und gefaehrdet mit seiner Dauer den MVP-Termin.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "synthesis",
+      "note": "Kontrolle: belegt (Review noetig \u002B Dauer sprengt MVP).",
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "E1 st\u00FCtzt explizit, dass ein Security Review 6 Wochen dauert und damit den 8-Wochen-MVP gef\u00E4hrdet. E2 st\u00FCtzt explizit, dass \u0027ohne Security Review\u0027 keine Option ist, also der Review erforderlich ist. Der Claim fasst beide Spans ohne Bedeutungsverschiebung zusammen."
+      },
+      "evidence": [
+        "Ben (T74): Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+        "Clara (T80): Das ist keine Option. [zu \u0027ohne Security Review\u0027]"
+      ]
+    },
+    {
+      "id": "2d7b09-UNSUPPORTED-PUSH-PII",
+      "artifact": "architecture",
+      "claim": "Push-Notifications sind im MVP enthalten und versenden personenbezogene Inhalte.",
+      "expectedLabel": "violation",
+      "originHandLabel": "unsupported",
+      "note": "Kontrolle: Push wurde diskutiert, aber \u0027im MVP enthalten\u0027 \u002B \u0027versendet personenbezogene Inhalte\u0027 ist nicht gedeckt.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "Evidence mentions only that Marketing wants push notifications and raises consent/GDPR concerns. It does not establish that push notifications are included in the MVP, and nowhere states they send personenbezogene Inhalte. The claim adds implementation/status and PII content beyond the evidence."
+      },
+      "evidence": [
+        "Anna (T32): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Clara (T41): Push heisst Einwilligung. Wieder DSGVO."
+      ]
+    }
+  ]
+}

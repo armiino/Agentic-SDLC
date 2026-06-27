@@ -1,0 +1,241 @@
+{
+  "fixture": "input/eval-labels/2d7b09.coverage.claim-evidence-spike.json",
+  "transcript": "Interview-Einrichtung.txt",
+  "judge": "openai/gpt-5.4",
+  "mode": "end-to-end (auto evidence selection)",
+  "total": 7,
+  "matchesExpected": 4,
+  "accuracyVsHandlabel": 0.5714,
+  "comparedToManual": 7,
+  "sameAsManual": 5,
+  "results": [
+    {
+      "id": "2d7b09-FP-BESTELLUEBERSICHT",
+      "artifact": "architecture",
+      "claim": "Das Kundenportal-Frontend zeigt Angebote, Bestellungen und Rechnungen an.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [],
+      "selectionReason": "Im Transkript geht es durchgehend um eine App zur unterst\u00FCtzenden Kommunikation f\u00FCr Bewohner, mit Screens wie About Me, Kommunikation, Video, Kalender und No-Go. Es gibt keine relevanten Hinweise auf ein Kundenportal-Frontend oder die Anzeige von Angeboten, Bestellungen und Rechnungen.",
+      "autoEvidence": [],
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "none",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Es wurde keine Evidence angegeben. Ohne explizite Evidence-Spans kann der Claim nicht lokal verifiziert oder gest\u00FCtzt werden."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "2d7b09-FP-BACKUP-EU",
+      "artifact": "architecture",
+      "claim": "Backup und Disaster Recovery muessen den Anforderungen der EU-Datenresidenz genuegen.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        58,
+        59,
+        60,
+        62,
+        63,
+        103,
+        104,
+        106
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim, weil sie Datenschutz/Zugriffsbeschr\u00E4nkungen und Mandantentrennung zwischen Einrichtungen behandeln (relevant f\u00FCr Datenresidenz/Governance), zugleich aber zeigen, dass Backup/DR und EU-Residenz nicht festgelegt sind. Besonders 103-106 nennen Firebase/Cloud nur als Vorschlag und zeigen offene Kl\u00E4rung statt erf\u00FCllter Anforderung.",
+      "autoEvidence": [
+        "[Speaker 1] (T58): Ihre Idee ist sehr gut und gef\u00E4llt uns. Ein paar Sachen m\u00FCssen aber noch gekl\u00E4rt werden. Wie sieht es mit dem Thema Datenschutz aus, da es sich schon um sehr sensible Daten handelt?",
+        "[Speaker 2] (T59): Was das Thema Datenschutz angeht, werden wir nicht allzu tief ins Detail gehen. Dieser Schritt w\u00E4re vermutlich ein zus\u00E4tzliches Projekt. Wir haben uns das aber so \u00FCberlegt, dass wir eine Login-Seite programmieren, auf der man sich nur einloggen kann, wenn man einen Account zugewiesen bekommen hat. Man hat also nicht die M\u00F6glichkeit, sich die App runterzuladen und sich zu registrieren und sich so einen Account anzulegen. Warum? Damit ist auch klar, dass diese App nur f\u00FCr den internen Gebrauch der KYOS wie gedacht ist und sich nicht beliebig jeder anmelden kann. Ein Account, der mit Adminrechten versehen ist, kann dann neue Accounts anlegen und Rechte verwalten. Es gibt also den Power-Nutzer-Admin und den Nutzer-User. Der User hat logischerweise weniger Rechte und kann keine Accounts erstellen oder hinzugef\u00FCgte Daten aus der App l\u00F6schen, w\u00E4hrend der Admin alles kann.",
+        "[Speaker 1] (T60): Okay, dann belassen wir das Thema Datenschutz f\u00FCrs Erste. Wie wird das geregelt zwischen den unterschiedlichen Einrichtungen? Die KYOSW hat ja nicht nur eine. Also hat jeder Mitarbeiter in jeder Einrichtung Einsicht auf alle Profile der Beeintr\u00E4chtigten oder nur auf die in dem Haus, in dem er t\u00E4tig ist?",
+        "[Speaker 1] (T62): Aufgrund von Datenschutz sollte es so geregelt sein, dass es nicht \u00FCbergreifend ist. Also ein Mitarbeiter aus dem Salzburger sollte nur diese Profile sehen von den Bewohnern, die auch tats\u00E4chlich im Salzburger Weg sind.",
+        "[Speaker 2] (T63): Alles klar, so wird das gemacht. Wir werden uns einen Weg \u00FCberlegen, wie man das l\u00F6sen k\u00F6nnte und bis zum n\u00E4chsten Treffen erarbeiten.",
+        "[Speaker 1] (T103): F\u00FCr die Datenbank w\u00FCrde ich Firebase Firestore von Google empfehlen, da ich diese schon mal mit Flutter und Dart verwendet habe und dazu sagen kann, dass es sehr einfach zu nutzen ist und wir keine speziellen Funktionen brauchen.",
+        "[Speaker 2] (T104): Okay, aber diese Datenbank fungiert ja dann wie eine Cloud. Wir m\u00FCssen kl\u00E4ren, ob die Daten aus der Cloud dann lokal auf dem Handy gespeichert werden k\u00F6nnen oder wie das l\u00E4uft.",
+        "[Speaker 2] (T106): Oh, okay. Also du meinst die NoSQLite Datenbank. Alles klar. Aber bleiben wir erst mal bei Firebase und dann k\u00F6nnen wir noch weiter schauen, wie wir das umsetzen."
+      ],
+      "verdict": {
+        "verdict": "assumption",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "none",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "reason": "Die Evidence behandelt Datenschutz, rollen-/einrichtungsbezogene Zugriffe sowie die m\u00F6gliche Nutzung von Firebase/Cloud. Es gibt keine explizite oder implizit ausreichende Aussage zu Backup, Disaster Recovery oder EU-Datenresidenz. Der Claim f\u00FCgt diese Anforderungen und einen Muss-Status hinzu, die in der Evidence nicht getragen werden."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "2d7b09-FN-SAP-WRITE",
+      "artifact": "requirements",
+      "claim": "SAP-Schreibzugriffe sind fuer spaetere Phasen geplant.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        103,
+        104,
+        105,
+        106
+      ],
+      "selectionReason": "Diese Turns behandeln konkret geplante technische Umsetzung f\u00FCr sp\u00E4tere Entwicklungsphasen: Firebase/Cloud-Datenbank sowie lokale Speicherung werden vorgeschlagen und weiter gekl\u00E4rt. Das zeigt geplante Schreib-/Datenzugriffe erst in der Implementierung. Es gibt jedoch keinen expliziten SAP-Bezug; damit sind sie relevant, um den Claim eher zu pr\u00FCfen bzw. ihm indirekt zu widersprechen.",
+      "autoEvidence": [
+        "[Speaker 1] (T103): F\u00FCr die Datenbank w\u00FCrde ich Firebase Firestore von Google empfehlen, da ich diese schon mal mit Flutter und Dart verwendet habe und dazu sagen kann, dass es sehr einfach zu nutzen ist und wir keine speziellen Funktionen brauchen.",
+        "[Speaker 2] (T104): Okay, aber diese Datenbank fungiert ja dann wie eine Cloud. Wir m\u00FCssen kl\u00E4ren, ob die Daten aus der Cloud dann lokal auf dem Handy gespeichert werden k\u00F6nnen oder wie das l\u00E4uft.",
+        "[Speaker 1] (T105): Ja, daf\u00FCr habe ich dann die NoSQLite Datenbank verwendet. Ich habe mir das so vorgestellt, dass die App beim Aufrufen einer Seite die Sachen aus Firebase l\u00E4dt und dann lokal speichert und nicht immer alles erneut aus Firebase l\u00E4dt.",
+        "[Speaker 2] (T106): Oh, okay. Also du meinst die NoSQLite Datenbank. Alles klar. Aber bleiben wir erst mal bei Firebase und dann k\u00F6nnen wir noch weiter schauen, wie wir das umsetzen."
+      ],
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "none",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "reason": "Die Evidence behandelt Firebase/Cloud/lokale Speicherung und erw\u00E4hnt keine SAP-Schreibzugriffe. Weder SAP noch Schreiboperationen noch eine Planung f\u00FCr sp\u00E4tere Phasen werden genannt."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "2d7b09-ROLES-OVERCOMMIT",
+      "artifact": "requirements",
+      "claim": "Das Rollenmodell umfasst mindestens Admin, Sales, Kunde, Manager und Support.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        33,
+        35,
+        36,
+        42,
+        59,
+        78,
+        79,
+        87
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen direkt das Rollenmodell: zun\u00E4chst werden Mitarbeiter und Angeh\u00F6rige als unterschiedliche Zugriffsgruppen diskutiert und als verschiedene Accounts/Rechte vorgesehen (33, 35, 36). Sp\u00E4ter werden explizit Admin und User definiert (42, 59) sowie zus\u00E4tzlich ein Bewohner-/Beeintr\u00E4chtigten-Account vorgeschlagen und best\u00E4tigt (78, 79). Turn 87 fasst die drei Rechte Admin, User und Bewohner nochmals zusammen. Die im Claim genannten Rollen Sales, Kunde, Manager und Support werden dagegen nirgends belegt; die relevanten Turns zeigen ein anderes Rollenmodell.",
+      "autoEvidence": [
+        "[Speaker 2] (T33): Ja, das h\u00F6rt sich schon mal sehr vielversprechend an. Aber wer wird denn alles Zugriff drauf haben k\u00F6nnen?",
+        "[Speaker 2] (T35): Ich f\u00E4nde es sehr sinnvoll, wenn auch die Angeh\u00F6rigen Zugriff drauf h\u00E4tten. Aus dem Grund, weil sie logischerweise die Personen noch besser kennen als wir die meisten. Wenn die auch ihre Daten da hinzuf\u00FCgen k\u00F6nnen, ist es von Vorteil, da sie oftmals Sachen wissen, die wir erst erfahren m\u00FCssten.",
+        "[Speaker 1] (T36): Alles klar. Wenn Sie das m\u00F6chten, dann machen wir das so, dass es verschiedene Accounts gibt. Also Mitarbeiter und Angeh\u00F6rige, die vermutlich auch verschiedene Rechte haben werden. Durch die Angeh\u00F6rigenaccounts h\u00E4tten Sie auch Vorteile, wenn Sie neue Bewohner bekommen. Sie k\u00F6nnten f\u00FCr die Angeh\u00F6rigen im Vorhinein einen Account erstellen und die App mit Daten f\u00FCllen lassen. So w\u00FCrden Sie sich Zeit sparen und m\u00FCssten nicht erstmal die Person von Null auf kennenlernen.",
+        "[Speaker 1] (T42): Ja, beim Thema Login sollten wir verschiedene Account-Typen haben. User und Admin w\u00E4re mal ein Anfang. Der Admin hat dabei mehr Rechte und kann neue Accounts anlegen und diese verwalten, w\u00E4hrend die User-Accounts nur User-Rechte haben. Als Betreuer und Angeh\u00F6rige w\u00E4ren solche User und die k\u00F6nnen nur Inhalte hinzuf\u00FCgen, aber nichts l\u00F6schen. Was h\u00E4ltst du davon?",
+        "[Speaker 2] (T59): Was das Thema Datenschutz angeht, werden wir nicht allzu tief ins Detail gehen. Dieser Schritt w\u00E4re vermutlich ein zus\u00E4tzliches Projekt. Wir haben uns das aber so \u00FCberlegt, dass wir eine Login-Seite programmieren, auf der man sich nur einloggen kann, wenn man einen Account zugewiesen bekommen hat. Man hat also nicht die M\u00F6glichkeit, sich die App runterzuladen und sich zu registrieren und sich so einen Account anzulegen. Warum? Damit ist auch klar, dass diese App nur f\u00FCr den internen Gebrauch der KYOS wie gedacht ist und sich nicht beliebig jeder anmelden kann. Ein Account, der mit Adminrechten versehen ist, kann dann neue Accounts anlegen und Rechte verwalten. Es gibt also den Power-Nutzer-Admin und den Nutzer-User. Der User hat logischerweise weniger Rechte und kann keine Accounts erstellen oder hinzugef\u00FCgte Daten aus der App l\u00F6schen, w\u00E4hrend der Admin alles kann.",
+        "[Speaker 1] (T78): Das ist eine sehr sch\u00F6ne Idee. Dies w\u00FCrde auch daf\u00FCr sorgen, dass auch Nutzer der App, die schon alles in- und auswendig kennen, sie immer noch weiterhin nutzen. Sehr gut. Da f\u00E4llt mir aber noch eine Idee ein. Wieso sollte der Bewohner nicht auch einen Account bei der App haben? Also, dass es sozusagen neben dem Admin- und User-Account Rechten eben auch noch einen Account mit Rechten f\u00FCr den Bewohner gibt. Schlie\u00DFlich k\u00F6nnte er dann das Handy mit der App auch immer an jemanden selber geben, damit die Person dann auch Zugriff darauf hat, im Falle dessen, dass eine Kommunikation fehlschl\u00E4gt. Oder er k\u00F6nnte selbst Bilder im Account About Me Bildschirm hinzuf\u00FCgen, sofern er das selbst schafft.",
+        "[Speaker 2] (T79): Sie haben recht. Das ist auch eine sehr gute Idee. Dieser Bewohner-Account sollte aber spezielle Rechte haben und auch nur sein eigenes Profil in der Profil\u00FCbersicht, wo alle Profile gelistet sind, sehen. Also das, was er wirklich nur seine eigenen Daten sehen kann. 5. Zweite-Ausarbeitung-Stundenten",
+        "[Speaker 1] (T87): Ich denke, es w\u00E4re echt sicherer, wenn nur der Admin die Accounts erstellt und verwaltet. Das verhindert das unbefugte Zugang erhalten. Wir k\u00F6nnen die Registrierung intern halten, um die Sicherheit und Kontrolle \u00FCber die App zu bewahren. Wir k\u00F6nnten uns einen Admin-Bildschirm \u00FCberlegen. Also eine Extra-Seite, die nur ein Account mit Admin-Rechten sehen kann. Auf dieser Seite k\u00F6nnen wir dann die Funktionalit\u00E4t einbauen, dass neue Accounts angelegt werden k\u00F6nnen und daf\u00FCr die drei Rechte Admin, User und Bewohner vergeben werden k\u00F6nnen. Nat\u00FCrlich m\u00FCssen wir uns sp\u00E4ter dann noch \u00FCberlegen, wie wir das mit der Rechteverwaltung l\u00F6sen."
+      ],
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "none",
+        "modalityPreserved": false,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "reason": "Die Evidence nennt nur Account-/Rollenarten wie Admin, User sowie spezifisch Mitarbeiter/Betreuer, Angeh\u00F6rige und Bewohner. Die im Claim aufgef\u00FChrten Rollen Sales, Kunde, Manager und Support kommen nicht vor; au\u00DFerdem wird aus den belegten drei Rechten/Admin-User-Bewohner ein deutlich anderes Rollenmodell gemacht."
+      },
+      "manualLabel": "violation"
+    },
+    {
+      "id": "2d7b09-OK-LOGIN",
+      "artifact": "requirements",
+      "claim": "Login erfolgt per E-Mail und Passwort; SSO ist optional.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        41,
+        42,
+        43,
+        59,
+        86,
+        87,
+        117,
+        118
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt zum Login-Verfahren: 117/118 spezifizieren E-Mail- und Passwort-Feld. 41-43 und 59 beschreiben Login nur mit zugewiesenem Account bzw. ohne Selbstregistrierung. 86/87 diskutieren offen die Registrierfunktion und entscheiden dagegen. Es gibt keinen Hinweis auf SSO; damit wird der Teil \u201ASSO ist optional\u2018 eher nicht gest\u00FCtzt bzw. bleibt unbelegt.",
+      "autoEvidence": [
+        "[Speaker 2] (T41): Okay, also lassen wir uns die Struktur unserer App jetzt durchgehen, um sicherzustellen, dass alles sinnvoll und benutzerfreundlich ist. Wir starten mit einem Login-Screen. Was ist da wichtig?",
+        "[Speaker 1] (T42): Ja, beim Thema Login sollten wir verschiedene Account-Typen haben. User und Admin w\u00E4re mal ein Anfang. Der Admin hat dabei mehr Rechte und kann neue Accounts anlegen und diese verwalten, w\u00E4hrend die User-Accounts nur User-Rechte haben. Als Betreuer und Angeh\u00F6rige w\u00E4ren solche User und die k\u00F6nnen nur Inhalte hinzuf\u00FCgen, aber nichts l\u00F6schen. Was h\u00E4ltst du davon?",
+        "[Speaker 2] (T43): Das klingt gut. Wie wir den Login-Screen dann vom Design her gestalten, kl\u00E4ren wir wann anders. Lass uns erstmal auf die Funktionalit\u00E4ten beschr\u00E4nken und dann weiterschauen. Es wird also nur eine Login-M\u00F6glichkeit da sein. Wir haben schon besprochen, dass man sich nicht registrieren k\u00F6nnen soll und nur ein Account mit Admin-Rechten weitere Accounts erstellen kann und die Rechte verwaltet. Wo kommen wir nach dem Login hin?",
+        "[Speaker 2] (T59): Was das Thema Datenschutz angeht, werden wir nicht allzu tief ins Detail gehen. Dieser Schritt w\u00E4re vermutlich ein zus\u00E4tzliches Projekt. Wir haben uns das aber so \u00FCberlegt, dass wir eine Login-Seite programmieren, auf der man sich nur einloggen kann, wenn man einen Account zugewiesen bekommen hat. Man hat also nicht die M\u00F6glichkeit, sich die App runterzuladen und sich zu registrieren und sich so einen Account anzulegen. Warum? Damit ist auch klar, dass diese App nur f\u00FCr den internen Gebrauch der KYOS wie gedacht ist und sich nicht beliebig jeder anmelden kann. Ein Account, der mit Adminrechten versehen ist, kann dann neue Accounts anlegen und Rechte verwalten. Es gibt also den Power-Nutzer-Admin und den Nutzer-User. Der User hat logischerweise weniger Rechte und kann keine Accounts erstellen oder hinzugef\u00FCgte Daten aus der App l\u00F6schen, w\u00E4hrend der Admin alles kann.",
+        "[Speaker 2] (T86): Ja, eine solche Standardisierung w\u00FCrde die Datenkonsistenz verbessern und die Nutzererfahrung vereinheitlichen. Noch eine Sache. Sollten wir eine Registrierfunktion einbauen oder denkst du, dass es besser w\u00E4re, wenn der Admin die Accounts verwaltet, so wie wir es geplant haben?",
+        "[Speaker 1] (T87): Ich denke, es w\u00E4re echt sicherer, wenn nur der Admin die Accounts erstellt und verwaltet. Das verhindert das unbefugte Zugang erhalten. Wir k\u00F6nnen die Registrierung intern halten, um die Sicherheit und Kontrolle \u00FCber die App zu bewahren. Wir k\u00F6nnten uns einen Admin-Bildschirm \u00FCberlegen. Also eine Extra-Seite, die nur ein Account mit Admin-Rechten sehen kann. Auf dieser Seite k\u00F6nnen wir dann die Funktionalit\u00E4t einbauen, dass neue Accounts angelegt werden k\u00F6nnen und daf\u00FCr die drei Rechte Admin, User und Bewohner vergeben werden k\u00F6nnen. Nat\u00FCrlich m\u00FCssen wir uns sp\u00E4ter dann noch \u00FCberlegen, wie wir das mit der Rechteverwaltung l\u00F6sen.",
+        "[Speaker 1] (T117): Ja, das Logo oben ist gut. Direkt darunter sollten wir das E-Mail- und Passwort-Feld anordnen. Sie m\u00FCssen intuitiv und benutzerfreundlich sein, vielleicht mit einem leichten Schattenwurf, aber lassen wir das noch offen.",
+        "[Speaker 2] (T118): Das macht Sinn. Und der Login-Button sollte direkt unter den zwei Feldern sein und hervorstechen. Wir wollen keine Registrierung auf dem Screen, nur den Login, um es schlicht zu halten. Also der Login-Screen besteht aus Logo, E-Mail und Passwort-Feld und einem Login-Button."
+      ],
+      "verdict": {
+        "verdict": "explicit",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "reason": "Die Evidence st\u00FCtzt explizit den Login per E-Mail und Passwort (E7, E8: \u0027E-Mail- und Passwort-Feld\u0027). Dass SSO optional ist, wird jedoch nirgends erw\u00E4hnt; die Evidence beschreibt nur einen Login-Screen mit genau einer Login-M\u00F6glichkeit und ohne Registrierung. Damit ist ein relevanter Claim-Bestandteil zeitlich/funktional nicht belegt."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "2d7b09-OK-SECURITY",
+      "artifact": "risks",
+      "claim": "Ein Security Review ist zwingend erforderlich und gefaehrdet mit seiner Dauer den MVP-Termin.",
+      "expectedLabel": "grounded",
+      "selectedTurns": [
+        58,
+        59,
+        60,
+        63,
+        67
+      ],
+      "selectionReason": "Diese Turns behandeln direkt das Security-/Datenschutz-Thema. Turn 58 fragt danach, Turn 59 sagt ausdr\u00FCcklich, dass man nicht tief ins Detail geht und dass ein vertiefter Datenschutzschritt eher ein zus\u00E4tzliches Projekt w\u00E4re. Turns 60, 63 und 67 zeigen weitere offene Datenschutz-/Zugriffsfragen, die erst noch erarbeitet bzw. evaluiert werden. Das widerspricht dem Claim, dass ein Security Review zwingend erforderlich sei und bereits den MVP-Termin wegen seiner Dauer gef\u00E4hrde; stattdessen ist das Thema offen bzw. vorerst begrenzt behandelt.",
+      "autoEvidence": [
+        "[Speaker 1] (T58): Ihre Idee ist sehr gut und gef\u00E4llt uns. Ein paar Sachen m\u00FCssen aber noch gekl\u00E4rt werden. Wie sieht es mit dem Thema Datenschutz aus, da es sich schon um sehr sensible Daten handelt?",
+        "[Speaker 2] (T59): Was das Thema Datenschutz angeht, werden wir nicht allzu tief ins Detail gehen. Dieser Schritt w\u00E4re vermutlich ein zus\u00E4tzliches Projekt. Wir haben uns das aber so \u00FCberlegt, dass wir eine Login-Seite programmieren, auf der man sich nur einloggen kann, wenn man einen Account zugewiesen bekommen hat. Man hat also nicht die M\u00F6glichkeit, sich die App runterzuladen und sich zu registrieren und sich so einen Account anzulegen. Warum? Damit ist auch klar, dass diese App nur f\u00FCr den internen Gebrauch der KYOS wie gedacht ist und sich nicht beliebig jeder anmelden kann. Ein Account, der mit Adminrechten versehen ist, kann dann neue Accounts anlegen und Rechte verwalten. Es gibt also den Power-Nutzer-Admin und den Nutzer-User. Der User hat logischerweise weniger Rechte und kann keine Accounts erstellen oder hinzugef\u00FCgte Daten aus der App l\u00F6schen, w\u00E4hrend der Admin alles kann.",
+        "[Speaker 1] (T60): Okay, dann belassen wir das Thema Datenschutz f\u00FCrs Erste. Wie wird das geregelt zwischen den unterschiedlichen Einrichtungen? Die KYOSW hat ja nicht nur eine. Also hat jeder Mitarbeiter in jeder Einrichtung Einsicht auf alle Profile der Beeintr\u00E4chtigten oder nur auf die in dem Haus, in dem er t\u00E4tig ist?",
+        "[Speaker 2] (T63): Alles klar, so wird das gemacht. Wir werden uns einen Weg \u00FCberlegen, wie man das l\u00F6sen k\u00F6nnte und bis zum n\u00E4chsten Treffen erarbeiten.",
+        "[Speaker 2] (T67): Auch das nehmen wir zu den Anforderungen auf und evaluieren, ob das umsetzbar sein wird oder nicht."
+      ],
+      "verdict": {
+        "verdict": "assumption",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "reason": "Die Evidence thematisiert Datenschutz/sensible Daten und offene Kl\u00E4rungsbedarfe sowie sp\u00E4tere Evaluation/L\u00F6sungserarbeitung. Sie sagt jedoch nirgends explizit oder implizit, dass ein Security Review zwingend erforderlich ist, noch dass dessen Dauer den MVP-Termin gef\u00E4hrdet. Der Claim f\u00FCgt Review-Pflicht, Terminrisiko und MVP-Zeitbezug hinzu."
+      },
+      "manualLabel": "grounded"
+    },
+    {
+      "id": "2d7b09-UNSUPPORTED-PUSH-PII",
+      "artifact": "architecture",
+      "claim": "Push-Notifications sind im MVP enthalten und versenden personenbezogene Inhalte.",
+      "expectedLabel": "violation",
+      "selectedTurns": [
+        58,
+        59,
+        77,
+        78,
+        79
+      ],
+      "selectionReason": "Diese Turns pr\u00FCfen den Claim direkt bzgl. Benachrichtigungen und personenbezogener Inhalte: Turn 77 nennt Popup-Nachrichten bei neuen About-Me-Inhalten; Turns 78\u201379 zeigen, dass noch \u00FCber Bewohner-Accounts nachgedacht wird und damit der Funktionsumfang noch im Fluss ist. Turns 58\u201359 rahmen die Sensibilit\u00E4t/personenbezogenen Daten und Datenschutz ein. Ein expliziter Nachweis, dass Push-Notifications bereits im MVP fest enthalten sind, fehlt; eher ist es eine sp\u00E4tere Idee.",
+      "autoEvidence": [
+        "[Speaker 1] (T58): Ihre Idee ist sehr gut und gef\u00E4llt uns. Ein paar Sachen m\u00FCssen aber noch gekl\u00E4rt werden. Wie sieht es mit dem Thema Datenschutz aus, da es sich schon um sehr sensible Daten handelt?",
+        "[Speaker 2] (T59): Was das Thema Datenschutz angeht, werden wir nicht allzu tief ins Detail gehen. Dieser Schritt w\u00E4re vermutlich ein zus\u00E4tzliches Projekt. Wir haben uns das aber so \u00FCberlegt, dass wir eine Login-Seite programmieren, auf der man sich nur einloggen kann, wenn man einen Account zugewiesen bekommen hat. Man hat also nicht die M\u00F6glichkeit, sich die App runterzuladen und sich zu registrieren und sich so einen Account anzulegen. Warum? Damit ist auch klar, dass diese App nur f\u00FCr den internen Gebrauch der KYOS wie gedacht ist und sich nicht beliebig jeder anmelden kann. Ein Account, der mit Adminrechten versehen ist, kann dann neue Accounts anlegen und Rechte verwalten. Es gibt also den Power-Nutzer-Admin und den Nutzer-User. Der User hat logischerweise weniger Rechte und kann keine Accounts erstellen oder hinzugef\u00FCgte Daten aus der App l\u00F6schen, w\u00E4hrend der Admin alles kann.",
+        "[Speaker 2] (T77): Genau, das haben wir uns auch gedacht. Der About Me Screen wird auch die Angeh\u00F6rigen erfreuen, da sie da immer sehen k\u00F6nnen, was die Bewohner so unternehmen. Jedes Mal, wenn etwas Neues im About Me Bildschirm hochgeladen wird, sollen alle User, die mit der App verbunden sind und Teil der Einrichtung sind, eine Popup-Nachricht erhalten.",
+        "[Speaker 1] (T78): Das ist eine sehr sch\u00F6ne Idee. Dies w\u00FCrde auch daf\u00FCr sorgen, dass auch Nutzer der App, die schon alles in- und auswendig kennen, sie immer noch weiterhin nutzen. Sehr gut. Da f\u00E4llt mir aber noch eine Idee ein. Wieso sollte der Bewohner nicht auch einen Account bei der App haben? Also, dass es sozusagen neben dem Admin- und User-Account Rechten eben auch noch einen Account mit Rechten f\u00FCr den Bewohner gibt. Schlie\u00DFlich k\u00F6nnte er dann das Handy mit der App auch immer an jemanden selber geben, damit die Person dann auch Zugriff darauf hat, im Falle dessen, dass eine Kommunikation fehlschl\u00E4gt. Oder er k\u00F6nnte selbst Bilder im Account About Me Bildschirm hinzuf\u00FCgen, sofern er das selbst schafft.",
+        "[Speaker 2] (T79): Sie haben recht. Das ist auch eine sehr gute Idee. Dieser Bewohner-Account sollte aber spezielle Rechte haben und auch nur sein eigenes Profil in der Profil\u00FCbersicht, wo alle Profile gelistet sind, sehen. Also das, was er wirklich nur seine eigenen Daten sehen kann. 5. Zweite-Ausarbeitung-Stundenten"
+      ],
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "reason": "Evidence E3 st\u00FCtzt nur, dass bei neuen Uploads im About-Me-Bildschirm alle verbundenen User der Einrichtung eine Popup-Nachricht erhalten sollen. Damit ist weder explizit belegt, dass Push-Notifications Teil des MVP sind, noch dass diese Benachrichtigungen personenbezogene Inhalte versenden; die Evidence erw\u00E4hnt nur das Ausl\u00F6sen einer Nachricht, nicht deren konkreten Inhalt. Der Claim versch\u00E4rft zudem den Umsetzungsstatus zu \u0027im MVP enthalten\u0027."
+      },
+      "manualLabel": "violation"
+    }
+  ]
+}

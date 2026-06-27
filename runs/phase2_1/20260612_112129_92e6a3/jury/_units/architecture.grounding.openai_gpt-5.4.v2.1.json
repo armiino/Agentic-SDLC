@@ -1,0 +1,250 @@
+{
+  "artifact": "architecture.md",
+  "phase": "phase2_1",
+  "runId": "20260612_112129_92e6a3",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4"
+  },
+  "unitCount": 29,
+  "groundingScore": 11,
+  "counts": {
+    "overstated": 11,
+    "grounded": 17,
+    "not_a_claim": 1
+  },
+  "verdicts": [
+    {
+      "index": 0,
+      "section": "1. Systemkontext",
+      "kind": "paragraph",
+      "verdict": "overstated",
+      "reason": "[\u201EKundenportal\u201C; \u201EAngebote schneller erstellen. Das ist eigentlich das Hauptziel.\u201C; \u201EKunden sollen Bestellungen sehen und Rechnungen downloaden.\u201C; \u201EStammdaten liegen in SAP. ... dann brauchen wir Produktdaten, Preise, Rabattlogik.\u201C; \u201ELogin per E-Mail? Dann brauchen wir Double-Opt-In.\u201C; \u201ESupport? ... Kontaktformular ohne Ticketpersistenz?\u201C; \u201EManaged Services sind okay.\u201C; \u201EUnd wir haben noch gar nicht \u00FCber Backup gesprochen.\u201C / \u201EWenn Kundendaten drin sind: ja.\u201C; \u201EWir brauchen definitiv eine API Layer.\u201C; \u201EFarid: ... neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u201C] Thema ist breit belegt: Portal, Angebote, Rechnungen, SAP-Daten, Double-Opt-In, Supportkontakt, Managed Services, Backup und API/API-Gateway kommen vor. Die Claim-St\u00E4rke ist aber teils zu stark bzw. zu konkret: \u201Ewebbasiert\u201C ist plausibel aus \u201EWeb first\u201C, aber Mobile blieb offen/diskutiert; \u201Eweitere essentielle angrenzende Systeme\u201C f\u00FCr E-Mail, Backup und API Gateway ist als Architekturverdichtung noch nahe, jedoch \u201EManaged Services f\u00FCr ... API Gateway\u201C f\u00FCgt eine konkrete Zuordnung hinzu, die so nicht gesagt wird. Wichtig: Hosting ist nicht final entschieden als strikt EU-Hosting, sondern zwischen \u201EEU only\u201C und \u201Eoder zumindest DSGVO-konform\u201C diskutiert; erst sp\u00E4ter im MVP-Schnitt sagt Anna \u201EEU Managed Hosting\u201C, aber insgesamt bleibt vieles spannungsbehaftet. Insgesamt tr\u00E4gt das Transkript das Thema, aber nicht jede Formulierung als gesetzte, saubere Architekturfestlegung.",
+      "text": "Das Kundenportal ist ein webbasiertes System, das Kunden die Erstellung von Angeboten und den Download von Rechnungen erm\u00F6glicht. Das Portal ist eingebettet in eine bestehende IT-Landschaft, insbesondere mit einer SAP-Backend-Integration f\u00FCr Produkt-, Preis- und Rabattdaten. Weitere essentielle angrenzende Systeme sind Identity-Provider (SSO optional), E-Mail-Systeme f\u00FCr Double-Opt-In und Supportkontakt, sowie Managed Services f\u00FCr Hosting, Backup und API Gateway."
+    },
+    {
+      "index": 1,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[\u201EKundenportal\u201C; \u201EWeb first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.\u201C; \u201EMVP: 1. Login 2. Angebote erstellen 3. Rechnungen anzeigen\u201C] Das Thema Frontend/Webanwendung ist belegt. Auch Login, Angebotserstellung und Rechnungsanzeige sind belegt. Die St\u00E4rke \u201EWeb-first, mobile Erweiterung sp\u00E4ter\u201C ist jedoch nicht stabil entschieden: Anna sagt zwar \u201EWeb first. Mobile sp\u00E4ter\u201C, relativiert aber sofort mit \u201EOder andersrum? Ich wei\u00DF nicht\u201C. Damit bleibt der Zeit-/Scope-Bezug offen, nicht final festgelegt. Die Einheit macht die Richtung finaler als das Transkript.",
+      "text": "Frontend: Webanwendung (Web-first, mobile Erweiterung sp\u00E4ter), die Kundeninteraktionen erm\u00F6glicht (Login, Angebotsprozess, Rechnungsanzeige)."
+    },
+    {
+      "index": 2,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201EAlso erstmal Login per E-Mail und Passwort.\u201C; \u201ELogin per E-Mail? Dann brauchen wir Double-Opt-In.\u201C; \u201ESSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u201C; \u201ESSO optional\u201C; \u201EJa Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support.\u201C; \u201EDann MVP: ... 4. Rollen Admin/Sales/Kunde\u201C] Login mit E-Mail/Passwort und Double-Opt-In ist klar belegt. Optionale SSO-Integration ist ebenfalls explizit belegt. F\u00FCr Rollen ist \u201Emindestens Admin, Sales, Kunde\u201C nur im sp\u00E4teren MVP-Schnitt genannt; zuvor waren andere Rollenschnitte im Gespr\u00E4ch (Admin, normaler User, Manager, Support). Daher ist die Rollenliste nicht allgemein gesetzt, aber als MVP-Stand nachvollziehbar. Insgesamt bleiben Modalit\u00E4t und Status \u00FCberwiegend erhalten.",
+      "text": "Identity \u0026 Access Management: Login mit E-Mail/Passwort und Double-Opt-In, optionale SSO-Integration. Rollenverwaltung mit mindestens Admin, Sales, Kunde."
+    },
+    {
+      "index": 3,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[\u201EWir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.\u201C; \u201EAPI muss abgesichert sein. OAuth? Oder API Keys?\u201C; \u201EOAuth w\u00E4re besser. Aber komplexer.\u201C; \u201EFarid: ... neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u201C] Ein zentraler Zugangspunkt f\u00FCr Integrationen ist belegt. Auch die Absicherung per OAuth oder API Keys wird diskutiert. Aber die Einheit formuliert \u201Egesicherter Zugangspunkt ... via OAuth oder API Keys\u201C als komponentenhafte Festlegung, obwohl die Wahl offen ist und OAuth nur bevorzugt, nicht final ist. Zudem \u201Einterne und externe Systeme\u201C ist teilweise hinzugef\u00FCgt; explizit genannt sind vor allem externe Portale und Integrationen zu SAP. Thema stimmt, St\u00E4rke/Finalit\u00E4t ist etwas zu hoch.",
+      "text": "API Layer: Zentraler, gesicherter Zugangspunkt f\u00FCr interne und externe Systeme via OAuth oder API Keys. Erm\u00F6glicht Integrationen, z.B. zu SAP."
+    },
+    {
+      "index": 4,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201EStammdaten liegen in SAP. ... dann brauchen wir Produktdaten, Preise, Rabattlogik.\u201C; \u201EKunden sollen ... Rechnungen downloaden.\u201C; \u201EDann MVP: ... 2. Angebotserstellung mit SAP-Lesedaten\u201C; \u201ESAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.\u201C] SAP als Quelle f\u00FCr Produktdaten, Preise, Rabattlogik und Rechnungsbezug ist belegt. Lesender Zugriff im MVP ist explizit belegt. Schreibzugriff ist unklar und so auch in der Einheit formuliert. Das Wort \u201ESynchronisation\u201C ist etwas technischer als das Transkript, das eher von Lesen/Abruf/Integration spricht; aber da anschlie\u00DFend pr\u00E4zisiert wird \u201ELesender Zugriff im MVP, Schreibzugriff unklar\u201C, bleibt die Claim-St\u00E4rke im Rahmen.",
+      "text": "SAP Connector: Schnittstelle zu SAP-Systemen zur Synchronisation von Produktdaten, Preisen, Rabatten und Rechnungsinformationen. Lesender Zugriff im MVP, Schreibzugriff unklar."
+    },
+    {
+      "index": 5,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[\u201ELogging. Und L\u00F6schkonzepte.\u201C; \u201EDann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.\u201C; \u201EAuditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u201C; \u201EUnd protokollieren. Wer hat welches Angebot ge\u00F6ffnet?\u201C; \u201EDann brauchen wir Event-History oder Audit-Log pro Angebot.\u201C; \u201ERevisionssicher hei\u00DFt nicht automatisch unver\u00E4nderbar, aber \u00C4nderungen m\u00FCssen nachvollziehbar sein.\u201C; \u201EUnser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.\u201C; \u201EApplication logs, audit logs und security logs sind unterschiedliche Dinge.\u201C] Protokollierung von Nutzeraktionen/\u00C4nderungen und Trennung technischer Logs von Audit-Logs ist klar belegt. Auch der Punkt \u201Ekeine personenbezogenen Daten in technischen Logs\u201C ist explizit belegt. \u201ERevisionssichere Speicherung\u201C ist jedoch st\u00E4rker als das Gesagte: Es wird \u201Erevisionssicher nachvollziehbar\u201C f\u00FCr Angebote gefordert und zugleich pr\u00E4zisiert, dass das nicht automatisch Unver\u00E4nderbarkeit bedeutet. Die Einheit macht daraus eine generelle Eigenschaft der Komponente/Speicherung, also etwas finaler und breiter.",
+      "text": "Audit \u0026 Logging: Komponente zur Protokollierung von Nutzeraktionen und \u00C4nderungen an Angeboten, ohne personenbezogene Daten in technischen Logs. Revisionssichere Speicherung."
+    },
+    {
+      "index": 6,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[\u201ETicketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u201C; \u201EKontaktformular ohne Ticketpersistenz?\u201C; \u201EDann werden Supportdaten per E-Mail verarbeitet.\u201C; \u201ENotieren als Risiko.\u201C] Ein Support-Kontaktformular statt Ticketsystem wird klar diskutiert, ebenso \u201Eohne Ticketpersistenz?\u201C f\u00FCr den MVP. Allerdings ist das nicht final entschieden, sondern als Vorschlag/Frage mit Risiken markiert; David ist unzufrieden, Clara/Farid nennen Datenschutz- und Audit-Probleme. Die Einheit stellt es als feste MVP-Komponente dar, obwohl Status offen bzw. bewusst riskant ist.",
+      "text": "Support-Kontaktformular: Einfaches Formular zur Kontaktaufnahme, ohne Persistenz oder Ticketsystem im MVP."
+    },
+    {
+      "index": 7,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[\u201EManaged Services sind okay.\u201C; \u201EUnd wir haben noch gar nicht \u00FCber Backup gesprochen.\u201C / \u201EWenn Kundendaten drin sind: ja.\u201C; \u201EBackup? Ja Disaster Recovery.\u201C; \u201EDann MVP: ... 6. EU Managed Hosting 7. Backup\u201C; \u201EWir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u201C; \u201EJa, Pseudonymisierung oder synthetische Testdaten.\u201C] Managed Hosting, Backup/DR, drei Umgebungen und abgesicherte Testdaten sind belegt. Aber \u201EEU-konformes Managed Hosting\u201C ist schw\u00E4cher/anders als eine klare, nachweisbare L\u00F6sung: Im Transkript ist EU-only vs. DSGVO-konform umstritten, und Farid warnt, dass Standardanbieter Backups global replizieren. Zudem ist Disaster Recovery zwar als Thema belegt, aber nicht als abgeschlossene Architekturfestlegung. Die Einheit formuliert den Infrastruktur-Schnitt finaler und sauberer als das Transkript hergibt.",
+      "text": "Hosting \u0026 Infrastruktur: EU-konformes Managed Hosting mit Backup- und Disaster-Recovery, mindestens drei Umgebungen (Dev, Test, Prod) mit abgesicherten Testdaten."
+    },
+    {
+      "index": 8,
+      "section": "3. Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201EStammdaten liegen in SAP. ... dann brauchen wir Produktdaten, Preise, Rabattlogik.\u201C; \u201EKunden sollen ... Rechnungen downloaden.\u201C; \u201EDann MVP: ... Angebotserstellung mit SAP-Lesedaten\u201C] Das Thema ist direkt belegt: SAP liefert Produkt-/Preisdaten, Rabattlogik und implizit Rechnungsbezug. Als knappe Benennung eines Backend-Systems mit Leseschnittstelle ist die Einheit eine zul\u00E4ssige Verdichtung ohne neue harte Zus\u00E4tze.",
+      "text": "SAP-Backend: Leseschnittstelle f\u00FCr Produkt- und Preisdaten, Rabattlogik, Rechnungsdaten."
+    },
+    {
+      "index": 9,
+      "section": "3. Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201ESSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u201C; \u201ESSO optional\u201C; \u201EKeine Azure-Entscheidung nur weil jemand Azure AD gesagt hat.\u201C] Optionale Integration eines Identity Providers ist klar belegt. Auch Azure AD und Google werden als Beispiele genannt. Die Einheit bleibt mit \u201Eoptional\u201C und \u201Eoder anderen SSO-Systemen\u201C offen genug und behauptet keine Produktauswahl. Das passt zu Modalit\u00E4t und Status.",
+      "text": "Identity Provider: Optionale Integration mit Azure AD, Google oder anderen SSO-Systemen."
+    },
+    {
+      "index": 10,
+      "section": "3. Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[\u201EUnser Standardanbieter repliziert Backups manchmal global...\u201C; \u201EWir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u201C; \u201EAPI muss abgesichert sein. OAuth? Oder API Keys?\u201C; \u201EOAuth w\u00E4re besser. Aber komplexer.\u201C] Ein zentrales API Gateway f\u00FCr externe Portale ist explizit belegt, ebenso Sicherheitsmechanismen wie OAuth/API Keys als Optionen. Aber \u201EBackend- und externe Schnittstellen\u201C erweitert den Scope; explizit verpflichtend genannt sind neue externe Portale. Au\u00DFerdem ist OAuth nicht final gew\u00E4hlt. Dadurch ist die Einheit etwas breiter/fester als die Evidence.",
+      "text": "API Gateway: Zentraler Zugangspunkt f\u00FCr Backend- und externe Schnittstellen mit Sicherheitsmechanismen wie OAuth."
+    },
+    {
+      "index": 11,
+      "section": "3. Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[\u201ELogin per E-Mail? Dann brauchen wir Double-Opt-In.\u201C; \u201EMarketing will Push Notifications.\u201C / \u201EPush hei\u00DFt Einwilligung.\u201C; \u201EKontaktformular ohne Ticketpersistenz?\u201C; \u201EDann werden Supportdaten per E-Mail verarbeitet.\u201C] E-Mail f\u00FCr Double-Opt-In und Support-Kontakte ist klar belegt. \u201EBenachrichtigungen\u201C ist jedoch zu allgemein/final: Im Transkript geht es um Push Notifications als Marketing-Wunsch, nicht ausdr\u00FCcklich um E-Mail-Benachrichtigungen. Damit f\u00FCgt die Einheit einen zus\u00E4tzlichen Verwendungszweck hinzu, der so nicht belegt ist.",
+      "text": "E-Mail-System: F\u00FCr Double-Opt-In, Benachrichtigungen und Support-Kontakte."
+    },
+    {
+      "index": 12,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201EDSGVO. Wir speichern Kundendaten.\u201C; \u201EDann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.\u201C; \u201EPush hei\u00DFt Einwilligung. Wieder DSGVO.\u201C; \u201EDSGVO ist nicht optional.\u201C] Das Thema DSGVO-konforme Verarbeitung/Speicherung personenbezogener Daten ist klar belegt. Die Einheit formuliert dies als allgemeine Anforderung, ohne neue konkrete Technik, Finalit\u00E4t oder engeren Scope hinzuzuf\u00FCgen. \u201Ealler personenbezogenen Daten\u201C passt zum breit diskutierten Umgang mit Kundendaten, Supportdaten, Angebotsdaten und ERP-Bezug.",
+      "text": "DSGVO-konforme Speicherung und Verarbeitung aller personenbezogenen Daten."
+    },
+    {
+      "index": 13,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201ELogin per E-Mail? Dann brauchen wir Double-Opt-In.\u201C; sp\u00E4ter im MVP-Schnitt: \u201E1. Login mit Double-Opt-In\u201C] Die Evidence tr\u00E4gt nicht nur das Thema, sondern auch die St\u00E4rke: Double-Opt-In wird zuerst als notwendige Folge von E-Mail-Login genannt und sp\u00E4ter explizit in den MVP aufgenommen. Das ist entschieden genug.",
+      "text": "Double-Opt-In f\u00FCr Registrierung."
+    },
+    {
+      "index": 14,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201EDann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.\u201C; \u201EAuditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u201C; \u201EUnd protokollieren. Wer hat welches Angebot ge\u00F6ffnet?\u201C; \u201EAngebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.\u201C; \u201ERevisionssicher hei\u00DFt nicht automatisch unver\u00E4nderbar, aber \u00C4nderungen m\u00FCssen nachvollziehbar sein.\u201C] Audit-Trails f\u00FCr Zugriffe und \u00C4nderungen sind klar belegt. Auch \u201Erevisionssicher nachvollziehbar\u201C ist im Kontext von Angeboten ausdr\u00FCcklich genannt. Die Einheit verdichtet dies zul\u00E4ssig; sie behauptet keine weitergehende Unver\u00E4nderbarkeit, sondern Speichern von Zugriffen/\u00C4nderungen revisionssicher.",
+      "text": "Audit-Trails speichern Zugriffe und \u00C4nderungen revisionssicher."
+    },
+    {
+      "index": 15,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201EAlso brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS?\u201C; \u201ETLS reicht. E2E ist unrealistisch.\u201C] Die Evidence tr\u00E4gt die konkrete Technologie und St\u00E4rke direkt: TLS wird als ausreichend bezeichnet, E2E verworfen. Das ist eine technische Festlegung im Gespr\u00E4ch.",
+      "text": "TLS-Verschl\u00FCsselung im Transport."
+    },
+    {
+      "index": 16,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201EUnser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.\u201C; \u201EApplication logs, audit logs und security logs sind unterschiedliche Dinge.\u201C] Die Aussage ist explizit und bezieht sich gerade auf technische Logs/Monitoring. Die Einheit \u00FCbernimmt dies ohne Ausweitung.",
+      "text": "Keine Speicherung personenbezogener Daten in technischen Logs."
+    },
+    {
+      "index": 17,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201EDann brauchen wir ... L\u00F6schkonzepte.\u201C; \u201EDann muss das gehen.\u201C / \u201EAlso brauchen wir ein L\u00F6schkonzept.\u201C; \u201EHandelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.\u201C; \u201EDas kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen.\u201C; \u201EAlso brauchen wir Datenklassifikation und Retention Rules.\u201C] L\u00F6schkonzept und Konflikt mit gesetzlichen Aufbewahrungspflichten sind klar belegt. Die Einheit formuliert dies als konzeptionelle Anforderung und bleibt beim diskutierten Status; sie behauptet keine bereits definierte konkrete Frist.",
+      "text": "L\u00F6schkonzepte f\u00FCr personenbezogene Daten unter Einhaltung gesetzlicher Aufbewahrungspflichten."
+    },
+    {
+      "index": 18,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[\u201EUnd wo werden Daten gehostet? EU only?\u201C \u2013 \u201EJa EU only. Oder zumindest DSGVO-konform.\u201C; \u201EEU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u201C; \u201EDann reicht \u201ADSGVO-konform\u2018 nicht. Wir brauchen nachweisbare Datenresidenz.\u201C; im MVP-Schnitt: \u201E6. EU Managed Hosting\u201C und \u201E7. Backup\u201C] Das Thema EU-Hosting, Backup und nachweisbare Datenresidenz kommt klar vor. Aber die Einheit behauptet \u201EHosting und Backup ausschlie\u00DFlich in der EU mit gesicherter Datenresidenz\u201C als harte, bereits gesicherte Festlegung. Im Transkript ist EU-only umstritten/kostenrelevant, technisch schwierig und gerade wegen global replizierter Backups als Risiko/offene Umsetzungsfrage diskutiert. \u201EEU Managed Hosting\u201C wird im MVP-Schnitt genannt, aber Backup explizit nicht als bereits gel\u00F6ste EU-only-Entscheidung abgesichert.",
+      "text": "Hosting und Backup ausschlie\u00DFlich in der EU mit gesicherter Datenresidenz."
+    },
+    {
+      "index": 19,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201ESSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u201C; \u201ESSO optional\u201C; \u201EKeine Azure-Entscheidung nur weil jemand Azure AD gesagt hat.\u201C] Das Thema SSO ist vorhanden, und Technologie/Umfang sind ausdr\u00FCcklich offen. Die Einheit erh\u00E4lt genau diese Offenheit, statt eine konkrete IdP- oder MVP-Festlegung zu behaupten.",
+      "text": "SSO-Integration: Technologie und Umfang sind noch nicht festgelegt."
+    },
+    {
+      "index": 20,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201EWir brauchen definitiv eine API Layer.\u201C; \u201EUnsere interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u201C; \u201E... unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u201C; \u201EDas passt nicht zum 8-Wochen-MVP.\u201C; \u201EKann man f\u00FCr MVP manuell Angebote hochladen?\u201C / \u201EVielleicht als Zwischenl\u00F6sung?\u201C] API Gateway als Pflicht/Abh\u00E4ngigkeit und dessen Einfluss auf den Zeitplan sind klar belegt. Auch m\u00F6gliche Alternativen/Zwischenl\u00F6sungen werden angesprochen, ohne dass eine entschieden w\u00E4re. Die Einheit formuliert das korrekt als Verf\u00FCgbarkeits- und Alternativenfrage.",
+      "text": "API Gateway Verf\u00FCgbarkeit und Alternativen zur Einhaltung des MVP-Zeitplans."
+    },
+    {
+      "index": 21,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201ESecurity Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u201C; \u201EDann machen wir es ohne Security Review?\u201C; \u201EDas ist keine Option.\u201C; \u201ESecurity Review irgendwie\u201C; \u201EOhne Dokumentation kein Security Review.\u201C] Art und Umfang des Security Reviews sind im Transkript nicht festgelegt, aber der Zeitdruck und die Nicht-Option des Weglassens sind klar. Die Einheit beschreibt genau diese offene Kl\u00E4rung unter Zeitdruck, ohne erfundene Details.",
+      "text": "Art und Umfang des Security Reviews unter Zeitdruck."
+    },
+    {
+      "index": 22,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[\u201E... dann brauchen wir Produktdaten, Preise, Rabattlogik.\u201C; \u201ERabattlogik kommt aus SAP, aber Freigabeprozess w\u00E4re vermutlich im Portal.\u201C; \u201ESAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.\u201C; \u201EDann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise.\u201C; \u201EWenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen.\u201C; \u201Ekeine Sonderrabatte ohne Freigabe\u201C] Preis- und Rabattlogik mit SAP-Abh\u00E4ngigkeiten und Verz\u00F6gerungen ist klar belegt. Die Einheit bleibt auf Ebene des Umgangs/Problems und behauptet keine erfundene L\u00F6sung. Das passt zum offenen Status im Transkript.",
+      "text": "Umgang mit Preis- und Rabattlogik, insbesondere mit SAP-Spezifika und m\u00F6glichen Verz\u00F6gerungen."
+    },
+    {
+      "index": 23,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[\u201ETicketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u201C; \u201EIch habe geh\u00F6rt, es soll kein Ticketsystem geben.\u201C; \u201EKontaktformular ohne Ticketpersistenz?\u201C; \u201ESupportprozess unklar\u201C; \u201ESupport ist nicht gel\u00F6st.\u201C] Das Thema ist belegt: Im MVP ist ein vollwertiges Ticketsystem gerade nicht vorgesehen, und Kontaktformular wird als m\u00F6gliche Minimalvariante diskutiert. Aber \u201Eintegrierte Ticket-Systeme sind ausgeschlossen im MVP\u201C ist st\u00E4rker/finaler als das Transkript: dort hei\u00DFt es \u201Ewar nicht im MVP\u201C, \u201Evielleicht\u201C, \u201Eerstmal nicht\u201C und die Supportl\u00F6sung bleibt ungel\u00F6st/offen. Das ist keine harte endg\u00FCltige Ausschlussentscheidung.",
+      "text": "Supportl\u00F6sung jenseits des Kontaktformulars, integrierte Ticket-Systeme sind ausgeschlossen im MVP."
+    },
+    {
+      "index": 24,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[Anna: \u0022Dann MVP: ...\u0022 / Eva: \u0022Und Rabatt-Freigabe?\u0022 / Anna: \u0022Vielleicht Phase 2.\u0022 / Eva: \u0022Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.\u0022 / Ben: \u0022Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u0022] Das Thema ist klar belegt: Rabatt-Freigaben werden nicht im MVP fest eingeplant, sondern eher in eine sp\u00E4tere Phase verschoben. Die Modalit\u00E4t ist jedoch nicht vollst\u00E4ndig entschieden, sondern als \u0022Vielleicht Phase 2\u0022 zun\u00E4chst offen formuliert; zugleich wird f\u00FCr den MVP eine Einschr\u00E4nkung beschlossen (keine Sonderrabatte ohne Freigabe). Die Einheit verdichtet das zu \u0022f\u00FCr sp\u00E4tere Projektphasen geplant\u0022, was den sp\u00E4tere-Phase-Scope trifft und keine zus\u00E4tzliche technische Festlegung hinzuf\u00FCgt.",
+      "text": "Freigabeprozesse f\u00FCr Rabatte sind f\u00FCr sp\u00E4tere Projektphasen geplant."
+    },
+    {
+      "index": 25,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[Ben: \u0022Vielleicht k\u00F6nnen wir Managed Services nehmen. Kein neuer DB Server \u2013 IT hat das klar gesagt.\u0022 / Anna: \u0022Ja kein neuer DB Server. Managed Services sind okay. Aber bitte g\u00FCnstig.\u0022 / Clara: \u0022Und wo werden Daten gehostet? EU only?\u0022 / Anna: \u0022Ja EU only. Oder zumindest DSGVO-konform.\u0022 / Farid: \u0022Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u0022 / Anna: \u0022Wir brauchen aber eine Kostensch\u00E4tzung f\u00FCr den Vorstand bis Freitag.\u0022 / Ben: \u0022Ja, aber wir haben noch nicht entschieden, welcher.\u0022] Das Thema ist belegt: Managed Services wurden als Option akzeptiert, Kosten und Compliance/Hosting-Residenz sind ausdr\u00FCcklich Themen, und Backups werden mit globaler Replikation explizit erw\u00E4hnt. Die Einheit behauptet keine konkrete Provider- oder Technologieentscheidung, sondern nur die Auswahl unter diesen Gesichtspunkten. Das passt zur Offenheit im Transkript (\u0022noch nicht entschieden, welcher\u0022).",
+      "text": "Auswahl der Managed Services f\u00FCr Hosting und Backup unter Kosten- und Compliance-Gesichtspunkten."
+    },
+    {
+      "index": 26,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[Anna: \u0022Zum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft.\u0022 / Ben: \u0022Und Sprachen. Dann brauchen wir Internationalisierung.\u0022 / Anna: \u0022Deutsch und Englisch sollten schon drin sein.\u0022 / Eva: \u0022Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u0022 / Anna: \u0022Nicht im MVP?\u0022 / Eva: \u0022Wenn Schweiz Pilotkunde ist, dann doch.\u0022 / Anna: \u0022Pilotkunde ist noch nicht final.\u0022] Mehrw\u00E4hrung und Mehrsprachigkeit kommen klar vor, aber ihr MVP-Status ist nicht eindeutig vollst\u00E4ndig au\u00DFerhalb des MVP verortet. F\u00FCr Sprachen sagt Anna sogar: \u0022Deutsch und Englisch sollten schon drin sein\u0022 \u2013 das spricht eher f\u00FCr fr\u00FChe Ber\u00FCcksichtigung. Bei W\u00E4hrungen ist EUR sicher, CHF eventuell abh\u00E4ngig vom noch offenen Pilotkunden, USD sp\u00E4ter. Die Einheit verlagert beides pauschal \u0022au\u00DFerhalb des MVP\u0022 und macht die Aussage damit breiter und finaler als das Transkript.",
+      "text": "Umgang mit Mehrw\u00E4hrungs- und Mehrsprachigkeitsanforderungen au\u00DFerhalb des MVP."
+    },
+    {
+      "index": 27,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[Farid: \u0022Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u0022 / Clara: \u0022Ja, Pseudonymisierung oder synthetische Testdaten.\u0022 / Ben: \u0022SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u0022 / Clara: \u0022Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u0022 / Anna: \u0022Kann man das sp\u00E4ter kl\u00E4ren?\u0022 / Clara: \u0022Nein, wenn Entwicklung darauf zugreift, ist es sofort relevant.\u0022] Das Thema ist direkt und stark belegt. Es geht ausdr\u00FCcklich um SAP-Testumgebungen, echte alte Kundendaten und den datenschutzkonformen Umgang damit. Der Status ist nicht offen im Sinne von \u0027sp\u00E4ter\u0027, sondern als sofort relevant markiert. Die Einheit bleibt auf Themenebene und f\u00FCgt keine ungest\u00FCtzten Details hinzu.",
+      "text": "Umgang mit Testdaten aus SAP-Testumgebungen unter Datenschutzgesichtspunkten."
+    },
+    {
+      "index": 28,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "paragraph",
+      "verdict": "not_a_claim",
+      "reason": "[Anna: \u0022MVP in 8 Wochen wurde versprochen.\u0022 / Anna: \u0022Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen.\u0022 / Clara: \u0022Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben.\u0022 / Ben: \u0022Und keine falsche Sicherheit erzeugen.\u0022] Die Aussage ist \u00FCberwiegend Metabeschreibung des Artefakts bzw. der Architekturhaltung. Der 8-Wochen-MVP ist belegt, ebenso der Wunsch nach klarem MVP-Schnitt und sichtbaren Risiken. Aber Formulierungen wie \u0022Diese Architektur basiert auf den Anforderungen und Risiken...\u0022 und \u0022erlaubt Erweiterungen und Nachjustierungen\u0022 beschreiben das Dokument/Design abstrakt statt einen fachlich pr\u00FCfbaren Sachclaim aus dem Transkript. Das ist eher eine Einordnung/Pr\u00E4ambel als ein konkreter inhaltlicher Claim.",
+      "text": "Diese Architektur basiert auf den Anforderungen und Risiken, die im Transkript erarbeitet wurden, und ist auf den schnellen MVP-Zeitrahmen von 8 Wochen ausgerichtet. Die Architektur erlaubt Erweiterungen und Nachjustierungen, um sp\u00E4tere Anforderungen und Compliance sicher umzusetzen."
+    }
+  ]
+}

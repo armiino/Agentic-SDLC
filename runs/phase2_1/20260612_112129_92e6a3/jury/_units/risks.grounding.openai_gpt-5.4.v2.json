@@ -1,0 +1,249 @@
+{
+  "artifact": "risks.md",
+  "phase": "phase2_1",
+  "runId": "20260612_112129_92e6a3",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4"
+  },
+  "unitCount": 29,
+  "groundingScore": 0,
+  "counts": {
+    "grounded": 28,
+    "not_a_claim": 1
+  },
+  "verdicts": [
+    {
+      "index": 0,
+      "section": "1. Fachliche Risiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EUnd wir haben noch keine klare Zieldefinition.\u201C / [Anna] \u201EZiel ist schneller Angebote erstellen.\u201C / [David] \u201EIch habe geh\u00F6rt, es soll kein Ticketsystem geben. Das ist aus Support-Sicht schwierig...\u201C / [Anna] \u201EDann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen.\u201C] Das Thema unklare Zieldefinition, konkurrierende Anforderungen und bewusster MVP-Zuschnitt mit Risiken wird explizit besprochen.",
+      "text": "Unklare Zieldefinition und Scope: Unterschiedliche Anforderungen (z.B. Angebotserstellung, Rechnungsdownload, Support) sind nicht final priorisiert. MVP-Schnitt ist bewusst eng, birgt jedoch Risiken, dass Stakeholder-Erwartungen nicht erf\u00FCllt werden."
+    },
+    {
+      "index": 1,
+      "section": "1. Fachliche Risiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[David] \u201EIch habe geh\u00F6rt, es soll kein Ticketsystem geben. Das ist aus Support-Sicht schwierig...\u201C / [David] \u201EIch will nur verhindern, dass wir nach dem Launch manuell Excel-Listen pflegen.\u201C / [Anna] \u201EKontaktformular ohne Ticketpersistenz?\u201C / [Clara] \u201EDann werden Supportdaten per E-Mail verarbeitet. Auch Datenschutz.\u201C / [Farid] \u201EE-Mail ist unstrukturiert und schlecht auditierbar.\u201C] Fehlendes Ticketsystem, Risiko manueller Workarounds sowie Datenschutzprobleme bei E-Mail/Kontaktformular werden direkt angesprochen. \u201EFehleranf\u00E4llig\u201C ist eine zul\u00E4ssige Risikokonkretion.",
+      "text": "Support-Prozesse unzureichend: Fehlen eines Ticketsystems im MVP f\u00FChrt zu manueller und fehleranf\u00E4lliger Bearbeitung von Kundenanfragen und Datenschutzrisiken bei Nutzung von E-Mail oder Kontaktformular."
+    },
+    {
+      "index": 2,
+      "section": "1. Fachliche Risiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EWer darf dann die Rabatte sehen? Das ist Rollen- und Berechtigungslogik.\u201C / [David] \u201ESupport sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen...\u201C / [Eva] \u201ESupport darf Sonderkonditionen nicht sehen...\u201C / [Ben] \u201EDas ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren.\u201C] Konflikte zwischen Rollen und Sichtbarkeiten werden ausdr\u00FCcklich diskutiert. Sicherheitsl\u00FCcken sind eine naheliegende Risikofolge dieses Themas.",
+      "text": "Konflikte bei Rollen und Berechtigungen: Unterschiedliche Anspr\u00FCche an Sichtbarkeit und Rechte (z.B. Sales vs. Support) k\u00F6nnen zu Inkonsistenzen und Sicherheitsl\u00FCcken f\u00FChren."
+    },
+    {
+      "index": 3,
+      "section": "2. Technische Risiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Farid] \u201EUnd SAP hat Wartungsfenster am Wochenende.\u201C / [David] \u201EWas passiert, wenn SAP nicht erreichbar ist?\u201C / [Ben] \u201EAngebote k\u00F6nnen dann nicht aktuell berechnet werden.\u201C / [Anna] \u201EKunden arbeiten auch am Wochenende.\u201C / [Ben] \u201EBitte schreibt \u201ASAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u2018.\u201C] Verf\u00FCgbarkeitsrisiken und Blockade der Angebotserstellung bei SAP-Ausfall sind klar belegt. \u201EDateninkonsistenzen\u201C werden nicht w\u00F6rtlich genannt, sind aber thematisch durch Preisaktualit\u00E4t/Verf\u00FCgbarkeit angerissen.",
+      "text": "SAP-Integration kritisch: SAP-Schnittstellen sind wartungsanf\u00E4llig, haben Wartungsfenster und k\u00F6nnen Verf\u00FCgbarkeitsrisiken verursachen, die Angebotserstellung zeitweise blockieren oder zu Dateninkonsistenzen f\u00FChren."
+    },
+    {
+      "index": 4,
+      "section": "2. Technische Risiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Farid] \u201EUnser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u201C KEIN BELEG] Das Artefakt nennt das zentrale API Gateway mit sechs Wochen Warteliste. Dazu gibt es im Transkript eine klare Stelle: [Farid] \u201E... neue externe Portale \u00FCber das zentrale API Gateway ...\u201C und [Ben] \u201E... unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u201C Dies gef\u00E4hrdet laut [Anna]/[Ben] den 8-Wochen-MVP. Das Thema ist also belegt.",
+      "text": "API Gateway Wartezeiten: Geplante Nutzung eines zentralen API Gateways hat eine Warteliste von sechs Wochen und kann den geplanten 8-Wochen-MVP-Zeitrahmen gef\u00E4hrden."
+    },
+    {
+      "index": 5,
+      "section": "2. Technische Risiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Ben] \u201EVielleicht k\u00F6nnen wir Managed Services nehmen. Kein neuer DB Server \u2013 IT hat das klar gesagt.\u201C / [Anna] \u201EJa kein neuer DB Server. Managed Services sind okay. Aber bitte g\u00FCnstig.\u201C / [Ben] \u201EG\u00FCnstig und skalierbar widerspricht sich.\u201C / [Ben] \u201E... wir haben noch nicht entschieden, welcher.\u201C] Kein neuer DB-Server, Managed Services, offene Auswahl sowie Spannungsfeld Kosten/Skalierung werden direkt genannt.",
+      "text": "Kein neuer DB-Server, Managed Services: Abh\u00E4ngigkeit von externen Services kann Kosten und Skalierbarkeit einschr\u00E4nken; Auswahl und Integration sind noch nicht erfolgt."
+    },
+    {
+      "index": 6,
+      "section": "2. Technische Risiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Farid] \u201EWir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u201C / [Ben] \u201ESAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u201C / [Clara] \u201EJa, Pseudonymisierung oder synthetische Testdaten.\u201C / [Clara] \u201EDann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u201C] Datenschutzrisiko durch echte Kundendaten im Testsystem und Bedarf an Pseudonymisierung/synthetischen Daten sind explizit besprochen.",
+      "text": "Testdaten und Umgebungen: Nutzung von SAP-Testsystem mit echten Kundendaten birgt Datenschutzrisiken; fehlende Pseudonymisierung k\u00F6nnte Compliance-Verst\u00F6\u00DFe verursachen."
+    },
+    {
+      "index": 7,
+      "section": "3. Compliance- und Datenschutzrisiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201ELogin per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.\u201C / [Clara] \u201EDann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.\u201C / [Clara] \u201EDSGVO ist nicht optional.\u201C] Die genannten DSGVO-Anforderungen werden direkt aufgez\u00E4hlt; dass sie komplex sind und das Projekt belasten k\u00F6nnen, ist durch die Gesamtdebatte um Zeit und Scope gest\u00FCtzt.",
+      "text": "DSGVO-Konformit\u00E4t zwingend: Anforderungen an Double-Opt-In, L\u00F6schkonzepte, Audit-Trails und Zugriffskontrollen sind komplex und k\u00F6nnten den MVP verz\u00F6gern."
+    },
+    {
+      "index": 8,
+      "section": "3. Compliance- und Datenschutzrisiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EAuditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u201C / [Farid] \u201EUnser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.\u201C / [Ben] \u201EApplication logs, audit logs und security logs sind unterschiedliche Dinge.\u201C] Die Balance zwischen Auditierbarkeit und Vermeidung personenbezogener Daten in Logs wird explizit thematisiert. \u201EDatenverlust\u201C wird nicht erw\u00E4hnt, aber Compliance-Risiken schon; das Kernthema ist belegt.",
+      "text": "Audit und Logging: Balance zwischen ausreichender Auditierbarkeit und Vermeidung der Protokollierung personenbezogener Daten ist schwierig und birgt Risiken bei Datenverlust oder Compliance-Verst\u00F6\u00DFen."
+    },
+    {
+      "index": 9,
+      "section": "3. Compliance- und Datenschutzrisiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EUnd wo werden Daten gehostet? EU only?\u201C / [Anna] \u201EJa EU only. Oder zumindest DSGVO-konform.\u201C / [Farid] \u201EEU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global...\u201C / [Anna] \u201EAber wenn EU-only teurer ist?\u201C / [Farid] \u201EIst es wahrscheinlich.\u201C / [Clara] \u201EUnd wir haben noch gar nicht \u00FCber Backup gesprochen.\u201C] EU-only Hosting, Backups, Unklarheiten sowie wahrscheinliche Mehrkosten sind direkt belegt. Verz\u00F6gerungen sind plausibel im Kontext offener Entscheidungen und MVP-Zeitdruck.",
+      "text": "Backup und Hosting: EU-only Hosting und Backup-Anforderungen sind noch unklar und k\u00F6nnen Mehrkosten und Verz\u00F6gerungen verursachen."
+    },
+    {
+      "index": 10,
+      "section": "3. Compliance- und Datenschutzrisiken",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Eva] \u201EHandelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.\u201C / [Clara] \u201EDas kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen.\u201C / [Ben] \u201EAlso brauchen wir Datenklassifikation und Retention Rules.\u201C] Der Konflikt zwischen Aufbewahrungspflichten und L\u00F6schung wird ausdr\u00FCcklich benannt; juristische Risiken sind eine naheliegende Einordnung.",
+      "text": "Retention und L\u00F6schung: Widerspr\u00FCchliche Anforderungen zwischen handelsrechtlichen Aufbewahrungspflichten und Datenschutzrecht (Recht auf L\u00F6schung) bergen juristische Risiken."
+    },
+    {
+      "index": 11,
+      "section": "4. Widerspr\u00FCche und Unsicherheiten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Ben] \u201ESecurity Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u201C / [Anna] \u201EDann machen wir es ohne Security Review?\u201C / [Clara] \u201EDas ist keine Option.\u201C] Der notwendige Security Review und sein Konflikt mit dem 8-Wochen-Termin werden wortw\u00F6rtlich genannt.",
+      "text": "Zeitdruck kontra Sicherheitsreview: Ein notwendiger Security Review kann den knappen MVP-Termin (8 Wochen) sprengen."
+    },
+    {
+      "index": 12,
+      "section": "4. Widerspr\u00FCche und Unsicherheiten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EMVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup\u201C\n[Eva] \u201EUnd Rabatt-Freigabe?\u201C\n[Anna] \u201EVielleicht Phase 2.\u201C\n[Anna] \u201EZum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft.\u201C\n[Ben] \u201EUnd Sprachen. Dann brauchen wir Internationalisierung.\u201C\n[Anna] \u201EDeutsch und Englisch sollten schon drin sein.\u201C\n[Eva] \u201EAngebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u201C\n[Anna] \u201EUnd Marketing will Push Notifications.\u201C] Das Transkript behandelt explizit Freigabeprozesse, Mehrw\u00E4hrung, Mehrsprachigkeit und Push Notifications als Themen; mehrere davon sind unklar bzw. werden teils auf sp\u00E4ter verschoben. Die Aussage \u00FCber sp\u00E4tere Integrationsrisiken ist eine zul\u00E4ssige Risiko-Extrapolation auf Basis der offenen/verschobenen Themen.",
+      "text": "Funktionaler Umfang: Umfangreiche Funktionen (Freigabeprozesse, Multiw\u00E4hrung, Mehrsprachigkeit, Push Notifications) sind offen und werden f\u00FCr MVP zur\u00FCckgestellt, was sp\u00E4tere Integrationsrisiken birgt."
+    },
+    {
+      "index": 13,
+      "section": "4. Widerspr\u00FCche und Unsicherheiten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EZum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft.\u201C\n[David] \u201EIch dachte Pilotkunde ist M\u00FCller AG aus der Schweiz.\u201C\n[Anna] \u201EVielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche.\u201C\n[Ben] \u201EDas beeinflusst Scope massiv.\u201C\n[Clara] \u201EUnd Datenschutzpr\u00FCfung.\u201C\n[Eva] \u201EUnd W\u00E4hrung.\u201C] Die Pilotkundenwahl ist ausdr\u00FCcklich offen, und es wird direkt gesagt, dass sie Scope, Datenschutz und W\u00E4hrung beeinflusst. Sprache und Infrastruktur werden im Umfeld internationaler Ausweitung ebenfalls thematisiert, daher ist die zusammenfassende Risikobeschreibung thematisch gedeckt.",
+      "text": "Pilotkunde und Markt: Unklare Pilotkundenwahl (DACH vs. Schweiz) beeinflusst Datenschutz, W\u00E4hrung, Sprache und Infrastruktur."
+    },
+    {
+      "index": 14,
+      "section": "4. Widerspr\u00FCche und Unsicherheiten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Eva] \u201EAngebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.\u201C\n[Anna] \u201EOder ab 20 Prozent. Ich bin mir nicht sicher.\u201C\n[Ben] \u201EDas muss klar definiert werden. Rabattlogik kommt aus SAP, aber Freigabeprozess w\u00E4re vermutlich im Portal.\u201C\n[Ben] \u201ESAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.\u201C\n[Eva] \u201EWenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen.\u201C\n[Eva] \u201ENein, ohne Freigabeprozess k\u00F6nnen falsche Angebote rausgehen. Das ist ein finanzielles Risiko.\u201C] Rabattschwellen und Freigabeprozess sind explizit nicht final gekl\u00E4rt; ebenso ist die Preisaktualit\u00E4t aus SAP problematisch. Das finanzielle Risiko wird sogar w\u00F6rtlich genannt.",
+      "text": "Preis- und Rabattlogik: Komplexit\u00E4t der Rabattfreigaben und Aktualit\u00E4t der SAP-Preise sind nicht final gekl\u00E4rt, was finanzielle Risiken birgt."
+    },
+    {
+      "index": 15,
+      "section": "5. Potenzielle Auswirkungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EUnd wir haben noch keine klare Zieldefinition.\u201C\n[Ben] \u201EBis Freitag? Wir haben nicht mal eine Architekturentscheidung.\u201C\n[Eva] \u201EEine grobe Sch\u00E4tzung ohne Scope ist gef\u00E4hrlich.\u201C\n[Ben] \u201EIch sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrw\u00E4hrung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP.\u201C] Unklarer Scope und fehlende Architekturentscheidungen werden klar benannt. Verz\u00F6gerungsgefahr ist direkt ableitbar; Budgetdruck/Kostenthemen kommen ebenfalls vor, etwa bei Sch\u00E4tzung und Hostingkosten. Daher ist die Risikoaussage gedeckt.",
+      "text": "Verz\u00F6gerungen und Budget\u00FCberschreitungen durch unklare Scope-Definition und fehlende Architekturentscheidungen."
+    },
+    {
+      "index": 16,
+      "section": "5. Potenzielle Auswirkungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EMVP in 8 Wochen wurde versprochen.\u201C\n[Ben] \u201ESecurity Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u201C\n[Anna] \u201EDann machen wir es ohne Security Review?\u201C\n[Clara] \u201EDas ist keine Option.\u201C\n[Anna] \u201EJa Logging. Aber bitte nicht zu komplex. Wir haben keine Zeit.\u201C\n[Clara] \u201EDouble-Opt-In und L\u00F6schung fehlen.\u201C] Das Transkript zeigt deutlichen Zeitdruck und gleichzeitig offene Compliance-/Sicherheitsthemen. Daraus ein Risiko von Qualit\u00E4tsverlusten in Compliance und Sicherheit abzuleiten ist naheliegend und thematisch gest\u00FCtzt.",
+      "text": "Qualit\u00E4tsverluste bei Compliance und Sicherheit durch Zeitdruck."
+    },
+    {
+      "index": 17,
+      "section": "5. Potenzielle Auswirkungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[David] \u201EIch habe geh\u00F6rt, es soll kein Ticketsystem geben. Das ist aus Support-Sicht schwierig, weil Kunden uns heute wegen Rechnungen, Lieferstatus und falschen Rabatten st\u00E4ndig schreiben.\u201C\n[Anna] \u201ETicketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u201C\n[David] \u201EWenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u201C\n[David] \u201ESupport wird damit nicht gl\u00FCcklich.\u201C\n[Anna] \u201ENotieren als Risiko.\u201C] Fehlende oder unklare Supportprozesse werden ausdr\u00FCcklich als Problem und Risiko benannt. Schlechterer Kundenservice ist direkt gest\u00FCtzt; erh\u00F6hte Supportkosten sind eine plausible Risikoextrapolation aus manuellem Aufwand und unzureichender Prozessunterst\u00FCtzung.",
+      "text": "Erh\u00F6hte Supportkosten und schlechter Kundenservice aufgrund fehlender Supportprozesse."
+    },
+    {
+      "index": 18,
+      "section": "5. Potenzielle Auswirkungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EDann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.\u201C\n[Clara] \u201EAuditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u201C\n[Clara] \u201EUnd ein Rollen- und Berechtigungskonzept.\u201C\n[Ben] \u201EDas ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren.\u201C\n[Clara] \u201EUnd protokollieren. Wer hat welches Angebot ge\u00F6ffnet?\u201C] Zugriffskontrollen, Rollen/Berechtigungen und Auditierung sind zentrale und noch auszuarbeitende Themen im Transkript. Das Risiko von Sicherheitsvorf\u00E4llen bei unzureichender Umsetzung ist eine zul\u00E4ssige Risikofolgerung.",
+      "text": "Sicherheitsvorf\u00E4lle durch unzureichende Zugriffskontrollen und mangelhafte Auditierung."
+    },
+    {
+      "index": 19,
+      "section": "5. Potenzielle Auswirkungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EBevor wir \u00FCber Frontends reden: DSGVO. Wir speichern Kundendaten.\u201C\n[Clara] \u201EDann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.\u201C\n[Clara] \u201EDas kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen.\u201C\n[Eva] \u201EHandelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.\u201C] DSGVO, L\u00F6schkonzept und Aufbewahrungspflichten werden explizit besprochen. Rechtliche Risiken bei Nichtbeachtung sind daher klar im Transkript verankert.",
+      "text": "Rechtliche Risiken durch Nichtbeachtung von DSGVO und Aufbewahrungspflichten."
+    },
+    {
+      "index": 20,
+      "section": "6. Gegenma\u00DFnahmen und Kl\u00E4rungsbedarfe",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EDann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen.\u201C\n[Clara] \u201EBitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u201C\n[Clara] \u201EUnd dokumentieren.\u201C\n[Ben] \u201EOhne Dokumentation kein Security Review.\u201C] Die Einheit fasst das am Ende explizit formulierte Ziel sehr treffend zusammen: bewusste Abgrenzung, Transparenz zu Ausschl\u00FCssen/Risiken und Dokumentation. Das ist direkt belegt.",
+      "text": "Klares MVP-Scoping: Bewusste und transparente Ausgrenzung riskanter Funktionen und offene Punkte, Dokumentation dieser Entscheidungen."
+    },
+    {
+      "index": 21,
+      "section": "6. Gegenma\u00DFnahmen und Kl\u00E4rungsbedarfe",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Ben] \u201ESecurity Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u201C\n[Anna] \u201EDann machen wir es ohne Security Review?\u201C\n[Clara] \u201EDas ist keine Option.\u201C\n[Anna] \u201ESecurity Review irgendwie\u201C] Das Thema, wie mit dem Security Review unter Zeitdruck umzugehen ist, kommt klar vor. Die konkrete Empfehlung eines pragmatischen Zuschnitts auf kritische Aspekte wird jedoch im Transkript nicht ausdr\u00FCcklich formuliert, sondern ist eine Ma\u00DFnahme, die \u00FCber den Wortlaut hinausgeht, aber thematisch passend ist.",
+      "text": "Security Review pragmatisch planen: Fokus auf kritische Sicherheitsaspekte f\u00FCr MVP, um Verz\u00F6gerungen zu minimieren."
+    },
+    {
+      "index": 22,
+      "section": "6. Gegenma\u00DFnahmen und Kl\u00E4rungsbedarfe",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201ETicketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u201C\n[David] \u201EWenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.\u201C\n[David] \u201ESupport wird damit nicht gl\u00FCcklich.\u201C\n[Anna] \u201ENotieren als Risiko.\u201C\n[Clara] \u201EBitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u201C] Das Transkript bespricht explizit Kontaktformular statt Ticketsystem, die Risiken f\u00FCr den Support und die Notwendigkeit, dies als bewusste Einschr\u00E4nkung zu kommunizieren. Die Einheit ist damit gut gest\u00FCtzt.",
+      "text": "Supportprozess sauber kommunizieren: Klare Risikohinweise f\u00FCr Kundenservice und geplante \u00DCbergangsl\u00F6sung mit Kontaktformular."
+    },
+    {
+      "index": 23,
+      "section": "6. Gegenma\u00DFnahmen und Kl\u00E4rungsbedarfe",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[David] \u201EWas passiert, wenn SAP nicht erreichbar ist?\u201C\n[Ben] \u201EAngebote k\u00F6nnen dann nicht aktuell berechnet werden.\u201C\n[Eva] \u201EDann darf kein Angebot erstellt werden, oder es muss als unverbindlich markiert sein.\u201C\n[Ben] \u201EDann brauchen wir Fallback oder Cache.\u201C\n[Anna] \u201EK\u00F6nnen wir nur Produktdaten cachen, keine Kundendaten?\u201C\n[Farid] \u201EUnd Cache-Invalidierung ist aufwendig.\u201C\n[Ben] \u201EBitte schreibt \u0027SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0027.\u201C] SAP-Verf\u00FCgbarkeit als kritische Abh\u00E4ngigkeit, m\u00F6gliche Ausfallfolgen sowie Fallback-/Cache-\u00DCberlegungen werden explizit genannt. \u0027Monitoring der Schnittstellenverf\u00FCgbarkeit\u0027 wird zwar nicht w\u00F6rtlich gefordert, ist aber eine naheliegende und thematisch passende Gegenma\u00DFnahme im Rahmen des besprochenen Themas.",
+      "text": "Enges Controlling der SAP-Integration: Monitoring der Schnittstellenverf\u00FCgbarkeit und Notfallkonzepte bei Ausfall."
+    },
+    {
+      "index": 24,
+      "section": "6. Gegenma\u00DFnahmen und Kl\u00E4rungsbedarfe",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Farid] Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\n[Clara] Ja, Pseudonymisierung oder synthetische Testdaten.\n[Ben] SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.] Das Thema Testumgebungen sowie Pseudonymisierung/synthetische Testdaten wird explizit besprochen. Die Einheit formuliert daraus eine verpflichtende Ma\u00DFnahme, bleibt aber thematisch im Rahmen des Transkripts.",
+      "text": "Datenschutzkonforme Testdaten und Umgebungen entwickeln: Nutzung von Pseudonymisierung und synthetischen Testdaten verpflichtend machen."
+    },
+    {
+      "index": 25,
+      "section": "6. Gegenma\u00DFnahmen und Kl\u00E4rungsbedarfe",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] Und wo werden Daten gehostet? EU only?\n[Anna] Ja EU only. Oder zumindest DSGVO-konform.\n...\n[Farid] Ich bin aus IT Operations. EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\n[Clara] Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz.\n...\n[Anna] Wir brauchen aber eine Kostensch\u00E4tzung f\u00FCr den Vorstand bis Freitag.\n[Farid] Kann ich noch nicht sagen.\n...\n[Clara] Und wir haben noch gar nicht \u00FCber Backup gesprochen.\n[Ben] Ja Disaster Recovery.\n[Clara] Wenn Kundendaten drin sind: ja.] Hosting in der EU/DSGVO-Konformit\u00E4t, Backup sowie eine Kostenabsch\u00E4tzung werden klar thematisiert. Die Einheit verdichtet dies zu einer Kl\u00E4rungsaufgabe mit fr\u00FCher Auswahl eines Anbieters; das ist als Ma\u00DFnahme aus dem Gesagten ableitbar.",
+      "text": "Hosting- und Backup-Strategie kl\u00E4ren: Fr\u00FChzeitige Auswahl eines DSGVO-konformen EU-Anbieters inklusive Kostenabsch\u00E4tzung."
+    },
+    {
+      "index": 26,
+      "section": "6. Gegenma\u00DFnahmen und Kl\u00E4rungsbedarfe",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] Okay. Dann MVP:\n1. Login mit Double-Opt-In\n2. Angebotserstellung mit SAP-Lesedaten\n3. Rechnungsdownload\n4. Rollen Admin/Sales/Kunde\n5. Minimaler Audit Trail\n6. EU Managed Hosting\n7. Backup\n\n[Eva] Und Rabatt-Freigabe?\n[Anna] Vielleicht Phase 2.\n[Eva] Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.\n[Ben] Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.] Das Transkript behandelt explizit, dass Rabatt-Freigaben evtl. erst in Phase 2 kommen und das MVP deshalb eingeschr\u00E4nkt werden muss. Die Einheit fasst dies als sp\u00E4tere Phase plus klare Anforderungen f\u00FCr sp\u00E4tere Erweiterungen zusammen.",
+      "text": "Freigabeprozesse und Rabattlogik f\u00FCr sp\u00E4tere Phasen vorsehen: MVP-Funktionalit\u00E4t begrenzen und klare Anforderungen f\u00FCr sp\u00E4tere Erweiterungen definieren."
+    },
+    {
+      "index": 27,
+      "section": "6. Gegenma\u00DFnahmen und Kl\u00E4rungsbedarfe",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben.\n...\n[Anna] Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen.\n[Ben] Und keine falsche Sicherheit erzeugen.] Die Einheit spricht \u00FCber transparente Risikokommunikation und Sichtbarkeit offener Risiken. Genau dieses Anliegen wird am Ende des Transkripts ausdr\u00FCcklich formuliert.",
+      "text": "Transparente Kommunikation aller Risiken an Management und Stakeholder: Offene Risiken sichtbar halten zur Vermeidung falscher Erwartungen."
+    },
+    {
+      "index": 28,
+      "section": "6. Gegenma\u00DFnahmen und Kl\u00E4rungsbedarfe",
+      "kind": "paragraph",
+      "verdict": "not_a_claim",
+      "reason": "[KEIN BELEG] Die Einheit ist ein Metahinweis auf Dateiquellen und Artefaktbasis, nicht auf fachlichen Inhalt des Transkripts. Daf\u00FCr gibt es im Transkript keinen inhaltlichen Beleg; zugleich ist es kein fachlicher Claim.",
+      "text": "_Diese Risikoanalyse basiert auf dem umfangreichen Transkript input/transcripts/T9999_chaos.txt, der Kontextzusammenfassung runs/phase2_1/20260612_112129_92e6a3/state/context.md sowie den daraus abgeleiteten Requirements docs/requirements.md._"
+    }
+  ]
+}

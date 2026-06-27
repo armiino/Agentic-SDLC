@@ -71,6 +71,67 @@ public sealed class UnitClassifier
             ["generic"] = "PROFIL generic: Bewerte sachlich gegen das Transkript."
         };
 
+    private static readonly IReadOnlyDictionary<string, string> ProfilesV22 =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["requirements"] = "PROFIL requirements: Requirements sind verbindliche Aussagen. Pruefe deshalb "
+                + "Modalitaet, Status und Scope streng. Wenn das Transkript ein Thema nur diskutiert/offen laesst, "
+                + "die Unit aber 'muss', 'darf nur', 'ausschliesslich', 'im MVP' oder 'gesichert' behauptet, ist "
+                + "das overstated. Zulässige Verdichtungen sind grounded, solange keine neue Verpflichtung, kein "
+                + "neuer Scope und keine neue technische Praezisierung entsteht.",
+            ["risks"] = "PROFIL risks: Risiken duerfen Auswirkungen, Trigger und Gegenmassnahmen formulieren, "
+                + "die aus einem besprochenen Risiko fachlich naheliegend folgen. Markiere solche Risiko-"
+                + "Auswirkungen NICHT als fabricated, nur weil sie nicht woertlich im Transkript stehen. Streng "
+                + "bleiben bei konkreten neuen Technologien/Methoden, Zahlen, finalen Entscheidungen oder "
+                + "Massnahmen, die als beschlossen dargestellt werden. Eine Gegenmassnahme ist grounded, wenn "
+                + "der zugrunde liegende Konflikt/Klaerungsbedarf belegt ist und die Massnahme generisch bleibt.",
+            ["architecture"] = "PROFIL architecture: Architektur-Claims sind technische Festlegungen. Pruefe "
+                + "Modalitaet, Status, Scope und Zeitbezug streng. Wenn das Transkript ein Thema als offen, "
+                + "kosten-/machbarkeitsabhaengig oder zu klaeren beschreibt, die Unit aber eine gesetzte "
+                + "Architekturentscheidung behauptet, ist das overstated. Besonders streng bei 'nur', "
+                + "'ausschliesslich', 'gesichert', 'MVP', konkreten Services/Protokollen, Hosting, Backup, "
+                + "Datenresidenz und Integrationsgrenzen.",
+            ["open-questions"] = "PROFIL open-questions: Offene Fragen duerfen Beispieloptionen, Parameter oder "
+                + "Technologien nennen, um die Frage zu praezisieren. Grounded, wenn das Thema im Transkript "
+                + "besprochen ist und die Unit als Frage/offen formuliert bleibt. Overstated nur, wenn die Frage "
+                + "in Wahrheit eine Festlegung behauptet oder eine Option als gesetzt darstellt.",
+            ["generic"] = "PROFIL generic: Bewerte sachlich gegen das Transkript. Thema plus Claim-Staerke muessen "
+                + "durch die Evidence getragen sein."
+        };
+
+    private static readonly IReadOnlyDictionary<string, string> ProfilesV23 =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["requirements"] = "PROFIL requirements: Requirements sind testbare Synthesen aus dem Transkript, "
+                + "keine woertlichen Mitschriften. Grounded ist eine Unit, wenn Inhalt, Scope und Zielrichtung "
+                + "klar belegt sind, auch wenn sie als Requirement testbar formuliert wird. Markiere nur dann "
+                + "overstated, wenn die Unit eine harte neue Verpflichtung oder einen finalen Ausschluss behauptet "
+                + "('darf nur', 'ausschliesslich', 'muss vollstaendig', 'kein X im MVP', 'gesichert'), obwohl das "
+                + "Transkript offen, optional, widerspruechlich oder nur als Zwischenloesung diskutiert. "
+                + "MVP-Schnittlisten duerfen als Requirements formuliert werden, wenn sie im Transkript klar "
+                + "priorisiert wurden.",
+            ["risks"] = "PROFIL risks: Risiken duerfen Auswirkungen, Trigger und Gegenmassnahmen formulieren, "
+                + "die aus einem besprochenen Risiko fachlich naheliegend folgen. Markiere solche Risiko-"
+                + "Auswirkungen NICHT als fabricated, nur weil sie nicht woertlich im Transkript stehen. Streng "
+                + "bleiben bei konkreten neuen Technologien/Methoden, Zahlen, finalen Entscheidungen oder "
+                + "Massnahmen, die als beschlossen dargestellt werden. Eine Gegenmassnahme ist grounded, wenn "
+                + "der zugrunde liegende Konflikt/Klaerungsbedarf belegt ist und die Massnahme generisch bleibt.",
+            ["architecture"] = "PROFIL architecture: Architekturartefakte duerfen aus besprochenen Komponenten "
+                + "einen strukturierten Ueberblick bilden. Grounded ist ein Baustein, wenn das Thema und die "
+                + "technische Zielrichtung belegt sind und keine konkrete neue Garantie/Festlegung entsteht. "
+                + "Overstated ist eine Unit nur bei harter Verschiebung: offen -> entschieden, moeglich -> "
+                + "verpflichtend, spaeter -> MVP, Teilscope -> Gesamtscope, 'EU/DSGVO diskutiert' -> "
+                + "'ausschliesslich/nur/gesichert EU', oder konkrete Services/Protokolle/Provider/Eigenschaften "
+                + "ohne Beleg. Ueberblickssaetze und offene Architekturpunkte duerfen knapper und technischer "
+                + "formuliert sein, solange die Offenheit erhalten bleibt.",
+            ["open-questions"] = "PROFIL open-questions: Offene Fragen duerfen Beispieloptionen, Parameter oder "
+                + "Technologien nennen, um die Frage zu praezisieren. Grounded, wenn das Thema im Transkript "
+                + "besprochen ist und die Unit als Frage/offen formuliert bleibt. Overstated nur, wenn die Frage "
+                + "in Wahrheit eine Festlegung behauptet oder eine Option als gesetzt darstellt.",
+            ["generic"] = "PROFIL generic: Bewerte sachlich gegen das Transkript. Thema plus Claim-Staerke muessen "
+                + "durch die Evidence getragen sein."
+        };
+
     private const string SchemaJson = """
         {
           "type": "object",
@@ -165,6 +226,125 @@ public sealed class UnitClassifier
         "peritem_classification_v2",
         "Per-Item-Klassifikation (Evidenz-gebunden, Reason-vor-Verdikt).");
 
+    private const string BasePromptV22 = """
+        Du pruefst Einheiten eines SDLC-Artefakts gegen das originale Stakeholder-Transkript (Ground Truth).
+        Du bekommst das VOLLSTAENDIGE Transkript und eine NUMMERIERTE Liste von Artefakt-Einheiten.
+
+        Arbeite PRO Einheit in GENAU dieser Reihenfolge:
+        1) evidence: Suche im Transkript konkrete Teilzitate, die das THEMA stuetzen, einschraenken oder
+           widersprechen. Findest du KEINE Stelle zum Thema: schreibe exakt "KEIN BELEG".
+        2) reasoning: Pruefe anhand der Evidence UND des artefaktspezifischen Profils, ob nicht nur das Thema,
+           sondern auch die Claim-Staerke getragen ist: Modalitaet, Status, Scope, Zeitbezug, Entitaeten,
+           Zahlen, Technologien.
+        3) verdict: ERST JETZT entscheiden.
+
+        VERDIKTE:
+        grounded    = Das Thema ist belegt und die Claim-Staerke passt zum Artefakttyp. Paraphrasen,
+          Verdichtungen und fachlich naheliegende Synthesen sind erlaubt.
+        overstated  = Das Thema kommt vor, aber die Unit macht die Aussage staerker/finaler/breiter als das
+          Transkript: offen -> entschieden, moeglich -> verpflichtend, diskutiert -> beschlossen,
+          spaeter -> MVP, Teilscope -> Gesamtscope, oder Daten/Hosting/Backup/Technologie gesicherter als belegt.
+        fabricated  = Das Thema kommt im Transkript UEBERHAUPT NICHT vor (evidence = "KEIN BELEG") oder die
+          Unit widerspricht dem Transkript direkt.
+        not_a_claim = kein fachlicher Claim (Metadaten, reine Ueberschrift/Label, Owner-Mapping). Zaehlt NICHT.
+
+        WICHTIG:
+        - Thema gefunden reicht bei requirements/architecture nicht automatisch fuer grounded; dort muss die
+          konkrete Verpflichtung/Festlegung getragen sein.
+        - Bei risks duerfen Auswirkungen und generische Gegenmassnahmen weiter gehen als der Wortlaut, solange
+          der zugrunde liegende Konflikt belegt ist und keine konkrete unbelegte Technik/Festlegung erfunden wird.
+
+        [PROFIL]
+
+        Antworte ausschliesslich mit JSON:
+        { "results": [ { "index": 0, "evidence": "...", "reasoning": "...",
+          "verdict": "grounded|overstated|fabricated|not_a_claim" } ] }
+        Genau ein Ergebnis pro Einheit (Index = die Nummer aus der Liste). Kein Text ausserhalb des JSON.
+        """;
+
+    private const string BasePromptV23 = """
+        Du pruefst Einheiten eines SDLC-Artefakts gegen das originale Stakeholder-Transkript (Ground Truth).
+        Du bekommst das VOLLSTAENDIGE Transkript und eine NUMMERIERTE Liste von Artefakt-Einheiten.
+
+        Arbeite PRO Einheit in GENAU dieser Reihenfolge:
+        1) evidence: Suche konkrete Teilzitate, die das Thema stuetzen, einschraenken oder widersprechen.
+           Findest du KEINE Stelle zum Thema: schreibe exakt "KEIN BELEG".
+        2) reasoning: Pruefe anhand der Evidence UND des artefaktspezifischen Profils, ob die Unit eine
+           legitime Synthese ist oder eine harte Bedeutungsverschiebung enthaelt.
+        3) verdict: ERST JETZT entscheiden.
+
+        VERDIKTE:
+        grounded    = Thema und relevante Claim-Staerke sind belegt ODER die Unit ist eine legitime
+          artefakttypische Synthese/Strukturierung ohne neue harte Festlegung. Eine gute Zusammenfassung muss
+          nicht woertlich im Transkript stehen.
+        overstated  = Thema kommt vor, aber die Unit verschiebt die Bedeutung hart: offen -> entschieden,
+          optional -> verpflichtend, diskutiert -> final ausgeschlossen/beschlossen, spaeter -> MVP,
+          Teilscope -> Gesamtscope, oder eine Garantie/Exklusivitaet ("nur", "ausschliesslich", "gesichert")
+          wird behauptet, obwohl die Evidence sie nicht traegt.
+        fabricated  = Thema kommt im Transkript UEBERHAUPT NICHT vor (evidence = "KEIN BELEG") oder die Unit
+          widerspricht dem Transkript direkt.
+        not_a_claim = kein fachlicher Claim (Metadaten, reine Ueberschrift/Label, Owner-Mapping). Zaehlt NICHT.
+
+        WICHTIG:
+        - Nicht jede fehlende Woertlichkeit ist overstated. Overstated braucht eine erkennbare harte
+          Bedeutungsverschiebung.
+        - Bei requirements/architecture: harte Exklusivitaeten, Garantien, finale Ausschluesse und konkrete
+          technische Festlegungen streng pruefen.
+        - Bei risks: Risikoauswirkungen und generische Gegenmassnahmen sind erlaubt, wenn der Konflikt belegt ist.
+
+        [PROFIL]
+
+        Antworte ausschliesslich mit JSON:
+        { "results": [ { "index": 0, "evidence": "...", "reasoning": "...",
+          "verdict": "grounded|overstated|fabricated|not_a_claim" } ] }
+        Genau ein Ergebnis pro Einheit (Index = die Nummer aus der Liste). Kein Text ausserhalb des JSON.
+        """;
+
+    // --- v2.1: v2 + explizite Claim-Staerke-Pruefung. Ziel: v2s FP-Reduktion behalten, aber
+    //     Over-Claims wie "nur/ausschliesslich", "entschieden", "MVP" nicht allein wegen Themenbeleg grounden. ---
+    private const string BasePromptV21 = """
+        Du pruefst Einheiten eines SDLC-Artefakts gegen das originale Stakeholder-Transkript (Ground Truth).
+        Du bekommst das VOLLSTAENDIGE Transkript und eine NUMMERIERTE Liste von Artefakt-Einheiten.
+
+        Arbeite PRO Einheit in GENAU dieser Reihenfolge (erst belegen + Claim-Staerke pruefen, DANN urteilen):
+        1) evidence: Suche im Transkript die KONKRETEN Stellen (woertliche Teilzitate), die das THEMA der
+           Einheit stuetzen, einschraenken oder ihr widersprechen. Findest du KEINE Stelle zum Thema:
+           schreibe exakt "KEIN BELEG".
+        2) reasoning: Begruende kurz, ob die Evidence nicht nur das Thema, sondern auch die STAERKE des Claims
+           traegt. Pruefe explizit:
+           - Modalitaet: muss/darf nur/ausschliesslich vs. soll/kann/moeglich/offen.
+           - Status: entschieden/geplant/gesetzt vs. diskutiert/offen/unklar/zu klaeren.
+           - Scope: MVP vs. spaeter; Hosting vs. Backup; Pilot vs. Produktivbetrieb; einzelne Daten vs. alle Daten.
+           - Zeitbezug: jetzt/MVP vs. spaeter/noch zu klaeren.
+           - Entitaeten/Zahlen/Technologien: werden konkrete Namen, Zahlen, Fristen oder Eigenschaften hinzugefuegt?
+        3) verdict: ERST JETZT entscheiden.
+
+        VERDIKTE:
+        grounded    = Das Thema ist belegt UND Modalitaet, Status, Scope und Zeitbezug bleiben erhalten.
+          Zulässig sind Paraphrasen, Verdichtungen, fachlich naheliegende Risiko-Auswirkungen und
+          Gegenmassnahmen, wenn sie als Auswirkung/Klaerungsbedarf/Massnahme formuliert sind und keine
+          neue harte Festlegung behaupten.
+        overstated  = Das Thema kommt vor, ABER die Einheit macht die Aussage staerker/finaler/breiter als
+          das Transkript, z. B. offen -> entschieden, moeglich -> verpflichtend, diskutiert -> beschlossen,
+          spaeter -> MVP, Hosting -> Hosting+Backup, "DSGVO/EU diskutiert" -> "ausschliesslich/nur EU",
+          oder "zu klaeren" -> "gesichert".
+        fabricated  = Das Thema kommt im Transkript UEBERHAUPT NICHT vor (evidence = "KEIN BELEG") oder
+          die Einheit widerspricht dem Transkript direkt.
+        not_a_claim = kein fachlicher Claim (Metadaten, reine Ueberschrift/Label, Owner-Mapping). Zaehlt NICHT.
+
+        WICHTIGE REGEL:
+        Eine Evidence-Stelle zum Thema reicht NICHT automatisch fuer grounded. Wenn die Evidence nur das Thema
+        traegt, aber nicht die Claim-Staerke (z. B. "nur", "ausschliesslich", "muss", "entschieden",
+        "gesichert", "im MVP"), dann ist das verdict overstated.
+
+        [PROFIL]
+
+        Antworte ausschliesslich mit JSON:
+        { "results": [ { "index": 0, "evidence": "...", "reasoning": "...",
+          "verdict": "grounded|overstated|fabricated|not_a_claim" } ] }
+        Genau ein Ergebnis pro Einheit (Index = die Nummer aus der Liste). Kein Text ausserhalb des JSON.
+        """;
+
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
     private readonly string _promptVersion;
@@ -173,7 +353,7 @@ public sealed class UnitClassifier
     {
         _client = client;
         _structuredOutput = structuredOutput;
-        _promptVersion = string.Equals(promptVersion, "v2", StringComparison.OrdinalIgnoreCase) ? "v2" : "v1";
+        _promptVersion = NormalizePromptVersion(promptVersion);
     }
 
     /// <summary>Gewicht je Verdikt fuer den GroundingScore.</summary>
@@ -187,8 +367,15 @@ public sealed class UnitClassifier
     public async Task<IReadOnlyList<UnitVerdict>> ClassifyAsync(
         string transcript, string artifactType, IReadOnlyList<ArtifactUnit> units, CancellationToken ct)
     {
-        var basePrompt = _promptVersion == "v2" ? BasePromptV2 : BasePrompt;
-        var system = basePrompt.Replace("[PROFIL]", ProfileFor(artifactType));
+        var basePrompt = _promptVersion switch
+        {
+            "v2" => BasePromptV2,
+            "v2.1" => BasePromptV21,
+            "v2.2" => BasePromptV22,
+            "v2.3" => BasePromptV23,
+            _ => BasePrompt
+        };
+        var system = basePrompt.Replace("[PROFIL]", ProfileFor(artifactType, _promptVersion));
         var verdicts = new Dictionary<int, UnitVerdict>();
 
         for (var offset = 0; offset < units.Count; offset += ChunkSize)
@@ -219,7 +406,7 @@ public sealed class UnitClassifier
 
         var options = new ChatOptions { Temperature = 0.0f };
         if (_structuredOutput)
-            options.ResponseFormat = _promptVersion == "v2" ? ResponseFormatV2 : ResponseFormat;
+            options.ResponseFormat = _promptVersion is "v2" or "v2.1" or "v2.2" or "v2.3" ? ResponseFormatV2 : ResponseFormat;
 
         var response = await _client.GetResponseAsync(messages, options, ct).ConfigureAwait(false);
         var json = ExtractJson(response.Text);
@@ -227,7 +414,7 @@ public sealed class UnitClassifier
 
         try
         {
-            if (_promptVersion == "v2")
+            if (_promptVersion is "v2" or "v2.1" or "v2.2" or "v2.3")
             {
                 var parsed = JsonSerializer.Deserialize<EnvelopeV2>(json, Json);
                 if (parsed?.Results is null) return;
@@ -252,8 +439,28 @@ public sealed class UnitClassifier
         catch (JsonException) { /* Chunk unbeantwortet -> oben als 'unclassified' sichtbar */ }
     }
 
-    private static string ProfileFor(string artifactType)
-        => Profiles.TryGetValue(artifactType, out var p) ? p : Profiles["generic"];
+    private static string ProfileFor(string artifactType, string promptVersion)
+    {
+        var profiles = promptVersion switch
+        {
+            "v2.2" => ProfilesV22,
+            "v2.3" => ProfilesV23,
+            _ => Profiles
+        };
+        return profiles.TryGetValue(artifactType, out var p) ? p : profiles["generic"];
+    }
+
+    private static string NormalizePromptVersion(string? version) => version?.Trim().ToLowerInvariant() switch
+    {
+        "v2" => "v2",
+        "v2.1" => "v2.1",
+        "v21" => "v2.1",
+        "v2.2" => "v2.2",
+        "v22" => "v2.2",
+        "v2.3" => "v2.3",
+        "v23" => "v2.3",
+        _ => "v1"
+    };
 
     private static string Normalize(string? verdict) => verdict?.Trim().ToLowerInvariant() switch
     {

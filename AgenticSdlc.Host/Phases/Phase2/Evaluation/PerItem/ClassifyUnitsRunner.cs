@@ -38,7 +38,8 @@ public static class ClassifyUnitsRunner
         {
             if (a.EndsWith(".md", StringComparison.OrdinalIgnoreCase)) artifactArg = a;
             else if (a.EndsWith(".txt", StringComparison.OrdinalIgnoreCase)) transcriptArg = a;
-            else if (a is "v1" or "v2") version = a;
+            else if (a is "v1" or "v2" or "v2.1" or "v21" or "v2.2" or "v22" or "v2.3" or "v23")
+                version = a switch { "v21" => "v2.1", "v22" => "v2.2", "v23" => "v2.3", _ => a };
             else judgeArg = a;
         }
 
@@ -63,7 +64,8 @@ public static class ClassifyUnitsRunner
             judgeArg is not null ? settings with { ModelId = judgeArg }
             : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! }
             : settings;
-        var modelSlug = judgeSettings.ModelId.Replace('/', '_').Replace(':', '_') + (version == "v2" ? ".v2" : "");
+        var modelSlug = judgeSettings.ModelId.Replace('/', '_').Replace(':', '_')
+            + (version == "v2" ? ".v2" : version == "v2.1" ? ".v2.1" : version == "v2.2" ? ".v2.2" : version == "v2.3" ? ".v2.3" : "");
 
         var client = ChatClientFactory.Create(judgeSettings);
         var classifier = new UnitClassifier(client, settings.JuryStructuredOutput, version);

@@ -1,0 +1,249 @@
+{
+  "artifact": "architecture.md",
+  "phase": "phase2_1",
+  "runId": "20260612_112129_92e6a3",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4"
+  },
+  "unitCount": 29,
+  "groundingScore": 4,
+  "counts": {
+    "grounded": 25,
+    "overstated": 4
+  },
+  "verdicts": [
+    {
+      "index": 0,
+      "section": "1. Systemkontext",
+      "kind": "paragraph",
+      "verdict": "grounded",
+      "reason": "Portal f\u00FCr Angebote/Rechnungen, SAP-Integration, SSO optional, Double-Opt-In/E-Mail, Managed Hosting/Backup/API-Gateway werden besprochen; als optional/offen markiert.",
+      "text": "Das Kundenportal ist ein webbasiertes System, das Kunden die Erstellung von Angeboten und den Download von Rechnungen erm\u00F6glicht. Das Portal ist eingebettet in eine bestehende IT-Landschaft, insbesondere mit einer SAP-Backend-Integration f\u00FCr Produkt-, Preis- und Rabattdaten. Weitere essentielle angrenzende Systeme sind Identity-Provider (SSO optional), E-Mail-Systeme f\u00FCr Double-Opt-In und Supportkontakt, sowie Managed Services f\u00FCr Hosting, Backup und API Gateway."
+    },
+    {
+      "index": 1,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Web-first, mobile sp\u00E4ter/optional sowie Login, Angebote, Rechnungen kommen im Transkript vor.",
+      "text": "Frontend: Webanwendung (Web-first, mobile Erweiterung sp\u00E4ter), die Kundeninteraktionen erm\u00F6glicht (Login, Angebotsprozess, Rechnungsanzeige)."
+    },
+    {
+      "index": 2,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Login mit E-Mail/Passwort, Double-Opt-In, optionale SSO-Integration und minimale Rollen inkl. Admin/Sales/Kunde sind abgedeckt.",
+      "text": "Identity \u0026 Access Management: Login mit E-Mail/Passwort und Double-Opt-In, optionale SSO-Integration. Rollenverwaltung mit mindestens Admin, Sales, Kunde."
+    },
+    {
+      "index": 3,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "API Layer ist definitiv n\u00F6tig; Absicherung via OAuth oder API Keys ist offen diskutiert, nicht festgelegt.",
+      "text": "API Layer: Zentraler, gesicherter Zugangspunkt f\u00FCr interne und externe Systeme via OAuth oder API Keys. Erm\u00F6glicht Integrationen, z.B. zu SAP."
+    },
+    {
+      "index": 4,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SAP f\u00FCr Produkt-, Preis-, Rabatt- und Rechnungsdaten ist genannt; MVP eher lesend, Schreibzugriff explizit noch unklar.",
+      "text": "SAP Connector: Schnittstelle zu SAP-Systemen zur Synchronisation von Produktdaten, Preisen, Rabatten und Rechnungsinformationen. Lesender Zugriff im MVP, Schreibzugriff unklar."
+    },
+    {
+      "index": 5,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Audit/Logging ohne personenbezogene Daten in technischen Logs ist besprochen, aber \u0027revisionssichere Speicherung\u0027 als gesetzte Komponente ist zu stark; nur Nachvollziehbarkeit/minimaler Audit Trail wurde diskutiert.",
+      "text": "Audit \u0026 Logging: Komponente zur Protokollierung von Nutzeraktionen und \u00C4nderungen an Angeboten, ohne personenbezogene Daten in technischen Logs. Revisionssichere Speicherung."
+    },
+    {
+      "index": 6,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Kontaktformular statt Ticketsystem wird als m\u00F6gliche MVP-L\u00F6sung diskutiert; fehlende Persistenz/Ticketsystem im MVP entspricht der Richtung, wenn auch riskant/offen.",
+      "text": "Support-Kontaktformular: Einfaches Formular zur Kontaktaufnahme, ohne Persistenz oder Ticketsystem im MVP."
+    },
+    {
+      "index": 7,
+      "section": "2. Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "EU-Hosting, Backup/DR, Dev/Test/Prod und abgesicherte Testdaten werden explizit thematisiert; Managed Hosting ist gesetzt, Details bleiben offen.",
+      "text": "Hosting \u0026 Infrastruktur: EU-konformes Managed Hosting mit Backup- und Disaster-Recovery, mindestens drei Umgebungen (Dev, Test, Prod) mit abgesicherten Testdaten."
+    },
+    {
+      "index": 8,
+      "section": "3. Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SAP als Quelle f\u00FCr Produkt-/Preisdaten, Rabattlogik und Rechnungsdaten ist klar im Transkript.",
+      "text": "SAP-Backend: Leseschnittstelle f\u00FCr Produkt- und Preisdaten, Rabattlogik, Rechnungsdaten."
+    },
+    {
+      "index": 9,
+      "section": "3. Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Azure AD und Google werden als m\u00F6gliche optionale SSO-Systeme genannt; keine finale Festlegung.",
+      "text": "Identity Provider: Optionale Integration mit Azure AD, Google oder anderen SSO-Systemen."
+    },
+    {
+      "index": 10,
+      "section": "3. Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Zentrales API Gateway f\u00FCr neue externe Portale ist interne Policy; OAuth als m\u00F6glicher Sicherheitsmechanismus wird diskutiert.",
+      "text": "API Gateway: Zentraler Zugangspunkt f\u00FCr Backend- und externe Schnittstellen mit Sicherheitsmechanismen wie OAuth."
+    },
+    {
+      "index": 11,
+      "section": "3. Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "E-Mail f\u00FCr Double-Opt-In und Support-Kontakte ist belegt, aber Benachrichtigungen allgemein sind nicht als gesetzte E-Mail-Funktion entschieden; Push/Notifications sind offen und nicht im MVP festgelegt.",
+      "text": "E-Mail-System: F\u00FCr Double-Opt-In, Benachrichtigungen und Support-Kontakte."
+    },
+    {
+      "index": 12,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "DSGVO, personenbezogene Daten, Hosting/Verarbeitung und Compliance werden mehrfach explizit besprochen.",
+      "text": "DSGVO-konforme Speicherung und Verarbeitung aller personenbezogenen Daten."
+    },
+    {
+      "index": 13,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Double-Opt-In f\u00FCr Login/Registrierung wird explizit genannt und sp\u00E4ter im MVP aufgenommen.",
+      "text": "Double-Opt-In f\u00FCr Registrierung."
+    },
+    {
+      "index": 14,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Audit Trails/\u00C4nderungs- und Zugriffsnachvollziehbarkeit sowie revisionssichere Nachvollziehbarkeit werden mehrfach gefordert.",
+      "text": "Audit-Trails speichern Zugriffe und \u00C4nderungen revisionssicher."
+    },
+    {
+      "index": 15,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "E2E vs. TLS wird explizit diskutiert; Ben sagt, TLS reicht.",
+      "text": "TLS-Verschl\u00FCsselung im Transport."
+    },
+    {
+      "index": 16,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Farid sagt ausdr\u00FCcklich, dass zentrales Monitoring keine personenbezogenen Daten in Logs enthalten darf.",
+      "text": "Keine Speicherung personenbezogener Daten in technischen Logs."
+    },
+    {
+      "index": 17,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "L\u00F6schkonzept und Konflikt mit gesetzlichen Aufbewahrungspflichten/Retention werden explizit besprochen.",
+      "text": "L\u00F6schkonzepte f\u00FCr personenbezogene Daten unter Einhaltung gesetzlicher Aufbewahrungspflichten."
+    },
+    {
+      "index": 18,
+      "section": "4. Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "EU-only Hosting ist Ziel/offene Anforderung, aber Backups global replizieren evtl.; gesicherte Datenresidenz ist gerade noch Problem, nicht entschieden/gesetzt.",
+      "text": "Hosting und Backup ausschlie\u00DFlich in der EU mit gesicherter Datenresidenz."
+    },
+    {
+      "index": 19,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SSO ist als optional/offen diskutiert; Technologie und Umfang sind nicht festgelegt.",
+      "text": "SSO-Integration: Technologie und Umfang sind noch nicht festgelegt."
+    },
+    {
+      "index": 20,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Zentrales API Gateway ist Policy, aber Warteliste gef\u00E4hrdet MVP; Alternativen/Zeitplanproblem werden klar besprochen.",
+      "text": "API Gateway Verf\u00FCgbarkeit und Alternativen zur Einhaltung des MVP-Zeitplans."
+    },
+    {
+      "index": 21,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Security Review dauert 6 Wochen, ist keine Option wegzulassen; Art/Umgang unter Zeitdruck ist offen.",
+      "text": "Art und Umfang des Security Reviews unter Zeitdruck."
+    },
+    {
+      "index": 22,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Preis-/Rabattlogik aus SAP, n\u00E4chtliche Berechnung, Verz\u00F6gerungen und Auswirkungen auf Angebote werden explizit diskutiert.",
+      "text": "Umgang mit Preis- und Rabattlogik, insbesondere mit SAP-Spezifika und m\u00F6glichen Verz\u00F6gerungen."
+    },
+    {
+      "index": 23,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Kontaktformular statt Ticketsystem wird erwogen, aber nicht final entschieden; integrierte Ticket-Systeme sind nicht eindeutig als ausgeschlossen festgelegt, sondern \u0027nicht im MVP\u0027 bzw. offen/risikobehaftet.",
+      "text": "Supportl\u00F6sung jenseits des Kontaktformulars, integrierte Ticket-Systeme sind ausgeschlossen im MVP."
+    },
+    {
+      "index": 24,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Rabatt-Freigaben wurden diskutiert; Anna schlug Phase 2 vor, im MVP keine Sonderrabatte ohne Freigabe.",
+      "text": "Freigabeprozesse f\u00FCr Rabatte sind f\u00FCr sp\u00E4tere Projektphasen geplant."
+    },
+    {
+      "index": 25,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Managed Services sind okay, Auswahl ist noch offen; Kosten, EU-Hosting/Compliance und Backup wurden ausdr\u00FCcklich thematisiert.",
+      "text": "Auswahl der Managed Services f\u00FCr Hosting und Backup unter Kosten- und Compliance-Gesichtspunkten."
+    },
+    {
+      "index": 26,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Mehrw\u00E4hrung und Mehrsprachigkeit wurden besprochen und teils als sp\u00E4ter/au\u00DFerhalb MVP eingeordnet bzw vom Pilotkunden abh\u00E4ngig gemacht.",
+      "text": "Umgang mit Mehrw\u00E4hrungs- und Mehrsprachigkeitsanforderungen au\u00DFerhalb des MVP."
+    },
+    {
+      "index": 27,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SAP-Testsystem mit echten alten Kundendaten und Datenschutzrisiken bei Testdaten wurden klar angesprochen.",
+      "text": "Umgang mit Testdaten aus SAP-Testumgebungen unter Datenschutzgesichtspunkten."
+    },
+    {
+      "index": 28,
+      "section": "5. Offene Architekturentscheidungen",
+      "kind": "paragraph",
+      "verdict": "grounded",
+      "reason": "8-Wochen-MVP, sp\u00E4tere Erweiterungen/Nachjustierungen, offene Risiken und sp\u00E4tere Compliance-Themen wurden im Transkript mehrfach benannt.",
+      "text": "Diese Architektur basiert auf den Anforderungen und Risiken, die im Transkript erarbeitet wurden, und ist auf den schnellen MVP-Zeitrahmen von 8 Wochen ausgerichtet. Die Architektur erlaubt Erweiterungen und Nachjustierungen, um sp\u00E4tere Anforderungen und Compliance sicher umzusetzen."
+    }
+  ]
+}

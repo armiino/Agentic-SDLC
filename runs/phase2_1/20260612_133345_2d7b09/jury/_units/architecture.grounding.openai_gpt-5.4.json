@@ -1,0 +1,235 @@
+{
+  "artifact": "architecture.md",
+  "phase": "phase2_1",
+  "runId": "20260612_133345_2d7b09",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4"
+  },
+  "unitCount": 27,
+  "groundingScore": 5,
+  "counts": {
+    "grounded": 22,
+    "fabricated": 1,
+    "overstated": 3,
+    "not_a_claim": 1
+  },
+  "verdicts": [
+    {
+      "index": 0,
+      "section": "Systemkontext",
+      "kind": "paragraph",
+      "verdict": "grounded",
+      "reason": "Portal/SAP/Angebote-Bestellungen-Rechnungen, Web zuerst, Mobile spaeter/offen sowie Restriktionen zu Integration/Security/Hosting werden besprochen.",
+      "text": "Das Kundenportal ist Teil eines gr\u00F6\u00DFeren IT-\u00D6kosystems, in das vor allem SAP f\u00FCr Produkt-, Preis- und Kundendaten integriert wird. Ziel ist, Kunden eine Plattform f\u00FCr Angebotserstellung, Bestell\u00FCbersicht und Rechnungsdownload bereitzustellen. Das Portal soll als Webl\u00F6sung starten, Mobile Nutzung ist geplant, aber nicht im MVP. F\u00FCr Integration, Sicherheit und Hosting bestehen strikte Anforderungen und Restriktionen."
+    },
+    {
+      "index": 1,
+      "section": "Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "fabricated",
+      "reason": "Anzeige von Angeboten wird besprochen, aber Bestelluebersicht als Frontend-Funktion wird im Transkript nicht genannt; nur Bestellungen sehen fuer Kunden allgemein, nicht als klarer Frontend-Baustein.",
+      "text": "Kundenportal Frontend: Webanwendung mit Login, Rollen- und Berechtigungssteuerung, Anzeige von Angeboten, Bestellungen und Rechnungen."
+    },
+    {
+      "index": 2,
+      "section": "Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "API Layer ist definitiv noetig, zentrales API Gateway ist vorgeschrieben, API muss abgesichert sein; OAuth wird bevorzugt, aber als offen markiert.",
+      "text": "API Layer: Verantwortlich f\u00FCr die sichere Anbindung externer Systeme wie SAP und das zentrale API Gateway. Umsetzung mit OAuth (bevorzugt) f\u00FCr Authentifizierung."
+    },
+    {
+      "index": 3,
+      "section": "Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SAP-Lesezugriff fuer Produkt-/Preis-/Rabattdaten ist mehrfach genannt; SAP-Schreibzugriff fuer Bestellungen ist noch nicht entschieden und damit spaeter/offen passend markiert.",
+      "text": "SAP Integration: Lesender Zugriff auf Produkt-, Preis- und Rabattdaten aus SAP. Schreibzugriffe (z.B. f\u00FCr Bestellungen) sind f\u00FCr sp\u00E4tere Phasen vorgesehen."
+    },
+    {
+      "index": 4,
+      "section": "Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "E-Mail/Passwort und optionales SSO via Azure AD oder Google werden genannt; Rollen inkl. Admin, Kunde/Sales, Manager, Support kommen im Transkript vor.",
+      "text": "Authentifizierungs- und Identity Management: Unterst\u00FCtzung von E-Mail/Passwort-Login und optional SSO \u00FCber Azure AD oder Google. Rollenmanagement mit mind. Admin, Kunde, Sales, Manager und Support."
+    },
+    {
+      "index": 5,
+      "section": "Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Audit Trails, Logging, Revisionssicherheit und DSGVO-Bezug werden explizit diskutiert.",
+      "text": "Audit- und Logging-Komponenten: Protokollierung sicherheitsrelevanter Aktionen zur Einhaltung von DSGVO und Revisionssicherheit."
+    },
+    {
+      "index": 6,
+      "section": "Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Backup und Disaster Recovery werden fuer MVP/Compliance explizit gefordert.",
+      "text": "Backup und Disaster Recovery: Sicherstellung von Datenverf\u00FCgbarkeit und Ausfallsicherheit gem\u00E4\u00DF Compliance-Anforderungen."
+    },
+    {
+      "index": 7,
+      "section": "Wichtige Komponenten",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "EU-only bzw. nachweisbare Datenresidenz und Managed Services/keine neue DB werden genannt, aber Mandantenfaehigkeit wird nirgends erwaehnt.",
+      "text": "Hosting-Service: Mandantenf\u00E4hige, DSGVO-konforme EU-basierte Managed Cloud Infrastruktur, keine neue DB-Installation."
+    },
+    {
+      "index": 8,
+      "section": "Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SAP wird klar als Quelle fuer Stammdaten, Produktdaten, Preise und Rabattlogik beschrieben.",
+      "text": "SAP System: Wesentliche Datenquelle f\u00FCr Produktinformationen, Preise, Rabattlogik und Kundenstammdaten."
+    },
+    {
+      "index": 9,
+      "section": "Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Zentrales API Gateway ist laut interner Policy verpflichtend; Warteliste von sechs Wochen ist explizit genannt.",
+      "text": "API Gateway (zentrales Infrastruktur-Component): Vorgeschriebene Integrationsebene, allerdings mit Verz\u00F6gerungsrisiko durch Warteliste."
+    },
+    {
+      "index": 10,
+      "section": "Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SSO ueber externe Identity Provider wird optional mit Azure AD/Google diskutiert.",
+      "text": "Identity Provider (optional): Externe SSO-Anbieter f\u00FCr vereinfachte Authentifizierung."
+    },
+    {
+      "index": 11,
+      "section": "Schnittstellen und Integrationspunkte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Ticketsystem/Support-Backend ist nicht im MVP, aber als kuenftiges bzw. offenes Thema fuer Kundenanfragen mehrfach besprochen.",
+      "text": "Support-Backend (nicht im MVP): K\u00FCnftige Integration f\u00FCr Ticketsystem und Kundenanfragen."
+    },
+    {
+      "index": 12,
+      "section": "Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "DSGVO, Double-Opt-In, L\u00F6schkonzept, Logging/Audit und Backup werden explizit thematisiert.",
+      "text": "DSGVO-Konformit\u00E4t ist zentral: Implementierung von Double-Opt-In, L\u00F6schkonzepten, Datenschutz bei Logging, Audit und Backup."
+    },
+    {
+      "index": 13,
+      "section": "Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Anna/Ben diskutieren E2E vs. TLS; Ben sagt ausdr\u00FCcklich, TLS reiche und E2E sei unrealistisch.",
+      "text": "Verschl\u00FCsselung: TLS f\u00FCr Daten\u00FCbertragung, Ende-zu-Ende-Verschl\u00FCsselung wird als unrealistisch betrachtet."
+    },
+    {
+      "index": 14,
+      "section": "Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Rollen/Berechtigungen inkl. Konflikt um Support-Sicht auf Angebote/Sonderkonditionen wird besprochen; feingranular ist hier sinngem\u00E4\u00DF.",
+      "text": "Rollen- und Berechtigungsmodell: Feingranulare Steuerung, insbesondere Einschr\u00E4nkungen f\u00FCr Support im Umgang mit sensitiven Daten."
+    },
+    {
+      "index": 15,
+      "section": "Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Auditierbarkeit und Nachvollziehbarkeit von \u00C4nderungen/Zugriffen sind Pflicht; zugleich wird mehrfach auf Zeit-/Komplexit\u00E4tsgrenzen hingewiesen.",
+      "text": "Auditierbarkeit: Nachvollziehbarkeit von Daten\u00E4nderungen und Zugriffen ist Pflicht, aber Balance zwischen Umfang und Aufwand notwendig."
+    },
+    {
+      "index": 16,
+      "section": "Daten- und Sicherheitsaspekte",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "Backup/DR wird besprochen und EU-Hosting/Datenresidenz ebenfalls, aber dass Backup/DR explizit EU-Datenresidenz gen\u00FCgen muss, wird nicht direkt so festgelegt.",
+      "text": "Backup und Disaster Recovery: Muss den Anforderungen der Datenresidenz in der EU gen\u00FCgen."
+    },
+    {
+      "index": 17,
+      "section": "Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Web first/mobile sp\u00E4ter sowie native vs. responsive werden diskutiert, ohne Entscheidung.",
+      "text": "Mobile Umsetzung: Native App vs. responsive Web-Anwendung bleibt unentschieden."
+    },
+    {
+      "index": 18,
+      "section": "Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Zentrales API Gateway ist laut Policy n\u00F6tig; wegen 6-Wochen-Warteliste entsteht klar die Frage nach Alternativen/Zwischenl\u00F6sungen.",
+      "text": "API Gateway Nutzung und alternative Strategien, wenn Verf\u00FCgbarkeit nicht rechtzeitig gegeben ist."
+    },
+    {
+      "index": 19,
+      "section": "Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "SSO ist optional; Azure AD und Google werden als m\u00F6gliche Anbieter genannt, ohne Entscheidung.",
+      "text": "Integration und Auswahl von SSO-Anbietern (Azure AD, Google)."
+    },
+    {
+      "index": 20,
+      "section": "Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Kein Ticketsystem im MVP wird gesagt; Kontaktformular/E-Mail als Alternative sowie Datenschutzprobleme dabei werden diskutiert.",
+      "text": "Supportprozess: Kein Ticketsystem im MVP, dennoch Bedarf an Datenschutz-konformer Bearbeitung."
+    },
+    {
+      "index": 21,
+      "section": "Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Schwellenwerte \u00FCber 15/30/20 Prozent und Workflow-Status werden angesprochen, aber ausdr\u00FCcklich als noch zu kl\u00E4ren/offen markiert.",
+      "text": "Rabattfreigabeprozess mit Workflows f\u00FCr Freigaben \u00FCber Schwellenwerte ist noch unvollst\u00E4ndig."
+    },
+    {
+      "index": 22,
+      "section": "Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Pilotkunde Schweiz vs. Deutschland ist offen und beeinflusst Datenschutz, W\u00E4hrung, Scope und Internationalisierung.",
+      "text": "Pilotkunden und deren Einfluss auf Datenschutz, Internationalisierung und Mehrw\u00E4hrung."
+    },
+    {
+      "index": 23,
+      "section": "Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Dev/Test/Prod, keine echten Kundendaten in Test, Pseudonymisierung/synthetische Daten und Problem mit SAP-Testdaten werden explizit besprochen.",
+      "text": "Testdatenstrategie und Umgang mit personenbezogenen Daten in Entwicklung und Testumgebungen."
+    },
+    {
+      "index": 24,
+      "section": "Offene Architekturentscheidungen",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "Preis-/Rabattaktualit\u00E4t aus SAP, Warnhinweise/Risiko sowie m\u00F6gliche Caches und deren Datenschutzrisiken werden explizit diskutiert.",
+      "text": "Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und m\u00F6glichen Caching-Mechanismen."
+    },
+    {
+      "index": 25,
+      "section": "Zusammenfassung",
+      "kind": "paragraph",
+      "verdict": "overstated",
+      "reason": "Herausforderungen, Zeitdruck, Compliance, offene Integrations-/Security-Entscheidungen und Managed Services sind belegt; aber ein webbasiertes MVP mit klarer Komponententrennung und strikter DSGVO-Konformit\u00E4t als vorl\u00E4ufige Architektur ist so nicht entschieden/festgelegt.",
+      "text": "Die Architektur des Kundenportals steht vor signifikanten Herausforderungen, insbesondere durch enge Zeitpl\u00E4ne, komplexe Compliance-Anforderungen und noch offene Entscheidungen bei Integration und Sicherheit. Die vorl\u00E4ufige Architektur fokussiert sich auf ein Webbasiertes MVP mit klarer Trennung von Komponenten, strikter DSGVO-Konformit\u00E4t und Nutzung bew\u00E4hrter Managed Services. Offene Fragen und Risiken sind dokumentiert und m\u00FCssen in weiteren Projektphasen gel\u00F6st werden."
+    },
+    {
+      "index": 26,
+      "section": "Zusammenfassung",
+      "kind": "paragraph",
+      "verdict": "not_a_claim",
+      "reason": "Reine Dokument-/Kontextbeschreibung ohne fachlichen Sachclaim zur Zielarchitektur.",
+      "text": "*Dieses Dokument basiert auf der Analyse des Stakeholder-Transkripts und den abgeleiteten Requirements und Risiken. Es bildet eine Grundlage f\u00FCr die weitere Architekturplanung und Entscheidungsfindung.*"
+    }
+  ]
+}

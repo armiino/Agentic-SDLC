@@ -1,0 +1,88 @@
+{
+  "cases": [
+    {
+      "id": "arch-001-frontend-orders-invoices",
+      "artifact": "architecture.md",
+      "claim": "Das Kundenportal-Frontend zeigt Angebote, Bestellungen und Rechnungen an.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "grounded",
+      "note": "B46 #1: alter Judge flaggte fabricated; Handlabel wertet als Pedanterie-FP.",
+      "evidence": [
+        "T23: Stammdaten liegen in SAP. Aber die sind teilweise unvollstaendig. Also wenn wir Angebote generieren wollen ... dann brauchen wir Produktdaten, Preise, Rabattlogik.",
+        "T32: Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden. Aber Sales will Angebote erstellen."
+      ]
+    },
+    {
+      "id": "arch-003-sap-write-later",
+      "artifact": "architecture.md",
+      "claim": "SAP-Schreibzugriffe, zum Beispiel fuer Bestellungen, sind fuer spaetere Phasen vorgesehen.",
+      "expectedLabel": "violation",
+      "originHandLabel": "violation",
+      "note": "B46 #3: echter FN des alten Judges; offen/eher lesend wurde zu geplant/later phase.",
+      "evidence": [
+        "T538: SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "T592: Wir sprechen von ... SAP-Schreibzugriff ... Das ist kein 8-Wochen-MVP.",
+        "T621: Angebotserstellung mit SAP-Lesedaten."
+      ]
+    },
+    {
+      "id": "arch-004-roles-manager-support",
+      "artifact": "architecture.md",
+      "claim": "Das Rollenmanagement umfasst mindestens Admin, Kunde, Sales, Manager und Support.",
+      "expectedLabel": "violation",
+      "originHandLabel": "borderline",
+      "note": "Autor-Label wurde in der Nachpruefung als zu mild bewertet: Manager/Support diskutiert, aber nicht finaler MVP-Scope.",
+      "evidence": [
+        "T20: Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?",
+        "T623: Rollen Admin/Sales/Kunde.",
+        "T644: Support?",
+        "T809: Support ist nicht geloest."
+      ]
+    },
+    {
+      "id": "arch-007-multitenant-hosting",
+      "artifact": "architecture.md",
+      "claim": "Das Hosting erfolgt auf einer mandantenfaehigen, DSGVO-konformen EU-basierten Managed-Cloud-Infrastruktur.",
+      "expectedLabel": "violation",
+      "originHandLabel": "violation",
+      "note": "B46 #7: mandantenfaehig ist unbelegt; EU Managed Hosting ist belegt.",
+      "evidence": [
+        "T83: Vielleicht koennen wir Managed Services nehmen. Kein neuer DB Server - IT hat das klar gesagt.",
+        "T95: Ja EU only. Oder zumindest DSGVO-konform.",
+        "T307: EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "T310: Dann reicht DSGVO-konform nicht. Wir brauchen nachweisbare Datenresidenz.",
+        "T625: EU Managed Hosting."
+      ]
+    },
+    {
+      "id": "arch-016-backup-eu-residency",
+      "artifact": "architecture.md",
+      "claim": "Backup und Disaster Recovery muessen den Anforderungen der Datenresidenz in der EU genuegen.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "grounded",
+      "note": "B46 #16: alter Judge flaggte overstated; Handlabel wertet als zulaessige Synthese/Inferenz.",
+      "evidence": [
+        "T137: Und wir haben noch gar nicht ueber Backup gesprochen.",
+        "T143: Ja Disaster Recovery.",
+        "T149: Wenn Kundendaten drin sind: ja.",
+        "T307: EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "T310: Dann reicht DSGVO-konform nicht. Wir brauchen nachweisbare Datenresidenz."
+      ]
+    },
+    {
+      "id": "arch-025-summary-component-separation",
+      "artifact": "architecture.md",
+      "claim": "Die vorlaeufige Architektur fokussiert sich auf ein webbasiertes MVP mit klarer Trennung von Komponenten, strikter DSGVO-Konformitaet und Nutzung bewaehrter Managed Services.",
+      "expectedLabel": "borderline",
+      "originHandLabel": "borderline",
+      "note": "B46 #25: Web-MVP, DSGVO und Managed Services sind belegt; klare Komponententrennung ist eher Synthese/Architekturformulierung.",
+      "evidence": [
+        "T2: Kundenportal ... Web first. Mobile spaeter.",
+        "T83: Vielleicht koennen wir Managed Services nehmen. Kein neuer DB Server.",
+        "T115: DSGVO.",
+        "T797: Architektur darf keine konkreten Cloud-Produkte erfinden, solange wir keinen Provider gewaehlt haben.",
+        "T806: DSGVO ist nicht optional."
+      ]
+    }
+  ]
+}

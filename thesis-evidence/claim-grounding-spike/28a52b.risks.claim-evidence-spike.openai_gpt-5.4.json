@@ -1,0 +1,242 @@
+{
+  "fixture": "input/eval-labels/28a52b.risks.claim-evidence-spike.json",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4"
+  },
+  "total": 10,
+  "matches": 7,
+  "accuracy": 0.7,
+  "results": [
+    {
+      "id": "28a52b-RISK-28",
+      "artifact": "risks",
+      "claim": "Die Datenschutzanforderungen sind noch nicht abschliessend definiert.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "explicit",
+      "note": "explizit: Datenschutz nicht im Detail, eigenes Projekt.",
+      "verdict": {
+        "verdict": "permissible_inference",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "Die Evidence sagt explizit, dass Datenschutz nicht detailliert behandelt wird und eine Loesung erst bis zum naechsten Treffen erarbeitet werden soll. Daraus folgt plausibel, dass die Datenschutzanforderungen derzeit noch nicht abschliessend definiert sind; der genaue Begriff \u0027Anforderungen\u0027 wird jedoch nicht direkt genannt."
+      },
+      "evidence": [
+        "Speaker 2 (T284): Was das Thema Datenschutz angeht, werden wir nicht allzu tief ins Detail gehen. Dieser Schritt waere vermutlich ein zusaetzliches Projekt.",
+        "Speaker 2 (T302): Wir werden uns einen Weg ueberlegen, wie man das loesen koennte und bis zum naechsten Treffen erarbeiten."
+      ]
+    },
+    {
+      "id": "28a52b-RISK-14",
+      "artifact": "risks",
+      "claim": "Die plattformuebergreifende Umsetzung mit Flutter/Dart birgt Performance- und Umsetzungsrisiken.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "permissible_inference",
+      "note": "Flutter/Dart explizit gewaehlt; Performance-/Umsetzungsrisiko ist zulaessige fachliche Auswirkung.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "Die Evidence stuetzt, dass Flutter/Dart bekannt ist und eine plattformuebergreifende Umsetzung in Betracht gezogen wird. Sie enthaelt aber keine explizite oder ableitbare Aussage, dass daraus Performance- oder Umsetzungsrisiken entstehen."
+      },
+      "evidence": [
+        "Speaker 2 (T421): Ja, ich habe mal mit dem Framework Flutter und der Programmiersprache Dart eine App entwickelt ... sowohl auf iOS als auch auf Android.",
+        "Speaker 1 (T308): Wir koennten das so machen, dass wir eine plattformuebergreifende Programmiersprache nutzen."
+      ]
+    },
+    {
+      "id": "28a52b-RISK-12",
+      "artifact": "risks",
+      "claim": "Gegenmassnahme: Priorisierung von Funktionen und schrittweise Einfuehrung.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "synthesis",
+      "note": "folgt aus \u0027App mit Grenzen\u0027, \u0027je mehr desto schwerer/laenger\u0027.",
+      "verdict": {
+        "verdict": "permissible_inference",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "Die Evidence st\u00FCtzt, dass der Umfang begrenzt bzw. nicht zu gro\u00DF sein sollte. Daraus l\u00E4sst sich eine Priorisierung von Funktionen nachvollziehbar ableiten, aber eine \u201Eschrittweise Einf\u00FChrung\u201C wird nicht explizit erw\u00E4hnt. Der Claim f\u00FCgt damit einen nicht belegten Ma\u00DFnahmenbestandteil hinzu."
+      },
+      "evidence": [
+        "Speaker 1 (T117): Jedoch waere es wichtig, die App mit Grenzen zu betrachten. Je mehr sie leisten muss, desto schwerer wird es, desto laenger dauert es.",
+        "Speaker 1 (T119): ... dass es nicht so einen grossen Umfang haben sollte."
+      ]
+    },
+    {
+      "id": "28a52b-RISK-16",
+      "artifact": "risks",
+      "claim": "Risiko: Verzoegerungen im Zeitplan durch technische Probleme.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "permissible_inference",
+      "note": "zulaessige Auswirkung von Umfang/technischer Komplexitaet.",
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "E1 st\u00FCtzt explizit den Aspekt der l\u00E4ngeren Dauer/Verz\u00F6gerung (\u201Edesto l\u00E4nger dauert es\u201C). E2 st\u00FCtzt explizit das Auftreten technischer Probleme in der Entwicklungsumgebung (\u201Ekann schon zu Problemen f\u00FChren\u201C). Zusammengenommen tragen die Spans die verdichtete Risikoaussage \u00FCber Zeitplanverz\u00F6gerungen durch technische Probleme."
+      },
+      "evidence": [
+        "Speaker 1 (T117): Je mehr sie leisten muss, desto schwerer wird es, desto laenger dauert es.",
+        "Speaker 1 (T444): Naja, es kann schon zu Problemen fuehren und dann liegt es in deiner Verantwortung, diese zu loesen. [Entwicklungsumgebung]"
+      ]
+    },
+    {
+      "id": "28a52b-RISK-23",
+      "artifact": "risks",
+      "claim": "Risiko: Fehleranfaelligkeit und instabile App-Versionen.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "permissible_inference",
+      "note": "zulaessige Auswirkung; Versions-/Umgebungsthemen werden besprochen.",
+      "verdict": {
+        "verdict": "permissible_inference",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "partial",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "Die Evidence nennt explizit nur moegliche \u0027Probleme\u0027 bei unterschiedlichen installierten Versionen und den Wunsch, spaeter Probleme zu vermeiden. \u0027Fehleranfaelligkeit\u0027 und besonders \u0027instabile App-Versionen\u0027 sind keine woertlich belegten Eigenschaften; sie sind nur als naheliegende Risikozusammenfassung inferierbar und spezifizieren den Scope staerker als die Evidence."
+      },
+      "evidence": [
+        "Speaker 1 (T450): Wichtig ist, dass wir dabei alle dieselben Versionen installieren, damit wir spaeter keine Probleme haben.",
+        "Speaker 1 (T444): Naja, es kann schon zu Problemen fuehren."
+      ]
+    },
+    {
+      "id": "28a52b-RISK-24",
+      "artifact": "risks",
+      "claim": "Risiko: hoeherer Wartungsaufwand durch dynamisches Wachstum und viele Funktionen.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "permissible_inference",
+      "note": "zulaessige Auswirkung des besprochenen Komplexitaets-/Erweiterbarkeitsrisikos.",
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "E1 nennt beliebige Erweiterbarkeit mit Funktionen, E2 sagt explizit, dass es mit steigender Leistungs-/Funktionsanzahl schwerer wird. Daraus laesst sich ohne Bedeutungsverschiebung das Risiko eines hoeheren Wartungsaufwands bei dynamischem Wachstum und vielen Funktionen verdichten."
+      },
+      "evidence": [
+        "Speaker 1 (T64): Genau, das laesst sich beliebig erweitern mit Funktionen.",
+        "Speaker 1 (T117): Je mehr sie leisten muss, desto schwerer wird es."
+      ]
+    },
+    {
+      "id": "28a52b-RISK-31",
+      "artifact": "risks",
+      "claim": "Risiko: Verlust von Nutzervertrauen bei Datenschutzverletzungen.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "synthesis",
+      "note": "Datenschutz/sensible Daten \u002B Vertrauen werden besprochen \u2192 zulaessige Auswirkung.",
+      "verdict": {
+        "verdict": "synthesis",
+        "label": "grounded",
+        "matchesExpected": true,
+        "support": "full",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": true,
+        "temporalContextPreserved": true,
+        "reason": "E1 nennt Datenschutz bei sehr sensiblen Daten als relevantes Thema; E2 sagt, dass Vertrauen eine grosse Rolle spielt und erst aufgebaut werden muss. Daraus laesst sich als Risiko verdichtet ableiten, dass Datenschutzprobleme bzw. -verletzungen zu Vertrauensverlust fuehren koennen."
+      },
+      "evidence": [
+        "Speaker 1 (T281): Wie sieht es mit dem Thema Datenschutz aus, da es sich schon um sehr sensible Daten handelt?",
+        "Speaker 2 (T102): Da spielt natuerlich auch das Vertrauen, das erst mal aufgebaut werden muss, eine grosse Rolle."
+      ]
+    },
+    {
+      "id": "28a52b-RISK-26",
+      "artifact": "risks",
+      "claim": "Gegenmassnahme: klare Architektur- und Schnittstellenplanung.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "permissible_inference (schwach)",
+      "note": "Grenzfall: \u0027genau planen\u0027 belegt, \u0027Schnittstellenplanung\u0027 nicht woertlich. Erwartung: noch grounded/permissible.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "partial",
+        "modalityPreserved": false,
+        "statusPreserved": false,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "Die Evidence spricht nur allgemein von \u0027ausarbeiten und genau planen\u0027 sowie \u0027zu den Anforderungen aufnehmen und evaluieren\u0027. \u0027klare Architektur- und Schnittstellenplanung\u0027 wird weder explizit genannt noch hinreichend aus den Spans ableitbar; der Claim fuegt spezifische Inhalte und eine konkrete Gegenmassnahme hinzu."
+      },
+      "evidence": [
+        "Speaker 1 (T64): Wir muessten das natuerlich noch ausarbeiten und genau planen, damit das Sinn macht.",
+        "Speaker 2 (T316): Auch das nehmen wir zu den Anforderungen auf und evaluieren, ob das umsetzbar sein wird."
+      ]
+    },
+    {
+      "id": "28a52b-RISK-33",
+      "artifact": "risks",
+      "claim": "Gegenmassnahme: fruehzeitige Zusammenarbeit mit Datenschutzbeauftragten.",
+      "expectedLabel": "grounded",
+      "originHandLabel": "permissible_inference (schwach)",
+      "note": "Grenzfall: Datenschutz frueh klaeren belegt, Begriff \u0027Datenschutzbeauftragte\u0027 nicht woertlich.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": false,
+        "support": "none",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "temporalContextPreserved": false,
+        "reason": "Die Evidence erwaehnt nur, sich um die Datenschutzthematik zu kuemmern bzw. dass dies ein zusaetzliches Projekt waere. Eine konkrete Gegenmassnahme \u0027fruehzeitige Zusammenarbeit mit Datenschutzbeauftragten\u0027 wird weder explizit genannt noch hinreichend aus den Spans gestuetzt; zudem fuegt der Claim die Rolle \u0027Datenschutzbeauftragte\u0027 und den Zeitbezug \u0027fruehzeitig\u0027 hinzu."
+      },
+      "evidence": [
+        "Speaker 1 (T147): Koennten Sie sich um die Datenschutzthematik kuemmern und mit den Angehoerigen reden ...?",
+        "Speaker 2 (T284): Dieser Schritt waere vermutlich ein zusaetzliches Projekt. [Datenschutz]"
+      ]
+    },
+    {
+      "id": "28a52b-RISK-40",
+      "artifact": "risks",
+      "claim": "Es erfolgt eine Auditierung der Zugriffskontrollen.",
+      "expectedLabel": "violation",
+      "originHandLabel": "unsupported",
+      "note": "Kern-Verstoss: Rollen/Rechte werden besprochen, aber AUDITIERUNG/Protokollierung von Zugriffen NICHT \u2192 unsupported.",
+      "verdict": {
+        "verdict": "unsupported",
+        "label": "violation",
+        "matchesExpected": true,
+        "support": "none",
+        "modalityPreserved": true,
+        "statusPreserved": true,
+        "scopePreserved": false,
+        "temporalContextPreserved": true,
+        "reason": "Die Evidence spricht nur \u00FCber Adminrechte sowie das Erstellen und Verwalten von Accounts/Rechten. Eine Auditierung bzw. \u00DCberpr\u00FCfung der Zugriffskontrollen wird nirgends erw\u00E4hnt."
+      },
+      "evidence": [
+        "Speaker 2 (T288): Ein Account, der mit Adminrechten versehen ist, kann dann neue Accounts anlegen und Rechte verwalten.",
+        "Speaker 1 (T398): Ich denke, es waere echt sicherer, wenn nur der Admin die Accounts erstellt und verwaltet."
+      ]
+    }
+  ]
+}

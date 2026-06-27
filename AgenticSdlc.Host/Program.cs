@@ -101,6 +101,34 @@ if (args.Length > 0 && string.Equals(args[0], "classify-topic-relevance", String
     return;
 }
 
+// D1 / R0: DirectTranscriptReview — Artefakt direkt gegen Roh-Transkript (ohne Fixture) → thesis-evidence/.
+if (args.Length > 0 && string.Equals(args[0], "review-direct", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ReviewDirectRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// B47-Spike: lokaler Claim-Evidence-Grounding-Test (isoliert, nicht Teil der produktiven GroundingAxis).
+if (args.Length > 0 && string.Equals(args[0], "claim-grounding-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClaimGroundingSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Claim-Pilot Stufe 2: END-TO-END (Claim → AUTO-EvidenceSelector → Verifier). Testet den Engpass Evidence-Auswahl.
+if (args.Length > 0 && string.Equals(args[0], "claim-evidence-e2e-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClaimEvidenceE2ESpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Claim-Pilot Stufe 3: ClaimSplitter (Unit → atomare Claims); mit Transkript volle Kette split→select→verify.
+if (args.Length > 0 && string.Equals(args[0], "claim-split-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClaimSplitSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // C1: zusammengesetzter Review (Grounding + Coverage) → EIN ReviewResult pro Artefakt (offline, ReviewService).
 if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.OrdinalIgnoreCase))
 {

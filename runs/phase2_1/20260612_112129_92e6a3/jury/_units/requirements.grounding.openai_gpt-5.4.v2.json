@@ -1,0 +1,338 @@
+{
+  "artifact": "requirements.md",
+  "phase": "phase2_1",
+  "runId": "20260612_112129_92e6a3",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-5.4"
+  },
+  "unitCount": 40,
+  "groundingScore": 7,
+  "counts": {
+    "grounded": 30,
+    "overstated": 7,
+    "not_a_claim": 3
+  },
+  "verdicts": [
+    {
+      "index": 0,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EAlso wir brauchen definitiv ein Kundenportal.\u201C / \u201EZiel ist schneller Angebote erstellen.\u201C / \u201EJa auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden.\u201C] Das Thema Kundenportal mit Angebotserstellung und Rechnungen kommt klar vor. Die Einheit fasst diese diskutierten Ziele zusammen.",
+      "text": "Das System muss ein Kundenportal bereitstellen, in dem Kunden ihre Angebote erstellen und Rechnungen einsehen k\u00F6nnen."
+    },
+    {
+      "index": 1,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Ben] \u201EStammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig. Also wenn wir Angebote generieren wollen \u2013 was Sales unbedingt will \u2013 dann brauchen wir Produktdaten, Preise, Rabattlogik.\u201C / [Anna] \u201EDann MVP: ... 2. Angebotserstellung mit SAP-Lesedaten\u201C] SAP als lesende Quelle f\u00FCr Produkt-/Preis-/Rabattdaten f\u00FCr Angebote wird explizit besprochen; im MVP wird sogar \u201ESAP-Lesedaten\u201C genannt.",
+      "text": "Die Angebotserstellung muss eine Integration zu SAP f\u00FCr Produkt- und Preisdaten besitzen (lesend)."
+    },
+    {
+      "index": 2,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EAlso erstmal Login per E-Mail und Passwort.\u201C / [Clara] \u201ELogin per E-Mail? Dann brauchen wir Double-Opt-In.\u201C / [Anna] \u201EOkay. Dann MVP: 1. Login mit Double-Opt-In\u201C] E-Mail/Passwort-Login und verpflichtendes Double-Opt-In werden direkt genannt und sp\u00E4ter in den MVP-Schnitt \u00FCbernommen.",
+      "text": "Kunden m\u00FCssen sich per E-Mail und Passwort anmelden k\u00F6nnen; ein Double-Opt-In f\u00FCr DSGVO-Konformit\u00E4t ist verpflichtend."
+    },
+    {
+      "index": 3,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[[Anna] \u201EJa Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?\u201C / [Anna] \u201EOkay. Dann MVP: ... 4. Rollen Admin/Sales/Kunde\u201C / [David] \u201ESupport?\u201C [Anna] \u201EKontaktformular ohne Ticketpersistenz?\u201C] Admin/Sales/Kunde als minimale MVP-Rollen sind belegt. Dass Support-Rollen im MVP ausgeschlossen sind, wird jedoch nicht ausdr\u00FCcklich festgelegt; Support bleibt eher offen/unklar.",
+      "text": "Rollen m\u00FCssen mindestens Admin, Sales und Kunde abdecken. Support-Rollen sind im MVP ausgeschlossen."
+    },
+    {
+      "index": 4,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[[Anna] \u201EJa auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden.\u201C / [Anna] \u201EWas ist mit PDF-Export von Angeboten?\u201C / [Eva] \u201EFinance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.\u201C / [Farid] \u201ETemplates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging.\u201C] Rechnungsdownload ist belegt. PDF-Export mit rechtlicher Nachvollziehbarkeit wird aber f\u00FCr Angebote diskutiert, nicht f\u00FCr Bestellungen und Rechnungen zusammen. Die Einheit vermischt diese Punkte zu stark als feststehende Funktion.",
+      "text": "Kunden sollen ihre Bestellungen und Rechnungen herunterladen k\u00F6nnen, inklusive PDF-Export mit rechtlicher Nachvollziehbarkeit."
+    },
+    {
+      "index": 5,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EAuditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u201C / [Anna] \u201EJa Logging. Aber bitte nicht zu komplex.\u201C / [Ben] \u201EDann brauchen wir Event-History oder Audit-Log pro Angebot.\u201C / [Anna] \u201EOkay. Dann MVP: ... 5. Minimaler Audit Trail\u201C] Minimales Audit/Logging f\u00FCr Nutzeraktionen und Angebots\u00E4nderungen ist direkt aus der Diskussion ableitbar.",
+      "text": "Das System soll minimale Audit- und Logging-Funktionalit\u00E4ten f\u00FCr Nutzeraktionen und Angebots\u00E4nderungen haben."
+    },
+    {
+      "index": 6,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[[Eva] \u201EAngebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.\u201C / [Anna] \u201EVielleicht Phase 2.\u201C / [Eva] \u201EDann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.\u201C / [Ben] \u201EDas w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u201C] Keine manuellen Sonderrabatte im MVP ist klar belegt. \u201Eeinfache Rabattlogik\u201C und insbesondere das definitive Ausklammern von Freigabeprozessen im MVP sind aber nicht sauber entschieden, sondern strittig/offen.",
+      "text": "Es soll eine einfache Rabattlogik ohne manuelle Sonderrabatte im MVP unterst\u00FCtzen (keine Freigabeprozesse im MVP)."
+    },
+    {
+      "index": 7,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Ben] \u201EWir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.\u201C / [Clara] \u201EAPI muss abgesichert sein. OAuth? Oder API Keys?\u201C / [Ben] \u201EOAuth w\u00E4re besser. Aber komplexer.\u201C / [Anna] \u201EKomplexer hei\u00DFt mehr Zeit.\u201C] API-Layer als notwendiges Integrationsthema ist klar belegt; ebenso die Sicherheitsoptionen OAuth oder API Keys mit Pr\u00E4ferenz f\u00FCr OAuth.",
+      "text": "Ein API-Layer muss implementiert werden, der die Integration mit externen Systemen erm\u00F6glicht; OAuth ist bevorzugt, API Keys sind m\u00F6glich."
+    },
+    {
+      "index": 8,
+      "section": "Functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201ETicketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u201C / [David] \u201EWenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto\u201C / [Anna] \u201EKontaktformular ohne Ticketpersistenz?\u201C] Kontaktformular statt vollst\u00E4ndigem Ticketsystem im MVP wird direkt diskutiert. Es bleibt zwar als Risiko/problematisch markiert, aber das Thema ist klar im Transkript.",
+      "text": "Das Kundenportal muss ein Kontaktformular f\u00FCr Supportanfragen bieten, jedoch kein vollst\u00E4ndiges Ticketsystem im MVP."
+    },
+    {
+      "index": 9,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EMVP in 8 Wochen wurde versprochen.\u201C] Die 8 Wochen werden ausdr\u00FCcklich genannt; als versprochener MVP-Zeitrahmen ist das im Transkript verankert, auch wenn die Machbarkeit angezweifelt wird.",
+      "text": "Das System muss innerhalb von 8 Wochen als MVP bereitgestellt werden."
+    },
+    {
+      "index": 10,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EUnd wo werden Daten gehostet? EU only?\u201C / [Anna] \u201EJa EU only. Oder zumindest DSGVO-konform.\u201C / [Farid] \u201EEU-only Hosting ist nicht einfach.\u201C / [Clara] \u201EDann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz.\u201C / [Anna] \u201EOkay. Dann MVP: ... 6. EU Managed Hosting\u201C] EU-Hosting und nachweisbare Datenresidenz werden explizit gefordert und als MVP-Punkt aufgenommen.",
+      "text": "Hosting muss in der EU erfolgen, um DSGVO-Vorschriften einzuhalten, inklusive nachweisbarer Datenresidenz."
+    },
+    {
+      "index": 11,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Ben] \u201EVielleicht k\u00F6nnen wir Managed Services nehmen. Kein neuer DB Server \u2013 IT hat das klar gesagt.\u201C / [Anna] \u201EJa kein neuer DB Server. Managed Services sind okay.\u201C] Kein neuer Datenbankserver und Managed Services als bevorzugte Richtung sind direkt belegt.",
+      "text": "Es d\u00FCrfen keine neuen Datenbankserver betrieben werden; Managed Services sind zu bevorzugen."
+    },
+    {
+      "index": 12,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EWei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.\u201C / [Clara] \u201ESkalierbarkeit muss ber\u00FCcksichtigt werden.\u201C / [Anna] \u201EAber bitte kein Overengineering.\u201C] Die Einheit greift die im Transkript genannte unsichere Nutzerzahlspanne sowie das Spannungsfeld zwischen Skalierbarkeit und Overengineering direkt auf.",
+      "text": "Die Performance muss so beschaffen sein, dass zwischen 200 und (unsicher) 20.000 Nutzer ohne Overengineering bedient werden k\u00F6nnen."
+    },
+    {
+      "index": 13,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EUnd wir haben noch gar nicht \u00FCber Backup gesprochen.\u201C / [Ben] \u201EJa Disaster Recovery.\u201C / [Clara] \u201EWenn Kundendaten drin sind: ja.\u201C / [Anna] \u201EOkay also doch.\u201C] Backup und Disaster Recovery werden explizit als erforderlich f\u00FCr den MVP-Kontext diskutiert. Die Formulierung \u201Em\u00FCssen umgesetzt werden\u201C ist durch die klare Zustimmung gest\u00FCtzt.",
+      "text": "Backup- und Disaster-Recovery-Konzepte m\u00FCssen umgesetzt werden."
+    },
+    {
+      "index": 14,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EAPI muss abgesichert sein. OAuth? Oder API Keys?\u201C / [Clara] \u201EAuditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u201C / [Farid] \u201EUnser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.\u201C / [Anna] \u201EAlso brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS?\u201C / [Ben] \u201ETLS reicht. E2E ist unrealistisch.\u201C] Alle Themen der Einheit kommen vor: API-Sicherheit, Audit-Logging, keine personenbezogenen Daten in technischen Logs und TLS als Transportverschl\u00FCsselung.",
+      "text": "API und Portal m\u00FCssen sicher betrieben werden mit Audit-Log-Funktionalit\u00E4t, Logging ohne personenbezogene Daten, und Verschl\u00FCsselung auf Transportebene (TLS)."
+    },
+    {
+      "index": 15,
+      "section": "Non-functional Requirements",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Farid] \u201EWir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u201C / [Clara] \u201EJa, Pseudonymisierung oder synthetische Testdaten.\u201C] Die Einheit entspricht nahezu w\u00F6rtlich dem Transkript: drei Umgebungen und pseudonymisierte oder synthetische Testdaten werden klar gefordert.",
+      "text": "Es sind mindestens drei Umgebungen (Dev, Test, Prod) mit pseudonymisierten oder synthetischen Testdaten zu etablieren."
+    },
+    {
+      "index": 16,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EDSGVO. Wir speichern Kundendaten. Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.\u201C / [Clara] \u201EDSGVO ist nicht optional.\u201C] DSGVO-Konformit\u00E4t sowie L\u00F6schkonzepte und Double-Opt-In werden explizit genannt. \u201EVollst\u00E4ndig DSGVO-konform\u201C ist als allgemeine Zielsetzung im Thema gedeckt.",
+      "text": "Das System muss vollst\u00E4ndig DSGVO-konform sein, insbesondere im Umgang mit personenbezogenen Daten, L\u00F6schkonzepten und Double-Opt-In."
+    },
+    {
+      "index": 17,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Eva] \u201EAngebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.\u201C / [Clara] \u201ERevisionssicher hei\u00DFt nicht automatisch unver\u00E4nderbar, aber \u00C4nderungen m\u00FCssen nachvollziehbar sein.\u201C / [Ben] \u201EDann brauchen wir Event-History oder Audit-Log pro Angebot.\u201C] Revisionssichere Nachvollziehbarkeit und Protokollierung von \u00C4nderungen an Angeboten werden direkt besprochen.",
+      "text": "Audit Trails m\u00FCssen revisionssicher sein und \u00C4nderungen an Angeboten protokollieren."
+    },
+    {
+      "index": 18,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[[David] \u201EKann man f\u00FCr MVP manuell Angebote hochladen?\u201C / [Anna] \u201EVielleicht als Zwischenl\u00F6sung?\u201C / [Eva] \u201EManuelle Uploads erh\u00F6hen Fehlerwahrscheinlichkeit.\u201C / [Clara] \u201EUnd wer pr\u00FCft, ob keine falschen Kundendaten hochgeladen werden?\u201C / [Farid] \u201EAu\u00DFerdem haben wir dann ein Berechtigungsproblem im File Storage.\u201C] Manuelle Uploads werden als m\u00F6gliche Zwischenl\u00F6sung diskutiert, aber nicht endg\u00FCltig ausgeschlossen. Die Einheit stellt ein Verbot im MVP als gesetzt dar, obwohl im Transkript nur Risiken und Bedenken genannt werden.",
+      "text": "Kein manueller Upload von Angebotsdaten im MVP, um Datenqualit\u00E4t und Compliance sicherzustellen."
+    },
+    {
+      "index": 19,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EUnd wo werden Daten gehostet? EU only?\u201C / [Anna] \u201EJa EU only. Oder zumindest DSGVO-konform.\u201C / [Farid] \u201EUnser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u201C / [Clara] \u201EDann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u201C / [Anna] \u201EDann MVP: ... 6. EU Managed Hosting\u201C] EU-only Hosting und die Einbeziehung von Backups in die Datenresidenz werden thematisiert. Die Aussage \u201Enur innerhalb der EU\u201C ist als Ziel klar angelegt, auch wenn Umsetzung und Kosten noch offen sind.",
+      "text": "Speicherung und Verarbeitung von Daten darf nur innerhalb der EU erfolgen, inklusive Backup und Hosting."
+    },
+    {
+      "index": 20,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Eva] \u201EAngebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.\u201C / [Anna] \u201EVielleicht Phase 2.\u201C / [Eva] \u201EDann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.\u201C / [Ben] \u201EDas w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u201C] Die Einschr\u00E4nkung f\u00FCr den MVP wird explizit formuliert: keine manuellen Sonderrabatte ohne Freigabe.",
+      "text": "Keine Sonderrabatte ohne vorherige Freigabe au\u00DFerhalb des MVP."
+    },
+    {
+      "index": 21,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[[Ben] \u201ESecurity Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.\u201C / [Anna] \u201EDann machen wir es ohne Security Review?\u201C / [Clara] \u201EDas ist keine Option.\u201C / [Anna] \u201EOkay also: ... Security Review irgendwie\u201C] Ein Security Review ist klar erforderlich. Der Teil \u201Edarf jedoch den MVP nicht verz\u00F6gern; pragmatische Umsetzungen sind erlaubt\u201C ist jedoch keine gesicherte Entscheidung, sondern nur implizite Spannung aus Zeitdruck und Pragmatismus.",
+      "text": "Ein Security Review ist erforderlich, darf jedoch den MVP nicht verz\u00F6gern; pragmatische Umsetzungen sind erlaubt."
+    },
+    {
+      "index": 22,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EKontaktformular ohne Ticketpersistenz?\u201C / [Clara] \u201EDann werden Supportdaten per E-Mail verarbeitet. Auch Datenschutz.\u201C / [Farid] \u201EE-Mail ist unstrukturiert und schlecht auditierbar.\u201C / [Anna] \u201ENotieren als Risiko.\u201C / [Clara] \u201EBitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u201C] Das Thema ist im Transkript klar vorhanden: Kontaktformular statt Ticketsystem und daraus folgende Datenschutzanforderungen. Die Einheit formuliert dies als zu behandelnde Anforderung, was thematisch gedeckt ist.",
+      "text": "Supportanfragen \u00FCber das Kontaktformular sind datenschutzkonform zu behandeln, da kein Ticketsystem besteht."
+    },
+    {
+      "index": 23,
+      "section": "Constraints/Compliance",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Eva] \u201EHandelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.\u201C / [Clara] \u201EDas kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen.\u201C / [Ben] \u201EAlso brauchen wir Datenklassifikation und Retention Rules.\u201C / [Anna] \u201EOkay, minimaler Retention-Plan.\u201C] Retention, L\u00F6schung personenbezogener Daten und Abw\u00E4gung mit Aufbewahrungspflichten werden explizit diskutiert.",
+      "text": "Retention Policies sind zu beachten, die L\u00F6schung personenbezogener Daten m\u00FCssen mit handelsrechtlichen Aufbewahrungspflichten abgewogen werden."
+    },
+    {
+      "index": 24,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201ESSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u201C ... \u201ESSO optional\u201C ... [Anna] \u201EKeine Azure-Entscheidung nur weil jemand Azure AD gesagt hat.\u201C [Ben] \u201EUnd OAuth ist bevorzugt, aber noch nicht final.\u201C] SSO mit Azure AD/Google wird ausdr\u00FCcklich als M\u00F6glichkeit genannt, als optional markiert und nicht final entschieden.",
+      "text": "SSO-Integration (Azure AD, Google) ist optional und noch nicht final definiert."
+    },
+    {
+      "index": 25,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EOkay. Dann MVP: ...\u201C ... [Eva] \u201EUnd Rabatt-Freigabe?\u201C [Anna] \u201EVielleicht Phase 2.\u201C] Die Transkriptstelle sagt direkt, dass Rabatt-Freigabe eher Phase 2 ist und damit nicht fest im MVP enthalten ist.",
+      "text": "Freigabeprozesse f\u00FCr Rabatte sind nicht im MVP enthalten und in sp\u00E4teren Phasen zu kl\u00E4ren."
+    },
+    {
+      "index": 26,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201ETicketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u201C ... [Anna] \u201EKontaktformular ohne Ticketpersistenz?\u201C] Das Thema ist klar belegt: kein vollst\u00E4ndiges Ticketsystem im MVP, stattdessen wird ein Kontaktformular als m\u00F6gliche Zwischenl\u00F6sung diskutiert.",
+      "text": "Support-Ticketsystem wird im MVP nicht realisiert; Kontaktformular ist tempor\u00E4re L\u00F6sung."
+    },
+    {
+      "index": 27,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Ben] \u201EUnd Performance. Wie viele User erwarten wir?\u201C [Anna] \u201EWei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.\u201C] Die Nutzerzahlen werden mit genau dieser gro\u00DFen Spannbreite und Unsicherheit genannt.",
+      "text": "Skalierung und erwartete Nutzerzahlen sind sehr unsicher (200 bis 20.000 Nutzer)."
+    },
+    {
+      "index": 28,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EZum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft.\u201C ... [Ben] \u201EDann brauchen wir Internationalisierung.\u201C [Anna] \u201EDeutsch und Englisch sollten schon drin sein.\u201C ... [Eva] \u201EAngebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.\u201C ... [Anna] \u201EPilotkunde ist noch nicht final.\u201C [David] \u201EIch dachte Pilotkunde ist M\u00FCller AG aus der Schweiz.\u201C [Anna] \u201EVielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche.\u201C [Ben] \u201EDas beeinflusst Scope massiv.\u201C] Pilotkunde, Sprachen und W\u00E4hrungen sind allesamt als offen bzw. nicht final beschrieben und es wird explizit gesagt, dass dies den Scope stark beeinflusst.",
+      "text": "Pilotkunde, Mehrw\u00E4hrungen und Mehrsprachigkeit sind noch offen und beeinflussen Scope und Anforderungen."
+    },
+    {
+      "index": 29,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Farid] \u201ENoch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u201C ... [Ben] \u201EAber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u201C [Anna] \u201EDas passt nicht zum 8-Wochen-MVP.\u201C] Die Nutzung des API Gateways ist durch Policy vorgegeben, und die sechs Wochen Wartezeit wird ausdr\u00FCcklich als Problem f\u00FCr den 8-Wochen-MVP benannt.",
+      "text": "API Gateway Nutzung ist geplant, aber Wartezeit von 6 Wochen k\u00F6nnte den MVP gef\u00E4hrden."
+    },
+    {
+      "index": 30,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Farid] \u201EUnd SAP hat Wartungsfenster am Wochenende.\u201C [Anna] \u201EKunden arbeiten auch am Wochenende.\u201C ... [David] \u201EWas passiert, wenn SAP nicht erreichbar ist?\u201C [Ben] \u201EAngebote k\u00F6nnen dann nicht aktuell berechnet werden.\u201C ... [Ben] \u201EBitte schreibt \u201ASAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u2018.\u201C] Die SAP-Abh\u00E4ngigkeit und ihre Auswirkung auf Verf\u00FCgbarkeit sind direkt angesprochen, inklusive Wartungsfenstern und Ausf\u00E4llen.",
+      "text": "SAP-Schnittstellen sind kritisch und k\u00F6nnen Wartungsfenster haben, was Verf\u00FCgbarkeit beeinflussen kann."
+    },
+    {
+      "index": 31,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Farid] \u201ENoch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u201C [Clara] \u201EJa, Pseudonymisierung oder synthetische Testdaten.\u201C [Ben] \u201ESAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u201C [Clara] \u201EDann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.\u201C] Das Datenschutzproblem mit Testdaten aus dem SAP-Testsystem wird ausdr\u00FCcklich benannt und als offenes Problem markiert.",
+      "text": "Datenschutzrisiken im Umgang mit Testdaten aus SAP-Testumgebungen sind noch unklar und zu kl\u00E4ren."
+    },
+    {
+      "index": 32,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[[Clara] \u201EPush hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema.\u201C [Ben] \u201ETracking? Wir haben keine Analytics Infrastruktur.\u201C [Anna] \u201EBrauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch?\u201C ... [Anna] \u201EJa Logging. Aber bitte nicht zu komplex.\u201C ... [Farid] \u201EUnser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.\u201C] Datenschutz rund um Protokollierung, Tracking und Push wird klar diskutiert. F\u00FCr Tracking wird sogar gesagt \u201Enicht im MVP\u201C bzw. unklar. F\u00FCr Logging/Audit ist es aber nicht zur\u00FCckgestellt, sondern Teil des MVP/der Pflicht. Daher ist die pauschale Zusammenfassung \u201Ef\u00FCr MVP zur\u00FCckgestellt\u201C zu stark.",
+      "text": "Datenschutzrechtliche Abw\u00E4gungen bez\u00FCglich Protokollierung, Tracking und Push Notifications sind f\u00FCr MVP zur\u00FCckgestellt."
+    },
+    {
+      "index": 33,
+      "section": "Assumptions and Open Points",
+      "kind": "bullet",
+      "verdict": "overstated",
+      "reason": "[[Ben] \u201ENoch ein technischer Punkt: SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.\u201C ... [Eva] \u201EWenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen.\u201C ... [Anna] \u201EOkay. Dann MVP: ... Angebotserstellung mit SAP-Lesedaten ...\u201C ... [Anna] \u201EGut.\u201C [Ben] \u201EDas w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u201C] Preisaktualit\u00E4t und eingeschr\u00E4nkte Rabattbehandlung sind klar belegt, ebenso die MVP-Constraint zu Sonderrabatten. Aber die konkrete Aussage \u201Ees gibt keinen Echtzeit-Zugriff auf SAP-Sonderpreise im MVP\u201C wird so nicht explizit festgelegt; es wird nur gesagt, dass SAP-Preise nicht immer in Echtzeit aktuell sind.",
+      "text": "Preisaktualit\u00E4t und Rabattlogik sind eingeschr\u00E4nkt; es gibt keinen Echtzeit-Zugriff auf SAP-Sonderpreise im MVP."
+    },
+    {
+      "index": 34,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "not_a_claim",
+      "reason": "[KEIN BELEG] Die Einheit ist Metadaten \u00FCber Dateipfad und Dokumentation des Transkripts, nicht Inhalt der Stakeholder-Aussagen.",
+      "text": "Anforderungen basieren auf dem Transkript input/transcripts/T9999_chaos.txt, welches umfangreiche Diskussionen zwischen Stakeholdern Anna, Ben, Clara, David, Eva und Farid dokumentiert."
+    },
+    {
+      "index": 35,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "not_a_claim",
+      "reason": "[KEIN BELEG] Die Einheit verweist nur auf eine externe Zusammenfassungsdatei und enth\u00E4lt keinen fachlichen Claim aus dem Transkript.",
+      "text": "Zielsetzung, Rollen, Hauptthemen, Konflikte und Risiken sind im Kontextruns/phase2_1/20260612_112129_92e6a3/state/context.md zusammengefasst."
+    },
+    {
+      "index": 36,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Anna] \u201EDann m\u00FCssen wir schneiden. MVP: ...\u201C / \u201EDann MVP: 1. Login mit Double-Opt-In ... 7. Backup\u201C ... [Clara] \u201EBitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u201C ... [Anna] \u201EDann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen.\u201C] Das Transkript behandelt ausdr\u00FCcklich, dass wegen Zeitrahmen und \u00DCberfrachtung ein MVP zugeschnitten und bewusst abgegrenzt werden muss, einschlie\u00DFlich expliziter Ausschl\u00FCsse und Risiken.",
+      "text": "Beim Umgang mit widerspr\u00FCchlichen Anforderungen wurden bewusste Abgrenzungen f\u00FCr das MVP getroffen, um den Zeitrahmen und Machbarkeit zu sichern."
+    },
+    {
+      "index": 37,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Clara] \u201EBevor wir \u00FCber Frontends reden: DSGVO. Wir speichern Kundendaten. Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.\u201C / [Clara] \u201EAuditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u201C / [Clara] \u201EDSGVO ist nicht optional.\u201C] Compliance und Datenschutz werden im Transkript stark durch Clara eingebracht und mehrfach konkretisiert. Die Aussage \u00FCber die Herkunft dieser Anforderungen aus ihren Beitr\u00E4gen ist thematisch belegt.",
+      "text": "Compliance-Anforderungen und Datenschutz stammen insbesondere aus den Beitr\u00E4gen von Clara und sind im Kontext dokumentiert."
+    },
+    {
+      "index": 38,
+      "section": "Traceability",
+      "kind": "bullet",
+      "verdict": "grounded",
+      "reason": "[[Ben] \u201EUnd ehrlich gesagt ist unser Backend noch nicht mal API-ready.\u201C / \u201EWir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.\u201C / [Farid] \u201ENoch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u201C / [Farid] \u201EEU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global ...\u201C] Ben und Farid nennen zahlreiche technische und operationelle Randbedingungen wie API-Reife, API-Layer/Gateway-Policy und Hosting-Restriktionen. Dass diese Randbedingungen im Kontext ber\u00FCcksichtigt sind, ist thematisch gest\u00FCtzt.",
+      "text": "Technische und operationelle Randbedingungen insbesondere von Ben und Farid sind im Kontext ber\u00FCcksichtigt."
+    },
+    {
+      "index": 39,
+      "section": "Traceability",
+      "kind": "paragraph",
+      "verdict": "not_a_claim",
+      "reason": "[KEIN BELEG] Die Einheit ist eine Dokumentations-/Metaaussage \u00FCber Erstellungsbasis, Dateipfad und Formulierungsstil des Dokuments, nicht ein fachlicher Sach-Claim aus dem Transkript.",
+      "text": "_Dieses Dokument wurde erstellt basierend auf MAF Workflow Kontext und dem Transkript input/transcripts/T9999_chaos.txt. Anforderungen sind als testbar formuliert, offene Punkte und Annahmen explizit gekennzeichnet._"
+    }
+  ]
+}
