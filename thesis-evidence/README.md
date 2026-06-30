@@ -33,6 +33,28 @@ Ledger-Bauplan.
 
 ---
 
+## Commit-Anker (welcher Stand liegt in welchem Commit)
+
+```text
+Code (Spike-Klassen):
+  7e5674d  Source-Claim Coverage-Matrix-Spikes (v1/v2/Batch)        -> source-claim-coverage-spike/
+  1f9c2c2  globaler Source-Claim-Ledger + Selection + Obligation     -> source-claim-coverage-spike/
+  f520247  Claim-Splitter/Verifier (Grounding-Pilot)                 -> claim-grounding-spike/
+  01ef8d3  Evidence-first + Semantic-Ledger + Human-Artifact         -> evidence-first-spike/
+
+Daten/Evidenz:
+  670f17c  thesis-evidence (alle Straenge) + Hand-Labels + Fixtures + diese README
+  c34b9a0  A'-Run runs/phase2B/20260630_145558_68149f (gpt-5.4 frei, Modell-Confound)
+
+Frueher (Daten der Review-/Closure-Phase):
+  43d8a7b  B45-B51  D1 + Grounding v2.x + Claim-Pilot validiert      -> D1-direct-vs-topic/, grounding-spotcheck/
+  2cbec6d  B43-B44  relevantFor separat + Precision/Recall-Befund
+  ccde963  eval-Buendel: GateResult-Persist + grounding-handlabels
+```
+
+Hinweis: Das Dispatch-Wiring (`Program.cs`) + die `.gitignore`-Anpassung liegen in einem separaten
+Commit (s. `git log`); ohne dieses Wiring sind die Spike-Kommandos zwar im Code, aber nicht aufrufbar.
+
 ## Datei-Konventionen pro Ordner
 
 ```text

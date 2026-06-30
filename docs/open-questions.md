@@ -1,36 +1,281 @@
-# Offene Fragen und Klärungsbedarfe der Kommunikations-App
+# Offene Fragen und Klärungsbedarfe
 
-## 1. Fachliche offene Fragen
+## Ziel und Einordnung
+Dieses Dokument sammelt offene Fragen, fehlende Informationen und klärungsbedürftige Widersprüche aus Projektkontext, Requirements, Risiken und Architekturüberblick. Der Fokus liegt auf Punkten, die vor einer belastbaren fachlichen und technischen Konkretisierung geklärt werden sollten.
 
-- Wie werden individuelle Kommunikationsweisen der Bewohner standardisiert und dokumentiert, um eine verständliche Nutzung für Betreuer und Angehörige sicherzustellen?
-- Welche konkreten Zugriffsrechte gelten für Bewohnerprofile, insbesondere im Hinblick auf Datenschutz und eingeschränkte Einsichtsmöglichkeiten?
-- Wie soll die Balance zwischen Funktionsumfang und Bedienbarkeit konkret erreicht und gemessen werden? Welche Funktionen haben Priorität?
+## 1. Offene fachliche Fragen
 
-## 2. Technische offene Fragen
+### F1. Welche Informationen sind im Betreuungsalltag wirklich prioritätskritisch?
+**Auslöser/Quelle:** Projektkontext, Requirements, Risiken R3/R4, Architektur-MVP-Fokus  
+Es ist noch nicht verbindlich festgelegt, welche Inhalte in einer akuten Nutzungssituation am wichtigsten sind.
 
-- Wie wird die Datenbankarchitektur konkret gestaltet hinsichtlich lokaler Speicherung, Synchronisation und Performance?
-- Welche Technologie und Architektur kommen für die lokale Synchronisation zum Einsatz?
-- Welche technischen Datenschutzmaßnahmen und Sicherheitsmechanismen werden implementiert, um differenzierte Zugriffsrechte sicherzustellen?
-- Gibt es bekannte technische Einschränkungen oder Herausforderungen aufgrund der plattformübergreifenden Flutter/Dart-Entwicklung?
+**Klärungsfragen:**
+- Welche Informationen müssen in den ersten Sekunden nach Öffnen eines Bewohnerprofils sichtbar sein?
+- Welche Inhalte gehören zwingend in ein Kernprofil, welche nur in vertiefende Bereiche?
+- Welche Informationen sind für neue Mitarbeitende wichtiger als für erfahrenes Fachpersonal?
 
-## 3. Widersprüche und Unklarheiten
+**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Gesamtleitung, Projektverantwortliche der Einrichtung
 
-- Wie wird die Abstimmung mit dem separaten Datenschutzprojekt organisiert, um die Auswirkungen auf technische Architektur und Rechteverwaltung zu klären?
-- Wie wird die Nutzerverwaltung und Zugangsbeschränkung technisch und organisatorisch umgesetzt, um die fehlende freie Registrierung sicherzustellen?
-- Welche konkreten Kriterien und Maßnahmen gewährleisen eine ausgewogene Balance von Funktionsumfang und Benutzbarkeit?
+### F2. Wie soll der fachliche Mindestumfang des ersten Releases aussehen?
+**Auslöser/Quelle:** Kontext „breite Funktionalität vs. Fokus“, FR-25, FR-26, Risiken R3, Architektur-MVP  
+Der Kernnutzen ist klar, aber der verbindliche fachliche Zuschnitt eines MVP ist noch nicht final entschieden.
+
+**Klärungsfragen:**
+- Gehören im ersten Release nur Profile, Kommunikationswissen, Suche und No-Go-Hinweise hinein?
+- Sollen Videos, Angehörigenzugriffe oder Bewohner-Accounts bereits im ersten Release berücksichtigt werden?
+- Sollen Kalender oder Medikamente ausdrücklich ausgeschlossen, zurückgestellt oder nur optional vorbereitet werden?
+
+**Mögliche Ansprechpartner/Rollen:** Gesamtleitung, Fachpersonal, Product-Owner-ähnliche Projektverantwortung
+
+### F3. Wie wird zwischen gesicherten Fakten, Beobachtungen und Interpretationen unterschieden?
+**Auslöser/Quelle:** Risiken R5, W3; Architektur: Trennung von Stammdaten und Erfahrungswissen  
+Das Projekt arbeitet mit stark interpretativem, situationsabhängigem Wissen. Unklar ist, wie dieses fachlich sauber dokumentiert werden soll.
+
+**Klärungsfragen:**
+- Welche Inhalte gelten als stabile Profildaten, welche als Beobachtungen?
+- Wie soll kenntlich gemacht werden, dass Kommunikationsdeutungen kontextabhängig und nicht absolut gültig sind?
+- Sollen Einträge Datum, Verfasser, Kontext oder Vertrauensstatus enthalten?
+
+**Mögliche Ansprechpartner/Rollen:** Fachpersonal, sozialpädagogische Expertise, Qualitätsmanagement
+
+### F4. Welche No-Go-Informationen sind fachlich zulässig und erforderlich?
+**Auslöser/Quelle:** FR-12, FR-13, Kontext „kritische Hinweise“, Risiken zu sensiblen Inhalten  
+Der Bereich wird als wichtig angesehen, aber Umfang, Sensibilität und Formulierung sind nicht präzisiert.
+
+**Klärungsfragen:**
+- Welche Arten von Warnhinweisen dürfen dokumentiert werden?
+- Wie konkret dürfen Trigger, Verbote oder kritische Umgangshinweise beschrieben werden?
+- Gibt es Inhalte, die bewusst nicht in die App aufgenommen werden sollen?
+
+**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Datenschutz, Einrichtungsleitung
+
+### F5. Welche Rolle sollen Angehörige fachlich tatsächlich spielen?
+**Auslöser/Quelle:** FR-17, AOP-10, Risiken W1/R2  
+Angehörige werden als wertvolle Wissensquelle gesehen, aber ihre konkrete Rolle ist offen.
+
+**Klärungsfragen:**
+- Sollen Angehörige nur Informationen liefern, nur lesen oder auch aktiv pflegen dürfen?
+- Für welche Bewohner oder Situationen ist Angehörigenbeteiligung sinnvoll?
+- Wer prüft oder bestätigt von Angehörigen eingebrachte Informationen?
+
+**Mögliche Ansprechpartner/Rollen:** Angehörigenvertretung, Fachpersonal, Gesamtleitung
+
+### F6. Soll es tatsächlich Bewohner-Accounts geben, und falls ja mit welchem Nutzen?
+**Auslöser/Quelle:** FR-18, AOP-9, Risiken W1/R2  
+Die Idee ist vorhanden, aber fachlicher Nutzen, Grenzen und Umsetzbarkeit sind offen.
+
+**Klärungsfragen:**
+- Für welche Bewohnergruppen wäre ein eigener Zugang realistisch und sinnvoll?
+- Welche Inhalte dürfen Bewohner selbst sehen oder ergänzen?
+- Soll ein Bewohner Inhalte selbst ändern dürfen oder nur Vorschläge machen?
+
+**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Bewohnervertretung, Einrichtungsleitung
+
+### F7. Wie soll die App mit bestehender Dokumentation zusammenspielen?
+**Auslöser/Quelle:** AOP-3, CC-8, Risiken R8/W5, Architektur „neben vorhandener Dokumentation“  
+Unklar ist, ob die App ergänzend, führend oder teilweise ersetzend genutzt werden soll.
+
+**Klärungsfragen:**
+- Welche Informationen bleiben in bestehenden Akten führend?
+- Welche Informationen sollen ausschließlich oder primär in der App gepflegt werden?
+- Wie wird Doppelpflege vermieden?
+
+**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Qualitätsmanagement, Einrichtungsleitung
+
+## 2. Offene technische Fragen
+
+### T1. Wie detailliert muss das Rollen- und Rechtemodell sein?
+**Auslöser/Quelle:** FR-14 bis FR-20, AOP-5, Risiken R2/R6, Architektur offene Entscheidung 1  
+Das Rollenmodell ist ein Kernbaustein, aber fachlich noch nicht in eine belastbare Matrix übersetzt.
+
+**Klärungsfragen:**
+- Welche Rolle darf welche Daten sehen, anlegen, ändern oder freigeben?
+- Gibt es unterschiedliche Sichtbarkeiten für Profilbasisdaten, Kommunikationshinweise, No-Go-Hinweise und Medien?
+- Sind Freigabe- oder Vier-Augen-Prozesse erforderlich?
+
+**Mögliche Ansprechpartner/Rollen:** Datenschutz, Einrichtungsleitung, Fachpersonal, technische Architektur
+
+### T2. Wie fein muss die Zugriffsbeschränkung nach Einrichtung oder Zuständigkeit modelliert werden?
+**Auslöser/Quelle:** FR-20, CC-4, Risiken R6, Architektur offene Entscheidung 2  
+Der Zugriff soll organisatorisch begrenzt sein, aber die Granularität ist unklar.
+
+**Klärungsfragen:**
+- Reicht eine Trennung nach Einrichtung, oder sind Wohngruppen/Teams/Fallzuständigkeiten nötig?
+- Können Nutzer mehreren Einrichtungen oder Bereichen zugeordnet sein?
+- Wie werden Vertretungen oder temporäre Zuständigkeiten abgebildet?
+
+**Mögliche Ansprechpartner/Rollen:** Einrichtungsleitung, Administration, Fachpersonal, technische Architektur
+
+### T3. Wie sollen Medien technisch und organisatorisch eingebunden werden?
+**Auslöser/Quelle:** FR-7, CC-5, AOP-4, Risiken R1/R7, Architektur Medienverwaltung  
+Bilder und besonders Videos sind fachlich nützlich, aber technisch und datenschutzrechtlich offen.
+
+**Klärungsfragen:**
+- Sollen Videos überhaupt in einer frühen Version unterstützt werden?
+- Werden Medien direkt hochgeladen, referenziert oder extern verwaltet?
+- Brauchen Medien gesonderte Freigabestufen oder Ablaufregeln?
+
+**Mögliche Ansprechpartner/Rollen:** Datenschutz, technische Architektur, Fachpersonal
+
+### T4. Welche Such- und Filterlogik ist für den Kernnutzen erforderlich?
+**Auslöser/Quelle:** FR-9 bis FR-11, Risiken R4, Architektur Suchkomponente  
+Schnelle Auffindbarkeit ist zentral, aber konkrete Suchszenarien sind noch nicht beschrieben.
+
+**Klärungsfragen:**
+- Reicht eine Namenssuche für Bewohnerprofile im ersten Schritt?
+- Welche Filter innerhalb eines Profils werden tatsächlich benötigt?
+- Sollen Nutzer nach Kommunikationsart, Situationen, Triggern oder Stichworten suchen können?
+
+**Mögliche Ansprechpartner/Rollen:** Fachpersonal, UX/Design, technische Architektur
+
+### T5. Welche Datenqualitäts- und Pflegeinformationen müssen technisch mitgeführt werden?
+**Auslöser/Quelle:** Risiken R5, Architektur Datenqualität  
+Die Inhalte sind dynamisch und interpretativ; technische Unterstützung für Nachvollziehbarkeit ist noch nicht entschieden.
+
+**Klärungsfragen:**
+- Müssen Einträge Autor, Datum, Änderungshistorie oder Gültigkeitsstatus enthalten?
+- Sollen veraltete Hinweise markiert oder zur Überprüfung vorgelegt werden?
+- Gibt es einen Bedarf an Versionierung oder Review-Status?
+
+**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Qualitätsmanagement, technische Architektur
+
+### T6. Welche Geräte und Nutzungsszenarien müssen verbindlich unterstützt werden?
+**Auslöser/Quelle:** AOP-1, FR-21, NFR-4  
+Mobilität ist gesetzt, aber die genaue Zielplattform ist nicht abschließend geklärt.
+
+**Klärungsfragen:**
+- Muss das System nur auf Smartphones oder auch auf Tablets voll unterstützt werden?
+- Gibt es Mindestanforderungen an Offline-Nutzung, Netzverfügbarkeit oder Reaktionsgeschwindigkeit?
+- In welchen typischen Situationen wird die App benutzt: unterwegs, in Wohngruppen, bei Übergaben, in Aufnahmegesprächen?
+
+**Mögliche Ansprechpartner/Rollen:** Fachpersonal, technische Architektur, Projektleitung
+
+### T7. Welche Integrationen zu bestehenden Systemen sind gewünscht oder ausgeschlossen?
+**Auslöser/Quelle:** AOP-3, Architektur Integrationspunkte, Risiken R8  
+Der Umgang mit vorhandenen Akten oder Identitätssystemen ist offen.
+
+**Klärungsfragen:**
+- Soll die App Daten aus bestehenden Dokumentationen übernehmen oder nur manuell neu erfassen?
+- Gibt es vorhandene Benutzerverwaltungen, die genutzt werden sollen?
+- Sollen Medien- oder Freigabeprozesse an bestehende organisatorische Systeme gekoppelt werden?
+
+**Mögliche Ansprechpartner/Rollen:** Einrichtungsleitung, IT/Administration, technische Architektur
+
+## 3. Widersprüche, die geklärt werden müssen
+
+### WQ1. Interne Fachanwendung vs. Beteiligung externer Akteure
+**Beobachtung:** Die App ist primär als internes Werkzeug motiviert, gleichzeitig sind Angehörige und optional Bewohner als Nutzer vorgesehen.  
+**Klärungsbedarf:** Es muss entschieden werden, ob externe Akteure Bestandteil des frühen Zielbilds sind oder erst eine spätere Ausbaustufe darstellen.
+
+### WQ2. Schneller Alltagszugriff vs. wachsender Funktionsumfang
+**Beobachtung:** Der Nutzen beruht auf Einfachheit und Schnelligkeit, zugleich werden viele zusätzliche Funktionen diskutiert.  
+**Klärungsbedarf:** Es braucht eine verbindliche Priorisierung, welche Funktionen Kern, optional oder ausgeschlossen sind.
+
+### WQ3. Dokumentation von Erfahrungswissen vs. Risiko scheinbar objektiver Deutungen
+**Beobachtung:** Die App soll helfen, individuelle Kommunikation besser zu verstehen, darf aber keine gesicherte Übersetzungslogik suggerieren.  
+**Klärungsbedarf:** Fachlich und technisch muss geregelt werden, wie interpretative Inhalte gekennzeichnet und eingeordnet werden.
+
+### WQ4. Hoher Nutzen von Medien vs. Datenschutzgrenzen
+**Beobachtung:** Bilder und Videos können das Verstehen verbessern, sind aber besonders sensibel.  
+**Klärungsbedarf:** Es muss entschieden werden, welche Medienarten realistisch freigabefähig und praktikabel sind.
+
+### WQ5. Bestehende Akten vorhanden vs. Anspruch auf bessere Alltagstauglichkeit
+**Beobachtung:** Die App soll vorhandene Dokumentation nicht zwingend ersetzen, aber dennoch klar nützlicher im Alltag sein.  
+**Klärungsbedarf:** Es braucht eine klare fachliche Abgrenzung, welche Inhalte wo führend gepflegt werden.
 
 ## 4. Fehlende Informationen
 
-- Detailinformationen zur Datenbank- und Synchronisationslösung (z.B. Datenbanktyp, Offline-Funktion, Synchronisationsprotokoll).
-- Datenschutzrichtlinien und verantwortliche Stellen im Datenschutzprojekt.
-- Detaillierte Beschreibung der Filter- und Suchfunktionen für Profile und Kommunikationsseiten.
-- Konkrete Konzepte zur Nutzer- und Rechteverwaltung mit Beispielen zu Rollenzuweisungen und Berechtigungen.
+### M1. Fehlende verbindliche Datenschutz- und Einwilligungsregeln
+**Auslöser/Quelle:** AOP-2, Risiken R1  
+Es fehlen konkrete Aussagen dazu, welche Datenarten unter welchen Voraussetzungen gespeichert, angezeigt und geteilt werden dürfen.
 
-## 5. Mögliche Ansprechpartner/Rollen
+### M2. Fehlende Rollenmatrix
+**Auslöser/Quelle:** AOP-5, Risiken R2, Architektur offene Entscheidungen  
+Es fehlt eine konkrete Übersicht, welche Rolle welche Rechte für welche Inhaltsarten besitzt.
 
-- Datenschutzbeauftragter / Datenschutzprojektteam
-- Technische Architekten / Entwickler für Datenbank und Synchronisation
-- UX-/Usability-Experten
-- Fachpersonal der betreuten Einrichtung (Gesamtleiter, Heilerziehungspfleger, soziales Fachpersonal)
+### M3. Fehlende Definition von Pflegeverantwortung
+**Auslöser/Quelle:** Risiken R5/R8  
+Es ist nicht beschrieben, wer Inhalte initial erfasst, laufend aktualisiert, fachlich prüft oder veraltete Einträge bereinigt.
 
-Dieser Fragekatalog soll dazu beitragen, die noch offenen Unsicherheiten im Projekt gezielt zu adressieren und die weitere Entwicklung sicher und abgestimmt voranzutreiben.
+### M4. Fehlende Priorisierung des MVP
+**Auslöser/Quelle:** Risiken R3, Architektur-MVP  
+Es gibt einen plausiblen MVP-Vorschlag, aber noch keine bestätigte Entscheidung der Stakeholder.
+
+### M5. Fehlende Entscheidung zu Videos
+**Auslöser/Quelle:** FR-7, AOP-4, Risiken R7  
+Unklar bleibt sowohl die Zulässigkeit als auch die fachliche und technische Einbettung von Videos.
+
+### M6. Fehlende Entscheidung zu Kalender- und Medikamentenfunktionen
+**Auslöser/Quelle:** FR-25, FR-26, AOP-7, AOP-8  
+Diese Bereiche sind genannt, aber weder bestätigt noch endgültig ausgeschlossen.
+
+### M7. Fehlende Definition der Zielgeräte und Einsatzkontexte
+**Auslöser/Quelle:** AOP-1, FR-21  
+Es fehlt eine verbindliche Aussage zu Smartphone-/Tablet-Unterstützung und zu relevanten Nutzungssituationen.
+
+### M8. Fehlende Konsolidierung der Ausgangsquellen
+**Auslöser/Quelle:** Kontext Inkonsistenzen, Risiken R10  
+Uneinheitliche Organisationsbezeichnungen und ein fehlender Abschnitt im Transkript erschweren belastbare Rückverfolgbarkeit.
+
+## 5. Mögliche Ansprechpartner oder beteiligte Rollen
+
+Je nach Frage zeichnen sich folgende Ansprechpartner oder Rollen ab:
+
+- **Gesamtleitung / Einrichtungsleitung**
+  - Priorisierung des Umfangs
+  - organisatorische Freigaben
+  - Entscheidung zu internen vs. externen Nutzern
+
+- **Fachpersonal / Heilerziehungspflege / Betreuungspersonal**
+  - fachliche Relevanz von Inhalten
+  - Such- und Nutzungsszenarien
+  - Bewertung von Alltagstauglichkeit
+  - Regeln für Beobachtungen und Kommunikationswissen
+
+- **Datenschutz / Compliance-Verantwortliche**
+  - Zulässigkeit personenbezogener Daten
+  - Einwilligungen
+  - Bild-/Videoeinsatz
+  - Rollen- und Zugriffsgrenzen
+
+- **Qualitätsmanagement / Dokumentationsverantwortliche**
+  - Abgrenzung zu bestehender Dokumentation
+  - Pflegeprozesse
+  - Aktualität und Nachvollziehbarkeit von Inhalten
+
+- **Technische Architektur / IT-Administration**
+  - Rollen- und Berechtigungsmodell
+  - Bereichstrennung
+  - Zielgeräte
+  - Integrationen
+  - Medienverwaltung
+
+- **Angehörige oder Angehörigenvertretung**
+  - Nutzen und Grenzen einer Beteiligung
+  - praktikable Formen der Informationsbeisteuerung
+
+- **Bewohnervertretung**
+  - Einschätzung zu Bewohner-Accounts
+  - Verständlichkeit und Angemessenheit eines möglichen Selbsteinblicks
+
+## 6. Empfohlene Priorisierung der offenen Fragen
+
+### Höchste Priorität
+1. Datenschutz, Einwilligungen und zulässige Daten-/Medienarten
+2. Rollen- und Rechtemodell inklusive Einrichtungsgrenzen
+3. MVP-Abgrenzung und verbindlicher Funktionsumfang
+4. Abgrenzung zu bestehender Dokumentation und Pflegeverantwortung
+
+### Mittlere Priorität
+5. Umgang mit Videos
+6. Such- und Filterlogik für Alltagsszenarien
+7. Modellierung von Beobachtungen, Interpretationen und Aktualität
+8. Entscheidung zu Angehörigen- und Bewohnerzugängen
+
+### Nachgelagerte Priorität
+9. Kalender-/Terminbereich
+10. Medikamenteninformationen
+11. weitergehende Integrationen in bestehende Systeme
+
+## Kurzfazit
+Die wichtigsten offenen Fragen betreffen nicht einzelne UI-Details, sondern die fachliche und organisatorische Tragfähigkeit des Vorhabens: Wer darf was sehen und pflegen, welche Inhalte sind wirklich Kern der App, wie werden sensible und interpretative Informationen verantwortbar behandelt und wie grenzt sich die Lösung von bestehender Dokumentation ab. Ohne diese Klärungen besteht das Risiko, dass entweder der Datenschutz oder der Kernnutzen der Anwendung unterminiert wird.

@@ -129,6 +129,105 @@ if (args.Length > 0 && string.Equals(args[0], "claim-split-spike", StringCompari
     return;
 }
 
+// Coverage-Spike: source-native Claims gegen Artefakt prüfen (Quelle -> Artefakt), isoliert.
+if (args.Length > 0 && string.Equals(args[0], "source-claim-coverage-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimCoverageSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Coverage-Matrix-Spike: kuratierte SourceClaims gegen alle Artefakte pruefen; not_applicable bleibt sichtbar.
+if (args.Length > 0 && string.Equals(args[0], "source-claim-coverage-matrix", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimCoverageMatrixRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Coverage-Matrix-v2-Spike: Applicability und Coverage getrennt gegen adjudizierte Matrix pruefen.
+if (args.Length > 0 && string.Equals(args[0], "source-claim-coverage-matrix-v2", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimCoverageMatrixV2Runner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Coverage-Matrix-Batch-Spike: alle SourceClaims gegen ein Artefakt in einem Call pruefen.
+if (args.Length > 0 && string.Equals(args[0], "source-claim-coverage-matrix-batch", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimCoverageMatrixBatchRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Evidence-first Semantic-Ledger-Spike: bestaetigte Quellsemantik -> traceable Artefakt -> lokale Verifikation.
+if (args.Length > 0 && string.Equals(args[0], "evidence-first-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.EvidenceFirstSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Human-Artefakt-Spike: evidence-first claims.json -> lesbares Markdown mit sichtbaren SourceClaim-Refs.
+if (args.Length > 0 && string.Equals(args[0], "human-artifact-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.HumanArtifactSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Human-Artefakt-Projektion: claims.json -> Markdown entlang sichtbarer SourceClaim-Refs deterministisch pruefen.
+if (args.Length > 0 && string.Equals(args[0], "human-artifact-projection", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.HumanArtifactProjectionRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Semantic-Ledger-Extraction-Spike: Transkript -> facettierter Ledger -> Recall gegen bestaetigte Fixture.
+if (args.Length > 0 && string.Equals(args[0], "semantic-ledger-extraction-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SemanticLedgerExtractionSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Semantic-Ledger-Extract (NUR Extraktion+Canonicalization, keine Fixture/kein Match):
+// Kandidaten-Ledger fuer ein NEUES Transkript erzeugen, aus dem dann manuell eine Fixture bestaetigt wird.
+if (args.Length > 0 && string.Equals(args[0], "semantic-ledger-extract", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SemanticLedgerExtractRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Coverage-Spike Stufe 2: Transcript -> auto SourceClaims -> Recall + E2E Coverage gegen Fixture, isoliert.
+if (args.Length > 0 && string.Equals(args[0], "source-claim-extraction-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimExtractionSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Coverage-Spike Stufe 3: Transcript einmal -> globaler SourceClaim-Ledger -> Recall + E2E Coverage, isoliert.
+if (args.Length > 0 && string.Equals(args[0], "source-claim-ledger-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.GlobalSourceClaimExtractionSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Coverage-Spike Stufe 4: Global SourceClaim Ledger -> ArtifactObligation -> Recall/Kandidatenreduktion, isoliert.
+if (args.Length > 0 && string.Equals(args[0], "source-claim-obligation-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ArtifactObligationSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Coverage-Spike Stufe 5: Transcript einmal -> artefaktspezifische SourceObligations -> Recall, isoliert.
+if (args.Length > 0 && string.Equals(args[0], "source-obligation-extraction-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceObligationExtractionSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Coverage-Spike Stufe 6: Global SourceClaim Ledger -> konservative Selection -> Recall/Kandidatenreduktion.
+if (args.Length > 0 && string.Equals(args[0], "source-claim-selection-spike", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimSelectionSpikeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // C1: zusammengesetzter Review (Grounding + Coverage) → EIN ReviewResult pro Artefakt (offline, ReviewService).
 if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.OrdinalIgnoreCase))
 {
