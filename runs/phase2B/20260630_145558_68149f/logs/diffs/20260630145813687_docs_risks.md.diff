@@ -1,0 +1,291 @@
+--- before/docs/risks.md
++++ after/docs/risks.md
+- 
++ # Risiken
++ 
++ ## Ziel und Einordnung
++ Dieses Dokument fasst wesentliche Risiken zusammen, die aus Projektkontext, Requirements und den benannten offenen Punkten ableitbar sind. Der Schwerpunkt liegt auf Risiken, die den fachlichen Nutzen der App, die technische Umsetzbarkeit, Datenschutz/Compliance sowie die Konsistenz des Vorhabens betreffen.
++ 
++ ## Priorisierte Risikoübersicht
++ 
++ | ID | Titel | Kategorie | Priorität | Kurzbeschreibung |
++ |---|---|---|---|---|
++ | R1 | Unklare Datenschutz- und Einwilligungsgrundlage | Compliance/Datenschutz | Hoch | Für personenbezogene Inhalte, Bilder und besonders Videos sind rechtliche und organisatorische Voraussetzungen nicht geklärt. |
++ | R2 | Unzureichend ausdefiniertes Rollen- und Rechtemodell | Technisch/Compliance | Hoch | Mehrere Nutzergruppen sind vorgesehen, aber Berechtigungen und Sichtbarkeiten sind noch nicht konkret festgelegt. |
++ | R3 | Fachliche Überfrachtung zulasten des Kernnutzens | Fachlich/Produkt | Hoch | Zusätzliche Funktionen wie Kalender, Medikamente oder erweiterte Beteiligungsmodelle können den Fokus auf Kommunikationsunterstützung verwässern. |
++ | R4 | Geringe Alltagstauglichkeit trotz vorhandener Informationen | Fachlich/Usability | Hoch | Wenn Inhalte nicht schnell auffindbar und prägnant sind, wird das Kernproblem gegenüber bestehenden Akten nicht gelöst. |
++ | R5 | Qualitäts- und Interpretationsrisiko bei Kommunikationswissen | Fachlich | Hoch | Individuelle Kommunikationsdeutungen können situationsabhängig, subjektiv oder veraltet sein. |
++ | R6 | Risiko unberechtigter oder zu breiter Datenzugriffe | Compliance/Technisch | Hoch | Einrichtungsübergreifende oder rollenfremde Einsicht in sensible Bewohnerdaten muss wirksam verhindert werden. |
++ | R7 | Unsicherheit bei Videoeinsatz | Compliance/Technisch/Fachlich | Mittel bis Hoch | Videos sind fachlich nützlich, aber besonders sensibel und organisatorisch aufwendig. |
++ | R8 | Unklare Abgrenzung zu bestehender Dokumentation | Fachlich/Organisation | Mittel bis Hoch | Es ist offen, wie das System mit vorhandenen Akten zusammenspielt, wodurch Doppelpflege und Inkonsistenzen drohen. |
++ | R9 | Barrierefreiheits- und Bedienrisiken | Technisch/Usability | Mittel | Die App soll mobil, klar und barrierearm sein; eine zu komplexe Oberfläche gefährdet Akzeptanz und Nutzbarkeit. |
++ | R10 | Inkonsistente Ausgangsquellen und offene Konzeptdetails | Projekt/Anforderungen | Mittel | Uneinheitliche Bezeichnungen und mehrere offene Konzeptoptionen erhöhen Fehlinterpretations- und Planungsrisiken. |
++ 
++ ## Detaillierte Risiken
++ 
++ ### R1: Unklare Datenschutz- und Einwilligungsgrundlage
++ **Kategorie:** Compliance/Datenschutz  
++ **Priorität:** Hoch
++ 
++ **Beschreibung:**
++ Die App soll hochsensible personenbezogene Informationen über Bewohner verarbeiten, darunter individuelle Kommunikationsweisen, No-Go-Informationen, möglicherweise Bilder und Videos sowie eventuell später sogar Medikamenteninformationen. Laut Kontext und Requirements sind Datenschutz, Einwilligungen und organisatorische Freigaben dafür noch nicht abschließend geklärt.
++ 
++ **Ableitbare Hinweise:**
++ - AOP-2: Datenschutz, Einwilligungen und Bild-/Videonutzung sind offen.
++ - CC-5 und CC-6: Bilder, Videos und sensible Inhalte bedürfen besonderer Klärung.
++ - NFR-12 und NFR-13: Vertrauliche Verarbeitung ist verpflichtend.
++ 
++ **Mögliche Auswirkungen:**
++ - Verzögerung oder Stopp von Funktionen wie Bild- und Videoeinsatz.
++ - Rechtliche oder organisatorische Nichtfreigabe des Systems.
++ - Vertrauensverlust bei Einrichtung, Angehörigen und Betroffenen.
++ - Erhöhter Nachbesserungsaufwand für Konzeption und Umsetzung.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Frühzeitige Klärung, welche Datenarten pro Rolle und Zweck zulässig sind.
++ - Datenschutz- und Einwilligungsregeln für Bilder, Videos und sensible Hinweise vor fachlicher Finalisierung definieren.
++ - Risikoreiche Inhalte wie Medikamente und Videos nur als optionale, freigabepflichtige Ausbaustufe behandeln.
++ 
++ ### R2: Unzureichend ausdefiniertes Rollen- und Rechtemodell
++ **Kategorie:** Technisch/Compliance  
++ **Priorität:** Hoch
++ 
++ **Beschreibung:**
++ Das System benötigt mindestens Admin-, reguläre Nutzer-, Angehörigen- und optional Bewohner-Rollen. Gleichzeitig ist unklar, welche Rolle welche Inhalte sehen, pflegen oder beitragen darf. Besonders kritisch ist die Kombination aus personenbezogenen Daten, externen Akteuren und einrichtungsbezogenen Zugriffsbeschränkungen.
++ 
++ **Ableitbare Hinweise:**
++ - FR-14 bis FR-20 definieren ein Rollen- und Zugriffskonzept als Kernanforderung.
++ - AOP-5 und AOP-9 markieren Detailfragen als offen.
++ - CC-3, CC-4 und CC-7 verlangen klare Berechtigung und Bereichstrennung.
++ 
++ **Mögliche Auswirkungen:**
++ - Sicherheitslücken oder zu weit gefasste Berechtigungen.
++ - Hohe Komplexität bei Umsetzung, Test und Administration.
++ - Konflikte zwischen gewünschter Zusammenarbeit und Datenschutz.
++ - Verzögerungen durch spätes Nachschärfen des Rollenmodells.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Rollenmatrix erstellen: Wer darf was sehen, anlegen, ändern, freigeben.
++ - Inhalte nach Schutzbedarf klassifizieren, z. B. Profilbasisdaten, Kommunikationswissen, No-Go-Hinweise, Medien.
++ - Angehörigen- und Bewohnerzugriff zunächst nur als streng begrenzte Option behandeln.
++ 
++ ### R3: Fachliche Überfrachtung zulasten des Kernnutzens
++ **Kategorie:** Fachlich/Produkt  
++ **Priorität:** Hoch
++ 
++ **Beschreibung:**
++ Der fachliche Kern ist klar auf Kommunikationsunterstützung und Wissenszugriff ausgerichtet. Gleichzeitig werden zahlreiche zusätzliche Funktionen genannt, etwa Kalender, Medikamente, Benachrichtigungen, Tutorials, Videos, Bewohner-Accounts und Angehörigenbeiträge. Es besteht das Risiko, dass das System zu breit wird und seine Alltagstauglichkeit verliert.
++ 
++ **Ableitbare Hinweise:**
++ - NFR-14 fordert funktionalen Fokus.
++ - FR-25 und FR-26 markieren Kalender und Medikamente ausdrücklich als nachrangig bzw. nicht bestätigt.
++ - Konflikt im Kontext: breite Funktionalität vs. Fokus.
++ 
++ **Mögliche Auswirkungen:**
++ - Unübersichtliche Oberfläche und geringere Akzeptanz.
++ - Längere Entwicklungszeit und höherer Abstimmungsaufwand.
++ - Priorisierungskonflikte im Projekt.
++ - Der eigentliche Nutzen in Betreuungssituationen wird abgeschwächt.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Strikte Abgrenzung eines MVP auf Profil, Kommunikationsdokumentation, Suche und No-Go-Hinweise.
++ - Nachrangige Funktionen erst nach fachlicher Validierung und Nutzennachweis aufnehmen.
++ - Jede Zusatzfunktion gegen den Kernnutzen "schnelleres Verstehen im Alltag" prüfen.
++ 
++ ### R4: Geringe Alltagstauglichkeit trotz vorhandener Informationen
++ **Kategorie:** Fachlich/Usability  
++ **Priorität:** Hoch
++ 
++ **Beschreibung:**
++ Das Problem ist nicht primär fehlende Dokumentation, sondern deren mangelnde praktische Nutzbarkeit. Wenn die App Informationen nicht schneller, kompakter und situationsbezogener bereitstellt als bestehende Akten, wird der Mehrwert verfehlt.
++ 
++ **Ableitbare Hinweise:**
++ - NFR-1, NFR-2 und NFR-11 betonen schnelle, praxistaugliche Nutzbarkeit.
++ - CC-8 grenzt das Ziel als bessere Auffindbarkeit statt vollständigen Aktenersatz ab.
++ - Kontext: bestehende Akten sind teils schwer durchsuchbar.
++ 
++ **Mögliche Auswirkungen:**
++ - Geringe Nutzung im Alltag.
++ - Parallelnutzung alter Dokumentation ohne echten Effizienzgewinn.
++ - Enttäuschung zentraler Stakeholder, insbesondere neuer Mitarbeitender.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Informationsarchitektur auf Schnellzugriff optimieren.
++ - Kompakte Kernansichten und klare Such-/Filterlogik priorisieren.
++ - Inhalte strukturiert, kurz und handlungsnah erfassen statt dokumentationslastig.
++ 
++ ### R5: Qualitäts- und Interpretationsrisiko bei Kommunikationswissen
++ **Kategorie:** Fachlich  
++ **Priorität:** Hoch
++ 
++ **Beschreibung:**
++ Das zu dokumentierende Wissen ist stark erfahrungsgebunden und situationsabhängig. Einzelne Deutungen nonverbaler oder individueller Ausdrucksweisen können subjektiv sein und sich im Zeitverlauf ändern. Es besteht das Risiko, dass Einträge als gesicherte Wahrheit verstanden werden, obwohl sie beobachtungs- oder kontextabhängig sind.
++ 
++ **Ableitbare Hinweise:**
++ - Projektkern: implizites Erfahrungswissen soll formalisiert werden.
++ - CC-2 verbietet den Eindruck automatisierter oder gesicherter Deutung.
++ - FR-8 sieht fortlaufende Ergänzung vor, was auf Wandelbarkeit hinweist.
++ 
++ **Mögliche Auswirkungen:**
++ - Fehlinterpretationen in Betreuungssituationen.
++ - Veraltete oder widersprüchliche Hinweise im Profil.
++ - Vertrauensverlust in die Inhalte der App.
++ - Fachlich problematische Vereinfachung individueller Kommunikation.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Einträge als Beobachtungen mit Kontext, Datum und ggf. Quelle kennzeichnen.
++ - Regelmäßige fachliche Überprüfung und Aktualisierung vorsehen.
++ - Formulierungen vermeiden, die Deutungen als absolut darstellen.
++ 
++ ### R6: Risiko unberechtigter oder zu breiter Datenzugriffe
++ **Kategorie:** Compliance/Technisch  
++ **Priorität:** Hoch
++ 
++ **Beschreibung:**
++ Da sensible Bewohnerprofile mobil verfügbar gemacht werden sollen, besteht ein hohes Risiko, dass Nutzer zu viele Daten sehen oder dass organisatorische Grenzen nicht sauber abgebildet werden. Besonders kritisch ist die Anforderung, Zugriffe nach Einrichtung oder Zuständigkeitsbereich zu beschränken.
++ 
++ **Ableitbare Hinweise:**
++ - FR-20 und CC-4 verlangen organisatorische Zugriffsbeschränkung.
++ - FR-19 schließt offene Selbstregistrierung aus.
++ - NFR-12 fordert Schutz vor unberechtigtem Zugriff.
++ 
++ **Mögliche Auswirkungen:**
++ - Datenschutzverletzungen und organisatorische Eskalationen.
++ - Verhinderte Freigabe durch die Einrichtung.
++ - Hoher Nachbesserungsaufwand an Berechtigungslogik und Administration.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Mandanten- bzw. Bereichstrennung fachlich und technisch früh festlegen.
++ - Standardmäßig restriktive Sichtbarkeiten definieren.
++ - Berechtigungsprüfung als zentrales Architektur- und Testthema behandeln.
++ 
++ ### R7: Unsicherheit bei Videoeinsatz
++ **Kategorie:** Compliance/Technisch/Fachlich  
++ **Priorität:** Mittel bis Hoch
++ 
++ **Beschreibung:**
++ Videos können Kommunikationsmuster anschaulich vermitteln, sind aber gegenüber Text und Bildern deutlich sensibler und aufwendiger. Zudem ist noch offen, wie Videos fachlich eingeordnet und im System verankert werden sollen.
++ 
++ **Ableitbare Hinweise:**
++ - FR-7 nur als Soll-Anforderung und unter Vorbehalt.
++ - AOP-4: konzeptionelle Einbindung offen.
++ - CC-5: besondere Datenschutz- und Organisationsvorgaben.
++ 
++ **Mögliche Auswirkungen:**
++ - Verzögerung wichtiger Entscheidungen zur Datenhaltung und Oberfläche.
++ - Erhöhter Aufwand für Einwilligung, Pflege und Zugriffsschutz.
++ - Gefahr, dass ein potenziell nützliches Feature aus rechtlichen Gründen nicht einsetzbar ist.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Videos nicht als Kernbestandteil des ersten verbindlichen Umfangs behandeln.
++ - Alternativen mit Text/Bild priorisieren.
++ - Falls Videos kommen, klare Freigabeprozesse und Schutzstufen definieren.
++ 
++ ### R8: Unklare Abgrenzung zu bestehender Dokumentation
++ **Kategorie:** Fachlich/Organisation  
++ **Priorität:** Mittel bis Hoch
++ 
++ **Beschreibung:**
++ Es existieren bereits Akten und Dokumentationen. Unklar ist, ob diese teilweise übernommen, referenziert oder parallel weitergeführt werden. Ohne klare Abgrenzung drohen Doppelpflege, Inkonsistenzen und unklare Verantwortlichkeiten.
++ 
++ **Ableitbare Hinweise:**
++ - CC-8: Ziel ist bessere Auffindbarkeit, nicht zwingend vollständiger Ersatz.
++ - AOP-3: Übernahme, Einsicht oder Verknüpfung bestehender Akten ist offen.
++ - Kontext: Akten sind vorhanden, aber schwer nutzbar.
++ 
++ **Mögliche Auswirkungen:**
++ - Mehrarbeit für Fachpersonal.
++ - Unterschiedliche Informationsstände zwischen App und Bestandsdokumentation.
++ - Sinkende Datenqualität und geringere Akzeptanz.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Früh festlegen, welche Inhalte führend in der App und welche in Bestandsakten bleiben.
++ - Pflegeverantwortung und Aktualisierungsprozesse definieren.
++ - Den App-Umfang auf alltagskritische Kurz- und Kommunikationsinformationen fokussieren.
++ 
++ ### R9: Barrierefreiheits- und Bedienrisiken
++ **Kategorie:** Technisch/Usability  
++ **Priorität:** Mittel
++ 
++ **Beschreibung:**
++ Die App soll mobil, klar, kontrastreich und mit einfacher Navigation nutzbar sein. Gleichzeitig steigt durch Suchlogik, Rollen, Medien und optionale Funktionen die Oberflächenkomplexität. Damit besteht das Risiko, dass Bedienbarkeit und Barrierefreiheit hinter den Anforderungen zurückbleiben.
++ 
++ **Ableitbare Hinweise:**
++ - NFR-3 bis NFR-10 definieren klare UX- und Accessibility-Anforderungen.
++ - FR-24 fordert Hilfen/Tutorials.
++ - Kontext nennt große Schrift, Kontrast, reduzierte Ablenkung und alternative Eingaben.
++ 
++ **Mögliche Auswirkungen:**
++ - Langsame Nutzung in Stress- oder Betreuungssituationen.
++ - Höherer Schulungsbedarf.
++ - Ausschluss oder Frustration bestimmter Nutzergruppen.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Kernaufgaben mit wenigen Interaktionen erreichbar machen.
++ - Oberflächenkomplexität begrenzen und auf mobile Kurzinteraktionen optimieren.
++ - Barrierefreiheit nicht nur gestalterisch, sondern auch funktional priorisieren.
++ 
++ ### R10: Inkonsistente Ausgangsquellen und offene Konzeptdetails
++ **Kategorie:** Projekt/Anforderungen  
++ **Priorität:** Mittel
++ 
++ **Beschreibung:**
++ Die Ausgangsunterlagen enthalten uneinheitliche Organisationsbezeichnungen, einen fehlenden Abschnitt im Transkript und mehrere noch nicht entschiedene Konzeptoptionen. Dadurch steigt das Risiko, Annahmen fälschlich als bestätigte Anforderungen zu behandeln.
++ 
++ **Ableitbare Hinweise:**
++ - Kontext weist auf inkonsistente Bezeichnungen hin.
++ - Abschnitt 7 fehlt im Material.
++ - CC-9 verbietet, offene Optionen als verbindliche Kernfunktionen zu behandeln.
++ 
++ **Mögliche Auswirkungen:**
++ - Missverständnisse in Spezifikation und Umsetzung.
++ - Falsch priorisierte Features.
++ - Höherer Abstimmungs- und Korrekturaufwand im Projektverlauf.
++ 
++ **Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
++ - Bestätigte Anforderungen klar von Annahmen und Optionen trennen.
++ - Offene Punkte sichtbar nachhalten und nicht implizit festschreiben.
++ - Terminologie und Organisationsbezüge konsolidieren.
++ 
++ ## Widersprüche und Unsicherheiten als Risikoquellen
++ 
++ ### W1: Interne Fachanwendung vs. Beteiligung externer Akteure
++ Die App ist primär als internes Werkzeug motiviert, soll aber möglicherweise auch Angehörige und optional Bewohner einbeziehen. Das erzeugt Spannungen bei Berechtigungen, Datenminimierung und Verantwortlichkeit.
++ 
++ **Auswirkung:** erhöhte Komplexität in Governance, Datenschutz und UX.  
++ **Klärungsbedarf:** Welche externen Rollen sind im ersten Schritt überhaupt vorgesehen?
++ 
++ ### W2: Schneller Zugriff vs. umfassende Dokumentation
++ Einerseits soll die App alltagsnah und schnell sein, andererseits werden viele Inhalte und optionale Dokumentationsbereiche diskutiert.
++ 
++ **Auswirkung:** Risiko einer überladenen Lösung mit sinkendem Nutzwert.  
++ **Klärungsbedarf:** Welche Informationen sind in Akutsituationen wirklich entscheidend?
++ 
++ ### W3: Wissenssicherung vs. Deutungsoffenheit
++ Die App soll Erfahrungswissen sichern, darf aber individuelle Kommunikation nicht als objektiv gesicherte Übersetzung darstellen.
++ 
++ **Auswirkung:** Risiko fachlich problematischer Vereinfachung.  
++ **Klärungsbedarf:** Wie werden Beobachtungen, Interpretationen und gesicherte Fakten im Datenmodell getrennt?
++ 
++ ### W4: Nützliche Medienunterstützung vs. Datenschutzgrenzen
++ Videos und Bilder können Verstehen stark verbessern, sind aber besonders sensibel.
++ 
++ **Auswirkung:** hoher Freigabe- und Schutzaufwand, mögliche Nichtumsetzbarkeit einzelner Medienarten.  
++ **Klärungsbedarf:** Welche Medien sind unter realen Rahmenbedingungen zulässig und praktikabel?
++ 
++ ### W5: Vorhandene Dokumentation vs. neues System
++ Das System soll nicht zwingend alle Akten ersetzen, aber dennoch relevanter und schneller nutzbar sein.
++ 
++ **Auswirkung:** Doppelstrukturen und unklare Pflegeprozesse.  
++ **Klärungsbedarf:** Was ist Primärquelle für welche Informationsart?
++ 
++ ## Zusammenfassende Risikobewertung
++ Die größten Projektrisiken liegen nicht primär in einer einzelnen Funktion, sondern in der Kombination aus hochsensiblen Daten, mehreren noch offenen Rollen- und Medienkonzepten sowie dem Anspruch, im Alltag schneller und nützlicher zu sein als bestehende Dokumentation. Kritisch ist daher vor allem, den fachlichen Kern eng zu halten, Governance und Berechtigungen früh zu klären und interpretatives Erfahrungswissen sorgfältig als kontextabhängige Information zu behandeln.
++ 
++ ## Empfohlene Prioritäten für Risikoreduktion
++ 1. Datenschutz-, Einwilligungs- und Freigaberahmen für Datenarten und Medien klären.
++ 2. Rollen- und Rechtekonzept inklusive Einrichtungsgrenzen fachlich verbindlich definieren.
++ 3. MVP strikt auf Kommunikationsunterstützung, schnelle Auffindbarkeit und No-Go-Hinweise fokussieren.
++ 4. Regeln für Qualität, Aktualität und Kontext von Kommunikationswissen festlegen.
++ 5. Abgrenzung zu bestehender Dokumentation und Pflegeverantwortung definieren.
++ 

@@ -1,0 +1,84 @@
+{
+  "evaluator": "Phase2JuryRunner",
+  "scheme": "Synthesis",
+  "artifact": "risks.md",
+  "judge": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4.1-mini"
+  },
+  "timestampUtc": "2026-06-30T15:01:37.497911Z",
+  "evaluationStatus": "ok",
+  "errorScore": 2,
+  "needsRepair": false,
+  "errorScoreReason": "Gewichtete Summe verifizierter Fehler (KRITISCH=3, MITTEL=2, GERING=1) = 2; KRITISCH=0; needsRepair=False (Schwelle 4). Herabgestufte (partial) Findings zaehlen mit reduzierter Severitygewichtung.",
+  "parseError": null,
+  "categories": [
+    {
+      "key": "FALSE_CLAIM",
+      "label": "FALSE_CLAIM",
+      "metric": "FalseClaim",
+      "count": 2,
+      "reason": "FALSE_CLAIM (Verifikation aktiv): 0 confirmed; 2 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 2,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Im Transkript wird Firebase Firestore als Datenbank empfohlen und als einfach zu nutzen beschrieben (Abschnitt 6), aber es gibt keine abschlie\u00DFende Festlegung o\u2026\u0022): [GERING] Artefakt: \u0022Wir verwenden Firebase Firestore von Google als Datenbank, da sie sehr einfach zu nutzen ist und keine speziellen Funktionen ben\u00F6tigt werden.\u0022 | Transkript: \u0022Im Transkript wird Firebase Firestore als Datenbank vorgeschlagen und als einfach zu nutzen beschrieben, aber es gibt keine abschlie\u00DFende Festlegung oder Entscheidung, dass Firebase Firestore definitiv verwendet wird.\u0022 | Das Risiko-Dokument stellt Firebase Firestore als festgelegte Datenbank dar, obwohl im Transkript nur eine Empfehlung und Diskussion dazu stattfindet, aber keine verbindliche Entscheidung."
+        },
+        {
+          "severity": "Informational",
+          "message": "HERABGESTUFT [MITTEL\u2192GERING] (partial: \u0022Im Transkript wird Flutter Version 3.13.9 und Dart Version 3.1.5 als aktuelle Versionen genannt und empfohlen, dass alle dieselben Versionen nutzen sollten (Abs\u2026\u0022): [GERING] Artefakt: \u0022Wir verwenden Flutter Version 3.13.9 und Dart Version 3.1.5 als Entwicklungsumgebung, damit alle dieselben Versionen nutzen und keine Probleme bei der Entwicklung entstehen.\u0022 | Transkript: \u0022Im Transkript wird Flutter und Dart als Programmiersprache genannt und Versionen diskutiert, aber keine verbindliche Festlegung auf genau diese Versionen getroffen.\u0022 | Das Risiko-Dokument gibt konkrete Flutter- und Dart-Versionen als verbindlich an, obwohl im Transkript nur eine Empfehlung und Diskussion stattfindet, keine finale Entscheidung."
+        }
+      ]
+    },
+    {
+      "key": "FALSE_CERTAINTY",
+      "label": "FALSE_CERTAINTY",
+      "metric": "FalseCertainty",
+      "count": 0,
+      "reason": "FALSE_CERTAINTY (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 0 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 0,
+        "unverified": 0
+      },
+      "findings": []
+    },
+    {
+      "key": "MISSING_TOPIC",
+      "label": "MISSING_TOPIC",
+      "metric": "MissingTopic",
+      "count": 0,
+      "reason": "MISSING_TOPIC (Verifikation aktiv): 0 confirmed; 0 partial (herabgestuft); 3 rejected (verworfen).",
+      "verification": {
+        "enabled": true,
+        "confirmed": 0,
+        "partial": 0,
+        "rejected": 3,
+        "unverified": 0
+      },
+      "findings": [
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022R1: Unklare Datenschutz- und Einwilligungsgrundlage - Beschreibung und Ableitbare Hinweise nennen explizit Datenschutz, Einwilligungen und Bild-/Videonutzung al\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Datenschutz und Einwilligung f\u00FCr Bild- und Videoaufnahmen sind noch offen und m\u00FCssen mit Angeh\u00F6rigen gekl\u00E4rt werden.\u0022 | Das Risiko der unklaren Datenschutz- und Einwilligungsgrundlage f\u00FCr Bilder und Videos wird im Transkript mehrfach als offenes Thema genannt, ist aber im Risiko-Dokument nicht explizit als eigenes Risiko oder mit konkretem Kl\u00E4rungsbedarf aufgef\u00FChrt."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022R2: Unzureichend ausdefiniertes Rollen- und Rechtemodell - Beschreibung und Ableitbare Hinweise erw\u00E4hnen Angeh\u00F6rigen-Rollen und deren Berechtigungen sowie Sicht\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Es wurde mehrfach angesprochen, dass Angeh\u00F6rige Zugriff auf die App erhalten sollen und eigene Daten hinzuf\u00FCgen k\u00F6nnen, was besondere Anforderungen an Rechte und Sichtbarkeiten stellt.\u0022 | Das Risiko der Einbindung von Angeh\u00F6rigen als Nutzer mit eigenen Zugriffsrechten und deren Auswirkungen auf das Rollen- und Rechtemodell wird im Risiko-Dokument nicht explizit behandelt, obwohl es im Transkript als relevantes Thema mehrfach genannt wird."
+        },
+        {
+          "severity": "Informational",
+          "message": "VERWORFEN (rejected: \u0022R2: Unzureichend ausdefiniertes Rollen- und Rechtemodell - Beschreibung nennt optional Bewohner-Rollen mit unklaren Rechten, was die Herausforderungen bei Bewoh\u2026\u0022): [MITTEL] Artefakt: \u0022nicht vorhanden\u0022 | Transkript: \u0022Im Transkript wird die Idee eines speziellen Bewohner-Accounts mit eingeschr\u00E4nkten Rechten diskutiert, der nur das eigene Profil sehen und bearbeiten kann.\u0022 | Das Risiko und die Herausforderungen bei der Einf\u00FChrung eines Bewohner-Accounts mit speziellen Rechten und dessen Auswirkungen auf Datenschutz und Usability sind im Risiko-Dokument nicht explizit aufgef\u00FChrt."
+        }
+      ]
+    }
+  ]
+}
