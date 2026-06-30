@@ -40,4 +40,64 @@ public sealed class ClaimSplitterTests
         Assert.Single(claims);
         Assert.Equal("Login per E-Mail.", claims[0]);
     }
+
+    [Fact]
+    public void ParseAtomicClaims_Reads_Normalized_Claim_And_Facets()
+    {
+        var text = """
+            {
+              "atomicClaims": [
+                {
+                  "artifactQuote": "Das Kundenportal-Frontend zeigt Bestellungen an.",
+                  "normalizedClaim": "Kunden koennen Bestellungen im Kundenportal sehen.",
+                  "facets": {
+                    "component": "Kundenportal-Frontend",
+                    "actor": "Kunden",
+                    "action": "sehen",
+                    "object": "Bestellungen",
+                    "modality": null,
+                    "status": null,
+                    "scope": "Kundenportal"
+                  },
+                  "splitReason": "Objekt aus Aufzaehlung isoliert, Oberflaeche erhalten."
+                }
+              ]
+            }
+            """;
+
+        var claims = ClaimSplitter.ParseAtomicClaims(text);
+
+        Assert.Single(claims);
+        Assert.Equal("Kunden koennen Bestellungen im Kundenportal sehen.", claims[0].NormalizedClaim);
+        Assert.Equal("Kundenportal-Frontend", claims[0].Facets.Component);
+        Assert.Equal("Bestellungen", claims[0].Facets.Object);
+    }
+
+    [Fact]
+    public void ParseClaims_Uses_Normalized_Claim_For_New_Format()
+    {
+        var claims = ClaimSplitter.ParseClaims("""
+            {
+              "atomicClaims": [
+                {
+                  "artifactQuote": "Frontend zeigt Rechnungen an.",
+                  "normalizedClaim": "Kunden koennen Rechnungen im Kundenportal abrufen.",
+                  "facets": {
+                    "component": "Frontend",
+                    "actor": "Kunden",
+                    "action": "abrufen",
+                    "object": "Rechnungen",
+                    "modality": null,
+                    "status": null,
+                    "scope": null
+                  },
+                  "splitReason": "Download/Anzeige normalisiert, UI-Facette erhalten."
+                }
+              ]
+            }
+            """);
+
+        Assert.Single(claims);
+        Assert.Equal("Kunden koennen Rechnungen im Kundenportal abrufen.", claims[0]);
+    }
 }

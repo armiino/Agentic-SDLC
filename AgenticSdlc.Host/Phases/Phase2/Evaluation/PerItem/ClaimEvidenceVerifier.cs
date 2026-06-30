@@ -11,7 +11,9 @@ public sealed record ClaimEvidenceCase(
     string ExpectedLabel,
     IReadOnlyList<string> Evidence,
     string? Note = null,
-    string? OriginHandLabel = null);
+    string? OriginHandLabel = null,
+    string? ArtifactQuote = null,
+    IReadOnlyDictionary<string, string>? Facets = null);
 
 public sealed record ClaimEvidenceVerdict(
     string Id,
@@ -31,8 +33,9 @@ public sealed class ClaimEvidenceVerifier
 
     private const string SystemPrompt = """
         Du pruefst EINEN atomaren Claim eines SDLC-Artefakts gegen die explizit zugeordnete Evidence.
-        Du bekommst NICHT das ganze Transkript, sondern nur Claim + Evidence-Spans. Entscheide streng,
-        ob genau diese Evidence genau diesen Claim traegt.
+        Du bekommst NICHT das ganze Transkript, sondern nur Claim + Evidence-Spans. Optional bekommst du
+        die Original-Quote und erhaltene Facetten (Komponente, Akteur, Aktion, Objekt, Modalitaet, Status,
+        Scope). Entscheide streng, ob genau diese Evidence genau diesen Claim UND seine Facetten traegt.
 
         Pruefe lokal:
         - Wird der Claim explizit gestuetzt?
@@ -40,6 +43,8 @@ public sealed class ClaimEvidenceVerifier
         - Ist er nur eine Inferenz? Wenn ja: sind die Praemissen ausreichend?
         - Wurden Modalitaet, Status, Scope oder Zeitbezug verschaerft?
         - Fuegt der Claim Entitaeten, Technologien, Zahlen oder Eigenschaften hinzu, die die Evidence nicht traegt?
+        - Wenn der fachliche Kern getragen ist, aber eine Facette (z. B. Frontend/UI, finaler Status, MVP-Scope)
+          nicht getragen ist: waehle eher overstated/support=partial statt unsupported.
         - Widerspricht der Claim der Evidence?
 
         VERDIKTE:
@@ -103,12 +108,29 @@ public sealed class ClaimEvidenceVerifier
     public async Task<ClaimEvidenceVerdict> VerifyAsync(ClaimEvidenceCase testCase, CancellationToken ct)
     {
         var evidence = string.Join("\n", testCase.Evidence.Select((e, i) => $"E{i + 1}: {e}"));
+        var artifactQuote = string.IsNullOrWhiteSpace(testCase.ArtifactQuote)
+            ? ""
+            : $"""
+
+            ORIGINAL-QUOTE:
+            {testCase.ArtifactQuote}
+            """;
+        var facets = testCase.Facets is { Count: > 0 }
+            ? $"""
+
+            ERHALTENE FACETTEN:
+            {string.Join("\n", testCase.Facets.Select(kv => $"- {kv.Key}: {kv.Value}"))}
+            """
+            : "";
+
         var user = $"""
             ID: {testCase.Id}
             ARTEFAKT: {testCase.Artifact}
 
             CLAIM:
             {testCase.Claim}
+            {artifactQuote}
+            {facets}
 
             EVIDENCE:
             {evidence}

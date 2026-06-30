@@ -66,26 +66,52 @@ public static class ClaimSplitSpikeRunner
         var results = new List<object>();
         foreach (var u in units)
         {
-            var atomics = await splitter.SplitAsync(u.Unit, u.Artifact, CancellationToken.None).ConfigureAwait(false);
+            var atomics = await splitter.SplitDetailedAsync(u.Unit, u.Artifact, CancellationToken.None).ConfigureAwait(false);
             Console.WriteLine($"\n[UNIT] {u.Id} ({u.Artifact}) → {atomics.Count} atomare Claims");
 
             var claimResults = new List<object>();
             for (var i = 0; i < atomics.Count; i++)
             {
-                var claim = atomics[i];
+                var atomic = atomics[i];
+                var claim = atomic.NormalizedClaim;
                 if (!fullChain)
                 {
                     Console.WriteLine($"   C{i + 1}: {claim}");
-                    claimResults.Add(new { claim });
+                    claimResults.Add(new
+                    {
+                        claim,
+                        atomic.ArtifactQuote,
+                        facets = atomic.Facets,
+                        atomic.SplitReason
+                    });
                     continue;
                 }
 
                 var sel = await selector.SelectAsync(claim, u.Artifact, turns, CancellationToken.None).ConfigureAwait(false);
                 var evidence = EvidenceSelector.ToEvidence(sel, turns);
                 var verdict = await verifier.VerifyAsync(
-                    new ClaimEvidenceCase($"{u.Id}-C{i + 1}", u.Artifact, claim, "n/a", evidence), CancellationToken.None).ConfigureAwait(false);
+                    new ClaimEvidenceCase(
+                        $"{u.Id}-C{i + 1}",
+                        u.Artifact,
+                        claim,
+                        "n/a",
+                        evidence,
+                        ArtifactQuote: atomic.ArtifactQuote,
+                        Facets: atomic.Facets.ToDictionary()),
+                    CancellationToken.None).ConfigureAwait(false);
                 Console.WriteLine($"   C{i + 1} [{verdict.Label}/{verdict.Verdict}] turns=[{string.Join(",", sel.Turns)}]: {claim}");
-                claimResults.Add(new { claim, selectedTurns = sel.Turns, verdict.Label, verdict.Verdict, verdict.Support, verdict.Reason });
+                claimResults.Add(new
+                {
+                    claim,
+                    atomic.ArtifactQuote,
+                    facets = atomic.Facets,
+                    atomic.SplitReason,
+                    selectedTurns = sel.Turns,
+                    verdict.Label,
+                    verdict.Verdict,
+                    verdict.Support,
+                    verdict.Reason
+                });
             }
 
             results.Add(new { u.Id, u.Artifact, u.Unit, u.Note, atomCount = atomics.Count, claims = claimResults });
