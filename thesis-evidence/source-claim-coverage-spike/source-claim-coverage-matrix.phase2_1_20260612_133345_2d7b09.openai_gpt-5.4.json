@@ -1,0 +1,1994 @@
+{
+  "fixture": "input/eval-labels/source-claim-coverage-spike.json",
+  "phase": "phase2_1",
+  "runId": "20260612_133345_2d7b09",
+  "judge": "openai/gpt-5.4",
+  "mode": "source-claim-coverage-matrix",
+  "sourceClaims": 20,
+  "artifacts": [
+    "architecture",
+    "requirements",
+    "risks",
+    "open-questions"
+  ],
+  "totalCells": 80,
+  "target": {
+    "total": 20,
+    "matchesExpected": 14,
+    "accuracyVsFixture": 0.7
+  },
+  "nonTarget": {
+    "total": 60,
+    "notApplicable": 4,
+    "notApplicableRate": 0.0667
+  },
+  "verdictCounts": {
+    "missing": 11,
+    "partial": 40,
+    "covered": 24,
+    "not_applicable": 4,
+    "contradicted": 1
+  },
+  "results": [
+    {
+      "id": "SC-ARCH-SCALABILITY-001",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": true,
+      "sourceClaim": "Die erwartete Nutzerzahl schwankt zwischen ca. 200 und 20.000; Skalierbarkeit und Performance sind deshalb architektonisch offen.",
+      "expectedVerdict": "missing",
+      "evidence": [
+        "Ben (T132): Sind das 200 Nutzer oder 20.000? Das macht einen Unterschied.",
+        "Farid (T135): Wenn wir 20.000 Nutzer haben, ist das keine kleine Portal-App mehr.",
+        "Anna (T136): Wir wissen es nicht. Pilotkunde ist unklar."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-SCALABILITY-001",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "Explizite Skalierungs-/Performance-Annahme bzw. offene Architekturfrage zur unklaren Nutzerzahl (ca. 200 vs. 20.000) fehlt.",
+        "reason": "Das Architekturartefakt enth\u00E4lt keine sinngem\u00E4\u00DFe Behandlung der im Transkript offenen Lastannahme. Weder in den offenen Architekturentscheidungen noch in der Zusammenfassung werden unklare Nutzerzahlen, Skalierbarkeit oder Performance als architektonisch offene Frage adressiert, obwohl E1-E3 genau dies als wesentlichen Unterschied und ungekl\u00E4rten Pilotkundenstatus benennen."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark fand SCALABILITY als Missing in architecture.",
+      "directReviewBaseline": "DirectReview stark verfehlte Analytics stabil und legte Scalability eher als open-question ab.",
+      "note": "Litmus-Gap aus D1/B45."
+    },
+    {
+      "id": "SC-ARCH-SCALABILITY-001",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Die erwartete Nutzerzahl schwankt zwischen ca. 200 und 20.000; Skalierbarkeit und Performance sind deshalb architektonisch offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T132): Sind das 200 Nutzer oder 20.000? Das macht einen Unterschied.",
+        "Farid (T135): Wenn wir 20.000 Nutzer haben, ist das keine kleine Portal-App mehr.",
+        "Anna (T136): Wir wissen es nicht. Pilotkunde ist unklar."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-SCALABILITY-001",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Die Plattform soll skalierbar sein, um Nutzerzahlen von ca. 200 bis 20.000 zu unterst\u00FCtzen.\n- Das System muss eine minimale Performance gew\u00E4hrleisten, sodass Angebotserstellungen in akzeptabler Zeit erfolgen.",
+        "missingFacet": "Dass die Nutzerzahl noch unklar ist (Pilotkunde unklar) und die daraus folgenden Architektur-/Performance-Entscheidungen noch offen sind.",
+        "reason": "Das Requirements-Dokument greift die Bandbreite 200 bis 20.000 sowie Skalierbarkeit/Performance auf. Es macht den Punkt jedoch als feststehende Anforderung, w\u00E4hrend die Source-Evidence ausdr\u00FCcklich Unsicherheit und architektonische Offenheit betont (\u0027Wir wissen es nicht\u0027). Dieser offene Status fehlt."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark fand SCALABILITY als Missing in architecture.",
+      "directReviewBaseline": "DirectReview stark verfehlte Analytics stabil und legte Scalability eher als open-question ab.",
+      "note": "Litmus-Gap aus D1/B45."
+    },
+    {
+      "id": "SC-ARCH-SCALABILITY-001",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Die erwartete Nutzerzahl schwankt zwischen ca. 200 und 20.000; Skalierbarkeit und Performance sind deshalb architektonisch offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T132): Sind das 200 Nutzer oder 20.000? Das macht einen Unterschied.",
+        "Farid (T135): Wenn wir 20.000 Nutzer haben, ist das keine kleine Portal-App mehr.",
+        "Anna (T136): Wir wissen es nicht. Pilotkunde ist unklar."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-SCALABILITY-001",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **Skalierbarkeit und Performance:** \n  Unsicherheit \u00FCber Nutzerzahlen (200 bis 20.000) erschwert die Dimensionierung und Optimierung.",
+        "missingFacet": "",
+        "reason": "Der Risk-Claim ist f\u00FCr eine Risikoanalyse klar relevant und wird explizit behandelt. Das Artefakt \u00FCbernimmt die Spannweite der Nutzerzahlen und leitet daraus das technische Risiko f\u00FCr Skalierbarkeit/Performance ab; damit ist die architektonische Unsicherheit sinngem\u00E4\u00DF als Risiko erfasst."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark fand SCALABILITY als Missing in architecture.",
+      "directReviewBaseline": "DirectReview stark verfehlte Analytics stabil und legte Scalability eher als open-question ab.",
+      "note": "Litmus-Gap aus D1/B45."
+    },
+    {
+      "id": "SC-ARCH-SCALABILITY-001",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Die erwartete Nutzerzahl schwankt zwischen ca. 200 und 20.000; Skalierbarkeit und Performance sind deshalb architektonisch offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T132): Sind das 200 Nutzer oder 20.000? Das macht einen Unterschied.",
+        "Farid (T135): Wenn wir 20.000 Nutzer haben, ist das keine kleine Portal-App mehr.",
+        "Anna (T136): Wir wissen es nicht. Pilotkunde ist unklar."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-SCALABILITY-001",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Pilotkunden \u0026 Internationalisierung:** Welcher Pilotkunde wird final fokussiert? Welche Anforderungen an W\u00E4hrungen, Sprachen und Datenschutz ergeben sich daraus (DACH, Schweiz, EU, USA)?",
+        "missingFacet": "Offene Frage zur erwarteten Nutzerzahl/Lastspanne und deren Architektur-/Performance-Auswirkungen fehlt.",
+        "reason": "Die Evidence macht die stark schwankende Nutzerzahl (ca. 200 vs. 20.000) und daraus resultierende offene Architektur-/Skalierungsfragen explizit. Im Artefakt ist zwar die Unklarheit zum Pilotkunden erfasst, aber die daraus folgende technische Kl\u00E4rungsfrage zu Skalierbarkeit und Performance wird nicht als offene Frage benannt."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark fand SCALABILITY als Missing in architecture.",
+      "directReviewBaseline": "DirectReview stark verfehlte Analytics stabil und legte Scalability eher als open-question ab.",
+      "note": "Litmus-Gap aus D1/B45."
+    },
+    {
+      "id": "SC-ARCH-ANALYTICS-002",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": true,
+      "sourceClaim": "Analytics/KPIs sind gew\u00FCnscht, aber technische Umsetzung, Tracking und Datenschutz sind offen.",
+      "expectedVerdict": "missing",
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Clara (T186): Tracking ist Datenschutz. Das muss sauber begr\u00FCndet werden.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-ANALYTICS-002",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "Offene Analytics/KPI-Tracking-Architektur sowie Datenschutzbegr\u00FCndung f\u00FCr Tracking fehlen.",
+        "reason": "Das Artefakt behandelt zwar DSGVO, Logging und offene Architekturentscheidungen allgemein, erw\u00E4hnt aber nirgends Analytics/KPIs, Tracking/Messung oder dass die technische Umsetzung daf\u00FCr noch offen ist. Damit wird der Source-Claim in der erwarteten Form als offene Architektur-/Datenschutzfrage nicht aufgegriffen."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark/schwach fing ANALYTICS als Missing.",
+      "directReviewBaseline": "DirectReview stark verfehlte ANALYTICS in beiden L\u00E4ufen.",
+      "note": "Systematischer DirectReview-Blindspot."
+    },
+    {
+      "id": "SC-ARCH-ANALYTICS-002",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Analytics/KPIs sind gew\u00FCnscht, aber technische Umsetzung, Tracking und Datenschutz sind offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Clara (T186): Tracking ist Datenschutz. Das muss sauber begr\u00FCndet werden.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-ANALYTICS-002",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Konkretisierung der KPI-Messungen und deren technische Umsetzung ist noch ausstehend.\n- Das System soll EU-konform gehostet werden und s\u00E4mtliche Datenschutzanforderungen der DSGVO erf\u00FCllen.",
+        "missingFacet": "Tracking als explizites Thema und der offene datenschutzrechtliche Begr\u00FCndungsbedarf f\u00FCr Analytics/Tracking",
+        "reason": "Der Claim ist teilweise abgedeckt: KPIs werden als offener Punkt mit noch ausstehender technischer Umsetzung genannt. Datenschutz wird im Artefakt generell adressiert, aber nicht spezifisch f\u00FCr Analytics/Tracking und nicht mit dem im Source-Claim betonten offenen Kl\u00E4rungsbedarf bzw. Begr\u00FCndungserfordernis verkn\u00FCpft."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark/schwach fing ANALYTICS als Missing.",
+      "directReviewBaseline": "DirectReview stark verfehlte ANALYTICS in beiden L\u00E4ufen.",
+      "note": "Systematischer DirectReview-Blindspot."
+    },
+    {
+      "id": "SC-ARCH-ANALYTICS-002",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Analytics/KPIs sind gew\u00FCnscht, aber technische Umsetzung, Tracking und Datenschutz sind offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Clara (T186): Tracking ist Datenschutz. Das muss sauber begr\u00FCndet werden.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-ANALYTICS-002",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **KPIs und Analytics:** \n  Bedarf besteht, technische Umsetzung ist nicht definiert und k\u00F6nnte Datenschutz gef\u00E4hrden.",
+        "missingFacet": "",
+        "reason": "Der Risk-Claim ist im Artefakt direkt und vollst\u00E4ndig als Risiko erfasst: gew\u00FCnschter KPI/Analytics-Bedarf, offene technische Messumsetzung und m\u00F6gliches Datenschutzrisiko entsprechen den Evidence-Spans E1\u2013E3."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark/schwach fing ANALYTICS als Missing.",
+      "directReviewBaseline": "DirectReview stark verfehlte ANALYTICS in beiden L\u00E4ufen.",
+      "note": "Systematischer DirectReview-Blindspot."
+    },
+    {
+      "id": "SC-ARCH-ANALYTICS-002",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Analytics/KPIs sind gew\u00FCnscht, aber technische Umsetzung, Tracking und Datenschutz sind offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Clara (T186): Tracking ist Datenschutz. Das muss sauber begr\u00FCndet werden.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-ANALYTICS-002",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": false,
+        "artifactQuote": "",
+        "missingFacet": "Offene Frage zu Analytics/KPIs, Tracking-Ansatz und Datenschutzbegr\u00FCndung fehlt",
+        "reason": "Der Claim ist f\u00FCr ein Open-Questions-Artefakt klar relevant, weil KPIs gew\u00FCnscht sind, aber Messmethode, Tracking und Datenschutz laut Evidence noch ungekl\u00E4rt sind. Im Artefakt finden sich zwar allgemeine Datenschutz- und Logging-Fragen, aber keine sinngem\u00E4\u00DFe offene Frage zu Analytics/KPIs oder zur technischen und datenschutzrechtlichen Kl\u00E4rung von Tracking."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark/schwach fing ANALYTICS als Missing.",
+      "directReviewBaseline": "DirectReview stark verfehlte ANALYTICS in beiden L\u00E4ufen.",
+      "note": "Systematischer DirectReview-Blindspot."
+    },
+    {
+      "id": "SC-ARCH-API-GATEWAY-003",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": true,
+      "sourceClaim": "Das zentrale API Gateway ist die bevorzugte/vorgegebene Integrationsebene, hat aber eine sechswoechige Warteliste und braucht Alternativen.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "Ben (T110): Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "Farid (T116): Unsere Policy sagt: neue externe Portale laufen \u00FCber das zentrale API Gateway.",
+        "Anna (T111): Das passt nicht zum 8-Wochen-MVP."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-API-GATEWAY-003",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **API Gateway (zentrales Infrastruktur-Component):** Vorgeschriebene Integrationsebene, allerdings mit Verz\u00F6gerungsrisiko durch Warteliste.\n- API Gateway Nutzung und alternative Strategien, wenn Verf\u00FCgbarkeit nicht rechtzeitig gegeben ist.",
+        "missingFacet": "Die konkrete Sechs-Wochen-Warteliste bzw. deren Auswirkung auf den 8-Wochen-MVP wird nicht explizit benannt.",
+        "reason": "Der fachliche Kern ist vorhanden: Das Artefakt nennt das zentrale API Gateway als vorgeschriebene/bevorzugte Integrationsebene, erw\u00E4hnt ein Verz\u00F6gerungsrisiko durch Warteliste und h\u00E4lt alternative Strategien als offene Architekturentscheidung fest. Gegen\u00FCber der Source-Evidence fehlt jedoch die konkrete Modalit\u00E4t/Sch\u00E4rfe der sechs Wochen und der explizite Bezug zum MVP-Zeitkonflikt."
+      },
+      "topicCoverageBaseline": "TopicCoverage wertete API/Gateway je nach Artefakt als covered/partial.",
+      "directReviewBaseline": "DirectReview fand API/Gateway-Themen teilweise, aber nicht als stabilen Litmus.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-API-GATEWAY-003",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Das zentrale API Gateway ist die bevorzugte/vorgegebene Integrationsebene, hat aber eine sechswoechige Warteliste und braucht Alternativen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T110): Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "Farid (T116): Unsere Policy sagt: neue externe Portale laufen \u00FCber das zentrale API Gateway.",
+        "Anna (T111): Das passt nicht zum 8-Wochen-MVP."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-API-GATEWAY-003",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- API Gateway Nutzung ist vorgesehen, jedoch gibt es eine 6-w\u00F6chige Warteliste; alternative L\u00F6sungen sind zu pr\u00FCfen.\n- Es besteht eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\n- API Gateway Verf\u00FCgbarkeit k\u00F6nnte die MVP-Zeitplanung beeintr\u00E4chtigen.",
+        "missingFacet": "",
+        "reason": "Der Claim ist in requirements.md vollst\u00E4ndig abgedeckt: bevorzugte/vorgegebene Nutzung des zentralen API Gateway wird als Policy/Constraint festgehalten, die 6-w\u00F6chige Warteliste wird explizit genannt, und die Notwendigkeit von Alternativen bzw. deren Pr\u00FCfung sowie die Auswirkung auf das 8-Wochen-MVP sind dokumentiert."
+      },
+      "topicCoverageBaseline": "TopicCoverage wertete API/Gateway je nach Artefakt als covered/partial.",
+      "directReviewBaseline": "DirectReview fand API/Gateway-Themen teilweise, aber nicht als stabilen Litmus.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-API-GATEWAY-003",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Das zentrale API Gateway ist die bevorzugte/vorgegebene Integrationsebene, hat aber eine sechswoechige Warteliste und braucht Alternativen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T110): Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "Farid (T116): Unsere Policy sagt: neue externe Portale laufen \u00FCber das zentrale API Gateway.",
+        "Anna (T111): Das passt nicht zum 8-Wochen-MVP."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-API-GATEWAY-003",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **API Gateway Verz\u00F6gerung:** Die Warteliste von sechs Wochen f\u00FCr das zentrale API Gateway gef\u00E4hrdet die 8-Wochen MVP-Zeitplanung.\n- **Architekturrichtlinien (z.B. API Gateway) nicht abgestimmt:** Widerspr\u00FCche zwischen Vorgaben, Teamf\u00E4higkeit und Projektzeitraum.\n- **Evaluierung alternativer API- und Hosting-Optionen aufgrund von Zeit- und Kostenrestriktionen**",
+        "missingFacet": "",
+        "reason": "Der Risk-Claim ist f\u00FCr ein Risikoartefakt klar relevant und wird vollst\u00E4ndig adressiert: Das Artefakt nennt sowohl die Vorgabe/Pr\u00E4ferenz f\u00FCr das zentrale API Gateway sinngem\u00E4\u00DF \u00FCber Architekturrichtlinien als auch die sechs\u00ADw\u00F6chige Warteliste als Terminrisiko und fordert Alternativen explizit als Gegenma\u00DFnahme."
+      },
+      "topicCoverageBaseline": "TopicCoverage wertete API/Gateway je nach Artefakt als covered/partial.",
+      "directReviewBaseline": "DirectReview fand API/Gateway-Themen teilweise, aber nicht als stabilen Litmus.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-API-GATEWAY-003",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Das zentrale API Gateway ist die bevorzugte/vorgegebene Integrationsebene, hat aber eine sechswoechige Warteliste und braucht Alternativen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T110): Das habe ich vorhin API Layer genannt. Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "Farid (T116): Unsere Policy sagt: neue externe Portale laufen \u00FCber das zentrale API Gateway.",
+        "Anna (T111): Das passt nicht zum 8-Wochen-MVP."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-API-GATEWAY-003",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **API Gateway Verf\u00FCgbarkeit:** Wie wird mit der m\u00F6glichen Verz\u00F6gerung des zentralen API Gateways umgegangen? Gibt es alternative Architekturkonzepte oder tempor\u00E4re L\u00F6sungen f\u00FCr die Integration?",
+        "missingFacet": "",
+        "reason": "Der Claim ist f\u00FCr ein Open-Questions-Artefakt sinnvoll und wird inhaltlich angemessen erfasst: zentrales API Gateway als Integrationspfad ist implizit adressiert, die Verz\u00F6gerung/Wartesituation wird als offene Verf\u00FCgbarkeitsfrage aufgenommen und Alternativen/tempor\u00E4re L\u00F6sungen werden explizit gefragt. Damit sind Kern, Status als Kl\u00E4rungsbedarf und MVP-Relevanz ausreichend abgedeckt."
+      },
+      "topicCoverageBaseline": "TopicCoverage wertete API/Gateway je nach Artefakt als covered/partial.",
+      "directReviewBaseline": "DirectReview fand API/Gateway-Themen teilweise, aber nicht als stabilen Litmus.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-ENV-SECRETS-004",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": true,
+      "sourceClaim": "Dev/Test/Prod-Umgebungen, Testdaten ohne echte Kundendaten und Secrets Management sind erforderlich.",
+      "expectedVerdict": "missing",
+      "evidence": [
+        "Farid (T300): Wir brauchen Umgebungen. Dev, Test, Prod.",
+        "Farid (T301): Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "Farid (T304): Und CI/CD braucht Secrets Management."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-ENV-SECRETS-004",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Testdatenstrategie und Umgang mit personenbezogenen Daten in Entwicklung und Testumgebungen.",
+        "missingFacet": "Dev/Test/Prod-Umgebungen und Secrets-Management/CI-CD-Secret-Strategie fehlen.",
+        "reason": "Das Artefakt behandelt den Claim teilweise als offene Architekturentscheidung zur Testdatenstrategie und zum Umgang mit personenbezogenen Daten in Entwicklungs-/Testumgebungen, was E2 abdeckt. Es enth\u00E4lt jedoch keine erkennbare Umgebungsstrategie f\u00FCr Dev/Test/Prod aus E1 und keine Secrets-Management-Strategie f\u00FCr CI/CD aus E3."
+      },
+      "topicCoverageBaseline": "TopicCoverage je nach Fixture nur grob \u00FCber Testdaten; Secrets/Umgebungen oft nicht pr\u00E4zise.",
+      "directReviewBaseline": "DirectReview stark fand Umgebungen/Testdaten/Secrets als Missing in architecture.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-ENV-SECRETS-004",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Dev/Test/Prod-Umgebungen, Testdaten ohne echte Kundendaten und Secrets Management sind erforderlich.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Farid (T300): Wir brauchen Umgebungen. Dev, Test, Prod.",
+        "Farid (T301): Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "Farid (T304): Und CI/CD braucht Secrets Management."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-ENV-SECRETS-004",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Umgang mit Testdaten und deren Datenschutz ist nicht abschlie\u00DFend gekl\u00E4rt.",
+        "missingFacet": "Dev/Test/Prod-Umgebungen und Secrets Management fehlen; Testdaten nur als offener Punkt statt klare Anforderung",
+        "reason": "Der Claim ist f\u00FCr Requirements sinnvoll relevant, insbesondere als nicht-funktionale/technische Anforderung. Im Artefakt wird nur der Umgang mit Testdaten erw\u00E4hnt, aber abgeschw\u00E4cht als offener Punkt. Die geforderten getrennten Umgebungen Dev/Test/Prod sowie Secrets Management f\u00FCr CI/CD sind im Requirements-Dokument nicht erkennbar enthalten."
+      },
+      "topicCoverageBaseline": "TopicCoverage je nach Fixture nur grob \u00FCber Testdaten; Secrets/Umgebungen oft nicht pr\u00E4zise.",
+      "directReviewBaseline": "DirectReview stark fand Umgebungen/Testdaten/Secrets als Missing in architecture.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-ENV-SECRETS-004",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Dev/Test/Prod-Umgebungen, Testdaten ohne echte Kundendaten und Secrets Management sind erforderlich.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Farid (T300): Wir brauchen Umgebungen. Dev, Test, Prod.",
+        "Farid (T301): Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "Farid (T304): Und CI/CD braucht Secrets Management."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-ENV-SECRETS-004",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Fehlende Testdatenstrategie:** \n  Umgang mit echten Kundendaten in Tests und Entwicklung ist unklar, Datenschutzrisiko.\n...\n- Einf\u00FChrung von Testdatenrichtlinien und Sicherheitspr\u00FCfungen im Entwicklungsprozess",
+        "missingFacet": "Risiken zu getrennten Dev/Test/Prod-Umgebungen und Secrets Management/CI-CD fehlen",
+        "reason": "Das Risikoartefakt greift den Teilclaim zu Testdaten ohne echte Kundendaten sinngem\u00E4\u00DF auf. Die weiteren im SourceClaim geforderten Punkte \u2013 erforderliche Dev/Test/Prod-Umgebungen sowie Secrets Management f\u00FCr CI/CD \u2013 werden jedoch nicht als eigene Risiken oder Kl\u00E4rungsbedarfe behandelt."
+      },
+      "topicCoverageBaseline": "TopicCoverage je nach Fixture nur grob \u00FCber Testdaten; Secrets/Umgebungen oft nicht pr\u00E4zise.",
+      "directReviewBaseline": "DirectReview stark fand Umgebungen/Testdaten/Secrets als Missing in architecture.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-ENV-SECRETS-004",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Dev/Test/Prod-Umgebungen, Testdaten ohne echte Kundendaten und Secrets Management sind erforderlich.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Farid (T300): Wir brauchen Umgebungen. Dev, Test, Prod.",
+        "Farid (T301): Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "Farid (T304): Und CI/CD braucht Secrets Management."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-ENV-SECRETS-004",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Testdaten \u0026 Entwicklung:** Welche Richtlinien gelten f\u00FCr den Umgang mit personenbezogenen Daten in Entwicklungs- und Testumgebungen? Gibt es Vorgaben zur Anonymisierung oder Ersatzdaten?",
+        "missingFacet": "Offene Frage zu Dev/Test/Prod-Umgebungen sowie zu Secrets Management/CI-CD fehlt.",
+        "reason": "Der Claim ist f\u00FCr ein Open-Questions-Artefakt grunds\u00E4tzlich relevant. Das Artefakt greift den Teil zu Testdaten ohne echte Kundendaten sinngem\u00E4\u00DF auf, behandelt aber weder die ben\u00F6tigten Umgebungen Dev/Test/Prod noch Secrets Management als offenen Kl\u00E4rungsbedarf."
+      },
+      "topicCoverageBaseline": "TopicCoverage je nach Fixture nur grob \u00FCber Testdaten; Secrets/Umgebungen oft nicht pr\u00E4zise.",
+      "directReviewBaseline": "DirectReview stark fand Umgebungen/Testdaten/Secrets als Missing in architecture.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": true,
+      "sourceClaim": "Rabatte \u00FCber 15 Prozent brauchen einen Freigabeprozess mit Workflow-Status.",
+      "expectedVerdict": "partial",
+      "evidence": [
+        "Eva (T262): Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+        "Ben (T271): Dann brauchen wir Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": true,
+        "artifactQuote": "- Rabattfreigabeprozess mit Workflows f\u00FCr Freigaben \u00FCber Schwellenwerte ist noch unvollst\u00E4ndig.",
+        "missingFacet": "Konkrete Schwelle von \u00FCber 15 Prozent und die Workflow-Status (draft, pending approval, approved, sent, accepted, rejected) fehlen.",
+        "reason": "Das Architekturartefakt behandelt den Claim als offene Architekturentscheidung zum Rabattfreigabeprozess mit Workflow. Damit ist der fachliche Kern erkennbar adressiert. Es fehlen jedoch die in der Evidence genannten zentralen Details: die konkrete Regel ab \u003E15% Rabatt sowie die ben\u00F6tigten Workflow-Status f\u00FCr Angebote."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 architecture wertete Angebotsworkflow als partial.",
+      "directReviewBaseline": "DirectReview stark fand Rabattfreigabe als Missing/Critical.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Rabatte \u00FCber 15 Prozent brauchen einen Freigabeprozess mit Workflow-Status.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Eva (T262): Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+        "Ben (T271): Dann brauchen wir Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Rabattfreigabeprozesse sind im MVP eingeschr\u00E4nkt; Sonderrabatte sind ohne Freigabe nicht erlaubt.",
+        "missingFacet": "Schwelle \u003E15% sowie konkrete Workflow-Status (draft, pending approval, approved, sent, accepted, rejected) fehlen.",
+        "reason": "Das Requirements-Artefakt greift den fachlichen Kern eines Freigabeprozesses f\u00FCr Rabatte/ Sonderrabatte im MVP auf. Es behandelt aber weder die im Transkript genannte konkrete Bedingung \u0027\u00FCber 15 Prozent\u0027 noch die explizit geforderten Workflow-Status f\u00FCr Angebote."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 architecture wertete Angebotsworkflow als partial.",
+      "directReviewBaseline": "DirectReview stark fand Rabattfreigabe als Missing/Critical.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Rabatte \u00FCber 15 Prozent brauchen einen Freigabeprozess mit Workflow-Status.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Eva (T262): Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+        "Ben (T271): Dann brauchen wir Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Rabatt- und Freigabeprozesse:** \n  Finanz- und Compliance-Risiken bei unklaren oder fehlenden Freigabeprozessen.",
+        "missingFacet": "Workflow-Status f\u00FCr Angebote sowie die konkrete Schwelle \u003E15% werden nicht genannt.",
+        "reason": "Das Risikoartefakt greift den Themenbereich Rabatt/Freigabe sinngem\u00E4\u00DF auf, was f\u00FCr eine Risikoanalyse passend ist. Es behandelt aber weder die im Claim wichtige Bedingung \u0027Rabatt \u00FCber 15 Prozent\u0027 noch das konkrete Risiko rund um ben\u00F6tigte Workflow-Status (draft, pending approval, approved, sent, accepted, rejected). Daher nur teilweise abgedeckt."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 architecture wertete Angebotsworkflow als partial.",
+      "directReviewBaseline": "DirectReview stark fand Rabattfreigabe als Missing/Critical.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+      "sourceArtifact": "architecture",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Rabatte \u00FCber 15 Prozent brauchen einen Freigabeprozess mit Workflow-Status.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Eva (T262): Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+        "Ben (T271): Dann brauchen wir Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected."
+      ],
+      "verdict": {
+        "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **MVP-Scope:** Welche Funktionen sind verbindlich im 8-Wochen-MVP enthalten, und welche Features (z.B. Rabattfreigabe, Support-Tickets, Mehrw\u00E4hrungen, PDF-Export mit Rechtskonformit\u00E4t) werden auf sp\u00E4tere Phasen verschoben?",
+        "missingFacet": "Freigabeschwelle \u00FCber 15 Prozent sowie ben\u00F6tigte Workflow-Status (draft, pending approval, approved, sent, accepted, rejected) als konkrete Kl\u00E4rung fehlen.",
+        "reason": "Das Artefakt greift Rabattfreigabe als offene Scope-Frage auf, behandelt aber den konkreten fachlichen Claim nicht ausreichend. Weder die Bedingung \u0027\u00FCber 15 Prozent\u0027 noch der erforderliche Angebots-Workflow mit Status werden explizit als Kl\u00E4rungsbedarf genannt."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 architecture wertete Angebotsworkflow als partial.",
+      "directReviewBaseline": "DirectReview stark fand Rabattfreigabe als Missing/Critical.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-LOGIN-006",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr das MVP vorgesehen; Double-Opt-In ist verpflichtend.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T3): Also erstmal Login per E-Mail und Passwort.",
+        "Clara (T8): Login per E-Mail? Dann brauchen wir Double-Opt-In."
+      ],
+      "verdict": {
+        "id": "SC-REQ-LOGIN-006",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "**Authentifizierungs- und Identity Management:** Unterst\u00FCtzung von E-Mail/Passwort-Login ...\n\n**Daten- und Sicherheitsaspekte**\n- **DSGVO-Konformit\u00E4t ist zentral:** Implementierung von Double-Opt-In",
+        "missingFacet": "MVP-/Verpflichtungsstatus des E-Mail/Passwort-Logins und die klare Kopplung, dass Double-Opt-In daf\u00FCr verpflichtend ist",
+        "reason": "Der fachliche Kern ist im Architekturartefakt vorhanden: E-Mail/Passwort-Login wird genannt und Double-Opt-In ebenfalls. Allerdings wird der SourceClaim als MVP-Vorgabe mit verpflichtendem Double-Opt-In formuliert; im Artefakt ist E-Mail/Passwort nur als unterst\u00FCtzte Option beschrieben und die Pflicht/Zuordnung zum Loginfluss nicht explizit gemacht."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Login/Double-Opt-In covered werten.",
+      "directReviewBaseline": "DirectReview meldete diesen Kontrollfall nicht als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-LOGIN-006",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": true,
+      "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr das MVP vorgesehen; Double-Opt-In ist verpflichtend.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "Anna (T3): Also erstmal Login per E-Mail und Passwort.",
+        "Clara (T8): Login per E-Mail? Dann brauchen wir Double-Opt-In."
+      ],
+      "verdict": {
+        "id": "SC-REQ-LOGIN-006",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- Ein Login mit E-Mail und Passwort ist obligatorisch; Single Sign-On (SSO) ist optional.\n- Doppelopt-in Verfahren f\u00FCr E-Mail-Login ist verpflichtend.",
+        "missingFacet": "",
+        "reason": "Der Claim wird in den Anforderungen vollst\u00E4ndig abgedeckt: E-Mail/Passwort-Login ist als obligatorische MVP-Anforderung enthalten und Double-Opt-In ist explizit als verpflichtender Constraint genannt."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Login/Double-Opt-In covered werten.",
+      "directReviewBaseline": "DirectReview meldete diesen Kontrollfall nicht als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-LOGIN-006",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr das MVP vorgesehen; Double-Opt-In ist verpflichtend.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T3): Also erstmal Login per E-Mail und Passwort.",
+        "Clara (T8): Login per E-Mail? Dann brauchen wir Double-Opt-In."
+      ],
+      "verdict": {
+        "id": "SC-REQ-LOGIN-006",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Einwilligungen und Double-Opt-In:** \n  Anforderungen zur Einwilligung und Logging sind komplex und bedeuten Mehraufwand.",
+        "missingFacet": "Bezug auf den vorgesehenen MVP-Login per E-Mail/Passwort als Ausl\u00F6ser/Kontext f\u00FCr die Double-Opt-In-Pflicht fehlt.",
+        "reason": "F\u00FCr ein Risikoartefakt ist nicht zwingend die Login-Funktionsentscheidung selbst als Requirement zu erwarten, wohl aber das daraus entstehende Compliance-/Umsetzungsrisiko. Das Artefakt behandelt Double-Opt-In als Risiko, deckt damit den verpflichtenden Teil teilweise ab. Es macht jedoch nicht klar, dass E-Mail/Passwort-Login im MVP vorgesehen ist und Double-Opt-In daf\u00FCr verpflichtend ist."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Login/Double-Opt-In covered werten.",
+      "directReviewBaseline": "DirectReview meldete diesen Kontrollfall nicht als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-LOGIN-006",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr das MVP vorgesehen; Double-Opt-In ist verpflichtend.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T3): Also erstmal Login per E-Mail und Passwort.",
+        "Clara (T8): Login per E-Mail? Dann brauchen wir Double-Opt-In."
+      ],
+      "verdict": {
+        "id": "SC-REQ-LOGIN-006",
+        "verdict": "not_applicable",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "",
+        "reason": "Der Source-Claim beschreibt eine bereits getroffene Anforderungsentscheidung (MVP: Login per E-Mail/Passwort; Double-Opt-In verpflichtend), nicht einen offenen Kl\u00E4rungspunkt. F\u00FCr ein Artefakt \u0027open-questions\u0027 ist das daher nicht sinnvoll als Coverage-Pflicht zu erwarten."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Login/Double-Opt-In covered werten.",
+      "directReviewBaseline": "DirectReview meldete diesen Kontrollfall nicht als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SAP-WRITE-007",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "SAP-Schreibzugriff ist nicht entschieden; im MVP ist eher nur SAP-Lesen vorgesehen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T538): SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "Anna (T541): Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+      ],
+      "verdict": {
+        "id": "SC-REQ-SAP-WRITE-007",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "**SAP Integration:** Lesender Zugriff auf Produkt-, Preis- und Rabattdaten aus SAP. Schreibzugriffe (z.B. f\u00FCr Bestellungen) sind f\u00FCr sp\u00E4tere Phasen vorgesehen.",
+        "missingFacet": "Der im Transkript betonte Status \u0022noch nicht entschieden\u0022 fehlt; das Artefakt stellt sp\u00E4tere Schreibzugriffe bereits gerichteter/fester dar statt als offene Entscheidung bzw. MVP-nur-lesend.",
+        "reason": "Die Architektur behandelt den Kern fachlich passend, indem sie SAP-Lesezugriff im MVP abbildet und Schreiben nicht im MVP verortet. Allerdings sagt die Source-Evidence ausdr\u00FCcklich, dass SAP-Schreibzugriff noch nicht entschieden ist; diese Offenheit wird im Artefakt nicht als offene Architekturentscheidung markiert, sondern als f\u00FCr sp\u00E4tere Phasen vorgesehen formuliert."
+      },
+      "topicCoverageBaseline": "TopicCoverage misst prim\u00E4r Missing und erkennt diese Status-\u00DCberfestlegung nicht sauber.",
+      "directReviewBaseline": "DirectReview kann false_claim finden, aber nicht stabil als Coverage-Fall.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SAP-WRITE-007",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": true,
+      "sourceClaim": "SAP-Schreibzugriff ist nicht entschieden; im MVP ist eher nur SAP-Lesen vorgesehen.",
+      "expectedVerdict": "contradicted",
+      "evidence": [
+        "Ben (T538): SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "Anna (T541): Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+      ],
+      "verdict": {
+        "id": "SC-REQ-SAP-WRITE-007",
+        "verdict": "contradicted",
+        "support": "contradicted",
+        "matchesExpected": true,
+        "artifactQuote": "SAP-Anbindung ist im MVP nur lesend vorgesehen, Schreibzugriffe sind f\u00FCr sp\u00E4tere Phasen geplant.",
+        "missingFacet": "Offenheit/Unentschiedenheit des SAP-Schreibzugriffs",
+        "reason": "Die Source-Evidence sagt ausdr\u00FCcklich, dass SAP-Schreibzugriff noch nicht entschieden ist und im MVP eher nur lesend gedacht wird. Das Artefakt legt dies jedoch als entschiedenen Plan fest (\u0027f\u00FCr sp\u00E4tere Phasen geplant\u0027) und widerspricht damit dem offenen Status des Claims."
+      },
+      "topicCoverageBaseline": "TopicCoverage misst prim\u00E4r Missing und erkennt diese Status-\u00DCberfestlegung nicht sauber.",
+      "directReviewBaseline": "DirectReview kann false_claim finden, aber nicht stabil als Coverage-Fall.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SAP-WRITE-007",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "SAP-Schreibzugriff ist nicht entschieden; im MVP ist eher nur SAP-Lesen vorgesehen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T538): SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "Anna (T541): Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+      ],
+      "verdict": {
+        "id": "SC-REQ-SAP-WRITE-007",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "**SAP-Integration unvollst\u00E4ndig:** Lesender Zugriff im MVP ist vorgesehen, Schreibzugriffe f\u00FCr Bestellungen und Freigaben fehlen, was zu funktionalen Einschr\u00E4nkungen und Inkonsistenzen f\u00FChren kann.",
+        "missingFacet": "Offener Entscheidungsstatus zu SAP-Schreibzugriff; Artefakt stellt fehlende Schreibzugriffe zu final dar statt als noch unentschieden bzw. im MVP eher nicht vorgesehen.",
+        "reason": "Der fachliche Kern ist erfasst: MVP eher lesend und kein SAP-Schreibzugriff. F\u00FCr die Source-Evidence wichtig ist aber die Modalit\u00E4t: Schreibzugriff war noch nicht entschieden, und im MVP nur Angebotsdownload/keine Online-Akzeptanz ist eher die Tendenz. Das Risikoartefakt macht daraus eine festere Aussage (\u0027fehlen\u0027) und verliert den offenen Status."
+      },
+      "topicCoverageBaseline": "TopicCoverage misst prim\u00E4r Missing und erkennt diese Status-\u00DCberfestlegung nicht sauber.",
+      "directReviewBaseline": "DirectReview kann false_claim finden, aber nicht stabil als Coverage-Fall.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SAP-WRITE-007",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "SAP-Schreibzugriff ist nicht entschieden; im MVP ist eher nur SAP-Lesen vorgesehen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T538): SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "Anna (T541): Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+      ],
+      "verdict": {
+        "id": "SC-REQ-SAP-WRITE-007",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **SAP Integration:** Wie soll der Umgang mit Preis- und Rabattdaten erfolgen, insbesondere bei teils n\u00E4chtlichen Aktualisierungen? Sind Schreibzugriffe im Portal langfristig vorgesehen und wie wird das technisch realisiert?\n- **MVP-Scope:** Welche Funktionen sind verbindlich im 8-Wochen-MVP enthalten, und welche Features ... werden auf sp\u00E4tere Phasen verschoben?",
+        "missingFacet": "Der aktuelle Status aus der Quelle fehlt: SAP-Schreibzugriff ist noch nicht entschieden und im MVP ist eher nur lesender Zugriff/Angebotsdownload ohne Online-Akzeptanz vorgesehen.",
+        "reason": "Das Artefakt behandelt die SAP-Schreibzugriffsfrage grunds\u00E4tzlich als offene Frage und adressiert auch MVP-Scope allgemein. Es \u00FCbernimmt aber nicht die quellennahe Modalit\u00E4t/den Zwischenstand, dass Schreibzugriff noch gar nicht entschieden ist und derzeit eher nur lesender SAP-Zugriff im MVP angenommen wird."
+      },
+      "topicCoverageBaseline": "TopicCoverage misst prim\u00E4r Missing und erkennt diese Status-\u00DCberfestlegung nicht sauber.",
+      "directReviewBaseline": "DirectReview kann false_claim finden, aber nicht stabil als Coverage-Fall.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-ANALYTICS-008",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "KPIs/Analytics sind gew\u00FCnscht, aber Messkonzept und technische Umsetzung sind noch offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-REQ-ANALYTICS-008",
+        "verdict": "not_applicable",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "",
+        "reason": "Der Claim betrifft den Wunsch nach KPIs/Analytics sowie die noch offene Mess- und Tool-Entscheidung. Das ist prim\u00E4r ein fachliches Analyse-/Produkttracking-Thema; f\u00FCr dieses Architekturartefakt ist keine verpflichtende Behandlung erkennbar, solange keine konkrete technische Analytics-Komponente, Datenfl\u00FCsse oder nicht-funktionale Architekturvorgabe daraus abgeleitet wurde."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics als Missing/Partial abh\u00E4ngig vom Artefakt erkennen.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot bei architecture; requirements teils besser.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-ANALYTICS-008",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": true,
+      "sourceClaim": "KPIs/Analytics sind gew\u00FCnscht, aber Messkonzept und technische Umsetzung sind noch offen.",
+      "expectedVerdict": "partial",
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-REQ-ANALYTICS-008",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- Konkretisierung der KPI-Messungen und deren technische Umsetzung ist noch ausstehend.",
+        "missingFacet": "",
+        "reason": "Der Artefakttext erfasst sowohl den KPI/Analytics-Wunsch (\u0027KPI-Messungen\u0027) als auch den offenen Status der technischen Umsetzung (\u0027technische Umsetzung ist noch ausstehend\u0027) unter offenen Punkten und entspricht damit dem Source-Claim."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics als Missing/Partial abh\u00E4ngig vom Artefakt erkennen.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot bei architecture; requirements teils besser.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-ANALYTICS-008",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "KPIs/Analytics sind gew\u00FCnscht, aber Messkonzept und technische Umsetzung sind noch offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-REQ-ANALYTICS-008",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **KPIs und Analytics:** \n  Bedarf besteht, technische Umsetzung ist nicht definiert und k\u00F6nnte Datenschutz gef\u00E4hrden.",
+        "missingFacet": "",
+        "reason": "Der Risk-Claim ist in risks.md explizit enthalten: KPI/Analytics werden als Bedarf genannt und die technische Umsetzung als offen beschrieben. Damit wird der fachliche Kern der Source-Evidence (gew\u00FCnscht, aber Mess-/Technikumsetzung offen) f\u00FCr ein Risikoartefakt angemessen behandelt."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics als Missing/Partial abh\u00E4ngig vom Artefakt erkennen.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot bei architecture; requirements teils besser.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-ANALYTICS-008",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "KPIs/Analytics sind gew\u00FCnscht, aber Messkonzept und technische Umsetzung sind noch offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-REQ-ANALYTICS-008",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": false,
+        "artifactQuote": "",
+        "missingFacet": "Offene Frage zu KPI-/Analytics-Messkonzept und technischer Umsetzung fehlt",
+        "reason": "Der Claim ist f\u00FCr ein Open-Questions-Artefakt klar relevant: Es gibt einen fachlichen Wunsch nach KPIs/Analytics (Conversion, Angebotsdauer, Nutzung) und zugleich laut Evidence ist die technische Messumsetzung noch offen. Im Artefakt findet sich jedoch keine sinngem\u00E4\u00DFe offene Frage zu Analytics, KPI-Definition, Tracking-Konzept oder Auswahl der Messtechnik."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics als Missing/Partial abh\u00E4ngig vom Artefakt erkennen.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot bei architecture; requirements teils besser.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SCALABILITY-009",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Nutzerzahl/Skalierung ist unklar, muss aber als nichtfunktionale Anforderung ber\u00FCcksichtigt werden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T132): Sind das 200 Nutzer oder 20.000? Das macht einen Unterschied.",
+        "Farid (T135): Wenn wir 20.000 Nutzer haben, ist das keine kleine Portal-App mehr."
+      ],
+      "verdict": {
+        "id": "SC-REQ-SCALABILITY-009",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": false,
+        "artifactQuote": "",
+        "missingFacet": "Skalierungs-/Nutzerzahl-Annahme bzw. offene Kapazit\u00E4tsanforderung als Architekturtreiber oder offene Architekturentscheidung fehlt.",
+        "reason": "Die Evidence thematisiert unklare Nutzerzahl und deren Relevanz f\u00FCr die Skalierung (200 vs. 20.000). Im Architekturartefakt finden sich keine Aussagen zu erwarteter Last, Skalierbarkeit, Kapazit\u00E4tsannahmen oder einer offenen Architekturentscheidung dazu. F\u00FCr ein Architektur-Dokument w\u00E4re dieser NFR/Architekturtreiber sinnvoll zu behandeln."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte requirements hier covered/partial werten.",
+      "directReviewBaseline": "DirectReview sollte keinen Missing-Fall melden.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SCALABILITY-009",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": true,
+      "sourceClaim": "Nutzerzahl/Skalierung ist unklar, muss aber als nichtfunktionale Anforderung ber\u00FCcksichtigt werden.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "Ben (T132): Sind das 200 Nutzer oder 20.000? Das macht einen Unterschied.",
+        "Farid (T135): Wenn wir 20.000 Nutzer haben, ist das keine kleine Portal-App mehr."
+      ],
+      "verdict": {
+        "id": "SC-REQ-SCALABILITY-009",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- Die Plattform soll skalierbar sein, um Nutzerzahlen von ca. 200 bis 20.000 zu unterst\u00FCtzen.\n- Das System muss eine minimale Performance gew\u00E4hrleisten, sodass Angebotserstellungen in akzeptabler Zeit erfolgen.",
+        "missingFacet": "",
+        "reason": "Der Source-Claim verlangt, Skalierung/Nutzerzahl als nichtfunktionale Anforderung zu ber\u00FCcksichtigen. Das Artefakt enth\u00E4lt dies explizit in den NFRs mit einer Nutzerzahl-Spanne von ca. 200 bis 20.000 sowie einem Performance-Hinweis; damit ist der fachliche Kern angemessen abgedeckt."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte requirements hier covered/partial werten.",
+      "directReviewBaseline": "DirectReview sollte keinen Missing-Fall melden.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SCALABILITY-009",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Nutzerzahl/Skalierung ist unklar, muss aber als nichtfunktionale Anforderung ber\u00FCcksichtigt werden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T132): Sind das 200 Nutzer oder 20.000? Das macht einen Unterschied.",
+        "Farid (T135): Wenn wir 20.000 Nutzer haben, ist das keine kleine Portal-App mehr."
+      ],
+      "verdict": {
+        "id": "SC-REQ-SCALABILITY-009",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **Skalierbarkeit und Performance:** \n  Unsicherheit \u00FCber Nutzerzahlen (200 bis 20.000) erschwert die Dimensionierung und Optimierung.",
+        "missingFacet": "",
+        "reason": "Der Risk-Claim ist in risks.md explizit als technisches Risiko aufgef\u00FChrt. Die Evidence-Spanne zur unklaren Nutzerzahl/Skalierung (200 vs. 20.000) wird sinngem\u00E4\u00DF und mit derselben Spannbreite aufgegriffen und als Auswirkung auf Dimensionierung/Performance beschrieben."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte requirements hier covered/partial werten.",
+      "directReviewBaseline": "DirectReview sollte keinen Missing-Fall melden.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SCALABILITY-009",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Nutzerzahl/Skalierung ist unklar, muss aber als nichtfunktionale Anforderung ber\u00FCcksichtigt werden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T132): Sind das 200 Nutzer oder 20.000? Das macht einen Unterschied.",
+        "Farid (T135): Wenn wir 20.000 Nutzer haben, ist das keine kleine Portal-App mehr."
+      ],
+      "verdict": {
+        "id": "SC-REQ-SCALABILITY-009",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": false,
+        "artifactQuote": "",
+        "missingFacet": "Offene Frage zur erwarteten Nutzerzahl/Last und daraus abgeleiteten Skalierungs- bzw. Performance-Anforderungen fehlt.",
+        "reason": "Die Evidence benennt explizit die ungekl\u00E4rte Gr\u00F6\u00DFenordnung der Nutzerbasis (200 vs. 20.000) und deren Relevanz f\u00FCr die Systemauslegung. Im Artefakt gibt es keine sinngem\u00E4\u00DFe offene Frage zu Nutzerzahl, Lastannahmen, Skalierung, Performance oder entsprechender nichtfunktionaler Anforderung."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte requirements hier covered/partial werten.",
+      "directReviewBaseline": "DirectReview sollte keinen Missing-Fall melden.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-PUSH-010",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Push Notifications wurden als Marketingwunsch eingebracht, waren aber nie besprochen und nicht im MVP entschieden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Anna (T43): Vielleicht sp\u00E4ter. Nicht im MVP."
+      ],
+      "verdict": {
+        "id": "SC-REQ-PUSH-010",
+        "verdict": "not_applicable",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "",
+        "reason": "Der Claim beschreibt einen eingebrachten, aber nicht beschlossenen Feature-Wunsch mit klarem Scope-Status (\u0027vielleicht sp\u00E4ter\u0027, \u0027nicht im MVP\u0027). F\u00FCr einen Architektur\u00FCberblick ist diese einzelne fachliche Backlog-/Priorisierungsentscheidung nicht zwingend als Coverage-Pflicht zu erwarten, solange keine Architektur f\u00FCr Push vorgesehen oder ben\u00F6tigt ist. Im Artefakt gibt es auch keine entsprechende Push-/Mobile-Architektur, die dem Claim widersprechen w\u00FCrde."
+      },
+      "topicCoverageBaseline": "F1/F2: Push war ein bekannter Topic-Extractor-Blindspot und wurde erst vom Verifier als Kandidat gefunden.",
+      "directReviewBaseline": "DirectReview kann Push \u00FCbersehen oder anders gewichten.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-PUSH-010",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": true,
+      "sourceClaim": "Push Notifications wurden als Marketingwunsch eingebracht, waren aber nie besprochen und nicht im MVP entschieden.",
+      "expectedVerdict": "missing",
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Anna (T43): Vielleicht sp\u00E4ter. Nicht im MVP."
+      ],
+      "verdict": {
+        "id": "SC-REQ-PUSH-010",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "Offene/ausgeschlossene Scope-Frage zu Push Notifications bzw. explizit nicht im MVP",
+        "reason": "Im Artefakt wird Push Notifications weder als Requirement aufgenommen noch als offener bzw. ausgeschlossener Scope-Punkt erw\u00E4hnt. Laut Evidence wurde Push nur als Marketingwunsch eingebracht, nie besprochen und ausdr\u00FCcklich nicht f\u00FCr das MVP entschieden; diese Status-/Scope-Information fehlt vollst\u00E4ndig."
+      },
+      "topicCoverageBaseline": "F1/F2: Push war ein bekannter Topic-Extractor-Blindspot und wurde erst vom Verifier als Kandidat gefunden.",
+      "directReviewBaseline": "DirectReview kann Push \u00FCbersehen oder anders gewichten.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-PUSH-010",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Push Notifications wurden als Marketingwunsch eingebracht, waren aber nie besprochen und nicht im MVP entschieden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Anna (T43): Vielleicht sp\u00E4ter. Nicht im MVP."
+      ],
+      "verdict": {
+        "id": "SC-REQ-PUSH-010",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "Das Risiko von Scope Creep und Zielkonflikten ist hoch.",
+        "missingFacet": "Push Notifications als konkreter, unbesprochener Marketingwunsch au\u00DFerhalb des MVP wird nicht explizit benannt.",
+        "reason": "Der fachliche Kern ist sinngem\u00E4\u00DF durch allgemeine Risiken zu unklaren/widerspr\u00FCchlichen Zielsetzungen und Scope Creep abgedeckt. Die Evidence betont aber spezifisch, dass Push Notifications nur als Marketingwunsch eingebracht, nie besprochen und ausdr\u00FCcklich nicht f\u00FCrs MVP vorgesehen sind; diese konkrete offene Scope-Abgrenzung erscheint im Risikoartefakt nicht explizit."
+      },
+      "topicCoverageBaseline": "F1/F2: Push war ein bekannter Topic-Extractor-Blindspot und wurde erst vom Verifier als Kandidat gefunden.",
+      "directReviewBaseline": "DirectReview kann Push \u00FCbersehen oder anders gewichten.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-PUSH-010",
+      "sourceArtifact": "requirements",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Push Notifications wurden als Marketingwunsch eingebracht, waren aber nie besprochen und nicht im MVP entschieden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Anna (T43): Vielleicht sp\u00E4ter. Nicht im MVP."
+      ],
+      "verdict": {
+        "id": "SC-REQ-PUSH-010",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **MVP-Scope:** Welche Funktionen sind verbindlich im 8-Wochen-MVP enthalten, und welche Features (...) werden auf sp\u00E4tere Phasen verschoben?",
+        "missingFacet": "Push Notifications als konkretes, bislang unbesprochenes Marketing-Feature und der explizite Status \u201Enicht im MVP / sp\u00E4ter kl\u00E4ren\u201C",
+        "reason": "Das Dokument behandelt die generelle offene MVP-Scope-Abgrenzung und sp\u00E4tere Phasen, womit der Kern des Claims teilweise aufgegriffen ist. Der konkrete SourceClaim zu Push Notifications als Marketingwunsch, der nie besprochen wurde und nicht f\u00FCr den MVP entschieden ist, wird jedoch nicht ausdr\u00FCcklich als offene Frage bzw. Kl\u00E4rungsbedarf genannt."
+      },
+      "topicCoverageBaseline": "F1/F2: Push war ein bekannter Topic-Extractor-Blindspot und wurde erst vom Verifier als Kandidat gefunden.",
+      "directReviewBaseline": "DirectReview kann Push \u00FCbersehen oder anders gewichten.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-API-GATEWAY-011",
+      "sourceArtifact": "risks",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Die sechswoechige API-Gateway-Warteliste gef\u00E4hrdet den 8-Wochen-MVP.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T110): Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "Anna (T111): Das passt nicht zum 8-Wochen-MVP."
+      ],
+      "verdict": {
+        "id": "SC-RISK-API-GATEWAY-011",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "**API Gateway (zentrales Infrastruktur-Component):** Vorgeschriebene Integrationsebene, allerdings mit Verz\u00F6gerungsrisiko durch Warteliste.\n- API Gateway Nutzung und alternative Strategien, wenn Verf\u00FCgbarkeit nicht rechtzeitig gegeben ist.\nDie Architektur des Kundenportals steht vor signifikanten Herausforderungen, insbesondere durch enge Zeitpl\u00E4ne",
+        "missingFacet": "Konkrete 6-Wochen-Warteliste und explizite Gef\u00E4hrdung des 8-Wochen-MVP werden nicht benannt",
+        "reason": "Der Architekturtext behandelt das Gateway als Verz\u00F6gerungsrisiko und erw\u00E4hnt Alternativstrategien bei nicht rechtzeitiger Verf\u00FCgbarkeit. Damit ist der fachliche Kern als Architektur-Risiko erkennbar. Es fehlt aber die pr\u00E4zise Status-/Scope-Aussage aus der Evidence, n\u00E4mlich dass die Warteliste sechs Wochen betr\u00E4gt und dadurch konkret der 8-Wochen-MVP gef\u00E4hrdet ist."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview meldete API-Gateway teils als Missing/Issue.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-API-GATEWAY-011",
+      "sourceArtifact": "risks",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Die sechswoechige API-Gateway-Warteliste gef\u00E4hrdet den 8-Wochen-MVP.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T110): Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "Anna (T111): Das passt nicht zum 8-Wochen-MVP."
+      ],
+      "verdict": {
+        "id": "SC-RISK-API-GATEWAY-011",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- API Gateway Nutzung ist vorgesehen, jedoch gibt es eine 6-w\u00F6chige Warteliste; alternative L\u00F6sungen sind zu pr\u00FCfen.\n- API Gateway Verf\u00FCgbarkeit k\u00F6nnte die MVP-Zeitplanung beeintr\u00E4chtigen.\n- Das Kundenportal muss innerhalb von 8 Wochen als MVP einsatzbereit sein.",
+        "missingFacet": "",
+        "reason": "Der Claim ist in den Requirements sinngem\u00E4\u00DF und ausreichend behandelt: Die 6-w\u00F6chige Warteliste des API Gateway wird explizit genannt und als Risiko f\u00FCr die 8-Wochen-MVP-Zeitplanung markiert. Damit sind Kerninhalt und Status als Projektrisiko im Artefakt abgedeckt."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview meldete API-Gateway teils als Missing/Issue.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-API-GATEWAY-011",
+      "sourceArtifact": "risks",
+      "targetArtifact": "risks",
+      "isFixtureTarget": true,
+      "sourceClaim": "Die sechswoechige API-Gateway-Warteliste gef\u00E4hrdet den 8-Wochen-MVP.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "Ben (T110): Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "Anna (T111): Das passt nicht zum 8-Wochen-MVP."
+      ],
+      "verdict": {
+        "id": "SC-RISK-API-GATEWAY-011",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- **API Gateway Verz\u00F6gerung:**\n  Die Warteliste von sechs Wochen f\u00FCr das zentrale API Gateway gef\u00E4hrdet die 8-Wochen MVP-Zeitplanung.",
+        "missingFacet": "",
+        "reason": "Der fachliche Kern des Claims ist explizit als technisches Termin-/Integrationsrisiko enthalten: sechswoechige Gateway-Warteliste und Gefaehrdung des 8-Wochen-MVP werden direkt benannt."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview meldete API-Gateway teils als Missing/Issue.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-API-GATEWAY-011",
+      "sourceArtifact": "risks",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Die sechswoechige API-Gateway-Warteliste gef\u00E4hrdet den 8-Wochen-MVP.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T110): Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "Anna (T111): Das passt nicht zum 8-Wochen-MVP."
+      ],
+      "verdict": {
+        "id": "SC-RISK-API-GATEWAY-011",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **API Gateway Verf\u00FCgbarkeit:** Wie wird mit der m\u00F6glichen Verz\u00F6gerung des zentralen API Gateways umgegangen? Gibt es alternative Architekturkonzepte oder tempor\u00E4re L\u00F6sungen f\u00FCr die Integration?",
+        "missingFacet": "Die konkrete Dringlichkeit/Einordnung, dass eine sechswoechige Warteliste den 8-Wochen-MVP gefaehrdet, ist nicht explizit benannt.",
+        "reason": "Der Claim ist im Open-Questions-Artefakt sinngemaess als offene technische Frage zur moeglichen Verzoegerung des API Gateways behandelt. Es fehlt jedoch die wesentliche Facette aus der Evidence, dass die bekannte sechswoechige Warteliste in direktem Konflikt mit dem 8-Wochen-MVP steht."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview meldete API-Gateway teils als Missing/Issue.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PUSH-012",
+      "sourceArtifact": "risks",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Push Notifications erzeugen Einwilligungs-/DSGVO-Risiken, falls sie sp\u00E4ter umgesetzt werden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Clara (T41): Push hei\u00DFt Einwilligung. Wieder DSGVO.",
+        "Anna (T43): Vielleicht sp\u00E4ter. Nicht im MVP."
+      ],
+      "verdict": {
+        "id": "SC-RISK-PUSH-012",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "## Daten- und Sicherheitsaspekte\n\n- **DSGVO-Konformit\u00E4t ist zentral:** Implementierung von Double-Opt-In, L\u00F6schkonzepten, Datenschutz bei Logging, Audit und Backup.\n\n## Offene Architekturentscheidungen\n\n- Mobile Umsetzung: Native App vs. responsive Web-Anwendung bleibt unentschieden.",
+        "missingFacet": "Push Notifications als sp\u00E4teres Feature und das spezifische Einwilligungs-/DSGVO-Risiko daf\u00FCr werden nicht explizit als offene Architekturfrage/Risiko benannt.",
+        "reason": "Das Architekturartefakt behandelt DSGVO und Opt-In grunds\u00E4tzlich, was thematisch an den Claim anschlie\u00DFt. Die Source-Evidence ist jedoch spezifisch: Push Notifications erzeugen Einwilligungs-/DSGVO-Risiken und sind nur eventuell f\u00FCr sp\u00E4ter, nicht f\u00FCr das MVP. Diese konkrete sp\u00E4tere Push-Thematik fehlt als explizite Architekturentscheidung bzw. Risiko."
+      },
+      "topicCoverageBaseline": "Push war in der TopicFixture zun\u00E4chst nicht enthalten; TopicCoverage konnte es nicht pr\u00FCfen.",
+      "directReviewBaseline": "DirectReview ist open-world, kann solche Themen finden, tat es aber nicht stabil.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PUSH-012",
+      "sourceArtifact": "risks",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Push Notifications erzeugen Einwilligungs-/DSGVO-Risiken, falls sie sp\u00E4ter umgesetzt werden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Clara (T41): Push hei\u00DFt Einwilligung. Wieder DSGVO.",
+        "Anna (T43): Vielleicht sp\u00E4ter. Nicht im MVP."
+      ],
+      "verdict": {
+        "id": "SC-RISK-PUSH-012",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Das System soll EU-konform gehostet werden und s\u00E4mtliche Datenschutzanforderungen der DSGVO erf\u00FCllen.",
+        "missingFacet": "Push Notifications als konkretes sp\u00E4teres Thema mit Einwilligungsrisiko und explizit nicht im MVP",
+        "reason": "Das Artefakt deckt den allgemeinen DSGVO-/Compliance-Rahmen ab, behandelt aber den konkreten Source-Claim zu Push Notifications nicht. Aus der Evidence ergibt sich ausdr\u00FCcklich: Push verursacht Einwilligungsrisiken und ist nur vielleicht sp\u00E4ter, nicht im MVP. Diese status- und themenspezifische Facette fehlt in den Requirements."
+      },
+      "topicCoverageBaseline": "Push war in der TopicFixture zun\u00E4chst nicht enthalten; TopicCoverage konnte es nicht pr\u00FCfen.",
+      "directReviewBaseline": "DirectReview ist open-world, kann solche Themen finden, tat es aber nicht stabil.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PUSH-012",
+      "sourceArtifact": "risks",
+      "targetArtifact": "risks",
+      "isFixtureTarget": true,
+      "sourceClaim": "Push Notifications erzeugen Einwilligungs-/DSGVO-Risiken, falls sie sp\u00E4ter umgesetzt werden.",
+      "expectedVerdict": "missing",
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Clara (T41): Push hei\u00DFt Einwilligung. Wieder DSGVO.",
+        "Anna (T43): Vielleicht sp\u00E4ter. Nicht im MVP."
+      ],
+      "verdict": {
+        "id": "SC-RISK-PUSH-012",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Einwilligungen und Double-Opt-In:** \n  Anforderungen zur Einwilligung und Logging sind komplex und bedeuten Mehraufwand.",
+        "missingFacet": "Bezug auf Push Notifications als konkreten sp\u00E4teren/Nicht-MVP-Risikotreiber fehlt.",
+        "reason": "Das Artefakt adressiert DSGVO-/Einwilligungsrisiken allgemein und nennt Einwilligungen explizit als Risiko. Der Source-Claim ist damit sinngem\u00E4\u00DF teilweise abgedeckt. Es fehlt aber die konkrete Verkn\u00FCpfung zu Push Notifications sowie der Status aus der Evidence, dass Push nur eventuell sp\u00E4ter und nicht im MVP umgesetzt werden soll."
+      },
+      "topicCoverageBaseline": "Push war in der TopicFixture zun\u00E4chst nicht enthalten; TopicCoverage konnte es nicht pr\u00FCfen.",
+      "directReviewBaseline": "DirectReview ist open-world, kann solche Themen finden, tat es aber nicht stabil.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PUSH-012",
+      "sourceArtifact": "risks",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Push Notifications erzeugen Einwilligungs-/DSGVO-Risiken, falls sie sp\u00E4ter umgesetzt werden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Clara (T41): Push hei\u00DFt Einwilligung. Wieder DSGVO.",
+        "Anna (T43): Vielleicht sp\u00E4ter. Nicht im MVP."
+      ],
+      "verdict": {
+        "id": "SC-RISK-PUSH-012",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **MVP-Scope:** Welche Funktionen sind verbindlich im 8-Wochen-MVP enthalten, und welche Features ... werden auf sp\u00E4tere Phasen verschoben?",
+        "missingFacet": "Sp\u00E4tere Push Notifications als konkretes Feature sowie das damit verbundene Einwilligungs-/DSGVO-Risiko werden nicht explizit als offene Frage benannt.",
+        "reason": "Die Evidence macht Push Notifications als sp\u00E4teres, nicht-MVP-Feature mit explizitem Einwilligungs-/DSGVO-Risiko deutlich. Im Artefakt ist nur allgemein die Kl\u00E4rung von MVP vs. sp\u00E4teren Features enthalten; die konkrete offene Frage zu Push Notifications und deren Consent-/DSGVO-Folgen fehlt."
+      },
+      "topicCoverageBaseline": "Push war in der TopicFixture zun\u00E4chst nicht enthalten; TopicCoverage konnte es nicht pr\u00FCfen.",
+      "directReviewBaseline": "DirectReview ist open-world, kann solche Themen finden, tat es aber nicht stabil.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-SUPPORT-013",
+      "sourceArtifact": "risks",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Kein Ticketsystem im MVP f\u00FChrt zu unstrukturierter E-Mail-Bearbeitung und Datenschutz-/Support-Risiken.",
+      "expectedVerdict": null,
+      "evidence": [
+        "David (T232): Ich habe geh\u00F6rt, es soll kein Ticketsystem geben.",
+        "Clara (T244): Unstrukturierte E-Mail-Bearbeitung ist datenschutzrechtlich schwierig."
+      ],
+      "verdict": {
+        "id": "SC-RISK-SUPPORT-013",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Support-Backend (nicht im MVP):** K\u00FCnftige Integration f\u00FCr Ticketsystem und Kundenanfragen.\n- Supportprozess: Kein Ticketsystem im MVP, dennoch Bedarf an Datenschutz-konformer Bearbeitung.",
+        "missingFacet": "Unstrukturierte E-Mail-Bearbeitung als konkretes Support-/Datenschutzrisiko wird nicht explizit beschrieben.",
+        "reason": "Das Architekturartefakt greift den Kern auf, dass es im MVP kein Ticketsystem gibt und dass daraus ein datenschutzkonformer Bearbeitungsbedarf entsteht. Die konkrete Evidence-Facette, dass ohne Ticketsystem eine unstrukturierte E-Mail-Bearbeitung mit Datenschutz-/Support-Risiken entsteht, bleibt jedoch nur implizit und nicht als klar benanntes Risiko oder architektonische Konsequenz ausgef\u00FChrt."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Support/Datenschutz in risks covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet Supportthemen h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-SUPPORT-013",
+      "sourceArtifact": "risks",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Kein Ticketsystem im MVP f\u00FChrt zu unstrukturierter E-Mail-Bearbeitung und Datenschutz-/Support-Risiken.",
+      "expectedVerdict": null,
+      "evidence": [
+        "David (T232): Ich habe geh\u00F6rt, es soll kein Ticketsystem geben.",
+        "Clara (T244): Unstrukturierte E-Mail-Bearbeitung ist datenschutzrechtlich schwierig."
+      ],
+      "verdict": {
+        "id": "SC-RISK-SUPPORT-013",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Supportprozesse im MVP beschr\u00E4nken sich auf Kontaktformular ohne Ticketpersistenz; E-Mail-Bearbeitung ist unstrukturierte Ausnahme.\n- Support mit Ticketsystem ist im MVP nicht enthalten; E-Mail-basierte Anfragen sind umst\u00E4ndlich.",
+        "missingFacet": "Datenschutz-/Support-Risiko bzw. explizite Risikoableitung aus unstrukturierter E-Mail-Bearbeitung fehlt.",
+        "reason": "Das Artefakt behandelt den Kern des Claims erkennbar: kein Ticketsystem im MVP und unstrukturierte/umst\u00E4ndliche E-Mail-Bearbeitung. Die in der Source-Evidence betonte datenschutzrechtliche Schwierigkeit bzw. das konkrete Support-/Datenschutzrisiko wird jedoch nicht als Anforderung, Risiko oder offene Kl\u00E4rung explizit festgehalten."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Support/Datenschutz in risks covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet Supportthemen h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-SUPPORT-013",
+      "sourceArtifact": "risks",
+      "targetArtifact": "risks",
+      "isFixtureTarget": true,
+      "sourceClaim": "Kein Ticketsystem im MVP f\u00FChrt zu unstrukturierter E-Mail-Bearbeitung und Datenschutz-/Support-Risiken.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "David (T232): Ich habe geh\u00F6rt, es soll kein Ticketsystem geben.",
+        "Clara (T244): Unstrukturierte E-Mail-Bearbeitung ist datenschutzrechtlich schwierig."
+      ],
+      "verdict": {
+        "id": "SC-RISK-SUPPORT-013",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- **Datenschutz bei Supportprozessen:** \n  Kein Ticketsystem im MVP, manuelle E-Mail-Verarbeitung f\u00FChrt zu unstrukturierter Datenhaltung und Compliance-Risiken.",
+        "missingFacet": "",
+        "reason": "Der Source-Claim wird explizit als Risiko erfasst: fehlendes Ticketsystem im MVP sowie daraus resultierende unstrukturierte E-Mail-Bearbeitung und Datenschutz/Compliance-Risiken sind im Artefakt direkt genannt."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Support/Datenschutz in risks covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet Supportthemen h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-SUPPORT-013",
+      "sourceArtifact": "risks",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Kein Ticketsystem im MVP f\u00FChrt zu unstrukturierter E-Mail-Bearbeitung und Datenschutz-/Support-Risiken.",
+      "expectedVerdict": null,
+      "evidence": [
+        "David (T232): Ich habe geh\u00F6rt, es soll kein Ticketsystem geben.",
+        "Clara (T244): Unstrukturierte E-Mail-Bearbeitung ist datenschutzrechtlich schwierig."
+      ],
+      "verdict": {
+        "id": "SC-RISK-SUPPORT-013",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **Supportprozess:** Wie wird der Supportprozess ohne Ticketsystem im MVP konkret datenschutzkonform gestaltet? Ist eine sp\u00E4tere Einf\u00FChrung eines Ticketsystems geplant und wie wird der \u00DCbergang gestaltet?\n- **Datenschutz im Support:** Wie kann die unstrukturierte E-Mail-basierte Supportbearbeitung DSGVO-konform gestaltet werden, gerade in Bezug auf Datenl\u00F6schung, Zugriffsrechte und Nachvollziehbarkeit?",
+        "missingFacet": "",
+        "reason": "Der Claim ist f\u00FCr ein Open-Questions-Artefakt sinnvoll und als offene Kl\u00E4rung explizit aufgenommen. Das Artefakt adressiert sowohl den fehlenden Ticketsystem-Status im MVP als auch die daraus entstehenden Risiken durch unstrukturierte E-Mail-Bearbeitung und Datenschutz/Support-Aspekte."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Support/Datenschutz in risks covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet Supportthemen h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-TESTDATA-014",
+      "sourceArtifact": "risks",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Echte Kundendaten in Test- und Entwicklungsumgebungen erzeugen Datenschutzrisiken.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Farid (T301): Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "Clara (T302): Sonst haben wir sofort ein Datenschutzproblem."
+      ],
+      "verdict": {
+        "id": "SC-RISK-TESTDATA-014",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Testdatenstrategie und Umgang mit personenbezogenen Daten in Entwicklung und Testumgebungen.",
+        "missingFacet": "Das Verbot bzw. die klare Risikoaussage zu echten Kundendaten in Test/Entwicklung ist nicht konkretisiert.",
+        "reason": "Der Claim ist in den offenen Architekturentscheidungen sinngem\u00E4\u00DF adressiert, da Testdatenstrategie und personenbezogene Daten in Dev/Test explizit genannt werden. Es fehlt aber die klare Festlegung bzw. explizite Benennung des Datenschutzrisikos und dass keine echten Kundendaten verwendet werden d\u00FCrfen."
+      },
+      "topicCoverageBaseline": "TopicCoverage findet Testdaten je nach Topic-Fassung; SourceClaim pr\u00E4zisiert die Pflicht.",
+      "directReviewBaseline": "DirectReview architecture fand Testdaten/Umgebungen als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-TESTDATA-014",
+      "sourceArtifact": "risks",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Echte Kundendaten in Test- und Entwicklungsumgebungen erzeugen Datenschutzrisiken.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Farid (T301): Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "Clara (T302): Sonst haben wir sofort ein Datenschutzproblem."
+      ],
+      "verdict": {
+        "id": "SC-RISK-TESTDATA-014",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Das System soll EU-konform gehostet werden und s\u00E4mtliche Datenschutzanforderungen der DSGVO erf\u00FCllen.\n- Umgang mit Testdaten und deren Datenschutz ist nicht abschlie\u00DFend gekl\u00E4rt.",
+        "missingFacet": "Explizite Anforderung, dass Test- und Entwicklungsumgebungen keine echten Kundendaten verwenden d\u00FCrfen.",
+        "reason": "Der Datenschutzbezug und ein offener Punkt zu Testdaten sind im Requirements-Artefakt vorhanden. Der konkrete Source-Claim aus der Evidence fordert jedoch explizit, dass Testdaten keine echten Kundendaten enthalten d\u00FCrfen, um Datenschutzrisiken zu vermeiden. Diese verbindliche, konkrete Vorgabe fehlt; stattdessen wird der Umgang mit Testdaten nur als ungekl\u00E4rter Punkt erw\u00E4hnt."
+      },
+      "topicCoverageBaseline": "TopicCoverage findet Testdaten je nach Topic-Fassung; SourceClaim pr\u00E4zisiert die Pflicht.",
+      "directReviewBaseline": "DirectReview architecture fand Testdaten/Umgebungen als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-TESTDATA-014",
+      "sourceArtifact": "risks",
+      "targetArtifact": "risks",
+      "isFixtureTarget": true,
+      "sourceClaim": "Echte Kundendaten in Test- und Entwicklungsumgebungen erzeugen Datenschutzrisiken.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "Farid (T301): Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "Clara (T302): Sonst haben wir sofort ein Datenschutzproblem."
+      ],
+      "verdict": {
+        "id": "SC-RISK-TESTDATA-014",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- **Fehlende Testdatenstrategie:** \n  Umgang mit echten Kundendaten in Tests und Entwicklung ist unklar, Datenschutzrisiko.\n...\n- Einf\u00FChrung von Testdatenrichtlinien und Sicherheitspr\u00FCfungen im Entwicklungsprozess",
+        "missingFacet": "",
+        "reason": "Der fachliche Kern des Claims ist explizit enthalten: echte Kundendaten in Test-/Entwicklungsumgebungen werden als Datenschutzrisiko benannt. Zus\u00E4tzlich nennt das Artefakt mit Testdatenrichtlinien eine passende Gegenma\u00DFnahme."
+      },
+      "topicCoverageBaseline": "TopicCoverage findet Testdaten je nach Topic-Fassung; SourceClaim pr\u00E4zisiert die Pflicht.",
+      "directReviewBaseline": "DirectReview architecture fand Testdaten/Umgebungen als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-TESTDATA-014",
+      "sourceArtifact": "risks",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Echte Kundendaten in Test- und Entwicklungsumgebungen erzeugen Datenschutzrisiken.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Farid (T301): Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "Clara (T302): Sonst haben wir sofort ein Datenschutzproblem."
+      ],
+      "verdict": {
+        "id": "SC-RISK-TESTDATA-014",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **Testdaten \u0026 Entwicklung:** Welche Richtlinien gelten f\u00FCr den Umgang mit personenbezogenen Daten in Entwicklungs- und Testumgebungen? Gibt es Vorgaben zur Anonymisierung oder Ersatzdaten?",
+        "missingFacet": "",
+        "reason": "Der Claim wird als offener Kl\u00E4rungsbedarf passend adressiert: Das Artefakt fragt explizit nach Richtlinien f\u00FCr personenbezogene Daten in Test-/Entwicklungsumgebungen sowie nach Anonymisierung bzw. Ersatzdaten. Das deckt die Evidence ab, dass echte Kundendaten dort Datenschutzrisiken verursachen und vermieden werden m\u00FCssen."
+      },
+      "topicCoverageBaseline": "TopicCoverage findet Testdaten je nach Topic-Fassung; SourceClaim pr\u00E4zisiert die Pflicht.",
+      "directReviewBaseline": "DirectReview architecture fand Testdaten/Umgebungen als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PRICE-CACHE-015",
+      "sourceArtifact": "risks",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Caching/Fallbacks f\u00FCr SAP-Daten kollidieren mit Datenaktualit\u00E4t und Datenschutz.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T237): Fallback oder Cache?",
+        "Clara (T240): Dann wieder Datenschutz und Retention.",
+        "Eva (T244): Cache-Invalidierung ist aufwendig."
+      ],
+      "verdict": {
+        "id": "SC-RISK-PRICE-CACHE-015",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und m\u00F6glichen Caching-Mechanismen.",
+        "missingFacet": "Kollision mit Datenschutz/Retention und Datenaktualit\u00E4t/Invalidierungsaufwand wird nicht explizit beschrieben.",
+        "reason": "Der Architekturtext adressiert Caching bei SAP-Daten als offene Architekturentscheidung und nennt Datenschutz/DSGVO allgemein. Der konkrete Source-Claim, dass Fallbacks/Caching mit Datenaktualit\u00E4t sowie Datenschutz/Retention kollidieren und Cache-Invalidierung aufwendig ist, wird jedoch nicht explizit zusammengef\u00FChrt oder n\u00E4her ausgef\u00FChrt."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Cache/Risiko teils.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PRICE-CACHE-015",
+      "sourceArtifact": "risks",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Caching/Fallbacks f\u00FCr SAP-Daten kollidieren mit Datenaktualit\u00E4t und Datenschutz.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T237): Fallback oder Cache?",
+        "Clara (T240): Dann wieder Datenschutz und Retention.",
+        "Eva (T244): Cache-Invalidierung ist aufwendig."
+      ],
+      "verdict": {
+        "id": "SC-RISK-PRICE-CACHE-015",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Preisaktualisierung und Cache-Mechanismen f\u00FCr SAP-Daten m\u00FCssen noch evaluiert werden.\n- Datenschutzrechtliche L\u00F6schkonzepte und datenschutzkonforme Aufbewahrungsfristen m\u00FCssen umgesetzt werden.",
+        "missingFacet": "Der konkrete Konflikt zwischen Cache/Fallbacks und Datenaktualit\u00E4t sowie Datenschutz/Retention wird nicht zusammenh\u00E4ngend beschrieben; Fallbacks fehlen ganz.",
+        "reason": "Das Requirements-Artefakt greift das Thema Cache f\u00FCr SAP-Daten als offenen Evaluierungspunkt auf und enth\u00E4lt allgemeine Datenschutz-/Retention-Anforderungen. Damit ist der Claim erkennbar adressiert, aber die eigentliche Kollision aus Cache/Fallbacks versus Aktualit\u00E4t und Datenschutz wird nicht explizit festgehalten."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Cache/Risiko teils.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PRICE-CACHE-015",
+      "sourceArtifact": "risks",
+      "targetArtifact": "risks",
+      "isFixtureTarget": true,
+      "sourceClaim": "Caching/Fallbacks f\u00FCr SAP-Daten kollidieren mit Datenaktualit\u00E4t und Datenschutz.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "Ben (T237): Fallback oder Cache?",
+        "Clara (T240): Dann wieder Datenschutz und Retention.",
+        "Eva (T244): Cache-Invalidierung ist aufwendig."
+      ],
+      "verdict": {
+        "id": "SC-RISK-PRICE-CACHE-015",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- **Cache-Konzept problematisch:** \n  Cache zur Verbesserung der Performance kollidiert mit Datenschutz und Datenaktualit\u00E4t.",
+        "missingFacet": "",
+        "reason": "Der Artefakttext erfasst den Kern des Claims direkt: Cache-Konflikt mit Datenaktualit\u00E4t und Datenschutz. Damit sind die in der Evidence genannten Spannungen zu Cache/Fallback, Datenschutz/Retention und Aktualit\u00E4t sinngem\u00E4\u00DF als Risiko dokumentiert."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Cache/Risiko teils.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PRICE-CACHE-015",
+      "sourceArtifact": "risks",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": false,
+      "sourceClaim": "Caching/Fallbacks f\u00FCr SAP-Daten kollidieren mit Datenaktualit\u00E4t und Datenschutz.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T237): Fallback oder Cache?",
+        "Clara (T240): Dann wieder Datenschutz und Retention.",
+        "Eva (T244): Cache-Invalidierung ist aufwendig."
+      ],
+      "verdict": {
+        "id": "SC-RISK-PRICE-CACHE-015",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **SAP Integration:** Wie soll der Umgang mit Preis- und Rabattdaten erfolgen, insbesondere bei teils n\u00E4chtlichen Aktualisierungen?",
+        "missingFacet": "Konkrete offene Frage zu Cache/Fallback-Strategie sowie Konflikt mit Datenschutz/Retention und Cache-Invalidierung fehlt.",
+        "reason": "Der Artefakttext greift die Datenaktualit\u00E4t bei Preis-/Rabattdaten im SAP-Kontext sinngem\u00E4\u00DF auf. Die im SourceClaim expliziten offenen Punkte zu Caching/Fallbacks, Datenschutz/Retention und dem Aufwand der Cache-Invalidierung werden jedoch nicht ausdr\u00FCcklich als Kl\u00E4rungsbedarf benannt."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Cache/Risiko teils.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-MOBILE-016",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Mobile Umsetzung ist offen: native App vs. responsive Web.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T2): Web first. Mobile sp\u00E4ter. Oder andersrum?",
+        "Ben (T5): Mobile hei\u00DFt native App oder responsive Web?"
+      ],
+      "verdict": {
+        "id": "SC-OQ-MOBILE-016",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- Mobile Umsetzung: Native App vs. responsive Web-Anwendung bleibt unentschieden.",
+        "missingFacet": "",
+        "reason": "Der Source-Claim ist in den offenen Architekturentscheidungen direkt und statusgerecht \u00FCbernommen. Die Offenheit der Entscheidung zwischen nativer App und responsiver Web-Umsetzung wird explizit dokumentiert; das ist f\u00FCr ein Architekturartefakt sinnvoll und ausreichend."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte Mobile covered erkennen.",
+      "directReviewBaseline": "DirectReview sollte diesen Kontrollfall nicht missen.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-MOBILE-016",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Mobile Umsetzung ist offen: native App vs. responsive Web.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T2): Web first. Mobile sp\u00E4ter. Oder andersrum?",
+        "Ben (T5): Mobile hei\u00DFt native App oder responsive Web?"
+      ],
+      "verdict": {
+        "id": "SC-OQ-MOBILE-016",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- Die Entscheidung, ob das Portal als native Mobile App oder responsive Web-App umgesetzt wird, ist noch offen.",
+        "missingFacet": "",
+        "reason": "Der Source-Claim wird im Abschnitt \u0027Assumptions and Open Points\u0027 explizit und mit korrektem Offenheitsstatus wiedergegeben. Das ist fuer requirements sinnvoll und angemessen behandelt."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte Mobile covered erkennen.",
+      "directReviewBaseline": "DirectReview sollte diesen Kontrollfall nicht missen.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-MOBILE-016",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Mobile Umsetzung ist offen: native App vs. responsive Web.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T2): Web first. Mobile sp\u00E4ter. Oder andersrum?",
+        "Ben (T5): Mobile hei\u00DFt native App oder responsive Web?"
+      ],
+      "verdict": {
+        "id": "SC-OQ-MOBILE-016",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **Technische Machbarkeit vs. Budget:** Native mobile App vs. responsive Web, Managed Services vs. Eigenbetrieb, Kosten und Aufwand sind unklar.",
+        "missingFacet": "",
+        "reason": "Der Risk-Claim aus dem Transkript (offene Mobile-Umsetzung: native App oder responsive Web) ist im Risikoartefakt explizit als Unsicherheit/Widerspruch mit Auswirkungen auf Aufwand und Kosten aufgenommen. F\u00FCr ein Risiken-Artefakt ist diese Behandlung angemessen."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte Mobile covered erkennen.",
+      "directReviewBaseline": "DirectReview sollte diesen Kontrollfall nicht missen.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-MOBILE-016",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": true,
+      "sourceClaim": "Mobile Umsetzung ist offen: native App vs. responsive Web.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "Anna (T2): Web first. Mobile sp\u00E4ter. Oder andersrum?",
+        "Ben (T5): Mobile hei\u00DFt native App oder responsive Web?"
+      ],
+      "verdict": {
+        "id": "SC-OQ-MOBILE-016",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": false,
+        "artifactQuote": "",
+        "missingFacet": "Offene Frage zur Mobile-Umsetzung (native App vs. responsive Web) fehlt vollst\u00E4ndig.",
+        "reason": "Der Source-Claim benennt explizit eine offene Produkt-/Technikfrage zur mobilen Umsetzung (\u0027native App oder responsive Web\u0027). Im Artefakt sind zwar mehrere offene fachliche und technische Fragen enthalten, aber keine sinngem\u00E4\u00DFe Erw\u00E4hnung von Mobile-Strategie, Web-first/mobile sp\u00E4ter oder der Entscheidung zwischen nativer App und responsive Web."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte Mobile covered erkennen.",
+      "directReviewBaseline": "DirectReview sollte diesen Kontrollfall nicht missen.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PUSH-017",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Push Notifications sind ein Marketingwunsch, aber Status, Einwilligung und MVP-Scope sind offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Clara (T41): Push hei\u00DFt Einwilligung. Wieder DSGVO."
+      ],
+      "verdict": {
+        "id": "SC-OQ-PUSH-017",
+        "verdict": "not_applicable",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "",
+        "reason": "Der Claim beschreibt prim\u00E4r einen offenen Produkt-/Scope-Wunsch aus Marketing (Push Notifications) mit unklarem Status und Einwilligungsbedarf. F\u00FCr dieses Architekturartefakt ist daraus noch keine verpflichtende Architekturabdeckung ableitbar, solange Feature, Consent-Umsetzung und MVP-Zugeh\u00F6rigkeit nicht entschieden sind. Das Dokument behandelt offene Architekturentscheidungen und DSGVO allgemein, aber Push Notifications sind hier nicht sinnvoll zwingend zu erwarten."
+      },
+      "topicCoverageBaseline": "TopicCoverage konnte Push ohne Topic nicht pr\u00FCfen; Verifier fand Push als Kandidat.",
+      "directReviewBaseline": "DirectReview kann Push finden, aber nicht garantiert.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PUSH-017",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Push Notifications sind ein Marketingwunsch, aber Status, Einwilligung und MVP-Scope sind offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Clara (T41): Push hei\u00DFt Einwilligung. Wieder DSGVO."
+      ],
+      "verdict": {
+        "id": "SC-OQ-PUSH-017",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": false,
+        "artifactQuote": "",
+        "missingFacet": "Offener Marketingwunsch zu Push Notifications inkl. ungekl\u00E4rter Einwilligung/DSGVO und fehlender MVP-Entscheidung",
+        "reason": "Im Artefakt gibt es keine sinngem\u00E4\u00DFe Erw\u00E4hnung von Push Notifications. Der Source-Claim betrifft eine potenzielle Anforderung mit offenem Status sowie Datenschutz-/Einwilligungsbedarf und unklarem MVP-Scope; solche offenen Punkte w\u00FCrden in diesem Requirements-Artefakt sinnvoll erwartet, sind aber nicht enthalten."
+      },
+      "topicCoverageBaseline": "TopicCoverage konnte Push ohne Topic nicht pr\u00FCfen; Verifier fand Push als Kandidat.",
+      "directReviewBaseline": "DirectReview kann Push finden, aber nicht garantiert.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PUSH-017",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Push Notifications sind ein Marketingwunsch, aber Status, Einwilligung und MVP-Scope sind offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Clara (T41): Push hei\u00DFt Einwilligung. Wieder DSGVO."
+      ],
+      "verdict": {
+        "id": "SC-OQ-PUSH-017",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Unklare und widerspr\u00FCchliche Zielsetzungen:** \n  Das Projektziel ist hochkomplex und umfasst viele Funktionen ... Das Risiko von Scope Creep und Zielkonflikten ist hoch.\n- **Einwilligungen und Double-Opt-In:** \n  Anforderungen zur Einwilligung und Logging sind komplex und bedeuten Mehraufwand.",
+        "missingFacet": "Push Notifications als konkreter offener Marketingwunsch sowie der ungekl\u00E4rte Status/MVP-Scope werden nicht explizit benannt.",
+        "reason": "Das Risikoartefakt deckt die beiden Kernaspekte allgemein ab: Scope-/Priorisierungskonflikte und DSGVO-/Einwilligungsrisiken. Die Source-Evidence ist aber spezifisch zu Push Notifications als Marketingwunsch, deren Status umstritten ist und die wegen Einwilligung den MVP beeinflussen k\u00F6nnten. Diese konkrete offene Anforderung fehlt."
+      },
+      "topicCoverageBaseline": "TopicCoverage konnte Push ohne Topic nicht pr\u00FCfen; Verifier fand Push als Kandidat.",
+      "directReviewBaseline": "DirectReview kann Push finden, aber nicht garantiert.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PUSH-017",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": true,
+      "sourceClaim": "Push Notifications sind ein Marketingwunsch, aber Status, Einwilligung und MVP-Scope sind offen.",
+      "expectedVerdict": "missing",
+      "evidence": [
+        "Anna (T10): Und Marketing will Push Notifications.",
+        "Ben (T35): Push Notifications? Das hatten wir nie besprochen.",
+        "Clara (T41): Push hei\u00DFt Einwilligung. Wieder DSGVO."
+      ],
+      "verdict": {
+        "id": "SC-OQ-PUSH-017",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "Offene Frage zu Push Notifications als Marketingwunsch inkl. MVP-Scope und DSGVO/Einwilligung fehlt.",
+        "reason": "Das Artefakt enth\u00E4lt allgemeine offene Fragen zu MVP-Scope und Datenschutz, nennt Push Notifications jedoch nirgends explizit oder sinngem\u00E4\u00DF. Der Source-Claim verlangt, Push als offene Scope-/Datenschutzfrage zu erfassen oder bewusst auszuschlie\u00DFen; diese spezifische Kl\u00E4rung fehlt."
+      },
+      "topicCoverageBaseline": "TopicCoverage konnte Push ohne Topic nicht pr\u00FCfen; Verifier fand Push als Kandidat.",
+      "directReviewBaseline": "DirectReview kann Push finden, aber nicht garantiert.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-EU-RESIDENCE-018",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "EU-only vs. allgemein DSGVO-konform ist nicht dasselbe und muss f\u00FCr Hosting/Datenresidenz gekl\u00E4rt werden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Clara (T96): EU only? Oder DSGVO-konform? Das ist nicht dasselbe.",
+        "Farid (T98): Managed Services replizieren manchmal global."
+      ],
+      "verdict": {
+        "id": "SC-OQ-EU-RESIDENCE-018",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Hosting-Service:** Mandantenf\u00E4hige, DSGVO-konforme EU-basierte Managed Cloud Infrastruktur, keine neue DB-Installation.\n- **Backup und Disaster Recovery:** Muss den Anforderungen der Datenresidenz in der EU gen\u00FCgen.",
+        "missingFacet": "Abgrenzung EU-only vs. nur DSGVO-konform sowie Risiko globaler Replikation bei Managed Services ist nicht explizit gekl\u00E4rt/offen dokumentiert.",
+        "reason": "Das Architekturartefakt behandelt Hosting und Datenresidenz grunds\u00E4tzlich mit EU-basierter Infrastruktur und EU-Datenresidenz. Der Kern des Source-Claims ist damit erkennbar adressiert. Es fehlt jedoch die explizite architektonische Kl\u00E4rung der im Transkript betonten Unterscheidung zwischen \u0027EU-only\u0027 und blo\u00DFer \u0027DSGVO-Konformit\u00E4t\u0027 sowie der Hinweis, dass Managed Services trotz DSGVO/EU-Claims global replizieren k\u00F6nnten."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte EU/Datenresidenz covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet EU/Hosting h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-EU-RESIDENCE-018",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "EU-only vs. allgemein DSGVO-konform ist nicht dasselbe und muss f\u00FCr Hosting/Datenresidenz gekl\u00E4rt werden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Clara (T96): EU only? Oder DSGVO-konform? Das ist nicht dasselbe.",
+        "Farid (T98): Managed Services replizieren manchmal global."
+      ],
+      "verdict": {
+        "id": "SC-OQ-EU-RESIDENCE-018",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Datenhosting muss in der EU oder mindestens DSGVO-konform erfolgen, exakte Datenresidenz ist zu definieren.\n- Das System soll EU-konform gehostet werden und s\u00E4mtliche Datenschutzanforderungen der DSGVO erf\u00FCllen.",
+        "missingFacet": "Unterschied EU-only vs. nur DSGVO-konform sowie Risiko globaler Replikation bei Managed Services ist nicht klar als offener Kl\u00E4rpunkt/harte Vorgabe pr\u00E4zisiert.",
+        "reason": "Der Kern des Claims ist erkennbar aufgegriffen: Das Artefakt nennt explizit \u201Ein der EU oder mindestens DSGVO-konform\u201C und dass die exakte Datenresidenz noch zu definieren ist. Damit wird die Nicht-Gleichheit indirekt adressiert. Es fehlt aber die pr\u00E4zise Kl\u00E4rung bzw. der Hinweis auf Managed Services mit m\u00F6glicher globaler Replikation aus der Evidence."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte EU/Datenresidenz covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet EU/Hosting h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-EU-RESIDENCE-018",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "EU-only vs. allgemein DSGVO-konform ist nicht dasselbe und muss f\u00FCr Hosting/Datenresidenz gekl\u00E4rt werden.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Clara (T96): EU only? Oder DSGVO-konform? Das ist nicht dasselbe.",
+        "Farid (T98): Managed Services replizieren manchmal global."
+      ],
+      "verdict": {
+        "id": "SC-OQ-EU-RESIDENCE-018",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "**DSGVO-Konformit\u00E4t unklar:** Hosting und Datenresidenz sind noch nicht konkret definiert. EU-only Hosting ist gefordert, Hosting-Kosten sind unklar.",
+        "missingFacet": "Die explizite Unterscheidung, dass EU-only nicht gleich allgemeiner DSGVO-Konformit\u00E4t ist, sowie das Risiko globaler Replikation bei Managed Services.",
+        "reason": "Das Risikoartefakt adressiert Hosting/Datenresidenz und nennt EU-only Hosting als offene Forderung. Damit ist der Kern des Claims erkennbar behandelt. Es fehlt aber die wichtige Facette aus der Evidence, dass EU-only und DSGVO-konform unterschiedliche Anforderungen sind und speziell bei Managed Services globale Replikation ein separates Risiko darstellt."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte EU/Datenresidenz covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet EU/Hosting h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-EU-RESIDENCE-018",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": true,
+      "sourceClaim": "EU-only vs. allgemein DSGVO-konform ist nicht dasselbe und muss f\u00FCr Hosting/Datenresidenz gekl\u00E4rt werden.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "Clara (T96): EU only? Oder DSGVO-konform? Das ist nicht dasselbe.",
+        "Farid (T98): Managed Services replizieren manchmal global."
+      ],
+      "verdict": {
+        "id": "SC-OQ-EU-RESIDENCE-018",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- **EU-only Hosting und Datenresidenz:** Wie wird die Einhaltung von EU-only Hosting bzw. strenger DSGVO-Konformit\u00E4t nachweisbar sichergestellt, insbesondere bei Nutzung von Managed Services?",
+        "missingFacet": "",
+        "reason": "Der Open-Questions-Eintrag adressiert explizit den Unterschied bzw. die Abgrenzung zwischen EU-only Hosting und DSGVO-Konformit\u00E4t sowie das Risiko durch Managed Services und h\u00E4lt dies als offene Compliancefrage fest, wie in der Evidence gefordert."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte EU/Datenresidenz covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet EU/Hosting h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PRICE-CACHE-019",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und Caching ist offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T147): SAP-Preise sind nicht immer in Echtzeit aktuell.",
+        "Ben (T237): Fallback oder Cache?",
+        "Eva (T244): Cache-Invalidierung ist aufwendig."
+      ],
+      "verdict": {
+        "id": "SC-OQ-PRICE-CACHE-019",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und m\u00F6glichen Caching-Mechanismen.",
+        "missingFacet": "",
+        "reason": "Der Source-Claim ist f\u00FCr ein Architekturartefakt sinnvoll relevant, da es um Integrations-/Caching-Entscheidungen f\u00FCr SAP-Preisdaten geht. Das Artefakt behandelt dies explizit als offene Architekturentscheidung und spiegelt damit den offenen Status aus der Evidence (nicht Echtzeit, Fallback/Cache, aufwendige Cache-Invalidierung) angemessen wider."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Preis-/Cachethemen teils.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PRICE-CACHE-019",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und Caching ist offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T147): SAP-Preise sind nicht immer in Echtzeit aktuell.",
+        "Ben (T237): Fallback oder Cache?",
+        "Eva (T244): Cache-Invalidierung ist aufwendig."
+      ],
+      "verdict": {
+        "id": "SC-OQ-PRICE-CACHE-019",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- Preisaktualisierung und Cache-Mechanismen f\u00FCr SAP-Daten m\u00FCssen noch evaluiert werden.",
+        "missingFacet": "",
+        "reason": "Der Source-Claim beschreibt einen offenen Umgang mit SAP-Preis-/Rabatt-Schwankungen und Caching. Im Requirements-Artefakt ist dieser Punkt als offener Punkt explizit enthalten; damit werden sowohl SAP-Preisdaten als auch Cache-Mechanismen mit offenem Status angemessen adressiert."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Preis-/Cachethemen teils.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PRICE-CACHE-019",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und Caching ist offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Ben (T147): SAP-Preise sind nicht immer in Echtzeit aktuell.",
+        "Ben (T237): Fallback oder Cache?",
+        "Eva (T244): Cache-Invalidierung ist aufwendig."
+      ],
+      "verdict": {
+        "id": "SC-OQ-PRICE-CACHE-019",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Cache-Konzept problematisch:** \n  Cache zur Verbesserung der Performance kollidiert mit Datenschutz und Datenaktualit\u00E4t.",
+        "missingFacet": "Preis- und Rabattschwankungen bei SAP-Daten sowie der offene Entscheidungsstatus zu Fallback/Cache werden nicht explizit benannt.",
+        "reason": "Der Risikokern zu Caching und fehlender Datenaktualit\u00E4t ist in der Risikoanalyse erkennbar enthalten. Die Source-Evidence bezieht sich jedoch spezifisch auf nicht echtzeitaktuelle SAP-Preise, Rabattschwankungen und die noch offene Frage Fallback oder Cache; diese fachliche Zuspitzung und der offene Status fehlen im Artefakt."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Preis-/Cachethemen teils.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PRICE-CACHE-019",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": true,
+      "sourceClaim": "Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und Caching ist offen.",
+      "expectedVerdict": "covered",
+      "evidence": [
+        "Ben (T147): SAP-Preise sind nicht immer in Echtzeit aktuell.",
+        "Ben (T237): Fallback oder Cache?",
+        "Eva (T244): Cache-Invalidierung ist aufwendig."
+      ],
+      "verdict": {
+        "id": "SC-OQ-PRICE-CACHE-019",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **SAP Integration:** Wie soll der Umgang mit Preis- und Rabattdaten erfolgen, insbesondere bei teils n\u00E4chtlichen Aktualisierungen? Sind Schreibzugriffe im Portal langfristig vorgesehen und wie wird das technisch realisiert?",
+        "missingFacet": "Offene Frage zu Fallback/Cache bzw. Cache-Invalidierung bei nicht echtzeitaktuellen SAP-Preis-/Rabattdaten fehlt.",
+        "reason": "Das Artefakt adressiert die Preis-/Rabattdaten als offene technische Frage und erw\u00E4hnt n\u00E4chtliche Aktualisierungen, was E1 sinngem\u00E4\u00DF aufgreift. Die im Claim zentrale offene Behandlung von Cache/Fallback und der Aufwand der Cache-Invalidierung aus E2/E3 ist jedoch nicht enthalten."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Preis-/Cachethemen teils.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-ANALYTICS-020",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "architecture",
+      "isFixtureTarget": false,
+      "sourceClaim": "KPI-/Analytics-Messung ist fachlich gew\u00FCnscht, aber technische Umsetzung und Datenschutz sind offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Clara (T186): Tracking ist Datenschutz.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-OQ-ANALYTICS-020",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "## Offene Architekturentscheidungen\n- Mobile Umsetzung: Native App vs. responsive Web-Anwendung bleibt unentschieden.\n...\n## Daten- und Sicherheitsaspekte\n- **DSGVO-Konformit\u00E4t ist zentral:** Implementierung von Double-Opt-In, L\u00F6schkonzepten, Datenschutz bei Logging, Audit und Backup.",
+        "missingFacet": "Analytics/KPI-Tracking selbst sowie die offene technische Messumsetzung werden nicht genannt.",
+        "reason": "Der Claim hat Architekturbezug, weil Tracking technisch offen ist und Datenschutz betroffen ist. Das Artefakt behandelt Datenschutz/DSGVO allgemein und dokumentiert offene Architekturentscheidungen, enth\u00E4lt aber keine sinngem\u00E4\u00DFe Erw\u00E4hnung eines Analytics-/KPI-Trackings, keiner Messl\u00F6sung und keiner offenen Entscheidung dazu. Daher nur teilweise abgedeckt."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics nur finden, wenn Topic \u002B relevantFor erhalten bleiben.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot in architecture; open-questions ist Kontrollfall.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-ANALYTICS-020",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "requirements",
+      "isFixtureTarget": false,
+      "sourceClaim": "KPI-/Analytics-Messung ist fachlich gew\u00FCnscht, aber technische Umsetzung und Datenschutz sind offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Clara (T186): Tracking ist Datenschutz.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-OQ-ANALYTICS-020",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Konkretisierung der KPI-Messungen und deren technische Umsetzung ist noch ausstehend.\n- Das System soll EU-konform gehostet werden und s\u00E4mtliche Datenschutzanforderungen der DSGVO erf\u00FCllen.\n- Umgang mit Testdaten und deren Datenschutz ist nicht abschlie\u00DFend gekl\u00E4rt.",
+        "missingFacet": "Der Bezug von Datenschutz explizit auf Tracking/Analytics ist offen und die fachlich gew\u00FCnschten KPIs (z. B. Conversion, Angebotsdauer, Nutzung) sind nicht konkret benannt.",
+        "reason": "Der fachliche Wunsch nach KPI-Messung ist im Artefakt erkennbar \u00FCber den offenen Punkt zur KPI-Messung und technischen Umsetzung abgebildet. Auch Datenschutz wird allgemein adressiert. Es fehlt jedoch die explizite Verkn\u00FCpfung, dass gerade Tracking/Analytics datenschutzrechtlich offen bzw. kl\u00E4rungsbed\u00FCrftig ist; zudem werden die gew\u00FCnschten KPI-Beispiele aus der Evidence nicht konkretisiert."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics nur finden, wenn Topic \u002B relevantFor erhalten bleiben.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot in architecture; open-questions ist Kontrollfall.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-ANALYTICS-020",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "risks",
+      "isFixtureTarget": false,
+      "sourceClaim": "KPI-/Analytics-Messung ist fachlich gew\u00FCnscht, aber technische Umsetzung und Datenschutz sind offen.",
+      "expectedVerdict": null,
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Clara (T186): Tracking ist Datenschutz.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-OQ-ANALYTICS-020",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": false,
+        "artifactQuote": "- **KPIs und Analytics:** Bedarf besteht, technische Umsetzung ist nicht definiert und k\u00F6nnte Datenschutz gef\u00E4hrden.",
+        "missingFacet": "",
+        "reason": "Der Risikoeintrag greift den fachlichen Bedarf an KPI/Analytics sowie die beiden offenen Risikofacetten aus der Evidence explizit auf: technische Umsetzung ist offen und Datenschutz ist kritisch."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics nur finden, wenn Topic \u002B relevantFor erhalten bleiben.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot in architecture; open-questions ist Kontrollfall.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-ANALYTICS-020",
+      "sourceArtifact": "open-questions",
+      "targetArtifact": "open-questions",
+      "isFixtureTarget": true,
+      "sourceClaim": "KPI-/Analytics-Messung ist fachlich gew\u00FCnscht, aber technische Umsetzung und Datenschutz sind offen.",
+      "expectedVerdict": "missing",
+      "evidence": [
+        "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung.",
+        "Clara (T186): Tracking ist Datenschutz.",
+        "Ben (T187): Technisch ist noch offen, womit wir das messen."
+      ],
+      "verdict": {
+        "id": "SC-OQ-ANALYTICS-020",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "Offene Frage zu KPI/Analytics-Tracking inkl. technischer Messumsetzung und Datenschutzbewertung fehlt.",
+        "reason": "Die Evidence nennt explizit den Wunsch nach KPIs/Analytics (Conversion, Angebotsdauer, Nutzung) sowie offene Punkte zu Tracking-Datenschutz und technischer Messl\u00F6sung. Im Artefakt finden sich offene Fragen zu Datenschutz, Logging und Technik allgemein, aber keine sinngem\u00E4\u00DFe offene Frage zu KPI-/Analytics-Messung oder Tracking."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics nur finden, wenn Topic \u002B relevantFor erhalten bleiben.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot in architecture; open-questions ist Kontrollfall.",
+      "note": null
+    }
+  ]
+}

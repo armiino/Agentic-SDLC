@@ -1,0 +1,2408 @@
+{
+  "fixture": "input/eval-labels/source-claim-coverage-spike.json",
+  "transcript": "T9999_chaos.txt",
+  "phase": "phase2_1",
+  "runId": "20260612_133345_2d7b09",
+  "judge": "openai/gpt-5.4",
+  "mode": "source-claim-ledger-spike",
+  "extractionMode": "global-ledger-once",
+  "total": 20,
+  "extracted": 98,
+  "candidateCounts": {
+    "architecture": 76,
+    "requirements": 87,
+    "risks": 76,
+    "open-questions": 31
+  },
+  "ledger": [
+    {
+      "id": "GLOBAL-SC-001",
+      "sourceClaim": "Ein Kundenportal ist als Kernprodukt erforderlich; der genaue Zuschnitt als reines Portal versus breitere Plattform ist noch nicht final entschieden.",
+      "requiredTreatment": "Portal als Kernscope festhalten und die noch offene Produktabgrenzung explizit dokumentieren.",
+      "evidence": [
+        "Also wir brauchen definitiv ein Kundenportal. Aber nicht nur ein Portal, eher so eine Plattform. Also... vielleicht doch erstmal nur ein Portal.",
+        "Nein, Portal bleibt Ziel."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-002",
+      "sourceClaim": "Die prim\u00E4re Zieldefinition ist schnellere Angebotserstellung; das Portal ist Mittel zum Zweck, weitere Ziele wie Rechnungszugriff und Compliance bestehen parallel.",
+      "requiredTreatment": "Hauptziel und konkurrierende Nebenziele priorisieren und in Scope/Erfolgskriterien abbilden.",
+      "evidence": [
+        "Ja genau! Angebote schneller erstellen. Das ist eigentlich das Hauptziel. Portal ist nur Mittel zum Zweck.",
+        "Ziel ist schneller Angebote erstellen.",
+        "Und Portal.",
+        "Und Compliance."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-003",
+      "sourceClaim": "MVP wurde in 8 Wochen versprochen, steht aber im Spannungsfeld mit Umfang und Pflichtma\u00DFnahmen.",
+      "requiredTreatment": "Zeitvorgabe als harte Rahmenbedingung dokumentieren und Scope/Risiken dagegen bewerten.",
+      "evidence": [
+        "MVP in 8 Wochen wurde versprochen.",
+        "Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+        "Das ist kein 8-Wochen-MVP."
+      ],
+      "kind": "constraint",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-004",
+      "sourceClaim": "Frontend-Strategie ist offen: Web-first wurde genannt, Mobile ist sp\u00E4ter angedacht, gleichzeitig will Sales mobil arbeiten.",
+      "requiredTreatment": "Kanalstrategie und MVP-Kanalentscheidung explizit kl\u00E4ren.",
+      "evidence": [
+        "Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.",
+        "Mobile vielleicht"
+      ],
+      "kind": "open_question",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-005",
+      "sourceClaim": "Es ist offen, ob mobile Nutzung als native App oder responsive Web umgesetzt werden soll; native w\u00E4re teuer.",
+      "requiredTreatment": "Mobile-Optionen mit Kosten- und Architekturfolgen gegeneinander entscheiden.",
+      "evidence": [
+        "Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer."
+      ],
+      "kind": "open_question",
+      "priority": "medium",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-006",
+      "sourceClaim": "Es gibt kein Budget f\u00FCr zwei Frontends.",
+      "requiredTreatment": "Als Budgetconstraint in L\u00F6sungswahl und Scope ber\u00FCcksichtigen.",
+      "evidence": [
+        "Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends."
+      ],
+      "kind": "constraint",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-007",
+      "sourceClaim": "Das bestehende Backend ist noch nicht API-ready.",
+      "requiredTreatment": "Integrationsreife des Backends als technisches Risiko und Umsetzungsbedarf erfassen.",
+      "evidence": [
+        "Und ehrlich gesagt ist unser Backend noch nicht mal API-ready."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-008",
+      "sourceClaim": "Es werden Kundendaten gespeichert, daher sind DSGVO-Anforderungen zwingend und nicht optional.",
+      "requiredTreatment": "Datenschutzpflichten als nicht verhandelbare Anforderungen und Architekturtreiber aufnehmen.",
+      "evidence": [
+        "Bevor wir \u00FCber Frontends reden: DSGVO. Wir speichern Kundendaten.",
+        "DSGVO ist nicht optional."
+      ],
+      "kind": "constraint",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-009",
+      "sourceClaim": "F\u00FCr Login per E-Mail ist Double-Opt-In erforderlich.",
+      "requiredTreatment": "Double-Opt-In als Pflicht f\u00FCr den gew\u00E4hlten Login-/Registrierungsprozess spezifizieren.",
+      "evidence": [
+        "Login per E-Mail? Dann brauchen wir Double-Opt-In.",
+        "Dann MVP: 1. Login mit Double-Opt-In"
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-010",
+      "sourceClaim": "Logging, L\u00F6schkonzepte und Auftragsverarbeitungsvertr\u00E4ge sind wegen DSGVO erforderlich.",
+      "requiredTreatment": "Datenschutz-Basispflichten als Compliance-Anforderungen und offene Umsetzungsaufgaben dokumentieren.",
+      "evidence": [
+        "Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.",
+        "Double-Opt-In und L\u00F6schung fehlen."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-011",
+      "sourceClaim": "F\u00FCr das MVP wurde Login per E-Mail und Passwort als erster Ansatz genannt.",
+      "requiredTreatment": "MVP-Authentifizierungsverfahren festhalten, sofern nicht durch sp\u00E4tere Entscheidungen ersetzt.",
+      "evidence": [
+        "Also erstmal Login per E-Mail und Passwort."
+      ],
+      "kind": "status",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-012",
+      "sourceClaim": "SSO ist optional und als sp\u00E4tere/unklare Erweiterung zu behandeln; m\u00F6gliche Provider wurden genannt, aber keine Auswahl ist getroffen.",
+      "requiredTreatment": "SSO als optionale Erweiterung mit offener Providerentscheidung dokumentieren.",
+      "evidence": [
+        "SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?",
+        "SSO optional",
+        "Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat."
+      ],
+      "kind": "open_question",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-013",
+      "sourceClaim": "Ein zentrales IAM fehlt; SAP hat nur eine veraltete Identit\u00E4tsl\u00F6sung, was SSO erschwert.",
+      "requiredTreatment": "IAM-L\u00FCcke als Architektur- und Integrationsrisiko ber\u00FCcksichtigen.",
+      "evidence": [
+        "Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-014",
+      "sourceClaim": "Wenn SAP involviert ist und personenbezogene Daten im ERP liegen, sind Audit Trails, Zugriffskontrolle und Rollenmodelle Pflicht.",
+      "requiredTreatment": "ERP-bezogene Audit- und Berechtigungsanforderungen explizit aufnehmen.",
+      "evidence": [
+        "SAP? Wenn SAP involviert ist, dann reden wir von personenbezogenen Daten im ERP. Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.",
+        "Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?"
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-015",
+      "sourceClaim": "Rollenmodell ist erforderlich, aber noch nicht final; diskutiert wurden Admin, normaler User, Manager und Support.",
+      "requiredTreatment": "Rollenmodell als Requirement aufnehmen und offene Rollenabgrenzung kl\u00E4ren.",
+      "evidence": [
+        "Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support.",
+        "Und ein Rollen- und Berechtigungskonzept.",
+        "Wer darf dann die Rabatte sehen? Das ist Rollen- und Berechtigungslogik."
+      ],
+      "kind": "open_question",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-016",
+      "sourceClaim": "Stammdaten liegen in SAP, sind aber teilweise unvollst\u00E4ndig.",
+      "requiredTreatment": "SAP-Stammdatenqualit\u00E4t als Integrationsannahme und Risiko dokumentieren.",
+      "evidence": [
+        "Stammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-017",
+      "sourceClaim": "F\u00FCr Angebotserstellung werden Produktdaten, Preise und Rabattlogik ben\u00F6tigt; Sales fordert dies zwingend.",
+      "requiredTreatment": "Ben\u00F6tigte fachliche Daten und Logik als Kernanforderung f\u00FCr Angebotserstellung spezifizieren.",
+      "evidence": [
+        "Also wenn wir Angebote generieren wollen \u2013 was Sales unbedingt will \u2013 dann brauchen wir Produktdaten, Preise, Rabattlogik.",
+        "Ja genau! Angebote schneller erstellen."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-018",
+      "sourceClaim": "Kunden sollen Bestellungen sehen und Rechnungen herunterladen k\u00F6nnen.",
+      "requiredTreatment": "Self-Service f\u00FCr Bestellansicht und Rechnungsdownload als fachlichen Scope erfassen.",
+      "evidence": [
+        "Also Kunden sollen Bestellungen sehen und Rechnungen downloaden.",
+        "1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload"
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-019",
+      "sourceClaim": "Push Notifications wurden als Wunsch genannt, sind aber unklar und nicht abgestimmt.",
+      "requiredTreatment": "Push-Thema als unsichere Anforderung kennzeichnen und vor Aufnahme validieren.",
+      "evidence": [
+        "Und Marketing will Push Notifications.",
+        "Push Notifications? Das hatten wir nie besprochen.",
+        "Doch, im letzten Meeting. Also ich glaube zumindest."
+      ],
+      "kind": "open_question",
+      "priority": "low",
+      "relevantFor": [
+        "requirements",
+        "open-questions",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-020",
+      "sourceClaim": "Push Notifications und Tracking w\u00FCrden zus\u00E4tzliche Einwilligungen nach DSGVO erfordern.",
+      "requiredTreatment": "Consent-Anforderungen f\u00FCr Push/Tracking als Bedingung dokumentieren.",
+      "evidence": [
+        "Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema."
+      ],
+      "kind": "constraint",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-021",
+      "sourceClaim": "Analytics-/Tracking-Infrastruktur existiert noch nicht.",
+      "requiredTreatment": "Fehlende Analytics-F\u00E4higkeit als Gap f\u00FCr KPI-Messung und sp\u00E4tere Features erfassen.",
+      "evidence": [
+        "Tracking? Wir haben keine Analytics Infrastruktur."
+      ],
+      "kind": "risk",
+      "priority": "medium",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-022",
+      "sourceClaim": "Analytics/KPI-Messung ist f\u00FCr das Team relevant, aber nicht im MVP final verankert.",
+      "requiredTreatment": "KPI-Messung als Bedarf dokumentieren und MVP-vs-sp\u00E4ter explizit entscheiden.",
+      "evidence": [
+        "Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen.",
+        "Was sind die KPIs?"
+      ],
+      "kind": "open_question",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "open-questions",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-023",
+      "sourceClaim": "Wesentliche KPIs sind Conversion Rate von Angebot zu Bestellung und Zeit bis Angebot.",
+      "requiredTreatment": "KPIs als messbare Erfolgsmetriken in Anforderungen/Reporting aufnehmen.",
+      "evidence": [
+        "Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-024",
+      "sourceClaim": "Angebote enthalten personenbezogene Daten.",
+      "requiredTreatment": "Angebotsdaten als personenbezogene Daten in Datenschutz-, Logging- und Speicherkonzepten klassifizieren.",
+      "evidence": [
+        "Aber Angebot selbst enth\u00E4lt personenbezogene Daten."
+      ],
+      "kind": "constraint",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-025",
+      "sourceClaim": "F\u00FCr Transportverschl\u00FCsselung reicht TLS; Ende-zu-Ende-Verschl\u00FCsselung wurde als unrealistisch verworfen.",
+      "requiredTreatment": "TLS als Sicherheitsbaseline festhalten und E2E explizit ausschlie\u00DFen.",
+      "evidence": [
+        "Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS?",
+        "TLS reicht. E2E ist unrealistisch."
+      ],
+      "kind": "decision",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-026",
+      "sourceClaim": "Auditierbarkeit ist Pflicht: nachvollziehbar sein muss, wer wann was ge\u00E4ndert hat.",
+      "requiredTreatment": "Audit-Trail-Anforderungen f\u00FCr Nutzeraktionen und \u00C4nderungen definieren.",
+      "evidence": [
+        "Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?",
+        "Und protokollieren. Wer hat welches Angebot ge\u00F6ffnet?"
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-027",
+      "sourceClaim": "Security Review ist verpflichtend und kann nicht einfach entfallen.",
+      "requiredTreatment": "Security Review als nicht verhandelbaren Gate und Terminrisiko einplanen.",
+      "evidence": [
+        "Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+        "Dann machen wir es ohne Security Review?",
+        "Das ist keine Option.",
+        "Ohne Dokumentation kein Security Review."
+      ],
+      "kind": "constraint",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-028",
+      "sourceClaim": "Es darf kein neuer Datenbankserver eingef\u00FChrt werden; Managed Services sind als Alternative grunds\u00E4tzlich akzeptiert.",
+      "requiredTreatment": "Persistenzl\u00F6sung unter der Vorgabe \u0027kein neuer DB-Server\u0027 und bevorzugt als Managed Service planen.",
+      "evidence": [
+        "Kein neuer DB Server \u2013 IT hat das klar gesagt.",
+        "Ja kein neuer DB Server. Managed Services sind okay.",
+        "Managed Service war okay."
+      ],
+      "kind": "constraint",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-029",
+      "sourceClaim": "Es besteht ein Spannungsfeld zwischen niedrigen Kosten und Skalierbarkeit.",
+      "requiredTreatment": "Kosten- und Skalierungsziele als Zielkonflikt transparent machen und Architekturentscheidungen daran ausrichten.",
+      "evidence": [
+        "Managed Services sind okay. Aber bitte g\u00FCnstig.",
+        "G\u00FCnstig und skalierbar widerspricht sich.",
+        "Overengineering und skalierbar sind ein Spannungsfeld."
+      ],
+      "kind": "risk",
+      "priority": "medium",
+      "relevantFor": [
+        "risks",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-030",
+      "sourceClaim": "Datenhosting soll EU-only sein; \u0027DSGVO-konform\u0027 allein ist daf\u00FCr nicht ausreichend.",
+      "requiredTreatment": "Verbindliche Datenresidenzanforderung und deren Abgrenzung zu allgemeiner DSGVO-Compliance festlegen.",
+      "evidence": [
+        "Und wo werden Daten gehostet? EU only?",
+        "Ja EU only. Oder zumindest DSGVO-konform.",
+        "Das ist nicht dasselbe.",
+        "Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-031",
+      "sourceClaim": "Eine API-Layer wird definitiv ben\u00F6tigt, um Integrationen umsetzen zu k\u00F6nnen.",
+      "requiredTreatment": "API-Layer als Architekturbaustein verpflichtend festhalten.",
+      "evidence": [
+        "Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.",
+        "Das habe ich vorhin API Layer genannt."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-032",
+      "sourceClaim": "Die API muss abgesichert werden; OAuth ist bevorzugt gegen\u00FCber API Keys, aber noch nicht final entschieden und komplexer.",
+      "requiredTreatment": "API-Authentifizierung als offene Architekturentscheidung mit Pr\u00E4ferenz f\u00FCr OAuth dokumentieren.",
+      "evidence": [
+        "API muss abgesichert sein. OAuth? Oder API Keys?",
+        "OAuth w\u00E4re besser. Aber komplexer.",
+        "Und OAuth ist bevorzugt, aber noch nicht final."
+      ],
+      "kind": "open_question",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-033",
+      "sourceClaim": "Backup und Disaster Recovery sind f\u00FCr ein System mit Kundendaten auch im MVP erforderlich.",
+      "requiredTreatment": "Backup/DR als Pflichtanforderung in MVP-Scope und Architektur aufnehmen.",
+      "evidence": [
+        "Und wir haben noch gar nicht \u00FCber Backup gesprochen.",
+        "Ja Disaster Recovery.",
+        "Brauchen wir das f\u00FCr MVP?",
+        "Wenn Kundendaten drin sind: ja.",
+        "Dann MVP: ... 7. Backup"
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-034",
+      "sourceClaim": "Erwartete Nutzerzahlen sind unklar und reichen von 20 bis 20.000, was die Skalierungsplanung offen l\u00E4sst.",
+      "requiredTreatment": "Lastannahmen als offene Frage mit starker Auswirkung auf Architektur und Performance kl\u00E4ren.",
+      "evidence": [
+        "Wie viele User erwarten wir?",
+        "Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft."
+      ],
+      "kind": "open_question",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-035",
+      "sourceClaim": "Skalierbarkeit muss ber\u00FCcksichtigt werden, gleichzeitig soll Overengineering vermieden werden.",
+      "requiredTreatment": "Architekturprinzipien f\u00FCr \u0027skalierbar ohne Overengineering\u0027 definieren.",
+      "evidence": [
+        "Skalierbarkeit muss ber\u00FCcksichtigt werden.",
+        "Aber bitte kein Overengineering."
+      ],
+      "kind": "constraint",
+      "priority": "medium",
+      "relevantFor": [
+        "architecture",
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-036",
+      "sourceClaim": "Es gibt noch keine klare, konsolidierte Zieldefinition und mehrere Stakeholder-Ziele konkurrieren.",
+      "requiredTreatment": "Zielbild und Priorit\u00E4ten explizit harmonisieren; Widerspr\u00FCche sichtbar halten.",
+      "evidence": [
+        "Und wir haben noch keine klare Zieldefinition.",
+        "Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-037",
+      "sourceClaim": "Ein Ticketsystem ist im MVP zun\u00E4chst ausgeschlossen.",
+      "requiredTreatment": "Ausschluss des Ticketsystems als bewusste Scope-Entscheidung dokumentieren.",
+      "evidence": [
+        "Was ist mit Support? Ticketsystem?",
+        "Nein erstmal nicht.",
+        "Ticketsystem war nicht im MVP."
+      ],
+      "kind": "decision",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-038",
+      "sourceClaim": "Das L\u00F6schen von Kundendaten muss m\u00F6glich sein; ein L\u00F6schkonzept wird zwingend ben\u00F6tigt.",
+      "requiredTreatment": "DSGVO-L\u00F6schung als Pflichtfunktion und Prozessanforderung aufnehmen.",
+      "evidence": [
+        "Aber wenn ein Kunde seine Daten l\u00F6schen will?",
+        "Dann muss das gehen.",
+        "Also brauchen wir ein L\u00F6schkonzept."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-039",
+      "sourceClaim": "Ein Rollen- und Berechtigungskonzept ist zwingend erforderlich.",
+      "requiredTreatment": "Feingranulare Berechtigungen fachlich und technisch modellieren.",
+      "evidence": [
+        "Und ein Rollen- und Berechtigungskonzept.",
+        "Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-040",
+      "sourceClaim": "Dokumentation ist notwendig, insbesondere weil ohne sie kein Security Review m\u00F6glich ist.",
+      "requiredTreatment": "Mindestdokumentation als Liefergegenstand f\u00FCr Architektur und Compliance einplanen.",
+      "evidence": [
+        "Dokumentation ist wichtig, aber bitte nicht zu viel.",
+        "Ohne Dokumentation kein Security Review."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-041",
+      "sourceClaim": "Support-relevante Anwendungsf\u00E4lle umfassen Rechnungen, Lieferstatus und falsche Rabatte; ohne strukturierte L\u00F6sung droht manueller Aufwand.",
+      "requiredTreatment": "Support-Use-Cases und deren MVP-Abdeckung explizit bewerten.",
+      "evidence": [
+        "Kunden uns heute wegen Rechnungen, Lieferstatus und falschen Rabatten st\u00E4ndig schreiben.",
+        "Ich will nur verhindern, dass wir nach dem Launch manuell Excel-Listen pflegen."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-042",
+      "sourceClaim": "Wenn nur ein Kontaktformular statt Ticketsystem genutzt wird, muss die Anfrage dem Kundenkonto zugeordnet werden k\u00F6nnen.",
+      "requiredTreatment": "Kontaktformular nur mit Kundenkontenbezug und Bearbeitbarkeit vorsehen.",
+      "evidence": [
+        "Aber kein richtiges Ticketsystem.",
+        "Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-043",
+      "sourceClaim": "Support-Anfragen mit personenbezogenen Daten m\u00FCssen in L\u00F6schkonzept und Auskunftspflichten einbezogen werden.",
+      "requiredTreatment": "Supportdaten in Datenschutz- und Retention-Konzepte integrieren.",
+      "evidence": [
+        "Wenn Support-Anfragen personenbezogene Daten enthalten, dann m\u00FCssen sie in das L\u00F6schkonzept und in die Auskunftspflicht einbezogen werden."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-044",
+      "sourceClaim": "Eine Persistenz f\u00FCr Supportf\u00E4lle ist technisch relevant, steht aber im Konflikt mit der Vorgabe, keine neue Datenbank einzuf\u00FChren; zudem ist der konkrete Managed Service noch nicht entschieden.",
+      "requiredTreatment": "Persistenzbedarf gegen Infrastruktur-Constraint abw\u00E4gen und Servicewahl offen halten.",
+      "evidence": [
+        "Und technisch hei\u00DFt das wieder Persistenz. Wir wollten keine neue Datenbank.",
+        "Managed Service war okay.",
+        "Ja, aber wir haben noch nicht entschieden, welcher."
+      ],
+      "kind": "open_question",
+      "priority": "medium",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-045",
+      "sourceClaim": "SAP kann keine Support-Tickets speichern.",
+      "requiredTreatment": "Supportprozess nicht auf SAP-Ticketpersistenz st\u00FCtzen.",
+      "evidence": [
+        "Und SAP kann keine Support-Tickets speichern."
+      ],
+      "kind": "constraint",
+      "priority": "medium",
+      "relevantFor": [
+        "architecture",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-046",
+      "sourceClaim": "Excel ist f\u00FCr die Verarbeitung solcher Daten keine Option und insbesondere mit personenbezogenen Kundendaten compliance-kritisch.",
+      "requiredTreatment": "Manuelle Excel-basierte Workarounds explizit ausschlie\u00DFen.",
+      "evidence": [
+        "Excel ist keine Option.",
+        "Excel mit personenbezogenen Kundendaten w\u00E4re aus Compliance-Sicht problematisch."
+      ],
+      "kind": "constraint",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-047",
+      "sourceClaim": "Angebote ben\u00F6tigen einen Freigabeprozess f\u00FCr Rabatte; mindestens ab 15 Prozent ist eine Manager-Freigabe gefordert.",
+      "requiredTreatment": "Rabattfreigabe als fachlichen Pflichtprozess spezifizieren.",
+      "evidence": [
+        "Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+        "Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-048",
+      "sourceClaim": "Die genaue Rabattschwelle und m\u00F6gliche zus\u00E4tzliche Finance-Freigabe sind noch nicht final gekl\u00E4rt.",
+      "requiredTreatment": "Schwellenwerte und Eskalationsregeln als offene Fachentscheidung kl\u00E4ren.",
+      "evidence": [
+        "Ab 30 Prozent vielleicht Finance.",
+        "Oder ab 20 Prozent. Ich bin mir nicht sicher.",
+        "Das muss klar definiert werden."
+      ],
+      "kind": "open_question",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "open-questions",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-049",
+      "sourceClaim": "Ohne Freigabeprozess k\u00F6nnen falsche Angebote versendet werden; das ist ein finanzielles Risiko.",
+      "requiredTreatment": "Fehlende Freigabe als finanzielles Risiko im Risikoregister erfassen.",
+      "evidence": [
+        "Nein, ohne Freigabeprozess k\u00F6nnen falsche Angebote rausgehen. Das ist ein finanzielles Risiko."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "risks",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-050",
+      "sourceClaim": "F\u00FCr Angebote werden Workflow-Status wie draft, pending approval, approved, sent, accepted und rejected ben\u00F6tigt.",
+      "requiredTreatment": "Angebotsstatusmodell fachlich und technisch festlegen.",
+      "evidence": [
+        "Dann brauchen wir Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-051",
+      "sourceClaim": "Rabattlogik kommt aus SAP, der Freigabeprozess w\u00FCrde voraussichtlich im Portal liegen.",
+      "requiredTreatment": "Verantwortungsschnitt zwischen SAP und Portal in der Architektur definieren.",
+      "evidence": [
+        "Rabattlogik kommt aus SAP, aber Freigabeprozess w\u00E4re vermutlich im Portal."
+      ],
+      "kind": "status",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-052",
+      "sourceClaim": "Es besteht ein Berechtigungskonflikt zwischen Support-Bedarf und Vertraulichkeit von Preis-/Rabattdetails.",
+      "requiredTreatment": "Berechtigungsmodell f\u00FCr Angebotsdetails und Supporteinsicht gezielt l\u00F6sen.",
+      "evidence": [
+        "Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen.",
+        "Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind.",
+        "Also Support sieht nur Status, nicht Details?",
+        "Dann kann Support nicht helfen."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-053",
+      "sourceClaim": "Nachvollziehbarkeit auch des blo\u00DFen \u00D6ffnens von Angeboten ist gefordert.",
+      "requiredTreatment": "Lesende Zugriffe auf sensible Angebote im Audit-Konzept ber\u00FCcksichtigen.",
+      "evidence": [
+        "Und protokollieren. Wer hat welches Angebot ge\u00F6ffnet?"
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-054",
+      "sourceClaim": "EU-only Hosting ist operativ nicht trivial, weil der Standardanbieter Backups teils global repliziert, wenn dies nicht explizit deaktiviert wird.",
+      "requiredTreatment": "Provider- und Backup-Konfiguration auf Datenresidenz pr\u00FCfen; Fehlkonfiguration als Risiko behandeln.",
+      "evidence": [
+        "Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+        "Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-055",
+      "sourceClaim": "EU-only Hosting wird voraussichtlich teurer; genaue Mehrkosten sind noch unbekannt.",
+      "requiredTreatment": "Kostenrisiko und offene Kostensch\u00E4tzung f\u00FCr Datenresidenz erfassen.",
+      "evidence": [
+        "Aber wenn EU-only teurer ist?",
+        "Ist es wahrscheinlich.",
+        "Kann ich noch nicht sagen."
+      ],
+      "kind": "risk",
+      "priority": "medium",
+      "relevantFor": [
+        "risks",
+        "open-questions",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-056",
+      "sourceClaim": "F\u00FCr den Vorstand wird bis Freitag eine Kostensch\u00E4tzung ben\u00F6tigt, obwohl Scope und Architektur noch unklar sind.",
+      "requiredTreatment": "Unsicherheit der kurzfristigen Kostensch\u00E4tzung transparent machen und Annahmen dokumentieren.",
+      "evidence": [
+        "Wir brauchen aber eine Kostensch\u00E4tzung f\u00FCr den Vorstand bis Freitag.",
+        "Bis Freitag? Wir haben nicht mal eine Architekturentscheidung.",
+        "Eine grobe Sch\u00E4tzung ohne Scope ist gef\u00E4hrlich."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "risks",
+        "open-questions",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-057",
+      "sourceClaim": "Neue externe Portale m\u00FCssen laut interner Policy \u00FCber das zentrale API Gateway laufen.",
+      "requiredTreatment": "API-Gateway-Nutzung als verbindliche Architektur-Constraint aufnehmen.",
+      "evidence": [
+        "Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen."
+      ],
+      "kind": "constraint",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-058",
+      "sourceClaim": "Das Gateway-Team hat eine Warteliste von sechs Wochen, was den 8-Wochen-MVP gef\u00E4hrdet.",
+      "requiredTreatment": "Abh\u00E4ngigkeit vom Gateway-Team als Terminrisiko und Planungsconstraint erfassen.",
+      "evidence": [
+        "Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+        "Das passt nicht zum 8-Wochen-MVP."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-059",
+      "sourceClaim": "Manuelle Uploads von Angeboten wurden nur als m\u00F6gliche Zwischenl\u00F6sung diskutiert, bringen aber Integrations-, Fehler- und Berechtigungsrisiken.",
+      "requiredTreatment": "Manuelle Uploads als bewusste \u00DCbergangsoption nur mit dokumentierten Risiken betrachten.",
+      "evidence": [
+        "Kann man f\u00FCr MVP manuell Angebote hochladen?",
+        "Vielleicht als Zwischenl\u00F6sung?",
+        "Manuelle Uploads erh\u00F6hen Fehlerwahrscheinlichkeit.",
+        "Au\u00DFerdem haben wir dann ein Berechtigungsproblem im File Storage."
+      ],
+      "kind": "risk",
+      "priority": "medium",
+      "relevantFor": [
+        "risks",
+        "requirements",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-060",
+      "sourceClaim": "Aus Datenminimierungssicht ist Abruf aus SAP bei Bedarf w\u00FCnschenswert statt Vollreplikation ins Portal.",
+      "requiredTreatment": "Datenminimierung als Architekturprinzip in der Integrationsstrategie ber\u00FCcksichtigen.",
+      "evidence": [
+        "Was ist eigentlich mit Datenminimierung? M\u00FCssen alle Kundendaten im Portal liegen oder reicht ein Abruf aus SAP bei Bedarf?",
+        "Abruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung"
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "architecture",
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-061",
+      "sourceClaim": "Abruf aus SAP bei Bedarf verschlechtert Performance und Verf\u00FCgbarkeit; zus\u00E4tzlich hat SAP Wartungsfenster am Wochenende.",
+      "requiredTreatment": "Trade-off zwischen Datenminimierung und Betriebsqualit\u00E4t analysieren.",
+      "evidence": [
+        "Abruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit.",
+        "Und SAP hat Wartungsfenster am Wochenende.",
+        "Kunden arbeiten auch am Wochenende."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-062",
+      "sourceClaim": "Zum Start ist DACH vorgesehen, sp\u00E4ter evtl. EU und USA; diese Internationalisierung ist noch nicht final und \u00E4ndert Datenschutz/Vertr\u00E4ge massiv.",
+      "requiredTreatment": "Geografischen Rollout als offene Scope- und Compliance-Entscheidung dokumentieren.",
+      "evidence": [
+        "Zum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft.",
+        "USA \u00E4ndert Datenschutz und Vertragslage massiv."
+      ],
+      "kind": "open_question",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-063",
+      "sourceClaim": "Deutsch und Englisch sollen unterst\u00FCtzt werden.",
+      "requiredTreatment": "Mindestens zweisprachige Oberfl\u00E4che/Dokumente als Anforderung aufnehmen.",
+      "evidence": [
+        "Deutsch und Englisch sollten schon drin sein.",
+        "Support braucht mindestens Deutsch und Englisch."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-064",
+      "sourceClaim": "Angebote m\u00FCssen mindestens in EUR ausgestellt werden; CHF ist wahrscheinlich relevant, USD eher sp\u00E4ter.",
+      "requiredTreatment": "Mehrw\u00E4hrungsbedarf und MVP-W\u00E4hrungsumfang definieren.",
+      "evidence": [
+        "Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter.",
+        "CHF ist f\u00FCr Schweiz wichtig."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-065",
+      "sourceClaim": "Mehrw\u00E4hrung ist insbesondere in Kombination mit Rabattlogik und SAP nicht trivial.",
+      "requiredTreatment": "Mehrw\u00E4hrung als technisches und fachliches Komplexit\u00E4tsrisiko erfassen.",
+      "evidence": [
+        "Mehrw\u00E4hrung ist nicht trivial, vor allem mit Rabattlogik und SAP."
+      ],
+      "kind": "risk",
+      "priority": "medium",
+      "relevantFor": [
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-066",
+      "sourceClaim": "L\u00E4nder- und W\u00E4hrungsregeln werden ben\u00F6tigt.",
+      "requiredTreatment": "Regelwerk f\u00FCr L\u00E4nder-/W\u00E4hrungslogik spezifizieren.",
+      "evidence": [
+        "Wir brauchen L\u00E4nder- und W\u00E4hrungsregeln."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-067",
+      "sourceClaim": "Ob die Schweiz Pilotkunde wird, ist noch offen; diese Entscheidung beeinflusst Scope, Datenschutz und W\u00E4hrung erheblich.",
+      "requiredTreatment": "Pilotkundenentscheidung als kritische Scope-Abh\u00E4ngigkeit kl\u00E4ren.",
+      "evidence": [
+        "Wenn Schweiz Pilotkunde ist, dann doch.",
+        "Pilotkunde ist noch nicht final.",
+        "Vielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche.",
+        "Das beeinflusst Scope massiv."
+      ],
+      "kind": "open_question",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-068",
+      "sourceClaim": "SAP-Preise sind nicht immer in Echtzeit aktuell; manche Rabatte werden nachts berechnet.",
+      "requiredTreatment": "Preisaktualit\u00E4t als Integrationsannahme und Risiko ber\u00FCcksichtigen.",
+      "evidence": [
+        "SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-069",
+      "sourceClaim": "Bei nicht tagesaktuellen Preisen werden Preisg\u00FCltigkeit und ggf. Warnhinweise ben\u00F6tigt; das Risiko falscher Rabatte darf nicht einfach akzeptiert werden.",
+      "requiredTreatment": "Umgang mit Preisstaleness fachlich absichern und UI/Prozessma\u00DFnahmen definieren.",
+      "evidence": [
+        "Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise.",
+        "Oder wir akzeptieren das Risiko.",
+        "Nein."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-070",
+      "sourceClaim": "PDF-Export von Angeboten ist wichtig; Finance ben\u00F6tigt rechtliche Fu\u00DFnoten und Versionsnummern.",
+      "requiredTreatment": "PDF-Generierung mit rechtlichen Inhalten und Versionierung als Requirement aufnehmen.",
+      "evidence": [
+        "Was ist mit PDF-Export von Angeboten?",
+        "Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.",
+        "PDF ist wichtig f\u00FCr Sales."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-071",
+      "sourceClaim": "Angebots-PDFs mit personenbezogenen Daten brauchen Datenschutzhinweise.",
+      "requiredTreatment": "Datenschutzhinweise f\u00FCr PDF-Ausgaben spezifizieren.",
+      "evidence": [
+        "Und Datenschutzhinweise, wenn personenbezogene Daten enthalten sind."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-072",
+      "sourceClaim": "Template-Management und Versionierung von Templates sind erforderlich, damit nachvollziehbar bleibt, welche Angebotsversion an welchen Kunden ging.",
+      "requiredTreatment": "Template-Versionierung und Nachvollziehbarkeit architektonisch vorsehen.",
+      "evidence": [
+        "Dann haben wir Template-Management.",
+        "Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-073",
+      "sourceClaim": "Angebote m\u00FCssen revisionssicher nachvollziehbar sein; daf\u00FCr ist mindestens eine Event-History oder ein Audit-Log pro Angebot n\u00F6tig.",
+      "requiredTreatment": "Revisions- und Historienanforderung technisch und fachlich umsetzen.",
+      "evidence": [
+        "Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein.",
+        "Dann brauchen wir Event-History oder Audit-Log pro Angebot.",
+        "F\u00FCr Freigabe und rechtliche Nachvollziehbarkeit: ja, zumindest minimal."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-074",
+      "sourceClaim": "Online-Akzeptanz von Angeboten w\u00E4re fachlich attraktiv, wurde aber f\u00FCr den MVP eher zur\u00FCckgestellt.",
+      "requiredTreatment": "Online-Akzeptanz als m\u00F6gliche sp\u00E4tere Funktion mit expliziter MVP-Entscheidung dokumentieren.",
+      "evidence": [
+        "Kann der Kunde ein Angebot online akzeptieren?",
+        "Das w\u00E4re super.",
+        "Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+      ],
+      "kind": "status",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-075",
+      "sourceClaim": "Online-Akzeptanz w\u00E4re rechtlich ein Vertragsabschluss und w\u00FCrde zus\u00E4tzliche Anforderungen wie Zustimmungsnachweis, Zeitstempel und ggf. AGB-Akzeptanz ausl\u00F6sen.",
+      "requiredTreatment": "Falls aufgenommen, Vertragsabschluss-Compliance und Nachweise spezifizieren.",
+      "evidence": [
+        "Das ist ein Vertragsabschluss. Ganz anderes Thema.",
+        "Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-076",
+      "sourceClaim": "Eine Online-Akzeptanz w\u00FCrde eine Bestellung erzeugen und sauberen Schreibzugriff nach SAP erfordern; SAP-Schreibzugriff ist derzeit noch nicht entschieden.",
+      "requiredTreatment": "SAP-Schreibzugriff als offene Integrationsentscheidung mit gro\u00DFer Auswirkung dokumentieren.",
+      "evidence": [
+        "Und dann entsteht eine Bestellung. Das muss sauber nach SAP zur\u00FCck.",
+        "SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend."
+      ],
+      "kind": "open_question",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "requirements",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-077",
+      "sourceClaim": "Technische Logs d\u00FCrfen keine personenbezogenen Daten enthalten; Audit-, Application- und Security-Logs sind getrennt zu behandeln und haben unterschiedliche Aufbewahrungsfristen.",
+      "requiredTreatment": "Logging-Konzept mit Log-Arten, Datenminimierung und Retention-Regeln definieren.",
+      "evidence": [
+        "Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.",
+        "Application logs, audit logs und security logs sind unterschiedliche Dinge.",
+        "Und unterschiedliche Aufbewahrungsfristen.",
+        "Und \u0022keine personenbezogenen Daten in technischen Logs\u0022."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-078",
+      "sourceClaim": "Aufbewahrungsdauer von Angeboten ist rechtlich zu pr\u00FCfen; gesetzliche Aufbewahrungspflichten k\u00F6nnen mit L\u00F6schanfragen kollidieren.",
+      "requiredTreatment": "Retention-Regeln mit Legal abstimmen und Konflikt zu L\u00F6schrechten l\u00F6sen.",
+      "evidence": [
+        "Wie lange m\u00FCssen wir Angebote speichern?",
+        "Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.",
+        "Das kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen."
+      ],
+      "kind": "open_question",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-079",
+      "sourceClaim": "Datenklassifikation und Retention Rules werden ben\u00F6tigt; mindestens ein minimaler Retention-Plan ist erforderlich.",
+      "requiredTreatment": "Datenarten klassifizieren und minimale Aufbewahrungsregeln f\u00FCr MVP festlegen.",
+      "evidence": [
+        "Also brauchen wir Datenklassifikation und Retention Rules.",
+        "Okay, minimaler Retention-Plan."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-080",
+      "sourceClaim": "Support und Finance ben\u00F6tigen Einsicht in alte Angebote.",
+      "requiredTreatment": "Historische Angebotszugriffe als Berechtigungs- und Retention-Anforderung ber\u00FCcksichtigen.",
+      "evidence": [
+        "Support braucht auch Einsicht in alte Angebote.",
+        "Finance auch."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-081",
+      "sourceClaim": "Es wurde ein MVP-Schnitt skizziert: Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimaler Audit Trail, EU Managed Hosting und Backup.",
+      "requiredTreatment": "Diesen MVP-Entwurf als aktuelles Arbeitsbild dokumentieren, aber gegen offene L\u00FCcken pr\u00FCfen.",
+      "evidence": [
+        "Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+      ],
+      "kind": "status",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-082",
+      "sourceClaim": "Rabatt-Freigabe ist im MVP noch nicht enthalten; wenn sie fehlt, d\u00FCrfen im MVP keine manuellen Sonderrabatte \u00FCber Standardsatz erstellt werden.",
+      "requiredTreatment": "Explizite MVP-Constraint zu Rabatten festlegen und in Prozesse/UI \u00FCbersetzen.",
+      "evidence": [
+        "Und Rabatt-Freigabe?",
+        "Vielleicht Phase 2.",
+        "Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.",
+        "Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP."
+      ],
+      "kind": "constraint",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-083",
+      "sourceClaim": "F\u00FCr Support im MVP wurde h\u00F6chstens ein Kontaktformular ohne Ticketpersistenz erwogen; dies ist eine bewusste Einschr\u00E4nkung mit Risiken und keine gel\u00F6ste Supportfunktion.",
+      "requiredTreatment": "Support-Ausschluss bzw. Minimalvariante mitsamt Folgen ausdr\u00FCcklich dokumentieren.",
+      "evidence": [
+        "Kontaktformular ohne Ticketpersistenz?",
+        "Support wird damit nicht gl\u00FCcklich.",
+        "Notieren als Risiko.",
+        "Bitte nicht \u0022wir ignorieren es\u0022, sondern \u0022bewusste Einschr\u00E4nkung\u0022.",
+        "Support ist nicht gel\u00F6st."
+      ],
+      "kind": "status",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-084",
+      "sourceClaim": "Support per E-Mail/Kontaktformular ist einfacher, aber unstrukturiert und schlecht auditierbar.",
+      "requiredTreatment": "E-Mail-basierte Supportverarbeitung als Risiko und bewussten Trade-off erfassen.",
+      "evidence": [
+        "Dann werden Supportdaten per E-Mail verarbeitet. Auch Datenschutz.",
+        "E-Mail ist unstrukturiert und schlecht auditierbar.",
+        "Aber einfacher."
+      ],
+      "kind": "risk",
+      "priority": "medium",
+      "relevantFor": [
+        "risks",
+        "requirements",
+        "architecture"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-085",
+      "sourceClaim": "Es werden getrennte Umgebungen Dev, Test und Prod ben\u00F6tigt.",
+      "requiredTreatment": "Mindestumgebungsmodell als Architektur- und Delivery-Anforderung aufnehmen.",
+      "evidence": [
+        "Wir brauchen Umgebungen. Dev, Test, Prod."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "architecture",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-086",
+      "sourceClaim": "Testdaten d\u00FCrfen keine echten Kundendaten enthalten; es sind Pseudonymisierung oder synthetische Testdaten n\u00F6tig.",
+      "requiredTreatment": "Testdatenstrategie datenschutzkonform festlegen.",
+      "evidence": [
+        "Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+        "Ja, Pseudonymisierung oder synthetische Testdaten."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-087",
+      "sourceClaim": "Das SAP-Testsystem enth\u00E4lt echte alte Kundendaten; ungepr\u00FCfte Nutzung ist unzul\u00E4ssig und blockiert Integrationstests.",
+      "requiredTreatment": "SAP-Testdatenproblem als akutes Compliance- und Testblocker-Risiko behandeln.",
+      "evidence": [
+        "SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.",
+        "Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.",
+        "Das blockiert Integrationstests."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "risks",
+        "architecture",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-088",
+      "sourceClaim": "CI/CD ben\u00F6tigt Secrets Management.",
+      "requiredTreatment": "Secrets Management als Pflichtbaustein der Betriebs- und Delivery-Architektur vorsehen.",
+      "evidence": [
+        "Und CI/CD braucht Secrets Management.",
+        "Und \u0022Secrets Management\u0022."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "architecture",
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-089",
+      "sourceClaim": "F\u00FCr die API werden Rate Limits ben\u00F6tigt.",
+      "requiredTreatment": "Rate Limiting als Sicherheits- und Betriebsanforderung spezifizieren.",
+      "evidence": [
+        "Wir brauchen auch Rate Limits f\u00FCr API.",
+        "Dann mindestens Rate Limiting und Audit."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-090",
+      "sourceClaim": "Kunden laden teils hunderte Rechnungen auf einmal herunter; deshalb werden Pagination und Download-Limits ben\u00F6tigt, ohne die UX unn\u00F6tig zu verschlechtern.",
+      "requiredTreatment": "Massendownload-Mechanismen mit UX-Abw\u00E4gung definieren.",
+      "evidence": [
+        "Kunden laden manchmal hunderte Rechnungen auf einmal herunter.",
+        "Dann brauchen wir Pagination und Download-Limits.",
+        "Aber bitte keine schlechte UX."
+      ],
+      "kind": "requirement",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-091",
+      "sourceClaim": "Massenexport von Rechnungen ist rechtlich und sicherheitsrelevant; mindestens Rate Limiting und Audit sind notwendig, optional Missbrauchserkennung.",
+      "requiredTreatment": "Missbrauchsschutz f\u00FCr Rechnungsdownloads als Sicherheitsanforderung festlegen.",
+      "evidence": [
+        "Massenexport von Rechnungen kann rechtlich relevant sein.",
+        "Und sicherheitsrelevant.",
+        "Wir brauchen Missbrauchserkennung.",
+        "Dann mindestens Rate Limiting und Audit."
+      ],
+      "kind": "requirement",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-092",
+      "sourceClaim": "Wenn SAP nicht erreichbar ist, k\u00F6nnen Angebote nicht aktuell berechnet werden; SAP-Verf\u00FCgbarkeit ist eine kritische Abh\u00E4ngigkeit.",
+      "requiredTreatment": "SAP-Verf\u00FCgbarkeit als zentrale Betriebsabh\u00E4ngigkeit und Risiko erfassen.",
+      "evidence": [
+        "Was passiert, wenn SAP nicht erreichbar ist?",
+        "Angebote k\u00F6nnen dann nicht aktuell berechnet werden.",
+        "Bitte schreibt \u0022SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0022."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "risks",
+        "architecture",
+        "requirements"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-093",
+      "sourceClaim": "Bei SAP-Ausfall darf entweder kein verbindliches Angebot erstellt werden oder es muss als unverbindlich markiert sein; die gew\u00FCnschte L\u00F6sung ist offen.",
+      "requiredTreatment": "Fallback-Verhalten bei SAP-Ausfall fachlich entscheiden.",
+      "evidence": [
+        "Dann darf kein Angebot erstellt werden, oder es muss als unverbindlich markiert sein.",
+        "Unverbindliche Angebote sind schlecht.",
+        "Dann brauchen wir Fallback oder Cache."
+      ],
+      "kind": "open_question",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "architecture",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-094",
+      "sourceClaim": "Caching wurde als m\u00F6glicher SAP-Fallback diskutiert, ist aber wegen kundenspezifischer Rabatte, Datenschutz und Cache-Invalidierung riskant.",
+      "requiredTreatment": "Cache-Option nur nach Bewertung von Datenarten, Invalidierung und Compliance vorsehen.",
+      "evidence": [
+        "Dann brauchen wir Fallback oder Cache.",
+        "Teilweise Produkt- und Preisdaten, vielleicht kundenindividuelle Rabatte.",
+        "Dann wieder Datenschutz und Retention.",
+        "Dann ist Cache riskant.",
+        "Und Cache-Invalidierung ist aufwendig."
+      ],
+      "kind": "risk",
+      "priority": "high",
+      "relevantFor": [
+        "architecture",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-095",
+      "sourceClaim": "Architektur soll keine konkreten Cloud-Produkte oder Provider-Entscheidungen vorwegnehmen, solange kein Provider gew\u00E4hlt wurde.",
+      "requiredTreatment": "Anbieterneutralit\u00E4t in Architekturartefakten wahren und implizite Festlegungen vermeiden.",
+      "evidence": [
+        "Architektur darf keine konkreten Cloud-Produkte erfinden, solange wir keinen Provider gew\u00E4hlt haben.",
+        "Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat."
+      ],
+      "kind": "constraint",
+      "priority": "medium",
+      "relevantFor": [
+        "architecture",
+        "requirements",
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-096",
+      "sourceClaim": "Widerspr\u00FCche sollen sichtbar bleiben und nicht k\u00FCnstlich gegl\u00E4ttet werden.",
+      "requiredTreatment": "Offene Konflikte und Gegenpositionen explizit dokumentieren statt implizit aufzul\u00F6sen.",
+      "evidence": [
+        "Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben."
+      ],
+      "kind": "constraint",
+      "priority": "medium",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-097",
+      "sourceClaim": "Risiken sind nicht nur technisch, sondern auch finanziell und organisatorisch zu behandeln.",
+      "requiredTreatment": "Risikobetrachtung multidisziplin\u00E4r aufsetzen.",
+      "evidence": [
+        "Und Risiken d\u00FCrfen nicht nur technisch sein, sondern auch finanziell und organisatorisch."
+      ],
+      "kind": "constraint",
+      "priority": "medium",
+      "relevantFor": [
+        "risks"
+      ]
+    },
+    {
+      "id": "GLOBAL-SC-098",
+      "sourceClaim": "Das aktuelle Ziel ist ein klarer MVP-Schnitt, der einschlie\u00DFt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen.",
+      "requiredTreatment": "MVP-Scope, Ausschl\u00FCsse und Residualrisiken explizit und konsistent festhalten.",
+      "evidence": [
+        "Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen.",
+        "Und keine falsche Sicherheit erzeugen."
+      ],
+      "kind": "status",
+      "priority": "high",
+      "relevantFor": [
+        "requirements",
+        "risks",
+        "open-questions"
+      ]
+    }
+  ],
+  "recall": {
+    "exact": 14,
+    "partial": 6,
+    "missed": 0,
+    "exactRate": 0.7,
+    "exactOrPartial": 20,
+    "exactOrPartialRate": 1
+  },
+  "e2e": {
+    "matchesExpected": 8,
+    "matchRateAllCases": 0.4
+  },
+  "results": [
+    {
+      "id": "SC-ARCH-SCALABILITY-001",
+      "artifact": "architecture",
+      "sourceClaim": "Die erwartete Nutzerzahl schwankt zwischen ca. 200 und 20.000; Skalierbarkeit und Performance sind deshalb architektonisch offen.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "architecture.md sollte die Skalierungs-/Performance-Annahme oder offene Architekturfrage explizit behandeln.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-034",
+          "GLOBAL-SC-035"
+        ],
+        "reason": "GLOBAL-SC-034 enth\u00E4lt die unklare Nutzerzahl bis 20.000 und die offene Auswirkung auf Skalierungsplanung/Architektur; GLOBAL-SC-035 erg\u00E4nzt die explizite Skalierbarkeitsbehandlung. Der fachliche Kern und die offene architektonische Behandlung sind damit inhaltlich enthalten."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-034",
+        "artifact": "architecture",
+        "sourceClaim": "Erwartete Nutzerzahlen sind unklar und reichen von 20 bis 20.000, was die Skalierungsplanung offen l\u00E4sst.",
+        "requiredTreatment": "Lastannahmen als offene Frage mit starker Auswirkung auf Architektur und Performance kl\u00E4ren.",
+        "evidence": [
+          "Wie viele User erwarten wir?",
+          "Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-ARCH-SCALABILITY-001",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "Offene Last-/Nutzerannahmen (z.B. 200 bis 20.000) und deren Architektur-/Performance-Auswirkung sind nicht dokumentiert.",
+        "reason": "Der Source-Claim fordert, die unklaren erwarteten Nutzerzahlen als offene, architekturrelevante Skalierungsfrage festzuhalten. Im Architekturartefakt finden sich zwar offene Entscheidungen und Risiken, aber keine sinngem\u00E4\u00DFe Erw\u00E4hnung von unklarer Nutzerlast, Lastannahmen, Skalierungszielen oder Performance-Konsequenzen."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark fand SCALABILITY als Missing in architecture.",
+      "directReviewBaseline": "DirectReview stark verfehlte Analytics stabil und legte Scalability eher als open-question ab.",
+      "note": "Litmus-Gap aus D1/B45."
+    },
+    {
+      "id": "SC-ARCH-ANALYTICS-002",
+      "artifact": "architecture",
+      "sourceClaim": "Analytics/KPIs sind gew\u00FCnscht, aber technische Umsetzung, Tracking und Datenschutz sind offen.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "architecture.md sollte Analytics/KPI-Tracking als offene Architektur-/Datenschutzfrage behandeln.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-020",
+          "GLOBAL-SC-021",
+          "GLOBAL-SC-023"
+        ],
+        "reason": "KPIs/Analytics sind enthalten (GLOBAL-SC-023), fehlende Analytics-Infrastruktur ist offen (GLOBAL-SC-021) und Tracking hat DSGVO-/Einwilligungsbezug (GLOBAL-SC-020). Es fehlt aber die gebuendelte Aussage, dass technische Umsetzung, Tracking und Datenschutz insgesamt als offene Architekturfrage zu behandeln sind."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-020",
+        "artifact": "architecture",
+        "sourceClaim": "Push Notifications und Tracking w\u00FCrden zus\u00E4tzliche Einwilligungen nach DSGVO erfordern.",
+        "requiredTreatment": "Consent-Anforderungen f\u00FCr Push/Tracking als Bedingung dokumentieren.",
+        "evidence": [
+          "Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema."
+        ],
+        "kind": "constraint",
+        "priority": "medium"
+      },
+      "coverageVerdict": {
+        "id": "SC-ARCH-ANALYTICS-002",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "**DSGVO-Konformit\u00E4t ist zentral:** Implementierung von Double-Opt-In, L\u00F6schkonzepten, Datenschutz bei Logging, Audit und Backup.",
+        "missingFacet": "Spezifische Consent-Anforderung f\u00FCr Push Notifications und Tracking als Bedingung fehlt.",
+        "reason": "Das Artefakt behandelt DSGVO und Opt-In allgemein, aber der Source-Claim nennt ausdr\u00FCcklich zus\u00E4tzliche Einwilligungen f\u00FCr Push Notifications und Tracking. Diese konkreten Bedingungen sind im Architekturtext nicht benannt."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 stark/schwach fing ANALYTICS als Missing.",
+      "directReviewBaseline": "DirectReview stark verfehlte ANALYTICS in beiden L\u00E4ufen.",
+      "note": "Systematischer DirectReview-Blindspot."
+    },
+    {
+      "id": "SC-ARCH-API-GATEWAY-003",
+      "artifact": "architecture",
+      "sourceClaim": "Das zentrale API Gateway ist die bevorzugte/vorgegebene Integrationsebene, hat aber eine sechswoechige Warteliste und braucht Alternativen.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "architecture.md sollte API Gateway, Verz\u00F6gerungsrisiko und Alternativen/offene Strategie nennen.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-057",
+          "GLOBAL-SC-058",
+          "GLOBAL-SC-031"
+        ],
+        "reason": "Bevorzugte/verbindliche Gateway-Nutzung und 6-w\u00F6chige Warteliste sind enthalten. Die geforderte Aussage, dass deshalb Alternativen bzw. eine offene Strategie genannt werden m\u00FCssen, fehlt jedoch."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-057",
+        "artifact": "architecture",
+        "sourceClaim": "Neue externe Portale m\u00FCssen laut interner Policy \u00FCber das zentrale API Gateway laufen.",
+        "requiredTreatment": "API-Gateway-Nutzung als verbindliche Architektur-Constraint aufnehmen.",
+        "evidence": [
+          "Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen."
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-ARCH-API-GATEWAY-003",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "**API Gateway (zentrales Infrastruktur-Component):** Vorgeschriebene Integrationsebene, allerdings mit Verz\u00F6gerungsrisiko durch Warteliste.\n\n- API Gateway Nutzung und alternative Strategien, wenn Verf\u00FCgbarkeit nicht rechtzeitig gegeben ist.",
+        "missingFacet": "Verbindliche Architektur-Constraint ohne Aufweichung; Artefakt macht die Pflicht als offene Entscheidung mit Alternativen statt als klare Muss-Vorgabe fest.",
+        "reason": "Der Kern des Claims ist erkennbar aufgegriffen (\u201Evorgeschriebene Integrationsebene\u201C). Das Artefakt relativiert die interne Policy jedoch, indem es die Gateway-Nutzung als offene Architekturentscheidung mit alternativen Strategien behandelt, statt sie als verbindliche Constraint f\u00FCr neue externe Portale festzuschreiben."
+      },
+      "topicCoverageBaseline": "TopicCoverage wertete API/Gateway je nach Artefakt als covered/partial.",
+      "directReviewBaseline": "DirectReview fand API/Gateway-Themen teilweise, aber nicht als stabilen Litmus.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-ENV-SECRETS-004",
+      "artifact": "architecture",
+      "sourceClaim": "Dev/Test/Prod-Umgebungen, Testdaten ohne echte Kundendaten und Secrets Management sind erforderlich.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "architecture.md sollte Umgebungs-/Testdaten-/Secrets-Strategie als Architekturthema oder offene Entscheidung enthalten.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-085",
+          "GLOBAL-SC-086",
+          "GLOBAL-SC-088"
+        ],
+        "reason": "Der erwartete Claim ist vollst\u00E4ndig enthalten: getrennte Dev/Test/Prod-Umgebungen, keine echten Kundendaten in Testdaten und erforderliches Secrets Management."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-085",
+        "artifact": "architecture",
+        "sourceClaim": "Es werden getrennte Umgebungen Dev, Test und Prod ben\u00F6tigt.",
+        "requiredTreatment": "Mindestumgebungsmodell als Architektur- und Delivery-Anforderung aufnehmen.",
+        "evidence": [
+          "Wir brauchen Umgebungen. Dev, Test, Prod."
+        ],
+        "kind": "requirement",
+        "priority": "medium"
+      },
+      "coverageVerdict": {
+        "id": "SC-ARCH-ENV-SECRETS-004",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Testdatenstrategie und Umgang mit personenbezogenen Daten in Entwicklung und Testumgebungen.",
+        "missingFacet": "Explizites Mindest-Umgebungsmodell mit getrennten Dev-, Test- und Prod-Umgebungen als Architektur-/Delivery-Anforderung fehlt.",
+        "reason": "Das Artefakt erw\u00E4hnt Entwicklung und Testumgebungen indirekt bei offenen Architekturentscheidungen, was den Claim teilweise ber\u00FChrt. Die geforderte klare Festlegung separater Umgebungen Dev, Test und Prod ist jedoch nirgends als Architektur- oder Delivery-Anforderung aufgenommen; insbesondere Prod fehlt explizit."
+      },
+      "topicCoverageBaseline": "TopicCoverage je nach Fixture nur grob \u00FCber Testdaten; Secrets/Umgebungen oft nicht pr\u00E4zise.",
+      "directReviewBaseline": "DirectReview stark fand Umgebungen/Testdaten/Secrets als Missing in architecture.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+      "artifact": "architecture",
+      "sourceClaim": "Rabatte \u00FCber 15 Prozent brauchen einen Freigabeprozess mit Workflow-Status.",
+      "expectedVerdict": "partial",
+      "requiredTreatment": "architecture.md sollte den Freigabeprozess als Komponente/Workflow oder offene Architekturentscheidung behandeln.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-047",
+          "GLOBAL-SC-050"
+        ],
+        "reason": "SC-047 deckt die Pflicht zur Freigabe ab Rabatt \u00FCber 15% ab, SC-050 die daf\u00FCr ben\u00F6tigten Workflow-Status; zusammen entspricht das inhaltlich dem erwarteten Architektur-Claim."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-047",
+        "artifact": "architecture",
+        "sourceClaim": "Angebote ben\u00F6tigen einen Freigabeprozess f\u00FCr Rabatte; mindestens ab 15 Prozent ist eine Manager-Freigabe gefordert.",
+        "requiredTreatment": "Rabattfreigabe als fachlichen Pflichtprozess spezifizieren.",
+        "evidence": [
+          "Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+          "Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt."
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": true,
+        "artifactQuote": "- Rabattfreigabeprozess mit Workflows f\u00FCr Freigaben \u00FCber Schwellenwerte ist noch unvollst\u00E4ndig.",
+        "missingFacet": "Konkrete fachliche Pflichtregel fehlt: ab mindestens 15 Prozent Rabatt ist eine Manager-Freigabe erforderlich.",
+        "reason": "Das Artefakt adressiert den Themenbereich Rabattfreigabe explizit, aber nur als offene/unvollst\u00E4ndige Architekturentscheidung. Die im Source-Claim geforderte verbindliche Fachregel inklusive Schwellenwert 15 Prozent und Manager-Freigabe ist nicht spezifiziert."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 architecture wertete Angebotsworkflow als partial.",
+      "directReviewBaseline": "DirectReview stark fand Rabattfreigabe als Missing/Critical.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-LOGIN-006",
+      "artifact": "requirements",
+      "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr das MVP vorgesehen; Double-Opt-In ist verpflichtend.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "requirements.md sollte Login per E-Mail/Passwort und Double-Opt-In als Anforderungen/Constraints enthalten.",
+      "candidateCount": 87,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-009",
+          "GLOBAL-SC-011",
+          "GLOBAL-SC-081"
+        ],
+        "reason": "Der erwartete Claim ist inhaltlich vollst\u00E4ndig enthalten: MVP-Login per E-Mail/Passwort bzw. E-Mail-Login als erster Ansatz sowie Double-Opt-In als verpflichtend sind durch die Kombination der Claims explizit abgedeckt."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-009",
+        "artifact": "requirements",
+        "sourceClaim": "F\u00FCr Login per E-Mail ist Double-Opt-In erforderlich.",
+        "requiredTreatment": "Double-Opt-In als Pflicht f\u00FCr den gew\u00E4hlten Login-/Registrierungsprozess spezifizieren.",
+        "evidence": [
+          "Login per E-Mail? Dann brauchen wir Double-Opt-In.",
+          "Dann MVP: 1. Login mit Double-Opt-In"
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-REQ-LOGIN-006",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- Doppelopt-in Verfahren f\u00FCr E-Mail-Login ist verpflichtend.",
+        "missingFacet": "",
+        "reason": "Der Artefakttext spezifiziert die Double-Opt-In-Pflicht explizit f\u00FCr E-Mail-Login und entspricht damit dem Source-Claim sowie der MVP-/Pflicht-Modalit\u00E4t aus der Evidence."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Login/Double-Opt-In covered werten.",
+      "directReviewBaseline": "DirectReview meldete diesen Kontrollfall nicht als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SAP-WRITE-007",
+      "artifact": "requirements",
+      "sourceClaim": "SAP-Schreibzugriff ist nicht entschieden; im MVP ist eher nur SAP-Lesen vorgesehen.",
+      "expectedVerdict": "contradicted",
+      "requiredTreatment": "requirements.md darf Schreibzugriff nicht als geplante sp\u00E4tere Phase festschreiben; es sollte offen/ungekl\u00E4rt bleiben.",
+      "candidateCount": 87,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-076",
+          "GLOBAL-SC-074",
+          "GLOBAL-SC-081"
+        ],
+        "reason": "GLOBAL-SC-076 enth\u00E4lt explizit, dass SAP-Schreibzugriff noch nicht entschieden ist und eher lesender Zugriff gemeint war; GLOBAL-SC-074 und GLOBAL-SC-081 st\u00FCtzen den MVP-Zuschnitt ohne Online-Akzeptanz bzw. mit SAP-Lesedaten. Damit ist der Claim samt offener Behandlung inhaltlich enthalten."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-076",
+        "artifact": "requirements",
+        "sourceClaim": "Eine Online-Akzeptanz w\u00FCrde eine Bestellung erzeugen und sauberen Schreibzugriff nach SAP erfordern; SAP-Schreibzugriff ist derzeit noch nicht entschieden.",
+        "requiredTreatment": "SAP-Schreibzugriff als offene Integrationsentscheidung mit gro\u00DFer Auswirkung dokumentieren.",
+        "evidence": [
+          "Und dann entsteht eine Bestellung. Das muss sauber nach SAP zur\u00FCck.",
+          "SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-REQ-SAP-WRITE-007",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "SAP-Anbindung ist im MVP nur lesend vorgesehen, Schreibzugriffe sind f\u00FCr sp\u00E4tere Phasen geplant.",
+        "missingFacet": "Offene, noch nicht entschiedene Integrationsentscheidung mit Auswirkung auf Online-Akzeptanz/Bestellungserzeugung und SAP-Schreibbedarf fehlt; Artefakt macht daraus bereits einen Plan f\u00FCr sp\u00E4tere Phasen.",
+        "reason": "Der Artefakttext greift den lesenden Status der SAP-Anbindung auf, behandelt aber nicht die im Claim zentrale offene Entscheidung zum SAP-Schreibzugriff. Statt \u0027noch nicht entschieden\u0027 wird ein bereits festgelegter Scope (\u0027f\u00FCr sp\u00E4tere Phasen geplant\u0027) formuliert; zudem fehlt der Bezug, dass Online-Akzeptanz eine Bestellung erzeugen und deshalb Schreibzugriff nach SAP erfordern w\u00FCrde."
+      },
+      "topicCoverageBaseline": "TopicCoverage misst prim\u00E4r Missing und erkennt diese Status-\u00DCberfestlegung nicht sauber.",
+      "directReviewBaseline": "DirectReview kann false_claim finden, aber nicht stabil als Coverage-Fall.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-ANALYTICS-008",
+      "artifact": "requirements",
+      "sourceClaim": "KPIs/Analytics sind gew\u00FCnscht, aber Messkonzept und technische Umsetzung sind noch offen.",
+      "expectedVerdict": "partial",
+      "requiredTreatment": "requirements.md sollte KPI-Wunsch und offene technische Umsetzung mindestens als offene Anforderung/Assumption erfassen.",
+      "candidateCount": 87,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-021",
+          "GLOBAL-SC-022",
+          "GLOBAL-SC-023"
+        ],
+        "reason": "KPI/Analytics-Bedarf ist enthalten (022/023) und die technische Messumsetzung bzw. Infrastruktur ist noch offen/nicht vorhanden (021). Das trifft den Kern des erwarteten Claims."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-021",
+        "artifact": "requirements",
+        "sourceClaim": "Analytics-/Tracking-Infrastruktur existiert noch nicht.",
+        "requiredTreatment": "Fehlende Analytics-F\u00E4higkeit als Gap f\u00FCr KPI-Messung und sp\u00E4tere Features erfassen.",
+        "evidence": [
+          "Tracking? Wir haben keine Analytics Infrastruktur."
+        ],
+        "kind": "risk",
+        "priority": "medium"
+      },
+      "coverageVerdict": {
+        "id": "SC-REQ-ANALYTICS-008",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": true,
+        "artifactQuote": "- Konkretisierung der KPI-Messungen und deren technische Umsetzung ist noch ausstehend.",
+        "missingFacet": "Expliziter Gap, dass aktuell keine Analytics-/Tracking-Infrastruktur existiert.",
+        "reason": "Das Artefakt greift den Zusammenhang zu KPI-Messung und technischer Umsetzung als offenen Punkt auf. Der konkrete Source-Claim, dass es derzeit keine Analytics-/Tracking-Infrastruktur gibt, wird jedoch nicht ausdr\u00FCcklich als bestehende F\u00E4higkeitsl\u00FCcke erfasst."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics als Missing/Partial abh\u00E4ngig vom Artefakt erkennen.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot bei architecture; requirements teils besser.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SCALABILITY-009",
+      "artifact": "requirements",
+      "sourceClaim": "Nutzerzahl/Skalierung ist unklar, muss aber als nichtfunktionale Anforderung ber\u00FCcksichtigt werden.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "requirements.md sollte Skalierbarkeit/Performance oder Nutzerzahl-Spanne als NFR enthalten.",
+      "candidateCount": 87,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-035"
+        ],
+        "reason": "GLOBAL-SC-035 enth\u00E4lt den fachlichen Kern direkt: Skalierbarkeit muss ber\u00FCcksichtigt werden. Das entspricht der geforderten Behandlung als nichtfunktionale Anforderung; die unklare Nutzerzahl ist im extrahierten Claim nicht explizit genannt, aber die Pflicht zur Ber\u00FCcksichtigung bleibt erhalten."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-035",
+        "artifact": "requirements",
+        "sourceClaim": "Skalierbarkeit muss ber\u00FCcksichtigt werden, gleichzeitig soll Overengineering vermieden werden.",
+        "requiredTreatment": "Architekturprinzipien f\u00FCr \u0027skalierbar ohne Overengineering\u0027 definieren.",
+        "evidence": [
+          "Skalierbarkeit muss ber\u00FCcksichtigt werden.",
+          "Aber bitte kein Overengineering."
+        ],
+        "kind": "constraint",
+        "priority": "medium"
+      },
+      "coverageVerdict": {
+        "id": "SC-REQ-SCALABILITY-009",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Die Plattform soll skalierbar sein, um Nutzerzahlen von ca. 200 bis 20.000 zu unterst\u00FCtzen.\n- Keine neue Datenbank soll f\u00FCr das MVP installiert werden; Managed Services sind erlaubt, m\u00FCssen jedoch kosteng\u00FCnstig sein.",
+        "missingFacet": "Explizites Architekturprinzip bzw. Leitlinie, Skalierbarkeit bedarfsgerecht umzusetzen und Overengineering zu vermeiden",
+        "reason": "Der Skalierbarkeitsaspekt aus E1 ist im Non-Functional Requirement klar enthalten. Der Overengineering-Gedanke aus E2 wird nur indirekt \u00FCber MVP-/Kosteneinschr\u00E4nkungen ber\u00FChrt, aber nicht als explizites Prinzip f\u00FCr die Architektur oder L\u00F6sungswahl formuliert. Damit ist der Claim erkennbar, aber nicht vollst\u00E4ndig gem\u00E4\u00DF erwarteter Behandlung abgedeckt."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte requirements hier covered/partial werten.",
+      "directReviewBaseline": "DirectReview sollte keinen Missing-Fall melden.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-PUSH-010",
+      "artifact": "requirements",
+      "sourceClaim": "Push Notifications wurden als Marketingwunsch eingebracht, waren aber nie besprochen und nicht im MVP entschieden.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "requirements.md sollte Push nicht als Requirement aufnehmen, aber als offene/ausgeschlossene Scope-Frage dokumentieren, wenn relevant.",
+      "candidateCount": 87,
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-019"
+        ],
+        "reason": "Push wird als genannter, nicht abgestimmter Wunsch erfasst. Es fehlt aber der volle Kern \u0027nie besprochen\u0027 plus die klare MVP-Entscheidung \u0027nicht im MVP\u0027 bzw. der Ausschluss/offene Scope-Charakter in dieser Sch\u00E4rfe."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-019",
+        "artifact": "requirements",
+        "sourceClaim": "Push Notifications wurden als Wunsch genannt, sind aber unklar und nicht abgestimmt.",
+        "requiredTreatment": "Push-Thema als unsichere Anforderung kennzeichnen und vor Aufnahme validieren.",
+        "evidence": [
+          "Und Marketing will Push Notifications.",
+          "Push Notifications? Das hatten wir nie besprochen.",
+          "Doch, im letzten Meeting. Also ich glaube zumindest."
+        ],
+        "kind": "open_question",
+        "priority": "low"
+      },
+      "coverageVerdict": {
+        "id": "SC-REQ-PUSH-010",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "Push Notifications als offener/unklarer Punkt mit Validierungsbedarf vor Aufnahme",
+        "reason": "Im Requirements-Artefakt gibt es weder bei den Functional Requirements noch bei den Open Points einen Hinweis auf Push Notifications. Die Evidence zeigt, dass Push nur als Wunsch genannt und zugleich bestritten/unklar abgestimmt wurde; genau diese Unsicherheit m\u00FCsste als offene, zu validierende Anforderung gekennzeichnet sein."
+      },
+      "topicCoverageBaseline": "F1/F2: Push war ein bekannter Topic-Extractor-Blindspot und wurde erst vom Verifier als Kandidat gefunden.",
+      "directReviewBaseline": "DirectReview kann Push \u00FCbersehen oder anders gewichten.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-API-GATEWAY-011",
+      "artifact": "risks",
+      "sourceClaim": "Die sechswoechige API-Gateway-Warteliste gef\u00E4hrdet den 8-Wochen-MVP.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "risks.md sollte API-Gateway-Verz\u00F6gerung als Termin-/Integrationsrisiko enthalten.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-058"
+        ],
+        "reason": "GLOBAL-SC-058 entspricht inhaltlich exakt dem erwarteten Risiko: sechswoechige Gateway-Warteliste gefaehrdet den 8-Wochen-MVP und soll als Terminrisiko erfasst werden."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-058",
+        "artifact": "risks",
+        "sourceClaim": "Das Gateway-Team hat eine Warteliste von sechs Wochen, was den 8-Wochen-MVP gef\u00E4hrdet.",
+        "requiredTreatment": "Abh\u00E4ngigkeit vom Gateway-Team als Terminrisiko und Planungsconstraint erfassen.",
+        "evidence": [
+          "Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+          "Das passt nicht zum 8-Wochen-MVP."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-API-GATEWAY-011",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- **API Gateway Verz\u00F6gerung:**\n  Die Warteliste von sechs Wochen f\u00FCr das zentrale API Gateway gef\u00E4hrdet die 8-Wochen MVP-Zeitplanung.",
+        "missingFacet": "",
+        "reason": "Der Claim ist direkt als Terminrisiko erfasst. Sowohl die Abh\u00E4ngigkeit vom Gateway-Team/Gateway als auch die 6-Wochen-Warteliste und die Gef\u00E4hrdung des 8-Wochen-MVP sind explizit im Risikoartefakt enthalten."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview meldete API-Gateway teils als Missing/Issue.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PUSH-012",
+      "artifact": "risks",
+      "sourceClaim": "Push Notifications erzeugen Einwilligungs-/DSGVO-Risiken, falls sie sp\u00E4ter umgesetzt werden.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "risks.md sollte Push/Einwilligung als Risiko oder bewusst ausgeschlossenes sp\u00E4teres Risiko behandeln.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-020"
+        ],
+        "reason": "Push und daraus folgende Einwilligungs-/DSGVO-Risiken sind direkt enthalten; durch Evidenz (\u0027vielleicht sp\u00E4ter, nicht im MVP\u0027) ist auch der Charakter als sp\u00E4teres bzw. auszuschlie\u00DFendes Risiko abgedeckt."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-020",
+        "artifact": "risks",
+        "sourceClaim": "Push Notifications und Tracking w\u00FCrden zus\u00E4tzliche Einwilligungen nach DSGVO erfordern.",
+        "requiredTreatment": "Consent-Anforderungen f\u00FCr Push/Tracking als Bedingung dokumentieren.",
+        "evidence": [
+          "Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema."
+        ],
+        "kind": "constraint",
+        "priority": "medium"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-PUSH-012",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Einwilligungen und Double-Opt-In:** \n  Anforderungen zur Einwilligung und Logging sind komplex und bedeuten Mehraufwand.\n- **KPIs und Analytics:** \n  Bedarf besteht, technische Umsetzung ist nicht definiert und k\u00F6nnte Datenschutz gef\u00E4hrden.",
+        "missingFacet": "Explizite Zuordnung der Einwilligungspflicht zu Push Notifications und Tracking/Analytics als Bedingung fehlt.",
+        "reason": "Das Risikoartefakt adressiert allgemein DSGVO-Einwilligungen sowie Datenschutzrisiken bei Analytics, greift damit den fachlichen Kern teilweise auf. Die Source-Evidence verlangt jedoch ausdr\u00FCcklich, dass Push Notifications und Tracking zus\u00E4tzliche Einwilligungen erfordern; diese konkrete Bedingung f\u00FCr Push/Tracking ist nicht explizit dokumentiert."
+      },
+      "topicCoverageBaseline": "Push war in der TopicFixture zun\u00E4chst nicht enthalten; TopicCoverage konnte es nicht pr\u00FCfen.",
+      "directReviewBaseline": "DirectReview ist open-world, kann solche Themen finden, tat es aber nicht stabil.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-SUPPORT-013",
+      "artifact": "risks",
+      "sourceClaim": "Kein Ticketsystem im MVP f\u00FChrt zu unstrukturierter E-Mail-Bearbeitung und Datenschutz-/Support-Risiken.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "risks.md sollte Support ohne Ticketsystem als Datenschutz-/Prozessrisiko erfassen.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-083",
+          "GLOBAL-SC-084",
+          "GLOBAL-SC-037"
+        ],
+        "reason": "Der erwartete Risk-Claim ist inhaltlich enthalten: kein Ticketsystem im MVP (SC-037) und daraus resultierende unstrukturierte E-Mail/Kontaktformular-Bearbeitung mit Datenschutz-/Audit-/Support-Risiken (SC-083, SC-084). Status als Risiko/Bewusste Einschr\u00E4nkung ist erhalten."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-083",
+        "artifact": "risks",
+        "sourceClaim": "F\u00FCr Support im MVP wurde h\u00F6chstens ein Kontaktformular ohne Ticketpersistenz erwogen; dies ist eine bewusste Einschr\u00E4nkung mit Risiken und keine gel\u00F6ste Supportfunktion.",
+        "requiredTreatment": "Support-Ausschluss bzw. Minimalvariante mitsamt Folgen ausdr\u00FCcklich dokumentieren.",
+        "evidence": [
+          "Kontaktformular ohne Ticketpersistenz?",
+          "Support wird damit nicht gl\u00FCcklich.",
+          "Notieren als Risiko.",
+          "Bitte nicht \u0022wir ignorieren es\u0022, sondern \u0022bewusste Einschr\u00E4nkung\u0022.",
+          "Support ist nicht gel\u00F6st."
+        ],
+        "kind": "status",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-SUPPORT-013",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "\u201EUnterschiedliche Vorstellungen zur Priorisierung von Features (z.B. Support mit Ticketsystem vs. nur Kontaktformular) f\u00FChren zu Konflikten und Verz\u00F6gerungen.\u201C / \u201EDatenschutz bei Supportprozessen: Kein Ticketsystem im MVP, manuelle E-Mail-Verarbeitung f\u00FChrt zu unstrukturierter Datenhaltung und Compliance-Risiken.\u201C",
+        "missingFacet": "Die bewusste Einschr\u00E4nkung \u201Eh\u00F6chstens Kontaktformular ohne Ticketpersistenz\u201C als explizit gew\u00E4hlte Minimalvariante und dass Support funktional nicht gel\u00F6st ist, wird nicht klar als solche dokumentiert.",
+        "reason": "Das Risikoartefakt greift die Minimalvariante ohne Ticketsystem und daraus folgende Risiken auf. Es dokumentiert aber nicht deutlich genug den Status aus der Evidence: nur erwogen bzw. bewusste MVP-Einschr\u00E4nkung statt gel\u00F6ster Supportfunktion; die Formulierung bleibt teils als Stakeholder-Konflikt bzw. allgemein \u201Ekein Ticketsystem im MVP\u201C und verfehlt damit die explizite Einordnung als bewusst unzureichende, ungel\u00F6ste Supportl\u00F6sung."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Support/Datenschutz in risks covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet Supportthemen h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-TESTDATA-014",
+      "artifact": "risks",
+      "sourceClaim": "Echte Kundendaten in Test- und Entwicklungsumgebungen erzeugen Datenschutzrisiken.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "risks.md sollte Testdatenstrategie/echte Kundendaten als Datenschutzrisiko enthalten.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-086",
+          "GLOBAL-SC-087"
+        ],
+        "reason": "GLOBAL-SC-086 trifft den Kern exakt: echte Kundendaten in Testdaten sind unzul\u00E4ssig und erfordern eine Testdatenstrategie. GLOBAL-SC-087 erg\u00E4nzt das konkrete Datenschutz-/Compliance-Risiko in Testumgebungen durch echte alte Kundendaten."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-086",
+        "artifact": "risks",
+        "sourceClaim": "Testdaten d\u00FCrfen keine echten Kundendaten enthalten; es sind Pseudonymisierung oder synthetische Testdaten n\u00F6tig.",
+        "requiredTreatment": "Testdatenstrategie datenschutzkonform festlegen.",
+        "evidence": [
+          "Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+          "Ja, Pseudonymisierung oder synthetische Testdaten."
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-TESTDATA-014",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Fehlende Testdatenstrategie:** Umgang mit echten Kundendaten in Tests und Entwicklung ist unklar, Datenschutzrisiko.\n...\n- Einf\u00FChrung von Testdatenrichtlinien und Sicherheitspr\u00FCfungen im Entwicklungsprozess",
+        "missingFacet": "Konkrete Festlegung, dass keine echten Kundendaten verwendet werden d\u00FCrfen und stattdessen Pseudonymisierung oder synthetische Testdaten n\u00F6tig sind",
+        "reason": "Das Risikoartefakt behandelt den Themenbereich Testdaten und Datenschutz ausdr\u00FCcklich und fordert Testdatenrichtlinien. Der fachliche Kern ist damit erkannt, aber die vom Source-Claim geforderte konkrete datenschutzkonforme Strategie (Verbot echter Kundendaten sowie Pseudonymisierung/synthetische Daten) wird nicht explizit festgelegt."
+      },
+      "topicCoverageBaseline": "TopicCoverage findet Testdaten je nach Topic-Fassung; SourceClaim pr\u00E4zisiert die Pflicht.",
+      "directReviewBaseline": "DirectReview architecture fand Testdaten/Umgebungen als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PRICE-CACHE-015",
+      "artifact": "risks",
+      "sourceClaim": "Caching/Fallbacks f\u00FCr SAP-Daten kollidieren mit Datenaktualit\u00E4t und Datenschutz.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "risks.md sollte Cache/Fallback-Konflikte mit Aktualit\u00E4t und Datenschutz erfassen.",
+      "candidateCount": 76,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-094"
+        ],
+        "reason": "GLOBAL-SC-094 deckt den fachlichen Kern vollst\u00E4ndig ab: Cache/Fallback f\u00FCr SAP-Daten wird als riskant beschrieben wegen kundenspezifischer Rabatte, Datenschutz/Retention und aufwendiger Cache-Invalidierung; damit ist der Konflikt mit Datenaktualit\u00E4t und Datenschutz im Risikoartefakt enthalten."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-094",
+        "artifact": "risks",
+        "sourceClaim": "Caching wurde als m\u00F6glicher SAP-Fallback diskutiert, ist aber wegen kundenspezifischer Rabatte, Datenschutz und Cache-Invalidierung riskant.",
+        "requiredTreatment": "Cache-Option nur nach Bewertung von Datenarten, Invalidierung und Compliance vorsehen.",
+        "evidence": [
+          "Dann brauchen wir Fallback oder Cache.",
+          "Teilweise Produkt- und Preisdaten, vielleicht kundenindividuelle Rabatte.",
+          "Dann wieder Datenschutz und Retention.",
+          "Dann ist Cache riskant.",
+          "Und Cache-Invalidierung ist aufwendig."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-PRICE-CACHE-015",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Cache-Konzept problematisch:** \n  Cache zur Verbesserung der Performance kollidiert mit Datenschutz und Datenaktualit\u00E4t.",
+        "missingFacet": "Kundenspezifische Rabatte/Datenarten, Cache nur als Fallback-Option, sowie explizite Bewertung von Invalidierung und Compliance vor Einsatz",
+        "reason": "Das Risikoartefakt greift den Kern des Claims erkennbar auf, indem es Cache als problematisch wegen Datenschutz und Datenaktualit\u00E4t beschreibt. Es fehlt aber die wichtige Facette, dass der Cache als m\u00F6glicher SAP-Fallback diskutiert wurde und besonders wegen m\u00F6glicher kundenindividueller Preis-/Rabattdaten sowie aufwendiger Cache-Invalidierung nur nach gezielter Bewertung von Datenarten, Invalidierung und Compliance in Betracht kommen sollte."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Cache/Risiko teils.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-MOBILE-016",
+      "artifact": "open-questions",
+      "sourceClaim": "Mobile Umsetzung ist offen: native App vs. responsive Web.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "open-questions.md sollte Mobile/native vs responsive als offene Frage enthalten.",
+      "candidateCount": 31,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-005"
+        ],
+        "reason": "Der Claim ist inhaltlich direkt enthalten: Mobile-Umsetzung als offene Frage zwischen nativer App und responsive Web. Status als offene Entscheidung bleibt erhalten."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-005",
+        "artifact": "open-questions",
+        "sourceClaim": "Es ist offen, ob mobile Nutzung als native App oder responsive Web umgesetzt werden soll; native w\u00E4re teuer.",
+        "requiredTreatment": "Mobile-Optionen mit Kosten- und Architekturfolgen gegeneinander entscheiden.",
+        "evidence": [
+          "Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer."
+        ],
+        "kind": "open_question",
+        "priority": "medium"
+      },
+      "coverageVerdict": {
+        "id": "SC-OQ-MOBILE-016",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": false,
+        "artifactQuote": "",
+        "missingFacet": "Offene Entscheidung native App vs. responsive Web inklusive Kosten- und Architekturfolgen fehlt vollst\u00E4ndig.",
+        "reason": "Der Source-Claim benennt eine offene Mobile-Strategiefrage (\u0027native App oder responsive Web\u0027, native teuer). Im Artefakt gibt es keine sinngem\u00E4\u00DFe offene Frage zu mobiler Nutzung, App-vs-Web-Ansatz, Kostenbewertung oder Architekturfolgen."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte Mobile covered erkennen.",
+      "directReviewBaseline": "DirectReview sollte diesen Kontrollfall nicht missen.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PUSH-017",
+      "artifact": "open-questions",
+      "sourceClaim": "Push Notifications sind ein Marketingwunsch, aber Status, Einwilligung und MVP-Scope sind offen.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "open-questions.md sollte Push als offene Scope-/Datenschutzfrage erfassen oder bewusst ausschliessen.",
+      "candidateCount": 31,
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-019"
+        ],
+        "reason": "Push Notifications als Wunsch und unklar/nicht abgestimmt sind enthalten; Einwilligung/DSGVO sowie explizit offener MVP-Scope fehlen jedoch."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-019",
+        "artifact": "open-questions",
+        "sourceClaim": "Push Notifications wurden als Wunsch genannt, sind aber unklar und nicht abgestimmt.",
+        "requiredTreatment": "Push-Thema als unsichere Anforderung kennzeichnen und vor Aufnahme validieren.",
+        "evidence": [
+          "Und Marketing will Push Notifications.",
+          "Push Notifications? Das hatten wir nie besprochen.",
+          "Doch, im letzten Meeting. Also ich glaube zumindest."
+        ],
+        "kind": "open_question",
+        "priority": "low"
+      },
+      "coverageVerdict": {
+        "id": "SC-OQ-PUSH-017",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "Offene/unstimmige Anforderung zu Push Notifications fehlt komplett; keine Validierungsfrage vor Aufnahme in den Scope.",
+        "reason": "Der Source-Claim beschreibt Push Notifications als ge\u00E4u\u00DFerten Wunsch, der nicht abgestimmt ist. Im Open-Questions-Artefakt findet sich weder unter MVP-Scope noch an anderer Stelle eine sinngem\u00E4\u00DFe offene Frage zu Push Notifications oder deren Validierung vor Aufnahme."
+      },
+      "topicCoverageBaseline": "TopicCoverage konnte Push ohne Topic nicht pr\u00FCfen; Verifier fand Push als Kandidat.",
+      "directReviewBaseline": "DirectReview kann Push finden, aber nicht garantiert.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-EU-RESIDENCE-018",
+      "artifact": "open-questions",
+      "sourceClaim": "EU-only vs. allgemein DSGVO-konform ist nicht dasselbe und muss f\u00FCr Hosting/Datenresidenz gekl\u00E4rt werden.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "open-questions.md sollte EU-only/Datenresidenz/Managed Services als offene Compliancefrage enthalten.",
+      "candidateCount": 31,
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-055",
+          "GLOBAL-SC-062"
+        ],
+        "reason": "EU-only/Datenresidenz wird teilweise ber\u00FChrt (EU-only teurer; geografischer Rollout beeinflusst Datenschutz), aber die spezifische offene Compliancefrage \u0027EU-only vs DSGVO-konform ist nicht dasselbe\u0027 samt Managed-Services/Hosting-Datenresidenz-Kl\u00E4rung fehlt."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-055",
+        "artifact": "open-questions",
+        "sourceClaim": "EU-only Hosting wird voraussichtlich teurer; genaue Mehrkosten sind noch unbekannt.",
+        "requiredTreatment": "Kostenrisiko und offene Kostensch\u00E4tzung f\u00FCr Datenresidenz erfassen.",
+        "evidence": [
+          "Aber wenn EU-only teurer ist?",
+          "Ist es wahrscheinlich.",
+          "Kann ich noch nicht sagen."
+        ],
+        "kind": "risk",
+        "priority": "medium"
+      },
+      "coverageVerdict": {
+        "id": "SC-OQ-EU-RESIDENCE-018",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **EU-only Hosting und Datenresidenz:** Wie wird die Einhaltung von EU-only Hosting bzw. strenger DSGVO-Konformit\u00E4t nachweisbar sichergestellt, insbesondere bei Nutzung von Managed Services?",
+        "missingFacet": "Kostenrisiko bzw. voraussichtlich h\u00F6here Kosten und die noch offene Kostensch\u00E4tzung fehlen.",
+        "reason": "Das Artefakt erfasst EU-only Hosting/Datenresidenz als offene Frage, behandelt aber nur die Compliance-/Umsetzungsseite. Der Source-Claim fordert explizit, das Kostenrisiko und die unbekannten Mehrkosten von EU-only Hosting als offene Sch\u00E4tzung festzuhalten."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte EU/Datenresidenz covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet EU/Hosting h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PRICE-CACHE-019",
+      "artifact": "open-questions",
+      "sourceClaim": "Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und Caching ist offen.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "open-questions.md sollte Preisaktualisierung/Cache-Mechanismen als offene Frage enthalten.",
+      "candidateCount": 31,
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-094",
+          "GLOBAL-SC-093"
+        ],
+        "reason": "GLOBAL-SC-094 enth\u00E4lt exakt die offene Frage zu Caching f\u00FCr SAP-Preis-/Rabattdaten inklusive Cache-Invalidierung; GLOBAL-SC-093 erg\u00E4nzt den offenen Fallback-Kontext bei SAP-Ausfall."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-094",
+        "artifact": "open-questions",
+        "sourceClaim": "Caching wurde als m\u00F6glicher SAP-Fallback diskutiert, ist aber wegen kundenspezifischer Rabatte, Datenschutz und Cache-Invalidierung riskant.",
+        "requiredTreatment": "Cache-Option nur nach Bewertung von Datenarten, Invalidierung und Compliance vorsehen.",
+        "evidence": [
+          "Dann brauchen wir Fallback oder Cache.",
+          "Teilweise Produkt- und Preisdaten, vielleicht kundenindividuelle Rabatte.",
+          "Dann wieder Datenschutz und Retention.",
+          "Dann ist Cache riskant.",
+          "Und Cache-Invalidierung ist aufwendig."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-OQ-PRICE-CACHE-019",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **SAP Integration:** Wie soll der Umgang mit Preis- und Rabattdaten erfolgen, insbesondere bei teils n\u00E4chtlichen Aktualisierungen?",
+        "missingFacet": "Cache/Fallback-Option als risikobehaftete offene Frage inkl. Bewertung von Datenarten, Cache-Invalidierung sowie Datenschutz/Retention/Compliance fehlt.",
+        "reason": "Das Artefakt adressiert Preis- und Rabattdaten sowie Aktualisierungen sinngem\u00E4\u00DF, was den fachlichen Kern teilweise ber\u00FChrt. Es nennt aber die diskutierte Cache-/Fallback-Option nicht und fragt nicht explizit nach deren Risiken durch kundenspezifische Rabatte, Datenschutz/Retention und aufwendige Invalidierung."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Preis-/Cachethemen teils.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-ANALYTICS-020",
+      "artifact": "open-questions",
+      "sourceClaim": "KPI-/Analytics-Messung ist fachlich gew\u00FCnscht, aber technische Umsetzung und Datenschutz sind offen.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "open-questions.md sollte KPI/Analytics als offene technische und Datenschutzfrage enthalten.",
+      "candidateCount": 31,
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-022"
+        ],
+        "reason": "Analytics/KPI-Bedarf ist enthalten, aber die offene technische Umsetzung und Datenschutzfrage fuer open-questions fehlen; stattdessen nur MVP-Status/Timing unklar."
+      },
+      "matchedClaim": {
+        "id": "GLOBAL-SC-022",
+        "artifact": "open-questions",
+        "sourceClaim": "Analytics/KPI-Messung ist f\u00FCr das Team relevant, aber nicht im MVP final verankert.",
+        "requiredTreatment": "KPI-Messung als Bedarf dokumentieren und MVP-vs-sp\u00E4ter explizit entscheiden.",
+        "evidence": [
+          "Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen.",
+          "Was sind die KPIs?"
+        ],
+        "kind": "open_question",
+        "priority": "medium"
+      },
+      "coverageVerdict": {
+        "id": "SC-OQ-ANALYTICS-020",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": true,
+        "artifactQuote": "",
+        "missingFacet": "Offene Frage zu KPI/Analytics sowie explizite Kl\u00E4rung, ob nicht im MVP und ggf. sp\u00E4ter, fehlt vollst\u00E4ndig.",
+        "reason": "Die Evidence nennt Analytics/KPI-Messung als relevanten, aber noch unentschiedenen Punkt mit MVP-vs-sp\u00E4ter-Abw\u00E4gung (\u0027nicht im MVP. Oder doch?\u0027) sowie die offene Frage nach den KPIs. Im Artefakt findet sich trotz allgemeiner MVP-Scope-Frage keine sinngem\u00E4\u00DFe Erw\u00E4hnung von Analytics, KPI-Messung oder KPI-Definition."
+      },
+      "topicCoverageBaseline": "TopicCoverage kann Analytics nur finden, wenn Topic \u002B relevantFor erhalten bleiben.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot in architecture; open-questions ist Kontrollfall.",
+      "note": null
+    }
+  ]
+}

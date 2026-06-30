@@ -1,0 +1,1459 @@
+{
+  "fixture": "input/eval-labels/source-claim-coverage-spike.json",
+  "transcript": "T9999_chaos.txt",
+  "phase": "phase2_1",
+  "runId": "20260612_133345_2d7b09",
+  "judge": "openai/gpt-5.4",
+  "mode": "source-claim-extraction-spike",
+  "total": 20,
+  "extractedByArtifact": {
+    "architecture": [
+      {
+        "id": "ARCHITECTURE-SC-001",
+        "artifact": "architecture",
+        "sourceClaim": "Die Architektur muss definitiv eine API-Layer vorsehen; zus\u00E4tzlich gibt es die verbindliche interne Vorgabe, dass neue externe Portale \u00FCber das zentrale API-Gateway laufen m\u00FCssen, obwohl das Gateway-Team eine Warteliste von sechs Wochen hat.",
+        "requiredTreatment": "API-Layer und zentrales API-Gateway als Architekturbausteine und Zwangsrandbedingungen dokumentieren; Auswirkung des 6-Wochen-Engpasses auf MVP-Architektur transparent machen.",
+        "evidence": [
+          "[Ben] \u201EWir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.\u201C",
+          "[Farid] \u201ENoch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u201C",
+          "[Ben] \u201EAber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u201C"
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-002",
+        "artifact": "architecture",
+        "sourceClaim": "Das Backend ist derzeit nicht API-ready und SAP ist die zentrale Datenquelle; die Architektur muss daher eine SAP-Integration f\u00FCr Lesedaten ber\u00FCcksichtigen, w\u00E4hrend SAP-Schreibzugriff noch nicht entschieden ist.",
+        "requiredTreatment": "Systemkontext und Integrationsarchitektur mit SAP als Kernabh\u00E4ngigkeit beschreiben; explizit festhalten, dass MVP auf SAP-Lesezugriffe setzt und Schreibzugriffe offen sind.",
+        "evidence": [
+          "[Ben] \u201EUnd ehrlich gesagt ist unser Backend noch nicht mal API-ready.\u201C",
+          "[Ben] \u201EStammdaten liegen in SAP.\u201C",
+          "[Anna] \u201EDann MVP: ... 2. Angebotserstellung mit SAP-Lesedaten ...\u201C",
+          "[Ben] \u201ESAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.\u201C"
+        ],
+        "kind": "status",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-003",
+        "artifact": "architecture",
+        "sourceClaim": "F\u00FCr das MVP ist eine Architektur mit Web-/Portal-Fokus angelegt; Mobile ist noch nicht entschieden und wegen Budgetrestriktionen sind zwei separate Frontends unwahrscheinlich.",
+        "requiredTreatment": "Frontend-Zielarchitektur mit prim\u00E4rem Web-Client festhalten und Mobile-/Native-Option als offene Architekturentscheidung mit Budgeteinfluss markieren.",
+        "evidence": [
+          "[Anna] \u201EAlso wir brauchen definitiv ein Kundenportal. ... Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.\u201C",
+          "[Ben] \u201EMoment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer. Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends.\u201C"
+        ],
+        "kind": "open_question",
+        "priority": "medium"
+      },
+      {
+        "id": "ARCHITECTURE-SC-004",
+        "artifact": "architecture",
+        "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr den MVP vorgesehen; SSO ist nur optional und der konkrete Identity Provider ist nicht entschieden, zudem existiert kein zentrales IAM und SAP-IAM ist veraltet.",
+        "requiredTreatment": "Identity-Architektur f\u00FCr MVP mit lokalem Login dokumentieren; SSO/IdP-Integration als sp\u00E4tere Option und offenes Architekturthema samt fehlendem zentralen IAM erfassen.",
+        "evidence": [
+          "[Anna] \u201EAlso erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?\u201C",
+          "[Ben] \u201EMoment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt.\u201C",
+          "[Anna] \u201ESSO optional\u201C"
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-005",
+        "artifact": "architecture",
+        "sourceClaim": "F\u00FCr die API-Absicherung wird OAuth bevorzugt, ist aber wegen h\u00F6herer Komplexit\u00E4t noch nicht final entschieden.",
+        "requiredTreatment": "Sicherheitsarchitektur der APIs mit pr\u00E4feriertem OAuth-Ansatz und Entscheidungsstatus \u0027noch offen\u0027 dokumentieren; Alternativen und Zeit-/Komplexit\u00E4tsauswirkung nennen.",
+        "evidence": [
+          "[Clara] \u201EAPI muss abgesichert sein. OAuth? Oder API Keys?\u201C",
+          "[Ben] \u201EOAuth w\u00E4re besser. Aber komplexer.\u201C",
+          "[Anna] \u201EKomplexer hei\u00DFt mehr Zeit.\u201C"
+        ],
+        "kind": "open_question",
+        "priority": "medium"
+      },
+      {
+        "id": "ARCHITECTURE-SC-006",
+        "artifact": "architecture",
+        "sourceClaim": "Die Architektur darf keinen neuen DB-Server einf\u00FChren; Managed Services sind erlaubt und bevorzugt, ein konkreter Dienst ist aber noch nicht entschieden.",
+        "requiredTreatment": "Persistenzarchitektur unter der Randbedingung \u0027kein neuer DB-Server\u0027 beschreiben; Managed-Service-Ansatz als Vorgabe und konkrete Auswahl als offen markieren.",
+        "evidence": [
+          "[Ben] \u201EVielleicht k\u00F6nnen wir Managed Services nehmen. Kein neuer DB Server \u2013 IT hat das klar gesagt.\u201C",
+          "[Anna] \u201EJa kein neuer DB Server. Managed Services sind okay. Aber bitte g\u00FCnstig.\u201C",
+          "[Ben] \u201EJa, aber wir haben noch nicht entschieden, welcher.\u201C"
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-007",
+        "artifact": "architecture",
+        "sourceClaim": "Hosting muss nachweisbare EU-Datenresidenz bieten; \u0027DSGVO-konform\u0027 reicht architektonisch nicht aus, und Standard-Backups k\u00F6nnen sonst global replizieren.",
+        "requiredTreatment": "Deployment-/Hosting-Architektur mit expliziter EU-Datenresidenz, Backup-Lokation und Nachweisbarkeit dokumentieren; Kosteneinfluss und Providerrestriktionen benennen.",
+        "evidence": [
+          "[Anna] \u201EJa EU only. Oder zumindest DSGVO-konform.\u201C",
+          "[Ben] \u201EDas ist nicht dasselbe.\u201C",
+          "[Farid] \u201EUnser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.\u201C",
+          "[Clara] \u201EDann reicht \u0027DSGVO-konform\u0027 nicht. Wir brauchen nachweisbare Datenresidenz.\u201C"
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-008",
+        "artifact": "architecture",
+        "sourceClaim": "Backup/Disaster-Recovery ist f\u00FCr das MVP trotz Zeitdruck erforderlich, weil Kundendaten verarbeitet werden.",
+        "requiredTreatment": "Betriebsarchitektur mit Backup- und DR-Konzept als MVP-Bestandteil aufnehmen; nicht als nachgelagert behandeln.",
+        "evidence": [
+          "[Clara] \u201EUnd wir haben noch gar nicht \u00FCber Backup gesprochen.\u201C",
+          "[Anna] \u201EBrauchen wir das f\u00FCr MVP?\u201C",
+          "[Clara] \u201EWenn Kundendaten drin sind: ja.\u201C",
+          "[Anna] \u201EOkay also doch.\u201C"
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-009",
+        "artifact": "architecture",
+        "sourceClaim": "Die Architektur muss zwischen Application Logs, Audit Logs und Security Logs trennen; technische Logs d\u00FCrfen keine personenbezogenen Daten enthalten und es gelten unterschiedliche Aufbewahrungsfristen.",
+        "requiredTreatment": "Observability-/Logging-Architektur mit getrennten Log-Kan\u00E4len, Datenschutzgrenzen und Retention-Regeln beschreiben.",
+        "evidence": [
+          "[Farid] \u201EUnser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.\u201C",
+          "[Ben] \u201EApplication logs, audit logs und security logs sind unterschiedliche Dinge.\u201C",
+          "[Clara] \u201EUnd unterschiedliche Aufbewahrungsfristen.\u201C"
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-010",
+        "artifact": "architecture",
+        "sourceClaim": "Auditierbarkeit ist verpflichtend: \u00C4nderungen und Zugriffe, insbesondere auf Angebote, m\u00FCssen nachvollziehbar sein; f\u00FCr das MVP ist ein minimaler Audit Trail vorgesehen.",
+        "requiredTreatment": "Audit-Architektur als Pflichtbestandteil mit mindestens minimalem MVP-Audit-Trail modellieren; Zugriffs- und \u00C4nderungsnachweise pro Angebot ber\u00FCcksichtigen.",
+        "evidence": [
+          "[Clara] \u201EAuditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?\u201C",
+          "[Clara] \u201EUnd protokollieren. Wer hat welches Angebot ge\u00F6ffnet?\u201C",
+          "[Ben] \u201EDann brauchen wir Event-History oder Audit-Log pro Angebot.\u201C",
+          "[Anna] \u201EDann MVP: ... 5. Minimaler Audit Trail ...\u201C"
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-011",
+        "artifact": "architecture",
+        "sourceClaim": "Die Architektur ben\u00F6tigt ein Rollen- und Berechtigungsmodell; als MVP sind Admin/Sales/Kunde genannt, gleichzeitig bestehen ungel\u00F6ste Konflikte um Manager- und Support-Sichtbarkeit sowie vertrauliche Rabatte.",
+        "requiredTreatment": "Autorisierungsarchitektur mit MVP-Rollen und identifizierten Berechtigungskonflikten dokumentieren; offene Feingranularit\u00E4t sichtbar lassen.",
+        "evidence": [
+          "[Anna] \u201EJa Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support.\u201C",
+          "[Clara] \u201EDann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.\u201C",
+          "[Anna] \u201EDann MVP: ... 4. Rollen Admin/Sales/Kunde ...\u201C",
+          "[Ben] \u201EDas ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren.\u201C"
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-012",
+        "artifact": "architecture",
+        "sourceClaim": "F\u00FCr Angebote ist im MVP keine manuelle Sonderrabattvergabe vorgesehen; ohne implementierten Freigabeprozess d\u00FCrfen nur Standards\u00E4tze verwendet werden.",
+        "requiredTreatment": "Anwendungs- und Integrationsarchitektur f\u00FCr Angebotslogik mit expliziter MVP-Beschr\u00E4nkung \u0027keine manuellen Sonderrabatte\u0027 festhalten; Freigabeworkflow als sp\u00E4tere Erweiterung oder offener Baustein markieren.",
+        "evidence": [
+          "[Eva] \u201ENein, ohne Freigabeprozess k\u00F6nnen falsche Angebote rausgehen. Das ist ein finanzielles Risiko.\u201C",
+          "[Anna] \u201EDann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.\u201C",
+          "[Ben] \u201EDas w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u201C"
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-013",
+        "artifact": "architecture",
+        "sourceClaim": "Der MVP nutzt als Support-L\u00F6sung h\u00F6chstens ein Kontaktformular bzw. E-Mail ohne Ticketpersistenz; dies ist eine bewusste Einschr\u00E4nkung mit Architekturfolgen und Risiko, kein gel\u00F6ster Support-Prozess.",
+        "requiredTreatment": "MVP-Scope und Kommunikationsarchitektur mit explizit ausgeschlossener Ticketing-Komponente dokumentieren; Risiko und Konsequenzen f\u00FCr Datenhaltung/Auditierbarkeit sichtbar machen.",
+        "evidence": [
+          "[Anna] \u201ENein erstmal nicht.\u201C",
+          "[Anna] \u201ETicketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.\u201C",
+          "[Anna] \u201EKontaktformular ohne Ticketpersistenz?\u201C",
+          "[Clara] \u201EBitte nicht \u0027wir ignorieren es\u0027, sondern \u0027bewusste Einschr\u00E4nkung\u0027.\u201C"
+        ],
+        "kind": "decision",
+        "priority": "medium"
+      },
+      {
+        "id": "ARCHITECTURE-SC-014",
+        "artifact": "architecture",
+        "sourceClaim": "SAP-Verf\u00FCgbarkeit ist eine kritische Architekturabh\u00E4ngigkeit; On-Demand-Abruf aus SAP verbessert Datenminimierung, verschlechtert aber Performance/Verf\u00FCgbarkeit, und bei SAP-Ausfall ist die Angebotserstellung fachlich blockiert oder nur mit problematischen Fallbacks m\u00F6glich.",
+        "requiredTreatment": "Laufzeit- und Integrationsarchitektur mit SAP als kritischer externer Abh\u00E4ngigkeit, Verf\u00FCgbarkeitsrisiko und Optionen wie Cache/Fallback samt Trade-offs dokumentieren.",
+        "evidence": [
+          "[Clara] \u201EM\u00FCssen alle Kundendaten im Portal liegen oder reicht ein Abruf aus SAP bei Bedarf?\u201C",
+          "[Ben] \u201EAbruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit.\u201C",
+          "[Farid] \u201EUnd SAP hat Wartungsfenster am Wochenende.\u201C",
+          "[Ben] \u201EBitte schreibt \u0027SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0027.\u0022"
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "ARCHITECTURE-SC-015",
+        "artifact": "architecture",
+        "sourceClaim": "F\u00FCr Entwicklung und Betrieb sind mindestens Dev-, Test- und Prod-Umgebungen sowie Secrets Management erforderlich; Testdaten d\u00FCrfen keine echten Kundendaten enthalten, w\u00E4hrend das vorhandene SAP-Testsystem problematisch echte Alt-Kundendaten enth\u00E4lt.",
+        "requiredTreatment": "Umgebungs- und Delivery-Architektur mit getrennten Stages, Secrets Management und Testdatenstrategie dokumentieren; Risiko des SAP-Testsystems explizit aufnehmen.",
+        "evidence": [
+          "[Farid] \u201EWir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u201C",
+          "[Clara] \u201EJa, Pseudonymisierung oder synthetische Testdaten.\u201C",
+          "[Ben] \u201ESAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u201C",
+          "[Farid] \u201EUnd CI/CD braucht Secrets Management.\u201C"
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "REQUIREMENTS-SC-001",
+        "artifact": "requirements",
+        "sourceClaim": "Das Produkt soll im Kern ein Kundenportal bereitstellen, dessen prim\u00E4res Gesch\u00E4ftsziel die schnellere Erstellung von Angeboten ist; zus\u00E4tzlich sollen Kunden Bestellungen sehen und Rechnungen herunterladen k\u00F6nnen.",
+        "requiredTreatment": "Als funktionale Kernanforderungen und Zielsetzung des MVP/Produkts aufnehmen; Hauptziel und unterst\u00FCtzende Use Cases klar priorisieren.",
+        "evidence": [
+          "Also wir brauchen definitiv ein Kundenportal.",
+          "Angebote schneller erstellen. Das ist eigentlich das Hauptziel. Portal ist nur Mittel zum Zweck.",
+          "Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden. Aber Sales will Angebote erstellen."
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-002",
+        "artifact": "requirements",
+        "sourceClaim": "Der MVP-Schnitt wurde vorl\u00E4ufig konkretisiert auf: Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, minimale Rollen Admin/Sales/Kunde, minimaler Audit Trail, EU Managed Hosting und Backup.",
+        "requiredTreatment": "Als aktueller MVP-Entscheidungsstand mit Scope-In und vorl\u00E4ufiger Verbindlichkeit dokumentieren.",
+        "evidence": [
+          "Okay. Dann MVP:\n1. Login mit Double-Opt-In\n2. Angebotserstellung mit SAP-Lesedaten\n3. Rechnungsdownload\n4. Rollen Admin/Sales/Kunde\n5. Minimaler Audit Trail\n6. EU Managed Hosting\n7. Backup"
+        ],
+        "kind": "decision",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-003",
+        "artifact": "requirements",
+        "sourceClaim": "Die Umsetzung steht unter einer harten Zeitvorgabe von 8 Wochen f\u00FCr das MVP.",
+        "requiredTreatment": "Als Projekt- und Planungsconstraint in die Anforderungen aufnehmen; Anforderungen nach MVP-F\u00E4higkeit kennzeichnen.",
+        "evidence": [
+          "MVP in 8 Wochen wurde versprochen.",
+          "Das passt nicht zum 8-Wochen-MVP."
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-004",
+        "artifact": "requirements",
+        "sourceClaim": "Mobile ist nicht entschieden: Es gilt zwar \u0027Web first, Mobile sp\u00E4ter\u0027 als Tendenz, gleichzeitig gibt es Stakeholderdruck f\u00FCr mobile Nutzung, und native App wird aus Budgetgr\u00FCnden kritisch gesehen.",
+        "requiredTreatment": "Als offene Produkt-Scope-Frage und Nicht-Festlegung dokumentieren; keine finale Mobile-/Native-Anforderung ableiten.",
+        "evidence": [
+          "Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.",
+          "Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer.",
+          "Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends."
+        ],
+        "kind": "open_question",
+        "priority": "medium"
+      },
+      {
+        "id": "REQUIREMENTS-SC-005",
+        "artifact": "requirements",
+        "sourceClaim": "Es gibt Budgetrestriktionen gegen zwei Frontends und technische Abh\u00E4ngigkeiten, da das Backend noch nicht API-ready ist.",
+        "requiredTreatment": "Als Umsetzungs- und Scope-Constraint festhalten, die Frontend-/Integrationsanforderungen begrenzt.",
+        "evidence": [
+          "native w\u00E4re teuer. Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends.",
+          "Und ehrlich gesagt ist unser Backend noch nicht mal API-ready."
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-006",
+        "artifact": "requirements",
+        "sourceClaim": "Eine abgesicherte API-Layer ist verpflichtend, und neue externe Portale m\u00FCssen laut interner Policy \u00FCber das zentrale API Gateway laufen; zugleich besteht dort eine 6-w\u00F6chige Warteliste.",
+        "requiredTreatment": "Als zwingende Integrationsanforderung plus relevante organisatorische Abh\u00E4ngigkeit/Constraint aufnehmen.",
+        "evidence": [
+          "Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.",
+          "Noch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.",
+          "Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen."
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-007",
+        "artifact": "requirements",
+        "sourceClaim": "F\u00FCr die API-Absicherung ist OAuth bevorzugt, aber noch nicht final entschieden; API Keys sind als Alternative im Gespr\u00E4ch.",
+        "requiredTreatment": "Als offene Sicherheitsanforderung mit Pr\u00E4ferenz f\u00FCr OAuth dokumentieren, ohne finale Technologieentscheidung vorzut\u00E4uschen.",
+        "evidence": [
+          "API muss abgesichert sein. OAuth? Oder API Keys?",
+          "OAuth w\u00E4re besser. Aber komplexer.",
+          "Und OAuth ist bevorzugt, aber noch nicht final."
+        ],
+        "kind": "open_question",
+        "priority": "medium"
+      },
+      {
+        "id": "REQUIREMENTS-SC-008",
+        "artifact": "requirements",
+        "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr den MVP vorgesehen; wegen Verarbeitung personenbezogener Daten ist Double-Opt-In erforderlich.",
+        "requiredTreatment": "Als konkrete Authentifizierungsanforderung inkl. Compliance-Pflicht aufnehmen.",
+        "evidence": [
+          "Also erstmal Login per E-Mail und Passwort.",
+          "Login per E-Mail? Dann brauchen wir Double-Opt-In.",
+          "Dann MVP:\n1. Login mit Double-Opt-In"
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-009",
+        "artifact": "requirements",
+        "sourceClaim": "SSO ist nur optional und noch nicht entschieden; m\u00F6gliche Identity Provider wie Azure AD oder Google d\u00FCrfen nicht als Architekturentscheidung vorweggenommen werden.",
+        "requiredTreatment": "Als optionale/sp\u00E4tere Anforderung und offenen Entscheid dokumentieren; keine Produkt-/Providerfestlegung in Requirements verankern.",
+        "evidence": [
+          "SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?",
+          "SSO optional",
+          "Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat."
+        ],
+        "kind": "status",
+        "priority": "medium"
+      },
+      {
+        "id": "REQUIREMENTS-SC-010",
+        "artifact": "requirements",
+        "sourceClaim": "DSGVO-Compliance ist zwingend und umfasst mindestens Logging/Auditierbarkeit, L\u00F6schkonzept, Zugriffskontrolle/Rollenmodell, Auftragsverarbeitungsvertr\u00E4ge sowie Ber\u00FCcksichtigung von Auskunfts- und L\u00F6schpflichten.",
+        "requiredTreatment": "Als nicht-optionale Compliance-Anforderungen b\u00FCndeln und explizit in den Requirements verankern.",
+        "evidence": [
+          "DSGVO. Wir speichern Kundendaten.",
+          "Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.",
+          "Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.",
+          "DSGVO ist nicht optional."
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-011",
+        "artifact": "requirements",
+        "sourceClaim": "Auditierbarkeit ist Pflicht: Es muss nachvollziehbar sein, wer wann was ge\u00E4ndert oder ge\u00F6ffnet hat; technische Logs, Audit-Logs und Security-Logs sind zu trennen, und technische Logs d\u00FCrfen keine personenbezogenen Daten enthalten.",
+        "requiredTreatment": "Als konkrete nicht-funktionale Sicherheits-/Compliance-Anforderungen an Protokollierung und Log-Trennung aufnehmen.",
+        "evidence": [
+          "Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?",
+          "Und protokollieren. Wer hat welches Angebot ge\u00F6ffnet?",
+          "Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden.",
+          "Application logs, audit logs und security logs sind unterschiedliche Dinge."
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-012",
+        "artifact": "requirements",
+        "sourceClaim": "Es darf kein neuer DB-Server eingef\u00FChrt werden; Managed Services sind erlaubt, aber es wurde noch kein konkreter Dienst entschieden.",
+        "requiredTreatment": "Als Infrastruktur-Constraint und bewusst offene Technologieentscheidung dokumentieren.",
+        "evidence": [
+          "Kein neuer DB Server \u2013 IT hat das klar gesagt.",
+          "Ja kein neuer DB Server. Managed Services sind okay.",
+          "Ja, aber wir haben noch nicht entschieden, welcher."
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-013",
+        "artifact": "requirements",
+        "sourceClaim": "Datenhosting muss nachweisbar EU-only sein; \u0027DSGVO-konform\u0027 allein reicht nicht, und globale Backup-Replikation des Standardanbieters ist ein Problem.",
+        "requiredTreatment": "Als verbindliche Datenresidenz-Anforderung mit Nachweisbarkeit festhalten.",
+        "evidence": [
+          "Und wo werden Daten gehostet? EU only?",
+          "Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz.",
+          "Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert."
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-014",
+        "artifact": "requirements",
+        "sourceClaim": "F\u00FCr das MVP sind Support-Funktionen nicht gel\u00F6st: Ein vollwertiges Ticketsystem ist zun\u00E4chst ausgeschlossen, eventuell nur ein Kontaktformular; dies ist eine bewusste Einschr\u00E4nkung mit Datenschutz- und Prozessfolgen.",
+        "requiredTreatment": "Als expliziten Scope-Ausschluss bzw. bewusste MVP-Einschr\u00E4nkung inklusive Konsequenzen dokumentieren.",
+        "evidence": [
+          "Nein erstmal nicht.",
+          "Ticketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.",
+          "Bitte nicht \u0022wir ignorieren es\u0022, sondern \u0022bewusste Einschr\u00E4nkung\u0022.",
+          "Support ist nicht gel\u00F6st."
+        ],
+        "kind": "status",
+        "priority": "high"
+      },
+      {
+        "id": "REQUIREMENTS-SC-015",
+        "artifact": "requirements",
+        "sourceClaim": "Im MVP d\u00FCrfen keine manuellen Sonderrabatte erzeugt werden, solange der Freigabeprozess f\u00FCr Rabatte nicht umgesetzt ist; mindestens Freigaben ab einem Schwellenwert sind fachlich gefordert, der genaue Schwellenwert ist noch unklar.",
+        "requiredTreatment": "Als fachliche Constraint f\u00FCr den MVP und als offene Detailanforderung f\u00FCr den Freigabeprozess aufnehmen.",
+        "evidence": [
+          "Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+          "Und Rabatt-Freigabe?",
+          "Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.",
+          "Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.",
+          "Oder ab 20 Prozent. Ich bin mir nicht sicher."
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      }
+    ],
+    "risks": [
+      {
+        "id": "RISKS-SC-001",
+        "artifact": "risks",
+        "sourceClaim": "Der MVP-Zeitplan von 8 Wochen ist durch mehrere Pflichtma\u00DFnahmen und Abh\u00E4ngigkeiten akut gef\u00E4hrdet, insbesondere Security Review, API-Gateway-Warteliste und ungekl\u00E4rte Architektur/Scope-Entscheidungen.",
+        "requiredTreatment": "Als zentrales Liefer-/Terminrisiko mit Ursachen und Auswirkung auf den 8-Wochen-MVP dokumentieren.",
+        "evidence": [
+          "MVP in 8 Wochen wurde versprochen.",
+          "Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+          "Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+          "Wir haben nicht mal eine Architekturentscheidung."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-002",
+        "artifact": "risks",
+        "sourceClaim": "Ein Verzicht auf Security Review ist nicht zul\u00E4ssig; ohne ausreichende Dokumentation ist das Review zudem nicht m\u00F6glich.",
+        "requiredTreatment": "Als Compliance-/Go-Live-Risiko erfassen: Security Review ist obligatorisch und dokumentationsabh\u00E4ngig.",
+        "evidence": [
+          "Dann machen wir es ohne Security Review?",
+          "Das ist keine Option.",
+          "Ohne Dokumentation kein Security Review."
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-003",
+        "artifact": "risks",
+        "sourceClaim": "DSGVO-/Compliance-Verst\u00F6\u00DFe sind ein wesentliches Risiko, da personenbezogene Kundendaten verarbeitet werden und u.a. Double-Opt-In, Logging/Audit, L\u00F6schkonzept, AV-Vertr\u00E4ge und Zugriffskontrolle erforderlich sind.",
+        "requiredTreatment": "Als umfassendes Datenschutz-/Compliance-Risiko mit den fehlenden Ma\u00DFnahmen und potenziellen Blockern aufnehmen.",
+        "evidence": [
+          "DSGVO. Wir speichern Kundendaten.",
+          "Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.",
+          "Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.",
+          "DSGVO ist nicht optional."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-004",
+        "artifact": "risks",
+        "sourceClaim": "EU-only Hosting bzw. nachweisbare Datenresidenz ist noch nicht gesichert; Standard-Backups des Anbieters k\u00F6nnen global replizieren, was zu Datenschutz- und Compliance-Risiken f\u00FChrt.",
+        "requiredTreatment": "Als Hosting-/Datenschutzrisiko dokumentieren, inklusive Kosten- und Umsetzungsunsicherheit bei EU-only-Datenresidenz.",
+        "evidence": [
+          "Und wo werden Daten gehostet? EU only?",
+          "Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+          "Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz.",
+          "EU-only Hosting ist nicht einfach."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-005",
+        "artifact": "risks",
+        "sourceClaim": "Die SAP-Integration ist eine kritische Abh\u00E4ngigkeit mit mehreren Risiken: Stammdaten sind unvollst\u00E4ndig, Preise/Rabatte nicht immer in Echtzeit aktuell, Wochenend-Wartungsfenster bestehen und Schreibzugriff ist ungekl\u00E4rt.",
+        "requiredTreatment": "Als zentrales Integrations- und Betriebsrisiko mit Teilrisiken f\u00FCr Datenqualit\u00E4t, Verf\u00FCgbarkeit und Scope aufnehmen.",
+        "evidence": [
+          "Stammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig.",
+          "SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.",
+          "SAP hat Wartungsfenster am Wochenende.",
+          "SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-006",
+        "artifact": "risks",
+        "sourceClaim": "Falsche oder veraltete Preis-/Rabattdaten k\u00F6nnen zu fehlerhaften Angeboten f\u00FChren; dies wurde explizit als finanzielles Risiko benannt und ist ohne klare Preisg\u00FCltigkeit/Freigaben nicht akzeptabel.",
+        "requiredTreatment": "Als Gesch\u00E4fts-/Finanzrisiko ausweisen, mit Triggern wie n\u00E4chtlicher Rabattberechnung und fehlender Preisg\u00FCltigkeitslogik.",
+        "evidence": [
+          "Wenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen.",
+          "Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise.",
+          "Oder wir akzeptieren das Risiko.",
+          "Nein, ohne Freigabeprozess k\u00F6nnen falsche Angebote rausgehen. Das ist ein finanzielles Risiko."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-007",
+        "artifact": "risks",
+        "sourceClaim": "Der Freigabeprozess f\u00FCr Rabatte ist f\u00FCr den MVP nicht gel\u00F6st; gleichzeitig d\u00FCrfen ohne Freigabe keine Sonderrabatte erlaubt werden, sonst entsteht finanzielles Risiko.",
+        "requiredTreatment": "Als Scope-/Kontrollrisiko dokumentieren: ungel\u00F6ster Freigabeprozess mit bewusster Einschr\u00E4nkung \u0027keine manuellen Sonderrabatte im MVP\u0027.",
+        "evidence": [
+          "Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+          "Das ist wichtig, aber vielleicht sp\u00E4ter.",
+          "Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.",
+          "Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-008",
+        "artifact": "risks",
+        "sourceClaim": "Der Supportprozess ist f\u00FCr den MVP bewusst eingeschr\u00E4nkt bzw. ungel\u00F6st; ein Kontaktformular ohne Ticketpersistenz birgt operative, Datenschutz- und Nachvollziehbarkeitsrisiken.",
+        "requiredTreatment": "Als operatives und Compliance-Risiko durch bewusst ausgeschlossenen Ticketprozess erfassen.",
+        "evidence": [
+          "Nein erstmal nicht.",
+          "Kontaktformular ohne Ticketpersistenz?",
+          "E-Mail ist unstrukturiert und schlecht auditierbar.",
+          "Supportprozess unklar."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-009",
+        "artifact": "risks",
+        "sourceClaim": "Excel- oder manuelle Zwischenl\u00F6sungen f\u00FCr Support bzw. Angebotsprozesse sind nicht akzeptabel bzw. erh\u00F6hen die Fehlerwahrscheinlichkeit und Compliance-Risiken.",
+        "requiredTreatment": "Als Risiko aus potenziellen Workarounds dokumentieren und unzul\u00E4ssige/gef\u00E4hrliche \u00DCbergangsl\u00F6sungen benennen.",
+        "evidence": [
+          "Ich will nur verhindern, dass wir nach dem Launch manuell Excel-Listen pflegen.",
+          "Excel ist keine Option.",
+          "Excel mit personenbezogenen Kundendaten w\u00E4re aus Compliance-Sicht problematisch.",
+          "Manuelle Uploads erh\u00F6hen Fehlerwahrscheinlichkeit."
+        ],
+        "kind": "risk",
+        "priority": "medium"
+      },
+      {
+        "id": "RISKS-SC-010",
+        "artifact": "risks",
+        "sourceClaim": "Es besteht ein ungel\u00F6ster Berechtigungskonflikt zwischen Support, Sales und vertraulichen Angebots-/Rabattdaten; falsche Einsichtsrechte bergen Datenschutz- und Gesch\u00E4ftsrisiken.",
+        "requiredTreatment": "Als Risiko durch unklare Rollen-/Berechtigungsregeln und Konflikte zwischen Supportbedarf und Vertraulichkeit aufnehmen.",
+        "evidence": [
+          "Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen.",
+          "Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind.",
+          "Also Support sieht nur Status, nicht Details?",
+          "Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-011",
+        "artifact": "risks",
+        "sourceClaim": "Logging/Audit birgt eigenes Compliance-Risiko: personenbezogene Daten d\u00FCrfen nicht in technische Logs gelangen; Audit-, Application- und Security-Logs m\u00FCssen getrennt und mit unterschiedlichen Aufbewahrungsfristen behandelt werden.",
+        "requiredTreatment": "Als Sicherheits-/Compliance-Risiko erfassen, falls Logging ohne Trennung und Datenminimierung umgesetzt wird.",
+        "evidence": [
+          "Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten.",
+          "Application logs, audit logs und security logs sind unterschiedliche Dinge.",
+          "Und unterschiedliche Aufbewahrungsfristen.",
+          "Und \u0027keine personenbezogenen Daten in technischen Logs\u0027."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-012",
+        "artifact": "risks",
+        "sourceClaim": "Ohne Backup/Disaster-Recovery-Konzept besteht ein unakzeptables Risiko f\u00FCr Kundendaten; f\u00FCr den MVP wurde dies als notwendig best\u00E4tigt.",
+        "requiredTreatment": "Als Betriebs- und Datenverlustrisiko dokumentieren, inklusive Pflicht zur Absicherung bereits im MVP.",
+        "evidence": [
+          "Und wir haben noch gar nicht \u00FCber Backup gesprochen.",
+          "Ja Disaster Recovery.",
+          "Brauchen wir das f\u00FCr MVP?",
+          "Wenn Kundendaten drin sind: ja."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      {
+        "id": "RISKS-SC-013",
+        "artifact": "risks",
+        "sourceClaim": "Skalierung und Performance sind riskant, weil die erwartete Nutzerzahl extrem unklar ist und gleichzeitig Overengineering vermieden werden soll.",
+        "requiredTreatment": "Als Kapazit\u00E4ts-/Architekturrisiko mit hoher Unsicherheit der Lastannahmen festhalten.",
+        "evidence": [
+          "Wie viele User erwarten wir?",
+          "Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.",
+          "Skalierbarkeit muss ber\u00FCcksichtigt werden.",
+          "Aber bitte kein Overengineering."
+        ],
+        "kind": "risk",
+        "priority": "medium"
+      },
+      {
+        "id": "RISKS-SC-014",
+        "artifact": "risks",
+        "sourceClaim": "Test und Integration sind durch Datenschutz- und Betriebsauflagen gef\u00E4hrdet: Testdaten d\u00FCrfen keine echten Kundendaten enthalten, das SAP-Testsystem enth\u00E4lt aber echte Alt-Kundendaten, was Integrationstests blockieren kann.",
+        "requiredTreatment": "Als Delivery-/Compliance-Risiko f\u00FCr Entwicklungs- und Testumgebungen aufnehmen.",
+        "evidence": [
+          "Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+          "SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.",
+          "Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.",
+          "Das blockiert Integrationstests."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      }
+    ],
+    "open-questions": [
+      {
+        "id": "OPEN-QUESTIONS-SC-001",
+        "artifact": "open-questions",
+        "sourceClaim": "Die Frontend-/Kanalstrategie ist offen: Web-first, mobile sp\u00E4ter, oder mobiler Fokus; zudem ist unklar, ob mobile als native App oder responsive Web umgesetzt werden soll.",
+        "requiredTreatment": "Als offene Produkt-/Scope-Frage dokumentieren und die Entscheidungsoptionen samt Auswirkungen auf MVP festhalten.",
+        "evidence": [
+          "Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.",
+          "Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-002",
+        "artifact": "open-questions",
+        "sourceClaim": "Die Login-/Identity-Strategie ist nicht entschieden: MVP tendiert zu E-Mail/Passwort, SSO ist optional; m\u00F6glicher IdP (Azure AD, Google, beides) ist offen.",
+        "requiredTreatment": "Als offene Identit\u00E4ts-/Authentifizierungsfrage mit MVP-Default und offenen SSO-Optionen aufnehmen.",
+        "evidence": [
+          "Also erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?",
+          "Und OAuth ist bevorzugt, aber noch nicht final.",
+          "Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-003",
+        "artifact": "open-questions",
+        "sourceClaim": "F\u00FCr das Portal ist eine API Layer zwingend, aber die konkrete Absicherung ist noch offen; OAuth ist bevorzugt, API Keys sind Alternative, Entscheidung nicht final.",
+        "requiredTreatment": "Offene Architektur-/Security-Frage zur API-Absicherung dokumentieren, inklusive Pr\u00E4ferenz f\u00FCr OAuth und fehlender Finalentscheidung.",
+        "evidence": [
+          "Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.",
+          "API muss abgesichert sein. OAuth? Oder API Keys?",
+          "OAuth w\u00E4re besser. Aber komplexer.",
+          "Und OAuth ist bevorzugt, aber noch nicht final."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-004",
+        "artifact": "open-questions",
+        "sourceClaim": "Das genaue Rollen- und Berechtigungsmodell ist ungekl\u00E4rt; erw\u00E4hnt werden u. a. Admin, normaler User, Manager, Support sowie Sichtbarkeitskonflikte bei Angeboten und Rabatten.",
+        "requiredTreatment": "Als offene Fach-/Security-Frage mit zu kl\u00E4renden Rollen, Berechtigungen und Konflikten im Zielartefakt explizit auff\u00FChren.",
+        "evidence": [
+          "Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?",
+          "Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren.",
+          "Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen.",
+          "Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-005",
+        "artifact": "open-questions",
+        "sourceClaim": "Der Freigabeprozess f\u00FCr Rabatte ist inhaltlich nicht gekl\u00E4rt: Freigabe ist erforderlich, aber Schwellenwerte und beteiligte Rollen sind offen.",
+        "requiredTreatment": "Als offene Business-Regel dokumentieren; offene Schwellenwerte, Verantwortlichkeiten und MVP-Auswirkung festhalten.",
+        "evidence": [
+          "Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+          "Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance.",
+          "Oder ab 20 Prozent. Ich bin mir nicht sicher.",
+          "Das muss klar definiert werden."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-006",
+        "artifact": "open-questions",
+        "sourceClaim": "Der Support-Umfang im MVP ist offen bzw. strittig: kein Ticketsystem, eventuell nur Kontaktformular; Persistenz, Kundenzuordnung und datenschutzkonforme Verarbeitung sind ungekl\u00E4rt.",
+        "requiredTreatment": "Als offene Scope- und Prozessfrage mit bewusster Einschr\u00E4nkung/Alternativen und ihren Folgen aufnehmen.",
+        "evidence": [
+          "Nein erstmal nicht.",
+          "Ticketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem.",
+          "Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten.",
+          "Support ist nicht gel\u00F6st."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-007",
+        "artifact": "open-questions",
+        "sourceClaim": "EU-only Hosting ist als Ziel genannt, aber nicht pr\u00E4zise entschieden; \u0027DSGVO-konform\u0027 reicht nicht aus, nachweisbare Datenresidenz und Mehrkosten sind offen.",
+        "requiredTreatment": "Als offene Compliance-/Betriebsfrage dokumentieren und zwischen EU-only, DSGVO-Konformit\u00E4t, Nachweisbarkeit und Kosten differenzieren.",
+        "evidence": [
+          "Und wo werden Daten gehostet? EU only?",
+          "Ja EU only. Oder zumindest DSGVO-konform.",
+          "Das ist nicht dasselbe.",
+          "Wir brauchen nachweisbare Datenresidenz.",
+          "Aber wenn EU-only teurer ist?",
+          "Kann ich noch nicht sagen."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-008",
+        "artifact": "open-questions",
+        "sourceClaim": "Die Last- und Skalierungsannahmen sind offen; erwartete Nutzerzahlen schwanken stark, wodurch Performance- und Architekturentscheidungen nicht belastbar sind.",
+        "requiredTreatment": "Als offene Kapazit\u00E4tsfrage mit ben\u00F6tigter Lastannahme und Einfluss auf MVP/Architektur festhalten.",
+        "evidence": [
+          "Wie viele User erwarten wir?",
+          "Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft.",
+          "Das ist ein Unterschied."
+        ],
+        "kind": "open_question",
+        "priority": "medium"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-009",
+        "artifact": "open-questions",
+        "sourceClaim": "Es gibt keine klare, priorisierte Zieldefinition des Produkts; zwischen schneller Angebotserstellung, Portal allgemein, Rechnungsdownload und Compliance bestehen konkurrierende Zielbilder.",
+        "requiredTreatment": "Als offene Ziel- und Priorisierungsfrage dokumentieren, damit ein eindeutiger MVP-Schnitt abgeleitet werden kann.",
+        "evidence": [
+          "Und wir haben noch keine klare Zieldefinition.",
+          "Ziel ist schneller Angebote erstellen.",
+          "Und Portal.",
+          "Und Compliance."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-010",
+        "artifact": "open-questions",
+        "sourceClaim": "Der Pilotkunde bzw. Startmarkt ist nicht entschieden (Schweiz vs. Deutschland); das beeinflusst Scope, Datenschutz, W\u00E4hrung und Mehrsprachigkeit erheblich.",
+        "requiredTreatment": "Als offene Markt-/Pilotfrage mit direkten Auswirkungen auf Anforderungen und MVP-Scope festhalten.",
+        "evidence": [
+          "Wenn Schweiz Pilotkunde ist, dann doch.",
+          "Pilotkunde ist noch nicht final.",
+          "Ich dachte Pilotkunde ist M\u00FCller AG aus der Schweiz.",
+          "Vielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche.",
+          "Das beeinflusst Scope massiv."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-011",
+        "artifact": "open-questions",
+        "sourceClaim": "F\u00FCr den MVP ist Online-Akzeptanz von Angeboten nicht entschieden; sie w\u00E4re fachlich wertvoll, zieht aber Vertragsabschluss-, Zustimmungs- und SAP-Schreibzugriffsfragen nach sich.",
+        "requiredTreatment": "Als offene Funktions- und Rechtsfrage mit MVP-Optionen (nur Download vs. Online-Akzeptanz) aufnehmen.",
+        "evidence": [
+          "Kann der Kunde ein Angebot online akzeptieren?",
+          "Das w\u00E4re super.",
+          "Das ist ein Vertragsabschluss. Ganz anderes Thema.",
+          "SAP-Schreibzugriff hatten wir noch gar nicht entschieden.",
+          "Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP.",
+          "Wir m\u00FCssen entscheiden."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-012",
+        "artifact": "open-questions",
+        "sourceClaim": "Die Datenhaltungsstrategie ist offen: Datenminimierung spricht f\u00FCr Abruf aus SAP bei Bedarf, Performance/Verf\u00FCgbarkeit sprechen dagegen; Cache-Optionen sind datenschutz- und fachlich problematisch.",
+        "requiredTreatment": "Als offene Datenarchitekturfrage mit Alternativen, Trade-offs und offenen Restriktionen dokumentieren.",
+        "evidence": [
+          "M\u00FCssen alle Kundendaten im Portal liegen oder reicht ein Abruf aus SAP bei Bedarf?",
+          "Abruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit.",
+          "Dann brauchen wir Fallback oder Cache.",
+          "K\u00F6nnen wir nur Produktdaten cachen, keine Kundendaten?",
+          "Vielleicht, aber Rabattlogik ist kundenspezifisch."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-013",
+        "artifact": "open-questions",
+        "sourceClaim": "Die Aufbewahrungs- und L\u00F6schregeln sind nicht gekl\u00E4rt; gesetzliche Aufbewahrungspflichten, L\u00F6schanfragen und unterschiedliche Log-Typen/Fristen m\u00FCssen noch gekl\u00E4rt werden.",
+        "requiredTreatment": "Als offene Governance-/Compliance-Frage mit Legal-Kl\u00E4rungsbedarf und minimalem MVP-Retention-Plan aufnehmen.",
+        "evidence": [
+          "Wie lange m\u00FCssen wir Angebote speichern?",
+          "Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen.",
+          "Das kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen.",
+          "Application logs, audit logs und security logs sind unterschiedliche Dinge.",
+          "Und unterschiedliche Aufbewahrungsfristen."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      {
+        "id": "OPEN-QUESTIONS-SC-014",
+        "artifact": "open-questions",
+        "sourceClaim": "Der endg\u00FCltige MVP-Schnitt ist noch nicht stabil beschlossen; es besteht das explizite offene Ziel, klar festzulegen, was enthalten, bewusst ausgeschlossen und mit welchen Risiken verbunden ist.",
+        "requiredTreatment": "Als zentrale offene Kl\u00E4rungsfrage f\u00FCr das Zielartefakt dokumentieren; finale MVP-Abgrenzung mit In/Out-of-Scope und Restrisiken erforderlich.",
+        "evidence": [
+          "Dann m\u00FCssen wir schneiden.",
+          "Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen.",
+          "Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      }
+    ]
+  },
+  "recall": {
+    "exact": 8,
+    "partial": 5,
+    "missed": 7,
+    "exactRate": 0.4,
+    "exactOrPartial": 13,
+    "exactOrPartialRate": 0.65
+  },
+  "e2e": {
+    "matchesExpected": 3,
+    "matchRateAllCases": 0.15
+  },
+  "results": [
+    {
+      "id": "SC-ARCH-SCALABILITY-001",
+      "artifact": "architecture",
+      "sourceClaim": "Die erwartete Nutzerzahl schwankt zwischen ca. 200 und 20.000; Skalierbarkeit und Performance sind deshalb architektonisch offen.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "architecture.md sollte die Skalierungs-/Performance-Annahme oder offene Architekturfrage explizit behandeln.",
+      "recall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim behandelt die unsichere Nutzerzahlspanne (ca. 200 bis 20.000) oder die daraus explizit offene Skalierungs-/Performance-Architekturfrage."
+      },
+      "matchedClaim": null,
+      "coverageVerdict": null,
+      "topicCoverageBaseline": "TopicCoverage R1 stark fand SCALABILITY als Missing in architecture.",
+      "directReviewBaseline": "DirectReview stark verfehlte Analytics stabil und legte Scalability eher als open-question ab.",
+      "note": "Litmus-Gap aus D1/B45."
+    },
+    {
+      "id": "SC-ARCH-ANALYTICS-002",
+      "artifact": "architecture",
+      "sourceClaim": "Analytics/KPIs sind gew\u00FCnscht, aber technische Umsetzung, Tracking und Datenschutz sind offen.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "architecture.md sollte Analytics/KPI-Tracking als offene Architektur-/Datenschutzfrage behandeln.",
+      "recall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim behandelt Analytics/KPIs bzw. dass Tracking und Datenschutz als offene Architekturfrage zu dokumentieren sind."
+      },
+      "matchedClaim": null,
+      "coverageVerdict": null,
+      "topicCoverageBaseline": "TopicCoverage R1 stark/schwach fing ANALYTICS als Missing.",
+      "directReviewBaseline": "DirectReview stark verfehlte ANALYTICS in beiden L\u00E4ufen.",
+      "note": "Systematischer DirectReview-Blindspot."
+    },
+    {
+      "id": "SC-ARCH-API-GATEWAY-003",
+      "artifact": "architecture",
+      "sourceClaim": "Das zentrale API Gateway ist die bevorzugte/vorgegebene Integrationsebene, hat aber eine sechswoechige Warteliste und braucht Alternativen.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "architecture.md sollte API Gateway, Verz\u00F6gerungsrisiko und Alternativen/offene Strategie nennen.",
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "ARCHITECTURE-SC-001"
+        ],
+        "reason": "Enth\u00E4lt den Kern: zentrales API-Gateway ist per Policy vorgegeben/bevorzugte Integrationsebene und hat 6 Wochen Warteliste. Die geforderte Nennung von Alternativen/offener Strategie wird jedoch nicht explizit abgedeckt, nur die Auswirkung des Engpasses auf die MVP-Architektur."
+      },
+      "matchedClaim": {
+        "id": "ARCHITECTURE-SC-001",
+        "artifact": "architecture",
+        "sourceClaim": "Die Architektur muss definitiv eine API-Layer vorsehen; zus\u00E4tzlich gibt es die verbindliche interne Vorgabe, dass neue externe Portale \u00FCber das zentrale API-Gateway laufen m\u00FCssen, obwohl das Gateway-Team eine Warteliste von sechs Wochen hat.",
+        "requiredTreatment": "API-Layer und zentrales API-Gateway als Architekturbausteine und Zwangsrandbedingungen dokumentieren; Auswirkung des 6-Wochen-Engpasses auf MVP-Architektur transparent machen.",
+        "evidence": [
+          "[Ben] \u201EWir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.\u201C",
+          "[Farid] \u201ENoch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen.\u201C",
+          "[Ben] \u201EAber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.\u201C"
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-ARCH-API-GATEWAY-003",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **API Layer:** Verantwortlich f\u00FCr die sichere Anbindung externer Systeme wie SAP und das zentrale API Gateway.\n- **API Gateway (zentrales Infrastruktur-Component):** Vorgeschriebene Integrationsebene, allerdings mit Verz\u00F6gerungsrisiko durch Warteliste.\n- API Gateway Nutzung und alternative Strategien, wenn Verf\u00FCgbarkeit nicht rechtzeitig gegeben ist.",
+        "missingFacet": "Die Verbindlichkeit der Policy f\u00FCr neue externe Portale und die konkrete Auswirkung des 6-Wochen-Engpasses auf die MVP-Architektur sind nicht klar genug festgehalten; stattdessen werden alternative Strategien als offen dargestellt.",
+        "reason": "Der fachliche Kern ist enthalten: API-Layer ist als Komponente dokumentiert und das zentrale API-Gateway als vorgeschriebene Integrationsebene mit Wartelisten-Risiko erw\u00E4hnt. Allerdings fordert die Source-Evidence eine definitive Muss-Vorgabe f\u00FCr das Gateway bei neuen externen Portalen; im Artefakt wird dies durch \u0027alternative Strategien\u0027 als offene Entscheidung abgeschw\u00E4cht. Die 6-Wochen-Warteliste wird zudem nur allgemein als Verz\u00F6gerungsrisiko genannt, ohne transparente Konsequenz f\u00FCr die MVP-Architektur."
+      },
+      "topicCoverageBaseline": "TopicCoverage wertete API/Gateway je nach Artefakt als covered/partial.",
+      "directReviewBaseline": "DirectReview fand API/Gateway-Themen teilweise, aber nicht als stabilen Litmus.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-ENV-SECRETS-004",
+      "artifact": "architecture",
+      "sourceClaim": "Dev/Test/Prod-Umgebungen, Testdaten ohne echte Kundendaten und Secrets Management sind erforderlich.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "architecture.md sollte Umgebungs-/Testdaten-/Secrets-Strategie als Architekturthema oder offene Entscheidung enthalten.",
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "ARCHITECTURE-SC-015"
+        ],
+        "reason": "Extrahierter Claim 015 enth\u00E4lt denselben fachlichen Kern f\u00FCr das Architekturartefakt: Dev/Test/Prod-Umgebungen, keine echten Kundendaten in Testdaten und erforderliches Secrets Management; zus\u00E4tzlich sogar das SAP-Testsystem-Risiko."
+      },
+      "matchedClaim": {
+        "id": "ARCHITECTURE-SC-015",
+        "artifact": "architecture",
+        "sourceClaim": "F\u00FCr Entwicklung und Betrieb sind mindestens Dev-, Test- und Prod-Umgebungen sowie Secrets Management erforderlich; Testdaten d\u00FCrfen keine echten Kundendaten enthalten, w\u00E4hrend das vorhandene SAP-Testsystem problematisch echte Alt-Kundendaten enth\u00E4lt.",
+        "requiredTreatment": "Umgebungs- und Delivery-Architektur mit getrennten Stages, Secrets Management und Testdatenstrategie dokumentieren; Risiko des SAP-Testsystems explizit aufnehmen.",
+        "evidence": [
+          "[Farid] \u201EWir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten.\u201C",
+          "[Clara] \u201EJa, Pseudonymisierung oder synthetische Testdaten.\u201C",
+          "[Ben] \u201ESAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.\u201C",
+          "[Farid] \u201EUnd CI/CD braucht Secrets Management.\u201C"
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-ARCH-ENV-SECRETS-004",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Testdatenstrategie und Umgang mit personenbezogenen Daten in Entwicklung und Testumgebungen.",
+        "missingFacet": "Getrennte Dev-/Test-/Prod-Umgebungen, Secrets Management sowie das explizite Risiko des SAP-Testsystems mit echten Alt-Kundendaten fehlen.",
+        "reason": "Das Artefakt greift die Testdaten-/Datenschutzthematik in offenen Architekturentscheidungen erkennbar auf. Es dokumentiert jedoch weder die geforderte Umgebungs-/Delivery-Architektur mit mindestens Dev, Test und Prod noch Secrets Management f\u00FCr CI/CD. Zudem wird das konkrete Problem des SAP-Testsystems mit echten alten Kundendaten nicht explizit als Risiko benannt."
+      },
+      "topicCoverageBaseline": "TopicCoverage je nach Fixture nur grob \u00FCber Testdaten; Secrets/Umgebungen oft nicht pr\u00E4zise.",
+      "directReviewBaseline": "DirectReview stark fand Umgebungen/Testdaten/Secrets als Missing in architecture.",
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+      "artifact": "architecture",
+      "sourceClaim": "Rabatte \u00FCber 15 Prozent brauchen einen Freigabeprozess mit Workflow-Status.",
+      "expectedVerdict": "partial",
+      "requiredTreatment": "architecture.md sollte den Freigabeprozess als Komponente/Workflow oder offene Architekturentscheidung behandeln.",
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "ARCHITECTURE-SC-012"
+        ],
+        "reason": "Der fachliche Kern zu Rabatten/Freigabeprozess ist teilweise enthalten, aber der erwartete konkrete Freigabeprozess mit Workflow-Status f\u00FCr Rabatte \u00FCber 15% fehlt. Stattdessen wird nur die MVP-Einschr\u00E4nkung ohne implementierten Freigabeprozess beschrieben."
+      },
+      "matchedClaim": {
+        "id": "ARCHITECTURE-SC-012",
+        "artifact": "architecture",
+        "sourceClaim": "F\u00FCr Angebote ist im MVP keine manuelle Sonderrabattvergabe vorgesehen; ohne implementierten Freigabeprozess d\u00FCrfen nur Standards\u00E4tze verwendet werden.",
+        "requiredTreatment": "Anwendungs- und Integrationsarchitektur f\u00FCr Angebotslogik mit expliziter MVP-Beschr\u00E4nkung \u0027keine manuellen Sonderrabatte\u0027 festhalten; Freigabeworkflow als sp\u00E4tere Erweiterung oder offener Baustein markieren.",
+        "evidence": [
+          "[Eva] \u201ENein, ohne Freigabeprozess k\u00F6nnen falsche Angebote rausgehen. Das ist ein finanzielles Risiko.\u201C",
+          "[Anna] \u201EDann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden.\u201C",
+          "[Ben] \u201EDas w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP.\u201C"
+        ],
+        "kind": "constraint",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": true,
+        "artifactQuote": "- **SAP Integration:** Lesender Zugriff auf Produkt-, Preis- und Rabattdaten aus SAP. ...\n- Rabattfreigabeprozess mit Workflows f\u00FCr Freigaben \u00FCber Schwellenwerte ist noch unvollst\u00E4ndig.",
+        "missingFacet": "Explizite MVP-Constraint, dass im MVP keine manuellen Sonderrabatte zul\u00E4ssig sind und nur Standardrabatts\u00E4tze verwendet werden d\u00FCrfen.",
+        "reason": "Das Artefakt adressiert Rabattdaten aus SAP und nennt den Rabattfreigabeprozess als offenen/noch unvollst\u00E4ndigen Architekturpunkt, was den sp\u00E4teren Workflow-Aspekt teilweise abdeckt. Es fehlt jedoch die zentrale MVP-Beschr\u00E4nkung aus der Evidence, dass ohne implementierten Freigabeprozess im MVP keine manuellen Sonderrabatte vergeben werden d\u00FCrfen und ausschlie\u00DFlich Standards\u00E4tze zul\u00E4ssig sind."
+      },
+      "topicCoverageBaseline": "TopicCoverage R1 architecture wertete Angebotsworkflow als partial.",
+      "directReviewBaseline": "DirectReview stark fand Rabattfreigabe als Missing/Critical.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-LOGIN-006",
+      "artifact": "requirements",
+      "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr das MVP vorgesehen; Double-Opt-In ist verpflichtend.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "requirements.md sollte Login per E-Mail/Passwort und Double-Opt-In als Anforderungen/Constraints enthalten.",
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "REQUIREMENTS-SC-008"
+        ],
+        "reason": "SC-008 enth\u00E4lt beide Kernelemente mit gleicher Modalit\u00E4t: Login per E-Mail/Passwort f\u00FCr den MVP und verpflichtendes Double-Opt-In."
+      },
+      "matchedClaim": {
+        "id": "REQUIREMENTS-SC-008",
+        "artifact": "requirements",
+        "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr den MVP vorgesehen; wegen Verarbeitung personenbezogener Daten ist Double-Opt-In erforderlich.",
+        "requiredTreatment": "Als konkrete Authentifizierungsanforderung inkl. Compliance-Pflicht aufnehmen.",
+        "evidence": [
+          "Also erstmal Login per E-Mail und Passwort.",
+          "Login per E-Mail? Dann brauchen wir Double-Opt-In.",
+          "Dann MVP:\n1. Login mit Double-Opt-In"
+        ],
+        "kind": "requirement",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-REQ-LOGIN-006",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- Ein Login mit E-Mail und Passwort ist obligatorisch; Single Sign-On (SSO) ist optional.\n- Doppelopt-in Verfahren f\u00FCr E-Mail-Login ist verpflichtend.",
+        "missingFacet": "",
+        "reason": "Der Claim wird als konkrete Authentifizierungsanforderung aufgenommen: E-Mail/Passwort-Login ist f\u00FCr den MVP vorgesehen, und Double-Opt-In ist als verpflichtende Compliance-/Constraint-Anforderung explizit genannt. Damit sind fachlicher Kern und Pflichtcharakter abgedeckt."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Login/Double-Opt-In covered werten.",
+      "directReviewBaseline": "DirectReview meldete diesen Kontrollfall nicht als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SAP-WRITE-007",
+      "artifact": "requirements",
+      "sourceClaim": "SAP-Schreibzugriff ist nicht entschieden; im MVP ist eher nur SAP-Lesen vorgesehen.",
+      "expectedVerdict": "contradicted",
+      "requiredTreatment": "requirements.md darf Schreibzugriff nicht als geplante sp\u00E4tere Phase festschreiben; es sollte offen/ungekl\u00E4rt bleiben.",
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "REQUIREMENTS-SC-002"
+        ],
+        "reason": "SC-002 enth\u00E4lt den gleichen Kern und die gleiche Modalit\u00E4t: MVP mit SAP-Lesedaten; damit wird SAP-Schreibzugriff nicht als beschlossene sp\u00E4tere Phase festgeschrieben, sondern der aktuelle Stand bleibt lesend."
+      },
+      "matchedClaim": {
+        "id": "REQUIREMENTS-SC-002",
+        "artifact": "requirements",
+        "sourceClaim": "Der MVP-Schnitt wurde vorl\u00E4ufig konkretisiert auf: Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, minimale Rollen Admin/Sales/Kunde, minimaler Audit Trail, EU Managed Hosting und Backup.",
+        "requiredTreatment": "Als aktueller MVP-Entscheidungsstand mit Scope-In und vorl\u00E4ufiger Verbindlichkeit dokumentieren.",
+        "evidence": [
+          "Okay. Dann MVP:\n1. Login mit Double-Opt-In\n2. Angebotserstellung mit SAP-Lesedaten\n3. Rechnungsdownload\n4. Rollen Admin/Sales/Kunde\n5. Minimaler Audit Trail\n6. EU Managed Hosting\n7. Backup"
+        ],
+        "kind": "decision",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-REQ-SAP-WRITE-007",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- Ein Login mit E-Mail und Passwort ist obligatorisch; Single Sign-On (SSO) ist optional.\n- Rollenbasierte Zugriffskontrolle mit mindestens den Rollen Admin, Sales, Kunde und Manager muss unterst\u00FCtzt werden.\n- Integration einer API-Schicht zur Anbindung von SAP zur Produkt- und Preisdatenabfrage.\n- Kunden sollen Bestellungen und Rechnungen im Portal einsehen und Rechnungen herunterladen k\u00F6nnen.\n- Das System soll EU-konform gehostet werden ...\n- Logging und Audit Trails sind f\u00FCr alle sicherheitsrelevanten Aktionen notwendig ...\n- Backup- und Disaster-Recovery-Ma\u00DFnahmen m\u00FCssen f\u00FCr das System implementiert sein.\n- Doppelopt-in Verfahren f\u00FCr E-Mail-Login ist verpflichtend.\n- SAP-Anbindung ist im MVP nur lesend vorgesehen, Schreibzugriffe sind f\u00FCr sp\u00E4tere Phasen geplant.",
+        "missingFacet": "Der vorl\u00E4ufige MVP-Entscheidungsstatus als zusammenh\u00E4ngender Scope-In ist nicht explizit dokumentiert; zudem weicht die Rollendefinition durch zus\u00E4tzliche Rolle \u201EManager\u201C vom konkretisierten Minimalumfang ab.",
+        "reason": "Die meisten MVP-Bausteine aus der Evidence sind im Artefakt enthalten (Double-Opt-In, SAP-Lesedaten, Rechnungsdownload, Admin/Sales/Kunde, Audit Trail, EU-Hosting, Backup). Allerdings wird der Claim nicht als vorl\u00E4ufig konkretisierter MVP-Entscheidungsstand geb\u00FCndelt festgehalten, und die minimale Rollenmenge wird durch eine zus\u00E4tzliche Pflichtrolle erweitert statt exakt als Minimalumfang dokumentiert."
+      },
+      "topicCoverageBaseline": "TopicCoverage misst prim\u00E4r Missing und erkennt diese Status-\u00DCberfestlegung nicht sauber.",
+      "directReviewBaseline": "DirectReview kann false_claim finden, aber nicht stabil als Coverage-Fall.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-ANALYTICS-008",
+      "artifact": "requirements",
+      "sourceClaim": "KPIs/Analytics sind gew\u00FCnscht, aber Messkonzept und technische Umsetzung sind noch offen.",
+      "expectedVerdict": "partial",
+      "requiredTreatment": "requirements.md sollte KPI-Wunsch und offene technische Umsetzung mindestens als offene Anforderung/Assumption erfassen.",
+      "recall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim erw\u00E4hnt KPI-/Analytics-Wunsch oder dass Messkonzept bzw. technische Umsetzung noch offen sind."
+      },
+      "matchedClaim": null,
+      "coverageVerdict": null,
+      "topicCoverageBaseline": "TopicCoverage kann Analytics als Missing/Partial abh\u00E4ngig vom Artefakt erkennen.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot bei architecture; requirements teils besser.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SCALABILITY-009",
+      "artifact": "requirements",
+      "sourceClaim": "Nutzerzahl/Skalierung ist unklar, muss aber als nichtfunktionale Anforderung ber\u00FCcksichtigt werden.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "requirements.md sollte Skalierbarkeit/Performance oder Nutzerzahl-Spanne als NFR enthalten.",
+      "recall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim behandelt unklare Nutzerzahl/Skalierung als zu ber\u00FCcksichtigende nichtfunktionale Anforderung oder fordert Skalierbarkeit/Performance als NFR."
+      },
+      "matchedClaim": null,
+      "coverageVerdict": null,
+      "topicCoverageBaseline": "TopicCoverage sollte requirements hier covered/partial werten.",
+      "directReviewBaseline": "DirectReview sollte keinen Missing-Fall melden.",
+      "note": null
+    },
+    {
+      "id": "SC-REQ-PUSH-010",
+      "artifact": "requirements",
+      "sourceClaim": "Push Notifications wurden als Marketingwunsch eingebracht, waren aber nie besprochen und nicht im MVP entschieden.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "requirements.md sollte Push nicht als Requirement aufnehmen, aber als offene/ausgeschlossene Scope-Frage dokumentieren, wenn relevant.",
+      "recall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim behandelt Push Notifications als Marketingwunsch, unbesprochen/nicht im MVP und als offene bzw. ausgeschlossene Scope-Frage."
+      },
+      "matchedClaim": null,
+      "coverageVerdict": null,
+      "topicCoverageBaseline": "F1/F2: Push war ein bekannter Topic-Extractor-Blindspot und wurde erst vom Verifier als Kandidat gefunden.",
+      "directReviewBaseline": "DirectReview kann Push \u00FCbersehen oder anders gewichten.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-API-GATEWAY-011",
+      "artifact": "risks",
+      "sourceClaim": "Die sechswoechige API-Gateway-Warteliste gef\u00E4hrdet den 8-Wochen-MVP.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "risks.md sollte API-Gateway-Verz\u00F6gerung als Termin-/Integrationsrisiko enthalten.",
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "RISKS-SC-001"
+        ],
+        "reason": "RISKS-SC-001 enth\u00E4lt explizit die 6-w\u00F6chige API-Gateway-Warteliste als Termin-/Integrationsrisiko mit Auswirkung auf den 8-Wochen-MVP."
+      },
+      "matchedClaim": {
+        "id": "RISKS-SC-001",
+        "artifact": "risks",
+        "sourceClaim": "Der MVP-Zeitplan von 8 Wochen ist durch mehrere Pflichtma\u00DFnahmen und Abh\u00E4ngigkeiten akut gef\u00E4hrdet, insbesondere Security Review, API-Gateway-Warteliste und ungekl\u00E4rte Architektur/Scope-Entscheidungen.",
+        "requiredTreatment": "Als zentrales Liefer-/Terminrisiko mit Ursachen und Auswirkung auf den 8-Wochen-MVP dokumentieren.",
+        "evidence": [
+          "MVP in 8 Wochen wurde versprochen.",
+          "Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP.",
+          "Unser Gateway-Team hat gerade eine Warteliste von sechs Wochen.",
+          "Wir haben nicht mal eine Architekturentscheidung."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-API-GATEWAY-011",
+        "verdict": "covered",
+        "support": "full",
+        "matchesExpected": true,
+        "artifactQuote": "- **API Gateway Verz\u00F6gerung:** Die Warteliste von sechs Wochen f\u00FCr das zentrale API Gateway gef\u00E4hrdet die 8-Wochen MVP-Zeitplanung.\n- **Backup, Disaster Recovery und Security Review:** Security Review dauert sechs Wochen, Backup ist verpflichtend, doch Zeitplan und Ressourcen sind begrenzt.\n- **Fehlende finale Architektur:** Kein klar definierter technischer Architekturentwurf, insbesondere bzgl. SSO, API Layer und Hosting, erh\u00F6ht das Risiko technischer Fehlentscheidungen.\n- **Zeitplan vs. Umfang und Qualit\u00E4t:** Komplexe Compliance- und Security-Anforderungen widersprechen dem kurzen MVP-Zeitplan.",
+        "missingFacet": "",
+        "reason": "Der zentrale Termin-/Lieferverzug des 8-Wochen-MVP ist als Risiko dokumentiert, inklusive der im Claim genannten Hauptursachen: Security Review (6 Wochen), API-Gateway-Warteliste (6 Wochen) und ungekl\u00E4rte Architekturentscheidungen. Zus\u00E4tzlich wird die Auswirkung auf den MVP-Zeitplan mehrfach explizit benannt."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview meldete API-Gateway teils als Missing/Issue.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PUSH-012",
+      "artifact": "risks",
+      "sourceClaim": "Push Notifications erzeugen Einwilligungs-/DSGVO-Risiken, falls sie sp\u00E4ter umgesetzt werden.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "risks.md sollte Push/Einwilligung als Risiko oder bewusst ausgeschlossenes sp\u00E4teres Risiko behandeln.",
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "RISKS-SC-003"
+        ],
+        "reason": "DSGVO/Einwilligung wird als Risiko allgemein erfasst, aber der spezifische sp\u00E4tere Push-Notification-Risikoaspekt bzw. bewusste Ausschluss f\u00FCr sp\u00E4ter ist nicht ausdr\u00FCcklich enthalten."
+      },
+      "matchedClaim": {
+        "id": "RISKS-SC-003",
+        "artifact": "risks",
+        "sourceClaim": "DSGVO-/Compliance-Verst\u00F6\u00DFe sind ein wesentliches Risiko, da personenbezogene Kundendaten verarbeitet werden und u.a. Double-Opt-In, Logging/Audit, L\u00F6schkonzept, AV-Vertr\u00E4ge und Zugriffskontrolle erforderlich sind.",
+        "requiredTreatment": "Als umfassendes Datenschutz-/Compliance-Risiko mit den fehlenden Ma\u00DFnahmen und potenziellen Blockern aufnehmen.",
+        "evidence": [
+          "DSGVO. Wir speichern Kundendaten.",
+          "Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge.",
+          "Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.",
+          "DSGVO ist nicht optional."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-PUSH-012",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Einwilligungen und Double-Opt-In:** Anforderungen zur Einwilligung und Logging sind komplex und bedeuten Mehraufwand.\n- **L\u00F6schkonzepte vs. Aufbewahrungspflichten:** Konflikte zwischen Recht auf L\u00F6schung und gesetzlichen Aufbewahrungsfristen sind ungel\u00F6st.\n- **Unzureichendes Logging und Audit:** Unterschiedliche Anforderungen an technische Logs, Audit-Trails und Datenschutz erschweren die Implementierung.\n- **Rollen- und Berechtigungsmodell:** Konflikte zwischen Support-Sichtbarkeit und Datenschutz.",
+        "missingFacet": "AV-Vertr\u00E4ge/Auftragsverarbeitungsvertr\u00E4ge und explizite Darstellung als umfassender potenzieller Compliance-Blocker wegen Verarbeitung personenbezogener Kundendaten fehlen",
+        "reason": "Das Risikoartefakt adressiert mehrere Kernelemente des Claims (DSGVO, Double-Opt-In, Logging/Audit, L\u00F6schkonzept, Zugriffskontrolle/Rollenmodell). Es nennt auch rechtliche Sanktionen. Es fehlt jedoch der explizite Punkt zu AV-Vertr\u00E4gen aus der Evidence sowie die geb\u00FCndelte Darstellung als wesentliches, nicht optionales Gesamt-Compliance-Risiko aufgrund der Verarbeitung personenbezogener Kundendaten mit potenziell blockierender Wirkung."
+      },
+      "topicCoverageBaseline": "Push war in der TopicFixture zun\u00E4chst nicht enthalten; TopicCoverage konnte es nicht pr\u00FCfen.",
+      "directReviewBaseline": "DirectReview ist open-world, kann solche Themen finden, tat es aber nicht stabil.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-SUPPORT-013",
+      "artifact": "risks",
+      "sourceClaim": "Kein Ticketsystem im MVP f\u00FChrt zu unstrukturierter E-Mail-Bearbeitung und Datenschutz-/Support-Risiken.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "risks.md sollte Support ohne Ticketsystem als Datenschutz-/Prozessrisiko erfassen.",
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "RISKS-SC-008"
+        ],
+        "reason": "RISKS-SC-008 deckt den fachlichen Kern vollst\u00E4ndig ab: kein/ausgeschlossener Ticketprozess im MVP bzw. keine Ticketpersistenz f\u00FChrt zu unstrukturiertem E-Mail-Support mit Datenschutz-, operativen und Nachvollziehbarkeitsrisiken."
+      },
+      "matchedClaim": {
+        "id": "RISKS-SC-008",
+        "artifact": "risks",
+        "sourceClaim": "Der Supportprozess ist f\u00FCr den MVP bewusst eingeschr\u00E4nkt bzw. ungel\u00F6st; ein Kontaktformular ohne Ticketpersistenz birgt operative, Datenschutz- und Nachvollziehbarkeitsrisiken.",
+        "requiredTreatment": "Als operatives und Compliance-Risiko durch bewusst ausgeschlossenen Ticketprozess erfassen.",
+        "evidence": [
+          "Nein erstmal nicht.",
+          "Kontaktformular ohne Ticketpersistenz?",
+          "E-Mail ist unstrukturiert und schlecht auditierbar.",
+          "Supportprozess unklar."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-SUPPORT-013",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "**Datenschutz bei Supportprozessen:** Kein Ticketsystem im MVP, manuelle E-Mail-Verarbeitung f\u00FChrt zu unstrukturierter Datenhaltung und Compliance-Risiken.",
+        "missingFacet": "Operatives Risiko, fehlende Nachvollziehbarkeit/Auditierbarkeit und unklarer Supportprozess bzw. Kontaktformular ohne Ticketpersistenz sind nicht vollst\u00E4ndig erfasst.",
+        "reason": "Das Artefakt erfasst den Kern als Datenschutz-/Compliance-Risiko durch fehlendes Ticketsystem im MVP und manuelle E-Mail-Verarbeitung. Es deckt aber den Source-Claim nicht vollst\u00E4ndig ab, weil die operative Einschr\u00E4nkung/Ungel\u00F6stheit des Supportprozesses sowie die explizite Nachvollziehbarkeits- bzw. Auditierbarkeitsproblematik und Ticketpersistenz nur teilweise bzw. nicht ausdr\u00FCcklich als eigenes Risiko benannt werden."
+      },
+      "topicCoverageBaseline": "TopicCoverage sollte Support/Datenschutz in risks covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet Supportthemen h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-TESTDATA-014",
+      "artifact": "risks",
+      "sourceClaim": "Echte Kundendaten in Test- und Entwicklungsumgebungen erzeugen Datenschutzrisiken.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "risks.md sollte Testdatenstrategie/echte Kundendaten als Datenschutzrisiko enthalten.",
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "RISKS-SC-014"
+        ],
+        "reason": "Der extrahierte Claim nennt explizit, dass Testdaten keine echten Kundendaten enthalten d\u00FCrfen und dass echte Kundendaten im Testsystem ein Datenschutz-/Compliance-Risiko darstellen."
+      },
+      "matchedClaim": {
+        "id": "RISKS-SC-014",
+        "artifact": "risks",
+        "sourceClaim": "Test und Integration sind durch Datenschutz- und Betriebsauflagen gef\u00E4hrdet: Testdaten d\u00FCrfen keine echten Kundendaten enthalten, das SAP-Testsystem enth\u00E4lt aber echte Alt-Kundendaten, was Integrationstests blockieren kann.",
+        "requiredTreatment": "Als Delivery-/Compliance-Risiko f\u00FCr Entwicklungs- und Testumgebungen aufnehmen.",
+        "evidence": [
+          "Testdaten d\u00FCrfen keine echten Kundendaten enthalten.",
+          "SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem.",
+          "Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden.",
+          "Das blockiert Integrationstests."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-TESTDATA-014",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **Fehlende Testdatenstrategie:** \n  Umgang mit echten Kundendaten in Tests und Entwicklung ist unklar, Datenschutzrisiko.",
+        "missingFacet": "Konkreter Bezug auf das SAP-Testsystem mit echten Alt-Kundendaten und die m\u00F6gliche Blockade von Integrationstests fehlt.",
+        "reason": "Das Risikoartefakt greift den Kern des Claims sinngem\u00E4\u00DF auf, indem es den unklaren Umgang mit echten Kundendaten in Test/Entwicklung als Datenschutzrisiko benennt. Es behandelt aber nicht die wesentliche konkrete Facette aus der Evidence, dass das SAP-Testsystem bereits echte Alt-Kundendaten enth\u00E4lt und dadurch Integrationstests blockiert werden k\u00F6nnen."
+      },
+      "topicCoverageBaseline": "TopicCoverage findet Testdaten je nach Topic-Fassung; SourceClaim pr\u00E4zisiert die Pflicht.",
+      "directReviewBaseline": "DirectReview architecture fand Testdaten/Umgebungen als Missing.",
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PRICE-CACHE-015",
+      "artifact": "risks",
+      "sourceClaim": "Caching/Fallbacks f\u00FCr SAP-Daten kollidieren mit Datenaktualit\u00E4t und Datenschutz.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "risks.md sollte Cache/Fallback-Konflikte mit Aktualit\u00E4t und Datenschutz erfassen.",
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "RISKS-SC-005",
+          "RISKS-SC-003"
+        ],
+        "reason": "SAP-Daten, Aktualit\u00E4t und Datenschutz sind abgedeckt, aber der spezifische Cache/Fallback-Konflikt als Risiko wird nicht explizit genannt."
+      },
+      "matchedClaim": {
+        "id": "RISKS-SC-005",
+        "artifact": "risks",
+        "sourceClaim": "Die SAP-Integration ist eine kritische Abh\u00E4ngigkeit mit mehreren Risiken: Stammdaten sind unvollst\u00E4ndig, Preise/Rabatte nicht immer in Echtzeit aktuell, Wochenend-Wartungsfenster bestehen und Schreibzugriff ist ungekl\u00E4rt.",
+        "requiredTreatment": "Als zentrales Integrations- und Betriebsrisiko mit Teilrisiken f\u00FCr Datenqualit\u00E4t, Verf\u00FCgbarkeit und Scope aufnehmen.",
+        "evidence": [
+          "Stammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig.",
+          "SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet.",
+          "SAP hat Wartungsfenster am Wochenende.",
+          "SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend."
+        ],
+        "kind": "risk",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-RISK-PRICE-CACHE-015",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "**SAP-Integration unvollst\u00E4ndig:** Lesender Zugriff im MVP ist vorgesehen, Schreibzugriffe f\u00FCr Bestellungen und Freigaben fehlen, was zu funktionalen Einschr\u00E4nkungen und Inkonsistenzen f\u00FChren kann.\n- **Cache-Konzept problematisch:** Cache zur Verbesserung der Performance kollidiert mit Datenschutz und Datenaktualit\u00E4t.",
+        "missingFacet": "Teilrisiken zu unvollst\u00E4ndigen SAP-Stammdaten, nicht echtzeitaktuellen Preisen/Rabatten und Wochenend-Wartungsfenstern fehlen als explizite SAP-Abh\u00E4ngigkeits-/Verf\u00FCgbarkeitsrisiken.",
+        "reason": "Das Artefakt erfasst die SAP-Integration als technisches Risiko und greift den ungekl\u00E4rten bzw. fehlenden Schreibzugriff teilweise auf. Es behandelt aber die im Claim zentralen weiteren Teilrisiken aus der Evidence nicht angemessen: unvollst\u00E4ndige Stammdaten (E1), verz\u00F6gerte Preis-/Rabattaktualit\u00E4t aus SAP (E2) und Wochenend-Wartungsfenster (E3) werden nicht als SAP-spezifische Datenqualit\u00E4ts- bzw. Verf\u00FCgbarkeitsrisiken aufgenommen. Das Cache-Risiko ist zu allgemein und nicht ausreichend an die SAP-Preisaktualit\u00E4t gebunden."
+      },
+      "topicCoverageBaseline": "TopicCoverage/risks sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Cache/Risiko teils.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-MOBILE-016",
+      "artifact": "open-questions",
+      "sourceClaim": "Mobile Umsetzung ist offen: native App vs. responsive Web.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "open-questions.md sollte Mobile/native vs responsive als offene Frage enthalten.",
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "OPEN-QUESTIONS-SC-001"
+        ],
+        "reason": "OPEN-QUESTIONS-SC-001 enth\u00E4lt explizit die offene Frage zur Mobile-Umsetzung als native App vs. responsive Web und ordnet sie als offene Frage im passenden Artefakt ein."
+      },
+      "matchedClaim": {
+        "id": "OPEN-QUESTIONS-SC-001",
+        "artifact": "open-questions",
+        "sourceClaim": "Die Frontend-/Kanalstrategie ist offen: Web-first, mobile sp\u00E4ter, oder mobiler Fokus; zudem ist unklar, ob mobile als native App oder responsive Web umgesetzt werden soll.",
+        "requiredTreatment": "Als offene Produkt-/Scope-Frage dokumentieren und die Entscheidungsoptionen samt Auswirkungen auf MVP festhalten.",
+        "evidence": [
+          "Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten.",
+          "Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-OQ-MOBILE-016",
+        "verdict": "missing",
+        "support": "none",
+        "matchesExpected": false,
+        "artifactQuote": "",
+        "missingFacet": "Offene Kanal-/Frontendstrategie (Web-first vs. mobile-first/mobile sp\u00E4ter) sowie Umsetzungsoption mobile (native App vs. responsive Web) und deren MVP-Auswirkungen fehlen.",
+        "reason": "Der Source-Claim verlangt eine offene Produkt-/Scope-Frage zur Frontend-/Kanalstrategie inklusive Entscheidungsoptionen und MVP-Folgen. Im Artefakt werden zwar offene MVP-, technische und Datenschutzfragen aufgelistet, aber nirgends die Wahl zwischen Web-first/mobile sp\u00E4ter/ mobilem Fokus oder native App vs. responsive Web thematisiert."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte Mobile covered erkennen.",
+      "directReviewBaseline": "DirectReview sollte diesen Kontrollfall nicht missen.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PUSH-017",
+      "artifact": "open-questions",
+      "sourceClaim": "Push Notifications sind ein Marketingwunsch, aber Status, Einwilligung und MVP-Scope sind offen.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "open-questions.md sollte Push als offene Scope-/Datenschutzfrage erfassen oder bewusst ausschliessen.",
+      "recall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim nennt Push Notifications oder die offene Frage zu Status, Einwilligung/DSGVO und MVP-Scope."
+      },
+      "matchedClaim": null,
+      "coverageVerdict": null,
+      "topicCoverageBaseline": "TopicCoverage konnte Push ohne Topic nicht pr\u00FCfen; Verifier fand Push als Kandidat.",
+      "directReviewBaseline": "DirectReview kann Push finden, aber nicht garantiert.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-EU-RESIDENCE-018",
+      "artifact": "open-questions",
+      "sourceClaim": "EU-only vs. allgemein DSGVO-konform ist nicht dasselbe und muss f\u00FCr Hosting/Datenresidenz gekl\u00E4rt werden.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "open-questions.md sollte EU-only/Datenresidenz/Managed Services als offene Compliancefrage enthalten.",
+      "recall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "OPEN-QUESTIONS-SC-007"
+        ],
+        "reason": "SC-007 trifft den Kern sehr gut (EU-only vs. DSGVO-konform, Datenresidenz als offene Compliancefrage), nennt aber Managed Services/globales Replizieren nicht explizit; daher nicht vollst\u00E4ndig exact."
+      },
+      "matchedClaim": {
+        "id": "OPEN-QUESTIONS-SC-007",
+        "artifact": "open-questions",
+        "sourceClaim": "EU-only Hosting ist als Ziel genannt, aber nicht pr\u00E4zise entschieden; \u0027DSGVO-konform\u0027 reicht nicht aus, nachweisbare Datenresidenz und Mehrkosten sind offen.",
+        "requiredTreatment": "Als offene Compliance-/Betriebsfrage dokumentieren und zwischen EU-only, DSGVO-Konformit\u00E4t, Nachweisbarkeit und Kosten differenzieren.",
+        "evidence": [
+          "Und wo werden Daten gehostet? EU only?",
+          "Ja EU only. Oder zumindest DSGVO-konform.",
+          "Das ist nicht dasselbe.",
+          "Wir brauchen nachweisbare Datenresidenz.",
+          "Aber wenn EU-only teurer ist?",
+          "Kann ich noch nicht sagen."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-OQ-EU-RESIDENCE-018",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **EU-only Hosting und Datenresidenz:** Wie wird die Einhaltung von EU-only Hosting bzw. strenger DSGVO-Konformit\u00E4t nachweisbar sichergestellt, insbesondere bei Nutzung von Managed Services?",
+        "missingFacet": "Die offene Kosten-/Mehrkostenfrage bei EU-only Hosting gegen\u00FCber blo\u00DFer DSGVO-Konformit\u00E4t fehlt; die noch nicht entschiedene Abw\u00E4gung wird nicht explizit gemacht.",
+        "reason": "Das Artefakt behandelt die offene Compliance-Frage erkennbar und differenziert zwischen EU-only Hosting, DSGVO-Konformit\u00E4t und Nachweisbarkeit der Datenresidenz. Aus der Evidence geht aber zus\u00E4tzlich hervor, dass EU-only als Ziel noch nicht belastbar entschieden ist, weil m\u00F6gliche Mehrkosten offen sind (E5/E6). Diese Kosten- und Entscheidungsunsicherheit fehlt im Artefakt."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte EU/Datenresidenz covered oder partial erkennen.",
+      "directReviewBaseline": "DirectReview findet EU/Hosting h\u00E4ufig.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PRICE-CACHE-019",
+      "artifact": "open-questions",
+      "sourceClaim": "Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und Caching ist offen.",
+      "expectedVerdict": "covered",
+      "requiredTreatment": "open-questions.md sollte Preisaktualisierung/Cache-Mechanismen als offene Frage enthalten.",
+      "recall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "OPEN-QUESTIONS-SC-012"
+        ],
+        "reason": "SC-012 enth\u00E4lt den fachlichen Kern als offene Frage zur Datenhaltung mit SAP-Abruf, Fallback/Cache und problematischen Cache-Optionen; damit ist Preis-/Rabattaktualisierung bzw. Caching im Open-Questions-Artefakt inhaltlich abgedeckt."
+      },
+      "matchedClaim": {
+        "id": "OPEN-QUESTIONS-SC-012",
+        "artifact": "open-questions",
+        "sourceClaim": "Die Datenhaltungsstrategie ist offen: Datenminimierung spricht f\u00FCr Abruf aus SAP bei Bedarf, Performance/Verf\u00FCgbarkeit sprechen dagegen; Cache-Optionen sind datenschutz- und fachlich problematisch.",
+        "requiredTreatment": "Als offene Datenarchitekturfrage mit Alternativen, Trade-offs und offenen Restriktionen dokumentieren.",
+        "evidence": [
+          "M\u00FCssen alle Kundendaten im Portal liegen oder reicht ein Abruf aus SAP bei Bedarf?",
+          "Abruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit.",
+          "Dann brauchen wir Fallback oder Cache.",
+          "K\u00F6nnen wir nur Produktdaten cachen, keine Kundendaten?",
+          "Vielleicht, aber Rabattlogik ist kundenspezifisch."
+        ],
+        "kind": "open_question",
+        "priority": "high"
+      },
+      "coverageVerdict": {
+        "id": "SC-OQ-PRICE-CACHE-019",
+        "verdict": "partial",
+        "support": "partial",
+        "matchesExpected": false,
+        "artifactQuote": "- **SAP Integration:** Wie soll der Umgang mit Preis- und Rabattdaten erfolgen, insbesondere bei teils n\u00E4chtlichen Aktualisierungen? Sind Schreibzugriffe im Portal langfristig vorgesehen und wie wird das technisch realisiert?",
+        "missingFacet": "Offene Datenhaltungsstrategie mit Alternativen (Abruf aus SAP bei Bedarf vs. Cache/Fallback), inklusive Trade-offs Datenminimierung vs. Performance/Verf\u00FCgbarkeit sowie Restriktion, dass Kundendaten-Caching datenschutz- und fachlich wegen kundenspezifischer Rabattlogik problematisch ist.",
+        "reason": "Das Artefakt adressiert das Themenfeld SAP-/Preis-/Rabattdaten als offene technische Frage, behandelt aber den konkreten Source-Claim nicht ausreichend. Es fehlen die expliziten Architektur-Alternativen zur Datenhaltung, die im Evidence genannte Abw\u00E4gung zwischen Datenminimierung und Performance/Verf\u00FCgbarkeit sowie die offene Einschr\u00E4nkung, dass allenfalls Produktdaten, nicht aber Kundendaten, cachebar sein k\u00F6nnten."
+      },
+      "topicCoverageBaseline": "TopicCoverage/open-questions sollte diesen Fall covered erkennen.",
+      "directReviewBaseline": "DirectReview findet Preis-/Cachethemen teils.",
+      "note": null
+    },
+    {
+      "id": "SC-OQ-ANALYTICS-020",
+      "artifact": "open-questions",
+      "sourceClaim": "KPI-/Analytics-Messung ist fachlich gew\u00FCnscht, aber technische Umsetzung und Datenschutz sind offen.",
+      "expectedVerdict": "missing",
+      "requiredTreatment": "open-questions.md sollte KPI/Analytics als offene technische und Datenschutzfrage enthalten.",
+      "recall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim behandelt KPI/Analytics/Tracking als offene Frage mit technischer Umsetzung und Datenschutz."
+      },
+      "matchedClaim": null,
+      "coverageVerdict": null,
+      "topicCoverageBaseline": "TopicCoverage kann Analytics nur finden, wenn Topic \u002B relevantFor erhalten bleiben.",
+      "directReviewBaseline": "DirectReview stark hatte Analytics-Blindspot in architecture; open-questions ist Kontrollfall.",
+      "note": null
+    }
+  ]
+}

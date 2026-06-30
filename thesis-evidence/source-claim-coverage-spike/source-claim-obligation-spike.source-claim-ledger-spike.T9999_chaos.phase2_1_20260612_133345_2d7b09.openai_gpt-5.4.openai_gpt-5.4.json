@@ -1,0 +1,3682 @@
+{
+  "ledger": "thesis-evidence/source-claim-coverage-spike/source-claim-ledger-spike.T9999_chaos.phase2_1_20260612_133345_2d7b09.openai_gpt-5.4.json",
+  "fixture": "input/eval-labels/source-claim-coverage-spike.json",
+  "judge": "openai/gpt-5.4",
+  "mode": "source-claim-obligation-spike",
+  "total": 20,
+  "sourceClaims": 98,
+  "candidateSummary": {
+    "architecture": {
+      "relevantFor": 76,
+      "required": 60,
+      "actionable": 87,
+      "contextOnly": 10,
+      "notApplicable": 1
+    },
+    "requirements": {
+      "relevantFor": 87,
+      "required": 54,
+      "actionable": 71,
+      "contextOnly": 9,
+      "notApplicable": 18
+    },
+    "risks": {
+      "relevantFor": 76,
+      "required": 33,
+      "actionable": 82,
+      "contextOnly": 3,
+      "notApplicable": 13
+    },
+    "open-questions": {
+      "relevantFor": 31,
+      "required": 22,
+      "actionable": 56,
+      "contextOnly": 4,
+      "notApplicable": 38
+    }
+  },
+  "obligationsByArtifact": {
+    "architecture": [
+      {
+        "sourceClaimId": "GLOBAL-SC-001",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Kernprodukt und noch offene Produktabgrenzung pr\u00E4gen den architektonischen Zuschnitt; Offenheit muss als Scope-/Architekturgrenze sichtbar sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-002",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Zielpriorit\u00E4ten geben Architekturkontext, sind aber keine eigenst\u00E4ndige Architektur-Coverage-Pflicht."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-003",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "8-Wochen-MVP beeinflusst Architekturentscheidungen stark, geh\u00F6rt prim\u00E4r aber in Constraints/Risiken statt als eigene Architekturentscheidung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-004",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "Die offene Kanalstrategie beeinflusst Frontend-Architektur und MVP-Zuschnitt direkt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-005",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "Native App vs. responsive Web ist eine zentrale offene Architekturentscheidung mit Kosten- und Strukturfolgen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-006",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Kein Budget f\u00FCr zwei Frontends ist eine harte L\u00F6sungs-Constraint f\u00FCr die Frontend-Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-007",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Nicht API-ready Backend ist eine zentrale Integrationsrandbedingung und muss architektonisch behandelt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-008",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "DSGVO bei Kundendaten ist ein nicht verhandelbarer Architekturtreiber f\u00FCr Datenhaltung, Zugriff und Betrieb."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-009",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Double-Opt-In ist prim\u00E4r Anforderung, hat aber Auswirkungen auf Auth-/Registrierungsarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-010",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Logging, L\u00F6schkonzept und AV-Vertr\u00E4ge beeinflussen Betriebs-, Daten- und Compliance-Architektur direkt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-011",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "MVP-Login per E-Mail/Passwort ist f\u00FCr die L\u00F6sungsarchitektur hilfreich, aber ersetzbar durch sp\u00E4tere Auth-Entscheidungen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-012",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "SSO optional/sp\u00E4ter und Provider offen beeinflussen IAM- und Auth-Architektur und d\u00FCrfen nicht implizit festgelegt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-013",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Fehlendes zentrales IAM ist eine wesentliche Randbedingung f\u00FCr Authentifizierung und SSO-Optionen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-014",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Bei SAP mit personenbezogenen Daten sind Audit, Zugriffskontrolle und Rollenmodell architekturrelevant verpflichtend."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-015",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "Erforderliches aber offenes Rollenmodell pr\u00E4gt Sicherheits- und Dom\u00E4nenarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-016",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Unvollst\u00E4ndige SAP-Stammdaten beeinflussen Integrationsdesign, Validierung und Datenverantwortung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-017",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Ben\u00F6tigte Produkt-/Preis-/Rabattdaten bestimmen Integrations- und Datenarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-018",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Bestellansicht und Rechnungsdownload sind prim\u00E4r fachlicher Scope; architektonisch relevant erst abgeleitet \u00FCber Integrationen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-019",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "low",
+        "reason": "Push als unklare Wunschfunktion kann Architektur beeinflussen, ist aktuell aber keine Pflichtabdeckung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-020",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Consent-Pflichten f\u00FCr Push/Tracking sind relevant, falls solche Funktionen architektonisch vorgesehen werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-021",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Fehlende Analytics-Infrastruktur ist ein technischer Gap, aber nicht zwingend Kern der Zielarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-022",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "low",
+        "reason": "Ob KPI-Messung im MVP verankert wird, kann Architektur beeinflussen, ist aber nicht zwingend f\u00FCr die Kernarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-023",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "low",
+        "reason": "KPIs steuern Erfolgsmessung; sie sind f\u00FCr Architektur nur indirekter Kontext."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-024",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Personenbezogene Angebotsdaten sind ein zentraler Sicherheits- und Datenarchitekturtreiber."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-025",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "TLS statt E2E ist eine explizite Sicherheitsentscheidung der Zielarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-026",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Auditierbarkeitspflicht bestimmt Logging-, Daten- und Sicherheitsarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-027",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Verpflichtender Security Review ist ein harter Architektur-/Delivery-Constraint mit Dokumentations- und Designfolgen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-028",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Kein neuer DB-Server und Managed Services okay ist eine direkte Infrastruktur- und Persistenzvorgabe."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-029",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Kosten-vs.-Skalierung ist ein expliziter Zielkonflikt, an dem Architekturentscheidungen auszurichten sind."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-030",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "EU-only Hosting ist eine verbindliche Betriebs- und Provider-Constraint der Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-031",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "API-Layer ist ein verpflichtender Architekturbaustein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-032",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "OAuth vs. API Keys ist eine offene Sicherheitsentscheidung der API-Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-033",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Backup/DR im MVP ist eine verpflichtende Betriebsanforderung an die Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-034",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "Unklare Lastannahmen sind f\u00FCr Skalierungs- und Performance-Architektur entscheidungsrelevant und offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-035",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Skalierbar ohne Overengineering ist ein explizites Architekturprinzip."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-036",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Unklare Zieldefinition erkl\u00E4rt Architekturunsicherheit, ist aber prim\u00E4r Risiko-/Steuerungsthema."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-037",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "Ausschluss des Ticketsystems begrenzt Integrations- und Persistenzbedarf der Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-038",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "L\u00F6schbarkeit von Kundendaten erfordert entsprechende Daten-, Prozess- und Betriebsarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-039",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Rollen- und Berechtigungskonzept ist ein zentraler Sicherheitsbaustein der Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-040",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Dokumentation ist f\u00FCr Delivery/Governance wichtig; in der Architektur eher begleitender Kontext als Strukturentscheidung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-041",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "context_only",
+        "importance": "low",
+        "reason": "Support-Use-Cases beeinflussen m\u00F6gliche Bausteine, sind aber prim\u00E4r fachlicher Scope."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-042",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Kundenkontozuordnung f\u00FCr Kontaktformular beeinflusst Datenmodell und Integrationsschnittstellen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-043",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Supportdaten mit Personenbezug m\u00FCssen in Datenhaltung und Retention-Architektur ber\u00FCcksichtigt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-044",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "Persistenzbedarf trotz DB-Constraint und offener Managed-Service-Wahl ist eine offene Architekturentscheidung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-045",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Dass SAP keine Support-Tickets speichern kann, schr\u00E4nkt Integrations- und Persistenzoptionen architektonisch direkt ein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-046",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "low",
+        "reason": "Ausschluss von Excel verhindert problematische Workarounds, ist aber eher L\u00F6sungsgrenze als Kernarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-047",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Rabattfreigabe ist prim\u00E4r fachlich, zieht aber Workflow- und Berechtigungsarchitektur nach sich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-048",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "Offene Schwellen/Eskalationen betreffen Workflow-Ausgestaltung, sind aber eher fachliche Detailentscheidung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-049",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "low",
+        "reason": "Finanzielles Risiko begr\u00FCndet Relevanz des Freigabeprozesses, ist selbst kein Architektur-Coverage-Claim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-050",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Statusmodell beeinflusst Zustandsmodell, Persistenz und Workflow-Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-051",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "Schnitt zwischen SAP und Portal ist eine zentrale Integrations- und Verantwortungsentscheidung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-052",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Berechtigungskonflikt zwischen Support und Vertraulichkeit muss in Sicherheits- und Datenzugriffsarchitektur gel\u00F6st werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-053",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Audit auch f\u00FCr lesende Zugriffe beeinflusst Logging- und Sicherheitsdesign."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-054",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "EU-Only ist ohne passende Backup-/Provider-Konfiguration architektonisch nicht erf\u00FCllt; muss explizit ber\u00FCcksichtigt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-055",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "low",
+        "reason": "M\u00F6gliche Mehrkosten von EU-only sind wichtiges Entscheidungsumfeld, aber keine eigene Architekturpflicht."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-056",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "low",
+        "reason": "Fr\u00FChe Kostensch\u00E4tzung erkl\u00E4rt Unsicherheit, geh\u00F6rt aber nicht als Architekturinhalt ins Artefakt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-057",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Zentrales API Gateway ist eine verbindliche Integrations-Constraint der Zielarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-058",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Gateway-Warteliste beeinflusst Umsetzbarkeit und Planung, ist prim\u00E4r Risiko/Abh\u00E4ngigkeit statt Architekturinhalt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-059",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "Manuelle Uploads als \u00DCbergangsoption betreffen Integrations- und Sicherheitsarchitektur, sind aber keine Muss-Festlegung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-060",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Datenminimierung als Abruf-pr\u00E4ferenz ist ein relevantes Integrations- und Datenarchitekturprinzip."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-061",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Trade-off von On-Demand-SAP-Abruf gegen Performance/Verf\u00FCgbarkeit pr\u00E4gt die Integrationsarchitektur wesentlich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-062",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "Geografischer Rollout beeinflusst Architektur und Compliance, ist aber noch eher Scope- als Architekturpflicht."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-063",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "low",
+        "reason": "Zweisprachigkeit kann UI- und Content-Architektur beeinflussen, ist aber nicht Kern der technischen Zielarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-064",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Mehrw\u00E4hrungsbedarf beeinflusst Dom\u00E4nen- und Integrationsdesign, ist aber prim\u00E4r fachlich getrieben."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-065",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Mehrw\u00E4hrung mit SAP/Rabattlogik ist ein zentraler technischer Komplexit\u00E4tstreiber der Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-066",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "low",
+        "reason": "L\u00E4nder-/W\u00E4hrungsregeln wirken auf das Dom\u00E4nenmodell, sind aber eher fachliche Spezifikation."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-067",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Offener Pilotkunde beeinflusst Rahmenannahmen der Architektur, ist aber prim\u00E4r Scope-/Planungsthema."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-068",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Nicht echtzeitaktuelle SAP-Preise sind eine wesentliche Integrationsannahme mit Architekturfolgen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-069",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Preisg\u00FCltigkeit/Warnhinweise sind prim\u00E4r fachlich, haben aber Auswirkungen auf Daten- und UI-nahe L\u00F6sungsbausteine."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-070",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "PDF-Export ist fachlich zentral, zieht aber nur abgeleitet Rendering-/Dokumentenarchitektur nach sich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-071",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "low",
+        "reason": "Datenschutzhinweise f\u00FCr PDFs sind eher Anforderungsdetail als Kernarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-072",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Template-Versionierung und Nachvollziehbarkeit ben\u00F6tigen technische Unterst\u00FCtzung in Persistenz und Dokumentenarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-073",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Revisionssichere Nachvollziehbarkeit mit Event-History/Audit-Log ist eine explizite Architekturpflicht."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-074",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "low",
+        "reason": "Zur\u00FCckstellung von Online-Akzeptanz begrenzt die MVP-Architektur, ist aber eher Scope-Status."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-075",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Zusatzanforderungen bei Online-Akzeptanz sind architekturrelevant, aber nur falls Feature aufgenommen wird."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-076",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "SAP-Schreibzugriff ist eine offene Integrationsentscheidung mit gro\u00DFer Architekturwirkung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-077",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Trennung von Log-Arten, keine PII in technischen Logs und unterschiedliche Retention sind klare Logging-Architekturvorgaben."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-078",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "Offene Retention-/L\u00F6schkonflikte beeinflussen Datenmodell, Speicherstrategie und Archivierung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-079",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Datenklassifikation und Retention Plan sind Grundpfeiler der Daten- und Compliance-Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-080",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Einsicht in alte Angebote beeinflusst Archiv-, Berechtigungs- und Retention-Design."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-081",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "Der skizzierte MVP-Schnitt enth\u00E4lt mehrere konkrete Architekturfestlegungen und muss als aktuelles Arbeitsbild reflektiert werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-082",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Keine manuellen Sonderrabatte ohne Freigabe im MVP ist eine harte L\u00F6sungsgrenze mit Workflow-/UI-Folgen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-083",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "medium",
+        "reason": "Bewusste Minimalvariante ohne Ticketpersistenz begrenzt Support- und Persistenzarchitektur explizit."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-084",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "low",
+        "reason": "E-Mail/Kontaktformular als Supportweg ist eher Risiko/Trade-off; architektonisch nur erg\u00E4nzende Randbedingung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-085",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Dev/Test/Prod ist ein grundlegendes Betriebs- und Delivery-Architekturmodell."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-086",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Datenschutzkonforme Testdatenstrategie ist eine verpflichtende Betriebs- und Integrationsarchitekturvorgabe."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-087",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Echte Kundendaten im SAP-Testsystem beeinflussen Integrations- und Testarchitektur unmittelbar."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-088",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Secrets Management ist ein notwendiger Baustein der Betriebs-/CI-CD-Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-089",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Rate Limits sind eine konkrete Sicherheits- und Betriebsanforderung an die API-Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-090",
+        "artifact": "architecture",
+        "necessity": "optional",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Pagination und Download-Limits beeinflussen API/UI-Design, sind aber eher funktionsnahe Detailarchitektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-091",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "Missbrauchsschutz mit mindestens Rate Limiting und Audit ist eine klare Sicherheitsarchitekturpflicht."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-092",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "high",
+        "reason": "SAP-Verf\u00FCgbarkeit als kritische Abh\u00E4ngigkeit muss in Betriebs- und Integrationsarchitektur adressiert werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-093",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "Fallback-Verhalten bei SAP-Ausfall ist eine offene Architekturentscheidung mit starken Prozess- und Integrationsfolgen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-094",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_decision",
+        "importance": "high",
+        "reason": "Caching als m\u00F6glicher Fallback ist eine offene, riskante Architekturentscheidung und muss explizit bewertet werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-095",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Providerneutralit\u00E4t ist eine explizite Regel f\u00FCr das Architekturartefakt selbst."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-096",
+        "artifact": "architecture",
+        "necessity": "required",
+        "expectedRepresentation": "architecture_constraint",
+        "importance": "medium",
+        "reason": "Offene Widerspr\u00FCche sichtbar zu halten ist f\u00FCr Architekturentscheidungen und deren Dokumentation verbindlich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-097",
+        "artifact": "architecture",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Behandlung multidisziplin\u00E4rer Risiken geh\u00F6rt prim\u00E4r ins Risikoartefakt, nicht als Architekturpflichtclaim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-098",
+        "artifact": "architecture",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Der Wunsch nach klarem MVP-Schnitt gibt Rahmen f\u00FCr Architekturarbeit, ist aber kein eigener Architekturinhalt."
+      }
+    ],
+    "requirements": [
+      {
+        "sourceClaimId": "GLOBAL-SC-001",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Kernscope des Produkts muss in Requirements explizit festgehalten werden; sonst ist der fachliche Umfang unklar."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-002",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Zieldefinition und Erfolgskriterien gehoeren in Requirements, damit Anforderungen priorisiert und bewertet werden koennen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-003",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Die 8-Wochen-Vorgabe ist eine harte Rahmenbedingung fuer den geforderten Scope und muss im Anforderungsartefakt sichtbar sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-004",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "medium",
+        "reason": "Die offene Kanalstrategie ist primaer eine offene Frage; in Requirements hoechstens indirekter Kontext, aber kein eigener Pflicht-Requirement-Eintrag."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-005",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "medium",
+        "reason": "Native App vs. responsive Web ist eine Loesungs-/Architekturfrage, nicht direkt ein Requirement-Claim fuer dieses Artefakt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-006",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Budget fuer nur ein Frontend wirkt als harter Scope-/Constraint-Rahmen fuer Anforderungen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-007",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "API-Readiness des Backends ist ein technisches Risiko, nicht prim\u00E4r eine Requirement-Abdeckungspflicht."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-008",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "DSGVO-Pflichten sind nicht verhandelbare Compliance-Anforderungen und muessen explizit in Requirements stehen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-009",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Double-Opt-In ist eine konkrete Pflichtanforderung fuer den gewaehlten Login-/Registrierungsprozess."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-010",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Logging, Loeschkonzepte und AV-Vertraege sind explizite Compliance-Anforderungen fuer den fachlichen Umfang."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-011",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Der genannte MVP-Auth-Ansatz ist hilfreich fuer den aktuellen Scope, kann aber durch spaetere Entscheidungen ersetzt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-012",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_deferment",
+        "importance": "medium",
+        "reason": "SSO als spaetere optionale Erweiterung sollte als bewusste Nicht-MVP-/Spaeter-Entscheidung dokumentiert werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-013",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "Fehlendes zentrales IAM ist fuer Requirements kein eigener Pflichtclaim, sondern ein Architektur-/Risikothema."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-014",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Audit Trails, Zugriffskontrolle und Rollenmodelle sind verbindliche fachliche/compliance-getriebene Anforderungen bei SAP/ERP-Bezug."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-015",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Dass ein Rollenmodell benoetigt wird, ist Anforderungsinhalt; die exakte Rollenauspraegung kann offen bleiben."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-016",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "Datenqualitaet in SAP ist ein Risiko bzw. Annahme, nicht selbst eine Requirement-Pflicht."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-017",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Produktdaten, Preise und Rabattlogik sind Kernvoraussetzungen der zentralen Fachfunktion Angebotserstellung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-018",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Bestellansicht und Rechnungsdownload sind konkrete fachliche Scope-Anforderungen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-019",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_deferment",
+        "importance": "low",
+        "reason": "Push Notifications sind unsicher; als noch nicht bestaetigte bzw. zurueckgestellte Anforderung hilfreich, aber nicht zwingend."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-020",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Consent-Pflichten sind relevant, falls Push/Tracking aufgenommen werden; fuer Requirements nuetzlich als bedingte Randbedingung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-021",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "medium",
+        "reason": "Fehlende Analytics-Infrastruktur ist ein Umsetzungsrisiko, keine direkte fachliche Anforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-022",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_deferment",
+        "importance": "medium",
+        "reason": "KPI-Messung ist relevant, aber fuer MVP noch nicht final; als bewusste spaetere/noch offene Scope-Position hilfreich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-023",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Die benannten KPIs sind messbare Erfolgskriterien und sollten als Anforderungen/Qualitaetsziele erfasst werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-024",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Die Klassifikation von Angeboten als personenbezogene Daten ist fuer Datenschutzanforderungen im Scope wesentlich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-025",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "TLS als Sicherheitsbaseline kann als nichtfunktionale Anforderung aufgenommen werden, ist aber auch stark architekturnah."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-026",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Auditierbarkeit ist eine explizite Pflichtanforderung und darf in Requirements nicht fehlen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-027",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Das verpflichtende Security Review ist eine nichtfunktionale Liefer-/Compliance-Anforderung fuer den Scope."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-028",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Kein neuer DB-Server ist eine harte Constraint, die den zulaessigen Loesungsraum fuer den geforderten Scope einschraenkt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-029",
+        "artifact": "requirements",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Der Zielkonflikt Kosten vs. Skalierung praegt Priorisierung, ist aber in Requirements nicht als eigener Pflichtclaim zu fuehren."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-030",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "EU-only Hosting ist eine verbindliche nichtfunktionale Anforderung und muss explizit dokumentiert werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-031",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Die Pflicht zu Integrationen kann im Requirements-Artefakt erwaehnt werden; die konkrete API-Layer ist aber eher Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-032",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "OAuth vs. API Keys ist eine offene technische Loesungsentscheidung, nicht prim\u00E4r Requirement-Coverage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-033",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Backup/DR fuer Kundendaten wurde explizit als auch im MVP erforderliche Pflichtanforderung benannt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-034",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "Unklare Nutzerzahlen sind eine offene Frage mit Architekturwirkung, aber keine direkte Requirement-Pflicht fuer dieses Artefakt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-035",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Skalierbarkeit ohne Overengineering kann als nichtfunktionale Leitplanke aufgenommen werden, ist aber relativ abstrakt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-036",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Da Zielkonflikte bestehen, muessen Requirements die Priorisierung bzw. konkurrierenden Ziele explizit sichtbar machen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-037",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_deferment",
+        "importance": "medium",
+        "reason": "Der Ausschluss des Ticketsystems ist eine bewusste Scope-Entscheidung und muss im Requirements-Artefakt sichtbar sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-038",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Loeschbarkeit von Kundendaten ist eine zwingende Datenschutzanforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-039",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Ein Rollen- und Berechtigungskonzept ist explizit zwingend und damit Pflichtbestandteil der Anforderungen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-040",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Mindestdokumentation als Liefergegenstand ist relevant, aber eher querschnittlich; fuer Requirements hilfreich, nicht immer hart fachlich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-041",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Die benannten Support-Use-Cases beeinflussen den fachlichen Scope und muessen hinsichtlich MVP-Abdeckung sichtbar sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-042",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Wenn ein Kontaktformular Teil des Scopes ist, ist die Zuordnung zum Kundenkonto eine konkrete funktionale Anforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-043",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Supportdaten in Loesch- und Auskunftspflichten einzubeziehen ist eine verbindliche Compliance-Anforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-044",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "medium",
+        "reason": "Persistenzbedarf vs. Infrastrukturvorgabe ist prim\u00E4r eine offene Architektur-/Loesungsfrage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-045",
+        "artifact": "requirements",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Dass SAP keine Support-Tickets speichern kann, erklaert Scopegrenzen, ist aber kein eigener Requirement-Claim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-046",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Der explizite Ausschluss von Excel-Workarounds ist eine relevante Prozess-/Compliance-Constraint fuer den Scope."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-047",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Rabattfreigabe ab 15 Prozent ist ein konkreter fachlicher Pflichtprozess."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-048",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Auch wenn Schwellen offen sind, muss die Anforderung an Freigaberegeln und Eskalation in Requirements sichtbar sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-049",
+        "artifact": "requirements",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "high",
+        "reason": "Das finanzielle Risiko begruendet die Anforderung, ist aber selbst kein Requirement-Eintrag."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-050",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Das Workflow-Statusmodell ist ein konkreter fachlicher Bestandteil der Angebotsfunktion."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-051",
+        "artifact": "requirements",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "high",
+        "reason": "Die Verantwortungsteilung SAP/Portal ist fuer das Verstaendnis relevant, gehoert aber eher in Architektur als in Requirements."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-052",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Der Berechtigungskonflikt muss in fachlichen Zugriffsanforderungen und Scope-Regeln abgebildet werden, sonst werden Requirements irrefuehrend."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-053",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Die Nachvollziehbarkeit lesender Zugriffe ist eine konkrete Audit-Anforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-054",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "Globale Backup-Replikation des Providers ist ein operatives Risiko, nicht selbst eine Requirement-Pflicht."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-055",
+        "artifact": "requirements",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Moegliche Mehrkosten erklaeren Priorisierungsdruck, sind aber kein eigener Requirement-Eintrag."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-056",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "Kurzfristige Kostenschaetzung trotz Unklarheit ist ein Risiko/Managementthema, nicht Requirement-Inhalt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-057",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Die Gateway-Policy kann als verbindliche Integrations-Constraint im Anforderungsrahmen sichtbar gemacht werden, liegt aber nah an Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-058",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "Die Warteliste des Gateway-Teams ist ein Terminrisiko, kein Requirement-Claim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-059",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_deferment",
+        "importance": "medium",
+        "reason": "Manuelle Uploads als moegliche Zwischenloesung sollten, wenn relevant, als bewusste temporaere Scope-Ausnahme dokumentiert werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-060",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Datenminimierung ist eine relevante nichtfunktionale/compliance-getriebene Anforderung, auch wenn die technische Umsetzung architekturnah ist."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-061",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "Performance-/Verfuegbarkeitsnachteile des SAP-Abrufs sind Risiko-/Architekturthemen, nicht eigene Requirements."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-062",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_deferment",
+        "importance": "medium",
+        "reason": "Der geografische Rollout ist fuer Scope relevant; in Requirements sollte zumindest die aktuelle Abgrenzung bzw. Spaeter-Erweiterung kenntlich sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-063",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Deutsch und Englisch sind konkrete funktionale/nichtfunktionale Produktanforderungen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-064",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Waehrungsunterstuetzung und MVP-Umfang gehoeren direkt in den fachlichen Scope."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-065",
+        "artifact": "requirements",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Die Komplexitaet von Mehrwaehrung begruendet Vorsicht, ist aber kein eigener Requirement-Claim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-066",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Laender- und Waehrungsregeln sind konkrete fachliche Regeln, die spezifiziert werden muessen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-067",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_deferment",
+        "importance": "high",
+        "reason": "Die offene Pilotkundenentscheidung beeinflusst Scope stark und sollte als noch nicht finaler Geltungsbereich kenntlich sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-068",
+        "artifact": "requirements",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "high",
+        "reason": "Nicht immer aktuelle SAP-Preise sind wichtige Hintergrundannahme, aber als Requirement erst ueber abgeleitete Fachregeln relevant."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-069",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Preisgueltigkeit und Warnhinweise sind konkrete fachliche Anforderungen zum Umgang mit Preisstaleness."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-070",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "PDF-Export mit rechtlichen Fussnoten und Versionsnummern ist eine konkrete Produktanforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-071",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Datenschutzhinweise fuer Angebots-PDFs sind explizite Compliance-Anforderungen an die Funktion."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-072",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Template-Management und Versionierung sind noetig fuer fachliche Nachvollziehbarkeit der Angebote."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-073",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Revisionssichere Nachvollziehbarkeit pro Angebot ist eine klare Pflichtanforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-074",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_deferment",
+        "importance": "medium",
+        "reason": "Die Zurueckstellung der Online-Akzeptanz im MVP ist eine wesentliche Scope-Abgrenzung fuer Requirements."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-075",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Die Zusatzanforderungen sind nur relevant, falls Online-Akzeptanz aufgenommen wird; als bedingte Anforderung hilfreich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-076",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "SAP-Schreibzugriff ist eine offene Integrations-/Architekturentscheidung, nicht direkt Requirement-Abdeckung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-077",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Das Logging-Konzept mit Datenminimierung und Retention ist eine verbindliche Compliance-/Betriebsanforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-078",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Auch wenn Details offen sind, muss der Requirement-Bedarf fuer Retention-Regeln und Konflikt mit Loeschrechten explizit sichtbar sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-079",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Datenklassifikation und minimaler Retention-Plan sind explizite Pflichtanforderungen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-080",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Einsicht in alte Angebote ist ein konkreter fachlicher Zugriffsbedarf."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-081",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Der skizzierte MVP-Schnitt muss als aktueller Anforderungsstand dokumentiert werden, sonst fehlt der zentrale Scope-Stand."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-082",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Die MVP-Constraint zu manuellen Sonderrabatten ist eine klare Scope-/Prozessanforderung fuer den MVP."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-083",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_deferment",
+        "importance": "high",
+        "reason": "Die bewusste Einschraenkung der Supportfunktion im MVP muss als Scope-Ausschluss/Nichtabdeckung dokumentiert werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-084",
+        "artifact": "requirements",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Die Nachteile von E-Mail/Kontaktformular sind fuer das Verstaendnis wichtig, gehoeren aber prim\u00E4r ins Risikobild."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-085",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Getrennte Umgebungen sind eine relevante Liefer-/Betriebsanforderung, aber im Requirements-Artefakt eher querschnittlich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-086",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Datenschutzkonforme Testdaten sind eine verbindliche nichtfunktionale/compliance-getriebene Anforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-087",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "Echte Kundendaten im SAP-Testsystem sind ein akutes Risiko/Testblocker, kein Requirement-Claim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-088",
+        "artifact": "requirements",
+        "necessity": "optional",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Secrets Management ist relevant als Betriebs-/Delivery-Anforderung, aber eher architekturnah."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-089",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Rate Limits sind eine explizite Sicherheits- und Betriebsanforderung an die API."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-090",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Pagination und Download-Limits sind konkrete funktionale/nichtfunktionale Anforderungen fuer Rechnungsdownloads."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-091",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Missbrauchsschutz mit mindestens Rate Limiting und Audit ist eine klare Sicherheitsanforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-092",
+        "artifact": "requirements",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "high",
+        "reason": "SAP-Verfuegbarkeit als Abhaengigkeit ist fuer Requirements nur Hintergrund; die fachlichen Folgen werden ueber andere Anforderungen abgebildet."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-093",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Das Verhalten bei SAP-Ausfall betrifft fachliche Geschaeftsregeln und muss als Requirement explizit entschieden bzw. beschrieben werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-094",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "high",
+        "reason": "Caching als Fallback ist eine technische Risiko-/Loesungsdiskussion, nicht direkt Requirement-Inhalt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-095",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "medium",
+        "reason": "Providerneutralitaet ist vor allem eine Regel fuer Architekturartefakte, nicht fuer Requirements."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-096",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "medium",
+        "reason": "Im Requirements-Artefakt muessen offene Widersprueche und konkurrierende Anforderungen sichtbar bleiben, um nicht irrezufuehren."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-097",
+        "artifact": "requirements",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "medium",
+        "reason": "Dies ist eine Vorgabe fuer das Risikomanagement, nicht fuer Requirements."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-098",
+        "artifact": "requirements",
+        "necessity": "required",
+        "expectedRepresentation": "explicit_requirement",
+        "importance": "high",
+        "reason": "Ein klarer MVP-Schnitt mit Inhalten, Ausschluessen und Folgen ist Kernaufgabe des Requirements-Artefakts."
+      }
+    ],
+    "risks": [
+      {
+        "sourceClaimId": "GLOBAL-SC-001",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Offene Produktabgrenzung erzeugt Scope-/Ausrichtungsrisiko, kann im Risikoregister hilfreich sein, ist aber prim\u00E4r Scope/Open-Question."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-002",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Konkurrierende Ziele k\u00F6nnen Zielkonflikte und Fehlsteuerung verursachen; als Risiko n\u00FCtzlich, aber nicht jeder Zielclaim muss im Risk-Artefakt stehen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-003",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Klare Terminspannung zwischen 8-Wochen-MVP und Umfang/Pflichtma\u00DFnahmen ist ein zentrales Projektrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-004",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Offene Kanalstrategie kann Entscheidungs- und Scope-Risiken verursachen, geh\u00F6rt aber prim\u00E4r zu offenen Fragen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-005",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Unklare Mobile-Umsetzung mit Kostenfolge kann als Risiko erfasst werden, prim\u00E4r aber Architektur-/Entscheidungsfrage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-006",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Budgetconstraint kann Risiko bei L\u00F6sungswahl erzeugen, ist aber prim\u00E4r Constraint in Anforderungen/Architektur."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-007",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Nicht API-ready Backend ist ein direkt genanntes technisches Umsetzungs- und Integrationsrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-008",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "DSGVO-Pflicht ist prim\u00E4r Compliance-Constraint; im Risikoartefakt nur relevant als Versto\u00DF-/Umsetzungsrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-009",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Double-Opt-In ist prim\u00E4r fachliche/Compliance-Anforderung, kein eigenst\u00E4ndiger Risikoclaim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-010",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Fehlende DSGVO-Basispflichten bergen Compliance-Risiken; als Risiko erfassbar, prim\u00E4r aber Anforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-011",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "MVP-Login-Ansatz ist Status/Scope, kein eigener Risikoclaim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-012",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Optionales, ungekl\u00E4rtes SSO kann Folge- und Entscheidungsrisiken erzeugen, ist aber prim\u00E4r offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-013",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Fehlendes zentrales IAM ist explizit ein Architektur-/Integrationsrisiko mit Auswirkung auf SSO und Security."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-014",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Pflichten bei SAP/personenbezogenen Daten sind prim\u00E4r Anforderungen; als Nichterf\u00FCllungsrisiko jedoch relevant."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-015",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Unfertiges Rollenmodell kann Security- und Scope-Risiken verursachen, geh\u00F6rt prim\u00E4r zu Anforderungen/offenen Fragen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-016",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Unvollst\u00E4ndige SAP-Stammdaten sind ein explizites Datenqualit\u00E4ts- und Integrationsrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-017",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Ben\u00F6tigte Produkt-/Preis-/Rabattdaten sind Kernanforderung, nicht als eigener Risikoclaim formuliert."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-018",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Bestellansicht und Rechnungsdownload sind Scope/Requirements, kein eigenst\u00E4ndiger Risikoeintrag."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-019",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Unabgestimmte Push-Anforderung kann Scope Creep verursachen; prim\u00E4r offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-020",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Zus\u00E4tzliche Consent-Pflichten erzeugen Compliance-/Aufwandsrisiken, prim\u00E4r aber Constraint."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-021",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Fehlende Analytics-Infrastruktur ist ein expliziter Gap mit Risiko f\u00FCr KPI-Messung und sp\u00E4tere Features."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-022",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Unklare MVP-Verankerung von KPI-Messung kann Zielerreichungsrisiken erzeugen, prim\u00E4r aber offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-023",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "KPIs selbst geh\u00F6ren eher in Anforderungen/Erfolgskriterien als als Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-024",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Personenbezug von Angeboten versch\u00E4rft Datenschutzrisiken; prim\u00E4r jedoch Compliance-Constraint."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-025",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "TLS-vs-E2E ist eine getroffene Sicherheitsentscheidung, kein Risikoclaim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-026",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Fehlende Auditierbarkeit birgt Compliance-/Forensikrisiko, prim\u00E4r aber Anforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-027",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Verpflichtendes Security Review ist zugleich harter Gate und explizites Termin-/Liefer\u00ADrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-028",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "DB-Constraint kann Umsetzungs- und L\u00F6sungsrisiken verursachen, ist prim\u00E4r Architekturconstraint."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-029",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Expliziter Zielkonflikt zwischen Kosten und Skalierbarkeit ist ein klassischer Risiko-Trade-off."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-030",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "EU-only ist prim\u00E4r Requirement/Constraint; Risiko entsteht bei Nichterf\u00FCllung oder Fehleinsch\u00E4tzung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-031",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "API-Layer ist Architektur-/Requirement-Claim, kein eigenst\u00E4ndiger Risikoclaim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-032",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Offene API-Absicherung mit Komplexit\u00E4tsunterschied kann Sicherheits-/Terminrisiken erzeugen, prim\u00E4r Architekturentscheidung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-033",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Backup/DR sind prim\u00E4r Anforderungen; Risiko besteht bei Fehlen, muss aber nicht als separater Claim gepr\u00FCft werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-034",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Unklare Nutzerzahlen sind eine wesentliche Unsicherheit mit direkter Auswirkung auf Skalierung und Planung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-035",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Prinzipienkonflikt skalierbar vs. kein Overengineering kann als Risiko gef\u00FChrt werden, ist prim\u00E4r Constraint."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-036",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Fehlende konsolidierte Zieldefinition und konkurrierende Stakeholder-Ziele sind ein zentrales Projekt- und Entscheidungsrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-037",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Ticketsystem-Ausschluss erzeugt Folge- und Support-Risiken, ist selbst aber prim\u00E4r Scope-Entscheidung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-038",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "L\u00F6schpflicht ist prim\u00E4r Anforderung; Nichterf\u00FCllung birgt Compliance-Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-039",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Berechtigungskonzept ist prim\u00E4r Requirement; Risiko ergibt sich bei fehlender oder unklarer Ausgestaltung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-040",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Fehlende Dokumentation erzeugt Review-/Compliance-Risiko, prim\u00E4r aber Lieferanforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-041",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Nicht adressierte Supportf\u00E4lle k\u00F6nnen operativen Mehraufwand verursachen; als Risiko hilfreich, prim\u00E4r aber Requirement."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-042",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Fehlende Zuordnung im Kontaktformular kann Bearbeitungsrisiken verursachen, prim\u00E4r jedoch Anforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-043",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Nicht einbezogene Supportdaten bergen Datenschutzrisiken; prim\u00E4r Requirement."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-044",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Persistenzbedarf im Konflikt mit DB-Constraint und offener Servicewahl ist eine konkrete technische Unsicherheit/Abh\u00E4ngigkeit."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-045",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "SAP kann keine Support-Tickets speichern; diese Constraint erzeugt Umsetzungsrisiken, ist aber prim\u00E4r Architekturconstraint."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-046",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Ausschluss von Excel adressiert Compliance-Risiko; als Risiko n\u00FCtzlich, prim\u00E4r Constraint."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-047",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Freigabeprozess ist prim\u00E4r fachliche Anforderung; Risikoseite wird in Folgeclaims expliziter."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-048",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Unklare Schwellenwerte und Zusatzfreigaben erzeugen fachliche, finanzielle und Umsetzungsunsicherheit."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-049",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Explizit benanntes finanzielles Risiko durch fehlenden Freigabeprozess geh\u00F6rt zwingend ins Risikoregister."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-050",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Workflow-Status sind funktionale Anforderung, kein eigener Risikoclaim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-051",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Verantwortungsschnitt SAP/Portal kann Integrationsrisiken bergen, ist prim\u00E4r Architekturstatus."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-052",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Expliziter Berechtigungskonflikt zwischen Supportf\u00E4higkeit und Vertraulichkeit ist ein zentrales fachlich-securitybezogenes Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-053",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Audit auch f\u00FCr Lesezugriffe ist prim\u00E4r Requirement; Risiko bei Fehlen eher abgeleitet."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-054",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Nicht triviale EU-only-Umsetzung durch globale Backup-Replikation ist ein konkretes Compliance-/Betriebsrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-055",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Unbekannte Mehrkosten f\u00FCr EU-only Hosting sind ein explizites Kostenrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-056",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Kurzfristige Kostensch\u00E4tzung bei unklarem Scope/Architektur ist ein klares Management- und Erwartungsrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-057",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "API-Gateway-Policy ist prim\u00E4r Constraint; Risiko folgt eher aus Abh\u00E4ngigkeiten wie Warteliste."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-058",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Warteliste des Gateway-Teams ist eine explizite externe Abh\u00E4ngigkeit mit direktem Terminrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-059",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Manuelle Uploads wurden explizit mit Integrations-, Fehler- und Berechtigungsrisiken verkn\u00FCpft."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-060",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Datenminimierung per On-Demand-Abruf ist prim\u00E4r Architekturprinzip; Risiken sind im Folgeclaim konkreter."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-061",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Performance-/Verf\u00FCgbarkeitsnachteile und SAP-Wartungsfenster sind konkrete Betriebsrisiken."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-062",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Offene Internationalisierung erzeugt Compliance-/Scope-Risiken, ist prim\u00E4r offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-063",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Sprachunterst\u00FCtzung ist funktionale Anforderung, kein Risikoclaim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-064",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "W\u00E4hrungsumfang ist prim\u00E4r Scope/Requirement, nicht eigenst\u00E4ndiges Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-065",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Mehrw\u00E4hrung mit Rabattlogik und SAP ist explizit als fachlich-technische Komplexit\u00E4t riskant."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-066",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "L\u00E4nder-/W\u00E4hrungsregeln sind Anforderungen, kein Risikoclaim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-067",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Offene Pilotkundenentscheidung beeinflusst Scope, Datenschutz und W\u00E4hrung massiv und ist damit eine kritische Abh\u00E4ngigkeit/Unsicherheit."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-068",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Nicht echtzeitaktuelle SAP-Preise sind ein explizites Integrations- und Fachrisiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-069",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Geforderte Gegenma\u00DFnahmen adressieren ein Risiko, sind aber selbst prim\u00E4r Anforderungen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-070",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "PDF-Export mit Fu\u00DFnoten/Versionen ist funktionale Anforderung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-071",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Fehlende Datenschutzhinweise bei PDFs bergen Compliance-Risiko, prim\u00E4r jedoch Requirement."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-072",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Fehlende Template-Versionierung kann Nachvollziehbarkeitsrisiken verursachen, prim\u00E4r Requirement."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-073",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Revisionssicherheit ist prim\u00E4r Requirement; Risiko bei Fehlen ist relevant, aber abgeleitet."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-074",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Zur\u00FCckgestellte Online-Akzeptanz kann Erwartungs-/Scope-Risiken erzeugen, ist prim\u00E4r Status."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-075",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Online-Akzeptanz bringt explizit erhebliche rechtliche und Nachweisrisiken mit sich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-076",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Unentschiedener SAP-Schreibzugriff mit gro\u00DFer Auswirkung ist eine wesentliche Integrationsabh\u00E4ngigkeit und Projektunsicherheit."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-077",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Logging-Vorgaben sind prim\u00E4r Compliance-/Security-Anforderungen; Risiken bei falscher Umsetzung sind hoch, aber abgeleitet."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-078",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Unklare rechtliche Aufbewahrung und Konflikt mit L\u00F6schrechten sind eine offene Compliance-Unsicherheit mit hohem Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-079",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Retention-Plan ist prim\u00E4r Requirement; fehlende Kl\u00E4rung birgt Compliance-Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-080",
+        "artifact": "risks",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Einsicht in alte Angebote ist prim\u00E4r Anforderung/Berechtigungsbedarf."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-081",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Der MVP-Entwurf selbst ist Status; relevante Risiken entstehen aus L\u00FCcken und Annahmen, nicht aus dem Claim als solchem."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-082",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Fehlende Rabatt-Freigabe im MVP und die daraus folgende Constraint adressieren direkt ein finanzielles/prozessuales Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-083",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Bewusst unzureichend gel\u00F6ste Supportfunktion im MVP samt Folgen ist ausdr\u00FCcklich als Risiko zu dokumentieren."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-084",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "E-Mail/Kontaktformular f\u00FCr Support wurde explizit als unstrukturiert und schlecht auditierbar und damit riskant beschrieben."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-085",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Getrennte Umgebungen sind prim\u00E4r Delivery-/Architektur-Anforderung; Risiko bei Fehlen ist nur abgeleitet."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-086",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Testdatenvorgabe ist prim\u00E4r Compliance-Anforderung; Risiko wird im Folgeclaim konkreter."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-087",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Echte Kundendaten im SAP-Testsystem sind ein akutes Compliance- und Testblocker-Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-088",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Secrets Management ist prim\u00E4r Architektur-/Betriebsanforderung; Sicherheitsrisiko bei Fehlen ist abgeleitet."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-089",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "medium",
+        "reason": "Rate Limits sind prim\u00E4r Sicherheitsanforderung; Risiko durch Missbrauch wird in Folgeclaim konkreter."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-090",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Pagination/Download-Limits sind Anforderungen; Risiko aus Massendownload ist im n\u00E4chsten Claim expliziter."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-091",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Massenexport von Rechnungen ist explizit rechtlich und sicherheitsrelevant und verlangt Risikobehandlung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-092",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "SAP-Verf\u00FCgbarkeit ist explizit als kritische Abh\u00E4ngigkeit und Betriebsrisiko benannt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-093",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Offenes Fallback-Verhalten bei SAP-Ausfall ist eine wesentliche Betriebs- und Gesch\u00E4ftsrisiko-Unsicherheit."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-094",
+        "artifact": "risks",
+        "necessity": "required",
+        "expectedRepresentation": "risk_entry",
+        "importance": "high",
+        "reason": "Caching als Fallback wurde explizit wegen Datenschutz, Rabatten und Invalidierung als riskant beschrieben."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-095",
+        "artifact": "risks",
+        "necessity": "optional",
+        "expectedRepresentation": "risk_entry",
+        "importance": "low",
+        "reason": "Anbieterneutralit\u00E4t ist prim\u00E4r Architekturconstraint; Risiko besteht bei Vorfestlegungen, aber nicht zwingend als eigener Risk-Claim."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-096",
+        "artifact": "risks",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Methodische Vorgabe zur Dokumentation von Widerspr\u00FCchen beeinflusst Risikodarstellung, ist aber kein eigener Risikoeintrag."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-097",
+        "artifact": "risks",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Artefakt-spezifische Leitlinie, dass Risiken multidisziplin\u00E4r zu behandeln sind; steuert die Modellierung, nicht ein einzelnes Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-098",
+        "artifact": "risks",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "high",
+        "reason": "Beschreibt den gew\u00FCnschten Umgang mit MVP-Ausschl\u00FCssen und Residualrisiken insgesamt, nicht einen einzelnen Risikoclaim."
+      }
+    ],
+    "open-questions": [
+      {
+        "sourceClaimId": "GLOBAL-SC-001",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Die Produktabgrenzung Portal vs. Plattform ist explizit noch offen und muss im Open-Questions-Artefakt stehen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-002",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Mehrere Ziele konkurrieren; als offene Priorisierungsfrage hilfreich, aber nicht jeder Zielclaim muss hier einzeln gef\u00FChrt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-003",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Zeitconstraint/Risikospannung geh\u00F6rt prim\u00E4r in Requirements/Risks, nicht als offene Frage an sich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-004",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Frontend-/Kanalstrategie ist ausdr\u00FCcklich ungekl\u00E4rt und entscheidungsbed\u00FCrftig."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-005",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Native App vs. responsive Web ist eine explizit offene Umsetzungsfrage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-006",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Budgetconstraint, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-007",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Technisches Risiko/Gap, aber nicht als offene Frage formuliert."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-008",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Zwingende Compliance-Constraint, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-009",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Festgelegte Pflichtanforderung f\u00FCr gew\u00E4hlten Login-Prozess, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-010",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Teils entschieden als Pflicht, aber konkrete Umsetzungs-/Abstimmungsaufgaben k\u00F6nnen als offene Punkte n\u00FCtzlich sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-011",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Vorl\u00E4ufiger Status/Ansatz, aber keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-012",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "SSO ist optional, aber Providerwahl und sp\u00E4tere Aufnahme sind explizit offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-013",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "IAM-L\u00FCcke ist Risiko/Architekturkontext, nicht selbst eine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-014",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Pflicht gilt nur falls SAP/personenbezogene ERP-Daten involviert sind; die genaue Anwendbarkeit kann als offene Kl\u00E4rung relevant sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-015",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Rollenmodell ist notwendig, aber die genaue Rollenabgrenzung ist ausdr\u00FCcklich noch nicht final."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-016",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Datenqualit\u00E4tsrisiko, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-017",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Klare Kernanforderung, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-018",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Scope-Anforderung, nicht als offene Frage beschrieben."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-019",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Push Notifications sind unklar und nicht abgestimmt; das ist genau eine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-020",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Consent wird nur relevant, falls Push/Tracking aufgenommen werden; als abh\u00E4ngige offene Kl\u00E4rung hilfreich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-021",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Capability-Gap/Risiko, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-022",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Analytics/KPI-Messung ist hinsichtlich MVP vs. sp\u00E4ter explizit offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-023",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "low",
+        "reason": "KPIs sind benannt; nur falls deren Finalisierung noch aussteht, w\u00E4re eine offene Frage sinnvoll."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-024",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Datenschutzrelevanter Fakt/Constraint, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-025",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Entschiedene Security-Baseline, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-026",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Pflichtanforderung, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-027",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Verpflichtender Gate/Constraint, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-028",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Infrastruktur-Constraint, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-029",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Zielkonflikt kann in offene Entscheidungsfragen \u00FCbersetzt werden, ist aber prim\u00E4r Risiko/Architekturtreiber."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-030",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "EU-only scheint gew\u00FCnscht, aber die exakte verbindliche Auspr\u00E4gung vs. nur DSGVO-konform musste gekl\u00E4rt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-031",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Architekturbaustein als gesetzt, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-032",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "OAuth vs. API Keys ist ausdr\u00FCcklich noch nicht final entschieden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-033",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Pflichtanforderung auch f\u00FCr MVP, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-034",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Nutzerzahlen sind stark unklar und m\u00FCssen als entscheidungsrelevante offene Frage behandelt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-035",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "low",
+        "reason": "Prinzip/Constraint; nur konkrete Operationalisierung w\u00E4re als offene Frage sinnvoll."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-036",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Fehlende konsolidierte Zieldefinition erzeugt expliziten Kl\u00E4rungsbedarf im Open-Questions-Artefakt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-037",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Bewusster Scope-Ausschluss, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-038",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Pflicht ist klar; offene Punkte betreffen eher konkrete Ausgestaltung des L\u00F6schkonzepts."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-039",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Zwingende Anforderung, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-040",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "low",
+        "reason": "Dokumentationspflicht steht fest; der genaue Mindestumfang k\u00F6nnte als offene Frage gef\u00FChrt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-041",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Die MVP-Abdeckung der Support-Use-Cases muss explizit bewertet/entschieden werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-042",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Bedingte Frage nur falls Kontaktformular-L\u00F6sung verfolgt wird; dann ist Zuordnung zwingend zu kl\u00E4ren."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-043",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Pflicht gilt, aber konkrete Einbeziehung in L\u00F6sch-/Auskunftsprozesse kann als offene Umsetzungskl\u00E4rung erscheinen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-044",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Persistenzbedarf f\u00FCr Supportf\u00E4lle und Wahl des Managed Service sind ausdr\u00FCcklich noch nicht entschieden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-045",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "low",
+        "reason": "Constraint selbst nicht offen, kann aber Folgefragen zur Support-Persistenz ausl\u00F6sen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-046",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Expliziter Ausschluss/Constraint, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-047",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Pflichtprozess ist gesetzt; offen ist nur die genaue Ausgestaltung in SC-048."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-048",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Rabattschwelle und zus\u00E4tzliche Finance-Freigabe sind explizit ungekl\u00E4rt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-049",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Finanzielles Risiko, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-050",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Ben\u00F6tigtes Statusmodell als Anforderung, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-051",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Der Verantwortungsschnitt ist nur \u0027vermutlich\u0027 so; falls noch nicht final, als Kl\u00E4rung hilfreich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-052",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Der Berechtigungskonflikt ist ungel\u00F6st und verlangt explizite fachliche Entscheidung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-053",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "low",
+        "reason": "Anforderung ist klar; nur genaue Reichweite des Audits k\u00F6nnte offen sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-054",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Prim\u00E4r Risiko, aber die notwendige Provider-/Backup-Konfigurationskl\u00E4rung kann als offener Punkt gef\u00FChrt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-055",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "low",
+        "reason": "Unbekannte Mehrkosten k\u00F6nnen eine offene Sch\u00E4tz-/Entscheidungsfrage sein, prim\u00E4r aber Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-056",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Welche Annahmen f\u00FCr die Freitagssch\u00E4tzung gelten sollen, kann als offene organisatorische Frage relevant sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-057",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Verbindliche Policy/Constraint, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-058",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Abh\u00E4ngigkeits-/Terminrisiko, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-059",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Manuelle Uploads sind als m\u00F6gliche Zwischenl\u00F6sung diskutiert; ob sie \u00FCberhaupt zugelassen werden, ist kl\u00E4rungsw\u00FCrdig."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-060",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Datenminimierung impliziert eine noch zu treffende Integrationsentscheidung zwischen Abruf und Replikation."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-061",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Trade-off aus Datenminimierung vs. Performance/Verf\u00FCgbarkeit kann als offene Entscheidungsfrage gef\u00FChrt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-062",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Geografischer Rollout DACH/EU/USA ist explizit noch nicht final."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-063",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Klare Anforderung, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-064",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "MVP-W\u00E4hrungsumfang ist noch nicht final; CHF/USD-Reichweite muss entschieden werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-065",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Komplexit\u00E4tsrisiko, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-066",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Regelbedarf steht fest, aber genaue L\u00E4nder-/W\u00E4hrungsregeln m\u00FCssen ggf. noch gekl\u00E4rt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-067",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Pilotkundenentscheidung Schweiz vs. Deutschland ist explizit offen und stark scope-wirksam."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-068",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Integrationsannahme/Risiko, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-069",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Preisg\u00FCltigkeit/Warnhinweise sind gefordert; die konkrete fachliche Ausgestaltung kann offen sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-070",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Klare Anforderung, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-071",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Klare Datenschutzanforderung, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-072",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Erforderliche Capability, nicht als offene Frage formuliert."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-073",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Pflicht ist klar; die Wahl Event-History vs. Audit-Log k\u00F6nnte als offene Frage gef\u00FChrt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-074",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "MVP-Entscheidung scheint Richtung \u0027sp\u00E4ter\u0027 zu gehen; nur falls noch nicht final best\u00E4tigt, als offene Frage hilfreich."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-075",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Zusatzanforderungen werden nur relevant, falls Online-Akzeptanz aufgenommen wird; dann als abh\u00E4ngige offene Frage sinnvoll."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-076",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "SAP-Schreibzugriff ist ausdr\u00FCcklich noch nicht entschieden und hat gro\u00DFe Auswirkung."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-077",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Anforderung steht; Detailkl\u00E4rung zu Log-Trennung/Retention kann als offene Umsetzungsfrage n\u00F6tig sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-078",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Aufbewahrungsdauer und Konflikt L\u00F6schung vs. gesetzliche Pflichten sind explizit offen und entscheidungsbed\u00FCrftig."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-079",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Retention-Plan ist Pflicht; konkrete Klassifikation/Regeln k\u00F6nnen als offene Punkte ausdetailliert werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-080",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "low",
+        "reason": "Anforderung ist klar; nur konkrete Berechtigungs-/Zeitraumdetails k\u00F6nnten offen sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-081",
+        "artifact": "open-questions",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Der MVP-Entwurf liefert wichtigen Kontext f\u00FCr offene Fragen, ist aber selbst keine einzelne offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-082",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Explizite MVP-Constraint als vorl\u00E4ufige Entscheidung, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-083",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Support ist ausdr\u00FCcklich nicht gel\u00F6st; die Minimalvariante und ihre Tragf\u00E4higkeit sind offene Fragen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-084",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "E-Mail/Kontaktformular als Trade-off kann eine zu best\u00E4tigende offene Entscheidung sein, prim\u00E4r aber Risiko."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-085",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Ben\u00F6tigte Umgebungen sind als Anforderung gesetzt, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-086",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Pflicht ist klar; konkrete Testdatenstrategie kann als offene Kl\u00E4rung n\u00F6tig sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-087",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Das SAP-Testdatenproblem blockiert Tests und verlangt eine konkrete offene Kl\u00E4rung des Vorgehens."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-088",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Pflichtbaustein, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-089",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Klare Anforderung, nicht offen."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-090",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Pagination/Download-Limits sind n\u00F6tig; die genaue UX-Ausgestaltung kann als offene Frage gef\u00FChrt werden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-091",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Baseline ist klar, aber optionale Missbrauchserkennung und genaue Schutzma\u00DFnahmen k\u00F6nnten offen sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-092",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Kritische Abh\u00E4ngigkeit/Risiko, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-093",
+        "artifact": "open-questions",
+        "necessity": "required",
+        "expectedRepresentation": "open_question",
+        "importance": "high",
+        "reason": "Fallback-Verhalten bei SAP-Ausfall ist explizit offen und fachlich zu entscheiden."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-094",
+        "artifact": "open-questions",
+        "necessity": "optional",
+        "expectedRepresentation": "open_question",
+        "importance": "medium",
+        "reason": "Caching ist als m\u00F6gliche, riskante Option diskutiert; ob und wie es genutzt werden soll, kann offen sein."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-095",
+        "artifact": "open-questions",
+        "necessity": "not_applicable",
+        "expectedRepresentation": "not_applicable",
+        "importance": "low",
+        "reason": "Dokumentations-/Architekturconstraint, keine offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-096",
+        "artifact": "open-questions",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "medium",
+        "reason": "Leitprinzip f\u00FCr Darstellung offener Fragen, aber kein einzelner fachlicher Kl\u00E4rungspunkt."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-097",
+        "artifact": "open-questions",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "low",
+        "reason": "Methodischer Hinweis zur Risikobetrachtung, nicht selbst offene Frage."
+      },
+      {
+        "sourceClaimId": "GLOBAL-SC-098",
+        "artifact": "open-questions",
+        "necessity": "context_only",
+        "expectedRepresentation": "context_only",
+        "importance": "high",
+        "reason": "Beschreibt Zielbild des Artefaktsets/MVP-Schnitts und liefert Kontext, aber keine einzelne offene Frage."
+      }
+    ]
+  },
+  "actionableRecall": {
+    "exact": 16,
+    "partial": 4,
+    "missed": 0,
+    "exactRate": 0.8,
+    "exactOrPartial": 20,
+    "exactOrPartialRate": 1
+  },
+  "requiredOnlyRecall": {
+    "exact": 8,
+    "partial": 7,
+    "missed": 5,
+    "exactRate": 0.4,
+    "exactOrPartial": 15,
+    "exactOrPartialRate": 0.75
+  },
+  "results": [
+    {
+      "id": "SC-ARCH-SCALABILITY-001",
+      "artifact": "architecture",
+      "sourceClaim": "Die erwartete Nutzerzahl schwankt zwischen ca. 200 und 20.000; Skalierbarkeit und Performance sind deshalb architektonisch offen.",
+      "relevantForCount": 76,
+      "actionableCount": 87,
+      "requiredCount": 60,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-034"
+        ],
+        "reason": "Enth\u00E4lt den fachlichen Kern inkl. offener Lastannahme mit gro\u00DFer Auswirkung auf Architektur/Performance; die Spannweite ist sinngleich, auch wenn statt 200\u201320.000 \u002720 bis 20.000\u0027 genannt wird."
+      },
+      "requiredRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-034",
+          "GLOBAL-SC-035",
+          "GLOBAL-SC-029"
+        ],
+        "reason": "GLOBAL-SC-034 enth\u00E4lt die unklare Nutzerzahl bis 20.000 und die offene Skalierungsplanung direkt; GLOBAL-SC-035 erg\u00E4nzt die explizite Pflicht, Skalierbarkeit architektonisch zu ber\u00FCcksichtigen. GLOBAL-SC-029 passt als Zielkonflikt-Kontext."
+      },
+      "note": "Litmus-Gap aus D1/B45."
+    },
+    {
+      "id": "SC-ARCH-ANALYTICS-002",
+      "artifact": "architecture",
+      "sourceClaim": "Analytics/KPIs sind gew\u00FCnscht, aber technische Umsetzung, Tracking und Datenschutz sind offen.",
+      "relevantForCount": 76,
+      "actionableCount": 87,
+      "requiredCount": 60,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-020",
+          "GLOBAL-SC-021",
+          "GLOBAL-SC-022"
+        ],
+        "reason": "Der erwartete Claim ist inhaltlich abgedeckt: KPI/Analytics-Bedarf ist vorhanden, Tracking/Analytics-Infrastruktur bzw. technische Umsetzung ist offen/fehlt, und Datenschutz/Consent f\u00FCr Tracking ist als offenes bzw. bedingendes Thema benannt."
+      },
+      "requiredRecall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim behandelt Analytics/KPIs bzw. dass Tracking, technische Umsetzung und Datenschutz dazu noch offen sind."
+      },
+      "note": "Systematischer DirectReview-Blindspot."
+    },
+    {
+      "id": "SC-ARCH-API-GATEWAY-003",
+      "artifact": "architecture",
+      "sourceClaim": "Das zentrale API Gateway ist die bevorzugte/vorgegebene Integrationsebene, hat aber eine sechswoechige Warteliste und braucht Alternativen.",
+      "relevantForCount": 76,
+      "actionableCount": 87,
+      "requiredCount": 60,
+      "actionableRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-031",
+          "GLOBAL-SC-057"
+        ],
+        "reason": "API-Gateway/API-Layer als zentrale bzw. verbindliche Integrationsebene ist enthalten, aber die sechswoechige Warteliste/Verzoegerungsrisiko und der Bedarf an Alternativen bzw. offener Strategie fehlen."
+      },
+      "requiredRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-057",
+          "GLOBAL-SC-031"
+        ],
+        "reason": "API Gateway/API-Layer als verbindliche bzw. notwendige Integrationsebene ist enthalten, aber die spezifische Aussage zur sechswoechigen Warteliste/Verzoegerungsrisiko und dem Bedarf an Alternativen fehlt."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-ENV-SECRETS-004",
+      "artifact": "architecture",
+      "sourceClaim": "Dev/Test/Prod-Umgebungen, Testdaten ohne echte Kundendaten und Secrets Management sind erforderlich.",
+      "relevantForCount": 76,
+      "actionableCount": 87,
+      "requiredCount": 60,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-085",
+          "GLOBAL-SC-086",
+          "GLOBAL-SC-088"
+        ],
+        "reason": "Der erwartete Claim wird vollst\u00E4ndig abgedeckt: getrennte Dev/Test/Prod-Umgebungen, Testdaten ohne echte Kundendaten und verpflichtendes Secrets Management sind jeweils explizit enthalten."
+      },
+      "requiredRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-085",
+          "GLOBAL-SC-086",
+          "GLOBAL-SC-088"
+        ],
+        "reason": "Alle drei geforderten Inhalte sind explizit enthalten: getrennte Dev/Test/Prod-Umgebungen, Testdaten ohne echte Kundendaten und Secrets Management f\u00FCr CI/CD."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+      "artifact": "architecture",
+      "sourceClaim": "Rabatte \u00FCber 15 Prozent brauchen einen Freigabeprozess mit Workflow-Status.",
+      "relevantForCount": 76,
+      "actionableCount": 87,
+      "requiredCount": 60,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-047",
+          "GLOBAL-SC-050"
+        ],
+        "reason": "Der erwartete Claim wird inhaltlich vollst\u00E4ndig abgedeckt: GLOBAL-SC-047 enth\u00E4lt die Pflicht zur Freigabe ab \u00FCber 15% Rabatt, GLOBAL-SC-050 die ben\u00F6tigten Workflow-Status. Zusammen entspricht das dem fachlichen Kern samt Modalit\u00E4t."
+      },
+      "requiredRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-050",
+          "GLOBAL-SC-051",
+          "GLOBAL-SC-082"
+        ],
+        "reason": "Der Kern ist teilweise enthalten: Workflow-Status f\u00FCr Angebote sind explizit genannt und der Freigabeprozess wird dem Portal zugeordnet. Die konkrete Pflicht \u0027Rabatte \u00FCber 15 Prozent brauchen einen Freigabeprozess\u0027 fehlt jedoch explizit; stattdessen gibt es nur den indirekten Hinweis, dass Rabatt-Freigabe im MVP fehlt bzw. eingeschr\u00E4nkt wird."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-REQ-LOGIN-006",
+      "artifact": "requirements",
+      "sourceClaim": "Login per E-Mail und Passwort ist f\u00FCr das MVP vorgesehen; Double-Opt-In ist verpflichtend.",
+      "relevantForCount": 87,
+      "actionableCount": 71,
+      "requiredCount": 54,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-009",
+          "GLOBAL-SC-011",
+          "GLOBAL-SC-081"
+        ],
+        "reason": "Beide Teile des erwarteten Claims sind enthalten: Login per E-Mail/Passwort ist f\u00FCrs MVP vorgesehen (GLOBAL-SC-011, zus\u00E4tzlich im MVP-Schnitt GLOBAL-SC-081) und Double-Opt-In ist verpflichtend bzw. Teil des Login-Prozesses (GLOBAL-SC-009, zus\u00E4tzlich GLOBAL-SC-081)."
+      },
+      "requiredRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-009",
+          "GLOBAL-SC-081"
+        ],
+        "reason": "Der erwartete Claim enth\u00E4lt zwei Kernelemente: Login per E-Mail/Passwort ist f\u00FCr das MVP vorgesehen und Double-Opt-In ist verpflichtend. GLOBAL-SC-009 deckt die Pflicht zu Double-Opt-In f\u00FCr E-Mail-Login ab; GLOBAL-SC-081 best\u00E4tigt den MVP-Scope mit Login mit Double-Opt-In. Zusammen ist der fachliche Kern mit gleicher Modalit\u00E4t enthalten."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SAP-WRITE-007",
+      "artifact": "requirements",
+      "sourceClaim": "SAP-Schreibzugriff ist nicht entschieden; im MVP ist eher nur SAP-Lesen vorgesehen.",
+      "relevantForCount": 87,
+      "actionableCount": 71,
+      "requiredCount": 54,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-074",
+          "GLOBAL-SC-081"
+        ],
+        "reason": "Der Claim ist inhaltlich enthalten: SAP-Schreibzugriff ist f\u00FCr den MVP nicht festgelegt bzw. eher nicht vorgesehen, stattdessen SAP-Lesedaten im MVP; au\u00DFerdem wird Online-Akzeptanz im MVP eher ausgeschlossen. Das trifft den offenen/nicht festzuschreibenden Charakter von SAP-Write zugunsten eines lesenden MVP."
+      },
+      "requiredRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-074",
+          "GLOBAL-SC-081"
+        ],
+        "reason": "Der Kern \u0027im MVP eher nur lesend/keine Online-Akzeptanz\u0027 ist enthalten. Es fehlt aber die explizite Aussage, dass SAP-Schreibzugriff noch nicht entschieden ist und requirements ihn nicht als sp\u00E4tere Phase festschreiben soll."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-REQ-ANALYTICS-008",
+      "artifact": "requirements",
+      "sourceClaim": "KPIs/Analytics sind gew\u00FCnscht, aber Messkonzept und technische Umsetzung sind noch offen.",
+      "relevantForCount": 87,
+      "actionableCount": 71,
+      "requiredCount": 54,
+      "actionableRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-022",
+          "GLOBAL-SC-023"
+        ],
+        "reason": "KPI/Analytics-Bedarf und konkrete KPIs sind enthalten, aber die erwartete offene technische Umsetzung/Messkonzept fehlt; stattdessen nur unklare MVP-Verankerung."
+      },
+      "requiredRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-023"
+        ],
+        "reason": "KPIs/Analytics als gew\u00FCnschte Metriken sind enthalten, aber der erwartete offene Punkt zur noch ungekl\u00E4rten technischen Messumsetzung fehlt."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-REQ-SCALABILITY-009",
+      "artifact": "requirements",
+      "sourceClaim": "Nutzerzahl/Skalierung ist unklar, muss aber als nichtfunktionale Anforderung ber\u00FCcksichtigt werden.",
+      "relevantForCount": 87,
+      "actionableCount": 71,
+      "requiredCount": 54,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-035"
+        ],
+        "reason": "GLOBAL-SC-035 enth\u00E4lt den fachlichen Kern direkt: Skalierbarkeit muss ber\u00FCcksichtigt werden, bei noch offener Auspr\u00E4gung. Das entspricht der geforderten Behandlung als nichtfunktionale Anforderung."
+      },
+      "requiredRecall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim adressiert die unklare Nutzerzahl/Skalierung oder die Pflicht, Skalierbarkeit/Performance bzw. Nutzerzahl-Spanne als nichtfunktionale Anforderung in requirements aufzunehmen."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-REQ-PUSH-010",
+      "artifact": "requirements",
+      "sourceClaim": "Push Notifications wurden als Marketingwunsch eingebracht, waren aber nie besprochen und nicht im MVP entschieden.",
+      "relevantForCount": 87,
+      "actionableCount": 71,
+      "requiredCount": 54,
+      "actionableRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-019"
+        ],
+        "reason": "Push Notifications als Wunsch und nicht abgestimmt ist enthalten. Es fehlt aber der volle Kern, dass sie nie besprochen und explizit nicht im MVP entschieden waren; stattdessen bleibt es nur \u0027unklar und nicht abgestimmt\u0027."
+      },
+      "requiredRecall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim behandelt Push Notifications als unbesprochenen Marketingwunsch bzw. als nicht im MVP entschiedene/offene oder ausgeschlossene Scope-Frage."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-RISK-API-GATEWAY-011",
+      "artifact": "risks",
+      "sourceClaim": "Die sechswoechige API-Gateway-Warteliste gef\u00E4hrdet den 8-Wochen-MVP.",
+      "relevantForCount": 76,
+      "actionableCount": 82,
+      "requiredCount": 33,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-058"
+        ],
+        "reason": "GLOBAL-SC-058 enth\u00E4lt denselben fachlichen Kern und dieselbe Risikobeziehung: sechswoechige Gateway-Warteliste gefaehrdet den 8-Wochen-MVP; zudem als Terminrisiko zu erfassen."
+      },
+      "requiredRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-058"
+        ],
+        "reason": "Gleicher fachlicher Kern und gleiche Risikobehandlung: sechswoechige Gateway-Warteliste gefaehrdet den 8-Wochen-MVP und soll als Termin-/Integrationsrisiko erfasst werden."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PUSH-012",
+      "artifact": "risks",
+      "sourceClaim": "Push Notifications erzeugen Einwilligungs-/DSGVO-Risiken, falls sie sp\u00E4ter umgesetzt werden.",
+      "relevantForCount": 76,
+      "actionableCount": 82,
+      "requiredCount": 33,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-019",
+          "GLOBAL-SC-020"
+        ],
+        "reason": "Push Notifications sind als Wunsch genannt und mit DSGVO-/Einwilligungsanforderungen verkn\u00FCpft; zusammen deckt das das sp\u00E4tere Push-/Consent-Risiko inhaltlich ab."
+      },
+      "requiredRecall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim behandelt Push Notifications als sp\u00E4teres DSGVO-/Einwilligungsrisiko oder bewussten Ausschluss im MVP."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-RISK-SUPPORT-013",
+      "artifact": "risks",
+      "sourceClaim": "Kein Ticketsystem im MVP f\u00FChrt zu unstrukturierter E-Mail-Bearbeitung und Datenschutz-/Support-Risiken.",
+      "relevantForCount": 76,
+      "actionableCount": 82,
+      "requiredCount": 33,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-083",
+          "GLOBAL-SC-084",
+          "GLOBAL-SC-037"
+        ],
+        "reason": "Der erwartete Risikoclaim ist inhaltlich enthalten: kein Ticketsystem im MVP, Support nur minimal/ungel\u00F6st, E-Mail/Kontaktformular ist unstrukturiert und datenschutz-/auditkritisch. Das erfasst den Support-ohne-Ticketsystem-Fall als Risiko im risks-Artefakt."
+      },
+      "requiredRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-083",
+          "GLOBAL-SC-084"
+        ],
+        "reason": "Die extrahierten Claims decken den fachlichen Kern vollst\u00E4ndig ab: kein/fehlendes Ticketsystem bzw. keine Ticketpersistenz im MVP als bewusste Einschr\u00E4nkung mit Support-Risiken sowie unstrukturierte E-Mail/Kontaktformular-Verarbeitung mit Datenschutz- und Auditierbarkeitsrisiken."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-RISK-TESTDATA-014",
+      "artifact": "risks",
+      "sourceClaim": "Echte Kundendaten in Test- und Entwicklungsumgebungen erzeugen Datenschutzrisiken.",
+      "relevantForCount": 76,
+      "actionableCount": 82,
+      "requiredCount": 33,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-086",
+          "GLOBAL-SC-087"
+        ],
+        "reason": "Der erwartete Risikoclaim ist inhaltlich enthalten: echte Kundendaten in Test-/Entwicklungskontext sind ein Datenschutzrisiko. SC-086 deckt die Pflicht direkt ab, SC-087 konkretisiert das Risiko am SAP-Testsystem als Compliance-/Testblocker."
+      },
+      "requiredRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-087"
+        ],
+        "reason": "GLOBAL-SC-087 enth\u00E4lt den fachlichen Kern exakt: echte Kundendaten in einer Testumgebung sind ein Datenschutz-/Compliance-Risiko; sogar konkreter als der erwartete allgemeine Risikoclaim."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-RISK-PRICE-CACHE-015",
+      "artifact": "risks",
+      "sourceClaim": "Caching/Fallbacks f\u00FCr SAP-Daten kollidieren mit Datenaktualit\u00E4t und Datenschutz.",
+      "relevantForCount": 76,
+      "actionableCount": 82,
+      "requiredCount": 33,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-094"
+        ],
+        "reason": "GLOBAL-SC-094 trifft den fachlichen Kern vollst\u00E4ndig: Caching als SAP-Fallback ist riskant und kollidiert mit Datenschutz/Retention sowie Cache-Invalidierung; damit ist der Cache/Fallback-Konflikt mit Datenaktualit\u00E4t implizit durch Invalidierung/Risiko kundenspezifischer Preisdaten abgedeckt."
+      },
+      "requiredRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-094"
+        ],
+        "reason": "GLOBAL-SC-094 enth\u00E4lt den fachlichen Kern vollst\u00E4ndig: Caching als SAP-Fallback ist wegen Datenschutz/Retention und Cache-Invalidierung riskant; damit ist der Cache/Fallback-Konflikt rund um Datenaktualit\u00E4t/Compliance im Risikoartefakt abgedeckt."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-OQ-MOBILE-016",
+      "artifact": "open-questions",
+      "sourceClaim": "Mobile Umsetzung ist offen: native App vs. responsive Web.",
+      "relevantForCount": 31,
+      "actionableCount": 56,
+      "requiredCount": 22,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-005"
+        ],
+        "reason": "Der erwartete Claim (\u0027offen: native App vs. responsive Web\u0027 als offene Frage) wird in GLOBAL-SC-005 inhaltlich direkt und mit gleicher Offenheit/Modalit\u00E4t abgedeckt."
+      },
+      "requiredRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-005"
+        ],
+        "reason": "Der erwartete offene Punkt mobile Umsetzung native App vs. responsive Web ist in GLOBAL-SC-005 inhaltlich vollst\u00E4ndig und als offene Entscheidung enthalten."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PUSH-017",
+      "artifact": "open-questions",
+      "sourceClaim": "Push Notifications sind ein Marketingwunsch, aber Status, Einwilligung und MVP-Scope sind offen.",
+      "relevantForCount": 31,
+      "actionableCount": 56,
+      "requiredCount": 22,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-019",
+          "GLOBAL-SC-020"
+        ],
+        "reason": "GLOBAL-SC-019 deckt den Marketingwunsch und den offenen/unklaren Status ab; GLOBAL-SC-020 erg\u00E4nzt die offene Einwilligungs-/DSGVO-Dimension. Zusammen entspricht das dem erwarteten Claim als offene Scope-/Datenschutzfrage."
+      },
+      "requiredRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-019"
+        ],
+        "reason": "Push als Marketing-/Stakeholder-Wunsch und unklar/nicht abgestimmt ist enthalten. Es fehlen aber die spezifischen offenen Punkte zu Einwilligung/DSGVO und MVP-Scope, daher nicht exact."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-OQ-EU-RESIDENCE-018",
+      "artifact": "open-questions",
+      "sourceClaim": "EU-only vs. allgemein DSGVO-konform ist nicht dasselbe und muss f\u00FCr Hosting/Datenresidenz gekl\u00E4rt werden.",
+      "relevantForCount": 31,
+      "actionableCount": 56,
+      "requiredCount": 22,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-030",
+          "GLOBAL-SC-054"
+        ],
+        "reason": "Der erwartete Open-Question-Claim ist inhaltlich enthalten: EU-only ist nicht gleich DSGVO-konform und Datenresidenz/Hosting muss gekl\u00E4rt werden; zus\u00E4tzlich wird das Managed-Services-/globale Replikationsrisiko explizit genannt."
+      },
+      "requiredRecall": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "reason": "Kein extrahierter Claim adressiert die offene Compliancefrage zu EU-only vs. DSGVO-konform bzw. Hosting/Datenresidenz/Managed-Services-Replikation."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-OQ-PRICE-CACHE-019",
+      "artifact": "open-questions",
+      "sourceClaim": "Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und Caching ist offen.",
+      "relevantForCount": 31,
+      "actionableCount": 56,
+      "requiredCount": 22,
+      "actionableRecall": {
+        "verdict": "exact",
+        "matchedIds": [
+          "GLOBAL-SC-094",
+          "GLOBAL-SC-093",
+          "GLOBAL-SC-069"
+        ],
+        "reason": "GLOBAL-SC-094 enth\u00E4lt den offenen Umgang mit SAP-bedingtem Fallback/Cache inkl. Preis-/Rabattdaten und aufwendiger Cache-Invalidierung; GLOBAL-SC-093 erg\u00E4nzt die offene Fallback-Frage, GLOBAL-SC-069 die Problematik nicht tagesaktueller Preise."
+      },
+      "requiredRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-093"
+        ],
+        "reason": "Der offene Umgang mit Fallback/Cache bei SAP-Ausfall ist enthalten, aber die spezifische offene Frage zu Preis-/Rabattschwankungen und nicht-echtzeitaktuellen SAP-Preisen samt Cache-Invalidierung wird nicht vollst\u00E4ndig abgedeckt."
+      },
+      "note": null
+    },
+    {
+      "id": "SC-OQ-ANALYTICS-020",
+      "artifact": "open-questions",
+      "sourceClaim": "KPI-/Analytics-Messung ist fachlich gew\u00FCnscht, aber technische Umsetzung und Datenschutz sind offen.",
+      "relevantForCount": 31,
+      "actionableCount": 56,
+      "requiredCount": 22,
+      "actionableRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-020",
+          "GLOBAL-SC-022",
+          "GLOBAL-SC-023"
+        ],
+        "reason": "KPI/Analytics-Bedarf ist enthalten und Tracking/DSGVO wird erw\u00E4hnt, aber die offene technische Umsetzung der Messung ist nicht klar als offene Frage dokumentiert; zudem steht bei KPI eher MVP-vs-sp\u00E4ter statt technische/datenschutzbezogene Open Question im Fokus."
+      },
+      "requiredRecall": {
+        "verdict": "partial",
+        "matchedIds": [
+          "GLOBAL-SC-022"
+        ],
+        "reason": "Analytics/KPI-Bedarf ist enthalten, aber die offene technische Umsetzung und Datenschutzfrage f\u00FCr open-questions fehlen."
+      },
+      "note": null
+    }
+  ]
+}

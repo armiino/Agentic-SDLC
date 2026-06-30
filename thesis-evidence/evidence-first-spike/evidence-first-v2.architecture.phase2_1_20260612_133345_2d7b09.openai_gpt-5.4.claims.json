@@ -1,0 +1,132 @@
+[
+  {
+    "artifactClaimId": "ARCH-001",
+    "artifact": "architecture",
+    "text": "Das MVP soll eine Authentifizierung per E-Mail und Passwort vorsehen; dabei ist Double-Opt-In verpflichtend und als architektonische Randbedingung zu ber\u00FCcksichtigen.",
+    "sourceClaimIds": [
+      "SC-REQ-LOGIN-006"
+    ],
+    "status": "decided",
+    "modality": "must",
+    "scope": "mvp_auth",
+    "timeScope": "mvp",
+    "assumption": false
+  },
+  {
+    "artifactClaimId": "ARCH-002",
+    "artifact": "architecture",
+    "text": "F\u00FCr die SAP-Integration ist Schreibzugriff nicht entschieden; f\u00FCr das MVP ist eher ein lesender Zugriff vorgesehen. Die Architektur muss diese Entscheidung daher offenhalten und darf keinen fest zugesagten SAP-Schreibpfad im MVP voraussetzen.",
+    "sourceClaimIds": [
+      "SC-REQ-SAP-WRITE-007"
+    ],
+    "status": "undecided",
+    "modality": "open",
+    "scope": "mvp_read_only_write_undecided",
+    "timeScope": "mvp",
+    "assumption": false
+  },
+  {
+    "artifactClaimId": "ARCH-003",
+    "artifact": "architecture",
+    "text": "Die erwartete Nutzerzahl ist unklar und liegt nach aktuellem Stand zwischen ca. 200 und 20.000 Nutzern. Skalierbarkeit und Performance m\u00FCssen daher in der Architektur ber\u00FCcksichtigt werden, ohne eine feste Lastannahme zu unterstellen.",
+    "sourceClaimIds": [
+      "SC-ARCH-SCALABILITY-001"
+    ],
+    "status": "uncertain",
+    "modality": "must_consider",
+    "scope": "mvp_scale_uncertain",
+    "timeScope": "mvp",
+    "assumption": false
+  },
+  {
+    "artifactClaimId": "ARCH-004",
+    "artifact": "architecture",
+    "text": "Analytics bzw. KPIs sind gew\u00FCnscht, jedoch sind Messkonzept, technische Umsetzung, Tracking und Datenschutz derzeit offen. Die Architektur muss diesen Punkt als offene Entscheidung behandeln.",
+    "sourceClaimIds": [
+      "SC-ARCH-ANALYTICS-002"
+    ],
+    "status": "undecided",
+    "modality": "desired",
+    "scope": "analytics_open",
+    "timeScope": "mvp_or_later_unclear",
+    "assumption": false
+  },
+  {
+    "artifactClaimId": "ARCH-005",
+    "artifact": "architecture",
+    "text": "F\u00FCr Angebote mit mehr als 15 Prozent Rabatt ist ein Freigabeprozess erforderlich.",
+    "sourceClaimIds": [
+      "SC-ARCH-DISCOUNT-WORKFLOW-005"
+    ],
+    "status": "required",
+    "modality": "must",
+    "scope": "offers_discount_approval",
+    "timeScope": "mvp_or_scope_unclear",
+    "assumption": false
+  },
+  {
+    "artifactClaimId": "ARCH-006",
+    "artifact": "architecture",
+    "text": "Daf\u00FCr werden Workflow-Status f\u00FCr Angebote ben\u00F6tigt: \u0060draft\u0060, \u0060pending approval\u0060, \u0060approved\u0060, \u0060sent\u0060, \u0060accepted\u0060, \u0060rejected\u0060.",
+    "sourceClaimIds": [
+      "SC-ARCH-DISCOUNT-WORKFLOW-005"
+    ],
+    "status": "required",
+    "modality": "must",
+    "scope": "offers_discount_approval",
+    "timeScope": "mvp_or_scope_unclear",
+    "assumption": false
+  },
+  {
+    "artifactClaimId": "ARCH-007",
+    "artifact": "architecture",
+    "text": "Datenresidenz f\u00FCr das Hosting ist offen zu kl\u00E4ren. EU-only Hosting und allgemein DSGVO-konformes Hosting sind nicht automatisch dasselbe; diese Unterscheidung ist in Architekturentscheidungen explizit zu ber\u00FCcksichtigen.",
+    "sourceClaimIds": [
+      "SC-OQ-EU-RESIDENCE-018"
+    ],
+    "status": "open",
+    "modality": "must_clarify",
+    "scope": "hosting_data_residency",
+    "timeScope": "mvp",
+    "assumption": false
+  },
+  {
+    "artifactClaimId": "ARCH-008",
+    "artifact": "architecture",
+    "text": "Der Umgang mit Preis- und Rabattschwankungen bei SAP-Daten sowie die Nutzung von Cache oder Fallback sind offen und m\u00FCssen architektonisch gekl\u00E4rt werden.",
+    "sourceClaimIds": [
+      "SC-OQ-PRICE-CACHE-019"
+    ],
+    "status": "open",
+    "modality": "must_clarify",
+    "scope": "sap_price_cache",
+    "timeScope": "mvp",
+    "assumption": false
+  },
+  {
+    "artifactClaimId": "ARCH-009",
+    "artifact": "architecture",
+    "text": "Caching oder Fallbacks f\u00FCr SAP-Daten m\u00FCssen im Spannungsfeld von Datenaktualit\u00E4t, Datenschutz und Retention betrachtet werden.",
+    "sourceClaimIds": [
+      "SC-RISK-PRICE-CACHE-015"
+    ],
+    "status": "open",
+    "modality": "must_consider",
+    "scope": "sap_cache_privacy_freshness",
+    "timeScope": "mvp",
+    "assumption": false
+  },
+  {
+    "artifactClaimId": "ARCH-010",
+    "artifact": "architecture",
+    "text": "Wenn im MVP kein Ticketsystem vorgesehen ist, ist das Risiko unstrukturierter E-Mail-Bearbeitung mit Datenschutz- und Support-Auswirkungen als architekturnahe Randbedingung zu beachten.",
+    "sourceClaimIds": [
+      "SC-RISK-SUPPORT-013"
+    ],
+    "status": "decided",
+    "modality": "must_note",
+    "scope": "mvp_support",
+    "timeScope": "mvp",
+    "assumption": false
+  }
+]

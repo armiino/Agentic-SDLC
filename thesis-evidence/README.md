@@ -1,0 +1,61 @@
+# thesis-evidence/
+
+Kuratierter, **getrackter** Ordner für die Lauf-/Mess-Ergebnisse, die in der Thesis zitiert werden.
+Bewusst **getrennt** vom großen `runs/`-Baum: hier landet nur die *zitierte Teilmenge* (das, worauf
+Faktenblatt/Evidence-Ledger zeigen), damit man sie sofort sieht und nutzen kann.
+
+---
+
+## Was hier zu finden ist (der rote Faden)
+
+Die Unterordner sind **keine** parallelen Experimente, sondern **eine Kette**, die zur Entscheidung führte,
+einen Evidence-Ledger zu bauen. Lies sie in dieser Reihenfolge:
+
+| # | Ordner | Frage | Kern-Befund |
+|---|---|---|---|
+| 1 | `D1-direct-vs-topic/` | Braucht Coverage die feste Topic-Checkliste, oder findet ein starkes Modell die Lücken direkt? | **TopicCoverage (feste Checkliste) ist modell-robust + reproduzierbar** → A/B/C-Messinstrument. **DirectReview ist modellabhängig + verrauscht** (Severity `arch crit 6→2`) → nur L3-Critic. |
+| 2 | `grounding-spotcheck/` | Wie verlässlich ist die Grounding-Achse von Haus aus? | Grounding ist ein **„Sieb, kein Messwert"** — Precision/Recall-Regler, modellabhängig (v1 recall-first vs. v2 precision, Modalitäts-Blindspot). **Kein LLM ist Ground Truth** (Mensch korrigierte das LLM-Label). |
+| 3 | `claim-grounding-spike/` | Wird Grounding stabiler mit **atomaren Claims gegen zugeordnete Evidence** statt Unit-gegen-Volltranskript? | **Claim+Evidence löst als EINZIGES beide Fehlerklassen** (Modalitäts-Over-Claims + Risiko-Synthesen). E2E auto-Selection **27/28**, **0 Fabrication** (Zwei-Transkript). Grenze: Erfolg „bei kuratierter Evidenz"; **Coverage strukturell nicht** adressiert. |
+| 4 | `source-claim-coverage-spike/` | Ist claim-/evidence-native **Coverage** feiner als TopicCoverage? Lässt sich der SourceClaim-Ledger automatisch extrahieren? | claim-native Coverage feiner; `missing` stark (Matrix-v2 **18/18**), aber `covered/partial/contradicted` + Status/Scope bleiben **hart**. **Wurzel-Ursache benannt: freie Generierung ohne Provenienz** → daraus folgt der Ledger/evidence-first-Pfad. |
+| 5 | `evidence-first-spike/` | Erhält Generierung **aus einem Ledger** die Quellsemantik besser als freie Generierung? | Ja, deutlich (required-only ~0 → hoch). Über **2 Domänen** generalisiert; **Modell-Confound** via A' (gpt-5.4 frei) isoliert → **Mechanismus, nicht Modell**. Grenzen: Prompt-Confound, Grounding-Metrik = Format, Hand-Ledger = Best-Case. |
+
+**Ein-Satz-Zusammenfassung der Kette:** Review gegen freie Artefakte ist schwer und modellabhängig (1,2) →
+Claim+Evidence lokalisiert Grounding (3) → claim-native Coverage ist feiner, aber die Wurzel ist freie
+Generierung ohne Provenienz (4) → also Generierung **aus** einem Evidence-Ledger (5) → daraus der aktuelle
+Ledger-Bauplan.
+
+## Zwei universelle Befunde (in JEDEM Strang)
+
+1. **Struktur schlägt frei** — feste Checkliste / Claim+Evidence / Ledger sind reproduzierbar und
+   **robust gegen Modellstärke**; offene Generierung/Bewertung ist modellabhängig.
+2. **Die gleiche harte Wand überall:** Status / Modalität / Scope / Disposition (`covered vs partial vs
+   contradicted`, `required vs optional`, `undecided vs planned`). `missing` ist dagegen verlässlich.
+
+---
+
+## Datei-Konventionen pro Ordner
+
+```text
+evidence.md                  Zusammenfassung: Aussage → Befehl → Werte → Faktenblatt-F# → Commit (Prosa)
+*.json                       ROHE Mess-Outputs (die belastbare Evidenz; jeder Defect mit Feldern)
+*-labels.md / *-handlabels.md / *-adjudication.md   menschliche Referenz-/Hand-Labels
+*.md (artefakt-spezifisch)   generierte Artefakte / Per-Run-Zusammenfassungen
+```
+
+**Die `*.json` sind die zitierbare Evidenz.** Konsolen-/`evidence.md`-Zahlen sind abgeleitete
+Zusammenfassungen — im Zweifel über Python aus den JSONs reproduzieren.
+
+## Regeln
+
+- **Ein Unterordner pro zitierwürdigem Experiment** (Closure-Schritt, A/B/C-Lauf, L3-Vergleich).
+- **Provenienz-Pflicht** je Datei/Ordner: Run-ID, Modell(e), Prompt-/Fixture-/GatePolicy-Version, Datum,
+  Commit. Ohne Provenienz nicht zitierbar.
+- **Rohdaten bleiben zusätzlich in `runs/`**; hier liegt die kuratierte Kopie/der gezielte Output.
+
+## Bezug zu den (privaten, gitignored) Notizen
+
+Die Interpretationen/Verdikte liegen privat unter `…/Phase2/Evaluation/NextStep/`:
+`faktenblatt-review.md`, `ReviewWorkflow-Evidence.md`, `iteration-notes-v02-L3.md`,
+`Vorschlag_28_6_umsetzung.md`, `LedgerExecutorWorkflow.md` + `…-smallVersion.md`,
+`ZUSATZ-entscheidungsnotiz-ledger-review.md`. Die rohen Outputs **hier** sind die zitierbaren Anker, auf
+die jene zeigen.
