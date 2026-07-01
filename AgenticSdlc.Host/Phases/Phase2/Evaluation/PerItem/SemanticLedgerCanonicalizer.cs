@@ -54,7 +54,17 @@ public sealed class SemanticLedgerCanonicalizer
         Output:
         - 30-80 kanonische Eintraege.
         - Jeder Eintrag hat Evidence aus den zusammengefuehrten Kandidaten.
-        - Jeder Eintrag nennt in notes kurz, welche Candidate-IDs zusammengefuehrt wurden.
+        - CLUSTER-TRACE (Pflicht, strukturiert):
+          - candidateIds: ALLE Candidate-IDs, die in diesen kanonischen Eintrag eingeflossen sind
+            (auch bei nur einem Kandidaten genau diese eine ID). KEINE Candidate-ID darf still verschwinden:
+            jeder Eingangskandidat muss in genau einem kanonischen Eintrag unter candidateIds auftauchen.
+          - assumedRelation: WIE die Kandidaten zusammengehoeren. Erlaubt:
+            same_proposition (gleiche Aussage / Duplikat-Merge) |
+            refines (ein Kandidat praezisiert den anderen) |
+            temporal_sequence (zeitlicher/prozessualer Zusammenhang) |
+            elaborates (ergaenzende Facette desselben Claims) |
+            standalone (genau ein Kandidat, kein Merge).
+        - notes weiterhin kurz fuer Facet-Repair-Hinweise (nicht fuer die Candidate-Liste, die steht in candidateIds).
 
         Antworte ausschliesslich mit JSON im exakt gleichen Schema:
         {
@@ -75,11 +85,72 @@ public sealed class SemanticLedgerCanonicalizer
                 "open-questions": { "applicability": "...", "representationMode": "..." }
               },
               "riskLevel": "high|medium|low",
-              "notes": "merged candidates: id1, id2; facet repair: ..."
+              "notes": "facet repair: ...",
+              "candidateIds": ["cand-id1", "cand-id2"],
+              "assumedRelation": "same_proposition|refines|temporal_sequence|elaborates|standalone"
             }
           ]
         }
         """;
+
+    private const string SchemaJson = """
+        {
+          "type": "object",
+          "properties": {
+            "entries": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "proposition": { "type": "string" },
+                  "kind": { "type": "string" },
+                  "status": { "type": "string" },
+                  "modality": { "type": "string" },
+                  "scope": { "type": "string" },
+                  "timeScope": { "type": ["string", "null"] },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "source": { "type": "string" },
+                        "quote": { "type": "string" }
+                      },
+                      "required": ["source", "quote"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "disposition": {
+                    "type": "object",
+                    "properties": {
+                      "requirements": { "type": "object", "properties": { "applicability": { "type": "string" }, "representationMode": { "type": "string" } }, "required": ["applicability", "representationMode"], "additionalProperties": false },
+                      "architecture": { "type": "object", "properties": { "applicability": { "type": "string" }, "representationMode": { "type": "string" } }, "required": ["applicability", "representationMode"], "additionalProperties": false },
+                      "risks": { "type": "object", "properties": { "applicability": { "type": "string" }, "representationMode": { "type": "string" } }, "required": ["applicability", "representationMode"], "additionalProperties": false },
+                      "open-questions": { "type": "object", "properties": { "applicability": { "type": "string" }, "representationMode": { "type": "string" } }, "required": ["applicability", "representationMode"], "additionalProperties": false }
+                    },
+                    "required": ["requirements", "architecture", "risks", "open-questions"],
+                    "additionalProperties": false
+                  },
+                  "riskLevel": { "type": "string" },
+                  "notes": { "type": ["string", "null"] },
+                  "candidateIds": { "type": "array", "items": { "type": "string" } },
+                  "assumedRelation": { "type": "string" }
+                },
+                "required": ["id", "proposition", "kind", "status", "modality", "scope", "timeScope", "evidence", "disposition", "riskLevel", "notes", "candidateIds", "assumedRelation"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["entries"],
+          "additionalProperties": false
+        }
+        """;
+
+    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
+        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
+        "semantic_ledger_canonicalization",
+        "Kanonischer Semantic Ledger mit Cluster-Trace (candidateIds + assumedRelation).");
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
@@ -95,12 +166,9 @@ public sealed class SemanticLedgerCanonicalizer
         CancellationToken ct)
     {
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput)
-        {
-            // Reuse the extractor schema by asking for the same JSON shape. Some providers reject
-            // duplicated schema names per request less often when response format is omitted here,
-            // so keep structured output optional via config.
-        }
+        // L2: eigener, BENANNTER Schema (semantic_ledger_canonicalization) — vermeidet die früher
+        // befürchtete Schema-Namens-Kollision mit dem Extractor und erzwingt den Cluster-Trace.
+        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
 
         var response = await _client.GetResponseAsync(
             [

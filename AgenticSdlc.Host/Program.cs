@@ -193,6 +193,50 @@ if (args.Length > 0 && string.Equals(args[0], "semantic-ledger-extract", StringC
     return;
 }
 
+// Ledger L1: Transkript -> Candidate Ledger -> Canonical Ledger als ECHTER MAF-Workflow (runs/ledger/<runId>).
+// Optional mit Fixture: matcht den kanonischen Ledger gegen die Fixture = Baseline-Reproduktion (Exit-Kriterium L1).
+if (args.Length > 0 && string.Equals(args[0], "ledger-build", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerBuildRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Ledger-Referenz-Vorlage (deterministisch, KEIN LLM): Transkript + Kandidaten-Ledger -> segmentweise
+// Annotations-Vorlage zum Bau eines hand-vollständigen Referenz-Ledgers (Completeness/Recall-Messung).
+if (args.Length > 0 && string.Equals(args[0], "ledger-reference-template", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerReferenceTemplateRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L3 realer Test: bestehenden Ledger mit dem FacetValidator prüfen (evidence- oder transcript-Kontext).
+if (args.Length > 0 && string.Equals(args[0], "ledger-validate", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerValidateRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L3-B: Selective-Metrics für den FacetValidator gegen die autor-bestätigte Fixture (correct vs perturbed).
+if (args.Length > 0 && string.Equals(args[0], "facet-validation-eval", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.FacetValidationEvalRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Ledger-Referenz-Recall (DETERMINISTISCH, kein LLM): Segment-Overlap-Screen, gratis. Misses verlässlich.
+if (args.Length > 0 && string.Equals(args[0], "ledger-reference-recall-fast", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerReferenceRecallFastRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Ledger-Referenz-Recall: misst, ob ein Auto-Ledger die Claims einer Referenz findet (Completeness/(B)-Frage).
+if (args.Length > 0 && string.Equals(args[0], "ledger-reference-recall", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerReferenceRecallRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // Coverage-Spike Stufe 2: Transcript -> auto SourceClaims -> Recall + E2E Coverage gegen Fixture, isoliert.
 if (args.Length > 0 && string.Equals(args[0], "source-claim-extraction-spike", StringComparison.OrdinalIgnoreCase))
 {

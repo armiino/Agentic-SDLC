@@ -23,6 +23,7 @@ public sealed record HostSettings(
     string OllamaBaseUrl,
     string OpenRouterBaseUrl,
     string? OpenRouterApiKey,
+    int LlmNetworkTimeoutSeconds,
     bool JuryEnabled,
     string? JuryJudgeModel,
     bool JuryStructuredOutput,
@@ -61,6 +62,10 @@ public sealed record HostSettings(
             OllamaBaseUrl: ReadString("OLLAMA_BASE_URL", "http://localhost:11434/"),
             OpenRouterBaseUrl: ReadString("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
             OpenRouterApiKey: Environment.GetEnvironmentVariable("OPENROUTER_API_KEY"),
+            // OpenAI-/OpenRouter-SDK-Default-NetworkTimeout = 100 s; Reasoning-Modelle (z. B. gpt-5.4)
+            // brauchen oft mehrere Minuten -> sonst "Retry failed after 4 tries / exceeded timeout 0:01:40".
+            // Default 600 s; per LLM_NETWORK_TIMEOUT_SECONDS steuerbar (Clamp 30..3600).
+            LlmNetworkTimeoutSeconds: Math.Clamp(ReadInt("LLM_NETWORK_TIMEOUT_SECONDS", 600), 30, 3600),
             JuryEnabled: config.Jury.Enabled ?? false,
             JuryJudgeModel: string.IsNullOrWhiteSpace(config.Jury.JudgeModel) ? null : config.Jury.JudgeModel.Trim(),
             JuryStructuredOutput: config.Jury.StructuredOutput ?? true,

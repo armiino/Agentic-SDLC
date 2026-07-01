@@ -16,7 +16,11 @@ public sealed record SemanticLedgerEntry(
     [property: JsonPropertyName("evidence")] IReadOnlyList<SemanticLedgerEvidence> Evidence,
     [property: JsonPropertyName("disposition")] IReadOnlyDictionary<string, ArtifactDisposition> Disposition,
     [property: JsonPropertyName("riskLevel")] string RiskLevel,
-    [property: JsonPropertyName("notes")] string? Notes);
+    [property: JsonPropertyName("notes")] string? Notes,
+    // L2 Cluster-Trace (nur von der Canonicalization gesetzt): welche Candidate-IDs in diesen kanonischen
+    // Claim eingingen + die angenommene Relation. Basis für die Gate-Invariante "kein Candidate verschwindet still".
+    [property: JsonPropertyName("candidateIds")] IReadOnlyList<string>? CandidateIds = null,
+    [property: JsonPropertyName("assumedRelation")] string? AssumedRelation = null);
 
 public sealed record SemanticLedgerEvidence(
     [property: JsonPropertyName("source")] string Source,

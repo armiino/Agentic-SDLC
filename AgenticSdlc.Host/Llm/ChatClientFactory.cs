@@ -50,7 +50,10 @@ public static class ChatClientFactory
 
         var options = new OpenAIClientOptions
         {
-            Endpoint = new Uri(settings.OpenRouterBaseUrl)
+            Endpoint = new Uri(settings.OpenRouterBaseUrl),
+            // SDK-Default NetworkTimeout = 100 s reicht für Reasoning-Modelle (gpt-5.4 ~5-6 min) nicht.
+            // Steuerbar via LLM_NETWORK_TIMEOUT_SECONDS (HostSettings). Verhindert "Retry failed after 4 tries".
+            NetworkTimeout = TimeSpan.FromSeconds(settings.LlmNetworkTimeoutSeconds)
         };
 
         var credential = new ApiKeyCredential(settings.OpenRouterApiKey);

@@ -213,7 +213,9 @@ public sealed class SemanticLedgerExtractor
             TimeScope = string.IsNullOrWhiteSpace(e.TimeScope) ? null : e.TimeScope.Trim().ToLowerInvariant(),
             Evidence = e.Evidence.Where(ev => !string.IsNullOrWhiteSpace(ev.Quote)).ToList(),
             RiskLevel = e.RiskLevel.Trim().ToLowerInvariant(),
-            Notes = e.Notes?.Trim()
+            Notes = e.Notes?.Trim(),
+            CandidateIds = e.CandidateIds?.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList(),
+            AssumedRelation = string.IsNullOrWhiteSpace(e.AssumedRelation) ? null : e.AssumedRelation.Trim().ToLowerInvariant()
         };
 
     private static string? ExtractJson(string? text)
