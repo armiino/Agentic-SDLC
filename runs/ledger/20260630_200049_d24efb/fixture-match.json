@@ -1,0 +1,569 @@
+{
+  "mode": "ledger-build-fixture-match",
+  "fixture": "input/eval-labels/semantic-ledger-evidence-first-spike.json",
+  "model": "openai/gpt-4.1-mini",
+  "expected": 10,
+  "canonicalCount": 24,
+  "metrics": {
+    "exact": 0,
+    "partial": 1,
+    "missed": 9,
+    "exactRecall": 0,
+    "exactOrPartialRecall": 0.1,
+    "facetExact": {
+      "proposition": 0,
+      "status": 0,
+      "modality": 0.1,
+      "scope": 0,
+      "timeScope": 0.1,
+      "evidence": 0,
+      "disposition": 0
+    }
+  },
+  "matches": [
+    {
+      "expected": {
+        "id": "SC-REQ-SAP-WRITE-007",
+        "proposition": "SAP-Schreibzugriff ist nicht entschieden; im MVP ist eher nur SAP-Lesen vorgesehen.",
+        "kind": "decision",
+        "status": "undecided",
+        "modality": "open",
+        "scope": "mvp_read_only_write_undecided",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben (T538): SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna (T541): Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Darf nicht zu planned/later committed verstaerkt werden."
+      },
+      "verdict": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "propositionMatch": "missed",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "missed",
+        "timeScopeMatch": "missed",
+        "evidenceMatch": "missed",
+        "dispositionMatch": "missed",
+        "reason": "Kein Eintrag im extrahierten Ledger behandelt SAP-Schreibzugriff als undecided mit Fokus auf MVP-Leserechte; nur verwandte offene Fragen zu SAP-Schreibzugriff und Online-Akzeptanz sind vorhanden, aber nicht mit genauem Scope und Status wie erwartet."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-REQ-PUSH-010",
+        "proposition": "Push Notifications wurden als Marketingwunsch eingebracht, waren aber nie besprochen und nicht im MVP entschieden.",
+        "kind": "scope",
+        "status": "undecided",
+        "modality": "open",
+        "scope": "not_mvp_later_possible",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna (T10): Und Marketing will Push Notifications."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben (T35): Push Notifications? Das hatten wir nie besprochen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna (T43): Vielleicht spaeter. Nicht im MVP."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Als Scope-/Open-Decision festhalten, nicht als MVP-Requirement."
+      },
+      "verdict": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "propositionMatch": "missed",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "missed",
+        "timeScopeMatch": "missed",
+        "evidenceMatch": "missed",
+        "dispositionMatch": "missed",
+        "reason": "Kein Eintrag zu Push Notifications oder Marketingwunsch im extrahierten Ledger vorhanden."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-ARCH-SCALABILITY-001",
+        "proposition": "Die erwartete Nutzerzahl schwankt zwischen ca. 200 und 20.000; Skalierbarkeit und Performance sind deshalb offen zu beruecksichtigen.",
+        "kind": "non_functional_requirement",
+        "status": "uncertain",
+        "modality": "must_consider",
+        "scope": "mvp_scale_uncertain",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben (T132): Sind das 200 Nutzer oder 20.000? Das macht einen Unterschied."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Farid (T135): Wenn wir 20.000 Nutzer haben, ist das keine kleine Portal-App mehr."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna (T136): Wir wissen es nicht. Pilotkunde ist unklar."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Nutzerzahlspanne und Unsicherheit duerfen nicht als fixe Lastannahme erscheinen."
+      },
+      "verdict": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "propositionMatch": "missed",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "missed",
+        "timeScopeMatch": "missed",
+        "evidenceMatch": "missed",
+        "dispositionMatch": "missed",
+        "reason": "Kein Eintrag im extrahierten Ledger behandelt die erwartete Nutzerzahl oder die offene Ber\u00FCcksichtigung von Skalierbarkeit und Performance mit unsicherem Status und Must-Consider-Modality im MVP-Kontext."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-ARCH-ANALYTICS-002",
+        "proposition": "Analytics/KPIs sind gewuenscht, aber Messkonzept, technische Umsetzung, Tracking und Datenschutz sind offen.",
+        "kind": "open_requirement",
+        "status": "undecided",
+        "modality": "desired",
+        "scope": "analytics_open",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna (T183): Wir brauchen KPIs. Conversion, Angebotsdauer, Nutzung."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara (T186): Tracking ist Datenschutz. Das muss sauber begruendet werden."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben (T187): Technisch ist noch offen, womit wir das messen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Wunsch und offene Umsetzung getrennt darstellen."
+      },
+      "verdict": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "propositionMatch": "missed",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "missed",
+        "timeScopeMatch": "missed",
+        "evidenceMatch": "missed",
+        "dispositionMatch": "missed",
+        "reason": "Kein Eintrag im extrahierten Ledger behandelt Analytics/KPIs mit offenem Messkonzept, technischer Umsetzung, Tracking und Datenschutz als offene Anforderung mit undecided Status und desired Modality."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-ARCH-DISCOUNT-WORKFLOW-005",
+        "proposition": "Rabatte ueber 15 Prozent brauchen einen Freigabeprozess mit Workflow-Status.",
+        "kind": "business_rule",
+        "status": "required",
+        "modality": "must",
+        "scope": "offers_discount_approval",
+        "timeScope": "mvp_or_scope_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Eva (T262): Angebote muessen freigegeben werden, wenn der Rabatt ueber 15 Prozent liegt."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben (T271): Dann brauchen wir Workflow-Status fuer Angebote: draft, pending approval, approved, sent, accepted, rejected."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "15-Prozent-Grenze und Statusmodell erhalten."
+      },
+      "verdict": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "propositionMatch": "missed",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "missed",
+        "timeScopeMatch": "missed",
+        "evidenceMatch": "missed",
+        "dispositionMatch": "missed",
+        "reason": "Kein Eintrag im extrahierten Ledger beschreibt einen Freigabeprozess mit Workflow-Status f\u00FCr Rabatte \u00FCber 15 Prozent; relevante Facetten fehlen vollst\u00E4ndig."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-OQ-EU-RESIDENCE-018",
+        "proposition": "EU-only Hosting und allgemein DSGVO-konformes Hosting sind nicht dasselbe; Datenresidenz muss geklaert werden.",
+        "kind": "compliance_constraint",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "hosting_data_residency",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: EU-only und DSGVO-konform sind nicht automatisch dasselbe."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Unterscheidung zwischen EU-only und DSGVO explizit halten."
+      },
+      "verdict": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "propositionMatch": "missed",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "missed",
+        "timeScopeMatch": "missed",
+        "evidenceMatch": "missed",
+        "dispositionMatch": "missed",
+        "reason": "Kein Eintrag im extrahierten Ledger beschreibt explizit, dass EU-only Hosting und DSGVO-konformes Hosting nicht dasselbe sind und dass Datenresidenz gekl\u00E4rt werden muss. Der Eintrag req_eu_hosting_and_data_residency erw\u00E4hnt EU-only oder DSGVO-konform, aber vermischt diese und differenziert nicht, daher kein exakter oder partieller Match."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-OQ-PRICE-CACHE-019",
+        "proposition": "Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und Caching ist offen.",
+        "kind": "open_requirement",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "sap_price_cache",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Fallback oder Cache?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Eva: Cache-Invalidierung ist aufwendig."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Preisaktualitaet, Rabatte und Cache/Fallback als offene Anforderung."
+      },
+      "verdict": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "propositionMatch": "missed",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "missed",
+        "timeScopeMatch": "missed",
+        "evidenceMatch": "missed",
+        "dispositionMatch": "missed",
+        "reason": "Kein Eintrag im extrahierten Ledger behandelt offen den Umgang mit Preis- und Rabattschwankungen bei SAP-Daten und Caching; kein passender Eintrag gefunden."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-RISK-PRICE-CACHE-015",
+        "proposition": "Caching/Fallbacks fuer SAP-Daten kollidieren mit Datenaktualitaet und Datenschutz.",
+        "kind": "risk_constraint",
+        "status": "open",
+        "modality": "must_consider",
+        "scope": "sap_cache_privacy_freshness",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben (T237): Fallback oder Cache?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara (T240): Dann wieder Datenschutz und Retention."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Eva (T244): Cache-Invalidierung ist aufwendig."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Nicht nur Cache erwaehnen; Konflikt mit Aktualitaet/Datenschutz erhalten."
+      },
+      "verdict": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "propositionMatch": "missed",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "missed",
+        "timeScopeMatch": "missed",
+        "evidenceMatch": "missed",
+        "dispositionMatch": "missed",
+        "reason": "No extracted ledger entry matches the proposition about caching/fallbacks for SAP data colliding with data freshness and privacy; closest related entries are about SAP availability or risks but do not cover caching, fallback, freshness, and privacy together."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-REQ-LOGIN-006",
+        "proposition": "Login per E-Mail und Passwort ist fuer das MVP vorgesehen; Double-Opt-In ist verpflichtend.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "mvp_auth",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna (T3): Also erstmal Login per E-Mail und Passwort."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara (T8): Login per E-Mail? Dann brauchen wir Double-Opt-In."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "Kontrollfall: sollte preserved sein."
+      },
+      "verdict": {
+        "verdict": "partial",
+        "matchedIds": [
+          "req_login_and_sso"
+        ],
+        "propositionMatch": "partial",
+        "statusMatch": "partial",
+        "modalityMatch": "exact",
+        "scopeMatch": "partial",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "partial",
+        "dispositionMatch": "partial",
+        "reason": "Extrahierter Eintrag beschreibt Login per E-Mail und Passwort im MVP (Kern vorhanden), aber erw\u00E4hnt nicht Double-Opt-In als verpflichtend. Status ist \u0027required\u0027 statt \u0027decided\u0027. Scope ist \u0027mvp\u0027 statt spezifisch \u0027mvp_auth\u0027. Evidence enth\u00E4lt nur Teil der erwarteten Aussagen. Disposition ist \u00E4hnlich, aber nicht exakt."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-RISK-SUPPORT-013",
+        "proposition": "Kein Ticketsystem im MVP fuehrt zu unstrukturierter E-Mail-Bearbeitung und Datenschutz-/Support-Risiken.",
+        "kind": "process_constraint",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "mvp_support",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "David (T232): Ich habe gehoert, es soll kein Ticketsystem geben."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara (T244): Unstrukturierte E-Mail-Bearbeitung ist datenschutzrechtlich schwierig."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Kontrollfall fuer Support/Datenschutz."
+      },
+      "verdict": {
+        "verdict": "missed",
+        "matchedIds": [],
+        "propositionMatch": "missed",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "missed",
+        "timeScopeMatch": "missed",
+        "evidenceMatch": "missed",
+        "dispositionMatch": "missed",
+        "reason": "Kein Eintrag im extrahierten Ledger beschreibt das Fehlen eines Ticketsystems im MVP mit den daraus resultierenden Datenschutz- und Support-Risiken; keine \u00DCbereinstimmung in Proposition oder Facetten."
+      }
+    }
+  ]
+}

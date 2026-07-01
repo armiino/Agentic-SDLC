@@ -1,0 +1,272 @@
+{
+  "mode": "facet-validation-eval (batched correct-vs-perturbed, author fixture, full transcript)",
+  "fixture": "input/eval-labels/semantic-ledger-interview-spike.json",
+  "transcript": "input/transcripts/Interview-Einrichtung.txt",
+  "model": "openai/gpt-5.4",
+  "goldEntries": 11,
+  "calls": "~4 (batched, 8/Batch)",
+  "metrics": {
+    "detectionRate": 0.6364,
+    "falseAlarmRate": 0.1818,
+    "correctGroundedRate": 0.8182
+  },
+  "verdictDistribution": {
+    "correct": {
+      "grounded": 9,
+      "partial": 1,
+      "overstated": 1
+    },
+    "perturbed": {
+      "partial": 4,
+      "grounded": 4,
+      "overstated": 3
+    }
+  },
+  "correct": [
+    {
+      "id": "SC-ACCESS-LOGIN-ONLY-001",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Die Quellen belegen klar Login-only ohne Selbstregistrierung und mit zugewiesenen Accounts."
+    },
+    {
+      "id": "SC-ACCESS-OWN-PROFILE-002",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "F\u00FCr den Bewohner-Account wird ausdr\u00FCcklich festgelegt, dass nur das eigene Profil bzw. die eigenen Daten sichtbar sein sollen."
+    },
+    {
+      "id": "SC-ACCESS-TENANT-ISOLATION-003",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Die einrichtungsbezogene Beschr\u00E4nkung wird aus Datenschutzgr\u00FCnden vorgeschlagen und direkt best\u00E4tigt."
+    },
+    {
+      "id": "SC-ACCESS-TENANT-IMPL-OPEN-004",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Die Entscheidung zur Beschr\u00E4nkung steht, aber die konkrete technische L\u00F6sung soll erst noch ausgearbeitet werden."
+    },
+    {
+      "id": "SC-PRIVACY-MEDIA-CONSENT-005",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Die Kl\u00E4rung mit Angeh\u00F6rigen zur Verwendung von Bildern wird ausdr\u00FCcklich angefragt und zugesagt."
+    },
+    {
+      "id": "SC-PRIVACY-RECORD-ACCESS-006",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Der Zugang zu Akten wird als datenschutzbedingt schwierig dargestellt und eine sp\u00E4tere Kl\u00E4rung angek\u00FCndigt."
+    },
+    {
+      "id": "SC-RISK-PRIVACY-DEPTH-007",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Es wird ausdr\u00FCcklich gesagt, dass Datenschutz vorerst nicht tief behandelt wird und eher ein Zusatzprojekt w\u00E4re."
+    },
+    {
+      "id": "SC-SCOPE-NO-TRANSLATION-008",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Eine bidirektionale \u00DCbersetzungsl\u00F6sung wird explizit ausgeschlossen und vom Gegen\u00FCber best\u00E4tigt."
+    },
+    {
+      "id": "SC-FEAT-NOTIFY-LATER-009",
+      "verdict": "partial",
+      "facetIssues": [
+        {
+          "facet": "modality",
+          "observed": "desired",
+          "problem": "Quelle formuliert die Popup-Nachricht als konkreten Soll-Wunsch, nicht optional",
+          "suggested": "must"
+        },
+        {
+          "facet": "timescope",
+          "observed": "later_possible",
+          "problem": "Kein Hinweis, dass dies erst sp\u00E4ter kommen soll",
+          "suggested": "mvp_or_later_unclear"
+        }
+      ],
+      "reason": "Benachrichtigung f\u00FCr verbundene Nutzer derselben Einrichtung ist im Transcript klar genannt; das eingef\u00FCgte \u0027optional\u0027 bzw. \u0027later\u0027 ist aber nicht belegt."
+    },
+    {
+      "id": "SC-FEAT-CALENDAR-AREA-010",
+      "verdict": "overstated",
+      "facetIssues": [
+        {
+          "facet": "status",
+          "observed": "decided",
+          "problem": "Kalender ist nicht durchg\u00E4ngig entschieden; teils nur Vorschlag/Planung und Video-Bereich wurde sp\u00E4ter zur Zusammenlegung diskutiert",
+          "suggested": "desired"
+        },
+        {
+          "facet": "modality",
+          "observed": "must",
+          "problem": "Quelle st\u00FCtzt eher geplante/gew\u00FCnschte Ausgestaltung als verbindliches Muss",
+          "suggested": "desired"
+        }
+      ],
+      "reason": "Kalender als eigener Bereich mit Monatsansicht und anklickbaren Tagen wird mehrfach vorgeschlagen und ausgearbeitet, aber nicht belastbar als final entschiedenes Muss festgelegt."
+    },
+    {
+      "id": "SC-FEAT-MEDICATION-CONFIDENTIAL-011",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Medikamentengaben im Kalender sowie erh\u00F6hter Schutzbedarf gegen\u00FCber normalen Terminen sind durch die zitierten Stellen gedeckt."
+    }
+  ],
+  "perturbed": [
+    {
+      "id": "SC-ACCESS-LOGIN-ONLY-001__PERT",
+      "verdict": "partial",
+      "facetIssues": [
+        {
+          "facet": "timescope",
+          "observed": "later_possible",
+          "problem": "Quelle beschreibt dies als aktuelle/grunds\u00E4tzliche Anforderung, nicht nur sp\u00E4ter m\u00F6glich",
+          "suggested": "mvp"
+        }
+      ],
+      "reason": "Die Aussage ist klar durch mehrere Stellen gedeckt; nur der Zeithorizont ist zu schwach angesetzt."
+    },
+    {
+      "id": "SC-ACCESS-OWN-PROFILE-002__PERT",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Bewohner-Account mit Sicht nur auf das eigene Profil wird ausdr\u00FCcklich so vorgeschlagen und best\u00E4tigt."
+    },
+    {
+      "id": "SC-ACCESS-TENANT-ISOLATION-003__PERT",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Die Beschr\u00E4nkung auf die jeweilige Einrichtung wird aus Datenschutzgr\u00FCnden vorgeschlagen und direkt akzeptiert."
+    },
+    {
+      "id": "SC-ACCESS-TENANT-IMPL-OPEN-004__PERT",
+      "verdict": "overstated",
+      "facetIssues": [
+        {
+          "facet": "status",
+          "observed": "decided",
+          "problem": "Quelle h\u00E4lt die technische L\u00F6sung ausdr\u00FCcklich noch offen",
+          "suggested": "open"
+        },
+        {
+          "facet": "modality",
+          "observed": "must",
+          "problem": "Quelle beschreibt offene Ausarbeitung, keine Muss-Festlegung",
+          "suggested": "desired"
+        }
+      ],
+      "reason": "Offen ist nur, dass ein L\u00F6sungsweg noch erarbeitet werden muss; als entschiedenes Muss ist das zu stark formuliert."
+    },
+    {
+      "id": "SC-PRIVACY-MEDIA-CONSENT-005__PERT",
+      "verdict": "partial",
+      "facetIssues": [
+        {
+          "facet": "status",
+          "observed": "decided",
+          "problem": "Einwilligungskl\u00E4rung wird angefragt und zugesagt, aber nicht als bereits entschiedene Regel festgelegt",
+          "suggested": "open"
+        },
+        {
+          "facet": "modality",
+          "observed": "must",
+          "problem": "Quelle zeigt einen sinnvollen Kl\u00E4rungsbedarf, aber kein explizit festgelegtes Muss",
+          "suggested": "desired"
+        }
+      ],
+      "reason": "Der Bedarf zur Kl\u00E4rung mit Angeh\u00F6rigen ist gut belegt, aber der Eintrag formuliert den Status zu entschieden."
+    },
+    {
+      "id": "SC-PRIVACY-RECORD-ACCESS-006__PERT",
+      "verdict": "overstated",
+      "facetIssues": [
+        {
+          "facet": "status",
+          "observed": "decided",
+          "problem": "Quelle sagt, der Zugriff sei schwierig und noch unklar",
+          "suggested": "open"
+        },
+        {
+          "facet": "modality",
+          "observed": "must",
+          "problem": "Es geht um eine offene Unsicherheit, nicht um eine Muss-Vorgabe",
+          "suggested": "desired"
+        }
+      ],
+      "reason": "Der Kern ist gedeckt, aber als entschiedene Muss-Aussage ist es st\u00E4rker als die Quelle."
+    },
+    {
+      "id": "SC-RISK-PRIVACY-DEPTH-007__PERT",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Die Quelle sagt ausdr\u00FCcklich, dass Datenschutz nicht tief behandelt wird und eher ein Zusatzprojekt w\u00E4re."
+    },
+    {
+      "id": "SC-SCOPE-NO-TRANSLATION-008__PERT",
+      "verdict": "grounded",
+      "facetIssues": [],
+      "reason": "Die ausgeschlossene L\u00F6sungsart wird explizit benannt und vom Einrichtungsleiter best\u00E4tigt."
+    },
+    {
+      "id": "SC-FEAT-NOTIFY-LATER-009__PERT",
+      "verdict": "partial",
+      "facetIssues": [
+        {
+          "facet": "modality",
+          "observed": "must",
+          "problem": "Quelle formuliert es als Idee/Vorschlag, nicht als verbindliches Muss",
+          "suggested": "should"
+        },
+        {
+          "facet": "status",
+          "observed": "required",
+          "problem": "Nicht final entschieden, sondern als sch\u00F6ne Idee akzeptiert",
+          "suggested": "proposed"
+        }
+      ],
+      "reason": "Die Benachrichtigung f\u00FCr About-Me-Uploads ist im Transcript klar genannt und auf Nutzer derselben Einrichtung eingegrenzt; die Verbindlichkeit ist aber schw\u00E4cher als \u0027required/must\u0027."
+    },
+    {
+      "id": "SC-FEAT-CALENDAR-AREA-010__PERT",
+      "verdict": "overstated",
+      "facetIssues": [
+        {
+          "facet": "status",
+          "observed": "open",
+          "problem": "Im Transcript wird der Kalender mehrfach als vorgesehener Bereich beschrieben, nicht mehr offen",
+          "suggested": "proposed"
+        },
+        {
+          "facet": "modality",
+          "observed": "desired",
+          "problem": "St\u00E4rker als blo\u00DFer Wunsch formuliert; als Teil der Struktur vorgesehen",
+          "suggested": "should"
+        }
+      ],
+      "reason": "Kalender als eigener Profil-Bereich mit Monatsansicht und anklickbaren Tagen ist deutlich im Transcript angelegt. Die Facetten \u0027open\u0027 und \u0027desired\u0027 unterzeichnen die bereits konkrete Festlegung."
+    },
+    {
+      "id": "SC-FEAT-MEDICATION-CONFIDENTIAL-011__PERT",
+      "verdict": "partial",
+      "facetIssues": [
+        {
+          "facet": "status",
+          "observed": "required",
+          "problem": "Medikation im Kalender ist vorgeschlagen/geplant, nicht verbindlich finalisiert",
+          "suggested": "proposed"
+        },
+        {
+          "facet": "modality",
+          "observed": "must",
+          "problem": "Quelle st\u00FCtzt Wichtigkeit und Idee, aber kein Muss",
+          "suggested": "should"
+        }
+      ],
+      "reason": "Die Abbildung von Medikamentengaben/-erinnerungen im Kalender ist gut belegt, ebenso der erh\u00F6hte Schutzbedarf. Die Formulierung als verbindliche MVP-Pflicht ist jedoch zu stark."
+    }
+  ]
+}

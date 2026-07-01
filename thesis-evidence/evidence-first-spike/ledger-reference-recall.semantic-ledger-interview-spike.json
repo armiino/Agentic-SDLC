@@ -1,0 +1,645 @@
+{
+  "mode": "ledger-reference-recall",
+  "reference": "input/eval-labels/semantic-ledger-interview-spike.json",
+  "referenceStatus": "author-confirmed-or-external (recall is non-circular w.r.t. this reference)",
+  "autoLedger": "thesis-evidence/evidence-first-spike/semantic-ledger-extract.Interview-Einrichtung.openai_gpt-5.4.extracted.json",
+  "model": "openai/gpt-5.4",
+  "referenceCount": 11,
+  "autoCount": 60,
+  "metrics": {
+    "exact": 8,
+    "partial": 3,
+    "missed": 0,
+    "recallExact": 0.7273,
+    "recallExactOrPartial": 1,
+    "facetExact": {
+      "proposition": 0.9091,
+      "status": 0.8182,
+      "modality": 0.8182,
+      "scope": 0.8182,
+      "timeScope": 0.9091,
+      "evidence": 0.9091,
+      "disposition": 0.6364
+    }
+  },
+  "matches": [
+    {
+      "expected": {
+        "id": "SC-ACCESS-LOGIN-ONLY-001",
+        "proposition": "Die App soll nur per Login zug\u00E4nglich sein; eine offene Selbstregistrierung ist nicht vorgesehen, sondern nur zugewiesene Accounts sollen Zugang erhalten.",
+        "kind": "compliance_constraint",
+        "status": "decided",
+        "modality": "must",
+        "scope": "authentifizierung und zugangsmodell",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Es wird also nur eine Login-M\u00F6glichkeit da sein. Wir haben schon besprochen, dass man sich nicht registrieren k\u00F6nnen soll..."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 1]: ... so umgehen wir etwas das Datenschutz-Thema und es kann sich nicht jeder beliebige bei der App registrieren und auf Daten zugreifen."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: ... man sich nur einloggen kann, wenn man einen Account zugewiesen bekommen hat."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Entschiedene Zugangsregel (nur zugewiesene Accounts, keine Selbstregistrierung). Darf nicht zu offen/optional abgeschwaecht werden."
+      },
+      "verdict": {
+        "verdict": "exact",
+        "matchedIds": [
+          "L024"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "exact",
+        "modalityMatch": "exact",
+        "scopeMatch": "exact",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "exact",
+        "reason": "L024 entspricht inhaltlich direkt dem erwarteten Eintrag: nur Login, keine Selbstregistrierung, nur zugewiesene Accounts; Status, Modalit\u00E4t, Scope, MVP-Zeitrahmen, Evidence und Disposition passen."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-ACCESS-OWN-PROFILE-002",
+        "proposition": "Ein Bewohner-Account soll ausschlie\u00DFlich das eigene Profil sehen k\u00F6nnen und keinen Zugriff auf Profile anderer Bewohner haben.",
+        "kind": "compliance_constraint",
+        "status": "decided",
+        "modality": "must",
+        "scope": "sichtbarkeit bewohner-account",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: ... auch nur sein eigenes Profil in der Profil\u00FCbersicht ... sehen."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Also das, was er wirklich nur seine eigenen Daten sehen kann."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Entschiedene Sichtbarkeitsgrenze (Bewohner sieht nur eigenes Profil). Privacy-Constraint, nicht abschwaechen."
+      },
+      "verdict": {
+        "verdict": "exact",
+        "matchedIds": [
+          "L042"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "exact",
+        "modalityMatch": "exact",
+        "scopeMatch": "exact",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "exact",
+        "reason": "L042 entspricht inhaltlich exakt dem erwarteten Eintrag: Bewohner-Account darf nur das eigene Profil bzw. eigene Daten sehen, nicht andere Bewohnerprofile; Status, Modalit\u00E4t, Scope, Time-Scope, Evidence und Disposition stimmen \u00FCberein."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-ACCESS-TENANT-ISOLATION-003",
+        "proposition": "Mitarbeiter sollen aus Datenschutzgr\u00FCnden Profile nicht einrichtungs\u00FCbergreifend sehen; die Sichtbarkeit muss auf die jeweils zust\u00E4ndige Einrichtung beschr\u00E4nkt sein.",
+        "kind": "compliance_constraint",
+        "status": "decided",
+        "modality": "must",
+        "scope": "einrichtungsbezogene zugriffsbeschr\u00E4nkung",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 1]: Aufgrund von Datenschutz sollte es so geregelt sein, dass es nicht \u00FCbergreifend ist."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 1]: Also ein Mitarbeiter aus dem Salzburger sollte nur diese Profile sehen ..."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Alles klar, so wird das gemacht."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Entschieden (so wird das gemacht): keine einrichtungsuebergreifende Sichtbarkeit. Nicht zu offen machen. Entscheidung getroffen -\u003E selbst KEINE open-question; offene Umsetzung steckt in SC-ACCESS-TENANT-IMPL-OPEN-004."
+      },
+      "verdict": {
+        "verdict": "exact",
+        "matchedIds": [
+          "L030"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "exact",
+        "modalityMatch": "exact",
+        "scopeMatch": "exact",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "partial",
+        "reason": "L030 entspricht der erwarteten Datenschutz-Anforderung inhaltlich nahezu wortgleich inklusive decided/must und einrichtungsbezogener Sichtbarkeitsbeschr\u00E4nkung. Disposition ist weitgehend passend, aber open-questions ist dort optional statt wie erwartet not_applicable."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-ACCESS-TENANT-IMPL-OPEN-004",
+        "proposition": "Die technische Umsetzung der einrichtungsbezogenen Zugriffsbeschr\u00E4nkung muss noch ausgearbeitet werden.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "umsetzung mandanten-/einrichtungskonzept",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Wir werden uns einen Weg \u00FCberlegen, wie man das l\u00F6sen k\u00F6nnte und bis zum n\u00E4chsten Treffen erarbeiten."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Ziel entschieden, UMSETZUNG offen. Status darf nicht zu decided/geplant verstaerkt werden (Status-Split gegen 003)."
+      },
+      "verdict": {
+        "verdict": "exact",
+        "matchedIds": [
+          "L031"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "exact",
+        "modalityMatch": "exact",
+        "scopeMatch": "exact",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "exact",
+        "reason": "L031 entspricht inhaltlich direkt der offenen technischen Ausarbeitung der einrichtungsbezogenen Zugriffsbeschr\u00E4nkung; Status, Modalit\u00E4t, Scope, Time-Scope, Evidence und Disposition stimmen \u00FCberein."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-PRIVACY-MEDIA-CONSENT-005",
+        "proposition": "F\u00FCr Bilder der Bewohner in der App ist eine Datenschutz- bzw. Einwilligungskl\u00E4rung mit Angeh\u00F6rigen erforderlich.",
+        "kind": "compliance_constraint",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "einwilligungen f\u00FCr bilder",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 1]: K\u00F6nnten Sie sich um die Datenschutzthematik k\u00FCmmern und mit den Angeh\u00F6rigen reden, ob es in Ordnung w\u00E4re, wenn wir Bilder machen bzw. bekommen..."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Ja, nat\u00FCrlich. Das kann ich gerne machen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Einwilligung fuer Bilder ist offen/zu klaeren. Darf nicht als bereits geregelt dargestellt werden. In requirements als open_decision (Einwilligung noch zu klaeren), nicht als geloester constraint."
+      },
+      "verdict": {
+        "verdict": "exact",
+        "matchedIds": [
+          "L023"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "exact",
+        "modalityMatch": "exact",
+        "scopeMatch": "exact",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "partial",
+        "reason": "L023 entspricht in Proposition, Status, Modalit\u00E4t, Scope, TimeScope und Evidence praktisch w\u00F6rtlich dem erwarteten Eintrag. Nur die Disposition weicht leicht ab, da requirements dort als constraint statt open_decision repr\u00E4sentiert sind."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-PRIVACY-RECORD-ACCESS-006",
+        "proposition": "Der Zugriff des Projektteams auf bestehende Bewohnerakten ist aus Datenschutzgr\u00FCnden schwierig und noch unklar.",
+        "kind": "compliance_constraint",
+        "status": "uncertain",
+        "modality": "must_consider",
+        "scope": "zugriff auf bestandsakten",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Das Einsehen so einer Akte k\u00F6nnte eher schwierig aufgrund von Datenschutz werden."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: ... ich werde mich mal umh\u00F6ren und euch Bescheid geben, falls es doch m\u00F6glich sein sollte."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Unsicher: weder verboten noch freigegeben. Nicht zu Verbot oder Freigabe verhaerten."
+      },
+      "verdict": {
+        "verdict": "exact",
+        "matchedIds": [
+          "L022"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "exact",
+        "modalityMatch": "exact",
+        "scopeMatch": "exact",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "exact",
+        "reason": "L022 entspricht inhaltlich direkt dem erwarteten Eintrag: Zugriff auf bestehende Bewohnerakten ist aus Datenschutzgr\u00FCnden schwierig und noch unklar; Status, Modalit\u00E4t, Scope, Time-Scope, Evidence und Disposition stimmen \u00FCberein."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-RISK-PRIVACY-DEPTH-007",
+        "proposition": "Das Projekt behandelt Datenschutz vorerst nicht vollst\u00E4ndig im Detail; eine umfassende Datenschutzl\u00F6sung wird eher als separates Zusatzprojekt gesehen.",
+        "kind": "risk",
+        "status": "open",
+        "modality": "must_note",
+        "scope": "projektgrenze datenschutz",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Was das Thema Datenschutz angeht, werden wir nicht allzu tief ins Detail gehen. Dieser Schritt w\u00E4re vermutlich ein zus\u00E4tzliches Projekt."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "assumption"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Bewusste Projektgrenze: Datenschutz vorerst nicht vollstaendig -\u003E Restrisiko. Als Risiko/offene Frage erhalten."
+      },
+      "verdict": {
+        "verdict": "exact",
+        "matchedIds": [
+          "L045"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "exact",
+        "modalityMatch": "exact",
+        "scopeMatch": "exact",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "exact",
+        "reason": "L045 entspricht in Proposition w\u00F6rtlich/paraphrasengleich dem erwarteten Eintrag und stimmt auch in Status, Modalit\u00E4t, Scope, TimeScope, Evidence und Disposition vollst\u00E4ndig \u00FCberein."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-SCOPE-NO-TRANSLATION-008",
+        "proposition": "Ein System, das zwischen Bewohner und Betreuer bidirektional \u00FCbersetzt, ist ausdr\u00FCcklich nicht Ziel der L\u00F6sung, da es als weder praktikabel noch kosteneffizient angesehen wird.",
+        "kind": "constraint",
+        "status": "rejected",
+        "modality": "must_note",
+        "scope": "ausgeschlossene l\u00F6sungsart",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 1]: Im Vorhinein k\u00F6nnen wir aber ausschlie\u00DFen, dass es sich um eine Art System handeln wird, das als Schnittstelle dient und zwischen Bewohner und zum Beispiel Betreuer hin und her \u00FCbersetzt."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 1]: ... weder m\u00F6glich noch kosteneffizient w\u00E4re, ein Ger\u00E4t oder System zu bauen, dass unsere Sprache in das individuell verstehende Sprachverst\u00E4ndnis der beeintr\u00E4chtigten Personen umwandelt und andersherum."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Das ist nat\u00FCrlich richtig und auch nicht so, wie ich es mir vorstelle."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "consciously_omitted"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Ausdruecklich ausgeschlossen (rejected). Darf nicht als Anforderung auftauchen; bewusste Nicht-Anforderung."
+      },
+      "verdict": {
+        "verdict": "exact",
+        "matchedIds": [
+          "L003"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "exact",
+        "modalityMatch": "exact",
+        "scopeMatch": "exact",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "exact",
+        "reason": "L003 entspricht dem erwarteten Eintrag in Aussage, Ausschlusscharakter, Begr\u00FCndung (nicht praktikabel/kosteneffizient), Status, Modalit\u00E4t, Scope, Zeithorizont, Evidenz und Disposition praktisch vollst\u00E4ndig."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-FEAT-NOTIFY-LATER-009",
+        "proposition": "Wenn im About-Me-Bereich neue Inhalte hochgeladen werden, sollen verbundene Nutzer derselben Einrichtung optional eine Popup-Benachrichtigung erhalten.",
+        "kind": "requirement",
+        "status": "desired",
+        "modality": "desired",
+        "scope": "benachrichtigungen zu profil\u00E4nderungen",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Jedes Mal, wenn etwas Neues im About Me Bildschirm hochgeladen wird, sollen alle User, die mit der App verbunden sind und Teil der Einrichtung sind, eine Popup-Nachricht erhalten."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 1]: Das ist eine sehr sch\u00F6ne Idee."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Gewuenscht/spaeter optional, nicht committed. Darf nicht zu MVP-Pflicht verstaerkt werden."
+      },
+      "verdict": {
+        "verdict": "partial",
+        "matchedIds": [
+          "L039"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "exact",
+        "modalityMatch": "exact",
+        "scopeMatch": "partial",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "exact",
+        "reason": "L039 trifft die Kernanforderung inhaltlich und mit Status/Modalit\u00E4t/Zeithorizont/Evidenz sehr gut. Der erwartete Scope ist allgemeiner auf Profil\u00E4nderungs-Benachrichtigungen, w\u00E4hrend L039 auf About-Me-Benachrichtigungen enger zugeschnitten ist; daher Scope nur partial."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-FEAT-CALENDAR-AREA-010",
+        "proposition": "Der Kalender ist ein eigener App-Bereich/Bildschirm pro Profil (neben About Me, Kommunikation, Video): klare, \u00FCbersichtliche Monatsansicht mit anklickbaren Tagen und Eintr\u00E4gen.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "kalender als app-bereich / profil-navigation",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: In jedem Profil haben wir dann drei weitere Seiten, die man navigieren k\u00F6nnte. About Me, Kommunikation und Video plus den Kalender."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 1]: Der Kalender sollte einfach und \u00FCbersichtlich sein. ... Also einfach anklickbare Tage des Monats, wo man klassisch einen Eintrag hinzuf\u00FCgen kann und darunter eine Liste mit Medikamenten."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Beim Calendar stimme ich dir zu, dass eine klare monatliche Ansicht ideal ist."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "not_applicable",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "Kalender wird im Verlauf STRUKTURELL als eigener Bildschirm behandelt (nicht blo\u00DF optionale Erweiterung). Darf nicht zu optional abgeschw\u00E4cht werden."
+      },
+      "verdict": {
+        "verdict": "partial",
+        "matchedIds": [
+          "L019"
+        ],
+        "propositionMatch": "partial",
+        "statusMatch": "missed",
+        "modalityMatch": "missed",
+        "scopeMatch": "partial",
+        "timeScopeMatch": "partial",
+        "evidenceMatch": "partial",
+        "dispositionMatch": "partial",
+        "reason": "L019 trifft das Kalenderthema, aber nur als optionale/sp\u00E4tere m\u00F6gliche Funktion \u0027Kalender/Termin\u00FCbersicht\u0027. Es fehlt die entschiedene Muss-Festlegung als eigener App-Bereich pro Profil sowie die konkrete Monatsansicht mit anklickbaren Tagen und Eintr\u00E4gen."
+      }
+    },
+    {
+      "expected": {
+        "id": "SC-FEAT-MEDICATION-CONFIDENTIAL-011",
+        "proposition": "Im Kalender sollen auch Medikamentengaben/-erinnerungen abgebildet werden; Medikationsinhalte sind dabei vertraulicher zu behandeln als normale Termine.",
+        "kind": "compliance_constraint",
+        "status": "desired",
+        "modality": "must_consider",
+        "scope": "medikationsinhalte im kalender / erhoehter schutzbedarf",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 1]: Er k\u00F6nnte nicht nur Termine, sondern auch Medikamentengaben enthalten, was enorm wichtig ist. ... darunter eine Liste mit Medikamenten."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Und f\u00FCr Medikamentenerinnerungen k\u00F6nnten wir kleine Icons oder Tags an den entsprechenden Tagen hinzuf\u00FCgen."
+          },
+          {
+            "source": "Interview-Einrichtung.txt",
+            "quote": "[Speaker 2]: Medikamente werden etwas vertraulicher gehandhabt."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Medikationsinhalt im Kalender: gew\u00FCnscht/wichtig, aber vertraulicher Schutzbedarf -\u003E als Risiko/offene Frage erhalten, nicht zu blo\u00DFem optionalem Feature verflachen."
+      },
+      "verdict": {
+        "verdict": "partial",
+        "matchedIds": [
+          "L019",
+          "L021"
+        ],
+        "propositionMatch": "exact",
+        "statusMatch": "partial",
+        "modalityMatch": "partial",
+        "scopeMatch": "exact",
+        "timeScopeMatch": "exact",
+        "evidenceMatch": "exact",
+        "dispositionMatch": "partial",
+        "reason": "Die erwartete Aussage verteilt sich auf L019 (Kalender inkl. Medikamentenvergabe/-erinnerungen als m\u00F6gliche Funktion) und L021 (Medikationsdaten vertraulicher behandeln). Kerninhalt und Scope sind damit vorhanden. Aber Status/Modalit\u00E4t weichen ab: erwartet ist ein desired/must_consider Gesamtpunkt, extrahiert sind die Kalenderfunktion nur optional/later_possible und die Vertraulichkeit bereits decided. Disposition ist nur teilweise passend, da die Aufteilung auf zwei Eintr\u00E4ge und Repr\u00E4sentation nicht vollst\u00E4ndig dem erwarteten kombinierten Constraint entspricht."
+      }
+    }
+  ]
+}
