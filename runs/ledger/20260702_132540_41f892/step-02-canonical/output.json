@@ -1,0 +1,956 @@
+{
+  "entries": [
+    {
+      "id": "canon-0001",
+      "proposition": "Das Kundenportal soll als Web-Portal realisiert werden, mobile Nutzung ist sp\u00E4ter geplant.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "frontend",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0001: Also wir brauchen definitiv ein Kundenportal. ... Web first. Mobile sp\u00E4ter."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Mobile erst nach MVP",
+      "candidateIds": [
+        "R-0001"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0001"
+      ]
+    },
+    {
+      "id": "canon-0002",
+      "proposition": "Das Backend ist aktuell nicht API-ready, daher wird eine API Layer ben\u00F6tigt, um Integration zu erm\u00F6glichen.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "backend",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0002: ... unser Backend noch nicht mal API-ready."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0036: Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "API Layer zwingend f\u00FCr Integration",
+      "candidateIds": [
+        "R-0002"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0002",
+        "AU-0036"
+      ]
+    },
+    {
+      "id": "canon-0003",
+      "proposition": "Das Kundenportal muss DSGVO-konform sein, inklusive Double-Opt-In, L\u00F6schkonzept, Audit Trails und Auftragsverarbeitungsvertr\u00E4gen.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "compliance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0003: DSGVO. ... Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "not_applicable",
+          "representationMode": "consciously_omitted"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "DSGVO ist Pflicht",
+      "candidateIds": [
+        "C-0001"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0003"
+      ]
+    },
+    {
+      "id": "canon-0004",
+      "proposition": "Login erfolgt per E-Mail und Passwort mit Double-Opt-In; SSO (Azure AD, Google) ist optional und noch nicht entschieden.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must_consider",
+      "scope": "authentication",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0004: Also erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "SSO noch offen",
+      "candidateIds": [
+        "R-0003"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0004"
+      ]
+    },
+    {
+      "id": "canon-0005",
+      "proposition": "Rollenmodell mit mindestens Admin, Sales, Kunde; Support wird im MVP nicht ber\u00FCcksichtigt.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "authorization",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0066: Wir brauchen einen Architekten."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0199: 4. Rollen Admin/Sales/Kunde"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Support ausgeschlossen im MVP",
+      "candidateIds": [
+        "R-0004"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0066",
+        "AU-0199"
+      ]
+    },
+    {
+      "id": "canon-0006",
+      "proposition": "Angebote m\u00FCssen mit SAP-Daten gelesen werden; SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "integration",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0199: 2. Angebotserstellung mit SAP-Lesedaten"
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0246: Bitte schreibt \u0022SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0022."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "SAP-Verf\u00FCgbarkeit kritisch",
+      "candidateIds": [
+        "R-0005"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0199",
+        "AU-0246"
+      ]
+    },
+    {
+      "id": "canon-0007",
+      "proposition": "Rechnungsdownload soll im Kundenportal m\u00F6glich sein.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "frontend",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0011: Kunden sollen Bestellungen sehen und Rechnungen downloaden."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0199: 3. Rechnungsdownload"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "low",
+      "notes": "Rechnungen im MVP",
+      "candidateIds": [
+        "R-0006"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0011",
+        "AU-0199"
+      ]
+    },
+    {
+      "id": "canon-0008",
+      "proposition": "Audit Trail mit minimalem Logging und Protokollierung der \u00C4nderungen ist erforderlich.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "security",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0023: Auditierbarkeit ist Pflicht."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0199: 5. Minimaler Audit Trail"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Audit Trail minimal im MVP",
+      "candidateIds": [
+        "R-0007"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0023",
+        "AU-0199"
+      ]
+    },
+    {
+      "id": "canon-0009",
+      "proposition": "EU-only Managed Hosting ist erforderlich, um DSGVO-Konformit\u00E4t sicherzustellen.",
+      "kind": "compliance_constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "hosting",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0032: Ja EU only. Oder zumindest DSGVO-konform."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0199: 6. EU Managed Hosting"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "EU-only Hosting verpflichtend",
+      "candidateIds": [
+        "R-0008"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0032",
+        "AU-0199"
+      ]
+    },
+    {
+      "id": "canon-0010",
+      "proposition": "Backup und Disaster Recovery sind f\u00FCr das MVP erforderlich.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "security",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0043: Ja Disaster Recovery."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0199: 7. Backup"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Backup und DR im MVP",
+      "candidateIds": [
+        "R-0009"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0043",
+        "AU-0199"
+      ]
+    },
+    {
+      "id": "canon-0011",
+      "proposition": "Keine personenbezogenen Daten d\u00FCrfen in technischen Logs gespeichert werden; Audit-Logs sind getrennt zu behandeln.",
+      "kind": "compliance_constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "logging",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0248: Und \u0022keine personenbezogenen Daten in technischen Logs\u0022."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0180: ... zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Trennung Audit- und technisches Logging",
+      "candidateIds": [
+        "C-0002"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0180",
+        "AU-0248"
+      ]
+    },
+    {
+      "id": "canon-0012",
+      "proposition": "OAuth wird als bevorzugtes API-Sicherheitsverfahren betrachtet, ist aber noch nicht final entschieden.",
+      "kind": "open_question",
+      "status": "open",
+      "modality": "must_consider",
+      "scope": "security",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0258: Und OAuth ist bevorzugt, aber noch nicht final."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "OAuth noch offen",
+      "candidateIds": [
+        "R-0010"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0258"
+      ]
+    },
+    {
+      "id": "canon-0013",
+      "proposition": "Im MVP d\u00FCrfen keine manuellen Sonderrabatte \u00FCber dem Standardsatz erstellt werden.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "business rules",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0203: Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Rabatt-Freigabe im MVP ausgeschlossen",
+      "candidateIds": [
+        "R-0011"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0203"
+      ]
+    },
+    {
+      "id": "canon-0014",
+      "proposition": "Support wird im MVP nur \u00FCber ein Kontaktformular ohne Ticketpersistenz realisiert; dies stellt ein Risiko dar.",
+      "kind": "risk",
+      "status": "open",
+      "modality": "must_note",
+      "scope": "support",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0206: Kontaktformular ohne Ticketpersistenz?"
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0211: Notieren als Risiko."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Support ohne Ticketsystem als Risiko",
+      "candidateIds": [
+        "R-0012"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0206",
+        "AU-0211"
+      ]
+    },
+    {
+      "id": "canon-0015",
+      "proposition": "MVP umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "mvp",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0199: MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Klares MVP-Scope",
+      "candidateIds": [
+        "R-0013"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0199"
+      ]
+    },
+    {
+      "id": "canon-0016",
+      "proposition": "API Gateway ist Pflicht laut interner Policy, aber das Gateway-Team hat eine sechs Wochen Warteliste, was das 8-Wochen-MVP gef\u00E4hrdet.",
+      "kind": "constraint",
+      "status": "open",
+      "modality": "must_note",
+      "scope": "architecture",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0110: interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0111: Gateway-Team hat gerade eine Warteliste von sechs Wochen."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "API Gateway Warteliste als Risiko",
+      "candidateIds": [
+        "R-0014"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0110",
+        "AU-0111"
+      ]
+    },
+    {
+      "id": "canon-0017",
+      "proposition": "Angebote m\u00FCssen revisionssicher nachvollziehbar sein mit Versionierung der Templates und Audit-Logs.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "compliance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0163: Templates m\u00FCssen versioniert werden."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0164: Angebote m\u00FCssen revisionssicher nachvollziehbar sein."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0166: Dann brauchen wir Event-History oder Audit-Log pro Angebot."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Revisionssicherheit f\u00FCr Angebote",
+      "candidateIds": [
+        "R-0015"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0163",
+        "AU-0164",
+        "AU-0166"
+      ]
+    },
+    {
+      "id": "canon-0018",
+      "proposition": "Supportprozess ist unklar und muss noch definiert werden.",
+      "kind": "open_question",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "support",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0251: Und \u0022Supportprozess unklar\u0022."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "question"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "question"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "question"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Supportprozess offen",
+      "candidateIds": [
+        "R-0016"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0251"
+      ]
+    },
+    {
+      "id": "canon-0019",
+      "proposition": "Es besteht ein Berechtigungskonflikt zwischen Support-Zugriffsrechten und Datenschutz bei Angeboten, der modelliert und protokolliert werden muss.",
+      "kind": "risk",
+      "status": "open",
+      "modality": "must_consider",
+      "scope": "authorization",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0095: Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0096: Und protokollieren. Wer hat welches Angebot ge\u00F6ffnet?"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Berechtigungskonflikt Support",
+      "candidateIds": [
+        "R-0017"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0095",
+        "AU-0096"
+      ]
+    },
+    {
+      "id": "canon-0020",
+      "proposition": "Kostensch\u00E4tzung f\u00FCr Vorstand bis Freitag wird ben\u00F6tigt, obwohl Architekturentscheidungen noch offen sind.",
+      "kind": "open_requirement",
+      "status": "open",
+      "modality": "must_note",
+      "scope": "project management",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0103: Wir brauchen aber eine Kostensch\u00E4tzung f\u00FCr den Vorstand bis Freitag."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0104: Wir haben nicht mal eine Architekturentscheidung."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Kostensch\u00E4tzung mit unklarer Architektur",
+      "candidateIds": [
+        "R-0018"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0103",
+        "AU-0104"
+      ]
+    },
+    {
+      "id": "canon-0021",
+      "proposition": "MVP-Scope muss klar definieren, was enthalten ist, was bewusst ausgeschlossen wird und welche Risiken dadurch entstehen.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "project management",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0262: Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Klares MVP-Scope und Risiko-Transparenz",
+      "candidateIds": [
+        "R-0019"
+      ],
+      "assumedRelation": "standalone",
+      "sourceUnitIds": [
+        "AU-0262"
+      ]
+    }
+  ]
+}

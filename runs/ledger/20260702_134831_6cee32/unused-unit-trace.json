@@ -1,0 +1,1600 @@
+{
+  "run": "20260702_134831_6cee32",
+  "note": "Nachvollziehbarer Trace je unused Unit: Unit-Text -> relatedCandidateIds -> finaler canonical Claim. Selbst prüfbar.",
+  "items": [
+    {
+      "unitId": "AU-0010",
+      "speaker": "Clara",
+      "unitText": "Moment, ich dachte es geht um Rechnungsdownload?",
+      "verdict": "already_covered_indirectly",
+      "reason": "Die Verwirrung über Rechnungsdownload vs. anderes Scope ist indirekt durch den festgehaltenen MVP-Schnitt inklusive Rechnungsdownload abgedeckt.",
+      "references": [
+        {
+          "candidateId": "mvp-scope-baseline",
+          "candidateExists": true,
+          "candidateProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup.",
+          "canonicalId": "mvp-baseline-scope",
+          "canonicalProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup."
+        },
+        {
+          "candidateId": "invoice-download-in-scope",
+          "candidateExists": true,
+          "candidateProp": "Kunden sollen Rechnungen herunterladen können; Rechnungsdownload ist im MVP enthalten.",
+          "canonicalId": "invoice-download-mvp",
+          "canonicalProp": "Kunden sollen Rechnungen herunterladen können; Rechnungsdownload ist im MVP enthalten."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0017",
+      "speaker": "Ben",
+      "unitText": "Was sind die KPIs?",
+      "verdict": "already_covered_indirectly",
+      "reason": "Die Frage nach KPIs ist durch den offenen KPI/MVP-Punkt und die konkret benannten KPIs bereits semantisch enthalten.",
+      "references": [
+        {
+          "candidateId": "analytics-mvp-open",
+          "candidateExists": true,
+          "candidateProp": "Ob Analytics/KPI-Messung im MVP enthalten sein soll, ist offen.",
+          "canonicalId": "analytics-infrastructure-mvp-scope-open",
+          "canonicalProp": "Eine Analytics-Infrastruktur existiert derzeit nicht; offen ist, ob Analytics/KPI-Messung im MVP enthalten sein soll, obwohl KPI-Messung fachlich relevant ist."
+        },
+        {
+          "candidateId": "kpis-defined",
+          "candidateExists": true,
+          "candidateProp": "Die genannten KPIs sind Conversion Rate von Angebot zu Bestellung und Zeit bis Angebot.",
+          "canonicalId": "product-kpis-defined",
+          "canonicalProp": "Die genannten KPIs sind Conversion Rate von Angebot zu Bestellung und Zeit bis Angebot."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0019",
+      "speaker": "Clara",
+      "unitText": "Zeit bis Angebot ist kein personenbezogenes Datum. Das ist gut.",
+      "verdict": "attach_as_evidence",
+      "reason": "Die Aussage präzisiert die Datenschutzbewertung eines bereits genannten KPI und stützt den bestehenden KPI-Claim, ohne einen neuen eigenständigen Claim zu erzeugen.",
+      "references": [
+        {
+          "candidateId": "kpis-defined",
+          "candidateExists": true,
+          "candidateProp": "Die genannten KPIs sind Conversion Rate von Angebot zu Bestellung und Zeit bis Angebot.",
+          "canonicalId": "product-kpis-defined",
+          "canonicalProp": "Die genannten KPIs sind Conversion Rate von Angebot zu Bestellung und Zeit bis Angebot."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0024",
+      "speaker": "Anna",
+      "unitText": "Ja Logging. Aber bitte nicht zu komplex. Wir haben keine Zeit.",
+      "verdict": "attach_as_evidence",
+      "reason": "Stützt die bestehenden Claims zu minimalem Audit Trail/Logging und dem Prinzip, Komplexität bzw. Overengineering zu vermeiden.",
+      "references": [
+        {
+          "candidateId": "minimal-audit-trail-mvp",
+          "candidateExists": true,
+          "candidateProp": "Ein minimaler Audit Trail ist im MVP enthalten.",
+          "canonicalId": "auditability-minimal-audit-trail-and-access-logging",
+          "canonicalProp": "Auditierbarkeit ist Pflicht; im MVP ist mindestens ein minimaler Audit Trail erforderlich, einschließlich Nachvollziehbarkeit, wer wann was geändert hat, und Protokollierung, wer welches Angebot geöffnet hat."
+        },
+        {
+          "candidateId": "avoid-overengineering",
+          "candidateExists": true,
+          "candidateProp": "Die Lösung soll kein Overengineering verursachen.",
+          "canonicalId": "avoid-overengineering",
+          "canonicalProp": "Die Lösung soll kein Overengineering verursachen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0030",
+      "speaker": "Ben",
+      "unitText": "Günstig und skalierbar widerspricht sich.",
+      "verdict": "attach_as_evidence",
+      "reason": "Formuliert den bereits festgehaltenen Zielkonflikt zwischen Kosten/Einfachheit und Skalierbarkeit nur als zusätzliche Begründung.",
+      "references": [
+        {
+          "candidateId": "scalability-needs-clarification",
+          "candidateExists": true,
+          "candidateProp": "Skalierbarkeit muss berücksichtigt werden, die erwartete Nutzerzahl ist aber unklar.",
+          "canonicalId": "scalability-needs-clarification",
+          "canonicalProp": "Skalierbarkeit muss berücksichtigt werden, die erwartete Nutzerzahl ist aber unklar."
+        },
+        {
+          "candidateId": "avoid-overengineering",
+          "candidateExists": true,
+          "candidateProp": "Die Lösung soll kein Overengineering verursachen.",
+          "canonicalId": "avoid-overengineering",
+          "canonicalProp": "Die Lösung soll kein Overengineering verursachen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0031",
+      "speaker": "Clara",
+      "unitText": "Und wo werden Daten gehostet? EU only?",
+      "verdict": "already_covered_indirectly",
+      "reason": "Die Frage nach EU-only Hosting ist bereits direkt als offener Klärungspunkt zur Datenresidenz vorhanden.",
+      "references": [
+        {
+          "candidateId": "eu-residency-required",
+          "candidateExists": true,
+          "candidateProp": "Für das MVP ist EU Managed Hosting vorgesehen; nachweisbare Datenresidenz in der EU muss geklärt bzw. berücksichtigt werden.",
+          "canonicalId": "eu-data-residency-and-hosting-constraint",
+          "canonicalProp": "Für das MVP ist EU Managed Hosting vorgesehen; nachweisbare Datenresidenz in der EU muss geklärt und berücksichtigt werden, DSGVO-konform allein reicht nicht."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0039",
+      "speaker": "Anna",
+      "unitText": "Komplexer heißt mehr Zeit.",
+      "verdict": "attach_as_evidence",
+      "reason": "Bekräftigt den bereits dokumentierten Zusammenhang zwischen Komplexität und Zeit-/MVP-Risiko.",
+      "references": [
+        {
+          "candidateId": "avoid-overengineering",
+          "candidateExists": true,
+          "candidateProp": "Die Lösung soll kein Overengineering verursachen.",
+          "canonicalId": "avoid-overengineering",
+          "canonicalProp": "Die Lösung soll kein Overengineering verursachen."
+        },
+        {
+          "candidateId": "mvp-not-feasible-as-discussed",
+          "candidateExists": true,
+          "candidateProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP.",
+          "canonicalId": "discussed-scope-not-feasible-in-8-weeks",
+          "canonicalProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0042",
+      "speaker": "Anna",
+      "unitText": "Backup?",
+      "verdict": "already_covered_indirectly",
+      "reason": "Backup ist bereits explizit im MVP-Scope und als Requirement festgehalten.",
+      "references": [
+        {
+          "candidateId": "backup-required-mvp",
+          "candidateExists": true,
+          "candidateProp": "Backup bzw. Disaster Recovery wird für das MVP benötigt, wenn Kundendaten enthalten sind.",
+          "canonicalId": "backup-and-dr-required-mvp",
+          "canonicalProp": "Backup bzw. Disaster Recovery wird für das MVP benötigt, wenn Kundendaten enthalten sind."
+        },
+        {
+          "candidateId": "mvp-scope-baseline",
+          "candidateExists": true,
+          "candidateProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup.",
+          "canonicalId": "mvp-baseline-scope",
+          "canonicalProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0052",
+      "speaker": "Ben",
+      "unitText": "Overengineering und skalierbar sind ein Spannungsfeld.",
+      "verdict": "attach_as_evidence",
+      "reason": "Zusätzliche Formulierung des bereits erfassten Spannungsfelds zwischen Skalierbarkeit und Overengineering.",
+      "references": [
+        {
+          "candidateId": "scalability-needs-clarification",
+          "candidateExists": true,
+          "candidateProp": "Skalierbarkeit muss berücksichtigt werden, die erwartete Nutzerzahl ist aber unklar.",
+          "canonicalId": "scalability-needs-clarification",
+          "canonicalProp": "Skalierbarkeit muss berücksichtigt werden, die erwartete Nutzerzahl ist aber unklar."
+        },
+        {
+          "candidateId": "avoid-overengineering",
+          "candidateExists": true,
+          "candidateProp": "Die Lösung soll kein Overengineering verursachen.",
+          "canonicalId": "avoid-overengineering",
+          "canonicalProp": "Die Lösung soll kein Overengineering verursachen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0054",
+      "speaker": "Clara",
+      "unitText": "Und wir haben noch keine klare Zieldefinition.",
+      "verdict": "missing_claim",
+      "reason": "Ein expliziter Claim, dass die Zieldefinition noch unklar ist, fehlt; das ist breiter als nur KPIs und relevant für Scope/Planung.",
+      "references": [
+        {
+          "candidateId": "goal-angebote-schneller",
+          "candidateExists": true,
+          "candidateProp": "Das Hauptziel ist, Angebote schneller zu erstellen; das Portal ist Mittel zum Zweck.",
+          "canonicalId": "goal-fast-offers-portal-as-means",
+          "canonicalProp": "Das Hauptziel ist, Angebote schneller zu erstellen; das Portal ist Mittel zum Zweck."
+        },
+        {
+          "candidateId": "board-estimate-risk",
+          "candidateExists": true,
+          "candidateProp": "Eine grobe Kostenschätzung ohne klaren Scope ist gefährlich bzw. unvollständig.",
+          "canonicalId": "board-estimate-scope-risk",
+          "canonicalProp": "Eine grobe Kostenschätzung ohne klaren Scope sowie ohne Datenschutzmaßnahmen und SAP-Schnittstelle ist gefährlich bzw. unvollständig."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0056",
+      "speaker": "Ben",
+      "unitText": "Und Portal.",
+      "verdict": "already_covered_indirectly",
+      "reason": "Der Portal-Aspekt ist bereits mehrfach als Zielbild bzw. Scope-Bestandteil enthalten.",
+      "references": [
+        {
+          "candidateId": "goal-angebote-schneller",
+          "candidateExists": true,
+          "candidateProp": "Das Hauptziel ist, Angebote schneller zu erstellen; das Portal ist Mittel zum Zweck.",
+          "canonicalId": "goal-fast-offers-portal-as-means",
+          "canonicalProp": "Das Hauptziel ist, Angebote schneller zu erstellen; das Portal ist Mittel zum Zweck."
+        },
+        {
+          "candidateId": "portal-remains-target",
+          "candidateExists": true,
+          "candidateProp": "Das Ziel bleibt ein Portal, nicht ein Dokumentenmanagementsystem.",
+          "canonicalId": "portal-remains-target",
+          "canonicalProp": "Das Ziel bleibt ein Portal, nicht ein Dokumentenmanagementsystem."
+        },
+        {
+          "candidateId": "mvp-scope-baseline",
+          "candidateExists": true,
+          "candidateProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup.",
+          "canonicalId": "mvp-baseline-scope",
+          "canonicalProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0057",
+      "speaker": "Clara",
+      "unitText": "Und Compliance.",
+      "verdict": "already_covered_indirectly",
+      "reason": "Compliance ist bereits breit durch DSGVO, Security Review und Dokumentationspflichten abgedeckt.",
+      "references": [
+        {
+          "candidateId": "dsgvo-mandatory",
+          "candidateExists": true,
+          "candidateProp": "DSGVO-Compliance ist nicht optional.",
+          "canonicalId": "gdpr-mandatory",
+          "canonicalProp": "DSGVO-Compliance ist nicht optional."
+        },
+        {
+          "candidateId": "security-review-required",
+          "candidateExists": true,
+          "candidateProp": "Das Vorhaben darf nicht ohne Security Review umgesetzt werden.",
+          "canonicalId": "security-review-mandatory",
+          "canonicalProp": "Das Vorhaben darf nicht ohne Security Review umgesetzt werden."
+        },
+        {
+          "candidateId": "documentation-needed-for-review",
+          "candidateExists": true,
+          "candidateProp": "Ausreichende Dokumentation ist erforderlich, da ohne Dokumentation kein Security Review möglich ist.",
+          "canonicalId": "documentation-required-for-security-review",
+          "canonicalProp": "Ausreichende Dokumentation ist erforderlich, da ohne Dokumentation kein Security Review möglich ist."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0059",
+      "speaker": "Ben",
+      "unitText": "Was ist mit Support? Ticketsystem?",
+      "verdict": "already_covered_indirectly",
+      "reason": "Die Frage nach Support/Ticketsystem ist bereits als offener bzw. problematischer Supportprozess und als nicht im MVP vorgesehene Ticketing-Lösung erfasst.",
+      "references": [
+        {
+          "candidateId": "support-ticketing-out-of-mvp",
+          "candidateExists": true,
+          "candidateProp": "Ein richtiges Ticketsystem ist nicht im MVP vorgesehen; höchstens ein Kontaktformular wird erwogen.",
+          "canonicalId": "support-ticketing-excluded-contact-form-conditional",
+          "canonicalProp": "Ein richtiges Ticketsystem ist im MVP nicht vorgesehen; höchstens ein Kontaktformular wird erwogen, das dann trotzdem eine Zuordnung zum Kundenkonto benötigt."
+        },
+        {
+          "candidateId": "support-process-unclear-risk",
+          "candidateExists": true,
+          "candidateProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch.",
+          "canonicalId": "support-process-unclear-risk",
+          "canonicalProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0065",
+      "speaker": "Anna",
+      "unitText": "Wer macht das?",
+      "verdict": "missing_claim",
+      "reason": "Die ungeklärte Verantwortlichkeit bzw. Ownership für die Umsetzung ist als eigenständiges Projektrisiko noch nicht im Ledger enthalten.",
+      "references": [
+        {
+          "candidateId": "documentation-needed-for-review",
+          "candidateExists": true,
+          "candidateProp": "Ausreichende Dokumentation ist erforderlich, da ohne Dokumentation kein Security Review möglich ist.",
+          "canonicalId": "documentation-required-for-security-review",
+          "canonicalProp": "Ausreichende Dokumentation ist erforderlich, da ohne Dokumentation kein Security Review möglich ist."
+        },
+        {
+          "candidateId": "mvp-not-feasible-as-discussed",
+          "candidateExists": true,
+          "candidateProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP.",
+          "canonicalId": "discussed-scope-not-feasible-in-8-weeks",
+          "canonicalProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0066",
+      "speaker": "Ben",
+      "unitText": "Wir brauchen einen Architekten.",
+      "verdict": "missing_claim",
+      "reason": "Der Bedarf nach einem Architekten ist ein eigenständiger Ressourcen-/Governance-Claim, der im Ledger noch fehlt.",
+      "references": [
+        {
+          "candidateId": "documentation-needed-for-review",
+          "candidateExists": true,
+          "candidateProp": "Ausreichende Dokumentation ist erforderlich, da ohne Dokumentation kein Security Review möglich ist.",
+          "canonicalId": "documentation-required-for-security-review",
+          "canonicalProp": "Ausreichende Dokumentation ist erforderlich, da ohne Dokumentation kein Security Review möglich ist."
+        },
+        {
+          "candidateId": "mvp-not-feasible-as-discussed",
+          "candidateExists": true,
+          "candidateProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP.",
+          "canonicalId": "discussed-scope-not-feasible-in-8-weeks",
+          "canonicalProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0067",
+      "speaker": "Anna",
+      "unitText": "Wir haben keinen.",
+      "verdict": "attach_as_evidence",
+      "reason": "Stützt den fehlenden Architektur-/Ownership-Punkt als Ressourcengap, sollte aber eher Evidenz zu diesem fehlenden Claim sein als eigener separater Claim.",
+      "references": []
+    },
+    {
+      "unitId": "AU-0072",
+      "speaker": "David",
+      "unitText": "Sorry, ich komme zu spät dazu. Ich bin von Customer Support. Ich habe gehört, es soll kein Ticketsystem geben. Das ist aus Support-Sicht schwierig, weil Kunden uns heute wegen Rechnungen, Lieferstatus und falschen Rabatten ständig schreiben.",
+      "verdict": "attach_as_evidence",
+      "reason": "Liefert starke Begründung dafür, warum fehlendes Ticketing aus Support-Sicht problematisch ist, ohne den bestehenden Support-Claim grundlegend zu verändern.",
+      "references": [
+        {
+          "candidateId": "support-ticketing-out-of-mvp",
+          "candidateExists": true,
+          "candidateProp": "Ein richtiges Ticketsystem ist nicht im MVP vorgesehen; höchstens ein Kontaktformular wird erwogen.",
+          "canonicalId": "support-ticketing-excluded-contact-form-conditional",
+          "canonicalProp": "Ein richtiges Ticketsystem ist im MVP nicht vorgesehen; höchstens ein Kontaktformular wird erwogen, das dann trotzdem eine Zuordnung zum Kundenkonto benötigt."
+        },
+        {
+          "candidateId": "support-process-unclear-risk",
+          "candidateExists": true,
+          "candidateProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch.",
+          "canonicalId": "support-process-unclear-risk",
+          "canonicalProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0076",
+      "speaker": "Ben",
+      "unitText": "Und technisch heißt das wieder Persistenz. Wir wollten keine neue Datenbank.",
+      "verdict": "attach_as_evidence",
+      "reason": "Untermauert den bereits festgehaltenen Konflikt zwischen Ticket-Persistenz und dem Verbot einer neuen Datenbank.",
+      "references": [
+        {
+          "candidateId": "no-new-db-server",
+          "candidateExists": true,
+          "candidateProp": "Es darf kein neuer Datenbankserver eingeführt werden.",
+          "canonicalId": "no-new-db-server-managed-services-allowed",
+          "canonicalProp": "Es darf kein neuer Datenbankserver eingeführt werden; Managed Services sind als Bereitstellungsform zulässig."
+        },
+        {
+          "candidateId": "support-process-unclear-risk",
+          "candidateExists": true,
+          "candidateProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch.",
+          "canonicalId": "support-process-unclear-risk",
+          "canonicalProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0077",
+      "speaker": "Anna",
+      "unitText": "Managed Service war okay.",
+      "verdict": "attach_as_evidence",
+      "reason": "Bestätigt nur nochmals, dass Managed Services als Option akzeptabel sind.",
+      "references": [
+        {
+          "candidateId": "managed-services-allowed",
+          "candidateExists": true,
+          "candidateProp": "Managed Services sind als Bereitstellungsform zulässig.",
+          "canonicalId": "no-new-db-server-managed-services-allowed",
+          "canonicalProp": "Es darf kein neuer Datenbankserver eingeführt werden; Managed Services sind als Bereitstellungsform zulässig."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0078",
+      "speaker": "Ben",
+      "unitText": "Ja, aber wir haben noch nicht entschieden, welcher. Und SAP kann keine Support-Tickets speichern.",
+      "verdict": "attach_as_evidence",
+      "reason": "Stützt bestehende offene Punkte zu Providerentscheidung sowie Support-Ticket-Speicherung/Persistenz.",
+      "references": [
+        {
+          "candidateId": "no-provider-decision",
+          "candidateExists": true,
+          "candidateProp": "Es darf keine konkrete Cloud- oder Produktentscheidung abgeleitet werden, solange kein Provider gewählt wurde.",
+          "canonicalId": "sso-optional-later-open",
+          "canonicalProp": "SSO ist wünschenswert, aber optional und eher später möglich; die konkrete IdP-Integration ist offen und es darf keine Providerentscheidung daraus abgeleitet werden."
+        },
+        {
+          "candidateId": "support-process-unclear-risk",
+          "candidateExists": true,
+          "candidateProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch.",
+          "canonicalId": "support-process-unclear-risk",
+          "canonicalProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0083",
+      "speaker": "Anna",
+      "unitText": "Das ist wichtig, aber vielleicht später.",
+      "verdict": "attach_as_evidence",
+      "reason": "Unterstützt die bereits dokumentierte Einordnung des Freigabeprozesses eher nachgelagert bzw. nicht im aktuellen MVP.",
+      "references": [
+        {
+          "candidateId": "discount-approval-not-in-mvp",
+          "candidateExists": true,
+          "candidateProp": "Ein Rabatt-Freigabeprozess ist im aktuellen MVP nicht enthalten und wird eher Phase 2 zugeordnet.",
+          "canonicalId": "discount-approval-policy-open-but-not-in-mvp",
+          "canonicalProp": "Für Angebote mit Rabatt oberhalb einer Schwelle wird ein Freigabeprozess benötigt, mindestens Manager-Freigabe ist genannt; die genaue Schwelle ist zwischen 15 und 20 Prozent unklar, eine zusätzliche Finance-Freigabe ab 30 Prozent ist offen, und der Freigabeprozess ist im aktuellen MVP eher nicht enthalten."
+        },
+        {
+          "candidateId": "freigaben-not-solved",
+          "candidateExists": true,
+          "candidateProp": "Der Freigabeprozess ist noch nicht gelöst.",
+          "canonicalId": "discount-approval-policy-open-but-not-in-mvp",
+          "canonicalProp": "Für Angebote mit Rabatt oberhalb einer Schwelle wird ein Freigabeprozess benötigt, mindestens Manager-Freigabe ist genannt; die genaue Schwelle ist zwischen 15 und 20 Prozent unklar, eine zusätzliche Finance-Freigabe ab 30 Prozent ist offen, und der Freigabeprozess ist im aktuellen MVP eher nicht enthalten."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0084",
+      "speaker": "Eva",
+      "unitText": "Nein, ohne Freigabeprozess können falsche Angebote rausgehen. Das ist ein finanzielles Risiko.",
+      "verdict": "attach_as_evidence",
+      "reason": "Begründet die Wichtigkeit eines Freigabeprozesses und das Risiko falscher Angebote; die Freigabethematik ist bereits erfasst.",
+      "references": [
+        {
+          "candidateId": "discount-approval-required",
+          "candidateExists": true,
+          "candidateProp": "Angebote mit Rabatt über 15 Prozent müssen mindestens durch einen Manager freigegeben werden.",
+          "canonicalId": "discount-approval-policy-open-but-not-in-mvp",
+          "canonicalProp": "Für Angebote mit Rabatt oberhalb einer Schwelle wird ein Freigabeprozess benötigt, mindestens Manager-Freigabe ist genannt; die genaue Schwelle ist zwischen 15 und 20 Prozent unklar, eine zusätzliche Finance-Freigabe ab 30 Prozent ist offen, und der Freigabeprozess ist im aktuellen MVP eher nicht enthalten."
+        },
+        {
+          "candidateId": "freigaben-not-solved",
+          "candidateExists": true,
+          "candidateProp": "Der Freigabeprozess ist noch nicht gelöst.",
+          "canonicalId": "discount-approval-policy-open-but-not-in-mvp",
+          "canonicalProp": "Für Angebote mit Rabatt oberhalb einer Schwelle wird ein Freigabeprozess benötigt, mindestens Manager-Freigabe ist genannt; die genaue Schwelle ist zwischen 15 und 20 Prozent unklar, eine zusätzliche Finance-Freigabe ab 30 Prozent ist offen, und der Freigabeprozess ist im aktuellen MVP eher nicht enthalten."
+        },
+        {
+          "candidateId": "price-risk-not-accepted",
+          "candidateExists": true,
+          "candidateProp": "Das Risiko falscher Angebote durch veraltete Preise soll nicht einfach akzeptiert werden.",
+          "canonicalId": "price-freshness-controls-required",
+          "canonicalProp": "SAP-Preise und Rabatte sind nicht immer in Echtzeit aktuell; falsche Angebote dürfen daraus nicht einfach akzeptiert werden, daher werden Preisgültigkeit und möglicherweise Warnhinweise benötigt."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0086",
+      "speaker": "Anna",
+      "unitText": "Aber nicht zu kompliziert.",
+      "verdict": "attach_as_evidence",
+      "reason": "Zusätzliche Evidenz für das bestehende Prinzip, Komplexität im MVP zu begrenzen.",
+      "references": [
+        {
+          "candidateId": "avoid-overengineering",
+          "candidateExists": true,
+          "candidateProp": "Die Lösung soll kein Overengineering verursachen.",
+          "canonicalId": "avoid-overengineering",
+          "canonicalProp": "Die Lösung soll kein Overengineering verursachen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0090",
+      "speaker": "Clara",
+      "unitText": "Wer darf dann die Rabatte sehen? Das ist Rollen- und Berechtigungslogik.",
+      "verdict": "attach_as_evidence",
+      "reason": "Präzisiert den bereits bestehenden Bedarf an Rollen- und Berechtigungslogik sowie den Support-Sichtbarkeitskonflikt.",
+      "references": [
+        {
+          "candidateId": "rbac-concept-required",
+          "candidateExists": true,
+          "candidateProp": "Ein Rollen- und Berechtigungskonzept ist erforderlich.",
+          "canonicalId": "rbac-concept-and-mvp-roles",
+          "canonicalProp": "Ein Rollen- und Berechtigungskonzept ist erforderlich; für das MVP sind die Rollen Admin, Sales und Kunde vorgesehen."
+        },
+        {
+          "candidateId": "support-visibility-conflict",
+          "candidateExists": true,
+          "candidateProp": "Es besteht ein Berechtigungskonflikt zwischen Support-Einsicht in Angebote und dem Schutz vertraulicher Sonderkonditionen.",
+          "canonicalId": "support-confidentiality-authorization-conflict",
+          "canonicalProp": "Es besteht ein Berechtigungskonflikt zwischen Support-Einsicht in Angebote und dem Schutz vertraulicher Sonderkonditionen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0093",
+      "speaker": "Anna",
+      "unitText": "Also Support sieht nur Status, nicht Details?",
+      "verdict": "attach_as_evidence",
+      "reason": "Konkretisiert den bestehenden Konflikt über die Sichtbarkeit von Details für Support.",
+      "references": [
+        {
+          "candidateId": "support-visibility-conflict",
+          "candidateExists": true,
+          "candidateProp": "Es besteht ein Berechtigungskonflikt zwischen Support-Einsicht in Angebote und dem Schutz vertraulicher Sonderkonditionen.",
+          "canonicalId": "support-confidentiality-authorization-conflict",
+          "canonicalProp": "Es besteht ein Berechtigungskonflikt zwischen Support-Einsicht in Angebote und dem Schutz vertraulicher Sonderkonditionen."
+        },
+        {
+          "candidateId": "support-role-open",
+          "candidateExists": true,
+          "candidateProp": "Ob eine Support-Rolle im Berechtigungskonzept benötigt wird, ist offen.",
+          "canonicalId": "support-role-and-visibility-open",
+          "canonicalProp": "Ob eine Support-Rolle benötigt wird, ist offen; falls ja, soll Support Preise nicht ändern können, aber möglicherweise Angebote einsehen dürfen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0094",
+      "speaker": "David",
+      "unitText": "Dann kann Support nicht helfen.",
+      "verdict": "attach_as_evidence",
+      "reason": "Direkte Evidenz für den bereits dokumentierten Zielkonflikt zwischen eingeschränkter Support-Sicht und effektiver Hilfeleistung.",
+      "references": [
+        {
+          "candidateId": "support-visibility-conflict",
+          "candidateExists": true,
+          "candidateProp": "Es besteht ein Berechtigungskonflikt zwischen Support-Einsicht in Angebote und dem Schutz vertraulicher Sonderkonditionen.",
+          "canonicalId": "support-confidentiality-authorization-conflict",
+          "canonicalProp": "Es besteht ein Berechtigungskonflikt zwischen Support-Einsicht in Angebote und dem Schutz vertraulicher Sonderkonditionen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0097",
+      "speaker": "Farid",
+      "unitText": "Ich bin aus IT Operations. EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert.",
+      "verdict": "attach_as_evidence",
+      "reason": "Liefert wichtige technische Begründung zum bestehenden EU-Residency- und Backup-Replikationsrisiko.",
+      "references": [
+        {
+          "candidateId": "eu-residency-required",
+          "candidateExists": true,
+          "candidateProp": "Für das MVP ist EU Managed Hosting vorgesehen; nachweisbare Datenresidenz in der EU muss geklärt bzw. berücksichtigt werden.",
+          "canonicalId": "eu-data-residency-and-hosting-constraint",
+          "canonicalProp": "Für das MVP ist EU Managed Hosting vorgesehen; nachweisbare Datenresidenz in der EU muss geklärt und berücksichtigt werden, DSGVO-konform allein reicht nicht."
+        },
+        {
+          "candidateId": "backup-required-mvp",
+          "candidateExists": true,
+          "candidateProp": "Backup bzw. Disaster Recovery wird für das MVP benötigt, wenn Kundendaten enthalten sind.",
+          "canonicalId": "backup-and-dr-required-mvp",
+          "canonicalProp": "Backup bzw. Disaster Recovery wird für das MVP benötigt, wenn Kundendaten enthalten sind."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0101",
+      "speaker": "Eva",
+      "unitText": "Wie viel teurer?",
+      "verdict": "already_covered_indirectly",
+      "reason": "Die Kostenfrage ist bereits durch den offenen Hosting-Kosten-Claim abgedeckt.",
+      "references": [
+        {
+          "candidateId": "hosting-cost-open",
+          "candidateExists": true,
+          "candidateProp": "Die Mehrkosten von EU-only Hosting sind offen; eine Kostenschätzung für den Vorstand wird bis Freitag benötigt.",
+          "canonicalId": "eu-hosting-cost-estimate-open",
+          "canonicalProp": "Die Mehrkosten von EU-only Hosting sind offen; eine Kostenschätzung für den Vorstand wird bis Freitag benötigt."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0104",
+      "speaker": "Ben",
+      "unitText": "Bis Freitag? Wir haben nicht mal eine Architekturentscheidung.",
+      "verdict": "attach_as_evidence",
+      "reason": "Stützt die bereits festgehaltenen Risiken durch fehlende Architekturentscheidung und belastete Schätzung/Zeitschiene.",
+      "references": [
+        {
+          "candidateId": "board-estimate-risk",
+          "candidateExists": true,
+          "candidateProp": "Eine grobe Kostenschätzung ohne klaren Scope ist gefährlich bzw. unvollständig.",
+          "canonicalId": "board-estimate-scope-risk",
+          "canonicalProp": "Eine grobe Kostenschätzung ohne klaren Scope sowie ohne Datenschutzmaßnahmen und SAP-Schnittstelle ist gefährlich bzw. unvollständig."
+        },
+        {
+          "candidateId": "mvp-not-feasible-as-discussed",
+          "candidateExists": true,
+          "candidateProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP.",
+          "canonicalId": "discussed-scope-not-feasible-in-8-weeks",
+          "canonicalProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0105",
+      "speaker": "Anna",
+      "unitText": "Dann schätzen wir grob.",
+      "verdict": "attach_as_evidence",
+      "reason": "Passt als Evidenz zum bestehenden Claim, dass nur grob geschätzt werden soll bzw. grobe Schätzung trotz Unsicherheit erfolgt.",
+      "references": [
+        {
+          "candidateId": "hosting-cost-open",
+          "candidateExists": true,
+          "candidateProp": "Die Mehrkosten von EU-only Hosting sind offen; eine Kostenschätzung für den Vorstand wird bis Freitag benötigt.",
+          "canonicalId": "eu-hosting-cost-estimate-open",
+          "canonicalProp": "Die Mehrkosten von EU-only Hosting sind offen; eine Kostenschätzung für den Vorstand wird bis Freitag benötigt."
+        },
+        {
+          "candidateId": "board-estimate-risk",
+          "candidateExists": true,
+          "candidateProp": "Eine grobe Kostenschätzung ohne klaren Scope ist gefährlich bzw. unvollständig.",
+          "canonicalId": "board-estimate-scope-risk",
+          "canonicalProp": "Eine grobe Kostenschätzung ohne klaren Scope sowie ohne Datenschutzmaßnahmen und SAP-Schnittstelle ist gefährlich bzw. unvollständig."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0109",
+      "speaker": "Anna",
+      "unitText": "Okay, aber der Vorstand will Zahlen.",
+      "verdict": "attach_as_evidence",
+      "reason": "Unterstützt den bestehenden Punkt, dass für den Vorstand eine Kostenschätzung/Zahlen benötigt werden.",
+      "references": [
+        {
+          "candidateId": "hosting-cost-open",
+          "candidateExists": true,
+          "candidateProp": "Die Mehrkosten von EU-only Hosting sind offen; eine Kostenschätzung für den Vorstand wird bis Freitag benötigt.",
+          "canonicalId": "eu-hosting-cost-estimate-open",
+          "canonicalProp": "Die Mehrkosten von EU-only Hosting sind offen; eine Kostenschätzung für den Vorstand wird bis Freitag benötigt."
+        },
+        {
+          "candidateId": "board-estimate-risk",
+          "candidateExists": true,
+          "candidateProp": "Eine grobe Kostenschätzung ohne klaren Scope ist gefährlich bzw. unvollständig.",
+          "canonicalId": "board-estimate-scope-risk",
+          "canonicalProp": "Eine grobe Kostenschätzung ohne klaren Scope sowie ohne Datenschutzmaßnahmen und SAP-Schnittstelle ist gefährlich bzw. unvollständig."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0115",
+      "speaker": "Ben",
+      "unitText": "Dann wäre es kein integriertes Portal.",
+      "verdict": "attach_as_evidence",
+      "reason": "Präzisiert die Produktvision, dass eine Übergangslösung nicht als integriertes Portal gelten würde.",
+      "references": [
+        {
+          "candidateId": "manual-upload-interim-open",
+          "candidateExists": true,
+          "candidateProp": "Manuelle Angebotsuploads als Zwischenlösung für den MVP wurden erwogen, sind aber nicht entschieden.",
+          "canonicalId": "manual-upload-interim-option-and-risks",
+          "canonicalProp": "Manuelle Angebotsuploads als Zwischenlösung für den MVP wurden erwogen, sind aber nicht entschieden; sie erhöhen Fehlerwahrscheinlichkeit und schaffen Datenschutz- sowie Berechtigungsrisiken im File Storage."
+        },
+        {
+          "candidateId": "portal-remains-target",
+          "candidateExists": true,
+          "candidateProp": "Das Ziel bleibt ein Portal, nicht ein Dokumentenmanagementsystem.",
+          "canonicalId": "portal-remains-target",
+          "canonicalProp": "Das Ziel bleibt ein Portal, nicht ein Dokumentenmanagementsystem."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0127",
+      "speaker": "Clara",
+      "unitText": "International? Ich dachte nur DACH.",
+      "verdict": "already_covered_indirectly",
+      "reason": "Der DACH-Startmarkt ist bereits explizit im Ledger enthalten.",
+      "references": [
+        {
+          "candidateId": "market-scope-dach-start",
+          "candidateExists": true,
+          "candidateProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später.",
+          "canonicalId": "market-scope-dach-then-eu-possible",
+          "canonicalProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0129",
+      "speaker": "Clara",
+      "unitText": "USA ändert Datenschutz und Vertragslage massiv.",
+      "verdict": "attach_as_evidence",
+      "reason": "Liefert Begründung dafür, warum USA erst später bzw. mit anderem Scope betrachtet werden sollte.",
+      "references": [
+        {
+          "candidateId": "market-scope-dach-start",
+          "candidateExists": true,
+          "candidateProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später.",
+          "canonicalId": "market-scope-dach-then-eu-possible",
+          "canonicalProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0130",
+      "speaker": "Ben",
+      "unitText": "Und Sprachen. Dann brauchen wir Internationalisierung.",
+      "verdict": "attach_as_evidence",
+      "reason": "Stützt den bestehenden Internationalisierungsbedarf bei Ausweitung über DACH hinaus.",
+      "references": [
+        {
+          "candidateId": "i18n-de-en",
+          "candidateExists": true,
+          "candidateProp": "Deutsch und Englisch sollen unterstützt werden.",
+          "canonicalId": "i18n-german-english-required",
+          "canonicalProp": "Deutsch und Englisch sollen unterstützt werden."
+        },
+        {
+          "candidateId": "market-scope-dach-start",
+          "candidateExists": true,
+          "candidateProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später.",
+          "canonicalId": "market-scope-dach-then-eu-possible",
+          "canonicalProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0134",
+      "speaker": "Ben",
+      "unitText": "Mehrwährung ist nicht trivial, vor allem mit Rabattlogik und SAP.",
+      "verdict": "attach_as_evidence",
+      "reason": "Zusätzliche Begründung für den offenen Mehrwährungsbedarf und dessen Komplexität mit Rabattlogik und SAP.",
+      "references": [
+        {
+          "candidateId": "currency-support-open",
+          "candidateExists": true,
+          "candidateProp": "Angebote müssen mindestens EUR unterstützen; CHF ist möglicherweise für den MVP nötig, USD eher später.",
+          "canonicalId": "currency-support-depends-on-pilot",
+          "canonicalProp": "Angebote müssen mindestens EUR unterstützen; CHF ist möglicherweise für den MVP nötig und hängt vom Pilotkunden ab, USD eher später."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0136",
+      "speaker": "Clara",
+      "unitText": "Schweiz ist nicht EU, aber hat eigene Datenschutzthemen.",
+      "verdict": "attach_as_evidence",
+      "reason": "Ergänzt die offene Pilot-/Schweiz-Frage um Datenschutzimplikationen für CH.",
+      "references": [
+        {
+          "candidateId": "pilot-customer-open",
+          "candidateExists": true,
+          "candidateProp": "Der Pilotkunde ist noch nicht final entschieden; zur Auswahl stehen ein Schweizer und ein deutscher Kunde.",
+          "canonicalId": "pilot-customer-open",
+          "canonicalProp": "Der Pilotkunde ist noch nicht final entschieden; zur Auswahl stehen ein Schweizer und ein deutscher Kunde."
+        },
+        {
+          "candidateId": "market-scope-dach-start",
+          "candidateExists": true,
+          "candidateProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später.",
+          "canonicalId": "market-scope-dach-then-eu-possible",
+          "canonicalProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0137",
+      "speaker": "Farid",
+      "unitText": "Hosting in EU kann Schweizer Kunden bedienen, aber Vertragsprüfung nötig.",
+      "verdict": "attach_as_evidence",
+      "reason": "Präzisiert EU-Hosting im Kontext Schweizer Kunden und verweist auf nötige Vertragsprüfung.",
+      "references": [
+        {
+          "candidateId": "eu-residency-required",
+          "candidateExists": true,
+          "candidateProp": "Für das MVP ist EU Managed Hosting vorgesehen; nachweisbare Datenresidenz in der EU muss geklärt bzw. berücksichtigt werden.",
+          "canonicalId": "eu-data-residency-and-hosting-constraint",
+          "canonicalProp": "Für das MVP ist EU Managed Hosting vorgesehen; nachweisbare Datenresidenz in der EU muss geklärt und berücksichtigt werden, DSGVO-konform allein reicht nicht."
+        },
+        {
+          "candidateId": "pilot-customer-open",
+          "candidateExists": true,
+          "candidateProp": "Der Pilotkunde ist noch nicht final entschieden; zur Auswahl stehen ein Schweizer und ein deutscher Kunde.",
+          "canonicalId": "pilot-customer-open",
+          "canonicalProp": "Der Pilotkunde ist noch nicht final entschieden; zur Auswahl stehen ein Schweizer und ein deutscher Kunde."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0138",
+      "speaker": "Ben",
+      "unitText": "Wir brauchen Länder- und Währungsregeln.",
+      "verdict": "attach_as_evidence",
+      "reason": "Unterstützt die bestehenden offenen Anforderungen zu Länder- und Währungsregeln.",
+      "references": [
+        {
+          "candidateId": "currency-support-open",
+          "candidateExists": true,
+          "candidateProp": "Angebote müssen mindestens EUR unterstützen; CHF ist möglicherweise für den MVP nötig, USD eher später.",
+          "canonicalId": "currency-support-depends-on-pilot",
+          "canonicalProp": "Angebote müssen mindestens EUR unterstützen; CHF ist möglicherweise für den MVP nötig und hängt vom Pilotkunden ab, USD eher später."
+        },
+        {
+          "candidateId": "market-scope-dach-start",
+          "candidateExists": true,
+          "candidateProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später.",
+          "canonicalId": "market-scope-dach-then-eu-possible",
+          "canonicalProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0144",
+      "speaker": "Ben",
+      "unitText": "Das beeinflusst Scope massiv.",
+      "verdict": "attach_as_evidence",
+      "reason": "Begründet den bereits festgehaltenen massiven Scope-Einfluss durch internationale Ausweitung.",
+      "references": [
+        {
+          "candidateId": "market-scope-dach-start",
+          "candidateExists": true,
+          "candidateProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später.",
+          "canonicalId": "market-scope-dach-then-eu-possible",
+          "canonicalProp": "Der Startmarkt ist DACH; später ist eine Ausweitung auf EU möglich, USA nur eventuell später."
+        },
+        {
+          "candidateId": "mvp-not-feasible-as-discussed",
+          "candidateExists": true,
+          "candidateProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP.",
+          "canonicalId": "discussed-scope-not-feasible-in-8-weeks",
+          "canonicalProp": "Der diskutierte Gesamtumfang ist kein 8-Wochen-MVP."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0145",
+      "speaker": "Clara",
+      "unitText": "Und Datenschutzprüfung.",
+      "verdict": "attach_as_evidence",
+      "reason": "Ergänzt Datenschutzprüfungsbedarf bei Scope-Ausweitung, semantisch durch bestehende Datenschutz-/Review-Kandidaten abgedeckt.",
+      "references": [
+        {
+          "candidateId": "dsgvo-mandatory",
+          "candidateExists": true,
+          "candidateProp": "DSGVO-Compliance ist nicht optional.",
+          "canonicalId": "gdpr-mandatory",
+          "canonicalProp": "DSGVO-Compliance ist nicht optional."
+        },
+        {
+          "candidateId": "security-review-required",
+          "candidateExists": true,
+          "candidateProp": "Das Vorhaben darf nicht ohne Security Review umgesetzt werden.",
+          "canonicalId": "security-review-mandatory",
+          "canonicalProp": "Das Vorhaben darf nicht ohne Security Review umgesetzt werden."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0146",
+      "speaker": "Eva",
+      "unitText": "Und Währung.",
+      "verdict": "attach_as_evidence",
+      "reason": "Kurzbeleg für zusätzlichen Währungsbedarf als Scope-Treiber.",
+      "references": [
+        {
+          "candidateId": "currency-support-open",
+          "candidateExists": true,
+          "candidateProp": "Angebote müssen mindestens EUR unterstützen; CHF ist möglicherweise für den MVP nötig, USD eher später.",
+          "canonicalId": "currency-support-depends-on-pilot",
+          "canonicalProp": "Angebote müssen mindestens EUR unterstützen; CHF ist möglicherweise für den MVP nötig und hängt vom Pilotkunden ab, USD eher später."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0149",
+      "speaker": "Anna",
+      "unitText": "Aber Sales will sofort Angebote erstellen.",
+      "verdict": "attach_as_evidence",
+      "reason": "Unterstützt das Hauptziel, Angebote schnell erstellen zu können.",
+      "references": [
+        {
+          "candidateId": "goal-angebote-schneller",
+          "candidateExists": true,
+          "candidateProp": "Das Hauptziel ist, Angebote schneller zu erstellen; das Portal ist Mittel zum Zweck.",
+          "canonicalId": "goal-fast-offers-portal-as-means",
+          "canonicalProp": "Das Hauptziel ist, Angebote schneller zu erstellen; das Portal ist Mittel zum Zweck."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0154",
+      "speaker": "Clara",
+      "unitText": "Wenn falsche Preise personenbezogene Kundendaten enthalten, ist das nicht primär Datenschutz, aber trotzdem Audit-relevant.",
+      "verdict": "attach_as_evidence",
+      "reason": "Ergänzt Audit-Relevanz falscher Preise; passt als Detail zu Preis- und Audit-Risiken.",
+      "references": [
+        {
+          "candidateId": "price-risk-not-accepted",
+          "candidateExists": true,
+          "candidateProp": "Das Risiko falscher Angebote durch veraltete Preise soll nicht einfach akzeptiert werden.",
+          "canonicalId": "price-freshness-controls-required",
+          "canonicalProp": "SAP-Preise und Rabatte sind nicht immer in Echtzeit aktuell; falsche Angebote dürfen daraus nicht einfach akzeptiert werden, daher werden Preisgültigkeit und möglicherweise Warnhinweise benötigt."
+        },
+        {
+          "candidateId": "auditability-required",
+          "candidateExists": true,
+          "candidateProp": "Auditierbarkeit ist Pflicht; nachvollziehbar sein muss, wer wann was geändert hat.",
+          "canonicalId": "auditability-minimal-audit-trail-and-access-logging",
+          "canonicalProp": "Auditierbarkeit ist Pflicht; im MVP ist mindestens ein minimaler Audit Trail erforderlich, einschließlich Nachvollziehbarkeit, wer wann was geändert hat, und Protokollierung, wer welches Angebot geöffnet hat."
+        },
+        {
+          "candidateId": "offer-contains-personal-data",
+          "candidateExists": true,
+          "candidateProp": "Angebote enthalten personenbezogene Daten.",
+          "canonicalId": "offers-contain-personal-data",
+          "canonicalProp": "Angebote enthalten personenbezogene Daten."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0155",
+      "speaker": "David",
+      "unitText": "Kunden rufen dann Support an. Wieder Tickets.",
+      "verdict": "attach_as_evidence",
+      "reason": "Stützt die Aussage, dass Fehler bei Angeboten Supportaufwand und Tickets erzeugen.",
+      "references": [
+        {
+          "candidateId": "support-process-unclear-risk",
+          "candidateExists": true,
+          "candidateProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch.",
+          "canonicalId": "support-process-unclear-risk",
+          "canonicalProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0158",
+      "speaker": "Ben",
+      "unitText": "Das wurde bisher nicht genannt.",
+      "verdict": "needs_human",
+      "reason": "Reiner Gesprächsmarker ohne klaren eigenständigen Sachclaim; Kontext fehlt.",
+      "references": []
+    },
+    {
+      "unitId": "AU-0167",
+      "speaker": "Anna",
+      "unitText": "Ist das MVP?",
+      "verdict": "attach_as_evidence",
+      "reason": "Unterstreicht die bereits zentrale MVP-Scope-Abgrenzung.",
+      "references": [
+        {
+          "candidateId": "mvp-scope-baseline",
+          "candidateExists": true,
+          "candidateProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup.",
+          "canonicalId": "mvp-baseline-scope",
+          "canonicalProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup."
+        },
+        {
+          "candidateId": "scope-must-show-exclusions-and-risks",
+          "candidateExists": true,
+          "candidateProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen.",
+          "canonicalId": "scope-documentation-must-show-exclusions-and-risks",
+          "canonicalProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0169",
+      "speaker": "David",
+      "unitText": "Kann der Kunde ein Angebot online akzeptieren?",
+      "verdict": "attach_as_evidence",
+      "reason": "Bringt den Online-Akzeptanz-Wunsch in die Diskussion ein; der Themenkomplex ist bereits im Ledger erfasst.",
+      "references": [
+        {
+          "candidateId": "online-acceptance-out-of-mvp-current",
+          "candidateExists": true,
+          "candidateProp": "Online-Akzeptanz von Angeboten wird im aktuellen MVP eher ausgeschlossen; vorgesehen ist eher nur der Angebotsdownload.",
+          "canonicalId": "sap-write-and-online-acceptance-outside-current-mvp",
+          "canonicalProp": "SAP-Schreibzugriff ist noch nicht entschieden und liegt nicht im aktuellen MVP-Schnitt; entsprechend ist Online-Akzeptanz von Angeboten im MVP eher ausgeschlossen und eher nur Angebotsdownload vorgesehen."
+        },
+        {
+          "candidateId": "online-acceptance-compliance-open",
+          "candidateExists": true,
+          "candidateProp": "Falls Angebote online akzeptiert werden sollen, wären Nachweis der Zustimmung, Zeitstempel und ggf. AGB-Akzeptanz erforderlich.",
+          "canonicalId": "online-acceptance-compliance-requirements-later",
+          "canonicalProp": "Falls Angebote später online akzeptiert werden sollen, sind Nachweis der Zustimmung, Zeitstempel und ggf. AGB-Akzeptanz erforderlich."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0170",
+      "speaker": "Anna",
+      "unitText": "Das wäre super.",
+      "verdict": "attach_as_evidence",
+      "reason": "Bestärkt den Wunsch nach Online-Akzeptanz, ohne neuen eigenständigen Claim zu schaffen.",
+      "references": [
+        {
+          "candidateId": "online-acceptance-compliance-open",
+          "candidateExists": true,
+          "candidateProp": "Falls Angebote online akzeptiert werden sollen, wären Nachweis der Zustimmung, Zeitstempel und ggf. AGB-Akzeptanz erforderlich.",
+          "canonicalId": "online-acceptance-compliance-requirements-later",
+          "canonicalProp": "Falls Angebote später online akzeptiert werden sollen, sind Nachweis der Zustimmung, Zeitstempel und ggf. AGB-Akzeptanz erforderlich."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0171",
+      "speaker": "Ben",
+      "unitText": "Das ist ein Vertragsabschluss. Ganz anderes Thema.",
+      "verdict": "attach_as_evidence",
+      "reason": "Begründet, warum Online-Akzeptanz ein separates Vertrags-/Compliance-Thema ist.",
+      "references": [
+        {
+          "candidateId": "online-acceptance-compliance-open",
+          "candidateExists": true,
+          "candidateProp": "Falls Angebote online akzeptiert werden sollen, wären Nachweis der Zustimmung, Zeitstempel und ggf. AGB-Akzeptanz erforderlich.",
+          "canonicalId": "online-acceptance-compliance-requirements-later",
+          "canonicalProp": "Falls Angebote später online akzeptiert werden sollen, sind Nachweis der Zustimmung, Zeitstempel und ggf. AGB-Akzeptanz erforderlich."
+        },
+        {
+          "candidateId": "online-acceptance-out-of-mvp-current",
+          "candidateExists": true,
+          "candidateProp": "Online-Akzeptanz von Angeboten wird im aktuellen MVP eher ausgeschlossen; vorgesehen ist eher nur der Angebotsdownload.",
+          "canonicalId": "sap-write-and-online-acceptance-outside-current-mvp",
+          "canonicalProp": "SAP-Schreibzugriff ist noch nicht entschieden und liegt nicht im aktuellen MVP-Schnitt; entsprechend ist Online-Akzeptanz von Angeboten im MVP eher ausgeschlossen und eher nur Angebotsdownload vorgesehen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0176",
+      "speaker": "David",
+      "unitText": "Aber ohne Online-Akzeptanz ist Conversion Tracking schlechter.",
+      "verdict": "attach_as_evidence",
+      "reason": "Liefert Begründung aus KPI-/Tracking-Sicht für die Online-Akzeptanz-Debatte.",
+      "references": [
+        {
+          "candidateId": "online-acceptance-compliance-open",
+          "candidateExists": true,
+          "candidateProp": "Falls Angebote online akzeptiert werden sollen, wären Nachweis der Zustimmung, Zeitstempel und ggf. AGB-Akzeptanz erforderlich.",
+          "canonicalId": "online-acceptance-compliance-requirements-later",
+          "canonicalProp": "Falls Angebote später online akzeptiert werden sollen, sind Nachweis der Zustimmung, Zeitstempel und ggf. AGB-Akzeptanz erforderlich."
+        },
+        {
+          "candidateId": "analytics-mvp-open",
+          "candidateExists": true,
+          "candidateProp": "Ob Analytics/KPI-Messung im MVP enthalten sein soll, ist offen.",
+          "canonicalId": "analytics-infrastructure-mvp-scope-open",
+          "canonicalProp": "Eine Analytics-Infrastruktur existiert derzeit nicht; offen ist, ob Analytics/KPI-Messung im MVP enthalten sein soll, obwohl KPI-Messung fachlich relevant ist."
+        },
+        {
+          "candidateId": "kpis-defined",
+          "candidateExists": true,
+          "candidateProp": "Die genannten KPIs sind Conversion Rate von Angebot zu Bestellung und Zeit bis Angebot.",
+          "canonicalId": "product-kpis-defined",
+          "canonicalProp": "Die genannten KPIs sind Conversion Rate von Angebot zu Bestellung und Zeit bis Angebot."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0178",
+      "speaker": "Ben",
+      "unitText": "Wir müssen entscheiden.",
+      "verdict": "attach_as_evidence",
+      "reason": "Unterstützt den Bedarf nach Scope-Entscheidung und klarer Abgrenzung.",
+      "references": [
+        {
+          "candidateId": "scope-must-show-exclusions-and-risks",
+          "candidateExists": true,
+          "candidateProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen.",
+          "canonicalId": "scope-documentation-must-show-exclusions-and-risks",
+          "canonicalProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0179",
+      "speaker": "Clara",
+      "unitText": "Und dokumentieren.",
+      "verdict": "attach_as_evidence",
+      "reason": "Unterstützt den dokumentationsbezogenen Governance-Bedarf.",
+      "references": [
+        {
+          "candidateId": "documentation-needed-for-review",
+          "candidateExists": true,
+          "candidateProp": "Ausreichende Dokumentation ist erforderlich, da ohne Dokumentation kein Security Review möglich ist.",
+          "canonicalId": "documentation-required-for-security-review",
+          "canonicalProp": "Ausreichende Dokumentation ist erforderlich, da ohne Dokumentation kein Security Review möglich ist."
+        },
+        {
+          "candidateId": "scope-must-show-exclusions-and-risks",
+          "candidateExists": true,
+          "candidateProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen.",
+          "canonicalId": "scope-documentation-must-show-exclusions-and-risks",
+          "canonicalProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0182",
+      "speaker": "Clara",
+      "unitText": "Und unterschiedliche Aufbewahrungsfristen.",
+      "verdict": "attach_as_evidence",
+      "reason": "Zusätzlicher Beleg für unterschiedliche Aufbewahrungsfristen und Retention-Regeln.",
+      "references": [
+        {
+          "candidateId": "retention-rules-required",
+          "candidateExists": true,
+          "candidateProp": "Datenklassifikation und Retention Rules werden benötigt; mindestens ein minimaler Retention-Plan ist vorgesehen.",
+          "canonicalId": "minimal-retention-plan-required",
+          "canonicalProp": "Datenklassifikation und Retention Rules werden benötigt; für den MVP ist mindestens ein minimaler Retention-Plan vorgesehen."
+        },
+        {
+          "candidateId": "offer-retention-legal-open",
+          "candidateExists": true,
+          "candidateProp": "Die gesetzliche Aufbewahrungsdauer für Angebote muss durch Legal geprüft werden.",
+          "canonicalId": "offer-retention-legal-open",
+          "canonicalProp": "Die gesetzliche Aufbewahrungsdauer für Angebote muss durch Legal geprüft werden."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0189",
+      "speaker": "David",
+      "unitText": "Support braucht auch Einsicht in alte Angebote.",
+      "verdict": "attach_as_evidence",
+      "reason": "Konkretisiert den Support-Bedarf nach Einsicht in ältere Angebote.",
+      "references": [
+        {
+          "candidateId": "support-visibility-conflict",
+          "candidateExists": true,
+          "candidateProp": "Es besteht ein Berechtigungskonflikt zwischen Support-Einsicht in Angebote und dem Schutz vertraulicher Sonderkonditionen.",
+          "canonicalId": "support-confidentiality-authorization-conflict",
+          "canonicalProp": "Es besteht ein Berechtigungskonflikt zwischen Support-Einsicht in Angebote und dem Schutz vertraulicher Sonderkonditionen."
+        },
+        {
+          "candidateId": "support-role-open",
+          "candidateExists": true,
+          "candidateProp": "Ob eine Support-Rolle im Berechtigungskonzept benötigt wird, ist offen.",
+          "canonicalId": "support-role-and-visibility-open",
+          "canonicalProp": "Ob eine Support-Rolle benötigt wird, ist offen; falls ja, soll Support Preise nicht ändern können, aber möglicherweise Angebote einsehen dürfen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0190",
+      "speaker": "Eva",
+      "unitText": "Finance auch.",
+      "verdict": "missing_claim",
+      "reason": "Finance-Einsicht in alte Angebote ist im Ledger nicht explizit als Berechtigungs-/Zugriffsanforderung erfasst.",
+      "references": [
+        {
+          "candidateId": "rbac-concept-required",
+          "candidateExists": true,
+          "candidateProp": "Ein Rollen- und Berechtigungskonzept ist erforderlich.",
+          "canonicalId": "rbac-concept-and-mvp-roles",
+          "canonicalProp": "Ein Rollen- und Berechtigungskonzept ist erforderlich; für das MVP sind die Rollen Admin, Sales und Kunde vorgesehen."
+        },
+        {
+          "candidateId": "retention-rules-required",
+          "candidateExists": true,
+          "candidateProp": "Datenklassifikation und Retention Rules werden benötigt; mindestens ein minimaler Retention-Plan ist vorgesehen.",
+          "canonicalId": "minimal-retention-plan-required",
+          "canonicalProp": "Datenklassifikation und Retention Rules werden benötigt; für den MVP ist mindestens ein minimaler Retention-Plan vorgesehen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0195",
+      "speaker": "Eva",
+      "unitText": "Freigabeprozess fehlt.",
+      "verdict": "attach_as_evidence",
+      "reason": "Bestätigt den bereits erfassten offenen bzw. ungelösten Freigabeprozess.",
+      "references": [
+        {
+          "candidateId": "freigaben-not-solved",
+          "candidateExists": true,
+          "candidateProp": "Der Freigabeprozess ist noch nicht gelöst.",
+          "canonicalId": "discount-approval-policy-open-but-not-in-mvp",
+          "canonicalProp": "Für Angebote mit Rabatt oberhalb einer Schwelle wird ein Freigabeprozess benötigt, mindestens Manager-Freigabe ist genannt; die genaue Schwelle ist zwischen 15 und 20 Prozent unklar, eine zusätzliche Finance-Freigabe ab 30 Prozent ist offen, und der Freigabeprozess ist im aktuellen MVP eher nicht enthalten."
+        },
+        {
+          "candidateId": "freigabeprozess-fehlt",
+          "candidateExists": false,
+          "candidateProp": null,
+          "canonicalId": null,
+          "canonicalProp": null
+        },
+        {
+          "candidateId": "approval-threshold-conflict",
+          "candidateExists": true,
+          "candidateProp": "Die Rabattschwelle für Freigaben ist nicht konsistent geklärt.",
+          "canonicalId": "discount-approval-policy-open-but-not-in-mvp",
+          "canonicalProp": "Für Angebote mit Rabatt oberhalb einer Schwelle wird ein Freigabeprozess benötigt, mindestens Manager-Freigabe ist genannt; die genaue Schwelle ist zwischen 15 und 20 Prozent unklar, eine zusätzliche Finance-Freigabe ab 30 Prozent ist offen, und der Freigabeprozess ist im aktuellen MVP eher nicht enthalten."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0196",
+      "speaker": "David",
+      "unitText": "Support fehlt.",
+      "verdict": "attach_as_evidence",
+      "reason": "Bestätigt, dass der Support-Aspekt im MVP-Schnitt noch fehlt bzw. unklar ist.",
+      "references": [
+        {
+          "candidateId": "support-process-unclear-risk",
+          "candidateExists": true,
+          "candidateProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch.",
+          "canonicalId": "support-process-unclear-risk",
+          "canonicalProp": "Der Supportprozess ist nicht gelöst; ein Kontaktformular ohne Ticketpersistenz wäre einfacher, aber aus Support-, Datenschutz- und Audit-Sicht problematisch."
+        },
+        {
+          "candidateId": "support-role-open",
+          "candidateExists": true,
+          "candidateProp": "Ob eine Support-Rolle im Berechtigungskonzept benötigt wird, ist offen.",
+          "canonicalId": "support-role-and-visibility-open",
+          "canonicalProp": "Ob eine Support-Rolle benötigt wird, ist offen; falls ja, soll Support Preise nicht ändern können, aber möglicherweise Angebote einsehen dürfen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0197",
+      "speaker": "Farid",
+      "unitText": "API Gateway und EU Hosting fehlen.",
+      "verdict": "already_covered_indirectly",
+      "reason": "API Gateway und EU Hosting sind bereits im Baseline-MVP und in separaten Kandidaten enthalten.",
+      "references": [
+        {
+          "candidateId": "mvp-scope-baseline",
+          "candidateExists": true,
+          "candidateProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup.",
+          "canonicalId": "mvp-baseline-scope",
+          "canonicalProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup."
+        },
+        {
+          "candidateId": "api-gateway-policy",
+          "candidateExists": true,
+          "candidateProp": "Neue externe Portale müssen laut interner Policy über das zentrale API Gateway laufen.",
+          "canonicalId": "api-layer-and-gateway-policy",
+          "canonicalProp": "Für Integrationen wird eine API-Layer benötigt, und neue externe Portale müssen laut interner Policy über das zentrale API Gateway laufen."
+        },
+        {
+          "candidateId": "eu-residency-required",
+          "candidateExists": true,
+          "candidateProp": "Für das MVP ist EU Managed Hosting vorgesehen; nachweisbare Datenresidenz in der EU muss geklärt bzw. berücksichtigt werden.",
+          "canonicalId": "eu-data-residency-and-hosting-constraint",
+          "canonicalProp": "Für das MVP ist EU Managed Hosting vorgesehen; nachweisbare Datenresidenz in der EU muss geklärt und berücksichtigt werden, DSGVO-konform allein reicht nicht."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0198",
+      "speaker": "Ben",
+      "unitText": "Backup fehlt.",
+      "verdict": "already_covered_indirectly",
+      "reason": "Backup ist bereits explizit im MVP-Baseline-Schnitt und als Requirement erfasst.",
+      "references": [
+        {
+          "candidateId": "mvp-scope-baseline",
+          "candidateExists": true,
+          "candidateProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup.",
+          "canonicalId": "mvp-baseline-scope",
+          "canonicalProp": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup."
+        },
+        {
+          "candidateId": "backup-required-mvp",
+          "candidateExists": true,
+          "candidateProp": "Backup bzw. Disaster Recovery wird für das MVP benötigt, wenn Kundendaten enthalten sind.",
+          "canonicalId": "backup-and-dr-required-mvp",
+          "canonicalProp": "Backup bzw. Disaster Recovery wird für das MVP benötigt, wenn Kundendaten enthalten sind."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0205",
+      "speaker": "David",
+      "unitText": "Support?",
+      "verdict": "already_covered_indirectly",
+      "reason": "Die knappe Nachfrage verweist nur auf das bereits erfasste offene Thema einer möglichen Support-Rolle.",
+      "references": [
+        {
+          "candidateId": "support-role-open",
+          "candidateExists": true,
+          "candidateProp": "Ob eine Support-Rolle im Berechtigungskonzept benötigt wird, ist offen.",
+          "canonicalId": "support-role-and-visibility-open",
+          "canonicalProp": "Ob eine Support-Rolle benötigt wird, ist offen; falls ja, soll Support Preise nicht ändern können, aber möglicherweise Angebote einsehen dürfen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0213",
+      "speaker": "Ben",
+      "unitText": "Das ist wichtig für Scope.",
+      "verdict": "attach_as_evidence",
+      "reason": "Unterstreicht direkt den bereits erfassten Claim, dass der Scope klar dokumentiert werden muss.",
+      "references": [
+        {
+          "candidateId": "scope-must-show-exclusions-and-risks",
+          "candidateExists": true,
+          "candidateProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen.",
+          "canonicalId": "scope-documentation-must-show-exclusions-and-risks",
+          "canonicalProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0218",
+      "speaker": "Anna",
+      "unitText": "Kann man das später klären?",
+      "verdict": "already_covered_indirectly",
+      "reason": "Allgemeine Prozessfrage ohne eigenständigen fachlichen Claim; der relevante offene Punkt ist bereits im Ledger abgebildet.",
+      "references": [
+        {
+          "candidateId": "sap-test-data-blocker",
+          "candidateExists": true,
+          "candidateProp": "Das SAP-Testsystem enthält echte alte Kundendaten; diese dürfen nicht ungeprüft verwendet werden, was Integrationstests blockieren kann.",
+          "canonicalId": "sap-test-data-blocker",
+          "canonicalProp": "Das SAP-Testsystem enthält echte alte Kundendaten; diese dürfen nicht ungeprüft verwendet werden, was Integrationstests blockieren kann."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0219",
+      "speaker": "Clara",
+      "unitText": "Nein, wenn Entwicklung darauf zugreift, ist es sofort relevant.",
+      "verdict": "attach_as_evidence",
+      "reason": "Begründet, warum das Testdaten-Thema sofort relevant ist, wenn Entwicklung darauf zugreift.",
+      "references": [
+        {
+          "candidateId": "sap-test-data-blocker",
+          "candidateExists": true,
+          "candidateProp": "Das SAP-Testsystem enthält echte alte Kundendaten; diese dürfen nicht ungeprüft verwendet werden, was Integrationstests blockieren kann.",
+          "canonicalId": "sap-test-data-blocker",
+          "canonicalProp": "Das SAP-Testsystem enthält echte alte Kundendaten; diese dürfen nicht ungeprüft verwendet werden, was Integrationstests blockieren kann."
+        },
+        {
+          "candidateId": "no-real-customer-data-in-test",
+          "candidateExists": true,
+          "candidateProp": "Testdaten dürfen keine echten Kundendaten enthalten; es sind Pseudonymisierung oder synthetische Testdaten zu verwenden.",
+          "canonicalId": "no-real-customer-data-in-test",
+          "canonicalProp": "Testdaten dürfen keine echten Kundendaten enthalten; es sind Pseudonymisierung oder synthetische Testdaten zu verwenden."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0225",
+      "speaker": "Anna",
+      "unitText": "Aber bitte keine schlechte UX.",
+      "verdict": "missing_claim",
+      "reason": "Ein explizites UX-/Usability-Prinzip ist im Ledger bislang nicht als eigener Claim enthalten.",
+      "references": []
+    },
+    {
+      "unitId": "AU-0226",
+      "speaker": "Eva",
+      "unitText": "Massenexport von Rechnungen kann rechtlich relevant sein.",
+      "verdict": "attach_as_evidence",
+      "reason": "Präzisiert die bereits erfassten Anforderungen und Limits rund um Rechnungsdownload durch den Hinweis auf rechtliche Relevanz bei Massenexporten.",
+      "references": [
+        {
+          "candidateId": "invoice-download-in-scope",
+          "candidateExists": true,
+          "candidateProp": "Kunden sollen Rechnungen herunterladen können; Rechnungsdownload ist im MVP enthalten.",
+          "canonicalId": "invoice-download-mvp",
+          "canonicalProp": "Kunden sollen Rechnungen herunterladen können; Rechnungsdownload ist im MVP enthalten."
+        },
+        {
+          "candidateId": "rate-limits-pagination-download-limits",
+          "candidateExists": true,
+          "candidateProp": "Für Rechnungs- und API-Zugriffe werden Rate Limits sowie Pagination und Download-Limits benötigt.",
+          "canonicalId": "rate-limits-pagination-download-limits-and-audit",
+          "canonicalProp": "Für Rechnungs- und API-Zugriffe werden Rate Limits sowie Pagination und Download-Limits benötigt; Audit muss dabei mindestens berücksichtigt werden."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0227",
+      "speaker": "Clara",
+      "unitText": "Und sicherheitsrelevant.",
+      "verdict": "attach_as_evidence",
+      "reason": "Ergänzt dieselbe Argumentation um den Sicherheitsaspekt und stützt damit bestehende Download-Limit- und Schutzanforderungen.",
+      "references": [
+        {
+          "candidateId": "rate-limits-pagination-download-limits",
+          "candidateExists": true,
+          "candidateProp": "Für Rechnungs- und API-Zugriffe werden Rate Limits sowie Pagination und Download-Limits benötigt.",
+          "canonicalId": "rate-limits-pagination-download-limits-and-audit",
+          "canonicalProp": "Für Rechnungs- und API-Zugriffe werden Rate Limits sowie Pagination und Download-Limits benötigt; Audit muss dabei mindestens berücksichtigt werden."
+        },
+        {
+          "candidateId": "security-review-required",
+          "candidateExists": true,
+          "candidateProp": "Das Vorhaben darf nicht ohne Security Review umgesetzt werden.",
+          "canonicalId": "security-review-mandatory",
+          "canonicalProp": "Das Vorhaben darf nicht ohne Security Review umgesetzt werden."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0231",
+      "speaker": "Farid",
+      "unitText": "Kann API Gateway übernehmen, wenn wir es bekommen.",
+      "verdict": "attach_as_evidence",
+      "reason": "Ist eine Umsetzungsoption für den bereits erfassten Gateway-Claim, keine neue eigenständige Aussage.",
+      "references": [
+        {
+          "candidateId": "api-gateway-policy",
+          "candidateExists": true,
+          "candidateProp": "Neue externe Portale müssen laut interner Policy über das zentrale API Gateway laufen.",
+          "canonicalId": "api-layer-and-gateway-policy",
+          "canonicalProp": "Für Integrationen wird eine API-Layer benötigt, und neue externe Portale müssen laut interner Policy über das zentrale API Gateway laufen."
+        },
+        {
+          "candidateId": "api-gateway-waitlist-risk",
+          "candidateExists": true,
+          "candidateProp": "Die Warteliste des Gateway-Teams von sechs Wochen gefährdet den 8-Wochen-MVP.",
+          "canonicalId": "api-gateway-waitlist-risk",
+          "canonicalProp": "Die Warteliste des Gateway-Teams von sechs Wochen gefährdet den 8-Wochen-MVP."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0232",
+      "speaker": "Ben",
+      "unitText": "Aber Gateway-Team hat sechs Wochen Warteliste.",
+      "verdict": "already_covered_indirectly",
+      "reason": "Die sechs Wochen Warteliste des Gateway-Teams sind bereits explizit im Ledger enthalten.",
+      "references": [
+        {
+          "candidateId": "api-gateway-waitlist-risk",
+          "candidateExists": true,
+          "candidateProp": "Die Warteliste des Gateway-Teams von sechs Wochen gefährdet den 8-Wochen-MVP.",
+          "canonicalId": "api-gateway-waitlist-risk",
+          "canonicalProp": "Die Warteliste des Gateway-Teams von sechs Wochen gefährdet den 8-Wochen-MVP."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0233",
+      "speaker": "Anna",
+      "unitText": "Das ist wieder das Zeitproblem.",
+      "verdict": "attach_as_evidence",
+      "reason": "Bewertet den bereits erfassten Wartelistenpunkt als Zeitproblem und stützt den bestehenden Zeitplan-Risiko-Claim.",
+      "references": [
+        {
+          "candidateId": "api-gateway-waitlist-risk",
+          "candidateExists": true,
+          "candidateProp": "Die Warteliste des Gateway-Teams von sechs Wochen gefährdet den 8-Wochen-MVP.",
+          "canonicalId": "api-gateway-waitlist-risk",
+          "canonicalProp": "Die Warteliste des Gateway-Teams von sechs Wochen gefährdet den 8-Wochen-MVP."
+        },
+        {
+          "candidateId": "mvp-deadline-8-weeks",
+          "candidateExists": true,
+          "candidateProp": "Ein MVP wurde für 8 Wochen zugesagt.",
+          "canonicalId": "mvp-deadline-8-weeks",
+          "canonicalProp": "Ein MVP wurde für 8 Wochen zugesagt."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0237",
+      "speaker": "Anna",
+      "unitText": "Unverbindliche Angebote sind schlecht.",
+      "verdict": "attach_as_evidence",
+      "reason": "Stützt den bestehenden Claim, dass Kostenschätzungen bzw. Angebote ohne klaren Scope problematisch sind.",
+      "references": [
+        {
+          "candidateId": "board-estimate-risk",
+          "candidateExists": true,
+          "candidateProp": "Eine grobe Kostenschätzung ohne klaren Scope ist gefährlich bzw. unvollständig.",
+          "canonicalId": "board-estimate-scope-risk",
+          "canonicalProp": "Eine grobe Kostenschätzung ohne klaren Scope sowie ohne Datenschutzmaßnahmen und SAP-Schnittstelle ist gefährlich bzw. unvollständig."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0242",
+      "speaker": "Anna",
+      "unitText": "Können wir nur Produktdaten cachen, keine Kundendaten?",
+      "verdict": "attach_as_evidence",
+      "reason": "Ist eine konkrete Ausprägung der bereits offenen Caching-/Datenminimierungsfrage.",
+      "references": [
+        {
+          "candidateId": "data-minimization-open",
+          "candidateExists": true,
+          "candidateProp": "Es ist offen, ob Kundendaten im Portal gespeichert werden oder bei Bedarf aus SAP abgerufen werden sollen; Datenminimierung spricht für Abruf, Performance und Verfügbarkeit dagegen.",
+          "canonicalId": "data-minimization-vs-sap-fetch-open",
+          "canonicalProp": "Es ist offen, ob Kundendaten im Portal gespeichert werden oder bei Bedarf aus SAP abgerufen werden sollen; Datenminimierung spricht für Abruf, Performance und Verfügbarkeit dagegen."
+        },
+        {
+          "candidateId": "sap-unavailable-offer-policy-open",
+          "candidateExists": true,
+          "candidateProp": "Wenn SAP nicht erreichbar ist, ist offen, ob keine Angebote erstellt werden dürfen oder ob ein Fallback/Cache genutzt werden soll.",
+          "canonicalId": "sap-unavailable-offer-policy-open",
+          "canonicalProp": "Wenn SAP nicht erreichbar ist, ist offen, ob keine Angebote erstellt werden dürfen oder ob ein Fallback bzw. Cache genutzt werden soll."
+        },
+        {
+          "candidateId": "cache-personal-data-risk",
+          "candidateExists": true,
+          "candidateProp": "Ein Cache könnte kundenindividuelle Rabatte bzw. Kundendaten enthalten und erzeugt damit Datenschutz-, Retention- und Invalidierungsrisiken.",
+          "canonicalId": "cache-personal-data-and-invalidation-risk",
+          "canonicalProp": "Ein Cache könnte kundenindividuelle Rabatte bzw. Kundendaten enthalten und erzeugt damit Datenschutz-, Retention- und Invalidierungsrisiken."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0243",
+      "speaker": "Ben",
+      "unitText": "Vielleicht, aber Rabattlogik ist kundenspezifisch.",
+      "verdict": "attach_as_evidence",
+      "reason": "Begründet das bereits erfasste Risiko, dass Caching wegen kundenspezifischer Rabattlogik personenbezogene bzw. kundenspezifische Daten betreffen kann.",
+      "references": [
+        {
+          "candidateId": "cache-personal-data-risk",
+          "candidateExists": true,
+          "candidateProp": "Ein Cache könnte kundenindividuelle Rabatte bzw. Kundendaten enthalten und erzeugt damit Datenschutz-, Retention- und Invalidierungsrisiken.",
+          "canonicalId": "cache-personal-data-and-invalidation-risk",
+          "canonicalProp": "Ein Cache könnte kundenindividuelle Rabatte bzw. Kundendaten enthalten und erzeugt damit Datenschutz-, Retention- und Invalidierungsrisiken."
+        },
+        {
+          "candidateId": "data-minimization-open",
+          "candidateExists": true,
+          "candidateProp": "Es ist offen, ob Kundendaten im Portal gespeichert werden oder bei Bedarf aus SAP abgerufen werden sollen; Datenminimierung spricht für Abruf, Performance und Verfügbarkeit dagegen.",
+          "canonicalId": "data-minimization-vs-sap-fetch-open",
+          "canonicalProp": "Es ist offen, ob Kundendaten im Portal gespeichert werden oder bei Bedarf aus SAP abgerufen werden sollen; Datenminimierung spricht für Abruf, Performance und Verfügbarkeit dagegen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0252",
+      "speaker": "Anna",
+      "unitText": "Wir haben jetzt sehr viele offene Punkte.",
+      "verdict": "already_covered_indirectly",
+      "reason": "Meta-Zusammenfassung des bereits breit dokumentierten Zustands mit vielen offenen Punkten, ohne neuen eigenständigen Sachclaim.",
+      "references": [
+        {
+          "candidateId": "avoid-false-certainty",
+          "candidateExists": true,
+          "candidateProp": "Die Ergebnisdarstellung soll keine falsche Sicherheit erzeugen; Widersprüche und offene Punkte müssen sichtbar bleiben.",
+          "canonicalId": "avoid-false-certainty-and-show-contradictions",
+          "canonicalProp": "Die Ergebnisdarstellung soll keine falsche Sicherheit erzeugen; Widersprüche und offene Punkte müssen sichtbar bleiben."
+        },
+        {
+          "candidateId": "scope-must-show-exclusions-and-risks",
+          "candidateExists": true,
+          "candidateProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen.",
+          "canonicalId": "scope-documentation-must-show-exclusions-and-risks",
+          "canonicalProp": "Der MVP-Schnitt soll klar dokumentieren, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen."
+        }
+      ]
+    },
+    {
+      "unitId": "AU-0255",
+      "speaker": "Eva",
+      "unitText": "Und Risiken dürfen nicht nur technisch sein, sondern auch finanziell und organisatorisch.",
+      "verdict": "missing_claim",
+      "reason": "Der Ledger enthält viele einzelne nichttechnische Risiken, aber kein explizites Querschnittsprinzip, Risiken auch finanziell und organisatorisch systematisch zu betrachten.",
+      "references": []
+    }
+  ],
+  "brokenReferences": [
+    {
+      "unitId": "AU-0195",
+      "candidateId": "freigabeprozess-fehlt"
+    }
+  ]
+}

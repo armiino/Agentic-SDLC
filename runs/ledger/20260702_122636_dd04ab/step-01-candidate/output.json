@@ -1,0 +1,954 @@
+{
+  "entries": [
+    {
+      "id": "R1",
+      "proposition": "Das Kundenportal soll als Web-Portal im MVP umgesetzt werden, mobile Nutzung ist sp\u00E4ter m\u00F6glich.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "frontend",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0001: Also wir brauchen definitiv ein Kundenportal. ... Web first. Mobile sp\u00E4ter."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Mobile Nutzung wird verschoben.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0001"
+      ]
+    },
+    {
+      "id": "R2",
+      "proposition": "Login erfolgt per E-Mail und Passwort mit Double-Opt-In zur DSGVO-Konformit\u00E4t im MVP.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "authentication",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0003: ... Login per E-Mail? Dann brauchen wir Double-Opt-In."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0199: MVP: 1. Login mit Double-Opt-In"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "open-questions": {
+          "applicability": "not_applicable",
+          "representationMode": "consciously_omitted"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "DSGVO-konformit\u00E4t ist Pflicht.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0003",
+        "AU-0199"
+      ]
+    },
+    {
+      "id": "R3",
+      "proposition": "Das Backend ist aktuell nicht API-ready, daher wird ein API Layer ben\u00F6tigt, um Integration zu erm\u00F6glichen.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "backend",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0002: ... unser Backend noch nicht mal API-ready."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0036: Wir brauchen definitiv eine API Layer."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "API Layer ist Voraussetzung f\u00FCr Integration.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0002",
+        "AU-0036"
+      ]
+    },
+    {
+      "id": "R4",
+      "proposition": "SSO (Single Sign-On) ist optional und noch nicht final entschieden, OAuth wird bevorzugt, aber ist komplexer und zeitaufw\u00E4ndiger.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must_consider",
+      "scope": "authentication",
+      "timeScope": "later_possible",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-004: SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?"
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0258: OAuth ist bevorzugt, aber noch nicht final."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "SSO-Integration noch offen.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0004",
+        "AU-0258"
+      ]
+    },
+    {
+      "id": "R5",
+      "proposition": "Rollenmodell im MVP umfasst mindestens Admin, Sales und Kunde; Support wird im MVP nicht ber\u00FCcksichtigt.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "authorization",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0199: ... Rollen Admin/Sales/Kunde ..."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0060: Nein erstmal nicht (Support)."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Support-Rollen sind ausgeschlossen im MVP.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0199",
+        "AU-0060"
+      ]
+    },
+    {
+      "id": "R6",
+      "proposition": "Angebotserstellung im MVP basiert auf SAP-Lesedaten ohne Schreibzugriff; Rabatt-Freigabeprozess ist Phase 2.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "business logic",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0199: Angebotserstellung mit SAP-Lesedaten ..."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0201: Vielleicht Phase 2 (Rabatt-Freigabe)."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Rabatt-Freigabeprozess noch offen, kein manueller Sonderrabatt im MVP.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0199",
+        "AU-0201"
+      ]
+    },
+    {
+      "id": "C1",
+      "proposition": "DSGVO-Konformit\u00E4t ist verpflichtend und umfasst Double-Opt-In, L\u00F6schkonzepte, Audit Trails und Zugriffskontrolle.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "compliance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0003: DSGVO ... Double-Opt-In ... L\u00F6schkonzepte ... Auftragsverarbeitungsvertr\u00E4ge."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0259: DSGVO ist nicht optional."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "not_applicable",
+          "representationMode": "consciously_omitted"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "DSGVO ist gesetzliche Pflicht.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0003",
+        "AU-0259"
+      ]
+    },
+    {
+      "id": "R7",
+      "proposition": "Auditierbarkeit mit minimalem Audit Trail ist Pflicht im MVP, inklusive Protokollierung von \u00C4nderungen und Zugriffen.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "security",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0023: Auditierbarkeit ist Pflicht."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0199: Minimaler Audit Trail."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Audit-Logs sind notwendig f\u00FCr Compliance und Sicherheit.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0023",
+        "AU-0199"
+      ]
+    },
+    {
+      "id": "R8",
+      "proposition": "Backup und Disaster Recovery sind Pflicht im MVP, da Kundendaten verarbeitet werden.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "operations",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0043: Disaster Recovery."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0045: Wenn Kundendaten drin sind: ja."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0199: Backup."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "not_applicable",
+          "representationMode": "consciously_omitted"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Backup ist notwendig f\u00FCr Datensicherheit.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0043",
+        "AU-0045",
+        "AU-0199"
+      ]
+    },
+    {
+      "id": "R9",
+      "proposition": "Hosting muss EU-only oder mindestens DSGVO-konform sein, mit nachweisbarer Datenresidenz.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "infrastructure",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0031: EU only?"
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0032: Ja EU only oder DSGVO-konform."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0098: Wir brauchen nachweisbare Datenresidenz."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "EU-Datenschutz ist kritisch.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0031",
+        "AU-0032",
+        "AU-0098"
+      ]
+    },
+    {
+      "id": "R10",
+      "proposition": "Keine neue Datenbank im MVP, Managed Services sind erlaubt, aber Auswahl ist noch offen.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "infrastructure",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0028: Kein neuer DB Server."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0029: Managed Services sind okay."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0078: SAP kann keine Support-Tickets speichern."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "DB-Server wird nicht neu aufgesetzt.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0028",
+        "AU-0029",
+        "AU-0078"
+      ]
+    },
+    {
+      "id": "R11",
+      "proposition": "Support wird im MVP nicht mit Ticketsystem umgesetzt, sondern mit Kontaktformular ohne Persistenz, was ein Risiko darstellt.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "support",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0060: Nein erstmal nicht (Ticketsystem)."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0206: Kontaktformular ohne Ticketpersistenz?"
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0211: Notieren als Risiko."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Supportprozess unklar, Datenschutzrisiken bei E-Mail-Verarbeitung.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0060",
+        "AU-0206",
+        "AU-0211"
+      ]
+    },
+    {
+      "id": "R12",
+      "proposition": "Rabatt-Freigabeprozess ist nicht im MVP enthalten; im MVP d\u00FCrfen keine manuellen Sonderrabatte \u00FCber Standardsatz erstellt werden.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "business logic",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0202: Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0203: Constraint: keine manuellen Sonderrabatte im MVP."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Rabattlogik im MVP eingeschr\u00E4nkt.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0202",
+        "AU-0203"
+      ]
+    },
+    {
+      "id": "R13",
+      "proposition": "PDF-Export von Angeboten mit rechtlichen Fu\u00DFnoten, Versionsnummer und Datenschutzhinweisen ist erforderlich.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "output",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0159: Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0160: Datenschutzhinweise bei personenbezogenen Daten."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "PDF-Export ist wichtig f\u00FCr Sales und Compliance.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0159",
+        "AU-0160"
+      ]
+    },
+    {
+      "id": "R14",
+      "proposition": "Templates f\u00FCr Angebote m\u00FCssen versioniert und revisionssicher sein, um Nachvollziehbarkeit zu gew\u00E4hrleisten.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "output",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0163: Templates m\u00FCssen versioniert werden."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0164: Angebote m\u00FCssen revisionssicher nachvollziehbar sein."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Revisionssicherheit ist wichtig f\u00FCr rechtliche Nachvollziehbarkeit.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0163",
+        "AU-0164"
+      ]
+    },
+    {
+      "id": "R15",
+      "proposition": "SAP-Verf\u00FCgbarkeit ist eine kritische Abh\u00E4ngigkeit f\u00FCr das Kundenportal und die Angebotserstellung.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "integration",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0246: SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "SAP-Ausfall beeintr\u00E4chtigt Angebotserstellung.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0246"
+      ]
+    },
+    {
+      "id": "R16",
+      "proposition": "API Gateway Nutzung ist verpflichtend laut interner Policy, aber das Gateway-Team hat eine sechs Wochen Warteliste, was das 8-Wochen-MVP gef\u00E4hrdet.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "infrastructure",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0110: Neue externe Portale m\u00FCssen \u00FCber zentrales API Gateway laufen."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0111: Gateway-Team hat sechs Wochen Warteliste."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "API Gateway ist Pflicht, aber Verz\u00F6gerung droht.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0110",
+        "AU-0111"
+      ]
+    },
+    {
+      "id": "R17",
+      "proposition": "Rate Limiting und Audit sind mindestens erforderlich, um Missbrauch und Sicherheitsrisiken bei Massenexporten zu verhindern.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "security",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0230: Dann mindestens Rate Limiting und Audit."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Schutz vor Missbrauch ist notwendig.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0230"
+      ]
+    },
+    {
+      "id": "R18",
+      "proposition": "Test- und Entwicklungsumgebungen m\u00FCssen Pseudonymisierung oder synthetische Testdaten verwenden; echte Kundendaten d\u00FCrfen nicht ungepr\u00FCft verwendet werden.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "testing",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0214: Testdaten d\u00FCrfen keine echten Kundendaten enthalten."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0217: Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Datenschutz im Testbetrieb ist kritisch.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0214",
+        "AU-0217"
+      ]
+    },
+    {
+      "id": "R19",
+      "proposition": "Datenklassifikation und Retention Rules sind notwendig, um gesetzliche Aufbewahrungspflichten und L\u00F6schanfragen zu managen, auch wenn nicht vollst\u00E4ndig im MVP umgesetzt.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must_consider",
+      "scope": "compliance",
+      "timeScope": "later_possible",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0186: Wir brauchen Datenklassifikation und Retention Rules."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0187: Das klingt nicht nach MVP."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Retention ist komplex und teilweise offen.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0186",
+        "AU-0187"
+      ]
+    },
+    {
+      "id": "OQ1",
+      "proposition": "Die finale Entscheidung \u00FCber den Pilotkunden (M\u00FCller AG Schweiz oder Hansa GmbH Deutschland) steht noch aus und beeinflusst Scope, Datenschutz und W\u00E4hrung.",
+      "kind": "open_question",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "project scope",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "transcript",
+          "quote": "AU-0143: Das entscheidet Sales n\u00E4chste Woche."
+        },
+        {
+          "source": "transcript",
+          "quote": "AU-0144: Das beeinflusst Scope massiv."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "question"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "question"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "question"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Pilotkunde noch unklar, beeinflusst viele Bereiche.",
+      "candidateIds": null,
+      "assumedRelation": null,
+      "sourceUnitIds": [
+        "AU-0143",
+        "AU-0144"
+      ]
+    }
+  ]
+}

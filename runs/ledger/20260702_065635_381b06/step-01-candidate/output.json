@@ -1,0 +1,3384 @@
+{
+  "entries": [
+    {
+      "id": "L001",
+      "proposition": "A customer-facing portal is required as the product direction, though the broader \u0027platform\u0027 framing is not settled.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must",
+      "scope": "product framing and customer access channel",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Also wir brauchen definitiv ein Kundenportal. Aber nicht nur ein Portal, eher so eine Plattform. Also... vielleicht doch erstmal nur ein Portal."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "assumption"
+        },
+        "risks": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Need to preserve ambiguity between portal and broader platform.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L002",
+      "proposition": "The solution should be web-first for MVP, while mobile support is considered for later; however mobile priority is still disputed because Sales wants mobile workflows.",
+      "kind": "scope",
+      "status": "uncertain",
+      "modality": "must_clarify",
+      "scope": "frontend channel strategy",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Do not strengthen to decided web-first.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L003",
+      "proposition": "Choosing native mobile would be expensive, and there is no budget for two separate frontends.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "frontend implementation and budget",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer. Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Budget constraint affects channel choice.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L004",
+      "proposition": "The current backend is not API-ready.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "integration architecture",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Und ehrlich gesagt ist unser Backend noch nicht mal API-ready."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "assumption"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Impacts integration feasibility and schedule.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L005",
+      "proposition": "Because customer data will be stored, GDPR-related controls are mandatory.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "personal data processing",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Bevor wir \u00FCber Frontends reden: DSGVO. Wir speichern Kundendaten."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] DSGVO ist nicht optional."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "context",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "External compliance obligation.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L006",
+      "proposition": "If login uses email, double-opt-in is required.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "authentication and consent",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Login per E-Mail? Dann brauchen wir Double-Opt-In."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Dann MVP: 1. Login mit Double-Opt-In"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Conditioned on email-based login.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L007",
+      "proposition": "Logging is required for the system.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must",
+      "scope": "system logging and traceability",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Dann brauchen wir Double-Opt-In. Und Logging."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Ja Logging. Aber bitte nicht zu komplex. Wir haben keine Zeit."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Logging exists but granularity is unresolved.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L008",
+      "proposition": "A deletion concept is required for customer data and deletion requests.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "data lifecycle and deletion rights",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Dann muss das gehen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Also brauchen wir ein L\u00F6schkonzept."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Triggered by customer deletion requests and support data too.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L009",
+      "proposition": "Data processing agreements are required.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "vendor and processor compliance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Relevant for managed services/providers.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L010",
+      "proposition": "The MVP has been promised in 8 weeks.",
+      "kind": "process_constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "delivery timeline",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] MVP in 8 Wochen wurde versprochen."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "context",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Central schedule constraint.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L011",
+      "proposition": "For MVP, login should initially use email and password.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "authentication for mvp",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Also erstmal Login per E-Mail und Passwort."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Subject to required double-opt-in if email-based.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L012",
+      "proposition": "SSO is optional and provider choice is unresolved; Azure AD, Google, or both were mentioned.",
+      "kind": "open_question",
+      "status": "open",
+      "modality": "optional",
+      "scope": "single sign-on strategy",
+      "timeScope": "later_possible",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] SSO optional"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Genau. Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "low",
+      "notes": "Do not infer Azure decision.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L013",
+      "proposition": "There is no central IAM, and SAP\u0027s identity-related capability is old.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "identity integration baseline",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "assumption"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Complicates SSO and auth architecture.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L014",
+      "proposition": "If SAP is involved with personal data in ERP, audit trails, access control, and role models are required.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "sap-related personal data handling",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] SAP? Wenn SAP involviert ist, dann reden wir von personenbezogenen Daten im ERP. Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "SAP involvement escalates compliance controls.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L015",
+      "proposition": "Role design is not finalized; Admin and normal user were proposed, with Manager and Support still uncertain.",
+      "kind": "open_requirement",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "authorization roles",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Later MVP cut lists Admin/Sales/Kunde.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L016",
+      "proposition": "Master data resides in SAP but is partially incomplete.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "sap master data quality",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Stammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "assumption"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Data quality risk for offer generation.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L017",
+      "proposition": "Generating offers faster is the primary business goal.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "business objective",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Ja genau! Angebote schneller erstellen. Das ist eigentlich das Hauptziel. Portal ist nur Mittel zum Zweck."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Ziel ist schneller Angebote erstellen."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "assumption"
+        },
+        "risks": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "low",
+      "notes": "Core goal for MVP prioritization.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L018",
+      "proposition": "Customers should be able to view orders and download invoices.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must",
+      "scope": "customer self-service features",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Dann MVP: 3. Rechnungsdownload"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "assumption"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Orders viewing mentioned once; invoice download appears in MVP cut.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L019",
+      "proposition": "Push notifications are desired by Marketing but were not previously aligned and are not confirmed for MVP.",
+      "kind": "open_requirement",
+      "status": "open",
+      "modality": "desired",
+      "scope": "marketing engagement features",
+      "timeScope": "later_possible",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Und Marketing will Push Notifications."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Push Notifications? Das hatten wir nie besprochen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Doch, im letzten Meeting. Also ich glaube zumindest."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "low",
+      "notes": "Conflicting recollection; not agreed.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L020",
+      "proposition": "Push notifications require user consent, and tracking raises additional GDPR concerns.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "notifications and analytics consent",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Push hei\u00DFt Einwilligung. Wieder DSGVO. Und Tracking ist auch ein Thema."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Applies if push/tracking are implemented.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L021",
+      "proposition": "Analytics infrastructure does not currently exist.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "tracking and kpi measurement",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Tracking? Wir haben keine Analytics Infrastruktur."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "assumption"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Blocks immediate analytics implementation.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L022",
+      "proposition": "KPIs may be needed, but analytics is explicitly not in MVP unless later decided otherwise.",
+      "kind": "scope",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "analytics and kpi tracking",
+      "timeScope": "later_possible",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Keep \u0027not in MVP\u0027 and uncertainty visible.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L023",
+      "proposition": "Proposed KPIs are conversion rate from offer to order and time to offer.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must_consider",
+      "scope": "business measurement",
+      "timeScope": "later_possible",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "risks": {
+          "applicability": "not_applicable",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "low",
+      "notes": "Metrics named, not implementation-committed.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L024",
+      "proposition": "Offers contain personal data.",
+      "kind": "compliance_constraint",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "offer data classification",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Aber Angebot selbst enth\u00E4lt personenbezogene Daten."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "context",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Drives encryption, audit, retention.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L025",
+      "proposition": "Transport security with TLS is sufficient; end-to-end encryption is considered unrealistic.",
+      "kind": "decision",
+      "status": "decided",
+      "modality": "must",
+      "scope": "data in transit security",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] TLS reicht. E2E ist unrealistisch."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Concrete security decision.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L026",
+      "proposition": "Auditability of changes is mandatory: it must be possible to determine who changed what and when.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "audit trail",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Explicitly mandatory.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L027",
+      "proposition": "A full security review normally takes 6 weeks, which threatens the 8-week MVP timeline.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "delivery schedule and governance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Major schedule risk.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L028",
+      "proposition": "Skipping the security review is not allowed.",
+      "kind": "process_constraint",
+      "status": "rejected",
+      "modality": "must_not",
+      "scope": "delivery governance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Dann machen wir es ohne Security Review?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Das ist keine Option."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Rejected path; must remain visible.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L029",
+      "proposition": "No new database server may be introduced because IT explicitly disallowed it.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must_not",
+      "scope": "infrastructure persistence",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Vielleicht k\u00F6nnen wir Managed Services nehmen. Kein neuer DB Server \u2013 IT hat das klar gesagt."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Ja kein neuer DB Server."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Strong infra constraint.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L030",
+      "proposition": "Managed services are acceptable, but cost sensitivity remains important.",
+      "kind": "decision",
+      "status": "decided",
+      "modality": "must_consider",
+      "scope": "hosting and managed infrastructure",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Managed Services sind okay. Aber bitte g\u00FCnstig."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Cost is a key selection criterion.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L031",
+      "proposition": "Low cost and scalability are in tension.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "solution economics and performance",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] G\u00FCnstig und skalierbar widerspricht sich."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Overengineering und skalierbar sind ein Spannungsfeld."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Explicit trade-off.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L032",
+      "proposition": "Hosting must be EU-only, or at minimum GDPR-compliant, but these are recognized as not equivalent and need clarification.",
+      "kind": "open_question",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "data residency and hosting compliance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Und wo werden Daten gehostet? EU only?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Ja EU only. Oder zumindest DSGVO-konform."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Das ist nicht dasselbe."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Genau."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Do not collapse EU-only into generic GDPR compliance.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L033",
+      "proposition": "An API layer is definitely required for integrations.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "integration architecture",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Strong architectural requirement.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L034",
+      "proposition": "The API must be secured, with OAuth preferred over API keys, but the final mechanism is not yet decided.",
+      "kind": "open_requirement",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "api authentication and authorization",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] API muss abgesichert sein. OAuth? Oder API Keys?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] OAuth w\u00E4re besser. Aber komplexer."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Und OAuth ist bevorzugt, aber noch nicht final."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Preference without final decision.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L035",
+      "proposition": "Backup and disaster recovery are required for MVP because customer data is involved.",
+      "kind": "non_functional_requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "backup and disaster recovery",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Und wir haben noch gar nicht \u00FCber Backup gesprochen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Ja Disaster Recovery."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Brauchen wir das f\u00FCr MVP?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Wenn Kundendaten drin sind: ja."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Okay also doch."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Explicit MVP inclusion.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L036",
+      "proposition": "Expected user volume is unknown, ranging from 200 to 20,000, so scalability must be considered without overengineering.",
+      "kind": "non_functional_requirement",
+      "status": "uncertain",
+      "modality": "must_consider",
+      "scope": "performance and scalability",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Skalierbarkeit muss ber\u00FCcksichtigt werden."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Aber bitte kein Overengineering."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Wide uncertainty materially impacts architecture.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L037",
+      "proposition": "A ticketing system is explicitly excluded from MVP for now.",
+      "kind": "scope",
+      "status": "rejected",
+      "modality": "must_not",
+      "scope": "support tooling in mvp",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Was ist mit Support? Ticketsystem?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Nein erstmal nicht."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Ticketsystem war nicht im MVP."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "consciously_omitted"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "consciously_omitted"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Intentional omission.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L038",
+      "proposition": "A roles and permissions concept is required.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "authorization governance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Und ein Rollen- und Berechtigungskonzept."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Separate from specific role list.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L039",
+      "proposition": "The team lacks an architect, which creates delivery and design risk.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "project staffing and architecture ownership",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Wir brauchen einen Architekten."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Wir haben keinen."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Organizational risk.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L040",
+      "proposition": "Documentation is required at least to the extent necessary for security review, despite pressure to keep it light.",
+      "kind": "process_constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "documentation and review readiness",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Dokumentation ist wichtig, aber bitte nicht zu viel."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Ohne Dokumentation kein Security Review."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Okay dann doch."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Governance-enabling documentation only, not exhaustive docs.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L041",
+      "proposition": "As an MVP compromise, a contact form may be used instead of a full ticketing system, but no proper ticket persistence is planned.",
+      "kind": "scope",
+      "status": "open",
+      "modality": "optional",
+      "scope": "support intake for mvp",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Ticketsystem war nicht im MVP. Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Kontaktformular ohne Ticketpersistenz?"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Conscious restriction, not finalized.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L042",
+      "proposition": "If a contact form is used, requests must still be associated with the customer account.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must",
+      "scope": "support request handling",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Applies if contact form path chosen.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L043",
+      "proposition": "Support request data containing personal information must be included in the deletion concept and subject access obligations.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "support data compliance",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Wenn Support-Anfragen personenbezogene Daten enthalten, dann m\u00FCssen sie in das L\u00F6schkonzept und in die Auskunftspflicht einbezogen werden."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Conditional on support data capture.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L044",
+      "proposition": "Excel is not an acceptable support workaround, and using Excel with personal customer data would be a compliance problem.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must_not",
+      "scope": "manual support operations",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Ich will nur verhindern, dass wir nach dem Launch manuell Excel-Listen pflegen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Excel ist keine Option."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Excel mit personenbezogenen Kundendaten w\u00E4re aus Compliance-Sicht problematisch."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "not_applicable",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Explicitly rejected workaround.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L045",
+      "proposition": "Offers above a discount threshold require approval; at least manager approval is mandatory above 15%, while higher thresholds and Finance involvement are still unclear.",
+      "kind": "open_requirement",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "discount approval policy",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Oder ab 20 Prozent. Ich bin mir nicht sicher."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Threshold conflict must remain unresolved.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L046",
+      "proposition": "Without a discount approval process, incorrect offers can be sent, creating financial risk.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "offer governance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Nein, ohne Freigabeprozess k\u00F6nnen falsche Angebote rausgehen. Das ist ein finanzielles Risiko."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Business risk, not just technical.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L047",
+      "proposition": "Offer workflow statuses should include at least draft, pending approval, approved, sent, accepted, and rejected.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must_consider",
+      "scope": "offer workflow model",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Dann brauchen wir Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Proposed model; scope not finalized.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L048",
+      "proposition": "Discount logic comes from SAP, but the approval workflow would likely be implemented in the portal.",
+      "kind": "architecture",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "split of responsibilities between sap and portal",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Das muss klar definiert werden. Rabattlogik kommt aus SAP, aber Freigabeprozess w\u00E4re vermutlich im Portal."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "assumption"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Architectural boundary unresolved.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L049",
+      "proposition": "There is an unresolved permissions conflict: Support may need to view offers to help customers, but should not see confidential special conditions or change prices.",
+      "kind": "open_question",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "support vs confidential pricing access",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Also Support sieht nur Status, nicht Details?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Dann kann Support nicht helfen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Explicit access-control conflict.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L050",
+      "proposition": "Opening offers must be logged for auditability.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "offer access auditing",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Und protokollieren. Wer hat welches Angebot ge\u00F6ffnet?"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Access logging requirement, not just change logging.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L051",
+      "proposition": "EU-only hosting is difficult because the standard provider may replicate backups globally unless explicitly disabled, so provable data residency is needed.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must",
+      "scope": "hosting and backup residency",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Specific operational compliance risk.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L052",
+      "proposition": "A cost estimate for the board is needed by Friday, even though architecture and scope are not settled.",
+      "kind": "process_constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "management reporting",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Wir brauchen aber eine Kostensch\u00E4tzung f\u00FCr den Vorstand bis Freitag."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Bis Freitag? Wir haben nicht mal eine Architekturentscheidung."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Planning and expectation risk.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L053",
+      "proposition": "A rough estimate without clear scope, privacy measures, or SAP integration is risky or incomplete.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "cost estimation credibility",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Eine grobe Sch\u00E4tzung ohne Scope ist gef\u00E4hrlich."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Und ohne Datenschutzma\u00DFnahmen unvollst\u00E4ndig."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Und ohne SAP-Schnittstelle wertlos."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Board estimate risk explicitly stated.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L054",
+      "proposition": "New external portals must use the central API gateway due to internal policy.",
+      "kind": "process_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "external integration governance",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] Noch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "External/internal policy obligation.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L055",
+      "proposition": "The API gateway team currently has a six-week waiting list, which conflicts with the 8-week MVP timeline.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "dependency on central gateway team",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Das passt nicht zum 8-Wochen-MVP."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Critical dependency risk.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L056",
+      "proposition": "Manual upload of offers was suggested only as an interim workaround, but it increases error risk, customer-data risk, and file-storage permission issues.",
+      "kind": "risk",
+      "status": "open",
+      "modality": "must_consider",
+      "scope": "manual mvp workaround",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Kann man f\u00FCr MVP manuell Angebote hochladen?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Vielleicht als Zwischenl\u00F6sung?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Manuelle Uploads erh\u00F6hen Fehlerwahrscheinlichkeit."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Und wer pr\u00FCft, ob keine falschen Kundendaten hochgeladen werden?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] Au\u00DFerdem haben wir dann ein Berechtigungsproblem im File Storage."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Workaround considered but risky.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L057",
+      "proposition": "For data minimization, fetching data from SAP on demand would be better than storing all customer data locally, but it worsens performance and availability.",
+      "kind": "architecture",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "data access pattern vs local storage",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Was ist eigentlich mit Datenminimierung? M\u00FCssen alle Kundendaten im Portal liegen oder reicht ein Abruf aus SAP bei Bedarf?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Abruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Architectural trade-off with compliance impact.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L058",
+      "proposition": "SAP has weekend maintenance windows, but customers are expected to use the portal on weekends, including international customers.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "availability dependency on sap",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] Und SAP hat Wartungsfenster am Wochenende."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Kunden arbeiten auch am Wochenende."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Vor allem internationale Kunden."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Availability mismatch between dependency and usage.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L059",
+      "proposition": "Market scope is DACH at launch, later EU, and possibly USA, but expansion beyond DACH is not final.",
+      "kind": "scope",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "geographic rollout",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Zum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] USA \u00E4ndert Datenschutz und Vertragslage massiv."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Future expansion affects compliance and i18n.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L060",
+      "proposition": "The portal should support German and English.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "desired",
+      "scope": "language support",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Deutsch und Englisch sollten schon drin sein."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Support braucht mindestens Deutsch und Englisch."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "optional",
+          "representationMode": "assumption"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Stated as should, not hard must.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L061",
+      "proposition": "Multi-currency support is needed: EUR definitely, CHF possibly for MVP depending on Swiss pilot, USD later.",
+      "kind": "open_requirement",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "currency support",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Nicht im MVP?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Wenn Schweiz Pilotkunde ist, dann doch."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Scope depends on pilot-country decision.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L062",
+      "proposition": "The pilot customer is not final; it may be a Swiss customer or a German one, and Sales decides next week.",
+      "kind": "open_question",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "pilot customer selection",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Pilotkunde ist noch nicht final."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Ich dachte Pilotkunde ist M\u00FCller AG aus der Schweiz."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Vielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Das beeinflusst Scope massiv."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "question"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "question"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Affects currency, privacy, geography.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L063",
+      "proposition": "SAP prices are not always real-time current; some discounts are calculated nightly.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "pricing data freshness",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Noch ein technischer Punkt: SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "context",
+          "representationMode": "assumption"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Creates offer correctness risk.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L064",
+      "proposition": "Offers must not be sent with incorrect discounts; therefore price validity and possibly warnings are needed.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must",
+      "scope": "pricing correctness in offers",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Wenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Oder wir akzeptieren das Risiko."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Nein."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Rejection of risk acceptance is explicit.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L065",
+      "proposition": "PDF export of offers is important, and Finance requires legal footnotes and version numbers in the PDF.",
+      "kind": "requirement",
+      "status": "open",
+      "modality": "must",
+      "scope": "offer document generation",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Was ist mit PDF-Export von Angeboten?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] PDF ist wichtig f\u00FCr Sales."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Legal/document requirements attached to PDF.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L066",
+      "proposition": "Offer templates must be versioned, and offers must remain traceable in a revision-safe manner; event history or audit log per offer is suggested.",
+      "kind": "compliance_constraint",
+      "status": "open",
+      "modality": "must",
+      "scope": "document versioning and traceability",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Genau. Und Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Dann brauchen wir Event-History oder Audit-Log pro Angebot."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] F\u00FCr Freigabe und rechtliche Nachvollziehbarkeit: ja, zumindest minimal."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Minimal MVP version of this is expected.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L067",
+      "proposition": "Online acceptance of offers is desired but likely excluded from MVP for now; MVP may be limited to offer download because online acceptance implies contract conclusion and SAP write-back.",
+      "kind": "scope",
+      "status": "open",
+      "modality": "desired",
+      "scope": "offer acceptance flow",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Kann der Kunde ein Angebot online akzeptieren?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Das w\u00E4re super."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Das ist ein Vertragsabschluss. Ganz anderes Thema."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Wir m\u00FCssen entscheiden."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "optional",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Do not infer final exclusion; still undecided.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L068",
+      "proposition": "If online offer acceptance is implemented, proof of consent, timestamping, and possibly terms acceptance are required.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "digital contract acceptance evidence",
+      "timeScope": "later_possible",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Conditional on online acceptance feature.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L069",
+      "proposition": "SAP write access has not yet been decided; earlier discussion leaned more toward read-only integration.",
+      "kind": "open_question",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "sap write-back capability",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Und dann entsteht eine Bestellung. Das muss sauber nach SAP zur\u00FCck."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "question"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Critical architectural and scope decision.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L070",
+      "proposition": "Technical logs must not contain personal data; audit logs, application logs, and security logs must be distinguished and may have different retention periods.",
+      "kind": "compliance_constraint",
+      "status": "required",
+      "modality": "must",
+      "scope": "logging architecture and privacy",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] Noch ein Risiko: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten. Wenn wir alles auditieren, m\u00FCssen wir zwischen Audit und technischem Logging unterscheiden."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Guter Punkt. Application logs, audit logs und security logs sind unterschiedliche Dinge."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Und unterschiedliche Aufbewahrungsfristen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Und \u0022keine personenbezogenen Daten in technischen Logs\u0022."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Important separation of logging concerns.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L071",
+      "proposition": "Offer retention likely has legal multi-year obligations, but Legal must confirm; deletion requests can conflict with statutory retention, so data classification and retention rules are needed.",
+      "kind": "open_requirement",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "retention and deletion policy",
+      "timeScope": "mvp_or_later_unclear",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Wie lange m\u00FCssen wir Angebote speichern?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Das kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Also brauchen wir Datenklassifikation und Retention Rules."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Okay, minimaler Retention-Plan."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Legal confirmation pending; minimal MVP plan requested.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L072",
+      "proposition": "A narrowed MVP candidate was proposed: login with double-opt-in, offer creation using SAP read data, invoice download, roles Admin/Sales/Customer, minimal audit trail, EU managed hosting, and backup.",
+      "kind": "decision",
+      "status": "open",
+      "modality": "must_consider",
+      "scope": "proposed mvp cut",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Proposed MVP slice, not fully accepted by all stakeholders.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L073",
+      "proposition": "If the discount approval process is deferred to phase 2, then MVP must disallow manual special discounts beyond the standard rate.",
+      "kind": "constraint",
+      "status": "decided",
+      "modality": "must_not",
+      "scope": "mvp discount handling",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Und Rabatt-Freigabe?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Vielleicht Phase 2."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Gut."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Concrete MVP constraint derived from omitted approval workflow.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L074",
+      "proposition": "Using email for support instead of ticket persistence is easier, but it is unstructured, poorly auditable, and a conscious limitation and risk rather than something to ignore.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "support process workaround",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Dann werden Supportdaten per E-Mail verarbeitet. Auch Datenschutz."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] E-Mail ist unstrukturiert und schlecht auditierbar."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Aber einfacher."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Notieren als Risiko."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Bitte nicht \u0022wir ignorieren es\u0022, sondern \u0022bewusste Einschr\u00E4nkung\u0022."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "consciously_omitted"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Explicitly framed as conscious limitation.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L075",
+      "proposition": "Separate Dev, Test, and Prod environments are required, and test data must not contain real customer data; pseudonymized or synthetic test data is needed.",
+      "kind": "compliance_constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "environments and test data handling",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Ja, Pseudonymisierung oder synthetische Testdaten."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Concrete environment and data handling requirement.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L076",
+      "proposition": "The SAP test system contains real old customer data, which cannot be used unchecked and currently blocks integration testing.",
+      "kind": "risk",
+      "status": "decided",
+      "modality": "must_note",
+      "scope": "integration testing with sap",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Das blockiert Integrationstests."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Immediate compliance and delivery blocker.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L077",
+      "proposition": "CI/CD requires secrets management.",
+      "kind": "requirement",
+      "status": "decided",
+      "modality": "must",
+      "scope": "deployment pipeline security",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] Und CI/CD braucht Secrets Management."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Notiert."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "risks": {
+          "applicability": "optional",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "not_applicable",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Security baseline for delivery pipeline.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L078",
+      "proposition": "The API should have rate limits; because customers may download hundreds of invoices at once, pagination and download limits are needed, and at minimum rate limiting plus audit must exist.",
+      "kind": "non_functional_requirement",
+      "status": "open",
+      "modality": "must",
+      "scope": "api abuse prevention and bulk download handling",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Wir brauchen auch Rate Limits f\u00FCr API."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Kunden laden manchmal hunderte Rechnungen auf einmal herunter."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Dann brauchen wir Pagination und Download-Limits."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Dann mindestens Rate Limiting und Audit."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "requirement"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "optional",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Derived from abuse, UX, and legal/security concerns.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L079",
+      "proposition": "SAP availability is a critical dependency; if SAP is unavailable, either offer creation must be blocked or a fallback/cache strategy is needed, but caching customer-specific pricing creates further privacy and invalidation risks.",
+      "kind": "risk",
+      "status": "open",
+      "modality": "must_clarify",
+      "scope": "runtime dependency on sap for offers",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[David] Was passiert, wenn SAP nicht erreichbar ist?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Angebote k\u00F6nnen dann nicht aktuell berechnet werden."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Dann darf kein Angebot erstellt werden, oder es muss als unverbindlich markiert sein."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Dann brauchen wir Fallback oder Cache."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Cache enth\u00E4lt Kundendaten?"
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Teilweise Produkt- und Preisdaten, vielleicht kundenindividuelle Rabatte."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Eva] Dann ist Cache riskant."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Farid] Und Cache-Invalidierung ist aufwendig."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Bitte schreibt \u0022SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0022."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "architecture": {
+          "applicability": "required",
+          "representationMode": "open_decision"
+        },
+        "risks": {
+          "applicability": "required",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "required",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "high",
+      "notes": "Explicit critical dependency with unresolved mitigation.",
+      "candidateIds": null,
+      "assumedRelation": null
+    },
+    {
+      "id": "L080",
+      "proposition": "The immediate goal is to produce an MVP cut that clearly states what is included, what is consciously excluded, and which risks result, without smoothing over contradictions or creating false certainty.",
+      "kind": "process_constraint",
+      "status": "decided",
+      "modality": "must",
+      "scope": "artifact quality and scope definition",
+      "timeScope": "mvp",
+      "evidence": [
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Anna] Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Clara] Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben."
+        },
+        {
+          "source": "T9999_chaos.txt",
+          "quote": "[Ben] Und keine falsche Sicherheit erzeugen."
+        }
+      ],
+      "disposition": {
+        "requirements": {
+          "applicability": "required",
+          "representationMode": "constraint"
+        },
+        "architecture": {
+          "applicability": "context",
+          "representationMode": "assumption"
+        },
+        "risks": {
+          "applicability": "context",
+          "representationMode": "risk_reference"
+        },
+        "open-questions": {
+          "applicability": "not_applicable",
+          "representationMode": "question"
+        }
+      },
+      "riskLevel": "medium",
+      "notes": "Meta-requirement for downstream SDLC artifacts.",
+      "candidateIds": null,
+      "assumedRelation": null
+    }
+  ]
+}

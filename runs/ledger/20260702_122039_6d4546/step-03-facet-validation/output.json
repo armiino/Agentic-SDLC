@@ -1,0 +1,1188 @@
+{
+  "entries": [
+    {
+      "entry": {
+        "id": "C1",
+        "proposition": "Das Kundenportal wird im MVP als Web-Portal umgesetzt, mobile Nutzung ist sp\u00E4ter m\u00F6glich.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "frontend",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0001: Anna sagt, Web first, Mobile sp\u00E4ter."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Mobile Nutzung wird auf sp\u00E4ter verschoben.",
+        "candidateIds": [
+          "R1"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0001"
+        ]
+      },
+      "validation": {
+        "id": "C1",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "modality",
+            "observed": "must",
+            "problem": "Quelle l\u00E4sst offen, ob Web-Portal \u0027must\u0027 ist oder eher \u0027desired\u0027",
+            "suggested": "desired"
+          }
+        ],
+        "reason": "Anna sagt \u0027definitiv Kundenportal\u0027 und \u0027Web first, Mobile sp\u00E4ter\u0027, aber es gibt Unsicherheit und Budget-/Technikrisiken, daher \u0027must\u0027 ist zu stark."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "C2",
+        "proposition": "Das Backend ist aktuell nicht API-ready, daher ist eine API Layer f\u00FCr Integration notwendig.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "backend",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0002: Ben erw\u00E4hnt Backend ist nicht API-ready."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0036: Ben sagt, API Layer wird ben\u00F6tigt."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "API Layer ist Voraussetzung f\u00FCr Integration.",
+        "candidateIds": [
+          "R2"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0002",
+          "AU-0036"
+        ]
+      },
+      "validation": {
+        "id": "C2",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben sagt Backend ist nicht API-ready und API Layer wird ben\u00F6tigt, Zeitrahmen ist unklar, daher mvp_or_later_unclear passend."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C3",
+        "proposition": "DSGVO-Konformit\u00E4t ist verpflichtend, inklusive Double-Opt-In, L\u00F6schkonzept, Audit Trails und Auftragsverarbeitungsvertr\u00E4gen.",
+        "kind": "compliance_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "compliance",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0003: Clara nennt DSGVO-Anforderungen."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0259: Clara sagt DSGVO ist nicht optional."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "DSGVO ist gesetzliche Pflicht.",
+        "candidateIds": [
+          "R3"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0003",
+          "AU-0259"
+        ]
+      },
+      "validation": {
+        "id": "C3",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Clara betont DSGVO-Konformit\u00E4t mit Double-Opt-In, L\u00F6schkonzept, Audit Trails, AV-Vertr\u00E4gen, und dass DSGVO nicht optional ist."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C4",
+        "proposition": "Login im MVP erfolgt per E-Mail und Passwort mit Double-Opt-In; SSO ist optional und noch nicht final entschieden.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "authentication",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0004: Anna schl\u00E4gt Login per E-Mail und Passwort vor."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0258: Ben sagt OAuth bevorzugt, aber nicht final."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "SSO noch offen.",
+        "candidateIds": [
+          "R4"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0004",
+          "AU-0258"
+        ]
+      },
+      "validation": {
+        "id": "C4",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "modality",
+            "observed": "must",
+            "problem": "SSO ist noch offen, daher \u0027must\u0027 f\u00FCr SSO zu stark",
+            "suggested": "desired"
+          }
+        ],
+        "reason": "Login per E-Mail/Passwort mit Double-Opt-In ist beschlossen, SSO ist optional und noch nicht final, daher \u0027must\u0027 f\u00FCr SSO nicht passend."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "C5",
+        "proposition": "Rollenmodell im MVP umfasst mindestens Admin, Sales und Kunde; Support wird im MVP nicht ber\u00FCcksichtigt.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "authorization",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0199: Anna nennt Rollen Admin/Sales/Kunde."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0060: Anna sagt Support erstmal nicht."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Support ausgeschlossen im MVP.",
+        "candidateIds": [
+          "R5"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0060",
+          "AU-0199"
+        ]
+      },
+      "validation": {
+        "id": "C5",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Anna nennt Rollen Admin/Sales/Kunde im MVP, Support wird erstmal nicht ber\u00FCcksichtigt, passt genau."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C6",
+        "proposition": "Angebotserstellung im MVP basiert auf SAP-Lesedaten ohne Schreibzugriff; Rabatt-Freigabeprozess ist nicht im MVP enthalten.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "businesslogic",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0199: Anna nennt Angebotserstellung mit SAP-Lesedaten."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0201: Anna sagt Rabatt-Freigabe vielleicht Phase 2."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Rabatt-Freigabe sp\u00E4ter.",
+        "candidateIds": [
+          "R6"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0199",
+          "AU-0201"
+        ]
+      },
+      "validation": {
+        "id": "C6",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Angebotserstellung mit SAP-Lesedaten ohne Schreibzugriff, Rabatt-Freigabe nicht im MVP, entspricht Quelle."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C7",
+        "proposition": "Rechnungsdownload ist Bestandteil des MVP.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "frontend",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0199: Anna nennt Rechnungsdownload."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "Rechnungen anzeigen im MVP.",
+        "candidateIds": [
+          "R7"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0199"
+        ]
+      },
+      "validation": {
+        "id": "C7",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Rechnungsdownload ist klar als MVP-Inhalt genannt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C8",
+        "proposition": "Minimaler Audit Trail ist im MVP erforderlich, um \u00C4nderungen nachvollziehbar zu machen.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "security",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0199: Anna nennt minimalen Audit Trail."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0166: Ben nennt Event-History oder Audit-Log pro Angebot."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Audit Trail f\u00FCr Compliance.",
+        "candidateIds": [
+          "R8"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0166",
+          "AU-0199"
+        ]
+      },
+      "validation": {
+        "id": "C8",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Minimaler Audit Trail im MVP wird von Anna und Ben best\u00E4tigt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C9",
+        "proposition": "EU Managed Hosting mit nachweisbarer Datenresidenz ist im MVP erforderlich; EU-only Hosting ist teurer, aber notwendig f\u00FCr Compliance.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "infrastructure",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0199: Anna nennt EU Managed Hosting."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0098: Clara fordert nachweisbare Datenresidenz."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0099 und AU-0100: Diskussion \u00FCber Kosten EU-only Hosting."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Compliance und Kosten im Spannungsfeld.",
+        "candidateIds": [
+          "R9"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0098",
+          "AU-0099",
+          "AU-0100",
+          "AU-0199"
+        ]
+      },
+      "validation": {
+        "id": "C9",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "decided",
+            "problem": "Quelle l\u00E4sst es offen, ob EU Managed Hosting im MVP zwingend ist",
+            "suggested": "open"
+          }
+        ],
+        "reason": "EU Managed Hosting und nachweisbare Datenresidenz sind gefordert, aber Kosten und Umsetzung sind offen, daher Status nicht entschieden."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "C10",
+        "proposition": "Backup und Disaster Recovery sind im MVP erforderlich, wenn Kundendaten gespeichert werden.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "infrastructure",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0045: Clara sagt Backup/Disaster Recovery ist Pflicht bei Kundendaten."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0199: Anna nennt Backup."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Backup f\u00FCr Datensicherheit.",
+        "candidateIds": [
+          "R10"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0045",
+          "AU-0199"
+        ]
+      },
+      "validation": {
+        "id": "C10",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Backup und Disaster Recovery sind als Pflicht bei Kundendaten im MVP klar genannt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C11",
+        "proposition": "Keine neuen Datenbanken im MVP; Managed Services sind akzeptabel, aber Auswahl ist noch offen.",
+        "kind": "constraint",
+        "status": "decided",
+        "modality": "must",
+        "scope": "infrastructure",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0028 und AU-0029: Kein neuer DB Server, Managed Services okay."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0078: Ben sagt SAP kann keine Support-Tickets speichern."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Keine neue DB, Managed Service Auswahl offen.",
+        "candidateIds": [
+          "R11"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0028",
+          "AU-0029",
+          "AU-0078"
+        ]
+      },
+      "validation": {
+        "id": "C11",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Kein neuer DB Server im MVP, Managed Services akzeptiert, Auswahl offen, entspricht Quelle."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C12",
+        "proposition": "Rabatte \u00FCber Standardsatz d\u00FCrfen im MVP nicht manuell vergeben werden (Constraint).",
+        "kind": "constraint",
+        "status": "decided",
+        "modality": "must",
+        "scope": "businesslogic",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0202 und AU-0203: Keine manuellen Sonderrabatte im MVP."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Vermeidung finanzieller Risiken.",
+        "candidateIds": [
+          "R12"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0202",
+          "AU-0203"
+        ]
+      },
+      "validation": {
+        "id": "C12",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Keine manuellen Sonderrabatte im MVP als Constraint ist klar und entschieden."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C13",
+        "proposition": "Support im MVP wird \u00FCber ein Kontaktformular ohne Ticketpersistenz realisiert; dies stellt ein Risiko f\u00FCr Supportqualit\u00E4t und Datenschutz dar.",
+        "kind": "risk",
+        "status": "open",
+        "modality": "must_note",
+        "scope": "support",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0206 bis AU-0211: Diskussion Kontaktformular, Datenschutz und Risiko."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Supportprozess unklar, Datenschutzrisiko.",
+        "candidateIds": [
+          "R13"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0206",
+          "AU-0207",
+          "AU-0208",
+          "AU-0209",
+          "AU-0210",
+          "AU-0211"
+        ]
+      },
+      "validation": {
+        "id": "C13",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Support \u00FCber Kontaktformular ohne Ticketpersistenz mit Risiken ist offen und als must_note korrekt beschrieben."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C14",
+        "proposition": "API Gateway Nutzung ist verpflichtend laut interner Policy, aber das Gateway-Team hat eine sechs Wochen Warteliste, was das 8-Wochen-MVP gef\u00E4hrdet.",
+        "kind": "constraint",
+        "status": "open",
+        "modality": "must_note",
+        "scope": "infrastructure",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0110 bis AU-0113: Policy API Gateway, Warteliste, Zeitproblem."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "API Gateway Verz\u00F6gerung gef\u00E4hrdet MVP.",
+        "candidateIds": [
+          "R14"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0110",
+          "AU-0111",
+          "AU-0112",
+          "AU-0113"
+        ]
+      },
+      "validation": {
+        "id": "C14",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "API Gateway Nutzung ist verpflichtend, aber Warteliste und Zeitproblem offen, Status und Modality passen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C15",
+        "proposition": "Angebote m\u00FCssen revisionssicher und mit Versionsnummern als PDF exportierbar sein, inklusive rechtlicher Fu\u00DFnoten und Datenschutzhinweisen.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "businesslogic",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0159 bis AU-0165: PDF Export, Templates, Revisionssicherheit."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "PDF Export f\u00FCr Sales und Compliance.",
+        "candidateIds": [
+          "R15"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0159",
+          "AU-0160",
+          "AU-0161",
+          "AU-0162",
+          "AU-0163",
+          "AU-0164",
+          "AU-0165"
+        ]
+      },
+      "validation": {
+        "id": "C15",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "timescope",
+            "observed": "mvp",
+            "problem": "Quelle l\u00E4sst offen, ob vollst\u00E4ndige Revisionssicherheit im MVP oder sp\u00E4ter",
+            "suggested": "mvp_or_later_unclear"
+          }
+        ],
+        "reason": "PDF Export mit Revisionssicherheit ist gefordert, aber Umfang und MVP-Zeitpunkt nicht eindeutig."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "C16",
+        "proposition": "SAP-Verf\u00FCgbarkeit ist eine kritische Abh\u00E4ngigkeit f\u00FCr das System.",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "infrastructure",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0246: Ben nennt SAP-Verf\u00FCgbarkeit kritische Abh\u00E4ngigkeit."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "SAP-Ausfall beeintr\u00E4chtigt Angebotserstellung.",
+        "candidateIds": [
+          "R16"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0246"
+        ]
+      },
+      "validation": {
+        "id": "C16",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "SAP-Verf\u00FCgbarkeit als kritische Abh\u00E4ngigkeit mit must_note und unklarer Zeitangabe ist korrekt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C17",
+        "proposition": "Technische Logs d\u00FCrfen keine personenbezogenen Daten enthalten; Unterscheidung zwischen Audit-Logs und technischen Logs ist notwendig.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "security",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0180 bis AU-0182: Farid, Ben, Clara zu Logs und Aufbewahrungsfristen."
+          },
+          {
+            "source": "transcript",
+            "quote": "AU-0248: Clara fordert keine personenbezogenen Daten in technischen Logs."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Datenschutz in Logs sicherstellen.",
+        "candidateIds": [
+          "R17"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0180",
+          "AU-0181",
+          "AU-0182",
+          "AU-0248"
+        ]
+      },
+      "validation": {
+        "id": "C17",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Transcript enth\u00E4lt klare Aussagen, dass technische Logs keine personenbezogenen Daten enthalten d\u00FCrfen und eine Unterscheidung zwischen Audit-Logs und technischen Logs notwendig ist. Status, Modality, Scope und TimeScope sind passend."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C18",
+        "proposition": "Es muss ein L\u00F6schkonzept f\u00FCr personenbezogene Daten geben, das auch Support-Anfragen einschlie\u00DFt.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "compliance",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0063 bis AU-0075: L\u00F6schkonzept und Datenschutz f\u00FCr Support."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "L\u00F6schkonzept f\u00FCr DSGVO.",
+        "candidateIds": [
+          "R18"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0063",
+          "AU-0064",
+          "AU-0075"
+        ]
+      },
+      "validation": {
+        "id": "C18",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "L\u00F6schkonzept f\u00FCr personenbezogene Daten inklusive Support-Anfragen wird im Transcript als notwendig und f\u00FCr MVP oder sp\u00E4ter diskutiert. Status, Modality, Scope und TimeScope sind angemessen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C19",
+        "proposition": "Es wird ein minimaler Retention-Plan f\u00FCr Angebote ben\u00F6tigt, der gesetzliche Aufbewahrungspflichten und L\u00F6schanfragen ber\u00FCcksichtigt.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "compliance",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0183 bis AU-0191: Diskussion zu Aufbewahrung und L\u00F6schung."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "Balance zwischen Aufbewahrung und L\u00F6schung.",
+        "candidateIds": [
+          "R19"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0183",
+          "AU-0184",
+          "AU-0185",
+          "AU-0186",
+          "AU-0187",
+          "AU-0188",
+          "AU-0189",
+          "AU-0190",
+          "AU-0191"
+        ]
+      },
+      "validation": {
+        "id": "C19",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Minimaler Retention-Plan f\u00FCr Angebote mit Ber\u00FCcksichtigung gesetzlicher Aufbewahrungspflichten und L\u00F6schanfragen wird im Transcript als erforderlich genannt. Status, Modality, Scope und TimeScope sind korrekt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C20",
+        "proposition": "OAuth wird als bevorzugtes API-Sicherheitsverfahren betrachtet, ist aber noch nicht final entschieden.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_consider",
+        "scope": "security",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0037 und AU-0038: Clara und Ben diskutieren OAuth vs API Keys."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "OAuth noch nicht final.",
+        "candidateIds": [
+          "R20"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0037",
+          "AU-0038"
+        ]
+      },
+      "validation": {
+        "id": "C20",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "OAuth wird als bevorzugtes Verfahren genannt, aber noch nicht final entschieden, was dem offenen Status und must_consider Modality entspricht. Scope und TimeScope sind passend."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "C21",
+        "proposition": "MVP-Scope muss klar definieren, was enthalten ist, was bewusst ausgeschlossen wird und welche Risiken dadurch entstehen.",
+        "kind": "open_requirement",
+        "status": "open",
+        "modality": "must",
+        "scope": "projectmanagement",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "AU-0262: Anna nennt finales Ziel MVP-Schnitt mit Scope und Risiken."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "Klare MVP-Abgrenzung notwendig.",
+        "candidateIds": [
+          "R21"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0262"
+        ]
+      },
+      "validation": {
+        "id": "C21",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Das finale Ziel eines klar definierten MVP-Scope mit enthaltenen, ausgeschlossenen Punkten und Risiken wird im Transcript explizit genannt. Status, Modality, Scope und TimeScope sind stimmig."
+      },
+      "claimStatus": "approved"
+    }
+  ]
+}

@@ -1,0 +1,1824 @@
+{
+  "entries": [
+    {
+      "entry": {
+        "id": "REQ_LOGIN_MVP",
+        "proposition": "Login mit E-Mail und Passwort ist im MVP enthalten, SSO ist optional und nicht im MVP",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "kundenportal",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Also erstmal Login per E-Mail und Passwort. SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: MVP in 8 Wochen wurde versprochen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: SSO als separate offene Frage behandelt, Login als MVP-Anforderung erhalten",
+        "candidateIds": [
+          "REQ_LOGIN_MVP",
+          "OPEN_QUESTION_SSO"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "REQ_LOGIN_MVP",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Login mit E-Mail und Passwort ist klar f\u00FCr MVP beschlossen, SSO ist optional und nicht im MVP, passt zum Transcript."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_DSGVO_COMPLIANCE",
+        "proposition": "DSGVO-Konformit\u00E4t ist Pflicht, inklusive Double-Opt-In, L\u00F6schkonzept, Audit Trails und Auftragsverarbeitungsvertr\u00E4ge",
+        "kind": "compliance_constraint",
+        "status": "decided",
+        "modality": "must",
+        "scope": "kundendatenverarbeitung",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: DSGVO. Wir speichern Kundendaten. Login per E-Mail? Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: DSGVO Compliance als verbindliche Constraint erhalten",
+        "candidateIds": [
+          "REQ_DSGVO_COMPLIANCE"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_DSGVO_COMPLIANCE",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "timescope",
+            "observed": "mvp_or_later_unclear",
+            "problem": "Transcript l\u00E4sst offen, ob alle DSGVO-Ma\u00DFnahmen im MVP oder sp\u00E4ter umgesetzt werden",
+            "suggested": null
+          }
+        ],
+        "reason": "DSGVO-Konformit\u00E4t ist Pflicht, aber einige Details wie L\u00F6schkonzept und Audit Trails sind noch offen f\u00FCr MVP oder sp\u00E4ter."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "REQ_ROLES_MINIMAL_MVP",
+        "proposition": "Im MVP sind minimale Rollen vorgesehen: Admin, Sales, Kunde",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "kundenportal",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Rollen Admin/Sales/Kunde"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: minimale Rollen im MVP klar",
+        "candidateIds": [
+          "REQ_ROLES_MINIMAL_MVP"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_ROLES_MINIMAL_MVP",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Minimale Rollen Admin, Sales, Kunde sind im MVP beschlossen und klar im Transcript genannt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_ANGEBOT_MVP",
+        "proposition": "Angebotserstellung mit SAP-Lesedaten ist im MVP enthalten; Freigabeprozess f\u00FCr Rabatte \u00FCber Standard ist nicht im MVP und offen",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "angebotsworkflow",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Angebotserstellung mit SAP-Lesedaten"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Freigabeprozess als offene Frage ausgelagert",
+        "candidateIds": [
+          "REQ_ANGEBOT_MVP",
+          "OPEN_QUESTION_RABATTLOGIK_FREIGABE"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "REQ_ANGEBOT_MVP",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Angebotserstellung mit SAP-Lesedaten ist MVP, Freigabeprozess f\u00FCr Rabatte \u00FCber Standard ist explizit nicht im MVP, passt genau."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_RECHNUNGEN_MVP",
+        "proposition": "Kunden sollen Bestellungen sehen und Rechnungen downloaden im MVP",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "kundenportal",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Rechnungen anzeigen"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Rechnungsdownload im MVP erhalten",
+        "candidateIds": [
+          "REQ_RECHNUNGEN_MVP"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_RECHNUNGEN_MVP",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Rechnungen anzeigen und Bestellungen sehen sind im MVP beschlossen, klar belegt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_LOGGING_AUDIT_MVP",
+        "proposition": "Minimaler Audit Trail und Logging sind im MVP Pflicht, um \u00C4nderungen nachvollziehbar zu machen",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "kundenportal",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Minimaler Audit Trail"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Audit Trail als MVP-Anforderung erhalten",
+        "candidateIds": [
+          "REQ_LOGGING_AUDIT_MVP"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_LOGGING_AUDIT_MVP",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Minimaler Audit Trail und Logging sind Pflicht im MVP, wird mehrfach best\u00E4tigt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_SAP_INTEGRATION_MVP",
+        "proposition": "SAP-Lesedaten sind im MVP integriert, SAP-Schreibzugriff ist offen und nicht im MVP",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "integration",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: SAP lesen"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: SAP-Schreibzugriff hatten wir noch gar nicht entschieden."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Schreibzugriff als offene Frage ausgelagert",
+        "candidateIds": [
+          "REQ_SAP_INTEGRATION_MVP",
+          "OPEN_QUESTION_SAP_SCHREIBZUGRIFF"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "REQ_SAP_INTEGRATION_MVP",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "SAP-Lesedaten sind im MVP, SAP-Schreibzugriff ist offen und nicht im MVP, entspricht Transcript."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_EU_HOSTING_MVP",
+        "proposition": "Hosting muss EU-only oder DSGVO-konform sein, EU-only ist bevorzugt im MVP",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "hosting",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: EU Managed Hosting"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: Wir brauchen nachweisbare Datenresidenz."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: EU-only Hosting als Constraint erhalten",
+        "candidateIds": [
+          "REQ_EU_HOSTING_MVP"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_EU_HOSTING_MVP",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "proposition",
+            "observed": "Hosting muss EU-only oder DSGVO-konform sein, EU-only ist bevorzugt im MVP",
+            "problem": "Transcript zeigt, dass EU-only Hosting bevorzugt, aber DSGVO-konform als Alternative diskutiert wird, keine klare Entscheidung",
+            "suggested": null
+          }
+        ],
+        "reason": "EU-only Hosting ist bevorzugt, aber DSGVO-konform wird als Alternative genannt, daher leichte Unsicherheit in Scope."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "REQ_BACKUP_MVP",
+        "proposition": "Backup und Disaster Recovery sind im MVP erforderlich wegen Kundendaten",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "betrieb",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: Wenn Kundendaten drin sind: ja."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Okay also doch."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Backup Pflicht im MVP erhalten",
+        "candidateIds": [
+          "REQ_BACKUP_MVP"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_BACKUP_MVP",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Backup und Disaster Recovery sind im MVP wegen Kundendaten erforderlich, wie Clara und Anna best\u00E4tigen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CONSTR_NO_NEUE_DB_MVP",
+        "proposition": "Im MVP wird keine neue Datenbank eingef\u00FChrt, Managed Services sind erlaubt",
+        "kind": "constraint",
+        "status": "decided",
+        "modality": "must_not",
+        "scope": "infrastruktur",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Kein neuer DB Server"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Managed Services sind okay."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Keine neue DB im MVP als Constraint erhalten",
+        "candidateIds": [
+          "CONSTR_NO_NEUE_DB_MVP"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CONSTR_NO_NEUE_DB_MVP",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Kein neuer DB Server im MVP, Managed Services sind erlaubt, wie Anna und Ben sagen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "OPEN_QUESTION_SSO",
+        "proposition": "SSO ist gew\u00FCnscht, aber noch nicht entschieden und nicht im MVP",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "desired",
+        "scope": "login",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "facet repair: SSO als offene Frage erhalten",
+        "candidateIds": [
+          "OPEN_QUESTION_SSO"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "OPEN_QUESTION_SSO",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "SSO ist gew\u00FCnscht, aber offen und nicht im MVP, wie Anna formuliert."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "OPEN_QUESTION_SUPPORT",
+        "proposition": "Support mit Ticketsystem ist nicht im MVP, nur Kontaktformular ohne Persistenz vorgesehen; Supportprozess unklar und risikobehaftet",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_note",
+        "scope": "support",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Kontaktformular ohne Ticketpersistenz?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "David: Support wird damit nicht gl\u00FCcklich."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Supportprozess offen und risikobehaftet erhalten",
+        "candidateIds": [
+          "OPEN_QUESTION_SUPPORT"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "OPEN_QUESTION_SUPPORT",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Support mit Ticketsystem nicht im MVP, nur Kontaktformular ohne Persistenz, Supportprozess unklar, wie Anna und David sagen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_SUPPORT_EMAIL_DATEN",
+        "proposition": "Supportdaten werden per E-Mail verarbeitet, was unstrukturiert und schlecht auditierbar ist",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "support",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Farid: E-Mail ist unstrukturiert und schlecht auditierbar."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Risiko Supportdaten per E-Mail erhalten",
+        "candidateIds": [
+          "RISK_SUPPORT_EMAIL_DATEN"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_SUPPORT_EMAIL_DATEN",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Supportdaten per E-Mail sind unstrukturiert und schlecht auditierbar, wie Farid sagt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_BERECHTIGUNGSKONFLIKT",
+        "proposition": "Berechtigungskonflikt zwischen Support und Finance bzgl. Einsicht in Preise und Sonderkonditionen",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "rollen und berechtigungen",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Berechtigungskonflikt als Risiko erhalten",
+        "candidateIds": [
+          "RISK_BERECHTIGUNGSKONFLIKT"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_BERECHTIGUNGSKONFLIKT",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Berechtigungskonflikt Support vs Finance bzgl. Preise/Sonderkonditionen ist erkannt und muss modelliert werden, wie Ben sagt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_SAP_VERFUEGBARKEIT",
+        "proposition": "SAP-Verf\u00FCgbarkeit ist eine kritische Abh\u00E4ngigkeit f\u00FCr Angebotserstellung",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "integration",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Bitte schreibt \u0027SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0027."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: SAP Verf\u00FCgbarkeit als Risiko erhalten",
+        "candidateIds": [
+          "RISK_SAP_VERFUEGBARKEIT"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_SAP_VERFUEGBARKEIT",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit f\u00FCr Angebotserstellung, wie Ben fordert."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_CACHE_DATENSCHUTZ",
+        "proposition": "Caching von kundenspezifischen Rabatten ist riskant wegen Datenschutz und Retention",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "performance",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "EVA: Dann ist Cache riskant."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Cache Datenschutzrisiko erhalten",
+        "candidateIds": [
+          "RISK_CACHE_DATENSCHUTZ"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_CACHE_DATENSCHUTZ",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Caching von kundenspezifischen Rabatten ist riskant wegen Datenschutz und Retention, wie Eva sagt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_API_GATEWAY_WARTELISTE",
+        "proposition": "Zentrales API Gateway hat eine Warteliste von sechs Wochen, passt nicht zum 8-Wochen-MVP",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "architektur",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Gateway-Team hat gerade eine Warteliste von sechs Wochen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: API Gateway Verz\u00F6gerung als Risiko erhalten",
+        "candidateIds": [
+          "RISK_API_GATEWAY_WARTELISTE"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_API_GATEWAY_WARTELISTE",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben nennt explizit die 6-Wochen-Warteliste, die nicht zum 8-Wochen-MVP passt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_UNKLARE_ZIELDEFINITION",
+        "proposition": "Es gibt noch keine klare Zieldefinition f\u00FCr das Projekt, was zu Unsicherheiten f\u00FChrt",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "projektmanagement",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: Und wir haben noch keine klare Zieldefinition."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Zieldefinition offen als Risiko erhalten",
+        "candidateIds": [
+          "RISK_UNKLARE_ZIELDEFINITION"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_UNKLARE_ZIELDEFINITION",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Clara sagt, es gibt noch keine klare Zieldefinition, was Unsicherheiten erzeugt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "OPEN_QUESTION_PILOTKUNDE",
+        "proposition": "Pilotkunde ist noch nicht final entschieden, beeinflusst Scope, Datenschutz und W\u00E4hrung",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "scope",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Pilotkunde ist noch nicht final."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Das beeinflusst Scope massiv."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "question"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Pilotkunde als offene Frage erhalten",
+        "candidateIds": [
+          "OPEN_QUESTION_PILOTKUNDE"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "OPEN_QUESTION_PILOTKUNDE",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Anna und Ben best\u00E4tigen, dass Pilotkunde noch offen ist und Scope beeinflusst."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "OPEN_QUESTION_RABATTLOGIK_FREIGABE",
+        "proposition": "Freigabeprozess f\u00FCr Rabatte \u00FCber Standard ist offen und nicht im MVP",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "angebotsworkflow",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "EVA: Freigabeprozess fehlt."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Freigabeprozess offen erhalten",
+        "candidateIds": [
+          "OPEN_QUESTION_RABATTLOGIK_FREIGABE"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "OPEN_QUESTION_RABATTLOGIK_FREIGABE",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Eva und Anna besprechen, dass Freigabeprozess fehlt und nicht im MVP ist."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "OPEN_QUESTION_ONLINE_ANGEBOTSAKZEPTANZ",
+        "proposition": "Online-Akzeptanz von Angeboten ist gew\u00FCnscht, aber nicht im MVP und noch nicht entschieden",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "desired",
+        "scope": "angebotsworkflow",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Online-Akzeptanz w\u00E4re super."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Das ist ein Vertragsabschluss. Ganz anderes Thema."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Online Akzeptanz offen erhalten",
+        "candidateIds": [
+          "OPEN_QUESTION_ONLINE_ANGEBOTSAKZEPTANZ"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "OPEN_QUESTION_ONLINE_ANGEBOTSAKZEPTANZ",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Anna und Ben diskutieren Online-Akzeptanz als Wunsch, aber nicht MVP und offen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "OPEN_QUESTION_API_AUTHENTIFIZIERUNG",
+        "proposition": "API Authentifizierung via OAuth ist bevorzugt, aber noch nicht final entschieden",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_consider",
+        "scope": "api layer",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: API muss abgesichert sein. OAuth? Oder API Keys?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: OAuth w\u00E4re besser. Aber komplexer."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: API Authentifizierung offen erhalten",
+        "candidateIds": [
+          "OPEN_QUESTION_API_AUTHENTIFIZIERUNG"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "OPEN_QUESTION_API_AUTHENTIFIZIERUNG",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Clara und Ben nennen OAuth als bevorzugt, aber noch nicht final entschieden."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "OPEN_QUESTION_KOSTENSCH\u00C4TZUNG",
+        "proposition": "Kostensch\u00E4tzung f\u00FCr Vorstand bis Freitag ist gefordert, aber ohne Architekturentscheidung schwierig",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "projektmanagement",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Wir brauchen aber eine Kostensch\u00E4tzung f\u00FCr den Vorstand bis Freitag."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Wir haben nicht mal eine Architekturentscheidung."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Kostensch\u00E4tzung offen erhalten",
+        "candidateIds": [
+          "OPEN_QUESTION_KOSTENSCH\u00C4TZUNG"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "OPEN_QUESTION_KOSTENSCH\u00C4TZUNG",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Anna und Ben sprechen \u00FCber Kostensch\u00E4tzung bis Freitag ohne Architekturentscheidung."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_SECURITY_REVIEW_TIME",
+        "proposition": "Security Review dauert 6 Wochen und passt nicht zum 8-Wochen-MVP, aber ist Pflicht",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "sicherheit",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: Das ist keine Option."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Security Review Zeitkonflikt als Risiko erhalten",
+        "candidateIds": [
+          "RISK_SECURITY_REVIEW_TIME"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_SECURITY_REVIEW_TIME",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben und Clara best\u00E4tigen, dass Security Review 6 Wochen dauert und Pflicht ist, passt nicht zum 8-Wochen-MVP."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_SUPPORT_MANUAL_EXCEL",
+        "proposition": "Manuelle Pflege von Supportanfragen in Excel ist keine Option und aus Compliance-Sicht problematisch",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_not",
+        "scope": "support",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "David: Ich will nur verhindern, dass wir nach dem Launch manuell Excel-Listen pflegen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Excel ist keine Option."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: Excel mit personenbezogenen Kundendaten w\u00E4re aus Compliance-Sicht problematisch."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Support Datenhaltung Risiko als Constraint erhalten",
+        "candidateIds": [
+          "RISK_SUPPORT_MANUAL_EXCEL"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_SUPPORT_MANUAL_EXCEL",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Proposition und Facetten sind klar durch David, Anna und Clara belegt und entsprechen der Quelle."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_TESTDATEN_PSEUDONYMISIERUNG",
+        "proposition": "Testdaten d\u00FCrfen keine echten Kundendaten enthalten, Pseudonymisierung oder synthetische Daten sind erforderlich",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "testumgebungen",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: Testdaten d\u00FCrfen keine echten Kundendaten enthalten."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Datenschutz Testdaten als MVP-Anforderung erhalten",
+        "candidateIds": [
+          "REQ_TESTDATEN_PSEUDONYMISIERUNG"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_TESTDATEN_PSEUDONYMISIERUNG",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Claras Aussage deckt die Notwendigkeit von Pseudonymisierung oder synthetischen Testdaten ab, Status und Modality passen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_SAP_TESTDATEN",
+        "proposition": "SAP-Testsystem enth\u00E4lt echte Kundendaten, was Integrationstests und Datenschutz blockiert",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "testumgebungen",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: SAP Testdaten Problem als Risiko erhalten",
+        "candidateIds": [
+          "RISK_SAP_TESTDATEN"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_SAP_TESTDATEN",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben nennt das Problem mit echten Kundendaten im SAP-Testsystem, Status und Modality sind angemessen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_API_LAYER",
+        "proposition": "Ein API Layer ist notwendig, um Integration zu erm\u00F6glichen",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "architektur",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: API Layer als MVP-Anforderung erhalten",
+        "candidateIds": [
+          "REQ_API_LAYER"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_API_LAYER",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben fordert einen API Layer f\u00FCr Integration, Status und Modality sind entschieden und passend."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "RISK_MONITORING_DATENSCHUTZ",
+        "proposition": "Zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten, Audit- und technische Logs m\u00FCssen getrennt werden",
+        "kind": "risk",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "monitoring",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Farid: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Monitoring Datenschutz als Risiko erhalten",
+        "candidateIds": [
+          "RISK_MONITORING_DATENSCHUTZ"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "RISK_MONITORING_DATENSCHUTZ",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Farid nennt die Notwendigkeit der Trennung von Logs und Datenschutz, Status und Modality sind korrekt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_RETENTION_RULES",
+        "proposition": "Datenklassifikation und Aufbewahrungsregeln sind notwendig, um L\u00F6schanfragen und gesetzliche Pflichten zu balancieren",
+        "kind": "requirement",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "datenschutz",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Also brauchen wir Datenklassifikation und Retention Rules."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Retention Rules offen erhalten",
+        "candidateIds": [
+          "REQ_RETENTION_RULES"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_RETENTION_RULES",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben nennt Datenklassifikation und Retention Rules als offene Frage, Status open und Modality must_clarify sind passend."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CONSTR_NO_MANUELLE_SONDERRABATTE_MVP",
+        "proposition": "Im MVP d\u00FCrfen keine manuellen Sonderrabatte erstellt werden",
+        "kind": "constraint",
+        "status": "decided",
+        "modality": "must_not",
+        "scope": "angebotsworkflow",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Sonderrabatte ausgeschlossen im MVP als Constraint erhalten",
+        "candidateIds": [
+          "CONSTR_NO_MANUELLE_SONDERRABATTE_MVP"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CONSTR_NO_MANUELLE_SONDERRABATTE_MVP",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben nennt klare Constraint f\u00FCr MVP, Status und Modality sind korrekt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_PAGINATION_DOWNLOAD_LIMITS",
+        "proposition": "Pagination und Download-Limits sind notwendig, um Missbrauch bei Rechnungsdownloads zu verhindern",
+        "kind": "requirement",
+        "status": "open",
+        "modality": "must_consider",
+        "scope": "performance",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Dann brauchen wir Pagination und Download-Limits."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Pagination offen erhalten",
+        "candidateIds": [
+          "REQ_PAGINATION_DOWNLOAD_LIMITS"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_PAGINATION_DOWNLOAD_LIMITS",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben nennt Pagination und Download-Limits als zu ber\u00FCcksichtigende Punkte, Status open und Modality must_consider sind angemessen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "OPEN_QUESTION_MEHRWAEHRUNG",
+        "proposition": "Mehrw\u00E4hrung ist gew\u00FCnscht, aber nicht im MVP; Schweiz als Pilotkunde beeinflusst W\u00E4hrungs- und Datenschutzanforderungen",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "desired",
+        "scope": "angebotsworkflow",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "EVA: Mehrw\u00E4hrung ist nicht trivial."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Anna: Nicht im MVP?"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Mehrw\u00E4hrung offen erhalten",
+        "candidateIds": [
+          "OPEN_QUESTION_MEHRWAEHRUNG"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "OPEN_QUESTION_MEHRWAEHRUNG",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Mehrw\u00E4hrung ist als Wunsch offen, nicht MVP, mit Pilotkunde Schweiz als Einfluss, wie im Transcript beschrieben."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_PDF_EXPORT_ANGEBOTE",
+        "proposition": "PDF-Export von Angeboten mit rechtlichen Fu\u00DFnoten, Versionsnummer und Datenschutzhinweisen ist erforderlich",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "angebotsworkflow",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "EVA: Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Clara: Und Datenschutzhinweise, wenn personenbezogene Daten enthalten sind."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: PDF Export wichtig erhalten",
+        "candidateIds": [
+          "REQ_PDF_EXPORT_ANGEBOTE"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_PDF_EXPORT_ANGEBOTE",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "timescope",
+            "observed": "mvp_or_later_unclear",
+            "problem": "Unklar, ob MVP oder sp\u00E4ter, Quelle nennt Wichtigkeit, aber MVP-Zeitpunkt nicht eindeutig",
+            "suggested": "later_possible"
+          }
+        ],
+        "reason": "PDF-Export mit rechtlichen Fu\u00DFnoten und Datenschutzhinweisen ist gefordert, aber MVP-Zeitpunkt ist nicht klar entschieden."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "REQ_TEMPLATE_VERSIONIERUNG",
+        "proposition": "Templates f\u00FCr Angebote m\u00FCssen versioniert werden, um Nachvollziehbarkeit zu gew\u00E4hrleisten",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "angebotsworkflow",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Farid: Templates m\u00FCssen versioniert werden."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Template Versionierung erhalten",
+        "candidateIds": [
+          "REQ_TEMPLATE_VERSIONIERUNG"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_TEMPLATE_VERSIONIERUNG",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Template-Versionierung ist klar gefordert und als notwendig f\u00FCr Nachvollziehbarkeit best\u00E4tigt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "REQ_EVENT_HISTORY_AUDIT_LOG",
+        "proposition": "Event-History oder Audit-Log pro Angebot ist notwendig f\u00FCr Revisionssicherheit",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "angebotsworkflow",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "Ben: Dann brauchen wir Event-History oder Audit-Log pro Angebot."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Audit Log wichtig erhalten",
+        "candidateIds": [
+          "REQ_EVENT_HISTORY_AUDIT_LOG"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "REQ_EVENT_HISTORY_AUDIT_LOG",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Event-History/Audit-Log f\u00FCr Revisionssicherheit ist eindeutig als notwendig beschrieben."
+      },
+      "claimStatus": "approved"
+    }
+  ]
+}
