@@ -13,5 +13,10 @@ namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
 /// </remarks>
 public sealed record CandidateLedgerMessage(IReadOnlyList<SemanticLedgerEntry> Entries);
 
+/// <summary>Transportiert den Candidate-Ledger und den Canonical-Draft in die Coverage-Reparatur.</summary>
+public sealed record CandidateAndCanonicalLedgerMessage(
+    IReadOnlyList<SemanticLedgerEntry> Candidates,
+    IReadOnlyList<SemanticLedgerEntry> CanonicalDraft);
+
 /// <summary>Kanonischer Ledger (Stufe 2 → Stufe 3), inkl. Cluster-Trace an den Einträgen.</summary>
 public sealed record CanonicalLedgerMessage(IReadOnlyList<SemanticLedgerEntry> Entries);

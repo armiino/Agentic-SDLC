@@ -9,9 +9,10 @@ namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
 /// (Muster wie Phase2B, aber Transport = Message-Passing statt Shared State).
 /// </summary>
 /// <remarks>
-/// L3-Stand = lineare 3-Stufen-Kette (graph-fähig, aktuell linear; später für den Gap-Audit verzweigbar):
-/// <code>Transcript → CandidateExtraction → Canonicalization → FacetValidation</code>
-/// L4 ergänzt das LedgerQualityGate (siehe smallVersion.md §verfeinerte Bau-Reihenfolge).
+/// L4-Stand = lineare Kette mit gezielter Coverage-Reparatur:
+/// <code>Transcript → CandidateExtraction → Canonicalization → CoverageRepair → FacetValidation</code>
+/// Das deterministische LedgerQualityGate (L4) läuft NACH dem Workflow im Runner über die Step-Outputs
+/// (kein LLM → gehört nicht in die Chat-Executor-Kette); schreibt gate/ledger-quality.json.
 /// Logging pro Executor liefert die gemeinsame Observability-Pipeline (AgentChatPipelineBuilder), die der
 /// Runner um die LLM-Clients der Executoren legt.
 /// </remarks>
@@ -20,20 +21,23 @@ public static class LedgerBuilderWorkflow
     public static Workflow Build(
         SemanticLedgerExtractor extractor,
         SemanticLedgerCanonicalizer canonicalizer,
+        CanonicalCoverageRepairer coverageRepairer,
         FacetValidator facetValidator,
         string transcript,
         RunContext run)
     {
         var extraction = new CandidateExtractionExecutor(extractor, run);
         var canonicalization = new CanonicalizationExecutor(canonicalizer, run);
+        var coverageRepair = new CanonicalCoverageRepairExecutor(coverageRepairer, run);
         var facetValidation = new FacetValidationExecutor(facetValidator, transcript, run);
 
         var builder = new WorkflowBuilder(extraction)
             .WithName("LedgerBuilder")
-            .WithDescription("Transcript → Candidate → Canonical → FacetValidation (evidence-first Ledger-Bau, L3).");
+            .WithDescription("Transcript → Candidate → CanonicalDraft → CoverageRepair → FacetValidation (evidence-first Ledger-Bau, L4).");
 
         builder.AddEdge(extraction, canonicalization);
-        builder.AddEdge(canonicalization, facetValidation);
+        builder.AddEdge(canonicalization, coverageRepair);
+        builder.AddEdge(coverageRepair, facetValidation);
 
         return builder.Build();
     }

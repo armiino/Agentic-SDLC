@@ -51,7 +51,7 @@ public static class LedgerBuildRunner
         run.WriteConfig(new
         {
             workflow = "LedgerBuilder",
-            stage = "L3",
+            stage = "L4",
             runId = run.RunId,
             transcript = Path.GetRelativePath(repoRoot, transcriptPath),
             fixture = fixturePath is null ? null : Path.GetRelativePath(repoRoot, fixturePath),
@@ -77,15 +77,17 @@ public static class LedgerBuildRunner
         var baseClient = ChatClientFactory.Create(judgeSettings);
         var extractionClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, CandidateExtractionExecutor.ExecutorName, SourceName);
         var canonicalClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, CanonicalizationExecutor.ExecutorName, SourceName);
+        var coverageRepairClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, CanonicalCoverageRepairExecutor.ExecutorName, SourceName);
         var facetClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, FacetValidationExecutor.ExecutorName, SourceName);
 
         var extractor = new SemanticLedgerExtractor(extractionClient, settings.JuryStructuredOutput);
         var canonicalizer = new SemanticLedgerCanonicalizer(canonicalClient, settings.JuryStructuredOutput);
+        var coverageRepairer = new CanonicalCoverageRepairer(coverageRepairClient, settings.JuryStructuredOutput);
         var facetValidator = new FacetValidator(facetClient, settings.JuryStructuredOutput);
 
-        var workflow = LedgerBuilderWorkflow.Build(extractor, canonicalizer, facetValidator, transcript, run);
+        var workflow = LedgerBuilderWorkflow.Build(extractor, canonicalizer, coverageRepairer, facetValidator, transcript, run);
 
-        Console.WriteLine("[ledger-build] running workflow (extraction -> canonicalization -> facet-validation)...");
+        Console.WriteLine("[ledger-build] running workflow (extraction -> canonicalization -> coverage-repair -> facet-validation)...");
         var workflowRun = await InProcessExecution.Default
             .RunAsync(workflow, transcript, run.RunId, CancellationToken.None)
             .ConfigureAwait(false);
@@ -152,6 +154,29 @@ public static class LedgerBuildRunner
         var validated = validatedLedger.Entries;
         Console.WriteLine($"[ledger-build] candidate={candidate.Count} -> canonical={canonical.Count} -> validated={validated.Count}");
         Console.WriteLine($"[ledger-build] steps -> {Path.GetRelativePath(repoRoot, Path.Combine(run.RunDir, "step-01-candidate"))} , step-02-canonical , step-03-facet-validation");
+
+        // L4: deterministisches Quality-Gate (kein LLM) über den gebauten Ledger -> gate/ledger-quality.json.
+        var gate = LedgerQualityGate.Evaluate(candidate, canonical, validated);
+        var gateDir = Path.Combine(run.RunDir, "gate");
+        Directory.CreateDirectory(gateDir);
+        await File.WriteAllTextAsync(Path.Combine(gateDir, "ledger-quality.json"), JsonSerializer.Serialize(gate, JsonOptions)).ConfigureAwait(false);
+        Console.WriteLine($"[ledger-build] gate: pass={gate.Pass} errors={gate.ErrorCount} warnings={gate.WarningCount}");
+        foreach (var viol in gate.Violations)
+            Console.WriteLine($"[ledger-build]   [{viol.Severity}] {viol.Code} ({viol.Ids.Count})");
+        if (!gate.Pass)
+        {
+            WriteDiagnosis(run, new
+            {
+                runId = run.RunId,
+                workflow = "LedgerBuilder",
+                status = "GATE_FAILED",
+                rootCause = new { code = "LEDGER_QUALITY_GATE_FAILED", errorCount = gate.ErrorCount, message = "Deterministic ledger quality gate found hard integrity errors." },
+                timestampUtc = DateTime.UtcNow
+            });
+            Console.Error.WriteLine($"[ledger-build] GATE FAILED ({gate.ErrorCount} errors) -> {Path.GetRelativePath(repoRoot, Path.Combine(gateDir, "ledger-quality.json"))}");
+            Console.WriteLine($"[ledger-build] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
+            return 4;
+        }
 
         if (fixturePath is not null)
         {

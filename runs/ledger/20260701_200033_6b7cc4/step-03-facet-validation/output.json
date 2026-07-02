@@ -1,0 +1,3469 @@
+{
+  "entries": [
+    {
+      "entry": {
+        "id": "CAN-001-portal-core",
+        "proposition": "Ein Kundenportal ist f\u00FCr das Vorhaben erforderlich; die genauere Auspr\u00E4gung als reines Portal oder breitere Plattform ist noch nicht final gekl\u00E4rt.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "produktvision und mvp-zielbild",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Also wir brauchen definitiv ein Kundenportal. Aber nicht nur ein Portal, eher so eine Plattform. Also... vielleicht doch erstmal nur ein Portal."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Nein, Portal bleibt Ziel."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Kernbedarf fix, Produktzuschnitt bleibt offen.",
+        "candidateIds": [
+          "REQ-portal-mvp"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-001-portal-core",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "scope",
+            "observed": "produktvision und mvp-zielbild",
+            "problem": "Portal als Ziel ist klar, aber die genaue Auspr\u00E4gung f\u00FCr das MVP bleibt offen; als MVP-Zielbild etwas zu weit gefasst",
+            "suggested": "produktvision"
+          }
+        ],
+        "reason": "Kernaussage ist gedeckt: Kundenportal ist gesetzt, Portal vs. Plattform ist offen. Die Zuordnung explizit auch zum MVP-Zielbild ist jedoch nur indirekt ableitbar."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-002-business-goal-offers",
+        "proposition": "Das Hauptziel des Vorhabens ist die schnellere Erstellung von Angeboten; das Portal ist Mittel zum Zweck.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "business-ziel",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Angebote schneller erstellen. Das ist eigentlich das Hauptziel. Portal ist nur Mittel zum Zweck."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Ziel ist schneller Angebote erstellen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "context",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Priorisierungsanker f\u00FCr Scope-Schnitt.",
+        "candidateIds": [
+          "REQ-offer-generation-main-goal"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-002-business-goal-offers",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "timescope",
+            "observed": "mvp",
+            "problem": "Als Hauptziel formuliert, aber nicht explizit auf MVP begrenzt",
+            "suggested": "mvp_or_later_unclear"
+          }
+        ],
+        "reason": "Das Hauptziel \u0027Angebote schneller erstellen\u0027 ist klar belegt; die harte Einordnung nur auf MVP ist etwas zu eng."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-003-frontend-strategy",
+        "proposition": "Die Frontend-Strategie ist offen: web-first, mobile sp\u00E4ter oder st\u00E4rker mobile-orientiert; zugleich gibt es kein Budget f\u00FCr zwei getrennte Frontends, und bei Mobile ist unklar, ob native App oder responsive Web gemeint ist.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "frontend-kan\u00E4le und client-strategie",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Web first. Mobile sp\u00E4ter. Oder andersrum? Ich wei\u00DF nicht, Sales will eigentlich mobil arbeiten."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Moment, mobile hei\u00DFt native App oder responsive Web? Weil native w\u00E4re teuer."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Und wir haben eigentlich kein Budget f\u00FCr zwei Frontends."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Budgetconstraint in dieselbe Kanalentscheidung integriert.",
+        "candidateIds": [
+          "OQ-mobile-strategy",
+          "CON-no-two-frontends"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-003-frontend-strategy",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Die Offenheit der Frontend-Strategie, die Budgetgrenze f\u00FCr zwei Frontends und die Unklarheit native vs. responsive sind direkt belegt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-004-backend-api-readiness-risk",
+        "proposition": "Das bestehende Backend ist noch nicht API-ready, was die Integrationsf\u00E4higkeit des Portals und einer notwendigen API-Schicht gef\u00E4hrdet.",
+        "kind": "risk",
+        "status": "uncertain",
+        "modality": "must_note",
+        "scope": "backend- und integrationsreife",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Und ehrlich gesagt ist unser Backend noch nicht mal API-ready."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] API Layer?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: API-Layer als Bedarf erhalten, Backend-Reife als dominantes Risiko verbunden.",
+        "candidateIds": [
+          "RISK-backend-not-api-ready",
+          "REQ-api-layer-required"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-004-backend-api-readiness-risk",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "uncertain",
+            "problem": "Die Quelle behauptet den API-Readiness-Mangel klar, nicht nur unsicher",
+            "suggested": "known"
+          },
+          {
+            "facet": "disposition",
+            "observed": "requirements=required",
+            "problem": "Das ist eher Kontext/Risiko als eigenst\u00E4ndige Anforderung",
+            "suggested": null
+          }
+        ],
+        "reason": "Die Aussage ist gest\u00FCtzt, aber \u0027uncertain\u0027 schw\u00E4cht eine klar ge\u00E4u\u00DFerte Tatsache unn\u00F6tig ab; au\u00DFerdem ist dies eher Risiko/Kontext als Requirement."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-005-dsgvo-baseline",
+        "proposition": "DSGVO-Anforderungen sind f\u00FCr das System verpflichtend, da Kundendaten gespeichert und verarbeitet werden.",
+        "kind": "compliance_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "datenschutz und compliance",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Bevor wir \u00FCber Frontends reden: DSGVO. Wir speichern Kundendaten."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] DSGVO ist nicht optional."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "context",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: \u00FCbergreifende Compliance-Basis.",
+        "candidateIds": [
+          "COMP-dsgvo-mandatory"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-005-dsgvo-baseline",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "DSGVO-Pflichten werden mehrfach explizit als verpflichtend und nicht optional beschrieben."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-006-mvp-login-email-double-opt-in",
+        "proposition": "F\u00FCr das MVP ist zun\u00E4chst Login per E-Mail und Passwort vorgesehen; wenn Login per E-Mail erfolgt, ist Double-Opt-In erforderlich.",
+        "kind": "compliance_constraint",
+        "status": "decided",
+        "modality": "must",
+        "scope": "mvp-authentifizierung",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Also erstmal Login per E-Mail und Passwort."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Login per E-Mail? Dann brauchen wir Double-Opt-In."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dann MVP: 1. Login mit Double-Opt-In"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Split-Claim Login \u002B Double-Opt-In zusammengef\u00FChrt.",
+        "candidateIds": [
+          "REQ-double-opt-in-email-login",
+          "DEC-login-email-password-mvp"
+        ],
+        "assumedRelation": "refines"
+      },
+      "validation": {
+        "id": "CAN-006-mvp-login-email-double-opt-in",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Login per E-Mail/Passwort f\u00FCr den Start sowie Double-Opt-In bei E-Mail-Login werden genannt und sp\u00E4ter explizit ins MVP aufgenommen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-007-sso-optional-open",
+        "proposition": "SSO ist optional bzw. w\u00FCnschenswert, aber Auswahl und Umfang des Identity Providers sind offen; genannt wurden Azure AD, Google oder beides, ohne Providerentscheidung.",
+        "kind": "open_question",
+        "status": "optional",
+        "modality": "optional",
+        "scope": "sso und identity provider",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] SSO optional"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Genau. Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "facet repair: optional bleibt optional, nicht MVP-pflichtig.",
+        "candidateIds": [
+          "OQ-sso-provider"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-007-sso-optional-open",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "SSO wird als w\u00FCnschenswert/optional beschrieben; Provideroptionen bleiben offen und eine Azure-Festlegung wird ausdr\u00FCcklich verneint."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-008-iam-gap-risk",
+        "proposition": "Es existiert kein zentrales IAM; vorhandene SAP-Identit\u00E4tsmechanismen sind alt, was SSO-/IdP-Integration erschwert.",
+        "kind": "risk",
+        "status": "uncertain",
+        "modality": "must_note",
+        "scope": "identity- und access-architektur",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Moment, SSO hei\u00DFt Identity Provider Integration. Wir haben kein zentrales IAM. SAP hat irgendwas, aber das ist uralt."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "assumption"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: separates Integrationsrisiko zu optionalem SSO.",
+        "candidateIds": [
+          "RISK-no-central-iam"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-008-iam-gap-risk",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Fehlendes zentrales IAM und veraltete SAP-Mechanismen sind direkt belegt und st\u00FCtzen das Integrationsrisiko."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-009-logging-audit-baseline",
+        "proposition": "Logging und Auditierbarkeit sind verpflichtend; insbesondere bei SAP- und personenbezogenen Daten m\u00FCssen Audit Trails vorhanden sein, einschlie\u00DFlich Protokollierung, wer welches Angebot ge\u00F6ffnet hat, und mindestens minimalem Audit Trail im MVP.",
+        "kind": "compliance_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "logging, auditierbarkeit und angebots-auditierung",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] SAP? Wenn SAP involviert ist, dann reden wir von personenbezogenen Daten im ERP. Dann brauchen wir Audit Trails."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Auditierbarkeit ist Pflicht. Wer hat wann was ge\u00E4ndert?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Und protokollieren. Wer hat welches Angebot ge\u00F6ffnet?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dann MVP: 5. Minimaler Audit Trail"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: allgemeines Logging, Audit-Trails und Offer-Access-Logging als ein Audit-Claim geb\u00FCndelt.",
+        "candidateIds": [
+          "REQ-logging",
+          "REQ-audit-trails",
+          "REQ-log-offer-access"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-009-logging-audit-baseline",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Transcript deckt Pflichtcharakter von Logging/Audit, SAP-/Personenbezug, Angebotszugriffe und minimalen Audit Trail im MVP."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-010-deletion-support-retention-tension",
+        "proposition": "Ein L\u00F6schkonzept ist erforderlich; Support-Anfragen mit personenbezogenen Daten m\u00FCssen einbezogen werden, zugleich k\u00F6nnen gesetzliche Aufbewahrungspflichten mit L\u00F6schanfragen kollidieren.",
+        "kind": "compliance_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "datenschutz, datenlebenszyklus und supportdaten",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Also brauchen wir ein L\u00F6schkonzept."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Wenn Support-Anfragen personenbezogene Daten enthalten, dann m\u00FCssen sie in das L\u00F6schkonzept und in die Auskunftspflicht einbezogen werden."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Das kollidiert mit L\u00F6schanfragen. Recht auf L\u00F6schung ist nicht absolut, wenn gesetzliche Aufbewahrungspflichten bestehen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: L\u00F6schkonzept mit Supportdaten und Retention-Konflikt zusammengef\u00FChrt.",
+        "candidateIds": [
+          "REQ-deletion-concept",
+          "COMP-support-data-in-deletion-and-access",
+          "RISK-retention-vs-deletion"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-010-deletion-support-retention-tension",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "L\u00F6schkonzept wird gefordert; Supportdaten mit Personenbezug m\u00FCssen einbezogen werden; Kollision mit Aufbewahrungspflichten wird explizit genannt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-011-av-contracts",
+        "proposition": "Auftragsverarbeitungsvertr\u00E4ge werden ben\u00F6tigt, abh\u00E4ngig von gew\u00E4hlten Dienstleistern.",
+        "kind": "compliance_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "vendor- und hosting-compliance",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann brauchen wir Double-Opt-In. Und Logging. Und L\u00F6schkonzepte. Und Auftragsverarbeitungsvertr\u00E4ge."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Timing bleibt mvp_or_later_unclear.",
+        "candidateIds": [
+          "REQ-av-contracts"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-011-av-contracts",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "proposition",
+            "observed": "Auftragsverarbeitungsvertr\u00E4ge werden ben\u00F6tigt, abh\u00E4ngig von gew\u00E4hlten Dienstleistern.",
+            "problem": "Abh\u00E4ngigkeit von gew\u00E4hlten Dienstleistern wird im Transcript nicht explizit gesagt, nur der Bedarf an AV-Vertr\u00E4gen.",
+            "suggested": "Auftragsverarbeitungsvertr\u00E4ge werden ben\u00F6tigt."
+          }
+        ],
+        "reason": "Kern ist gedeckt, aber die Formulierung zur Abh\u00E4ngigkeit von gew\u00E4hlten Dienstleistern ist eine naheliegende Interpretation statt expliziter Aussage."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-012-mvp-8-weeks",
+        "proposition": "F\u00FCr das MVP wurde ein Zieltermin von 8 Wochen zugesagt.",
+        "kind": "process_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "planung und delivery",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] MVP in 8 Wochen wurde versprochen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: harte Terminrestriktion.",
+        "candidateIds": [
+          "CON-mvp-8-weeks"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-012-mvp-8-weeks",
+        "verdict": "overstated",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "required",
+            "problem": "Quelle beschreibt einen zugesagten Zieltermin, nicht eine verpflichtende Muss-Anforderung.",
+            "suggested": "context"
+          },
+          {
+            "facet": "modality",
+            "observed": "must",
+            "problem": "Aus dem Transcript folgt kein Muss, sondern ein vorgegebener/versprochener Zeitrahmen.",
+            "suggested": "target"
+          }
+        ],
+        "reason": "Die 8 Wochen sind als versprochener Zieltermin genannt, nicht als normative Muss-Anforderung."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-013-access-control-role-model",
+        "proposition": "Zugriffskontrolle und ein Rollen- und Berechtigungskonzept sind erforderlich; die detaillierte Rollenstruktur ist noch offen, auch wenn f\u00FCr den MVP ein reduzierter Rollensatz Admin/Sales/Kunde genannt wurde.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "berechtigungen und autorisierung",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Und ein Rollen- und Berechtigungskonzept."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Ja Rollen. Admin und normaler User. Vielleicht noch Manager. Und Support. Oder brauchen wir Support?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dann MVP: 4. Rollen Admin/Sales/Kunde"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Pflicht zum Rollenmodell bleibt, Detailzuschnitt weiter offen.",
+        "candidateIds": [
+          "REQ-access-control-role-model",
+          "OQ-roles-detailed"
+        ],
+        "assumedRelation": "refines"
+      },
+      "validation": {
+        "id": "CAN-013-access-control-role-model",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Zugriffskontrolle sowie Rollen-/Berechtigungskonzept sind klar gefordert; Detailrollen bleiben offen; f\u00FCr MVP wird ein reduzierter Rollensatz genannt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-014-support-pricing-authorization-conflict",
+        "proposition": "Es besteht ein Berechtigungskonflikt zwischen Support-Bedarf zur Einsicht in Angebote und der Einschr\u00E4nkung, dass Support keine Preise \u00E4ndern und vertrauliche Sonderkonditionen nicht sehen darf.",
+        "kind": "risk",
+        "status": "open",
+        "modality": "must_note",
+        "scope": "berechtigungsmodell f\u00FCr angebote",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[David] Support sollte keine Preise \u00E4ndern k\u00F6nnen, aber vielleicht Angebote einsehen d\u00FCrfen, wenn Kunden anrufen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Support darf Sonderkonditionen nicht sehen, wenn sie vertraulich sind."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Das ist ein klassischer Berechtigungskonflikt. M\u00FCssen wir modellieren."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: offener Berechtigungsentwurf als Risiko/Frage erhalten.",
+        "candidateIds": [
+          "RISK-authorization-conflict-support-pricing"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-014-support-pricing-authorization-conflict",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Der Konflikt zwischen Support-Einsicht und Beschr\u00E4nkung bei Preisen/Sonderkonditionen wird explizit diskutiert und als zu modellierender Berechtigungskonflikt benannt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-015-sap-master-data-quality-risk",
+        "proposition": "Stammdaten liegen in SAP, sind aber teilweise unvollst\u00E4ndig, was Angebotsprozess und Datenqualit\u00E4t gef\u00E4hrdet.",
+        "kind": "risk",
+        "status": "uncertain",
+        "modality": "must_note",
+        "scope": "sap-stammdatenqualit\u00E4t",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Stammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "assumption"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Datenqualit\u00E4tsrisiko separat halten.",
+        "candidateIds": [
+          "FACT-master-data-in-sap-incomplete"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-015-sap-master-data-quality-risk",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "SAP als Quelle der Stammdaten und deren teilweise Unvollst\u00E4ndigkeit sind explizit genannt; Risiko f\u00FCr Angebote ist im Gespr\u00E4ch plausibel und direkt angerissen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-016-order-visibility-and-invoice-download",
+        "proposition": "Kunden sollen Bestellungen sehen und Rechnungen herunterladen k\u00F6nnen; Rechnungsdownload ist im MVP-Schnitt konkret genannt, Bestellsicht bleibt im MVP-Umfang weniger klar.",
+        "kind": "requirement",
+        "status": "desired",
+        "modality": "desired",
+        "scope": "kundenportal-funktionalit\u00E4t",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Ja auch. Also Kunden sollen Bestellungen sehen und Rechnungen downloaden."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dann MVP: 3. Rechnungsdownload"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Rechnungsdownload st\u00E4rker best\u00E4tigt als Bestellsicht.",
+        "candidateIds": [
+          "REQ-order-and-invoice-visibility"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-016-order-visibility-and-invoice-download",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Bestellsicht und Rechnungsdownload werden genannt; Rechnungsdownload wird sp\u00E4ter explizit in den MVP-Schnitt aufgenommen, w\u00E4hrend Bestellsicht f\u00FCr MVP weniger klar bleibt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-017-push-notifications-open",
+        "proposition": "Push Notifications wurden als Wunsch genannt, waren zuvor nicht abgestimmt und l\u00F6sen zus\u00E4tzliche DSGVO-Einwilligungsfragen aus; sie sind nicht als MVP best\u00E4tigt.",
+        "kind": "open_question",
+        "status": "uncertain",
+        "modality": "must_clarify",
+        "scope": "benachrichtigungen und marketing-funktionen",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Und Marketing will Push Notifications."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Push Notifications? Das hatten wir nie besprochen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Push hei\u00DFt Einwilligung. Wieder DSGVO."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: \u0027nie besprochen\u0027 und sp\u00E4ter m\u00F6glich beibehalten.",
+        "candidateIds": [
+          "OQ-push-notifications"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-017-push-notifications-open",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Aussage ist durch das Transcript gedeckt: Wunsch von Marketing, zuvor nicht abgestimmt, DSGVO-Einwilligung relevant, nicht als MVP best\u00E4tigt bzw. eher sp\u00E4ter/offen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-018-analytics-kpis-later",
+        "proposition": "Analytics bzw. Tracking wird m\u00F6glicherweise sp\u00E4ter ben\u00F6tigt und ist nicht im MVP zugesagt; zugleich sollen KPIs wie Conversion Rate Angebot\u2192Bestellung und Zeit bis Angebot gemessen werden, der Erfassungsmechanismus bleibt offen.",
+        "kind": "scope",
+        "status": "optional",
+        "modality": "optional",
+        "scope": "analytics und erfolgsmessung",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Brauchen wir aber vielleicht sp\u00E4ter. Also nicht im MVP. Oder doch? Wir m\u00FCssen KPIs messen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Tracking? Wir haben keine Analytics Infrastruktur."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Conversion Rate. Angebot \u2192 Bestellung. Und Zeit bis Angebot."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "consciously_omitted"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "consciously_omitted"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: KPI-Bedarf erhalten, aber nicht f\u00E4lschlich zu MVP-Tracking verst\u00E4rkt.",
+        "candidateIds": [
+          "SCOPE-analytics-not-mvp",
+          "REQ-kpis"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-018-analytics-kpis-later",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Das Transcript deckt ab, dass Tracking/Analytics vielleicht sp\u00E4ter kommt, im MVP unsicher ist, KPIs genannt sind und der Mechanismus offen bleibt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-019-transport-encryption-tls",
+        "proposition": "F\u00FCr die Daten\u00FCbertragung wird Transportverschl\u00FCsselung per TLS als ausreichend angesehen; Ende-zu-Ende-Verschl\u00FCsselung gilt als unrealistisch.",
+        "kind": "constraint",
+        "status": "decided",
+        "modality": "must",
+        "scope": "sicherheitsarchitektur f\u00FCr daten\u00FCbertragung",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] TLS reicht. E2E ist unrealistisch."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: representationMode repariert, keine Aussage zu at-rest-Verschl\u00FCsselung.",
+        "candidateIds": [
+          "REQ-encryption-tls-not-e2e"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-019-transport-encryption-tls",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "decided",
+            "problem": "TLS wird von Ben als ausreichend eingesch\u00E4tzt, aber nicht ausdr\u00FCcklich teamweit final entschieden",
+            "suggested": "open"
+          }
+        ],
+        "reason": "Kernaussage zu TLS vs. E2E ist belegt, aber der Entscheidungsgrad ist etwas zu stark formuliert."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-020-security-review-and-documentation",
+        "proposition": "Ein Security Review ist verpflichtend und kann nicht \u00FCbersprungen werden; es dauert etwa 6 Wochen und ohne ausreichende Dokumentation ist es nicht m\u00F6glich.",
+        "kind": "process_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "governance, freigabeprozess und review-dokumentation",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Security Review dauert 6 Wochen. Das sprengt die 8 Wochen MVP."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dann machen wir es ohne Security Review?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Das ist keine Option."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Ohne Dokumentation kein Security Review."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann m\u00FCssen wir das sauber dokumentieren."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dokumentation ist wichtig, aber bitte nicht zu viel."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Review-Pflicht, Dauer und Dokumentationsvoraussetzung zusammengef\u00FChrt.",
+        "candidateIds": [
+          "RISK-security-review-duration",
+          "CON-security-review-cannot-be-skipped",
+          "REQ-documentation-needed"
+        ],
+        "assumedRelation": "temporal_sequence"
+      },
+      "validation": {
+        "id": "CAN-020-security-review-and-documentation",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Security Review wird als nicht optional dargestellt, mit ca. 6 Wochen Dauer; zudem ist Dokumentation Voraussetzung laut Transcript."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-021-no-new-db-managed-service-open",
+        "proposition": "Es darf kein neuer Datenbankserver eingef\u00FChrt werden; Managed Services sind grunds\u00E4tzlich zul\u00E4ssig und sollen kosteng\u00FCnstig sein, die konkrete Wahl des Managed Service ist aber noch offen.",
+        "kind": "constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "infrastruktur, persistenz und hosting-ansatz",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Vielleicht k\u00F6nnen wir Managed Services nehmen. Kein neuer DB Server \u2013 IT hat das klar gesagt."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Ja kein neuer DB Server."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Managed Services sind okay. Aber bitte g\u00FCnstig."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Ja, aber wir haben noch nicht entschieden, welcher."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Verbot neuer DB-Server bleibt bindend; Managed-Service-Wahl bleibt offen.",
+        "candidateIds": [
+          "CON-no-new-db-server",
+          "DEC-managed-services-allowed",
+          "OQ-managed-service-choice"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-021-no-new-db-managed-service-open",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Kein neuer DB-Server ist klar gesetzt, Managed Services sind zul\u00E4ssig und g\u00FCnstig gew\u00FCnscht, konkrete Wahl bleibt offen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-022-cost-vs-scale-tradeoff",
+        "proposition": "Es besteht ein Spannungsfeld zwischen niedrigen Kosten, Skalierbarkeit und dem Ziel, Overengineering zu vermeiden; Skalierbarkeit muss ber\u00FCcksichtigt werden, ohne unn\u00F6tig zu \u00FCberbauen.",
+        "kind": "non_functional_requirement",
+        "status": "required",
+        "modality": "must_consider",
+        "scope": "qualit\u00E4tsanforderungen und hosting",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] G\u00FCnstig und skalierbar widerspricht sich."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Overengineering und skalierbar sind ein Spannungsfeld."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Skalierbarkeit muss ber\u00FCcksichtigt werden."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Aber bitte kein Overengineering."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: NFR und Trade-off-Risiko geb\u00FCndelt.",
+        "candidateIds": [
+          "RISK-cheap-vs-scalable",
+          "NFR-scalability-consider"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-022-cost-vs-scale-tradeoff",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Das Spannungsfeld zwischen Kosten, Skalierbarkeit und Overengineering wird explizit benannt; Ber\u00FCcksichtigung von Skalierbarkeit ist gefordert."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-023-data-residency-hosting-compliance",
+        "proposition": "Hosting-Compliance muss pr\u00E4zisiert werden: \u0027EU only\u0027 ist nicht gleich \u0027DSGVO-konform\u0027; erforderlich ist nachweisbare Datenresidenz, zugleich ist EU-only operativ schwierig und wahrscheinlich teurer.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "datenresidenz, hosting-compliance und kosten",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Ja EU only. Oder zumindest DSGVO-konform."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Das ist nicht dasselbe."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann reicht \u0022DSGVO-konform\u0022 nicht. Wir brauchen nachweisbare Datenresidenz."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] EU-only Hosting ist nicht einfach. Unser Standardanbieter repliziert Backups manchmal global, wenn man es nicht explizit deaktiviert."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Aber wenn EU-only teurer ist?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Ist es wahrscheinlich."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Kann ich noch nicht sagen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Compliance-Anforderung, Umsetzungsrisiko und Kostenunsicherheit gemeinsam abgebildet.",
+        "candidateIds": [
+          "OQ-eu-only-vs-dsgvo",
+          "RISK-global-backup-replication",
+          "REQ-provable-data-residency",
+          "OQ-eu-hosting-cost"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-023-data-residency-hosting-compliance",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Die Quelle st\u00FCtzt klar, dass EU-only pr\u00E4ziser als DSGVO-konform betrachtet werden muss, nachweisbare Datenresidenz n\u00F6tig ist und EU-only schwierig sowie wohl teurer ist."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-024-api-security-open",
+        "proposition": "Die API muss abgesichert werden; OAuth wird bevorzugt, API Keys sind eine Alternative, die endg\u00FCltige Entscheidung ist aber offen.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "api-sicherheit",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] API muss abgesichert sein. OAuth? Oder API Keys?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] OAuth w\u00E4re besser. Aber komplexer."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Und OAuth ist bevorzugt, aber noch nicht final."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: bevorzugt, aber nicht entschieden.",
+        "candidateIds": [
+          "OQ-api-auth-oauth-vs-keys"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-024-api-security-open",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "API-Absicherung ist erforderlich; OAuth wird bevorzugt, API Keys bleiben Alternative, finale Entscheidung ist ausdr\u00FCcklich offen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-025-backup-dr-required",
+        "proposition": "Backup und Disaster Recovery sind f\u00FCr das MVP erforderlich, weil Kundendaten verarbeitet werden.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "betriebssicherheit und datenwiederherstellung",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Ja Disaster Recovery."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Wenn Kundendaten drin sind: ja."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Okay also doch."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dann MVP: 7. Backup"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: MVP-verbindlich best\u00E4tigt.",
+        "candidateIds": [
+          "REQ-backup-dr"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-025-backup-dr-required",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Transcript st\u00FCtzt, dass Backup/DR wegen Kundendaten f\u00FCr MVP erforderlich gemacht wurde und sp\u00E4ter explizit in die MVP-Liste aufgenommen wurde."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-026-user-volume-and-sizing-open",
+        "proposition": "Die erwartete Nutzerzahl ist unklar und reicht grob von Hunderten bis Zehntausenden, was Dimensionierung und Skalierungsentscheidungen stark beeinflusst.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "kapazit\u00E4tsplanung und performance",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Wei\u00DF ich nicht. Vielleicht 200. Vielleicht 2000. Vielleicht 20.000 wenn es gut l\u00E4uft."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Das ist ein Unterschied."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: fehlende Lastannahmen explizit offen.",
+        "candidateIds": [
+          "OQ-user-volume"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-026-user-volume-and-sizing-open",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Die Nutzerzahl ist explizit unklar und variiert stark; Ben best\u00E4tigt den erheblichen Einfluss auf die Auslegung."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-027-support-scope-and-contact-form-open",
+        "proposition": "Ein vollwertiges Ticketsystem ist zun\u00E4chst nicht im MVP enthalten; als m\u00F6gliche Zwischenl\u00F6sung wurde ein Kontaktformular ohne Ticketpersistenz diskutiert, die konkrete MVP-Umsetzung bleibt offen und soll als bewusste Einschr\u00E4nkung dokumentiert werden.",
+        "kind": "scope",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "support-funktionalit\u00E4t und mvp-abgrenzung",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Nein erstmal nicht."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Ticketsystem war nicht im MVP."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Oder vielleicht nur Kontaktformular? Aber kein richtiges Ticketsystem."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Kontaktformular ohne Ticketpersistenz?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Bitte nicht \u0022wir ignorieren es\u0022, sondern \u0022bewusste Einschr\u00E4nkung\u0022."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Das ist wichtig f\u00FCr Scope."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "consciously_omitted"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "consciously_omitted"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: bewusst ausgeschlossen statt ignoriert; Kontaktformular bleibt offen.",
+        "candidateIds": [
+          "SCOPE-no-ticketing-initially",
+          "OQ-support-contact-form",
+          "SCOPE-support-conscious-limitation"
+        ],
+        "assumedRelation": "refines"
+      },
+      "validation": {
+        "id": "CAN-027-support-scope-and-contact-form-open",
+        "verdict": "overstated",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "decided",
+            "problem": "Die konkrete MVP-Umsetzung bleibt offen; es wurde keine Entscheidung getroffen",
+            "suggested": "open"
+          }
+        ],
+        "reason": "Der Kern ist gedeckt, aber der Status ist zu stark: Ticketsystem eher nicht im MVP, Kontaktformular nur als m\u00F6gliche Zwischenl\u00F6sung, bewusst als Einschr\u00E4nkung zu dokumentieren."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-028-support-data-persistence-risk",
+        "proposition": "Supportfunktionalit\u00E4t erzeugt Persistenzbedarf und steht im Konflikt mit der Vorgabe, keinen neuen Datenbankserver einzuf\u00FChren; ein kontaktformularbasierter Support ohne Ticketpersistenz verlagert Daten in E-Mail und erzeugt Datenschutz-, Auditierbarkeits- und Bearbeitungsprobleme.",
+        "kind": "risk",
+        "status": "open",
+        "modality": "must_note",
+        "scope": "supportprozess, persistenz und datenschutz",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[David] Wenn es nur ein Kontaktformular ist, brauchen wir trotzdem eine Zuordnung zum Kundenkonto, sonst k\u00F6nnen wir die Anfrage nicht bearbeiten."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Und technisch hei\u00DFt das wieder Persistenz. Wir wollten keine neue Datenbank."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann werden Supportdaten per E-Mail verarbeitet. Auch Datenschutz."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] E-Mail ist unstrukturiert und schlecht auditierbar."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[David] Support wird damit nicht gl\u00FCcklich."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Kontaktformular-Folgen und Persistenzkonflikt geb\u00FCndelt.",
+        "candidateIds": [
+          "REQ-support-needs-customer-association",
+          "RISK-support-persistence-vs-no-db",
+          "RISK-contact-form-email-privacy-audit"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-028-support-data-persistence-risk",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "proposition",
+            "observed": "kontaktformularbasierter Support ohne Ticketpersistenz verlagert Daten in E-Mail",
+            "problem": "E-Mail-Verarbeitung wurde als Folge des Kontaktformulars diskutiert, aber \u0027ohne Ticketpersistenz\u0027 ist nicht eindeutig als feststehende Auspr\u00E4gung belegt",
+            "suggested": "kontaktformularbasierter Support kann Daten in E-Mail verlagern und erzeugt Datenschutz-, Auditierbarkeits- und Bearbeitungsprobleme"
+          }
+        ],
+        "reason": "Persistenzkonflikt und die Risiken rund um E-Mail/Datenschutz/Auditierbarkeit sind gedeckt; die Formulierung zur Ticketpersistenz ist leicht zu konkret."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-029-excel-not-option",
+        "proposition": "Excel ist als operative Zwischenl\u00F6sung ausgeschlossen; Excel mit personenbezogenen Kundendaten w\u00E4re zudem aus Compliance-Sicht problematisch.",
+        "kind": "constraint",
+        "status": "required",
+        "modality": "must_not",
+        "scope": "interimsl\u00F6sungen f\u00FCr support und datenpflege",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[David] Ich will nur verhindern, dass wir nach dem Launch manuell Excel-Listen pflegen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Excel ist keine Option."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Excel mit personenbezogenen Kundendaten w\u00E4re aus Compliance-Sicht problematisch."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: bewusste Negativabgrenzung erhalten.",
+        "candidateIds": [
+          "CON-excel-not-option"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-029-excel-not-option",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Anna schlie\u00DFt Excel klar aus; Clara erg\u00E4nzt die Compliance-Problematik bei personenbezogenen Kundendaten."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-030-discount-approval-and-workflow",
+        "proposition": "F\u00FCr Angebote wird grunds\u00E4tzlich ein Freigabeprozess f\u00FCr h\u00F6here Rabatte ben\u00F6tigt, einschlie\u00DFlich Workflow-Status; die genaue Rabattlogik ist aber noch nicht final definiert, und Rabattlogik kommt aus SAP, w\u00E4hrend der Freigabeprozess voraussichtlich im Portal l\u00E4ge.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "angebotsfreigabe, rabattregeln und workflow",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt. Manche Kunden haben Sonderkonditionen, aber nicht jeder Sales-Mitarbeiter darf die nutzen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Dann brauchen wir Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt. Ab 30 Prozent vielleicht Finance."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Oder ab 20 Prozent. Ich bin mir nicht sicher."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Das muss klar definiert werden."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Rabattlogik kommt aus SAP, aber Freigabeprozess w\u00E4re vermutlich im Portal."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Split-Claim Rabattgrenze \u002B Workflow \u002B Systemgrenze zusammengef\u00FChrt.",
+        "candidateIds": [
+          "REQ-discount-approval-threshold",
+          "REQ-offer-workflow-statuses",
+          "OQ-discount-thresholds-15-20-30",
+          "FACT-discount-logic-sap-portal-approval"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-030-discount-approval-and-workflow",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Freigabeprozess f\u00FCr hohe Rabatte, Workflow-Status, unklare Schwellen und Aufteilung SAP/Portal werden im Transcript direkt so diskutiert."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-031-missing-approval-financial-risk",
+        "proposition": "Ohne Freigabeprozess k\u00F6nnen falsche Angebote versendet werden; dies ist ein finanzielles Risiko.",
+        "kind": "risk",
+        "status": "required",
+        "modality": "must_note",
+        "scope": "preis- und rabattgovernance",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Nein, ohne Freigabeprozess k\u00F6nnen falsche Angebote rausgehen. Das ist ein finanzielles Risiko."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: separates Gesch\u00E4ftsrisiko zum offenen Freigabeprozess.",
+        "candidateIds": [
+          "RISK-no-approval-financial"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-031-missing-approval-financial-risk",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Eva sagt explizit, dass ohne Freigabeprozess falsche Angebote rausgehen k\u00F6nnen und dies ein finanzielles Risiko ist."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-032-board-estimate-by-friday",
+        "proposition": "F\u00FCr den Vorstand wird bis Freitag eine Kostensch\u00E4tzung ben\u00F6tigt.",
+        "kind": "process_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "management-reporting und planung",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Wir brauchen aber eine Kostensch\u00E4tzung f\u00FCr den Vorstand bis Freitag."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: externer Managementtermin.",
+        "candidateIds": [
+          "CON-board-estimate-by-friday"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-032-board-estimate-by-friday",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "timescope",
+            "observed": "mvp",
+            "problem": "Die Aussage betrifft einen kurzfristigen Management-Termin, nicht den MVP-Zeitraum als fachlichen Geltungsbereich",
+            "suggested": "unspecified"
+          }
+        ],
+        "reason": "Die Kostensch\u00E4tzung bis Freitag ist klar belegt, aber der TimeScope \u0027mvp\u0027 passt nicht sauber zur Quelle."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-033-estimate-without-clarity-risk",
+        "proposition": "Eine grobe Sch\u00E4tzung ohne gekl\u00E4rten Scope, Datenschutzma\u00DFnahmen und SAP-Schnittstelle ist gef\u00E4hrlich bzw. unvollst\u00E4ndig.",
+        "kind": "risk",
+        "status": "open",
+        "modality": "must_note",
+        "scope": "budgetsch\u00E4tzung und governance",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Eine grobe Sch\u00E4tzung ohne Scope ist gef\u00E4hrlich."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Und ohne Datenschutzma\u00DFnahmen unvollst\u00E4ndig."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Und ohne SAP-Schnittstelle wertlos."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Sch\u00E4tzrisiko eigenst\u00E4ndig belassen.",
+        "candidateIds": [
+          "RISK-estimate-without-scope"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-033-estimate-without-clarity-risk",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Aussage und Risikokontext sind direkt durch Eva, Clara und Ben gedeckt; offen als Risiko/Einordnung passend."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-034-api-gateway-policy-and-delay",
+        "proposition": "Neue externe Portale m\u00FCssen laut interner Policy \u00FCber das zentrale API Gateway laufen; das Gateway-Team hat jedoch eine Warteliste von etwa sechs Wochen, was mit dem 8-Wochen-MVP kollidiert.",
+        "kind": "constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "unternehmensarchitektur und integration",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Noch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Aber unser Gateway-Team hat gerade eine Warteliste von sechs Wochen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Das passt nicht zum 8-Wochen-MVP."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Policy und Delivery-Risiko verbunden.",
+        "candidateIds": [
+          "CON-api-gateway-mandatory",
+          "RISK-gateway-waitlist"
+        ],
+        "assumedRelation": "temporal_sequence"
+      },
+      "validation": {
+        "id": "CAN-034-api-gateway-policy-and-delay",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "required",
+            "problem": "Policy ist verpflichtend, aber die Kollision mit dem MVP ist eher offenes Planungs-/Umsetzungsproblem als bereits fest entschiedener Requirement-Status des ganzen Eintrags",
+            "suggested": "open"
+          }
+        ],
+        "reason": "Die Policy und der 6-Wochen-Delay sind klar belegt; die Kollisionsbewertung ist gedeckt, aber als Gesamtpunkt eher offene Constraint/Risikofrage."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-035-manual-upload-bridge-risk",
+        "proposition": "Manuelle Uploads von Angeboten wurden als m\u00F6gliche Zwischenl\u00F6sung f\u00FCr das MVP diskutiert, sind aber fachlich und technisch problematisch, weil sie Fehlerwahrscheinlichkeit, Datenschutzpr\u00FCfungen und Berechtigungsprobleme im File Storage erh\u00F6hen.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "interimsl\u00F6sung ohne vollintegration",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[David] Kann man f\u00FCr MVP manuell Angebote hochladen?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Vielleicht als Zwischenl\u00F6sung?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Manuelle Uploads erh\u00F6hen Fehlerwahrscheinlichkeit."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Und wer pr\u00FCft, ob keine falschen Kundendaten hochgeladen werden?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Au\u00DFerdem haben wir dann ein Berechtigungsproblem im File Storage."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Zwischenl\u00F6sung und ihre Risiken als ein offener Claim.",
+        "candidateIds": [
+          "OQ-manual-upload-bridge",
+          "RISK-manual-uploads-errors-permissions"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-035-manual-upload-bridge-risk",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Als m\u00F6gliche Zwischenl\u00F6sung diskutiert und mit Fehler-, Datenschutz- und Berechtigungsrisiken im Transcript explizit problematisiert."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-036-data-minimization-vs-live-sap",
+        "proposition": "Es ist offen, ob alle Kundendaten im Portal liegen m\u00FCssen oder ein Abruf aus SAP bei Bedarf gen\u00FCgt; On-demand-Abruf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit, wobei SAP-Wartungsfenster am Wochenende die Abh\u00E4ngigkeit zus\u00E4tzlich versch\u00E4rfen.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "datenhaltung vs. live-abruf",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] M\u00FCssen alle Kundendaten im Portal liegen oder reicht ein Abruf aus SAP bei Bedarf?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Abruf aus SAP bei Bedarf w\u00E4re besser f\u00FCr Datenminimierung, aber schlechter f\u00FCr Performance und Verf\u00FCgbarkeit."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Und SAP hat Wartungsfenster am Wochenende."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Kunden arbeiten auch am Wochenende."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Architektur- und Compliance-Trade-off mit Verf\u00FCgbarkeitsfolge zusammengef\u00FChrt.",
+        "candidateIds": [
+          "OQ-data-minimization-sap-on-demand",
+          "FACT-sap-weekend-maintenance"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-036-data-minimization-vs-live-sap",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Offene Entscheidung mit klar benannten Trade-offs zu Datenminimierung, Performance, Verf\u00FCgbarkeit und Wochenend-Wartungsfenstern ist direkt belegt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-037-geographic-rollout-dach-first",
+        "proposition": "Der Startmarkt ist DACH; sp\u00E4ter werden EU und eventuell USA erwogen, wobei ein sp\u00E4terer USA-Scope Datenschutz- und Vertragslage massiv ver\u00E4ndern w\u00FCrde.",
+        "kind": "scope",
+        "status": "decided",
+        "modality": "must_note",
+        "scope": "geografischer rollout",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Zum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] USA \u00E4ndert Datenschutz und Vertragslage massiv."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Startscope klar, USA nur sp\u00E4ter m\u00F6glich mit Risiko.",
+        "candidateIds": [
+          "SCOPE-dach-start-later-eu-usa",
+          "RISK-usa-changes-compliance"
+        ],
+        "assumedRelation": "temporal_sequence"
+      },
+      "validation": {
+        "id": "CAN-037-geographic-rollout-dach-first",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "decided",
+            "problem": "DACH zum Start wird genannt, aber der sp\u00E4tere Scope bleibt ausdr\u00FCcklich unsicher (\u0027vielleicht USA\u0027)",
+            "suggested": "open"
+          }
+        ],
+        "reason": "Kern ist gedeckt, aber der Eintrag klingt entschiedener, als die Quelle f\u00FCr den Gesamt-Rollout hergibt."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-038-i18n-de-en",
+        "proposition": "Deutsch und Englisch sollen unterst\u00FCtzt werden; Support ben\u00F6tigt mindestens diese beiden Sprachen.",
+        "kind": "requirement",
+        "status": "desired",
+        "modality": "desired",
+        "scope": "internationalisierung und sprache",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Deutsch und Englisch sollten schon drin sein."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[David] Support braucht mindestens Deutsch und Englisch."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Wunsch bleibt nicht final als MVP festgezurrt.",
+        "candidateIds": [
+          "REQ-i18n-de-en"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-038-i18n-de-en",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Anna nennt Deutsch und Englisch als gew\u00FCnschte Unterst\u00FCtzung, David best\u00E4tigt den Bedarf aus Support-Sicht; gew\u00FCnschter Status passt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-039-multi-currency-and-pilot-open",
+        "proposition": "Angebote sollen in der W\u00E4hrung des Kunden ausgestellt werden; EUR ist sicher, CHF m\u00F6glicherweise fr\u00FCh relevant und USD sp\u00E4ter. Die Wahl des Pilotkunden ist jedoch noch offen und beeinflusst W\u00E4hrungsanforderungen, Scope und Datenschutzpr\u00FCfung massiv; Mehrw\u00E4hrung ist zudem mit Rabattlogik und SAP nicht trivial.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "pilotkunde, l\u00E4nderscope und w\u00E4hrung",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Angebote m\u00FCssen in der W\u00E4hrung des Kunden ausgestellt werden. EUR sicher, CHF vielleicht, USD sp\u00E4ter."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] CHF ist f\u00FCr Schweiz wichtig."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Mehrw\u00E4hrung ist nicht trivial, vor allem mit Rabattlogik und SAP."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Pilotkunde ist noch nicht final."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[David] Ich dachte Pilotkunde ist M\u00FCller AG aus der Schweiz."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Vielleicht. Oder Hansa GmbH in Deutschland. Das entscheidet Sales n\u00E4chste Woche."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Das beeinflusst Scope massiv."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Und Datenschutzpr\u00FCfung."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Und W\u00E4hrung."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Split-Claim Pilotkunde \u002B W\u00E4hrung \u002B Scope-Auswirkung zusammengef\u00FChrt.",
+        "candidateIds": [
+          "REQ-multi-currency",
+          "RISK-multi-currency-not-trivial",
+          "OQ-pilot-customer-country",
+          "RISK-pilot-scope-impact"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-039-multi-currency-and-pilot-open",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Mehrw\u00E4hrung, Unsicherheit beim Pilotkunden und die Auswirkungen auf Scope, Datenschutz und W\u00E4hrung sind im Transcript ausdr\u00FCcklich benannt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-040-price-freshness-and-validity",
+        "proposition": "SAP-Preise sind nicht immer in Echtzeit aktuell; manche Rabatte werden nachts berechnet. Deshalb werden Preisg\u00FCltigkeit und m\u00F6glicherweise Warnhinweise ben\u00F6tigt, damit tags\u00FCber keine Angebote mit falschen Rabatten versendet werden.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "angebotskorrektheit bei verz\u00F6gerter preisaktualisierung",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] SAP-Preise sind nicht immer in Echtzeit aktuell. Manche Rabatte werden nachts berechnet."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Wenn Preise nachts aktualisiert werden, darf ein Angebot tags\u00FCber nicht mit falschen Rabatten rausgehen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Dann brauchen wir Preisg\u00FCltigkeit und vielleicht Warnhinweise."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Risiko und Gegenma\u00DFnahme verbunden.",
+        "candidateIds": [
+          "RISK-price-not-realtime",
+          "REQ-price-validity-or-warning"
+        ],
+        "assumedRelation": "refines"
+      },
+      "validation": {
+        "id": "CAN-040-price-freshness-and-validity",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "required",
+            "problem": "Preisproblem ist klar, aber \u0027Warnhinweise\u0027 werden nur als m\u00F6gliche Ma\u00DFnahme genannt, nicht als fest erforderlich",
+            "suggested": "open"
+          },
+          {
+            "facet": "modality",
+            "observed": "must",
+            "problem": "Die Quelle formuliert Preisg\u00FCltigkeit als Bedarf, Warnhinweise jedoch nur eventuell",
+            "suggested": "must_clarify"
+          }
+        ],
+        "reason": "Das Problem veralteter Preise ist gedeckt, aber die abgeleitete Ma\u00DFnahme ist teilweise noch offen formuliert."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-041-pdf-versioning-traceability",
+        "proposition": "PDF-Export f\u00FCr Angebote ist wichtig; Finance ben\u00F6tigt PDFs mit rechtlichen Fu\u00DFnoten und Versionsnummer. Templates m\u00FCssen versioniert werden, damit nachvollziehbar bleibt, welche Angebotsversion an welchen Kunden ging, und Angebote m\u00FCssen revisionssicher nachvollziehbar sein.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "angebotsausgabe, dokumenterzeugung und versionierung",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Was ist mit PDF-Export von Angeboten?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] PDF ist wichtig f\u00FCr Sales."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Templates m\u00FCssen versioniert werden, sonst kann niemand nachvollziehen, welche Angebotsversion an welchen Kunden ging."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Genau. Und Angebote m\u00FCssen nachtr\u00E4glich revisionssicher nachvollziehbar sein."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: PDF-Bedarf mit Traceability/Versionierung vereint.",
+        "candidateIds": [
+          "REQ-pdf-export",
+          "REQ-template-versioning-traceability"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-041-pdf-versioning-traceability",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Aussage und Facetten sind durch die zitierten Stellen gedeckt; Wichtigkeit von PDF, Pflichtbedarf aus Finance sowie Versionierung/Nachvollziehbarkeit werden explizit genannt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-042-offer-event-history",
+        "proposition": "F\u00FCr Angebote wird im MVP mindestens eine Event-History bzw. ein Audit-Log pro Angebot ben\u00F6tigt, insbesondere f\u00FCr Freigabe und rechtliche Nachvollziehbarkeit.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "angebots-auditierung",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Dann brauchen wir Event-History oder Audit-Log pro Angebot."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] F\u00FCr Freigabe und rechtliche Nachvollziehbarkeit: ja, zumindest minimal."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: separates konkretes Artefakt unterhalb allgemeiner Auditpflicht.",
+        "candidateIds": [
+          "REQ-event-history-per-offer"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-042-offer-event-history",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben nennt Event-History/Audit-Log pro Angebot, Eva best\u00E4tigt dies f\u00FCr Freigabe und rechtliche Nachvollziehbarkeit ausdr\u00FCcklich als mindestens minimal und f\u00FCr MVP-relevant."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-043-online-acceptance-out-of-mvp",
+        "proposition": "Online-Akzeptanz von Angeboten ist f\u00FCr das MVP eher ausgeschlossen; stattdessen wurde f\u00FCr das MVP eher nur Angebotsdownload erwogen. Online-Akzeptanz w\u00E4re ein Vertragsabschluss und w\u00FCrde zus\u00E4tzliche Anforderungen wie Zustimmungsnachweis, Zeitstempel, AGB-Akzeptanz und SAP-Schreibzugriff ausl\u00F6sen.",
+        "kind": "scope",
+        "status": "rejected",
+        "modality": "must_note",
+        "scope": "vertragsabschluss im portal",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Das ist ein Vertragsabschluss. Ganz anderes Thema."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Und dann entsteht eine Bestellung. Das muss sauber nach SAP zur\u00FCck."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "consciously_omitted"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "consciously_omitted"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Scope-Ausschluss und Begr\u00FCndungsrisiken zusammengef\u00FChrt.",
+        "candidateIds": [
+          "SCOPE-online-acceptance-not-mvp",
+          "RISK-online-acceptance-contracting"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-043-online-acceptance-out-of-mvp",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "rejected",
+            "problem": "Quelle zeigt eher eine erwogene bewusste Einschr\u00E4nkung f\u00FCr MVP, aber keine final entschiedene Ablehnung",
+            "suggested": "open"
+          },
+          {
+            "facet": "modality",
+            "observed": "must_note",
+            "problem": "MVP-Ausschluss ist nur als vorl\u00E4ufige Erw\u00E4gung formuliert (\u0027vielleicht\u0027)",
+            "suggested": "must_clarify"
+          }
+        ],
+        "reason": "Der Kern ist gedeckt: Online-Akzeptanz w\u00FCrde Zusatzanforderungen ausl\u00F6sen und stattdessen wurde eher Angebotsdownload f\u00FCr MVP erwogen. Die Formulierung als abgelehnt ist aber zu entschieden."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-044-sap-write-access-open",
+        "proposition": "SAP-Schreibzugriff ist noch nicht entschieden; bislang lag der Fokus eher auf lesendem Zugriff.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "sap-integrationsrichtung",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Architekturentscheidung offen belassen.",
+        "candidateIds": [
+          "OQ-sap-write-access"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-044-sap-write-access-open",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Direkt gedeckt: SAP-Schreibzugriff ist noch nicht entschieden, bisher war die Diskussion eher lesend."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-045-log-separation-and-no-pii",
+        "proposition": "Technische Logs d\u00FCrfen keine personenbezogenen Daten enthalten; zugleich sind Application Logs, Audit Logs und Security Logs zu unterscheiden und unterliegen unterschiedlichen Aufbewahrungsfristen.",
+        "kind": "compliance_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "monitoring, logging-architektur und retention",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Noch ein Risiko: Unser zentrales Monitoring darf keine personenbezogenen Daten in Logs enthalten."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Und \u0022keine personenbezogenen Daten in technischen Logs\u0022."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Application logs, audit logs und security logs sind unterschiedliche Dinge."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Und unterschiedliche Aufbewahrungsfristen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: technische Log-Beschr\u00E4nkung und Log-Typentrennung zusammengef\u00FChrt.",
+        "candidateIds": [
+          "CON-no-pii-in-technical-logs",
+          "REQ-separate-log-types-retention"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-045-log-separation-and-no-pii",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Die Quelle sagt ausdr\u00FCcklich, dass technische Logs keine personenbezogenen Daten enthalten d\u00FCrfen und dass Log-Arten sowie Aufbewahrungsfristen unterschieden werden m\u00FCssen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-046-offer-retention-open",
+        "proposition": "Die rechtliche Aufbewahrungsdauer f\u00FCr Angebote ist noch nicht gekl\u00E4rt und muss von Legal gepr\u00FCft werden.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "retention und archivierung",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Wie lange m\u00FCssen wir Angebote speichern?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Rechtspr\u00FCfung offen.",
+        "candidateIds": [
+          "OQ-offer-retention-legal"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-046-offer-retention-open",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Die Aufbewahrungsdauer f\u00FCr Angebote wird explizit als ungekl\u00E4rt benannt und zur Pr\u00FCfung an Legal verwiesen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-047-data-classification-retention-plan",
+        "proposition": "Datenklassifikation und Retention Rules werden ben\u00F6tigt; als Minimalziel wurde ein minimaler Retention-Plan f\u00FCr das MVP akzeptiert.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "datenlebenszyklus und compliance",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Also brauchen wir Datenklassifikation und Retention Rules."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Okay, minimaler Retention-Plan."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Minimalplan statt voller Ausgestaltung.",
+        "candidateIds": [
+          "REQ-data-classification-retention-rules"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-047-data-classification-retention-plan",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "required",
+            "problem": "Datenklassifikation und Retention Rules werden als Bedarf genannt, aber f\u00FCr MVP wird nur ein minimaler Retention-Plan akzeptiert; volle Verbindlichkeit f\u00FCr beides im MVP ist zu stark",
+            "suggested": "open"
+          },
+          {
+            "facet": "timescope",
+            "observed": "mvp",
+            "problem": "Im MVP ist nur ein minimaler Retention-Plan akzeptiert, nicht klar vollst\u00E4ndig Datenklassifikation plus Retention Rules",
+            "suggested": "mvp_or_later_unclear"
+          }
+        ],
+        "reason": "Der Bedarf ist grunds\u00E4tzlich gedeckt, aber der Eintrag verst\u00E4rkt die MVP-Verbindlichkeit f\u00FCr Datenklassifikation und vollst\u00E4ndige Retention Rules \u00FCber die Quelle hinaus."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-048-not-an-8-week-mvp-risk",
+        "proposition": "Der aktuell diskutierte Gesamtumfang ist nach Einsch\u00E4tzung der Beteiligten kein 8-Wochen-MVP.",
+        "kind": "risk",
+        "status": "open",
+        "modality": "must_note",
+        "scope": "projektumfang und lieferf\u00E4higkeit",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Ich sehe gerade: Wir sprechen von Kundenportal, Angebotsworkflow, Rechnungen, Support, Datenschutz, Analytics, Mehrw\u00E4hrung, PDF, SAP-Schreibzugriff und Monitoring. Das ist kein 8-Wochen-MVP."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: explizite Umfangswarnung getrennt belassen.",
+        "candidateIds": [
+          "RISK-not-an-8-week-mvp"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-048-not-an-8-week-mvp-risk",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Ben bewertet den diskutierten Gesamtumfang ausdr\u00FCcklich als kein 8-Wochen-MVP; als Risiko-/Kontextaussage passt der Eintrag."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-049-mvp-scope-cut-current",
+        "proposition": "Der aktuelle MVP-Schnitt umfasst: Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup.",
+        "kind": "scope",
+        "status": "decided",
+        "modality": "must",
+        "scope": "aktueller mvp-schnitt",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "assumption"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "context",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: aktueller Schnitt dokumentiert, trotz offener Einw\u00E4nde.",
+        "candidateIds": [
+          "DEC-mvp-scope-cut"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-049-mvp-scope-cut-current",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "decided",
+            "problem": "Der MVP-Schnitt wird von Anna vorgeschlagen, aber direkt danach werden weitere fehlende Punkte genannt; kein stabil entschiedenes Ergebnis",
+            "suggested": "open"
+          }
+        ],
+        "reason": "Die aufgelisteten Inhalte sind w\u00F6rtlich genannt, aber der Schnitt ist im Gespr\u00E4ch noch nicht final beschlossen."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-050-discount-approval-phase2-with-mvp-constraint",
+        "proposition": "Der Rabatt-Freigabeprozess ist im aktuellen Zuschnitt eher Phase 2 und nicht Teil des MVP; als Kompensation d\u00FCrfen im MVP keine manuellen Sonderrabatte bzw. keine Sonderrabatte ohne Freigabe erstellt werden.",
+        "kind": "scope",
+        "status": "optional",
+        "modality": "must_note",
+        "scope": "rabattfreigabe im mvp",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Vielleicht Phase 2."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Dann darf im MVP kein Rabatt \u00FCber Standardsatz erstellt werden."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Das w\u00E4re eine Constraint: keine manuellen Sonderrabatte im MVP."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Und \u0022keine Sonderrabatte ohne Freigabe\u0022."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "consciously_omitted"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: nicht im MVP, aber kompensierende MVP-Constraint verbindlich.",
+        "candidateIds": [
+          "SCOPE-discount-approval-phase2",
+          "CON-no-manual-special-discounts-mvp"
+        ],
+        "assumedRelation": "refines"
+      },
+      "validation": {
+        "id": "CAN-050-discount-approval-phase2-with-mvp-constraint",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "optional",
+            "problem": "Nicht optional, sondern als bewusste Einschr\u00E4nkung/Constraint f\u00FCr den MVP formuliert",
+            "suggested": "open"
+          },
+          {
+            "facet": "timescope",
+            "observed": "later_possible",
+            "problem": "Phase 2 wird erwogen, aber nicht verbindlich entschieden",
+            "suggested": "mvp"
+          }
+        ],
+        "reason": "Kernaussage ist gedeckt: Freigabe eher nicht im MVP, daf\u00FCr keine Sonderrabatte ohne Freigabe. Die Facetten sind jedoch nicht sauber gesetzt."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-051-env-and-test-data",
+        "proposition": "Es werden Dev-, Test- und Prod-Umgebungen ben\u00F6tigt; Testdaten d\u00FCrfen keine echten Kundendaten enthalten, daher werden pseudonymisierte oder synthetische Testdaten ben\u00F6tigt.",
+        "kind": "compliance_constraint",
+        "status": "required",
+        "modality": "must",
+        "scope": "entwicklungs-, testumgebungen und testdatenmanagement",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod. Testdaten d\u00FCrfen keine echten Kundendaten enthalten."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Ja, Pseudonymisierung oder synthetische Testdaten."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Umgebungsbedarf und konkrete Testdaten-Compliance zusammengef\u00FChrt.",
+        "candidateIds": [
+          "REQ-env-separation-no-real-test-data",
+          "REQ-pseudonymized-or-synthetic-test-data"
+        ],
+        "assumedRelation": "refines"
+      },
+      "validation": {
+        "id": "CAN-051-env-and-test-data",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "required",
+            "problem": "Bedarf ist klar benannt, aber nicht ausdr\u00FCcklich als beschlossener MVP-Requirement-Satz fixiert",
+            "suggested": "open"
+          }
+        ],
+        "reason": "Inhaltlich klar gest\u00FCtzt; nur der Status ist etwas zu stark als fest entschieden formuliert."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-052-sap-test-data-risk",
+        "proposition": "Das SAP-Testsystem enth\u00E4lt echte alte Kundendaten; diese d\u00FCrfen nicht ungepr\u00FCft verwendet werden und blockieren sonst Integrationstests.",
+        "kind": "risk",
+        "status": "open",
+        "modality": "must_note",
+        "scope": "sap-testintegration und datenschutz",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] SAP-Testsystem hat aber echte alte Kundendaten. Das ist ein Problem."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann d\u00FCrfen die nicht ungepr\u00FCft verwendet werden."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Das blockiert Integrationstests."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: unmittelbarer Testblocker.",
+        "candidateIds": [
+          "RISK-sap-test-data-real-pii"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-052-sap-test-data-risk",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Aussage, Offenheit und Risikocharakter sind direkt durch das Transcript gedeckt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-053-secrets-management",
+        "proposition": "CI/CD ben\u00F6tigt Secrets Management.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "deployment und betriebsplattform",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Und CI/CD braucht Secrets Management."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Und \u0022Secrets Management\u0022."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: explizites Muss.",
+        "candidateIds": [
+          "REQ-secrets-management"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-053-secrets-management",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "required",
+            "problem": "Im Transcript als Bedarf genannt, aber nicht als final entschiedene Pflicht im MVP beschlossen",
+            "suggested": "open"
+          }
+        ],
+        "reason": "Die Proposition ist gest\u00FCtzt, der Status als fest erforderlich ist jedoch etwas st\u00E4rker als die Quelle."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-054-rate-limits-download-controls",
+        "proposition": "F\u00FCr API und Rechnungsdownloads werden Rate Limits sowie Pagination und Download-Limits ben\u00F6tigt; Massenexport von Rechnungen ist rechtlich und sicherheitstechnisch relevant, w\u00E4hrend weitergehende Missbrauchserkennung zwar w\u00FCnschenswert, f\u00FCr das MVP aber als zu viel angesehen wird.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "api-schutz und massendownloads",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Wir brauchen auch Rate Limits f\u00FCr API."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[David] Kunden laden manchmal hunderte Rechnungen auf einmal herunter."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Dann brauchen wir Pagination und Download-Limits."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann mindestens Rate Limiting und Audit."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Massenexport von Rechnungen kann rechtlich relevant sein."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Und sicherheitsrelevant."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Wir brauchen Missbrauchserkennung."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Das ist zu viel."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "optional",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Mindestschutz als Requirement, weitergehende Missbrauchserkennung nicht in MVP verst\u00E4rken.",
+        "candidateIds": [
+          "REQ-rate-limits-pagination-download-limits",
+          "RISK-mass-export-legal-security"
+        ],
+        "assumedRelation": "refines"
+      },
+      "validation": {
+        "id": "CAN-054-rate-limits-download-controls",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "required",
+            "problem": "Rate Limiting wird als Mindestma\u00DF genannt, aber Pagination/Download-Limits sind diskutierte Ableitungen und nicht als finaler entschiedener MVP-Umfang festgezogen",
+            "suggested": "open"
+          }
+        ],
+        "reason": "Der Kern ist gut gedeckt; nur der Grad der Verbindlichkeit ist etwas zu stark."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "CAN-055-sap-availability-and-fallback-open",
+        "proposition": "SAP-Verf\u00FCgbarkeit ist eine kritische Abh\u00E4ngigkeit f\u00FCr das Portal; offen ist, wie bei nicht erreichbarem SAP verfahren wird, etwa kein Angebot erstellen, unverbindliche Kennzeichnung oder Fallback/Cache.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "verhalten bei sap-ausfall",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Bitte schreibt \u0022SAP-Verf\u00FCgbarkeit ist kritische Abh\u00E4ngigkeit\u0022."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[David] Was passiert, wenn SAP nicht erreichbar ist?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Angebote k\u00F6nnen dann nicht aktuell berechnet werden."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Dann darf kein Angebot erstellt werden, oder es muss als unverbindlich markiert sein."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Dann brauchen wir Fallback oder Cache."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: kritische Abh\u00E4ngigkeit und Fallback-Frage zusammengef\u00FChrt.",
+        "candidateIds": [
+          "RISK-sap-availability-critical",
+          "OQ-sap-outage-fallback"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-055-sap-availability-and-fallback-open",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Kritische SAP-Abh\u00E4ngigkeit und offene Reaktion auf Ausf\u00E4lle werden explizit benannt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-056-cache-strategy-open-risky",
+        "proposition": "Es ist offen, ob nur Produktdaten ohne Kundendaten gecacht werden k\u00F6nnen; dies k\u00F6nnte Datenschutzrisiken senken, kollidiert aber mit kundenspezifischer Rabattlogik. Caching ist zudem wegen Datenschutz, Retention und Cache-Invalidierung riskant bzw. aufwendig.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "caching-strategie",
+        "timeScope": "mvp_or_later_unclear",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] K\u00F6nnen wir nur Produktdaten cachen, keine Kundendaten?"
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Vielleicht, aber Rabattlogik ist kundenspezifisch."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Dann wieder Datenschutz und Retention."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Eva] Dann ist Cache riskant."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Und Cache-Invalidierung ist aufwendig."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "high",
+        "notes": "facet repair: Cache-Option und Gegenrisiken als ein offener Trade-off.",
+        "candidateIds": [
+          "OQ-cache-without-customer-data",
+          "RISK-cache-complexity"
+        ],
+        "assumedRelation": "elaborates"
+      },
+      "validation": {
+        "id": "CAN-056-cache-strategy-open-risky",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Offene Cache-Strategie sowie Konflikte mit Datenschutz, Retention, kundenspezifischer Rabattlogik und Invalidierung sind direkt belegt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "CAN-057-meta-documentation-principles",
+        "proposition": "Das unmittelbare Ziel ist ein MVP-Schnitt, der klar dokumentiert, was enthalten ist, was bewusst ausgeschlossen ist und welche Risiken daraus entstehen; Widerspr\u00FCche d\u00FCrfen nicht glattgeb\u00FCgelt werden, und Architektur darf ohne Providerwahl keine konkreten Cloud-Produkte erfinden.",
+        "kind": "meta",
+        "status": "decided",
+        "modality": "must",
+        "scope": "ergebnisform und dokumentationsprinzipien",
+        "timeScope": "mvp",
+        "evidence": [
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Anna] Dann ist das finale Ziel f\u00FCr jetzt: ein MVP-Schnitt, der klar sagt, was drin ist, was bewusst ausgeschlossen ist und welche Risiken dadurch entstehen."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Clara] Wichtig ist, dass Widerspr\u00FCche nicht einfach glattgeb\u00FCgelt werden. Sie m\u00FCssen sichtbar bleiben."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Farid] Architektur darf keine konkreten Cloud-Produkte erfinden, solange wir keinen Provider gew\u00E4hlt haben."
+          },
+          {
+            "source": "T9999_chaos.txt",
+            "quote": "[Ben] Und keine falsche Sicherheit erzeugen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "required",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "context",
+            "representationMode": "question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Meta-Leitplanke f\u00FCr Folgeartefakte.",
+        "candidateIds": [
+          "META-mvp-cut-explicit-in-out-risks"
+        ],
+        "assumedRelation": "standalone"
+      },
+      "validation": {
+        "id": "CAN-057-meta-documentation-principles",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Die Proposition ist durch die zitierten Aussagen direkt gedeckt: finales Ziel ist ein MVP-Schnitt mit klarem In/Out-of-Scope und Risiken; Widerspr\u00FCche sollen sichtbar bleiben; ohne Providerwahl sollen keine konkreten Cloud-Produkte festgelegt werden. Status, Modalit\u00E4t, Scope und MVP-Bezug passen."
+      },
+      "claimStatus": "approved"
+    }
+  ]
+}

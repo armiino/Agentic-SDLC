@@ -9,11 +9,11 @@ namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
 /// </summary>
 /// <remarks>
 /// Wie Stufe 1 ein <see cref="Executor{TInput}"/> mit EINEM schema-gebundenen LLM-Call; Logik aus
-/// <see cref="SemanticLedgerCanonicalizer"/> wiederverwendet. Reicht den kanonischen Ledger als
-/// <see cref="CanonicalLedgerMessage"/> an Stufe 3 (FacetValidation) weiter. Cluster-Trace
+/// <see cref="SemanticLedgerCanonicalizer"/> wiederverwendet. Reicht den Draft zusammen mit den Candidates als
+/// <see cref="CandidateAndCanonicalLedgerMessage"/> an Stufe 2b (CoverageRepair) weiter. Cluster-Trace
 /// (candidateIds[]/assumedRelation) + ResponseFormat kamen mit L2.
 /// </remarks>
-[SendsMessage(typeof(CanonicalLedgerMessage))]
+[SendsMessage(typeof(CandidateAndCanonicalLedgerMessage))]
 internal sealed class CanonicalizationExecutor : Executor<CandidateLedgerMessage>
 {
     public const string ExecutorName = "LedgerCanonicalization";
@@ -39,7 +39,7 @@ internal sealed class CanonicalizationExecutor : Executor<CandidateLedgerMessage
 
         LedgerRunArtifacts.WriteStep(
             _run,
-            "step-02-canonical",
+            "step-02-canonical-draft",
             output: new SemanticLedgerFixture(canonical),
             metrics: new
             {
@@ -50,7 +50,7 @@ internal sealed class CanonicalizationExecutor : Executor<CandidateLedgerMessage
             });
 
         await context
-            .SendMessageAsync(new CanonicalLedgerMessage(canonical))
+            .SendMessageAsync(new CandidateAndCanonicalLedgerMessage(message.Entries, canonical))
             .ConfigureAwait(false);
     }
 }

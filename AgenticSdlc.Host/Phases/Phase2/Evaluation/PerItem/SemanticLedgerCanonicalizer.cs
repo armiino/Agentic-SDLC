@@ -40,6 +40,11 @@ public sealed class SemanticLedgerCanonicalizer
 
         5. Disposition:
            Entscheide pro Artefakt, ob der kanonische Claim required, optional, context oder not_applicable ist.
+           Verwende fuer applicability NUR: required | optional | context | not_applicable.
+           Verwende fuer representationMode NUR:
+           requirement | constraint | open_decision | assumption | risk_reference | question | open_question | consciously_omitted.
+           Verwende NIEMALS representationMode="decision"; nutze open_decision fuer offene Entscheidungen
+           oder constraint/requirement fuer verbindliche Entscheidungen.
            Requirements: fachliche Anforderungen, Constraints, Scope-/MVP-Entscheidungen, offene Anforderungen.
            Architecture: Architekturentscheidungen, Integrations-/Skalierungs-/technische Offenheiten.
            Risks: Risiken, Tradeoffs, Compliance-/Datenschutz-/Terminrisiken.
@@ -72,17 +77,17 @@ public sealed class SemanticLedgerCanonicalizer
             {
               "id": "canonical-stable-id",
               "proposition": "...",
-              "kind": "...",
+              "kind": "decision|requirement|constraint|risk|open_requirement|open_question|scope|compliance_constraint|process_constraint|non_functional_requirement|meta",
               "status": "...",
               "modality": "...",
               "scope": "...",
               "timeScope": "mvp|later_possible|mvp_or_later_unclear|null",
               "evidence": [{ "source": "...", "quote": "..." }],
               "disposition": {
-                "requirements": { "applicability": "...", "representationMode": "..." },
-                "architecture": { "applicability": "...", "representationMode": "..." },
-                "risks": { "applicability": "...", "representationMode": "..." },
-                "open-questions": { "applicability": "...", "representationMode": "..." }
+                "requirements": { "applicability": "required|optional|context|not_applicable", "representationMode": "requirement|constraint|open_decision|assumption|risk_reference|question|open_question|consciously_omitted" },
+                "architecture": { "applicability": "required|optional|context|not_applicable", "representationMode": "requirement|constraint|open_decision|assumption|risk_reference|question|open_question|consciously_omitted" },
+                "risks": { "applicability": "required|optional|context|not_applicable", "representationMode": "requirement|constraint|open_decision|assumption|risk_reference|question|open_question|consciously_omitted" },
+                "open-questions": { "applicability": "required|optional|context|not_applicable", "representationMode": "requirement|constraint|open_decision|assumption|risk_reference|question|open_question|consciously_omitted" }
               },
               "riskLevel": "high|medium|low",
               "notes": "facet repair: ...",
@@ -104,11 +109,11 @@ public sealed class SemanticLedgerCanonicalizer
                 "properties": {
                   "id": { "type": "string" },
                   "proposition": { "type": "string" },
-                  "kind": { "type": "string" },
+                  "kind": { "type": "string", "enum": ["decision", "requirement", "constraint", "risk", "open_requirement", "open_question", "scope", "compliance_constraint", "process_constraint", "non_functional_requirement", "meta"] },
                   "status": { "type": "string" },
                   "modality": { "type": "string" },
                   "scope": { "type": "string" },
-                  "timeScope": { "type": ["string", "null"] },
+                  "timeScope": { "type": ["string", "null"], "enum": ["mvp", "later_possible", "mvp_or_later_unclear", null] },
                   "evidence": {
                     "type": "array",
                     "items": {
@@ -124,18 +129,18 @@ public sealed class SemanticLedgerCanonicalizer
                   "disposition": {
                     "type": "object",
                     "properties": {
-                      "requirements": { "type": "object", "properties": { "applicability": { "type": "string" }, "representationMode": { "type": "string" } }, "required": ["applicability", "representationMode"], "additionalProperties": false },
-                      "architecture": { "type": "object", "properties": { "applicability": { "type": "string" }, "representationMode": { "type": "string" } }, "required": ["applicability", "representationMode"], "additionalProperties": false },
-                      "risks": { "type": "object", "properties": { "applicability": { "type": "string" }, "representationMode": { "type": "string" } }, "required": ["applicability", "representationMode"], "additionalProperties": false },
-                      "open-questions": { "type": "object", "properties": { "applicability": { "type": "string" }, "representationMode": { "type": "string" } }, "required": ["applicability", "representationMode"], "additionalProperties": false }
+                      "requirements": { "type": "object", "properties": { "applicability": { "type": "string", "enum": ["required", "optional", "context", "not_applicable"] }, "representationMode": { "type": "string", "enum": ["requirement", "constraint", "open_decision", "assumption", "risk_reference", "question", "open_question", "consciously_omitted"] } }, "required": ["applicability", "representationMode"], "additionalProperties": false },
+                      "architecture": { "type": "object", "properties": { "applicability": { "type": "string", "enum": ["required", "optional", "context", "not_applicable"] }, "representationMode": { "type": "string", "enum": ["requirement", "constraint", "open_decision", "assumption", "risk_reference", "question", "open_question", "consciously_omitted"] } }, "required": ["applicability", "representationMode"], "additionalProperties": false },
+                      "risks": { "type": "object", "properties": { "applicability": { "type": "string", "enum": ["required", "optional", "context", "not_applicable"] }, "representationMode": { "type": "string", "enum": ["requirement", "constraint", "open_decision", "assumption", "risk_reference", "question", "open_question", "consciously_omitted"] } }, "required": ["applicability", "representationMode"], "additionalProperties": false },
+                      "open-questions": { "type": "object", "properties": { "applicability": { "type": "string", "enum": ["required", "optional", "context", "not_applicable"] }, "representationMode": { "type": "string", "enum": ["requirement", "constraint", "open_decision", "assumption", "risk_reference", "question", "open_question", "consciously_omitted"] } }, "required": ["applicability", "representationMode"], "additionalProperties": false }
                     },
                     "required": ["requirements", "architecture", "risks", "open-questions"],
                     "additionalProperties": false
                   },
-                  "riskLevel": { "type": "string" },
+                  "riskLevel": { "type": "string", "enum": ["high", "medium", "low"] },
                   "notes": { "type": ["string", "null"] },
                   "candidateIds": { "type": "array", "items": { "type": "string" } },
-                  "assumedRelation": { "type": "string" }
+                  "assumedRelation": { "type": "string", "enum": ["same_proposition", "refines", "temporal_sequence", "elaborates", "standalone"] }
                 },
                 "required": ["id", "proposition", "kind", "status", "modality", "scope", "timeScope", "evidence", "disposition", "riskLevel", "notes", "candidateIds", "assumedRelation"],
                 "additionalProperties": false
