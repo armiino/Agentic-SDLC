@@ -46,6 +46,13 @@ public sealed class FacetValidator
         facetIssues: NUR für Facetten, die nicht passen. Pro Issue: facet, observed (aktueller Wert),
         problem (kurz), suggested (korrigierter Wert oder null). Wenn alles passt: leere Liste.
 
+        suggested MUSS bei geschlossenen Facetten ein OFFIZIELLER Taxonomie-Wert sein (keine Freitexte wie
+        "should", "proposed", "known", "target", "noted", "unspecified"):
+          status:    decided | open | rejected | uncertain | required
+          modality:  must | must_clarify | must_consider | must_note | must_not | desired | optional
+          timeScope: mvp | later_possible | mvp_or_later_unclear
+        Nur abschwächen, nie verstärken (z. B. decided->open, must->desired/must_clarify, mvp->mvp_or_later_unclear).
+
         Antworte ausschliesslich mit JSON:
         {
           "items": [

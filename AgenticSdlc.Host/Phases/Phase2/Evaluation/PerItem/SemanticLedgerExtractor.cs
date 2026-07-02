@@ -44,6 +44,14 @@ public sealed class SemanticLedgerExtractor
         Gib maximal 80 Ledger-Eintraege aus. Fasse keine unabhaengigen Facetten zusammen, wenn Status/Scope dadurch
         verloren geht. Vermeide reine Duplikate.
 
+        FACETTEN-TAXONOMIE (verbindlich, keine anderen Werte):
+        status (Entscheidungsstand): decided | open | rejected | uncertain | required
+          - required NUR fuer extern vorgeschriebene, nicht-verhandelbare Pflicht (Gesetz/Policy/Compliance),
+            NICHT fuer team-internes "wir muessen X" -> das ist status=open|decided + modality=must.
+          - Ein Wunsch ist KEIN status; "gewuenscht/optional" -> status=open + modality=desired|optional.
+        modality (Verbindlichkeit): must | must_clarify | must_consider | must_note | must_not | desired | optional
+        Keine Verstaerkung: offen darf nicht decided/required werden, gewuenscht nicht must, spaeter nicht mvp.
+
         Antworte ausschliesslich mit JSON:
         {
           "entries": [
@@ -51,8 +59,8 @@ public sealed class SemanticLedgerExtractor
               "id": "kurze stabile ID oder leer",
               "proposition": "...",
               "kind": "decision|requirement|constraint|risk|open_requirement|open_question|scope|compliance_constraint|process_constraint|non_functional_requirement",
-              "status": "undecided|open|decided|required|uncertain|rejected|optional|desired|...",
-              "modality": "open|must|desired|must_consider|must_clarify|must_note|optional|...",
+              "status": "decided|open|rejected|uncertain|required",
+              "modality": "must|must_clarify|must_consider|must_note|must_not|desired|optional",
               "scope": "kurzer_scope_string",
               "timeScope": "mvp|later_possible|mvp_or_later_unclear|null",
               "evidence": [
@@ -83,8 +91,8 @@ public sealed class SemanticLedgerExtractor
                   "id": { "type": "string" },
                   "proposition": { "type": "string" },
                   "kind": { "type": "string" },
-                  "status": { "type": "string" },
-                  "modality": { "type": "string" },
+                  "status": { "type": "string", "enum": ["decided", "open", "rejected", "uncertain", "required"] },
+                  "modality": { "type": "string", "enum": ["must", "must_clarify", "must_consider", "must_note", "must_not", "desired", "optional"] },
                   "scope": { "type": "string" },
                   "timeScope": { "type": ["string", "null"] },
                   "evidence": {
@@ -202,21 +210,51 @@ public sealed class SemanticLedgerExtractor
     }
 
     private static SemanticLedgerEntry Normalize(SemanticLedgerEntry e)
-        => e with
+    {
+        var candidateIds = e.CandidateIds?.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList();
+        var sourceUnitIds = e.SourceUnitIds?
+            .Where(s => !string.IsNullOrWhiteSpace(s))
+            .Select(NormalizeSourceUnitId)
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+        var status = e.Status.Trim().ToLowerInvariant();
+        var modality = e.Modality.Trim().ToLowerInvariant();
+        if (status == "required" && modality is not ("must" or "must_not"))
+            status = "open";
+        var relation = string.IsNullOrWhiteSpace(e.AssumedRelation) ? null : e.AssumedRelation.Trim().ToLowerInvariant();
+        // Deterministische Cluster-Trace-Normalisierung: EIN Kandidat kann definitionsgemäss kein Merge sein.
+        // candidateIds.count <= 1  => assumedRelation = standalone (räumt LLM-Label-Rauschen aus; count>=2
+        // mit standalone bleibt eine echte Inkonsistenz, die das Gate weiter meldet).
+        if (candidateIds is not null && candidateIds.Count <= 1 && relation is not null && relation != "standalone")
+            relation = "standalone";
+
+        return e with
         {
             Id = e.Id.Trim(),
             Proposition = e.Proposition.Trim(),
             Kind = e.Kind.Trim().ToLowerInvariant(),
-            Status = e.Status.Trim().ToLowerInvariant(),
-            Modality = e.Modality.Trim().ToLowerInvariant(),
+            Status = status,
+            Modality = modality,
             Scope = e.Scope.Trim().ToLowerInvariant(),
             TimeScope = string.IsNullOrWhiteSpace(e.TimeScope) ? null : e.TimeScope.Trim().ToLowerInvariant(),
             Evidence = e.Evidence.Where(ev => !string.IsNullOrWhiteSpace(ev.Quote)).ToList(),
             RiskLevel = e.RiskLevel.Trim().ToLowerInvariant(),
             Notes = e.Notes?.Trim(),
-            CandidateIds = e.CandidateIds?.Where(s => !string.IsNullOrWhiteSpace(s)).Select(s => s.Trim()).ToList(),
-            AssumedRelation = string.IsNullOrWhiteSpace(e.AssumedRelation) ? null : e.AssumedRelation.Trim().ToLowerInvariant()
+            CandidateIds = candidateIds,
+            AssumedRelation = relation,
+            SourceUnitIds = sourceUnitIds
         };
+    }
+
+    private static string NormalizeSourceUnitId(string value)
+    {
+        var trimmed = value.Trim();
+        if (!trimmed.StartsWith("AU-", StringComparison.OrdinalIgnoreCase)) return trimmed;
+        var suffix = trimmed[3..];
+        return int.TryParse(suffix, out var number)
+            ? $"AU-{number:D4}"
+            : trimmed.ToUpperInvariant();
+    }
 
     private static string? ExtractJson(string? text)
     {

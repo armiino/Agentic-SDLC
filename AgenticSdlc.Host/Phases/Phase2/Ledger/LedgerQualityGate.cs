@@ -38,6 +38,17 @@ public static class LedgerQualityGate
     ];
     private static readonly string[] ValidTimeScopes = ["mvp", "later_possible", "mvp_or_later_unclear"];
     private static readonly string[] ValidRiskLevels = ["high", "medium", "low"];
+    // #3 ratifiziert (ledger-taxonomy.md): status = Entscheidungsstand, modality = Verbindlichkeit.
+    private static readonly string[] ValidStatus = ["decided", "open", "rejected", "uncertain", "required"];
+    private static readonly string[] ValidModality = ["must", "must_clarify", "must_consider", "must_note", "must_not", "desired", "optional"];
+    // Geschlossene Facetten, für die ein Repair-suggested nur offizielle Werte enthalten darf.
+    private static readonly Dictionary<string, string[]> SuggestableFacetValues = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["status"] = ValidStatus,
+        ["modality"] = ValidModality,
+        ["timescope"] = ["mvp", "later_possible", "mvp_or_later_unclear"]
+        // scope = Freitext (kein Enum); kind/riskLevel/disposition sind keine FacetValidator-Facetten.
+    };
     private static readonly string[] RequiredArtifacts = ["requirements", "architecture", "risks", "open-questions"];
     private static readonly string[] ValidApplicability = ["required", "optional", "context", "not_applicable"];
     private static readonly string[] ValidRepresentationModes =
@@ -151,6 +162,31 @@ public static class LedgerQualityGate
         AddEnumViolation(v, "INVALID_KIND", $"kind ausserhalb {{{string.Join("|", ValidKinds)}}}.", canonical, e => e.Kind, ValidKinds);
         AddEnumViolation(v, "INVALID_TIME_SCOPE", $"timeScope ausserhalb {{{string.Join("|", ValidTimeScopes)}}}.", canonical, e => e.TimeScope, ValidTimeScopes, allowNull: true);
         AddEnumViolation(v, "INVALID_RISK_LEVEL", $"riskLevel ausserhalb {{{string.Join("|", ValidRiskLevels)}}}.", canonical, e => e.RiskLevel, ValidRiskLevels);
+        // #3: status/modality jetzt Gate-erzwungen.
+        AddEnumViolation(v, "INVALID_STATUS", $"status ausserhalb {{{string.Join("|", ValidStatus)}}}.", canonical, e => e.Status, ValidStatus);
+        AddEnumViolation(v, "INVALID_MODALITY", $"modality ausserhalb {{{string.Join("|", ValidModality)}}}.", canonical, e => e.Modality, ValidModality);
+
+        // --- I5c (ERROR): required ist NUR extern-bindend -> Rasierklingen-Regel: modality muss must/must_not sein. ---
+        var inconsistentRequired = canonical
+            .Where(e => string.Equals(e.Status, "required", StringComparison.OrdinalIgnoreCase)
+                && e.Modality is not null && e.Modality is not ("must" or "must_not"))
+            .Select(e => e.Id)
+            .ToList();
+        if (inconsistentRequired.Count > 0)
+            v.Add(new("error", "INCONSISTENT_REQUIRED_MODALITY",
+                "status=required (externe Pflicht) verlangt modality=must|must_not.", inconsistentRequired));
+
+        // --- I5d (ERROR): Validator-Repair taxonomie-konform (#4): suggested nur offizielle Werte je Facette. ---
+        var badSuggested = validated
+            .Where(x => x.Validation.FacetIssues.Any(i =>
+                i.Suggested is not null
+                && SuggestableFacetValues.TryGetValue(i.Facet, out var allowed)
+                && !allowed.Contains(i.Suggested)))
+            .Select(x => x.Entry.Id)
+            .ToList();
+        if (badSuggested.Count > 0)
+            v.Add(new("error", "INVALID_SUGGESTED_VALUE",
+                "FacetIssue.suggested liegt für eine geschlossene Facette ausserhalb der offiziellen Taxonomie.", badSuggested));
 
         var missingDispositionArtifacts = canonical
             .Where(e => RequiredArtifacts.Any(a => !e.Disposition.ContainsKey(a)))

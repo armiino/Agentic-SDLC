@@ -14,13 +14,30 @@ public sealed record FacetIssue(
     [property: JsonPropertyName("problem")] string Problem,
     [property: JsonPropertyName("suggested")] string? Suggested)
 {
+    private static readonly Dictionary<string, string[]> SuggestedValues = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["status"] = ["decided", "open", "rejected", "uncertain", "required"],
+        ["modality"] = ["must", "must_clarify", "must_consider", "must_note", "must_not", "desired", "optional"],
+        ["timescope"] = ["mvp", "later_possible", "mvp_or_later_unclear"]
+    };
+
     public FacetIssue Normalized() => this with
     {
         Facet = Facet?.Trim().ToLowerInvariant() ?? "",
         Observed = Observed?.Trim() ?? "",
         Problem = Problem?.Trim() ?? "",
-        Suggested = string.IsNullOrWhiteSpace(Suggested) ? null : Suggested.Trim()
+        Suggested = NormalizeSuggested(Facet, Suggested)
     };
+
+    private static string? NormalizeSuggested(string? facet, string? suggested)
+    {
+        if (string.IsNullOrWhiteSpace(suggested)) return null;
+        var normalizedFacet = facet?.Trim().ToLowerInvariant() ?? "";
+        var normalized = suggested.Trim().ToLowerInvariant();
+        return SuggestedValues.TryGetValue(normalizedFacet, out var allowed) && !allowed.Contains(normalized, StringComparer.Ordinal)
+            ? null
+            : normalized;
+    }
 }
 
 /// <summary>Verdict des Validators für EINEN Ledger-Eintrag (bounded Per-Item-Urteil gegen das Transcript).</summary>

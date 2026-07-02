@@ -41,4 +41,39 @@ public static class LedgerBuilderWorkflow
 
         return builder.Build();
     }
+
+    internal static Workflow BuildUnitCoverage(
+        UnitAwareSemanticLedgerExtractor extractor,
+        UnusedUnitTriageReviewer unusedUnitTriageReviewer,
+        UnusedUnitLedgerComparer unusedUnitLedgerComparer,
+        SemanticLedgerCanonicalizer canonicalizer,
+        CanonicalCoverageRepairer coverageRepairer,
+        FacetValidator facetValidator,
+        string transcript,
+        string sourceName,
+        RunContext run)
+    {
+        var segmentation = new AtomicUnitSegmentationExecutor(sourceName, run);
+        var extraction = new UnitAwareCandidateExtractionExecutor(extractor, run);
+        var unitCoverage = new UnitCoverageGateExecutor(run);
+        var unusedTriage = new UnusedUnitTriageExecutor(unusedUnitTriageReviewer, run);
+        var unusedCompare = new UnusedUnitLedgerCompareExecutor(unusedUnitLedgerComparer, run);
+        var canonicalization = new CanonicalizationExecutor(canonicalizer, run);
+        var coverageRepair = new CanonicalCoverageRepairExecutor(coverageRepairer, run);
+        var facetValidation = new FacetValidationExecutor(facetValidator, transcript, run);
+
+        var builder = new WorkflowBuilder(segmentation)
+            .WithName("LedgerBuilderUnitCoverage")
+            .WithDescription("Transcript -> AtomicUnits -> UnitAwareCandidate -> UnitCoverageGate -> UnusedUnitTriage -> UnusedUnitLedgerCompare -> CanonicalDraft -> CoverageRepair -> FacetValidation.");
+
+        builder.AddEdge(segmentation, extraction);
+        builder.AddEdge(extraction, unitCoverage);
+        builder.AddEdge(unitCoverage, unusedTriage);
+        builder.AddEdge(unusedTriage, unusedCompare);
+        builder.AddEdge(unusedCompare, canonicalization);
+        builder.AddEdge(canonicalization, coverageRepair);
+        builder.AddEdge(coverageRepair, facetValidation);
+
+        return builder.Build();
+    }
 }

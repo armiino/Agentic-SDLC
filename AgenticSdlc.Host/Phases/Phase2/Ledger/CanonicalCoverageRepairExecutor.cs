@@ -34,6 +34,7 @@ internal sealed class CanonicalCoverageRepairExecutor : Executor<CandidateAndCan
             : await _repairer
                 .RepairAsync(message.Candidates, message.CanonicalDraft, missing, cancellationToken)
                 .ConfigureAwait(false);
+        repaired = LedgerSourceUnitTrace.ApplyFromCandidates(message.Candidates, repaired);
 
         var remainingMissing = FindMissingCandidateIds(message.Candidates, repaired);
 

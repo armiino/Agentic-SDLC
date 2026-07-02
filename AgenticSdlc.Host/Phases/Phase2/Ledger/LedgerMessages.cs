@@ -13,6 +13,23 @@ namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
 /// </remarks>
 public sealed record CandidateLedgerMessage(IReadOnlyList<SemanticLedgerEntry> Entries);
 
+public sealed record AtomicUnitsMessage(IReadOnlyList<AtomicUnit> Units);
+
+public sealed record UnitAwareCandidateLedgerMessage(
+    IReadOnlyList<AtomicUnit> Units,
+    IReadOnlyList<SemanticLedgerEntry> Entries);
+
+public sealed record UnitCoverageReviewRequestMessage(
+    IReadOnlyList<AtomicUnit> Units,
+    IReadOnlyList<SemanticLedgerEntry> Entries,
+    UnitCoverageGateResult Coverage);
+
+public sealed record UnusedUnitTriageResultMessage(
+    IReadOnlyList<AtomicUnit> Units,
+    IReadOnlyList<SemanticLedgerEntry> Entries,
+    UnitCoverageGateResult Coverage,
+    IReadOnlyList<UnusedUnitTriageItem> Triage);
+
 /// <summary>Transportiert den Candidate-Ledger und den Canonical-Draft in die Coverage-Reparatur.</summary>
 public sealed record CandidateAndCanonicalLedgerMessage(
     IReadOnlyList<SemanticLedgerEntry> Candidates,

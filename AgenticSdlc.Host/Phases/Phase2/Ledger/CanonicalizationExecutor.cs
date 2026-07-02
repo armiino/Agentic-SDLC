@@ -36,6 +36,7 @@ internal sealed class CanonicalizationExecutor : Executor<CandidateLedgerMessage
         var canonical = await _canonicalizer
             .CanonicalizeAsync(message.Entries, cancellationToken)
             .ConfigureAwait(false);
+        canonical = LedgerSourceUnitTrace.ApplyFromCandidates(message.Entries, canonical);
 
         LedgerRunArtifacts.WriteStep(
             _run,

@@ -20,7 +20,8 @@ public sealed record SemanticLedgerEntry(
     // L2 Cluster-Trace (nur von der Canonicalization gesetzt): welche Candidate-IDs in diesen kanonischen
     // Claim eingingen + die angenommene Relation. Basis für die Gate-Invariante "kein Candidate verschwindet still".
     [property: JsonPropertyName("candidateIds")] IReadOnlyList<string>? CandidateIds = null,
-    [property: JsonPropertyName("assumedRelation")] string? AssumedRelation = null);
+    [property: JsonPropertyName("assumedRelation")] string? AssumedRelation = null,
+    [property: JsonPropertyName("sourceUnitIds")] IReadOnlyList<string>? SourceUnitIds = null);
 
 public sealed record SemanticLedgerEvidence(
     [property: JsonPropertyName("source")] string Source,

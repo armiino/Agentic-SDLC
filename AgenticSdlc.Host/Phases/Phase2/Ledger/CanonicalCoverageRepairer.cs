@@ -52,8 +52,8 @@ public sealed class CanonicalCoverageRepairer
                   "id": { "type": "string" },
                   "proposition": { "type": "string" },
                   "kind": { "type": "string", "enum": ["decision", "requirement", "constraint", "risk", "open_requirement", "open_question", "scope", "compliance_constraint", "process_constraint", "non_functional_requirement", "meta"] },
-                  "status": { "type": "string" },
-                  "modality": { "type": "string" },
+                  "status": { "type": "string", "enum": ["decided", "open", "rejected", "uncertain", "required"] },
+                  "modality": { "type": "string", "enum": ["must", "must_clarify", "must_consider", "must_note", "must_not", "desired", "optional"] },
                   "scope": { "type": "string" },
                   "timeScope": { "type": ["string", "null"], "enum": ["mvp", "later_possible", "mvp_or_later_unclear", null] },
                   "evidence": {

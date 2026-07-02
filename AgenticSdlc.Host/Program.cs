@@ -201,6 +201,14 @@ if (args.Length > 0 && string.Equals(args[0], "ledger-build", StringComparison.O
     return;
 }
 
+// Ledger High-Coverage-MVP: Transkript -> deterministische Atomic Units -> unit-aware Candidate Ledger
+// -> bestehende Canonical/Repair/Facet-Kette. Additiv; normaler ledger-build bleibt unveraendert.
+if (args.Length > 0 && string.Equals(args[0], "ledger-build-units", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerBuildUnitsRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // Ledger-Referenz-Vorlage (deterministisch, KEIN LLM): Transkript + Kandidaten-Ledger -> segmentweise
 // Annotations-Vorlage zum Bau eines hand-vollständigen Referenz-Ledgers (Completeness/Recall-Messung).
 if (args.Length > 0 && string.Equals(args[0], "ledger-reference-template", StringComparison.OrdinalIgnoreCase))
