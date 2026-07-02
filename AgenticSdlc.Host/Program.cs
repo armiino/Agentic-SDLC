@@ -217,6 +217,19 @@ if (args.Length > 0 && string.Equals(args[0], "ledger-reference-template", Strin
     return;
 }
 
+// Adjudikation Schritt 1 (deterministisch, kein LLM): review_required + Misses -> Adjudikations-Queue.
+if (args.Length > 0 && string.Equals(args[0], "ledger-adjudicate", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerAdjudicateRunner.RunPrepareAsync(args, repoRoot);
+    return;
+}
+// Adjudikation apply: ausgefüllte Queue -> adjudicated-ledger + consumable + AdjudicationCompletenessGate.
+if (args.Length > 0 && string.Equals(args[0], "ledger-adjudicate-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerAdjudicateRunner.RunApplyAsync(args, repoRoot);
+    return;
+}
+
 // L3 realer Test: bestehenden Ledger mit dem FacetValidator prüfen (evidence- oder transcript-Kontext).
 if (args.Length > 0 && string.Equals(args[0], "ledger-validate", StringComparison.OrdinalIgnoreCase))
 {
