@@ -1,3 +1,5 @@
+using AgenticSdlc.Host.Phases.Phase2.Ledger;
+
 namespace AgenticSdlc.Host.Configuration;
 
 /// <summary>
@@ -35,7 +37,9 @@ public sealed record HostSettings(
     int JuryMissingTopicBatchSize,
     IReadOnlyDictionary<string, IReadOnlyList<string>>? JuryCategoriesByArtifact,
     bool Phase2BWriteArtifacts,
-    IReadOnlyDictionary<string, IReadOnlyList<string>>? Phase2BReads)
+    IReadOnlyDictionary<string, IReadOnlyList<string>>? Phase2BReads,
+    AdjudicationMode LedgerAdjudicationMode,
+    bool LedgerAdjudicationOpenBrowser)
 {
     /// <summary>
     /// Erstellt die Settings aus den aktuell gesetzten Umgebungsvariablen.
@@ -81,7 +85,10 @@ public sealed record HostSettings(
             // DISK-12/B22: optionale Kategorie-Overrides je Artefakttyp (null = nur Code-Defaults).
             JuryCategoriesByArtifact: BuildJuryCategories(config.Jury.Categories),
             Phase2BWriteArtifacts: config.Phase2BState.WriteArtifacts ?? true,
-            Phase2BReads: BuildPhase2BReads(config.Phase2BState.Reads)
+            Phase2BReads: BuildPhase2BReads(config.Phase2BState.Reads),
+            // Ledger-Adjudikation (Plan §4): Default skip = Baseline-neutral.
+            LedgerAdjudicationMode: AdjudicationModeParser.Parse(config.Ledger.AdjudicationMode),
+            LedgerAdjudicationOpenBrowser: config.Ledger.AdjudicationOpenBrowser ?? true
         );
 
         return settings;

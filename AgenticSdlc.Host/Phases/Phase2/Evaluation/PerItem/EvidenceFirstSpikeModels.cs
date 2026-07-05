@@ -21,7 +21,12 @@ public sealed record SemanticLedgerEntry(
     // Claim eingingen + die angenommene Relation. Basis für die Gate-Invariante "kein Candidate verschwindet still".
     [property: JsonPropertyName("candidateIds")] IReadOnlyList<string>? CandidateIds = null,
     [property: JsonPropertyName("assumedRelation")] string? AssumedRelation = null,
-    [property: JsonPropertyName("sourceUnitIds")] IReadOnlyList<string>? SourceUnitIds = null);
+    [property: JsonPropertyName("sourceUnitIds")] IReadOnlyList<string>? SourceUnitIds = null,
+    // Adjudikation (A8): Claims, die per accept_gap/promote_to_claim NEU aus einer Unit entstehen, sind echt
+    // evidenz-geerdet, aber noch nicht facettiert -> "pending". Ein separater Refine-Pass (A10) hebt sie auf
+    // Pipeline-Niveau und löscht den Marker. Nur bei solchen Claims gesetzt (WhenWritingNull -> kein Output-Diff
+    // für bestehende Pipeline-Claims).
+    [property: JsonPropertyName("facetStatus")][property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? FacetStatus = null);
 
 public sealed record SemanticLedgerEvidence(
     [property: JsonPropertyName("source")] string Source,

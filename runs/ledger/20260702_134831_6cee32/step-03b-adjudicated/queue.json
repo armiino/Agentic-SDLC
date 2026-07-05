@@ -1,0 +1,1955 @@
+{
+  "sourceValidatedRunId": "20260702_134831_6cee32",
+  "sourceUnitRunId": "20260702_134831_6cee32",
+  "generatedAt": "2026-07-03T14:35:14.3203190Z",
+  "items": [
+    {
+      "itemId": "RR::mvp-baseline-scope",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "mvp-baseline-scope",
+      "unitId": null,
+      "proposition": "Der aktuelle MVP-Schnitt umfasst Login mit Double-Opt-In, Angebotserstellung mit SAP-Lesedaten, Rechnungsdownload, Rollen Admin/Sales/Kunde, minimalen Audit Trail, EU Managed Hosting und Backup.",
+      "evidenceRefs": [
+        "Anna: Okay. Dann MVP: 1. Login mit Double-Opt-In 2. Angebotserstellung mit SAP-Lesedaten 3. Rechnungsdownload 4. Rollen Admin/Sales/Kunde 5. Minimaler Audit Trail 6. EU Managed Hosting 7. Backup"
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "open",
+        "classification": null
+      },
+      "reason": "verdict=partial; Der genannte MVP-Schnitt ist im Transcript genannt, aber nicht als final entschiedener verbindlicher Scope abgesichert.",
+      "action": "apply_repair",
+      "actionReason": null,
+      "referenceTarget": "analytics-infrastructure-mvp-scope-open"
+    },
+    {
+      "itemId": "RR::mvp-deadline-8-weeks",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "mvp-deadline-8-weeks",
+      "unitId": null,
+      "proposition": "Ein MVP wurde f\u00FCr 8 Wochen zugesagt.",
+      "evidenceRefs": [
+        "Anna: Ja aber das darf uns jetzt nicht blockieren. MVP in 8 Wochen wurde versprochen."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "uncertain",
+        "classification": null
+      },
+      "reason": "verdict=partial; Die 8-Wochen-Vorgabe ist klar erw\u00E4hnt, aber eher als versprochener Termin unter erheblichem Risiko als als gesicherte Entscheidung.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": "mvp-baseline-scope"
+    },
+    {
+      "itemId": "RR::api-layer-and-gateway-policy",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "api-layer-and-gateway-policy",
+      "unitId": null,
+      "proposition": "F\u00FCr Integrationen wird eine API-Layer ben\u00F6tigt, und neue externe Portale m\u00FCssen laut interner Policy \u00FCber das zentrale API Gateway laufen.",
+      "evidenceRefs": [
+        "Ben: Wir brauchen definitiv eine API Layer. Sonst k\u00F6nnen wir nichts integrieren.",
+        "Farid: Noch ein Punkt: Wir haben eine interne Policy, dass neue externe Portale \u00FCber das zentrale API Gateway laufen m\u00FCssen."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "mvp",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; Inhaltlich klar gedeckt und als Vorgabe/Constraint plausibel, nur die Zuordnung explizit zum MVP ist etwas zu stark.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::sso-optional-later-open",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "sso-optional-later-open",
+      "unitId": null,
+      "proposition": "SSO ist w\u00FCnschenswert, aber optional und eher sp\u00E4ter m\u00F6glich; die konkrete IdP-Integration ist offen und es darf keine Providerentscheidung daraus abgeleitet werden.",
+      "evidenceRefs": [
+        "Anna: SSO w\u00E4re sch\u00F6n. Vielleicht Azure AD. Oder Google? Oder beides?",
+        "Anna: ... SSO optional ...",
+        "Farid: Architektur darf keine konkreten Cloud-Produkte erfinden, solange wir keinen Provider gew\u00E4hlt haben.",
+        "Anna: Genau. Keine Azure-Entscheidung nur weil jemand Azure AD gesagt hat."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "later_possible",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; SSO als optional und IdP offen ist gedeckt, ebenso dass keine Providerentscheidung abgeleitet werden darf; \u0027eher sp\u00E4ter\u0027 ist jedoch nur indirekt nahegelegt, nicht klar festgelegt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": "sso-optional-later-open"
+    },
+    {
+      "itemId": "RR::rbac-concept-and-mvp-roles",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "rbac-concept-and-mvp-roles",
+      "unitId": null,
+      "proposition": "Ein Rollen- und Berechtigungskonzept ist erforderlich; f\u00FCr das MVP sind die Rollen Admin, Sales und Kunde vorgesehen.",
+      "evidenceRefs": [
+        "Clara: Dann brauchen wir Audit Trails. Und Zugriffskontrolle. Und Rollenmodelle.",
+        "Clara: Und ein Rollen- und Berechtigungskonzept.",
+        "Anna: Okay. Dann MVP: ... 4. Rollen Admin/Sales/Kunde ..."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "required",
+        "classification": null
+      },
+      "reason": "verdict=partial; Rollen- und Berechtigungskonzept ist klar erforderlich; Admin/Sales/Kunde wird in Annas MVP-Schnitt genannt, aber die Rollenlage ist insgesamt noch nicht vollst\u00E4ndig gekl\u00E4rt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::sap-masterdata-quality-risk",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "sap-masterdata-quality-risk",
+      "unitId": null,
+      "proposition": "Stammdaten in SAP sind teilweise unvollst\u00E4ndig, was die Angebotserstellung beeintr\u00E4chtigen kann.",
+      "evidenceRefs": [
+        "Ben: Stammdaten liegen in SAP. Aber die sind teilweise unvollst\u00E4ndig."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "mvp",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; Die unvollst\u00E4ndigen SAP-Stammdaten sind klar belegt; der konkrete Bezug nur auf MVP ist jedoch nicht ausdr\u00FCcklich gemacht.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::sap-write-and-online-acceptance-outside-current-mvp",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "sap-write-and-online-acceptance-outside-current-mvp",
+      "unitId": null,
+      "proposition": "SAP-Schreibzugriff ist noch nicht entschieden und liegt nicht im aktuellen MVP-Schnitt; entsprechend ist Online-Akzeptanz von Angeboten im MVP eher ausgeschlossen und eher nur Angebotsdownload vorgesehen.",
+      "evidenceRefs": [
+        "Eva: Und dann entsteht eine Bestellung. Das muss sauber nach SAP zur\u00FCck.",
+        "Ben: SAP-Schreibzugriff hatten wir noch gar nicht entschieden. Vorhin war eher lesend.",
+        "Anna: Dann vielleicht nur Angebotsdownload, keine Online-Akzeptanz im MVP."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "later_possible",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; SAP-Schreibzugriff ist offen, und Anna tendiert zu Angebotsdownload statt Online-Akzeptanz im MVP; \u0027later_possible\u0027 ist etwas spezifischer als die Quelle.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::online-acceptance-compliance-requirements-later",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "online-acceptance-compliance-requirements-later",
+      "unitId": null,
+      "proposition": "Falls Angebote sp\u00E4ter online akzeptiert werden sollen, sind Nachweis der Zustimmung, Zeitstempel und ggf. AGB-Akzeptanz erforderlich.",
+      "evidenceRefs": [
+        "Clara: Dann brauchen wir Nachweis der Zustimmung, Zeitstempel, eventuell AGB-Akzeptanz."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "open",
+        "suggested": "required",
+        "classification": null
+      },
+      "reason": "verdict=partial; Clara nennt die Anforderungen klar f\u00FCr den Fall einer sp\u00E4teren Online-Akzeptanz; offen ist eher die Feature-Entscheidung, nicht der Bedarf dieser Punkte.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::offers-contain-personal-data",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "offers-contain-personal-data",
+      "unitId": null,
+      "proposition": "Angebote enthalten personenbezogene Daten.",
+      "evidenceRefs": [
+        "Ben: Aber Angebot selbst enth\u00E4lt personenbezogene Daten."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "mvp",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; Die Aussage zu personenbezogenen Daten in Angeboten ist gedeckt, aber der explizite MVP-Zeitbezug ist in der zitierten Stelle nicht belegt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::tls-transport-encryption-sufficient",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "tls-transport-encryption-sufficient",
+      "unitId": null,
+      "proposition": "TLS wird als ausreichende Transportverschl\u00FCsselung angesehen; Ende-zu-Ende-Verschl\u00FCsselung wird als unrealistisch bewertet.",
+      "evidenceRefs": [
+        "Anna: Also brauchen wir Verschl\u00FCsselung. Ende-zu-Ende? Oder reicht TLS?",
+        "Ben: TLS reicht. E2E ist unrealistisch."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "open",
+        "classification": null
+      },
+      "reason": "verdict=overstated; Ben bewertet TLS als ausreichend und E2E als unrealistisch, aber das ist im Gespr\u00E4ch keine klar beschlossene Muss-Vorgabe.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::avoid-overengineering",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "avoid-overengineering",
+      "unitId": null,
+      "proposition": "Die L\u00F6sung soll kein Overengineering verursachen.",
+      "evidenceRefs": [
+        "Anna: Aber bitte kein Overengineering."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "mvp",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; Der Kern ist gedeckt, aber die zeitliche Eingrenzung nur auf MVP ist im Transcript nicht eindeutig.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::customer-deletion-and-deletion-concept-required",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "customer-deletion-and-deletion-concept-required",
+      "unitId": null,
+      "proposition": "Wenn ein Kunde die L\u00F6schung seiner Daten verlangt, muss dies unterst\u00FCtzt werden; daf\u00FCr ist ein L\u00F6schkonzept erforderlich.",
+      "evidenceRefs": [
+        "Clara: Aber wenn ein Kunde seine Daten l\u00F6schen will?",
+        "Anna: Dann muss das gehen.",
+        "Clara: DSGVO. Wir speichern Kundendaten. ... Dann brauchen wir ... L\u00F6schkonzepte.",
+        "Ben: Also brauchen wir ein L\u00F6schkonzept."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "mvp",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; Die Pflicht zur Unterst\u00FCtzung von L\u00F6schung und zu einem L\u00F6schkonzept ist gedeckt, aber die Zuordnung fest ins MVP ist nicht eindeutig abgesichert.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::discount-approval-policy-open-but-not-in-mvp",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "discount-approval-policy-open-but-not-in-mvp",
+      "unitId": null,
+      "proposition": "F\u00FCr Angebote mit Rabatt oberhalb einer Schwelle wird ein Freigabeprozess ben\u00F6tigt, mindestens Manager-Freigabe ist genannt; die genaue Schwelle ist zwischen 15 und 20 Prozent unklar, eine zus\u00E4tzliche Finance-Freigabe ab 30 Prozent ist offen, und der Freigabeprozess ist im aktuellen MVP eher nicht enthalten.",
+      "evidenceRefs": [
+        "Eva: Angebote m\u00FCssen freigegeben werden, wenn der Rabatt \u00FCber 15 Prozent liegt.",
+        "Eva: Mindestens eine Freigabe durch Manager ab 15 Prozent Rabatt.",
+        "Anna: Oder ab 20 Prozent. Ich bin mir nicht sicher.",
+        "Ben: Das muss klar definiert werden.",
+        "Eva: Ab 30 Prozent vielleicht Finance.",
+        "Eva: Und Rabatt-Freigabe?",
+        "Anna: Vielleicht Phase 2.",
+        "Eva: Freigaben sind nicht gel\u00F6st."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "later_possible",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; Kern ist gedeckt: Freigabebedarf, unklare Schwellen und ungel\u00F6ster MVP-Zuschnitt. \u0027later_possible\u0027 ist etwas zu fest.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::offer-workflow-statuses-needed",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "offer-workflow-statuses-needed",
+      "unitId": null,
+      "proposition": "F\u00FCr Angebote werden Workflow-Status ben\u00F6tigt: draft, pending approval, approved, sent, accepted, rejected.",
+      "evidenceRefs": [
+        "Ben: Dann brauchen wir Workflow-Status f\u00FCr Angebote: draft, pending approval, approved, sent, accepted, rejected."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "modality",
+        "observed": "must",
+        "suggested": "must_clarify",
+        "classification": null
+      },
+      "reason": "verdict=overstated; Die Statusliste wird genannt, aber als offene technische Folgerung, nicht als festes Muss mit klarem Zeithorizont.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::market-scope-dach-then-eu-possible",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "market-scope-dach-then-eu-possible",
+      "unitId": null,
+      "proposition": "Der Startmarkt ist DACH; sp\u00E4ter ist eine Ausweitung auf EU m\u00F6glich, USA nur eventuell sp\u00E4ter.",
+      "evidenceRefs": [
+        "Anna: Zum Start DACH. Sp\u00E4ter EU. Vielleicht USA, wenn es gut l\u00E4uft."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "open",
+        "classification": null
+      },
+      "reason": "verdict=partial; Start DACH, sp\u00E4ter EU, USA eventuell ist gedeckt; als entschieden ist es zu stark.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::i18n-german-english-required",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "i18n-german-english-required",
+      "unitId": null,
+      "proposition": "Deutsch und Englisch sollen unterst\u00FCtzt werden.",
+      "evidenceRefs": [
+        "Anna: Deutsch und Englisch sollten schon drin sein.",
+        "David: Support braucht mindestens Deutsch und Englisch."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "open",
+        "classification": null
+      },
+      "reason": "verdict=overstated; Deutsch/Englisch wird klar gew\u00FCnscht und von Support gest\u00FCtzt, aber nicht als final verpflichtend beschlossen.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::offer-pdf-export-required",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "offer-pdf-export-required",
+      "unitId": null,
+      "proposition": "F\u00FCr Angebote wird ein PDF-Export ben\u00F6tigt.",
+      "evidenceRefs": [
+        "Anna: Was ist mit PDF-Export von Angeboten?",
+        "Eva: Finance braucht PDF mit rechtlichen Fu\u00DFnoten und Versionsnummer.",
+        "Anna: PDF ist wichtig f\u00FCr Sales."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "required",
+        "classification": null
+      },
+      "reason": "verdict=partial; Der Bedarf an PDF-Export ist stark belegt, jedoch nicht als ausdr\u00FCcklich beschlossene Entscheidung formuliert.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::environment-separation-required",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "environment-separation-required",
+      "unitId": null,
+      "proposition": "Es werden die Umgebungen Dev, Test und Prod ben\u00F6tigt.",
+      "evidenceRefs": [
+        "Farid: Noch eins: Wir brauchen Umgebungen. Dev, Test, Prod."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "required",
+        "classification": null
+      },
+      "reason": "verdict=partial; Der Bedarf nach Dev/Test/Prod ist klar belegt, aber der Eintrag formuliert den Status etwas zu entschieden.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::secrets-management-required",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "secrets-management-required",
+      "unitId": null,
+      "proposition": "CI/CD ben\u00F6tigt Secrets Management.",
+      "evidenceRefs": [
+        "Farid: Und CI/CD braucht Secrets Management.",
+        "Farid: Und \u0022Secrets Management\u0022."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "required",
+        "classification": null
+      },
+      "reason": "verdict=partial; Secrets Management f\u00FCr CI/CD wird klar gefordert, aber \u0027decided\u0027 ist st\u00E4rker als die Quelle hergibt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::rate-limits-pagination-download-limits-and-audit",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "rate-limits-pagination-download-limits-and-audit",
+      "unitId": null,
+      "proposition": "F\u00FCr Rechnungs- und API-Zugriffe werden Rate Limits sowie Pagination und Download-Limits ben\u00F6tigt; Audit muss dabei mindestens ber\u00FCcksichtigt werden.",
+      "evidenceRefs": [
+        "Ben: Wir brauchen auch Rate Limits f\u00FCr API.",
+        "David: Kunden laden manchmal hunderte Rechnungen auf einmal herunter.",
+        "Ben: Dann brauchen wir Pagination und Download-Limits.",
+        "Clara: Dann mindestens Rate Limiting und Audit."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "modality",
+        "observed": "must",
+        "suggested": "must_consider",
+        "classification": null
+      },
+      "reason": "verdict=partial; Der Kern ist gedeckt, aber die Verbindlichkeit f\u00FCr alle aufgez\u00E4hlten Elemente ist etwas zu stark vereinheitlicht.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::abuse-detection-desired-later",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "abuse-detection-desired-later",
+      "unitId": null,
+      "proposition": "Missbrauchserkennung wurde gefordert, ist aber als zu viel f\u00FCr den aktuellen Scope bewertet und eher sp\u00E4ter m\u00F6glich.",
+      "evidenceRefs": [
+        "Ben: Wir brauchen Missbrauchserkennung.",
+        "Anna: Das ist zu viel."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "modality",
+        "observed": "desired",
+        "suggested": "must_consider",
+        "classification": null
+      },
+      "reason": "verdict=partial; Dass Missbrauchserkennung genannt und f\u00FCr den aktuellen Scope als zu viel bewertet wird, ist gedeckt; \u0027desired\u0027 ist etwas zu interpretativ.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::sap-unavailable-offer-policy-open",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "sap-unavailable-offer-policy-open",
+      "unitId": null,
+      "proposition": "Wenn SAP nicht erreichbar ist, ist offen, ob keine Angebote erstellt werden d\u00FCrfen oder ob ein Fallback bzw. Cache genutzt werden soll.",
+      "evidenceRefs": [
+        "David: Was passiert, wenn SAP nicht erreichbar ist?",
+        "Ben: Angebote k\u00F6nnen dann nicht aktuell berechnet werden.",
+        "Eva: Dann darf kein Angebot erstellt werden, oder es muss als unverbindlich markiert sein.",
+        "Ben: Dann brauchen wir Fallback oder Cache."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "mvp",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; Kernaussage ist gedeckt: Bei SAP-Ausfall ist offen, ob blockiert wird oder Fallback/Cache genutzt wird.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::cache-personal-data-and-invalidation-risk",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "cache-personal-data-and-invalidation-risk",
+      "unitId": null,
+      "proposition": "Ein Cache k\u00F6nnte kundenindividuelle Rabatte bzw. Kundendaten enthalten und erzeugt damit Datenschutz-, Retention- und Invalidierungsrisiken.",
+      "evidenceRefs": [
+        "Clara: Cache enth\u00E4lt Kundendaten?",
+        "Ben: Teilweise Produkt- und Preisdaten, vielleicht kundenindividuelle Rabatte.",
+        "Clara: Dann wieder Datenschutz und Retention.",
+        "Eva: Dann ist Cache riskant.",
+        "Farid: Und Cache-Invalidierung ist aufwendig."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "decided",
+        "suggested": "open",
+        "classification": null
+      },
+      "reason": "verdict=overstated; Die Risiken eines m\u00F6glichen Caches sind belegt, aber die Facette \u0027decided\u0027 verst\u00E4rkt die Quelllage.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::minimal-retention-plan-required",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "minimal-retention-plan-required",
+      "unitId": null,
+      "proposition": "Datenklassifikation und Retention Rules werden ben\u00F6tigt; f\u00FCr den MVP ist mindestens ein minimaler Retention-Plan vorgesehen.",
+      "evidenceRefs": [
+        "Ben: Also brauchen wir Datenklassifikation und Retention Rules.",
+        "Anna: Das klingt nicht nach MVP.",
+        "Clara: Aber ohne Konzept riskieren wir Fehler.",
+        "Anna: Okay, minimaler Retention-Plan."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "status",
+        "observed": "open",
+        "suggested": "decided",
+        "classification": null
+      },
+      "reason": "verdict=partial; Need f\u00FCr Datenklassifikation/Retention und ein minimaler MVP-Plan sind gedeckt; nur der Status ist zu schwach.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "RR::offer-retention-legal-open",
+      "itemType": "review_required_claim",
+      "sourceMode": "normal",
+      "claimId": "offer-retention-legal-open",
+      "unitId": null,
+      "proposition": "Die gesetzliche Aufbewahrungsdauer f\u00FCr Angebote muss durch Legal gepr\u00FCft werden.",
+      "evidenceRefs": [
+        "Anna: Wie lange m\u00FCssen wir Angebote speichern?",
+        "Eva: Handelsrechtlich m\u00F6glicherweise mehrere Jahre, aber das muss Legal pr\u00FCfen."
+      ],
+      "systemSuggestion": {
+        "kind": "facet_repair",
+        "facet": "timescope",
+        "observed": "mvp",
+        "suggested": "mvp_or_later_unclear",
+        "classification": null
+      },
+      "reason": "verdict=partial; Die notwendige Legal-Kl\u00E4rung der Aufbewahrungsdauer ist klar belegt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0019",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "kpis-defined",
+      "unitId": "AU-0019",
+      "proposition": "Die Aussage pr\u00E4zisiert die Datenschutzbewertung eines bereits genannten KPI und st\u00FCtzt den bestehenden KPI-Claim, ohne einen neuen eigenst\u00E4ndigen Claim zu erzeugen.",
+      "evidenceRefs": [
+        "kpis-defined"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Die Aussage pr\u00E4zisiert die Datenschutzbewertung eines bereits genannten KPI und st\u00FCtzt den bestehenden KPI-Claim, ohne einen neuen eigenst\u00E4ndigen Claim zu erzeugen.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0024",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "minimal-audit-trail-mvp",
+      "unitId": "AU-0024",
+      "proposition": "St\u00FCtzt die bestehenden Claims zu minimalem Audit Trail/Logging und dem Prinzip, Komplexit\u00E4t bzw. Overengineering zu vermeiden.",
+      "evidenceRefs": [
+        "minimal-audit-trail-mvp",
+        "avoid-overengineering"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "St\u00FCtzt die bestehenden Claims zu minimalem Audit Trail/Logging und dem Prinzip, Komplexit\u00E4t bzw. Overengineering zu vermeiden.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0030",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "scalability-needs-clarification",
+      "unitId": "AU-0030",
+      "proposition": "Formuliert den bereits festgehaltenen Zielkonflikt zwischen Kosten/Einfachheit und Skalierbarkeit nur als zus\u00E4tzliche Begr\u00FCndung.",
+      "evidenceRefs": [
+        "scalability-needs-clarification",
+        "avoid-overengineering"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Formuliert den bereits festgehaltenen Zielkonflikt zwischen Kosten/Einfachheit und Skalierbarkeit nur als zus\u00E4tzliche Begr\u00FCndung.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0039",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "avoid-overengineering",
+      "unitId": "AU-0039",
+      "proposition": "Bekr\u00E4ftigt den bereits dokumentierten Zusammenhang zwischen Komplexit\u00E4t und Zeit-/MVP-Risiko.",
+      "evidenceRefs": [
+        "avoid-overengineering",
+        "mvp-not-feasible-as-discussed"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Bekr\u00E4ftigt den bereits dokumentierten Zusammenhang zwischen Komplexit\u00E4t und Zeit-/MVP-Risiko.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0052",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "scalability-needs-clarification",
+      "unitId": "AU-0052",
+      "proposition": "Zus\u00E4tzliche Formulierung des bereits erfassten Spannungsfelds zwischen Skalierbarkeit und Overengineering.",
+      "evidenceRefs": [
+        "scalability-needs-clarification",
+        "avoid-overengineering"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Zus\u00E4tzliche Formulierung des bereits erfassten Spannungsfelds zwischen Skalierbarkeit und Overengineering.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0054",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "goal-angebote-schneller",
+      "unitId": "AU-0054",
+      "proposition": "Die Zieldefinition des Vorhabens ist noch nicht klar genug festgelegt.",
+      "evidenceRefs": [
+        "goal-angebote-schneller",
+        "board-estimate-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "missing_claim"
+      },
+      "reason": "Ein expliziter Claim, dass die Zieldefinition noch unklar ist, fehlt; das ist breiter als nur KPIs und relevant f\u00FCr Scope/Planung.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0065",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "documentation-needed-for-review",
+      "unitId": "AU-0065",
+      "proposition": "Verantwortlichkeiten bzw. Ownership f\u00FCr Architektur und Umsetzung sind noch nicht gekl\u00E4rt.",
+      "evidenceRefs": [
+        "documentation-needed-for-review",
+        "mvp-not-feasible-as-discussed"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "missing_claim"
+      },
+      "reason": "Die ungekl\u00E4rte Verantwortlichkeit bzw. Ownership f\u00FCr die Umsetzung ist als eigenst\u00E4ndiges Projektrisiko noch nicht im Ledger enthalten.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0066",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "documentation-needed-for-review",
+      "unitId": "AU-0066",
+      "proposition": "F\u00FCr das Vorhaben wird Architekturverantwortung bzw. ein Architekt ben\u00F6tigt.",
+      "evidenceRefs": [
+        "documentation-needed-for-review",
+        "mvp-not-feasible-as-discussed"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "missing_claim"
+      },
+      "reason": "Der Bedarf nach einem Architekten ist ein eigenst\u00E4ndiger Ressourcen-/Governance-Claim, der im Ledger noch fehlt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0067",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": null,
+      "unitId": "AU-0067",
+      "proposition": "St\u00FCtzt den fehlenden Architektur-/Ownership-Punkt als Ressourcengap, sollte aber eher Evidenz zu diesem fehlenden Claim sein als eigener separater Claim.",
+      "evidenceRefs": [],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "St\u00FCtzt den fehlenden Architektur-/Ownership-Punkt als Ressourcengap, sollte aber eher Evidenz zu diesem fehlenden Claim sein als eigener separater Claim.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0072",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "support-ticketing-out-of-mvp",
+      "unitId": "AU-0072",
+      "proposition": "Liefert starke Begr\u00FCndung daf\u00FCr, warum fehlendes Ticketing aus Support-Sicht problematisch ist, ohne den bestehenden Support-Claim grundlegend zu ver\u00E4ndern.",
+      "evidenceRefs": [
+        "support-ticketing-out-of-mvp",
+        "support-process-unclear-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Liefert starke Begr\u00FCndung daf\u00FCr, warum fehlendes Ticketing aus Support-Sicht problematisch ist, ohne den bestehenden Support-Claim grundlegend zu ver\u00E4ndern.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0076",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "no-new-db-server",
+      "unitId": "AU-0076",
+      "proposition": "Untermauert den bereits festgehaltenen Konflikt zwischen Ticket-Persistenz und dem Verbot einer neuen Datenbank.",
+      "evidenceRefs": [
+        "no-new-db-server",
+        "support-process-unclear-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Untermauert den bereits festgehaltenen Konflikt zwischen Ticket-Persistenz und dem Verbot einer neuen Datenbank.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0077",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "managed-services-allowed",
+      "unitId": "AU-0077",
+      "proposition": "Best\u00E4tigt nur nochmals, dass Managed Services als Option akzeptabel sind.",
+      "evidenceRefs": [
+        "managed-services-allowed"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Best\u00E4tigt nur nochmals, dass Managed Services als Option akzeptabel sind.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0078",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "no-provider-decision",
+      "unitId": "AU-0078",
+      "proposition": "St\u00FCtzt bestehende offene Punkte zu Providerentscheidung sowie Support-Ticket-Speicherung/Persistenz.",
+      "evidenceRefs": [
+        "no-provider-decision",
+        "support-process-unclear-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "St\u00FCtzt bestehende offene Punkte zu Providerentscheidung sowie Support-Ticket-Speicherung/Persistenz.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0083",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "discount-approval-not-in-mvp",
+      "unitId": "AU-0083",
+      "proposition": "Unterst\u00FCtzt die bereits dokumentierte Einordnung des Freigabeprozesses eher nachgelagert bzw. nicht im aktuellen MVP.",
+      "evidenceRefs": [
+        "discount-approval-not-in-mvp",
+        "freigaben-not-solved"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Unterst\u00FCtzt die bereits dokumentierte Einordnung des Freigabeprozesses eher nachgelagert bzw. nicht im aktuellen MVP.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0084",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "discount-approval-required",
+      "unitId": "AU-0084",
+      "proposition": "Begr\u00FCndet die Wichtigkeit eines Freigabeprozesses und das Risiko falscher Angebote; die Freigabethematik ist bereits erfasst.",
+      "evidenceRefs": [
+        "discount-approval-required",
+        "freigaben-not-solved",
+        "price-risk-not-accepted"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Begr\u00FCndet die Wichtigkeit eines Freigabeprozesses und das Risiko falscher Angebote; die Freigabethematik ist bereits erfasst.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0086",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "avoid-overengineering",
+      "unitId": "AU-0086",
+      "proposition": "Zus\u00E4tzliche Evidenz f\u00FCr das bestehende Prinzip, Komplexit\u00E4t im MVP zu begrenzen.",
+      "evidenceRefs": [
+        "avoid-overengineering"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Zus\u00E4tzliche Evidenz f\u00FCr das bestehende Prinzip, Komplexit\u00E4t im MVP zu begrenzen.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0090",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "rbac-concept-required",
+      "unitId": "AU-0090",
+      "proposition": "Pr\u00E4zisiert den bereits bestehenden Bedarf an Rollen- und Berechtigungslogik sowie den Support-Sichtbarkeitskonflikt.",
+      "evidenceRefs": [
+        "rbac-concept-required",
+        "support-visibility-conflict"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Pr\u00E4zisiert den bereits bestehenden Bedarf an Rollen- und Berechtigungslogik sowie den Support-Sichtbarkeitskonflikt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0093",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "support-visibility-conflict",
+      "unitId": "AU-0093",
+      "proposition": "Konkretisiert den bestehenden Konflikt \u00FCber die Sichtbarkeit von Details f\u00FCr Support.",
+      "evidenceRefs": [
+        "support-visibility-conflict",
+        "support-role-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Konkretisiert den bestehenden Konflikt \u00FCber die Sichtbarkeit von Details f\u00FCr Support.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0094",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "support-visibility-conflict",
+      "unitId": "AU-0094",
+      "proposition": "Direkte Evidenz f\u00FCr den bereits dokumentierten Zielkonflikt zwischen eingeschr\u00E4nkter Support-Sicht und effektiver Hilfeleistung.",
+      "evidenceRefs": [
+        "support-visibility-conflict"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Direkte Evidenz f\u00FCr den bereits dokumentierten Zielkonflikt zwischen eingeschr\u00E4nkter Support-Sicht und effektiver Hilfeleistung.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0097",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "eu-residency-required",
+      "unitId": "AU-0097",
+      "proposition": "Liefert wichtige technische Begr\u00FCndung zum bestehenden EU-Residency- und Backup-Replikationsrisiko.",
+      "evidenceRefs": [
+        "eu-residency-required",
+        "backup-required-mvp"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Liefert wichtige technische Begr\u00FCndung zum bestehenden EU-Residency- und Backup-Replikationsrisiko.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0104",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "board-estimate-risk",
+      "unitId": "AU-0104",
+      "proposition": "St\u00FCtzt die bereits festgehaltenen Risiken durch fehlende Architekturentscheidung und belastete Sch\u00E4tzung/Zeitschiene.",
+      "evidenceRefs": [
+        "board-estimate-risk",
+        "mvp-not-feasible-as-discussed"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "St\u00FCtzt die bereits festgehaltenen Risiken durch fehlende Architekturentscheidung und belastete Sch\u00E4tzung/Zeitschiene.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0105",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "hosting-cost-open",
+      "unitId": "AU-0105",
+      "proposition": "Passt als Evidenz zum bestehenden Claim, dass nur grob gesch\u00E4tzt werden soll bzw. grobe Sch\u00E4tzung trotz Unsicherheit erfolgt.",
+      "evidenceRefs": [
+        "hosting-cost-open",
+        "board-estimate-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Passt als Evidenz zum bestehenden Claim, dass nur grob gesch\u00E4tzt werden soll bzw. grobe Sch\u00E4tzung trotz Unsicherheit erfolgt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0109",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "hosting-cost-open",
+      "unitId": "AU-0109",
+      "proposition": "Unterst\u00FCtzt den bestehenden Punkt, dass f\u00FCr den Vorstand eine Kostensch\u00E4tzung/Zahlen ben\u00F6tigt werden.",
+      "evidenceRefs": [
+        "hosting-cost-open",
+        "board-estimate-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Unterst\u00FCtzt den bestehenden Punkt, dass f\u00FCr den Vorstand eine Kostensch\u00E4tzung/Zahlen ben\u00F6tigt werden.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0115",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "manual-upload-interim-open",
+      "unitId": "AU-0115",
+      "proposition": "Pr\u00E4zisiert die Produktvision, dass eine \u00DCbergangsl\u00F6sung nicht als integriertes Portal gelten w\u00FCrde.",
+      "evidenceRefs": [
+        "manual-upload-interim-open",
+        "portal-remains-target"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Pr\u00E4zisiert die Produktvision, dass eine \u00DCbergangsl\u00F6sung nicht als integriertes Portal gelten w\u00FCrde.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0129",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "market-scope-dach-start",
+      "unitId": "AU-0129",
+      "proposition": "Liefert Begr\u00FCndung daf\u00FCr, warum USA erst sp\u00E4ter bzw. mit anderem Scope betrachtet werden sollte.",
+      "evidenceRefs": [
+        "market-scope-dach-start"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Liefert Begr\u00FCndung daf\u00FCr, warum USA erst sp\u00E4ter bzw. mit anderem Scope betrachtet werden sollte.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0130",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "i18n-de-en",
+      "unitId": "AU-0130",
+      "proposition": "St\u00FCtzt den bestehenden Internationalisierungsbedarf bei Ausweitung \u00FCber DACH hinaus.",
+      "evidenceRefs": [
+        "i18n-de-en",
+        "market-scope-dach-start"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "St\u00FCtzt den bestehenden Internationalisierungsbedarf bei Ausweitung \u00FCber DACH hinaus.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0134",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "currency-support-open",
+      "unitId": "AU-0134",
+      "proposition": "Zus\u00E4tzliche Begr\u00FCndung f\u00FCr den offenen Mehrw\u00E4hrungsbedarf und dessen Komplexit\u00E4t mit Rabattlogik und SAP.",
+      "evidenceRefs": [
+        "currency-support-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Zus\u00E4tzliche Begr\u00FCndung f\u00FCr den offenen Mehrw\u00E4hrungsbedarf und dessen Komplexit\u00E4t mit Rabattlogik und SAP.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0136",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "pilot-customer-open",
+      "unitId": "AU-0136",
+      "proposition": "Erg\u00E4nzt die offene Pilot-/Schweiz-Frage um Datenschutzimplikationen f\u00FCr CH.",
+      "evidenceRefs": [
+        "pilot-customer-open",
+        "market-scope-dach-start"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Erg\u00E4nzt die offene Pilot-/Schweiz-Frage um Datenschutzimplikationen f\u00FCr CH.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0137",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "eu-residency-required",
+      "unitId": "AU-0137",
+      "proposition": "Pr\u00E4zisiert EU-Hosting im Kontext Schweizer Kunden und verweist auf n\u00F6tige Vertragspr\u00FCfung.",
+      "evidenceRefs": [
+        "eu-residency-required",
+        "pilot-customer-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Pr\u00E4zisiert EU-Hosting im Kontext Schweizer Kunden und verweist auf n\u00F6tige Vertragspr\u00FCfung.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0138",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "currency-support-open",
+      "unitId": "AU-0138",
+      "proposition": "Unterst\u00FCtzt die bestehenden offenen Anforderungen zu L\u00E4nder- und W\u00E4hrungsregeln.",
+      "evidenceRefs": [
+        "currency-support-open",
+        "market-scope-dach-start"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Unterst\u00FCtzt die bestehenden offenen Anforderungen zu L\u00E4nder- und W\u00E4hrungsregeln.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0144",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "market-scope-dach-start",
+      "unitId": "AU-0144",
+      "proposition": "Begr\u00FCndet den bereits festgehaltenen massiven Scope-Einfluss durch internationale Ausweitung.",
+      "evidenceRefs": [
+        "market-scope-dach-start",
+        "mvp-not-feasible-as-discussed"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Begr\u00FCndet den bereits festgehaltenen massiven Scope-Einfluss durch internationale Ausweitung.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0145",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "dsgvo-mandatory",
+      "unitId": "AU-0145",
+      "proposition": "Erg\u00E4nzt Datenschutzpr\u00FCfungsbedarf bei Scope-Ausweitung, semantisch durch bestehende Datenschutz-/Review-Kandidaten abgedeckt.",
+      "evidenceRefs": [
+        "dsgvo-mandatory",
+        "security-review-required"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Erg\u00E4nzt Datenschutzpr\u00FCfungsbedarf bei Scope-Ausweitung, semantisch durch bestehende Datenschutz-/Review-Kandidaten abgedeckt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0146",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "currency-support-open",
+      "unitId": "AU-0146",
+      "proposition": "Kurzbeleg f\u00FCr zus\u00E4tzlichen W\u00E4hrungsbedarf als Scope-Treiber.",
+      "evidenceRefs": [
+        "currency-support-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Kurzbeleg f\u00FCr zus\u00E4tzlichen W\u00E4hrungsbedarf als Scope-Treiber.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0149",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "goal-angebote-schneller",
+      "unitId": "AU-0149",
+      "proposition": "Unterst\u00FCtzt das Hauptziel, Angebote schnell erstellen zu k\u00F6nnen.",
+      "evidenceRefs": [
+        "goal-angebote-schneller"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Unterst\u00FCtzt das Hauptziel, Angebote schnell erstellen zu k\u00F6nnen.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0154",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "price-risk-not-accepted",
+      "unitId": "AU-0154",
+      "proposition": "Erg\u00E4nzt Audit-Relevanz falscher Preise; passt als Detail zu Preis- und Audit-Risiken.",
+      "evidenceRefs": [
+        "price-risk-not-accepted",
+        "auditability-required",
+        "offer-contains-personal-data"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Erg\u00E4nzt Audit-Relevanz falscher Preise; passt als Detail zu Preis- und Audit-Risiken.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0155",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "support-process-unclear-risk",
+      "unitId": "AU-0155",
+      "proposition": "St\u00FCtzt die Aussage, dass Fehler bei Angeboten Supportaufwand und Tickets erzeugen.",
+      "evidenceRefs": [
+        "support-process-unclear-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "St\u00FCtzt die Aussage, dass Fehler bei Angeboten Supportaufwand und Tickets erzeugen.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0158",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": null,
+      "unitId": "AU-0158",
+      "proposition": "Pr\u00FCfen, ob hier auf einen zuvor nicht erfassten fachlichen Punkt verwiesen wird.",
+      "evidenceRefs": [],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "needs_human"
+      },
+      "reason": "Reiner Gespr\u00E4chsmarker ohne klaren eigenst\u00E4ndigen Sachclaim; Kontext fehlt.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0167",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "mvp-scope-baseline",
+      "unitId": "AU-0167",
+      "proposition": "Unterstreicht die bereits zentrale MVP-Scope-Abgrenzung.",
+      "evidenceRefs": [
+        "mvp-scope-baseline",
+        "scope-must-show-exclusions-and-risks"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Unterstreicht die bereits zentrale MVP-Scope-Abgrenzung.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0169",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "online-acceptance-out-of-mvp-current",
+      "unitId": "AU-0169",
+      "proposition": "Bringt den Online-Akzeptanz-Wunsch in die Diskussion ein; der Themenkomplex ist bereits im Ledger erfasst.",
+      "evidenceRefs": [
+        "online-acceptance-out-of-mvp-current",
+        "online-acceptance-compliance-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Bringt den Online-Akzeptanz-Wunsch in die Diskussion ein; der Themenkomplex ist bereits im Ledger erfasst.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0170",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "online-acceptance-compliance-open",
+      "unitId": "AU-0170",
+      "proposition": "Best\u00E4rkt den Wunsch nach Online-Akzeptanz, ohne neuen eigenst\u00E4ndigen Claim zu schaffen.",
+      "evidenceRefs": [
+        "online-acceptance-compliance-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Best\u00E4rkt den Wunsch nach Online-Akzeptanz, ohne neuen eigenst\u00E4ndigen Claim zu schaffen.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0171",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "online-acceptance-compliance-open",
+      "unitId": "AU-0171",
+      "proposition": "Begr\u00FCndet, warum Online-Akzeptanz ein separates Vertrags-/Compliance-Thema ist.",
+      "evidenceRefs": [
+        "online-acceptance-compliance-open",
+        "online-acceptance-out-of-mvp-current"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Begr\u00FCndet, warum Online-Akzeptanz ein separates Vertrags-/Compliance-Thema ist.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0176",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "online-acceptance-compliance-open",
+      "unitId": "AU-0176",
+      "proposition": "Liefert Begr\u00FCndung aus KPI-/Tracking-Sicht f\u00FCr die Online-Akzeptanz-Debatte.",
+      "evidenceRefs": [
+        "online-acceptance-compliance-open",
+        "analytics-mvp-open",
+        "kpis-defined"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Liefert Begr\u00FCndung aus KPI-/Tracking-Sicht f\u00FCr die Online-Akzeptanz-Debatte.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0178",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "scope-must-show-exclusions-and-risks",
+      "unitId": "AU-0178",
+      "proposition": "Unterst\u00FCtzt den Bedarf nach Scope-Entscheidung und klarer Abgrenzung.",
+      "evidenceRefs": [
+        "scope-must-show-exclusions-and-risks"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Unterst\u00FCtzt den Bedarf nach Scope-Entscheidung und klarer Abgrenzung.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0179",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "documentation-needed-for-review",
+      "unitId": "AU-0179",
+      "proposition": "Unterst\u00FCtzt den dokumentationsbezogenen Governance-Bedarf.",
+      "evidenceRefs": [
+        "documentation-needed-for-review",
+        "scope-must-show-exclusions-and-risks"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Unterst\u00FCtzt den dokumentationsbezogenen Governance-Bedarf.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0182",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "retention-rules-required",
+      "unitId": "AU-0182",
+      "proposition": "Zus\u00E4tzlicher Beleg f\u00FCr unterschiedliche Aufbewahrungsfristen und Retention-Regeln.",
+      "evidenceRefs": [
+        "retention-rules-required",
+        "offer-retention-legal-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Zus\u00E4tzlicher Beleg f\u00FCr unterschiedliche Aufbewahrungsfristen und Retention-Regeln.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0189",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "support-visibility-conflict",
+      "unitId": "AU-0189",
+      "proposition": "Konkretisiert den Support-Bedarf nach Einsicht in \u00E4ltere Angebote.",
+      "evidenceRefs": [
+        "support-visibility-conflict",
+        "support-role-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Konkretisiert den Support-Bedarf nach Einsicht in \u00E4ltere Angebote.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0190",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "rbac-concept-required",
+      "unitId": "AU-0190",
+      "proposition": "Es muss gekl\u00E4rt werden, ob Finance Einsicht in historische Angebote ben\u00F6tigt und wie dies im Rollen- und Berechtigungskonzept abgebildet wird.",
+      "evidenceRefs": [
+        "rbac-concept-required",
+        "retention-rules-required"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "missing_claim"
+      },
+      "reason": "Finance-Einsicht in alte Angebote ist im Ledger nicht explizit als Berechtigungs-/Zugriffsanforderung erfasst.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0195",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "freigaben-not-solved",
+      "unitId": "AU-0195",
+      "proposition": "Best\u00E4tigt den bereits erfassten offenen bzw. ungel\u00F6sten Freigabeprozess.",
+      "evidenceRefs": [
+        "freigaben-not-solved",
+        "freigabeprozess-fehlt",
+        "approval-threshold-conflict"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Best\u00E4tigt den bereits erfassten offenen bzw. ungel\u00F6sten Freigabeprozess.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0196",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "support-process-unclear-risk",
+      "unitId": "AU-0196",
+      "proposition": "Best\u00E4tigt, dass der Support-Aspekt im MVP-Schnitt noch fehlt bzw. unklar ist.",
+      "evidenceRefs": [
+        "support-process-unclear-risk",
+        "support-role-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Best\u00E4tigt, dass der Support-Aspekt im MVP-Schnitt noch fehlt bzw. unklar ist.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0213",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "scope-must-show-exclusions-and-risks",
+      "unitId": "AU-0213",
+      "proposition": "Unterstreicht direkt den bereits erfassten Claim, dass der Scope klar dokumentiert werden muss.",
+      "evidenceRefs": [
+        "scope-must-show-exclusions-and-risks"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Unterstreicht direkt den bereits erfassten Claim, dass der Scope klar dokumentiert werden muss.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0219",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "sap-test-data-blocker",
+      "unitId": "AU-0219",
+      "proposition": "Begr\u00FCndet, warum das Testdaten-Thema sofort relevant ist, wenn Entwicklung darauf zugreift.",
+      "evidenceRefs": [
+        "sap-test-data-blocker",
+        "no-real-customer-data-in-test"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Begr\u00FCndet, warum das Testdaten-Thema sofort relevant ist, wenn Entwicklung darauf zugreift.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0225",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": null,
+      "unitId": "AU-0225",
+      "proposition": "Die L\u00F6sung soll keine schlechte User Experience verursachen; UX ist bei Scope- und Architekturentscheidungen zu ber\u00FCcksichtigen.",
+      "evidenceRefs": [],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "missing_claim"
+      },
+      "reason": "Ein explizites UX-/Usability-Prinzip ist im Ledger bislang nicht als eigener Claim enthalten.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0226",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "invoice-download-in-scope",
+      "unitId": "AU-0226",
+      "proposition": "Pr\u00E4zisiert die bereits erfassten Anforderungen und Limits rund um Rechnungsdownload durch den Hinweis auf rechtliche Relevanz bei Massenexporten.",
+      "evidenceRefs": [
+        "invoice-download-in-scope",
+        "rate-limits-pagination-download-limits"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Pr\u00E4zisiert die bereits erfassten Anforderungen und Limits rund um Rechnungsdownload durch den Hinweis auf rechtliche Relevanz bei Massenexporten.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0227",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "rate-limits-pagination-download-limits",
+      "unitId": "AU-0227",
+      "proposition": "Erg\u00E4nzt dieselbe Argumentation um den Sicherheitsaspekt und st\u00FCtzt damit bestehende Download-Limit- und Schutzanforderungen.",
+      "evidenceRefs": [
+        "rate-limits-pagination-download-limits",
+        "security-review-required"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Erg\u00E4nzt dieselbe Argumentation um den Sicherheitsaspekt und st\u00FCtzt damit bestehende Download-Limit- und Schutzanforderungen.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0231",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "api-gateway-policy",
+      "unitId": "AU-0231",
+      "proposition": "Ist eine Umsetzungsoption f\u00FCr den bereits erfassten Gateway-Claim, keine neue eigenst\u00E4ndige Aussage.",
+      "evidenceRefs": [
+        "api-gateway-policy",
+        "api-gateway-waitlist-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Ist eine Umsetzungsoption f\u00FCr den bereits erfassten Gateway-Claim, keine neue eigenst\u00E4ndige Aussage.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0233",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "api-gateway-waitlist-risk",
+      "unitId": "AU-0233",
+      "proposition": "Bewertet den bereits erfassten Wartelistenpunkt als Zeitproblem und st\u00FCtzt den bestehenden Zeitplan-Risiko-Claim.",
+      "evidenceRefs": [
+        "api-gateway-waitlist-risk",
+        "mvp-deadline-8-weeks"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Bewertet den bereits erfassten Wartelistenpunkt als Zeitproblem und st\u00FCtzt den bestehenden Zeitplan-Risiko-Claim.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0237",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "board-estimate-risk",
+      "unitId": "AU-0237",
+      "proposition": "St\u00FCtzt den bestehenden Claim, dass Kostensch\u00E4tzungen bzw. Angebote ohne klaren Scope problematisch sind.",
+      "evidenceRefs": [
+        "board-estimate-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "St\u00FCtzt den bestehenden Claim, dass Kostensch\u00E4tzungen bzw. Angebote ohne klaren Scope problematisch sind.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0242",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "data-minimization-open",
+      "unitId": "AU-0242",
+      "proposition": "Ist eine konkrete Auspr\u00E4gung der bereits offenen Caching-/Datenminimierungsfrage.",
+      "evidenceRefs": [
+        "data-minimization-open",
+        "sap-unavailable-offer-policy-open",
+        "cache-personal-data-risk"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Ist eine konkrete Auspr\u00E4gung der bereits offenen Caching-/Datenminimierungsfrage.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0243",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": "cache-personal-data-risk",
+      "unitId": "AU-0243",
+      "proposition": "Begr\u00FCndet das bereits erfasste Risiko, dass Caching wegen kundenspezifischer Rabattlogik personenbezogene bzw. kundenspezifische Daten betreffen kann.",
+      "evidenceRefs": [
+        "cache-personal-data-risk",
+        "data-minimization-open"
+      ],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "attach_as_evidence"
+      },
+      "reason": "Begr\u00FCndet das bereits erfasste Risiko, dass Caching wegen kundenspezifischer Rabattlogik personenbezogene bzw. kundenspezifische Daten betreffen kann.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    },
+    {
+      "itemId": "US::AU-0255",
+      "itemType": "unit_signal",
+      "sourceMode": "unit",
+      "claimId": null,
+      "unitId": "AU-0255",
+      "proposition": "Risiken sind nicht nur technisch zu bewerten, sondern systematisch auch finanziell und organisatorisch zu erfassen.",
+      "evidenceRefs": [],
+      "systemSuggestion": {
+        "kind": "compare_classification",
+        "facet": null,
+        "observed": null,
+        "suggested": null,
+        "classification": "missing_claim"
+      },
+      "reason": "Der Ledger enth\u00E4lt viele einzelne nichttechnische Risiken, aber kein explizites Querschnittsprinzip, Risiken auch finanziell und organisatorisch systematisch zu betrachten.",
+      "action": null,
+      "actionReason": null,
+      "referenceTarget": null
+    }
+  ]
+}

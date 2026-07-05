@@ -229,6 +229,12 @@ if (args.Length > 0 && string.Equals(args[0], "ledger-adjudicate-apply", StringC
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerAdjudicateRunner.RunApplyAsync(args, repoRoot);
     return;
 }
+// Adjudikation Interactive/Re-Launch (§9): lokale Review-UI über der queue.json (Autosave), Finish -> apply.
+if (args.Length > 0 && string.Equals(args[0], "ledger-adjudicate-ui", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerAdjudicateUiRunner.RunAsync(args, repoRoot);
+    return;
+}
 
 // L3 realer Test: bestehenden Ledger mit dem FacetValidator prüfen (evidence- oder transcript-Kontext).
 if (args.Length > 0 && string.Equals(args[0], "ledger-validate", StringComparison.OrdinalIgnoreCase))

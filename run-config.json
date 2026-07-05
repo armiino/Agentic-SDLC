@@ -90,5 +90,13 @@
       "Phase2ArchitectureAgent": ["context", "requirements", "risks"],
       "Phase2OpenQuestionsAgent": ["context", "requirements", "risks", "architecture"]
     }
+  },
+  // Nur für `ledger-build` wirksam (Plan §4). Config-gesteuerter Human-in-the-Loop-Adjudikationsschritt.
+  //   skip        = kein Schritt, validated Ledger unverändert (Default, Baseline-neutral)
+  //   manual      = queue.json in step-03b schreiben, Prozess endet (Naht) -> später apply/-ui
+  //   interactive = blockierende lokale Review-UI (Autosave), "Fertig" wendet direkt an
+  "ledger": {
+    "adjudicationMode": "skip",
+    "adjudicationOpenBrowser": true
   }
 }

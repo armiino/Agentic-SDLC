@@ -8,11 +8,18 @@ namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
 /// (Verdict + Facet-Issues + Repair-Vorschlag), Freigabe-Status deterministisch abgeleitet.
 /// </summary>
 /// <remarks>
-/// Wrappt <see cref="FacetValidator"/> (Batches à ~8, fixer Nenner, VOLLES Transcript). Terminiert die
-/// Kette; schreibt <c>step-03-facet-validation/output.json</c> (validierter Ledger) + metrics.json
-/// (Verdict-/Issue-Verteilung — Deskriptiv, keine Gold-Bewertung; Selective-Metriken laufen separat).
+/// Wrappt <see cref="FacetValidator"/> (Batches à ~8, fixer Nenner, VOLLES Transcript); schreibt
+/// <c>step-03-facet-validation/output.json</c> (validierter Ledger) + metrics.json (Verdict-/Issue-
+/// Verteilung — Deskriptiv, keine Gold-Bewertung; Selective-Metriken laufen separat).
+///
+/// Terminierung ist config-abhängig (Plan §4): OHNE Adjudikation (<c>forwardToAdjudication=false</c>,
+/// Default = heutiges Verhalten) terminiert die Stufe und yieldet die Zusammenfassung. MIT Adjudikation
+/// sendet sie stattdessen den validierten Ledger als <see cref="ValidatedLedgerMessage"/> an den
+/// nachgelagerten <see cref="HumanAdjudicationExecutor"/>. Beide Ausgangstypen sind deklariert; gesendet
+/// wird immer nur genau einer (Send-Zeit-Check von MAF).
 /// </remarks>
 [YieldsOutput(typeof(string))]
+[SendsMessage(typeof(ValidatedLedgerMessage))]
 internal sealed class FacetValidationExecutor : Executor<CanonicalLedgerMessage>
 {
     public const string ExecutorName = "LedgerFacetValidation";
@@ -20,13 +27,16 @@ internal sealed class FacetValidationExecutor : Executor<CanonicalLedgerMessage>
     private readonly FacetValidator _validator;
     private readonly string _transcript;
     private readonly RunContext _run;
+    private readonly bool _forwardToAdjudication;
 
-    public FacetValidationExecutor(FacetValidator validator, string transcript, RunContext run)
+    public FacetValidationExecutor(FacetValidator validator, string transcript, RunContext run,
+        bool forwardToAdjudication = false)
         : base(ExecutorName)
     {
         _validator = validator;
         _transcript = transcript;
         _run = run;
+        _forwardToAdjudication = forwardToAdjudication;
     }
 
     public override async ValueTask HandleAsync(
@@ -73,10 +83,14 @@ internal sealed class FacetValidationExecutor : Executor<CanonicalLedgerMessage>
             }
         };
 
-        LedgerRunArtifacts.WriteStep(_run, "step-03-facet-validation", new ValidatedLedger(validated), metrics);
+        var validatedLedger = new ValidatedLedger(validated);
+        LedgerRunArtifacts.WriteStep(_run, "step-03-facet-validation", validatedLedger, metrics);
 
-        await context
-            .YieldOutputAsync($"Ledger L3 fertig: {validated.Count} Claims validiert (grounded={metrics.verdict.grounded}, partial={metrics.verdict.partial}, overstated={metrics.verdict.overstated}, unsupported={metrics.verdict.unsupported}; {issues.Count} Facet-Issues)")
-            .ConfigureAwait(false);
+        var summary = $"Ledger L3 fertig: {validated.Count} Claims validiert (grounded={metrics.verdict.grounded}, partial={metrics.verdict.partial}, overstated={metrics.verdict.overstated}, unsupported={metrics.verdict.unsupported}; {issues.Count} Facet-Issues)";
+
+        if (_forwardToAdjudication)
+            await context.SendMessageAsync(new ValidatedLedgerMessage(validatedLedger)).ConfigureAwait(false);
+        else
+            await context.YieldOutputAsync(summary).ConfigureAwait(false);
     }
 }

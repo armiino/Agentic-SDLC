@@ -37,3 +37,10 @@ public sealed record CandidateAndCanonicalLedgerMessage(
 
 /// <summary>Kanonischer Ledger (Stufe 2 → Stufe 3), inkl. Cluster-Trace an den Einträgen.</summary>
 public sealed record CanonicalLedgerMessage(IReadOnlyList<SemanticLedgerEntry> Entries);
+
+/// <summary>
+/// Validierter Ledger (Stufe 3 → optionaler Adjudikationsschritt). Trägt den validierten Ledger typisiert
+/// über die Edge; der Adjudikations-Executor operiert für Prepare/Apply zusätzlich auf den kanonischen
+/// On-Disk-Artefakten des Runs (step-03/step-03b), damit die bestehenden Runner 1:1 wiederverwendbar bleiben.
+/// </summary>
+public sealed record ValidatedLedgerMessage(ValidatedLedger Ledger);

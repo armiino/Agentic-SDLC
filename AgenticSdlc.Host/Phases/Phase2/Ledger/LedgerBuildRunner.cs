@@ -59,6 +59,7 @@ public static class LedgerBuildRunner
             model = judgeSettings.ModelId,
             structuredOutput = settings.JuryStructuredOutput,
             innerCycleLogging = settings.InnerCycleLogging,
+            adjudicationMode = settings.LedgerAdjudicationMode.ToString(),
             timestampUtc = DateTime.UtcNow
         });
 
@@ -85,9 +86,13 @@ public static class LedgerBuildRunner
         var coverageRepairer = new CanonicalCoverageRepairer(coverageRepairClient, settings.JuryStructuredOutput);
         var facetValidator = new FacetValidator(facetClient, settings.JuryStructuredOutput);
 
-        var workflow = LedgerBuilderWorkflow.Build(extractor, canonicalizer, coverageRepairer, facetValidator, transcript, run);
+        var workflow = LedgerBuilderWorkflow.Build(
+            extractor, canonicalizer, coverageRepairer, facetValidator, transcript, run,
+            settings.LedgerAdjudicationMode, repoRoot, settings.LedgerAdjudicationOpenBrowser);
 
-        Console.WriteLine("[ledger-build] running workflow (extraction -> canonicalization -> coverage-repair -> facet-validation)...");
+        var adjudicationNote = settings.LedgerAdjudicationMode == AdjudicationMode.Skip
+            ? "" : $" -> human-adjudication ({settings.LedgerAdjudicationMode})";
+        Console.WriteLine($"[ledger-build] running workflow (extraction -> canonicalization -> coverage-repair -> facet-validation{adjudicationNote})...");
         var workflowRun = await InProcessExecution.Default
             .RunAsync(workflow, transcript, run.RunId, CancellationToken.None)
             .ConfigureAwait(false);

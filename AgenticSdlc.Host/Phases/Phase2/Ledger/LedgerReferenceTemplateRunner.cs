@@ -25,7 +25,9 @@ public static class LedgerReferenceTemplateRunner
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
     private static readonly Regex WhitespaceRx = new(@"\s+", RegexOptions.Compiled);
-    private static readonly Regex SpeakerPrefixRx = new(@"^\s*(\[[^\]]*\]|\p{Lu}[\p{L}]*)\s*:?\s*", RegexOptions.Compiled);
+    // Siehe LedgerReferenceRecallFastRunner: identische Prefix-Strip-Logik (bracketed [Speaker 2]: sowie
+    // unbracketed "Speaker 2:" / "Anna:" / "Ben Müller:"). Beide Dateien MÜSSEN synchron bleiben.
+    private static readonly Regex SpeakerPrefixRx = new(@"^\s*(\[[^\]]*\]|\p{Lu}[\p{L}]*(?:\s+[\p{Lu}\p{N}][\p{L}\p{N}]*)*)\s*:?\s*", RegexOptions.Compiled);
 
     public static Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

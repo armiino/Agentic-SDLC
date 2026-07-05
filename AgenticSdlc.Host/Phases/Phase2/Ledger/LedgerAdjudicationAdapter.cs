@@ -25,11 +25,12 @@ public static class LedgerAdjudicationAdapter
     {
         var items = new List<AdjudicationItem>();
 
-        // 1) review_required-Claims (beide Modi) -> systemSuggestion = erster FacetIssue mit Repair-Vorschlag.
+        // 1) review_required-Claims (beide Modi) -> systemSuggestions = alle FacetIssues mit Repair-Vorschlag.
+        // systemSuggestion bleibt als Legacy-/Kurzfeld der erste Vorschlag.
         foreach (var v in validated.Entries.Where(e => e.ClaimStatus == "review_required"))
         {
-            var issue = v.Validation.FacetIssues.FirstOrDefault(i => i.Suggested is not null)
-                        ?? v.Validation.FacetIssues.FirstOrDefault();
+            var issues = BuildRepairSuggestions(v);
+            var issue = issues.FirstOrDefault();
             AdjudicationSuggestion? sug = issue is null ? null
                 : new AdjudicationSuggestion("facet_repair", issue.Facet, issue.Observed, issue.Suggested, null);
 
@@ -42,7 +43,8 @@ public static class LedgerAdjudicationAdapter
                 Proposition: v.Entry.Proposition,
                 EvidenceRefs: v.Entry.Evidence.Select(ev => ev.Quote).ToList(),
                 SystemSuggestion: sug,
-                Reason: $"verdict={v.Validation.Verdict}; {v.Validation.Reason}"));
+                Reason: $"verdict={v.Validation.Verdict}; {v.Validation.Reason}",
+                SystemSuggestions: issues.Count > 0 ? issues : null));
         }
 
         // 2) Miss-Signale (optional). Format-Erkennung: unit-compare hat items[].verdict, recall-fast hat missedEntries[].
@@ -102,6 +104,40 @@ public static class LedgerAdjudicationAdapter
         return new AdjudicationQueue(validatedRunId, unitRunId, DateTime.UtcNow.ToString("o"), items);
     }
 
+    public static AdjudicationQueue EnrichRepairSuggestions(AdjudicationQueue queue, ValidatedLedger validated)
+    {
+        var byClaimId = validated.Entries.ToDictionary(e => e.Entry.Id, StringComparer.Ordinal);
+        var items = queue.Items.Select(item =>
+        {
+            if (item.ItemType != "review_required_claim"
+                || item.ClaimId is not { Length: > 0 } claimId
+                || item.SystemSuggestions is { Count: > 0 }
+                || !byClaimId.TryGetValue(claimId, out var validatedEntry))
+                return item;
+
+            var suggestions = BuildRepairSuggestions(validatedEntry);
+            if (suggestions.Count == 0) return item;
+            return item with
+            {
+                SystemSuggestion = item.SystemSuggestion ?? suggestions[0],
+                SystemSuggestions = suggestions
+            };
+        }).ToList();
+
+        return queue with { Items = items };
+    }
+
     public static ValidatedLedger LoadValidated(string path)
         => JsonSerializer.Deserialize<ValidatedLedger>(File.ReadAllText(path), Json) ?? new ValidatedLedger([]);
+
+    private static List<AdjudicationSuggestion> BuildRepairSuggestions(ValidatedLedgerEntry entry)
+    {
+        var issues = entry.Validation.FacetIssues
+            .Where(i => i.Suggested is not null)
+            .DefaultIfEmpty(entry.Validation.FacetIssues.FirstOrDefault())
+            .Where(i => i is not null)
+            .Select(i => new AdjudicationSuggestion("facet_repair", i!.Facet, i.Observed, i.Suggested, null))
+            .ToList();
+        return issues;
+    }
 }

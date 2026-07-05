@@ -24,20 +24,35 @@ public static class LedgerBuilderWorkflow
         CanonicalCoverageRepairer coverageRepairer,
         FacetValidator facetValidator,
         string transcript,
-        RunContext run)
+        RunContext run,
+        AdjudicationMode adjudicationMode = AdjudicationMode.Skip,
+        string repoRoot = "",
+        bool adjudicationOpenBrowser = true)
     {
+        // Skip = Baseline-neutral: FacetValidation terminiert wie bisher. Sonst hängt der
+        // HumanAdjudicationExecutor als terminale Stufe an und FacetValidation forwardet den Ledger.
+        var withAdjudication = adjudicationMode != AdjudicationMode.Skip;
+
         var extraction = new CandidateExtractionExecutor(extractor, run);
         var canonicalization = new CanonicalizationExecutor(canonicalizer, run);
         var coverageRepair = new CanonicalCoverageRepairExecutor(coverageRepairer, run);
-        var facetValidation = new FacetValidationExecutor(facetValidator, transcript, run);
+        var facetValidation = new FacetValidationExecutor(facetValidator, transcript, run, withAdjudication);
 
         var builder = new WorkflowBuilder(extraction)
             .WithName("LedgerBuilder")
-            .WithDescription("Transcript → Candidate → CanonicalDraft → CoverageRepair → FacetValidation (evidence-first Ledger-Bau, L4).");
+            .WithDescription("Transcript → Candidate → CanonicalDraft → CoverageRepair → FacetValidation (evidence-first Ledger-Bau, L4)"
+                + (withAdjudication ? " → HumanAdjudication." : "."));
 
         builder.AddEdge(extraction, canonicalization);
         builder.AddEdge(canonicalization, coverageRepair);
         builder.AddEdge(coverageRepair, facetValidation);
+
+        if (withAdjudication)
+        {
+            // Normal-Build: keine Miss-Signale (nur review_required in der Queue) -> missSignalPath=null.
+            var adjudication = new HumanAdjudicationExecutor(adjudicationMode, run, repoRoot, adjudicationOpenBrowser, missSignalPath: null);
+            builder.AddEdge(facetValidation, adjudication);
+        }
 
         return builder.Build();
     }

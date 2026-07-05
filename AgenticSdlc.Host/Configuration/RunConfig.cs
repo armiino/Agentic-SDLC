@@ -42,6 +42,7 @@ public sealed class RunConfig
     public LlmPreviewConfig LlmPreview { get; set; } = new();
     public JuryConfig Jury { get; set; } = new();
     public Phase2BStateConfig Phase2BState { get; set; } = new();
+    public LedgerConfig Ledger { get; set; } = new();
 
     /// <summary>
     /// Lädt `run-config.json` aus dem Repo-Root
@@ -151,6 +152,23 @@ public sealed class JuryVerificationConfig
     /// eingebauten Verifier. Nur zum Experimentieren/Kalibrieren — nicht für A/B/C-Vergleiche.
     /// </summary>
     public bool? Custom { get; set; }
+}
+
+/// <summary>
+/// Steuert den config-gesteuerten Human-in-the-Loop-Adjudikationsschritt des Ledger-Workflows (Plan §4).
+/// </summary>
+/// <remarks>
+/// Nur relevant für <c>ledger-build</c>. Fehlt der Block, gilt <c>skip</c> (Baseline-neutral, heutiges
+/// Verhalten). <c>manual</c> = queue.json schreiben und enden (Naht); <c>interactive</c> = blockierende
+/// lokale Review-UI mit Autosave, „Fertig" wendet direkt an.
+/// </remarks>
+public sealed class LedgerConfig
+{
+    /// <summary>skip | manual | interactive. Default (fehlend/unbekannt): skip.</summary>
+    public string? AdjudicationMode { get; set; }
+
+    /// <summary>Im Interactive-Modus den Browser automatisch öffnen. Default: true.</summary>
+    public bool? AdjudicationOpenBrowser { get; set; }
 }
 
 /// <summary>

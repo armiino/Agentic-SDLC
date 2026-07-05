@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <!-- Generischer Human-in-the-Loop-Review-Kern. Weiss NICHTS ueber Ledger/Adjudikation.
+         Wiederverwendbar fuer beliebige Review-Sessions (Artefakt-Review, Agenten-Output-Review, ...). -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Minimal-API (WebApplication) fuer den lokalen Review-Server. Kein MVC/Blazor/SignalR. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Das einzige Frontend-File: generisch, rendert JEDE ReviewSession. Als Embedded Resource
+         mitgeliefert, damit der Server ohne wwwroot-Copy/Pfad-Abhaengigkeit auskommt. -->
+    <EmbeddedResource Include="wwwroot/index.html" />
+  </ItemGroup>
+
+</Project>

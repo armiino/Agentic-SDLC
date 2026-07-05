@@ -22,7 +22,15 @@ public static class LedgerReferenceRecallFastRunner
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
     private static readonly Regex WhitespaceRx = new(@"\s+", RegexOptions.Compiled);
-    private static readonly Regex SpeakerPrefixRx = new(@"^\s*(\[[^\]]*\]|\p{Lu}[\p{L}]*)\s*:?\s*", RegexOptions.Compiled);
+    // Strippt den Sprecher-Prefix eines Evidence-Quotes, damit der Resttext gegen den (bereits
+    // sprecher-freien) Turn-Text substring-matchen kann. Deckt beide beobachteten Formate ab:
+    //   [Speaker 2]: …            (bracketed, wie Transkript/Referenz)
+    //   Speaker 2: … / Anna: … / Ben Müller: …  (unbracketed; die Atomic-Unit-Pipeline rendert den
+    //                                             Prefix OHNE Klammern -> sonst poisont "speaker 2:" das Fragment)
+    // Der unbracketed-Zweig erlaubt neben dem ersten Großwort optionale weitere Groß-/Ziffern-Tokens
+    // (Namen mehrwortig, "Speaker <n>"). Bekannter, seltener + symmetrischer Rand: ein Quote, der mit
+    // zwei Großwörtern + Doppelpunkt BEGINNT ("Die App:") verliert diese – bei Referenz UND Auto gleich.
+    private static readonly Regex SpeakerPrefixRx = new(@"^\s*(\[[^\]]*\]|\p{Lu}[\p{L}]*(?:\s+[\p{Lu}\p{N}][\p{L}\p{N}]*)*)\s*:?\s*", RegexOptions.Compiled);
 
     public static Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

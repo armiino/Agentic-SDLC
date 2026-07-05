@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Human Review</title>
+<style>
+  :root { --bg:#0f1115; --panel:#151922; --card:#1a1d24; --edge:#2a2f3a; --fg:#e6e8ec; --mut:#9aa3b2;
+          --accent:#4f9cff; --ok:#3ddc97; --warn:#f0a04b; --danger:#ff6b6b; --mark:#ffe08a; --header-h:96px; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--fg); }
+  header { position:sticky; top:0; z-index:10; background:#12151b; border-bottom:1px solid var(--edge);
+           padding:14px 20px; box-shadow:0 10px 22px rgba(0,0,0,.28); }
+  .header-row { display:flex; gap:14px; align-items:flex-start; justify-content:space-between; }
+  .header-main { min-width:0; flex:1; }
+  header h1 { margin:0 0 2px; font-size:16px; }
+  header .sub { color:var(--mut); font-size:12px; }
+  .bar { height:6px; background:var(--edge); border-radius:3px; margin-top:10px; overflow:hidden; }
+  .bar > span { display:block; height:100%; width:0; background:var(--accent); transition:width .2s; }
+  .count { font-size:12px; color:var(--mut); margin-top:4px; }
+  .header-actions { display:flex; align-items:center; gap:8px; padding-top:2px; }
+  .toggle { display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--fg);
+            cursor:pointer; user-select:none; border:1px solid var(--edge); border-radius:999px;
+            padding:6px 10px; background:#0c0e12; white-space:nowrap; }
+  .toggle input { appearance:none; width:28px; height:16px; border-radius:999px; margin:0;
+                  background:var(--edge); position:relative; transition:background .15s; }
+  .toggle input::after { content:""; position:absolute; width:12px; height:12px; top:2px; left:2px;
+                         border-radius:50%; background:var(--mut); transition:left .15s, background .15s; }
+  .toggle input:checked { background:rgba(61,220,151,.35); }
+  .toggle input:checked::after { left:14px; background:var(--ok); }
+
+  .workspace { display:grid; grid-template-columns:minmax(0,1fr) 390px; gap:16px; padding:28px 20px 120px;
+               max-width:1480px; margin:0 auto; align-items:start; }
+  #items { min-width:0; }
+  .ledger-panel { position:sticky; top:calc(var(--header-h) + 20px); max-height:calc(100vh - var(--header-h) - 46px); overflow:hidden;
+                  background:var(--panel); border:1px solid var(--edge); border-radius:8px; }
+  .ledger-head { padding:16px 16px 14px; border-bottom:1px solid var(--edge); }
+  .ledger-head h2 { margin:0 0 12px; font-size:14px; }
+  .ledger-tools { display:grid; grid-template-columns:1fr auto; gap:8px; }
+  .ledger-tools input { width:100%; }
+  .search-help { color:var(--mut); font-size:11px; margin-top:6px; }
+  code { color:#c8d8ff; background:#0c0e12; border:1px solid var(--edge); border-radius:4px; padding:1px 4px; }
+  .ledger-list { max-height:calc(100vh - var(--header-h) - 235px); overflow:auto; padding:8px; }
+  .claim-card { border:1px solid var(--edge); border-radius:6px; padding:8px 9px; margin-bottom:7px;
+                background:#11151d; cursor:pointer; }
+  .claim-card:hover, .claim-card.focused { border-color:var(--accent); background:#111a26; }
+  .claim-card.selected { border-color:var(--ok); }
+  .claim-id { display:block; font-size:11px; color:var(--accent); margin-bottom:3px; overflow-wrap:anywhere; }
+  .claim-prop { color:var(--fg); font-size:12px; }
+  .claim-empty { color:var(--mut); padding:12px; font-size:12px; }
+  .selected-target { margin-top:8px; color:var(--mut); font-size:12px; }
+  .selected-target strong { color:var(--ok); font-weight:600; }
+  .reference-detail { display:none; border-top:1px solid var(--edge); border-bottom:1px solid var(--edge);
+                      padding:12px; background:#10141c; max-height:42vh; overflow:auto; }
+  .reference-detail.show { display:block; }
+  .reference-detail h3 { margin:0 0 4px; font-size:13px; color:var(--accent); overflow-wrap:anywhere; }
+  .reference-summary { margin:0 0 10px; color:var(--fg); font-size:13px; white-space:pre-wrap; }
+  .reference-actions { display:flex; flex-wrap:wrap; gap:6px; margin:10px 0; }
+  .reference-context { display:none; background:#0c0e12; border:1px solid var(--edge); border-radius:6px;
+                       padding:8px 10px; margin-top:8px; white-space:pre-wrap; color:var(--mut); font-size:12px; }
+  .reference-context.show { display:block; }
+
+  .item { background:var(--card); border:1px solid var(--edge); border-left:3px solid var(--edge);
+          border-radius:8px; padding:14px 16px; margin-bottom:12px; scroll-margin-top:calc(var(--header-h) + 28px); }
+  .item.active { border-color:var(--accent); border-left-color:var(--accent); }
+  .item.resolved { border-left-color:var(--ok); }
+  body.hide-resolved .item.resolved { display:none; }
+  body.drawer-open { overflow:hidden; }
+  .item .top { display:flex; gap:8px; align-items:baseline; }
+  .badge { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--mut);
+           border:1px solid var(--edge); border-radius:4px; padding:1px 6px; white-space:nowrap; }
+  .item .summary { margin:2px 0 8px; white-space:pre-wrap; font-size:15px; }
+  .notes { display:flex; flex-direction:column; gap:6px; margin:6px 0 10px; }
+  .note { border-radius:6px; padding:6px 10px; font-size:13px; border-left:3px solid var(--edge); background:#12151b; }
+  .note-label { display:block; font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--mut); margin-bottom:2px; }
+  .note-suggestion { border-left-color:var(--accent); background:#111a26; }
+  .note-suggestion .note-label { color:var(--accent); }
+  .note-reason { border-left-color:var(--warn); }
+  .note-reason .note-label { color:var(--warn); }
+  .note-warning { border-left-color:var(--danger); }
+  .facet-note { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .suggestion-list { display:flex; flex-direction:column; gap:5px; }
+  .suggestion-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
+  .pill { display:inline-flex; align-items:center; min-height:22px; border:1px solid var(--edge);
+          border-radius:999px; padding:2px 8px; font-size:12px; color:var(--fg); background:#0c0e12; }
+  .pill-key { color:var(--mut); margin-right:5px; }
+  .pill.key { color:var(--accent); border-color:rgba(79,156,255,.5); background:#0f1d2e; }
+  .pill.warn { color:var(--warn); border-color:rgba(240,160,75,.55); background:#241a10; }
+  .pill.ok { color:var(--ok); border-color:rgba(61,220,151,.5); background:#0d2119; }
+  .arrow { color:var(--mut); }
+  .ctxrow { display:flex; gap:6px; flex-wrap:wrap; margin:6px 0; }
+  button.ctx, button.small { background:transparent; color:var(--accent); border:1px solid var(--edge);
+               border-radius:4px; padding:3px 8px; font-size:12px; cursor:pointer; }
+  button.ctx:hover, button.small:hover { border-color:var(--accent); }
+  .ctxout { display:none; background:#0c0e12; border:1px solid var(--edge); border-radius:6px;
+            padding:8px 10px; margin:6px 0; white-space:pre-wrap; color:var(--mut); font-size:13px; }
+  .ctxout.show { display:block; }
+  .fields { display:grid; grid-template-columns:130px 1fr; gap:8px 12px; align-items:center; margin-top:8px; }
+  .fields label { color:var(--mut); font-size:12px; }
+  .fields .req::after { content:" *"; color:var(--warn); }
+  .repair-fields { display:grid; grid-template-columns:130px 1fr; gap:8px 12px; align-items:center;
+                   margin:8px 0 10px; padding:10px; border:1px solid rgba(79,156,255,.28);
+                   border-radius:6px; background:#101826; }
+  .repair-fields .repair-title { grid-column:1 / -1; color:var(--accent); font-size:11px;
+                                 text-transform:uppercase; letter-spacing:.5px; }
+  .repair-fields label { color:var(--mut); font-size:12px; }
+  select, input[type=text] { width:100%; background:#0c0e12; color:var(--fg); border:1px solid var(--edge);
+           border-radius:6px; padding:6px 8px; font:inherit; }
+  select:focus, input:focus { outline:none; border-color:var(--accent); }
+
+  footer { position:fixed; bottom:0; left:0; right:0; background:#12151b; border-top:1px solid var(--edge);
+           padding:12px 20px; display:flex; gap:12px; justify-content:flex-end; align-items:center; z-index:11; }
+  footer .msg { margin-right:auto; color:var(--mut); font-size:12px; }
+  button.primary { background:var(--accent); color:#08111f; border:0; border-radius:6px; padding:9px 18px;
+                   font-weight:600; cursor:pointer; }
+  button.primary:disabled { background:var(--edge); color:var(--mut); cursor:not-allowed; }
+  button.ghost { background:transparent; color:var(--fg); border:1px solid var(--edge); border-radius:6px;
+                 padding:9px 16px; cursor:pointer; }
+  .done { text-align:center; padding:80px 20px; color:var(--mut); }
+  .done h2 { color:var(--fg); }
+  datalist { color-scheme:dark; }
+
+  .drawer-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.58); z-index:40; display:none; }
+  .drawer-backdrop.show { display:block; }
+  .drawer { position:fixed; top:0; right:0; width:min(760px, 92vw); height:100vh; background:#10141c;
+            border-left:1px solid var(--edge); z-index:41; display:none; flex-direction:column; }
+  .drawer.show { display:flex; }
+  .drawer-head { padding:12px 14px; border-bottom:1px solid var(--edge); display:flex; gap:8px; align-items:center; }
+  .drawer-head h2 { margin:0; font-size:15px; }
+  .drawer-search { display:grid; grid-template-columns:minmax(160px, 1fr) auto auto auto; gap:6px; align-items:center;
+                   min-width:min(470px, 58vw); }
+  .drawer-search input { width:100%; }
+  .drawer-search input::placeholder, .ledger-tools input::placeholder { color:#778091; }
+  .drawer-count { color:var(--mut); font-size:12px; white-space:nowrap; min-width:58px; text-align:right; }
+  .drawer-head .spacer { flex:1; }
+  .drawer-body { overflow:auto; padding:12px 14px 24px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+                 font-size:12px; line-height:1.55; }
+  .turn-line { white-space:pre-wrap; border-left:3px solid transparent; padding:3px 8px; color:#c7ccd6; }
+  .turn-line.focus { background:#2a2410; border-left-color:var(--mark); color:#fff2b5; }
+  .turn-line.search-hit { outline:1px solid rgba(79,156,255,.45); background:#101d2d; }
+  .turn-line.search-current { outline:2px solid var(--accent); }
+
+  @media (max-width: 1050px) {
+    .workspace { grid-template-columns:1fr; }
+    .ledger-panel { position:relative; top:auto; max-height:none; }
+    .ledger-list { max-height:360px; }
+    .reference-detail { max-height:none; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="header-row">
+    <div class="header-main">
+      <h1 id="title">Human Review</h1>
+      <div class="sub" id="subtitle"></div>
+      <div class="bar"><span id="progress"></span></div>
+      <div class="count" id="count"></div>
+    </div>
+    <div class="header-actions">
+      <label class="toggle"><input type="checkbox" id="hideResolved"> nur offene zeigen</label>
+    </div>
+  </div>
+</header>
+
+<main class="workspace">
+  <section id="items"></section>
+  <aside class="ledger-panel">
+    <div class="ledger-head">
+      <h2>Claim Ledger</h2>
+      <div class="ledger-tools">
+        <input id="ledgerSearch" type="text" placeholder="Claims suchen: mvp portal rabatt">
+        <button class="small" id="searchActiveBtn" type="button">aus Item</button>
+      </div>
+      <div class="search-help">UND-Suche, case-insensitive. Beispiel: <code>mvp portal</code>.</div>
+      <div class="selected-target" id="selectedTarget">Kein Review-Item aktiv.</div>
+    </div>
+    <div class="reference-detail" id="referenceDetail"></div>
+    <div class="ledger-list" id="ledgerList"></div>
+  </aside>
+</main>
+
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+<section class="drawer" id="transcriptDrawer" aria-hidden="true">
+  <div class="drawer-head">
+    <h2>Transkript-Kontext</h2>
+    <div class="drawer-search">
+      <input id="transcriptSearch" type="text" placeholder="Im Transkript suchen">
+      <button class="small" id="prevTranscriptHitBtn" type="button">↑</button>
+      <button class="small" id="nextTranscriptHitBtn" type="button">↓</button>
+      <span class="drawer-count" id="transcriptSearchCount">0 Treffer</span>
+    </div>
+    <button class="small" id="jumpHighlightBtn" type="button">Zum Highlight</button>
+    <span class="spacer"></span>
+    <button class="ghost" id="closeDrawerBtn" type="button">Schließen</button>
+  </div>
+  <div class="drawer-body" id="drawerBody"></div>
+</section>
+
+<footer>
+  <span class="msg" id="msg"></span>
+  <button class="ghost" id="cancelBtn">Abbrechen / Später</button>
+  <button class="primary" id="finishBtn" disabled>Weiter / Fertig</button>
+</footer>
+
+<script>
+let session = null;
+let activeItemId = null;
+let ledgerOptions = [];
+let transcriptSearchIndex = -1;
+let transcriptSearchHits = [];
+let openReferenceId = null;
+
+const esc = s => (s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const val = (item, key) => (item.fieldValues.find(f => f.fieldKey === key) || {}).value ?? '';
+const cssEsc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/["\\]/g, '\\$&');
+
+async function load() {
+  updateHeaderHeight();
+  session = await fetch('/api/session').then(r => r.json());
+  document.getElementById('title').textContent = session.title || 'Human Review';
+  document.getElementById('subtitle').textContent = session.subtitle || '';
+  updateHeaderHeight();
+  ledgerOptions = extractLedgerOptions();
+  render();
+  renderLedger();
+  updateProgress();
+}
+
+function updateHeaderHeight() {
+  const h = document.querySelector('header')?.offsetHeight || 96;
+  document.documentElement.style.setProperty('--header-h', `${h}px`);
+}
+
+function extractLedgerOptions() {
+  const spec = session.fieldSchema.find(f => f.fieldKey === 'referenceTarget');
+  return (spec?.options || []).map(o => {
+    const parts = (o.label || '').split(' — ');
+    return { id: o.value, proposition: parts.slice(1).join(' — ') || o.label || o.value, label: o.label || o.value };
+  });
+}
+
+function render() {
+  document.getElementById('items').innerHTML = session.items.map(item => `
+    <div class="item ${item.resolved ? 'resolved' : ''} ${item.itemId === activeItemId ? 'active' : ''}"
+         data-id="${esc(item.itemId)}" onclick="selectItem('${esc(item.itemId)}')">
+      <div class="top">
+        ${item.badge ? `<span class="badge">${esc(item.badge)}</span>` : ''}
+        <span class="mono" style="color:var(--mut);font-size:11px">${esc(item.itemId)}</span>
+      </div>
+      <div class="summary">${esc(item.summary)}</div>
+      ${item.notes && item.notes.length ? `<div class="notes">${item.notes.map(renderNote).join('')}</div>` : ''}
+      ${renderRepairControls(item)}
+      ${item.contextBlocks && item.contextBlocks.length ? `<div class="ctxrow">${
+        item.contextBlocks.map(cb =>
+          `<button class="ctx" onclick="event.stopPropagation();loadContext('${esc(item.itemId)}','${esc(cb.resolverKey)}',this)">${esc(cb.label)}</button>`
+        ).join('')}</div><div class="ctxout"></div>` : ''}
+      <div class="fields" onclick="event.stopPropagation()">
+        ${session.fieldSchema.filter(spec => !isRepairField(spec.fieldKey)).map(spec => renderField(item, spec)).join('')}
+      </div>
+    </div>`).join('');
+
+  if (!activeItemId && session.items.length) selectItem(session.items[0].itemId, false);
+}
+
+function renderNote(n) {
+  const kind = (n.kind || 'info').toLowerCase();
+  return `<div class="note note-${kind}"><span class="note-label">${esc(n.label)}</span>${renderNoteBody(kind, n.text)}</div>`;
+}
+
+function renderNoteBody(kind, text) {
+  const t = text || '';
+  if (kind === 'suggestion' && t.includes('\n')) {
+    return `<div class="suggestion-list">${t.split('\n').filter(Boolean)
+      .map(line => `<div class="suggestion-row">${renderFacetSuggestion(line)}</div>`).join('')}</div>`;
+  }
+  const facet = t.match(/^([^:]+):\s*(.*?)\s*→\s*(.*)$/);
+  if (kind === 'suggestion' && facet) {
+    return `<div class="suggestion-row">${renderFacetSuggestion(t)}</div>`;
+  }
+  if (kind === 'info' && t.includes('=')) {
+    const chips = t.split(';')
+      .map(x => x.trim())
+      .filter(Boolean)
+      .map(x => {
+        const parts = x.split('=');
+        const key = parts.shift() || '';
+        const value = parts.join('=') || '';
+        return `<span class="pill"><span class="pill-key">${esc(key)}</span>${esc(value)}</span>`;
+      })
+      .join('');
+    return `<div class="facet-note">${chips}</div>`;
+  }
+  const verdict = t.match(/^verdict=([^;]+);\s*(.*)$/i);
+  if (kind === 'reason' && verdict) {
+    return `<div class="facet-note">
+      <span class="pill warn">verdict=${esc(verdict[1])}</span>
+      <span>${esc(verdict[2])}</span>
+    </div>`;
+  }
+  return esc(t);
+}
+
+function renderFacetSuggestion(line) {
+  const facet = (line || '').match(/^([^:]+):\s*(.*?)\s*(?:→|->)\s*(.*)$/);
+  if (!facet) return `<span>${esc(line)}</span>`;
+  return `<span class="pill key">${esc(facet[1])}</span>
+    <span class="pill warn">${esc(facet[2])}</span>
+    <span class="arrow">→</span>
+    <span class="pill ok">${esc(facet[3])}</span>`;
+}
+
+function isRepairField(fieldKey) {
+  return (fieldKey || '').startsWith('repair.');
+}
+
+function renderRepairControls(item) {
+  const specs = session.fieldSchema.filter(spec => isRepairField(spec.fieldKey) && val(item, spec.fieldKey));
+  if (!specs.length) return '';
+  return `<div class="repair-fields" onclick="event.stopPropagation()">
+    <div class="repair-title">Repair-Auswahl für apply_repair</div>
+    ${specs.map(spec => renderField(item, spec)).join('')}
+  </div>`;
+}
+
+function renderField(item, spec) {
+  const cur = val(item, spec.fieldKey);
+  const id = (spec.inputType || '').toLowerCase();
+  const lbl = `<label class="${spec.required ? 'req' : ''}" title="${esc(spec.help)}">${esc(spec.label)}</label>`;
+  if (id === 'dropdown') {
+    const opts = ['<option value="">— wählen —</option>']
+      .concat((spec.allowedValues || []).map(v => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(v)}</option>`));
+    return `${lbl}<select data-field="${esc(spec.fieldKey)}" onchange="save('${esc(item.itemId)}','${esc(spec.fieldKey)}',this.value)">${opts.join('')}</select>`;
+  }
+  if (id === 'readonly') {
+    return `${lbl}<input data-field="${esc(spec.fieldKey)}" type="text" value="${esc(cur)}" readonly>`;
+  }
+  if (spec.options && spec.options.length) {
+    const listId = `dl-${esc(item.itemId)}-${esc(spec.fieldKey)}`;
+    const opts = spec.options.map(o => `<option value="${esc(o.value)}">${esc(o.label)}</option>`).join('');
+    return `${lbl}<input data-field="${esc(spec.fieldKey)}" type="text" list="${listId}" value="${esc(cur)}" placeholder="${esc(spec.help)}"
+              onchange="save('${esc(item.itemId)}','${esc(spec.fieldKey)}',this.value)">
+            <datalist id="${listId}">${opts}</datalist>`;
+  }
+  return `${lbl}<input data-field="${esc(spec.fieldKey)}" type="text" value="${esc(cur)}" placeholder="${esc(spec.help)}"
+            onchange="save('${esc(item.itemId)}','${esc(spec.fieldKey)}',this.value)">`;
+}
+
+function renderLedger() {
+  const terms = document.getElementById('ledgerSearch').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+  const active = activeItem();
+  const selected = active ? val(active, 'referenceTarget') : '';
+  const hits = filterLedger(terms);
+  document.getElementById('ledgerList').innerHTML = hits.length ? hits.map(c => `
+    <div class="claim-card ${c.id === selected ? 'selected' : ''} ${c.id === openReferenceId ? 'focused' : ''}"
+         data-claim-id="${esc(c.id)}" onclick="openReferenceDetails('${esc(c.id)}')">
+      <span class="claim-id">${esc(c.id)}</span>
+      <div class="claim-prop">${esc(c.proposition)}</div>
+    </div>`).join('') : `<div class="claim-empty">Keine passenden Claims.</div>`;
+  updateSelectedTarget();
+}
+
+function selectItem(itemId, scrollLedger = true) {
+  activeItemId = itemId;
+  document.querySelectorAll('.item').forEach(el => el.classList.toggle('active', el.dataset.id === itemId));
+  updateSelectedTarget();
+  renderLedger();
+  if (scrollLedger) {
+    const claimId = itemId.includes('::') ? itemId.split('::').slice(1).join('::') : '';
+    if (claimId) focusClaim(claimId);
+  }
+}
+
+function activeItem() {
+  return session?.items.find(i => i.itemId === activeItemId) || null;
+}
+
+function updateSelectedTarget() {
+  const el = document.getElementById('selectedTarget');
+  const item = activeItem();
+  if (!item) { el.textContent = 'Kein Review-Item aktiv.'; return; }
+  const target = val(item, 'referenceTarget');
+  el.innerHTML = target ? `Referenz-Ziel: <strong>${esc(target)}</strong>` : `Aktiv: ${esc(item.itemId)} · kein Referenz-Ziel gesetzt.`;
+}
+
+async function setReferenceTarget(id) {
+  if (!activeItemId) { flash('Erst ein Review-Item auswählen.'); return; }
+  const input = document.querySelector(`.item[data-id="${cssEsc(activeItemId)}"] [data-field="referenceTarget"]`);
+  if (input) input.value = id;
+  await save(activeItemId, 'referenceTarget', id);
+  focusClaim(id);
+}
+
+async function openReferenceDetails(id) {
+  openReferenceId = id;
+  renderLedger();
+  const panel = document.getElementById('referenceDetail');
+  panel.classList.add('show');
+  panel.innerHTML = `<h3>${esc(id)}</h3><p class="reference-summary">lädt…</p>`;
+  const res = await fetch(`/api/reference/${encodeURIComponent(id)}`);
+  if (!res.ok) {
+    panel.innerHTML = `<h3>${esc(id)}</h3><p class="reference-summary">Details nicht gefunden.</p>
+      <div class="reference-actions"><button class="primary" onclick="chooseReferenceTarget('${esc(id)}')">Als Referenz setzen</button>
+      <button class="ghost" onclick="closeReferenceDetails()">Schließen</button></div>`;
+    return;
+  }
+  const d = await res.json();
+  panel.innerHTML = `
+    <h3>${esc(d.title || d.referenceId || id)}</h3>
+    <p class="reference-summary">${esc(d.summary || '')}</p>
+    ${d.notes && d.notes.length ? `<div class="notes">${d.notes.map(renderNote).join('')}</div>` : ''}
+    <div class="reference-actions">
+      ${(d.contextBlocks || []).map(cb =>
+        `<button class="ctx" onclick="loadReferenceContext('${esc(id)}','${esc(cb.resolverKey)}',this)">${esc(cb.label)}</button>`
+      ).join('')}
+      <button class="primary" onclick="chooseReferenceTarget('${esc(id)}')">Als Referenz setzen</button>
+      <button class="ghost" onclick="closeReferenceDetails()">Schließen</button>
+    </div>
+    <div class="reference-context"></div>`;
+}
+
+async function chooseReferenceTarget(id) {
+  await setReferenceTarget(id);
+  closeReferenceDetails();
+}
+
+function closeReferenceDetails() {
+  openReferenceId = null;
+  const panel = document.getElementById('referenceDetail');
+  panel.classList.remove('show');
+  panel.innerHTML = '';
+  renderLedger();
+}
+
+async function loadReferenceContext(referenceId, blockKey, btn) {
+  const text = await fetch(`/api/reference/${encodeURIComponent(referenceId)}/${encodeURIComponent(blockKey)}`).then(r => r.text());
+  if (blockKey === 'transcript') { openTranscriptDrawer(text); return; }
+  const out = btn.closest('.reference-detail').querySelector('.reference-context');
+  if (out.classList.contains('show') && out.dataset.key === blockKey) { out.classList.remove('show'); return; }
+  out.textContent = text;
+  out.classList.add('show');
+  out.dataset.key = blockKey;
+}
+
+function focusClaim(id) {
+  const card = document.querySelector(`.claim-card[data-claim-id="${cssEsc(id)}"]`);
+  document.querySelectorAll('.claim-card.focused').forEach(c => c.classList.remove('focused'));
+  if (card) {
+    card.classList.add('focused');
+    card.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }
+}
+
+function searchFromActive() {
+  const item = activeItem();
+  if (!item) return;
+  const words = keywords(item.summary);
+  let chosen = [];
+  for (let n = Math.min(3, words.length); n >= 1; n--) {
+    const candidate = words.slice(0, n);
+    if (filterLedger(candidate).length > 0) { chosen = candidate; break; }
+  }
+  if (chosen.length === 0 && words.length > 0) chosen = [words[0]];
+  document.getElementById('ledgerSearch').value = chosen.join(' ');
+  renderLedger();
+  flash(chosen.length ? `Suche: ${chosen.join(' ')}` : 'Keine sinnvollen Keywords gefunden.');
+}
+
+function filterLedger(terms) {
+  return ledgerOptions.filter(c => {
+    const hay = `${c.id} ${c.proposition}`.toLowerCase();
+    return terms.every(t => hay.includes(t));
+  });
+}
+
+function keywords(text) {
+  const stop = new Set(['aber','auch','beim','dann','dass','dazu','eine','einem','einen','einer','eines','fuer','gibt',
+    'haben','kein','keine','keinen','kann','muss','nicht','noch','oder','ohne','sind','soll','ueber','wenn','werden',
+    'wird','wir','the','and','with','from','this','that']);
+  const seen = new Set();
+  return text.toLowerCase().replace(/[^a-z0-9äöüß -]/g, ' ').split(/\s+/)
+    .filter(w => w.length >= 4 && !stop.has(w))
+    .filter(w => {
+      if (seen.has(w)) return false;
+      seen.add(w);
+      return true;
+    })
+    .sort((a, b) => scoreKeyword(b) - scoreKeyword(a));
+}
+
+function scoreKeyword(w) {
+  let s = w.length;
+  if (/[0-9]/.test(w)) s += 4;
+  if (w.includes('-')) s += 3;
+  return s;
+}
+
+async function save(itemId, fieldKey, value) {
+  const res = await fetch(`/api/item/${encodeURIComponent(itemId)}`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ fieldKey, value })
+  });
+  if (!res.ok) { flash('Speichern fehlgeschlagen.'); return; }
+  const r = await res.json();
+  const item = session.items.find(i => i.itemId === itemId);
+  item.fieldValues = item.fieldValues.filter(f => f.fieldKey !== fieldKey);
+  item.fieldValues.push({ fieldKey, value });
+  item.resolved = r.resolved;
+  document.querySelector(`.item[data-id="${cssEsc(itemId)}"]`)?.classList.toggle('resolved', r.resolved);
+  applyProgress(r.resolvedCount, r.total, r.allResolved);
+  updateSelectedTarget();
+  renderLedger();
+  flash('Gespeichert.');
+}
+
+async function loadContext(itemId, blockKey, btn) {
+  selectItem(itemId, false);
+  const text = await fetch(`/api/context/${encodeURIComponent(itemId)}/${encodeURIComponent(blockKey)}`).then(r => r.text());
+  if (blockKey === 'transcript') { openTranscriptDrawer(text); return; }
+
+  const out = btn.closest('.item').querySelector('.ctxout');
+  if (out.classList.contains('show') && out.dataset.key === blockKey) { out.classList.remove('show'); return; }
+  out.textContent = text;
+  out.classList.add('show');
+  out.dataset.key = blockKey;
+}
+
+function openTranscriptDrawer(text) {
+  const body = document.getElementById('drawerBody');
+  body.innerHTML = text.split('\n').map(line => {
+    const focus = line.startsWith('>> ');
+    return `<div class="turn-line ${focus ? 'focus' : ''}">${esc(line)}</div>`;
+  }).join('');
+  document.getElementById('transcriptSearch').value = '';
+  applyTranscriptSearch();
+  document.getElementById('drawerBackdrop').classList.add('show');
+  document.getElementById('transcriptDrawer').classList.add('show');
+  document.body.classList.add('drawer-open');
+  document.getElementById('transcriptDrawer').setAttribute('aria-hidden', 'false');
+  setTimeout(jumpHighlight, 60);
+}
+
+function closeTranscriptDrawer() {
+  document.getElementById('drawerBackdrop').classList.remove('show');
+  document.getElementById('transcriptDrawer').classList.remove('show');
+  document.body.classList.remove('drawer-open');
+  document.getElementById('transcriptDrawer').setAttribute('aria-hidden', 'true');
+}
+
+function jumpHighlight() {
+  const focus = document.querySelector('.drawer-body .turn-line.focus');
+  if (focus) focus.scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+
+function applyTranscriptSearch() {
+  const q = document.getElementById('transcriptSearch').value.trim().toLowerCase();
+  const terms = q.split(/\s+/).filter(Boolean);
+  transcriptSearchIndex = -1;
+  transcriptSearchHits = [];
+  document.querySelectorAll('.drawer-body .turn-line').forEach((line, idx) => {
+    line.classList.remove('search-hit', 'search-current');
+    const hit = terms.length > 0 && terms.every(t => line.textContent.toLowerCase().includes(t));
+    if (hit) {
+      line.classList.add('search-hit');
+      transcriptSearchHits.push(line);
+    }
+  });
+  document.getElementById('transcriptSearchCount').textContent = `${transcriptSearchHits.length} Treffer`;
+  if (transcriptSearchHits.length > 0) goTranscriptHit(0);
+}
+
+function goTranscriptHit(nextIndex) {
+  if (transcriptSearchHits.length === 0) return;
+  transcriptSearchHits.forEach(h => h.classList.remove('search-current'));
+  transcriptSearchIndex = (nextIndex + transcriptSearchHits.length) % transcriptSearchHits.length;
+  const hit = transcriptSearchHits[transcriptSearchIndex];
+  hit.classList.add('search-current');
+  document.getElementById('transcriptSearchCount').textContent = `${transcriptSearchIndex + 1}/${transcriptSearchHits.length}`;
+  hit.scrollIntoView({ block: 'center', behavior: 'smooth' });
+}
+
+function updateProgress() {
+  applyProgress(session.items.filter(i => i.resolved).length, session.items.length,
+                session.items.every(i => i.resolved));
+}
+function applyProgress(done, total, allResolved) {
+  document.getElementById('progress').style.width = total ? `${100 * done / total}%` : '0';
+  document.getElementById('count').textContent = `${done}/${total} entschieden`;
+  document.getElementById('finishBtn').disabled = !allResolved;
+}
+
+let flashTimer;
+function flash(m) {
+  const el = document.getElementById('msg');
+  el.textContent = m;
+  clearTimeout(flashTimer);
+  flashTimer = setTimeout(() => { el.textContent = ''; }, 1500);
+}
+
+document.getElementById('hideResolved').onchange = (e) => {
+  document.body.classList.toggle('hide-resolved', e.target.checked);
+};
+document.getElementById('ledgerSearch').oninput = renderLedger;
+document.getElementById('searchActiveBtn').onclick = searchFromActive;
+document.getElementById('closeDrawerBtn').onclick = closeTranscriptDrawer;
+document.getElementById('drawerBackdrop').onclick = closeTranscriptDrawer;
+document.getElementById('jumpHighlightBtn').onclick = jumpHighlight;
+document.getElementById('transcriptSearch').oninput = applyTranscriptSearch;
+document.getElementById('transcriptSearch').onkeydown = (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    goTranscriptHit(transcriptSearchIndex + (e.shiftKey ? -1 : 1));
+  }
+};
+document.getElementById('prevTranscriptHitBtn').onclick = () => goTranscriptHit(transcriptSearchIndex - 1);
+document.getElementById('nextTranscriptHitBtn').onclick = () => goTranscriptHit(transcriptSearchIndex + 1);
+window.addEventListener('resize', updateHeaderHeight);
+
+document.getElementById('finishBtn').onclick = async () => {
+  const res = await fetch('/api/finish', { method: 'POST' });
+  if (res.ok) done('Fertig — die Pipeline läuft im selben Prozess weiter.');
+  else flash('Es sind noch nicht alle Items entschieden.');
+};
+document.getElementById('cancelBtn').onclick = async () => {
+  if (!confirm('Abbrechen? Der Stand bleibt in der queue.json gespeichert; du kannst die UI später erneut öffnen.')) return;
+  await fetch('/api/cancel', { method: 'POST' });
+  done('Abgebrochen — der autogespeicherte Stand bleibt erhalten. Dieses Fenster kann geschlossen werden.');
+};
+function done(text) {
+  document.body.innerHTML = `<div class="done"><h2>${esc(text.split('—')[0])}</h2><p>${esc(text)}</p></div>`;
+}
+
+load();
+</script>
+</body>
+</html>
