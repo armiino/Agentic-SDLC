@@ -235,6 +235,13 @@ if (args.Length > 0 && string.Equals(args[0], "ledger-adjudicate-ui", StringComp
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerAdjudicateUiRunner.RunAsync(args, repoRoot);
     return;
 }
+// Adjudikation A10 (Refine): neu geminteten Claims (facetStatus=pending) volle Facetten zuweisen (deterministischer
+// Filter, LLM nur auf den pending-Claims) -> consumable-Claims auf Pipeline-Niveau.
+if (args.Length > 0 && string.Equals(args[0], "ledger-adjudicate-refine", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerAdjudicateRefineRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
 
 // L3 realer Test: bestehenden Ledger mit dem FacetValidator prüfen (evidence- oder transcript-Kontext).
 if (args.Length > 0 && string.Equals(args[0], "ledger-validate", StringComparison.OrdinalIgnoreCase))
