@@ -1,11 +1,12 @@
 
 {
-  "agentPhase": "phase2_1",
+  "agentPhase": "phase2_evidence",
+//"agentPhase": "phase2_1",
 //"agentPhase": "phase1",
  // "phase2ContextStrategy": "message_passing",
   "phase2ContextStrategy": "artifact_state",   // Phase 2.1B: MAF Shared State. Umschalten reicht..Prompts werden automatisch gewählt.
   "llmProvider": "openrouter",
-  "agentModel": "openai/gpt-4.1-mini",
+  "agentModel": "openai/gpt-5.4",
  // "agentModel": "openai/gpt-oss-120b:free",
  //  "agentModel": "openai/gpt-oss-120b",
  //langsam: "agentModel": "nvidia/nemotron-3-super-120b-a12b:free",
@@ -32,6 +33,16 @@
         "Phase2RisksAgent": "RisksPromptB1",
         "Phase2ArchitectureAgent": "ArchitecturePromptB1",
         "Phase2OpenQuestionsAgent": "OpenQuestionsPromptB1"
+      }
+    },
+    // Kapitel B: Prompt pro Arm (transcript = Arm A; ledger = Arm B). Beide teilen sich _shared-core.txt
+    // (Aufgabe/Format/Treue) — der Runner komponiert Arm-Header + Kern → Prompt-Parität beweisbar.
+    "phase2_evidence": {
+      "transcript": {
+        "EvidenceRequirementsAgent": "RequirementsFromTranscript1"
+      },
+      "ledger": {
+        "EvidenceRequirementsAgent": "RequirementsFromLedger1"
       }
     }
   },
@@ -98,5 +109,20 @@
   "ledger": {
     "adjudicationMode": "skip",
     "adjudicationOpenBrowser": true
+  },
+
+  // Kapitel B (Evidenz-Agent): nur wirksam, wenn oben "agentPhase": "phase2_evidence".
+  // Vergleicht Artefakt-Generierung aus dem Ledger (Arm B) vs. Rohtranskript (Arm A) auf Treue.
+  // Runs landen unter runs/phase2evidenz-agent/<source>/<runId>. Plan: Phases/Phase2/Evidenz-Agent/ReusePlan.md
+  //   source     = transcript (Arm A, Baseline) | ledger (Arm B)
+  //   artifact   = requirements (B-Minimal-Bar; später risks/architecture/open-questions)
+  //   ledgerRun  = Pfad zur consumable.json (nur bei source=ledger)
+  //   repetitions= k Läufe pro Arm (temp>0) für Verteilungs-Messung
+  "evidenceAgent": {
+    "source": "ledger",
+    "artifact": "requirements",
+    "transcript": "input/transcripts/Interview-Einrichtung.txt",
+    "ledgerRun": "runs/ledger/20260704_131614_018865/step-03b-adjudicated/consumable.json",
+    "repetitions": 1
   }
 }

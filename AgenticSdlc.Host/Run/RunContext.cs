@@ -37,8 +37,13 @@ public sealed class RunContext
     public RunContext(string runId, string phaseSelector)
     {
         RunId = runId;
-        PhaseSelector = NormalizePathSegment(phaseSelector);
-        RunDir = Path.Combine("runs", PhaseSelector, runId);
+        // PhaseSelector darf Unter-Ordner enthalten (z.B. "phase2evidenz-agent/transcript"): pro Segment
+        // normalisieren, Verzeichnisstruktur erhalten. Einzelsegment-Selektoren (phase2_1, phase2B, …) bleiben unverändert.
+        var segments = phaseSelector.Split('/', '\\', StringSplitOptions.RemoveEmptyEntries)
+            .Select(NormalizePathSegment).Where(s => s.Length > 0).ToArray();
+        if (segments.Length == 0) segments = ["unknown"];
+        PhaseSelector = string.Join('/', segments);
+        RunDir = Path.Combine(new[] { "runs" }.Concat(segments).Append(runId).ToArray());
     }
 
     public void EnsureFolders()

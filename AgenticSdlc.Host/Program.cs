@@ -322,14 +322,18 @@ CleanDocsFolder();
 
 // runs/<folder>/<runId>. Strategie B/C erhalten eigene Ordner.. A bleibt aus Historie-Gruenden in phase2_1.
 static string ResolveRunFolder(HostSettings settings)
-    => settings.AgentPhase == "phase2_1"
-        ? settings.Phase2ContextStrategy switch
+    => settings.AgentPhase switch
+    {
+        "phase2_1" => settings.Phase2ContextStrategy switch
         {
             "artifact_state" => "phase2B",
             "independent_source_reads" => "phase2C",
             _ => "phase2_1"   // message_passing (A)
-        }
-        : settings.AgentPhase;
+        },
+        // Kapitel B (Evidenz-Agent): runs/phase2evidenz-agent/<arm>/<runId> — Arme (ledger|transcript) getrennt.
+        "phase2_evidence" => $"phase2evidenz-agent/{settings.EvidenceSource}",
+        _ => settings.AgentPhase
+    };
 
 var sourceName = "AgenticSdlc.Host";
 var activitySource = new ActivitySource(sourceName);
@@ -445,6 +449,7 @@ Environment.ExitCode = settings.AgentPhase switch
 {
     "phase1" => await RunPhase1Async(),
     "phase2_1" => await RunPhase2_1Async(),
+    "phase2_evidence" => await RunPhase2EvidenceAsync(),
     _ => UnknownPhase(settings.AgentPhase, run)
 };
 
@@ -474,6 +479,21 @@ async Task<int> RunPhase2_1Async()
     return await runner.RunAsync();
 }
 
+// Kapitel B (Evidenz-Agent): eigener, DÜNNER Runner; komponiert die vorhandenen Bausteine
+// (Phase2AgentFactory / Pipeline), lässt Phase2Runner unangetastet. E0 = Gerüst-Durchstich.
+async Task<int> RunPhase2EvidenceAsync()
+{
+    var runner = new AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.EvidenceAgentRunner(
+        settings: settings,
+        run: run,
+        sourceName: sourceName,
+        activitySource: activitySource,
+        repoRoot: repoRoot
+    );
+
+    return await runner.RunAsync();
+}
+
 static int UnknownPhase(string phase, RunContext run)
 {
     run.AppendEvent(new
@@ -482,11 +502,11 @@ static int UnknownPhase(string phase, RunContext run)
         runId = run.RunId,
         reason = "Unknown AGENT_PHASE.",
         phase,
-        allowedPhases = new[] { "phase1", "phase2_1" },
+        allowedPhases = new[] { "phase1", "phase2_1", "phase2_evidence" },
         timestampUtc = DateTime.UtcNow
     });
 
-    Console.Error.WriteLine($"RUN FAILED - Unknown AGENT_PHASE '{phase}'. Allowed values: phase1, phase2_1.");
+    Console.Error.WriteLine($"RUN FAILED - Unknown AGENT_PHASE '{phase}'. Allowed values: phase1, phase2_1, phase2_evidence.");
     return 4;
 }
 

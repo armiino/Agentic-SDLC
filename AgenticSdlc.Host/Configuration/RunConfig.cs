@@ -43,6 +43,7 @@ public sealed class RunConfig
     public JuryConfig Jury { get; set; } = new();
     public Phase2BStateConfig Phase2BState { get; set; } = new();
     public LedgerConfig Ledger { get; set; } = new();
+    public EvidenceAgentConfig EvidenceAgent { get; set; } = new();
 
     /// <summary>
     /// Lädt `run-config.json` aus dem Repo-Root
@@ -169,6 +170,31 @@ public sealed class LedgerConfig
 
     /// <summary>Im Interactive-Modus den Browser automatisch öffnen. Default: true.</summary>
     public bool? AdjudicationOpenBrowser { get; set; }
+}
+
+/// <summary>
+/// Steuert den Evidenz-Agent-Modus (Kapitel B): Artefakt-Generierung aus Ledger vs. Rohtranskript.
+/// </summary>
+/// <remarks>
+/// Nur relevant, wenn <c>agentPhase = phase2_evidence</c>. Fehlt der Block, gelten die Defaults
+/// (source=transcript, artifact=requirements). Siehe <c>Phases/Phase2/Evidenz-Agent/ReusePlan.md</c>.
+/// </remarks>
+public sealed class EvidenceAgentConfig
+{
+    /// <summary>ledger (Arm B) | transcript (Arm A). Default: transcript.</summary>
+    public string? Source { get; set; }
+
+    /// <summary>Zielartefakt. B-Minimal-Bar: nur "requirements". Default: requirements.</summary>
+    public string? Artifact { get; set; }
+
+    /// <summary>Pfad zum Roh-Transkript (Arm A). MUSS dasselbe sein, aus dem der Ledger gebaut wurde (Vergleichbarkeit).</summary>
+    public string? Transcript { get; set; }
+
+    /// <summary>Nur bei source=ledger: Pfad zur consumable.json des adjudizierten Ledger-Runs.</summary>
+    public string? LedgerRun { get; set; }
+
+    /// <summary>k Wiederholungen pro Arm für die Verteilungs-Messung (temp>0). Default: 1.</summary>
+    public int? Repetitions { get; set; }
 }
 
 /// <summary>

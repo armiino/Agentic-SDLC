@@ -39,7 +39,13 @@ public sealed record HostSettings(
     bool Phase2BWriteArtifacts,
     IReadOnlyDictionary<string, IReadOnlyList<string>>? Phase2BReads,
     AdjudicationMode LedgerAdjudicationMode,
-    bool LedgerAdjudicationOpenBrowser)
+    bool LedgerAdjudicationOpenBrowser,
+    // Evidenz-Agent (Kapitel B) — nur relevant bei AgentPhase=phase2_evidence.
+    string EvidenceSource,
+    string EvidenceArtifact,
+    string? EvidenceTranscript,
+    string? EvidenceLedgerRun,
+    int EvidenceRepetitions)
 {
     /// <summary>
     /// Erstellt die Settings aus den aktuell gesetzten Umgebungsvariablen.
@@ -50,6 +56,8 @@ public sealed record HostSettings(
         
         var agentPhase = ReadConfigString(config.AgentPhase, "AGENT_PHASE", "phase1").Trim().ToLowerInvariant();
         var phase2Strategy = ReadConfigString(config.Phase2ContextStrategy, "PHASE2_CONTEXT_STRATEGY", "message_passing").Trim().ToLowerInvariant();
+        // Evidenz-Agent-Arm (Kapitel B): wählt bei agentPhase=phase2_evidence die Prompt-Section (analog Strategie bei phase2_1).
+        var evidenceSource = (string.IsNullOrWhiteSpace(config.EvidenceAgent.Source) ? "transcript" : config.EvidenceAgent.Source).Trim().ToLowerInvariant();
 
         var settings = new HostSettings(
             RepoRoot: repoRoot,
@@ -60,7 +68,7 @@ public sealed record HostSettings(
             LlmPreviewChars: Math.Clamp(config.LlmPreview.Chars ?? ReadInt("LLM_PREVIEW_CHARS", 800), 100, 8000),
             AgentPhase: agentPhase,
             Phase2ContextStrategy: phase2Strategy,
-            Prompts: BuildPromptSelection(config.Prompts, agentPhase, phase2Strategy),
+            Prompts: BuildPromptSelection(config.Prompts, agentPhase, phase2Strategy, evidenceSource),
             LlmProvider: ReadConfigString(config.LlmProvider, "LLM_PROVIDER", "ollama").Trim().ToLowerInvariant(),
             ModelId: ReadConfigString(config.AgentModel, "AGENT_MODEL", "qwen2.5:14b"),
             OllamaBaseUrl: ReadString("OLLAMA_BASE_URL", "http://localhost:11434/"),
@@ -88,7 +96,13 @@ public sealed record HostSettings(
             Phase2BReads: BuildPhase2BReads(config.Phase2BState.Reads),
             // Ledger-Adjudikation (Plan §4): Default skip = Baseline-neutral.
             LedgerAdjudicationMode: AdjudicationModeParser.Parse(config.Ledger.AdjudicationMode),
-            LedgerAdjudicationOpenBrowser: config.Ledger.AdjudicationOpenBrowser ?? true
+            LedgerAdjudicationOpenBrowser: config.Ledger.AdjudicationOpenBrowser ?? true,
+            // Evidenz-Agent (Kapitel B): Defaults source=transcript (Arm A), artifact=requirements (B-Minimal-Bar).
+            EvidenceSource: evidenceSource,
+            EvidenceArtifact: (string.IsNullOrWhiteSpace(config.EvidenceAgent.Artifact) ? "requirements" : config.EvidenceAgent.Artifact).Trim().ToLowerInvariant(),
+            EvidenceTranscript: string.IsNullOrWhiteSpace(config.EvidenceAgent.Transcript) ? null : config.EvidenceAgent.Transcript.Trim(),
+            EvidenceLedgerRun: string.IsNullOrWhiteSpace(config.EvidenceAgent.LedgerRun) ? null : config.EvidenceAgent.LedgerRun.Trim(),
+            EvidenceRepetitions: Math.Clamp(config.EvidenceAgent.Repetitions ?? 1, 1, 20)
         );
 
         return settings;
@@ -183,7 +197,8 @@ public sealed record HostSettings(
     private static IReadOnlyDictionary<string, string> BuildPromptSelection(
         IDictionary<string, Dictionary<string, Dictionary<string, string>>>? configuredPrompts,
         string agentPhase,
-        string phase2Strategy)
+        string phase2Strategy,
+        string evidenceSource)
     {
         var prompts = new Dictionary<string, string>(StringComparer.Ordinal)
         {
@@ -192,14 +207,22 @@ public sealed record HostSettings(
             ["Phase2RequirementsAgent"] = "RequirementsPrompt4",
             ["Phase2RisksAgent"] = "RisksPrompt2",
             ["Phase2ArchitectureAgent"] = "ArchitecturePrompt2",
-            ["Phase2OpenQuestionsAgent"] = "OpenQuestionsPrompt2"
+            ["Phase2OpenQuestionsAgent"] = "OpenQuestionsPrompt2",
+            // Evidenz-Agent (Kapitel B): Default Arm-A-Prompt; run-config wählt pro Arm (transcript|ledger).
+            ["EvidenceRequirementsAgent"] = "RequirementsFromTranscript1"
         };
 
         if (configuredPrompts is null)
             return prompts;
 
-        // phase2_1 wählt die Section der aktiven Kontextstrategie.. alle anderen Phasen "default".
-        var strategyKey = agentPhase == "phase2_1" ? phase2Strategy : "default";
+        // phase2_1 wählt die Section der aktiven Kontextstrategie; phase2_evidence die des aktiven Arms;
+        // alle anderen Phasen "default".
+        var strategyKey = agentPhase switch
+        {
+            "phase2_1" => phase2Strategy,
+            "phase2_evidence" => evidenceSource,
+            _ => "default"
+        };
 
         if (configuredPrompts.TryGetValue(agentPhase, out var byStrategy) && byStrategy is not null
             && byStrategy.TryGetValue(strategyKey, out var byAgent) && byAgent is not null)
