@@ -33,11 +33,11 @@ public static class ContractChecker
     private static readonly HashSet<string> SoftTime = new(StringComparer.OrdinalIgnoreCase)
         { "later_possible", "mvp_or_later_unclear" };
 
-    private const string ReqDisposition = "requirements";
-
     /// <param name="iteration">1-basiert; im Loop später hochgezählt. In MC0 (kein Loop) = 1.</param>
     /// <param name="maxIterations">Loop-Obergrenze; steuert nur die MaxIterationsReached-Entscheidung.</param>
-    public static ContractCheckReport Check(string markdown, ConsumableLedger ledger, int iteration = 1, int maxIterations = 3)
+    /// <param name="artifactDisposition">Ledger-Disposition-Key des Zielartefakts (requirements|risks|architecture|open-questions).</param>
+    public static ContractCheckReport Check(string markdown, ConsumableLedger ledger,
+        int iteration = 1, int maxIterations = 3, string artifactDisposition = "requirements")
     {
         var claims = new Dictionary<string, SemanticLedgerEntry>(StringComparer.Ordinal);
         foreach (var c in ledger.Claims)
@@ -85,15 +85,15 @@ public static class ContractChecker
                 known.Add(claim);
 
                 // C4 — Claim ist für das requirements-Artefakt nicht verwertbar (not_applicable).
-                var disp = ReqApplicability(claim);
+                var disp = Applicability(claim, artifactDisposition);
                 if (string.Equals(disp, "not_applicable", StringComparison.OrdinalIgnoreCase))
                 {
                     wrongDispCount++;
                     violations.Add(new ContractViolation(
                         ContractCodes.WrongDisposition, ContractSeverity.Error, Repairable: false,
-                        Message: $"Claim '{id}' hat requirements-disposition=not_applicable und gehört nicht ins Requirements-Artefakt.",
+                        Message: $"Claim '{id}' hat {artifactDisposition}-disposition=not_applicable und gehört nicht ins {artifactDisposition}-Artefakt.",
                         LineNumber: lineNo, ArtifactQuote: Trim(text), ClaimIds: [id],
-                        LedgerFacets: Facets(claim), SuggestedAction: "Zeile entfernen oder Disposition prüfen."));
+                        LedgerFacets: Facets(claim, artifactDisposition), SuggestedAction: "Zeile entfernen oder Disposition prüfen."));
                 }
             }
 
@@ -118,22 +118,22 @@ public static class ContractChecker
         // C5 — required-Claims, die von keiner Zeile zitiert werden (Coverage gegen den GESCHLOSSENEN Claim-Satz).
         var repairItems = new List<RepairItem>();
         var requiredClaims = ledger.Claims
-            .Where(c => string.Equals(ReqApplicability(c), "required", StringComparison.OrdinalIgnoreCase))
+            .Where(c => string.Equals(Applicability(c, artifactDisposition), "required", StringComparison.OrdinalIgnoreCase))
             .ToList();
         var missingRequired = requiredClaims.Where(c => !citedIds.Contains(c.Id)).ToList();
         foreach (var c in missingRequired)
         {
             violations.Add(new ContractViolation(
                 ContractCodes.RequiredClaimUnused, ContractSeverity.Error, Repairable: true,
-                Message: $"required-Claim '{c.Id}' wird von keiner Anforderung zitiert.",
+                Message: $"required-Claim '{c.Id}' wird von keiner Zeile zitiert.",
                 LineNumber: null, ArtifactQuote: null, ClaimIds: [c.Id],
-                LedgerFacets: Facets(c), SuggestedAction: "Anforderungszeile für diesen Claim ergänzen (mit Source-ID)."));
+                LedgerFacets: Facets(c, artifactDisposition), SuggestedAction: "Artefaktzeile für diesen Claim ergänzen (mit Source-ID)."));
 
             repairItems.Add(new RepairItem(
                 Id: $"repair-{c.Id}", ViolationCode: ContractCodes.RequiredClaimUnused, LineNumber: null,
                 CurrentText: string.Empty, ClaimIds: [c.Id],
-                Instruction: "Ergänze eine Requirement-Zeile für diesen Claim mit Source-ID; respektiere die Facetten (nicht verstärken).",
-                AllowedFacetBounds: Facets(c),
+                Instruction: "Ergänze eine Artefaktzeile für diesen Claim mit Source-ID; respektiere die Facetten (nicht verstärken).",
+                AllowedFacetBounds: Facets(c, artifactDisposition),
                 EvidenceQuotes: (c.Evidence ?? [])
                     .Select(e => e.Quote).Where(q => !string.IsNullOrWhiteSpace(q)).ToList()));
         }
@@ -189,15 +189,15 @@ public static class ContractChecker
         return ids;
     }
 
-    private static string? ReqApplicability(SemanticLedgerEntry c)
-        => c.Disposition is not null && c.Disposition.TryGetValue(ReqDisposition, out var d) ? d.Applicability : null;
+    private static string? Applicability(SemanticLedgerEntry c, string dispositionKey)
+        => c.Disposition is not null && c.Disposition.TryGetValue(dispositionKey, out var d) ? d.Applicability : null;
 
-    private static IReadOnlyDictionary<string, string> Facets(SemanticLedgerEntry c) => new Dictionary<string, string>
+    private static IReadOnlyDictionary<string, string> Facets(SemanticLedgerEntry c, string dispositionKey) => new Dictionary<string, string>
     {
         ["status"] = c.Status,
         ["modality"] = c.Modality,
         ["timeScope"] = c.TimeScope ?? "?",
-        ["requirements"] = ReqApplicability(c) ?? "?"
+        [dispositionKey] = Applicability(c, dispositionKey) ?? "?"
     };
 
     private static readonly IReadOnlyDictionary<string, string> Empty = new Dictionary<string, string>();

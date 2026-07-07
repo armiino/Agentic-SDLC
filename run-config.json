@@ -7,7 +7,7 @@
   "phase2ContextStrategy": "artifact_state",   // Phase 2.1B: MAF Shared State. Umschalten reicht..Prompts werden automatisch gewählt.
   "llmProvider": "openrouter",
   "agentModel": "openai/gpt-5.4",
- // "agentModel": "openai/gpt-oss-120b:free",
+ // "agentModel": "openai/gpt-4.1-mini",
  //  "agentModel": "openai/gpt-oss-120b",
  //langsam: "agentModel": "nvidia/nemotron-3-super-120b-a12b:free",
 
@@ -39,10 +39,12 @@
     // (Aufgabe/Format/Treue) — der Runner komponiert Arm-Header + Kern → Prompt-Parität beweisbar.
     "phase2_evidence": {
       "transcript": {
-        "EvidenceRequirementsAgent": "RequirementsFromTranscript1"
+        "EvidenceRequirementsAgent": "RequirementsFromTranscript1",
+        "EvidenceRisksAgent": "RisksFromTranscript1"
       },
       "ledger": {
-        "EvidenceRequirementsAgent": "RequirementsFromLedger2"
+        "EvidenceRequirementsAgent": "RequirementsFromLedger2",
+        "EvidenceRisksAgent": "RisksFromLedger1"
       }
     }
   },
@@ -120,7 +122,7 @@
   //   repetitions= k Läufe pro Arm (temp>0) für Verteilungs-Messung
   "evidenceAgent": {
     "source": "ledger",
-    "artifact": "requirements",
+    "artifact": "risks",
     "transcript": "input/transcripts/Interview-Einrichtung.txt",
     "ledgerRun": "runs/ledger/20260704_131614_018865/step-03b-adjudicated/consumable.json",
     "repetitions": 1

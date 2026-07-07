@@ -209,7 +209,8 @@ public sealed record HostSettings(
             ["Phase2ArchitectureAgent"] = "ArchitecturePrompt2",
             ["Phase2OpenQuestionsAgent"] = "OpenQuestionsPrompt2",
             // Evidenz-Agent (Kapitel B): Default Arm-A-Prompt; run-config wählt pro Arm (transcript|ledger).
-            ["EvidenceRequirementsAgent"] = "RequirementsFromTranscript1"
+            ["EvidenceRequirementsAgent"] = "RequirementsFromTranscript1",
+            ["EvidenceRisksAgent"] = "RisksFromTranscript1"
         };
 
         if (configuredPrompts is null)

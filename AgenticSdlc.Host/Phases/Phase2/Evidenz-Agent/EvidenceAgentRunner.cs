@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text;
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
@@ -30,7 +29,13 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent;
 /// </remarks>
 public sealed class EvidenceAgentRunner
 {
-    private const string AgentName = "EvidenceRequirementsAgent";
+    // Artefakt -> (Agent-Prompt-Ordner, Ledger-Disposition-Key). Additiv erweiterbar (architecture/open-questions später).
+    private static readonly IReadOnlyDictionary<string, (string Agent, string Disposition)> ArtifactMap =
+        new Dictionary<string, (string, string)>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["requirements"] = ("EvidenceRequirementsAgent", "requirements"),
+            ["risks"] = ("EvidenceRisksAgent", "risks"),
+        };
     private const string SharedCorePrompt = "_shared-core"; // geteilter Kern (Aufgabe/Format/Treue) — beide Arme identisch
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
@@ -64,11 +69,13 @@ public sealed class EvidenceAgentRunner
         Console.WriteLine($"[evidence-agent] arm={arm} artifact={artifact} repetitions={_settings.EvidenceRepetitions}");
         Console.WriteLine($"[evidence-agent] runDir={Path.GetRelativePath(_repoRoot, _run.RunDir)}");
 
-        if (artifact != "requirements")
+        if (!ArtifactMap.TryGetValue(artifact, out var map))
         {
-            Console.Error.WriteLine($"[evidence-agent] artifact='{artifact}' noch nicht unterstützt (B-Minimal-Bar = requirements).");
+            Console.Error.WriteLine($"[evidence-agent] artifact='{artifact}' nicht unterstützt (verfügbar: {string.Join(", ", ArtifactMap.Keys)}).");
             return Fail("UNSUPPORTED_ARTIFACT");
         }
+        var agentName = map.Agent;
+        var dispositionKey = map.Disposition;
 
         // Quelle auflösen. E1 = Arm A (transcript). Arm B (ledger) folgt in E2.
         string sourceBlock;
@@ -98,17 +105,17 @@ public sealed class EvidenceAgentRunner
                 Console.Error.WriteLine("[evidence-agent] consumable.json leer/nicht lesbar.");
                 return Fail("CONSUMABLE_EMPTY");
             }
-            sourceBlock = "EVIDENCE-LEDGER (freigegebene Claims):\n\n" + ProjectLedger(consumable.Claims);
+            sourceBlock = "EVIDENCE-LEDGER (freigegebene Claims):\n\n" + ProjectLedger(consumable.Claims, dispositionKey);
             Console.WriteLine($"[evidence-agent] source=ledger  '{_settings.EvidenceLedgerRun}' ({consumable.Claims.Count} Claims)");
         }
 
         // Agent bauen (Reuse der Bausteine; KEINE MCP-Tools = Direkt-Chat).
         // Prompt-Parität: Arm-Header (arm-spezifisch) + GETEILTER KERN (byte-identisch für beide Arme).
         var vars = new Dictionary<string, string> { ["runId"] = _run.RunId };
-        var header = PromptProvider.Load(_repoRoot, phase, AgentName, _settings.GetPromptName(AgentName), vars);
-        var core = PromptProvider.Load(_repoRoot, phase, AgentName, SharedCorePrompt, vars);
+        var header = PromptProvider.Load(_repoRoot, phase, agentName, _settings.GetPromptName(agentName), vars);
+        var core = PromptProvider.Load(_repoRoot, phase, agentName, SharedCorePrompt, vars);
         var instructions = header.TrimEnd() + "\n\n" + core;
-        var agent = BuildAgent(instructions);
+        var agent = BuildAgent(instructions, agentName);
 
         var k = _settings.EvidenceRepetitions;
         for (var i = 1; i <= k; i++)
@@ -118,7 +125,7 @@ public sealed class EvidenceAgentRunner
                 .ConfigureAwait(false);
             var text = response.Text ?? string.Empty;
 
-            var fileName = k == 1 ? "requirements.md" : $"requirements.{i:D2}.md";
+            var fileName = k == 1 ? $"{artifact}.md" : $"{artifact}.{i:D2}.md";
             var outFile = Path.Combine(_run.RunDir, fileName);
             await File.WriteAllTextAsync(outFile, text).ConfigureAwait(false);
             Console.WriteLine($"[evidence-agent] {i}/{k} -> {Path.GetRelativePath(_repoRoot, outFile)} ({text.Length} Zeichen)");
@@ -129,43 +136,20 @@ public sealed class EvidenceAgentRunner
         return 0;
     }
 
-    private AIAgent BuildAgent(string instructions)
+    private AIAgent BuildAgent(string instructions, string agentName)
     {
         IChatClient baseChat = ChatClientFactory.Create(_settings);
-        IChatClient chat = AgentChatPipelineBuilder.Build(baseChat, _settings, _run, AgentName, _sourceName);
-        AIAgent baseAgent = chat.AsAIAgent(instructions: instructions, name: AgentName, tools: []);
+        IChatClient chat = AgentChatPipelineBuilder.Build(baseChat, _settings, _run, agentName, _sourceName);
+        AIAgent baseAgent = chat.AsAIAgent(instructions: instructions, name: agentName, tools: []);
         var toolLogger = new ToolCallLoggerMiddleware(_run);
         return baseAgent.AsBuilder().Use(toolLogger.InvokeAsync).Build();
     }
 
-    /// <summary>Projiziert die freigegebenen Claims lesbar für den Agenten: id + Facetten + Proposition +
-    /// die ECHTE Transkript-Evidenz + Notes. Die Evidenz ist v.a. für ADJ-GAP-Claims wichtig, deren Proposition
-    /// nur eine Meta-Beschreibung ist (der konkrete Inhalt steckt im Zitat). Die Facetten sind die adjudizierte
-    /// Wahrheit; die id ist die Quellenangabe, die im Artefakt zitiert wird.</summary>
-    private static string ProjectLedger(IReadOnlyList<SemanticLedgerEntry> claims)
-    {
-        var sb = new StringBuilder();
-        foreach (var c in claims)
-        {
-            var reqDisp = c.Disposition is not null && c.Disposition.TryGetValue("requirements", out var d)
-                ? d.Applicability : "?";
-            sb.Append("- [").Append(c.Id).Append("] ")
-              .Append("kind=").Append(c.Kind)
-              .Append(" status=").Append(c.Status)
-              .Append(" modality=").Append(c.Modality)
-              .Append(" timeScope=").Append(c.TimeScope ?? "?")
-              .Append(" requirements=").Append(reqDisp).AppendLine();
-            sb.Append("  proposition: ").AppendLine(c.Proposition);
-
-            var quotes = (c.Evidence ?? [])
-                .Select(e => e.Quote).Where(q => !string.IsNullOrWhiteSpace(q)).ToList();
-            if (quotes.Count > 0)
-                sb.Append("  evidence: ").AppendLine(string.Join(" | ", quotes));
-            if (!string.IsNullOrWhiteSpace(c.Notes))
-                sb.Append("  notes: ").AppendLine(c.Notes);
-        }
-        return sb.ToString();
-    }
+    /// <summary>Projiziert die freigegebenen Claims lesbar für den Agenten. Delegiert an das gemeinsame
+    /// <see cref="EvidenceLedgerProjection"/>-Modul, damit Direkt-Chat-Runner und MAF-Maker-Executor
+    /// byte-identisch dieselbe Quelle sehen (Experiment-Kontrolle).</summary>
+    private static string ProjectLedger(IReadOnlyList<SemanticLedgerEntry> claims, string dispositionKey)
+        => EvidenceLedgerProjection.Project(claims, dispositionKey);
 
     private string? Resolve(string? p)
         => string.IsNullOrWhiteSpace(p) ? null : (Path.IsPathRooted(p) ? p : Path.Combine(_repoRoot, p));

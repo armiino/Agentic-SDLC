@@ -257,6 +257,20 @@ if (args.Length > 0 && string.Equals(args[0], "contract-check", StringComparison
     return;
 }
 
+// C7 (MC3): bounded Evidence-Support-Critic (LLM) — Detail-Deckung je Zeile gegen das zitierte Claim-Paket.
+if (args.Length > 0 && string.Equals(args[0], "contract-critic", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.ContractCriticRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// MC2: bounded Repair-Loop (k-Vote-Critic -> Repair -> re-check, max N) auf einem Artefakt.
+if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.ContractRepairRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // L3-B: Selective-Metrics für den FacetValidator gegen die autor-bestätigte Fixture (correct vs perturbed).
 if (args.Length > 0 && string.Equals(args[0], "facet-validation-eval", StringComparison.OrdinalIgnoreCase))
 {

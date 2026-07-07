@@ -1,0 +1,1090 @@
+diff --git a/.gitignore b/.gitignore
+index a2a2da3..c5c8446 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -43,6 +43,31 @@ Icon?
+ .env
+ .env.local
+ .env.old
++
++# --- Local working notes ---
++todos.md
++infoforclaude.txt
++CLAUDE.md
+ Phasen_KNOWHOW
+ phase1notes
+ phase2notes
++analyse
++commit-rules.md
++NextStep
++LedgerProgressDocumentation
++
++AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/docs
++AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/makerchecker/Plan.md
++
++# --- Analysis prose (write thesis yourself; cite raw runs/results, not this) ---
++# Keeps raw evidence + README + Fixtures committed; excludes only the evidence.md prose summaries.
++thesis-evidence/**
++!thesis-evidence/**/
++!thesis-evidence/**/*.json
++!thesis-evidence/**/*-labels.md
++!thesis-evidence/**/*-handlabels.md
++!thesis-evidence/**/*-adjudication.md
++!thesis-evidence/README.md
++# evidence.md-Zusammenfassungen bleiben privat; zum Mitcommitten naechste Zeile entkommentieren:
++# !thesis-evidence/**/*.md
++# input/eval-labels NICHT mehr ignoriert (Fixtures = Inputs fuer Reproduzierbarkeit -> getrackt)
+diff --git a/docs/architecture.md b/docs/architecture.md
+deleted file mode 100644
+index 98d47c3..0000000
+--- a/docs/architecture.md
++++ /dev/null
+@@ -1,296 +0,0 @@
+-# Architekturüberblick
+-
+-## Ziel und Einordnung
+-Dieses Dokument beschreibt einen frühen Architekturüberblick für das geplante System zur digitalen Unterstützung der Kommunikation im Betreuungsalltag. Die Architektur leitet sich aus dem fachlichen Kern ab: vorhandenes Erfahrungswissen über individuelle Kommunikationsweisen von Bewohnern strukturiert erfassen, alltagstauglich aufbereiten und für berechtigte Nutzer schnell verfügbar machen.
+-
+-Das System ist ausdrücklich **keine automatische Übersetzungs- oder Interpretationslösung**. Es dient der Dokumentation, Einordnung und Auffindbarkeit von bereits vorhandenem Wissen.
+-
+-## Systemkontext
+-Das System ist als mobile, alltagsnahe Anwendung für berechtigte Nutzer in Betreuungseinrichtungen gedacht. Es unterstützt vor allem Mitarbeitende, perspektivisch möglicherweise auch Angehörige und optional Bewohner mit stark eingeschränkten Rechten.
+-
+-### Zentrale Akteure
+-- **Administratoren** verwalten Nutzer, Rollen und organisatorische Zuordnungen.
+-- **Reguläre Nutzer** wie Mitarbeitende pflegen und nutzen Bewohnerinformationen im Rahmen ihrer Berechtigung.
+-- **Angehörige** können optional als gesondert berechtigte Nutzergruppe eingebunden werden.
+-- **Bewohner** könnten optional einen stark eingeschränkten Zugang zu ihrem eigenen Profil erhalten.
+-
+-### Fachliche Umgebung
+-Das System steht neben bereits vorhandener Dokumentation und ersetzt diese in der frühen Betrachtung nicht zwingend vollständig. Sein Mehrwert liegt vor allem in:
+-- schnellerem Zugriff auf alltagsrelevante Informationen,
+-- kompakterer Darstellung,
+-- besserer Auffindbarkeit von Kommunikationshinweisen,
+-- Unterstützung der Wissensweitergabe an neue oder fachfremde Personen.
+-
+-## Architekturprinzipien
+-Aus Requirements und Risiken ergeben sich folgende Leitprinzipien:
+-
+-1. **Fokus auf Kernnutzen**  
+-   Priorität haben Bewohnerprofile, Kommunikationswissen, Suche und No-Go-Hinweise. Nachrangige Funktionen wie Kalender oder Medikamenteninformationen werden architektonisch nur als optionale Erweiterungen betrachtet.
+-
+-2. **Security und Datenschutz by Design**  
+-   Da hochsensible personenbezogene Daten verarbeitet werden, müssen Berechtigung, Bereichstrennung und kontrollierter Medienzugriff zentrale Architekturthemen sein.
+-
+-3. **Mobile und schnelle Nutzung**  
+-   Die Informationsarchitektur muss kurze Nutzungssituationen unterstützen: wenige Schritte, klare Navigation, kompakte Ansichten.
+-
+-4. **Trennung von gesicherten Stammdaten und kontextabhängigem Erfahrungswissen**  
+-   Kommunikationshinweise sind nicht als objektive Wahrheit zu behandeln. Das System sollte beobachtungsbezogene Inhalte als ergänzbares, aktualisierbares Wissen abbilden.
+-
+-5. **Erweiterbarkeit ohne Überfrachtung**  
+-   Optionale Funktionen und Medienarten sollen ergänzbar sein, ohne den Kern der Anwendung zu destabilisieren.
+-
+-## Wichtige Komponenten
+-
+-### 1. Client / Benutzeroberfläche
+-Die Benutzeroberfläche ist der mobile Zugangspunkt für berechtigte Nutzer.
+-
+-**Aufgaben:**
+-- Login und Zugriff auf freigegebene Inhalte
+-- Profilübersicht und Navigation zu Bewohnerprofilen
+-- Darstellung von Kommunikationshinweisen, Profilinformationen und No-Go-Hinweisen
+-- Suche und ggf. Filterung innerhalb von Profilinhalten
+-- Erfassung und Pflege neuer Beobachtungen
+-- Bereitstellung von Hilfen/Tutorials
+-- barrierearme Darstellung mit klarer Navigation, gut lesbarer Schrift und reduziertem Layout
+-
+-**Architekturelle Bedeutung:**
+-Die Oberfläche ist wesentlich für den Projekterfolg, weil das Kernproblem nicht fehlende Daten, sondern mangelnde Alltagstauglichkeit bestehender Dokumentation ist.
+-
+-### 2. Authentifizierungs- und Autorisierungskomponente
+-Diese Komponente steuert Anmeldung, Rollen und Zugriffsrechte.
+-
+-**Aufgaben:**
+-- geschlossener Zugang ohne offene Selbstregistrierung
+-- Zuordnung von Nutzern zu Rollen
+-- Prüfung, welche Profile und Inhalte ein Nutzer sehen oder bearbeiten darf
+-- Durchsetzung organisatorischer Grenzen, z. B. nach Einrichtung oder Zuständigkeitsbereich
+-
+-**Architekturelle Bedeutung:**
+-Diese Komponente ist sicherheitskritisch, weil unterschiedliche Nutzergruppen und sensible Daten kombiniert werden.
+-
+-### 3. Bewohnerprofil-Komponente
+-Diese Komponente verwaltet die fachliche Klammer pro Bewohner.
+-
+-**Aufgaben:**
+-- Verwaltung grundlegender Profilinformationen
+-- kompakte persönliche Einführung („About Me“)
+-- Zusammenführung der zugehörigen Kommunikations-, Medien- und Warninformationen
+-- Einstiegspunkt für schnelle Orientierung über eine Person
+-
+-**Typische Inhalte:**
+-- Name
+-- Alter
+-- Hobbys
+-- allgemeine persönliche Informationen
+-- ggf. Bilder mit Beschreibung
+-
+-### 4. Kommunikationswissens-Komponente
+-Dies ist der fachliche Kern des Systems.
+-
+-**Aufgaben:**
+-- Erfassung individueller Kommunikationsweisen pro Bewohner
+-- Unterscheidung zwischen verbalen und nonverbalen Hinweisen
+-- Pflege beschreibender Texte
+-- Verknüpfung mit Bildern und optional Videos
+-- fortlaufende Ergänzung neuer Beobachtungen
+-- möglichst kontextbezogene, aktualisierbare Wissensdarstellung
+-
+-**Architekturelle Bedeutung:**
+-Die Komponente sollte so modelliert sein, dass Beobachtungen, Interpretationen und erläuternde Medien nicht als starre oder absolut gültige Aussage erscheinen.
+-
+-### 5. No-Go- und Warnhinweis-Komponente
+-Diese Komponente stellt kritische Informationen mit hoher Sichtbarkeit bereit.
+-
+-**Aufgaben:**
+-- Verwaltung von Triggern, Warnungen und zu vermeidenden Reizen
+-- schnelle, gut erkennbare Darstellung im Bewohnerkontext
+-- Zugriff nur für berechtigte Rollen
+-
+-**Architekturelle Bedeutung:**
+-Da diese Informationen im Alltag besonders relevant und sensibel sind, sollten sie prominent, aber zugriffsgeschützt eingebunden werden.
+-
+-### 6. Such- und Auffindbarkeits-Komponente
+-Diese Komponente unterstützt den schnellen Zugriff auf relevante Inhalte.
+-
+-**Aufgaben:**
+-- Suche nach Bewohnerprofilen
+-- optional Filter oder Suche innerhalb von Kommunikationsinhalten
+-- Unterstützung kompakter Ergebnisdarstellung
+-
+-**Architekturelle Bedeutung:**
+-Sie ist ein Kernbestandteil des Nutzens, da das System vorhandenes Wissen schneller auffindbar machen soll als klassische Akten.
+-
+-### 7. Medienverwaltung
+-Diese Komponente verwaltet Bilder und optional Videos als unterstützende Inhalte.
+-
+-**Aufgaben:**
+-- Zuordnung von Medien zu Profilen oder Kommunikationshinweisen
+-- kontrollierte Bereitstellung je nach Berechtigung
+-- Berücksichtigung sensibler Freigaben und organisatorischer Regeln
+-
+-**Architekturelle Bedeutung:**
+-Medien sollten von der fachlichen Struktur her unterstützt werden, aber Videos nur als optionale Ausbaustufe, da ihre Zulässigkeit und Einbindung noch offen sind.
+-
+-### 8. Administrationskomponente
+-Diese Komponente unterstützt die organisatorische Steuerung des Systems.
+-
+-**Aufgaben:**
+-- Nutzerverwaltung
+-- Rollenzuweisung
+-- Zuordnung zu Einrichtungen oder Zuständigkeitsbereichen
+-- ggf. Freigabe- oder Pflegeprozesse
+-
+-### 9. Persistenz- / Datenhaltungskomponente
+-Diese Komponente speichert die fachlichen Inhalte und Sicherheitszuordnungen.
+-
+-**Aufgaben:**
+-- Speicherung von Bewohnerprofilen
+-- Speicherung von Kommunikationshinweisen und No-Go-Informationen
+-- Verwaltung von Rollen, Rechten und organisatorischer Zuordnung
+-- Speicherung von Medienreferenzen und optional Medienmetadaten
+-- Nachvollziehbarkeit von Pflege- und Aktualisierungsvorgängen, soweit erforderlich
+-
+-## Schnittstellen und Integrationspunkte
+-
+-## Interne Schnittstellen
+-Zwischen den Komponenten ergeben sich mindestens folgende interne Schnittstellen:
+-- Benutzeroberfläche ↔ Authentifizierung/Autorisierung
+-- Benutzeroberfläche ↔ Bewohnerprofil-Komponente
+-- Benutzeroberfläche ↔ Kommunikationswissens-Komponente
+-- Benutzeroberfläche ↔ Suche
+-- Kommunikationswissens-Komponente ↔ Medienverwaltung
+-- alle fachlichen Komponenten ↔ Datenhaltung
+-- Administrationskomponente ↔ Rollen- und Rechteverwaltung
+-
+-## Externe oder organisatorische Integrationspunkte
+-Auf Basis des Kontexts sind Integrationen noch nicht abschließend definiert. Erkennbar sind jedoch mögliche Integrationsfelder:
+-- **bestehende Dokumentation/Akten**: unklar, ob Inhalte übernommen, referenziert oder manuell parallel gepflegt werden
+-- **Identitäts- oder Nutzerverwaltung der Einrichtung**: denkbarer Integrationspunkt, fachlich aber nicht bestätigt
+-- **Medienfreigabe-/Einwilligungsprozesse**: organisatorischer Integrationspunkt für Bild- und Videoeinsatz
+-
+-Da hierzu keine gesicherten Anforderungen vorliegen, sollte die Architektur diese Integrationen nur als optionale Anschlussstellen vorsehen.
+-
+-## Datenaspekte
+-
+-### Zentrale Datenobjekte
+-Erkennbar sind insbesondere folgende fachliche Datenobjekte:
+-- **Nutzer**
+-- **Rolle**
+-- **Einrichtung / Zuständigkeitsbereich**
+-- **Bewohnerprofil**
+-- **Profilbasisinformationen**
+-- **Kommunikationshinweis**
+-- **Kommunikationskategorie** (verbal / nonverbal)
+-- **Beobachtung / Ergänzung**
+-- **No-Go-Hinweis / Warnhinweis**
+-- **Medienobjekt** (Bild, optional Video)
+-- **Berechtigungszuordnung**
+-
+-### Datenmodellierende Grundidee
+-Fachlich sinnvoll ist eine Trennung zwischen:
+-- **stabileren Profildaten** wie Name oder Hobbys,
+-- **dynamischem Erfahrungswissen** wie Kommunikationsbeobachtungen,
+-- **kritischen Warninformationen** mit besonderer Sichtbarkeit,
+-- **Medieninhalten** mit erhöhtem Schutzbedarf.
+-
+-### Datenqualität
+-Da Kommunikationswissen interpretativ und veränderlich sein kann, sollte die Architektur Raum für Kontextinformationen lassen, z. B.:
+-- wann ein Hinweis erfasst wurde,
+-- von wem er stammt,
+-- ob es sich um Beobachtung, Erläuterung oder ergänzende Interpretation handelt.
+-
+-Dies ist keine endgültige Detailmodellierung, aber eine wichtige Leitidee zur Risikoreduktion.
+-
+-## Sicherheitsaspekte
+-Sicherheits- und Datenschutzanforderungen prägen die Architektur wesentlich.
+-
+-### Wesentliche Sicherheitsanforderungen
+-- Zugriff nur für berechtigte Nutzer
+-- keine offene Selbstregistrierung
+-- rollenbasierter Zugriff
+-- Bereichstrennung nach Einrichtung oder Zuständigkeit
+-- restriktiver Umgang mit besonders sensiblen Inhalten
+-- kontrollierter Zugriff auf Bilder und insbesondere Videos
+-
+-### Architekturelle Konsequenzen
+-- Berechtigungsprüfung darf nicht nur in der Oberfläche, sondern muss zentral in der fachlichen Zugriffsschicht durchgesetzt werden.
+-- Datenzugriffe sollten standardmäßig restriktiv sein.
+-- Medienzugriffe benötigen dieselben oder strengere Freigaberegeln wie Textdaten.
+-- Optionale Funktionen mit höherem Schutzbedarf, z. B. Medikamente oder Videos, sollten als getrennt freischaltbare Erweiterungen gedacht werden.
+-
+-## Grobes logisches Architekturmodell
+-Das System lässt sich in einer frühen Sicht grob als mehrschichtige Fachanwendung beschreiben:
+-
+-1. **Präsentationsschicht**  
+-   Mobile Benutzeroberfläche für Suche, Profilansicht, Pflege und Administration.
+-
+-2. **Fachlogikschicht**  
+-   Fachmodule für Profile, Kommunikationswissen, No-Go-Hinweise, Suche, Rollen und Administration.
+-
+-3. **Sicherheits- und Zugriffssteuerungsschicht**  
+-   Authentifizierung, Rollenprüfung, organisatorische Bereichstrennung.
+-
+-4. **Datenhaltungsschicht**  
+-   Persistenz für Profile, Hinweise, Rechte und Medienzuordnungen.
+-
+-Diese Struktur unterstützt die Trennung zwischen fachlichem Kern, Sicherheitslogik und optionalen Erweiterungen.
+-
+-## Architektonische Priorisierung für einen frühen MVP
+-Zur Risikoreduktion und Wahrung des Fokus sollte ein erstes System architektonisch auf wenige Kernfähigkeiten zugeschnitten sein:
+-- Login und geschlossener Zugriff
+-- Nutzer-/Rollenmodell mit Einrichtungsbezug
+-- Bewohnerprofilübersicht mit Suche
+-- Bewohnerprofil mit persönlicher Kurzübersicht
+-- Kommunikationsdokumentation mit verbal/nonverbal und Text/Bild
+-- No-Go-Hinweise
+-- einfache Pflege neuer Beobachtungen
+-
+-Bewusst nachrangig bzw. optional:
+-- Videos
+-- Angehörigenbeiträge in größerem Umfang
+-- Bewohner-Accounts
+-- Kalender/Termine
+-- Medikamenteninformationen
+-
+-## Offene Architekturentscheidungen
+-Mehrere Punkte sind fachlich noch nicht entschieden und müssen als offene Architekturentscheidungen festgehalten werden:
+-
+-1. **Rollen- und Rechtezuschnitt im Detail**  
+-   Welche Rolle welche Inhalte sehen, pflegen oder freigeben darf, ist noch nicht final definiert.
+-
+-2. **Granularität der organisatorischen Bereichstrennung**  
+-   Offen ist, wie fein Einrichtung oder Zuständigkeit modelliert werden müssen.
+-
+-3. **Umgang mit bestehender Dokumentation**  
+-   Unklar ist, ob die App führendes System für bestimmte Informationen wird oder nur ergänzend arbeitet.
+-
+-4. **Einbindung von Videos**  
+-   Offen ist sowohl die fachliche Platzierung als auch die datenschutzrechtliche Freigabefähigkeit.
+-
+-5. **Schutzbedarf und Freigabemodell für sensible Inhalte**  
+-   Besonders für No-Go-Hinweise, Medien und mögliche spätere Medikamenteninformationen sind Schutzstufen noch auszuarbeiten.
+-
+-6. **Beteiligung externer Akteure**  
+-   Angehörige und optionale Bewohner-Accounts erhöhen Nutzenpotenzial, aber auch Governance- und Sicherheitskomplexität.
+-
+-7. **Abgrenzung des MVP gegenüber späteren Ausbaustufen**  
+-   Der fachliche Fokus muss verbindlich festgelegt werden, damit die Architektur nicht früh durch optionale Funktionen überlastet wird.
+-
+-## Risiken mit direkter Architekturwirkung
+-Folgende Risiken beeinflussen die Architektur unmittelbar:
+-- **Datenschutz und Einwilligung** bestimmen, welche Datenarten und Medien überhaupt unterstützt werden können.
+-- **Unklare Rechtevergabe** erfordert eine Architektur, in der Autorisierung zentral und erweiterbar modelliert ist.
+-- **Alltagstauglichkeit** verlangt eine informationszentrierte statt dokumentationszentrierte Struktur.
+-- **Interpretationsrisiko** verlangt ein Datenmodell, das Beobachtungen als kontextabhängig behandelt.
+-- **Überfrachtung** spricht für modularen Zuschnitt und MVP-Fokus.
+-
+-## Zusammenfassung
+-Die erkennbare Zielarchitektur ist eine mobile, rollenbasierte Fachanwendung zur strukturierten Bereitstellung von Erfahrungswissen über Bewohner. Im Zentrum stehen Bewohnerprofile, Kommunikationsdokumentation, schnelle Auffindbarkeit und kritische Warnhinweise. 
+-
+-Architektonisch besonders wichtig sind:
+-- eine klare Trennung von Fachlogik, Sicherheitslogik und Datenhaltung,
+-- ein restriktives und organisationsbezogenes Zugriffskonzept,
+-- ein Datenmodell für dynamisches, kontextabhängiges Kommunikationswissen,
+-- ein modularer Zuschnitt, damit optionale Funktionen den Kernnutzen nicht verdrängen.
+-
+-Die Architektur sollte daher bewusst konservativ starten: fokussiert auf den Kommunikationskern, erweiterbar für Medien und weitere Rollen, aber ohne offene Konzeptoptionen vorschnell als festen Kernbestandteil anzunehmen.
+diff --git a/docs/open-questions.md b/docs/open-questions.md
+deleted file mode 100644
+index c1dbf4f..0000000
+--- a/docs/open-questions.md
++++ /dev/null
+@@ -1,281 +0,0 @@
+-# Offene Fragen und Klärungsbedarfe
+-
+-## Ziel und Einordnung
+-Dieses Dokument sammelt offene Fragen, fehlende Informationen und klärungsbedürftige Widersprüche aus Projektkontext, Requirements, Risiken und Architekturüberblick. Der Fokus liegt auf Punkten, die vor einer belastbaren fachlichen und technischen Konkretisierung geklärt werden sollten.
+-
+-## 1. Offene fachliche Fragen
+-
+-### F1. Welche Informationen sind im Betreuungsalltag wirklich prioritätskritisch?
+-**Auslöser/Quelle:** Projektkontext, Requirements, Risiken R3/R4, Architektur-MVP-Fokus  
+-Es ist noch nicht verbindlich festgelegt, welche Inhalte in einer akuten Nutzungssituation am wichtigsten sind.
+-
+-**Klärungsfragen:**
+-- Welche Informationen müssen in den ersten Sekunden nach Öffnen eines Bewohnerprofils sichtbar sein?
+-- Welche Inhalte gehören zwingend in ein Kernprofil, welche nur in vertiefende Bereiche?
+-- Welche Informationen sind für neue Mitarbeitende wichtiger als für erfahrenes Fachpersonal?
+-
+-**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Gesamtleitung, Projektverantwortliche der Einrichtung
+-
+-### F2. Wie soll der fachliche Mindestumfang des ersten Releases aussehen?
+-**Auslöser/Quelle:** Kontext „breite Funktionalität vs. Fokus“, FR-25, FR-26, Risiken R3, Architektur-MVP  
+-Der Kernnutzen ist klar, aber der verbindliche fachliche Zuschnitt eines MVP ist noch nicht final entschieden.
+-
+-**Klärungsfragen:**
+-- Gehören im ersten Release nur Profile, Kommunikationswissen, Suche und No-Go-Hinweise hinein?
+-- Sollen Videos, Angehörigenzugriffe oder Bewohner-Accounts bereits im ersten Release berücksichtigt werden?
+-- Sollen Kalender oder Medikamente ausdrücklich ausgeschlossen, zurückgestellt oder nur optional vorbereitet werden?
+-
+-**Mögliche Ansprechpartner/Rollen:** Gesamtleitung, Fachpersonal, Product-Owner-ähnliche Projektverantwortung
+-
+-### F3. Wie wird zwischen gesicherten Fakten, Beobachtungen und Interpretationen unterschieden?
+-**Auslöser/Quelle:** Risiken R5, W3; Architektur: Trennung von Stammdaten und Erfahrungswissen  
+-Das Projekt arbeitet mit stark interpretativem, situationsabhängigem Wissen. Unklar ist, wie dieses fachlich sauber dokumentiert werden soll.
+-
+-**Klärungsfragen:**
+-- Welche Inhalte gelten als stabile Profildaten, welche als Beobachtungen?
+-- Wie soll kenntlich gemacht werden, dass Kommunikationsdeutungen kontextabhängig und nicht absolut gültig sind?
+-- Sollen Einträge Datum, Verfasser, Kontext oder Vertrauensstatus enthalten?
+-
+-**Mögliche Ansprechpartner/Rollen:** Fachpersonal, sozialpädagogische Expertise, Qualitätsmanagement
+-
+-### F4. Welche No-Go-Informationen sind fachlich zulässig und erforderlich?
+-**Auslöser/Quelle:** FR-12, FR-13, Kontext „kritische Hinweise“, Risiken zu sensiblen Inhalten  
+-Der Bereich wird als wichtig angesehen, aber Umfang, Sensibilität und Formulierung sind nicht präzisiert.
+-
+-**Klärungsfragen:**
+-- Welche Arten von Warnhinweisen dürfen dokumentiert werden?
+-- Wie konkret dürfen Trigger, Verbote oder kritische Umgangshinweise beschrieben werden?
+-- Gibt es Inhalte, die bewusst nicht in die App aufgenommen werden sollen?
+-
+-**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Datenschutz, Einrichtungsleitung
+-
+-### F5. Welche Rolle sollen Angehörige fachlich tatsächlich spielen?
+-**Auslöser/Quelle:** FR-17, AOP-10, Risiken W1/R2  
+-Angehörige werden als wertvolle Wissensquelle gesehen, aber ihre konkrete Rolle ist offen.
+-
+-**Klärungsfragen:**
+-- Sollen Angehörige nur Informationen liefern, nur lesen oder auch aktiv pflegen dürfen?
+-- Für welche Bewohner oder Situationen ist Angehörigenbeteiligung sinnvoll?
+-- Wer prüft oder bestätigt von Angehörigen eingebrachte Informationen?
+-
+-**Mögliche Ansprechpartner/Rollen:** Angehörigenvertretung, Fachpersonal, Gesamtleitung
+-
+-### F6. Soll es tatsächlich Bewohner-Accounts geben, und falls ja mit welchem Nutzen?
+-**Auslöser/Quelle:** FR-18, AOP-9, Risiken W1/R2  
+-Die Idee ist vorhanden, aber fachlicher Nutzen, Grenzen und Umsetzbarkeit sind offen.
+-
+-**Klärungsfragen:**
+-- Für welche Bewohnergruppen wäre ein eigener Zugang realistisch und sinnvoll?
+-- Welche Inhalte dürfen Bewohner selbst sehen oder ergänzen?
+-- Soll ein Bewohner Inhalte selbst ändern dürfen oder nur Vorschläge machen?
+-
+-**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Bewohnervertretung, Einrichtungsleitung
+-
+-### F7. Wie soll die App mit bestehender Dokumentation zusammenspielen?
+-**Auslöser/Quelle:** AOP-3, CC-8, Risiken R8/W5, Architektur „neben vorhandener Dokumentation“  
+-Unklar ist, ob die App ergänzend, führend oder teilweise ersetzend genutzt werden soll.
+-
+-**Klärungsfragen:**
+-- Welche Informationen bleiben in bestehenden Akten führend?
+-- Welche Informationen sollen ausschließlich oder primär in der App gepflegt werden?
+-- Wie wird Doppelpflege vermieden?
+-
+-**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Qualitätsmanagement, Einrichtungsleitung
+-
+-## 2. Offene technische Fragen
+-
+-### T1. Wie detailliert muss das Rollen- und Rechtemodell sein?
+-**Auslöser/Quelle:** FR-14 bis FR-20, AOP-5, Risiken R2/R6, Architektur offene Entscheidung 1  
+-Das Rollenmodell ist ein Kernbaustein, aber fachlich noch nicht in eine belastbare Matrix übersetzt.
+-
+-**Klärungsfragen:**
+-- Welche Rolle darf welche Daten sehen, anlegen, ändern oder freigeben?
+-- Gibt es unterschiedliche Sichtbarkeiten für Profilbasisdaten, Kommunikationshinweise, No-Go-Hinweise und Medien?
+-- Sind Freigabe- oder Vier-Augen-Prozesse erforderlich?
+-
+-**Mögliche Ansprechpartner/Rollen:** Datenschutz, Einrichtungsleitung, Fachpersonal, technische Architektur
+-
+-### T2. Wie fein muss die Zugriffsbeschränkung nach Einrichtung oder Zuständigkeit modelliert werden?
+-**Auslöser/Quelle:** FR-20, CC-4, Risiken R6, Architektur offene Entscheidung 2  
+-Der Zugriff soll organisatorisch begrenzt sein, aber die Granularität ist unklar.
+-
+-**Klärungsfragen:**
+-- Reicht eine Trennung nach Einrichtung, oder sind Wohngruppen/Teams/Fallzuständigkeiten nötig?
+-- Können Nutzer mehreren Einrichtungen oder Bereichen zugeordnet sein?
+-- Wie werden Vertretungen oder temporäre Zuständigkeiten abgebildet?
+-
+-**Mögliche Ansprechpartner/Rollen:** Einrichtungsleitung, Administration, Fachpersonal, technische Architektur
+-
+-### T3. Wie sollen Medien technisch und organisatorisch eingebunden werden?
+-**Auslöser/Quelle:** FR-7, CC-5, AOP-4, Risiken R1/R7, Architektur Medienverwaltung  
+-Bilder und besonders Videos sind fachlich nützlich, aber technisch und datenschutzrechtlich offen.
+-
+-**Klärungsfragen:**
+-- Sollen Videos überhaupt in einer frühen Version unterstützt werden?
+-- Werden Medien direkt hochgeladen, referenziert oder extern verwaltet?
+-- Brauchen Medien gesonderte Freigabestufen oder Ablaufregeln?
+-
+-**Mögliche Ansprechpartner/Rollen:** Datenschutz, technische Architektur, Fachpersonal
+-
+-### T4. Welche Such- und Filterlogik ist für den Kernnutzen erforderlich?
+-**Auslöser/Quelle:** FR-9 bis FR-11, Risiken R4, Architektur Suchkomponente  
+-Schnelle Auffindbarkeit ist zentral, aber konkrete Suchszenarien sind noch nicht beschrieben.
+-
+-**Klärungsfragen:**
+-- Reicht eine Namenssuche für Bewohnerprofile im ersten Schritt?
+-- Welche Filter innerhalb eines Profils werden tatsächlich benötigt?
+-- Sollen Nutzer nach Kommunikationsart, Situationen, Triggern oder Stichworten suchen können?
+-
+-**Mögliche Ansprechpartner/Rollen:** Fachpersonal, UX/Design, technische Architektur
+-
+-### T5. Welche Datenqualitäts- und Pflegeinformationen müssen technisch mitgeführt werden?
+-**Auslöser/Quelle:** Risiken R5, Architektur Datenqualität  
+-Die Inhalte sind dynamisch und interpretativ; technische Unterstützung für Nachvollziehbarkeit ist noch nicht entschieden.
+-
+-**Klärungsfragen:**
+-- Müssen Einträge Autor, Datum, Änderungshistorie oder Gültigkeitsstatus enthalten?
+-- Sollen veraltete Hinweise markiert oder zur Überprüfung vorgelegt werden?
+-- Gibt es einen Bedarf an Versionierung oder Review-Status?
+-
+-**Mögliche Ansprechpartner/Rollen:** Fachpersonal, Qualitätsmanagement, technische Architektur
+-
+-### T6. Welche Geräte und Nutzungsszenarien müssen verbindlich unterstützt werden?
+-**Auslöser/Quelle:** AOP-1, FR-21, NFR-4  
+-Mobilität ist gesetzt, aber die genaue Zielplattform ist nicht abschließend geklärt.
+-
+-**Klärungsfragen:**
+-- Muss das System nur auf Smartphones oder auch auf Tablets voll unterstützt werden?
+-- Gibt es Mindestanforderungen an Offline-Nutzung, Netzverfügbarkeit oder Reaktionsgeschwindigkeit?
+-- In welchen typischen Situationen wird die App benutzt: unterwegs, in Wohngruppen, bei Übergaben, in Aufnahmegesprächen?
+-
+-**Mögliche Ansprechpartner/Rollen:** Fachpersonal, technische Architektur, Projektleitung
+-
+-### T7. Welche Integrationen zu bestehenden Systemen sind gewünscht oder ausgeschlossen?
+-**Auslöser/Quelle:** AOP-3, Architektur Integrationspunkte, Risiken R8  
+-Der Umgang mit vorhandenen Akten oder Identitätssystemen ist offen.
+-
+-**Klärungsfragen:**
+-- Soll die App Daten aus bestehenden Dokumentationen übernehmen oder nur manuell neu erfassen?
+-- Gibt es vorhandene Benutzerverwaltungen, die genutzt werden sollen?
+-- Sollen Medien- oder Freigabeprozesse an bestehende organisatorische Systeme gekoppelt werden?
+-
+-**Mögliche Ansprechpartner/Rollen:** Einrichtungsleitung, IT/Administration, technische Architektur
+-
+-## 3. Widersprüche, die geklärt werden müssen
+-
+-### WQ1. Interne Fachanwendung vs. Beteiligung externer Akteure
+-**Beobachtung:** Die App ist primär als internes Werkzeug motiviert, gleichzeitig sind Angehörige und optional Bewohner als Nutzer vorgesehen.  
+-**Klärungsbedarf:** Es muss entschieden werden, ob externe Akteure Bestandteil des frühen Zielbilds sind oder erst eine spätere Ausbaustufe darstellen.
+-
+-### WQ2. Schneller Alltagszugriff vs. wachsender Funktionsumfang
+-**Beobachtung:** Der Nutzen beruht auf Einfachheit und Schnelligkeit, zugleich werden viele zusätzliche Funktionen diskutiert.  
+-**Klärungsbedarf:** Es braucht eine verbindliche Priorisierung, welche Funktionen Kern, optional oder ausgeschlossen sind.
+-
+-### WQ3. Dokumentation von Erfahrungswissen vs. Risiko scheinbar objektiver Deutungen
+-**Beobachtung:** Die App soll helfen, individuelle Kommunikation besser zu verstehen, darf aber keine gesicherte Übersetzungslogik suggerieren.  
+-**Klärungsbedarf:** Fachlich und technisch muss geregelt werden, wie interpretative Inhalte gekennzeichnet und eingeordnet werden.
+-
+-### WQ4. Hoher Nutzen von Medien vs. Datenschutzgrenzen
+-**Beobachtung:** Bilder und Videos können das Verstehen verbessern, sind aber besonders sensibel.  
+-**Klärungsbedarf:** Es muss entschieden werden, welche Medienarten realistisch freigabefähig und praktikabel sind.
+-
+-### WQ5. Bestehende Akten vorhanden vs. Anspruch auf bessere Alltagstauglichkeit
+-**Beobachtung:** Die App soll vorhandene Dokumentation nicht zwingend ersetzen, aber dennoch klar nützlicher im Alltag sein.  
+-**Klärungsbedarf:** Es braucht eine klare fachliche Abgrenzung, welche Inhalte wo führend gepflegt werden.
+-
+-## 4. Fehlende Informationen
+-
+-### M1. Fehlende verbindliche Datenschutz- und Einwilligungsregeln
+-**Auslöser/Quelle:** AOP-2, Risiken R1  
+-Es fehlen konkrete Aussagen dazu, welche Datenarten unter welchen Voraussetzungen gespeichert, angezeigt und geteilt werden dürfen.
+-
+-### M2. Fehlende Rollenmatrix
+-**Auslöser/Quelle:** AOP-5, Risiken R2, Architektur offene Entscheidungen  
+-Es fehlt eine konkrete Übersicht, welche Rolle welche Rechte für welche Inhaltsarten besitzt.
+-
+-### M3. Fehlende Definition von Pflegeverantwortung
+-**Auslöser/Quelle:** Risiken R5/R8  
+-Es ist nicht beschrieben, wer Inhalte initial erfasst, laufend aktualisiert, fachlich prüft oder veraltete Einträge bereinigt.
+-
+-### M4. Fehlende Priorisierung des MVP
+-**Auslöser/Quelle:** Risiken R3, Architektur-MVP  
+-Es gibt einen plausiblen MVP-Vorschlag, aber noch keine bestätigte Entscheidung der Stakeholder.
+-
+-### M5. Fehlende Entscheidung zu Videos
+-**Auslöser/Quelle:** FR-7, AOP-4, Risiken R7  
+-Unklar bleibt sowohl die Zulässigkeit als auch die fachliche und technische Einbettung von Videos.
+-
+-### M6. Fehlende Entscheidung zu Kalender- und Medikamentenfunktionen
+-**Auslöser/Quelle:** FR-25, FR-26, AOP-7, AOP-8  
+-Diese Bereiche sind genannt, aber weder bestätigt noch endgültig ausgeschlossen.
+-
+-### M7. Fehlende Definition der Zielgeräte und Einsatzkontexte
+-**Auslöser/Quelle:** AOP-1, FR-21  
+-Es fehlt eine verbindliche Aussage zu Smartphone-/Tablet-Unterstützung und zu relevanten Nutzungssituationen.
+-
+-### M8. Fehlende Konsolidierung der Ausgangsquellen
+-**Auslöser/Quelle:** Kontext Inkonsistenzen, Risiken R10  
+-Uneinheitliche Organisationsbezeichnungen und ein fehlender Abschnitt im Transkript erschweren belastbare Rückverfolgbarkeit.
+-
+-## 5. Mögliche Ansprechpartner oder beteiligte Rollen
+-
+-Je nach Frage zeichnen sich folgende Ansprechpartner oder Rollen ab:
+-
+-- **Gesamtleitung / Einrichtungsleitung**
+-  - Priorisierung des Umfangs
+-  - organisatorische Freigaben
+-  - Entscheidung zu internen vs. externen Nutzern
+-
+-- **Fachpersonal / Heilerziehungspflege / Betreuungspersonal**
+-  - fachliche Relevanz von Inhalten
+-  - Such- und Nutzungsszenarien
+-  - Bewertung von Alltagstauglichkeit
+-  - Regeln für Beobachtungen und Kommunikationswissen
+-
+-- **Datenschutz / Compliance-Verantwortliche**
+-  - Zulässigkeit personenbezogener Daten
+-  - Einwilligungen
+-  - Bild-/Videoeinsatz
+-  - Rollen- und Zugriffsgrenzen
+-
+-- **Qualitätsmanagement / Dokumentationsverantwortliche**
+-  - Abgrenzung zu bestehender Dokumentation
+-  - Pflegeprozesse
+-  - Aktualität und Nachvollziehbarkeit von Inhalten
+-
+-- **Technische Architektur / IT-Administration**
+-  - Rollen- und Berechtigungsmodell
+-  - Bereichstrennung
+-  - Zielgeräte
+-  - Integrationen
+-  - Medienverwaltung
+-
+-- **Angehörige oder Angehörigenvertretung**
+-  - Nutzen und Grenzen einer Beteiligung
+-  - praktikable Formen der Informationsbeisteuerung
+-
+-- **Bewohnervertretung**
+-  - Einschätzung zu Bewohner-Accounts
+-  - Verständlichkeit und Angemessenheit eines möglichen Selbsteinblicks
+-
+-## 6. Empfohlene Priorisierung der offenen Fragen
+-
+-### Höchste Priorität
+-1. Datenschutz, Einwilligungen und zulässige Daten-/Medienarten
+-2. Rollen- und Rechtemodell inklusive Einrichtungsgrenzen
+-3. MVP-Abgrenzung und verbindlicher Funktionsumfang
+-4. Abgrenzung zu bestehender Dokumentation und Pflegeverantwortung
+-
+-### Mittlere Priorität
+-5. Umgang mit Videos
+-6. Such- und Filterlogik für Alltagsszenarien
+-7. Modellierung von Beobachtungen, Interpretationen und Aktualität
+-8. Entscheidung zu Angehörigen- und Bewohnerzugängen
+-
+-### Nachgelagerte Priorität
+-9. Kalender-/Terminbereich
+-10. Medikamenteninformationen
+-11. weitergehende Integrationen in bestehende Systeme
+-
+-## Kurzfazit
+-Die wichtigsten offenen Fragen betreffen nicht einzelne UI-Details, sondern die fachliche und organisatorische Tragfähigkeit des Vorhabens: Wer darf was sehen und pflegen, welche Inhalte sind wirklich Kern der App, wie werden sensible und interpretative Informationen verantwortbar behandelt und wie grenzt sich die Lösung von bestehender Dokumentation ab. Ohne diese Klärungen besteht das Risiko, dass entweder der Datenschutz oder der Kernnutzen der Anwendung unterminiert wird.
+diff --git a/docs/requirements.md b/docs/requirements.md
+deleted file mode 100644
+index ffac82a..0000000
+--- a/docs/requirements.md
++++ /dev/null
+@@ -1,151 +0,0 @@
+-# Requirements
+-
+-## Functional Requirements
+-
+-FR-1: Das System muss berechtigten Nutzern ermöglichen, für einzelne Bewohner digitale Profile anzulegen und einzusehen.
+-
+-FR-2: Ein Bewohnerprofil muss mindestens grundlegende personenbezogene Informationen strukturiert darstellen können, darunter Name, Alter, Hobbys sowie allgemeine Informationen über die Person, soweit diese für das Verstehen und die Interaktion im Alltag relevant sind.
+-
+-FR-3: Das System muss pro Bewohner die Dokumentation individueller Kommunikationsweisen ermöglichen.
+-
+-FR-4: Die Kommunikationsdokumentation muss zwischen verbalen und nonverbalen Kommunikationsweisen unterscheiden können.
+-
+-FR-5: Zu dokumentierten Kommunikationsweisen müssen beschreibende Texte hinterlegt werden können.
+-
+-FR-6: Zu dokumentierten Kommunikationsweisen müssen Bilder mit beschreibenden Erläuterungen hinterlegt werden können.
+-
+-FR-7: Das System soll die Hinterlegung von Videos zu Kommunikationsweisen oder typischen Situationen unterstützen, sofern die datenschutzrechtlichen und organisatorischen Voraussetzungen geklärt sind.
+-
+-FR-8: Das System muss die fortlaufende Ergänzung neuer Beobachtungen und Hinweise zu Kommunikationsweisen eines Bewohners ermöglichen.
+-
+-FR-9: Das System muss Informationen so bereitstellen, dass Nutzer in konkreten Betreuungssituationen relevante Hinweise schnell auffinden können.
+-
+-FR-10: Das System muss eine Suchfunktion für Bewohnerprofile bereitstellen.
+-
+-FR-11: Das System soll Such- oder Filtermöglichkeiten innerhalb der dokumentierten Inhalte eines Bewohnerprofils bereitstellen, um Kommunikationshinweise schneller auffinden zu können.
+-
+-FR-12: Das System muss einen Bereich für kritische Hinweise und No-Go-Informationen je Bewohner bereitstellen.
+-
+-FR-13: Im Bereich für kritische Hinweise und No-Go-Informationen müssen Warnhinweise, zu vermeidende Reize, Trigger oder klare Verbote im Umgang dokumentiert und abrufbar sein.
+-
+-FR-14: Das System muss ein rollenbasiertes Zugriffsmodell unterstützen.
+-
+-FR-15: Das System muss mindestens eine administrative Rolle zur Verwaltung von Zugriffsrechten und Nutzern unterstützen.
+-
+-FR-16: Das System muss mindestens eine Rolle für reguläre berechtigte Nutzer unterstützen, die Bewohnerinformationen im Rahmen ihrer Berechtigung einsehen und pflegen können.
+-
+-FR-17: Das System soll die Beteiligung von Angehörigen als gesondert berechtigbare Nutzergruppe unterstützen, damit diese Informationen beisteuern oder einsehen können, sofern dies organisatorisch und datenschutzrechtlich freigegeben ist.
+-
+-FR-18: Das System soll optional einen stark eingeschränkten Bewohner-Account unterstützen, mit dem ein Bewohner sein eigenes Profil einsehen und in begrenztem Umfang Inhalte beitragen kann, sofern dies fachlich und organisatorisch gewünscht ist.
+-
+-FR-19: Das System darf Nutzern keinen offenen Zugriff über freie Selbstregistrierung ermöglichen.
+-
+-FR-20: Das System muss den Zugriff auf Bewohnerprofile nach Einrichtung oder organisatorischem Zuständigkeitsbereich beschränken können, sodass Nutzer nicht automatisch einrichtungsübergreifend auf alle Profile zugreifen können.
+-
+-FR-21: Das System muss für mobile Nutzung ausgelegt sein.
+-
+-FR-22: Das System muss eine Profilübersicht bereitstellen, von der aus berechtigte Nutzer zu einzelnen Bewohnerprofilen navigieren können.
+-
+-FR-23: Das System soll innerhalb eines Bewohnerprofils einen Bereich zur kompakten persönlichen Einführung in die Person bereitstellen.
+-
+-FR-24: Das System soll Hilfestellungen zur Nutzung bereitstellen, damit neue oder ungeübte Nutzer die Anwendung verstehen können.
+-
+-FR-25: Das System soll Kalender- oder Termininformationen zu Bewohnern nur dann unterstützen, wenn dadurch der fachliche Fokus auf Kommunikationsunterstützung nicht beeinträchtigt wird; dieser Funktionsbereich ist derzeit nachrangig und fachlich noch nicht final bestätigt.
+-
+-FR-26: Das System soll Medikamenteninformationen nur dann unterstützen, wenn hierfür eine gesonderte fachliche und datenschutzrechtliche Freigabe vorliegt; dieser Funktionsbereich ist derzeit nicht als bestätigter Kernbestandteil festgelegt.
+-
+-## Non-functional Requirements
+-
+-NFR-1: Das System muss im Betreuungsalltag einfach und schnell nutzbar sein.
+-
+-NFR-2: Das System muss Informationen praxistauglich aufbereiten, sodass relevante Inhalte leichter auffindbar sind als in umfangreicher klassischer Dokumentation.
+-
+-NFR-3: Das System muss eine klare und leicht verständliche Navigation bieten.
+-
+-NFR-4: Das System soll auf mobilen Endgeräten mit einer für kurze Nutzungssituationen geeigneten Bedienoberfläche nutzbar sein.
+-
+-NFR-5: Das System muss die Anforderungen an Barrierefreiheit und benutzerfreundliche Bedienung berücksichtigen.
+-
+-NFR-6: Die Benutzeroberfläche soll große oder gut lesbare Schriftgrößen unterstützen.
+-
+-NFR-7: Die Benutzeroberfläche soll ausreichende Kontraste unterstützen.
+-
+-NFR-8: Die Benutzeroberfläche soll visuell reduziert gestaltet sein, um Ablenkung zu minimieren.
+-
+-NFR-9: Das System soll Hilfen oder Tutorials zur Einführung in die Nutzung bereitstellen.
+-
+-NFR-10: Das System soll alternative oder vereinfachte Eingabemethoden unterstützen, sofern dies für die Zielgruppen erforderlich ist.
+-
+-NFR-11: Das System muss so gestaltet sein, dass es die Wissensweitergabe zwischen erfahrenen und neuen Betreuungspersonen wirksam unterstützt.
+-
+-NFR-12: Das System muss personenbezogene und besonders sensible Inhalte vertraulich verarbeiten und vor unberechtigtem Zugriff schützen.
+-
+-NFR-13: Das System muss bei der Darstellung und Pflege von Informationen den sensiblen Charakter der Daten angemessen berücksichtigen.
+-
+-NFR-14: Das System soll funktional fokussiert bleiben und nicht mit fachlich nachrangigen Funktionen überfrachtet werden.
+-
+-## Constraints/Compliance
+-
+-CC-1: Der fachliche Kern des Systems ist die Dokumentation, Aufbereitung und der schnelle Zugriff auf vorhandenes Erfahrungswissen über individuelle Kommunikationsweisen; eine automatische Übersetzung individueller Ausdrucksweisen in Standardsprache ist nicht Bestandteil des Systems.
+-
+-CC-2: Das System darf keine Funktionen voraussetzen, die den Eindruck einer automatisierten Deutung oder Übersetzung individueller Kommunikation als gesicherte Wahrheit erzeugen.
+-
+-CC-3: Das System muss den Zugriff auf personenbezogene Daten nur für berechtigte Nutzer im Rahmen eines Rechtekonzepts erlauben.
+-
+-CC-4: Das System muss organisatorische Zugriffsbeschränkungen nach Einrichtung oder Zuständigkeitsbereich unterstützen.
+-
+-CC-5: Die Verarbeitung von Bildern und insbesondere Videos darf nur unter Beachtung der dafür geltenden Datenschutz-, Einwilligungs- und Organisationsvorgaben erfolgen.
+-
+-CC-6: Die Verarbeitung besonders sensibler Inhalte, insbesondere möglicher Medikamenteninformationen, darf nur erfolgen, wenn Zweck, Berechtigung und Schutzmaßnahmen fachlich und organisatorisch geklärt sind.
+-
+-CC-7: Das System muss so konzipiert werden, dass Angehörigenzugriffe nur bei expliziter Freigabe und klar geregelten Berechtigungen möglich sind.
+-
+-CC-8: Das System muss dem Umstand Rechnung tragen, dass bestehende Dokumentation bereits vorhanden sein kann; Ziel ist daher vor allem bessere Auffindbarkeit und Alltagstauglichkeit, nicht zwingend der vollständige Ersatz aller bestehenden Akten.
+-
+-CC-9: Nicht abschließend entschiedene Konzeptoptionen dürfen nicht als verbindlich implementierungspflichtige Kernfunktionen behandelt werden, solange keine fachliche Bestätigung vorliegt.
+-
+-## Assumptions and Open Points
+-
+-AOP-1: Es wird angenommen, dass die primäre Zielplattform eine mobile App ist; ob zusätzlich Tablets verbindlich unterstützt werden müssen, ist noch offen.
+-
+-AOP-2: Es ist offen, wie Datenschutz, Einwilligungen sowie die zulässige Nutzung von Bild- und Videomaterial im Detail geregelt werden.
+-
+-AOP-3: Es ist offen, ob und in welchem Umfang bestehende Bewohnerakten inhaltlich übernommen, eingesehen oder mit dem System verknüpft werden dürfen.
+-
+-AOP-4: Es ist offen, ob Videos als eigenständiger Bereich oder ausschließlich integriert in Kommunikationsseiten bereitgestellt werden sollen.
+-
+-AOP-5: Es ist offen, wie das Rollen- und Rechtemodell im Detail ausgestaltet wird, insbesondere hinsichtlich Angehörigen und Bewohner-Accounts.
+-
+-AOP-6: Es wird angenommen, dass neue Mitarbeitende und fachfremde Personen eine zentrale Nutzergruppe darstellen, da der Nutzen für Einarbeitung und Alltagshilfe mehrfach betont wurde.
+-
+-AOP-7: Es ist offen, ob Kalender- und Terminfunktionen Bestandteil des ersten Releases werden sollen.
+-
+-AOP-8: Es ist offen, ob Medikamenteninformationen überhaupt Bestandteil des Systems werden sollen.
+-
+-AOP-9: Es ist offen, welche Inhalte Bewohner mit einem möglichen eigenen Account selbst einsehen oder bearbeiten dürfen.
+-
+-AOP-10: Es wird angenommen, dass die Beteiligung von Angehörigen fachlich erwünscht sein kann, aber von organisatorischen und datenschutzrechtlichen Freigaben abhängt.
+-
+-AOP-11: Uneinheitliche Organisationsbezeichnungen in der Quelle werden als Inkonsistenz der Ausgangsdokumente behandelt und haben keine eigenständige fachliche Anforderungswirkung.
+-
+-## Traceability
+-
+-- FR-1 bis FR-3, FR-8, FR-9, NFR-1, NFR-2, NFR-11, CC-1, CC-8 leiten sich aus dem Projektziel, der Ausgangslage sowie den fachlichen Hauptthemen „Unterstützte Kommunikation“ und „Wissenssicherung und Wissensweitergabe“ ab.
+-
+-- FR-2 und FR-23 leiten sich aus dem Hauptthema „Bewohnerprofile / personenbezogene Informationen“ sowie dem vorläufigen Lösungsbild mit Profilseiten und About-Me-Bereich ab.
+-
+-- FR-4 bis FR-7, FR-11 leiten sich aus dem Hauptthema „Kommunikationsdokumentation“ sowie dem Thema „Videos als Interpretationshilfe“ ab.
+-
+-- FR-12 und FR-13 leiten sich aus dem Hauptthema „No-Go-Informationen / kritische Hinweise“ ab.
+-
+-- FR-14 bis FR-20 sowie CC-3, CC-4, CC-7 leiten sich aus den Themen „Rollen- und Rechtemanagement“, „Zugriffsbeschränkung nach Einrichtung“ sowie den Spannungen zwischen internem Nutzen, Angehörigenbeteiligung und Datenschutz ab.
+-
+-- FR-19 leitet sich aus dem vorläufigen Lösungsbild „Login ohne offene Selbstregistrierung“ ab.
+-
+-- FR-21, FR-22 und NFR-4 leiten sich aus der Zielrichtung einer mobilen, schnell nutzbaren App sowie dem vorläufigen Lösungsbild mit Profilübersicht und Suche ab.
+-
+-- FR-24 sowie NFR-3, NFR-5 bis NFR-10 leiten sich aus dem Thema „Barrierefreiheit und Benutzerfreundlichkeit“ sowie der Design-Ausarbeitung ab.
+-
+-- FR-25, FR-26, CC-5, CC-6 sowie AOP-2, AOP-4, AOP-7 und AOP-8 leiten sich aus den als unsicher oder nachrangig beschriebenen Themen Videos, Kalender, Medikamente und Datenschutz ab.
+-
+-- AOP-1, AOP-3, AOP-5, AOP-9 und AOP-10 leiten sich aus den im Kontext ausdrücklich genannten offenen Punkten und Unsicherheiten ab.
+diff --git a/docs/risks.md b/docs/risks.md
+deleted file mode 100644
+index 2a3ce4e..0000000
+--- a/docs/risks.md
++++ /dev/null
+@@ -1,287 +0,0 @@
+-# Risiken
+-
+-## Ziel und Einordnung
+-Dieses Dokument fasst wesentliche Risiken zusammen, die aus Projektkontext, Requirements und den benannten offenen Punkten ableitbar sind. Der Schwerpunkt liegt auf Risiken, die den fachlichen Nutzen der App, die technische Umsetzbarkeit, Datenschutz/Compliance sowie die Konsistenz des Vorhabens betreffen.
+-
+-## Priorisierte Risikoübersicht
+-
+-| ID | Titel | Kategorie | Priorität | Kurzbeschreibung |
+-|---|---|---|---|---|
+-| R1 | Unklare Datenschutz- und Einwilligungsgrundlage | Compliance/Datenschutz | Hoch | Für personenbezogene Inhalte, Bilder und besonders Videos sind rechtliche und organisatorische Voraussetzungen nicht geklärt. |
+-| R2 | Unzureichend ausdefiniertes Rollen- und Rechtemodell | Technisch/Compliance | Hoch | Mehrere Nutzergruppen sind vorgesehen, aber Berechtigungen und Sichtbarkeiten sind noch nicht konkret festgelegt. |
+-| R3 | Fachliche Überfrachtung zulasten des Kernnutzens | Fachlich/Produkt | Hoch | Zusätzliche Funktionen wie Kalender, Medikamente oder erweiterte Beteiligungsmodelle können den Fokus auf Kommunikationsunterstützung verwässern. |
+-| R4 | Geringe Alltagstauglichkeit trotz vorhandener Informationen | Fachlich/Usability | Hoch | Wenn Inhalte nicht schnell auffindbar und prägnant sind, wird das Kernproblem gegenüber bestehenden Akten nicht gelöst. |
+-| R5 | Qualitäts- und Interpretationsrisiko bei Kommunikationswissen | Fachlich | Hoch | Individuelle Kommunikationsdeutungen können situationsabhängig, subjektiv oder veraltet sein. |
+-| R6 | Risiko unberechtigter oder zu breiter Datenzugriffe | Compliance/Technisch | Hoch | Einrichtungsübergreifende oder rollenfremde Einsicht in sensible Bewohnerdaten muss wirksam verhindert werden. |
+-| R7 | Unsicherheit bei Videoeinsatz | Compliance/Technisch/Fachlich | Mittel bis Hoch | Videos sind fachlich nützlich, aber besonders sensibel und organisatorisch aufwendig. |
+-| R8 | Unklare Abgrenzung zu bestehender Dokumentation | Fachlich/Organisation | Mittel bis Hoch | Es ist offen, wie das System mit vorhandenen Akten zusammenspielt, wodurch Doppelpflege und Inkonsistenzen drohen. |
+-| R9 | Barrierefreiheits- und Bedienrisiken | Technisch/Usability | Mittel | Die App soll mobil, klar und barrierearm sein; eine zu komplexe Oberfläche gefährdet Akzeptanz und Nutzbarkeit. |
+-| R10 | Inkonsistente Ausgangsquellen und offene Konzeptdetails | Projekt/Anforderungen | Mittel | Uneinheitliche Bezeichnungen und mehrere offene Konzeptoptionen erhöhen Fehlinterpretations- und Planungsrisiken. |
+-
+-## Detaillierte Risiken
+-
+-### R1: Unklare Datenschutz- und Einwilligungsgrundlage
+-**Kategorie:** Compliance/Datenschutz  
+-**Priorität:** Hoch
+-
+-**Beschreibung:**
+-Die App soll hochsensible personenbezogene Informationen über Bewohner verarbeiten, darunter individuelle Kommunikationsweisen, No-Go-Informationen, möglicherweise Bilder und Videos sowie eventuell später sogar Medikamenteninformationen. Laut Kontext und Requirements sind Datenschutz, Einwilligungen und organisatorische Freigaben dafür noch nicht abschließend geklärt.
+-
+-**Ableitbare Hinweise:**
+-- AOP-2: Datenschutz, Einwilligungen und Bild-/Videonutzung sind offen.
+-- CC-5 und CC-6: Bilder, Videos und sensible Inhalte bedürfen besonderer Klärung.
+-- NFR-12 und NFR-13: Vertrauliche Verarbeitung ist verpflichtend.
+-
+-**Mögliche Auswirkungen:**
+-- Verzögerung oder Stopp von Funktionen wie Bild- und Videoeinsatz.
+-- Rechtliche oder organisatorische Nichtfreigabe des Systems.
+-- Vertrauensverlust bei Einrichtung, Angehörigen und Betroffenen.
+-- Erhöhter Nachbesserungsaufwand für Konzeption und Umsetzung.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Frühzeitige Klärung, welche Datenarten pro Rolle und Zweck zulässig sind.
+-- Datenschutz- und Einwilligungsregeln für Bilder, Videos und sensible Hinweise vor fachlicher Finalisierung definieren.
+-- Risikoreiche Inhalte wie Medikamente und Videos nur als optionale, freigabepflichtige Ausbaustufe behandeln.
+-
+-### R2: Unzureichend ausdefiniertes Rollen- und Rechtemodell
+-**Kategorie:** Technisch/Compliance  
+-**Priorität:** Hoch
+-
+-**Beschreibung:**
+-Das System benötigt mindestens Admin-, reguläre Nutzer-, Angehörigen- und optional Bewohner-Rollen. Gleichzeitig ist unklar, welche Rolle welche Inhalte sehen, pflegen oder beitragen darf. Besonders kritisch ist die Kombination aus personenbezogenen Daten, externen Akteuren und einrichtungsbezogenen Zugriffsbeschränkungen.
+-
+-**Ableitbare Hinweise:**
+-- FR-14 bis FR-20 definieren ein Rollen- und Zugriffskonzept als Kernanforderung.
+-- AOP-5 und AOP-9 markieren Detailfragen als offen.
+-- CC-3, CC-4 und CC-7 verlangen klare Berechtigung und Bereichstrennung.
+-
+-**Mögliche Auswirkungen:**
+-- Sicherheitslücken oder zu weit gefasste Berechtigungen.
+-- Hohe Komplexität bei Umsetzung, Test und Administration.
+-- Konflikte zwischen gewünschter Zusammenarbeit und Datenschutz.
+-- Verzögerungen durch spätes Nachschärfen des Rollenmodells.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Rollenmatrix erstellen: Wer darf was sehen, anlegen, ändern, freigeben.
+-- Inhalte nach Schutzbedarf klassifizieren, z. B. Profilbasisdaten, Kommunikationswissen, No-Go-Hinweise, Medien.
+-- Angehörigen- und Bewohnerzugriff zunächst nur als streng begrenzte Option behandeln.
+-
+-### R3: Fachliche Überfrachtung zulasten des Kernnutzens
+-**Kategorie:** Fachlich/Produkt  
+-**Priorität:** Hoch
+-
+-**Beschreibung:**
+-Der fachliche Kern ist klar auf Kommunikationsunterstützung und Wissenszugriff ausgerichtet. Gleichzeitig werden zahlreiche zusätzliche Funktionen genannt, etwa Kalender, Medikamente, Benachrichtigungen, Tutorials, Videos, Bewohner-Accounts und Angehörigenbeiträge. Es besteht das Risiko, dass das System zu breit wird und seine Alltagstauglichkeit verliert.
+-
+-**Ableitbare Hinweise:**
+-- NFR-14 fordert funktionalen Fokus.
+-- FR-25 und FR-26 markieren Kalender und Medikamente ausdrücklich als nachrangig bzw. nicht bestätigt.
+-- Konflikt im Kontext: breite Funktionalität vs. Fokus.
+-
+-**Mögliche Auswirkungen:**
+-- Unübersichtliche Oberfläche und geringere Akzeptanz.
+-- Längere Entwicklungszeit und höherer Abstimmungsaufwand.
+-- Priorisierungskonflikte im Projekt.
+-- Der eigentliche Nutzen in Betreuungssituationen wird abgeschwächt.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Strikte Abgrenzung eines MVP auf Profil, Kommunikationsdokumentation, Suche und No-Go-Hinweise.
+-- Nachrangige Funktionen erst nach fachlicher Validierung und Nutzennachweis aufnehmen.
+-- Jede Zusatzfunktion gegen den Kernnutzen "schnelleres Verstehen im Alltag" prüfen.
+-
+-### R4: Geringe Alltagstauglichkeit trotz vorhandener Informationen
+-**Kategorie:** Fachlich/Usability  
+-**Priorität:** Hoch
+-
+-**Beschreibung:**
+-Das Problem ist nicht primär fehlende Dokumentation, sondern deren mangelnde praktische Nutzbarkeit. Wenn die App Informationen nicht schneller, kompakter und situationsbezogener bereitstellt als bestehende Akten, wird der Mehrwert verfehlt.
+-
+-**Ableitbare Hinweise:**
+-- NFR-1, NFR-2 und NFR-11 betonen schnelle, praxistaugliche Nutzbarkeit.
+-- CC-8 grenzt das Ziel als bessere Auffindbarkeit statt vollständigen Aktenersatz ab.
+-- Kontext: bestehende Akten sind teils schwer durchsuchbar.
+-
+-**Mögliche Auswirkungen:**
+-- Geringe Nutzung im Alltag.
+-- Parallelnutzung alter Dokumentation ohne echten Effizienzgewinn.
+-- Enttäuschung zentraler Stakeholder, insbesondere neuer Mitarbeitender.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Informationsarchitektur auf Schnellzugriff optimieren.
+-- Kompakte Kernansichten und klare Such-/Filterlogik priorisieren.
+-- Inhalte strukturiert, kurz und handlungsnah erfassen statt dokumentationslastig.
+-
+-### R5: Qualitäts- und Interpretationsrisiko bei Kommunikationswissen
+-**Kategorie:** Fachlich  
+-**Priorität:** Hoch
+-
+-**Beschreibung:**
+-Das zu dokumentierende Wissen ist stark erfahrungsgebunden und situationsabhängig. Einzelne Deutungen nonverbaler oder individueller Ausdrucksweisen können subjektiv sein und sich im Zeitverlauf ändern. Es besteht das Risiko, dass Einträge als gesicherte Wahrheit verstanden werden, obwohl sie beobachtungs- oder kontextabhängig sind.
+-
+-**Ableitbare Hinweise:**
+-- Projektkern: implizites Erfahrungswissen soll formalisiert werden.
+-- CC-2 verbietet den Eindruck automatisierter oder gesicherter Deutung.
+-- FR-8 sieht fortlaufende Ergänzung vor, was auf Wandelbarkeit hinweist.
+-
+-**Mögliche Auswirkungen:**
+-- Fehlinterpretationen in Betreuungssituationen.
+-- Veraltete oder widersprüchliche Hinweise im Profil.
+-- Vertrauensverlust in die Inhalte der App.
+-- Fachlich problematische Vereinfachung individueller Kommunikation.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Einträge als Beobachtungen mit Kontext, Datum und ggf. Quelle kennzeichnen.
+-- Regelmäßige fachliche Überprüfung und Aktualisierung vorsehen.
+-- Formulierungen vermeiden, die Deutungen als absolut darstellen.
+-
+-### R6: Risiko unberechtigter oder zu breiter Datenzugriffe
+-**Kategorie:** Compliance/Technisch  
+-**Priorität:** Hoch
+-
+-**Beschreibung:**
+-Da sensible Bewohnerprofile mobil verfügbar gemacht werden sollen, besteht ein hohes Risiko, dass Nutzer zu viele Daten sehen oder dass organisatorische Grenzen nicht sauber abgebildet werden. Besonders kritisch ist die Anforderung, Zugriffe nach Einrichtung oder Zuständigkeitsbereich zu beschränken.
+-
+-**Ableitbare Hinweise:**
+-- FR-20 und CC-4 verlangen organisatorische Zugriffsbeschränkung.
+-- FR-19 schließt offene Selbstregistrierung aus.
+-- NFR-12 fordert Schutz vor unberechtigtem Zugriff.
+-
+-**Mögliche Auswirkungen:**
+-- Datenschutzverletzungen und organisatorische Eskalationen.
+-- Verhinderte Freigabe durch die Einrichtung.
+-- Hoher Nachbesserungsaufwand an Berechtigungslogik und Administration.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Mandanten- bzw. Bereichstrennung fachlich und technisch früh festlegen.
+-- Standardmäßig restriktive Sichtbarkeiten definieren.
+-- Berechtigungsprüfung als zentrales Architektur- und Testthema behandeln.
+-
+-### R7: Unsicherheit bei Videoeinsatz
+-**Kategorie:** Compliance/Technisch/Fachlich  
+-**Priorität:** Mittel bis Hoch
+-
+-**Beschreibung:**
+-Videos können Kommunikationsmuster anschaulich vermitteln, sind aber gegenüber Text und Bildern deutlich sensibler und aufwendiger. Zudem ist noch offen, wie Videos fachlich eingeordnet und im System verankert werden sollen.
+-
+-**Ableitbare Hinweise:**
+-- FR-7 nur als Soll-Anforderung und unter Vorbehalt.
+-- AOP-4: konzeptionelle Einbindung offen.
+-- CC-5: besondere Datenschutz- und Organisationsvorgaben.
+-
+-**Mögliche Auswirkungen:**
+-- Verzögerung wichtiger Entscheidungen zur Datenhaltung und Oberfläche.
+-- Erhöhter Aufwand für Einwilligung, Pflege und Zugriffsschutz.
+-- Gefahr, dass ein potenziell nützliches Feature aus rechtlichen Gründen nicht einsetzbar ist.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Videos nicht als Kernbestandteil des ersten verbindlichen Umfangs behandeln.
+-- Alternativen mit Text/Bild priorisieren.
+-- Falls Videos kommen, klare Freigabeprozesse und Schutzstufen definieren.
+-
+-### R8: Unklare Abgrenzung zu bestehender Dokumentation
+-**Kategorie:** Fachlich/Organisation  
+-**Priorität:** Mittel bis Hoch
+-
+-**Beschreibung:**
+-Es existieren bereits Akten und Dokumentationen. Unklar ist, ob diese teilweise übernommen, referenziert oder parallel weitergeführt werden. Ohne klare Abgrenzung drohen Doppelpflege, Inkonsistenzen und unklare Verantwortlichkeiten.
+-
+-**Ableitbare Hinweise:**
+-- CC-8: Ziel ist bessere Auffindbarkeit, nicht zwingend vollständiger Ersatz.
+-- AOP-3: Übernahme, Einsicht oder Verknüpfung bestehender Akten ist offen.
+-- Kontext: Akten sind vorhanden, aber schwer nutzbar.
+-
+-**Mögliche Auswirkungen:**
+-- Mehrarbeit für Fachpersonal.
+-- Unterschiedliche Informationsstände zwischen App und Bestandsdokumentation.
+-- Sinkende Datenqualität und geringere Akzeptanz.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Früh festlegen, welche Inhalte führend in der App und welche in Bestandsakten bleiben.
+-- Pflegeverantwortung und Aktualisierungsprozesse definieren.
+-- Den App-Umfang auf alltagskritische Kurz- und Kommunikationsinformationen fokussieren.
+-
+-### R9: Barrierefreiheits- und Bedienrisiken
+-**Kategorie:** Technisch/Usability  
+-**Priorität:** Mittel
+-
+-**Beschreibung:**
+-Die App soll mobil, klar, kontrastreich und mit einfacher Navigation nutzbar sein. Gleichzeitig steigt durch Suchlogik, Rollen, Medien und optionale Funktionen die Oberflächenkomplexität. Damit besteht das Risiko, dass Bedienbarkeit und Barrierefreiheit hinter den Anforderungen zurückbleiben.
+-
+-**Ableitbare Hinweise:**
+-- NFR-3 bis NFR-10 definieren klare UX- und Accessibility-Anforderungen.
+-- FR-24 fordert Hilfen/Tutorials.
+-- Kontext nennt große Schrift, Kontrast, reduzierte Ablenkung und alternative Eingaben.
+-
+-**Mögliche Auswirkungen:**
+-- Langsame Nutzung in Stress- oder Betreuungssituationen.
+-- Höherer Schulungsbedarf.
+-- Ausschluss oder Frustration bestimmter Nutzergruppen.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Kernaufgaben mit wenigen Interaktionen erreichbar machen.
+-- Oberflächenkomplexität begrenzen und auf mobile Kurzinteraktionen optimieren.
+-- Barrierefreiheit nicht nur gestalterisch, sondern auch funktional priorisieren.
+-
+-### R10: Inkonsistente Ausgangsquellen und offene Konzeptdetails
+-**Kategorie:** Projekt/Anforderungen  
+-**Priorität:** Mittel
+-
+-**Beschreibung:**
+-Die Ausgangsunterlagen enthalten uneinheitliche Organisationsbezeichnungen, einen fehlenden Abschnitt im Transkript und mehrere noch nicht entschiedene Konzeptoptionen. Dadurch steigt das Risiko, Annahmen fälschlich als bestätigte Anforderungen zu behandeln.
+-
+-**Ableitbare Hinweise:**
+-- Kontext weist auf inkonsistente Bezeichnungen hin.
+-- Abschnitt 7 fehlt im Material.
+-- CC-9 verbietet, offene Optionen als verbindliche Kernfunktionen zu behandeln.
+-
+-**Mögliche Auswirkungen:**
+-- Missverständnisse in Spezifikation und Umsetzung.
+-- Falsch priorisierte Features.
+-- Höherer Abstimmungs- und Korrekturaufwand im Projektverlauf.
+-
+-**Mögliche Gegenmaßnahmen / Klärungsbedarfe:**
+-- Bestätigte Anforderungen klar von Annahmen und Optionen trennen.
+-- Offene Punkte sichtbar nachhalten und nicht implizit festschreiben.
+-- Terminologie und Organisationsbezüge konsolidieren.
+-
+-## Widersprüche und Unsicherheiten als Risikoquellen
+-
+-### W1: Interne Fachanwendung vs. Beteiligung externer Akteure
+-Die App ist primär als internes Werkzeug motiviert, soll aber möglicherweise auch Angehörige und optional Bewohner einbeziehen. Das erzeugt Spannungen bei Berechtigungen, Datenminimierung und Verantwortlichkeit.
+-
+-**Auswirkung:** erhöhte Komplexität in Governance, Datenschutz und UX.  
+-**Klärungsbedarf:** Welche externen Rollen sind im ersten Schritt überhaupt vorgesehen?
+-
+-### W2: Schneller Zugriff vs. umfassende Dokumentation
+-Einerseits soll die App alltagsnah und schnell sein, andererseits werden viele Inhalte und optionale Dokumentationsbereiche diskutiert.
+-
+-**Auswirkung:** Risiko einer überladenen Lösung mit sinkendem Nutzwert.  
+-**Klärungsbedarf:** Welche Informationen sind in Akutsituationen wirklich entscheidend?
+-
+-### W3: Wissenssicherung vs. Deutungsoffenheit
+-Die App soll Erfahrungswissen sichern, darf aber individuelle Kommunikation nicht als objektiv gesicherte Übersetzung darstellen.
+-
+-**Auswirkung:** Risiko fachlich problematischer Vereinfachung.  
+-**Klärungsbedarf:** Wie werden Beobachtungen, Interpretationen und gesicherte Fakten im Datenmodell getrennt?
+-
+-### W4: Nützliche Medienunterstützung vs. Datenschutzgrenzen
+-Videos und Bilder können Verstehen stark verbessern, sind aber besonders sensibel.
+-
+-**Auswirkung:** hoher Freigabe- und Schutzaufwand, mögliche Nichtumsetzbarkeit einzelner Medienarten.  
+-**Klärungsbedarf:** Welche Medien sind unter realen Rahmenbedingungen zulässig und praktikabel?
+-
+-### W5: Vorhandene Dokumentation vs. neues System
+-Das System soll nicht zwingend alle Akten ersetzen, aber dennoch relevanter und schneller nutzbar sein.
+-
+-**Auswirkung:** Doppelstrukturen und unklare Pflegeprozesse.  
+-**Klärungsbedarf:** Was ist Primärquelle für welche Informationsart?
+-
+-## Zusammenfassende Risikobewertung
+-Die größten Projektrisiken liegen nicht primär in einer einzelnen Funktion, sondern in der Kombination aus hochsensiblen Daten, mehreren noch offenen Rollen- und Medienkonzepten sowie dem Anspruch, im Alltag schneller und nützlicher zu sein als bestehende Dokumentation. Kritisch ist daher vor allem, den fachlichen Kern eng zu halten, Governance und Berechtigungen früh zu klären und interpretatives Erfahrungswissen sorgfältig als kontextabhängige Information zu behandeln.
+-
+-## Empfohlene Prioritäten für Risikoreduktion
+-1. Datenschutz-, Einwilligungs- und Freigaberahmen für Datenarten und Medien klären.
+-2. Rollen- und Rechtekonzept inklusive Einrichtungsgrenzen fachlich verbindlich definieren.
+-3. MVP strikt auf Kommunikationsunterstützung, schnelle Auffindbarkeit und No-Go-Hinweise fokussieren.
+-4. Regeln für Qualität, Aktualität und Kontext von Kommunikationswissen festlegen.
+-5. Abgrenzung zu bestehender Dokumentation und Pflegeverantwortung definieren.
+diff --git a/run-config.json b/run-config.json
+index d39dff5..2e4276b 100644
+--- a/run-config.json
++++ b/run-config.json
+@@ -6,8 +6,8 @@
+  // "phase2ContextStrategy": "message_passing",
+   "phase2ContextStrategy": "artifact_state",   // Phase 2.1B: MAF Shared State. Umschalten reicht..Prompts werden automatisch gewählt.
+   "llmProvider": "openrouter",
+-  "agentModel": "openai/gpt-5.4",
+- // "agentModel": "openai/gpt-oss-120b:free",
++//"agentModel": "openai/gpt-5.4",
++  "agentModel": "openai/gpt-oss-120b:free",
+  //  "agentModel": "openai/gpt-oss-120b",
+  //langsam: "agentModel": "nvidia/nemotron-3-super-120b-a12b:free",
+ 

@@ -59,5 +59,6 @@ public static class ContractCodes
     public const string UnknownClaimId = "UNKNOWN_CLAIM_ID";        // C2
     public const string WrongDisposition = "WRONG_DISPOSITION";     // C4
     public const string RequiredClaimUnused = "REQUIRED_CLAIM_UNUSED"; // C5
-    public const string FacetOverstated = "FACET_OVERSTATED";       // C3 (Heuristik, Warning)
+    public const string FacetOverstated = "FACET_OVERSTATED";       // C3 (Heuristik, Warning) / C7 (Critic, Error)
+    public const string EvidenceUnsupportedDetail = "EVIDENCE_UNSUPPORTED_DETAIL"; // C7 (Critic, Error)
 }

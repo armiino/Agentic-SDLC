@@ -18,7 +18,7 @@ public static class ContractCheckRunner
         _ = settings;
         if (args.Length < 3)
         {
-            Console.Error.WriteLine("Usage: contract-check <requirements.md> <consumable.json> [out.json] [--iteration N] [--max N]");
+            Console.Error.WriteLine("Usage: contract-check <artifact.md> <consumable.json> [out.json] [--artifact requirements|risks|architecture|open-questions] [--iteration N] [--max N]");
             return 2;
         }
 
@@ -31,12 +31,15 @@ public static class ContractCheckRunner
         string? outArg = null;
         var iteration = 1;
         var maxIterations = 3;
+        var artifactDisposition = "requirements";
         for (var i = 3; i < args.Length; i++)
         {
             if (string.Equals(args[i], "--iteration", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
                 { iteration = ParseInt(args[++i], iteration); }
             else if (string.Equals(args[i], "--max", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
                 { maxIterations = ParseInt(args[++i], maxIterations); }
+            else if (string.Equals(args[i], "--artifact", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
+                { artifactDisposition = args[++i].Trim().ToLowerInvariant(); }
             else if (!args[i].StartsWith("--", StringComparison.Ordinal) && outArg is null)
                 { outArg = args[i]; }
         }
@@ -49,7 +52,7 @@ public static class ContractCheckRunner
             return 2;
         }
 
-        var report = ContractChecker.Check(markdown, ledger, iteration, maxIterations);
+        var report = ContractChecker.Check(markdown, ledger, iteration, maxIterations, artifactDisposition);
 
         var outPath = outArg is not null
             ? Resolve(repoRoot, outArg)
