@@ -250,6 +250,13 @@ if (args.Length > 0 && string.Equals(args[0], "ledger-validate", StringCompariso
     return;
 }
 
+// MC0 (Maker-Checker): deterministischer Contract-Checker requirements.md + consumable.json -> contract-report.json.
+if (args.Length > 0 && string.Equals(args[0], "contract-check", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.ContractCheckRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // L3-B: Selective-Metrics für den FacetValidator gegen die autor-bestätigte Fixture (correct vs perturbed).
 if (args.Length > 0 && string.Equals(args[0], "facet-validation-eval", StringComparison.OrdinalIgnoreCase))
 {
