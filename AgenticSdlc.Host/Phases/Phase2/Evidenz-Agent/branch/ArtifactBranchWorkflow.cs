@@ -65,6 +65,11 @@ public static class ArtifactBranchWorkflow
         builder.AddEdge(maker, checkerRepairNode);
         builder.AddEdge(checkerRepairNode, assignIds);
 
+        // Zweig-Output deklarieren (dieselbe MAF-Regel wie im CheckerRepair): erst dadurch reicht der als
+        // BindAsExecutor gebundene Zweig sein ArtifactDocument an die nachgelagerte Fan-in-Barrier (E-d) weiter
+        // — und surfaced den Output auch im Standalone-Lauf.
+        builder.WithOutputFrom(assignIds);
+
         return builder.Build();
     }
 }

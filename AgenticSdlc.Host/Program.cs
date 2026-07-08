@@ -271,6 +271,13 @@ if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringCompariso
     return;
 }
 
+// E-d: Fan-out des Ledgers auf mehrere Artefakt-Zweige (parallel) -> Fan-in-Barrier -> Verified Baseline Set.
+if (args.Length > 0 && string.Equals(args[0], "baseline-fanout", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut.BaselineFanOutRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // E-c: EIN komponierter Artefakt-Zweig (EvidenceBaselineAgent -> [CheckerRepair via BindAsExecutor] -> AssignIds).
 if (args.Length > 0 && string.Equals(args[0], "artifact-branch", StringComparison.OrdinalIgnoreCase))
 {
