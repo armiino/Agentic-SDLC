@@ -116,6 +116,11 @@ public static class ContractChecker
         }
 
         // C5 — required-Claims, die von keiner Zeile zitiert werden (Coverage gegen den GESCHLOSSENEN Claim-Satz).
+        // E-b (2026-07-08): C5 ist NICHT auto-reparierbar (Repairable:false). Der zeilenweise ContractRepair ist rein
+        // SUBTRAKTIV (entfernt/entschärft geflaggte Zeilen). Eine fehlende Zeile HINZUZUFÜGEN ist ein additiver,
+        // generativer Akt und gehört an den Menschen -> Decision landet über den Non-Repairable-Zweig bei HumanReview.
+        // Das RepairItem bleibt als MENSCHEN-Hinweis (was ergänzen, mit welchen Facetten-Grenzen), wird aber von KEINEM
+        // Auto-Repairer konsumiert. Damit lügt das Repairable-Flag nicht mehr über die tatsächliche Fähigkeit.
         var repairItems = new List<RepairItem>();
         var requiredClaims = ledger.Claims
             .Where(c => string.Equals(Applicability(c, artifactDisposition), "required", StringComparison.OrdinalIgnoreCase))
@@ -124,7 +129,7 @@ public static class ContractChecker
         foreach (var c in missingRequired)
         {
             violations.Add(new ContractViolation(
-                ContractCodes.RequiredClaimUnused, ContractSeverity.Error, Repairable: true,
+                ContractCodes.RequiredClaimUnused, ContractSeverity.Error, Repairable: false,
                 Message: $"required-Claim '{c.Id}' wird von keiner Zeile zitiert.",
                 LineNumber: null, ArtifactQuote: null, ClaimIds: [c.Id],
                 LedgerFacets: Facets(c, artifactDisposition), SuggestedAction: "Artefaktzeile für diesen Claim ergänzen (mit Source-ID)."));

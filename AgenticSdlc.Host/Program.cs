@@ -271,6 +271,14 @@ if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringCompariso
     return;
 }
 
+// MC1/C3: eigenständiger Checker-Repair als echter MAF-Workflow (Checker -> [Repair-Loop] -> Finalize).
+// Quell-generisch, per BindAsExecutor als Knoten hinter jeden Generator-Agenten einhängbar (Kapitel C).
+if (args.Length > 0 && string.Equals(args[0], "checker-repair-workflow", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow.CheckerRepairRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // L3-B: Selective-Metrics für den FacetValidator gegen die autor-bestätigte Fixture (correct vs perturbed).
 if (args.Length > 0 && string.Equals(args[0], "facet-validation-eval", StringComparison.OrdinalIgnoreCase))
 {
