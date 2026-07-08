@@ -271,6 +271,13 @@ if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringCompariso
     return;
 }
 
+// I-c: Inference-Checker — semantischer Relevanz-/Nicht-Widerspruchs-Check der abgeleiteten Risiken gegen ihre Anker.
+if (args.Length > 0 && string.Equals(args[0], "inference-check", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation.InferenceCheckRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // I-b: erster Derivation-Agent — leitet aus der geprüften Requirements-Baseline neue, verankerte Risiken ab.
 if (args.Length > 0 && string.Equals(args[0], "derive-risks", StringComparison.OrdinalIgnoreCase))
 {
