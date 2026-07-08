@@ -1,0 +1,195 @@
+{
+  "artifactId": "DREQ",
+  "artifactType": "requirements",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260708_204229_91edf4",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "RequirementsGapFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DREQ-01",
+      "origin": "Derived",
+      "text": "Jedes Profil muss einer Einrichtung zugeordnet sein, damit einrichtungsbezogene Zugriffsrechte auf Profilinformationen durchgesetzt werden k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-28"
+      ],
+      "assumptions": [
+        "Die in REQ-28 geforderte Sichtbarkeit von Profilen je Haus bezieht sich auf die in REQ-05 genannte Profil\u00FCbersicht und die darin enthaltenen Profile."
+      ],
+      "derivationRationale": "Wenn Mitarbeiter nur Profile ihres eigenen Hauses sehen d\u00FCrfen, muss f\u00FCr jedes Profil eine Zuordnung zu einer Einrichtung vorliegen; ohne diese Zuordnung ist die geforderte Zugriffsbeschr\u00E4nkung nicht umsetzbar."
+    },
+    {
+      "itemId": "DREQ-02",
+      "origin": "Derived",
+      "text": "Jeder Nutzer-Account muss genau einer Einrichtung zugeordnet sein oder Einrichtungen m\u00FCssen im Account-Berechtigungsmodell abbildbar sein, damit zug\u00E4ngliche Profile einrichtungsbezogen gefiltert werden k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-15",
+        "REQ-28"
+      ],
+      "assumptions": [
+        "Das rollenbasierte Rechtemodell aus REQ-15 umfasst neben Rollen auch die f\u00FCr REQ-28 n\u00F6tige organisatorische Zuordnung."
+      ],
+      "derivationRationale": "Die Beschr\u00E4nkung auf Profile des eigenen Hauses erfordert nicht nur Rollen, sondern auch eine Zuordnung des Accounts zur relevanten Einrichtung; sonst kann das System nicht bestimmen, welche Profile angezeigt werden d\u00FCrfen."
+    },
+    {
+      "itemId": "DREQ-03",
+      "origin": "Derived",
+      "text": "Die Profil\u00FCbersichtsseite muss nur die Profile anzeigen, f\u00FCr die der eingeloggte Nutzer gem\u00E4\u00DF Rollen- und Einrichtungsberechtigung zugriffsberechtigt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-15",
+        "REQ-20",
+        "REQ-28"
+      ],
+      "assumptions": [
+        "Der Bewohner-Account aus REQ-20 ist Teil des rollenbasierten Berechtigungsmodells aus REQ-15.",
+        "REQ-28 gilt mindestens f\u00FCr Mitarbeiterkonten und darf der Anzeige aller Profile aus REQ-05 vorgehen."
+      ],
+      "derivationRationale": "REQ-05 fordert eine Liste aller zug\u00E4nglichen Profile; was zug\u00E4nglich ist, wird erst durch Rollen und Einrichtungsgrenzen bestimmt. Daraus folgt die Notwendigkeit einer berechtigungsgesteuerten Anzeige."
+    },
+    {
+      "itemId": "DREQ-04",
+      "origin": "Derived",
+      "text": "Beim \u00D6ffnen eines Profils darf der Nutzer nur die Profilbereiche und Funktionen sehen bzw. nutzen, die seiner Rolle entsprechen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-15",
+        "REQ-18",
+        "REQ-20"
+      ],
+      "assumptions": [
+        "Unterschiedliche Rechte aus REQ-15 und REQ-18 beziehen sich nicht nur auf globale Funktionen, sondern auch auf Profilbereiche und Bearbeitungsm\u00F6glichkeiten innerhalb eines Profils."
+      ],
+      "derivationRationale": "Wenn Accounts unterschiedliche Rechte haben und der Bewohner-Account nur eingeschr\u00E4nkte Funktionen erhalten soll, m\u00FCssen Profilansichten und Aktionen rollenabh\u00E4ngig begrenzt werden."
+    },
+    {
+      "itemId": "DREQ-05",
+      "origin": "Derived",
+      "text": "F\u00FCr neu hinzuf\u00FCgbare Inhalte in Profil-, Kommunikations-, Video- und No-Go-Bereichen muss jeweils eine Eingabem\u00F6glichkeit bereitgestellt werden, \u00FCber die Nutzer die erforderlichen Informationen erfassen k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-09",
+        "REQ-10",
+        "REQ-14"
+      ],
+      "assumptions": [
+        "Dynamische Erweiterbarkeit und das Hinzuf\u00FCgen per Plus-Button erfordern eine konkrete Erfassungsinteraktion innerhalb der App."
+      ],
+      "derivationRationale": "Die Anforderungen verlangen, dass Inhalte hinzugef\u00FCgt werden k\u00F6nnen; daf\u00FCr ist logisch eine Erfassungsm\u00F6glichkeit n\u00F6tig, sonst bleibt die Hinzuf\u00FCgbarkeit unerf\u00FCllbar."
+    },
+    {
+      "itemId": "DREQ-06",
+      "origin": "Derived",
+      "text": "F\u00FCr Kommunikationsinhalte muss ein einheitliches Erfassungsschema verwendet werden, das mindestens die Zuordnung zu verbal oder nonverbal sowie durchsuchbare Beschreibungsangaben unterst\u00FCtzt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-11",
+        "REQ-21",
+        "REQ-30"
+      ],
+      "assumptions": [
+        "Das in REQ-30 geforderte systematische Beschreibungsmuster soll auf die in REQ-11 und REQ-21 beschriebenen Kommunikationsinhalte angewendet werden."
+      ],
+      "derivationRationale": "Damit Kommunikationsinhalte strukturiert dargestellt sowie gesucht und gefiltert werden k\u00F6nnen, m\u00FCssen sie beim Erfassen in einer einheitlichen, auswertbaren Struktur vorliegen."
+    },
+    {
+      "itemId": "DREQ-07",
+      "origin": "Derived",
+      "text": "Videos f\u00FCr Kommunikationssituationen m\u00FCssen beim Hinzuf\u00FCgen entweder dem verbalen oder dem nonverbalen Kommunikationsbereich zugeordnet werden k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-10",
+        "REQ-11",
+        "REQ-12"
+      ],
+      "assumptions": [
+        "Die Integration der Videofunktion in verbale und nonverbale Seiten aus REQ-12 setzt voraus, dass jedes Video einem dieser Bereiche zugeordnet werden kann."
+      ],
+      "derivationRationale": "Wenn Videos nicht als eigener Screen existieren, sondern in die beiden Kommunikationsbereiche integriert werden, ist eine explizite Zuordnung erforderlich, damit sie korrekt angezeigt werden k\u00F6nnen."
+    },
+    {
+      "itemId": "DREQ-08",
+      "origin": "Derived",
+      "text": "Neu hinzugef\u00FCgte Kommunikationsinhalte und Profilerg\u00E4nzungen m\u00FCssen nach dem Speichern f\u00FCr andere berechtigte Nutzer derselben Einrichtung zeitnah verf\u00FCgbar sein.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "REQ-09",
+        "REQ-35"
+      ],
+      "assumptions": [
+        "Die in REQ-03 geforderte sofortige Teilbarkeit neuer Erfahrungen bezieht sich auf in der App erfasste Inhalte.",
+        "Die Benachrichtigung in REQ-35 setzt voraus, dass die betreffenden Inhalte nach dem Hinzuf\u00FCgen auch abrufbar sind."
+      ],
+      "derivationRationale": "Sofortiges Teilen neuer Erfahrungen und Benachrichtigungen an verbundene Nutzer sind nur sinnvoll erf\u00FCllbar, wenn neue Inhalte nach dem Speichern ohne verz\u00F6gerte Sonderprozesse f\u00FCr Berechtigte verf\u00FCgbar werden."
+    },
+    {
+      "itemId": "DREQ-09",
+      "origin": "Derived",
+      "text": "Die Suchfunktion auf Kommunikationsseiten darf nur Inhalte durchsuchen, auf die der jeweilige Nutzer zugriffsberechtigt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-15",
+        "REQ-20",
+        "REQ-28",
+        "REQ-30"
+      ],
+      "assumptions": [
+        "Suchergebnisse d\u00FCrfen keine Inhalte offenlegen, die au\u00DFerhalb der Rolle oder Einrichtung des Nutzers liegen."
+      ],
+      "derivationRationale": "Da Zugriffe rollen- und einrichtungsbezogen beschr\u00E4nkt sind, muss dieselbe Beschr\u00E4nkung auch f\u00FCr Suchfunktionen gelten; andernfalls w\u00FCrden Berechtigungen durch Suchergebnisse umgangen."
+    },
+    {
+      "itemId": "DREQ-10",
+      "origin": "Derived",
+      "text": "Die Suchfunktion auf der Profil\u00FCbersichtsseite darf nur unter den f\u00FCr den Nutzer zug\u00E4nglichen Profilen suchen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-06",
+        "REQ-20",
+        "REQ-28"
+      ],
+      "assumptions": [
+        "Die Suchfunktion aus REQ-06 arbeitet auf derselben Datenmenge wie die Profil\u00FCbersicht aus REQ-05."
+      ],
+      "derivationRationale": "Wenn die Profil\u00FCbersicht aus Berechtigungsgr\u00FCnden eingeschr\u00E4nkt ist, muss auch die darauf angebotene Suche auf diese sichtbare und zul\u00E4ssige Profilmenge begrenzt sein."
+    },
+    {
+      "itemId": "DREQ-11",
+      "origin": "Derived",
+      "text": "Der Bewohner-Account darf ausschlie\u00DFlich das eigene Profil aufrufen k\u00F6nnen und keine Navigation zu anderen Profilen erhalten.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-20",
+        "REQ-36"
+      ],
+      "assumptions": [
+        "Die in REQ-20 genannte Einschr\u00E4nkung \u0027nur das eigene Profil sehen\u0027 bezieht sich sowohl auf die Anzeige in \u00DCbersichten als auch auf direkte Navigationsm\u00F6glichkeiten innerhalb der App."
+      ],
+      "derivationRationale": "Die Beschr\u00E4nkung auf das eigene Profil ist nur wirksam, wenn auch die Navigation innerhalb der Profilfunktionen entsprechend begrenzt wird."
+    },
+    {
+      "itemId": "DREQ-12",
+      "origin": "Derived",
+      "text": "F\u00FCr die Benachrichtigung \u00FCber neue Inhalte im About-Me-Bereich muss definiert sein, welche Nutzer als verbundene Nutzer derselben Einrichtung gelten.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-28",
+        "REQ-35"
+      ],
+      "assumptions": [
+        "Die in REQ-35 genannten verbundenen Nutzer werden \u00FCber die Einrichtungszugeh\u00F6rigkeit bestimmt, da keine andere Verbindungslogik spezifiziert ist."
+      ],
+      "derivationRationale": "Damit Benachrichtigungen gezielt an die richtigen Empf\u00E4nger gesendet werden k\u00F6nnen, muss nachvollziehbar bestimmbar sein, welche Nutzer derselben Einrichtung als Empf\u00E4ngergruppe gelten."
+    }
+  ]
+}

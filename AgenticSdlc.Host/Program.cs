@@ -271,6 +271,13 @@ if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringCompariso
     return;
 }
 
+// Derivation-Familie (verallgemeinert): config-gesteuerter Ableitungs-Workflow (Generate[Agent]->Anchor->Check).
+if (args.Length > 0 && string.Equals(args[0], "derive", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation.DerivationRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // I-d: Human-Review der abgeleiteten Risiken (generisches HumanReview-UI) -> approved-derived-risks.json.
 if (args.Length > 0 && string.Equals(args[0], "derive-review", StringComparison.OrdinalIgnoreCase))
 {
