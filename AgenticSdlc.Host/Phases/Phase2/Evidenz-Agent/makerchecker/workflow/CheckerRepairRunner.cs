@@ -151,10 +151,39 @@ public static class CheckerRepairRunner
             return 3;
         }
 
-        if (result is not null)
+        // final-report.json (vom FinalizeExecutor) ist die Wahrheit. MAF surfaced YieldOutput hier nicht immer als
+        // WorkflowOutputEvent in OutgoingEvents (Status Idle), daher NICHT auf das Event verlassen -> Disk lesen
+        // (analog LedgerBuildRunner, der Step-Outputs von Disk liest). Event-result bleibt sekundärer Fallback.
+        var final = ReadFinalReport(run);
+        if (final is { } f)
+            Console.WriteLine($"[checker-repair] decision={f.Decision} nach {f.Iterations} Iteration(en) (MC0-Fehler={f.Mc0Errors}, C7-Restverstöße={f.C7Residual}).");
+        else if (result is not null)
             Console.WriteLine($"[checker-repair] decision={result.Decision} nach {result.Iterations} Iteration(en) (MC0-Fehler={result.Mc0Errors}, C7-Restverstöße={result.C7Residual}).");
+        else
+            Console.Error.WriteLine("[checker-repair] WARN: kein final-report.json und kein Output-Event — Ergebnis unklar.");
         Console.WriteLine($"[checker-repair] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
-        return result is { Decision: ContractDecision.Pass } ? 0 : 1;
+
+        var decision = final?.Decision ?? result?.Decision.ToString();
+        return string.Equals(decision, nameof(ContractDecision.Pass), StringComparison.OrdinalIgnoreCase) ? 0 : 1;
+    }
+
+    /// <summary>Liest das Abschluss-Zertifikat von Disk (Wahrheitsquelle, unabhängig davon ob MAF das YieldOutput
+    /// als Event surfaced).</summary>
+    private static (string Decision, int Iterations, int Mc0Errors, int C7Residual)? ReadFinalReport(RunContext run)
+    {
+        var path = Path.Combine(run.RunDir, "final-report.json");
+        if (!File.Exists(path)) return null;
+        try
+        {
+            using var doc = JsonDocument.Parse(File.ReadAllText(path));
+            var root = doc.RootElement;
+            return (
+                root.GetProperty("decision").GetString() ?? "UNKNOWN",
+                root.GetProperty("iterations").GetInt32(),
+                root.GetProperty("mc0").GetProperty("errors").GetInt32(),
+                root.GetProperty("c7").GetProperty("violations").GetInt32());
+        }
+        catch (Exception) { return null; }
     }
 
     /// <summary>Zeichnet die Workflow-Events auf (wie LedgerBuildRunner) und gibt zurück, ob ein Executor-Fehler
