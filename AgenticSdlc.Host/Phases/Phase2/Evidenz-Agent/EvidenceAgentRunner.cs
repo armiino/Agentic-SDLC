@@ -35,6 +35,8 @@ public sealed class EvidenceAgentRunner
         {
             ["requirements"] = ("EvidenceRequirementsAgent", "requirements"),
             ["risks"] = ("EvidenceRisksAgent", "risks"),
+            ["architecture"] = ("EvidenceArchitectureAgent", "architecture"),
+            ["open-questions"] = ("EvidenceOpenQuestionsAgent", "open-questions"),
         };
     private const string SharedCorePrompt = "_shared-core"; // geteilter Kern (Aufgabe/Format/Treue) — beide Arme identisch
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);

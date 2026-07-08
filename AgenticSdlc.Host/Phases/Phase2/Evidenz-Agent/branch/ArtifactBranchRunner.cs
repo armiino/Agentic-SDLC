@@ -39,6 +39,8 @@ public static class ArtifactBranchRunner
         {
             ["requirements"] = ("EvidenceRequirementsAgent", "requirements"),
             ["risks"] = ("EvidenceRisksAgent", "risks"),
+            ["architecture"] = ("EvidenceArchitectureAgent", "architecture"),
+            ["open-questions"] = ("EvidenceOpenQuestionsAgent", "open-questions"),
         };
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)

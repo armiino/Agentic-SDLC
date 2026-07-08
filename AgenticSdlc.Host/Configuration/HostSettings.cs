@@ -210,7 +210,10 @@ public sealed record HostSettings(
             ["Phase2OpenQuestionsAgent"] = "OpenQuestionsPrompt2",
             // Evidenz-Agent (Kapitel B): Default Arm-A-Prompt; run-config wählt pro Arm (transcript|ledger).
             ["EvidenceRequirementsAgent"] = "RequirementsFromTranscript1",
-            ["EvidenceRisksAgent"] = "RisksFromTranscript1"
+            ["EvidenceRisksAgent"] = "RisksFromTranscript1",
+            // architecture/open-questions: nur Ledger-Arm gebaut (Fan-out Arm B); Default = Ledger-Prompt.
+            ["EvidenceArchitectureAgent"] = "ArchitectureFromLedger1",
+            ["EvidenceOpenQuestionsAgent"] = "OpenQuestionsFromLedger1"
         };
 
         if (configuredPrompts is null)
