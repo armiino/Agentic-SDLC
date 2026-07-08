@@ -271,6 +271,13 @@ if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringCompariso
     return;
 }
 
+// I-a: deterministisches ID-Gate — geprüftes Baseline-Artefakt -> ArtifactDocument mit stabilen Item-IDs (artifact.json).
+if (args.Length > 0 && string.Equals(args[0], "assign-artifact-ids", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts.ArtifactIdGateRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // MC1/C3: eigenständiger Checker-Repair als echter MAF-Workflow (Checker -> [Repair-Loop] -> Finalize).
 // Quell-generisch, per BindAsExecutor als Knoten hinter jeden Generator-Agenten einhängbar (Kapitel C).
 if (args.Length > 0 && string.Equals(args[0], "checker-repair-workflow", StringComparison.OrdinalIgnoreCase))
