@@ -271,6 +271,13 @@ if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringCompariso
     return;
 }
 
+// E-c: EIN komponierter Artefakt-Zweig (EvidenceBaselineAgent -> [CheckerRepair via BindAsExecutor] -> AssignIds).
+if (args.Length > 0 && string.Equals(args[0], "artifact-branch", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Branch.ArtifactBranchRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // I-a: deterministisches ID-Gate — geprüftes Baseline-Artefakt -> ArtifactDocument mit stabilen Item-IDs (artifact.json).
 if (args.Length > 0 && string.Equals(args[0], "assign-artifact-ids", StringComparison.OrdinalIgnoreCase))
 {

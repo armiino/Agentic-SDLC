@@ -43,6 +43,12 @@ public static class CheckerRepairWorkflow
         // Loop-Back: Repair schickt das reparierte Artefakt (Iteration+1) zurück in den Checker.
         builder.AddEdge(repair, checker);
 
+        // Output-Quelle deklarieren (MAF-nativ, offizielle Sub-Workflow-Doku): erst dadurch gilt Finalizes
+        // YieldOutput als der Workflow-Output. Beim Standalone-Lauf surfaced das den WorkflowOutputEvent; beim
+        // Einbetten via BindAsExecutor wird der CheckerRepairResult an die nachgelagerte Kante WEITERGEREICHT
+        // (ExecutorOptions.AutoSendMessageHandlerResultObject=true, Default) — ohne WithOutputFrom lief AssignIds nicht.
+        builder.WithOutputFrom(finalize);
+
         return builder.Build();
     }
 }
