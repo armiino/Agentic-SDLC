@@ -271,6 +271,13 @@ if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringCompariso
     return;
 }
 
+// I-d: Human-Review der abgeleiteten Risiken (generisches HumanReview-UI) -> approved-derived-risks.json.
+if (args.Length > 0 && string.Equals(args[0], "derive-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation.DerivedRisksReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // I-c: Inference-Checker — semantischer Relevanz-/Nicht-Widerspruchs-Check der abgeleiteten Risiken gegen ihre Anker.
 if (args.Length > 0 && string.Equals(args[0], "inference-check", StringComparison.OrdinalIgnoreCase))
 {
