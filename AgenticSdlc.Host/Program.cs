@@ -271,6 +271,13 @@ if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringCompariso
     return;
 }
 
+// I-b: erster Derivation-Agent — leitet aus der geprüften Requirements-Baseline neue, verankerte Risiken ab.
+if (args.Length > 0 && string.Equals(args[0], "derive-risks", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation.DerivedRisksRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // E-d: Fan-out des Ledgers auf mehrere Artefakt-Zweige (parallel) -> Fan-in-Barrier -> Verified Baseline Set.
 if (args.Length > 0 && string.Equals(args[0], "baseline-fanout", StringComparison.OrdinalIgnoreCase))
 {

@@ -1,0 +1,146 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "derived-risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260708_192533_e4b237",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Ohne ein verbindliches Berechtigungsmodell auf Profil- und Feldebene besteht das Risiko, dass Angeh\u00F6rige oder Bewohner Inhalte sehen oder erg\u00E4nzen k\u00F6nnen, die f\u00FCr sie nicht vorgesehen sind, insbesondere sensible Kommunikations- oder No-Go-Informationen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-15",
+        "REQ-20",
+        "REQ-28"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige und Bewohner erhalten nicht automatisch identische Sicht- und Bearbeitungsrechte wie Mitarbeiter.",
+        "assumption: Die in den Profilen enthaltenen Kommunikations- und No-Go-Inhalte sind aus fachlicher Sicht nicht f\u00FCr jede Rolle gleicherma\u00DFen bestimmt."
+      ],
+      "derivationRationale": "REQ-04 erweitert den Nutzerkreis um Angeh\u00F6rige, REQ-20 um Bewohner, w\u00E4hrend REQ-15 nur allgemein rollenbasierte Rechte fordert und REQ-28 nur einrichtungsbezogene Beschr\u00E4nkung nennt. Daraus folgt ein offenes Risiko, wenn die Rechte nicht zus\u00E4tzlich innerhalb eines Hauses und pro Inhaltsart sauber getrennt werden."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Da normale User Inhalte hinzuf\u00FCgen, aber nicht l\u00F6schen d\u00FCrfen, besteht das Risiko einer wachsenden Menge veralteter, widerspr\u00FCchlicher oder irrt\u00FCmlich erfasster Kommunikationshinweise, die das schnelle Verstehen eher erschweren als verbessern.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-03",
+        "REQ-09",
+        "REQ-18"
+      ],
+      "assumptions": [
+        "Kommunikationswissen kann sich durch neue Erfahrungen \u00E4ndern oder als fehlerhaft herausstellen.",
+        "assumption: Es ist keine alternative Korrektur- oder Archivierungsfunktion explizit festgelegt."
+      ],
+      "derivationRationale": "REQ-02 und REQ-03 verlangen eine laufende Wissenssammlung und sofortiges Teilen neuer Erfahrungen; REQ-09 macht Inhalte dynamisch erweiterbar. Gleichzeitig verbietet REQ-18 das L\u00F6schen durch User. Daraus folgt das Risiko, dass Informationsbest\u00E4nde anwachsen, ohne dass veraltete Eintr\u00E4ge durch die operativen Nutzer bereinigt werden k\u00F6nnen."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Die geforderte Suchfunktion in Kommunikationsbereichen kann unzuverl\u00E4ssig oder uneinheitlich werden, wenn das notwendige Beschreibungsmuster nicht rechtzeitig definiert und im Erfassen neuer Inhalte konsequent angewendet wird.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-09",
+        "REQ-21",
+        "REQ-30"
+      ],
+      "assumptions": [
+        "Nutzer erfassen Inhalte frei genug, dass ohne Vorgaben unterschiedliche Begriffe oder Strukturen entstehen.",
+        "assumption: Suche und Filterung h\u00E4ngen von konsistenten Beschreibungen ab und nicht nur von Volltextsuche."
+      ],
+      "derivationRationale": "REQ-30 macht die Suchfunktion ausdr\u00FCcklich von einem systematischen Beschreibungsmuster abh\u00E4ngig. Da REQ-09 dynamische Erweiterung und REQ-21 verschiedene Darstellungsformen erlauben, folgt das Risiko uneinheitlicher Datenerfassung, das die sp\u00E4tere Auffindbarkeit beeintr\u00E4chtigt."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Benachrichtigungen \u00FCber neue About-Me-Inhalte k\u00F6nnen zu Informationsunterbrechungen oder Benachrichtigungs\u00FCberlastung f\u00FChren, wenn h\u00E4ufige \u00C4nderungen vieler Profile per Popup an alle verbundenen Nutzer derselben Einrichtung verteilt werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-09",
+        "REQ-28",
+        "REQ-35"
+      ],
+      "assumptions": [
+        "In einer Einrichtung k\u00F6nnen mehrere Nutzer gleichzeitig verbunden sein.",
+        "assumption: About-Me-Inhalte werden regelm\u00E4\u00DFig erweitert, wie durch dynamische Inhalte nahegelegt."
+      ],
+      "derivationRationale": "REQ-35 fordert Popups f\u00FCr verbundene Nutzer derselben Einrichtung. In Verbindung mit dynamisch erweiterbaren Inhalten aus REQ-09 und der einrichtungsbezogenen Reichweite aus REQ-28 ergibt sich das Risiko, dass die Benachrichtigungslogik im Alltag st\u00F6rend wirkt."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Die Integration von Videos direkt in verbale und nonverbale Kommunikationsseiten kann die Seitenstruktur \u00FCberladen und das schnelle Nachschlagen im Nutzungskontext erschweren, wenn keine klare Priorisierung zwischen Text, Bild und Video erfolgt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-11",
+        "REQ-12",
+        "REQ-21"
+      ],
+      "assumptions": [
+        "Nutzer greifen in Situationen mit Verst\u00E4ndnisproblemen auf die Inhalte unter Zeitdruck zu.",
+        "assumption: Videos ben\u00F6tigen mehr Aufmerksamkeit und Platz als Text- oder Bildinhalte."
+      ],
+      "derivationRationale": "REQ-11 teilt Kommunikationsinhalte in zwei Bereiche, REQ-12 integriert Videos in genau diese Seiten statt auf einen separaten Screen, und REQ-21 erweitert die Darstellung um Bilder. Daraus folgt das Risiko einer verdichteten Oberfl\u00E4che mit konkurrierenden Informationsformen."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Der Bewohner-Account kann trotz starker Einschr\u00E4nkungen das Risiko unbeabsichtigter Profilver\u00E4nderungen erh\u00F6hen, weil der Bewohner im About-Me-Bereich eigene Bilder hinzuf\u00FCgen darf und diese \u00C4nderungen andere Nutzer beeinflussen oder Benachrichtigungen ausl\u00F6sen k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-20",
+        "REQ-35",
+        "REQ-36"
+      ],
+      "assumptions": [
+        "Von Bewohnern hinzugef\u00FCgte Bilder werden nicht vor Ver\u00F6ffentlichung gesondert gepr\u00FCft.",
+        "assumption: Bild\u00E4nderungen im About-Me-Bereich fallen unter die in REQ-35 genannten Benachrichtigungen."
+      ],
+      "derivationRationale": "REQ-20 erlaubt dem Bewohner-Account das Hinzuf\u00FCgen eigener Bilder im About-Me-Bereich, w\u00E4hrend REQ-35 f\u00FCr neue About-Me-Inhalte Benachrichtigungen vorsieht. REQ-36 betont zus\u00E4tzlich den Wunsch nach stark eingeschr\u00E4nkten Rechten. Daraus folgt das Risiko, dass selbst ein enger Bearbeitungsumfang operative Nebenwirkungen erzeugt."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": "Wenn die App zugleich Einarbeitungswissen, Profilinformationen, Kommunikationswissen, No-Gos, Videos, Hilfe und eventuell weitere Module b\u00FCndelt, besteht das Risiko einer schleichenden Ausweitung zur allgemeinen Dokumentationsl\u00F6sung, wodurch Fokus und Nutzbarkeit f\u00FCr unterst\u00FCtzende Kommunikation leiden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "REQ-13",
+        "REQ-27",
+        "REQ-32",
+        "REQ-34"
+      ],
+      "assumptions": [
+        "Zus\u00E4tzliche Funktionsw\u00FCnsche werden im Projektverlauf eher erg\u00E4nzt als strikt abgegrenzt.",
+        "assumption: Nutzer orientieren den fachlichen Einsatz an den im System verf\u00FCgbaren Modulen."
+      ],
+      "derivationRationale": "REQ-27 warnt ausdr\u00FCcklich davor, den Umfang auszuweiten und den Fokus zu verlieren. Zusammen mit den bereits vorgesehenen Wissens-, No-Go-, Hilfs- und m\u00F6glichen Kalender-/Medikationsfunktionen folgt das Risiko von Scope Drift und damit einer Verw\u00E4sserung des eigentlichen Kommunikationszwecks."
+    },
+    {
+      "itemId": "DRISK-08",
+      "origin": "Derived",
+      "text": "Die Kombination aus interner Nutzung, fehlender Selbstregistrierung und zentraler Account-Erstellung nur durch Admins erzeugt ein operatives Risiko f\u00FCr verz\u00F6gerte Zugangsvergabe, insbesondere bei neuen Mitarbeitern, obwohl die L\u00F6sung gerade deren schnellen Wissenszugang unterst\u00FCtzen soll.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "REQ-16",
+        "REQ-17",
+        "REQ-24"
+      ],
+      "assumptions": [
+        "Neue Mitarbeiter ben\u00F6tigen zeitnah nach Arbeitsbeginn Zugriff auf die App.",
+        "assumption: Es gibt nicht beliebig viele Admins mit sofortiger Verf\u00FCgbarkeit."
+      ],
+      "derivationRationale": "REQ-03 setzt auf schnellen Nutzen f\u00FCr neue Mitarbeiter. Gleichzeitig beschr\u00E4nken REQ-16 und REQ-17 die Kontoanlage strikt auf Admins, und REQ-24 schlie\u00DFt externe offene Zugangswege aus. Daraus folgt ein naheliegendes Betriebsrisiko bei der Bereitstellung von Zug\u00E4ngen."
+    }
+  ]
+}

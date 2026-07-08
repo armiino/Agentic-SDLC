@@ -39,7 +39,12 @@ public sealed record ArtifactItem(
     [property: JsonPropertyName("origin")] ArtifactOrigin Origin,
     [property: JsonPropertyName("text")] string Text,
     [property: JsonPropertyName("sourceClaimIds")] IReadOnlyList<string> SourceClaimIds,
-    [property: JsonPropertyName("sourceArtifactItemIds")] IReadOnlyList<string> SourceArtifactItemIds);
+    [property: JsonPropertyName("sourceArtifactItemIds")] IReadOnlyList<string> SourceArtifactItemIds,
+    // Nur für origin=Derived (I-b): explizite Annahmen + Ableitungsbegründung. Bei Extraktion null/leer
+    // (rückwärtskompatibel: Default-Werte → I-a-ID-Gate bleibt unverändert). Reviewer §11.3: Annahmen als eigenes
+    // Feld, nicht in der Begründung versteckt.
+    [property: JsonPropertyName("assumptions")] IReadOnlyList<string>? Assumptions = null,
+    [property: JsonPropertyName("derivationRationale")] string? DerivationRationale = null);
 
 /// <summary>Reproduktions-/Audit-Metadaten des erzeugenden Laufs (koppelt an das run-config-Snapshot-System).</summary>
 public sealed record ProducerMetadata(
