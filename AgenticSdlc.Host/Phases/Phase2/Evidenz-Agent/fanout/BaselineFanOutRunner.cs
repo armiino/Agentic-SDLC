@@ -33,7 +33,7 @@ public static class BaselineFanOutRunner
     private const string Phase = "phase2_evidence";
     private const string SharedCorePrompt = "_shared-core";
 
-    private static readonly IReadOnlyDictionary<string, (string Agent, string Disposition)> ArtifactMap =
+    internal static readonly IReadOnlyDictionary<string, (string Agent, string Disposition)> ArtifactMap =
         new Dictionary<string, (string, string)>(StringComparer.OrdinalIgnoreCase)
         {
             ["requirements"] = ("EvidenceRequirementsAgent", "requirements"),
@@ -189,7 +189,7 @@ public static class BaselineFanOutRunner
         return 0;
     }
 
-    private static Microsoft.Agents.AI.Workflows.Workflow BuildBranch(
+    internal static Microsoft.Agents.AI.Workflows.Workflow BuildBranch(
         string artifactType, string agentName, string dispositionKey, ConsumableLedger ledger,
         int k, int minVotes, int maxIter, HostSettings settings, HostSettings judgeSettings,
         IChatClient makerBase, IChatClient judgeBase, RunContext run, string repoRoot)

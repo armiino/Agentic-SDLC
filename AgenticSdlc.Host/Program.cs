@@ -271,6 +271,13 @@ if (args.Length > 0 && string.Equals(args[0], "contract-repair", StringCompariso
     return;
 }
 
+// Volle MAF-Komposition: Ledger -> [Fan-out] -> SelectBaseline -> [Derivation] (mehrstufig BindAsExecutor).
+if (args.Length > 0 && string.Equals(args[0], "evidence-chain", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Chain.EvidenceChainRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // Derivation-Familie (verallgemeinert): config-gesteuerter Ableitungs-Workflow (Generate[Agent]->Anchor->Check).
 if (args.Length > 0 && string.Equals(args[0], "derive", StringComparison.OrdinalIgnoreCase))
 {

@@ -1,0 +1,186 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260708_205448_d3682c",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-25",
+        "REQ-27",
+        "REQ-28",
+        "REQ-29",
+        "REQ-31"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige und Mitarbeiter k\u00F6nnen derselben funktionalen Rolle nicht vollst\u00E4ndig gleichgestellt werden, wenn gleichzeitig einrichtungsbezogene Sichtbarkeitsgrenzen gelten sollen.",
+        "Die Rechtepr\u00FCfung muss sowohl Rollenrechte als auch Einrichtungszugeh\u00F6rigkeit gleichzeitig auswerten."
+      ],
+      "derivationRationale": "Aus rollenbasierten Accounts, Admin-Sonderrechten, eingeschr\u00E4nkten User-Rechten und hausbezogenen Zugriffen folgt ein mehrdimensionales Berechtigungsmodell. Da dessen technische Umsetzung laut Anforderung noch auszuarbeiten ist, ergibt sich das Risiko von Inkonsistenzen oder Fehlfreigaben."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "REQ-13",
+        "REQ-25",
+        "REQ-29",
+        "REQ-50",
+        "REQ-51"
+      ],
+      "assumptions": [
+        "Mitarbeiter und Angeh\u00F6rige erfassen Informationen mit unterschiedlichem Detailgrad und unterschiedlicher Begriffswahl.",
+        "Nicht l\u00F6schbare Inhalte werden nicht automatisch redaktionell harmonisiert."
+      ],
+      "derivationRationale": "Die App soll bestehendes und erfahrungsbasiertes Wissen erfassen und dynamisch erweitern; zus\u00E4tzlich d\u00FCrfen mehrere Nutzergruppen Inhalte hinzuf\u00FCgen, w\u00E4hrend normale User nicht l\u00F6schen d\u00FCrfen. Daraus folgt das Risiko wachsender Inkonsistenz, Doppelungen oder schwer vergleichbarer Eintr\u00E4ge."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-18",
+        "REQ-19",
+        "REQ-20",
+        "REQ-39"
+      ],
+      "assumptions": [
+        "Such- und Filterlogik st\u00FCtzt sich wesentlich auf strukturierte Beschreibungen und nicht auf automatische inhaltliche Erkennung aus Medien.",
+        "Nutzer tragen Beschreibungen manuell ein."
+      ],
+      "derivationRationale": "Die Anforderungen koppeln Suche ausdr\u00FCcklich an ein systematisches Beschreibungsmuster, gleichzeitig werden Videos, Bilder und Beschreibungen unterst\u00FCtzt. Wenn Medieninhalte nicht konsistent beschrieben werden, folgt daraus ein Risiko f\u00FCr geringe Auffindbarkeit trotz vorhandener Suchfunktion."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-11",
+        "REQ-12",
+        "REQ-13",
+        "REQ-14",
+        "REQ-45"
+      ],
+      "assumptions": [
+        "Neue Bilder und Inhalte werden im Alltag regelm\u00E4\u00DFig erg\u00E4nzt.",
+        "Es ist keine zus\u00E4tzliche Feinsteuerung der Benachrichtigungen vorgesehen."
+      ],
+      "derivationRationale": "About-Me-Inhalte sind dynamisch erweiterbar, neue Bilder werden hervorgehoben, und neue Uploads sollen per Popup an verbundene Nutzer gemeldet werden. Daraus folgt bei h\u00E4ufiger Nutzung das Risiko einer hohen Benachrichtigungsdichte."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-24",
+        "REQ-42"
+      ],
+      "assumptions": [
+        "Kalenderfunktionen werden von Stakeholdern als Einstiegspunkt f\u00FCr weitere organisatorische Dokumentationsw\u00FCnsche verstanden.",
+        "Es gibt keine bereits festgelegte Abgrenzung, welche Informationen noch zum Kommunikationsfokus geh\u00F6ren."
+      ],
+      "derivationRationale": "Ein Kalender ist vorgesehen, zugleich ist offen, wie weit die App \u00FCber Kommunikationsunterst\u00FCtzung hinausgehen darf. Daraus folgt das Risiko von Scope-Unsch\u00E4rfe und konkurrierenden Erwartungen an den Produktfokus."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-26",
+        "REQ-41",
+        "REQ-44",
+        "REQ-46"
+      ],
+      "assumptions": [
+        "Ein Teil der Bewohner ben\u00F6tigt mehr als nur gro\u00DFe Schrift und Kontrast, um die App zuverl\u00E4ssig zu bedienen.",
+        "Die Bewohner sollen den eingeschr\u00E4nkten Account tats\u00E4chlich eigenst\u00E4ndig nutzen k\u00F6nnen."
+      ],
+      "derivationRationale": "F\u00FCr Bewohner ist ein eigener Account mit reduzierten Funktionen vorgesehen; gleichzeitig werden Barrierefreiheit, Tutorials und alternative Eingaben gefordert. Daraus folgt das Risiko, dass eine nur allgemein barrierearme Gestaltung f\u00FCr die tats\u00E4chliche Nutzbarkeit nicht ausreicht."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-25",
+        "REQ-28",
+        "REQ-37"
+      ],
+      "assumptions": [
+        "Neue Nutzerkonten m\u00FCssen im laufenden Betrieb regelm\u00E4\u00DFig angelegt oder angepasst werden.",
+        "Es ist keine Delegation administrativer Teilaufgaben au\u00DFerhalb der Admin-Rolle vorgesehen."
+      ],
+      "derivationRationale": "Wenn Registrierung ausgeschlossen ist und nur Admins Konten und Rechte verwalten d\u00FCrfen, steigt mit zus\u00E4tzlichen Nutzergruppen die Abh\u00E4ngigkeit von wenigen administrativen Stellen. Daraus folgt das Risiko von Verz\u00F6gerungen oder R\u00FCckstau in der Kontenpflege."
+    },
+    {
+      "itemId": "DRISK-08",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-32",
+        "REQ-33",
+        "REQ-50",
+        "REQ-52"
+      ],
+      "assumptions": [
+        "F\u00FCr einen nutzbaren Startbestand m\u00FCssen Informationen aus Akten und Bilder tats\u00E4chlich \u00FCbernommen oder verarbeitet werden.",
+        "Ohne gekl\u00E4rte Zugriffs- und Einwilligungsfragen kann die Datenbef\u00FCllung nicht im vorgesehenen Umfang erfolgen."
+      ],
+      "derivationRationale": "Die App baut auf Wissen aus Akten und auf Bildmaterial auf; gleichzeitig sind Akteneinsicht, Bildzustimmungen und datenschutzbezogene Fragen noch offen. Daraus folgt das Risiko, dass Bef\u00FCllung, Test und produktiver Einsatz nicht rechtzeitig mit realen Inhalten m\u00F6glich sind."
+    },
+    {
+      "itemId": "DRISK-09",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-17",
+        "REQ-19",
+        "REQ-20",
+        "REQ-40",
+        "REQ-52",
+        "REQ-54"
+      ],
+      "assumptions": [
+        "Videoinhalte werden in relevantem Umfang genutzt.",
+        "Die Nutzung findet nicht ausschlie\u00DFlich unter stabilen Netzwerkbedingungen statt."
+      ],
+      "derivationRationale": "Die App soll unter iOS und Android laufen und Videos in Kommunikationsseiten integrieren; gleichzeitig ist offen, wie Cloud-Daten lokal gespeichert oder zwischengespeichert werden. Daraus folgt ein Risiko f\u00FCr Performance- und Verf\u00FCgbarkeitsunterschiede im praktischen Einsatz."
+    },
+    {
+      "itemId": "DRISK-10",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-21",
+        "REQ-22",
+        "REQ-23"
+      ],
+      "assumptions": [
+        "Im Betrieb entstehen fortlaufend neue Eintr\u00E4ge oder Pr\u00E4zisierungen.",
+        "Es ist keine explizite Strukturierung oder Priorisierung der No-Go-Eintr\u00E4ge beschrieben."
+      ],
+      "derivationRationale": "Die Anforderungen kombinieren laufende Erweiterbarkeit mit dem Anspruch auf knappe, schnell erfassbare Inhalte. Daraus folgt ein Spannungsverh\u00E4ltnis, das ohne zus\u00E4tzliche Struktur die \u00DCbersichtlichkeit gef\u00E4hrden kann."
+    }
+  ]
+}
