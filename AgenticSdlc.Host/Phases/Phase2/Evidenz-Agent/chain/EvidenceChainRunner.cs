@@ -16,8 +16,8 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Chain;
 /// <summary>
 /// Volle MAF-Komposition (CLI: <c>evidence-chain &lt;specId&gt; [model] [--dry-run]</c>): ein durchgängiger
 /// Workflow <c>Ledger → [Fan-out] → SelectBaseline → [Derivation]</c>, in dem Fan-out und Derivation je ein
-/// gebundener Sub-Workflow sind. Baut die Baseline für den vom Spec geforderten Quelltyp und leitet daraus ab.
-/// Runs unter <c>runs/evidence-chain/&lt;runId&gt;/</c>. Exit: 0 = ok/dry-run, 2 = Usage/IO, 3 = Workflow-Fehler,
+/// gebundener Sub-Workflow sind. Fan-outet JE Quelltyp der Spec eine Baseline (1..N, Multi-Source) und leitet aus der
+/// via SelectBaseline gezogenen Teilmenge ab. Runs unter <c>runs/evidence-chain/&lt;runId&gt;/</c>. Exit: 0 = ok/dry-run, 2 = Usage/IO, 3 = Workflow-Fehler,
 /// 4 = Konfig/LLM-Fehler.
 /// </summary>
 /// <remarks>
@@ -41,15 +41,13 @@ public static class EvidenceChainRunner
         }
         var specId = args[1];
         if (!DerivationRegistry.TryGet(specId, out var spec)) { Console.Error.WriteLine($"[chain] unbekannte specId '{specId}'."); return 2; }
-        if (spec.IsMultiSource)
-        {
-            Console.Error.WriteLine($"[chain] spec '{spec.Id}' ist Multi-Source ({spec.SourceLabel}); die Kette baut aktuell nur den Einzelquell-Fan-out. "
-                                  + "Nutze `derive <specId> <quelle1.artifact.json> <quelle2.artifact.json> …` (Multi-Source läuft dort), bis SelectSubset/LoadBaseline in der Kette stehen.");
-            return 2;
-        }
-        var sourceType = spec.PrimarySourceArtifactType;
-        if (!BaselineFanOutRunner.ArtifactMap.TryGetValue(sourceType, out var extract))
-        { Console.Error.WriteLine($"[chain] kein Evidence-Agent für Quelltyp '{sourceType}'."); return 2; }
+
+        // Bau-Punkt 2 (SelectSubset): die Kette fan-outet ALLE Quelltypen der Spec parallel; SelectBaseline zieht dann
+        // genau diese Teilmenge als SourceArtifactSet. Jeder Quelltyp braucht einen Evidence-Agent (ArtifactMap).
+        var sourceTypes = spec.SourceArtifactTypes;
+        var unknown = sourceTypes.Where(t => !BaselineFanOutRunner.ArtifactMap.ContainsKey(t)).ToList();
+        if (unknown.Count > 0)
+        { Console.Error.WriteLine($"[chain] kein Evidence-Agent für Quelltyp(en): {string.Join(", ", unknown)} (verfügbar: {string.Join(", ", BaselineFanOutRunner.ArtifactMap.Keys)})."); return 2; }
 
         if (!string.Equals(settings.EvidenceSource, "ledger", StringComparison.OrdinalIgnoreCase))
         { Console.Error.WriteLine("[chain] Arm B: setze evidenceAgent.source=ledger in run-config.json."); return 4; }
@@ -71,12 +69,12 @@ public static class EvidenceChainRunner
         run.WriteConfig(new
         {
             workflow = EvidenceChainWorkflow.WorkflowName, runId = run.RunId, spec = spec.Id,
-            sourceType, target = spec.TargetArtifactType,
+            sourceTypes, target = spec.TargetArtifactType,
             consumable = Path.GetRelativePath(repoRoot, consPath), claims = ledger.Claims.Count,
             provider = settings.LlmProvider, generatorModel = genSettings.ModelId, checkerModel = judgeSettings.ModelId,
             k, minVotes, maxIterations = maxIter, timestampUtc = DateTime.UtcNow
         });
-        Console.WriteLine($"[chain] runId={run.RunId} spec={spec.Id}  Ledger → [{sourceType}] → Select → [{spec.Id}]  genModel={genSettings.ModelId} checkModel={judgeSettings.ModelId}");
+        Console.WriteLine($"[chain] runId={run.RunId} spec={spec.Id}  Ledger → [Fan-out {spec.SourceLabel}] → Select → [{spec.Id}]  genModel={genSettings.ModelId} checkModel={judgeSettings.ModelId}");
 
         using var otel = OtelRunExporters.TryCreate(
             enabled: settings.OtelEnabled, sourceName: SourceName,
@@ -87,11 +85,17 @@ public static class EvidenceChainRunner
         var makerBase = ChatClientFactory.Create(settings);
         var judgeBase = ChatClientFactory.Create(judgeSettings);
 
-        // 1) Fan-out mit genau dem Zweig, den die Ableitung als Quelle braucht (Reuse BuildBranch).
-        var branch = BaselineFanOutRunner.BuildBranch(
-            sourceType, extract.Agent, extract.Disposition, ledger, k, minVotes, maxIter,
-            settings, judgeSettings, makerBase, judgeBase, run, repoRoot);
-        var fanOut = BaselineFanOutWorkflow.Build([(sourceType, branch)], run);
+        // 1) Fan-out: EIN Zweig je Quelltyp der Spec (Reuse BuildBranch). Bei Einzelquelle = genau ein Zweig (wie vorher).
+        var branches = new List<(string ArtifactType, Microsoft.Agents.AI.Workflows.Workflow Branch)>();
+        foreach (var t in sourceTypes)
+        {
+            var (agentName, disposition) = BaselineFanOutRunner.ArtifactMap[t];
+            var branch = BaselineFanOutRunner.BuildBranch(
+                t, agentName, disposition, ledger, k, minVotes, maxIter,
+                settings, judgeSettings, makerBase, judgeBase, run, repoRoot);
+            branches.Add((t, branch));
+        }
+        var fanOut = BaselineFanOutWorkflow.Build(branches, run);
 
         // 2) Derivation-Workflow (Generator = echter Agent, Check = Judge).
         var genClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, $"DerivationGenerate-{spec.Id}", SourceName);
@@ -104,17 +108,18 @@ public static class EvidenceChainRunner
             new DerivationAnchorExecutor(spec, run),
             new DerivationCheckExecutor(new InferenceChecker(checkClient, settings.JuryStructuredOutput), spec, genSettings.ModelId, run));
 
-        // 3) Verketten.
-        var chain = EvidenceChainWorkflow.Build(fanOut, derivation, [sourceType], run);
+        // 3) Verketten (SelectBaseline zieht die volle Quelltyp-Liste = SelectSubset).
+        var chain = EvidenceChainWorkflow.Build(fanOut, derivation, sourceTypes, run);
 
         if (dryRun)
         {
-            Console.WriteLine($"[chain] --dry-run: Chain Build()-bar (Ledger → [Fan-out {sourceType}] → Select → [Derivation {spec.Id}]). Kein LLM.");
+            Console.WriteLine($"[chain] --dry-run: Chain Build()-bar (Ledger → [Fan-out {spec.SourceLabel}] → Select({spec.SourceLabel}) → [Derivation {spec.Id}]). Kein LLM.");
             Console.WriteLine($"[chain] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
             return 0;
         }
 
-        var sourceBlock = "EVIDENCE-LEDGER (freigegebene Claims):\n\n" + EvidenceLedgerProjection.Project(ledger.Claims, extract.Disposition);
+        // Fan-out reicht EINE disposition-annotierte Projektion an ALLE Zweige; jeder Zweig-Prompt liest seine Disposition.
+        var sourceBlock = "EVIDENCE-LEDGER (freigegebene Claims):\n\n" + EvidenceLedgerProjection.Project(ledger.Claims, spec.PrimarySourceArtifactType);
         Console.WriteLine("[chain] running full chain (ledger -> fan-out -> select -> derivation)...");
         try
         {
@@ -127,11 +132,10 @@ public static class EvidenceChainRunner
             return 4;
         }
 
-        // Wahrheit von Disk: baseline ({sourceType}.artifact.json) + Ableitung ({target}.derived.json).
-        var basePath = Path.Combine(run.RunDir, $"{sourceType}.artifact.json");
-        var derivedPath = Path.Combine(run.RunDir, $"{spec.TargetArtifactType}.derived.json");
-        int baseItems = Count(basePath, "items"), derivedItems = Count(derivedPath, "items");
-        Console.WriteLine($"[chain] fertig: Baseline {sourceType}={baseItems} items → {spec.TargetArtifactType} abgeleitet={derivedItems} items");
+        // Wahrheit von Disk: je Quelltyp eine baseline ({type}.artifact.json) + Ableitung ({target}.derived.json).
+        var baseParts = sourceTypes.Select(t => $"{t}={Count(Path.Combine(run.RunDir, $"{t}.artifact.json"), "items")}");
+        var derivedItems = Count(Path.Combine(run.RunDir, $"{spec.TargetArtifactType}.derived.json"), "items");
+        Console.WriteLine($"[chain] fertig: Baselines [{string.Join(", ", baseParts)}] items → {spec.TargetArtifactType} abgeleitet={derivedItems} items");
         Console.WriteLine($"[chain] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
         return 0;
     }

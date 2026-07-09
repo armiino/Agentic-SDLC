@@ -42,6 +42,11 @@ public static class DerivationRegistry
             ["requirements-gap"] = new(
                 Id: "requirements-gap", SourceArtifactTypes: ["requirements"], TargetArtifactType: "requirements",
                 AgentName: "EvidenceRequirementsGapAgent", PromptName: "RequirementsGapFromRequirements1", ItemIdPrefix: "DREQ"),
+
+            // Multi-Source-Demo (Bau-Punkt 2): Risiken aus requirements + architecture (Zusammenspiel).
+            ["derived-risks-multi"] = new(
+                Id: "derived-risks-multi", SourceArtifactTypes: ["requirements", "architecture"], TargetArtifactType: "risks",
+                AgentName: "EvidenceDerivedRisksAgent", PromptName: "DerivedRisksFromReqArch1", ItemIdPrefix: "DRISK"),
         };
 
     public static bool TryGet(string id, out DerivationSpec spec) => Specs.TryGetValue(id, out spec!);
