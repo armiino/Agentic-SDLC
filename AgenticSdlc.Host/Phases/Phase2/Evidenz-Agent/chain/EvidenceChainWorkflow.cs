@@ -1,5 +1,6 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
 using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
@@ -8,36 +9,41 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Chain;
 
 /// <summary>
 /// Bindeglied der vollen Komposition: nimmt das <see cref="VerifiedBaselineSet"/> des Fan-outs und wählt die
-/// EINE Baseline aus, aus der abgeleitet werden soll (z. B. requirements) — als typisiertes
-/// <see cref="ArtifactDocument"/> für den nachgelagerten Derivation-Knoten. Die vollen Items liest es von der Platte
-/// (der Fan-out-Collector hat <c>{type}.artifact.json</c> in denselben Run geschrieben — „Disk = Wahrheit", wie in
-/// LedgerBuildRunner; das VerifiedBaselineSet selbst trägt nur den Index).
+/// Baseline(s) aus, aus der/denen abgeleitet werden soll — als <see cref="SourceArtifactSet"/> für den nachgelagerten
+/// Derivation-Knoten. Die vollen Items liest es von der Platte (der Fan-out-Collector hat <c>{type}.artifact.json</c>
+/// in denselben Run geschrieben — „Disk = Wahrheit", wie in LedgerBuildRunner; das VerifiedBaselineSet selbst trägt
+/// nur den Index). Mehrere Typen ⇒ Multi-Source-Set (dann müssen alle Zweige im Fan-out gelaufen sein).
 /// </summary>
-[SendsMessage(typeof(ArtifactDocument))]
+[SendsMessage(typeof(SourceArtifactSet))]
 internal sealed class SelectBaselineExecutor : Executor<VerifiedBaselineSet>
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
-    private readonly string _artifactType;
+    private readonly IReadOnlyList<string> _artifactTypes;
     private readonly RunContext _run;
 
-    public SelectBaselineExecutor(string artifactType, RunContext run) : base($"SelectBaseline-{artifactType}")
+    public SelectBaselineExecutor(IReadOnlyList<string> artifactTypes, RunContext run)
+        : base($"SelectBaseline-{string.Join("+", artifactTypes)}")
     {
-        _artifactType = artifactType;
+        _artifactTypes = artifactTypes;
         _run = run;
     }
 
     public override async ValueTask HandleAsync(VerifiedBaselineSet set, IWorkflowContext context, CancellationToken ct = default)
     {
-        var path = Path.Combine(_run.RunDir, $"{_artifactType}.artifact.json");
-        if (!File.Exists(path))
-            throw new InvalidOperationException($"[chain] Baseline '{_artifactType}.artifact.json' nicht im Run — Fan-out enthielt den Typ nicht?");
+        var docs = new List<ArtifactDocument>(_artifactTypes.Count);
+        foreach (var artifactType in _artifactTypes)
+        {
+            var path = Path.Combine(_run.RunDir, $"{artifactType}.artifact.json");
+            if (!File.Exists(path))
+                throw new InvalidOperationException($"[chain] Baseline '{artifactType}.artifact.json' nicht im Run — Fan-out enthielt den Typ nicht?");
 
-        var doc = JsonSerializer.Deserialize<ArtifactDocument>(await File.ReadAllTextAsync(path, ct).ConfigureAwait(false), Json)
-                  ?? throw new InvalidOperationException($"[chain] {_artifactType}.artifact.json nicht lesbar.");
+            docs.Add(JsonSerializer.Deserialize<ArtifactDocument>(await File.ReadAllTextAsync(path, ct).ConfigureAwait(false), Json)
+                     ?? throw new InvalidOperationException($"[chain] {artifactType}.artifact.json nicht lesbar."));
+        }
 
-        _run.AppendEvent(new { type = "BASELINE_SELECTED", runId = _run.RunId, artifactType = _artifactType, items = doc.Items.Count, timestampUtc = DateTime.UtcNow });
-        await context.SendMessageAsync(doc).ConfigureAwait(false);
+        _run.AppendEvent(new { type = "BASELINE_SELECTED", runId = _run.RunId, artifactTypes = _artifactTypes, items = docs.Sum(d => d.Items.Count), timestampUtc = DateTime.UtcNow });
+        await context.SendMessageAsync(new SourceArtifactSet(docs)).ConfigureAwait(false);
     }
 }
 
@@ -58,16 +64,16 @@ public static class EvidenceChainWorkflow
     internal static Microsoft.Agents.AI.Workflows.Workflow Build(
         Microsoft.Agents.AI.Workflows.Workflow fanOut,
         Microsoft.Agents.AI.Workflows.Workflow derivation,
-        string sourceArtifactType,
+        IReadOnlyList<string> sourceArtifactTypes,
         RunContext run)
     {
         var fanOutNode = fanOut.BindAsExecutor("BaselineFanOut");
-        var select = new SelectBaselineExecutor(sourceArtifactType, run);
+        var select = new SelectBaselineExecutor(sourceArtifactTypes, run);
         var derivationNode = derivation.BindAsExecutor("Derivation");
 
         var builder = new WorkflowBuilder(fanOutNode)
             .WithName(WorkflowName)
-            .WithDescription($"Ledger → [Fan-out] → Select({sourceArtifactType}) → [Derivation] (mehrstufig BindAsExecutor).");
+            .WithDescription($"Ledger → [Fan-out] → Select({string.Join("+", sourceArtifactTypes)}) → [Derivation] (mehrstufig BindAsExecutor).");
 
         builder.AddEdge(fanOutNode, select);
         builder.AddEdge(select, derivationNode);
