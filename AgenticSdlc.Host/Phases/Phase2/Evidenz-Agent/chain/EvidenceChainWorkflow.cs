@@ -2,6 +2,7 @@ using System.Text.Json;
 using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
 using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
 using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut;
+using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Load;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
@@ -76,6 +77,30 @@ public static class EvidenceChainWorkflow
             .WithDescription($"Ledger → [Fan-out] → Select({string.Join("+", sourceArtifactTypes)}) → [Derivation] (mehrstufig BindAsExecutor).");
 
         builder.AddEdge(fanOutNode, select);
+        builder.AddEdge(select, derivationNode);
+        builder.WithOutputFrom(derivationNode);
+        return builder.Build();
+    }
+
+    /// <summary>
+    /// Bau-Punkt 3 (<c>mode:load</c>): dieselbe Kette OHNE frischen Fan-out — die Baseline-Quelle ist ein
+    /// <see cref="LoadBaselineExecutor"/> (liest vorhandene Artefakte). Downstream (<c>Select → [Derivation]</c>)
+    /// ist identisch zum Build-Modus; nur der Startknoten ist getauscht. Input = trivialer Trigger-String.
+    /// </summary>
+    internal static Microsoft.Agents.AI.Workflows.Workflow BuildFromLoad(
+        LoadBaselineExecutor load,
+        Microsoft.Agents.AI.Workflows.Workflow derivation,
+        IReadOnlyList<string> sourceArtifactTypes,
+        RunContext run)
+    {
+        var select = new SelectBaselineExecutor(sourceArtifactTypes, run);
+        var derivationNode = derivation.BindAsExecutor("Derivation");
+
+        var builder = new WorkflowBuilder(load)
+            .WithName($"{WorkflowName}-Load")
+            .WithDescription($"LoadBaseline({string.Join("+", sourceArtifactTypes)}) → Select → [Derivation] (mode:load, kein Fan-out).");
+
+        builder.AddEdge(load, select);
         builder.AddEdge(select, derivationNode);
         builder.WithOutputFrom(derivationNode);
         return builder.Build();
