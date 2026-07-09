@@ -1,0 +1,162 @@
+{
+  "artifactId": "DREQ",
+  "artifactType": "requirements",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260709_143733_299d8c",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "RequirementsGapFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DREQ-01",
+      "origin": "Derived",
+      "text": "Das System muss serverseitig erzwingen, dass Nutzer nur die Profile und Inhalte sehen und \u00F6ffnen k\u00F6nnen, f\u00FCr die sie gem\u00E4\u00DF Rolle und Einrichtungszugeh\u00F6rigkeit berechtigt sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-08",
+        "REQ-31",
+        "REQ-37"
+      ],
+      "assumptions": [
+        "Die in der Profil\u00FCbersicht angezeigten Profile d\u00FCrfen nicht nur in der Oberfl\u00E4che gefiltert, sondern m\u00FCssen tats\u00E4chlich zugriffsgesch\u00FCtzt sein.",
+        "Die Berechtigungen gelten nicht nur f\u00FCr die \u00DCbersichtsseite, sondern auch f\u00FCr nachgelagerte Detail- und Inhaltsseiten eines Profils."
+      ],
+      "derivationRationale": "Aus der zug\u00E4nglichen Profil\u00FCbersicht, rollenbasierten Accounts und einrichtungsbezogenen Zugriffsbeschr\u00E4nkung folgt zwingend, dass der Zugriff auf Profile technisch autorisiert werden muss; sonst w\u00E4ren die genannten Einschr\u00E4nkungen nicht verl\u00E4sslich erf\u00FCllbar."
+    },
+    {
+      "itemId": "DREQ-02",
+      "origin": "Derived",
+      "text": "F\u00FCr jedes Profil muss eine eindeutige Zuordnung zu genau einer Einrichtung oder einem zugriffsbeschr\u00E4nkenden organisatorischen Kontext gespeichert werden, damit die einrichtungsbezogene Sichtbarkeit von Profilen umgesetzt werden kann.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-11",
+        "REQ-37"
+      ],
+      "assumptions": [
+        "Neue Profile m\u00FCssen so gespeichert werden, dass das in REQ-37 geforderte Berechtigungsmodell darauf anwendbar ist.",
+        "Die organisatorische Zuordnung erfolgt auf Profilebene."
+      ],
+      "derivationRationale": "Wenn Mitarbeiter nur Profile ihres eigenen Hauses sehen d\u00FCrfen und neue Profile angelegt werden k\u00F6nnen, ben\u00F6tigt jedes Profil eine gespeicherte Zuordnung zur Einrichtung; ohne diese ist die Zugriffsbeschr\u00E4nkung nicht operationalisierbar."
+    },
+    {
+      "itemId": "DREQ-03",
+      "origin": "Derived",
+      "text": "Neu angelegte Nutzeraccounts m\u00FCssen vor der ersten Anmeldung bereits durch einen Admin erstellt und einer Rolle sowie einem zul\u00E4ssigen Zugriffskontext zugeordnet worden sein.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-07",
+        "REQ-30",
+        "REQ-31",
+        "REQ-37"
+      ],
+      "assumptions": [
+        "Da keine Selbstregistrierung vorgesehen ist, m\u00FCssen alle ben\u00F6tigten Berechtigungsmerkmale bei der Accountanlage gesetzt werden.",
+        "Der zul\u00E4ssige Zugriffskontext umfasst mindestens die Einrichtungszugeh\u00F6rigkeit."
+      ],
+      "derivationRationale": "Ohne Registrierung und mit adminverwalteten Rechten sowie einrichtungsbezogenen Beschr\u00E4nkungen ist eine vorgelagerte, vollst\u00E4ndige Account-Provisionierung logisch erforderlich."
+    },
+    {
+      "itemId": "DREQ-04",
+      "origin": "Derived",
+      "text": "Das System muss pro Inhaltseintrag pr\u00FCfen, ob der aktuelle Nutzer ihn gem\u00E4\u00DF seiner Rolle bearbeiten oder hinzuf\u00FCgen darf; insbesondere d\u00FCrfen Bewohner nur die f\u00FCr ihren Account erlaubten Inhalte im eigenen Profil hinzuf\u00FCgen oder \u00E4ndern.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-14",
+        "REQ-15",
+        "REQ-19",
+        "REQ-21",
+        "REQ-22",
+        "REQ-25",
+        "REQ-31"
+      ],
+      "assumptions": [
+        "Die in REQ-06 genannte Einschr\u00E4nkung des Bewohner-Accounts soll technisch durchgesetzt werden und nicht nur als Nutzungshinweis dienen.",
+        "Bearbeitungsrechte m\u00FCssen je Funktionsbereich wirksam begrenzt werden, weil mehrere Bereiche Inhalte per Plus-Button erg\u00E4nzbar machen."
+      ],
+      "derivationRationale": "Da zahlreiche Bereiche dynamisch erweiterbar sind, gleichzeitig aber Rollen mit eingeschr\u00E4nkten Rechten existieren, ist eine bereichsbezogene Autorisierung f\u00FCr Schreibzugriffe notwendig."
+    },
+    {
+      "itemId": "DREQ-05",
+      "origin": "Derived",
+      "text": "F\u00FCr das Hinzuf\u00FCgen von Kommunikationsinhalten muss ein einheitlich strukturiertes Erfassungsschema bereitgestellt werden, das die f\u00FCr Suche und Filterung ben\u00F6tigten Beschreibungsangaben verbindlich abfragt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-19",
+        "REQ-23"
+      ],
+      "assumptions": [
+        "Die in REQ-23 geforderte Suche soll auf strukturierten, nicht nur frei formulierten Eingaben beruhen.",
+        "Neue Kommunikationsarten und -eintr\u00E4ge werden \u00FCber Eingabemasken erfasst."
+      ],
+      "derivationRationale": "Wenn Kommunikationsinhalte erweiterbar sind und die Suche ein systematisches Beschreibungsmuster voraussetzt, muss die Erfassung diese Struktur aktiv sicherstellen."
+    },
+    {
+      "itemId": "DREQ-06",
+      "origin": "Derived",
+      "text": "Die Suchfunktionen m\u00FCssen mindestens auf den jeweils angezeigten und f\u00FCr den Nutzer berechtigten Datenbestand begrenzt werden, damit keine nicht zug\u00E4nglichen Profile oder Inhalte \u00FCber Suchtreffer offengelegt werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-09",
+        "REQ-23",
+        "REQ-31",
+        "REQ-37"
+      ],
+      "assumptions": [
+        "Suchfunktionen d\u00FCrfen keine Informationen \u00FCber nicht sichtbare Datens\u00E4tze preisgeben.",
+        "Die Suchlogik folgt denselben Berechtigungsregeln wie die normale Anzeige."
+      ],
+      "derivationRationale": "Aus Suchfunktionen in Verbindung mit rollen- und einrichtungsbezogenen Zugriffsbeschr\u00E4nkungen folgt, dass auch Suchergebnisse autorisiert gefiltert werden m\u00FCssen."
+    },
+    {
+      "itemId": "DREQ-07",
+      "origin": "Derived",
+      "text": "Wenn neue Inhalte im About-Me-Bereich einrichtungsweit per Popup angek\u00FCndigt werden, d\u00FCrfen solche Benachrichtigungen nur an Nutzer derselben Einrichtung und nur f\u00FCr Profile versendet werden, auf die diese Nutzer regul\u00E4r zugreifen d\u00FCrfen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-42",
+        "REQ-37",
+        "REQ-31"
+      ],
+      "assumptions": [
+        "Die sp\u00E4tere Benachrichtigungsfunktion muss bestehende Berechtigungsgrenzen einhalten.",
+        "Benachrichtigungen d\u00FCrfen keine Informationen \u00FCber fremde Einrichtungen oder unberechtigte Profile offenlegen."
+      ],
+      "derivationRationale": "Die geplante Benachrichtigung steht im Zusammenspiel mit dem Berechtigungsmodell; ohne entsprechende Einschr\u00E4nkung w\u00FCrde sie die Zugriffsbeschr\u00E4nkung unterlaufen."
+    },
+    {
+      "itemId": "DREQ-08",
+      "origin": "Derived",
+      "text": "Vor dem Speichern oder Anzeigen von Bewohnerbildern muss gepr\u00FCft sein, ob f\u00FCr das jeweilige Bild eine datenschutzrechtlich zul\u00E4ssige Freigabe vorliegt; nicht freigegebene Bilder d\u00FCrfen nicht verwendet werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-13",
+        "REQ-15",
+        "REQ-39"
+      ],
+      "assumptions": [
+        "Die in REQ-39 genannte Kl\u00E4rung f\u00FChrt im Betrieb zu einer fallbezogenen Zul\u00E4ssigkeitspr\u00FCfung pro Bildverwendung.",
+        "Bilder k\u00F6nnen sowohl beim initialen Profil als auch in sp\u00E4teren About-Me-Eintr\u00E4gen vorkommen."
+      ],
+      "derivationRationale": "Da Bilder zentraler Bestandteil des Profils sind, ihre Nutzung aber unter Datenschutzvorbehalt steht, ist eine verbindliche Freigabepr\u00FCfung logisch erforderlich, damit die Bildfunktionen rechtskonform nutzbar sind."
+    },
+    {
+      "itemId": "DREQ-09",
+      "origin": "Derived",
+      "text": "Falls Informationen aus Akten oder schriftlicher Dokumentation in die App \u00FCbernommen werden, muss deren Herkunft nachvollziehbar einem Bewohnerprofil zugeordnet werden, damit das \u00FCbernommene Wissen korrekt dem richtigen Profil zugeordnet bleibt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-45",
+        "REQ-47"
+      ],
+      "assumptions": [
+        "Die in REQ-02 und REQ-45 genannten Wissensquellen k\u00F6nnen inhaltlich in Profile einflie\u00DFen, sofern die datenschutzrechtliche Kl\u00E4rung dies erlaubt.",
+        "Nachvollziehbarkeit bezieht sich mindestens auf die korrekte Zuordnung zum Bewohner, nicht zwingend auf formale Revisionshistorie."
+      ],
+      "derivationRationale": "Wenn Wissen aus bestehenden Akten und Dokumentationen \u00FCbernommen werden soll, ist eine saubere Zuordnung zum jeweiligen Bewohner notwendig; sonst w\u00FCrde die Kernfunktion des besseren Verstehens durch Fehlzuordnung gef\u00E4hrdet."
+    }
+  ]
+}

@@ -33,10 +33,11 @@ internal sealed class CheckerExecutor : Executor<CheckArtifactMessage>
     private readonly int _minVotes;
     private readonly int _maxIterations;
     private readonly RunContext _run;
+    private readonly string _outDir;
 
     public CheckerExecutor(
         ContractCritic critic, ConsumableLedger ledger, string artifactDisposition,
-        int k, int minVotes, int maxIterations, RunContext run)
+        int k, int minVotes, int maxIterations, RunContext run, string? outputScope = null)
         : base(ExecutorName)
     {
         _critic = critic;
@@ -46,6 +47,7 @@ internal sealed class CheckerExecutor : Executor<CheckArtifactMessage>
         _minVotes = minVotes;
         _maxIterations = maxIterations;
         _run = run;
+        _outDir = run.OutputDir(outputScope);
     }
 
     public override async ValueTask HandleAsync(
@@ -107,7 +109,7 @@ internal sealed class CheckerExecutor : Executor<CheckArtifactMessage>
     private void WriteStepReport(
         int iteration, ContractCheckReport structural, CriticVoteReport evidence, ContractDecision decision)
     {
-        var dir = Path.Combine(_run.RunDir, $"step-check-{iteration:D2}");
+        var dir = Path.Combine(_outDir, $"step-check-{iteration:D2}");
         Directory.CreateDirectory(dir);
         var payload = new
         {

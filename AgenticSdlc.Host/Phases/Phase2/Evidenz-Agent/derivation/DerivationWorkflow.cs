@@ -29,11 +29,43 @@ public sealed record SourceArtifactSet(IReadOnlyList<ArtifactDocument> Sources)
 
 /// <summary>Ein vom Generator-Agenten erzeugtes Roh-Item (vor Anker-Validierung + ID-Vergabe). Generisch für JEDE
 /// Ableitung (Risiken, Gap-Requirements, User-Stories …).</summary>
+/// <remarks>
+/// TOLERANT ggü. Feldnamen-Varianten des Generators: der Aussagetext kann als <c>text</c>, <c>statement</c>,
+/// <c>risk</c>, <c>requirement</c> ODER als <c>title</c>+<c>description</c> kommen. <see cref="EffectiveText"/>
+/// normalisiert das auf EINEN Text. Grund: der Generate-Agent liefert je Prompt/Modell mal <c>text</c>, mal
+/// <c>title/description</c> — ohne Normalisierung landete der Risikotext als <c>null</c> im Artefakt (Bug, run 299d8c:
+/// 8/8 Risiken ohne Text; der Inference-Check „Supported" war dadurch wertlos).
+/// </remarks>
 public sealed record RawDerivedItem(
-    [property: JsonPropertyName("text")] string Text,
-    [property: JsonPropertyName("sourceArtifactItemIds")] IReadOnlyList<string> SourceArtifactItemIds,
-    [property: JsonPropertyName("assumptions")] IReadOnlyList<string> Assumptions,
-    [property: JsonPropertyName("rationale")] string Rationale);
+    [property: JsonPropertyName("text")] string? Text,
+    [property: JsonPropertyName("sourceArtifactItemIds")] IReadOnlyList<string>? SourceArtifactItemIds,
+    [property: JsonPropertyName("assumptions")] IReadOnlyList<string>? Assumptions,
+    [property: JsonPropertyName("rationale")] string? Rationale)
+{
+    [property: JsonPropertyName("title")] public string? Title { get; init; }
+    [property: JsonPropertyName("description")] public string? Description { get; init; }
+    [property: JsonPropertyName("statement")] public string? Statement { get; init; }
+    [property: JsonPropertyName("risk")] public string? Risk { get; init; }
+    [property: JsonPropertyName("requirement")] public string? Requirement { get; init; }
+
+    /// <summary>Normalisierter Item-Text (leer, wenn der Generator gar keinen lieferte → wird verworfen).</summary>
+    [JsonIgnore]
+    public string EffectiveText
+    {
+        get
+        {
+            var direct = FirstNonEmpty(Text, Statement, Risk, Requirement);
+            if (!string.IsNullOrWhiteSpace(direct)) return direct!.Trim();
+            var t = Title?.Trim();
+            var d = Description?.Trim();
+            if (!string.IsNullOrWhiteSpace(t) && !string.IsNullOrWhiteSpace(d)) return $"{t} — {d}";
+            return FirstNonEmpty(t, d)?.Trim() ?? string.Empty;
+        }
+    }
+
+    private static string? FirstNonEmpty(params string?[] values)
+        => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
+}
 
 /// <summary>Ungültig verankertes Item (Anker fehlt/zeigt ins Leere) — Audit, nicht ins konsumierbare Dokument.</summary>
 public sealed record InvalidAnchor(string Text, IReadOnlyList<string> Anchors, IReadOnlyList<string> BadIds, string Reason);

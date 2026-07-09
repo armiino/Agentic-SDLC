@@ -23,8 +23,9 @@ internal sealed class SelectBaselineExecutor : Executor<VerifiedBaselineSet>
     private readonly IReadOnlyList<string> _artifactTypes;
     private readonly RunContext _run;
 
-    public SelectBaselineExecutor(IReadOnlyList<string> artifactTypes, RunContext run)
-        : base($"SelectBaseline-{string.Join("+", artifactTypes)}")
+    // idSuffix macht den Executor eindeutig, wenn mehrere Ableitungen (Rezept) dieselbe Quell-Teilmenge wählen.
+    public SelectBaselineExecutor(IReadOnlyList<string> artifactTypes, RunContext run, string? idSuffix = null)
+        : base($"SelectBaseline-{string.Join("+", artifactTypes)}{(idSuffix is null ? "" : "-" + idSuffix)}")
     {
         _artifactTypes = artifactTypes;
         _run = run;
@@ -35,9 +36,9 @@ internal sealed class SelectBaselineExecutor : Executor<VerifiedBaselineSet>
         var docs = new List<ArtifactDocument>(_artifactTypes.Count);
         foreach (var artifactType in _artifactTypes)
         {
-            var path = Path.Combine(_run.RunDir, $"{artifactType}.artifact.json");
+            var path = Path.Combine(_run.RunDir, "baselines", artifactType, "artifact.json");
             if (!File.Exists(path))
-                throw new InvalidOperationException($"[chain] Baseline '{artifactType}.artifact.json' nicht im Run — Fan-out enthielt den Typ nicht?");
+                throw new InvalidOperationException($"[chain] Baseline 'baselines/{artifactType}/artifact.json' nicht im Run — Fan-out enthielt den Typ nicht?");
 
             docs.Add(JsonSerializer.Deserialize<ArtifactDocument>(await File.ReadAllTextAsync(path, ct).ConfigureAwait(false), Json)
                      ?? throw new InvalidOperationException($"[chain] {artifactType}.artifact.json nicht lesbar."));

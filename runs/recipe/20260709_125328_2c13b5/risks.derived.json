@@ -1,0 +1,175 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260709_125328_2c13b5",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArch1"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-05",
+        "REQ-33",
+        "REQ-37",
+        "ARCH-08",
+        "ARCH-09",
+        "ARCH-10"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige sind nicht zwingend Mitarbeiter derselben Einrichtung und passen daher nicht automatisch in ein rein einrichtungsbezogenes Zugriffsmodell.",
+        "Bewohnerbeziehungen und Angeh\u00F6rigenbeziehungen k\u00F6nnen einrichtungs\u00FCbergreifend oder au\u00DFerhalb der Mitarbeiterstruktur liegen."
+      ],
+      "derivationRationale": "Aus REQ-37/ARCH-10 folgt ein hausbezogenes Berechtigungsmodell. REQ-04/ARCH-08 und REQ-05/ARCH-09 erweitern den Nutzerkreis aber um Angeh\u00F6rige und Bewohner. Daraus entsteht eine L\u00FCcke: Die Architektur beschreibt noch nicht, wie diese Rollen innerhalb des einrichtungsbezogenen Modells korrekt autorisiert werden."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-13",
+        "REQ-16",
+        "REQ-21",
+        "REQ-35",
+        "REQ-47",
+        "ARCH-03",
+        "ARCH-07",
+        "ARCH-19",
+        "ARCH-20",
+        "ARCH-21",
+        "ARCH-25",
+        "ARCH-36"
+      ],
+      "assumptions": [
+        "\u0027Keine Daten l\u00F6schen\u0027 umfasst auch fachlich \u00FCberholte oder irrt\u00FCmlich erfasste Inhalte, sofern kein alternativer Korrekturmechanismus vorgesehen ist.",
+        "Ein reines Hinzuf\u00FCgen neuer Inhalte ersetzt alte Eintr\u00E4ge nicht automatisch oder eindeutig."
+      ],
+      "derivationRationale": "Die Architektur sieht einen dynamisch wachsenden Wissensspeicher vor (ARCH-03, ARCH-19 bis ARCH-21), zugleich verbietet das Rollenmodell regul\u00E4ren Nutzern das L\u00F6schen von Daten (REQ-35, ARCH-07). In Verbindung mit der Anforderung, Informationen schnell auffindbar und f\u00FCr neue Mitarbeiter nutzbar zu machen (REQ-47, ARCH-25, ARCH-36), entsteht das Risiko sinkender Informationsqualit\u00E4t und Orientierbarkeit."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "REQ-47",
+        "ARCH-23",
+        "ARCH-25",
+        "ARCH-36"
+      ],
+      "assumptions": [
+        "Die Suche soll inhaltlich mehr leisten als reine Volltextsuche \u00FCber frei formulierte Eintr\u00E4ge.",
+        "Kommunikationswissen wird von mehreren Personen erfasst und daher ohne Standardisierung uneinheitlich beschrieben."
+      ],
+      "derivationRationale": "REQ-23 und ARCH-23 benennen die Suche ausdr\u00FCcklich als abh\u00E4ngig von einem erst noch zu definierenden Beschreibungsmuster. Zusammen mit REQ-47/ARCH-25 und ARCH-36, wonach Informationen schnell gefunden und besonders f\u00FCr neue Mitarbeiter nutzbar sein sollen, ergibt sich ein direktes Risiko f\u00FCr einen Kernnutzen der L\u00F6sung."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-12",
+        "REQ-31",
+        "REQ-46",
+        "REQ-48",
+        "REQ-49",
+        "ARCH-03",
+        "ARCH-14",
+        "ARCH-24",
+        "ARCH-26",
+        "ARCH-27",
+        "ARCH-36"
+      ],
+      "assumptions": [
+        "F\u00FCr einen n\u00FCtzlichen Wissensspeicher werden reale Bewohnerdaten, Bilder und dokumentierte Erfahrungen in substanzieller Form ben\u00F6tigt.",
+        "Datenschutzkl\u00E4rungen k\u00F6nnen den Zugriff auf bestimmte Quellen oder Medientypen tats\u00E4chlich einschr\u00E4nken."
+      ],
+      "derivationRationale": "Die Kernarchitektur als Wissensspeicher basiert auf vorhandenen Akten und pers\u00F6nlichen Inhalten (ARCH-03, ARCH-14, ARCH-24). REQ-48/REQ-49 sowie ARCH-26/ARCH-27 machen aber deutlich, dass zentrale Datenquellen und Bildnutzungen noch nicht gekl\u00E4rt sind. Damit ist die Umsetzbarkeit des inhaltlichen Mehrwerts selbst gef\u00E4hrdet."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-36",
+        "REQ-37",
+        "REQ-51",
+        "ARCH-06",
+        "ARCH-10",
+        "ARCH-34"
+      ],
+      "assumptions": [
+        "\u0027Interner Gebrauch\u0027 erfordert eine kontrollierte Begrenzung von Datenzugriff und -verteilung \u00FCber die Einrichtung hinaus.",
+        "Lokale Zwischenspeicherung kann Daten auf Ger\u00E4ten verf\u00FCgbar halten, auch wenn Berechtigungen oder Zugeh\u00F6rigkeiten sich \u00E4ndern."
+      ],
+      "derivationRationale": "REQ-36/ARCH-06 setzen internen Gebrauch voraus, REQ-37/ARCH-10 zus\u00E4tzlich ein restriktives Berechtigungsmodell. Mit REQ-51/ARCH-34 ist jedoch nur der Cloud-Ansatz benannt, w\u00E4hrend lokale Speicherung und Cache-Verhalten offen bleiben. Daraus folgt ein Architektur-Risiko an der Schnittstelle von Zugriffsbeschr\u00E4nkung und Datenhaltung."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-32",
+        "REQ-40",
+        "ARCH-09",
+        "ARCH-30"
+      ],
+      "assumptions": [
+        "Ein Teil der vorgesehenen Bewohnernutzer kann Standard-Touch- und Texteingaben nicht zuverl\u00E4ssig verwenden.",
+        "Visuelle Barrierefreiheit allein reicht f\u00FCr alternative Bedienbedarfe nicht aus."
+      ],
+      "derivationRationale": "REQ-32 fordert die Ber\u00FCcksichtigung alternativer Eingabemethoden. Die Architektur adressiert Barrierefreiheit bisher jedoch nur visuell (ARCH-30), w\u00E4hrend mit ARCH-09 ein Bewohnerzugang vorgesehen ist. Daraus folgt eine L\u00FCcke zwischen Nutzergruppe und konkret getragener Bedienbarkeit."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "REQ-30",
+        "REQ-33",
+        "ARCH-11",
+        "ARCH-15",
+        "ARCH-17",
+        "ARCH-32",
+        "ARCH-36"
+      ],
+      "assumptions": [
+        "Neue Mitarbeiter verf\u00FCgen anfangs nicht \u00FCber implizites Dom\u00E4nenwissen zur Struktur der App und zu den gepflegten Inhalten.",
+        "Die Kombination aus Rollen, Profilen und mehreren Inhaltsbereichen ist nicht automatisch selbsterkl\u00E4rend."
+      ],
+      "derivationRationale": "REQ-03 und ARCH-36 priorisieren den Nutzen f\u00FCr neue Mitarbeiter. Gleichzeitig ist Unterst\u00FCtzung durch Tutorial/Hilfe erst sp\u00E4ter vorgesehen (REQ-30, ARCH-32), obwohl die Architektur bereits mehrere Bereiche und Rollen umfasst. Das erzeugt ein Adoptions- und Nutzungsrisiko in einem zentralen Zielkontext."
+    },
+    {
+      "itemId": "DRISK-08",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-24",
+        "REQ-45",
+        "ARCH-05",
+        "ARCH-18"
+      ],
+      "assumptions": [
+        "Eine Erweiterung um medikationsnahe oder allgemeine Termin-Dokumentation w\u00FCrde den fachlichen Schwerpunkt der L\u00F6sung verbreitern.",
+        "Kalenderfunktionen konkurrieren in Umsetzung und Nutzung mit dem prim\u00E4ren Kommunikationszweck."
+      ],
+      "derivationRationale": "REQ-24/ARCH-18 lassen sensible Zusatzinhalte im Kalender offen. REQ-45 und ARCH-05 betonen aber, dass der Umfang begrenzt bleiben soll und keine vollst\u00E4ndige Dokumentation entstehen soll. Daraus folgt ein Scope-Risiko durch Architekturentscheidungen nahe an Dokumentationsfunktionen."
+    }
+  ]
+}

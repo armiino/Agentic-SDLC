@@ -43,18 +43,21 @@ public static class ArtifactBranchWorkflow
         string model,
         RunContext run)
     {
+        // Jeder Zweig schreibt in seinen eigenen Unterordner baselines/{type} → keine Kollision im Fan-out/Rezept.
+        var scope = $"baselines/{artifactType}";
+
         // 1) CheckerRepair-Subworkflow (der Zyklus) bauen — wie im Standalone-Fall, nur hier eingebettet.
-        var checker = new CheckerExecutor(critic, ledger, dispositionKey, k, minVotes, maxIterations, run);
-        var repairExec = new RepairExecutor(repair, ledger, run);
-        var finalize = new FinalizeExecutor(run, artifactType);
+        var checker = new CheckerExecutor(critic, ledger, dispositionKey, k, minVotes, maxIterations, run, scope);
+        var repairExec = new RepairExecutor(repair, ledger, run, scope);
+        var finalize = new FinalizeExecutor(run, artifactType, scope);
         var checkerRepair = CheckerRepairWorkflow.Build(checker, repairExec, finalize);
 
         // 2) Subworkflow als EIN Knoten binden (Zyklus versteckt).
         var checkerRepairNode = checkerRepair.BindAsExecutor($"CheckerRepair-{artifactType}");
 
         // 3) Zweig-Stufen davor/danach.
-        var maker = new ArtifactBranchMakerExecutor(agent, run, artifactType);
-        var assignIds = new ArtifactAssignIdsExecutor(run, artifactType, model);
+        var maker = new ArtifactBranchMakerExecutor(agent, run, artifactType, scope);
+        var assignIds = new ArtifactAssignIdsExecutor(run, artifactType, model, scope);
 
         // 4) Linearer Zweig-Außengraph.
         var builder = new WorkflowBuilder(maker)

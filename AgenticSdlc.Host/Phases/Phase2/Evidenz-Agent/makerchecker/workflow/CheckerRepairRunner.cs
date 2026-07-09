@@ -103,9 +103,10 @@ public static class CheckerRepairRunner
         var critic = new ContractCritic(checkerClient, settings.JuryStructuredOutput);
         var repair = new ContractRepair(repairClient, settings.JuryStructuredOutput);
 
-        var checker = new CheckerExecutor(critic, ledger, artifactDisposition, k, minVotes, maxIter, run);
-        var repairExec = new RepairExecutor(repair, ledger, run);
-        var finalize = new FinalizeExecutor(run, artifactDisposition);
+        var scope = $"baselines/{artifactDisposition}";
+        var checker = new CheckerExecutor(critic, ledger, artifactDisposition, k, minVotes, maxIter, run, scope);
+        var repairExec = new RepairExecutor(repair, ledger, run, scope);
+        var finalize = new FinalizeExecutor(run, artifactDisposition, scope);
 
         var workflow = CheckerRepairWorkflow.Build(checker, repairExec, finalize);
 
@@ -154,7 +155,7 @@ public static class CheckerRepairRunner
         // final-report.json (vom FinalizeExecutor) ist die Wahrheit. MAF surfaced YieldOutput hier nicht immer als
         // WorkflowOutputEvent in OutgoingEvents (Status Idle), daher NICHT auf das Event verlassen -> Disk lesen
         // (analog LedgerBuildRunner, der Step-Outputs von Disk liest). Event-result bleibt sekundärer Fallback.
-        var final = ReadFinalReport(run);
+        var final = ReadFinalReport(run, scope);
         if (final is { } f)
             Console.WriteLine($"[checker-repair] decision={f.Decision} nach {f.Iterations} Iteration(en) (MC0-Fehler={f.Mc0Errors}, C7-Restverstöße={f.C7Residual}).");
         else if (result is not null)
@@ -169,9 +170,9 @@ public static class CheckerRepairRunner
 
     /// <summary>Liest das Abschluss-Zertifikat von Disk (Wahrheitsquelle, unabhängig davon ob MAF das YieldOutput
     /// als Event surfaced).</summary>
-    private static (string Decision, int Iterations, int Mc0Errors, int C7Residual)? ReadFinalReport(RunContext run)
+    private static (string Decision, int Iterations, int Mc0Errors, int C7Residual)? ReadFinalReport(RunContext run, string scope)
     {
-        var path = Path.Combine(run.RunDir, "final-report.json");
+        var path = Path.Combine(run.OutputDir(scope), "final-report.json");
         if (!File.Exists(path)) return null;
         try
         {

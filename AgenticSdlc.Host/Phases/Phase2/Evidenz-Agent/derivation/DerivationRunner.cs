@@ -111,7 +111,7 @@ public static class DerivationRunner
         var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput);
         var generate = new DerivationGenerateExecutor(agent, spec, run);
         var anchor = new DerivationAnchorExecutor(spec, run);
-        var check = new DerivationCheckExecutor(checker, spec, genSettings.ModelId, run);
+        var check = new DerivationCheckExecutor(checker, spec, genSettings.ModelId, run, $"derivations/{spec.Id}");
         var workflow = DerivationWorkflow.Build(generate, anchor, check);
 
         if (dryRun)
@@ -134,13 +134,13 @@ public static class DerivationRunner
         }
 
         // Wahrheit von Disk (der Check-Executor schreibt).
-        var derivedPath = Path.Combine(run.RunDir, $"{spec.TargetArtifactType}.derived.json");
-        var reportPath = Path.Combine(run.RunDir, "derivation-report.json");
+        var derivedPath = Path.Combine(run.RunDir, "derivations", spec.Id, "derived.json");
+        var reportPath = Path.Combine(run.RunDir, "derivations", spec.Id, "derivation-report.json");
         int items = -1, invalid = -1;
         if (File.Exists(derivedPath)) { using var d = JsonDocument.Parse(await File.ReadAllTextAsync(derivedPath).ConfigureAwait(false)); items = d.RootElement.GetProperty("items").GetArrayLength(); }
         if (File.Exists(reportPath)) { using var d = JsonDocument.Parse(await File.ReadAllTextAsync(reportPath).ConfigureAwait(false)); invalid = d.RootElement.GetProperty("invalidAnchor").GetInt32(); }
         Console.WriteLine($"[derive] fertig: {spec.TargetArtifactType} abgeleitet, anker-gültig={items}, anker-ungültig={invalid}");
-        Console.WriteLine($"[derive] -> {spec.TargetArtifactType}.derived.json + inference-check-report.json  run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
+        Console.WriteLine($"[derive] -> derivations/{spec.Id}/derived.json + inference-check-report.json  run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
         return 0;
     }
 

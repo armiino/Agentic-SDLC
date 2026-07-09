@@ -41,19 +41,23 @@ internal sealed class LoadBaselineExecutor : Executor<string>
         var entries = new List<BaselineEntry>(_artifactTypes.Count);
         foreach (var type in _artifactTypes)
         {
-            var srcPath = Path.Combine(_sourceDir, $"{type}.artifact.json");
+            // Neues Layout: baselines/{type}/artifact.json. Fallback auf altes flaches {type}.artifact.json,
+            // damit vor dem Struktur-Umbau eingefrorene Runs (z. B. d3682c) weiter ladbar bleiben.
+            var srcPath = Path.Combine(_sourceDir, "baselines", type, "artifact.json");
+            if (!File.Exists(srcPath)) srcPath = Path.Combine(_sourceDir, $"{type}.artifact.json");
             if (!File.Exists(srcPath))
-                throw new InvalidOperationException($"[load] '{type}.artifact.json' nicht im Quell-Run '{_sourceDir}'.");
+                throw new InvalidOperationException($"[load] artifact.json für '{type}' nicht im Quell-Run '{_sourceDir}' (weder baselines/{type}/ noch flach).");
 
             var text = await File.ReadAllTextAsync(srcPath, ct).ConfigureAwait(false);
             var doc = JsonSerializer.Deserialize<ArtifactDocument>(text, Json)
-                      ?? throw new InvalidOperationException($"[load] '{type}.artifact.json' nicht lesbar.");
+                      ?? throw new InvalidOperationException($"[load] artifact.json für '{type}' nicht lesbar.");
             if (doc.Items.Count == 0)
-                throw new InvalidOperationException($"[load] '{type}.artifact.json' hat 0 Items.");
+                throw new InvalidOperationException($"[load] artifact.json für '{type}' hat 0 Items.");
 
-            // Kopie in den aktuellen Run (Disk = Wahrheit; SelectBaseline liest von run.RunDir wie im Build-Modus).
-            await File.WriteAllTextAsync(Path.Combine(_run.RunDir, $"{type}.artifact.json"), text, ct).ConfigureAwait(false);
-            entries.Add(new BaselineEntry(doc.ArtifactId, doc.ArtifactType, doc.Items.Count, $"{type}.artifact.json"));
+            // Kopie in den aktuellen Run ins neue Layout (Disk = Wahrheit; SelectBaseline liest baselines/{type}/).
+            var destFile = Path.Combine(_run.OutputDir($"baselines/{type}"), "artifact.json");
+            await File.WriteAllTextAsync(destFile, text, ct).ConfigureAwait(false);
+            entries.Add(new BaselineEntry(doc.ArtifactId, doc.ArtifactType, doc.Items.Count, $"baselines/{type}/artifact.json"));
             _run.AppendEvent(new
             {
                 type = "BASELINE_LOADED", runId = _run.RunId, artifact = type, items = doc.Items.Count,

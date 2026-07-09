@@ -24,13 +24,15 @@ internal sealed class ArtifactBranchMakerExecutor : Executor<string>
     private readonly AIAgent _agent;
     private readonly RunContext _run;
     private readonly string _artifactType;
+    private readonly string _outDir;
 
-    public ArtifactBranchMakerExecutor(AIAgent agent, RunContext run, string artifactType)
+    public ArtifactBranchMakerExecutor(AIAgent agent, RunContext run, string artifactType, string? outputScope = null)
         : base($"BranchMaker-{artifactType}")
     {
         _agent = agent;
         _run = run;
         _artifactType = artifactType;
+        _outDir = run.OutputDir(outputScope);
     }
 
     public override async ValueTask HandleAsync(
@@ -41,7 +43,7 @@ internal sealed class ArtifactBranchMakerExecutor : Executor<string>
             .ConfigureAwait(false);
         var markdown = response.Text ?? string.Empty;
 
-        var outFile = Path.Combine(_run.RunDir, $"{_artifactType}.maker.md");
+        var outFile = Path.Combine(_outDir, "maker.md");
         await File.WriteAllTextAsync(outFile, markdown, cancellationToken).ConfigureAwait(false);
 
         _run.AppendEvent(new

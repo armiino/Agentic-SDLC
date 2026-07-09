@@ -27,13 +27,15 @@ internal sealed class RepairExecutor : Executor<CheckVerdictMessage>
     private readonly ContractRepair _repair;
     private readonly ConsumableLedger _ledger;
     private readonly RunContext _run;
+    private readonly string _outDir;
 
-    public RepairExecutor(ContractRepair repair, ConsumableLedger ledger, RunContext run)
+    public RepairExecutor(ContractRepair repair, ConsumableLedger ledger, RunContext run, string? outputScope = null)
         : base(ExecutorName)
     {
         _repair = repair;
         _ledger = ledger;
         _run = run;
+        _outDir = run.OutputDir(outputScope);
     }
 
     public override async ValueTask HandleAsync(
@@ -64,7 +66,7 @@ internal sealed class RepairExecutor : Executor<CheckVerdictMessage>
 
     private void WriteStep(int iteration, string patched, IReadOnlyList<RepairResult> repairs)
     {
-        var dir = Path.Combine(_run.RunDir, $"step-repair-{iteration:D2}");
+        var dir = Path.Combine(_outDir, $"step-repair-{iteration:D2}");
         Directory.CreateDirectory(dir);
         File.WriteAllText(Path.Combine(dir, "repaired.md"), patched);
         File.WriteAllText(Path.Combine(dir, "repair-log.json"),

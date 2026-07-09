@@ -7,7 +7,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow;
 /// <summary>
 /// Terminale Stufe „Finalize" des Checker-Repair-Workflows: erreicht über die konditionale Kante
 /// <c>Decision != Repair</c> (Pass / MaxIterationsReached / HumanReview). Schreibt das finale Artefakt
-/// (<c>{artifact}.final.md</c>) + das Abschluss-Zertifikat (<c>final-report.json</c>) und yieldet ein typisiertes
+/// (<c>final.md</c>) + das Abschluss-Zertifikat (<c>final-report.json</c>) in den Scope-Ordner und yieldet ein typisiertes
 /// <see cref="CheckerRepairResult"/> als Workflow-Output — direkt weiterverwendbar, wenn der Workflow als Knoten
 /// gebunden wird.
 /// </summary>
@@ -25,18 +25,20 @@ internal sealed class FinalizeExecutor : Executor<CheckVerdictMessage>
 
     private readonly RunContext _run;
     private readonly string _artifactName;
+    private readonly string _outDir;
 
-    public FinalizeExecutor(RunContext run, string artifactName)
+    public FinalizeExecutor(RunContext run, string artifactName, string? outputScope = null)
         : base(ExecutorName)
     {
         _run = run;
         _artifactName = artifactName;
+        _outDir = run.OutputDir(outputScope);
     }
 
     public override async ValueTask HandleAsync(
         CheckVerdictMessage message, IWorkflowContext context, CancellationToken cancellationToken = default)
     {
-        var finalMd = Path.Combine(_run.RunDir, $"{_artifactName}.final.md");
+        var finalMd = Path.Combine(_outDir, "final.md");
         await File.WriteAllTextAsync(finalMd, message.Markdown, cancellationToken).ConfigureAwait(false);
 
         var mc0Errors = message.Structural.Violations.Count(v => v.Severity == ContractSeverity.Error);
@@ -55,7 +57,7 @@ internal sealed class FinalizeExecutor : Executor<CheckVerdictMessage>
             timestampUtc = DateTime.UtcNow
         };
         await File.WriteAllTextAsync(
-            Path.Combine(_run.RunDir, "final-report.json"),
+            Path.Combine(_outDir, "final-report.json"),
             JsonSerializer.Serialize(report, Json), cancellationToken).ConfigureAwait(false);
 
         _run.AppendEvent(new

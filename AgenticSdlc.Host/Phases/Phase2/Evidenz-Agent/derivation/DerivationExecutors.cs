@@ -66,7 +66,7 @@ internal sealed class DerivationGenerateExecutor : Executor<SourceArtifactSet>
         try
         {
             var r = JsonSerializer.Deserialize<RawResult>(json, Json);
-            return (r?.Decision ?? "unknown", r?.Items ?? r?.Risks ?? []);
+            return (r?.Decision ?? "unknown", r?.Items ?? r?.Risks ?? r?.Requirements ?? r?.Derived ?? []);
         }
         catch (JsonException) { return ("unknown", []); }
     }
@@ -81,7 +81,9 @@ internal sealed class DerivationGenerateExecutor : Executor<SourceArtifactSet>
     private sealed record RawResult(
         [property: JsonPropertyName("decision")] string? Decision,
         [property: JsonPropertyName("items")] IReadOnlyList<RawDerivedItem>? Items,
-        [property: JsonPropertyName("risks")] IReadOnlyList<RawDerivedItem>? Risks);
+        [property: JsonPropertyName("risks")] IReadOnlyList<RawDerivedItem>? Risks,
+        [property: JsonPropertyName("requirements")] IReadOnlyList<RawDerivedItem>? Requirements,
+        [property: JsonPropertyName("derived")] IReadOnlyList<RawDerivedItem>? Derived);
 }
 
 /// <summary>Stufe 2: ANKER-VALIDIERUNG — deterministisch (C1'/C2'-Analog, kein LLM → korrekt KEIN Agent). Nur an
@@ -107,19 +109,25 @@ internal sealed class DerivationAnchorExecutor : Executor<GeneratedDerivation>
         var n = 0;
         foreach (var r in msg.Raw)
         {
+            var text = r.EffectiveText;
             var anchors = (r.SourceArtifactItemIds ?? []).Where(a => !string.IsNullOrWhiteSpace(a)).ToList();
             var bad = anchors.Where(a => !sourceIds.Contains(a)).ToList();
-            if (anchors.Count > 0 && bad.Count == 0)
+
+            // Reihenfolge der Ablehnungsgründe: leerer Text zuerst (ein Item ohne Aussage ist wertlos und darf NICHT
+            // in die Ausgabe/zum Inference-Check → sonst "Supported" auf Leerem, run 299d8c).
+            if (string.IsNullOrWhiteSpace(text))
+                invalid.Add(new InvalidAnchor(text, anchors, bad, "MISSING_TEXT"));
+            else if (anchors.Count == 0)
+                invalid.Add(new InvalidAnchor(text, anchors, bad, "MISSING_ANCHOR"));
+            else if (bad.Count > 0)
+                invalid.Add(new InvalidAnchor(text, anchors, bad, "UNKNOWN_ANCHOR"));
+            else
             {
                 n++;
                 valid.Add(new ArtifactItem(
-                    $"{_spec.ItemIdPrefix}-{n:D2}", ArtifactOrigin.Derived, r.Text,
+                    $"{_spec.ItemIdPrefix}-{n:D2}", ArtifactOrigin.Derived, text,
                     SourceClaimIds: [], SourceArtifactItemIds: anchors,
                     Assumptions: r.Assumptions ?? [], DerivationRationale: r.Rationale));
-            }
-            else
-            {
-                invalid.Add(new InvalidAnchor(r.Text, anchors, bad, anchors.Count == 0 ? "MISSING_ANCHOR" : "UNKNOWN_ANCHOR"));
             }
         }
 
@@ -140,14 +148,16 @@ internal sealed class DerivationCheckExecutor : Executor<AnchoredDerivation>
     private readonly DerivationSpec _spec;
     private readonly string _model;
     private readonly RunContext _run;
+    private readonly string _outDir;
 
-    public DerivationCheckExecutor(InferenceChecker checker, DerivationSpec spec, string model, RunContext run)
+    public DerivationCheckExecutor(InferenceChecker checker, DerivationSpec spec, string model, RunContext run, string? outputScope = null)
         : base($"DerivationCheck-{spec.Id}")
     {
         _checker = checker;
         _spec = spec;
         _model = model;
         _run = run;
+        _outDir = run.OutputDir(outputScope);
     }
 
     public override async ValueTask HandleAsync(AnchoredDerivation msg, IWorkflowContext context, CancellationToken ct = default)
@@ -161,10 +171,11 @@ internal sealed class DerivationCheckExecutor : Executor<AnchoredDerivation>
             ArtifactId: _spec.ItemIdPrefix, ArtifactType: _spec.TargetArtifactType, Version: 1,
             Stage: ArtifactDocument.StageDerivation, Producer: producer, Items: msg.Items);
 
-        // Ergebnisse auf Platte (Wahrheitsquelle, unabhängig vom Output-Event).
-        await File.WriteAllTextAsync(Path.Combine(_run.RunDir, $"{_spec.TargetArtifactType}.derived.json"), JsonSerializer.Serialize(doc, Json), ct).ConfigureAwait(false);
-        await File.WriteAllTextAsync(Path.Combine(_run.RunDir, "inference-check-report.json"), JsonSerializer.Serialize(report, Json), ct).ConfigureAwait(false);
-        await File.WriteAllTextAsync(Path.Combine(_run.RunDir, "derivation-report.json"),
+        // Ergebnisse auf Platte (Wahrheitsquelle, unabhängig vom Output-Event). In den scope-Ordner (z. B.
+        // derivations/{spec}) → mehrere Ableitungen im selben Run kollidieren nicht.
+        await File.WriteAllTextAsync(Path.Combine(_outDir, "derived.json"), JsonSerializer.Serialize(doc, Json), ct).ConfigureAwait(false);
+        await File.WriteAllTextAsync(Path.Combine(_outDir, "inference-check-report.json"), JsonSerializer.Serialize(report, Json), ct).ConfigureAwait(false);
+        await File.WriteAllTextAsync(Path.Combine(_outDir, "derivation-report.json"),
             JsonSerializer.Serialize(new { spec = _spec.Id, decision = msg.Decision, anchoredValid = msg.Items.Count, invalidAnchor = msg.Invalid.Count, invalid = msg.Invalid }, Json), ct).ConfigureAwait(false);
 
         _run.AppendEvent(new { type = "DERIVATION_CHECKED", runId = _run.RunId, spec = _spec.Id, items = msg.Items.Count, pass = report.Pass, byVerdict = report.ByVerdict, timestampUtc = DateTime.UtcNow });

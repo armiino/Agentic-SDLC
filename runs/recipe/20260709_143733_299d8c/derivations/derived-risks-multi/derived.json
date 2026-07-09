@@ -1,0 +1,170 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260709_143733_299d8c",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArch1"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-06",
+        "REQ-37",
+        "REQ-31",
+        "ARCH-06",
+        "ARCH-07",
+        "ARCH-08",
+        "ARCH-05"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige sind nicht automatisch eindeutig genau einer Einrichtung im selben Sinn wie Mitarbeitende zugeordnet.",
+        "Bewohner- und Angeh\u00F6rigenzugriffe sollen ebenfalls auf einen fachlich zul\u00E4ssigen Profilumfang begrenzt werden."
+      ],
+      "derivationRationale": "REQ-37/ARCH-08 definieren die Zugriffsbeschr\u00E4nkung nur explizit f\u00FCr Mitarbeitende. Gleichzeitig erweitern REQ-05/REQ-06 sowie ARCH-06/ARCH-07 den Nutzerkreis um Angeh\u00F6rige und Bewohner. Aus REQ-31/ARCH-05 folgt zwar Rollensteuerung, aber nicht die konkrete Zuordnung der sichtbaren Profile f\u00FCr diese zus\u00E4tzlichen Rollen."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-14",
+        "REQ-19",
+        "REQ-21",
+        "REQ-25",
+        "REQ-31",
+        "REQ-46",
+        "ARCH-15",
+        "ARCH-18",
+        "ARCH-21",
+        "ARCH-05"
+      ],
+      "assumptions": [
+        "In der Praxis werden Inhalte nicht immer beim ersten Erfassen korrekt oder dauerhaft aktuell sein.",
+        "Es ist keine alternative Korrekturstrategie wie Archivierung oder Versionierung spezifiziert."
+      ],
+      "derivationRationale": "Die Anforderungen und Architektur fordern mehrfach dynamische Erweiterbarkeit. Zugleich verbieten REQ-31/ARCH-05 das L\u00F6schen durch User. In Verbindung mit REQ-46, das bereits schwer auffindbares Wissen als Problem beschreibt, folgt das Risiko einer zunehmend un\u00FCbersichtlichen oder inkonsistenten Wissensbasis."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-19",
+        "REQ-23",
+        "REQ-46",
+        "ARCH-15",
+        "ARCH-22"
+      ],
+      "assumptions": [
+        "Nutzer erfassen Kommunikationsinhalte frei oder mit nur schwach strukturierten Eingaben, solange kein verbindliches Schema umgesetzt ist."
+      ],
+      "derivationRationale": "REQ-23/ARCH-22 machen die Suchfunktion ausdr\u00FCcklich von einem standardisierten Beschreibungsmuster abh\u00E4ngig. REQ-19/ARCH-15 verlangen zugleich dynamisch erweiterbare Inhalte. Zusammen mit REQ-46 ergibt sich das Risiko, dass ohne fr\u00FChe Standardisierung die Kernverbesserung gegen\u00FCber schwer durchsuchbarer Dokumentation ausbleibt."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-13",
+        "REQ-16",
+        "REQ-39",
+        "REQ-45",
+        "REQ-47",
+        "ARCH-14",
+        "ARCH-23",
+        "ARCH-24"
+      ],
+      "assumptions": [
+        "Ein relevanter Teil der initialen Inhalte soll aus bestehenden Akten oder aus bereits vorhandenen Bildern stammen."
+      ],
+      "derivationRationale": "REQ-02, REQ-13 und REQ-16 setzen inhaltlich auf personenbezogenes Wissen und Bilder; REQ-45 benennt bestehende Dokumentation als Quelle. REQ-39/REQ-47 sowie ARCH-23/ARCH-24 machen aber klar, dass die rechtliche bzw. organisatorische Nutzbarkeit dieser Quellen noch ungekl\u00E4rt ist."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-35",
+        "ARCH-04",
+        "ARCH-06"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige z\u00E4hlen organisatorisch nicht zum internen Personal der Einrichtung."
+      ],
+      "derivationRationale": "REQ-35/ARCH-04 definieren einen internen Nutzungsrahmen. REQ-05/ARCH-06 \u00F6ffnen die Nutzung jedoch ausdr\u00FCcklich f\u00FCr Angeh\u00F6rige. Daraus folgt ein nicht aufgel\u00F6ster Spannungsbereich zwischen Nutzungsgrenze und beabsichtigtem Nutzerkreis."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-06",
+        "REQ-41",
+        "ARCH-07",
+        "ARCH-30"
+      ],
+      "assumptions": [
+        "Die Bedienung der App und ihrer Rollen-/Bereichslogik ist ohne Einf\u00FChrung nicht f\u00FCr alle Zielgruppen unmittelbar selbsterkl\u00E4rend."
+      ],
+      "derivationRationale": "REQ-04 betont Unterst\u00FCtzung neuer Mitarbeitender, REQ-06 einen eingeschr\u00E4nkten Bewohner-Account. REQ-41 und ARCH-30 verschieben Hilfe/Tutorial jedoch in eine sp\u00E4tere Ausbaustufe. Daraus ergibt sich ein Risiko f\u00FCr die initiale Nutzbarkeit."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-33",
+        "REQ-34",
+        "REQ-40",
+        "REQ-50",
+        "ARCH-26",
+        "ARCH-27",
+        "ARCH-28",
+        "ARCH-29"
+      ],
+      "assumptions": [
+        "Die konkrete UI-Ausgestaltung wird f\u00FCr unterschiedliche Displaygr\u00F6\u00DFen nicht automatisch ausreichend sein.",
+        "Tablet-Nutzung k\u00F6nnte fachlich relevant werden, auch wenn sie noch nicht entschieden ist."
+      ],
+      "derivationRationale": "REQ-34/ARCH-26 und REQ-50/ARCH-28 sichern den Cross-Plattform-Stack f\u00FCr iOS/Android ab. REQ-40/ARCH-27 lassen Tablet-Eignung aber offen, obwohl REQ-33/ARCH-29 barrierefreie, gut lesbare Oberfl\u00E4chen verlangen. Daraus folgt ein Anpassungsrisiko f\u00FCr weitere Ger\u00E4tetypen bzw. gr\u00F6\u00DFere Formfaktoren."
+    },
+    {
+      "itemId": "DRISK-08",
+      "origin": "Derived",
+      "text": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-24",
+        "REQ-27",
+        "REQ-38",
+        "ARCH-03",
+        "ARCH-14",
+        "ARCH-15",
+        "ARCH-17",
+        "ARCH-25"
+      ],
+      "assumptions": [
+        "Nutzer werden zus\u00E4tzliche Inhalte bevorzugt in der App sammeln, wenn mehrere offene, erweiterbare Bereiche vorhanden sind."
+      ],
+      "derivationRationale": "REQ-38/ARCH-03 verlangen begrenzten Umfang. Gleichzeitig schaffen REQ-02, REQ-24, REQ-27 sowie ARCH-14/15/17/25 viele Inhaltebenen mit wachsendem Charakter. Daraus ergibt sich das Risiko einer schleichenden Scope-Ausweitung Richtung Dokumentation."
+    }
+  ]
+}

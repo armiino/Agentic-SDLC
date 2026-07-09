@@ -55,6 +55,10 @@ internal sealed class BaselineCollectorExecutor : Executor<ArtifactDocument>
     private readonly RunContext _run;
     private readonly int _expected;
     private readonly List<BaselineEntry> _entries = [];
+    // Die Fan-in-Barrier kann die Zweig-Outputs im SELBEN Superstep NEBENLÄUFIG zustellen (belegt: recipe-Lauf
+    // 5b745e — nur 1 statt 2 collected, Set nie freigegeben). Die Akkumulation muss daher synchronisiert sein,
+    // sonst verzählt sich der Collector und der Workflow bleibt stumm (kein BASELINE_SET_READY) stehen.
+    private readonly object _gate = new();
 
     public BaselineCollectorExecutor(RunContext run, int expected) : base(ExecutorName)
     {
@@ -65,7 +69,16 @@ internal sealed class BaselineCollectorExecutor : Executor<ArtifactDocument>
     public override async ValueTask HandleAsync(
         ArtifactDocument doc, IWorkflowContext context, CancellationToken cancellationToken = default)
     {
-        _entries.Add(new BaselineEntry(doc.ArtifactId, doc.ArtifactType, doc.Items.Count, $"{doc.ArtifactType}.artifact.json"));
+        int collected;
+        List<BaselineEntry>? completed = null;
+        lock (_gate)
+        {
+            _entries.Add(new BaselineEntry(doc.ArtifactId, doc.ArtifactType, doc.Items.Count, $"baselines/{doc.ArtifactType}/artifact.json"));
+            collected = _entries.Count;
+            if (collected >= _expected)
+                completed = _entries.OrderBy(e => e.ArtifactType, StringComparer.Ordinal).ToList();
+        }
+
         _run.AppendEvent(new
         {
             type = "BASELINE_COLLECTED",
@@ -73,14 +86,14 @@ internal sealed class BaselineCollectorExecutor : Executor<ArtifactDocument>
             artifact = doc.ArtifactType,
             artifactId = doc.ArtifactId,
             items = doc.Items.Count,
-            collected = _entries.Count,
+            collected,
             expected = _expected,
             timestampUtc = DateTime.UtcNow
         });
 
-        if (_entries.Count < _expected) return;
+        if (completed is null) return;   // nur der Thread, der den letzten Zweig einbringt, gibt das Set frei.
 
-        var set = new VerifiedBaselineSet(_entries.OrderBy(e => e.ArtifactType, StringComparer.Ordinal).ToList());
+        var set = new VerifiedBaselineSet(completed);
         await File.WriteAllTextAsync(
             Path.Combine(_run.RunDir, "baseline-set.json"), JsonSerializer.Serialize(set, Json), cancellationToken).ConfigureAwait(false);
 

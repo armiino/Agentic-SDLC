@@ -65,7 +65,7 @@ public static class EvidenceChainRunner
             // mode:load — Baseline aus vorhandenem Run (Pfad ODER runId unter runs/). Kein Ledger/Fan-out nötig.
             sourceDir = ResolveExistingDir(repoRoot, fromRunArg!) ?? ResolveRunDir(repoRoot, fromRunArg!);
             if (sourceDir is null) { Console.Error.WriteLine($"[chain] --from-run: Quell-Run '{fromRunArg}' nicht gefunden (Pfad oder runId unter runs/)."); return 2; }
-            var missing = sourceTypes.Where(t => !File.Exists(Path.Combine(sourceDir, $"{t}.artifact.json"))).ToList();
+            var missing = sourceTypes.Where(t => !BaselineExists(sourceDir, t)).ToList();
             if (missing.Count > 0)
             { Console.Error.WriteLine($"[chain] --from-run: fehlende Baseline(s) in '{Path.GetRelativePath(repoRoot, sourceDir)}': {string.Join(", ", missing.Select(t => $"{t}.artifact.json"))}."); return 2; }
         }
@@ -120,7 +120,7 @@ public static class EvidenceChainRunner
         var derivation = DerivationWorkflow.Build(
             new DerivationGenerateExecutor(agent, spec, run),
             new DerivationAnchorExecutor(spec, run),
-            new DerivationCheckExecutor(new InferenceChecker(checkClient, settings.JuryStructuredOutput), spec, genSettings.ModelId, run));
+            new DerivationCheckExecutor(new InferenceChecker(checkClient, settings.JuryStructuredOutput), spec, genSettings.ModelId, run, $"derivations/{spec.Id}"));
 
         // Baseline-Quelle: Fan-out (build) ODER LoadBaseline (mode:load) — der Rest des Graphen (Select → Derivation) ist identisch.
         Microsoft.Agents.AI.Workflows.Workflow chain;
@@ -173,9 +173,9 @@ public static class EvidenceChainRunner
             return 4;
         }
 
-        // Wahrheit von Disk: je Quelltyp eine baseline ({type}.artifact.json) + Ableitung ({target}.derived.json).
-        var baseParts = sourceTypes.Select(t => $"{t}={Count(Path.Combine(run.RunDir, $"{t}.artifact.json"), "items")}");
-        var derivedItems = Count(Path.Combine(run.RunDir, $"{spec.TargetArtifactType}.derived.json"), "items");
+        // Wahrheit von Disk: je Quelltyp eine baseline (baselines/{type}/artifact.json) + Ableitung (derivations/{spec}/derived.json).
+        var baseParts = sourceTypes.Select(t => $"{t}={Count(Path.Combine(run.RunDir, "baselines", t, "artifact.json"), "items")}");
+        var derivedItems = Count(Path.Combine(run.RunDir, "derivations", spec.Id, "derived.json"), "items");
         Console.WriteLine($"[chain] fertig: Baselines [{string.Join(", ", baseParts)}] items → {spec.TargetArtifactType} abgeleitet={derivedItems} items");
         Console.WriteLine($"[chain] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
         return 0;
@@ -190,6 +190,11 @@ public static class EvidenceChainRunner
 
     private static string? Resolve(string repoRoot, string? p)
         => string.IsNullOrWhiteSpace(p) ? null : (Path.IsPathRooted(p) ? p : Path.Combine(repoRoot, p));
+
+    // Akzeptiert neues (baselines/{type}/artifact.json) UND altes flaches Layout (Rückwärtskompatibilität beim Laden).
+    internal static bool BaselineExists(string runDir, string type)
+        => File.Exists(Path.Combine(runDir, "baselines", type, "artifact.json"))
+        || File.Exists(Path.Combine(runDir, $"{type}.artifact.json"));
 
     private static string? ResolveExistingDir(string repoRoot, string p)
     {

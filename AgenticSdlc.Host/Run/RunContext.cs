@@ -34,6 +34,13 @@ public sealed class RunContext
 
     private readonly JsonSerializerOptions _json = new(JsonSerializerDefaults.Web);
 
+    // Serialisiert Appends an die GETEILTEN Run-Dateien (events.jsonl, decision-log.jsonl): unter Fan-out schreiben
+    // mehrere Zweige parallel dieselbe Datei → ohne Lock gehen Zeilen verloren (Logging-Race, recipe 5b745e:
+    // 1 statt 2 BASELINE_SELECTED). NUR für geteilte Dateien — per-Agent-Logs sind nach Agentname partitioniert und
+    // dürfen NICHT global gelockt werden (globale Serialisierung aller Zweig-Logs störte das Timing so, dass die
+    // Fan-in-Barrier ausfiel: recipe 4ec4d0, 0 statt 2 collected).
+    private readonly object _fileLock = new();
+
     public RunContext(string runId, string phaseSelector)
     {
         RunId = runId;
@@ -44,6 +51,21 @@ public sealed class RunContext
         if (segments.Length == 0) segments = ["unknown"];
         PhaseSelector = string.Join('/', segments);
         RunDir = Path.Combine(new[] { "runs" }.Concat(segments).Append(runId).ToArray());
+    }
+
+    /// <summary>
+    /// Ergibt einen (angelegten) Ausgabe-Unterordner im Run, z. B. "baselines/requirements" oder
+    /// "derivations/derived-risks". Leer/null = RunDir selbst. Zweck: bei Fan-out/Rezept schreibt JEDER Zweig bzw.
+    /// jede Ableitung in einen eigenen Unterordner → keine Kollision fester Dateinamen. Logs bleiben oben (ein Strom).
+    /// </summary>
+    public string OutputDir(string? scope)
+    {
+        var dir = string.IsNullOrWhiteSpace(scope)
+            ? RunDir
+            : Path.Combine(new[] { RunDir }.Concat(
+                scope.Split('/', '\\', StringSplitOptions.RemoveEmptyEntries).Select(NormalizePathSegment)).ToArray());
+        Directory.CreateDirectory(dir);
+        return dir;
     }
 
     public void EnsureFolders()
@@ -70,7 +92,7 @@ public sealed class RunContext
     public void AppendEvent(object evt)
     {
         var line = JsonSerializer.Serialize(evt, _json);
-        File.AppendAllText(EventsPath, line + Environment.NewLine);
+        lock (_fileLock) File.AppendAllText(EventsPath, line + Environment.NewLine);
     }
 
     public void AppendDecision(object decision)
@@ -79,7 +101,7 @@ public sealed class RunContext
         // Enthält model-declared rationale (intent/reason/evidence) und belegbare
         // Write-Fakten (SHA256, writeEffect, diff). Kein Ersatz für events.jsonl.
         var line = JsonSerializer.Serialize(decision, _json);
-        File.AppendAllText(DecisionLogPath, line + Environment.NewLine);
+        lock (_fileLock) File.AppendAllText(DecisionLogPath, line + Environment.NewLine);
     }
 
     public void AppendAgentEvent(string? agentName, object evt)
@@ -90,6 +112,9 @@ public sealed class RunContext
         var agentDir = GetAgentLogDir(agentName);
         Directory.CreateDirectory(agentDir);
 
+        // Per-Agent-Datei: nach Agentname partitioniert (im Fan-out haben Zweige distinkte Namen → verschiedene
+        // Dateien) → kein globaler Lock nötig. Ein globaler Lock hier würde ALLE Zweig-Logs serialisieren und das
+        // Nebenläufigkeits-Timing so stören, dass die Fan-in-Barrier ausfällt (belegt: recipe 5b745e/4ec4d0).
         var line = JsonSerializer.Serialize(evt, _json);
         File.AppendAllText(Path.Combine(agentDir, "events.jsonl"), line + Environment.NewLine);
     }

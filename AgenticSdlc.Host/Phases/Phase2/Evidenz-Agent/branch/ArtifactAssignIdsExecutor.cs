@@ -26,13 +26,15 @@ internal sealed class ArtifactAssignIdsExecutor : Executor<CheckerRepairResult>
     private readonly RunContext _run;
     private readonly string _artifactType;
     private readonly string _model;
+    private readonly string _outDir;
 
-    public ArtifactAssignIdsExecutor(RunContext run, string artifactType, string model)
+    public ArtifactAssignIdsExecutor(RunContext run, string artifactType, string model, string? outputScope = null)
         : base($"AssignIds-{artifactType}")
     {
         _run = run;
         _artifactType = artifactType;
         _model = model;
+        _outDir = run.OutputDir(outputScope);
     }
 
     public override async ValueTask HandleAsync(
@@ -41,7 +43,7 @@ internal sealed class ArtifactAssignIdsExecutor : Executor<CheckerRepairResult>
         var producer = new ProducerMetadata(_run.RunId, _model, PromptVersion: null);
         var doc = ArtifactIdGate.Assign(result.Markdown, _artifactType, producer);
 
-        var outFile = Path.Combine(_run.RunDir, $"{_artifactType}.artifact.json");
+        var outFile = Path.Combine(_outDir, "artifact.json");
         await File.WriteAllTextAsync(outFile, JsonSerializer.Serialize(doc, Json), cancellationToken).ConfigureAwait(false);
 
         _run.AppendEvent(new

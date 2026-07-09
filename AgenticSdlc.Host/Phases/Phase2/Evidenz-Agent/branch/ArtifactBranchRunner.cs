@@ -171,15 +171,15 @@ public static class ArtifactBranchRunner
             return 3;
         }
 
-        // Wahrheit von Disk: CheckerRepair-final-report.json + der geschriebene artifact.json.
-        var artifactJson = Path.Combine(run.RunDir, $"{artifact}.artifact.json");
+        // Wahrheit von Disk: baselines/{artifact}/ mit artifact.json + CheckerRepair-final-report.json.
+        var artifactJson = Path.Combine(run.RunDir, "baselines", artifact, "artifact.json");
         var items = -1; string decision = "UNKNOWN";
         if (File.Exists(artifactJson))
         {
             using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(artifactJson).ConfigureAwait(false));
             items = doc.RootElement.GetProperty("items").GetArrayLength();
         }
-        var finalReport = Path.Combine(run.RunDir, "final-report.json");
+        var finalReport = Path.Combine(run.RunDir, "baselines", artifact, "final-report.json");
         if (File.Exists(finalReport))
         {
             using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(finalReport).ConfigureAwait(false));

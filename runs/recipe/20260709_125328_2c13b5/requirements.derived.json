@@ -1,0 +1,282 @@
+{
+  "artifactId": "DREQ",
+  "artifactType": "requirements",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260709_125328_2c13b5",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "RequirementsGapFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DREQ-01",
+      "origin": "Derived",
+      "text": "Die App muss f\u00FCr jedes Bewohnerprofil eine eindeutige Zuordnung zu genau einer Einrichtung unterst\u00FCtzen, damit Zugriffe einrichtungsbezogen beschr\u00E4nkt werden k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-37",
+        "REQ-06"
+      ],
+      "assumptions": [
+        "Die in der Profil\u00FCbersicht angezeigten Profile sind Bewohnerprofile.",
+        "Eine einrichtungsbezogene Sichtbarkeit von Profilen erfordert, dass Profile einer Einrichtung zugeordnet sind."
+      ],
+      "derivationRationale": "Wenn Nutzer nach Einrichtung nur die Profile ihres eigenen Hauses sehen d\u00FCrfen, muss das System Profile einer Einrichtung zuordnen k\u00F6nnen; sonst ist die geforderte Zugriffsbeschr\u00E4nkung nicht umsetzbar."
+    },
+    {
+      "itemId": "DREQ-02",
+      "origin": "Derived",
+      "text": "Die App muss f\u00FCr jeden Nutzeraccount eine eindeutige Zuordnung zu einer Einrichtung unterst\u00FCtzen, damit die Sichtbarkeit von Profilen auf das eigene Haus beschr\u00E4nkt werden kann.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-37",
+        "REQ-33",
+        "REQ-34",
+        "REQ-38"
+      ],
+      "assumptions": [
+        "Die einrichtungsbezogene Zugriffsbeschr\u00E4nkung wird auf Basis des Nutzeraccounts durchgesetzt.",
+        "Accounts werden innerhalb der App verwaltet oder in ihren Rechten abgebildet."
+      ],
+      "derivationRationale": "Damit Mitarbeiter nur die Profile ihres eigenen Hauses sehen, ben\u00F6tigt der Account selbst ein Merkmal zur Einrichtungszugeh\u00F6rigkeit; ohne diese Zuordnung ist das Berechtigungsmodell nicht vollziehbar."
+    },
+    {
+      "itemId": "DREQ-03",
+      "origin": "Derived",
+      "text": "Die App muss beim Anzeigen der Profil\u00FCbersicht die Liste der Profile anhand der Berechtigungen des eingeloggten Nutzers filtern.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-33",
+        "REQ-37"
+      ],
+      "assumptions": [
+        "Die Profil\u00FCbersicht zeigt standardm\u00E4\u00DFig alle f\u00FCr den Nutzer zug\u00E4nglichen Profile an.",
+        "Rollen und Einrichtungszugeh\u00F6rigkeit sind Teil der Berechtigungspr\u00FCfung."
+      ],
+      "derivationRationale": "Die Profil\u00FCbersicht ist der Einstieg in die Profile. Damit nur zul\u00E4ssige Profile sichtbar sind, muss die Anzeige dort anhand der Zugriffsrechte eingeschr\u00E4nkt werden."
+    },
+    {
+      "itemId": "DREQ-04",
+      "origin": "Derived",
+      "text": "Die App muss den Zugriff auf Profilinhalte und Hauptbereiche eines Bewohnerprofils server- bzw. systemseitig anhand der Rolle und Berechtigung des eingeloggten Nutzers pr\u00FCfen, nicht nur \u00FCber die Navigation verbergen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-11",
+        "REQ-33",
+        "REQ-37"
+      ],
+      "assumptions": [
+        "Ein verbergender UI-Ansatz allein gen\u00FCgt nicht, um die geforderte Zugriffsbeschr\u00E4nkung zuverl\u00E4ssig sicherzustellen.",
+        "Die Hauptbereiche eines Profils enthalten sch\u00FCtzenswerte Inhalte."
+      ],
+      "derivationRationale": "Wenn Profile und ihre Inhalte nur f\u00FCr berechtigte Nutzer sichtbar sein d\u00FCrfen, reicht es nicht, unzul\u00E4ssige Men\u00FCpunkte nur nicht anzuzeigen; der tats\u00E4chliche Zugriff auf die Inhalte muss gepr\u00FCft werden."
+    },
+    {
+      "itemId": "DREQ-05",
+      "origin": "Derived",
+      "text": "Die App muss das Hinzuf\u00FCgen von Inhalten auf die daf\u00FCr berechtigten Rollen beschr\u00E4nken und f\u00FCr nicht berechtigte Rollen die entsprechenden Eingabefunktionen ausblenden oder sperren.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-33",
+        "REQ-35",
+        "REQ-38"
+      ],
+      "assumptions": [
+        "Der Bewohner-Account ist eine eigene Rolle mit eingeschr\u00E4nkten Rechten.",
+        "Rollenrechte sollen sowohl funktional durchgesetzt als auch in der Oberfl\u00E4che abgebildet werden."
+      ],
+      "derivationRationale": "Da unterschiedliche Rollen unterschiedliche Rechte haben und der Bewohner-Account nur eingeschr\u00E4nkte Funktionen erhalten soll, m\u00FCssen Eingabefunktionen rollenabh\u00E4ngig freigegeben oder gesperrt werden."
+    },
+    {
+      "itemId": "DREQ-06",
+      "origin": "Derived",
+      "text": "Die App muss f\u00FCr den Bewohner-Account den Zugriff auf fremde Profile verhindern und ausschlie\u00DFlich das eigene Profil als ausw\u00E4hlbaren Eintrag bereitstellen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-06",
+        "REQ-33"
+      ],
+      "assumptions": [
+        "Der Bewohner-Account meldet sich wie andere Rollen am System an.",
+        "Die Profil\u00FCbersicht wird auch f\u00FCr Bewohner-Accounts verwendet."
+      ],
+      "derivationRationale": "Wenn ein Bewohner-Account nur das eigene Profil sehen k\u00F6nnen soll, muss die Profil\u00FCbersicht f\u00FCr diese Rolle auf genau dieses Profil eingeschr\u00E4nkt werden."
+    },
+    {
+      "itemId": "DREQ-07",
+      "origin": "Derived",
+      "text": "Die App muss f\u00FCr Benutzerkonten ohne Admin-Rechte Funktionen zum Anlegen weiterer Accounts und zur Rechteverwaltung unterbinden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-34",
+        "REQ-38"
+      ],
+      "assumptions": [
+        "Accountanlage und Rechteverwaltung sind \u00FCber den Settings-Bereich oder eine damit verbundene Verwaltungsfunktion erreichbar."
+      ],
+      "derivationRationale": "Da ausschlie\u00DFlich Admins weitere Accounts anlegen und Rechte verwalten d\u00FCrfen, muss das System diese Funktionen f\u00FCr andere Konten sperren."
+    },
+    {
+      "itemId": "DREQ-08",
+      "origin": "Derived",
+      "text": "Die App muss das L\u00F6schen bereits hinzugef\u00FCgter Inhalte f\u00FCr User-Accounts unterbinden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-35",
+        "REQ-13",
+        "REQ-16",
+        "REQ-21"
+      ],
+      "assumptions": [
+        "Mit \u0027hinzugef\u00FCgten Daten\u0027 sind mindestens die in der App neu erfassten Profil-, No-Go- und Kommunikationsinhalte gemeint."
+      ],
+      "derivationRationale": "User-Accounts d\u00FCrfen Inhalte hinzuf\u00FCgen, aber keine hinzugef\u00FCgten Daten l\u00F6schen. Da mehrere Bereiche dynamisch erweiterbar sein sollen, muss die L\u00F6schsperre dort durchg\u00E4ngig umgesetzt werden."
+    },
+    {
+      "itemId": "DREQ-09",
+      "origin": "Derived",
+      "text": "Die App muss f\u00FCr Kommunikationsinhalte ein einheitliches, strukturiertes Erfassungsschema bereitstellen, nach dem neue Kommunikationsweisen beim Anlegen beschrieben werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "REQ-13",
+        "REQ-18"
+      ],
+      "assumptions": [
+        "Neue Kommunikationsinhalte werden innerhalb der App erfasst und nicht ausschlie\u00DFlich frei unstrukturiert hinterlegt.",
+        "Das in REQ-23 genannte Beschreibungsmuster kann als Erfassungsschema umgesetzt werden."
+      ],
+      "derivationRationale": "Die Suchfunktion auf Kommunikationsseiten setzt laut Vorgabe ein systematisches Beschreibungsmuster voraus. Damit Suche und Filterung tats\u00E4chlich m\u00F6glich sind, muss die Erfassung neuer Kommunikationsinhalte diesem Schema folgen."
+    },
+    {
+      "itemId": "DREQ-10",
+      "origin": "Derived",
+      "text": "Die App muss Kommunikationsinhalte beim Erfassen mindestens einem der beiden Bereiche \u0027verbal\u0027 oder \u0027nonverbal\u0027 zuordnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-18",
+        "REQ-20",
+        "REQ-23"
+      ],
+      "assumptions": [
+        "Neue Kommunikationsinhalte und zugeh\u00F6rige Videos werden in die bestehende Kommunikationsstruktur einsortiert."
+      ],
+      "derivationRationale": "Wenn Kommunikationsinformationen strukturell in verbale und nonverbale Bereiche unterteilt sind und Videos in diese Bereiche integriert werden, muss jeder Eintrag einer solchen Kategorie zugeordnet werden k\u00F6nnen."
+    },
+    {
+      "itemId": "DREQ-11",
+      "origin": "Derived",
+      "text": "Die App muss Kommunikationsseiten so indizieren oder strukturieren, dass die vorhandene Suchfunktion sowohl textuelle Beschreibungen als auch zugeh\u00F6rige visuelle Kommunikationsinhalte auffinden kann.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "REQ-39"
+      ],
+      "assumptions": [
+        "Visuelle Kommunikationsdarstellungen besitzen beschreibende Metadaten oder zugeh\u00F6rige Texte, \u00FCber die sie suchbar gemacht werden k\u00F6nnen."
+      ],
+      "derivationRationale": "Wenn Kommunikationsinhalte nicht nur aus Text, sondern auch aus Bildern bestehen und die Kommunikationsseiten eine Suche bieten sollen, muss die Suchfunktion diese Inhalte in einer auffindbaren Struktur ber\u00FCcksichtigen."
+    },
+    {
+      "itemId": "DREQ-12",
+      "origin": "Derived",
+      "text": "Die App muss neu hinzugef\u00FCgte About-Me-, No-Go- und Videoeintr\u00E4ge mit einer Reihenfolge bzw. einem Erstellungszeitpunkt verwalten, damit die jeweils neuesten Inhalte oben angezeigt werden k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-14",
+        "REQ-21",
+        "REQ-13"
+      ],
+      "assumptions": [
+        "Die Anzeige \u0027neueste oben\u0027 wird systematisch und nicht manuell durch Nutzer gepflegt."
+      ],
+      "derivationRationale": "Mehrere Bereiche verlangen, dass neue Inhalte oben erscheinen. Daf\u00FCr ben\u00F6tigt das System eine verwertbare Sortiergrundlage wie Reihenfolge oder Erstellungszeitpunkt."
+    },
+    {
+      "itemId": "DREQ-13",
+      "origin": "Derived",
+      "text": "Die App muss Bilder und Videos Bewohnerprofilen eindeutig zuordnen, damit mediale Inhalte in den jeweils richtigen About-Me- und Kommunikationsbereichen erscheinen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-12",
+        "REQ-14",
+        "REQ-20",
+        "REQ-21"
+      ],
+      "assumptions": [
+        "Medien werden profilbezogen und nicht global gespeichert."
+      ],
+      "derivationRationale": "Da Bilder und Videos in personenbezogenen Bereichen verschiedener Bewohner angezeigt und erweitert werden sollen, ist eine eindeutige Zuordnung der Medien zum jeweiligen Profil erforderlich."
+    },
+    {
+      "itemId": "DREQ-14",
+      "origin": "Derived",
+      "text": "Die App muss f\u00FCr Bilder und Videos beschreibende Metadaten unterst\u00FCtzen, damit die Inhalte verst\u00E4ndlich eingeordnet und in den vorgesehenen Bereichen nutzbar gemacht werden k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-20",
+        "REQ-21",
+        "REQ-39"
+      ],
+      "assumptions": [
+        "Mit \u0027Beschreibungen\u0027 bei Videos und visueller Unterst\u00FCtzung bei Kommunikationsinhalten sind strukturierte oder zumindest gespeicherte beschreibende Angaben gemeint."
+      ],
+      "derivationRationale": "Videos sollen mit Beschreibungen unterst\u00FCtzt werden, und visuelle Kommunikationsdarstellungen sollen nutzbar sein. Daf\u00FCr m\u00FCssen Medien mit erl\u00E4uternden Angaben gespeichert werden k\u00F6nnen."
+    },
+    {
+      "itemId": "DREQ-15",
+      "origin": "Derived",
+      "text": "Die App muss vor Anzeige oder Nutzung von Bewohnerbildern sicherstellen, dass f\u00FCr diese Bilder eine freigegebene Zustimmungslage vorliegt oder die Inhalte andernfalls f\u00FCr die App-Nutzung gesperrt bleiben.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-12",
+        "REQ-14",
+        "REQ-31",
+        "REQ-48"
+      ],
+      "assumptions": [
+        "Bilder ohne gekl\u00E4rte Zustimmung d\u00FCrfen nicht wie regul\u00E4re Inhalte in der App verwendet werden.",
+        "Die Kl\u00E4rung der Zustimmung kann au\u00DFerhalb der App erfolgen, muss aber in der App-Nutzung ber\u00FCcksichtigt werden."
+      ],
+      "derivationRationale": "Da Bilder in mehreren Funktionen vorgesehen sind, ihre Nutzung aber von Datenschutz und Zustimmung abh\u00E4ngt, muss die App die Verwendbarkeit solcher Inhalte an einen gekl\u00E4rten Freigabestatus binden."
+    },
+    {
+      "itemId": "DREQ-16",
+      "origin": "Derived",
+      "text": "Die App muss Nutzeridentit\u00E4ten eindeutig authentifizieren, bevor ein Zugriff auf interne Inhalte oder Funktionen m\u00F6glich ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-27",
+        "REQ-28",
+        "REQ-33",
+        "REQ-36",
+        "REQ-37"
+      ],
+      "assumptions": [
+        "Der Login ist das Mittel, um interne Nutzung und rollen- bzw. einrichtungsbezogene Berechtigungen durchzusetzen."
+      ],
+      "derivationRationale": "Da die App nur intern genutzt werden soll und Zugriffe rollen- sowie einrichtungsbezogen beschr\u00E4nkt sind, ist eine verl\u00E4ssliche Authentifizierung Voraussetzung daf\u00FCr, diese Beschr\u00E4nkungen \u00FCberhaupt anwenden zu k\u00F6nnen."
+    },
+    {
+      "itemId": "DREQ-17",
+      "origin": "Derived",
+      "text": "Die App muss nach erfolgreichem Login den eingeloggten Nutzerkontext laden, einschlie\u00DFlich Rolle und berechtigungsrelevanter Zuordnungen, damit die nachfolgenden Ansichten korrekt gesteuert werden k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-25",
+        "REQ-33",
+        "REQ-37",
+        "REQ-38"
+      ],
+      "assumptions": [
+        "Rolle und Einrichtungszugeh\u00F6rigkeit sind berechtigungsrelevante Teile des Nutzerkontexts."
+      ],
+      "derivationRationale": "Nach dem Login werden sofort Ansichten mit berechtigungsabh\u00E4ngigen Inhalten angezeigt. Daher muss der Nutzerkontext direkt nach der Anmeldung verf\u00FCgbar sein, um Oberfl\u00E4che und Datenzugriff korrekt zu steuern."
+    }
+  ]
+}

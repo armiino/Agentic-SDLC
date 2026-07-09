@@ -278,6 +278,13 @@ if (args.Length > 0 && string.Equals(args[0], "evidence-chain", StringComparison
     return;
 }
 
+// Rezept-Assembler (§10): deklaratives Rezept -> Graph zur Laufzeit (Baseline build|load -> 0..N Ableitungen).
+if (args.Length > 0 && string.Equals(args[0], "recipe", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Recipes.RecipeRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // Derivation-Familie (verallgemeinert): config-gesteuerter Ableitungs-Workflow (Generate[Agent]->Anchor->Check).
 if (args.Length > 0 && string.Equals(args[0], "derive", StringComparison.OrdinalIgnoreCase))
 {
