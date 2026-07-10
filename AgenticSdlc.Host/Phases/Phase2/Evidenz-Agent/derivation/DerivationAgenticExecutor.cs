@@ -39,11 +39,12 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
     private readonly bool _explorer;
     private readonly bool _verify;
     private readonly bool _accountable;
+    private readonly bool _accountVerify;
 
     public DerivationAgenticExecutor(
         Func<IReadOnlyList<AITool>, AIAgent> agentFactory, InferenceChecker checker, DerivationSpec spec,
         string model, RunContext run, string outDir, IReadOnlyDictionary<string, LedgerClaim>? ledgerClaims = null,
-        bool explorer = false, bool verify = false, bool accountable = false)
+        bool explorer = false, bool verify = false, bool accountable = false, bool accountVerify = false)
         : base($"DerivationAgentic-{spec.Id}")
     {
         _agentFactory = agentFactory;
@@ -56,25 +57,32 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
         _explorer = explorer;
         _verify = verify;
         _accountable = accountable;
+        _accountVerify = accountVerify;
     }
 
-    private string ModeLabel => _verify ? "explore-verify" : _accountable ? "explore-account" : _explorer ? "explore" : "agentic";
+    // Der kombinierte Arm braucht BEIDE Auswertungen: Treue (verify) UND Coverage (accountable).
+    private bool WantsVerify => _verify || _accountVerify;
+    private bool WantsCoverage => _accountable || _accountVerify;
+
+    private string ModeLabel => _accountVerify ? "explore-account-verify" : _verify ? "explore-verify" : _accountable ? "explore-account" : _explorer ? "explore" : "agentic";
 
     public override async ValueTask HandleAsync(SourceArtifactSet sources, IWorkflowContext context, CancellationToken ct = default)
     {
-        // Verify bekommt den Checker als In-Loop-Werkzeug (verify_derived); Explorer/agentic/account ohne.
-        var tools = new DerivationTools(sources, _spec, _run, _outDir, _model, _ledgerClaims, _verify ? _checker : null);
-        // Toolset: verify = Explorer + verify_derived; account = Explorer + account_uncovered; explore = Entdeckungs-Set; sonst Basis.
-        var toolSet = _verify ? tools.BuildVerify() : _accountable ? tools.BuildAccountable() : _explorer ? tools.BuildExplorer() : tools.Build();
+        // verify/account-verify bekommen den Checker als In-Loop-Werkzeug (verify_derived); Explorer/agentic/account ohne.
+        var tools = new DerivationTools(sources, _spec, _run, _outDir, _model, _ledgerClaims, WantsVerify ? _checker : null);
+        // Toolset: account-verify = Explorer + account_uncovered + check_accountability + verify_derived (geschlossene Schleife);
+        // verify = Explorer + verify_derived; account = Explorer + account_uncovered; explore = Entdeckungs-Set; sonst Basis.
+        var toolSet = _accountVerify ? tools.BuildAccountVerify() : _verify ? tools.BuildVerify() : _accountable ? tools.BuildAccountable() : _explorer ? tools.BuildExplorer() : tools.Build();
         var agent = _agentFactory(toolSet);
 
         var task = new StringBuilder();
-        if (_verify || _explorer || _accountable)
+        if (_verify || _explorer || _accountable || _accountVerify)
         {
             task.AppendLine("Beginne. Deine Umwelt ist der verifizierte Projektzustand — sie wird dir NICHT vorab genannt.");
             task.AppendLine("Entdecke sie zuerst mit list_artifacts, konsultiere selbst, was du für dein Ziel brauchst, und speichere mit save_derived, wenn du genug Evidenz hast.");
-            if (_verify) task.AppendLine("Prüfe deinen Entwurf VOR dem Speichern mit verify_derived und überarbeite schwache Items, bis deine Definition of Done erfüllt ist.");
-            if (_accountable) task.AppendLine("Rechenschaft: JEDES Quell-Item muss am Ende entweder Anker eines Risikos ODER via account_uncovered mit Grund verworfen sein. Begründe vor jeder Tool-Entscheidung kurz, warum.");
+            if (WantsVerify) task.AppendLine("Prüfe deinen Entwurf VOR dem Speichern mit verify_derived und überarbeite schwache Items, bis deine Definition of Done erfüllt ist.");
+            if (WantsCoverage) task.AppendLine("Rechenschaft: JEDES Quell-Item muss am Ende entweder Anker eines Risikos ODER via account_uncovered mit Grund verworfen sein. Begründe vor jeder Tool-Entscheidung kurz, warum.");
+            if (_accountVerify) task.AppendLine("Prüfe VOR dem Speichern mit check_accountability, ob etwas UNBEHANDELT ist oder du ein Item zugleich verankerst und verwirfst (Kollision); behebe beides selbst und speichere erst, wenn der Stand sauber ist.");
         }
         else
         {
@@ -138,7 +146,7 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
 
         // Verify-Arm: DoD-Scorecard (neutral, kein Zwang) + ΔR1 (Korrektur-Gewinn) + Runden.
         object? verifyBlock = null;
-        if (_verify)
+        if (WantsVerify)
         {
             var dod = DerivationDoD.Evaluate(doc, sources, verdicts);
             await File.WriteAllTextAsync(Path.Combine(_outDir, "dod-report.json"), JsonSerializer.Serialize(dod, Json), ct).ConfigureAwait(false);
@@ -155,7 +163,8 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
 
         // Accountable-Arm: Coverage-Rechenschaft (closed-world) — jedes Quell-Item genutzt oder begründet verworfen.
         object? coverageBlock = null;
-        if (_accountable)
+        object? coverageDeltaBlock = null;
+        if (WantsCoverage)
         {
             var cov = DerivationCoverage.Evaluate(sources, doc.Items, tools.AccountedItemIds, tools.Dismissals);
             await File.WriteAllTextAsync(Path.Combine(_outDir, "coverage-report.json"), JsonSerializer.Serialize(cov, Json), ct).ConfigureAwait(false);
@@ -166,6 +175,22 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
                 collisionRate = cov.Covered > 0 ? Math.Round((double)cov.Collisions / cov.Covered, 4) : 0.0,
                 dismissalGroups = tools.Dismissals.Count
             };
+
+            // Account-Verify: ΔCoverage = Selbstkorrektur-Gewinn (Roh-Entwurf beim 1. check_accountability vs. final).
+            // Positives Δ = der Agent hat via In-Loop-Feedback Lücken/Kollisionen selbst geschlossen. Das ist das Signal
+            // (nicht der Endzustand, der über die Schleife trivial sauber würde). rounds=0 → Feedback nicht genutzt.
+            if (_accountVerify)
+                coverageDeltaBlock = new
+                {
+                    rounds = tools.AccountabilityRounds,
+                    firstDraftUnaccounted = tools.FirstDraftUnaccounted,
+                    finalUnaccounted = cov.Unaccounted,
+                    deltaUnaccounted = tools.FirstDraftUnaccounted is int fu ? fu - cov.Unaccounted : (int?)null,
+                    firstDraftCollisions = tools.FirstDraftCollisions,
+                    finalCollisions = cov.Collisions,
+                    deltaCollisions = tools.FirstDraftCollisions is int fc ? fc - cov.Collisions : (int?)null,
+                    selfAccountingClean = cov.SelfAccountingClean
+                };
         }
 
         await File.WriteAllTextAsync(Path.Combine(_outDir, "derivation-report.json"), JsonSerializer.Serialize(new
@@ -175,7 +200,7 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
             retrievedItemIds = tools.RetrievedItemIds.OrderBy(x => x, StringComparer.Ordinal).ToArray(),
             usedItemIds = used,
             retrievedCount = tools.RetrievedItemIds.Count, usedCount = used.Length,
-            metrics, verify = verifyBlock, coverage = coverageBlock
+            metrics, verify = verifyBlock, coverage = coverageBlock, coverageDelta = coverageDeltaBlock
         }, Json), ct).ConfigureAwait(false);
     }
 }

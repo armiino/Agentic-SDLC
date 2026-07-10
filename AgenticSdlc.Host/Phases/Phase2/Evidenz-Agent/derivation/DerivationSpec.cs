@@ -20,7 +20,8 @@ public sealed record DerivationSpec(
     string? AgenticDiagnosticPromptName = null, // Diagnose-Prompt (Narrations-Pflicht, --narrate); NICHT die Mess-Default
     string? AgenticExplorerPromptName = null,   // Explorer-Prompt (Ziel-only, Entdeckungs-Tools, --explore)
     string? AgenticVerifyPromptName = null,      // Verify-Loop-Prompt (Explorer + Selbstkorrektur via verify_derived, --verify)
-    string? AgenticAccountablePromptName = null) // Accountable-Prompt (Explorer + Coverage-Rechenschaft via account_uncovered, --account)
+    string? AgenticAccountablePromptName = null, // Accountable-Prompt (Explorer + Coverage-Rechenschaft via account_uncovered, --account)
+    string? AgenticAccountVerifyPromptName = null) // Account-Verify-Prompt (Explorer + check_accountability + verify_derived, geschlossene Schleife, --account-verify)
 {
     /// <summary>Unterstützt diese Ableitung den agentischen Modus (Agent nutzt Tools selbst)?</summary>
     public bool SupportsAgentic => !string.IsNullOrWhiteSpace(AgenticPromptName);
@@ -33,6 +34,9 @@ public sealed record DerivationSpec(
 
     /// <summary>Unterstützt diese Ableitung den Accountable-Modus (Coverage-Rechenschaft über den gegebenen Input)?</summary>
     public bool SupportsAccountable => !string.IsNullOrWhiteSpace(AgenticAccountablePromptName);
+
+    /// <summary>Unterstützt diese Ableitung den Account-Verify-Modus (geschlossene Coverage+Treue-Feedbackschleife)?</summary>
+    public bool SupportsAccountVerify => !string.IsNullOrWhiteSpace(AgenticAccountVerifyPromptName);
 
     /// <summary>Primärer (erster) Quelltyp — für Einzelquell-Pfade (Chain-Fan-out, CLI-Hinweise/Guards).</summary>
     public string PrimarySourceArtifactType => SourceArtifactTypes[0];
@@ -72,7 +76,9 @@ public static class DerivationRegistry
                 // --verify: Explorer + Selbstkorrektur gegen eine Definition of Done (verify_derived im Loop).
                 AgenticVerifyPromptName: "DerivedRisksVerifyLoop1",
                 // --account: Explorer + Coverage-Rechenschaft (account_uncovered) + sichtbares Reasoning.
-                AgenticAccountablePromptName: "DerivedRisksAccountable1"),
+                AgenticAccountablePromptName: "DerivedRisksAccountable1",
+                // --account-verify: geschlossene Schleife — check_accountability (Coverage) + verify_derived (Treue) vor save.
+                AgenticAccountVerifyPromptName: "DerivedRisksAccountVerify1"),
         };
 
     public static bool TryGet(string id, out DerivationSpec spec) => Specs.TryGetValue(id, out spec!);

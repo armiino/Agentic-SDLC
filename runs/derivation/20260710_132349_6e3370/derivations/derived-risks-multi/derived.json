@@ -1,0 +1,119 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260710_132349_6e3370",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die Kommunikationssuche inhaltlich unzuverl\u00E4ssig bleibt und relevante Hinweise nicht auffindbar sind, weil die Architektur eine Suchfunktion f\u00FCr Kommunikationsinhalte vorsieht, das daf\u00FCr n\u00F6tige standardisierte Beschreibungsmuster f\u00FCr Eintr\u00E4ge aber noch nicht definiert ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "ARCH-22"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-23 fordert Suche/Filter \u00FCber Kommunikationsweisen und benennt selbst die Notwendigkeit eines systematischen Beschreibungsmusters; ARCH-22 \u00FCbernimmt die Suchfunktion architektonisch, l\u00E4sst das Muster aber offen. Ohne dieses gemeinsame Erfassungsschema wird die vorgesehene Suche die Anforderung voraussichtlich nur unzuverl\u00E4ssig tragen."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass Profile oder Wissensinhalte einrichtungs\u00FCbergreifend sichtbar werden, weil Zugriffe pro Haus beschr\u00E4nkt sein m\u00FCssen, die technische Umsetzung dieses Berechtigungsmodells in der Architektur aber noch nicht ausgearbeitet ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-37",
+        "ARCH-08",
+        "ARCH-09"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-37 verlangt hausbezogene Zugriffsbeschr\u00E4nkung. ARCH-08 best\u00E4tigt diese Notwendigkeit, sagt aber ausdr\u00FCcklich, dass die technische Umsetzung noch auszuarbeiten ist. Gleichzeitig sieht ARCH-09 eine Profil\u00FCbersicht aller f\u00FCr den Nutzer zug\u00E4nglichen Profile vor; ohne sauber modellierte Mandantentrennung ist damit Fehlzuordnung oder \u00DCberfreigabe ein naheliegendes Architektur-/Anforderungsrisiko."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass der inhaltliche Nutzen der App beim Start gering bleibt, weil die L\u00F6sung Wissen aus Akten und Erfahrungen verf\u00FCgbar machen soll, die Architektur aber f\u00FCr Analyse, Tests und Bef\u00FCllung auf Datenquellen verweist, deren Zugriff aus Datenschutzgr\u00FCnden noch ungekl\u00E4rt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-45",
+        "REQ-47",
+        "ARCH-14",
+        "ARCH-15",
+        "ARCH-24"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-02 und REQ-45 setzen voraus, dass vorhandenes Wissen aus Akten und Erfahrungen in die App einflie\u00DFen kann. ARCH-14/15 setzen inhaltlich bef\u00FCllbare, dynamisch erweiterbare Profile voraus. ARCH-24 und REQ-47 machen jedoch klar, dass Einsicht in Bewohnerakten f\u00FCr Analyse, Tests oder Bef\u00FCllung datenschutzbedingt ungekl\u00E4rt ist. Dadurch kann die Architektur die Wissensbasis der Anforderung anfangs nicht ausreichend tragen."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass zentrale About-Me- und Kommunikationsfunktionen nicht oder nur eingeschr\u00E4nkt nutzbar sind, weil Bilder und Videos als wesentliche Darstellungsform vorgesehen sind, die erforderlichen Datenschutz- und Zustimmungsfreigaben f\u00FCr Bildnutzung aber noch nicht gekl\u00E4rt sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-13",
+        "REQ-20",
+        "REQ-39",
+        "ARCH-16",
+        "ARCH-20",
+        "ARCH-23"
+      ],
+      "assumptions": [
+        "Das Risiko bezieht sich auf Mediennutzung mit Personenbezug; reine Textinhalte k\u00F6nnen davon unber\u00FChrt sein."
+      ],
+      "derivationRationale": "REQ-13 und REQ-20 verlangen bild- bzw. videobasierte Inhalte f\u00FCr erste Eindr\u00FCcke und Kommunikationssituationen. ARCH-16 und ARCH-20 verankern diese Mediennutzung architektonisch. REQ-39 und ARCH-23 halten jedoch fest, dass Datenschutz und Zustimmung der Angeh\u00F6rigen f\u00FCr Bilder vorab ungekl\u00E4rt sind. Damit sind gerade die vorgesehenen mediengest\u00FCtzten Kernfunktionen gef\u00E4hrdet oder verz\u00F6gert."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass der Bewohner-Account trotz eingeschr\u00E4nkter Rechte unbeabsichtigt problematische oder qualitativ uneinheitliche Inhalte in Profile einbringt, weil Bewohner eigene Bilder zum About-Me-Bereich hinzuf\u00FCgen d\u00FCrfen, w\u00E4hrend nur grob von Fehlbedienungsminimierung gesprochen wird und keine weitergehenden Pr\u00FCf- oder Freigabemechanismen beschrieben sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "ARCH-07",
+        "ARCH-15"
+      ],
+      "assumptions": [
+        "Es ist kein zus\u00E4tzlicher Moderations- oder Freigabeschritt beschrieben."
+      ],
+      "derivationRationale": "REQ-06 und ARCH-07 erlauben dem Bewohner-Account ausdr\u00FCcklich das Hinzuf\u00FCgen eigener Bilder bei zugleich nur eingeschr\u00E4nkt gedachten Rechten zur Minimierung von Fehlbedienungen. ARCH-15 fordert dynamisch erweiterbare Inhalte. Aus dieser Kombination folgt das Risiko, dass Inhalte zwar technisch erg\u00E4nzt werden k\u00F6nnen, aber ohne beschriebene Sicherungen inkonsistent oder unbeabsichtigt eingestellt werden."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass neue Mitarbeitende die App in kritischen Situationen nicht schnell genug sicher bedienen k\u00F6nnen, weil die L\u00F6sung gerade zur schnellen Verst\u00E4ndigung und Einarbeitung dienen soll, die Hilfe-/Tutorial-Funktion aber architektonisch nur als sp\u00E4tere Erg\u00E4nzung vorgesehen ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-41",
+        "ARCH-01",
+        "ARCH-30"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-04 beschreibt Nutzung in Einarbeitung und Erstkontakten, also unter Zeitdruck und mit hohem Orientierungsbedarf. REQ-41 nennt Hilfe/Tutorial als gew\u00FCnschte Funktion. ARCH-01 positioniert die App als Verst\u00E4ndigungsunterst\u00FCtzung, w\u00E4hrend ARCH-30 die Hilfe nur als sp\u00E4tere Erg\u00E4nzung vorsieht. Damit kollidiert der unmittelbare Nutzungsanspruch mit der verz\u00F6gerten Unterst\u00FCtzungsfunktion."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass Rollen- und Zugriffskonflikte zunehmen, wenn Angeh\u00F6rige Inhalte beitragen, Nutzer keine Inhalte l\u00F6schen d\u00FCrfen und sp\u00E4tere Pop-up-Benachrichtigungen f\u00FCr alle verbundenen Nutzer derselben Einrichtung vorgesehen sind, ohne dass f\u00FCr diese Zusammenarbeit ein fein ausgearbeitetes Rechte- und Qualit\u00E4tssicherungsmodell beschrieben ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-31",
+        "REQ-42",
+        "ARCH-06",
+        "ARCH-05"
+      ],
+      "assumptions": [
+        "Die Benachrichtigungsfunktion ist sp\u00E4ter vorgesehen, zeigt aber bereits eine geplante breite Verteilung neu eingestellter Inhalte innerhalb einer Einrichtung an.",
+        "Ein konkreter Freigabe-, Korrektur- oder Bereinigungsprozess ist in den Ankern nicht beschrieben."
+      ],
+      "derivationRationale": "REQ-05 und ARCH-06 \u00F6ffnen die Inhaltspflege f\u00FCr Angeh\u00F6rige. REQ-31 und ARCH-05 legen zugleich fest, dass normale Nutzer Inhalte hinzuf\u00FCgen, aber nicht l\u00F6schen d\u00FCrfen, w\u00E4hrend nur Admins Accounts und Rechte verwalten. REQ-42 plant dar\u00FCber hinaus einrichtungsweite Pop-up-Benachrichtigungen bei neuen About-Me-Inhalten. Aus dieser Kombination folgt das Risiko, dass fehlerhafte, uneinheitliche oder abstimmungsbed\u00FCrftige Inhalte schnell verteilt werden, ohne dass in den verankerten Vorgaben ein entsprechend fein abgestimmter Governance-Mechanismus beschrieben ist."
+    }
+  ]
+}

@@ -45,10 +45,11 @@ public static class DerivationRunner
         }
 
         var dryRun = args.Contains("--dry-run");
-        var verify = args.Contains("--verify");       // VERIFY-LOOP: Explorer + Selbstkorrektur (verify_derived) gegen eine Definition of Done.
-        var account = args.Contains("--account");     // ACCOUNTABLE: Explorer + Coverage-Rechenschaft (account_uncovered) + sichtbares Reasoning.
+        var accountVerify = args.Contains("--account-verify"); // ACCOUNT-VERIFY: geschlossene Schleife — check_accountability (Coverage) + verify_derived (Treue) vor save.
+        var verify = args.Contains("--verify") && !accountVerify;   // VERIFY-LOOP: Explorer + Selbstkorrektur (verify_derived) gegen eine Definition of Done.
+        var account = args.Contains("--account") && !accountVerify; // ACCOUNTABLE: Explorer + Coverage-Rechenschaft (account_uncovered) + sichtbares Reasoning.
         var explore = args.Contains("--explore");     // EXPLORER: Ziel-only-Prompt + Entdeckungs-Tools; Agent entdeckt seine Umwelt selbst.
-        var agentic = args.Contains("--agentic") || explore || verify || account;   // Explorer/Verify/Account sind agentische Modi.
+        var agentic = args.Contains("--agentic") || explore || verify || account || accountVerify;   // Explorer/Verify/Account(+Verify) sind agentische Modi.
         var narrate = args.Contains("--narrate");   // DIAGNOSE: Narrations-Pflicht-Prompt (Reasoning-Text vor jedem Tool-Call). NICHT die Mess-Default.
         if (agentic && !spec.SupportsAgentic)
         {
@@ -70,9 +71,14 @@ public static class DerivationRunner
             Console.Error.WriteLine($"[derive] spec '{spec.Id}' hat keinen Accountable-Modus (kein AgenticAccountablePromptName).");
             return 2;
         }
+        if (accountVerify && !spec.SupportsAccountVerify)
+        {
+            Console.Error.WriteLine($"[derive] spec '{spec.Id}' hat keinen Account-Verify-Modus (kein AgenticAccountVerifyPromptName).");
+            return 2;
+        }
         if (narrate && !agentic)
             Console.WriteLine("[derive] HINWEIS: --narrate wirkt nur mit --agentic (Diagnose-Prompt). Ignoriert.");
-        var useDiagnostic = agentic && narrate && !explore && !verify && !account && !string.IsNullOrWhiteSpace(spec.AgenticDiagnosticPromptName);
+        var useDiagnostic = agentic && narrate && !explore && !verify && !account && !accountVerify && !string.IsNullOrWhiteSpace(spec.AgenticDiagnosticPromptName);
 
         // Optional: --ledger <consumable.json> (Drill-down-Claim-Texte) und --env <dir> (Explorer-Umwelt = ALLE
         // baselines/*/artifact.json darunter). Ihre WERT-Indizes werden beim Positional-Parsing übersprungen.
@@ -149,15 +155,16 @@ public static class DerivationRunner
             sources = sourcePaths.Select(p => Path.GetRelativePath(repoRoot, p)).ToArray(),
             sourceTypes = providedTypes, sourceItems = sourceSet.TotalItemCount,
             provider = settings.LlmProvider, generatorModel = genSettings.ModelId, checkerModel = judgeSettings.ModelId,
-            mode = verify ? "explore-verify" : account ? "explore-account" : explore ? "explore" : agentic ? "agentic" : "structured", diagnostic = useDiagnostic,
+            mode = accountVerify ? "explore-account-verify" : verify ? "explore-verify" : account ? "explore-account" : explore ? "explore" : agentic ? "agentic" : "structured", diagnostic = useDiagnostic,
             env = envDir is not null ? Path.GetRelativePath(repoRoot, envDir) : null, envArtifacts = sources.Select(s => s.ArtifactType).ToArray(),
             ledger = ledgerPath is not null ? Path.GetRelativePath(repoRoot, ledgerPath) : null, ledgerClaims = ledgerClaims.Count,
-            prompt = !agentic ? spec.PromptName : verify ? spec.AgenticVerifyPromptName : account ? spec.AgenticAccountablePromptName : explore ? spec.AgenticExplorerPromptName : useDiagnostic ? spec.AgenticDiagnosticPromptName : spec.AgenticPromptName,
+            prompt = !agentic ? spec.PromptName : accountVerify ? spec.AgenticAccountVerifyPromptName : verify ? spec.AgenticVerifyPromptName : account ? spec.AgenticAccountablePromptName : explore ? spec.AgenticExplorerPromptName : useDiagnostic ? spec.AgenticDiagnosticPromptName : spec.AgenticPromptName,
             target = spec.TargetArtifactType, timestampUtc = DateTime.UtcNow
         });
-        var modeLabel = verify ? "explore-verify" : account ? "explore-account" : explore ? "explore" : agentic ? "agentic" : "structured";
+        var modeLabel = accountVerify ? "explore-account-verify" : verify ? "explore-verify" : account ? "explore-account" : explore ? "explore" : agentic ? "agentic" : "structured";
         Console.WriteLine($"[derive] runId={run.RunId} spec={spec.Id} mode={modeLabel} ([{spec.SourceLabel}]->{spec.TargetArtifactType}) umwelt=[{string.Join(",", sources.Select(s => s.ArtifactType))}] items={sourceSet.TotalItemCount} genModel={genSettings.ModelId} checkModel={judgeSettings.ModelId}");
-        if (verify) Console.WriteLine($"[derive] verify-loop-tools: explorer-set + verify_derived (Selbstprüfung des Entwurfs gegen Definition of Done, Selbstkorrektur; ledger claims: {ledgerClaims.Count}). Ziel-only-Prompt.");
+        if (accountVerify) Console.WriteLine($"[derive] account-verify-tools: explorer-set + account_uncovered + check_accountability (Coverage-Feedback) + verify_derived (Treue-Feedback) — geschlossene Schleife VOR save, Host meldet nur zurück (ledger claims: {ledgerClaims.Count}).");
+        else if (verify) Console.WriteLine($"[derive] verify-loop-tools: explorer-set + verify_derived (Selbstprüfung des Entwurfs gegen Definition of Done, Selbstkorrektur; ledger claims: {ledgerClaims.Count}). Ziel-only-Prompt.");
         else if (account) Console.WriteLine($"[derive] accountable-tools: explorer-set + account_uncovered (Coverage-Rechenschaft: jedes Item genutzt ODER begründet verworfen; ledger claims: {ledgerClaims.Count}). Sichtbares Reasoning.");
         else if (explore) Console.WriteLine($"[derive] explorer-tools: list_artifacts/search_items/get_item + get_baseline_items/check_anchor/save_derived + drill-down (ledger claims: {ledgerClaims.Count}). Ziel-only-Prompt, Umwelt selbst-entdeckt.");
         else if (agentic) Console.WriteLine($"[derive] agentic-tools: get_baseline_items/check_anchor/save_derived + drill-down get_source_claims/find_related_items (ledger claims: {ledgerClaims.Count}){(useDiagnostic ? " · DIAGNOSE: Narrations-Prompt v3 (--narrate)" : "")}");
@@ -173,6 +180,7 @@ public static class DerivationRunner
         var checkClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, $"DerivationCheck-{spec.Id}", SourceName);
 
         var promptName = !agentic ? spec.PromptName
+            : accountVerify ? spec.AgenticAccountVerifyPromptName!
             : verify ? spec.AgenticVerifyPromptName!
             : account ? spec.AgenticAccountablePromptName!
             : explore ? spec.AgenticExplorerPromptName!
@@ -192,7 +200,7 @@ public static class DerivationRunner
                 var a = genClient.AsAIAgent(instructions: prompt, name: spec.AgentName, tools: [.. tools]);
                 return a.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
             };
-            var agenticExec = new DerivationAgenticExecutor(agentFactory, checker, spec, genSettings.ModelId, run, run.OutputDir(outScope), ledgerClaims, explore, verify, account);
+            var agenticExec = new DerivationAgenticExecutor(agentFactory, checker, spec, genSettings.ModelId, run, run.OutputDir(outScope), ledgerClaims, explore, verify, account, accountVerify);
             workflow = DerivationWorkflow.BuildAgentic(agenticExec, spec);
         }
         else

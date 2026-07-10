@@ -48,6 +48,9 @@ internal sealed class DerivationTools
     private int _saveCount;
     private int _verifyRounds;
     private double? _firstDraftR1;
+    private int _accountabilityRounds;
+    private int? _firstDraftUnaccounted;
+    private int? _firstDraftCollisions;
 
     public DerivationTools(SourceArtifactSet sources, DerivationSpec spec, RunContext run, string outDir, string model,
         IReadOnlyDictionary<string, LedgerClaim>? ledgerClaims = null, InferenceChecker? checker = null)
@@ -79,6 +82,15 @@ internal sealed class DerivationTools
 
     /// <summary>Die Verwerfungs-Gruppen (Item-IDs + Grund).</summary>
     public IReadOnlyList<Dismissal> Dismissals => _dismissals;
+
+    /// <summary>Wie oft der Agent seinen Rechenschafts-Stand per <c>check_accountability</c> abfragte (0 = angeboten, nicht genutzt).</summary>
+    public int AccountabilityRounds => _accountabilityRounds;
+
+    /// <summary>Unbehandelte Items beim ERSTEN <c>check_accountability</c> — Basis für ΔCoverage (Selbstkorrektur). null = nie geprüft.</summary>
+    public int? FirstDraftUnaccounted => _firstDraftUnaccounted;
+
+    /// <summary>Kollisionen (Anker ∩ verworfen) beim ERSTEN <c>check_accountability</c>. null = nie geprüft.</summary>
+    public int? FirstDraftCollisions => _firstDraftCollisions;
 
     public IReadOnlyList<AITool> Build() =>
     [
@@ -138,6 +150,55 @@ internal sealed class DerivationTools
                 "Vermerke eine GRUPPE von Quell-Items, die du BEWUSST NICHT zu einem Risiko ableitest, mit gemeinsamem Grund (z. B. 'REQ-10..18: reine UI-Details, keine Architektur-Wechselwirkung'). Rufe es so oft wie nötig, bis JEDES Quell-Item entweder Anker eines Risikos ODER hier vermerkt ist. Keine Mengen-Quote — nur Rechenschaft."),
         };
         return tools;
+    }
+
+    /// <summary>Account-Verify-Toolset (Modus <c>--account-verify</c>, Bau-Punkt A): das Accountable-Set PLUS die
+    /// geschlossene Feedbackschleife — <c>verify_derived</c> (Treue) UND <c>check_accountability</c> (Coverage) als
+    /// AUSFÜHRBARE Definition-of-Done-Rückmeldung VOR dem Speichern. ReAct/Reflexion: der Agent handelt, beobachtet
+    /// (unaccounted/collisions/verdict), revidiert, handelt erneut. Der Host meldet nur zurück — er korrigiert NICHT
+    /// (Feedback-only, kein Force-Back: sonst misst man das Gate, nicht die Agency).</summary>
+    public IReadOnlyList<AITool> BuildAccountVerify()
+    {
+        var tools = new List<AITool>(BuildExplorer())
+        {
+            AIFunctionFactory.Create(AccountUncovered, "account_uncovered",
+                "Vermerke eine GRUPPE von Quell-Items, die du BEWUSST NICHT ableitest, mit gemeinsamem Grund. Verwirf NICHTS, was du als Anker nutzt. Keine Mengen-Quote — nur Rechenschaft."),
+            AIFunctionFactory.Create(CheckAccountability, "check_accountability",
+                "READ-ONLY Rechenschafts-Feedback zu DEINEM aktuellen Entwurf: übergib dieselben Items wie für save_derived; es meldet, welche Quell-Items noch UNBEHANDELT sind und welche du als Anker nutzt UND zugleich verworfen hast (Kollision). Nutze es VOR save_derived, arbeite die offenen Punkte selbst ab und prüfe erneut. Mehrfach erlaubt. Der Host korrigiert NICHT — du."),
+            AIFunctionFactory.Create(VerifyDerived, "verify_derived",
+                "Prüft DEINEN ENTWURF (noch NICHT gespeichert): je Item, ob die Anker existieren (anchorOk) und ob das Risiko aus seinen Ankern folgt (verdict). Nutze es VOR save_derived, überarbeite schwache Items, prüfe erneut. Mehrfach erlaubt."),
+        };
+        return tools;
+    }
+
+    // Account-Verify: READ-ONLY Coverage-Feedback zum aktuellen Entwurf (schreibt NICHTS, korrigiert NICHTS). Übergebene
+    // Entwurfs-Anker + bereits vermerkte Verwerfungen (_accounted/_dismissals) → {unaccounted, collisions}. Erste Runde
+    // stempelt den Roh-Stand für ΔCoverage. Deckungsgleich mit dem finalen DerivationCoverage-Report (driftfrei).
+    private string CheckAccountability(DerivedItemDto[] items)
+    {
+        var round = Interlocked.Increment(ref _accountabilityRounds);
+        var draft = new List<ArtifactItem>();
+        var n = 0;
+        foreach (var it in items ?? [])
+        {
+            n++;
+            var anchors = (it.SourceArtifactItemIds ?? []).Where(a => !string.IsNullOrWhiteSpace(a)).Select(a => a.Trim()).ToList();
+            draft.Add(new ArtifactItem($"DRAFT-{n:D2}", ArtifactOrigin.Derived, it.Text?.Trim() ?? string.Empty,
+                SourceClaimIds: [], SourceArtifactItemIds: anchors, Assumptions: [], DerivationRationale: null));
+        }
+
+        var cov = DerivationCoverage.Evaluate(_sources, draft, _accounted, _dismissals);
+        if (round == 1) { _firstDraftUnaccounted = cov.Unaccounted; _firstDraftCollisions = cov.Collisions; }
+        _run.AppendEvent(new { type = "AGENTIC_TOOL_CHECK_ACCOUNTABILITY", runId = _run.RunId, spec = _spec.Id, round, covered = cov.Covered, accounted = cov.Accounted, unaccounted = cov.Unaccounted, collisions = cov.Collisions, clean = cov.SelfAccountingClean, timestampUtc = DateTime.UtcNow });
+
+        var sb = new StringBuilder();
+        sb.AppendLine($"Rechenschafts-Stand (Runde {round}): {cov.Covered} verankert, {cov.Accounted} begründet verworfen, {cov.Unaccounted} UNBEHANDELT (von {cov.Total}).");
+        if (cov.Unaccounted > 0) sb.AppendLine($"UNBEHANDELT (verankere ODER verwirf mit Grund): {string.Join(", ", cov.UnaccountedItemIds)}");
+        if (cov.Collisions > 0) sb.AppendLine($"KOLLISION — diese Items nutzt du als Anker UND hast sie verworfen; nimm sie aus deiner Verwerfung heraus: {string.Join(", ", cov.CollisionItemIds)}");
+        sb.AppendLine(cov.SelfAccountingClean
+            ? "SAUBER: jedes Quell-Item ist genau einmal behandelt (verankert ODER verworfen). Du kannst jetzt save_derived aufrufen."
+            : "Noch NICHT sauber — arbeite die offenen Punkte ab und prüfe erneut, BEVOR du save_derived aufrufst.");
+        return sb.ToString();
     }
 
     // Accountable: eine Gruppe bewusst nicht-abgeleiteter Items mit Grund vermerken (Coverage-Rechenschaft, schreibt nichts).
