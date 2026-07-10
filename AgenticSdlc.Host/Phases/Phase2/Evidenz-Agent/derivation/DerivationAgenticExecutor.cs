@@ -30,7 +30,10 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
     private static readonly JsonSerializerOptions Read = new(JsonSerializerDefaults.Web);
 
     private readonly Func<IReadOnlyList<AITool>, AIAgent> _agentFactory;
-    private readonly InferenceChecker _checker;
+    private readonly InferenceChecker _checker;         // In-Loop-Judge (verify_derived, Selbst-Prüfwerkzeug des Agenten)
+    private readonly InferenceChecker _postHocChecker;  // UNABHÄNGIGE Nach-Prüfung (Authorität; = _checker wenn kein --posthoc-judge)
+    private readonly string _postHocJudgeModel;
+    private readonly bool _independentPostHoc;
     private readonly DerivationSpec _spec;
     private readonly string _model;
     private readonly RunContext _run;
@@ -42,13 +45,17 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
     private readonly bool _accountVerify;
 
     public DerivationAgenticExecutor(
-        Func<IReadOnlyList<AITool>, AIAgent> agentFactory, InferenceChecker checker, DerivationSpec spec,
+        Func<IReadOnlyList<AITool>, AIAgent> agentFactory, InferenceChecker checker, InferenceChecker postHocChecker, DerivationSpec spec,
         string model, RunContext run, string outDir, IReadOnlyDictionary<string, LedgerClaim>? ledgerClaims = null,
-        bool explorer = false, bool verify = false, bool accountable = false, bool accountVerify = false)
+        bool explorer = false, bool verify = false, bool accountable = false, bool accountVerify = false,
+        string? postHocJudgeModel = null, bool independentPostHoc = false)
         : base($"DerivationAgentic-{spec.Id}")
     {
         _agentFactory = agentFactory;
         _checker = checker;
+        _postHocChecker = postHocChecker;
+        _postHocJudgeModel = postHocJudgeModel ?? model;
+        _independentPostHoc = independentPostHoc;
         _spec = spec;
         _model = model;
         _run = run;
@@ -118,8 +125,9 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
             else if (bad.Count > 0) invalid.Add(new InvalidAnchor(it.Text, anchors, bad, "UNKNOWN_ANCHOR"));
         }
 
-        // (b) bounded Inference-Check (unverändert: Treue je Item gegen SEINE Anker).
-        var report = await _checker.CheckAsync(doc.Items, sources.ItemsById(), ct).ConfigureAwait(false);
+        // (b) UNABHÄNGIGE bounded Inference-Nach-Prüfung (Treue je Item gegen SEINE Anker) — mit dem Post-hoc-Judge,
+        // gegen den der Agent NICHT im Loop optimiert hat (bricht die verify_derived-Zirkularität, wenn --posthoc-judge).
+        var report = await _postHocChecker.CheckAsync(doc.Items, sources.ItemsById(), ct).ConfigureAwait(false);
 
         await WriteReportsAsync(doc, report.Verdicts, invalid, sources, tools, "agentic", ct).ConfigureAwait(false);
         _run.AppendEvent(new { type = "AGENTIC_DERIVATION_CHECKED", runId = _run.RunId, spec = _spec.Id, items = doc.Items.Count, invalidAnchor = invalid.Count, pass = report.Pass, byVerdict = report.ByVerdict, retrieved = tools.RetrievedItemIds.Count, timestampUtc = DateTime.UtcNow });
@@ -200,6 +208,9 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
             retrievedItemIds = tools.RetrievedItemIds.OrderBy(x => x, StringComparer.Ordinal).ToArray(),
             usedItemIds = used,
             retrievedCount = tools.RetrievedItemIds.Count, usedCount = used.Length,
+            // independentPostHoc = wurde finalR1/dodPass von einem anderen Judge geprüft als dem In-Loop-verify_derived?
+            // (bricht Zirkularität). postHocJudgeModel = welches Modell die unabhängige Nach-Prüfung fuhr.
+            independentPostHoc = _independentPostHoc, postHocJudgeModel = _postHocJudgeModel,
             metrics, verify = verifyBlock, coverage = coverageBlock, coverageDelta = coverageDeltaBlock
         }, Json), ct).ConfigureAwait(false);
     }

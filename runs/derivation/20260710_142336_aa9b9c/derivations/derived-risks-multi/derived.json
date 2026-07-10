@@ -1,0 +1,139 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260710_142336_aa9b9c",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die Anforderung nach Offline-Nutzung nicht erf\u00FCllt wird, weil die Architektur eine mobile App mit zentraler Cloud-Speicherung vorsieht, aber keinen Mechanismus f\u00FCr lokale Datenhaltung oder Synchronisation beschreibt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "ARCH-01",
+        "ARCH-02"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-03 fordert Offline-F\u00E4higkeit. ARCH-01 und ARCH-02 beschreiben eine mobile App mit zentraler Cloud-Speicherung; ohne ausgewiesene Offline-/Sync-Strategie ist die Anforderung gef\u00E4hrdet."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko unzureichenden Schutzes sensibler Daten, weil zwar Rollenkonzept und Standard-Authentifizierung vorgesehen sind, die konkrete technische Umsetzung der Datenschutzvorgaben jedoch erst sp\u00E4ter festgelegt werden soll.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "ARCH-03",
+        "ARCH-07",
+        "ARCH-09"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-02 verlangt Schutz sensibler Daten. ARCH-03 und ARCH-07 adressieren nur Teilaspekte des Zugriffs; ARCH-09 verschiebt zentrale Datenschutzfestlegungen, wodurch Schutzl\u00FCcken bis sp\u00E4t im Design m\u00F6glich bleiben."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die gew\u00FCnschte schnelle Auffindbarkeit relevanter Informationen nur teilweise erreicht wird, weil die Architektur zwar eine Suchfunktion vorsieht, aber keine Strukturierung oder Qualit\u00E4tsmechanismen f\u00FCr aktuelle Inhalte beschreibt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-11",
+        "ARCH-05"
+      ],
+      "assumptions": [
+        "Aktualit\u00E4t und Auffindbarkeit beeinflussen sich gegenseitig, weil veraltete Treffer die Suche entwerten k\u00F6nnen."
+      ],
+      "derivationRationale": "REQ-05 fordert schnelles Finden, REQ-11 aktuelle Inhalte. ARCH-05 nennt nur eine Suchfunktion; ohne architektonische Vorkehrungen f\u00FCr Inhaltsqualit\u00E4t und Pflege kann die Suche fachlich unzuverl\u00E4ssige Ergebnisse liefern."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass Fehleingaben nicht weitgehend vermieden werden, weil die Architektur zur Oberfl\u00E4che nur allgemeine Gestaltungsprinzipien nennt, aber keine spezifischen Validierungs- oder Eingabeleitmechanismen beschreibt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-09",
+        "ARCH-04"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-09 fordert die weitgehende Vermeidung von Fehleingaben. ARCH-04 adressiert nur allgemeine UI-Prinzipien; daraus folgen noch keine konkreten Ma\u00DFnahmen wie Validierung, Defaults oder gef\u00FChrte Eingaben."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die L\u00F6sung Angeh\u00F6rige nicht im geeigneten Umfang einbezieht oder dabei ungewollte Zugriffe er\u00F6ffnet, weil zwar ein Rollenkonzept existiert, aber keine Architektur f\u00FCr getrennte Sichten oder begrenzte Beteiligungsformen von Angeh\u00F6rigen beschrieben ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-07",
+        "REQ-02",
+        "ARCH-03"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-07 verlangt eine angemessene Einbeziehung von Angeh\u00F6rigen, gleichzeitig fordert REQ-02 den Schutz sensibler Daten. ARCH-03 nennt nur ein allgemeines Rollenkonzept; ohne pr\u00E4zisere Architektur f\u00FCr abgegrenzte Zugriffe besteht ein Spannungsrisiko zwischen Teilhabe und Datenschutz."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die L\u00F6sung bestehende Arbeitsabl\u00E4ufe nicht sp\u00FCrbar entlastet, weil Benachrichtigungen zus\u00E4tzliches Arbeitsaufkommen erzeugen k\u00F6nnen und keine Architektur f\u00FCr ihre dosierte oder kontextsensitive Nutzung beschrieben ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-08",
+        "REQ-10",
+        "ARCH-08"
+      ],
+      "assumptions": [
+        "Benachrichtigungen k\u00F6nnen Arbeitsunterbrechungen und Zusatzaufwand verursachen, wenn sie nicht gezielt gesteuert werden."
+      ],
+      "derivationRationale": "REQ-08 fordert sp\u00FCrbare Entlastung und REQ-10 Kompatibilit\u00E4t mit bestehenden Abl\u00E4ufen. ARCH-08 sieht Benachrichtigungen vor; ohne Mechanismen zur Steuerung kann dies Abl\u00E4ufe eher belasten als unterst\u00FCtzen."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die Anforderungen an hohe Bewohnerzahlen sowie Zukunftssicherheit nicht verl\u00E4sslich getragen werden, weil Skalierung in der Architektur nur perspektivisch f\u00FCr mehrere Einrichtungen erw\u00E4hnt wird und keine konkrete Tragf\u00E4higkeit der zentralen Cloud-L\u00F6sung beschrieben ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-12",
+        "ARCH-02",
+        "ARCH-10"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-04 und REQ-12 verlangen Tragf\u00E4higkeit f\u00FCr Wachstum und Zukunft. ARCH-02 setzt auf zentrale Cloud-Speicherung, w\u00E4hrend ARCH-10 Skalierung nur als perspektivisch denkbar beschreibt; damit bleibt offen, ob die Architektur die erwartete Last robust tr\u00E4gt."
+    },
+    {
+      "itemId": "DRISK-08",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die zugesagte Flexibilit\u00E4t zur Erweiterung in der Praxis eingeschr\u00E4nkt bleibt, weil zwar Module vorgesehen sind, aber keine Regeln f\u00FCr stabile Schnittstellen oder die Kopplung zwischen Modulen beschrieben werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-12",
+        "ARCH-06"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-06 fordert Erweiterbarkeit, REQ-12 Zukunftssicherheit. ARCH-06 nennt Module, doch ohne weitere architektonische Leitplanken kann Modularisierung nur nominell sein und sp\u00E4tere Erweiterungen erschweren."
+    },
+    {
+      "itemId": "DRISK-09",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die App trotz allgemeiner Gestaltungsprinzipien nicht schnell und einfach bedienbar wirkt, weil die Architektur zugleich Suche, Rollen und potenziell Offline-bezogene Zust\u00E4nde abbilden muss, ohne ein Konzept zur Beherrschung dieser Bedienkomplexit\u00E4t zu beschreiben.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-01",
+        "REQ-03",
+        "REQ-05",
+        "ARCH-03",
+        "ARCH-04"
+      ],
+      "assumptions": [
+        "Offline-bezogene Zust\u00E4nde erh\u00F6hen typischerweise die Bedienkomplexit\u00E4t, wenn sie dem Nutzer sichtbar gemacht werden m\u00FCssen."
+      ],
+      "derivationRationale": "REQ-01 fordert einfache, schnelle Bedienung. Zugleich erzeugen REQ-03 und REQ-05 fachliche Komplexit\u00E4t, w\u00E4hrend ARCH-03 Rollen und ARCH-04 nur allgemeine UI-Prinzipien nennt; ohne konkretes Architekturkonzept zur Reduktion dieser Komplexit\u00E4t ist die Usability gef\u00E4hrdet."
+    }
+  ]
+}

@@ -80,14 +80,17 @@ public static class DerivationRunner
             Console.WriteLine("[derive] HINWEIS: --narrate wirkt nur mit --agentic (Diagnose-Prompt). Ignoriert.");
         var useDiagnostic = agentic && narrate && !explore && !verify && !account && !accountVerify && !string.IsNullOrWhiteSpace(spec.AgenticDiagnosticPromptName);
 
-        // Optional: --ledger <consumable.json> (Drill-down-Claim-Texte) und --env <dir> (Explorer-Umwelt = ALLE
-        // baselines/*/artifact.json darunter). Ihre WERT-Indizes werden beim Positional-Parsing übersprungen.
-        string? ledgerArg = null, envArg = null;
+        // Optional: --ledger <consumable.json> (Drill-down-Claim-Texte), --env <dir> (Explorer-Umwelt = ALLE
+        // baselines/*/artifact.json darunter) und --posthoc-judge <model> (UNABHÄNGIGER Nach-Prüfungs-Judge, anderes
+        // Modell als der In-Loop-verify_derived — bricht die Zirkularität: finalR1/dodPass gegen einen Judge, gegen den
+        // der Agent NICHT optimiert hat). Ihre WERT-Indizes werden beim Positional-Parsing übersprungen.
+        string? ledgerArg = null, envArg = null, postHocJudgeArg = null;
         var skipValueIndex = new HashSet<int>();
         for (var i = 2; i < args.Length - 1; i++)
         {
             if (string.Equals(args[i], "--ledger", StringComparison.Ordinal)) { ledgerArg = args[i + 1]; skipValueIndex.Add(i + 1); }
             else if (string.Equals(args[i], "--env", StringComparison.Ordinal)) { envArg = args[i + 1]; skipValueIndex.Add(i + 1); }
+            else if (string.Equals(args[i], "--posthoc-judge", StringComparison.Ordinal)) { postHocJudgeArg = args[i + 1]; skipValueIndex.Add(i + 1); }
         }
 
         // Positional nach specId: existierende Dateien = Quellen (1..N, Multi-Source); erstes Nicht-File/Nicht-Flag = Modell.
@@ -146,6 +149,10 @@ public static class DerivationRunner
 
         var genSettings = modelArg is not null ? settings with { ModelId = modelArg } : settings;
         var judgeSettings = !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! } : settings;
+        // Post-hoc-Judge: standardmäßig = In-Loop-Judge (rückwärtskompatibel); mit --posthoc-judge <model> ein ANDERES
+        // Modell für die unabhängige Nach-Prüfung (bricht die verify_derived-Zirkularität).
+        var postHocSettings = !string.IsNullOrWhiteSpace(postHocJudgeArg) ? settings with { ModelId = postHocJudgeArg!.Trim() } : judgeSettings;
+        var independentPostHoc = !string.Equals(postHocSettings.ModelId, judgeSettings.ModelId, StringComparison.Ordinal);
 
         var run = new RunContext(RunId.New(), "derivation");
         run.EnsureFolders();
@@ -155,6 +162,7 @@ public static class DerivationRunner
             sources = sourcePaths.Select(p => Path.GetRelativePath(repoRoot, p)).ToArray(),
             sourceTypes = providedTypes, sourceItems = sourceSet.TotalItemCount,
             provider = settings.LlmProvider, generatorModel = genSettings.ModelId, checkerModel = judgeSettings.ModelId,
+            inLoopJudgeModel = judgeSettings.ModelId, postHocJudgeModel = postHocSettings.ModelId, independentPostHoc,
             mode = accountVerify ? "explore-account-verify" : verify ? "explore-verify" : account ? "explore-account" : explore ? "explore" : agentic ? "agentic" : "structured", diagnostic = useDiagnostic,
             env = envDir is not null ? Path.GetRelativePath(repoRoot, envDir) : null, envArtifacts = sources.Select(s => s.ArtifactType).ToArray(),
             ledger = ledgerPath is not null ? Path.GetRelativePath(repoRoot, ledgerPath) : null, ledgerClaims = ledgerClaims.Count,
@@ -178,6 +186,11 @@ public static class DerivationRunner
         // Generator = echter AIAgent (Prompt + Pipeline + ToolLogger). Check = bounded Judge (Pipeline-Client).
         var genClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, $"DerivationGenerate-{spec.Id}", SourceName);
         var checkClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, $"DerivationCheck-{spec.Id}", SourceName);
+        // Unabhängiger Post-hoc-Judge (nur wenn --posthoc-judge ein anderes Modell nennt) — eigener Pipeline-Scope.
+        var postHocClient = independentPostHoc
+            ? AgentChatPipelineBuilder.Build(ChatClientFactory.Create(postHocSettings), settings, run, $"DerivationPostHoc-{spec.Id}", SourceName)
+            : checkClient;
+        if (independentPostHoc) Console.WriteLine($"[derive] UNABHÄNGIGER Post-hoc-Judge: {postHocSettings.ModelId} (≠ In-Loop-verify {judgeSettings.ModelId}) — finalR1/dodPass gegen einen nicht-optimierten Judge.");
 
         var promptName = !agentic ? spec.PromptName
             : accountVerify ? spec.AgenticAccountVerifyPromptName!
@@ -187,7 +200,10 @@ public static class DerivationRunner
             : useDiagnostic ? spec.AgenticDiagnosticPromptName!
             : spec.AgenticPromptName!;
         var prompt = PromptProvider.Load(repoRoot, Phase, spec.AgentName, promptName, new Dictionary<string, string> { ["runId"] = run.RunId });
+        // checker = In-Loop-Judge (verify_derived, das Selbst-Prüfwerkzeug des Agenten). postHocChecker = die UNABHÄNGIGE
+        // Nach-Prüfung (Authorität). Ohne --posthoc-judge sind beide identisch (rückwärtskompatibel).
         var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput);
+        var postHocChecker = independentPostHoc ? new InferenceChecker(postHocClient, settings.JuryStructuredOutput) : checker;
         var outScope = $"derivations/{spec.Id}";
 
         Microsoft.Agents.AI.Workflows.Workflow workflow;
@@ -200,7 +216,7 @@ public static class DerivationRunner
                 var a = genClient.AsAIAgent(instructions: prompt, name: spec.AgentName, tools: [.. tools]);
                 return a.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
             };
-            var agenticExec = new DerivationAgenticExecutor(agentFactory, checker, spec, genSettings.ModelId, run, run.OutputDir(outScope), ledgerClaims, explore, verify, account, accountVerify);
+            var agenticExec = new DerivationAgenticExecutor(agentFactory, checker, postHocChecker, spec, genSettings.ModelId, run, run.OutputDir(outScope), ledgerClaims, explore, verify, account, accountVerify, postHocSettings.ModelId, independentPostHoc);
             workflow = DerivationWorkflow.BuildAgentic(agenticExec, spec);
         }
         else
@@ -209,7 +225,7 @@ public static class DerivationRunner
             agent = agent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
             var generate = new DerivationGenerateExecutor(agent, spec, run);
             var anchor = new DerivationAnchorExecutor(spec, run);
-            var check = new DerivationCheckExecutor(checker, spec, genSettings.ModelId, run, outScope);
+            var check = new DerivationCheckExecutor(postHocChecker, spec, genSettings.ModelId, run, outScope);
             workflow = DerivationWorkflow.Build(generate, anchor, check);
         }
 
