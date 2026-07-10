@@ -19,8 +19,9 @@ WERKZEUGE (du entscheidest, ob/wann):
 - search_items(query) / get_baseline_items(artifactType) / get_item(itemId): hole dir die Grundlage.
 - find_related_items(itemId) / get_source_claims(itemId): vertiefe innerhalb der geprüften Evidenz (situativ).
 - check_anchor(itemId): prüft deterministisch, ob eine itemId existiert.
-- account_uncovered(itemIds, reason): vermerke eine GRUPPE bewusst NICHT abgeleiteter Quell-Items mit gemeinsamem Grund.
-  Verwirf NICHTS, was du zugleich als Anker nutzt.
+- account_uncovered(itemIds, reason, dismiss): dismiss=true vermerkt eine GRUPPE bewusst NICHT abgeleiteter Quell-Items
+  mit gemeinsamem Grund. dismiss=false NIMMT eine frühere Verwerfung für die genannten ids ZURÜCK — so löst du eine
+  Kollision auf, wenn du ein zuvor verworfenes Item doch als Anker nutzt. Verwirf NICHTS, was du zugleich als Anker nutzt.
 - check_accountability(items): READ-ONLY Coverage-Feedback zu DEINEM Entwurf — welche Quell-Items noch UNBEHANDELT sind
   und welche du als Anker nutzt UND verworfen hast (Kollision). Übergib dieselben Items wie für save_derived.
 - verify_derived(items): READ-ONLY Treue-Feedback zu DEINEM Entwurf — je Item anchorOk und verdict
@@ -43,7 +44,8 @@ ARBEITSWEISE (der Loop — handeln, beobachten, revidieren, erneut handeln):
   1. Entdecke die Umwelt, konsultiere, was du brauchst, und ENTWIRF deine Risiken.
   2. Lege für die nicht genutzten Items via account_uncovered Rechenschaft ab (gruppiert, mit Grund).
   3. Rufe check_accountability auf DEINEN ENTWURF. Behebe SELBST: UNBEHANDELTE Items verankern oder verwerfen;
-     KOLLISIONEN aus der Verwerfung nehmen. Prüfe erneut, bis 0 unbehandelt UND 0 Kollision.
+     eine KOLLISION löst du mit account_uncovered(dismiss=false) für die betroffenen ids (Verwerfung zurücknehmen).
+     Prüfe erneut, bis 0 unbehandelt UND 0 Kollision.
   4. Rufe verify_derived auf DEINEN ENTWURF. Überarbeite jedes Item mit anchorOk=false ODER verdict ∈
      {contradicts, unrelated, unclear} — bessere Anker, schärfere Ableitung, oder verwirf es (dann wieder Schritt 3).
      Bis zu 3 Runden je Prüfung.

@@ -1,0 +1,130 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260710_134250_f9859c",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Wenn das einrichtungsbezogene Berechtigungsmodell technisch noch nicht ausgearbeitet ist, besteht das Risiko, dass die Profil\u00FCbersicht nach dem Login Bewohnerprofile haus\u00FCbergreifend sichtbar macht oder der Zugriff sp\u00E4ter nur mit teuren Nacharbeiten korrekt begrenzt werden kann.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-37",
+        "ARCH-08",
+        "ARCH-09"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-37 fordert hausbezogene Zugriffsbeschr\u00E4nkung, ARCH-08 best\u00E4tigt, dass die technische Umsetzung noch auszuarbeiten ist, w\u00E4hrend ARCH-09 bereits eine \u00DCbersicht aller zug\u00E4nglichen Profile vorsieht. Das Zusammenspiel erzeugt das Risiko, dass die zentrale Navigationsfunktion ohne belastbares Tenant-/Berechtigungsmodell zun\u00E4chst zu breit ausliefert oder sp\u00E4ter umgebaut werden muss."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Wenn f\u00FCr Kommunikations-Eintr\u00E4ge kein standardisiertes Beschreibungsmuster definiert wird, besteht das Risiko, dass die geforderte Suche auf Kommunikationsseiten uneinheitliche oder schwer auffindbare Eintr\u00E4ge liefert und damit das Ziel schneller Verst\u00E4ndigung f\u00FCr neue Mitarbeitende verfehlt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "ARCH-22",
+        "REQ-04"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-23 und ARCH-22 machen die Suchfunktion ausdr\u00FCcklich von einem noch zu definierenden Beschreibungsmuster abh\u00E4ngig. In Verbindung mit REQ-04, wonach neue Mitarbeitende schnell handlungsrelevantes Wissen finden sollen, wird die Suchqualit\u00E4t zu einer erfolgskritischen Vorbedingung."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Solange Datenschutzfreigaben f\u00FCr Bilder und die Einsicht in bestehende Akten ungekl\u00E4rt sind, besteht das Risiko, dass die App zum Start nicht mit ausreichend visuellen und biografischen Inhalten bef\u00FCllt werden kann und dadurch der About-Me-Bereich seinen Nutzen als schneller Ersteindruck nur eingeschr\u00E4nkt erreicht.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-39",
+        "ARCH-23",
+        "REQ-47",
+        "ARCH-24",
+        "REQ-13"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-13 verlangt einen bild- und basisinformationsreichen About-Me-Bereich. REQ-39/ARCH-23 und REQ-47/ARCH-24 markieren jedoch ungekl\u00E4rte Datenschutz- und Zugriffsfragen f\u00FCr Bilder und Akten als vorgelagerte Bedingungen. Damit h\u00E4ngt die inhaltliche Bef\u00FCllbarkeit eines Kernbereichs von noch offenen Freigaben ab."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Mit Angeh\u00F6rigenzugriff und Bewohner-Accounts bei zugleich nur administrativ anlegbaren Accounts entsteht das Risiko eines operativen Flaschenhalses in der Benutzerverwaltung, sodass externe oder zus\u00E4tzliche Nutzer nicht rechtzeitig eingerichtet werden und Beitr\u00E4ge ausbleiben.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-06",
+        "REQ-31",
+        "ARCH-05",
+        "ARCH-06",
+        "ARCH-07"
+      ],
+      "assumptions": [
+        "Die Zahl der anzulegenden Angeh\u00F6rigen- und Bewohnerkonten ist im Betrieb relevant genug, dass manueller Admin-Aufwand sp\u00FCrbar wird."
+      ],
+      "derivationRationale": "REQ-05/06 und ARCH-06/07 erweitern den Nutzerkreis um Angeh\u00F6rige und Bewohner. REQ-31 und ARCH-05 legen gleichzeitig fest, dass es keine Selbstregistrierung gibt und nur Admins Konten anlegen d\u00FCrfen. Daraus folgt eine neue betriebliche Vorbedingung: ausreichende Admin-Kapazit\u00E4t f\u00FCr zeitnahe Kontoanlage und Rechtepflege."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Wenn Cloudspeicherung mit Firestore festgelegt ist, aber lokale Speicherung oder Zwischenspeicherung ungekl\u00E4rt bleibt, besteht das Risiko, dass zentrale Wissensinhalte in Nutzungssituationen nicht verl\u00E4sslich oder zu langsam verf\u00FCgbar sind, obwohl die App gerade in spontanen Verst\u00E4ndigungssituationen unterst\u00FCtzen soll.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-51",
+        "REQ-04",
+        "ARCH-28"
+      ],
+      "assumptions": [
+        "Die App wird zumindest teilweise in Situationen mit schwankender oder verz\u00F6gerter Netzverbindung genutzt."
+      ],
+      "derivationRationale": "REQ-51 benennt Firestore und l\u00E4sst die lokale Speicherung offen. Zusammen mit REQ-04, das unmittelbare Unterst\u00FCtzung in Verst\u00E4ndigungssituationen fordert, entsteht ein Verf\u00FCgbarkeits- und Reaktionsrisiko, falls Offline-/Cache-Verhalten nicht fr\u00FCh festgelegt wird. ARCH-28 verankert den gew\u00E4hlten mobilen Technologie-Stack, in dem diese Datenzugriffsentscheidung umgesetzt werden muss."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Wenn die Hilfe- und Tutorial-Funktion erst sp\u00E4ter kommt, obwohl die App besonders neue Mitarbeitende schneller arbeitsf\u00E4hig machen soll, besteht das Risiko, dass die Einarbeitung zun\u00E4chst von informeller Erkl\u00E4rung abh\u00E4ngt und das Ziel einer schneller nutzbaren Wissensbasis nur teilweise erreicht wird.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-41",
+        "ARCH-30",
+        "REQ-04"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-41/ARCH-30 verschieben Hilfe/Tutorial in eine sp\u00E4tere Erg\u00E4nzung. REQ-04 adressiert explizit neue Mitarbeitende und schnelle Verst\u00E4ndlichkeit. Das Zusammenspiel legt nahe, dass ohne fr\u00FChe produktintegrierte Einf\u00FChrung ein Teil des Nutzens in der Einf\u00FChrungsphase ausbleibt."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": "Da die App barrierearm gestaltet werden soll und zugleich alternative Eingabemethoden nur als zu ber\u00FCcksichtigende Anforderung formuliert sind, besteht das Risiko, dass Bewohner-Accounts praktisch kaum nutzbar sind, wenn die Interaktion prim\u00E4r auf Standard-Touch- und Texteingaben ausgelegt bleibt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-43",
+        "ARCH-29"
+      ],
+      "assumptions": [
+        "Ein relevanter Teil der vorgesehenen Bewohner kann Standardbedienung nur eingeschr\u00E4nkt nutzen."
+      ],
+      "derivationRationale": "REQ-06 f\u00FChrt Bewohner-Accounts mit eigenen Beitr\u00E4gen ein. REQ-43 fordert die Ber\u00FCcksichtigung alternativer Eingaben, w\u00E4hrend ARCH-29 vor allem visuelle Barrierefreiheit adressiert. Daraus ergibt sich das Risiko, dass die vorgesehene Bewohnernutzung ohne konkretere Interaktionsstrategie funktional hinter dem Accountkonzept zur\u00FCckbleibt."
+    },
+    {
+      "itemId": "DRISK-08",
+      "origin": "Derived",
+      "text": "Wenn vor der konkreten Ausgestaltung erst noch eine Anforderungsanalyse \u00FCber mehrere Einrichtungen erfolgen soll, gleichzeitig aber bereits zentrale Technologie- und Funktionsentscheidungen festgelegt sind, besteht das Risiko von Rework, falls die erhobenen Bedarfe sp\u00E4tere \u00C4nderungen am Berechtigungs-, Inhalts- oder Plattformzuschnitt erzwingen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-49",
+        "REQ-50",
+        "ARCH-28",
+        "REQ-37",
+        "REQ-40"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-49 sieht eine vorgelagerte Anforderungsanalyse mit sp\u00E4teren Nutzern und ggf. mehreren Einrichtungen vor. Zugleich sind mit REQ-50/ARCH-28 bereits Technologieentscheidungen getroffen und mit REQ-37 bzw. REQ-40 wesentliche fachliche Rahmenbedingungen noch offen. Das erzeugt das Risiko, dass fr\u00FChe Festlegungen sp\u00E4ter nicht optimal zu den validierten Bedarfen passen."
+    }
+  ]
+}

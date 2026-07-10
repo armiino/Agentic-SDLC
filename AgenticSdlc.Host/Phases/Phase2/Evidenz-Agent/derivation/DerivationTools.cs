@@ -162,7 +162,7 @@ internal sealed class DerivationTools
         var tools = new List<AITool>(BuildExplorer())
         {
             AIFunctionFactory.Create(AccountUncovered, "account_uncovered",
-                "Vermerke eine GRUPPE von Quell-Items, die du BEWUSST NICHT ableitest, mit gemeinsamem Grund. Verwirf NICHTS, was du als Anker nutzt. Keine Mengen-Quote — nur Rechenschaft."),
+                "Vermerke eine GRUPPE von Quell-Items, die du BEWUSST NICHT ableitest, mit gemeinsamem Grund (dismiss=true). Um eine KOLLISION aufzulösen (du willst ein zuvor verworfenes Item doch als Anker nutzen): rufe es mit dismiss=false und den betroffenen ids auf — das NIMMT die Verwerfung ZURÜCK. Verwirf NICHTS, was du als Anker nutzt. Keine Mengen-Quote — nur Rechenschaft."),
             AIFunctionFactory.Create(CheckAccountability, "check_accountability",
                 "READ-ONLY Rechenschafts-Feedback zu DEINEM aktuellen Entwurf: übergib dieselben Items wie für save_derived; es meldet, welche Quell-Items noch UNBEHANDELT sind und welche du als Anker nutzt UND zugleich verworfen hast (Kollision). Nutze es VOR save_derived, arbeite die offenen Punkte selbst ab und prüfe erneut. Mehrfach erlaubt. Der Host korrigiert NICHT — du."),
             AIFunctionFactory.Create(VerifyDerived, "verify_derived",
@@ -201,16 +201,37 @@ internal sealed class DerivationTools
         return sb.ToString();
     }
 
-    // Accountable: eine Gruppe bewusst nicht-abgeleiteter Items mit Grund vermerken (Coverage-Rechenschaft, schreibt nichts).
-    private string AccountUncovered(string[] itemIds, string reason)
+    // Accountable: eine Gruppe bewusst nicht-abgeleiteter Items mit Grund vermerken ODER (dismiss=false) eine frühere
+    // Verwerfung ZURÜCKNEHMEN (Coverage-Rechenschaft, schreibt kein Artefakt). Rücknahme löst Kollisionen auf: ein Item,
+    // das der Agent später doch als Anker nutzt, kann er hier aus der Verwerfung entfernen — durch den Agenten, nicht den
+    // Host (Messung bleibt intakt). Das Register _accounted/_dismissals ist damit KORRIGIERBAR statt append-only.
+    private string AccountUncovered(string[] itemIds, string reason, bool dismiss = true)
     {
         var ids = (itemIds ?? []).Select(a => a?.Trim() ?? string.Empty).Where(a => a.Length > 0).ToList();
         var known = ids.Where(_byId.ContainsKey).Distinct(StringComparer.Ordinal).ToList();
         var unknown = ids.Where(a => !_byId.ContainsKey(a)).ToList();
+
+        if (!dismiss)
+        {
+            var toRemove = known.ToHashSet(StringComparer.Ordinal);
+            var removed = known.Count(k => _accounted.Remove(k));
+            // Aus den Gruppen prunen; leer gewordene Gruppen fallen weg.
+            for (var i = _dismissals.Count - 1; i >= 0; i--)
+            {
+                var kept = _dismissals[i].ItemIds.Where(x => !toRemove.Contains(x)).ToList();
+                if (kept.Count == _dismissals[i].ItemIds.Count) continue;
+                if (kept.Count == 0) _dismissals.RemoveAt(i);
+                else _dismissals[i] = _dismissals[i] with { ItemIds = kept };
+            }
+            _run.AppendEvent(new { type = "AGENTIC_TOOL_ACCOUNT_UNCOVERED", runId = _run.RunId, spec = _spec.Id, retract = true, ids = removed, requested = known.Count, unknown = unknown.Count, timestampUtc = DateTime.UtcNow });
+            return $"OK: {removed} Item(s) aus der Verwerfung ZURÜCKGENOMMEN (kannst du jetzt als Anker nutzen, ohne Kollision)."
+                 + (unknown.Count > 0 ? $" Unbekannt ignoriert: {string.Join(",", unknown)}." : string.Empty);
+        }
+
         var r = string.IsNullOrWhiteSpace(reason) ? "(kein Grund angegeben)" : reason.Trim();
         foreach (var k in known) _accounted.Add(k);
         if (known.Count > 0) _dismissals.Add(new Dismissal(known, r));
-        _run.AppendEvent(new { type = "AGENTIC_TOOL_ACCOUNT_UNCOVERED", runId = _run.RunId, spec = _spec.Id, ids = known.Count, unknown = unknown.Count, reason = r, timestampUtc = DateTime.UtcNow });
+        _run.AppendEvent(new { type = "AGENTIC_TOOL_ACCOUNT_UNCOVERED", runId = _run.RunId, spec = _spec.Id, retract = false, ids = known.Count, unknown = unknown.Count, reason = r, timestampUtc = DateTime.UtcNow });
         return $"OK: {known.Count} Item(s) als bewusst nicht-abgeleitet vermerkt (Grund: {r})."
              + (unknown.Count > 0 ? $" Unbekannt ignoriert: {string.Join(",", unknown)}." : string.Empty);
     }
