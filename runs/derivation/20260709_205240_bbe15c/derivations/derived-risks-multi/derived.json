@@ -1,0 +1,114 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260709_205240_bbe15c",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass das einrichtungsbezogene Berechtigungsmodell unvollst\u00E4ndig bleibt, weil die Architektur die Zugriffsbeschr\u00E4nkung nur f\u00FCr Mitarbeitende konkretisiert, gleichzeitig aber auch Angeh\u00F6rigen- und Bewohner-Accounts vorsieht. Ohne explizite Zuordnung dieser zus\u00E4tzlichen Rollen zu genau einer Einrichtung bzw. genau einem Bewohner k\u00F6nnen Profile versehentlich zu breit sichtbar oder bearbeitbar werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-06",
+        "REQ-37",
+        "ARCH-06",
+        "ARCH-07",
+        "ARCH-08"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige und Bewohner greifen technisch \u00FCber dasselbe App- und Rechtekonzept auf Daten zu wie Mitarbeitende.",
+        "Das einrichtungsbezogene Berechtigungsmodell muss nicht nur f\u00FCr Mitarbeitende, sondern f\u00FCr alle vorgesehenen Account-Typen konsistent umgesetzt werden."
+      ],
+      "derivationRationale": "REQ-37 und ARCH-08 verlangen hausbezogene Zugriffsbeschr\u00E4nkung, formulieren diese aber nur explizit f\u00FCr Mitarbeitende. Gleichzeitig erweitern REQ-05/ARCH-06 und REQ-06/ARCH-07 den Nutzerkreis um Angeh\u00F6rige und Bewohner. Daraus folgt ein Integrationsrisiko f\u00FCr das Rollen- und Berechtigungsmodell, wenn diese Rollen nicht sauber an Einrichtung bzw. Einzelprofil gebunden werden."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die vorgesehene Suche auf Kommunikationsseiten fachlich unzuverl\u00E4ssig bleibt, weil Such- und Filterfunktion gefordert sind, die Architektur den notwendigen Standard f\u00FCr Beschreibungen aber noch offen l\u00E4sst, w\u00E4hrend Inhalte gleichzeitig dynamisch von verschiedenen Nutzern erg\u00E4nzt werden sollen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "REQ-31",
+        "ARCH-15",
+        "ARCH-22"
+      ],
+      "assumptions": [
+        "Von unterschiedlichen Nutzern hinzugef\u00FCgte Kommunikationsinhalte k\u00F6nnen sich in Wortwahl und Detailgrad stark unterscheiden, wenn kein verbindliches Eingabeschema vorgegeben wird."
+      ],
+      "derivationRationale": "REQ-23 fordert Suche und daf\u00FCr ein systematisches Beschreibungsmuster. ARCH-22 best\u00E4tigt, dass dieses Muster erst noch definiert werden muss, w\u00E4hrend ARCH-15 und REQ-31 bereits dynamische, von Nutzern erg\u00E4nzbare Inhalte vorsehen. Dadurch entsteht das Risiko, dass Suchergebnisse trotz vorhandener Daten inkonsistent oder l\u00FCckenhaft sind."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass falsche oder unangemessene Inhalte langfristig in Profilen verbleiben, weil viele Nutzer Inhalte erg\u00E4nzen d\u00FCrfen, normale User aber nichts l\u00F6schen d\u00FCrfen und gleichzeitig dynamisch wachsende Bereiche mit Bildern, Kommunikationsinhalten, Videos und No-Gos vorgesehen sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-31",
+        "ARCH-15",
+        "ARCH-20"
+      ],
+      "assumptions": [
+        "Nicht jede inhaltliche Korrektur l\u00E4sst sich allein durch \u00DCberschreiben oder Hinzuf\u00FCgen eines neuen Eintrags sauber l\u00F6sen.",
+        "Ein Teil der inhaltlichen Pflege wird im Alltag von Nicht-Admins vorgenommen."
+      ],
+      "derivationRationale": "REQ-31 erlaubt Usern das Hinzuf\u00FCgen, verbietet ihnen aber das L\u00F6schen bestehender Daten. ARCH-15 und ARCH-20 sehen mehrere dynamisch wachsende Inhaltsarten vor. Daraus folgt ein Governance-Risiko: Fehl- oder Dubletteneintr\u00E4ge k\u00F6nnen sich ansammeln, obwohl die App gerade schnelles und verl\u00E4ssliches Nachschlagen unterst\u00FCtzen soll."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die App im Alltag gerade f\u00FCr neue oder seltene Nutzer schwer bedienbar bleibt, weil Barrierefreiheit und alternative Eingabemethoden ber\u00FCcksichtigt werden sollen, die Hilfefunktion aber nur als sp\u00E4tere Erg\u00E4nzung vorgesehen ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-33",
+        "REQ-41",
+        "REQ-43",
+        "ARCH-29",
+        "ARCH-30"
+      ],
+      "assumptions": [
+        "Ein signifikanter Teil der Zielgruppe nutzt die App nicht kontinuierlich genug, um Bedienabl\u00E4ufe ohne Unterst\u00FCtzung sicher zu verinnerlichen."
+      ],
+      "derivationRationale": "REQ-33 und ARCH-29 verlangen barrierearmes Design, REQ-43 fordert die Ber\u00FCcksichtigung alternativer Eingabemethoden, und REQ-41 benennt Hilfe/Tutorial als sinnvolle Unterst\u00FCtzung. Wenn ARCH-30 diese Hilfe nur als sp\u00E4tere Erg\u00E4nzung behandelt, entsteht das Risiko, dass die Bedienbarkeit trotz guter UI-Grunds\u00E4tze f\u00FCr einzelne Nutzergruppen nicht ausreichend abgesichert ist."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass Aktualit\u00E4ts-Benachrichtigungen technisch oder organisatorisch unzuverl\u00E4ssig ausfallen, weil Popups f\u00FCr alle verbundenen Nutzer derselben Einrichtung vorgesehen sind, w\u00E4hrend die Datenhaltung in Firestore und insbesondere die lokale Speicherung bzw. Zwischenspeicherung noch nicht konkretisiert ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-42",
+        "REQ-51",
+        "ARCH-08"
+      ],
+      "assumptions": [
+        "Benachrichtigungen sollen sich an der Einrichtungszugeh\u00F6rigkeit der Nutzer orientieren.",
+        "Die Auslieferung oder Anzeige von Benachrichtigungen h\u00E4ngt zumindest teilweise vom lokalen Datenstand oder einer clientseitigen Zuordnung ab."
+      ],
+      "derivationRationale": "REQ-42 verlangt einrichtungsweite Benachrichtigungen bei neuen About-Me-Inhalten. REQ-51 sagt zugleich, dass lokale Speicherung/Caching bei Firestore noch offen ist; ARCH-08 macht die Einrichtungsgrenze zur zentralen Berechtigungsdimension. Daraus folgt ein Risiko f\u00FCr konsistente, zielgenaue Aktualit\u00E4tsmeldungen, solange Synchronisation und Mandantenzuordnung nicht konkretisiert sind."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass der Nutzen der App f\u00FCr das schnelle Verstehen von Bewohnern begrenzt bleibt, wenn die inhaltliche Erstbef\u00FCllung und Validierung nicht rechtzeitig gekl\u00E4rt werden, weil bestehendes Wissen zwar aus Akten und Dokumentation stammen soll, deren Verf\u00FCgbarkeit und Nutzbarkeit aber unsicher ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-46",
+        "REQ-47",
+        "ARCH-24"
+      ],
+      "assumptions": [
+        "Ein wesentlicher Teil des f\u00FCr die App wertvollen Kommunikationswissens liegt zun\u00E4chst nicht strukturiert digital vor.",
+        "Der wahrgenommene Nutzen der App h\u00E4ngt stark davon ab, dass beim Start bereits ausreichend belastbare Inhalte vorhanden sind."
+      ],
+      "derivationRationale": "REQ-02 und REQ-46 setzen darauf, vorhandenes Kommunikationswissen auffindbar zu machen und das heutige Problem schwer durchsuchbarer Dokumentation zu entsch\u00E4rfen. Zugleich sagen REQ-47 und ARCH-24, dass Einsicht in Akten f\u00FCr Analyse, Tests oder Bef\u00FCllung wegen Datenschutz ungekl\u00E4rt ist. Daraus folgt ein Einf\u00FChrungsrisiko: Die Architektur kann die fachliche Zielsetzung nur tragen, wenn die Wissensbasis tats\u00E4chlich zug\u00E4nglich gemacht werden darf."
+    }
+  ]
+}

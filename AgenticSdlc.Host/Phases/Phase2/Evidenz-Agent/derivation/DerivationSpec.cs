@@ -14,9 +14,18 @@ public sealed record DerivationSpec(
     IReadOnlyList<string> SourceArtifactTypes,  // 1..N Quell-Artefakttypen (Multi-Source); Reihenfolge = Anzeige/Doku
     string TargetArtifactType,                  // Ziel-Typ des erzeugten ArtifactDocument, z. B. "risks"
     string AgentName,                           // Prompt-Ordner unter Prompts/phase2_evidence/
-    string PromptName,                          // Prompt-Datei (versioniert)
-    string ItemIdPrefix)                        // stabiler ID-Präfix der abgeleiteten Items, z. B. "DRISK"
+    string PromptName,                          // Prompt-Datei (versioniert) — strukturierter Modus (Host füttert Items)
+    string ItemIdPrefix,                        // stabiler ID-Präfix der abgeleiteten Items, z. B. "DRISK"
+    string? AgenticPromptName = null,           // Prompt für den agentischen Modus (Agent liest/schreibt via Tools); null = kein agentic-Support
+    string? AgenticDiagnosticPromptName = null, // Diagnose-Prompt (Narrations-Pflicht, --narrate); NICHT die Mess-Default
+    string? AgenticExplorerPromptName = null)   // Explorer-Prompt (Ziel-only, Entdeckungs-Tools, --explore)
 {
+    /// <summary>Unterstützt diese Ableitung den agentischen Modus (Agent nutzt Tools selbst)?</summary>
+    public bool SupportsAgentic => !string.IsNullOrWhiteSpace(AgenticPromptName);
+
+    /// <summary>Unterstützt diese Ableitung den Explorer-Modus (Ziel-only, Selbst-Entdeckung der Umwelt)?</summary>
+    public bool SupportsExplorer => !string.IsNullOrWhiteSpace(AgenticExplorerPromptName);
+
     /// <summary>Primärer (erster) Quelltyp — für Einzelquell-Pfade (Chain-Fan-out, CLI-Hinweise/Guards).</summary>
     public string PrimarySourceArtifactType => SourceArtifactTypes[0];
 
@@ -44,9 +53,14 @@ public static class DerivationRegistry
                 AgentName: "EvidenceRequirementsGapAgent", PromptName: "RequirementsGapFromRequirements1", ItemIdPrefix: "DREQ"),
 
             // Multi-Source-Demo (Bau-Punkt 2): Risiken aus requirements + architecture (Zusammenspiel).
+            // AgenticPromptName gesetzt → --agentic-Modus verfügbar (Agent liest/schreibt via Tools selbst).
             ["derived-risks-multi"] = new(
                 Id: "derived-risks-multi", SourceArtifactTypes: ["requirements", "architecture"], TargetArtifactType: "risks",
-                AgentName: "EvidenceDerivedRisksAgent", PromptName: "DerivedRisksFromReqArch1", ItemIdPrefix: "DRISK"),
+                AgentName: "EvidenceDerivedRisksAgent", PromptName: "DerivedRisksFromReqArch1", ItemIdPrefix: "DRISK",
+                // v2 = Mess-Default (nennt Drill-down-Tools); v3 = Diagnose (Narrations-Pflicht, via --narrate). v1 bleibt erhalten.
+                AgenticPromptName: "DerivedRisksFromReqArchAgentic2",
+                AgenticDiagnosticPromptName: "DerivedRisksFromReqArchAgentic3",
+                AgenticExplorerPromptName: "DerivedRisksExplorer1"),
         };
 
     public static bool TryGet(string id, out DerivationSpec spec) => Specs.TryGetValue(id, out spec!);

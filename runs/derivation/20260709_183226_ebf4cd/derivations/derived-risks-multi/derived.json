@@ -1,0 +1,167 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260709_183226_ebf4cd",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic1"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Das geforderte einrichtungsbezogene Berechtigungsmodell ist architektonisch noch nicht konkretisiert; dadurch besteht das Risiko, dass Nutzer trotz interner Nutzung Profile aus anderen H\u00E4usern sehen oder suchen k\u00F6nnen, bevor die Mandantentrennung durchg\u00E4ngig umgesetzt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-37",
+        "ARCH-08",
+        "ARCH-09",
+        "ARCH-10"
+      ],
+      "assumptions": [
+        "Die Profil\u00FCbersicht und Suche greifen auf einen gemeinsamen Datenbestand zu, in dem Profile mehrerer Einrichtungen vorhanden sein k\u00F6nnen."
+      ],
+      "derivationRationale": "REQ-37 fordert eine strikte Beschr\u00E4nkung pro Einrichtung. ARCH-08 sagt zugleich, dass die technische Umsetzung noch auszuarbeiten ist, w\u00E4hrend ARCH-09 und ARCH-10 bereits eine \u00DCbersicht und Suche \u00FCber zug\u00E4ngliche Profile vorsehen. Ohne fr\u00FCh gekl\u00E4rte und durchg\u00E4ngige Filterung gef\u00E4hrden \u00DCbersicht und Suche die geforderte Zugriffstrennung."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Die Kombination aus Angeh\u00F6rigenzugang und rollenbasiertem Hinzuf\u00FCgen von Inhalten erzeugt das Risiko, dass externe Beitr\u00E4ge die Verl\u00E4sslichkeit und Einheitlichkeit der Bewohnerprofile beeintr\u00E4chtigen, wenn keine besondere Pr\u00FCfung oder Freigabelogik vorgesehen wird.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-31",
+        "ARCH-05",
+        "ARCH-06",
+        "ARCH-15"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige werden im Rollenmodell nicht strenger eingeschr\u00E4nkt als normale beitragende Nutzer.",
+        "assumptions",
+        "Es ist keine separate redaktionelle Freigabe f\u00FCr von Angeh\u00F6rigen eingestellte Inhalte vorgesehen."
+      ],
+      "derivationRationale": "REQ-05 und ARCH-06 \u00F6ffnen die App f\u00FCr Angeh\u00F6rige als Beitragende. REQ-31 und ARCH-05 erlauben Nicht-Admins das Hinzuf\u00FCgen von Inhalten, w\u00E4hrend ARCH-15 dynamische Erweiterbarkeit vorsieht. Dadurch steigt das Risiko widerspr\u00FCchlicher, uneinheitlicher oder schwer einordbarer Inhalte, obwohl die L\u00F6sung verl\u00E4ssliches Verst\u00E4ndnis unterst\u00FCtzen soll."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Die sp\u00E4tere Popup-Benachrichtigung bei neuen About-Me-Inhalten kann unter der noch offenen Zugriffstrennung dazu f\u00FChren, dass Aktualisierungen an einen zu gro\u00DFen Empf\u00E4ngerkreis signalisiert werden oder Benachrichtigungen fachlich nicht sauber auf dieselbe Einrichtung begrenzt sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-42",
+        "REQ-37",
+        "ARCH-08",
+        "ARCH-14",
+        "ARCH-15"
+      ],
+      "assumptions": [
+        "Die Benachrichtigungsfunktion w\u00FCrde auf denselben Berechtigungs- und Gruppierungsmechanismen aufbauen wie der \u00FCbrige Datenzugriff."
+      ],
+      "derivationRationale": "REQ-42 verlangt Benachrichtigungen an alle verbundenen Nutzer derselben Einrichtung. Gleichzeitig ist laut REQ-37/ARCH-08 die technische Umsetzung der Einrichtungsgrenzen noch offen. Da About-Me-Inhalte gem\u00E4\u00DF ARCH-14 und ARCH-15 dynamisch wachsen, h\u00E4ngt die korrekte Benachrichtigungsverteilung an einem noch nicht ausdefinierten Mandantenmodell."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Die geforderte Suche in Kommunikationsinhalten ist gef\u00E4hrdet, weil die Architektur die Suche von einem erst noch zu definierenden Beschreibungsmuster abh\u00E4ngig macht; ohne verbindlichen Erfassungsstandard k\u00F6nnten neue Eintr\u00E4ge zwar zahlreich wachsen, aber nur uneinheitlich auffindbar sein.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "REQ-19",
+        "ARCH-22",
+        "ARCH-15"
+      ],
+      "assumptions": [
+        "Nutzer erfassen Kommunikationsbeschreibungen dezentral und ohne stark vorstrukturierte Pflichtfelder, solange das Beschreibungsmuster nicht festgelegt ist."
+      ],
+      "derivationRationale": "REQ-23 fordert Suche und benennt selbst die Notwendigkeit eines systematischen Musters. ARCH-22 best\u00E4tigt, dass dieses Muster noch definiert werden muss, w\u00E4hrend REQ-19 und ARCH-15 dynamisches Wachstum der Inhalte vorsehen. Damit entsteht das Risiko, dass Datenbestand und Suchfunktion auseinanderlaufen."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Die Architektur ist auf inhaltliche Bef\u00FCllung mit Wissen aus Akten und Dokumentation angewiesen, obwohl der Zugriff auf diese Quellen datenschutzbedingt ungekl\u00E4rt ist; dadurch besteht das Risiko, dass die App ihren Nutzen f\u00FCr Einarbeitung und schnelles Nachschlagen nur mit unvollst\u00E4ndigem oder stark verz\u00F6gertem Initialbestand erreicht.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-04",
+        "REQ-45",
+        "REQ-46",
+        "REQ-47",
+        "ARCH-24"
+      ],
+      "assumptions": [
+        "Ein wesentlicher Teil des anf\u00E4nglichen Kommunikationswissens liegt tats\u00E4chlich nur in bestehenden Akten oder schriftlicher Dokumentation vor und nicht bereits strukturiert digital vor."
+      ],
+      "derivationRationale": "REQ-02, REQ-04 und REQ-45 verlangen die Nutzung vorhandenen Wissens f\u00FCr Nachschlagen und Einarbeitung; REQ-46 beschreibt gerade die heutige Schwierigkeit beim Finden dieses Wissens. Gleichzeitig sagen REQ-47 und ARCH-24, dass Einsicht in Akten f\u00FCr Analyse, Tests oder Bef\u00FCllung ungekl\u00E4rt ist. Wenn diese Quelle nicht nutzbar ist, wird die App anfangs inhaltlich schwach bleiben."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Die vorgesehene Nutzung von Bildern und Videos f\u00FCr Profile und Kommunikationssituationen ist durch ungekl\u00E4rte Zustimmungen gef\u00E4hrdet; dadurch k\u00F6nnten gerade besonders anschauliche Inhalte, auf die das Verst\u00E4ndnis neuer Mitarbeitender angewiesen ist, nicht oder nur uneinheitlich genutzt werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-20",
+        "REQ-32",
+        "REQ-39",
+        "ARCH-20",
+        "ARCH-23"
+      ],
+      "assumptions": [
+        "F\u00FCr einen relevanten Teil der Bewohner w\u00E4ren Bilder oder Videos in der Praxis besonders hilfreich, um Kommunikationsweisen verst\u00E4ndlich zu machen."
+      ],
+      "derivationRationale": "REQ-20 und REQ-32 sowie ARCH-20 setzen auf visuelle und videobasierte Inhalte. REQ-39 und ARCH-23 machen aber klar, dass Datenschutz und Zustimmungen f\u00FCr Bilder vorab ungekl\u00E4rt sind. Damit ist ein zentraler architektonischer Nutzenbaustein von externen Freigaben abh\u00E4ngig."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": "Der Bewohner-Account mit eigenem Bild-Upload erzeugt das Risiko, dass eingeschr\u00E4nkte Bedienrechte allein nicht ausreichen, um unbeabsichtigte oder f\u00FCr andere Nutzer irref\u00FChrende Profil\u00E4nderungen zu vermeiden, wenn keine zus\u00E4tzliche Moderation oder Kennzeichnung selbst eingestellter Inhalte vorgesehen ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "ARCH-07",
+        "ARCH-14",
+        "ARCH-15"
+      ],
+      "assumptions": [
+        "Vom Bewohner hochgeladene Bilder werden nach dem Upload unmittelbar im normalen Profilkontext f\u00FCr andere Nutzer sichtbar.",
+        "Die Zielgruppe kann aufgrund der erw\u00E4hnten Fehlbedienungsgefahr Inhalte versehentlich unpassend oder missverst\u00E4ndlich einstellen."
+      ],
+      "derivationRationale": "REQ-06 und ARCH-07 begrenzen zwar den Bewohner-Account, erlauben aber explizit das Hinzuf\u00FCgen eigener Bilder. ARCH-14 und ARCH-15 machen diese Inhalte Teil eines dynamisch wachsenden Profils. Damit bleibt trotz eingeschr\u00E4nkter Rechte ein Risiko f\u00FCr irref\u00FChrende oder unbeabsichtigte Profilinhalte bestehen."
+    },
+    {
+      "itemId": "DRISK-08",
+      "origin": "Derived",
+      "text": "Die Anforderung, alternative Eingabemethoden f\u00FCr beeintr\u00E4chtigte Nutzer zu ber\u00FCcksichtigen, ist in der Architektur bislang nicht konkret getragen; dadurch besteht das Risiko, dass der vorgesehene Bewohner-Account praktisch nur eingeschr\u00E4nkt nutzbar ist, obwohl er Beteiligung am eigenen Profil erm\u00F6glichen soll.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-43",
+        "ARCH-07",
+        "ARCH-29"
+      ],
+      "assumptions": [
+        "Barrierefreiheit im Sinne von gro\u00DFer Schrift und Kontrast deckt die ben\u00F6tigten alternativen Eingabemethoden nicht bereits ausreichend ab."
+      ],
+      "derivationRationale": "REQ-43 fordert die Ber\u00FCcksichtigung von Sprachbefehlen oder alternativen Eingabemethoden. Die Architektur nennt mit ARCH-29 bisher nur visuelle Barrierefreiheitsaspekte, w\u00E4hrend ARCH-07 einen Bewohner-Account mit aktiver Nutzung vorsieht. Damit ist die Nutzbarkeit dieses Accounts f\u00FCr beeintr\u00E4chtigte Personen architektonisch nicht hinreichend abgesichert."
+    },
+    {
+      "itemId": "DRISK-09",
+      "origin": "Derived",
+      "text": "Die vorgesehene Cloud-Datenhaltung mit noch ungekl\u00E4rter lokaler Speicherung gef\u00E4hrdet die Verf\u00FCgbarkeit aktueller Kommunikations- und Videoinhalte in Situationen, in denen Informationen schnell ben\u00F6tigt werden, wenn Netzverbindung oder Caching-Verhalten nicht fr\u00FCh festgelegt werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-20",
+        "REQ-51",
+        "ARCH-20",
+        "ARCH-21"
+      ],
+      "assumptions": [
+        "Die App wird zumindest teilweise in Umgebungen mit instabiler oder nicht jederzeit verl\u00E4sslicher Internetverbindung genutzt.",
+        "F\u00FCr schnelle Unterst\u00FCtzung in Betreuungssituationen ist ein unmittelbarer Zugriff auf vorhandene Inhalte erforderlich."
+      ],
+      "derivationRationale": "REQ-04 verlangt Unterst\u00FCtzung in konkreten Verst\u00E4ndigungssituationen und schnelles Nachschlagen; REQ-20 sowie ARCH-20/21 erweitern dies um Medieninhalte. REQ-51 sagt jedoch, dass lokale Speicherung bzw. Zwischenspeicherung bei Firebase Firestore noch zu konkretisieren ist. Damit ist die praktische Verf\u00FCgbarkeit der Inhalte noch nicht architektonisch abgesichert."
+    }
+  ]
+}

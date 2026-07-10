@@ -1,0 +1,73 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260709_214113_77f20c",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko unzul\u00E4ssiger oder einrichtungs\u00FCbergreifender Datenoffenlegung, weil der Zugriff zwar auf das eigene Haus beschr\u00E4nkt werden muss, die technische Umsetzung dieses Berechtigungsmodells aber noch offen ist und gleichzeitig ein cloudbasierter Datenbankansatz mit noch ungekl\u00E4rter lokaler Speicherung/Zwischenspeicherung vorgesehen ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-37",
+        "REQ-51"
+      ],
+      "assumptions": [
+        "Die einrichtungsbezogene Zugriffsbeschr\u00E4nkung muss technisch sowohl serverseitig als auch bei lokaler Zwischenspeicherung wirksam durchgesetzt werden."
+      ],
+      "derivationRationale": "Aus der Kombination aus noch nicht ausgearbeitetem Berechtigungsmodell und ungekl\u00E4rter Client-/Offline-Speicherung folgt ein konkretes Risiko, dass Profile au\u00DFerhalb der vorgesehenen Einrichtung sichtbar oder auf Ger\u00E4ten verf\u00FCgbar werden."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die App wegen ungekl\u00E4rter Datenschutz- und Einwilligungsfragen nicht rechtzeitig mit realistischen Inhalten bef\u00FCllt, getestet oder produktiv genutzt werden kann, da sowohl die Nutzung von Bildern als auch die Einsicht in Bewohnerakten als relevante Wissensquellen noch vorab gekl\u00E4rt werden m\u00FCssen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-39",
+        "REQ-47",
+        "REQ-45"
+      ],
+      "assumptions": [
+        "F\u00FCr einen nutzbringenden Einsatz werden reale Bewohnerinformationen aus Bildern und/oder bestehender Dokumentation ben\u00F6tigt."
+      ],
+      "derivationRationale": "Die L\u00F6sung soll auf Wissen aus Bildern und bestehender Dokumentation aufbauen; wenn Freigaben f\u00FCr Bilder und Akteneinsicht unklar bleiben, fehlt eine belastbare Grundlage f\u00FCr Bef\u00FCllung, Erprobung und sp\u00E4teren Betrieb."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko geringer Auffindbarkeit und inkonsistenter Kommunikationsdaten, weil Kommunikationsinhalte dynamisch von Nutzern erweitert werden sollen, w\u00E4hrend das daf\u00FCr notwendige standardisierte Beschreibungsmuster f\u00FCr Suche und Filterung noch nicht definiert ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-19",
+        "REQ-23"
+      ],
+      "assumptions": [
+        "Nutzer erfassen Kommunikationsinhalte weitgehend frei, solange kein verbindliches Beschreibungsmuster vorgegeben ist."
+      ],
+      "derivationRationale": "Wenn viele Eintr\u00E4ge dynamisch entstehen, aber die semantische Struktur f\u00FCr Suchbarkeit noch fehlt, wird Wissen voraussichtlich uneinheitlich erfasst und sp\u00E4ter schwer zuverl\u00E4ssig gefunden."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko unbeabsichtigter inhaltlicher Verf\u00E4lschung oder Fehlsteuerung im Umgang mit Bewohnern, weil mehrere nicht-administrative Rollen Inhalte hinzuf\u00FCgen d\u00FCrfen, bereits erfasste Daten aber nicht l\u00F6schen k\u00F6nnen und keine Anforderungen an fachliche Freigabe, Korrekturprozess oder Versionsnachvollziehbarkeit erkennbar sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-31",
+        "REQ-05",
+        "REQ-06",
+        "REQ-24"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige, Bewohner und regul\u00E4re Nutzer k\u00F6nnen Inhalte zu Profilen bzw. sensiblen Bereichen tats\u00E4chlich beisteuern.",
+        "sourceArtifactItemIds are interpreted jointly with the rule that User Inhalte hinzuf\u00FCgen d\u00FCrfen."
+      ],
+      "derivationRationale": "Wenn sensible Inhalte wie Kommunikationswissen oder No-Gos von mehreren Rollen erweiterbar sind, fehlerhafte Eintr\u00E4ge aber nicht regul\u00E4r entfernt werden k\u00F6nnen und kein Governance-Mechanismus beschrieben ist, k\u00F6nnen problematische Inhalte fortbestehen und das Verhalten anderer Nutzer fehlleiten."
+    }
+  ]
+}

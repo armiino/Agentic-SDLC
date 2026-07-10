@@ -1,0 +1,134 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260709_190538_26eea5",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass das einrichtungsbezogene Berechtigungsmodell in der Praxis nicht trennscharf umgesetzt wird, weil gleichzeitig externe Angeh\u00F6rige Zugriff erhalten sollen, die Beschr\u00E4nkung aber nur f\u00FCr Mitarbeitende konkret beschrieben ist. Dadurch kann die vorgesehene Zugriffsbeschr\u00E4nkung auf Profile einer Einrichtung unterlaufen werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-37",
+        "REQ-05",
+        "ARCH-08",
+        "ARCH-06"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige geh\u00F6ren nicht automatisch derselben organisatorischen Einheit wie Mitarbeitende an.",
+        "F\u00FCr Angeh\u00F6rige wird kein separates, gleichwertig pr\u00E4zisiertes Mandanten- oder Einrichtungsmodell definiert."
+      ],
+      "derivationRationale": "Die Anforderungen/Architektur verlangen einerseits einrichtungsbezogene Zugriffsbeschr\u00E4nkung, erweitern den Nutzerkreis aber zugleich auf Angeh\u00F6rige. Da die technische Umsetzung des Berechtigungsmodells noch offen ist und nur f\u00FCr Mitarbeitende explizit beschrieben wird, entsteht ein konkretes Abgrenzungsrisiko."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die Kombination aus strikt administrierter Account-Anlage und fehlender Selbstregistrierung zum Betriebsengpass wird: Neue Mitarbeitende, Angeh\u00F6rige oder berechtigte Bewohner erhalten ben\u00F6tigten Zugriff oder angepasste Rechte nicht rechtzeitig, obwohl die L\u00F6sung gerade in neuen oder erstmaligen Betreuungssituationen schnell verf\u00FCgbar sein soll.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-07",
+        "REQ-31",
+        "ARCH-05"
+      ],
+      "assumptions": [
+        "Die Einrichtung hat keine durchg\u00E4ngig sofort verf\u00FCgbare Admin-Kapazit\u00E4t f\u00FCr jede Zugriffsanforderung.",
+        "F\u00FCr kurzfristige Eins\u00E4tze oder personelle Wechsel ist ein zeitnaher Zugang fachlich relevant."
+      ],
+      "derivationRationale": "Die App soll besonders neuen Mitarbeitenden und in ad-hoc Situationen helfen, gleichzeitig d\u00FCrfen nur Admins Accounts anlegen und es gibt keine Registrierung. Daraus folgt ein operatives Risiko, dass die Architektur die gew\u00FCnschte kurzfristige Verf\u00FCgbarkeit nicht ausreichend tr\u00E4gt."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass der Bewohner-Account trotz eingeschr\u00E4nkter Funktionen zu unbeabsichtigten \u00C4nderungen am Selbstbild oder zur Verf\u00E4lschung des gemeinsam genutzten Wissensstands f\u00FChrt, weil Bewohner eigene Bilder hinzuf\u00FCgen d\u00FCrfen, w\u00E4hrend keine differenzierte Freigabe-, Pr\u00FCf- oder Trennungssystematik f\u00FCr solche Beitr\u00E4ge beschrieben ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-14",
+        "REQ-15",
+        "ARCH-07",
+        "ARCH-15"
+      ],
+      "assumptions": [
+        "Von Bewohnern hinzugef\u00FCgte Inhalte werden im selben fachlichen Profilkontext sichtbar wie Beitr\u00E4ge anderer Nutzer.",
+        "Es ist keine gesonderte Moderation oder Kennzeichnung von Bewohnerbeitr\u00E4gen vorgesehen."
+      ],
+      "derivationRationale": "Die Architektur erlaubt Bewohnern bewusst eingeschr\u00E4nkten Zugriff, l\u00E4sst aber eigene Bildbeitr\u00E4ge zu; gleichzeitig sind Profilinhalte dynamisch erweiterbar. Ohne beschriebenen Pr\u00FCf- oder Trennmechanismus kann dies den verl\u00E4sslichen Charakter des Profils als Orientierungshilfe beeintr\u00E4chtigen."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die Suchfunktion f\u00FCr Kommunikationsinhalte ihren Zweck nicht erf\u00FCllt und die bisherige schlechte Auffindbarkeit von Wissen digital fortgeschrieben wird, solange das erforderliche standardisierte Beschreibungsmuster f\u00FCr Eintr\u00E4ge nicht verbindlich definiert und durchgesetzt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "REQ-46",
+        "ARCH-22"
+      ],
+      "assumptions": [
+        "Nutzer erfassen Kommunikationsinhalte ohne strikt vorgegebenes Schema uneinheitlich.",
+        "Die Suchfunktion basiert wesentlich auf den vergebenen Beschreibungen der Eintr\u00E4ge."
+      ],
+      "derivationRationale": "Die bestehende Problemlage ist schlechte Les- und Suchbarkeit von Wissen. Zugleich h\u00E4ngt die vorgesehene Suche laut Anforderung und Architektur ausdr\u00FCcklich von einem noch zu definierenden Beschreibungsmuster ab. Bleibt dieses unklar oder unverbindlich, wird das Kernziel der schnelleren Wissensfindung gef\u00E4hrdet."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass videobasierte Kommunikationsinhalte die Pflege und Nutzbarkeit der Wissensbasis verschlechtern, wenn keine klare Strategie f\u00FCr lokale Speicherung oder Zwischenspeicherung existiert. Gerade bei umfangreicheren Medien kann die auf Firestore gest\u00FCtzte L\u00F6sung sonst im Nutzungskontext unzuverl\u00E4ssig oder schwergewichtig werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-20",
+        "REQ-21",
+        "REQ-51",
+        "ARCH-20",
+        "ARCH-21"
+      ],
+      "assumptions": [
+        "Videos werden nicht ausschlie\u00DFlich als externe Verweise, sondern als in der L\u00F6sung zu handhabende Medien betrachtet.",
+        "F\u00FCr die Nutzung ist eine sp\u00FCrbar verl\u00E4ssliche Verf\u00FCgbarkeit auch au\u00DFerhalb idealer Netzbedingungen relevant."
+      ],
+      "derivationRationale": "Die Architektur fordert integrierte, dynamisch wachsende Videoinhalte; zugleich ist laut Anforderung noch offen, wie Cloud-Daten lokal gespeichert oder gecacht werden. Medienintensive Inhalte versch\u00E4rfen dieses ungekl\u00E4rte Architekturthema und gef\u00E4hrden damit Nutzbarkeit und Verf\u00FCgbarkeit."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die als sp\u00E4tere M\u00F6glichkeit vorgesehene Benachrichtigung bei neuen About-Me-Inhalten organisatorisch oder datenschutzseitig nicht tragf\u00E4hig umgesetzt werden kann, weil gleichzeitig Zugriffe streng einrichtungsbezogen sein sollen und Bildfreigaben vorab zu kl\u00E4ren sind. Ohne saubere Ereignis- und Empf\u00E4ngerlogik k\u00F6nnten Informationen entweder zu breit oder nicht zuverl\u00E4ssig an die richtigen Personen verteilt werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-42",
+        "REQ-37",
+        "REQ-39",
+        "ARCH-08",
+        "ARCH-23"
+      ],
+      "assumptions": [
+        "Benachrichtigungen enthalten mindestens einen Bezug auf konkrete Profil\u00E4nderungen oder Bilder.",
+        "Die Empf\u00E4ngerauswahl f\u00FCr Popups muss dieselben fachlichen Grenzen einhalten wie der Datenzugriff selbst."
+      ],
+      "derivationRationale": "Die sp\u00E4tere Benachrichtigungsfunktion interagiert direkt mit einrichtungsbezogener Zugriffsbeschr\u00E4nkung und ungekl\u00E4rten Bildfreigaben. Dadurch entsteht ein abgeleitetes Risiko in der Verteilungslogik und Governance der Benachrichtigungen."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die inhaltliche Erstbef\u00FCllung und sp\u00E4tere fachliche Qualit\u00E4t der Profile unzureichend bleiben, weil die L\u00F6sung auf Wissen aus Akten und Dokumentation aufbaut, der Zugriff auf diese Quellen aber datenschutzbedingt ungekl\u00E4rt ist und die Architektur keine alternative gesicherte \u00DCberf\u00FChrungsstrategie beschreibt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-45",
+        "REQ-47",
+        "ARCH-24"
+      ],
+      "assumptions": [
+        "Ein wesentlicher Teil des f\u00FCr die Profile ben\u00F6tigten Wissens liegt tats\u00E4chlich in bestehenden Akten oder schriftlicher Dokumentation vor.",
+        "Ohne geregelten Zugriff auf diese Quellen kann die Wissensbasis nicht vollst\u00E4ndig oder konsistent aufgebaut werden."
+      ],
+      "derivationRationale": "Die Anforderungen sehen explizit vor, Wissen aus Akten und Erfahrungen in der App festzuhalten; zugleich ist Einsicht in Bewohnerakten f\u00FCr Analyse, Tests oder Bef\u00FCllung ungekl\u00E4rt. Daraus folgt ein Risiko f\u00FCr Datenverf\u00FCgbarkeit und Inhaltsqualit\u00E4t der L\u00F6sung."
+    }
+  ]
+}

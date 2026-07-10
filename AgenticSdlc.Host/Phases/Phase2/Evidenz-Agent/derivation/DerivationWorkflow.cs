@@ -104,4 +104,17 @@ public static class DerivationWorkflow
         builder.WithOutputFrom(check);
         return builder.Build();
     }
+
+    /// <summary>AGENTISCHER Modus (Stufe 1): EIN Knoten — der Agent liest/verankert/schreibt selbst; die unabhängige
+    /// Assurance läuft im selben Executor danach. Gleicher Ausgabetyp (<see cref="DerivationResult"/>) → als
+    /// Derivation-Knoten austauschbar mit dem strukturierten Graphen.</summary>
+    internal static Microsoft.Agents.AI.Workflows.Workflow BuildAgentic(DerivationAgenticExecutor agentic, DerivationSpec spec)
+    {
+        var builder = new WorkflowBuilder(agentic)
+            .WithName($"Derivation-{spec.Id}-agentic")
+            .WithDescription($"{spec.SourceLabel} → {spec.TargetArtifactType} "
+                           + "(agentisch: Agent liest/verankert/schreibt selbst via Tools; unabhängige Assurance danach).");
+        builder.WithOutputFrom(agentic);
+        return builder.Build();
+    }
 }
