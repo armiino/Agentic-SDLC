@@ -43,12 +43,14 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
     private readonly bool _verify;
     private readonly bool _accountable;
     private readonly bool _accountVerify;
+    private readonly bool _reflect;
+    private readonly int _maxRetries;
 
     public DerivationAgenticExecutor(
         Func<IReadOnlyList<AITool>, AIAgent> agentFactory, InferenceChecker checker, InferenceChecker postHocChecker, DerivationSpec spec,
         string model, RunContext run, string outDir, IReadOnlyDictionary<string, LedgerClaim>? ledgerClaims = null,
         bool explorer = false, bool verify = false, bool accountable = false, bool accountVerify = false,
-        string? postHocJudgeModel = null, bool independentPostHoc = false)
+        string? postHocJudgeModel = null, bool independentPostHoc = false, bool reflect = false, int maxRetries = 1)
         : base($"DerivationAgentic-{spec.Id}")
     {
         _agentFactory = agentFactory;
@@ -56,6 +58,8 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
         _postHocChecker = postHocChecker;
         _postHocJudgeModel = postHocJudgeModel ?? model;
         _independentPostHoc = independentPostHoc;
+        _reflect = reflect;
+        _maxRetries = Math.Max(0, maxRetries);
         _spec = spec;
         _model = model;
         _run = run;
@@ -71,10 +75,13 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
     private bool WantsVerify => _verify || _accountVerify;
     private bool WantsCoverage => _accountable || _accountVerify;
 
-    private string ModeLabel => _accountVerify ? "explore-account-verify" : _verify ? "explore-verify" : _accountable ? "explore-account" : _explorer ? "explore" : "agentic";
+    private string ModeLabel => _reflect ? "explore-account-verify-reflect" : _accountVerify ? "explore-account-verify" : _verify ? "explore-verify" : _accountable ? "explore-account" : _explorer ? "explore" : "agentic";
 
     public override async ValueTask HandleAsync(SourceArtifactSet sources, IWorkflowContext context, CancellationToken ct = default)
     {
+        // REFLECT-Arm: verbindliche externe Abnahme (Reflection-Pattern) mit bounded Loop — separater Pfad, lässt die
+        // validierten Nicht-reflect-Arme unberührt. Belege/Begründung: siehe iteration-note A-agentic-12.
+        if (_reflect) { await HandleReflectAsync(sources, context, ct).ConfigureAwait(false); return; }
         // verify/account-verify bekommen den Checker als In-Loop-Werkzeug (verify_derived); Explorer/agentic/account ohne.
         var tools = new DerivationTools(sources, _spec, _run, _outDir, _model, _ledgerClaims, WantsVerify ? _checker : null);
         // Toolset: account-verify = Explorer + account_uncovered + check_accountability + verify_derived (geschlossene Schleife);
@@ -134,9 +141,115 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
         await context.YieldOutputAsync(new DerivationResult(doc, report.Verdicts, invalid, "agentic")).ConfigureAwait(false);
     }
 
+    // REFLECTION-PATTERN mit EXTERNEM Gate (Reflection = Konzept; Conditional-Edge-Semantik hier executor-gehostet, weil
+    // der „Reviser" derselbe Agent ist). Critic = der bestehende EXTERNE Verifier-Stack (deterministische Anker-/Coverage-
+    // Gates + unabhängiger Post-hoc-Judge), NICHT der Selbst-Check des Agenten (Self-Bias, Panickssery 2024). Loop feuert
+    // NUR bei fail; bounded (Forschung: Runde 2 marginal, Runde 3 negativ). Memory: externe Kritik wird EXPLIZIT wieder
+    // eingespeist (Entwurf liegt auf Disk, Befund als Text) — kein AgentSession-Thread nötig (in rc1 undokumentiert; und
+    // bei EXTERNER Kritik ist explizites Re-Feed korrekt, vgl. Coding-Agent: Code + Test-Output neu lesen).
+    private async Task HandleReflectAsync(SourceArtifactSet sources, IWorkflowContext context, CancellationToken ct)
+    {
+        var baseTask = BuildAccountVerifyTask(sources);
+        var sourceIds = sources.ItemsById().Keys.ToHashSet(StringComparer.Ordinal);
+
+        DerivationTools tools = null!;
+        var doc = new ArtifactDocument(_spec.ItemIdPrefix, _spec.TargetArtifactType, 1, ArtifactDocument.StageDerivation, new ProducerMetadata(_run.RunId, _model, _spec.AgenticAccountVerifyPromptName), []);
+        List<InvalidAnchor> invalid = [];
+        IReadOnlyList<InferenceVerdict> verdicts = [];
+        var gatePass = false;
+        var firstDraftGatePass = false;
+        double? firstDraftR1 = null; bool? firstDraftClean = null;
+        var gateHistory = new List<object>();
+        var taskText = baseTask;
+        var roundsRun = 0;
+
+        for (var round = 0; round <= _maxRetries; round++)
+        {
+            roundsRun = round + 1;
+            tools = new DerivationTools(sources, _spec, _run, _outDir, _model, _ledgerClaims, _checker);
+            var agent = _agentFactory(tools.BuildAccountVerify());
+            _run.AppendEvent(new { type = "REFLECT_ROUND_START", runId = _run.RunId, spec = _spec.Id, round, timestampUtc = DateTime.UtcNow });
+            await agent.RunAsync([new ChatMessage(ChatRole.User, taskText)], cancellationToken: ct).ConfigureAwait(false);
+
+            var derivedPath = Path.Combine(_outDir, "derived.json");
+            var fails = new List<string>();
+            if (!tools.Saved || !File.Exists(derivedPath))
+            {
+                fails.Add("Kein Artefakt gespeichert (save_derived nicht aufgerufen).");
+                gatePass = false; gateHistory.Add(new { round, gatePass, fails });
+                if (round == 0) { firstDraftR1 = null; firstDraftClean = false; }
+                if (round == _maxRetries) break;
+                taskText = BuildReviseTask(fails); continue;
+            }
+
+            doc = JsonSerializer.Deserialize<ArtifactDocument>(await File.ReadAllTextAsync(derivedPath, ct).ConfigureAwait(false), Read) ?? doc;
+
+            // GATE (extern, deterministisch + unabhängiger Judge):
+            invalid = [];
+            foreach (var it in doc.Items)
+            {
+                var anchors = it.SourceArtifactItemIds ?? [];
+                var bad = anchors.Where(a => !sourceIds.Contains(a)).ToList();
+                if (anchors.Count == 0) invalid.Add(new InvalidAnchor(it.Text, anchors, bad, "MISSING_ANCHOR"));
+                else if (bad.Count > 0) invalid.Add(new InvalidAnchor(it.Text, anchors, bad, "UNKNOWN_ANCHOR"));
+            }
+            verdicts = (await _postHocChecker.CheckAsync(doc.Items, sources.ItemsById(), ct).ConfigureAwait(false)).Verdicts;
+            var cov = DerivationCoverage.Evaluate(sources, doc.Items, tools.AccountedItemIds, tools.Dismissals);
+            var badV = verdicts.Where(v => v.Verdict is InferenceVerdictKind.Contradicts or InferenceVerdictKind.Unrelated).ToList();
+            var r1 = doc.Items.Count == 0 ? 0.0 : Math.Round((double)badV.Count / doc.Items.Count, 4);
+
+            if (invalid.Count > 0) fails.Add($"{invalid.Count} ungültige Anker: {string.Join(", ", invalid.SelectMany(i => i.BadIds).Distinct())}.");
+            if (badV.Count > 0) fails.Add($"{badV.Count} nicht-tragende Risiken (verdict∈contradicts/unrelated): {string.Join(", ", badV.Select(v => v.ItemId))}.");
+            if (!cov.SelfAccountingClean) fails.Add($"Rechenschaft unsauber — unbehandelt: [{string.Join(", ", cov.UnaccountedItemIds)}], Kollision: [{string.Join(", ", cov.CollisionItemIds)}].");
+
+            gatePass = fails.Count == 0;
+            if (round == 0) { firstDraftR1 = r1; firstDraftClean = cov.SelfAccountingClean; firstDraftGatePass = gatePass; }
+            gateHistory.Add(new { round, gatePass, fails });
+            _run.AppendEvent(new { type = "REFLECT_GATE", runId = _run.RunId, spec = _spec.Id, round, gatePass, failCount = fails.Count, r1, selfClean = cov.SelfAccountingClean, timestampUtc = DateTime.UtcNow });
+
+            if (gatePass || round == _maxRetries) break;
+            taskText = BuildReviseTask(fails);   // EXTERNE Kritik explizit wieder einspeisen (kein Force-Back-Tool, kein Force auf den Call).
+        }
+
+        var finalBad = verdicts.Count(v => v.Verdict is InferenceVerdictKind.Contradicts or InferenceVerdictKind.Unrelated);
+        var finalR1 = doc.Items.Count == 0 ? 0.0 : Math.Round((double)finalBad / doc.Items.Count, 4);
+        var overCorrected = firstDraftR1 is double fd && finalR1 > fd;   // „silent killer": Loop hat schon-korrektes verschlechtert?
+        var reflectBlock = new
+        {
+            rounds = roundsRun, maxRetries = _maxRetries,
+            firstDraftGatePass, finalGatePass = gatePass, needsRepair = !gatePass,
+            firstDraftR1, finalR1, overCorrected, gateHistory
+        };
+        var decision = gatePass ? "reflect_pass" : "reflect_needsRepair";
+        await WriteReportsAsync(doc, verdicts, invalid, sources, tools, decision, ct, reflectBlock).ConfigureAwait(false);
+        _run.AppendEvent(new { type = "REFLECT_DONE", runId = _run.RunId, spec = _spec.Id, rounds = roundsRun, finalGatePass = gatePass, needsRepair = !gatePass, timestampUtc = DateTime.UtcNow });
+        await context.YieldOutputAsync(new DerivationResult(doc, verdicts, invalid, decision)).ConfigureAwait(false);
+    }
+
+    private string BuildAccountVerifyTask(SourceArtifactSet sources)
+    {
+        var t = new StringBuilder();
+        t.AppendLine("Beginne. Deine Umwelt ist der verifizierte Projektzustand — sie wird dir NICHT vorab genannt.");
+        t.AppendLine("Entdecke sie zuerst mit list_artifacts, konsultiere selbst, was du für dein Ziel brauchst, und speichere mit save_derived, wenn du genug Evidenz hast.");
+        t.AppendLine("Prüfe deinen Entwurf VOR dem Speichern mit verify_derived und überarbeite schwache Items, bis deine Definition of Done erfüllt ist.");
+        t.AppendLine("Rechenschaft: JEDES Quell-Item muss am Ende entweder Anker eines Risikos ODER via account_uncovered mit Grund verworfen sein. Begründe vor jeder Tool-Entscheidung kurz, warum.");
+        t.AppendLine("Prüfe VOR dem Speichern mit check_accountability, ob etwas UNBEHANDELT ist oder du ein Item zugleich verankerst und verwirfst (Kollision); behebe beides selbst und speichere erst, wenn der Stand sauber ist.");
+        return t.ToString();
+    }
+
+    private string BuildReviseTask(IReadOnlyList<string> fails)
+    {
+        var t = new StringBuilder();
+        t.AppendLine("Dein vorheriger Entwurf wurde EXTERN und unabhängig geprüft und ist noch NICHT abgenommen.");
+        t.AppendLine("Konkrete Befunde der Prüfung:");
+        foreach (var f in fails) t.AppendLine($"- {f}");
+        t.AppendLine("Überarbeite GEZIELT diese Punkte: entdecke die Umwelt erneut mit list_artifacts, korrigiere die genannten Items (bessere/tragende Anker, oder verwirf sie begründet), stelle lückenlose UND kollisionsfreie Rechenschaft her, und speichere die finale Fassung erneut mit save_derived GENAU EINMAL.");
+        return t.ToString();
+    }
+
     private async Task WriteReportsAsync(
         ArtifactDocument doc, IReadOnlyList<InferenceVerdict> verdicts, IReadOnlyList<InvalidAnchor> invalid,
-        SourceArtifactSet sources, DerivationTools tools, string decision, CancellationToken ct)
+        SourceArtifactSet sources, DerivationTools tools, string decision, CancellationToken ct, object? reflectBlock = null)
     {
         var byVerdict = verdicts.GroupBy(v => v.Verdict).ToDictionary(g => g.Key.ToString(), g => g.Count());
         var report = new InferenceCheckReport(
@@ -211,7 +324,7 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
             // independentPostHoc = wurde finalR1/dodPass von einem anderen Judge geprüft als dem In-Loop-verify_derived?
             // (bricht Zirkularität). postHocJudgeModel = welches Modell die unabhängige Nach-Prüfung fuhr.
             independentPostHoc = _independentPostHoc, postHocJudgeModel = _postHocJudgeModel,
-            metrics, verify = verifyBlock, coverage = coverageBlock, coverageDelta = coverageDeltaBlock
+            metrics, verify = verifyBlock, coverage = coverageBlock, coverageDelta = coverageDeltaBlock, reflect = reflectBlock
         }, Json), ct).ConfigureAwait(false);
     }
 }

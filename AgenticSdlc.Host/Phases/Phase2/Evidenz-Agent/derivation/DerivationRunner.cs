@@ -45,7 +45,8 @@ public static class DerivationRunner
         }
 
         var dryRun = args.Contains("--dry-run");
-        var accountVerify = args.Contains("--account-verify"); // ACCOUNT-VERIFY: geschlossene Schleife — check_accountability (Coverage) + verify_derived (Treue) vor save.
+        var reflect = args.Contains("--reflect");     // REFLECT: account-verify + VERBINDLICHE externe Abnahme (Reflection-Pattern, bounded Loop, externer Gate).
+        var accountVerify = args.Contains("--account-verify") || reflect; // reflect impliziert das account-verify-Toolset + die beiden Checks.
         var verify = args.Contains("--verify") && !accountVerify;   // VERIFY-LOOP: Explorer + Selbstkorrektur (verify_derived) gegen eine Definition of Done.
         var account = args.Contains("--account") && !accountVerify; // ACCOUNTABLE: Explorer + Coverage-Rechenschaft (account_uncovered) + sichtbares Reasoning.
         var explore = args.Contains("--explore");     // EXPLORER: Ziel-only-Prompt + Entdeckungs-Tools; Agent entdeckt seine Umwelt selbst.
@@ -163,15 +164,16 @@ public static class DerivationRunner
             sourceTypes = providedTypes, sourceItems = sourceSet.TotalItemCount,
             provider = settings.LlmProvider, generatorModel = genSettings.ModelId, checkerModel = judgeSettings.ModelId,
             inLoopJudgeModel = judgeSettings.ModelId, postHocJudgeModel = postHocSettings.ModelId, independentPostHoc,
-            mode = accountVerify ? "explore-account-verify" : verify ? "explore-verify" : account ? "explore-account" : explore ? "explore" : agentic ? "agentic" : "structured", diagnostic = useDiagnostic,
+            mode = reflect ? "explore-account-verify-reflect" : accountVerify ? "explore-account-verify" : verify ? "explore-verify" : account ? "explore-account" : explore ? "explore" : agentic ? "agentic" : "structured", diagnostic = useDiagnostic,
             env = envDir is not null ? Path.GetRelativePath(repoRoot, envDir) : null, envArtifacts = sources.Select(s => s.ArtifactType).ToArray(),
             ledger = ledgerPath is not null ? Path.GetRelativePath(repoRoot, ledgerPath) : null, ledgerClaims = ledgerClaims.Count,
             prompt = !agentic ? spec.PromptName : accountVerify ? spec.AgenticAccountVerifyPromptName : verify ? spec.AgenticVerifyPromptName : account ? spec.AgenticAccountablePromptName : explore ? spec.AgenticExplorerPromptName : useDiagnostic ? spec.AgenticDiagnosticPromptName : spec.AgenticPromptName,
             target = spec.TargetArtifactType, timestampUtc = DateTime.UtcNow
         });
-        var modeLabel = accountVerify ? "explore-account-verify" : verify ? "explore-verify" : account ? "explore-account" : explore ? "explore" : agentic ? "agentic" : "structured";
+        var modeLabel = reflect ? "explore-account-verify-reflect" : accountVerify ? "explore-account-verify" : verify ? "explore-verify" : account ? "explore-account" : explore ? "explore" : agentic ? "agentic" : "structured";
         Console.WriteLine($"[derive] runId={run.RunId} spec={spec.Id} mode={modeLabel} ([{spec.SourceLabel}]->{spec.TargetArtifactType}) umwelt=[{string.Join(",", sources.Select(s => s.ArtifactType))}] items={sourceSet.TotalItemCount} genModel={genSettings.ModelId} checkModel={judgeSettings.ModelId}");
-        if (accountVerify) Console.WriteLine($"[derive] account-verify-tools: explorer-set + account_uncovered + check_accountability (Coverage-Feedback) + verify_derived (Treue-Feedback) — geschlossene Schleife VOR save, Host meldet nur zurück (ledger claims: {ledgerClaims.Count}).");
+        if (reflect) Console.WriteLine($"[derive] REFLECT: account-verify-tools + VERBINDLICHE externe Abnahme (Reflection-Pattern) — externer Gate (det. Anker/Coverage + unabhängiger Judge), bounded Loop (max 1 Retry), Kritik wird bei fail explizit wieder eingespeist. Kein Force auf den Tool-Call.");
+        else if (accountVerify) Console.WriteLine($"[derive] account-verify-tools: explorer-set + account_uncovered + check_accountability (Coverage-Feedback) + verify_derived (Treue-Feedback) — geschlossene Schleife VOR save, Host meldet nur zurück (ledger claims: {ledgerClaims.Count}).");
         else if (verify) Console.WriteLine($"[derive] verify-loop-tools: explorer-set + verify_derived (Selbstprüfung des Entwurfs gegen Definition of Done, Selbstkorrektur; ledger claims: {ledgerClaims.Count}). Ziel-only-Prompt.");
         else if (account) Console.WriteLine($"[derive] accountable-tools: explorer-set + account_uncovered (Coverage-Rechenschaft: jedes Item genutzt ODER begründet verworfen; ledger claims: {ledgerClaims.Count}). Sichtbares Reasoning.");
         else if (explore) Console.WriteLine($"[derive] explorer-tools: list_artifacts/search_items/get_item + get_baseline_items/check_anchor/save_derived + drill-down (ledger claims: {ledgerClaims.Count}). Ziel-only-Prompt, Umwelt selbst-entdeckt.");
@@ -216,7 +218,7 @@ public static class DerivationRunner
                 var a = genClient.AsAIAgent(instructions: prompt, name: spec.AgentName, tools: [.. tools]);
                 return a.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
             };
-            var agenticExec = new DerivationAgenticExecutor(agentFactory, checker, postHocChecker, spec, genSettings.ModelId, run, run.OutputDir(outScope), ledgerClaims, explore, verify, account, accountVerify, postHocSettings.ModelId, independentPostHoc);
+            var agenticExec = new DerivationAgenticExecutor(agentFactory, checker, postHocChecker, spec, genSettings.ModelId, run, run.OutputDir(outScope), ledgerClaims, explore, verify, account, accountVerify, postHocSettings.ModelId, independentPostHoc, reflect);
             workflow = DerivationWorkflow.BuildAgentic(agenticExec, spec);
         }
         else
