@@ -18,13 +18,17 @@ public sealed record DerivationSpec(
     string ItemIdPrefix,                        // stabiler ID-Präfix der abgeleiteten Items, z. B. "DRISK"
     string? AgenticPromptName = null,           // Prompt für den agentischen Modus (Agent liest/schreibt via Tools); null = kein agentic-Support
     string? AgenticDiagnosticPromptName = null, // Diagnose-Prompt (Narrations-Pflicht, --narrate); NICHT die Mess-Default
-    string? AgenticExplorerPromptName = null)   // Explorer-Prompt (Ziel-only, Entdeckungs-Tools, --explore)
+    string? AgenticExplorerPromptName = null,   // Explorer-Prompt (Ziel-only, Entdeckungs-Tools, --explore)
+    string? AgenticVerifyPromptName = null)      // Verify-Loop-Prompt (Explorer + Selbstkorrektur via verify_derived, --verify)
 {
     /// <summary>Unterstützt diese Ableitung den agentischen Modus (Agent nutzt Tools selbst)?</summary>
     public bool SupportsAgentic => !string.IsNullOrWhiteSpace(AgenticPromptName);
 
     /// <summary>Unterstützt diese Ableitung den Explorer-Modus (Ziel-only, Selbst-Entdeckung der Umwelt)?</summary>
     public bool SupportsExplorer => !string.IsNullOrWhiteSpace(AgenticExplorerPromptName);
+
+    /// <summary>Unterstützt diese Ableitung den Verify-Loop-Modus (Selbstkorrektur gegen eine Definition of Done)?</summary>
+    public bool SupportsVerify => !string.IsNullOrWhiteSpace(AgenticVerifyPromptName);
 
     /// <summary>Primärer (erster) Quelltyp — für Einzelquell-Pfade (Chain-Fan-out, CLI-Hinweise/Guards).</summary>
     public string PrimarySourceArtifactType => SourceArtifactTypes[0];
@@ -60,7 +64,9 @@ public static class DerivationRegistry
                 // v2 = Mess-Default (nennt Drill-down-Tools); v3 = Diagnose (Narrations-Pflicht, via --narrate). v1 bleibt erhalten.
                 AgenticPromptName: "DerivedRisksFromReqArchAgentic2",
                 AgenticDiagnosticPromptName: "DerivedRisksFromReqArchAgentic3",
-                AgenticExplorerPromptName: "DerivedRisksExplorer1"),
+                AgenticExplorerPromptName: "DerivedRisksExplorer1",
+                // --verify: Explorer + Selbstkorrektur gegen eine Definition of Done (verify_derived im Loop).
+                AgenticVerifyPromptName: "DerivedRisksVerifyLoop1"),
         };
 
     public static bool TryGet(string id, out DerivationSpec spec) => Specs.TryGetValue(id, out spec!);

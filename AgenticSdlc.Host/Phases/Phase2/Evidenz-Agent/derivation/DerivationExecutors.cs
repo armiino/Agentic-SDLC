@@ -173,10 +173,14 @@ internal sealed class DerivationCheckExecutor : Executor<AnchoredDerivation>
 
         // Ergebnisse auf Platte (Wahrheitsquelle, unabhängig vom Output-Event). In den scope-Ordner (z. B.
         // derivations/{spec}) → mehrere Ableitungen im selben Run kollidieren nicht.
+        // B0: deterministischer Metrik-Vektor (N1/N2/R1/R2) je Lauf mitschreiben (R3 = Judge, separat/offline).
+        // Strukturiert: defekte Items werden VERWORFEN → Nenner R2 = gültige (doc) + verworfene (invalid).
+        var metrics = DerivationMetrics.ComputeDeterministic(doc, msg.Sources, msg.Invalid, report.Verdicts, doc.Items.Count + msg.Invalid.Count);
+
         await File.WriteAllTextAsync(Path.Combine(_outDir, "derived.json"), JsonSerializer.Serialize(doc, Json), ct).ConfigureAwait(false);
         await File.WriteAllTextAsync(Path.Combine(_outDir, "inference-check-report.json"), JsonSerializer.Serialize(report, Json), ct).ConfigureAwait(false);
         await File.WriteAllTextAsync(Path.Combine(_outDir, "derivation-report.json"),
-            JsonSerializer.Serialize(new { spec = _spec.Id, decision = msg.Decision, anchoredValid = msg.Items.Count, invalidAnchor = msg.Invalid.Count, invalid = msg.Invalid }, Json), ct).ConfigureAwait(false);
+            JsonSerializer.Serialize(new { spec = _spec.Id, mode = "structured", decision = msg.Decision, anchoredValid = msg.Items.Count, invalidAnchor = msg.Invalid.Count, invalid = msg.Invalid, metrics }, Json), ct).ConfigureAwait(false);
 
         _run.AppendEvent(new { type = "DERIVATION_CHECKED", runId = _run.RunId, spec = _spec.Id, items = msg.Items.Count, pass = report.Pass, byVerdict = report.ByVerdict, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(new DerivationResult(doc, report.Verdicts, msg.Invalid, msg.Decision)).ConfigureAwait(false);

@@ -292,6 +292,13 @@ if (args.Length > 0 && string.Equals(args[0], "derive", StringComparison.Ordinal
     return;
 }
 
+// B0: Ableitungsgüte-Aggregator über MEHRERE Läufe (Mittel + Spannweite je Modus; --judge = R3 Scope-Creep).
+if (args.Length > 0 && string.Equals(args[0], "derive-metrics", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation.DerivationMetricsAggregator.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // I-d: Human-Review der abgeleiteten Risiken (generisches HumanReview-UI) -> approved-derived-risks.json.
 if (args.Length > 0 && string.Equals(args[0], "derive-review", StringComparison.OrdinalIgnoreCase))
 {

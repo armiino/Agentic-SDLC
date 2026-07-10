@@ -41,11 +41,14 @@ internal sealed class DerivationTools
     private readonly string _model;
     private readonly IReadOnlyDictionary<string, ArtifactItem> _byId;
     private readonly IReadOnlyDictionary<string, LedgerClaim> _claims;
+    private readonly InferenceChecker? _checker;
     private readonly HashSet<string> _retrieved = new(StringComparer.Ordinal);
     private int _saveCount;
+    private int _verifyRounds;
+    private double? _firstDraftR1;
 
     public DerivationTools(SourceArtifactSet sources, DerivationSpec spec, RunContext run, string outDir, string model,
-        IReadOnlyDictionary<string, LedgerClaim>? ledgerClaims = null)
+        IReadOnlyDictionary<string, LedgerClaim>? ledgerClaims = null, InferenceChecker? checker = null)
     {
         _sources = sources;
         _spec = spec;
@@ -54,6 +57,7 @@ internal sealed class DerivationTools
         _model = model;
         _byId = sources.ItemsById();
         _claims = ledgerClaims ?? new Dictionary<string, LedgerClaim>();
+        _checker = checker;
     }
 
     /// <summary>Alle vom Agenten via <c>get_baseline_items</c> betrachteten Item-IDs (Provenienz: retrieved ⊇ used).</summary>
@@ -61,6 +65,12 @@ internal sealed class DerivationTools
 
     /// <summary>Wurde tatsächlich (genau einmal) geschrieben?</summary>
     public bool Saved => _saveCount > 0;
+
+    /// <summary>Wie oft der Agent seinen Entwurf per <c>verify_derived</c> selbst prüfte (0 = angeboten, nicht genutzt).</summary>
+    public int VerifyRounds => _verifyRounds;
+
+    /// <summary>Treue-Verletzungsrate des ERSTEN Entwurfs (verify-Runde 1) — Basis für ΔR1 (Korrektur-Gewinn). null = nie geprüft.</summary>
+    public double? FirstDraftR1 => _firstDraftR1;
 
     public IReadOnlyList<AITool> Build() =>
     [
@@ -92,6 +102,20 @@ internal sealed class DerivationTools
                 "Hole EIN einzelnes Item (Text + Artefakttyp) per itemId."),
         };
         tools.AddRange(Build());
+        return tools;
+    }
+
+    /// <summary>Verify-Loop-Toolset (Modus <c>--verify</c>): das Explorer-Set + <c>verify_derived</c>. Der Agent kann
+    /// seinen EIGENEN Entwurf (vor dem Speichern) auf Anker-Existenz UND Treue prüfen lassen, das Urteil sehen und
+    /// überarbeiten — die geschlossene Feedbackschleife. Der Judge im Loop ist dieselbe <see cref="InferenceChecker"/>-
+    /// Instanz wie die unabhängige Nach-Prüfung (vergleichbares Urteil für ΔR1).</summary>
+    public IReadOnlyList<AITool> BuildVerify()
+    {
+        var tools = new List<AITool>(BuildExplorer())
+        {
+            AIFunctionFactory.Create(VerifyDerived, "verify_derived",
+                "Prüft DEINEN ENTWURF (noch NICHT gespeichert): je Item, ob die Anker existieren (anchorOk) und ob das Risiko aus seinen Ankern folgt (verdict: supported/contradicts/unrelated/unclear) + kurze Begründung. Nutze es VOR save_derived, überarbeite schwache Items und prüfe erneut. Mehrfach erlaubt."),
+        };
         return tools;
     }
 
@@ -239,6 +263,51 @@ internal sealed class DerivationTools
         return related.Count == 0
             ? $"{id}: kein anderes Item teilt seine Claims."
             : $"{id} teilt Evidenz mit {related.Count} Item(s):\n{string.Join("\n", related)}";
+    }
+
+    // Verify: prüft den ENTWURF des Agenten (schreibt NICHTS). Deterministische Anker-Existenz + InferenceChecker-Treue.
+    // Erste Runde stempelt _firstDraftR1 (Roh-Entwurfs-Treue) für ΔR1. Provisorische DRAFT-NN-Refs nur fürs Mapping.
+    private async Task<string> VerifyDerived(DerivedItemDto[] items, CancellationToken ct)
+    {
+        if (_checker is null) return "verify_derived ist in diesem Modus nicht verfügbar.";
+        var round = Interlocked.Increment(ref _verifyRounds);
+
+        var draft = new List<ArtifactItem>();
+        var n = 0;
+        foreach (var it in items ?? [])
+        {
+            n++;
+            var anchors = (it.SourceArtifactItemIds ?? []).Where(a => !string.IsNullOrWhiteSpace(a)).Select(a => a.Trim()).ToList();
+            draft.Add(new ArtifactItem($"DRAFT-{n:D2}", ArtifactOrigin.Derived, it.Text?.Trim() ?? string.Empty,
+                SourceClaimIds: [], SourceArtifactItemIds: anchors, Assumptions: it.Assumptions ?? [], DerivationRationale: it.Rationale));
+        }
+        if (draft.Count == 0) return "verify_derived: leerer Entwurf — nichts zu prüfen.";
+
+        var report = await _checker.CheckAsync(draft, _byId, ct).ConfigureAwait(false);
+        var vById = report.Verdicts.ToDictionary(v => v.ItemId, v => v, StringComparer.Ordinal);
+
+        // ΔR1-Basis: Treue-Verletzungsrate des ERSTEN Entwurfs festhalten.
+        if (round == 1)
+            _firstDraftR1 = Math.Round((double)draft.Count(d =>
+                vById.TryGetValue(d.ItemId, out var v) && v.Verdict is InferenceVerdictKind.Contradicts or InferenceVerdictKind.Unrelated) / draft.Count, 4);
+
+        Directory.CreateDirectory(_outDir);
+        File.WriteAllText(Path.Combine(_outDir, $"verify-round-{round:D2}.json"), JsonSerializer.Serialize(report, Json));
+        _run.AppendEvent(new { type = "AGENTIC_TOOL_VERIFY", runId = _run.RunId, spec = _spec.Id, round, items = draft.Count, byVerdict = report.ByVerdict, timestampUtc = DateTime.UtcNow });
+
+        var sb = new StringBuilder();
+        sb.AppendLine($"verify-Runde {round}: {draft.Count} Entwurfs-Items geprüft.");
+        foreach (var d in draft)
+        {
+            var bad = d.SourceArtifactItemIds.Where(a => !_byId.ContainsKey(a)).ToList();
+            var anchorOk = d.SourceArtifactItemIds.Count > 0 && bad.Count == 0;
+            var v = vById.TryGetValue(d.ItemId, out var vv) ? vv : null;
+            sb.Append($"- {d.ItemId}: anchorOk={anchorOk.ToString().ToLowerInvariant()}");
+            if (bad.Count > 0) sb.Append($" (unbekannt: {string.Join(",", bad)})");
+            sb.AppendLine($", verdict={(v?.Verdict.ToString() ?? "unclear").ToLowerInvariant()} — {v?.Rationale ?? ""}");
+        }
+        sb.AppendLine("Überarbeite Items mit anchorOk=false ODER verdict∈{contradicts,unrelated,unclear} (bessere Anker, schärfere Ableitung, oder verwerfen), dann verify erneut ODER speichere final mit save_derived.");
+        return sb.ToString();
     }
 
     /// <summary>Roh-Eingabe eines abgeleiteten Items für <c>save_derived</c> (der Agent baut die IDs NICHT selbst).</summary>

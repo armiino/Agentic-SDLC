@@ -1,0 +1,145 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260710_110409_f2d052",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Das einrichtungsbezogene Berechtigungsmodell kann durch den vorgesehenen Angeh\u00F6rigenzugriff unterlaufen werden, weil bislang nur f\u00FCr Mitarbeitende festgelegt ist, dass sie auf Profile des eigenen Hauses beschr\u00E4nkt sein m\u00FCssen. Ohne zus\u00E4tzliche Regel f\u00FCr haus\u00FCbergreifende oder mehrdeutige Angeh\u00F6rigenzuordnungen besteht das Risiko, dass Angeh\u00F6rige mehr Profile sehen oder bearbeiten k\u00F6nnen als fachlich vorgesehen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-37",
+        "ARCH-06",
+        "ARCH-08"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige sind nicht automatisch eindeutig genau einer Einrichtung bzw. genau einem Bewohner zugeordnet.",
+        "Der Angeh\u00F6rigenzugriff soll nicht pauschal denselben Sichtbarkeitsregeln wie Mitarbeitenden folgen."
+      ],
+      "derivationRationale": "REQ-37/ARCH-08 definieren die Einrichtungsgrenze nur f\u00FCr Mitarbeitende, w\u00E4hrend REQ-05/ARCH-06 zus\u00E4tzliche externe Nutzergruppen mit Beitragsrechten einf\u00FChren. Aus dieser Kombination entsteht eine nicht spezifizierte Autorisierungs-L\u00FCcke."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Die Kombination aus dynamisch erweiterbaren Inhalten durch viele Rollen und dem Verbot, bereits hinzugef\u00FCgte Daten zu l\u00F6schen, erzeugt das Risiko, dass falsche, veraltete oder ungeeignete Bewohnerinformationen dauerhaft im System verbleiben und das Verst\u00E4ndnis neuer Mitarbeitender eher verschlechtern als verbessern.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-31",
+        "ARCH-05",
+        "ARCH-15"
+      ],
+      "assumptions": [
+        "Es ist keine alternative Korrektur- oder Archivierungsfunktion vorgesehen, die die fachliche Wirkung einer L\u00F6schung ersetzt."
+      ],
+      "derivationRationale": "REQ-04 fordert verl\u00E4ssliches Einarbeitungswissen; ARCH-15 erlaubt fortlaufende Inhaltserweiterung durch Nutzer, w\u00E4hrend REQ-31/ARCH-05 das L\u00F6schen bestehender Daten f\u00FCr User ausschlie\u00DFen. Dadurch w\u00E4chst das Risiko eines nicht bereinigbaren Wissensbestands."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Der Bewohner-Account mit der M\u00F6glichkeit, eigene Bilder hinzuzuf\u00FCgen, gef\u00E4hrdet das Ziel der Fehlbedienungsminimierung, wenn diese Eingaben ohne zus\u00E4tzliche Pr\u00FCfung unmittelbar in dem Profil erscheinen, das andere Nutzer zur Orientierung verwenden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "ARCH-07",
+        "REQ-04",
+        "ARCH-14"
+      ],
+      "assumptions": [
+        "Von Bewohnern hochgeladene Bilder werden f\u00FCr andere berechtigte Nutzer sichtbar und sind nicht vor Ver\u00F6ffentlichung moderationspflichtig."
+      ],
+      "derivationRationale": "REQ-06/ARCH-07 wollen einerseits Fehlbedienungen minimieren, erlauben andererseits aber aktive Inhaltsbeitr\u00E4ge des Bewohners. Zusammen mit dem Zweck aus REQ-04 und dem zentralen Profilkontext aus ARCH-14 entsteht das Risiko, dass unpassende Inhalte das Profilbild der Person verzerren."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Die vorgesehene Popup-Benachrichtigung bei neuen About-Me-Inhalten kann mit den noch ungekl\u00E4rten Freigaben f\u00FCr Bilder kollidieren, weil neue visuelle Inhalte einrichtungsweit verteilt w\u00FCrden, obwohl die rechtliche bzw. organisatorische Zul\u00E4ssigkeit ihrer Nutzung noch nicht gekl\u00E4rt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-42",
+        "REQ-39",
+        "ARCH-23",
+        "ARCH-14"
+      ],
+      "assumptions": [
+        "Popup-Benachrichtigungen machen neue Inhalte oder deren Vorschaudaten f\u00FCr andere Nutzer der Einrichtung sichtbar.",
+        "About-Me-Inhalte k\u00F6nnen Bilder enthalten."
+      ],
+      "derivationRationale": "REQ-42 erweitert die Reichweite neuer Inhalte aktiv auf alle verbundenen Nutzer derselben Einrichtung. Gleichzeitig halten REQ-39/ARCH-23 fest, dass die Zul\u00E4ssigkeit von Bildnutzung erst gekl\u00E4rt werden muss; in ARCH-14 sind Bilder Kernbestandteil des Profils."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Der Nutzen der App als schnell durchsuchbare Wissensquelle ist gef\u00E4hrdet, solange Inhalte aus bestehenden Akten und Erfahrungen \u00FCbernommen werden sollen, die Einsicht in diese Quellen aber datenschutzbedingt unklar bleibt. Dadurch kann die Architektur zwar die Zielstruktur bereitstellen, aber ohne belastbare Bef\u00FCllung bleibt der fachliche Mehrwert aus.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-45",
+        "REQ-46",
+        "REQ-47",
+        "ARCH-24"
+      ],
+      "assumptions": [
+        "F\u00FCr einen wesentlichen Teil des initialen Nutzens ist eine \u00DCbernahme oder Auswertung vorhandener Dokumentationsinhalte erforderlich."
+      ],
+      "derivationRationale": "REQ-02, REQ-45 und REQ-46 setzen auf vorhandenes Wissen als zentrale Grundlage zur Verbesserung der Auffindbarkeit. REQ-47/ARCH-24 machen jedoch genau den Zugang zu diesen Quellen unsicher; damit entsteht ein Einf\u00FChrungsrisiko aus Inhalt statt aus UI."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Die Suchfunktion f\u00FCr Kommunikationsinhalte kann ihren Zweck verfehlen, weil sie von einem erst noch zu definierenden Beschreibungsmuster abh\u00E4ngt, w\u00E4hrend Inhalte zugleich dynamisch und von mehreren Nutzern erweiterbar sein sollen. Ohne fr\u00FCh standardisierte Erfassung entstehen schwer vergleichbare Eintr\u00E4ge, die Suche und Filterung schw\u00E4chen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-19",
+        "REQ-23",
+        "ARCH-15",
+        "ARCH-22"
+      ],
+      "assumptions": [
+        "Nutzer k\u00F6nnen Kommunikationsinhalte frei formulieren, solange kein verbindliches Erfassungsschema umgesetzt ist."
+      ],
+      "derivationRationale": "REQ-23/ARCH-22 benennen das Beschreibungsmuster ausdr\u00FCcklich als Voraussetzung f\u00FCr Suche und Filterung. Gleichzeitig \u00F6ffnen REQ-19/ARCH-15 den Bestand f\u00FCr laufende nutzerseitige Erweiterungen; daraus folgt ein Qualit\u00E4tsrisiko der Informationsstruktur."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": "Die plattform\u00FCbergreifende Architektur auf iOS und Android gef\u00E4hrdet die Ber\u00FCcksichtigung alternativer Eingabemethoden, wenn deren Unterst\u00FCtzung nicht fr\u00FCh plattformspezifisch konkretisiert wird. Damit k\u00F6nnte eine formale Cross-Platform-Erf\u00FCllung erreicht werden, ohne dass beeintr\u00E4chtigte Nutzer die App praktisch bedienen k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-34",
+        "REQ-43",
+        "ARCH-26",
+        "ARCH-28"
+      ],
+      "assumptions": [
+        "Alternative Eingabemethoden erfordern zumindest teilweise plattformspezifische Integration oder Tests und ergeben sich nicht automatisch aus dem gew\u00E4hlten Framework."
+      ],
+      "derivationRationale": "REQ-34/ARCH-26 und ARCH-28 priorisieren eine einheitliche Flutter-basierte Mehrplattforml\u00F6sung. REQ-43 fordert jedoch zus\u00E4tzliche Eingabeformen; aus der Kombination entsteht das Risiko, dass diese Accessibility-Anforderung in der Cross-Platform-Abstraktion untergeht."
+    },
+    {
+      "itemId": "DRISK-08",
+      "origin": "Derived",
+      "text": "Die Videounterst\u00FCtzung in verbalen und nonverbalen Kommunikationsbereichen kann die angestrebte barrierearme und schnell erfassbare Nutzung beeintr\u00E4chtigen, wenn videobasierte Inhalte ohne gleichwertige knappe textliche oder visuelle Struktur dominieren. Dann steigt der Aufwand, relevante Kommunikationshinweise in akuten Situationen rasch zu erfassen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-20",
+        "REQ-33",
+        "ARCH-20",
+        "ARCH-29"
+      ],
+      "assumptions": [
+        "Videoinhalte werden in Nutzungssituationen nicht immer schneller erfassbar sein als kompakte strukturierte Hinweise.",
+        "Es ist keine zus\u00E4tzliche Verpflichtung zu Kurzbeschreibungen oder stark verdichteten Zusammenfassungen definiert."
+      ],
+      "derivationRationale": "REQ-20/ARCH-20 integrieren Videos direkt in zentrale Kommunikationsseiten. REQ-33/ARCH-29 verlangen zugleich barrierearme, gut erfassbare Gestaltung; daraus folgt ein Usability-Risiko, wenn reichhaltige Medien die schnelle Orientierung erschweren."
+    }
+  ]
+}

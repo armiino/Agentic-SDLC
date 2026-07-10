@@ -1,0 +1,114 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260710_110505_fa5ba6",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko eines unzureichenden Berechtigungsmodells mit ungewollter Offenlegung von Bewohnerdaten, weil der Nutzerkreis \u00FCber Mitarbeitende hinaus auf Angeh\u00F6rige und ggf. Bewohner ausgeweitet wird, w\u00E4hrend die Zugriffsbeschr\u00E4nkung bisher nur f\u00FCr Mitarbeitende einrichtungsbezogen beschrieben und die technische Umsetzung insgesamt noch offen ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-06",
+        "REQ-37",
+        "ARCH-08"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige und Bewohner erhalten ebenfalls Zugriff auf profilerbezogene Inhalte und nicht nur auf strikt isolierte Teilansichten.",
+        "F\u00FCr Angeh\u00F6rige und Bewohner ist bislang kein ebenso konkret beschriebenes Mandanten-/Scopeschema festgelegt wie f\u00FCr Mitarbeitende."
+      ],
+      "derivationRationale": "Die Kombination aus mehreren Rollen mit Zugriff auf Profile (Angeh\u00F6rige, Bewohner, Mitarbeitende) und einer nur f\u00FCr Mitarbeitende konkret genannten einrichtungsbezogenen Beschr\u00E4nkung bei zugleich noch offener technischer Umsetzung erzeugt ein naheliegendes Risiko, dass Sichtbarkeiten und Datenabgrenzungen fehlerhaft oder unvollst\u00E4ndig umgesetzt werden."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass Inhalte fachlich veralten, widerspr\u00FCchlich werden oder an Verl\u00E4sslichkeit verlieren, weil viele Nutzer neue Informationen hinzuf\u00FCgen d\u00FCrfen, bestehende Daten aber nicht l\u00F6schen k\u00F6nnen und kein Mechanismus f\u00FCr Korrektur, Freigabe oder Versionsnachverfolgung festgelegt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-31",
+        "REQ-14",
+        "REQ-19",
+        "ARCH-15"
+      ],
+      "assumptions": [
+        "Das Verbot des L\u00F6schens durch User wird nicht durch bereits definierte alternative Korrekturmechanismen wie Review-, Archivierungs- oder Versionierungsfunktionen kompensiert.",
+        "Neue Erfahrungen und Kommunikationsinformationen k\u00F6nnen denselben Sachverhalt mehrfach oder abweichend beschreiben."
+      ],
+      "derivationRationale": "Die Anforderungen f\u00F6rdern starkes kollaboratives Erg\u00E4nzen dynamischer Inhalte, schlie\u00DFen aber f\u00FCr normale Nutzer das Entfernen bestehender Inhalte aus. Ohne explizite Regeln zur Korrektur oder Qualit\u00E4tssicherung w\u00E4chst das Risiko eines schwer pflegbaren, widerspr\u00FCchlichen Wissensbestands."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die vorgesehene Suche in Kommunikationsinhalten ihren eigentlichen Zweck verfehlt, weil die Suchbarkeit laut Anforderungen von einem erst noch zu definierenden standardisierten Beschreibungsmuster abh\u00E4ngt, w\u00E4hrend die Ausgangslage bereits durch schwer auffindbares Wissen gepr\u00E4gt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "ARCH-22",
+        "REQ-46"
+      ],
+      "assumptions": [
+        "Ohne verbindliches Eingabeschema werden Eintr\u00E4ge von verschiedenen Nutzern in uneinheitlicher Sprache oder Struktur erfasst.",
+        "Die Suchfunktion soll im Alltag zentrale Auffindbarkeitsprobleme der heutigen Dokumentation sp\u00FCrbar reduzieren."
+      ],
+      "derivationRationale": "Die Anforderungen benennen selbst, dass Suche und Filterung ein systematisches Beschreibungsmuster voraussetzen. Da genau die schlechte Durchsuchbarkeit bestehender Informationen ein Kernproblem ist, gef\u00E4hrdet ein offenes oder versp\u00E4tet definiertes Erfassungsschema direkt den Nutzen der L\u00F6sung."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko von Inkonsistenzen, Datenverlustwahrnehmung oder Fehlentscheidungen im Nutzungskontext, weil Firestore als Cloud-Datenbasis vorgesehen ist, aber lokale Speicherung bzw. Zwischenspeicherung noch nicht konkretisiert wurde, obwohl neue Erfahrungen unmittelbar teilbar und im Alltag schnell verf\u00FCgbar sein sollen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-51",
+        "REQ-04",
+        "REQ-46"
+      ],
+      "assumptions": [
+        "Die App wird in Nutzungssituationen eingesetzt, in denen Netzverf\u00FCgbarkeit oder Synchronisationszeitpunkte nicht durchgehend verl\u00E4sslich sind.",
+        "Nutzer verlassen sich darauf, dass neu erfasste oder nachgeschlagene Informationen zeitnah und konsistent auf ihren Ger\u00E4ten verf\u00FCgbar sind."
+      ],
+      "derivationRationale": "Die L\u00F6sung adressiert ein zeitkritisches Informationsproblem im Alltag. Wenn bei einer cloudbasierten Architektur Offline-, Cache- und Synchronisationsverhalten offen bleiben, entsteht ein naheliegendes Risiko, dass Informationen nicht rechtzeitig, nicht konsistent oder missverst\u00E4ndlich aktuell erscheinen."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die inhaltliche Bef\u00FCllung und Erprobung der App verz\u00F6gert oder qualitativ stark eingeschr\u00E4nkt wird, weil zentrale Wissensquellen aus Akten sowie Bilder zwar fachlich relevant sind, ihre datenschutzrechtliche Nutzbarkeit und Zustimmungslage aber noch ungekl\u00E4rt sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-39",
+        "REQ-45",
+        "REQ-47",
+        "ARCH-23",
+        "ARCH-24"
+      ],
+      "assumptions": [
+        "Ein wesentlicher Teil des initialen Nutzens der App h\u00E4ngt davon ab, bestehendes Wissen und Bilder tats\u00E4chlich \u00FCbernehmen oder verwenden zu k\u00F6nnen.",
+        "Ohne Kl\u00E4rung dieser Punkte sind nicht alle vorgesehenen Inhalte rechtssicher f\u00FCr Tests oder produktive Nutzung verf\u00FCgbar."
+      ],
+      "derivationRationale": "Die Anforderungen nennen Akten, bestehende Dokumentation und Bilder als wichtige Inhaltsquellen, markieren deren Nutzung aber zugleich als datenschutzrechtlich ungekl\u00E4rt. Damit entsteht direkt ein Risiko f\u00FCr Bef\u00FCllbarkeit, Testbarkeit und fr\u00FChen Nutzwert der L\u00F6sung."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko st\u00F6render oder irrelevanter Benachrichtigungen innerhalb einer Einrichtung, weil bei neuen About-Me-Inhalten alle verbundenen Nutzer derselben Einrichtung per Popup informiert werden sollen, obwohl die App sehr unterschiedliche Rollen und nur teilweise differenzierte Sichtbarkeiten vorsieht.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-42",
+        "REQ-31",
+        "REQ-37"
+      ],
+      "assumptions": [
+        "Die Benachrichtigungslogik wird nicht zus\u00E4tzlich nach Rollen, Zust\u00E4ndigkeiten oder Relevanz gefiltert.",
+        "About-Me-Inhalte k\u00F6nnen h\u00E4ufig aktualisiert werden und sind nicht f\u00FCr jeden Nutzer gleicherma\u00DFen handlungsrelevant."
+      ],
+      "derivationRationale": "Eine pauschale Benachrichtigung an alle Nutzer derselben Einrichtung kollidiert mit dem differenzierten Rollen- und Zugriffsmodell. Ohne feinere Relevanzsteuerung drohen \u00FCberm\u00E4\u00DFige oder unpassende Popups, was Akzeptanz und Aufmerksamkeit f\u00FCr wirklich wichtige Informationen schw\u00E4chen kann."
+    }
+  ]
+}
