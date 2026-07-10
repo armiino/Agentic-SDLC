@@ -38,11 +38,12 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
     private readonly IReadOnlyDictionary<string, LedgerClaim> _ledgerClaims;
     private readonly bool _explorer;
     private readonly bool _verify;
+    private readonly bool _accountable;
 
     public DerivationAgenticExecutor(
         Func<IReadOnlyList<AITool>, AIAgent> agentFactory, InferenceChecker checker, DerivationSpec spec,
         string model, RunContext run, string outDir, IReadOnlyDictionary<string, LedgerClaim>? ledgerClaims = null,
-        bool explorer = false, bool verify = false)
+        bool explorer = false, bool verify = false, bool accountable = false)
         : base($"DerivationAgentic-{spec.Id}")
     {
         _agentFactory = agentFactory;
@@ -54,24 +55,26 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
         _ledgerClaims = ledgerClaims ?? new Dictionary<string, LedgerClaim>();
         _explorer = explorer;
         _verify = verify;
+        _accountable = accountable;
     }
 
-    private string ModeLabel => _verify ? "explore-verify" : _explorer ? "explore" : "agentic";
+    private string ModeLabel => _verify ? "explore-verify" : _accountable ? "explore-account" : _explorer ? "explore" : "agentic";
 
     public override async ValueTask HandleAsync(SourceArtifactSet sources, IWorkflowContext context, CancellationToken ct = default)
     {
-        // Verify bekommt den Checker als In-Loop-Werkzeug (verify_derived); Explorer/agentic ohne.
+        // Verify bekommt den Checker als In-Loop-Werkzeug (verify_derived); Explorer/agentic/account ohne.
         var tools = new DerivationTools(sources, _spec, _run, _outDir, _model, _ledgerClaims, _verify ? _checker : null);
-        // Toolset: verify = Explorer + verify_derived; explore = Entdeckungs-Set; sonst Basis. Umwelt wird bei verify/explore NICHT vorgesagt.
-        var toolSet = _verify ? tools.BuildVerify() : _explorer ? tools.BuildExplorer() : tools.Build();
+        // Toolset: verify = Explorer + verify_derived; account = Explorer + account_uncovered; explore = Entdeckungs-Set; sonst Basis.
+        var toolSet = _verify ? tools.BuildVerify() : _accountable ? tools.BuildAccountable() : _explorer ? tools.BuildExplorer() : tools.Build();
         var agent = _agentFactory(toolSet);
 
         var task = new StringBuilder();
-        if (_verify || _explorer)
+        if (_verify || _explorer || _accountable)
         {
             task.AppendLine("Beginne. Deine Umwelt ist der verifizierte Projektzustand — sie wird dir NICHT vorab genannt.");
             task.AppendLine("Entdecke sie zuerst mit list_artifacts, konsultiere selbst, was du für dein Ziel brauchst, und speichere mit save_derived, wenn du genug Evidenz hast.");
             if (_verify) task.AppendLine("Prüfe deinen Entwurf VOR dem Speichern mit verify_derived und überarbeite schwache Items, bis deine Definition of Done erfüllt ist.");
+            if (_accountable) task.AppendLine("Rechenschaft: JEDES Quell-Item muss am Ende entweder Anker eines Risikos ODER via account_uncovered mit Grund verworfen sein. Begründe vor jeder Tool-Entscheidung kurz, warum.");
         }
         else
         {
@@ -150,6 +153,21 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
             };
         }
 
+        // Accountable-Arm: Coverage-Rechenschaft (closed-world) — jedes Quell-Item genutzt oder begründet verworfen.
+        object? coverageBlock = null;
+        if (_accountable)
+        {
+            var cov = DerivationCoverage.Evaluate(sources, doc.Items, tools.AccountedItemIds, tools.Dismissals);
+            await File.WriteAllTextAsync(Path.Combine(_outDir, "coverage-report.json"), JsonSerializer.Serialize(cov, Json), ct).ConfigureAwait(false);
+            coverageBlock = new
+            {
+                cov.Total, cov.Covered, cov.Accounted, cov.Unaccounted, cov.CoverageComplete,
+                cov.DismissedRaw, cov.Collisions, cov.SelfAccountingClean,
+                collisionRate = cov.Covered > 0 ? Math.Round((double)cov.Collisions / cov.Covered, 4) : 0.0,
+                dismissalGroups = tools.Dismissals.Count
+            };
+        }
+
         await File.WriteAllTextAsync(Path.Combine(_outDir, "derivation-report.json"), JsonSerializer.Serialize(new
         {
             spec = _spec.Id, mode = ModeLabel, decision,
@@ -157,7 +175,7 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
             retrievedItemIds = tools.RetrievedItemIds.OrderBy(x => x, StringComparer.Ordinal).ToArray(),
             usedItemIds = used,
             retrievedCount = tools.RetrievedItemIds.Count, usedCount = used.Length,
-            metrics, verify = verifyBlock
+            metrics, verify = verifyBlock, coverage = coverageBlock
         }, Json), ct).ConfigureAwait(false);
     }
 }

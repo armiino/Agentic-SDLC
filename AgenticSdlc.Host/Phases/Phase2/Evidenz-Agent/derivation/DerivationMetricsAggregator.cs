@@ -88,11 +88,28 @@ public static class DerivationMetricsAggregator
                 if (vEl.TryGetProperty("dodPass", out var dp) && (dp.ValueKind is JsonValueKind.True or JsonValueKind.False)) dodPass = dp.GetBoolean();
             }
 
+            // Accountable-Arm-Kennzahlen (nur im explore-account-Report vorhanden).
+            double? coveredRate = null, dismissedRate = null, unaccountedRate = null, collisionRate = null;
+            bool? coverageComplete = null, selfAccountingClean = null;
+            if (root.TryGetProperty("coverage", out var cEl) && cEl.ValueKind == JsonValueKind.Object
+                && cEl.TryGetProperty("total", out var tot) && tot.ValueKind == JsonValueKind.Number && tot.GetInt32() > 0)
+            {
+                double total = tot.GetInt32();
+                if (cEl.TryGetProperty("covered", out var cv)) coveredRate = Math.Round(cv.GetInt32() / total, 4);
+                if (cEl.TryGetProperty("accounted", out var ac)) dismissedRate = Math.Round(ac.GetInt32() / total, 4);
+                if (cEl.TryGetProperty("unaccounted", out var un)) unaccountedRate = Math.Round(un.GetInt32() / total, 4);
+                if (cEl.TryGetProperty("coverageComplete", out var cc) && (cc.ValueKind is JsonValueKind.True or JsonValueKind.False)) coverageComplete = cc.GetBoolean();
+                // collisionRate = Anteil der Anker, die der Agent GLEICHZEITIG verworfen hat (Disjunktheits-Verletzung).
+                if (cEl.TryGetProperty("collisionRate", out var cr) && cr.ValueKind == JsonValueKind.Number) collisionRate = cr.GetDouble();
+                if (cEl.TryGetProperty("selfAccountingClean", out var sc) && (sc.ValueKind is JsonValueKind.True or JsonValueKind.False)) selfAccountingClean = sc.GetBoolean();
+            }
+
             double? r3 = null;
             if (scopeChecker is not null)
                 r3 = await JudgeR3Async(dir, spec, scopeChecker, repoRoot).ConfigureAwait(false);
 
-            perRun.Add(new RunMetrics(Path.GetFileName(dir), mode, m, retrieved, usedCnt, r3, rounds, deltaR1, dodPass));
+            perRun.Add(new RunMetrics(Path.GetFileName(dir), mode, m, retrieved, usedCnt, r3, rounds, deltaR1, dodPass,
+                coveredRate, dismissedRate, unaccountedRate, coverageComplete, collisionRate, selfAccountingClean));
         }
         if (perRun.Count == 0) { Console.Error.WriteLine("[derive-metrics] keine auswertbaren Läufe (Metrik-Block fehlt überall)."); return 2; }
 
@@ -164,6 +181,10 @@ public static class DerivationMetricsAggregator
         var withV = runs.Where(r => r.VerifyRounds is not null).ToList();
         var withD = runs.Where(r => r.DeltaR1 is not null).ToList();
         var withDod = runs.Where(r => r.DodPass is not null).ToList();
+        var withCov = runs.Where(r => r.CoveredRate is not null).ToList();
+        var withCC = runs.Where(r => r.CoverageComplete is not null).ToList();
+        var withColl = runs.Where(r => r.CollisionRate is not null).ToList();
+        var withSac = runs.Where(r => r.SelfAccountingClean is not null).ToList();
         return new ModeAggregate(
             N: runs.Count,
             RunIds: runs.Select(r => r.RunId).ToArray(),
@@ -177,7 +198,13 @@ public static class DerivationMetricsAggregator
             D2_RetrievedUsedRatio: withRu.Count > 0 ? Stat.Of(withRu.Select(r => r.UsedCount!.Value == 0 ? 0.0 : (double)r.RetrievedCount!.Value / r.UsedCount!.Value)) : null,
             VerifyRounds: withV.Count > 0 ? Stat.Of(withV.Select(r => (double)r.VerifyRounds!.Value)) : null,
             DeltaR1: withD.Count > 0 ? Stat.Of(withD.Select(r => r.DeltaR1!.Value)) : null,
-            DodPassRate: withDod.Count > 0 ? Stat.Of(withDod.Select(r => r.DodPass!.Value ? 1.0 : 0.0)) : null);
+            DodPassRate: withDod.Count > 0 ? Stat.Of(withDod.Select(r => r.DodPass!.Value ? 1.0 : 0.0)) : null,
+            CoveredRate: withCov.Count > 0 ? Stat.Of(withCov.Select(r => r.CoveredRate!.Value)) : null,
+            DismissedRate: withCov.Count > 0 ? Stat.Of(withCov.Select(r => r.DismissedRate!.Value)) : null,
+            UnaccountedRate: withCov.Count > 0 ? Stat.Of(withCov.Select(r => r.UnaccountedRate!.Value)) : null,
+            CoverageCompleteRate: withCC.Count > 0 ? Stat.Of(withCC.Select(r => r.CoverageComplete!.Value ? 1.0 : 0.0)) : null,
+            CollisionRate: withColl.Count > 0 ? Stat.Of(withColl.Select(r => r.CollisionRate!.Value)) : null,
+            SelfAccountingCleanRate: withSac.Count > 0 ? Stat.Of(withSac.Select(r => r.SelfAccountingClean!.Value ? 1.0 : 0.0)) : null);
     }
 
     private static void PrintTable(string spec, IReadOnlyDictionary<string, ModeAggregate> byMode, bool judged)
@@ -203,6 +230,16 @@ public static class DerivationMetricsAggregator
             Row("verify-Runden", a => a.VerifyRounds);
             Row("DoD-pass-Rate", a => a.DodPassRate);
         }
+        if (byMode.Values.Any(a => a.CoveredRate is not null))
+        {
+            Console.WriteLine("-- ACCOUNTABLE-ARM (Coverage-Rechenschaft) --");
+            Row("covered-Rate", a => a.CoveredRate);
+            Row("dismissed-Rate", a => a.DismissedRate);
+            Row("unaccounted-Rate", a => a.UnaccountedRate);
+            Row("collision-Rate", a => a.CollisionRate);          // Anker, die zugleich verworfen wurden (Disjunktheit)
+            Row("coverage-complete", a => a.CoverageCompleteRate); // host-disjungierte Sicht
+            Row("self-acct-clean", a => a.SelfAccountingCleanRate); // EHRLICHE Sicht (lückenlos UND kollisionsfrei)
+        }
         Console.WriteLine("-- DESKRIPTIV (nicht gewertet) --");
         Row("D1 Item-Anzahl", a => a.D1_Items);
         Row("D2 retrieved/used", a => a.D2_RetrievedUsedRatio);
@@ -212,7 +249,9 @@ public static class DerivationMetricsAggregator
     private static string Fmt(Stat? s) => s is null ? "—" : $"{s.Mean:0.###} [{s.Min:0.###}–{s.Max:0.###}]";
 
     private sealed record RunMetrics(string RunId, string Mode, DeterministicMetrics Metrics, int? RetrievedCount, int? UsedCount, double? R3,
-        int? VerifyRounds, double? DeltaR1, bool? DodPass);
+        int? VerifyRounds, double? DeltaR1, bool? DodPass,
+        double? CoveredRate, double? DismissedRate, double? UnaccountedRate, bool? CoverageComplete,
+        double? CollisionRate, bool? SelfAccountingClean);
 }
 
 /// <summary>Mittelwert + Spannweite einer Metrik über die Wiederholungen (M2). Nicht-überlappende Spannen = echter Effekt.</summary>
@@ -239,4 +278,10 @@ public sealed record ModeAggregate(
     Stat? D2_RetrievedUsedRatio,
     Stat? VerifyRounds,
     Stat? DeltaR1,
-    Stat? DodPassRate);
+    Stat? DodPassRate,
+    Stat? CoveredRate,
+    Stat? DismissedRate,
+    Stat? UnaccountedRate,
+    Stat? CoverageCompleteRate,
+    Stat? CollisionRate,
+    Stat? SelfAccountingCleanRate);

@@ -1,0 +1,96 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260710_121141_fb185d",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko eines Berechtigungsfehlers zwischen rollenbasiertem und einrichtungsbezogenem Zugriff: Wenn die technische Umsetzung der Haus-/Einrichtungsgrenzen nicht sauber mit dem Rollenmodell verkn\u00FCpft wird, k\u00F6nnen Nutzer Profile au\u00DFerhalb ihres Hauses sehen oder berechtigte Zugriffe f\u00E4lschlich verlieren.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-31",
+        "REQ-37",
+        "ARCH-05",
+        "ARCH-08"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Die Anforderungen verlangen zugleich Rollenrechte und eine harte Beschr\u00E4nkung auf das eigene Haus; die Architektur best\u00E4tigt beides, h\u00E4lt aber die technische Umsetzung des einrichtungsbezogenen Berechtigungsmodells ausdr\u00FCcklich noch offen."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die Suchfunktion f\u00FCr Kommunikationsinhalte ihren Hauptnutzen verfehlt, weil f\u00FCr dynamisch wachsende Text-, Bild- und Videoeintr\u00E4ge noch kein standardisiertes Beschreibungsmuster festgelegt ist. Ohne konsistente Metadaten werden Inhalte zwar gesammelt, aber kaum zuverl\u00E4ssig auffindbar oder filterbar.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-19",
+        "REQ-20",
+        "REQ-23",
+        "REQ-32",
+        "ARCH-15",
+        "ARCH-16",
+        "ARCH-20",
+        "ARCH-22"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Die L\u00F6sung soll Kommunikationswissen inkl. Medien dynamisch erweitern und durchsuchen; zugleich sagt die Architektur, dass das daf\u00FCr n\u00F6tige standardisierte Beschreibungsmuster noch definiert werden muss."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die inhaltliche Bef\u00FCllung und Nutzbarkeit von About-Me- und Kommunikationsbereichen blockiert oder stark verz\u00F6gert wird, weil Bildfreigaben und Akteneinsicht als notwendige Wissensquellen datenschutzrechtlich noch ungekl\u00E4rt sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-13",
+        "REQ-39",
+        "REQ-45",
+        "REQ-47",
+        "ARCH-14",
+        "ARCH-23",
+        "ARCH-24"
+      ],
+      "assumptions": [
+        "Die initiale inhaltliche Qualit\u00E4t der App h\u00E4ngt wesentlich von bestehenden Akten und Bildern ab."
+      ],
+      "derivationRationale": "Die Anforderungen wollen vorhandenes Wissen und Bilder in der App nutzbar machen; die Architektur markiert sowohl Bildzustimmung als auch Akteneinsicht als noch ungekl\u00E4rt. Damit ist die Datenbasis f\u00FCr zentrale Funktionen unsicher."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass der Bewohner-Account trotz eingeschr\u00E4nktem Zielbild zu Fehlbedienungen oder unklaren Rechtegrenzen f\u00FChrt, weil derselbe Architekturrahmen zugleich dynamische Inhaltserweiterung vorsieht und nur grob beschreibt, welche Funktionen Bewohner tats\u00E4chlich ausf\u00FChren d\u00FCrfen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-14",
+        "REQ-15",
+        "ARCH-07",
+        "ARCH-15"
+      ],
+      "assumptions": [
+        "Bewohner interagieren mit denselben inhaltlichen Strukturen wie andere Nutzer, jedoch mit reduziertem Funktionsumfang."
+      ],
+      "derivationRationale": "Der Bewohner-Account soll nur sehr eingeschr\u00E4nkte Funktionen haben, w\u00E4hrend Inhalte generell dynamisch erweiterbar sind. Ohne pr\u00E4zise rechtebezogene Abgrenzung pro Aktion kann die gew\u00FCnschte Fehlbedienungsminimierung unterlaufen werden."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko einer langsamen oder fehleranf\u00E4lligen Einf\u00FChrung bei neuen bzw. wenig technikaffinen Nutzern, weil die L\u00F6sung viele rollen- und inhaltsbezogene Funktionen vorsieht, die Hilfefunktion aber nur als sp\u00E4tere Erg\u00E4nzung vorgesehen ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-41",
+        "ARCH-05",
+        "ARCH-30"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Die App soll insbesondere neuen Mitarbeitenden schnell helfen und hat ein differenziertes Rollenmodell; gleichzeitig ist die Unterst\u00FCtzung durch Tutorial/Hilfe nicht Teil der gesicherten Erstumsetzung, sondern nur sp\u00E4ter vorgesehen."
+    }
+  ]
+}

@@ -43,6 +43,8 @@ internal sealed class DerivationTools
     private readonly IReadOnlyDictionary<string, LedgerClaim> _claims;
     private readonly InferenceChecker? _checker;
     private readonly HashSet<string> _retrieved = new(StringComparer.Ordinal);
+    private readonly HashSet<string> _accounted = new(StringComparer.Ordinal);
+    private readonly List<Dismissal> _dismissals = new();
     private int _saveCount;
     private int _verifyRounds;
     private double? _firstDraftR1;
@@ -71,6 +73,12 @@ internal sealed class DerivationTools
 
     /// <summary>Treue-Verletzungsrate des ERSTEN Entwurfs (verify-Runde 1) — Basis für ΔR1 (Korrektur-Gewinn). null = nie geprüft.</summary>
     public double? FirstDraftR1 => _firstDraftR1;
+
+    /// <summary>Items, die der Agent via <c>account_uncovered</c> bewusst NICHT abgeleitet hat (Coverage-Rechenschaft).</summary>
+    public IReadOnlyCollection<string> AccountedItemIds => _accounted;
+
+    /// <summary>Die Verwerfungs-Gruppen (Item-IDs + Grund).</summary>
+    public IReadOnlyList<Dismissal> Dismissals => _dismissals;
 
     public IReadOnlyList<AITool> Build() =>
     [
@@ -117,6 +125,33 @@ internal sealed class DerivationTools
                 "Prüft DEINEN ENTWURF (noch NICHT gespeichert): je Item, ob die Anker existieren (anchorOk) und ob das Risiko aus seinen Ankern folgt (verdict: supported/contradicts/unrelated/unclear) + kurze Begründung. Nutze es VOR save_derived, überarbeite schwache Items und prüfe erneut. Mehrfach erlaubt."),
         };
         return tools;
+    }
+
+    /// <summary>Accountable-Toolset (Modus <c>--account</c>): Explorer-Set + <c>account_uncovered</c>. Der Agent muss
+    /// jedes Quell-Item am Ende ENTWEDER als Anker nutzen ODER hier mit Grund verwerfen (Coverage-Rechenschaft, keine
+    /// Quote).</summary>
+    public IReadOnlyList<AITool> BuildAccountable()
+    {
+        var tools = new List<AITool>(BuildExplorer())
+        {
+            AIFunctionFactory.Create(AccountUncovered, "account_uncovered",
+                "Vermerke eine GRUPPE von Quell-Items, die du BEWUSST NICHT zu einem Risiko ableitest, mit gemeinsamem Grund (z. B. 'REQ-10..18: reine UI-Details, keine Architektur-Wechselwirkung'). Rufe es so oft wie nötig, bis JEDES Quell-Item entweder Anker eines Risikos ODER hier vermerkt ist. Keine Mengen-Quote — nur Rechenschaft."),
+        };
+        return tools;
+    }
+
+    // Accountable: eine Gruppe bewusst nicht-abgeleiteter Items mit Grund vermerken (Coverage-Rechenschaft, schreibt nichts).
+    private string AccountUncovered(string[] itemIds, string reason)
+    {
+        var ids = (itemIds ?? []).Select(a => a?.Trim() ?? string.Empty).Where(a => a.Length > 0).ToList();
+        var known = ids.Where(_byId.ContainsKey).Distinct(StringComparer.Ordinal).ToList();
+        var unknown = ids.Where(a => !_byId.ContainsKey(a)).ToList();
+        var r = string.IsNullOrWhiteSpace(reason) ? "(kein Grund angegeben)" : reason.Trim();
+        foreach (var k in known) _accounted.Add(k);
+        if (known.Count > 0) _dismissals.Add(new Dismissal(known, r));
+        _run.AppendEvent(new { type = "AGENTIC_TOOL_ACCOUNT_UNCOVERED", runId = _run.RunId, spec = _spec.Id, ids = known.Count, unknown = unknown.Count, reason = r, timestampUtc = DateTime.UtcNow });
+        return $"OK: {known.Count} Item(s) als bewusst nicht-abgeleitet vermerkt (Grund: {r})."
+             + (unknown.Count > 0 ? $" Unbekannt ignoriert: {string.Join(",", unknown)}." : string.Empty);
     }
 
     // Entdeckung: welche Artefakttypen gibt es überhaupt (der Agent wird NICHT vorab informiert).

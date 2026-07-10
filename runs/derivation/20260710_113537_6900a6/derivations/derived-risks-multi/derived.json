@@ -1,0 +1,80 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260710_113537_6900a6",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die Kommunikationssuche ihren Hauptzweck verfehlt, weil zwar dynamisch erweiterbare Kommunikations- und Videoinhalte vorgesehen sind, das daf\u00FCr notwendige standardisierte Beschreibungsmuster f\u00FCr Eintr\u00E4ge aber noch nicht definiert ist. Dadurch k\u00F6nnten neue oder unerfahrene Mitarbeitende relevante Kommunikationshinweise trotz vorhandener Inhalte nicht zuverl\u00E4ssig finden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-23",
+        "REQ-19",
+        "REQ-20",
+        "REQ-04",
+        "ARCH-22",
+        "ARCH-15"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-19/20 und ARCH-15 zeigen, dass die Wissensbasis laufend um Kommunikationsarten und Videos w\u00E4chst. REQ-23 und ARCH-22 sagen ausdr\u00FCcklich, dass f\u00FCr Suche/Filterung erst noch ein standardisiertes Beschreibungsmuster definiert werden muss. REQ-04 macht schnelle Auffindbarkeit f\u00FCr neue Mitarbeitende zum Nutzenziel. Aus diesem Zusammenspiel folgt das Risiko schlechter Auffindbarkeit trotz vorhandener Inhalte."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass Inhalte zu Bewohnern zwischen H\u00E4usern oder unpassenden Nutzergruppen sichtbar werden, weil einrichtungsbezogene Zugriffsbeschr\u00E4nkungen gefordert sind, ihre technische Umsetzung aber noch auszuarbeiten ist, w\u00E4hrend gleichzeitig mehrere Rollen einschlie\u00DFlich Angeh\u00F6rigenzugriff vorgesehen sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-37",
+        "REQ-05",
+        "REQ-31",
+        "ARCH-08",
+        "ARCH-06",
+        "ARCH-05"
+      ],
+      "assumptions": [],
+      "derivationRationale": "REQ-37 und ARCH-08 fordern eine Beschr\u00E4nkung auf das eigene Haus, benennen aber die technische Umsetzung als offen. Gleichzeitig erweitern REQ-05/31 und ARCH-05/06 den Nutzerkreis und das Rechtemodell. Je mehr Rollen und Zugriffswege bei noch ungekl\u00E4rter Mandantentrennung bestehen, desto gr\u00F6\u00DFer ist das Risiko fehlerhafter Sichtbarkeit von Bewohnerprofilen."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass die App in fr\u00FChen Tests oder beim initialen Bef\u00FCllen nur mit unvollst\u00E4ndigen oder k\u00FCnstlichen Bewohnerinhalten bewertet werden kann, weil Bilder, Angeh\u00F6rigenzustimmung und m\u00F6gliche Einsicht in Akten als relevante Wissensquellen bzw. Inhalte vorgesehen sind, deren datenschutzrechtliche Freigabe aber noch ungekl\u00E4rt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-39",
+        "REQ-47",
+        "REQ-45",
+        "REQ-13",
+        "ARCH-23",
+        "ARCH-24"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass fr\u00FChe Evaluation oder inhaltliche Bef\u00FCllung auf reale oder realit\u00E4tsnahe Bewohnerdaten angewiesen ist, um den Nutzen der App belastbar zu beurteilen."
+      ],
+      "derivationRationale": "REQ-45 und REQ-13 machen Aktenwissen sowie personenbezogene Profilinhalte wie Bilder und Beschreibungen zu wichtigen Bausteinen der L\u00F6sung. REQ-39 sowie ARCH-23 nennen ungekl\u00E4rte Freigaben f\u00FCr Bilder; REQ-47 und ARCH-24 benennen unklare Akteneinsicht f\u00FCr Analyse, Tests oder Bef\u00FCllung. Daraus folgt das Risiko, dass realistische Inhalte f\u00FCr Test und Erstbef\u00FCllung fehlen oder stark eingeschr\u00E4nkt sind."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Es besteht das Risiko, dass Nutzer veraltete oder inkonsistente Bewohnerinformationen sehen, weil die L\u00F6sung auf Firebase Firestore als Cloud-Datenbasis setzt und Inhalte dynamisch erg\u00E4nzt werden sollen, w\u00E4hrend noch nicht konkretisiert ist, wie Cloud-Daten lokal auf Ger\u00E4ten gespeichert oder zwischengespeichert werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-51",
+        "REQ-14",
+        "REQ-19",
+        "ARCH-15",
+        "ARCH-28"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass die App Daten nicht ausschlie\u00DFlich immer live aus der Cloud liest, sondern zumindest teilweise lokale Speicherung oder Caching nutzen wird."
+      ],
+      "derivationRationale": "ARCH-28 und REQ-51 legen den Stack mit Firebase Firestore fest, nennen aber die lokale Speicherung bzw. Zwischenspeicherung als ungekl\u00E4rt. REQ-14, REQ-19 und ARCH-15 verlangen dynamisch wachsende Inhalte. Wenn Synchronisation und Cache-Verhalten daf\u00FCr nicht pr\u00E4zisiert sind, ist das Risiko naheliegend, dass verschiedene Ger\u00E4te nicht denselben aktuellen Informationsstand anzeigen."
+    }
+  ]
+}
