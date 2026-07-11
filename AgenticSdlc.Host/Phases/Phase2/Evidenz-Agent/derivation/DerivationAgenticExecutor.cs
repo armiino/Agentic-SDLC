@@ -162,6 +162,7 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
         var gateHistory = new List<object>();
         var taskText = baseTask;
         var roundsRun = 0;
+        ArtifactDocument? prevDoc = null; var prevRound = -1;   // für den strukturierten Runden-Item-Diff (ARTIFACT_REVISED)
 
         for (var round = 0; round <= _maxRetries; round++)
         {
@@ -178,24 +179,35 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
                 fails.Add("Kein Artefakt gespeichert (save_derived nicht aufgerufen).");
                 gatePass = false; gateHistory.Add(new { round, gatePass, fails });
                 if (round == 0) { firstDraftR1 = null; firstDraftClean = false; }
+                _run.AppendEvent(new { type = "REFLECT_GATE", runId = _run.RunId, spec = _spec.Id, round, gatePass, failCount = fails.Count, r1 = (double?)null, selfClean = false, note = "no_save", timestampUtc = DateTime.UtcNow });
                 if (round == _maxRetries) break;
-                taskText = BuildReviseTask(fails); continue;
+                taskText = BuildNoDraftTask(fails); continue;   // kein Entwurf vorhanden → nichts zu erhalten.
             }
 
             doc = JsonSerializer.Deserialize<ArtifactDocument>(await File.ReadAllTextAsync(derivedPath, ct).ConfigureAwait(false), Read) ?? doc;
 
+            // Per-Runde-Snapshot (die on-disk derived.json wird von der nächsten Runde überschrieben) + struktureller
+            // Item-Diff gegen den vorigen gespeicherten Entwurf → macht die „Item-Stabilität" maschinell belegbar.
+            var snapRel = SnapshotRound(round, derivedPath);
+            if (prevDoc is not null) EmitReviseDiff(prevRound, round, prevDoc, doc, snapRel);
+            prevDoc = doc; prevRound = round;
+
             // GATE (extern, deterministisch + unabhängiger Judge):
+            // flaggedByItem = per-Item-Kritik fb_t (itemId → Gründe) für das chirurgische Re-Feed (Self-Refine).
             invalid = [];
+            var flaggedByItem = new Dictionary<string, List<string>>(StringComparer.Ordinal);
+            void Flag(string id, string reason) { if (!flaggedByItem.TryGetValue(id, out var l)) { l = []; flaggedByItem[id] = l; } l.Add(reason); }
             foreach (var it in doc.Items)
             {
                 var anchors = it.SourceArtifactItemIds ?? [];
                 var bad = anchors.Where(a => !sourceIds.Contains(a)).ToList();
-                if (anchors.Count == 0) invalid.Add(new InvalidAnchor(it.Text, anchors, bad, "MISSING_ANCHOR"));
-                else if (bad.Count > 0) invalid.Add(new InvalidAnchor(it.Text, anchors, bad, "UNKNOWN_ANCHOR"));
+                if (anchors.Count == 0) { invalid.Add(new InvalidAnchor(it.Text, anchors, bad, "MISSING_ANCHOR")); Flag(it.ItemId, "kein Anker gesetzt — verankere an einem realen Quell-Item oder verwirf begründet."); }
+                else if (bad.Count > 0) { invalid.Add(new InvalidAnchor(it.Text, anchors, bad, "UNKNOWN_ANCHOR")); Flag(it.ItemId, $"unbekannte Anker: {string.Join(", ", bad)} — ersetze durch reale Quell-IDs."); }
             }
             verdicts = (await _postHocChecker.CheckAsync(doc.Items, sources.ItemsById(), ct).ConfigureAwait(false)).Verdicts;
             var cov = DerivationCoverage.Evaluate(sources, doc.Items, tools.AccountedItemIds, tools.Dismissals);
             var badV = verdicts.Where(v => v.Verdict is InferenceVerdictKind.Contradicts or InferenceVerdictKind.Unrelated).ToList();
+            foreach (var v in badV) Flag(v.ItemId, $"unabhängiger Prüfer: verdict={v.Verdict} — {v.Rationale}");
             var r1 = doc.Items.Count == 0 ? 0.0 : Math.Round((double)badV.Count / doc.Items.Count, 4);
 
             if (invalid.Count > 0) fails.Add($"{invalid.Count} ungültige Anker: {string.Join(", ", invalid.SelectMany(i => i.BadIds).Distinct())}.");
@@ -208,7 +220,9 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
             _run.AppendEvent(new { type = "REFLECT_GATE", runId = _run.RunId, spec = _spec.Id, round, gatePass, failCount = fails.Count, r1, selfClean = cov.SelfAccountingClean, timestampUtc = DateTime.UtcNow });
 
             if (gatePass || round == _maxRetries) break;
-            taskText = BuildReviseTask(fails);   // EXTERNE Kritik explizit wieder einspeisen (kein Force-Back-Tool, kein Force auf den Call).
+            // Self-Refine (arXiv:2303.17651): den Entwurf y_t + per-Item-Feedback fb_t explizit zurückspeisen
+            // → konditionierte Regeneration mit Erhalt der abgenommenen Items (chirurgisch), kein Neustart.
+            taskText = BuildReviseTask(doc, flaggedByItem, cov);
         }
 
         var finalBad = verdicts.Count(v => v.Verdict is InferenceVerdictKind.Contradicts or InferenceVerdictKind.Unrelated);
@@ -237,14 +251,99 @@ internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
         return t.ToString();
     }
 
-    private string BuildReviseTask(IReadOnlyList<string> fails)
+    // Self-Refine (arXiv:2303.17651): y_{t+1} = M(p_refine ∥ x ∥ y_t ∥ fb_t). Wir geben dem Agenten seinen
+    // vorherigen Entwurf y_t (die derived.json, hier aus doc rekonstruiert) UND das per-Item-Feedback fb_t
+    // explizit zurück — der Entwurf ist Tool-erzeugter Zustand auf Disk, kein Konversationstext, deshalb muss er
+    // explizit zurückgereicht werden (Coding-Agent-Muster „maintain artifacts the agent can directly read").
+    // Erhalt-Anweisung = chirurgisch: abgenommene Items bleiben, nur beanstandete werden geändert/verworfen.
+    private string BuildReviseTask(ArtifactDocument prevDraft, IReadOnlyDictionary<string, List<string>> flaggedByItem, CoverageReport cov)
     {
         var t = new StringBuilder();
         t.AppendLine("Dein vorheriger Entwurf wurde EXTERN und unabhängig geprüft und ist noch NICHT abgenommen.");
-        t.AppendLine("Konkrete Befunde der Prüfung:");
-        foreach (var f in fails) t.AppendLine($"- {f}");
-        t.AppendLine("Überarbeite GEZIELT diese Punkte: entdecke die Umwelt erneut mit list_artifacts, korrigiere die genannten Items (bessere/tragende Anker, oder verwirf sie begründet), stelle lückenlose UND kollisionsfreie Rechenschaft her, und speichere die finale Fassung erneut mit save_derived GENAU EINMAL.");
+        t.AppendLine("Er ist noch gespeichert; dies ist dein AUSGANGSPUNKT — beginne NICHT bei null.");
+        t.AppendLine();
+        t.AppendLine("=== DEIN VORHERIGER ENTWURF (überarbeite genau diesen) ===");
+        foreach (var it in prevDraft.Items)
+        {
+            var anchors = it.SourceArtifactItemIds is { Count: > 0 } a ? string.Join(", ", a) : "—";
+            var flagged = flaggedByItem.TryGetValue(it.ItemId, out var reasons);
+            t.AppendLine($"[{(flagged ? "BEANSTANDET" : "ABGENOMMEN")}] {it.ItemId}  (Anker: {anchors})");
+            t.AppendLine($"    {it.Text}");
+            if (flagged) foreach (var r in reasons!) t.AppendLine($"    → {r}");
+        }
+        t.AppendLine();
+        if (!cov.SelfAccountingClean)
+        {
+            t.AppendLine("=== RECHENSCHAFT (noch unsauber) ===");
+            if (cov.UnaccountedItemIds.Count > 0) t.AppendLine($"Unbehandelte Quell-Items (verankern ODER via account_uncovered begründet verwerfen): [{string.Join(", ", cov.UnaccountedItemIds)}]");
+            if (cov.CollisionItemIds.Count > 0) t.AppendLine($"Kollision (zugleich verankert UND verworfen — mit account_uncovered dismiss=false zurücknehmen): [{string.Join(", ", cov.CollisionItemIds)}]");
+            t.AppendLine();
+        }
+        t.AppendLine("=== AUFTRAG ===");
+        t.AppendLine("Behalte die ABGENOMMENEN Items UNVERÄNDERT. Ändere/ersetze/verwirf NUR die BEANSTANDETEN Items (bessere tragende Anker, oder begründet verwerfen). Stelle lückenlose UND kollisionsfreie Rechenschaft her.");
+        t.AppendLine("Entdecke bei Bedarf die Umwelt erneut mit list_artifacts, und speichere die vollständige finale Fassung (abgenommene + korrigierte Items) mit save_derived GENAU EINMAL.");
         return t.ToString();
+    }
+
+    // Sonderfall: der vorige Durchlauf hat gar nicht gespeichert → es gibt kein y_t zu erhalten.
+    private string BuildNoDraftTask(IReadOnlyList<string> fails)
+    {
+        var t = new StringBuilder();
+        t.AppendLine("Dein vorheriger Durchlauf hat KEIN Artefakt gespeichert. Befunde:");
+        foreach (var f in fails) t.AppendLine($"- {f}");
+        t.AppendLine("Führe die Ableitung erneut aus: entdecke die Umwelt mit list_artifacts, leite die tragenden Risiken ab, stelle lückenlose UND kollisionsfreie Rechenschaft her, und speichere mit save_derived GENAU EINMAL.");
+        return t.ToString();
+    }
+
+    // Sichert den in dieser Runde gespeicherten Entwurf, bevor die nächste Runde die on-disk derived.json überschreibt.
+    // Ablage in einem sprechenden Archiv-Ordner NEBEN dem Artefakt (reflect-archive/derived.round-NN.json).
+    private string SnapshotRound(int round, string derivedPath)
+    {
+        var archiveDir = Path.Combine(_outDir, "reflect-archive");
+        Directory.CreateDirectory(archiveDir);
+        var dest = Path.Combine(archiveDir, $"derived.round-{round:00}.json");
+        File.Copy(derivedPath, dest, overwrite: true);
+        return Path.GetRelativePath(_run.RunDir, dest).Replace('\\', '/');
+    }
+
+    // Struktureller Item-Diff zwischen zwei gespeicherten Runden. Item-IDENTITÄT via normalisiertem Text, NICHT via
+    // itemId — die IDs sind positionsbasiert und rutschen beim Entfernen eines Items (round-0 DRISK-06 → round-1 DRISK-05).
+    // Exakter Text-Match ist der STRENGE Stabilitäts-Test: eine minimal umformulierte „behaltene" Zeile zählt bewusst als
+    // removed+added, nicht als kept. Analog zu Phase2B ARTIFACT_SUSPICIOUS_OVERWRITE, aber semantisch statt zähl-basiert.
+    private void EmitReviseDiff(int fromRound, int toRound, ArtifactDocument prev, ArtifactDocument cur, string curSnapshotRel)
+    {
+        static string Key(ArtifactItem i) => i.Text.Trim();
+        static string Anch(ArtifactItem i) => string.Join(",", (i.SourceArtifactItemIds ?? []).OrderBy(x => x, StringComparer.Ordinal));
+        static string Short(string s) => s.Length <= 100 ? s : s[..100] + "…";
+
+        var prevByText = prev.Items.GroupBy(Key).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+        var curByText = cur.Items.GroupBy(Key).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+
+        var kept = new List<string>(); var removed = new List<string>(); var added = new List<string>();
+        var changedAnchors = new List<object>();
+        foreach (var (text, pit) in prevByText)
+        {
+            if (curByText.TryGetValue(text, out var cit))
+            {
+                if (Anch(pit) == Anch(cit)) kept.Add(Short(text));
+                else changedAnchors.Add(new { text = Short(text), from = Anch(pit), to = Anch(cit) });
+            }
+            else removed.Add(Short(text));
+        }
+        foreach (var (text, _) in curByText)
+            if (!prevByText.ContainsKey(text)) added.Add(Short(text));
+
+        var evt = new
+        {
+            type = "ARTIFACT_REVISED", runId = _run.RunId, spec = _spec.Id, fromRound, toRound,
+            prevCount = prev.Items.Count, curCount = cur.Items.Count,
+            keptCount = kept.Count, removedCount = removed.Count, addedCount = added.Count, changedAnchorsCount = changedAnchors.Count,
+            kept, removed, added, changedAnchors, snapshot = curSnapshotRel,
+            note = "Item-Identität via normalisiertem Text (IDs sind positionsbasiert); exakter Text-Match = strenger Stabilitäts-Test.",
+            timestampUtc = DateTime.UtcNow
+        };
+        _run.AppendEvent(evt);
+        File.WriteAllText(Path.Combine(_outDir, "reflect-archive", $"revise.round-{fromRound:00}-to-{toRound:00}.json"), JsonSerializer.Serialize(evt, Json));
     }
 
     private async Task WriteReportsAsync(

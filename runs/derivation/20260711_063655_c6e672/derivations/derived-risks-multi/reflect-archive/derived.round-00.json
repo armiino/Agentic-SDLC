@@ -1,0 +1,69 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260711_063655_c6e672",
+    "model": "openai/gpt-4o-mini",
+    "promptVersion": "DerivedRisksFromReqArchAgentic2"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Unzureichender Datenschutz bei zentraler Cloud-Speicherung",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "ARCH-02"
+      ],
+      "assumptions": [
+        "Die Sicherheitsma\u00DFnahmen der verwendeten Cloud sind unbekannt."
+      ],
+      "derivationRationale": "Die Anforderung verlangt den Schutz sensibler Daten, w\u00E4hrend die Architektur eine zentrale Cloud-Speicherung festlegt."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Offline-Funktionalit\u00E4t unzureichend durch Cloud-Abh\u00E4ngigkeit",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "ARCH-02"
+      ],
+      "assumptions": [
+        "Erwartung, dass die App auch ohne Internetzugang betriebsf\u00E4hig bleibt."
+      ],
+      "derivationRationale": "Die Anforderung verlangt Offline-Funktionalit\u00E4t, w\u00E4hrend die Architektur Entscheidung f\u00FCr zentrale Cloud-Speicherung getroffen wird."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "\u00DCberlastung der App durch hohe Nutzerzahlen",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "ARCH-10"
+      ],
+      "assumptions": [
+        "Eine unzureichende technische Skalierung k\u00F6nnte die Nutzererfahrung beeintr\u00E4chtigen."
+      ],
+      "derivationRationale": "Die Anforderung erfordert das Management vieler Bewohner, w\u00E4hrend die Architektur eine Skalierung auf mehrere Einrichtungen in Aussicht stellt."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Verz\u00F6gerte Aktualisierungen durch unklare Umsetzungszeiten",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-11",
+        "ARCH-09"
+      ],
+      "assumptions": [
+        "Unklare Fristen f\u00FChren dazu, dass notwendige Anpassungen sp\u00E4t implementiert werden."
+      ],
+      "derivationRationale": "Die Anforderung verlangt die Aktualit\u00E4t von Inhalten, w\u00E4hrend die Architektur besagt, dass die Umsetzung der Datenschutzvorgaben erst sp\u00E4ter erfolgt."
+    }
+  ]
+}
