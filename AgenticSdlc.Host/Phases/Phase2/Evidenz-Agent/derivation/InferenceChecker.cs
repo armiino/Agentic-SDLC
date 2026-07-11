@@ -23,7 +23,11 @@ public sealed class InferenceChecker
     public const int DefaultBatchSize = 8;
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
-    private const string SystemPrompt = """
+    /// <summary>Eingebauter Default-Maßstab (Risiko-Fidelity, inkl. Scope-Creep-Regel). Wird verwendet, wenn kein
+    /// spec-gewählter Judge-Prompt übergeben wird → alle Alt-Aufrufer bleiben verhaltensidentisch. Für andere
+    /// Ableitungs-Ziele (z. B. Requirements-Elaboration, wo Scope-Erweiterung der SINN ist) wird ein anderer Maßstab
+    /// per Spec/Prompt-Datei gewählt und über den Konstruktor injiziert.</summary>
+    private const string DefaultSystemPrompt = """
         Du prüfst ABGELEITETE Risiken gegen ihre zitierten ANFORDERUNGEN (die einzige erlaubte Grundlage).
         Für JEDES Risiko bekommst du: den Risikotext, seine Annahmen, seine Begründung UND die zitierten
         Anforderung(en) (Text). Deine EINZIGE Frage: Ist dieses abgeleitete Risiko gegenüber SEINEN zitierten
@@ -81,12 +85,16 @@ public sealed class InferenceChecker
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
     private readonly int _batchSize;
+    private readonly string _systemPrompt;
 
-    public InferenceChecker(IChatClient client, bool structuredOutput = true, int batchSize = DefaultBatchSize)
+    /// <param name="systemPrompt">Der Judge-Maßstab. <c>null</c> → eingebauter Risiko-Default (<see cref="DefaultSystemPrompt"/>).
+    /// Ein spec-gewählter Prompt macht den Maßstab task-abhängig (die vierte Config-Achse neben Tooling/Input/Prompt).</param>
+    public InferenceChecker(IChatClient client, bool structuredOutput = true, int batchSize = DefaultBatchSize, string? systemPrompt = null)
     {
         _client = client;
         _structuredOutput = structuredOutput;
         _batchSize = Math.Clamp(batchSize, 1, 16);
+        _systemPrompt = string.IsNullOrWhiteSpace(systemPrompt) ? DefaultSystemPrompt : systemPrompt;
     }
 
     public async Task<InferenceCheckReport> CheckAsync(
@@ -116,7 +124,7 @@ public sealed class InferenceChecker
         if (_structuredOutput) options.ResponseFormat = ResponseFormat;
 
         var response = await _client.GetResponseAsync(
-            [new ChatMessage(ChatRole.System, SystemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, baselineById))],
+            [new ChatMessage(ChatRole.System, _systemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, baselineById))],
             options, ct).ConfigureAwait(false);
 
         var parsed = Parse(response.Text).ToDictionary(v => v.Ref, v => v, StringComparer.OrdinalIgnoreCase);

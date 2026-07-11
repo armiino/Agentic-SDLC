@@ -21,7 +21,10 @@ public sealed record DerivationSpec(
     string? AgenticExplorerPromptName = null,   // Explorer-Prompt (Ziel-only, Entdeckungs-Tools, --explore)
     string? AgenticVerifyPromptName = null,      // Verify-Loop-Prompt (Explorer + Selbstkorrektur via verify_derived, --verify)
     string? AgenticAccountablePromptName = null, // Accountable-Prompt (Explorer + Coverage-Rechenschaft via account_uncovered, --account)
-    string? AgenticAccountVerifyPromptName = null) // Account-Verify-Prompt (Explorer + check_accountability + verify_derived, geschlossene Schleife, --account-verify)
+    string? AgenticAccountVerifyPromptName = null, // Account-Verify-Prompt (Explorer + check_accountability + verify_derived, geschlossene Schleife, --account-verify)
+    string? JudgePromptName = null)              // Judge-MAßSTAB (die vierte Config-Achse): der System-Prompt des unabhängigen InferenceChecker.
+                                                // null = eingebauter Risiko-Default (Fidelity + Scope-Creep-Regel). Für Nicht-Risiko-Ziele (z. B. Req-Elaboration,
+                                                // wo Scope-Erweiterung der Sinn ist) einen anderen Maßstab per Datei wählen — ohne Mechanismus-Änderung.
 {
     /// <summary>Unterstützt diese Ableitung den agentischen Modus (Agent nutzt Tools selbst)?</summary>
     public bool SupportsAgentic => !string.IsNullOrWhiteSpace(AgenticPromptName);
@@ -58,11 +61,17 @@ public static class DerivationRegistry
         {
             ["derived-risks"] = new(
                 Id: "derived-risks", SourceArtifactTypes: ["requirements"], TargetArtifactType: "risks",
-                AgentName: "EvidenceDerivedRisksAgent", PromptName: "DerivedRisksFromRequirements1", ItemIdPrefix: "DRISK"),
+                AgentName: "EvidenceDerivedRisksAgent", PromptName: "DerivedRisksFromRequirements1", ItemIdPrefix: "DRISK",
+                JudgePromptName: "DerivedRisksJudge1"),
 
             ["requirements-gap"] = new(
                 Id: "requirements-gap", SourceArtifactTypes: ["requirements"], TargetArtifactType: "requirements",
-                AgentName: "EvidenceRequirementsGapAgent", PromptName: "RequirementsGapFromRequirements1", ItemIdPrefix: "DREQ"),
+                AgentName: "EvidenceRequirementsGapAgent", PromptName: "RequirementsGapFromRequirements1", ItemIdPrefix: "DREQ",
+                // Reflect-fähig (L1 Elaboration): derselbe Motor, andere Config. Basis-Agentic (Guard/plain --agentic) +
+                // AccountVerify (Reflect-Rolle) + gelockerter Judge-Maßstab (Scope-Erweiterung ist hier ERWÜNSCHT).
+                AgenticPromptName: "RequirementsGapAgentic1",
+                AgenticAccountVerifyPromptName: "RequirementsGapAccountVerify1",
+                JudgePromptName: "RequirementsGapJudge1"),
 
             // Multi-Source-Demo (Bau-Punkt 2): Risiken aus requirements + architecture (Zusammenspiel).
             // AgenticPromptName gesetzt → --agentic-Modus verfügbar (Agent liest/schreibt via Tools selbst).
@@ -78,7 +87,9 @@ public static class DerivationRegistry
                 // --account: Explorer + Coverage-Rechenschaft (account_uncovered) + sichtbares Reasoning.
                 AgenticAccountablePromptName: "DerivedRisksAccountable1",
                 // --account-verify: geschlossene Schleife — check_accountability (Coverage) + verify_derived (Treue) vor save.
-                AgenticAccountVerifyPromptName: "DerivedRisksAccountVerify1"),
+                AgenticAccountVerifyPromptName: "DerivedRisksAccountVerify1",
+                // Judge-Maßstab (unabhängiger InferenceChecker) — ausgelagert + spec-wählbar (byte-gleich zum bisherigen Default).
+                JudgePromptName: "DerivedRisksJudge1"),
         };
 
     public static bool TryGet(string id, out DerivationSpec spec) => Specs.TryGetValue(id, out spec!);

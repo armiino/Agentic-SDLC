@@ -204,8 +204,12 @@ public static class DerivationRunner
         var prompt = PromptProvider.Load(repoRoot, Phase, spec.AgentName, promptName, new Dictionary<string, string> { ["runId"] = run.RunId });
         // checker = In-Loop-Judge (verify_derived, das Selbst-Prüfwerkzeug des Agenten). postHocChecker = die UNABHÄNGIGE
         // Nach-Prüfung (Authorität). Ohne --posthoc-judge sind beide identisch (rückwärtskompatibel).
-        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput);
-        var postHocChecker = independentPostHoc ? new InferenceChecker(postHocClient, settings.JuryStructuredOutput) : checker;
+        // Judge-Maßstab (vierte Config-Achse): spec-gewählter System-Prompt des unabhängigen Checkers. null → Risiko-Default.
+        var judgeSystemPrompt = string.IsNullOrWhiteSpace(spec.JudgePromptName)
+            ? null
+            : PromptProvider.Load(repoRoot, Phase, spec.AgentName, spec.JudgePromptName!, new Dictionary<string, string>());
+        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt);
+        var postHocChecker = independentPostHoc ? new InferenceChecker(postHocClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt) : checker;
         var outScope = $"derivations/{spec.Id}";
 
         Microsoft.Agents.AI.Workflows.Workflow workflow;

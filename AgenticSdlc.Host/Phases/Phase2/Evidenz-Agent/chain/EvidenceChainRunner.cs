@@ -115,12 +115,13 @@ public static class EvidenceChainRunner
         var genClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, $"DerivationGenerate-{spec.Id}", SourceName);
         var checkClient = AgentChatPipelineBuilder.Build(judgeBase, settings, run, $"DerivationCheck-{spec.Id}", SourceName);
         var prompt = PromptProvider.Load(repoRoot, Phase, spec.AgentName, spec.PromptName, new Dictionary<string, string> { ["runId"] = run.RunId });
+        var judgeSystemPrompt = string.IsNullOrWhiteSpace(spec.JudgePromptName) ? null : PromptProvider.Load(repoRoot, Phase, spec.AgentName, spec.JudgePromptName!, new Dictionary<string, string>());
         AIAgent agent = genClient.AsAIAgent(instructions: prompt, name: spec.AgentName, tools: []);
         agent = agent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
         var derivation = DerivationWorkflow.Build(
             new DerivationGenerateExecutor(agent, spec, run),
             new DerivationAnchorExecutor(spec, run),
-            new DerivationCheckExecutor(new InferenceChecker(checkClient, settings.JuryStructuredOutput), spec, genSettings.ModelId, run, $"derivations/{spec.Id}"));
+            new DerivationCheckExecutor(new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt), spec, genSettings.ModelId, run, $"derivations/{spec.Id}"));
 
         // Baseline-Quelle: Fan-out (build) ODER LoadBaseline (mode:load) — der Rest des Graphen (Select → Derivation) ist identisch.
         Microsoft.Agents.AI.Workflows.Workflow chain;
