@@ -37,7 +37,7 @@ public static class EvidenceChainRunner
     {
         if (args.Length < 2)
         {
-            Console.Error.WriteLine($"Usage: evidence-chain <specId> [model] [--from-run <runId|pfad>] [--dry-run]   (specs: {string.Join(", ", DerivationRegistry.Specs.Keys)})");
+            Console.Error.WriteLine($"Usage: evidence-chain <specId> [model] [--from-run <runId|pfad>] [--reflect|--reflect-graph] [--dry-run]   (specs: {string.Join(", ", DerivationRegistry.Specs.Keys)})");
             return 2;
         }
         var specId = args[1];
@@ -55,6 +55,16 @@ public static class EvidenceChainRunner
         }
         var dryRun = args.Contains("--dry-run");
         var loadMode = fromRunArg is not null;
+        // Derivations-FORM (config-schaltbar, drop-in): strukturiert (Default) ODER der agentische Reflect-Mechanismus
+        // (A-agentic-12…20) als Chain-Knoten. --reflect = node-intern (imperativer Loop), --reflect-graph = edge-native
+        // (MAF-Zyklus). Beide sind typgleich (SourceArtifactSet → DerivationResult) → BindAsExecutor bleibt identisch.
+        var reflectGraph = args.Contains("--reflect-graph");
+        var reflect = args.Contains("--reflect") || reflectGraph;
+        if (reflect && !spec.SupportsAccountVerify)
+        {
+            Console.Error.WriteLine($"[chain] spec '{spec.Id}' hat keinen Reflect-Modus (kein AgenticAccountVerifyPromptName). Ohne --reflect laufen lassen.");
+            return 2;
+        }
         int k = 3, minVotes = 0, maxIter = 3;
 
         // Quellen-Vorbedingungen je Modus.
@@ -92,6 +102,7 @@ public static class EvidenceChainRunner
         {
             workflow = EvidenceChainWorkflow.WorkflowName, runId = run.RunId, spec = spec.Id,
             mode = loadMode ? "load" : "build",
+            derivationForm = reflect ? (reflectGraph ? "reflect-graph" : "reflect") : "structured",
             sourceTypes, target = spec.TargetArtifactType,
             consumable = consPath is not null ? Path.GetRelativePath(repoRoot, consPath) : null,
             claims = ledger?.Claims.Count ?? 0,
@@ -111,17 +122,56 @@ public static class EvidenceChainRunner
 
         var judgeBase = ChatClientFactory.Create(judgeSettings);
 
-        // Derivation-Workflow (Generator = echter Agent, Check = Judge) — modus-unabhängig.
+        // Derivation-Workflow — modus-unabhängig verdrahtet; die FORM (strukturiert vs. agentischer Reflect) ist
+        // config-schaltbar und wird per BindAsExecutor als EIN Knoten (SourceArtifactSet → DerivationResult) in die
+        // Chain gehängt. Beide Formen sind typgleich → drop-in (EvidenceChainWorkflow bleibt unverändert).
         var genClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, $"DerivationGenerate-{spec.Id}", SourceName);
         var checkClient = AgentChatPipelineBuilder.Build(judgeBase, settings, run, $"DerivationCheck-{spec.Id}", SourceName);
-        var prompt = PromptProvider.Load(repoRoot, Phase, spec.AgentName, spec.PromptName, new Dictionary<string, string> { ["runId"] = run.RunId });
         var judgeSystemPrompt = string.IsNullOrWhiteSpace(spec.JudgePromptName) ? null : PromptProvider.Load(repoRoot, Phase, spec.AgentName, spec.JudgePromptName!, new Dictionary<string, string>());
-        AIAgent agent = genClient.AsAIAgent(instructions: prompt, name: spec.AgentName, tools: []);
-        agent = agent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
-        var derivation = DerivationWorkflow.Build(
-            new DerivationGenerateExecutor(agent, spec, run),
-            new DerivationAnchorExecutor(spec, run),
-            new DerivationCheckExecutor(new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt), spec, genSettings.ModelId, run, $"derivations/{spec.Id}"));
+        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt);
+        var outScope = $"derivations/{spec.Id}";
+
+        Microsoft.Agents.AI.Workflows.Workflow derivation;
+        if (reflect)
+        {
+            // Der in A-agentic-12…20 geschlossene Selbstkorrektur-Mechanismus als Chain-Derivationsknoten: der Agent
+            // liest/verankert/schreibt selbst (account-verify-Tools), externer Gate + bounded Loop (max 1 Retry); die
+            // Provenienz (agent/ + checks/ + reflect/) landet im Chain-Run. Drill-down-Claims = der Chain-eigene Ledger
+            // (consumable; build-Modus, sonst leer). Post-hoc-Judge = In-Loop-Judge (Chain hat kein --posthoc-judge).
+            var ledgerClaims = LedgerClaimIndex.LoadOrEmpty(consPath);
+            var reflectPrompt = PromptProvider.Load(repoRoot, Phase, spec.AgentName, spec.AgenticAccountVerifyPromptName!, new Dictionary<string, string> { ["runId"] = run.RunId });
+            Func<IReadOnlyList<AITool>, AIAgent> agentFactory = tools =>
+            {
+                var a = genClient.AsAIAgent(instructions: reflectPrompt, name: spec.AgentName, tools: [.. tools]);
+                return a.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+            };
+            var outDir = run.OutputDir(outScope);
+            if (reflectGraph)
+            {
+                // Edge-native: der zyklische Reflect-Sub-Workflow wird selbst per BindAsExecutor als EIN Chain-Knoten gebunden.
+                var deps = new ReflectGraphDeps(agentFactory, checker, checker, spec, genSettings.ModelId, run, outDir,
+                    ledgerClaims, MaxRetries: 1, PostHocJudgeModel: judgeSettings.ModelId, IndependentPostHoc: false);
+                derivation = ReflectGraphWorkflow.Build(deps);
+            }
+            else
+            {
+                var agenticExec = new DerivationAgenticExecutor(agentFactory, checker, checker, spec, genSettings.ModelId,
+                    run, outDir, ledgerClaims, explorer: false, verify: false, accountable: false, accountVerify: true,
+                    postHocJudgeModel: judgeSettings.ModelId, independentPostHoc: false, reflect: true);
+                derivation = DerivationWorkflow.BuildAgentic(agenticExec, spec);
+            }
+            Console.WriteLine($"[chain] Derivation-FORM: {(reflectGraph ? "reflect-graph (edge-native MAF-Zyklus)" : "reflect (node-intern)")} — Agent + externer Gate + bounded Loop; Provenienz agent/+checks/+reflect/.");
+        }
+        else
+        {
+            var prompt = PromptProvider.Load(repoRoot, Phase, spec.AgentName, spec.PromptName, new Dictionary<string, string> { ["runId"] = run.RunId });
+            AIAgent agent = genClient.AsAIAgent(instructions: prompt, name: spec.AgentName, tools: []);
+            agent = agent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+            derivation = DerivationWorkflow.Build(
+                new DerivationGenerateExecutor(agent, spec, run),
+                new DerivationAnchorExecutor(spec, run),
+                new DerivationCheckExecutor(checker, spec, genSettings.ModelId, run, outScope));
+        }
 
         // Baseline-Quelle: Fan-out (build) ODER LoadBaseline (mode:load) — der Rest des Graphen (Select → Derivation) ist identisch.
         Microsoft.Agents.AI.Workflows.Workflow chain;
