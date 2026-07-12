@@ -112,13 +112,23 @@ public static class DerivationMetricsAggregator
                 if (cdEl.TryGetProperty("deltaUnaccounted", out var du) && du.ValueKind == JsonValueKind.Number) deltaUnaccounted = du.GetInt32();
             }
 
+            // Reflect-Arm-Kennzahlen (nur im …-reflect / …-reflect-graph-Report vorhanden): verbindliche, bounded Selbstkorrektur.
+            int? reflectRounds = null; bool? needsRepair = null, overCorrected = null, firstDraftGatePass = null;
+            if (root.TryGetProperty("reflect", out var rfEl) && rfEl.ValueKind == JsonValueKind.Object)
+            {
+                if (rfEl.TryGetProperty("rounds", out var rfr) && rfr.ValueKind == JsonValueKind.Number) reflectRounds = rfr.GetInt32();
+                if (rfEl.TryGetProperty("needsRepair", out var nr) && (nr.ValueKind is JsonValueKind.True or JsonValueKind.False)) needsRepair = nr.GetBoolean();
+                if (rfEl.TryGetProperty("overCorrected", out var oc) && (oc.ValueKind is JsonValueKind.True or JsonValueKind.False)) overCorrected = oc.GetBoolean();
+                if (rfEl.TryGetProperty("firstDraftGatePass", out var fg) && (fg.ValueKind is JsonValueKind.True or JsonValueKind.False)) firstDraftGatePass = fg.GetBoolean();
+            }
+
             double? r3 = null;
             if (scopeChecker is not null)
                 r3 = await JudgeR3Async(dir, spec, scopeChecker, repoRoot).ConfigureAwait(false);
 
             perRun.Add(new RunMetrics(Path.GetFileName(dir), mode, m, retrieved, usedCnt, r3, rounds, deltaR1, dodPass,
                 coveredRate, dismissedRate, unaccountedRate, coverageComplete, collisionRate, selfAccountingClean,
-                acctRounds, deltaUnaccounted));
+                acctRounds, deltaUnaccounted, reflectRounds, needsRepair, overCorrected, firstDraftGatePass));
         }
         if (perRun.Count == 0) { Console.Error.WriteLine("[derive-metrics] keine auswertbaren Läufe (Metrik-Block fehlt überall)."); return 2; }
 
@@ -196,6 +206,7 @@ public static class DerivationMetricsAggregator
         var withSac = runs.Where(r => r.SelfAccountingClean is not null).ToList();
         var withAcctR = runs.Where(r => r.AcctRounds is not null).ToList();
         var withDeltaUn = runs.Where(r => r.DeltaUnaccounted is not null).ToList();
+        var withRf = runs.Where(r => r.ReflectRounds is not null).ToList();
         return new ModeAggregate(
             N: runs.Count,
             RunIds: runs.Select(r => r.RunId).ToArray(),
@@ -217,7 +228,12 @@ public static class DerivationMetricsAggregator
             CollisionRate: withColl.Count > 0 ? Stat.Of(withColl.Select(r => r.CollisionRate!.Value)) : null,
             SelfAccountingCleanRate: withSac.Count > 0 ? Stat.Of(withSac.Select(r => r.SelfAccountingClean!.Value ? 1.0 : 0.0)) : null,
             AcctRounds: withAcctR.Count > 0 ? Stat.Of(withAcctR.Select(r => (double)r.AcctRounds!.Value)) : null,
-            DeltaUnaccounted: withDeltaUn.Count > 0 ? Stat.Of(withDeltaUn.Select(r => r.DeltaUnaccounted!.Value)) : null);
+            DeltaUnaccounted: withDeltaUn.Count > 0 ? Stat.Of(withDeltaUn.Select(r => r.DeltaUnaccounted!.Value)) : null,
+            ReflectRounds: withRf.Count > 0 ? Stat.Of(withRf.Select(r => (double)r.ReflectRounds!.Value)) : null,
+            LoopFireRate: withRf.Count > 0 ? Stat.Of(withRf.Select(r => r.ReflectRounds!.Value > 1 ? 1.0 : 0.0)) : null,
+            NeedsRepairRate: withRf.Count > 0 ? Stat.Of(withRf.Select(r => r.NeedsRepair is true ? 1.0 : 0.0)) : null,
+            FirstDraftGatePassRate: withRf.Count > 0 ? Stat.Of(withRf.Select(r => r.FirstDraftGatePass is true ? 1.0 : 0.0)) : null,
+            OverCorrectedRate: withRf.Count > 0 ? Stat.Of(withRf.Select(r => r.OverCorrected is true ? 1.0 : 0.0)) : null);
     }
 
     private static void PrintTable(string spec, IReadOnlyDictionary<string, ModeAggregate> byMode, bool judged)
@@ -258,6 +274,15 @@ public static class DerivationMetricsAggregator
                 Row("acct-Runden", a => a.AcctRounds);                       // 0 = check_accountability nicht genutzt
             }
         }
+        if (byMode.Values.Any(a => a.ReflectRounds is not null))
+        {
+            Console.WriteLine("-- REFLECT-ARM (verbindliche Selbstkorrektur, bounded) --");
+            Row("reflect-Runden", a => a.ReflectRounds);                 // 1 = kein Retry, 2 = Loop feuerte einmal
+            Row("loop-feuer-Rate", a => a.LoopFireRate);                 // Anteil Läufe mit >1 Runde (Retry gefeuert)
+            Row("needsRepair-Rate", a => a.NeedsRepairRate);             // Anteil, der bounded aufgab (final fail, ehrlich markiert)
+            Row("firstDraft-pass-Rate", a => a.FirstDraftGatePassRate);  // Anteil, der round 0 direkt bestand
+            Row("over-correction-Rate", a => a.OverCorrectedRate);       // „silent killer": Loop verschlechterte schon-korrektes
+        }
         Console.WriteLine("-- DESKRIPTIV (nicht gewertet) --");
         Row("D1 Item-Anzahl", a => a.D1_Items);
         Row("D2 retrieved/used", a => a.D2_RetrievedUsedRatio);
@@ -270,7 +295,8 @@ public static class DerivationMetricsAggregator
         int? VerifyRounds, double? DeltaR1, bool? DodPass,
         double? CoveredRate, double? DismissedRate, double? UnaccountedRate, bool? CoverageComplete,
         double? CollisionRate, bool? SelfAccountingClean,
-        int? AcctRounds, double? DeltaUnaccounted);
+        int? AcctRounds, double? DeltaUnaccounted,
+        int? ReflectRounds, bool? NeedsRepair, bool? OverCorrected, bool? FirstDraftGatePass);
 }
 
 /// <summary>Mittelwert + Spannweite einer Metrik über die Wiederholungen (M2). Nicht-überlappende Spannen = echter Effekt.</summary>
@@ -305,4 +331,9 @@ public sealed record ModeAggregate(
     Stat? CollisionRate,
     Stat? SelfAccountingCleanRate,
     Stat? AcctRounds,
-    Stat? DeltaUnaccounted);
+    Stat? DeltaUnaccounted,
+    Stat? ReflectRounds,
+    Stat? LoopFireRate,
+    Stat? NeedsRepairRate,
+    Stat? FirstDraftGatePassRate,
+    Stat? OverCorrectedRate);
