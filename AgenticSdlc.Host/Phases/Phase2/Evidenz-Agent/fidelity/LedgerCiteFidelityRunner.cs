@@ -75,7 +75,25 @@ public static class LedgerCiteFidelityRunner
             cited.Add(new ArtifactItem($"REQ-{n:D3}", ArtifactOrigin.Extracted, text, SourceClaimIds: ids, SourceArtifactItemIds: ids));
         }
 
-        if (cited.Count == 0) { Console.Error.WriteLine("[cite-fidelity] keine zitierten Anforderungs-Bullets im requirements.md gefunden."); return 2; }
+        var totalBullets = cited.Count + uncited.Count;
+        if (cited.Count == 0)
+        {
+            // Arm-A-Fall (illustrative Folie): keine Inline-Zitate → NICHTS ist nachvollziehbar/cite-prüfbar. Das IST der
+            // Befund („was du bei freier Generierung aufgibst"), kein Fehler → deterministischer Report, kein Judge.
+            var runA = new RunContext(RunId.New(), "fidelity");
+            runA.EnsureFolders();
+            var reportA = new
+            {
+                requirements = Path.GetRelativePath(repoRoot, mdPath), consumable = Path.GetRelativePath(repoRoot, consPath),
+                totalBullets, citedBullets = 0, uncitedBullets = uncited.Count, citedRate = 0.0,
+                note = "keine Inline-Zitate — nicht cite-prüfbar (Traceability = 0).", uncitedStatements = uncited
+            };
+            var pathA = Path.Combine(runA.RunDir, "cite-fidelity-report.json");
+            await File.WriteAllTextAsync(pathA, JsonSerializer.Serialize(reportA, Json)).ConfigureAwait(false);
+            runA.AppendEvent(new { type = "CITE_FIDELITY_UNCITED", runId = runA.RunId, totalBullets, cited = 0, timestampUtc = DateTime.UtcNow });
+            Console.WriteLine($"[cite-fidelity] runId={runA.RunId}  bullets={totalBullets} zitiert=0 → Traceability = 0 (nicht cite-prüfbar).  -> {Path.GetRelativePath(repoRoot, pathA)}");
+            return 0;
+        }
 
         // (2) consumable-Ledger als Baseline (Claim-ID → Claim-Text als ArtifactItem).
         var claims = LedgerClaimIndex.LoadOrEmpty(consPath);
@@ -127,7 +145,8 @@ public static class LedgerCiteFidelityRunner
         {
             requirements = Path.GetRelativePath(repoRoot, mdPath), consumable = Path.GetRelativePath(repoRoot, consPath),
             judgeModel = judgeSettings.ModelId,
-            citedBullets = cited.Count, uncitedBullets = uncited.Count,
+            totalBullets, citedBullets = cited.Count, uncitedBullets = uncited.Count,
+            citedRate = Math.Round((double)cited.Count / totalBullets, 4),
             supported, supportedRate,
             byVerdict = report.ByVerdict,
             unresolvableAnchors = unresolvable,
