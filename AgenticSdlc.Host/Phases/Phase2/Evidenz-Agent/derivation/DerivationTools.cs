@@ -409,7 +409,7 @@ internal sealed class DerivationTools
                 vById.TryGetValue(d.ItemId, out var v) && v.Verdict is InferenceVerdictKind.Contradicts or InferenceVerdictKind.Unrelated) / draft.Count, 4);
 
         Directory.CreateDirectory(_outDir);
-        File.WriteAllText(Path.Combine(_outDir, $"verify-round-{round:D2}.json"), JsonSerializer.Serialize(report, Json));
+        File.WriteAllText(DerivationLayout.File(_outDir, DerivationLayout.Agent, $"verify-round-{round:D2}.json"), JsonSerializer.Serialize(report, Json));
         _run.AppendEvent(new { type = "AGENTIC_TOOL_VERIFY", runId = _run.RunId, spec = _spec.Id, round, items = draft.Count, byVerdict = report.ByVerdict, timestampUtc = DateTime.UtcNow });
 
         var sb = new StringBuilder();

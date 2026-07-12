@@ -178,7 +178,7 @@ internal sealed class DerivationCheckExecutor : Executor<AnchoredDerivation>
         var metrics = DerivationMetrics.ComputeDeterministic(doc, msg.Sources, msg.Invalid, report.Verdicts, doc.Items.Count + msg.Invalid.Count);
 
         await File.WriteAllTextAsync(Path.Combine(_outDir, "derived.json"), JsonSerializer.Serialize(doc, Json), ct).ConfigureAwait(false);
-        await File.WriteAllTextAsync(Path.Combine(_outDir, "inference-check-report.json"), JsonSerializer.Serialize(report, Json), ct).ConfigureAwait(false);
+        await File.WriteAllTextAsync(DerivationLayout.File(_outDir, DerivationLayout.Checks, "inference-check-report.json"), JsonSerializer.Serialize(report, Json), ct).ConfigureAwait(false);
         await File.WriteAllTextAsync(Path.Combine(_outDir, "derivation-report.json"),
             JsonSerializer.Serialize(new { spec = _spec.Id, mode = "structured", decision = msg.Decision, anchoredValid = msg.Items.Count, invalidAnchor = msg.Invalid.Count, invalid = msg.Invalid, metrics }, Json), ct).ConfigureAwait(false);
 
