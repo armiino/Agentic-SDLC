@@ -299,6 +299,13 @@ if (args.Length > 0 && string.Equals(args[0], "derive-metrics", StringComparison
     return;
 }
 
+// A2 (Demonstration): Nicht-dekorativ-Beleg — supported-Rate der ledger-geerdeten requirements.md gegen den consumable.
+if (args.Length > 0 && string.Equals(args[0], "ledger-cite-fidelity", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Fidelity.LedgerCiteFidelityRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // I-d: Human-Review der abgeleiteten Risiken (generisches HumanReview-UI) -> approved-derived-risks.json.
 if (args.Length > 0 && string.Equals(args[0], "derive-review", StringComparison.OrdinalIgnoreCase))
 {
