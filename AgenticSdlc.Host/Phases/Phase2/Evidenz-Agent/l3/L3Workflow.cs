@@ -1,0 +1,38 @@
+using Microsoft.Agents.AI.Workflows;
+
+namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+
+/// <summary>
+/// L3-Prepare-Workflow (Workflow 1, §5.3): der MAF-native lineare Pfad
+/// <c>CandidateGen[Agent] → AnchorResolve[Agent] → AnchorValidate[det] → SupportJudge[Judge] → Routing[det] → Finalize</c>.
+/// Eingabe = <see cref="Derivation.SourceArtifactSet"/> (Umwelt-Graph), Ausgabe = <see cref="L3Result"/>. Endet am
+/// Human-Review-Paket; die Klassen-Verzweigung + der Human-Loop (accept/edit/reject, NEEDS_REVISION→Reflect) sind die
+/// Apply-Phase (Workflow 2) und bewusst noch nicht Teil von v1. Per <c>WithOutputFrom</c>/<c>BindAsExecutor</c> als EIN
+/// Knoten in größere Graphen einhängbar.
+/// </summary>
+public static class L3Workflow
+{
+    public const string WorkflowName = "L3-OpenWorld-Prepare";
+
+    internal static Microsoft.Agents.AI.Workflows.Workflow Build(
+        L3CandidateGenExecutor gen,
+        L3AnchorResolveExecutor resolve,
+        L3AnchorValidateExecutor validate,
+        L3SupportJudgeExecutor judge,
+        L3RoutingExecutor routing,
+        L3FinalizeExecutor finalize)
+    {
+        var builder = new WorkflowBuilder(gen)
+            .WithName(WorkflowName)
+            .WithDescription("Open-World-Kandidaten: generieren (ohne Pflicht-Anker) → Anker suchen → validieren → "
+                           + "je Anker Tragfähigkeit → deterministisch in 4 Klassen routen → Human-Review-Paket.");
+
+        builder.AddEdge(gen, resolve);
+        builder.AddEdge(resolve, validate);
+        builder.AddEdge(validate, judge);
+        builder.AddEdge(judge, routing);
+        builder.AddEdge(routing, finalize);
+        builder.WithOutputFrom(finalize);
+        return builder.Build();
+    }
+}

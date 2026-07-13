@@ -299,6 +299,13 @@ if (args.Length > 0 && string.Equals(args[0], "derive-metrics", StringComparison
     return;
 }
 
+// L3 Open-World-Ableitung: Kandidaten generieren → verankern → in 4 Klassen routen → Human-Review-Paket (Prepare-Phase).
+if (args.Length > 0 && string.Equals(args[0], "l3", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3.L3Runner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // A2 (Demonstration): Nicht-dekorativ-Beleg — supported-Rate der ledger-geerdeten requirements.md gegen den consumable.
 if (args.Length > 0 && string.Equals(args[0], "ledger-cite-fidelity", StringComparison.OrdinalIgnoreCase))
 {
