@@ -35,4 +35,28 @@ public static class L3Workflow
         builder.WithOutputFrom(finalize);
         return builder.Build();
     }
+
+    /// <summary>
+    /// Komponenten-Variante (Plan §11.1): startet bei <c>AnchorValidate</c> mit KONTROLLIERTEN Test-Kandidaten
+    /// (<see cref="L3Resolved"/>) — überspringt die beiden nondeterministischen Agenten (Generierung + Resolution).
+    /// Erlaubt einen isolierten, reproduzierbaren Test der Klassifikation (alle 4 Klassen gezielt provozieren). Nur der
+    /// Support-Judge bleibt ein LLM.
+    /// </summary>
+    internal static Microsoft.Agents.AI.Workflows.Workflow BuildFromResolved(
+        L3AnchorValidateExecutor validate,
+        L3SupportJudgeExecutor judge,
+        L3RoutingExecutor routing,
+        L3FinalizeExecutor finalize)
+    {
+        var builder = new WorkflowBuilder(validate)
+            .WithName($"{WorkflowName}-FromCandidates")
+            .WithDescription("Kontrollierte Test-Kandidaten: validieren → je Anker Tragfähigkeit → 4-Klassen-Routing → "
+                           + "Human-Review-Paket (ohne Generierungs-/Resolutions-Agenten).");
+
+        builder.AddEdge(validate, judge);
+        builder.AddEdge(judge, routing);
+        builder.AddEdge(routing, finalize);
+        builder.WithOutputFrom(finalize);
+        return builder.Build();
+    }
 }

@@ -40,17 +40,28 @@ public static class L3Runner
         }
         var dryRun = args.Contains("--dry-run");
 
+        // --candidates <file>: kontrollierte Test-Kandidaten (Plan §11.1) — überspringt Generierung + Resolution und
+        // fährt nur die deterministische Klassifikation + den Judge (alle 4 Klassen gezielt provozierbar).
+        string? candidatesArg = null;
+        var skipValue = new HashSet<int>();
+        for (var i = 1; i < args.Length - 1; i++)
+            if (string.Equals(args[i], "--candidates", StringComparison.Ordinal)) { candidatesArg = args[i + 1]; skipValue.Add(i + 1); }
+
         // Positional nach dem Befehl: existierende Dateien = Umwelt-Artefakte (1..N); erstes Nicht-File/Nicht-Flag = Modell.
         var sourcePaths = new List<string>();
         string? modelArg = null;
         for (var i = 1; i < args.Length; i++)
         {
+            if (skipValue.Contains(i)) continue;
             var a = args[i];
             if (a.StartsWith("--", StringComparison.Ordinal)) continue;
             var resolved = Resolve(repoRoot, a);
             if (resolved is not null && File.Exists(resolved)) sourcePaths.Add(resolved);
             else if (modelArg is null) modelArg = a;
         }
+        var injectPath = candidatesArg is not null ? Resolve(repoRoot, candidatesArg) : null;
+        var inject = injectPath is not null;
+        if (inject && !File.Exists(injectPath!)) { Console.Error.WriteLine($"[l3] --candidates: Datei fehlt: '{candidatesArg}'."); return 2; }
 
         var sources = new List<ArtifactDocument>();
         var seenTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -73,6 +84,7 @@ public static class L3Runner
             workflow = L3Workflow.WorkflowName, runId = run.RunId,
             env = sourcePaths.Select(p => Path.GetRelativePath(repoRoot, p)).ToArray(), envTypes = sources.Select(s => s.ArtifactType).ToArray(),
             envItems = env.TotalItemCount, provider = settings.LlmProvider, generatorModel = genSettings.ModelId, judgeModel = judgeSettings.ModelId,
+            mode = inject ? "from-candidates" : "generate", candidates = inject ? Path.GetRelativePath(repoRoot, injectPath!) : null,
             timestampUtc = DateTime.UtcNow
         });
         Console.WriteLine($"[l3] runId={run.RunId}  umwelt=[{string.Join(",", sources.Select(s => s.ArtifactType))}] items={env.TotalItemCount}  genModel={genSettings.ModelId} judgeModel={judgeSettings.ModelId}");
@@ -83,32 +95,42 @@ public static class L3Runner
             metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
 
-        // Zwei Agenten (Generierung + Anker-Resolution getrennt), ein Judge — alle über die Standard-Pipeline + ToolCallLogger.
-        var genClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, "L3-CandidateGen", SourceName);
-        var resolveClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, "L3-AnchorResolve", SourceName);
+        // Judge (immer) — wiederverwendeter InferenceChecker-Kern mit L3-Maßstab, über die Standard-Pipeline.
         var judgeClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "L3-SupportJudge", SourceName);
-
-        var genPrompt = PromptProvider.Load(repoRoot, Phase, AgentName, "L3CandidateGen1", new Dictionary<string, string> { ["runId"] = run.RunId });
-        var resolvePrompt = PromptProvider.Load(repoRoot, Phase, AgentName, "L3AnchorResolve1", new Dictionary<string, string> { ["runId"] = run.RunId });
         var judgePrompt = PromptProvider.Load(repoRoot, Phase, AgentName, "L3SupportJudge1", new Dictionary<string, string>());
-
-        AIAgent genAgent = genClient.AsAIAgent(instructions: genPrompt, name: AgentName, tools: []);
-        genAgent = genAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
-        AIAgent resolveAgent = resolveClient.AsAIAgent(instructions: resolvePrompt, name: AgentName, tools: []);
-        resolveAgent = resolveAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
         var judge = new InferenceChecker(judgeClient, settings.JuryStructuredOutput, systemPrompt: judgePrompt);
 
-        var workflow = L3Workflow.Build(
-            new L3CandidateGenExecutor(genAgent, run),
-            new L3AnchorResolveExecutor(resolveAgent, run),
-            new L3AnchorValidateExecutor(run),
-            new L3SupportJudgeExecutor(judge, run),
-            new L3RoutingExecutor(run),
-            new L3FinalizeExecutor(run));
+        Microsoft.Agents.AI.Workflows.Workflow workflow;
+        L3Resolved? injected = null;
+        if (inject)
+        {
+            injected = new L3Resolved(env, await LoadTestCandidatesAsync(injectPath!).ConfigureAwait(false));
+            workflow = L3Workflow.BuildFromResolved(new L3AnchorValidateExecutor(run), new L3SupportJudgeExecutor(judge, run), new L3RoutingExecutor(run), new L3FinalizeExecutor(run));
+            Console.WriteLine($"[l3] mode=from-candidates: {injected.Items.Count} kontrollierte Test-Kandidaten (Generierung + Resolution übersprungen).");
+        }
+        else
+        {
+            // Zwei Agenten (Generierung + Anker-Resolution getrennt) — beide über Standard-Pipeline + ToolCallLogger.
+            var genClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, "L3-CandidateGen", SourceName);
+            var resolveClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, "L3-AnchorResolve", SourceName);
+            var genPrompt = PromptProvider.Load(repoRoot, Phase, AgentName, "L3CandidateGen1", new Dictionary<string, string> { ["runId"] = run.RunId });
+            var resolvePrompt = PromptProvider.Load(repoRoot, Phase, AgentName, "L3AnchorResolve1", new Dictionary<string, string> { ["runId"] = run.RunId });
+            AIAgent genAgent = genClient.AsAIAgent(instructions: genPrompt, name: AgentName, tools: []);
+            genAgent = genAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+            AIAgent resolveAgent = resolveClient.AsAIAgent(instructions: resolvePrompt, name: AgentName, tools: []);
+            resolveAgent = resolveAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+            workflow = L3Workflow.Build(
+                new L3CandidateGenExecutor(genAgent, run),
+                new L3AnchorResolveExecutor(resolveAgent, run),
+                new L3AnchorValidateExecutor(run),
+                new L3SupportJudgeExecutor(judge, run),
+                new L3RoutingExecutor(run),
+                new L3FinalizeExecutor(run));
+        }
 
         if (dryRun)
         {
-            Console.WriteLine("[l3] --dry-run: Graph Build()-bar (CandidateGen[Agent] → AnchorResolve[Agent] → Validate[det] → SupportJudge[Judge] → Routing[det] → Finalize). Kein LLM.");
+            Console.WriteLine("[l3] --dry-run: Graph Build()-bar (Validate[det] → SupportJudge[Judge] → Routing[det] → Finalize, davor Generierung+Resolution außer bei --candidates). Kein LLM.");
             Console.WriteLine($"[l3] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
             return 0;
         }
@@ -116,7 +138,8 @@ public static class L3Runner
         Console.WriteLine("[l3] running open-world prepare workflow...");
         try
         {
-            await InProcessExecution.Default.RunAsync(workflow, env, run.RunId, CancellationToken.None).ConfigureAwait(false);
+            if (inject) await InProcessExecution.Default.RunAsync(workflow, injected!, run.RunId, CancellationToken.None).ConfigureAwait(false);
+            else await InProcessExecution.Default.RunAsync(workflow, env, run.RunId, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -139,4 +162,41 @@ public static class L3Runner
 
     private static string? Resolve(string repoRoot, string? p)
         => string.IsNullOrWhiteSpace(p) ? null : (Path.IsPathRooted(p) ? p : Path.Combine(repoRoot, p));
+
+    /// <summary>Lädt kontrollierte Test-Kandidaten (mit vorgegebenen Ankern) → <see cref="ResolvedCandidate"/>-Liste,
+    /// als hätte die Resolution sie geliefert (Plan §11.1). CandidateId aus der Datei ODER T{n} als Fallback.</summary>
+    private static async Task<IReadOnlyList<ResolvedCandidate>> LoadTestCandidatesAsync(string path)
+    {
+        var file = JsonSerializer.Deserialize<TestCandidatesFile>(await File.ReadAllTextAsync(path).ConfigureAwait(false), Json);
+        var result = new List<ResolvedCandidate>();
+        var n = 0;
+        foreach (var c in file?.Candidates ?? [])
+        {
+            if (string.IsNullOrWhiteSpace(c.Text)) continue;
+            n++;
+            var id = string.IsNullOrWhiteSpace(c.CandidateId) ? $"T{n:D2}" : c.CandidateId!.Trim();
+            var candidate = new L3Candidate(id, string.IsNullOrWhiteSpace(c.TargetType) ? "requirement" : c.TargetType!.Trim(),
+                c.Text!.Trim(), c.Rationale, c.Assumptions ?? []);
+            var anchors = (c.ProposedAnchors ?? [])
+                .Where(a => !string.IsNullOrWhiteSpace(a.ItemId))
+                .Select(a => new ProposedAnchor(a.ItemId!.Trim(), string.IsNullOrWhiteSpace(a.Relation) ? "relates_to" : a.Relation!.Trim(), a.Reason ?? ""))
+                .ToList();
+            result.Add(new ResolvedCandidate(candidate, new L3AnchorResolution(anchors, anchors.Count == 0 ? "Test-Kandidat ohne Anker" : null)));
+        }
+        return result;
+    }
+
+    private sealed record TestCandidatesFile(
+        [property: System.Text.Json.Serialization.JsonPropertyName("candidates")] IReadOnlyList<TestCandidate>? Candidates);
+    private sealed record TestCandidate(
+        [property: System.Text.Json.Serialization.JsonPropertyName("candidateId")] string? CandidateId,
+        [property: System.Text.Json.Serialization.JsonPropertyName("targetType")] string? TargetType,
+        [property: System.Text.Json.Serialization.JsonPropertyName("text")] string? Text,
+        [property: System.Text.Json.Serialization.JsonPropertyName("rationale")] string? Rationale,
+        [property: System.Text.Json.Serialization.JsonPropertyName("assumptions")] IReadOnlyList<string>? Assumptions,
+        [property: System.Text.Json.Serialization.JsonPropertyName("proposedAnchors")] IReadOnlyList<TestAnchor>? ProposedAnchors);
+    private sealed record TestAnchor(
+        [property: System.Text.Json.Serialization.JsonPropertyName("itemId")] string? ItemId,
+        [property: System.Text.Json.Serialization.JsonPropertyName("relation")] string? Relation,
+        [property: System.Text.Json.Serialization.JsonPropertyName("reason")] string? Reason);
 }
