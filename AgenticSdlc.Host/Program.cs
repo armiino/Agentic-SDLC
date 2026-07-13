@@ -320,6 +320,13 @@ if (args.Length > 0 && string.Equals(args[0], "l3-revise", StringComparison.Ordi
     return;
 }
 
+// L3 Human-Review (config l3.reviewMode: file|interactive): Review-UI → human-decisions.json (von apply/revise konsumiert).
+if (args.Length > 0 && string.Equals(args[0], "l3-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3.L3ReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // A2 (Demonstration): Nicht-dekorativ-Beleg — supported-Rate der ledger-geerdeten requirements.md gegen den consumable.
 if (args.Length > 0 && string.Equals(args[0], "ledger-cite-fidelity", StringComparison.OrdinalIgnoreCase))
 {

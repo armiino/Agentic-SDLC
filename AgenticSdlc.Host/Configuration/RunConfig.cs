@@ -44,6 +44,7 @@ public sealed class RunConfig
     public Phase2BStateConfig Phase2BState { get; set; } = new();
     public LedgerConfig Ledger { get; set; } = new();
     public EvidenceAgentConfig EvidenceAgent { get; set; } = new();
+    public L3Config L3 { get; set; } = new();
 
     /// <summary>
     /// Lädt `run-config.json` aus dem Repo-Root
@@ -170,6 +171,16 @@ public sealed class LedgerConfig
 
     /// <summary>Im Interactive-Modus den Browser automatisch öffnen. Default: true.</summary>
     public bool? AdjudicationOpenBrowser { get; set; }
+}
+
+/// <summary>Steuert das L3-Human-Review (Open-World-Ableitung).</summary>
+public sealed class L3Config
+{
+    /// <summary>file | interactive. Default: file (Human-Review-Paket als Datei). interactive = lokale Review-UI.</summary>
+    public string? ReviewMode { get; set; }
+
+    /// <summary>Im Interactive-Modus den Browser automatisch öffnen. Default: true.</summary>
+    public bool? ReviewOpenBrowser { get; set; }
 }
 
 /// <summary>

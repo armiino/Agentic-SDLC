@@ -40,6 +40,9 @@ public sealed record HostSettings(
     IReadOnlyDictionary<string, IReadOnlyList<string>>? Phase2BReads,
     AdjudicationMode LedgerAdjudicationMode,
     bool LedgerAdjudicationOpenBrowser,
+    // L3 Open-World-Review: "file" (Datei-Paket) | "interactive" (Review-UI). Default file.
+    string L3ReviewMode,
+    bool L3ReviewOpenBrowser,
     // Evidenz-Agent (Kapitel B) — nur relevant bei AgentPhase=phase2_evidence.
     string EvidenceSource,
     string EvidenceArtifact,
@@ -97,6 +100,9 @@ public sealed record HostSettings(
             // Ledger-Adjudikation (Plan §4): Default skip = Baseline-neutral.
             LedgerAdjudicationMode: AdjudicationModeParser.Parse(config.Ledger.AdjudicationMode),
             LedgerAdjudicationOpenBrowser: config.Ledger.AdjudicationOpenBrowser ?? true,
+            // L3-Review: Default file (kein UI-Zwang); "interactive" schaltet die Review-UI ein.
+            L3ReviewMode: string.Equals(config.L3.ReviewMode?.Trim(), "interactive", StringComparison.OrdinalIgnoreCase) ? "interactive" : "file",
+            L3ReviewOpenBrowser: config.L3.ReviewOpenBrowser ?? true,
             // Evidenz-Agent (Kapitel B): Defaults source=transcript (Arm A), artifact=requirements (B-Minimal-Bar).
             EvidenceSource: evidenceSource,
             EvidenceArtifact: (string.IsNullOrWhiteSpace(config.EvidenceAgent.Artifact) ? "requirements" : config.EvidenceAgent.Artifact).Trim().ToLowerInvariant(),
