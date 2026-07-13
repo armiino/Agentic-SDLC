@@ -42,4 +42,18 @@ internal static class L3Prompts
         }
         return sb.ToString();
     }
+
+    /// <summary>Umwelt + je Kandidat der vorige Entwurf (y_t) + das menschliche Feedback (fb_t) für die Self-Refine-Revision.</summary>
+    public static string BuildReviseUser(SourceArtifactSet env, IReadOnlyList<L3ReviseItem> items)
+    {
+        var sb = new StringBuilder(BuildEnvUser(env, forGeneration: false));
+        sb.AppendLine();
+        sb.AppendLine($"ZU REVIDIERENDE KANDIDATEN ({items.Count}) — überarbeite je Kandidat den bisherigen Entwurf GEMÄSS dem menschlichen Feedback. Behalte die CandidateId als Bezug:");
+        foreach (var it in items)
+        {
+            sb.Append("- ").Append(it.PrevCandidate.CandidateId).Append(" (bisher): ").AppendLine(it.PrevCandidate.Text);
+            sb.Append("    feedback: ").AppendLine(string.IsNullOrWhiteSpace(it.Feedback) ? "(kein konkretes Feedback — präzisiere/verankere den Vorschlag)" : it.Feedback);
+        }
+        return sb.ToString();
+    }
 }

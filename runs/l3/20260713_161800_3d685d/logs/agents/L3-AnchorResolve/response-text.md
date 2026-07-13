@@ -35,3 +35,31 @@
 
 ---
 
+## Model Round 1
+
+- No tool calls (standalone text response)
+- Text length: 718 chars
+
+> ```json
+> {
+>   "resolutions": [
+>     {
+>       "candidateId": "CAND-004-rev1",
+>       "proposedAnchors": [
+>         { "itemId": "REQ-18", "relation": "depends_on", "reason": "Die Analyse der Kommunikationsseiten ist direkt von der systematischen Beschreibung und Suchfunktion abhängig, die für Filterung und Suche definiert wurde." }
+>       ],
+>       "noAnchorReason": null
+>     },
+>     {
+>       "candidateId": "CAND-001-rev1",
+>       "proposedAnchors": [
+>         { "itemId": "REQ-13", "relation": "elaborates", "reason": "Die vorliegende Details zur Feedback-Funktion unterstützen die dynamische Erweiterbarkeit der Inhalte, die bereits in den Anforderungen beschrieben ist." }
+>       ],
+>       "noAnchorReason": null
+>     }
+>   ]
+> }
+> ```
+
+---
+

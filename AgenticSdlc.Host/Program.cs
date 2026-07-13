@@ -313,6 +313,13 @@ if (args.Length > 0 && string.Equals(args[0], "l3-apply", StringComparison.Ordin
     return;
 }
 
+// L3 Reflect-Sub-Workflow (NEEDS_REVISION): Kandidaten per Feedback überarbeiten (Self-Refine) → neu klassifizieren, bounded.
+if (args.Length > 0 && string.Equals(args[0], "l3-revise", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3.L3ReviseRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 // A2 (Demonstration): Nicht-dekorativ-Beleg — supported-Rate der ledger-geerdeten requirements.md gegen den consumable.
 if (args.Length > 0 && string.Equals(args[0], "ledger-cite-fidelity", StringComparison.OrdinalIgnoreCase))
 {

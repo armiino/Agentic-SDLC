@@ -158,14 +158,14 @@ internal sealed class L3RoutingExecutor(RunContext run) : Executor<L3Judged>("L3
 /// <summary>Finalize-Join (§5.2): schreibt Routing-Report + Human-Review-Paket (accept/edit/reject) auf Platte und
 /// yieldet das terminale <see cref="L3Result"/>. Der Prepare-Pfad endet HIER; das deterministische Apply ist Workflow 2.</summary>
 [YieldsOutput(typeof(L3Result))]
-internal sealed class L3FinalizeExecutor(RunContext run) : Executor<L3Routed>("L3-Finalize")
+internal sealed class L3FinalizeExecutor(RunContext run, string outSuffix = "") : Executor<L3Routed>("L3-Finalize")
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
 
     public override async ValueTask HandleAsync(L3Routed msg, IWorkflowContext context, CancellationToken ct = default)
     {
         var byClass = msg.Items.GroupBy(r => r.Class).ToDictionary(g => g.Key.ToString(), g => g.Count());
-        var routingPath = Path.Combine(run.RunDir, "routing-report.json");
+        var routingPath = Path.Combine(run.RunDir, $"routing-report{outSuffix}.json");
         await File.WriteAllTextAsync(routingPath, JsonSerializer.Serialize(new { total = msg.Items.Count, byClass, items = msg.Items }, Json), ct).ConfigureAwait(false);
 
         // Human-Review-Paket = die Kandidaten, die eine menschliche Entscheidung brauchen (nicht SUPPORTED_ANCHORED).
@@ -189,7 +189,7 @@ internal sealed class L3FinalizeExecutor(RunContext run) : Executor<L3Routed>("L
                 _ => "Schwach/unsicher gestützt — Mensch entscheidet (NEEDS_REVISION triggert Reflect)."
             }
         }).ToList();
-        var reviewPath = Path.Combine(run.RunDir, "human-review-package.json");
+        var reviewPath = Path.Combine(run.RunDir, $"human-review-package{outSuffix}.json");
         await File.WriteAllTextAsync(reviewPath, JsonSerializer.Serialize(new
         {
             runId = run.RunId, generatedUtc = DateTime.UtcNow,

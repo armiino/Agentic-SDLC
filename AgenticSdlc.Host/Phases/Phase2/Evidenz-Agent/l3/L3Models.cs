@@ -73,6 +73,12 @@ public sealed record JudgedCandidate(L3Candidate Candidate, IReadOnlyList<Anchor
 public sealed record L3Judged(SourceArtifactSet Env, IReadOnlyList<JudgedCandidate> Items);
 public sealed record L3Routed(IReadOnlyList<L3RoutedCandidate> Items);
 
+// ── Reflect-Sub-Workflow (NEEDS_REVISION, §5.3/§9) ───────────────────────────────────────────────────────────────
+/// <summary>Ein zu revidierender Kandidat + menschliches Feedback + Zahl bisheriger Revisionen (bounded).</summary>
+public sealed record L3ReviseItem(L3Candidate PrevCandidate, string Feedback, int PriorRevisions);
+/// <summary>Eingabe des Revise-Sub-Workflows: Umwelt + die (im Cap liegenden) zu revidierenden Kandidaten.</summary>
+public sealed record L3ReviseSet(SourceArtifactSet Env, IReadOnlyList<L3ReviseItem> Items);
+
 /// <summary>Terminales Laufresultat (YieldOutput). Der Prepare-Pfad endet am Human-Review-Paket.</summary>
 public sealed record L3Result(
     [property: JsonPropertyName("items")] IReadOnlyList<L3RoutedCandidate> Items,

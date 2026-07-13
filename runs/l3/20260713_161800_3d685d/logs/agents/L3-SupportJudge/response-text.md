@@ -9,3 +9,12 @@
 
 ---
 
+## Model Round 1
+
+- No tool calls (standalone text response)
+- Text length: 501 chars
+
+> {"items":[{"ref":"CAND-004-rev1#REQ-18","verdict":"supported","rationale":"Der Anker fordert eine Suchfunktion mit systematischem Beschreibungsmuster auf Kommunikationsseiten, was die Grundlage für eine Analysefunktion zur Identifikation von Trends und Problemen bildet."},{"ref":"CAND-001-rev1#REQ-13","verdict":"unrelated","rationale":"Der Anker beschreibt die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, erwähnt aber keine Feedback-Funktion oder Anmerkungen durch Nutzer."}]}
+
+---
+

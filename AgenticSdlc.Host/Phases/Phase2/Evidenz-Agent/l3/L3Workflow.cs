@@ -59,4 +59,32 @@ public static class L3Workflow
         builder.WithOutputFrom(finalize);
         return builder.Build();
     }
+
+    /// <summary>
+    /// Reflect-Sub-Workflow (NEEDS_REVISION, §5.3/§9): <c>Revise[Agent] → AnchorResolve[Agent] → Validate → Judge →
+    /// Routing → Finalize</c>. Der Revise-Agent überarbeitet den vorigen Entwurf per Feedback (Self-Refine), danach läuft
+    /// der revidierte Kandidat durch die WIEDERVERWENDETE Klassifikations-Pipeline und wird neu geroutet. Eingabe =
+    /// <see cref="L3ReviseSet"/>, Ausgabe = <see cref="L3Result"/> (revidiertes Review-Paket via Finalize-Suffix).
+    /// </summary>
+    internal static Microsoft.Agents.AI.Workflows.Workflow BuildRevise(
+        L3ReviseExecutor revise,
+        L3AnchorResolveExecutor resolve,
+        L3AnchorValidateExecutor validate,
+        L3SupportJudgeExecutor judge,
+        L3RoutingExecutor routing,
+        L3FinalizeExecutor finalize)
+    {
+        var builder = new WorkflowBuilder(revise)
+            .WithName($"{WorkflowName}-Revise")
+            .WithDescription("NEEDS_REVISION: Entwurf per Feedback überarbeiten (Self-Refine) → neu verankern → validieren "
+                           + "→ Tragfähigkeit → 4-Klassen-Routing → revidiertes Human-Review-Paket. Bounded (Runner-Schranke).");
+
+        builder.AddEdge(revise, resolve);
+        builder.AddEdge(resolve, validate);
+        builder.AddEdge(validate, judge);
+        builder.AddEdge(judge, routing);
+        builder.AddEdge(routing, finalize);
+        builder.WithOutputFrom(finalize);
+        return builder.Build();
+    }
 }
