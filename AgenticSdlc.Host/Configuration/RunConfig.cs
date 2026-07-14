@@ -173,7 +173,7 @@ public sealed class LedgerConfig
     public bool? AdjudicationOpenBrowser { get; set; }
 }
 
-/// <summary>Steuert das L3-Human-Review (Open-World-Ableitung).</summary>
+/// <summary>Steuert die L3-Open-World-Ableitung (Human-Review + Kandidaten-Generierung).</summary>
 public sealed class L3Config
 {
     /// <summary>file | interactive. Default: file (Human-Review-Paket als Datei). interactive = lokale Review-UI.</summary>
@@ -181,6 +181,10 @@ public sealed class L3Config
 
     /// <summary>Im Interactive-Modus den Browser automatisch öffnen. Default: true.</summary>
     public bool? ReviewOpenBrowser { get; set; }
+
+    /// <summary>selective | exhaustive. Default: selective (fokussierte Handvoll). exhaustive = systematische,
+    /// ergiebige VERANKERTE Elaboration je Umwelt-Item. CLI-Flags --exhaustive/--selective überschreiben.</summary>
+    public string? CandidateMode { get; set; }
 }
 
 /// <summary>

@@ -43,6 +43,8 @@ public sealed record HostSettings(
     // L3 Open-World-Review: "file" (Datei-Paket) | "interactive" (Review-UI). Default file.
     string L3ReviewMode,
     bool L3ReviewOpenBrowser,
+    // L3 Kandidaten-Generierung: "selective" (Handvoll) | "exhaustive" (ergiebige verankerte Elaboration). Default selective.
+    string L3CandidateMode,
     // Evidenz-Agent (Kapitel B) — nur relevant bei AgentPhase=phase2_evidence.
     string EvidenceSource,
     string EvidenceArtifact,
@@ -103,6 +105,8 @@ public sealed record HostSettings(
             // L3-Review: Default file (kein UI-Zwang); "interactive" schaltet die Review-UI ein.
             L3ReviewMode: string.Equals(config.L3.ReviewMode?.Trim(), "interactive", StringComparison.OrdinalIgnoreCase) ? "interactive" : "file",
             L3ReviewOpenBrowser: config.L3.ReviewOpenBrowser ?? true,
+            // L3-Kandidaten: Default selective; "exhaustive" schaltet die ergiebige verankerte Elaboration ein.
+            L3CandidateMode: string.Equals(config.L3.CandidateMode?.Trim(), "exhaustive", StringComparison.OrdinalIgnoreCase) ? "exhaustive" : "selective",
             // Evidenz-Agent (Kapitel B): Defaults source=transcript (Arm A), artifact=requirements (B-Minimal-Bar).
             EvidenceSource: evidenceSource,
             EvidenceArtifact: (string.IsNullOrWhiteSpace(config.EvidenceAgent.Artifact) ? "requirements" : config.EvidenceAgent.Artifact).Trim().ToLowerInvariant(),

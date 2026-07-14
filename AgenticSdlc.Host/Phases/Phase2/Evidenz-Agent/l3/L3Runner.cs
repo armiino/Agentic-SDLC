@@ -35,10 +35,14 @@ public static class L3Runner
     {
         if (args.Length < 2)
         {
-            Console.Error.WriteLine("Usage: l3 <env1.artifact.json> [env2.artifact.json …] [model] [--dry-run]");
+            Console.Error.WriteLine("Usage: l3 <env1.artifact.json> [env2.artifact.json …] [model] [--exhaustive|--selective] [--candidates <file>] [--dry-run]");
             return 2;
         }
         var dryRun = args.Contains("--dry-run");
+        // Kandidaten-Modus: config l3.candidateMode; CLI --exhaustive/--selective überschreibt.
+        var candidateMode = args.Contains("--exhaustive") ? "exhaustive"
+            : args.Contains("--selective") ? "selective"
+            : settings.L3CandidateMode;
 
         // --candidates <file>: kontrollierte Test-Kandidaten (Plan §11.1) — überspringt Generierung + Resolution und
         // fährt nur die deterministische Klassifikation + den Judge (alle 4 Klassen gezielt provozierbar).
@@ -84,7 +88,7 @@ public static class L3Runner
             workflow = L3Workflow.WorkflowName, runId = run.RunId,
             env = sourcePaths.Select(p => Path.GetRelativePath(repoRoot, p)).ToArray(), envTypes = sources.Select(s => s.ArtifactType).ToArray(),
             envItems = env.TotalItemCount, provider = settings.LlmProvider, generatorModel = genSettings.ModelId, judgeModel = judgeSettings.ModelId,
-            mode = inject ? "from-candidates" : "generate", candidates = inject ? Path.GetRelativePath(repoRoot, injectPath!) : null,
+            mode = inject ? "from-candidates" : "generate", candidateMode, candidates = inject ? Path.GetRelativePath(repoRoot, injectPath!) : null,
             timestampUtc = DateTime.UtcNow
         });
         Console.WriteLine($"[l3] runId={run.RunId}  umwelt=[{string.Join(",", sources.Select(s => s.ArtifactType))}] items={env.TotalItemCount}  genModel={genSettings.ModelId} judgeModel={judgeSettings.ModelId}");
@@ -113,7 +117,10 @@ public static class L3Runner
             // Zwei Agenten (Generierung + Anker-Resolution getrennt) — beide über Standard-Pipeline + ToolCallLogger.
             var genClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, "L3-CandidateGen", SourceName);
             var resolveClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, "L3-AnchorResolve", SourceName);
-            var genPrompt = PromptProvider.Load(repoRoot, Phase, AgentName, "L3CandidateGen1", new Dictionary<string, string> { ["runId"] = run.RunId });
+            // selective = fokussierte Handvoll; exhaustive = ergiebige verankerte Elaboration je Umwelt-Item.
+            var genPromptName = candidateMode == "exhaustive" ? "L3CandidateGenExhaustive1" : "L3CandidateGen1";
+            Console.WriteLine($"[l3] candidateMode={candidateMode} (Prompt {genPromptName})");
+            var genPrompt = PromptProvider.Load(repoRoot, Phase, AgentName, genPromptName, new Dictionary<string, string> { ["runId"] = run.RunId });
             var resolvePrompt = PromptProvider.Load(repoRoot, Phase, AgentName, "L3AnchorResolve1", new Dictionary<string, string> { ["runId"] = run.RunId });
             AIAgent genAgent = genClient.AsAIAgent(instructions: genPrompt, name: AgentName, tools: []);
             genAgent = genAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
