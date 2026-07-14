@@ -35,21 +35,54 @@ public static class L3Runner
     {
         if (args.Length < 2)
         {
-            Console.Error.WriteLine("Usage: l3 <env1.artifact.json> [env2.artifact.json …] [model] [--exhaustive|--selective] [--candidates <file>] [--dry-run]");
+            Console.Error.WriteLine("Usage: l3 <env1.artifact.json> [env2.artifact.json …] [model] [--coverage|--coverage-measure|--coverage-repair [--repair-rounds N]|--research|--exhaustive|--selective] [--provenance|--force-provenance] [--graph <file> …] [--candidates <file>] [--dry-run]");
             return 2;
         }
         var dryRun = args.Contains("--dry-run");
         // Kandidaten-Modus: config l3.candidateMode; CLI --exhaustive/--selective überschreibt.
-        var candidateMode = args.Contains("--exhaustive") ? "exhaustive"
+        // research = L3-Über-Agent (Recherche-first: großes Bild erfassen, erweitern UND Lücken finden; deklariert
+        // intent extension|gap + basedOn). Braucht das Provenance-Tool → impliziert es (s. provenanceOn).
+        // coverage = L3-Über-Agent als Coverage/Gap-Analyst (v10): Prüflinsen über den ganzen Graphen, deklariert je
+        // Kandidat gapCategory + impactIfMissing + requiresHumanDecision (additiv zu intent/basedOn). Provenance nicht
+        // erzwungen (konsistent mit dem Kohärenz-Learning) → das Tool ist an, aber "wenn nötig".
+        var candidateMode = args.Contains("--coverage") || args.Contains("--coverage-measure") || args.Contains("--coverage-repair") ? "coverage"
+            : args.Contains("--research") ? "research"
+            : args.Contains("--exhaustive") ? "exhaustive"
             : args.Contains("--selective") ? "selective"
             : settings.L3CandidateMode;
+        // Coverage-Variante (Schritt 4) — Punkte auf der Priming/Repair-Achse: strong = sichtbarer Voll-Katalog (v2,
+        // Einzelpass, primed) · measure = minimal-prime (nur Label-Vokabular, Einzelpass) · repair = measure + gebundener
+        // Repair-Loop auf leere Linsen. measure/repair laufen über L3CoverageGenExecutor; strong bleibt der Einzelpass-Baseline.
+        var coverageVariant = candidateMode != "coverage" ? null
+            : args.Contains("--coverage-repair") ? "repair"
+            : args.Contains("--coverage-measure") ? "measure" : "strong";
+        // resolve_provenance-Tool: config l3.provenanceTool; CLI --provenance überschreibt. Default aus (baseline-neutral).
+        // --force-provenance = eigener Messpunkt (b): erzwingt das Tool UND wählt Prompt-Varianten, die den Agenten
+        // explizit anweisen, resolve_provenance zu nutzen + das Ziel auf gut-verankerte Elaboration schärfen (additiv,
+        // die neutralen Prompts bleiben die "angeboten≠genutzt"-Baseline).
+        var provenanceForce = args.Contains("--force-provenance");
+        var provenanceOn = provenanceForce || candidateMode == "research" || candidateMode == "coverage" || args.Contains("--provenance") || settings.L3ProvenanceTool;
+        // Coverage-Modus: der geteilte Abdeckungs-Rahmen (Linsen). EINE Quelle für Generator-Prompt (RenderGeneratorBlock
+        // → {{coverageLenses}}) UND — Schritt 3 — den LensCoverageGate. Nur im coverage-Modus gebaut.
+        var coverageSpec = candidateMode == "coverage" ? CoverageRegistry.Default : null;
 
         // --candidates <file>: kontrollierte Test-Kandidaten (Plan §11.1) — überspringt Generierung + Resolution und
         // fährt nur die deterministische Klassifikation + den Judge (alle 4 Klassen gezielt provozierbar).
         string? candidatesArg = null;
+        string? repairRoundsArg = null;
         var skipValue = new HashSet<int>();
+        // --graph <file> (wiederholbar): "DB-Scheibe" — diese Artefakte gehen NUR in die resolve_provenance-Tool-Basis,
+        // NICHT in den Generierungs-Prompt. Damit ist Tool-Backing ⊋ Prompt-Env: das Tool kann Upstream-TEXT liefern,
+        // den der Agent im Prompt nicht sieht (confound-freier Nutzungstest; simuliert die spätere DB-Umwelt).
+        var graphArgs = new List<string>();
         for (var i = 1; i < args.Length - 1; i++)
+        {
             if (string.Equals(args[i], "--candidates", StringComparison.Ordinal)) { candidatesArg = args[i + 1]; skipValue.Add(i + 1); }
+            else if (string.Equals(args[i], "--graph", StringComparison.Ordinal)) { graphArgs.Add(args[i + 1]); skipValue.Add(i + 1); }
+            else if (string.Equals(args[i], "--repair-rounds", StringComparison.Ordinal)) { repairRoundsArg = args[i + 1]; skipValue.Add(i + 1); }
+        }
+        // Repair-Runden: nur in der repair-Variante wirksam; Default 2. measure/strong ⇒ 0 (kein Loop).
+        var repairRounds = coverageVariant == "repair" ? (int.TryParse(repairRoundsArg, out var rr) && rr > 0 ? rr : 2) : 0;
 
         // Positional nach dem Befehl: existierende Dateien = Umwelt-Artefakte (1..N); erstes Nicht-File/Nicht-Flag = Modell.
         var sourcePaths = new List<string>();
@@ -78,6 +111,22 @@ public static class L3Runner
         if (sources.Count == 0) { Console.Error.WriteLine("[l3] keine Umwelt-Artefakte gefunden (erwartet 1..N *.artifact.json positional)."); return 2; }
         var env = new SourceArtifactSet(sources);
 
+        // DB-Scheibe: --graph-Artefakte laden und mit der Prompt-Env zu EINER breiteren Tool-Basis vereinen (Prompt-Env
+        // gewinnt bei Typ-Kollision). Der Prompt (Generierung/Anker/Routing) bleibt strikt auf `env`; nur das
+        // resolve_provenance-Tool sieht `toolEnv`. Ohne --graph ist toolEnv == env (altes Verhalten).
+        var toolSources = new List<ArtifactDocument>(sources);
+        var toolSeen = new HashSet<string>(seenTypes, StringComparer.OrdinalIgnoreCase);
+        var graphTypes = new List<string>();
+        foreach (var ga in graphArgs)
+        {
+            var gp = Resolve(repoRoot, ga);
+            if (gp is null || !File.Exists(gp)) { Console.Error.WriteLine($"[l3] --graph: Datei fehlt: '{ga}'."); return 2; }
+            var doc = JsonSerializer.Deserialize<ArtifactDocument>(await File.ReadAllTextAsync(gp).ConfigureAwait(false), Json);
+            if (doc is null || doc.Items.Count == 0) { Console.Error.WriteLine($"[l3] --graph-Artefakt leer/nicht lesbar: {Path.GetRelativePath(repoRoot, gp)}"); return 2; }
+            if (toolSeen.Add(doc.ArtifactType)) { toolSources.Add(doc); graphTypes.Add(doc.ArtifactType); }
+        }
+        var toolEnv = graphTypes.Count > 0 ? new SourceArtifactSet(toolSources) : env;
+
         var genSettings = modelArg is not null ? settings with { ModelId = modelArg } : settings;
         var judgeSettings = !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! } : settings;
 
@@ -88,7 +137,11 @@ public static class L3Runner
             workflow = L3Workflow.WorkflowName, runId = run.RunId,
             env = sourcePaths.Select(p => Path.GetRelativePath(repoRoot, p)).ToArray(), envTypes = sources.Select(s => s.ArtifactType).ToArray(),
             envItems = env.TotalItemCount, provider = settings.LlmProvider, generatorModel = genSettings.ModelId, judgeModel = judgeSettings.ModelId,
-            mode = inject ? "from-candidates" : "generate", candidateMode, candidates = inject ? Path.GetRelativePath(repoRoot, injectPath!) : null,
+            mode = inject ? "from-candidates" : "generate", candidateMode, coverageVariant, coverageRepairRounds = coverageVariant == "repair" ? repairRounds : (int?)null,
+            coverageSpec = coverageSpec?.Id, coverageLensCount = coverageSpec?.Lenses.Count,
+            provenanceTool = provenanceOn && !inject, provenanceForce = provenanceForce && !inject,
+            toolGraphTypes = graphTypes.Count > 0 ? graphTypes.ToArray() : null, toolItems = toolEnv.TotalItemCount,
+            candidates = inject ? Path.GetRelativePath(repoRoot, injectPath!) : null,
             timestampUtc = DateTime.UtcNow
         });
         Console.WriteLine($"[l3] runId={run.RunId}  umwelt=[{string.Join(",", sources.Select(s => s.ArtifactType))}] items={env.TotalItemCount}  genModel={genSettings.ModelId} judgeModel={judgeSettings.ModelId}");
@@ -118,21 +171,60 @@ public static class L3Runner
             var genClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, "L3-CandidateGen", SourceName);
             var resolveClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, "L3-AnchorResolve", SourceName);
             // selective = fokussierte Handvoll; exhaustive = ergiebige verankerte Elaboration je Umwelt-Item.
-            var genPromptName = candidateMode == "exhaustive" ? "L3CandidateGenExhaustive1" : "L3CandidateGen1";
-            Console.WriteLine($"[l3] candidateMode={candidateMode} (Prompt {genPromptName})");
-            var genPrompt = PromptProvider.Load(repoRoot, Phase, AgentName, genPromptName, new Dictionary<string, string> { ["runId"] = run.RunId });
-            var resolvePrompt = PromptProvider.Load(repoRoot, Phase, AgentName, "L3AnchorResolve1", new Dictionary<string, string> { ["runId"] = run.RunId });
-            AIAgent genAgent = genClient.AsAIAgent(instructions: genPrompt, name: AgentName, tools: []);
+            // research = Über-Agent (Recherche-first, erweitern+Lücken, intent/basedOn); --force-provenance = Messpunkt b.
+            // Im research-Modus bleibt der Resolver neutral: bei kohärentem Env (alle Artefakte positional) ist der ganze
+            // Graph im Prompt sichtbar → der Resolver braucht das Tool nicht (nur der Generator recherchiert in die Tiefe).
+            // coverage: strong = v2 (spec-getriebener Voll-Katalog via {{coverageLenses}}, Einzelpass);
+            // measure/repair = Measure1 (minimal-prime, nur Label-Vokabular via {{coverageLabels}}). v1 bleibt eingefroren.
+            var genPromptName = candidateMode == "coverage"
+                    ? (coverageVariant == "strong" ? "L3CandidateGenCoverage2" : "L3CandidateGenCoverageMeasure2")
+                : candidateMode == "research" ? "L3CandidateGenResearch1"
+                : provenanceForce ? "L3CandidateGenExhaustiveProv1"
+                : candidateMode == "exhaustive" ? "L3CandidateGenExhaustive1" : "L3CandidateGen1";
+            var resolvePromptName = provenanceForce ? "L3AnchorResolveProv1" : "L3AnchorResolve1";
+            Console.WriteLine($"[l3] candidateMode={(provenanceForce ? "exhaustive+force-provenance" : candidateMode)} (Prompts {genPromptName} / {resolvePromptName})"
+                + (coverageSpec is not null ? $"  coverageSpec={coverageSpec.Id} ({coverageSpec.Lenses.Count} Linsen) variant={coverageVariant}{(repairRounds > 0 ? $" repairRounds={repairRounds}" : "")}" : ""));
+            var genVars = new Dictionary<string, string> { ["runId"] = run.RunId };
+            if (coverageSpec is not null)
+            {
+                genVars["coverageLenses"] = coverageSpec.RenderGeneratorBlock();
+                genVars["coverageLabels"] = coverageSpec.RenderLabelVocabulary();
+            }
+            var genPrompt = PromptProvider.Load(repoRoot, Phase, AgentName, genPromptName, genVars);
+            var resolvePrompt = PromptProvider.Load(repoRoot, Phase, AgentName, resolvePromptName, new Dictionary<string, string> { ["runId"] = run.RunId });
+            // resolve_provenance (optional, config-gated): erlaubt Gen/Resolve die Herkunft eines Umwelt-Items
+            // rückzuverfolgen. Gegen SourceArtifactSet gebaut → DB-migrationssicher. Default aus = tools: [] (baseline).
+            IReadOnlyList<AITool> tools = [];
+            if (provenanceOn)
+            {
+                var ledgerPath = settings.L3LedgerRun is not null ? Resolve(repoRoot, settings.L3LedgerRun) : null;
+                var claims = LedgerClaimIndex.LoadOrEmpty(ledgerPath);
+                tools = new L3ProvenanceTool(toolEnv, claims, run).Build();
+                var graphNote = graphTypes.Count > 0 ? $"; DB-Scheibe: Tool-Basis={toolEnv.TotalItemCount} items (+[{string.Join(",", graphTypes)}]) ⊋ Prompt-Env={env.TotalItemCount}" : "";
+                Console.WriteLine($"[l3] provenanceTool=on (resolve_provenance an Gen+Resolve; ledgerClaims={claims.Count}{(ledgerPath is null ? ", kein Ledger-Pfad" : "")}{graphNote})");
+            }
+            AIAgent genAgent = genClient.AsAIAgent(instructions: genPrompt, name: AgentName, tools: [.. tools]);
             genAgent = genAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
-            AIAgent resolveAgent = resolveClient.AsAIAgent(instructions: resolvePrompt, name: AgentName, tools: []);
+            AIAgent resolveAgent = resolveClient.AsAIAgent(instructions: resolvePrompt, name: AgentName, tools: [.. tools]);
             resolveAgent = resolveAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
-            workflow = L3Workflow.Build(
-                new L3CandidateGenExecutor(genAgent, run),
-                new L3AnchorResolveExecutor(resolveAgent, run),
-                new L3AnchorValidateExecutor(run),
-                new L3SupportJudgeExecutor(judge, run),
-                new L3RoutingExecutor(run),
-                new L3FinalizeExecutor(run));
+            // measure/repair: Start-Knoten = L3CoverageGenExecutor (knoten-interner Repair-Loop; measure ⇒ 0 Runden).
+            // strong + alle Nicht-coverage-Modi: der Einzelpass-L3CandidateGenExecutor (unverändert = Baseline).
+            var useCoverageLoop = coverageVariant is "measure" or "repair";
+            workflow = useCoverageLoop
+                ? L3Workflow.Build(
+                    new L3CoverageGenExecutor(genAgent, coverageSpec!, repairRounds, run),
+                    new L3AnchorResolveExecutor(resolveAgent, run),
+                    new L3AnchorValidateExecutor(run),
+                    new L3SupportJudgeExecutor(judge, run),
+                    new L3RoutingExecutor(run),
+                    new L3FinalizeExecutor(run, coverageSpec: coverageSpec))
+                : L3Workflow.Build(
+                    new L3CandidateGenExecutor(genAgent, run),
+                    new L3AnchorResolveExecutor(resolveAgent, run),
+                    new L3AnchorValidateExecutor(run),
+                    new L3SupportJudgeExecutor(judge, run),
+                    new L3RoutingExecutor(run),
+                    new L3FinalizeExecutor(run, coverageSpec: coverageSpec));
         }
 
         if (dryRun)
@@ -163,7 +255,26 @@ public static class L3Runner
             var byClass = d.RootElement.GetProperty("byClass");
             Console.WriteLine($"[l3] fertig: {total} Kandidaten geroutet — {string.Join(", ", byClass.EnumerateObject().Select(p => $"{p.Name}={p.Value.GetInt32()}"))}");
         }
-        Console.WriteLine($"[l3] -> routing-report.json + human-review-package.json  run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
+        var tracePath = Path.Combine(run.RunDir, "coverage-repair-trace.json");
+        if (File.Exists(tracePath))
+        {
+            using var d = JsonDocument.Parse(await File.ReadAllTextAsync(tracePath).ConfigureAwait(false));
+            var r = d.RootElement;
+            Console.WriteLine($"[l3] repair-loop: {r.GetProperty("roundsRun").GetInt32()}/{r.GetProperty("maxRepairRounds").GetInt32()} Runden"
+                + $" — Abdeckung {r.GetProperty("initialAddressed").GetInt32()}→{r.GetProperty("finalAddressed").GetInt32()}/{r.GetProperty("totalLenses").GetInt32()} Linsen");
+        }
+        var coveragePath = Path.Combine(run.RunDir, "lens-coverage-report.json");
+        if (File.Exists(coveragePath))
+        {
+            using var d = JsonDocument.Parse(await File.ReadAllTextAsync(coveragePath).ConfigureAwait(false));
+            var r = d.RootElement;
+            var unaddr = r.GetProperty("unaddressedLensIds").EnumerateArray().Select(x => x.GetString()).ToArray();
+            var mand = r.GetProperty("mandatoryUnaddressedLensIds").EnumerateArray().Select(x => x.GetString()).ToArray();
+            Console.WriteLine($"[l3] coverage: {r.GetProperty("addressedLenses").GetInt32()}/{r.GetProperty("totalLenses").GetInt32()} Linsen adressiert"
+                + (unaddr.Length > 0 ? $" — LEER: [{string.Join(",", unaddr)}]" : " — vollständig")
+                + (mand.Length > 0 ? $"  ⚠ PFLICHT-LINSE LEER: [{string.Join(",", mand)}]" : ""));
+        }
+        Console.WriteLine($"[l3] -> routing-report.json + human-review-package.json" + (coverageSpec is not null ? " + lens-coverage-report.json" : "") + $"  run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
         return 0;
     }
 

@@ -1,0 +1,254 @@
+{
+  "runId": "20260714_171621_1f9024",
+  "generatedUtc": "2026-07-14T17:17:56.782844Z",
+  "summary": {
+    "SupportedAnchored": 9,
+    "Unreferenced": 5
+  },
+  "autoSupported": 9,
+  "needsHumanCount": 5,
+  "items": [
+    {
+      "candidateId": "CAND-002",
+      "class": "Unreferenced",
+      "text": "\u00C4nderungen an bewohnerbezogenen Informationen sollen nachvollziehbar protokolliert werden, sodass erkennbar ist, wer welche Information wann erstellt, ge\u00E4ndert oder best\u00E4tigt hat.",
+      "targetType": "requirement",
+      "intent": "extension",
+      "basedOn": [
+        "REQ-02",
+        "REQ-11",
+        "ARCH-02"
+      ],
+      "gapCategory": "data-lifecycle",
+      "impactIfMissing": null,
+      "requiresHumanDecision": false,
+      "rationale": "Bei zentral gespeicherten sensiblen und aktuell zu haltenden Informationen ist Nachvollziehbarkeit eine direkte Folge, um \u00C4nderungen pr\u00FCfen und Datenqualit\u00E4t sichern zu k\u00F6nnen.",
+      "assumptions": [
+        "Bewohnerdaten werden von mehreren Nutzern gepflegt."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-02",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung zum Schutz sensibler Daten tr\u00E4gt nicht explizit die Nachvollziehbarkeit von \u00C4nderungen und Protokollierung."
+        },
+        {
+          "itemId": "REQ-11",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung zur Aktualit\u00E4t der Inhalte tr\u00E4gt nicht die Protokollierung von \u00C4nderungen und deren Nachvollziehbarkeit."
+        },
+        {
+          "itemId": "ARCH-02",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die zentrale Cloud-Speicherung tr\u00E4gt nicht die Nachvollziehbarkeit von \u00C4nderungen und Protokollierung."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-007",
+      "class": "Unreferenced",
+      "text": "Benachrichtigungen sollen nur f\u00FCr fachlich relevante Ereignisse ausgel\u00F6st werden und pro Rolle sowie pro Ereignistyp konfigurierbar sein, um Informations\u00FCberlastung im Arbeitsalltag zu vermeiden.",
+      "targetType": "requirement",
+      "intent": "extension",
+      "basedOn": [
+        "REQ-08",
+        "ARCH-08"
+      ],
+      "gapCategory": "usage-context",
+      "impactIfMissing": null,
+      "requiresHumanDecision": false,
+      "rationale": "Da Benachrichtigungen vorgesehen sind und die App sp\u00FCrbar entlasten soll, muss geregelt werden, wann Hinweise hilfreich sind und wann sie den Arbeitsfluss st\u00F6ren w\u00FCrden.",
+      "assumptions": [
+        "Nicht alle Nutzer ben\u00F6tigen dieselben Hinweise im selben Umfang."
+      ],
+      "anchors": [
+        {
+          "itemId": "ARCH-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker erlaubt das Versenden von Benachrichtigungen, tr\u00E4gt aber nicht die Anforderungen an Relevanzfilterung und Konfigurierbarkeit."
+        },
+        {
+          "itemId": "REQ-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Entlastung, tr\u00E4gt aber nicht die spezifischen Anforderungen an Benachrichtigungsfilterung und Konfigurierbarkeit."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-012",
+      "class": "Unreferenced",
+      "text": "Es fehlt eine Festlegung, wie auf Ger\u00E4teverlust, unbefugten Ger\u00E4tezugriff oder ungesicherte lokale Offline-Daten reagiert werden soll, etwa durch Sitzungsregeln oder Fernsperrmechanismen.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-02",
+        "REQ-03",
+        "ARCH-01",
+        "ARCH-07"
+      ],
+      "gapCategory": "security-misuse",
+      "impactIfMissing": "Ohne Ma\u00DFnahmen f\u00FCr verlorene oder kompromittierte Ger\u00E4te k\u00F6nnen sensible Bewohnerdaten trotz grunds\u00E4tzlich vorhandener Anmeldung unbefugt offengelegt werden.",
+      "requiresHumanDecision": false,
+      "rationale": "Mobile Nutzung, Offline-Datenhaltung und sensible Informationen schaffen spezifische Missbrauchs- und Verlustszenarien, die durch allgemeine Authentifizierung allein nicht abgedeckt sind.",
+      "assumptions": [
+        "Die App wird auf mobilen Endger\u00E4ten au\u00DFerhalb streng kontrollierter Serverumgebungen verwendet."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-02",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert Schutz sensibler Daten, erw\u00E4hnt aber keine konkreten Reaktionen auf Ger\u00E4teverlust oder unbefugten Zugriff."
+        },
+        {
+          "itemId": "ARCH-01",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt die Umsetzung als mobile App, tr\u00E4gt aber keine Festlegung zu Reaktionen auf Ger\u00E4teverlust oder unbefugten Zugriff."
+        },
+        {
+          "itemId": "ARCH-07",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt Authentifizierung \u00FCber Standardverfahren, tr\u00E4gt aber keine Festlegung zu Reaktionen auf Ger\u00E4teverlust oder unbefugten Zugriff."
+        },
+        {
+          "itemId": "REQ-03",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt Offline-Funktionalit\u00E4t, tr\u00E4gt aber keine Festlegung zu Reaktionen auf Ger\u00E4teverlust oder unbefugten Zugriff."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-013",
+      "class": "Unreferenced",
+      "text": "Es fehlt eine Entscheidung, nach welchen fachlichen Kriterien Inhalte als \u0027aktuell\u0027 gelten und wer f\u00FCr Pr\u00FCfung, Best\u00E4tigung oder Nachpflege veralteter Informationen verantwortlich ist.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-11",
+        "DRISK-10"
+      ],
+      "gapCategory": "open-decisions",
+      "impactIfMissing": "Ohne klare Aktualit\u00E4tsregeln bleiben veraltete Informationen m\u00F6glicherweise unentdeckt, was die Verl\u00E4sslichkeit der App und ihre Entlastungswirkung im Alltag schw\u00E4cht.",
+      "requiresHumanDecision": true,
+      "rationale": "Die Aktualit\u00E4t von Inhalten ist als Ziel benannt, aber ohne Verantwortlichkeiten und Pr\u00FCfkriterien bleibt offen, wie dieses Ziel organisatorisch und systemseitig abgesichert werden soll.",
+      "assumptions": [
+        "Nicht alle Informationen \u00E4ndern sich gleich h\u00E4ufig oder ben\u00F6tigen dieselbe Pr\u00FCftiefe."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-11",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert nur, dass Inhalte aktuell gehalten werden, tr\u00E4gt aber nicht, dass eine Entscheidung \u00FCber Kriterien oder Verantwortlichkeiten fehlt."
+        },
+        {
+          "itemId": "DRISK-10",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung nennt die Qualit\u00E4t der Informationen, tr\u00E4gt aber nicht konkret das Fehlen von Entscheidungen zu Kriterien oder Verantwortlichkeiten f\u00FCr Aktualit\u00E4t."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-014",
+      "class": "Unreferenced",
+      "text": "Es fehlt eine belastbare Zieldefinition f\u00FCr die angestrebte Gr\u00F6\u00DFenordnung, etwa Anzahl von Bewohnern, Nutzern, Einrichtungen und gleichzeitigen Zugriffen, die unterst\u00FCtzt werden soll.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-04",
+        "ARCH-10",
+        "DRISK-05"
+      ],
+      "gapCategory": "quality-attributes",
+      "impactIfMissing": "Ohne konkrete Gr\u00F6\u00DFenordnung kann die L\u00F6sung unterdimensioniert werden oder unn\u00F6tig komplex ausfallen, wodurch Kosten, Performance und Zukunftsf\u00E4higkeit schlecht steuerbar bleiben.",
+      "requiresHumanDecision": true,
+      "rationale": "Die Verwaltung m\u00F6glichst vieler Bewohner und eine perspektivische Skalierung auf mehrere Einrichtungen sind benannt, aber ohne Zielgr\u00F6\u00DFen bleibt die notwendige Skalierungsf\u00E4higkeit unscharf.",
+      "assumptions": [
+        "Die Anzahl der Bewohner allein reicht nicht aus, um die Last realistisch zu beschreiben."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-04",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert m\u00F6glichst viele Bewohner, tr\u00E4gt aber nicht das Fehlen einer belastbaren Zieldefinition zur Gr\u00F6\u00DFenordnung."
+        },
+        {
+          "itemId": "ARCH-10",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung nennt eine perspektivische Skalierung, tr\u00E4gt aber nicht das Fehlen einer belastbaren Zieldefinition zur Gr\u00F6\u00DFenordnung."
+        },
+        {
+          "itemId": "DRISK-05",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung nennt Effizienzprobleme bei unzureichender Verwaltung, tr\u00E4gt aber nicht das Fehlen einer belastbaren Zieldefinition zur Gr\u00F6\u00DFenordnung."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    }
+  ]
+}

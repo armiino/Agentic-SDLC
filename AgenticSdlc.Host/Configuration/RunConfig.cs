@@ -182,9 +182,21 @@ public sealed class L3Config
     /// <summary>Im Interactive-Modus den Browser automatisch öffnen. Default: true.</summary>
     public bool? ReviewOpenBrowser { get; set; }
 
-    /// <summary>selective | exhaustive. Default: selective (fokussierte Handvoll). exhaustive = systematische,
-    /// ergiebige VERANKERTE Elaboration je Umwelt-Item. CLI-Flags --exhaustive/--selective überschreiben.</summary>
+    /// <summary>selective | exhaustive | research. Default: selective (fokussierte Handvoll). exhaustive = systematische,
+    /// ergiebige VERANKERTE Elaboration je Umwelt-Item. research = L3-Über-Agent (Recherche-first: großes Bild erfassen,
+    /// erweitern UND Lücken finden; deklariert intent extension|gap + basedOn; impliziert das Provenance-Tool).
+    /// CLI-Flags --research/--exhaustive/--selective überschreiben.</summary>
     public string? CandidateMode { get; set; }
+
+    /// <summary>resolve_provenance-Tool für die L3-Agenten aktivieren (Rückverfolgung der Item-Herkunft über die
+    /// id-verknüpfte Kette). Default: false (baseline-neutral — die eingefrorenen Gen-Läufe liefen ohne Tool). CLI
+    /// --provenance überschreibt. Gegen SourceArtifactSet gebaut → überlebt den späteren DB-Umwelt-Umbau (nur der
+    /// Loader wird getauscht).</summary>
+    public bool? ProvenanceTool { get; set; }
+
+    /// <summary>Optionaler Pfad zur Ledger-consumable.json, damit resolve_provenance sourceClaimIds bis zum
+    /// Claim-Text (→ Evidenz) auflöst statt nur der id. Fehlt er, endet die Kette bei den Claim-ids.</summary>
+    public string? LedgerRun { get; set; }
 }
 
 /// <summary>

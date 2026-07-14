@@ -45,6 +45,10 @@ public sealed record HostSettings(
     bool L3ReviewOpenBrowser,
     // L3 Kandidaten-Generierung: "selective" (Handvoll) | "exhaustive" (ergiebige verankerte Elaboration). Default selective.
     string L3CandidateMode,
+    // L3 resolve_provenance-Tool an Gen/Resolve anhängen (Herkunft rückverfolgen). Default false (baseline-neutral).
+    bool L3ProvenanceTool,
+    // Optionaler Ledger-consumable.json-Pfad, damit resolve_provenance sourceClaimIds bis zum Claim-Text auflöst.
+    string? L3LedgerRun,
     // Evidenz-Agent (Kapitel B) — nur relevant bei AgentPhase=phase2_evidence.
     string EvidenceSource,
     string EvidenceArtifact,
@@ -106,7 +110,10 @@ public sealed record HostSettings(
             L3ReviewMode: string.Equals(config.L3.ReviewMode?.Trim(), "interactive", StringComparison.OrdinalIgnoreCase) ? "interactive" : "file",
             L3ReviewOpenBrowser: config.L3.ReviewOpenBrowser ?? true,
             // L3-Kandidaten: Default selective; "exhaustive" schaltet die ergiebige verankerte Elaboration ein.
-            L3CandidateMode: string.Equals(config.L3.CandidateMode?.Trim(), "exhaustive", StringComparison.OrdinalIgnoreCase) ? "exhaustive" : "selective",
+            L3CandidateMode: config.L3.CandidateMode?.Trim().ToLowerInvariant() is "exhaustive" or "research" or "coverage" ? config.L3.CandidateMode!.Trim().ToLowerInvariant() : "selective",
+            // L3-Provenienz-Tool: Default false (baseline-neutral); "true" hängt resolve_provenance an Gen + Resolve.
+            L3ProvenanceTool: config.L3.ProvenanceTool ?? false,
+            L3LedgerRun: string.IsNullOrWhiteSpace(config.L3.LedgerRun) ? null : config.L3.LedgerRun.Trim(),
             // Evidenz-Agent (Kapitel B): Defaults source=transcript (Arm A), artifact=requirements (B-Minimal-Bar).
             EvidenceSource: evidenceSource,
             EvidenceArtifact: (string.IsNullOrWhiteSpace(config.EvidenceAgent.Artifact) ? "requirements" : config.EvidenceAgent.Artifact).Trim().ToLowerInvariant(),

@@ -1,0 +1,765 @@
+{
+  "total": 17,
+  "byClass": {
+    "SupportedAnchored": 12,
+    "Unreferenced": 5
+  },
+  "items": [
+    {
+      "candidate": {
+        "candidateId": "CAND-001",
+        "targetType": "requirement",
+        "text": "Offline erfasste oder ge\u00E4nderte Daten m\u00FCssen automatisch synchronisiert werden, sobald wieder eine Verbindung besteht; dabei sind Konflikte erkennbar zu machen und nachvollziehbar aufzul\u00F6sen.",
+        "rationale": "Aus der Offline-F\u00E4higkeit folgt, dass lokale \u00C4nderungen sp\u00E4ter in den zentralen Cloud-Bestand \u00FCberf\u00FChrt werden m\u00FCssen. Die recherchierte Herkunft von DRISK-04 zeigt den Zusammenhang zwischen mobiler App und Offline-Nutzung; ohne Synchronisations- und Konfliktregelung bleibt das Offline-Requirement unvollst\u00E4ndig.",
+        "assumptions": [
+          "Offline-Nutzung umfasst nicht nur Lesen, sondern auch Eingaben oder \u00C4nderungen."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-03",
+          "DRISK-04"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-03",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "REQ-03 verlangt Offline-Funktionalit\u00E4t, der Kandidat konkretisiert die Synchronisation und Konfliktl\u00F6sung, was plausibel aus Offline-Funktion folgt."
+        },
+        {
+          "itemId": "ARCH-02",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "ARCH-02 beschreibt zentrale Cloud-Speicherung, tr\u00E4gt aber nicht direkt zur automatischen Synchronisation oder Konfliktl\u00F6sung bei."
+        },
+        {
+          "itemId": "DRISK-04",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "DRISK-04 nennt negative Auswirkungen unzureichender Offline-Funktionalit\u00E4t, tr\u00E4gt aber nicht konkret zur automatischen Synchronisation oder Konfliktl\u00F6sung bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-03"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-002",
+        "targetType": "requirement",
+        "text": "Die App muss f\u00FCr offline nicht verf\u00FCgbare Funktionen klar anzeigen, welche Aktionen derzeit m\u00F6glich sind und welche erst nach Wiederherstellung der Verbindung ausgef\u00FChrt werden k\u00F6nnen.",
+        "rationale": "Wenn das System nur \u0027wenn n\u00F6tig\u0027 offline funktioniert, m\u00FCssen Grenzen der Offline-Nutzung transparent sein. Sonst leidet die einfache Bedienbarkeit und die Offline-Funktion wird f\u00FCr Nutzer unvorhersehbar.",
+        "assumptions": [
+          "Nicht alle Funktionen werden vollst\u00E4ndig offline verf\u00FCgbar sein."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-03",
+          "REQ-01",
+          "DRISK-04"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-03",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "REQ-03 fordert Offline-Funktionalit\u00E4t, der Kandidat konkretisiert Anzeige der verf\u00FCgbaren Aktionen bei Offline, was eine plausible Konkretisierung ist."
+        },
+        {
+          "itemId": "REQ-01",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-01 fordert einfache Bedienbarkeit, tr\u00E4gt aber nicht zur Anzeige von Offline-Funktionalit\u00E4ten bei."
+        },
+        {
+          "itemId": "ARCH-01",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "ARCH-01 beschreibt Umsetzung als mobile App, tr\u00E4gt nicht zur Anzeige von Offline-Funktionalit\u00E4ten bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-03"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-003",
+        "targetType": "requirement",
+        "text": "Zugriffsrechte m\u00FCssen rollenbasiert bis auf Ebene einzelner Datenbereiche festgelegt werden, sodass Mitarbeitende und Angeh\u00F6rige nur die f\u00FCr sie freigegebenen Informationen sehen und bearbeiten k\u00F6nnen.",
+        "rationale": "Die recherchierten Items zu Datenschutz und Rollenkonzept benennen Schutz und Zugriff nur allgemein. F\u00FCr die Einbindung von Angeh\u00F6rigen ist eine feinere Abgrenzung der Sicht- und Bearbeitungsrechte eine direkte notwendige Konkretisierung.",
+        "assumptions": [
+          "Angeh\u00F6rige erhalten einen eigenen oder abgeleiteten Zugriff auf bestimmte Informationen."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-02",
+          "REQ-07",
+          "ARCH-03"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "ARCH-03",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "ARCH-03 nennt Rollenkonzept f\u00FCr Zugriffe, Kandidat konkretisiert rollenbasierte Rechte bis auf Datenbereichsebene, was plausibel folgt."
+        },
+        {
+          "itemId": "REQ-02",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "REQ-02 fordert Schutz sensibler Daten, Kandidat konkretisiert rollenbasierte Zugriffsrechte, was eine plausible Umsetzung des Schutzes ist."
+        },
+        {
+          "itemId": "REQ-07",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung erw\u00E4hnt nur die Einbeziehung von Angeh\u00F6rigen, tr\u00E4gt aber nicht die detaillierte Forderung nach rollenbasierten Zugriffsrechten auf Datenbereichsebene."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "ARCH-03",
+        "REQ-02"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-004",
+        "targetType": "requirement",
+        "text": "Zugriffe auf sensible Daten und sicherheitsrelevante \u00C4nderungen m\u00FCssen protokolliert und nachvollziehbar auswertbar sein.",
+        "rationale": "Sensible Daten zu sch\u00FCtzen und Zugriffe per Rollen zu regeln reicht ohne Nachvollziehbarkeit nicht aus. Die offene technische Ausgestaltung des Datenschutzes in ARCH-09 macht diese L\u00FCcke innerhalb des Schutzkonzepts sichtbar.",
+        "assumptions": [
+          "F\u00FCr das Nutzungsszenario bestehen Nachweis- oder Pr\u00FCfbedarfe zu Datenzugriffen."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-02",
+          "ARCH-03",
+          "ARCH-09"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-02",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert Schutz sensibler Daten, erw\u00E4hnt aber nicht Protokollierung oder Nachvollziehbarkeit von Zugriffen und \u00C4nderungen."
+        },
+        {
+          "itemId": "ARCH-03",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Das Rollenkonzept regelt Zugriffe, aber die Protokollierung und Nachvollziehbarkeit werden nicht explizit genannt."
+        },
+        {
+          "itemId": "ARCH-09",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die technische Umsetzung der Datenschutzvorgaben wird sp\u00E4ter festgelegt, tr\u00E4gt aber nicht konkret die Forderung nach Protokollierung und Nachvollziehbarkeit."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-005",
+        "targetType": "requirement",
+        "text": "Die Suche muss Ergebnisse nach zentralen Kriterien wie Bewohner, Zeitraum, Dokumenttyp oder Relevanz filtern und sortieren k\u00F6nnen.",
+        "rationale": "Eine blo\u00DFe Suchfunktion konkretisiert noch nicht, wie Nutzer relevante Informationen schnell finden. Filter- und Sortierm\u00F6glichkeiten folgen direkt aus dem Ziel der schnellen Auffindbarkeit.",
+        "assumptions": [
+          "Die App verwaltet unterschiedliche Informationsarten und wachsende Datenmengen."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-05",
+          "ARCH-05"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "ARCH-05",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung nennt nur die Bereitstellung einer Suchfunktion, tr\u00E4gt aber nicht die detaillierte Forderung nach Filter- und Sortierm\u00F6glichkeiten."
+        },
+        {
+          "itemId": "REQ-05",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert schnelles Finden relevanter Informationen, tr\u00E4gt aber nicht konkret die Filter- und Sortierfunktionalit\u00E4t."
+        },
+        {
+          "itemId": "DRISK-09",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt ein Risiko bei schwacher Suchfunktion, tr\u00E4gt aber nicht die konkrete Forderung nach Filter- und Sortierm\u00F6glichkeiten."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-006",
+        "targetType": "requirement",
+        "text": "Bei leeren oder mehrdeutigen Suchergebnissen muss die App verst\u00E4ndliche R\u00FCckmeldungen und Vorschl\u00E4ge zur Verfeinerung der Suche anzeigen.",
+        "rationale": "Schnelles Finden umfasst nicht nur erfolgreiche Treffer, sondern auch den Umgang mit Fehl- und Leerzust\u00E4nden. Ohne solche R\u00FCckmeldungen bleibt die Suchfunktion f\u00FCr Nutzer unn\u00F6tig schwer bedienbar.",
+        "assumptions": [
+          "Nutzer suchen auch mit ungenauen oder unvollst\u00E4ndigen Begriffen."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-05",
+          "REQ-01",
+          "ARCH-05"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "ARCH-05",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung nennt nur die Bereitstellung einer Suchfunktion, tr\u00E4gt nicht die Forderung nach verst\u00E4ndlichen R\u00FCckmeldungen bei leeren oder mehrdeutigen Suchergebnissen."
+        },
+        {
+          "itemId": "REQ-05",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Das Anforderungsziel, relevante Informationen schnell zu finden, wird durch verst\u00E4ndliche R\u00FCckmeldungen bei leeren oder mehrdeutigen Suchergebnissen plausibel unterst\u00FCtzt."
+        },
+        {
+          "itemId": "REQ-01",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung zur schnellen und einfachen Bedienbarkeit erw\u00E4hnt keine Details zu Suchergebnissen oder R\u00FCckmeldungen, daher tr\u00E4gt sie den Kandidaten nicht direkt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-05"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-007",
+        "targetType": "requirement",
+        "text": "Eingabemasken m\u00FCssen Pflichtfelder, Wertebereiche, Datumslogik und Dubletten bereits w\u00E4hrend der Eingabe pr\u00FCfen und verst\u00E4ndliche Korrekturhinweise geben.",
+        "rationale": "Das bestehende Ziel, Fehleingaben zu vermeiden, bleibt ohne konkrete Validierungsmechanismen unpr\u00E4zise. Direkte Pr\u00FCfung und klare Hinweise sind eine naheliegende Ausgestaltung davon.",
+        "assumptions": [
+          "Die App enth\u00E4lt strukturierte Dateneingaben mit fehleranf\u00E4lligen Feldern."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-09",
+          "REQ-01"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-09",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Die Forderung, Fehleingaben zu vermeiden, wird durch Pr\u00FCfung und Korrekturhinweise w\u00E4hrend der Eingabe klar getragen."
+        },
+        {
+          "itemId": "REQ-01",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung zur schnellen und einfachen Bedienbarkeit enth\u00E4lt keine konkrete Forderung zu Pr\u00FCfungen oder Korrekturhinweisen in Eingabemasken."
+        },
+        {
+          "itemId": "ARCH-04",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Das Gestaltungsprinzip der Oberfl\u00E4che ist thematisch verwandt, tr\u00E4gt aber keine konkrete Forderung zu Pr\u00FCfungen oder Korrekturhinweisen w\u00E4hrend der Eingabe."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-09"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-008",
+        "targetType": "requirement",
+        "text": "F\u00FCr gro\u00DFe Bewohnerbest\u00E4nde muss die App Listen, Suche und Ladeverhalten so auslegen, dass auch bei hoher Datenmenge eine fl\u00FCssige Nutzung erhalten bleibt.",
+        "rationale": "Die Verwaltung vieler Bewohner ist bereits gefordert und als Effizienzrisiko benannt. Daraus folgt eine konkrete Leistungsanforderung f\u00FCr typische Nutzungsoberfl\u00E4chen wie Listen und Suche.",
+        "assumptions": [
+          "Hohe Datenmengen wirken sich besonders auf mobile Endger\u00E4te sp\u00FCrbar aus."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-04",
+          "REQ-05",
+          "DRISK-05"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-04",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Die Anforderung, viele Bewohner verwalten zu k\u00F6nnen, impliziert eine effiziente Handhabung gro\u00DFer Datenmengen, was die fl\u00FCssige Nutzung bei hoher Datenmenge unterst\u00FCtzt."
+        },
+        {
+          "itemId": "REQ-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Entlastung bei der t\u00E4glichen Arbeit ist ein allgemeines Ziel, tr\u00E4gt aber nicht konkret zur fl\u00FCssigen Nutzung bei hoher Datenmenge bei."
+        },
+        {
+          "itemId": "DRISK-05",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Das Risiko ineffizienter Verwaltung gro\u00DFer Bewohnerzahlen wird durch die Anforderung adressiert, was die Notwendigkeit fl\u00FCssiger Nutzung bei hoher Datenmenge st\u00FCtzt."
+        },
+        {
+          "itemId": "DRISK-09",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker erw\u00E4hnt nur eine schwache Suchfunktion als Risiko f\u00FCr Benutzererfahrung, tr\u00E4gt aber nicht die konkrete Auslegung von Listen, Suche und Ladeverhalten f\u00FCr gro\u00DFe Datenmengen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-04",
+        "DRISK-05"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-009",
+        "targetType": "requirement",
+        "text": "\u00C4nderungen an fachlichen Inhalten m\u00FCssen mit Verantwortlichkeit und Aktualisierungszeitpunkt versehen werden, damit veraltete Informationen erkannt und nachverfolgt werden k\u00F6nnen.",
+        "rationale": "Aktualit\u00E4t der Inhalte verlangt nicht nur Bearbeitbarkeit, sondern auch Nachvollziehbarkeit der letzten Pflege. Das Risiko zur Informationsqualit\u00E4t macht diese Konkretisierung besonders plausibel.",
+        "assumptions": [
+          "Mehrere Nutzer k\u00F6nnen Inhalte pflegen oder \u00E4ndern."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-11",
+          "DRISK-10"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-11",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert nur, dass Inhalte aktuell gehalten werden sollen, tr\u00E4gt aber nicht die konkrete Forderung nach Verantwortlichkeit und Aktualisierungszeitpunkt."
+        },
+        {
+          "itemId": "DRISK-10",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker nennt die Qualit\u00E4t der Informationen als wichtig, tr\u00E4gt aber nicht die konkrete Forderung nach Verantwortlichkeit und Aktualisierungszeitpunkt zur Erkennung veralteter Informationen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-010",
+        "targetType": "requirement",
+        "text": "F\u00FCr die Einbindung in bestehende Abl\u00E4ufe m\u00FCssen Standardschnittstellen oder definierte Import-/Export-Verfahren vorgesehen werden, um Daten mit vorhandenen Systemen austauschen zu k\u00F6nnen.",
+        "rationale": "Kompatibilit\u00E4t mit bestehenden Abl\u00E4ufen bleibt ohne Datenaustauschmechanismus zu abstrakt. Die recherchierte Herkunft von DRISK-01 zeigt, dass fehlende Integration bereits als Nutzungshindernis erkannt ist.",
+        "assumptions": [
+          "In den Einrichtungen existieren bereits relevante digitale oder teil-digitale Vorsysteme."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-10",
+          "DRISK-01"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-10",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker fordert Kompatibilit\u00E4t mit bestehenden Abl\u00E4ufen, was die Auslegung von Standardschnittstellen oder Import/Export-Verfahren zur Datenintegration plausibel tr\u00E4gt."
+        },
+        {
+          "itemId": "DRISK-01",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker nennt mangelnde Integration als Risiko, was die Forderung nach Standardschnittstellen oder definierten Import/Export-Verfahren zur Einbindung in bestehende Abl\u00E4ufe tr\u00E4gt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-10",
+        "DRISK-01"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-011",
+        "targetType": "requirement",
+        "text": "Benachrichtigungen m\u00FCssen nach Rolle, Relevanz und Dringlichkeit steuerbar sein, damit Nutzer nur f\u00FCr tats\u00E4chlich handlungsrelevante Ereignisse informiert werden.",
+        "rationale": "Wenn Benachrichtigungen versendet werden k\u00F6nnen, braucht es Regeln gegen \u00DCberinformation. Sonst widerspricht die Funktion dem Ziel der sp\u00FCrbaren Entlastung und dem Rollenkonzept.",
+        "assumptions": [
+          "Benachrichtigungen betreffen unterschiedliche Nutzergruppen mit verschiedenem Informationsbedarf."
+        ],
+        "intent": "extension",
+        "basedOn": [
+          "ARCH-08",
+          "REQ-08",
+          "ARCH-03"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "ARCH-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker erlaubt nur das Versenden von Benachrichtigungen, tr\u00E4gt aber nicht die Steuerbarkeit nach Rolle, Relevanz und Dringlichkeit."
+        },
+        {
+          "itemId": "REQ-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert nur eine sp\u00FCrbare Entlastung bei der Arbeit, tr\u00E4gt aber nicht die konkrete Steuerbarkeit von Benachrichtigungen nach Rolle, Relevanz und Dringlichkeit."
+        },
+        {
+          "itemId": "ARCH-03",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker nennt ein Rollenkonzept zur Zugriffskontrolle, was die Steuerbarkeit von Benachrichtigungen nach Rolle plausibel tr\u00E4gt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "ARCH-03"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-012",
+        "targetType": "requirement",
+        "text": "Es fehlt ein Thema zur Ger\u00E4teverwaltung bei mobiler Nutzung, insbesondere wie verlorene oder gemeinsam genutzte Ger\u00E4te abgesichert, gesperrt oder aus der Ferne zur\u00FCckgesetzt werden.",
+        "rationale": "Die Kombination aus mobiler App, Authentifizierung und Schutz sensibler Daten legt ein Ger\u00E4tesicherheitskonzept nahe. Dieses Thema ist im Bestand jedoch nirgends explizit adressiert.",
+        "assumptions": [
+          "Die App wird auf realen Mobilger\u00E4ten im Arbeitsalltag eingesetzt."
+        ],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-02",
+          "ARCH-01",
+          "ARCH-07"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "ARCH-01",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "ARCH-01 beschreibt nur, dass die Anwendung als mobile App umgesetzt wird, aber enth\u00E4lt keine Anforderungen oder Hinweise zur Ger\u00E4teverwaltung, Absicherung, Sperrung oder Fernzur\u00FCcksetzung."
+        },
+        {
+          "itemId": "REQ-02",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-02 fordert Schutz sensibler Daten, aber erw\u00E4hnt nicht explizit Ger\u00E4teverwaltung oder Ma\u00DFnahmen bei verlorenen oder gemeinsam genutzten Ger\u00E4ten."
+        },
+        {
+          "itemId": "ARCH-07",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "ARCH-07 beschreibt die Authentifizierung \u00FCber Standardverfahren, aber tr\u00E4gt nicht konkret zur Ger\u00E4teverwaltung oder Fernsperrung verlorener Ger\u00E4te bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-013",
+        "targetType": "requirement",
+        "text": "Es fehlt ein Thema zur Zustimmung, Vertretungsregelung und rechtssicheren Freigabe, nach denen Angeh\u00F6rige Zugriff auf Informationen erhalten oder ausgeschlossen werden.",
+        "rationale": "Die Einbindung von Angeh\u00F6rigen ist gefordert, aber die Bedingungen daf\u00FCr sind weder fachlich noch datenschutzbezogen beschrieben. Gerade wegen sensibler Daten ist dies eine eigenst\u00E4ndige, bislang unadressierte Fragestellung.",
+        "assumptions": [
+          "Nicht jeder Angeh\u00F6rige darf automatisch dieselben Informationen erhalten."
+        ],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-07",
+          "REQ-02",
+          "ARCH-03"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-07",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "REQ-07 fordert die Einbeziehung von Angeh\u00F6rigen in geeignetem Umfang, was die Notwendigkeit von Regelungen zur Zustimmung und Zugriffskontrolle plausibel tr\u00E4gt."
+        },
+        {
+          "itemId": "REQ-02",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-02 fordert Schutz sensibler Daten allgemein, tr\u00E4gt aber nicht spezifisch zur Zustimmung, Vertretungsregelung oder rechtssicheren Freigabe f\u00FCr Angeh\u00F6rige bei."
+        },
+        {
+          "itemId": "DRISK-06",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "DRISK-06 weist auf negative Auswirkungen mangelnder Einbindung von Angeh\u00F6rigen hin, was das Risiko fehlender Zustimmung und Zugriffsregelungen plausibel unterst\u00FCtzt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-07",
+        "DRISK-06"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-014",
+        "targetType": "requirement",
+        "text": "Es fehlt ein Thema zur Mandantentrennung zwischen Einrichtungen, falls die L\u00F6sung auf mehrere Einrichtungen skaliert wird.",
+        "rationale": "Die perspektivische Skalierung auf mehrere Einrichtungen ist genannt, aber nicht, wie Daten, Rollen und Suchergebnisse strikt zwischen Einrichtungen getrennt werden. Das ist besonders relevant bei sensiblen Daten.",
+        "assumptions": [
+          "Mehrere Einrichtungen w\u00FCrden dieselbe technische Plattform nutzen."
+        ],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-04",
+          "ARCH-10",
+          "REQ-02"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "ARCH-10",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "ARCH-10 nennt die perspektivische Skalierung auf mehrere Einrichtungen, was das Risiko fehlender Mandantentrennung bei Mehrfachnutzung plausibel tr\u00E4gt."
+        },
+        {
+          "itemId": "REQ-02",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-02 fordert Schutz sensibler Daten allgemein, tr\u00E4gt aber nicht spezifisch zur Mandantentrennung zwischen Einrichtungen bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "ARCH-10"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-015",
+        "targetType": "requirement",
+        "text": "Es fehlt ein Thema zu Verf\u00FCgbarkeit und Notfallbetrieb des Cloud-zentrierten Systems, insbesondere bei Backend-, Netzwerk- oder Synchronisationsst\u00F6rungen.",
+        "rationale": "Zentrale Cloud-Speicherung und Offline-F\u00E4higkeit adressieren nur einen Teil des Betriebsmodells. Was bei Ausf\u00E4llen im Gesamtsystem passiert, bleibt offen, ist f\u00FCr den Arbeitsalltag aber kritisch.",
+        "assumptions": [
+          "Die App wird in Prozessen genutzt, die auch bei technischen St\u00F6rungen weiterlaufen m\u00FCssen."
+        ],
+        "intent": "gap",
+        "basedOn": [
+          "ARCH-02",
+          "REQ-03"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "ARCH-02",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "ARCH-02 beschreibt zentrale Datenspeicherung in der Cloud, tr\u00E4gt aber nicht explizit ein Thema zu Verf\u00FCgbarkeit oder Notfallbetrieb bei St\u00F6rungen."
+        },
+        {
+          "itemId": "REQ-03",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "REQ-03 fordert Offline-Funktionalit\u00E4t, was Verf\u00FCgbarkeit bei Backend- oder Netzst\u00F6rungen impliziert und somit das Risiko tr\u00E4gt."
+        },
+        {
+          "itemId": "REQ-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-08 beschreibt Entlastung bei t\u00E4glicher Arbeit, tr\u00E4gt aber nicht zum Thema Verf\u00FCgbarkeit oder Notfallbetrieb bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-03"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-016",
+        "targetType": "requirement",
+        "text": "Es fehlt ein Thema zu Aufbewahrungsfristen, L\u00F6schung und Archivierung von Daten, obwohl sensible und laufend aktualisierte Inhalte verarbeitet werden.",
+        "rationale": "Datenschutz ist technisch noch offen und die Inhalte sollen aktuell gehalten werden. Daraus wird sichtbar, dass Regeln zur Lebensdauer von Daten bisher nicht beschrieben sind.",
+        "assumptions": [
+          "F\u00FCr unterschiedliche Datentypen k\u00F6nnen unterschiedliche Fristen oder Archivierungsregeln gelten."
+        ],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-02",
+          "REQ-11",
+          "ARCH-09"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-02",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-02 fordert Schutz sensibler Daten, behandelt aber nicht Aufbewahrungsfristen, L\u00F6schung oder Archivierung."
+        },
+        {
+          "itemId": "REQ-11",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-11 fordert Aktualit\u00E4t der Inhalte, tr\u00E4gt aber nicht zum Thema Aufbewahrungsfristen, L\u00F6schung oder Archivierung bei."
+        },
+        {
+          "itemId": "ARCH-09",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "ARCH-09 verweist auf sp\u00E4tere Festlegung der Datenschutz-Umsetzung, tr\u00E4gt aber nicht konkret zu Aufbewahrungsfristen, L\u00F6schung oder Archivierung bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-017",
+        "targetType": "requirement",
+        "text": "Es fehlt ein Thema zur Einf\u00FChrung, Schulung und Nutzerakzeptanz, obwohl einfache Bedienbarkeit und Entlastung zentrale Ziele sind.",
+        "rationale": "Die Qualit\u00E4t der Oberfl\u00E4che allein garantiert keine erfolgreiche Nutzung im Arbeitsalltag. Der Bestand adressiert weder Schulungsbedarf noch Einf\u00FChrungsunterst\u00FCtzung, obwohl dies f\u00FCr die Zielerreichung plausibel relevant ist.",
+        "assumptions": [
+          "Die Nutzergruppen haben unterschiedliche digitale Vorerfahrungen."
+        ],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-01",
+          "REQ-08",
+          "DRISK-02"
+        ]
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-01",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-01 fordert einfache Bedienbarkeit, tr\u00E4gt aber nicht zum Thema Einf\u00FChrung, Schulung oder Nutzerakzeptanz bei."
+        },
+        {
+          "itemId": "REQ-08",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-08 beschreibt Entlastung bei t\u00E4glicher Arbeit, tr\u00E4gt aber nicht zum Thema Einf\u00FChrung, Schulung oder Nutzerakzeptanz bei."
+        },
+        {
+          "itemId": "DRISK-02",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker benennt eine unzureichende Benutzeroberfl\u00E4che als Risiko f\u00FCr die Nutzererfahrung, was die fehlende Einf\u00FChrung, Schulung und Nutzerakzeptanz als konkrete Aspekte der Nutzererfahrung plausibel tr\u00E4gt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "DRISK-02"
+      ],
+      "unknownAnchorIds": []
+    }
+  ]
+}

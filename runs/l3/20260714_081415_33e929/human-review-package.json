@@ -1,0 +1,443 @@
+{
+  "runId": "20260714_081415_33e929",
+  "generatedUtc": "2026-07-14T08:18:05.687912Z",
+  "summary": {
+    "SupportedAnchored": 43,
+    "Unreferenced": 7,
+    "Contradicted": 3,
+    "WeakOrUncertain": 2
+  },
+  "autoSupported": 43,
+  "needsHumanCount": 12,
+  "items": [
+    {
+      "candidateId": "CAND-005",
+      "class": "Unreferenced",
+      "text": "Pflichtangaben sollten bei der Erfassung als solche kenntlich gemacht werden.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-09 und REQ-01: Sichtbare Pflichtfelder helfen, Fehleingaben und unn\u00F6tige Nacharbeit zu vermeiden.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-09",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-09 fordert Vermeidung von Fehleingaben, aber keine explizite Kennzeichnung von Pflichtangaben."
+        },
+        {
+          "itemId": "REQ-01",
+          "relation": "supports",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-01 fordert einfache und schnelle Bedienbarkeit, aber keine Pflichtangaben-Kennzeichnung."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-008",
+      "class": "Contradicted",
+      "text": "Bei potenziell folgenreichen Aktionen sollte die App eine Best\u00E4tigung vor der endg\u00FCltigen Ausf\u00FChrung vorsehen.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-09: Wenn Fehleingaben vermieden werden sollen, sind Schutzmechanismen bei kritischen Aktionen plausibel.",
+      "assumptions": [
+        "Welche Aktionen als folgenschwer gelten, ist fachlich noch festzulegen."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-09",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "REQ-09 fordert Vermeidung von Fehleingaben, aber eine Best\u00E4tigung vor Ausf\u00FChrung ist eine zus\u00E4tzliche Ma\u00DFnahme, die nicht direkt aus Vermeidung folgt und erweitert den Scope."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Widerspruch zu bestehendem Item \u2014 Konfliktentscheidung, nicht automatisch verwerfen."
+    },
+    {
+      "candidateId": "CAND-009",
+      "class": "Contradicted",
+      "text": "Sensible Daten sollten auf dem mobilen Endger\u00E4t nur in dem Umfang gespeichert werden, der f\u00FCr die Nutzung erforderlich ist.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-02, REQ-03, ARCH-01 und ARCH-02: Datenschutz und Offline-Funktion bei mobiler Nutzung erfordern eine bewusste Begrenzung lokaler Datenspeicherung.",
+      "assumptions": [
+        "Offline-Nutzung kann lokale Datenhaltung notwendig machen."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-02",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Speicherung sensibler Daten nur im erforderlichen Umfang unterst\u00FCtzt den Schutz sensibler Daten gem\u00E4\u00DF REQ-02."
+        },
+        {
+          "itemId": "REQ-03",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-03 fordert Offline-Funktionalit\u00E4t, tr\u00E4gt aber nicht direkt die Einschr\u00E4nkung zur minimalen Speicherung sensibler Daten."
+        },
+        {
+          "itemId": "ARCH-01",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "ARCH-01 als mobile App Umsetzung impliziert Speicherung auf Endger\u00E4t, was die Forderung nach minimaler Speicherung plausibel tr\u00E4gt."
+        },
+        {
+          "itemId": "ARCH-02",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "ARCH-02 beschreibt zentrale Cloud-Speicherung, widerspricht der Forderung nach minimaler Speicherung sensibler Daten auf dem Endger\u00E4t."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Widerspruch zu bestehendem Item \u2014 Konfliktentscheidung, nicht automatisch verwerfen."
+    },
+    {
+      "candidateId": "CAND-014",
+      "class": "Unreferenced",
+      "text": "Die App sollte nach einer Phase der Inaktivit\u00E4t einen erneuten Nachweis der Berechtigung verlangen.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-02 sowie ARCH-01 und ARCH-07: Auf mobilen Ger\u00E4ten mit sensiblen Daten ist ein Schutz bei liegen gelassenen Ger\u00E4ten naheliegend.",
+      "assumptions": [
+        "Dauer und Ausgestaltung der Inaktivit\u00E4tsgrenze sind noch offen."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-02",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Schutz sensibler Daten allgemein, tr\u00E4gt aber nicht explizit die Forderung nach erneuter Berechtigungspr\u00FCfung nach Inaktivit\u00E4t."
+        },
+        {
+          "itemId": "ARCH-01",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt nur die Umsetzung als mobile App, tr\u00E4gt aber nicht die Forderung nach erneuter Berechtigungspr\u00FCfung nach Inaktivit\u00E4t."
+        },
+        {
+          "itemId": "ARCH-07",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die Authentifizierung \u00FCber Standardverfahren, tr\u00E4gt aber nicht explizit die Forderung nach erneuter Berechtigungspr\u00FCfung nach Inaktivit\u00E4t."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-016",
+      "class": "Unreferenced",
+      "text": "Die App sollte den aktuellen Verbindungsstatus f\u00FCr Nutzer erkennbar machen.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-03 und DRISK-04: Bei Offline-Nutzung ist Transparenz \u00FCber den Netzstatus wichtig, um Fehlannahmen zu vermeiden.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-03",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert Offline-Funktionalit\u00E4t, das Risiko beschreibt aber die Anzeige des Verbindungsstatus, was nicht direkt aus der Anforderung folgt."
+        },
+        {
+          "itemId": "DRISK-04",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Das Risiko beschreibt die Anzeige des Verbindungsstatus, die Anforderung nennt nur negative Folgen unzureichender Offline-Funktionalit\u00E4t, tr\u00E4gt das Risiko aber nicht direkt."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-017",
+      "class": "Unreferenced",
+      "text": "Offline erfasste oder ge\u00E4nderte Daten sollten nach Wiederherstellung der Verbindung mit der Cloud abgeglichen werden.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-03 sowie ARCH-02: Zentrale Cloud-Speicherung und Offline-Funktion erfordern einen nachgelagerten Abgleich.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-03",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert Offline-Funktionalit\u00E4t, das Risiko beschreibt jedoch den Datenabgleich nach Wiederherstellung der Verbindung, was nicht explizit aus der Anforderung folgt."
+        },
+        {
+          "itemId": "ARCH-02",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Architektur-Anforderung beschreibt zentrale Cloud-Speicherung, das Risiko fordert Datenabgleich nach Offline-Nutzung, was nicht direkt aus der Architektur-Anforderung folgt."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-018",
+      "class": "Unreferenced",
+      "text": "Wenn ein Datenabgleich nach Offline-Nutzung nicht erfolgreich war, sollte die App dies verst\u00E4ndlich anzeigen.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-03, REQ-01 und ARCH-02: Offline-Synchronisation ben\u00F6tigt nachvollziehbare R\u00FCckmeldung bei Problemen.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-03",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert Offline-Funktionalit\u00E4t, das Risiko beschreibt die Anzeige eines fehlgeschlagenen Datenabgleichs, was nicht direkt aus der Anforderung folgt."
+        },
+        {
+          "itemId": "REQ-01",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert einfache Bedienbarkeit, das Risiko beschreibt eine Fehlermeldung bei Datenabgleich, was nicht direkt aus der Anforderung folgt."
+        },
+        {
+          "itemId": "ARCH-02",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt nur die zentrale Speicherung der Daten in der Cloud, tr\u00E4gt aber nicht dazu bei, dass die App eine verst\u00E4ndliche Anzeige bei fehlgeschlagenem Datenabgleich nach Offline-Nutzung zeigt."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-022",
+      "class": "Unreferenced",
+      "text": "Bewohnerdatens\u00E4tze sollten eindeutig identifizierbar sein, um Verwechslungen zu vermeiden.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-04 und REQ-09: Bei vielen Bewohnern steigt das Risiko von Zuordnungsfehlern.",
+      "assumptions": [
+        "Die Art der eindeutigen Kennzeichnung ist offen."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-04",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert nur die Verwaltung vieler Bewohner, tr\u00E4gt aber nicht zur eindeutigen Identifizierbarkeit bei."
+        },
+        {
+          "itemId": "REQ-09",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung zielt auf Vermeidung von Fehleingaben, nicht direkt auf eindeutige Identifizierbarkeit der Bewohnerdatens\u00E4tze."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-032",
+      "class": "WeakOrUncertain",
+      "text": "Benachrichtigungen an Angeh\u00F6rige sollten nur f\u00FCr daf\u00FCr geeignete Ereignisse versendet werden.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-07 und ARCH-08: Wenn Angeh\u00F6rige einbezogen werden und Benachrichtigungen m\u00F6glich sind, braucht es eine sachgerechte Eingrenzung der Anl\u00E4sse.",
+      "assumptions": [
+        "Welche Ereignisse geeignet sind, ist fachlich noch festzulegen."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-07",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unclear",
+          "rationale": "Die Anforderung nennt nur die Einbeziehung von Angeh\u00F6rigen, nicht die Einschr\u00E4nkung auf geeignete Ereignisse bei Benachrichtigungen."
+        },
+        {
+          "itemId": "ARCH-08",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unclear",
+          "rationale": "Die Anforderung erlaubt Benachrichtigungen, aber spezifiziert nicht, dass sie nur f\u00FCr geeignete Ereignisse an Angeh\u00F6rige gehen sollen."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Schwach/unsicher gest\u00FCtzt \u2014 Mensch entscheidet (NEEDS_REVISION triggert Reflect)."
+    },
+    {
+      "candidateId": "CAND-035",
+      "class": "Unreferenced",
+      "text": "Die App sollte Doppelerfassungen m\u00F6glichst vermeiden.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-08 und REQ-10: Entlastung und Kompatibilit\u00E4t mit bestehenden Abl\u00E4ufen sprechen gegen unn\u00F6tige Mehrfacheingaben.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert eine sp\u00FCrbare Entlastung bei der t\u00E4glichen Arbeit, erw\u00E4hnt aber nicht explizit die Vermeidung von Doppelerfassungen."
+        },
+        {
+          "itemId": "REQ-10",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Kompatibilit\u00E4t mit bestehenden Abl\u00E4ufen wird gefordert, aber die Vermeidung von Doppelerfassungen wird nicht explizit adressiert."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-046",
+      "class": "WeakOrUncertain",
+      "text": "Technische und fachliche Erweiterungen sollten bestehende Datenbest\u00E4nde und Kernprozesse m\u00F6glichst weiter nutzbar lassen.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-12, REQ-06 und DRISK-07: Zukunftssicherheit erfordert, dass Weiterentwicklungen nicht regelm\u00E4\u00DFig zu Br\u00FCchen f\u00FChren.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-12",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unclear",
+          "rationale": "Die Anforderung \u0027Die L\u00F6sung soll zukunftssicher sein\u0027 impliziert eine gewisse Nachhaltigkeit, aber sie spezifiziert nicht explizit, dass bestehende Datenbest\u00E4nde und Kernprozesse weiter nutzbar bleiben m\u00FCssen."
+        },
+        {
+          "itemId": "REQ-06",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unclear",
+          "rationale": "Die Anforderung \u0027Die L\u00F6sung soll flexibel erweiterbar sein\u0027 deutet auf Erweiterbarkeit hin, erw\u00E4hnt aber nicht explizit die Weiterverwendung bestehender Datenbest\u00E4nde und Kernprozesse."
+        },
+        {
+          "itemId": "DRISK-07",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Das Risiko bezieht sich auf die Handhabung zuk\u00FCnftiger Anforderungen und deren Einfluss auf die Relevanz der App, tr\u00E4gt aber nicht direkt zur Aussage \u00FCber die Weiterverwendung bestehender Datenbest\u00E4nde und Kernprozesse bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Schwach/unsicher gest\u00FCtzt \u2014 Mensch entscheidet (NEEDS_REVISION triggert Reflect)."
+    },
+    {
+      "candidateId": "CAND-054",
+      "class": "Contradicted",
+      "text": "Die App sollte Nutzer vor unbeabsichtigtem Datenverlust warnen, wenn sie eine Eingabe vor dem Speichern verlassen.",
+      "targetType": "requirement",
+      "rationale": "Folgt aus REQ-09, REQ-08 und ARCH-01: Mobile Nutzung mit Unterbrechungen erh\u00F6ht das Risiko versehentlichen Verlassens von Eingaben.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-09",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Die Anforderung will Fehleingaben vermeiden, das Risiko fordert aber eine Warnung vor Datenverlust, was \u00FCber das Vermeiden von Fehleingaben hinausgeht."
+        },
+        {
+          "itemId": "REQ-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung zur sp\u00FCrbaren Entlastung bei der Arbeit tr\u00E4gt nicht explizit eine Warnfunktion vor unbeabsichtigtem Datenverlust."
+        },
+        {
+          "itemId": "ARCH-01",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Umsetzung als mobile App tr\u00E4gt nicht direkt das Risiko einer Warnung vor Datenverlust."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Widerspruch zu bestehendem Item \u2014 Konfliktentscheidung, nicht automatisch verwerfen."
+    }
+  ]
+}

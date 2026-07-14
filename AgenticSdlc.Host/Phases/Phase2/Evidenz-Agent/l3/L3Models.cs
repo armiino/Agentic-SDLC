@@ -29,7 +29,20 @@ public sealed record L3Candidate(
     [property: JsonPropertyName("targetType")] string TargetType,
     [property: JsonPropertyName("text")] string Text,
     [property: JsonPropertyName("rationale")] string? Rationale,
-    [property: JsonPropertyName("assumptions")] IReadOnlyList<string> Assumptions);
+    [property: JsonPropertyName("assumptions")] IReadOnlyList<string> Assumptions,
+    // Research-Modus (L3-Über-Agent): der Generator deklariert, WAS der Kandidat sein will —
+    // "extension" (verankerbare Erweiterung eines Bestehenden) | "gap" (unausgesprochenes/fehlendes Thema, open-world).
+    // BasedOn = die Item-ids, auf denen die Idee RECHERCHIERT wurde (Behauptung, KEIN finaler Anker — Resolver/Judge
+    // entscheiden unabhängig; vgl. retrieved⊇used). Bei selective/exhaustive null/leer → rückwärtskompatibel.
+    [property: JsonPropertyName("intent")] string? Intent = null,
+    [property: JsonPropertyName("basedOn")] IReadOnlyList<string>? BasedOn = null,
+    // Coverage/Gap-Modus (L3-Über-Agent, v10): additive Analyse-Felder. GapCategory = kontrollierte Prüflinsen-Kategorie
+    // (data-lifecycle | security | actors-permissions | …), aggregierbar für die intent×class-Cross-Tab. ImpactIfMissing
+    // = Projektbezug einer Lücke (verhindert generische Best-Practice-Kandidaten). RequiresHumanDecision = AGENTEN-Claim
+    // (offener Entscheidungsbedarf) — reine Metadata, überschreibt NICHT das deterministische Routing (Class-Gate).
+    [property: JsonPropertyName("gapCategory")] string? GapCategory = null,
+    [property: JsonPropertyName("impactIfMissing")] string? ImpactIfMissing = null,
+    [property: JsonPropertyName("requiresHumanDecision")] bool? RequiresHumanDecision = null);
 
 /// <summary>Ein vom Agenten vorgeschlagener Anker mit behaupteter Beziehung + Begründung (§3 Datenvertrag).</summary>
 public sealed record ProposedAnchor(

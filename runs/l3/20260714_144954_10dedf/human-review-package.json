@@ -1,0 +1,266 @@
+{
+  "runId": "20260714_144954_10dedf",
+  "generatedUtc": "2026-07-14T14:51:21.701098Z",
+  "summary": {
+    "SupportedAnchored": 7,
+    "Contradicted": 1,
+    "Unreferenced": 4
+  },
+  "autoSupported": 7,
+  "needsHumanCount": 5,
+  "items": [
+    {
+      "candidateId": "CAND-003",
+      "class": "Contradicted",
+      "text": "Offline nutzbare Funktionen m\u00FCssen so abgegrenzt werden, dass klar ist, welche Daten ohne Verbindung verf\u00FCgbar, \u00E4nderbar und sp\u00E4ter zu synchronisieren sind.",
+      "targetType": "requirement",
+      "intent": "extension",
+      "basedOn": [
+        "REQ-03",
+        "ARCH-01",
+        "ARCH-02",
+        "DRISK-04"
+      ],
+      "gapCategory": "state-transitions",
+      "impactIfMissing": null,
+      "requiresHumanDecision": false,
+      "rationale": "Offline-F\u00E4higkeit ist gefordert, bei zentraler Cloud-Speicherung entstehen jedoch fachlich relevante Zust\u00E4nde und \u00DCberg\u00E4nge zwischen offline erfassten und zentral gespeicherten Daten. Diese Abgrenzung ist eine notwendige Konkretisierung des bestehenden Stands.",
+      "assumptions": [
+        "Die mobile App wird zeitweise ohne stabile Netzverbindung verwendet."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-03",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "REQ-03 fordert Offline-Funktionalit\u00E4t, was das Abgrenzen der offline verf\u00FCgbaren und \u00E4nderbaren Daten sowie deren Synchronisation erfordert."
+        },
+        {
+          "itemId": "ARCH-02",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "ARCH-02 beschreibt zentrale Cloud-Speicherung, widerspricht aber der Notwendigkeit, offline verf\u00FCgbare und \u00E4nderbare Daten klar abzugrenzen."
+        },
+        {
+          "itemId": "DRISK-04",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker nennt nur, dass unzureichende Offline-Funktionalit\u00E4ten die Nutzung negativ beeinflussen k\u00F6nnen, tr\u00E4gt aber nicht die konkrete Abgrenzung oder Synchronisationsdetails."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Widerspruch zu bestehendem Item \u2014 Konfliktentscheidung, nicht automatisch verwerfen."
+    },
+    {
+      "candidateId": "CAND-004",
+      "class": "Unreferenced",
+      "text": "F\u00FCr gleichzeitige oder zeitversetzte \u00C4nderungen an denselben Bewohnerinformationen ist festzulegen, wie Konflikte bei der Synchronisation erkannt und behandelt werden.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-03",
+        "REQ-11",
+        "ARCH-02",
+        "DRISK-04",
+        "DRISK-10"
+      ],
+      "gapCategory": "state-transitions",
+      "impactIfMissing": "Unklare Konfliktbehandlung kann zu veralteten, \u00FCberschriebenen oder widerspr\u00FCchlichen Bewohnerinformationen f\u00FChren. Das untergr\u00E4bt die Verl\u00E4sslichkeit der App im Arbeitsalltag und gef\u00E4hrdet das Ziel aktueller Inhalte.",
+      "requiresHumanDecision": false,
+      "rationale": "Der Projektstand fordert Offline-Nutzung und aktuelle Inhalte, beschreibt aber nicht, wie widerspr\u00FCchliche \u00C4nderungen zusammengef\u00FChrt werden. Das ist ein eigenst\u00E4ndiges, bisher unbehandeltes Thema.",
+      "assumptions": [
+        "Mehrere Nutzer k\u00F6nnen dieselben Informationen bearbeiten."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-03",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert nur, dass das System offline funktionieren soll, tr\u00E4gt aber nicht die Festlegung zur Konflikterkennung und -behandlung bei Synchronisation."
+        },
+        {
+          "itemId": "REQ-11",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Aktualit\u00E4t der Inhalte, tr\u00E4gt aber nicht die konkrete Festlegung zu Konfliktmanagement bei gleichzeitigen \u00C4nderungen."
+        },
+        {
+          "itemId": "ARCH-02",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt nur die zentrale Cloud-Speicherung, tr\u00E4gt aber nicht die Festlegung zu Konfliktmanagement bei Synchronisation."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-005",
+      "class": "Unreferenced",
+      "text": "Es ist festzulegen, wie lange verschiedene Arten sensibler Bewohnerdaten gespeichert werden und unter welchen Bedingungen sie gel\u00F6scht oder anonymisiert werden m\u00FCssen.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-02",
+        "ARCH-02",
+        "ARCH-09"
+      ],
+      "gapCategory": "data-lifecycle",
+      "impactIfMissing": "Ohne Regeln zur Aufbewahrung und L\u00F6schung besteht das Risiko, Daten l\u00E4nger als notwendig vorzuhalten oder unzul\u00E4ssig zu entfernen. Das erschwert Datenschutzkonformit\u00E4t und den verl\u00E4sslichen Betrieb \u00FCber den Lebenszyklus der Bewohnerdaten.",
+      "requiresHumanDecision": true,
+      "rationale": "Sensible Daten und Cloud-Speicherung sind benannt, die Datenlebensdauer bleibt aber offen. Die sp\u00E4tere Festlegung der Datenschutzumsetzung zeigt, dass hierzu noch eine fachliche Kl\u00E4rung fehlt.",
+      "assumptions": [
+        "Es werden personenbezogene und potenziell besonders sch\u00FCtzenswerte Informationen verarbeitet."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-02",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Schutz sensibler Daten, tr\u00E4gt aber nicht die Festlegung zu Speicherfristen oder L\u00F6sch-/Anonymisierungsbedingungen."
+        },
+        {
+          "itemId": "ARCH-02",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt nur zentrale Cloud-Speicherung, tr\u00E4gt nicht die Festlegung zu Speicherfristen oder L\u00F6sch-/Anonymisierungsbedingungen."
+        },
+        {
+          "itemId": "ARCH-09",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker sagt, dass die technische Umsetzung der Datenschutzvorgaben sp\u00E4ter festgelegt wird, tr\u00E4gt aber nicht die konkrete Festlegung zu Speicherfristen oder L\u00F6sch-/Anonymisierungsbedingungen."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-009",
+      "class": "Unreferenced",
+      "text": "Benachrichtigungen m\u00FCssen fachlich so begrenzt werden, dass nur relevante Ereignisse gemeldet werden und Nutzer Benachrichtigungen nach Rolle oder Bedarf steuern k\u00F6nnen.",
+      "targetType": "requirement",
+      "intent": "extension",
+      "basedOn": [
+        "REQ-01",
+        "REQ-08",
+        "ARCH-08"
+      ],
+      "gapCategory": "quality-attributes",
+      "impactIfMissing": null,
+      "requiresHumanDecision": false,
+      "rationale": "Benachrichtigungen sind vorgesehen, w\u00E4hrend die App entlasten und einfach bedienbar sein soll. Ohne fachliche Begrenzung drohen unn\u00F6tige Unterbrechungen statt Arbeitserleichterung; daher ist dies eine sinnvolle Erweiterung des bestehenden Stands.",
+      "assumptions": [
+        "Benachrichtigungen werden im Arbeitsalltag potenziell h\u00E4ufig ausgel\u00F6st."
+      ],
+      "anchors": [
+        {
+          "itemId": "ARCH-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker erlaubt das Versenden von Benachrichtigungen, der Kandidat fordert fachliche Begrenzung und Steuerung, was nicht direkt vom Anker getragen wird."
+        },
+        {
+          "itemId": "REQ-08",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert eine sp\u00FCrbare Entlastung, erw\u00E4hnt aber keine Details zu Benachrichtigungen oder deren fachlicher Begrenzung."
+        },
+        {
+          "itemId": "REQ-01",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert schnelle und einfache Bedienbarkeit, tr\u00E4gt aber nicht konkret zur fachlichen Begrenzung oder Steuerung von Benachrichtigungen bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-010",
+      "class": "Unreferenced",
+      "text": "F\u00FCr die Nutzung auf mobilen Ger\u00E4ten ist festzulegen, unter welchen Einsatzbedingungen die App zuverl\u00E4ssig bedienbar sein muss, etwa bei Schichtbetrieb, wechselnden Ger\u00E4ten oder kurzen Nutzungssituationen.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "ARCH-01",
+        "REQ-01",
+        "REQ-08"
+      ],
+      "gapCategory": "usage-context",
+      "impactIfMissing": "Ohne gekl\u00E4rten Nutzungskontext kann die App zwar technisch mobil sein, aber in realen Arbeitssituationen unpraktisch bleiben. Das gef\u00E4hrdet Bedienbarkeit, Akzeptanz und den erwarteten Entlastungseffekt.",
+      "requiresHumanDecision": true,
+      "rationale": "Die L\u00F6sung wird als mobile App umgesetzt und soll den Arbeitsalltag sp\u00FCrbar erleichtern, aber der tats\u00E4chliche Nutzungskontext bleibt unbeschrieben. Dieser Kontext beeinflusst wesentliche Anforderungen an Bedienung und Ablauf.",
+      "assumptions": [
+        "Die Nutzung erfolgt in einem arbeitsintensiven Umfeld mit situativ kurzer Interaktionsdauer."
+      ],
+      "anchors": [
+        {
+          "itemId": "ARCH-01",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt die Umsetzung als mobile App, tr\u00E4gt aber nicht zur Definition der Einsatzbedingungen oder Bedienbarkeit unter bestimmten Bedingungen bei."
+        },
+        {
+          "itemId": "REQ-08",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert sp\u00FCrbare Entlastung bei der Arbeit, tr\u00E4gt aber nicht zur Festlegung der Einsatzbedingungen oder Bedienbarkeit auf mobilen Ger\u00E4ten bei."
+        },
+        {
+          "itemId": "REQ-01",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert schnelle und einfache Bedienbarkeit, tr\u00E4gt aber nicht zur Festlegung der Einsatzbedingungen oder Bedienbarkeit auf mobilen Ger\u00E4ten bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    }
+  ]
+}

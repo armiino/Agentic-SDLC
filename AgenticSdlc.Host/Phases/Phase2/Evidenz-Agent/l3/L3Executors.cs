@@ -20,26 +20,10 @@ internal sealed class L3CandidateGenExecutor(AIAgent agent, RunContext run) : Ex
     public override async ValueTask HandleAsync(SourceArtifactSet env, IWorkflowContext context, CancellationToken ct = default)
     {
         var response = await agent.RunAsync([new ChatMessage(ChatRole.User, L3Prompts.BuildEnvUser(env, forGeneration: true))], cancellationToken: ct).ConfigureAwait(false);
-        var raw = L3Json.Deserialize<RawCandidates>(response.Text)?.Candidates ?? [];
-        var items = new List<L3Candidate>(raw.Count);
-        var n = 0;
-        foreach (var c in raw)
-        {
-            if (string.IsNullOrWhiteSpace(c.Text)) continue;
-            n++;
-            items.Add(new L3Candidate($"CAND-{n:D3}", string.IsNullOrWhiteSpace(c.TargetType) ? "requirement" : c.TargetType!.Trim(),
-                c.Text!.Trim(), c.Rationale, c.Assumptions ?? []));
-        }
+        var items = L3CandidateParsing.AssignIds(L3CandidateParsing.ParseCores(response.Text));
         run.AppendEvent(new { type = "L3_CANDIDATES_GENERATED", runId = run.RunId, count = items.Count, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(new L3Candidates(env, items)).ConfigureAwait(false);
     }
-
-    private sealed record RawCandidates([property: JsonPropertyName("candidates")] IReadOnlyList<RawCandidate>? Candidates);
-    private sealed record RawCandidate(
-        [property: JsonPropertyName("text")] string? Text,
-        [property: JsonPropertyName("targetType")] string? TargetType,
-        [property: JsonPropertyName("rationale")] string? Rationale,
-        [property: JsonPropertyName("assumptions")] IReadOnlyList<string>? Assumptions);
 }
 
 /// <summary>Phase B (§3): der RESOLUTION-Agent sucht — GETRENNT von der Generierung — mögliche Anker je Kandidat
@@ -158,7 +142,7 @@ internal sealed class L3RoutingExecutor(RunContext run) : Executor<L3Judged>("L3
 /// <summary>Finalize-Join (§5.2): schreibt Routing-Report + Human-Review-Paket (accept/edit/reject) auf Platte und
 /// yieldet das terminale <see cref="L3Result"/>. Der Prepare-Pfad endet HIER; das deterministische Apply ist Workflow 2.</summary>
 [YieldsOutput(typeof(L3Result))]
-internal sealed class L3FinalizeExecutor(RunContext run, string outSuffix = "") : Executor<L3Routed>("L3-Finalize")
+internal sealed class L3FinalizeExecutor(RunContext run, string outSuffix = "", CoverageSpec? coverageSpec = null) : Executor<L3Routed>("L3-Finalize")
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
 
@@ -176,6 +160,11 @@ internal sealed class L3FinalizeExecutor(RunContext run, string outSuffix = "") 
             r.Class,
             text = r.Candidate.Text,
             r.Candidate.TargetType,
+            r.Candidate.Intent,
+            r.Candidate.BasedOn,
+            r.Candidate.GapCategory,
+            r.Candidate.ImpactIfMissing,
+            r.Candidate.RequiresHumanDecision,
             r.Candidate.Rationale,
             r.Candidate.Assumptions,
             anchors = r.Anchors,
@@ -196,6 +185,23 @@ internal sealed class L3FinalizeExecutor(RunContext run, string outSuffix = "") 
             summary = byClass, autoSupported = byClass.GetValueOrDefault(nameof(L3Class.SupportedAnchored), 0),
             needsHumanCount = needsHuman.Count, items = needsHuman
         }, Json), ct).ConfigureAwait(false);
+
+        // Lens-Coverage-Report (Schritt 3, nur wenn ein CoverageSpec aktiv = coverage-Modus): deterministisch, measure-only
+        // (kein Loop — das wäre Schritt 4). Macht leere/Pflicht-leere Linsen sichtbar statt sie lautlos verschwinden zu lassen.
+        if (coverageSpec is not null)
+        {
+            var coverage = L3LensCoverage.Evaluate(coverageSpec, msg.Items.Select(r => r.Candidate).ToList());
+            var coveragePath = Path.Combine(run.RunDir, $"lens-coverage-report{outSuffix}.json");
+            await File.WriteAllTextAsync(coveragePath, JsonSerializer.Serialize(coverage, Json), ct).ConfigureAwait(false);
+            run.AppendEvent(new
+            {
+                type = "L3_LENS_COVERAGE", runId = run.RunId, spec = coverage.SpecId,
+                addressed = coverage.AddressedLenses, total = coverage.TotalLenses,
+                unaddressed = coverage.UnaddressedLensIds, mandatoryUnaddressed = coverage.MandatoryUnaddressedLensIds,
+                coverageComplete = coverage.CoverageComplete, mandatoryComplete = coverage.MandatoryComplete,
+                untagged = coverage.UntaggedCandidates, unknownCategories = coverage.UnknownCategories, timestampUtc = DateTime.UtcNow
+            });
+        }
 
         run.AppendEvent(new { type = "L3_FINALIZED", runId = run.RunId, byClass, needsHuman = needsHuman.Count, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(new L3Result(msg.Items, routingPath, reviewPath)).ConfigureAwait(false);

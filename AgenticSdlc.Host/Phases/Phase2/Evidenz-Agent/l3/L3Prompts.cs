@@ -43,6 +43,27 @@ internal static class L3Prompts
         return sb.ToString();
     }
 
+    /// <summary>Repair-Pass (Schritt 4): Umwelt + bereits erzeugte Kandidaten + die noch UNBEHANDELTEN Linsen (mit
+    /// Repair-Hinweis). Der Agent darf eine Linse begründet leer lassen (echtes N/A, kein Füllstoff).</summary>
+    public static string BuildCoverageRepairUser(SourceArtifactSet env, IReadOnlyList<L3Candidate> prior, IReadOnlyList<CoverageLens> missing)
+    {
+        var sb = new StringBuilder(BuildEnvUser(env, forGeneration: false));
+        sb.AppendLine();
+        sb.AppendLine($"DU HAST BEREITS {prior.Count} KANDIDATEN ERZEUGT (gapCategory: Text):");
+        foreach (var c in prior) sb.Append("- ").Append(c.GapCategory ?? "?").Append(": ").AppendLine(c.Text);
+        sb.AppendLine();
+        sb.AppendLine("Folgende Prüf-Aspekte sind BISLANG UNBEHANDELT:");
+        foreach (var l in missing) sb.Append("* `").Append(l.Id).Append("` — ").AppendLine(l.RepairHint);
+        sb.AppendLine();
+        sb.AppendLine("Prüfe JE Aspekt gezielt auf ALLE wesentlichen, voneinander UNABHÄNGIGEN Defizite — erzeuge nicht "
+            + "nur einen beliebigen Kandidaten, um den Aspekt formal zu schließen. Ein Aspekt darf durchaus MEHRERE "
+            + "Kandidaten ergeben, wenn das Projekt es hergibt (gapCategory = der Aspekt-Bezeichner). Ist der Bereich für "
+            + "DIESES Projekt bereits ausreichend behandelt ODER nicht anwendbar, LASS IHN WEG (kein Füllstoff) — eine "
+            + "geprüfte, aber bewusst leere Perspektive ist ein gültiges Ergebnis, kein Zwang zu einem neuen Requirement. "
+            + "Antworte NUR mit den NEUEN Kandidaten im selben JSON-Format.");
+        return sb.ToString();
+    }
+
     /// <summary>Umwelt + je Kandidat der vorige Entwurf (y_t) + das menschliche Feedback (fb_t) für die Self-Refine-Revision.</summary>
     public static string BuildReviseUser(SourceArtifactSet env, IReadOnlyList<L3ReviseItem> items)
     {
