@@ -364,6 +364,13 @@ if (args.Length > 0 && string.Equals(args[0], "l4-apply", StringComparison.Ordin
     return;
 }
 
+// L4 Quality: kanonische Baseline auf Rueckfuehrbarkeit und Operationalisierbarkeit pruefen.
+if (args.Length > 0 && string.Equals(args[0], "l4-quality", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.L4QualityRunner.RunAsync(args, repoRoot);
+    return;
+}
+
 // A2 (Demonstration): Nicht-dekorativ-Beleg — supported-Rate der ledger-geerdeten requirements.md gegen den consumable.
 if (args.Length > 0 && string.Equals(args[0], "ledger-cite-fidelity", StringComparison.OrdinalIgnoreCase))
 {
@@ -487,7 +494,7 @@ if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.Ordinal
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
-    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, l4-baseline, l4-consolidation, l4-review, l4-apply, ledger-build, ledger-adjudicate-ui, review.");
+    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, ledger-build, ledger-adjudicate-ui, review.");
     Environment.ExitCode = 2;
     return;
 }
