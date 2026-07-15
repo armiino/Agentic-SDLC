@@ -8,7 +8,8 @@ using AgenticSdlc.HumanReview;
 namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
 
 /// <summary>
-/// L3 Human-Review (CLI: <c>l3-review &lt;l3-run|runId&gt;</c>). Config-gesteuert über <c>l3.reviewMode</c>:
+/// L3 Human-Review (CLI: <c>l3-review &lt;l3-run|runId&gt; [--interactive|--file] [--no-browser] [--scope needs-human|all]</c>).
+/// Config-gesteuert über <c>l3.reviewMode</c>, CLI-Flags überschreiben fuer Einzelruns:
 /// <list type="bullet">
 /// <item><b>file</b> (Default): kein UI — weist auf das dateibasierte Paket hin (Mensch editiert
 /// <c>human-review-package.json</c> → <c>human-decisions.json</c>).</item>
@@ -23,7 +24,7 @@ public static class L3ReviewRunner
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
-        if (args.Length < 2) { Console.Error.WriteLine("Usage: l3-review <l3-run-dir|runId>   (Modus via config l3.reviewMode: file|interactive)"); return 2; }
+        if (args.Length < 2) { Console.Error.WriteLine("Usage: l3-review <l3-run-dir|runId> [--interactive|--file] [--no-browser] [--scope needs-human|all]"); return 2; }
         var runDir = ResolveRunDir(repoRoot, args[1]);
         if (runDir is null) { Console.Error.WriteLine($"[l3-review] L3-Lauf '{args[1]}' nicht gefunden."); return 2; }
 
@@ -32,13 +33,20 @@ public static class L3ReviewRunner
         var routed = (JsonSerializer.Deserialize<RoutingReport>(await File.ReadAllTextAsync(routingPath).ConfigureAwait(false), Json)?.Items ?? []).ToList();
         var decisionsPath = Path.Combine(runDir, "human-decisions.json");
 
-        var interactive = string.Equals(settings.L3ReviewMode, "interactive", StringComparison.OrdinalIgnoreCase);
+        var forceInteractive = args.Contains("--interactive", StringComparer.OrdinalIgnoreCase);
+        var forceFile = args.Contains("--file", StringComparer.OrdinalIgnoreCase);
+        var noBrowser = args.Contains("--no-browser", StringComparer.OrdinalIgnoreCase);
+        var scope = ParseScope(args);
+        var includeSupportedAnchored = string.Equals(scope, "all", StringComparison.OrdinalIgnoreCase);
+        var interactive = forceInteractive || (!forceFile && string.Equals(settings.L3ReviewMode, "interactive", StringComparison.OrdinalIgnoreCase));
         if (!interactive)
         {
-            var open = routed.Count(r => r.Class != L3Class.SupportedAnchored);
-            Console.WriteLine($"[l3-review] mode=file (config l3.reviewMode). {open} Kandidaten zu entscheiden.");
-            Console.WriteLine($"[l3-review] Öffne human-review-package.json, trage je Kandidat accept|edit|reject|revise ein und speichere als human-decisions.json.");
-            Console.WriteLine($"[l3-review] Für die UI: setze l3.reviewMode=interactive in run-config.json.  run -> {Path.GetRelativePath(repoRoot, runDir)}");
+            var open = includeSupportedAnchored ? routed.Count : routed.Count(r => r.Class != L3Class.SupportedAnchored);
+            Console.WriteLine($"[l3-review] mode=file (config l3.reviewMode). scope={scope}. {open} Kandidaten zu entscheiden/prüfen.");
+            Console.WriteLine(includeSupportedAnchored
+                ? "[l3-review] scope=all ist als Kontrollschicht fuer die UI gedacht. Starte mit --interactive --scope all; Entscheidungen landen in human-decisions.json."
+                : "[l3-review] Öffne human-review-package.json, trage je Kandidat accept|edit|reject|revise ein und speichere als human-decisions.json.");
+            Console.WriteLine($"[l3-review] Für die UI: `l3-review {Path.GetFileName(runDir)} --interactive --scope {scope}` oder setze l3.reviewMode=interactive in run-config.json.  run -> {Path.GetRelativePath(repoRoot, runDir)}");
             return 0;
         }
 
@@ -46,8 +54,12 @@ public static class L3ReviewRunner
         var env = await LoadEnvAsync(runDir, repoRoot).ConfigureAwait(false);
         var envById = env?.ItemsById() ?? new Dictionary<string, ArtifactItem>();
         var runId = Path.GetFileName(runDir);
-        var session = L3ReviewAdapter.BuildSession(runId, routed);
+        var session = L3ReviewAdapter.BuildSession(runId, routed, includeSupportedAnchored);
         if (session.Items.Count == 0) { Console.WriteLine("[l3-review] keine zu entscheidenden Kandidaten (alle SupportedAnchored)."); return 0; }
+        var existingDecisions = await LoadExistingDecisionsAsync(decisionsPath).ConfigureAwait(false);
+        L3ReviewAdapter.MergeExistingDecisions(session, existingDecisions);
+        foreach (var item in session.Items)
+            item.Resolved = L3ReviewAdapter.Resolved(item);
 
         async Task Persist() => await File.WriteAllTextAsync(decisionsPath, JsonSerializer.Serialize(L3ReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
 
@@ -57,16 +69,46 @@ public static class L3ReviewRunner
             RecomputeResolved = L3ReviewAdapter.Resolved,
             ResolveContext = (_, key) => Task.FromResult(L3ReviewAdapter.ResolveContext(key, envById)),
             OnItemSaved = async _ => await Persist().ConfigureAwait(false),   // Autosave-Sicherheitsnetz
-            OpenBrowser = settings.L3ReviewOpenBrowser
+            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
         };
 
-        Console.WriteLine($"[l3-review] mode=interactive  runId={runId}  {session.Items.Count} Kandidaten");
+        Console.WriteLine($"[l3-review] mode=interactive  scope={scope}  runId={runId}  {session.Items.Count} Kandidaten");
+        if (existingDecisions is not null)
+            Console.WriteLine($"[l3-review] Re-Launch: vorhandene human-decisions.json geladen ({session.ResolvedCount()}/{session.Items.Count} resolved).");
         var result = await LocalReviewServerHost.RunAsync(options).ConfigureAwait(false);
         await Persist().ConfigureAwait(false);   // finaler Stand
 
         Console.WriteLine($"[l3-review] {result.Outcome} — {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
         Console.WriteLine($"[l3-review] Anwenden: `l3-apply {runId}` (accept/edit/reject) und/oder `l3-revise {runId}` (revise).");
         return 0;
+    }
+
+    private static string ParseScope(string[] args)
+    {
+        for (var i = 0; i < args.Length; i++)
+        {
+            if (string.Equals(args[i], "--all", StringComparison.OrdinalIgnoreCase)) return "all";
+            if (string.Equals(args[i], "--needs-human", StringComparison.OrdinalIgnoreCase)) return "needs-human";
+            if (!string.Equals(args[i], "--scope", StringComparison.OrdinalIgnoreCase)) continue;
+            if (i + 1 >= args.Length) return "needs-human";
+            var value = args[i + 1].Trim().ToLowerInvariant();
+            return value is "all" ? "all" : "needs-human";
+        }
+        return "needs-human";
+    }
+
+    private static async Task<HumanDecisionsFile?> LoadExistingDecisionsAsync(string path)
+    {
+        if (!File.Exists(path)) return null;
+        try
+        {
+            return JsonSerializer.Deserialize<HumanDecisionsFile>(await File.ReadAllTextAsync(path).ConfigureAwait(false), Json);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[l3-review] WARNUNG: vorhandene human-decisions.json konnte nicht geladen werden: {ex.Message}");
+            return null;
+        }
     }
 
     private static async Task<SourceArtifactSet?> LoadEnvAsync(string runDir, string repoRoot)

@@ -1,0 +1,190 @@
+{
+  "runId": "20260715_142625_fdc325",
+  "generatedUtc": "2026-07-15T14:29:09.844973Z",
+  "summary": {
+    "SupportedAnchored": 9,
+    "Unreferenced": 3
+  },
+  "autoSupported": 9,
+  "needsHumanCount": 3,
+  "items": [
+    {
+      "candidateId": "CAND-004",
+      "class": "Unreferenced",
+      "text": "F\u00FCr nutzergenerierte Inhalte ist ein Bearbeitungs- und Freigabeprozess festzulegen: Neue oder ge\u00E4nderte Beitr\u00E4ge von Mitarbeitern, Angeh\u00F6rigen oder Bewohnern m\u00FCssen definierte Zust\u00E4nde wie Entwurf, eingereicht, freigegeben, zur\u00FCckgewiesen oder archiviert durchlaufen, und bei gleichzeitigen \u00C4nderungen ist ein Konfliktverhalten einschlie\u00DFlich Versionserhalt festzulegen.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-04",
+        "REQ-05",
+        "REQ-35",
+        "REQ-51"
+      ],
+      "gapCategory": "state-transitions",
+      "impactIfMissing": "Inhalte k\u00F6nnen versehentlich \u00FCberschrieben, ungepr\u00FCft sichtbar oder praktisch nicht korrigierbar werden; das Vertrauen in die Daten sinkt.",
+      "requiresHumanDecision": true,
+      "rationale": "Mehrere Rollen sollen Inhalte beitragen, gleichzeitig d\u00FCrfen normale User nicht l\u00F6schen. Daraus ergibt sich Bedarf an klaren Inhaltszust\u00E4nden, Moderation und Konfliktbehandlung.",
+      "assumptions": [
+        "Mehrere Rollen k\u00F6nnen dieselben Bewohnerdaten zeitversetzt oder parallel erg\u00E4nzen."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-13",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt dynamische Erweiterbarkeit von Inhalten, der Kandidat fordert einen Bearbeitungs- und Freigabeprozess mit Zust\u00E4nden und Konfliktverhalten, was im Anker nicht enthalten ist."
+        },
+        {
+          "itemId": "REQ-35",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt Rechte von User-Accounts bez\u00FCglich Inhalte hinzuf\u00FCgen, aber keine Accounts erstellen oder Daten l\u00F6schen, der Kandidat fordert einen Bearbeitungs- und Freigabeprozess mit Zust\u00E4nden und Konfliktverhalten, was im Anker nicht adressiert wird."
+        },
+        {
+          "itemId": "REQ-04",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker erlaubt Angeh\u00F6rigen Zugriff, erw\u00E4hnt aber keinen Bearbeitungs- oder Freigabeprozess mit Zustands\u00FCberg\u00E4ngen oder Konfliktverhalten."
+        },
+        {
+          "itemId": "REQ-05",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt Bewohner-Accounts mit eingeschr\u00E4nkten Funktionen, aber keinen Bearbeitungs- und Freigabeprozess oder Versionskonfliktmanagement."
+        },
+        {
+          "itemId": "ARCH-19",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt Erweiterbarkeit von Profil- und Kommunikationsinhalten, aber nicht die geforderten Bearbeitungs- und Freigabeprozesse oder Konfliktverhalten."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-005",
+      "class": "Unreferenced",
+      "text": "Vor Produktivstart ist ein Datenschutz- und Datenlebenszyklus festzulegen, der f\u00FCr Fotos, Videos, Bewohnerprofile, Kommunikationshinweise und No-Go-Inhalte Aufbewahrungsdauer, Korrektur, Archivierung, L\u00F6schung, Entzug von Einwilligungen sowie einen nachvollziehbaren Export pro Bewohner oder Einrichtung regelt.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "ARCH-26",
+        "ARCH-27",
+        "REQ-15",
+        "REQ-20",
+        "REQ-51"
+      ],
+      "gapCategory": "data-lifecycle",
+      "impactIfMissing": "Es drohen Datenschutzverst\u00F6\u00DFe, operative Unsicherheit bei Korrektur- oder L\u00F6schw\u00FCnschen und Blockaden f\u00FCr Tests oder Produktivbetrieb.",
+      "requiresHumanDecision": true,
+      "rationale": "Die L\u00F6sung verarbeitet sensible personenbezogene Daten und Medien, aber Regeln zu Aufbewahrung, L\u00F6schung und Widerruf fehlen bislang vollst\u00E4ndig.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-48",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Kl\u00E4rung von Datenschutz und Zustimmung f\u00FCr Bilder, aber nicht die detaillierten Prozesse zu Aufbewahrung, Korrektur, Archivierung, L\u00F6schung, Einwilligungsentzug oder Export."
+        },
+        {
+          "itemId": "REQ-49",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Kl\u00E4rung der Einsicht in Bewohnerakten aus Datenschutzgr\u00FCnden, aber nicht die umfassenden Datenschutz- und Datenlebenszyklusregelungen."
+        },
+        {
+          "itemId": "REQ-36",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt nur den internen Gebrauch der App, nicht die detaillierten Datenschutz- und Datenlebenszyklusregelungen."
+        },
+        {
+          "itemId": "ARCH-27",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Kl\u00E4rung von Datenschutz und Zustimmung f\u00FCr Bilder, aber nicht die umfassenden Regelungen zu Aufbewahrung, Korrektur, Archivierung, L\u00F6schung, Einwilligungsentzug oder Export."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-009",
+      "class": "Unreferenced",
+      "text": "Vor Projektstart sind messbare Qualit\u00E4tsziele festzulegen, mindestens f\u00FCr maximale Such- und Ladezeiten bei Profilen, erwartete Anzahl gleichzeitiger Nutzer pro Einrichtung, Anzahl verwalteter Bewohnerprofile sowie akzeptable Mediengr\u00F6\u00DFen f\u00FCr Bilder und Videos.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-07",
+        "REQ-23",
+        "REQ-20",
+        "ARCH-36"
+      ],
+      "gapCategory": "quality-attributes",
+      "impactIfMissing": "Die L\u00F6sung kann funktional korrekt sein, im Alltag aber zu langsam oder f\u00FCr reale Datenmengen ungeeignet bleiben.",
+      "requiresHumanDecision": true,
+      "rationale": "Der Kernnutzen ist schnelles Nachschlagen in Alltagssituationen, aber es fehlen quantitative Leistungsziele und Mengenger\u00FCste f\u00FCr Architektur und Testplanung.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-01",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt den Zweck der L\u00F6sung, aber nicht die Festlegung messbarer Qualit\u00E4tsziele."
+        },
+        {
+          "itemId": "REQ-07",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung fordert eine Suchfunktion, tr\u00E4gt aber nicht zur Festlegung messbarer Qualit\u00E4tsziele bei."
+        },
+        {
+          "itemId": "REQ-23",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt eine Suchfunktion und Eingabemuster, tr\u00E4gt aber nicht zur Festlegung messbarer Qualit\u00E4tsziele bei."
+        },
+        {
+          "itemId": "ARCH-36",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt den Nutzenfall f\u00FCr neue Mitarbeiter, tr\u00E4gt aber nicht zur Festlegung messbarer Qualit\u00E4tsziele bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    }
+  ]
+}

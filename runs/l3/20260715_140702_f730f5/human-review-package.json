@@ -1,0 +1,221 @@
+{
+  "runId": "20260715_140702_f730f5",
+  "generatedUtc": "2026-07-15T14:08:45.086881Z",
+  "summary": {
+    "Unreferenced": 4,
+    "SupportedAnchored": 10
+  },
+  "autoSupported": 10,
+  "needsHumanCount": 4,
+  "items": [
+    {
+      "candidateId": "CAND-001",
+      "class": "Unreferenced",
+      "text": "F\u00FCr jeden neu hinzugef\u00FCgten oder ge\u00E4nderten Inhalt zu einem Bewohnerprofil soll nachvollziehbar gespeichert werden, wer die \u00C4nderung wann vorgenommen hat, damit die Herkunft und Aktualit\u00E4t von Kommunikationswissen \u00FCberpr\u00FCfbar bleibt.",
+      "targetType": "requirement",
+      "intent": "extension",
+      "basedOn": [
+        "REQ-13",
+        "REQ-31",
+        "REQ-33",
+        "REQ-35",
+        "ARCH-19",
+        "ARCH-36"
+      ],
+      "gapCategory": "data-lifecycle",
+      "impactIfMissing": null,
+      "requiresHumanDecision": false,
+      "rationale": "Da Inhalte dynamisch von verschiedenen Rollen erg\u00E4nzt werden sollen und das System als Wissensspeicher f\u00FCr neue Mitarbeiter dient, folgt ein Bedarf an Nachvollziehbarkeit der Eintr\u00E4ge. Ohne Herkunfts- und Zeitbezug ist schwer bewertbar, ob Informationen verl\u00E4sslich und noch aktuell sind.",
+      "assumptions": [
+        "Mehrere Nutzer k\u00F6nnen zu demselben Bewohnerprofil beitragen.",
+        "Kommunikationswissen kann sich im Zeitverlauf ver\u00E4ndern oder veralten."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-13",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-13 beschreibt die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, tr\u00E4gt aber nicht dazu bei, dass nachvollziehbar gespeichert wird, wer wann \u00C4nderungen vornimmt."
+        },
+        {
+          "itemId": "REQ-33",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-33 nennt rollenbasierte Accounts mit unterschiedlichen Rechten, erw\u00E4hnt aber nicht die Nachvollziehbarkeit von \u00C4nderungen an Bewohnerprofilen."
+        },
+        {
+          "itemId": "ARCH-03",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "ARCH-03 beschreibt die L\u00F6sung als Wissensspeicher f\u00FCr Kommunikationsweisen, tr\u00E4gt aber nicht zur Nachvollziehbarkeit von \u00C4nderungen bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-010",
+      "class": "Unreferenced",
+      "text": "Wenn mehrere berechtigte Nutzer denselben Inhalt zeitnah bearbeiten oder erg\u00E4nzen, soll das System Bearbeitungskonflikte erkennbar machen und Datenverlust durch unbeabsichtigtes \u00DCberschreiben vermeiden.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-13",
+        "REQ-31",
+        "REQ-33",
+        "ARCH-19"
+      ],
+      "gapCategory": "state-transitions",
+      "impactIfMissing": "Aktualisierungen k\u00F6nnten unbemerkt verloren gehen oder sich gegenseitig \u00FCberschreiben; dadurch sinkt das Vertrauen in den Wissensbestand und wichtige Kommunikationsinformationen k\u00F6nnen verf\u00E4lscht werden.",
+      "requiresHumanDecision": false,
+      "rationale": "Mehrere Rollen k\u00F6nnen Inhalte zu denselben Profilen erg\u00E4nzen. Damit entsteht im Gesamtbild ein Mehrbenutzer-Szenario, f\u00FCr das noch keine Regeln bei parallelen \u00C4nderungen beschrieben sind.",
+      "assumptions": [
+        "Mehrere Mitarbeitende oder Angeh\u00F6rige k\u00F6nnen dasselbe Profil bearbeiten."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-13",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Erweiterbarkeit von Inhalten, aber nicht das Erkennen von Bearbeitungskonflikten oder Vermeidung von Datenverlust."
+        },
+        {
+          "itemId": "REQ-33",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker nennt rollenbasierte Accounts mit Rechten, aber keine Mechanismen zur Konflikterkennung oder Datenverlustvermeidung bei paralleler Bearbeitung."
+        },
+        {
+          "itemId": "ARCH-19",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt dynamisch erweiterbare Inhalte, aber nicht das Erkennen von Bearbeitungskonflikten oder Vermeidung von Datenverlust."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-012",
+      "class": "Unreferenced",
+      "text": "F\u00FCr die \u00DCbernahme von Bestandswissen aus Akten oder anderen Dokumentationsquellen soll gekl\u00E4rt werden, ob diese Informationen manuell \u00FCbertragen, strukturiert importiert oder nur referenziert werden sollen.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-46",
+        "REQ-49",
+        "ARCH-24",
+        "ARCH-26"
+      ],
+      "gapCategory": "external-integration",
+      "impactIfMissing": "Die initiale und laufende Bef\u00FCllung der App bleibt organisatorisch und technisch unklar; dadurch drohen hoher Pflegeaufwand, Medienbr\u00FCche oder eine nur teilweise nutzbare Wissensbasis.",
+      "requiresHumanDecision": true,
+      "rationale": "Bestehende Dokumentation ist eine wichtige Wissensquelle, aber der Weg in die App ist nicht beschrieben. Damit besteht eine relevante L\u00FCcke zwischen Datenquelle und tats\u00E4chlicher Bef\u00FCllung der L\u00F6sung.",
+      "assumptions": [
+        "Es existieren bereits relevante Informationen au\u00DFerhalb der App."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-46",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker nennt die Ber\u00FCcksichtigung dokumentierter Informationen als Wissensquelle, trifft aber keine Aussage zur Art der \u00DCbernahme (manuell, importiert, referenziert)."
+        },
+        {
+          "itemId": "REQ-49",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker thematisiert die Kl\u00E4rung der Einsicht in Bewohnerakten wegen Datenschutz, aber nicht die Art der \u00DCbernahme von Bestandswissen."
+        },
+        {
+          "itemId": "ARCH-24",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker best\u00E4tigt Akten als Wissensquelle, sagt aber nichts zur Kl\u00E4rung der \u00DCbernahmeart der Informationen."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-014",
+      "class": "Unreferenced",
+      "text": "Die App soll Zugriffe automatisch beenden oder erneute Authentifizierung verlangen, wenn ein angemeldetes Ger\u00E4t unbeaufsichtigt bleibt oder an eine andere Person weitergegeben wird.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-36",
+        "REQ-37",
+        "REQ-41",
+        "ARCH-06",
+        "ARCH-10",
+        "ARCH-28"
+      ],
+      "gapCategory": "security-misuse",
+      "impactIfMissing": "Unbefugte k\u00F6nnten ohne neue Anmeldung sensible Bewohnerinformationen einsehen oder ver\u00E4ndern, obwohl die eigentliche Zugangsbeschr\u00E4nkung formal vorhanden ist.",
+      "requiresHumanDecision": false,
+      "rationale": "Die App wird auf mobilen Ger\u00E4ten mit sensiblen Bewohnerdaten genutzt und ist nur f\u00FCr den internen Gebrauch vorgesehen. Im Gesamtbild fehlt jedoch eine Absicherung gegen Missbrauch durch offen liegende oder weitergereichte, bereits eingeloggte Ger\u00E4te.",
+      "assumptions": [
+        "Die Nutzung findet in einem personellen Alltag mit Ger\u00E4teweitergabe oder unbeaufsichtigten Momenten statt."
+      ],
+      "anchors": [
+        {
+          "itemId": "REQ-36",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt nur den internen Gebrauch der App, enth\u00E4lt aber keine Anforderungen zu automatischem Beenden von Zugriffen oder erneuter Authentifizierung."
+        },
+        {
+          "itemId": "REQ-27",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker REQ-27 beschreibt nur die Login-M\u00F6glichkeiten und Selbstregistrierung, tr\u00E4gt aber nicht die Forderung nach automatischem Beenden von Zugriffen oder erneuter Authentifizierung bei unbeaufsichtigtem Ger\u00E4t."
+        },
+        {
+          "itemId": "REQ-48",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker REQ-48 behandelt Datenschutz und Zustimmung f\u00FCr Bilder, tr\u00E4gt aber nicht die Forderung nach automatischem Beenden von Zugriffen oder erneuter Authentifizierung bei unbeaufsichtigtem Ger\u00E4t."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    }
+  ]
+}

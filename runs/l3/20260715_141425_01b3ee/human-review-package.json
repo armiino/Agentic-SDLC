@@ -1,0 +1,341 @@
+{
+  "runId": "20260715_141425_01b3ee",
+  "generatedUtc": "2026-07-15T14:17:06.367875Z",
+  "summary": {
+    "Contradicted": 2,
+    "SupportedAnchored": 7,
+    "Unreferenced": 4
+  },
+  "autoSupported": 7,
+  "needsHumanCount": 6,
+  "items": [
+    {
+      "candidateId": "CAND-001",
+      "class": "Contradicted",
+      "text": "Vor Projektstart ist verbindlich festzulegen, welche Inhalte zum MVP-Kernumfang der Kommunikationsunterst\u00FCtzung geh\u00F6ren und welche Teile der vollst\u00E4ndigen Bewohnerdokumentation ausdr\u00FCcklich nicht in die App \u00FCbernommen werden; das Ergebnis ist als abgegrenzter Funktions- und Datenkatalog pro Profilbereich zu dokumentieren.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-01",
+        "REQ-45",
+        "ARCH-03"
+      ],
+      "gapCategory": "business-goals",
+      "impactIfMissing": "Das Projekt startet ohne belastbaren MVP-Zuschnitt; Umfang, Datenmodell und Priorisierung wachsen unkontrolliert und die eigentliche Kommunikationsunterst\u00FCtzung wird durch Dokumentationsanforderungen verdr\u00E4ngt.",
+      "requiresHumanDecision": true,
+      "rationale": "Die Evidenz beschreibt die L\u00F6sung gleichzeitig als Kommunikations-Nachschlagewerk und nennt offen, dass keine ausufernde Voll-Dokumentation entstehen soll. Ohne explizite Scope-Grenze bleibt unklar, welche Inhalte entwickelt, migriert und gepflegt werden sollen.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-45",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Anker l\u00E4sst offen, ob die App eine vollst\u00E4ndige Dokumentation \u00FCbernehmen soll und fordert Kl\u00E4rung; der Kandidat verlangt jedoch eine verbindliche Festlegung vor Projektstart und eine Dokumentation als abgegrenzter Katalog, was \u00FCber die Offenheit hinausgeht."
+        },
+        {
+          "itemId": "ARCH-05",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Anker fordert Kl\u00E4rung und begrenzten Umfang, l\u00E4sst aber offen, ob und wie verbindlich vor Projektstart festgelegt wird; der Kandidat verlangt eine verbindliche Festlegung und Dokumentation, was den Anker unzul\u00E4ssig verst\u00E4rkt."
+        },
+        {
+          "itemId": "ARCH-03",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die L\u00F6sung als Wissensspeicher f\u00FCr Kommunikationsweisen, tr\u00E4gt aber nicht die Forderung nach verbindlicher Festlegung und Dokumentation des MVP-Kernumfangs."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Widerspruch zu bestehendem Item \u2014 Konfliktentscheidung, nicht automatisch verwerfen."
+    },
+    {
+      "candidateId": "CAND-003",
+      "class": "Unreferenced",
+      "text": "F\u00FCr alle Eingabedialoge zum Anlegen und Erweitern von Profilen, About-Me-Inhalten, Bildern und No-Go-Eintr\u00E4gen sind Pflichtfelder, zul\u00E4ssige Formate, maximale Dateigr\u00F6\u00DFen sowie das Verhalten bei leeren, fehlerhaften oder unvollst\u00E4ndigen Eingaben festzulegen; unvollst\u00E4ndige Eintr\u00E4ge d\u00FCrfen nicht stillschweigend gespeichert werden.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-10",
+        "REQ-13",
+        "REQ-14",
+        "REQ-16"
+      ],
+      "gapCategory": "input-validation",
+      "impactIfMissing": "Die Teams implementieren Formulare uneinheitlich; es entstehen unbrauchbare oder inkonsistente Bewohnerprofile und Fehlerf\u00E4lle werden erst im Test oder Betrieb sichtbar.",
+      "requiresHumanDecision": false,
+      "rationale": "Die Evidenz beschreibt zahlreiche Erfassungsfunktionen, aber keine Regeln f\u00FCr Datenqualit\u00E4t oder Fehlersituationen. F\u00FCr ein startf\u00E4higes Projekt m\u00FCssen diese Interaktions- und Validierungsregeln vorliegen.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-10",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt das Anlegen neuer Profile mit Bild, Name und Beschreibung, tr\u00E4gt aber nicht die detaillierten Anforderungen an Pflichtfelder, Formate, Dateigr\u00F6\u00DFen und Fehlerverhalten."
+        },
+        {
+          "itemId": "REQ-13",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt nur die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, tr\u00E4gt aber keine Anforderungen zu Pflichtfeldern, zul\u00E4ssigen Formaten, Dateigr\u00F6\u00DFen oder Verhalten bei fehlerhaften Eingaben."
+        },
+        {
+          "itemId": "REQ-16",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Erweiterbarkeit der No-Go-Seite per Plus-Button, tr\u00E4gt aber keine Anforderungen zu Pflichtfeldern, Formaten, Dateigr\u00F6\u00DFen oder Eingabeverhalten."
+        },
+        {
+          "itemId": "ARCH-19",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, tr\u00E4gt aber keine Anforderungen zu Pflichtfeldern, zul\u00E4ssigen Formaten, Dateigr\u00F6\u00DFen oder Eingabeverhalten."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-004",
+      "class": "Unreferenced",
+      "text": "F\u00FCr nutzergenerierte Inhalte ist ein Zustandsmodell festzulegen, das mindestens Entwurf, ver\u00F6ffentlicht, ge\u00E4ndert und entfernt/archiviert umfasst, sowie regelt, ob neue oder ge\u00E4nderte Beitr\u00E4ge sofort sichtbar sind, ob Benachrichtigungen ausgel\u00F6st werden und wie Konflikte bei nahezu gleichzeitigen \u00C4nderungen behandelt werden.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-13",
+        "REQ-31",
+        "REQ-35",
+        "ARCH-19"
+      ],
+      "gapCategory": "state-transitions",
+      "impactIfMissing": "Es drohen Daten\u00FCberschreibungen, uneinheitliche Sichtbarkeit neuer Informationen und schwer nachvollziehbare Seiteneffekte bei \u00C4nderungen im laufenden Betrieb.",
+      "requiresHumanDecision": true,
+      "rationale": "Mehrere Rollen k\u00F6nnen Inhalte erg\u00E4nzen, zus\u00E4tzlich ist eine Benachrichtigung bei neuen Inhalten angedacht. Ohne definiertes Lebenszyklus- und Konfliktverhalten bleibt unklar, wann Inhalte sichtbar sind und wie \u00DCberschneidungen behandelt werden.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-13",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, tr\u00E4gt aber keine Anforderungen zu Zustandsmodellen, Sichtbarkeit, Benachrichtigungen oder Konfliktbehandlung."
+        },
+        {
+          "itemId": "REQ-31",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt eine optionale Benachrichtigungsfunktion bei neuen Inhalten, tr\u00E4gt aber nicht die umfassenden Anforderungen an ein Zustandsmodell und Konfliktbehandlung."
+        },
+        {
+          "itemId": "ARCH-19",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, tr\u00E4gt aber keine Anforderungen zu Zustandsmodellen, Sichtbarkeit, Benachrichtigungen oder Konfliktbehandlung."
+        },
+        {
+          "itemId": "ARCH-20",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Hinzuf\u00FCgung von Videoinhalten, tr\u00E4gt aber keine Anforderungen zu Zustandsmodellen, Sichtbarkeit, Benachrichtigungen oder Konfliktbehandlung."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-008",
+      "class": "Unreferenced",
+      "text": "Es ist zu entscheiden und technisch zu spezifizieren, ob und wie bestehende Bewohnerakten oder andere Dokumentationsquellen in die App \u00FCbernommen werden: manuelle \u00DCbertragung, strukturierte Migration oder reine Referenznutzung; dabei sind Datenquellen, Verantwortlichkeiten und zul\u00E4ssige Importformate festzulegen.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-46",
+        "REQ-49",
+        "ARCH-24",
+        "ARCH-26"
+      ],
+      "gapCategory": "external-integration",
+      "impactIfMissing": "Das Projekt plant Datenmodell und Einf\u00FChrung ohne belastbare Annahme zur Erstbef\u00FCllung; notwendige Schnittstellen oder Migrationsarbeiten werden zu sp\u00E4t erkannt.",
+      "requiresHumanDecision": true,
+      "rationale": "Die Evidenz nennt Akten als relevante Wissensquelle, l\u00E4sst aber offen, ob und wie diese Quelle in die L\u00F6sung einflie\u00DFt. Diese Kl\u00E4rung beeinflusst Architektur, Datenmodell und Einf\u00FChrungsaufwand.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-46",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt das Vorhandensein und Ber\u00FCcksichtigung von Akten als Wissensquelle, aber nicht die technische Spezifikation oder Entscheidung zur \u00DCbernahme in die App."
+        },
+        {
+          "itemId": "REQ-49",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung stellt die Datenschutzunsicherheit bei Einsicht in Bewohnerakten fest, tr\u00E4gt aber nicht zur technischen Spezifikation der \u00DCbernahme von Akten bei."
+        },
+        {
+          "itemId": "ARCH-24",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt das Vorhandensein von Akten als Wissensquelle, tr\u00E4gt aber nicht zur technischen Spezifikation der \u00DCbernahme bei."
+        },
+        {
+          "itemId": "ARCH-26",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung stellt die Datenschutzunsicherheit bei Einsicht in Bewohnerakten fest, tr\u00E4gt aber nicht zur technischen Spezifikation der \u00DCbernahme bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-010",
+      "class": "Unreferenced",
+      "text": "Vor der Umsetzung sind messbare Qualit\u00E4tsziele f\u00FCr die MVP-Nutzung festzulegen, mindestens f\u00FCr Anzahl der Einrichtungen, Nutzer und Bewohnerprofile, Such- und Ladezeiten der Profil\u00FCbersicht sowie maximale Wartezeit bis neu hinzugef\u00FCgte Inhalte f\u00FCr berechtigte Nutzer sichtbar sind.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-07",
+        "REQ-09",
+        "ARCH-25",
+        "ARCH-36"
+      ],
+      "gapCategory": "quality-attributes",
+      "impactIfMissing": "Performanceprobleme werden erst sp\u00E4t sichtbar; die App verfehlt ihren Kernnutzen, wenn Suchen, Laden und Auffinden von Informationen im Alltag zu langsam sind.",
+      "requiresHumanDecision": true,
+      "rationale": "Die L\u00F6sung soll schnelles Nachschlagen und Einarbeitung unterst\u00FCtzen, aber es fehlen Mengenger\u00FCst und Performanceziele. Ohne diese Ziele kann die Architektur nicht angemessen ausgelegt oder bewertet werden.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-07",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert eine Suchfunktion auf der Profil\u00FCbersichtsseite, tr\u00E4gt aber keine Qualit\u00E4tsziele oder Messgr\u00F6\u00DFen f\u00FCr MVP-Nutzung."
+        },
+        {
+          "itemId": "REQ-31",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt eine optionale Popup-Benachrichtigung bei neuen Inhalten, tr\u00E4gt aber keine Qualit\u00E4tsziele oder Messgr\u00F6\u00DFen."
+        },
+        {
+          "itemId": "ARCH-12",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert eine Suchfunktion auf der Profil\u00FCbersichtsseite, tr\u00E4gt aber keine Qualit\u00E4tsziele oder Messgr\u00F6\u00DFen f\u00FCr MVP-Nutzung."
+        },
+        {
+          "itemId": "ARCH-36",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt den Nutzen f\u00FCr neue Mitarbeiter, Bewohner schneller zu verstehen, tr\u00E4gt aber keine Qualit\u00E4tsziele oder Messgr\u00F6\u00DFen."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Open-World: kein tragf\u00E4higer Anker \u2014 nur mit menschlicher Autorisierung \u00FCbernehmen."
+    },
+    {
+      "candidateId": "CAND-011",
+      "class": "Contradicted",
+      "text": "Der Nutzungskontext ist in verbindliche Bedienbarkeitsanforderungen zu \u00FCberf\u00FChren: Zielger\u00E4te, minimale Bildschirmgr\u00F6\u00DFen, Bedienung durch neue Mitarbeiter unter Zeitdruck sowie der konkrete Umfang barrierearmer Eingabe- und Darstellungsformen f\u00FCr Bewohneraccounts sind festzulegen.",
+      "targetType": "requirement",
+      "intent": "gap",
+      "basedOn": [
+        "REQ-03",
+        "REQ-05",
+        "REQ-32",
+        "ARCH-36"
+      ],
+      "gapCategory": "usage-context",
+      "impactIfMissing": "Die entwickelte L\u00F6sung kann an realen Ger\u00E4ten oder in Stresssituationen schwer bedienbar sein und wichtige Nutzergruppen wie Bewohner nicht angemessen unterst\u00FCtzen.",
+      "requiresHumanDecision": true,
+      "rationale": "Die Evidenz nennt neue Mitarbeiter als MVP-Zielgruppe und alternative Eingaben f\u00FCr beeintr\u00E4chtigte Nutzer, konkretisiert aber weder Einsatzger\u00E4te noch Bedienbarkeitskriterien. Diese Informationen sind f\u00FCr UI- und Technikentscheidungen essenziell.",
+      "assumptions": [],
+      "anchors": [
+        {
+          "itemId": "REQ-03",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt Bedienbarkeitsanforderungen und Nutzungskontext, tr\u00E4gt aber nicht die Notwendigkeit verbindlicher Festlegungen."
+        },
+        {
+          "itemId": "REQ-32",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker nennt alternative Eingabemethoden, tr\u00E4gt aber nicht die verbindliche Festlegung von Bedienbarkeitsanforderungen."
+        },
+        {
+          "itemId": "REQ-40",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Kandidat fordert verbindliche Festlegungen zu Zielger\u00E4ten, Bildschirmgr\u00F6\u00DFen, Bedienung unter Zeitdruck und barrierearmen Eingabe-/Darstellungsformen, w\u00E4hrend der Anker nur allgemeine Designhinweise zu Barrierefreiheit (Schriftgr\u00F6\u00DFe, Kontrast, Farben) gibt, ohne verbindliche Anforderungen oder Kontextfestlegungen."
+        },
+        {
+          "itemId": "REQ-42",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Kandidat fordert verbindliche Bedienbarkeitsanforderungen inklusive Zielger\u00E4te und Bedienungskontext, der Anker behandelt nur die Frage, ob die App auf Tablets laufen soll, ohne Anforderungen an Bedienbarkeit oder Kontextfestlegung."
+        }
+      ],
+      "noAnchorReason": null,
+      "unknownAnchorIds": [],
+      "allowedOperations": [
+        "accept",
+        "edit",
+        "reject"
+      ],
+      "note": "Widerspruch zu bestehendem Item \u2014 Konfliktentscheidung, nicht automatisch verwerfen."
+    }
+  ]
+}

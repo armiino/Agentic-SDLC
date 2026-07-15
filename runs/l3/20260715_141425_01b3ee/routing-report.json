@@ -1,0 +1,726 @@
+{
+  "total": 13,
+  "byClass": {
+    "Contradicted": 2,
+    "SupportedAnchored": 7,
+    "Unreferenced": 4
+  },
+  "items": [
+    {
+      "candidate": {
+        "candidateId": "CAND-001",
+        "targetType": "requirement",
+        "text": "Vor Projektstart ist verbindlich festzulegen, welche Inhalte zum MVP-Kernumfang der Kommunikationsunterst\u00FCtzung geh\u00F6ren und welche Teile der vollst\u00E4ndigen Bewohnerdokumentation ausdr\u00FCcklich nicht in die App \u00FCbernommen werden; das Ergebnis ist als abgegrenzter Funktions- und Datenkatalog pro Profilbereich zu dokumentieren.",
+        "rationale": "Die Evidenz beschreibt die L\u00F6sung gleichzeitig als Kommunikations-Nachschlagewerk und nennt offen, dass keine ausufernde Voll-Dokumentation entstehen soll. Ohne explizite Scope-Grenze bleibt unklar, welche Inhalte entwickelt, migriert und gepflegt werden sollen.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-01",
+          "REQ-45",
+          "ARCH-03"
+        ],
+        "gapCategory": "business-goals",
+        "impactIfMissing": "Das Projekt startet ohne belastbaren MVP-Zuschnitt; Umfang, Datenmodell und Priorisierung wachsen unkontrolliert und die eigentliche Kommunikationsunterst\u00FCtzung wird durch Dokumentationsanforderungen verdr\u00E4ngt.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-45",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Anker l\u00E4sst offen, ob die App eine vollst\u00E4ndige Dokumentation \u00FCbernehmen soll und fordert Kl\u00E4rung; der Kandidat verlangt jedoch eine verbindliche Festlegung vor Projektstart und eine Dokumentation als abgegrenzter Katalog, was \u00FCber die Offenheit hinausgeht."
+        },
+        {
+          "itemId": "ARCH-05",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Anker fordert Kl\u00E4rung und begrenzten Umfang, l\u00E4sst aber offen, ob und wie verbindlich vor Projektstart festgelegt wird; der Kandidat verlangt eine verbindliche Festlegung und Dokumentation, was den Anker unzul\u00E4ssig verst\u00E4rkt."
+        },
+        {
+          "itemId": "ARCH-03",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die L\u00F6sung als Wissensspeicher f\u00FCr Kommunikationsweisen, tr\u00E4gt aber nicht die Forderung nach verbindlicher Festlegung und Dokumentation des MVP-Kernumfangs."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Contradicted",
+      "keptAnchorIds": [
+        "REQ-45",
+        "ARCH-05"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-002",
+        "targetType": "requirement",
+        "text": "Es ist ein rollen- und einrichtungsbezogenes Berechtigungskonzept zu spezifizieren, das f\u00FCr Admins, Mitarbeiter, Angeh\u00F6rige und Bewohner je Profilbereich festlegt, wer Profile sehen, Inhalte anlegen, \u00E4ndern, freigeben oder l\u00F6schen darf; Zugriffe \u00FCber Einrichtungsgrenzen hinweg sind standardm\u00E4\u00DFig zu unterbinden.",
+        "rationale": "Zwar sind Rollen und einzelne Rechte grob benannt, aber die konkrete Zugriffsmatrix f\u00FCr sensible Profilinhalte und zus\u00E4tzliche Stakeholder fehlt. Gerade wegen Angeh\u00F6rigen- und Bewohnerzugriffen reicht eine grobe Rollenbeschreibung nicht aus.",
+        "assumptions": [],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-04",
+          "REQ-05",
+          "REQ-37",
+          "REQ-38",
+          "ARCH-07"
+        ],
+        "gapCategory": "actors-permissions",
+        "impactIfMissing": "Es entstehen widerspr\u00FCchliche Implementierungen von Sichtbarkeit und Bearbeitung; sensible Bewohnerdaten k\u00F6nnten f\u00FCr falsche Personen sichtbar oder legitime Beitr\u00E4ge blockiert sein.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-33",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker fordert rollenbasierte Accounts mit unterschiedlichen Rechten, der Kandidat konkretisiert dies zu einem detaillierten Berechtigungskonzept mit Profilbereichsrechten, was plausibel folgt."
+        },
+        {
+          "itemId": "REQ-37",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker verlangt einrichtungsbezogene Zugriffsbeschr\u00E4nkungen, der Kandidat fordert ein Berechtigungskonzept mit genau dieser Einschr\u00E4nkung, was klar getragen wird."
+        },
+        {
+          "itemId": "ARCH-07",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker beschreibt rollenbasierte Accounts mit differenzierten Rechten und Admin-only Accountanlage; der Kandidat fordert ein Berechtigungskonzept mit diesen Details, was plausibel folgt."
+        },
+        {
+          "itemId": "ARCH-10",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker fordert einrichtungsbezogene Zugriffsbeschr\u00E4nkungen mit technischer Umsetzung offen; der Kandidat fordert ein Berechtigungskonzept mit genau dieser Einschr\u00E4nkung, was getragen wird."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-33",
+        "REQ-37",
+        "ARCH-07",
+        "ARCH-10"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-003",
+        "targetType": "requirement",
+        "text": "F\u00FCr alle Eingabedialoge zum Anlegen und Erweitern von Profilen, About-Me-Inhalten, Bildern und No-Go-Eintr\u00E4gen sind Pflichtfelder, zul\u00E4ssige Formate, maximale Dateigr\u00F6\u00DFen sowie das Verhalten bei leeren, fehlerhaften oder unvollst\u00E4ndigen Eingaben festzulegen; unvollst\u00E4ndige Eintr\u00E4ge d\u00FCrfen nicht stillschweigend gespeichert werden.",
+        "rationale": "Die Evidenz beschreibt zahlreiche Erfassungsfunktionen, aber keine Regeln f\u00FCr Datenqualit\u00E4t oder Fehlersituationen. F\u00FCr ein startf\u00E4higes Projekt m\u00FCssen diese Interaktions- und Validierungsregeln vorliegen.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-10",
+          "REQ-13",
+          "REQ-14",
+          "REQ-16"
+        ],
+        "gapCategory": "input-validation",
+        "impactIfMissing": "Die Teams implementieren Formulare uneinheitlich; es entstehen unbrauchbare oder inkonsistente Bewohnerprofile und Fehlerf\u00E4lle werden erst im Test oder Betrieb sichtbar.",
+        "requiresHumanDecision": false
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-10",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt das Anlegen neuer Profile mit Bild, Name und Beschreibung, tr\u00E4gt aber nicht die detaillierten Anforderungen an Pflichtfelder, Formate, Dateigr\u00F6\u00DFen und Fehlerverhalten."
+        },
+        {
+          "itemId": "REQ-13",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt nur die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, tr\u00E4gt aber keine Anforderungen zu Pflichtfeldern, zul\u00E4ssigen Formaten, Dateigr\u00F6\u00DFen oder Verhalten bei fehlerhaften Eingaben."
+        },
+        {
+          "itemId": "REQ-16",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Erweiterbarkeit der No-Go-Seite per Plus-Button, tr\u00E4gt aber keine Anforderungen zu Pflichtfeldern, Formaten, Dateigr\u00F6\u00DFen oder Eingabeverhalten."
+        },
+        {
+          "itemId": "ARCH-19",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, tr\u00E4gt aber keine Anforderungen zu Pflichtfeldern, zul\u00E4ssigen Formaten, Dateigr\u00F6\u00DFen oder Eingabeverhalten."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-004",
+        "targetType": "requirement",
+        "text": "F\u00FCr nutzergenerierte Inhalte ist ein Zustandsmodell festzulegen, das mindestens Entwurf, ver\u00F6ffentlicht, ge\u00E4ndert und entfernt/archiviert umfasst, sowie regelt, ob neue oder ge\u00E4nderte Beitr\u00E4ge sofort sichtbar sind, ob Benachrichtigungen ausgel\u00F6st werden und wie Konflikte bei nahezu gleichzeitigen \u00C4nderungen behandelt werden.",
+        "rationale": "Mehrere Rollen k\u00F6nnen Inhalte erg\u00E4nzen, zus\u00E4tzlich ist eine Benachrichtigung bei neuen Inhalten angedacht. Ohne definiertes Lebenszyklus- und Konfliktverhalten bleibt unklar, wann Inhalte sichtbar sind und wie \u00DCberschneidungen behandelt werden.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-13",
+          "REQ-31",
+          "REQ-35",
+          "ARCH-19"
+        ],
+        "gapCategory": "state-transitions",
+        "impactIfMissing": "Es drohen Daten\u00FCberschreibungen, uneinheitliche Sichtbarkeit neuer Informationen und schwer nachvollziehbare Seiteneffekte bei \u00C4nderungen im laufenden Betrieb.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-13",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, tr\u00E4gt aber keine Anforderungen zu Zustandsmodellen, Sichtbarkeit, Benachrichtigungen oder Konfliktbehandlung."
+        },
+        {
+          "itemId": "REQ-31",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt eine optionale Benachrichtigungsfunktion bei neuen Inhalten, tr\u00E4gt aber nicht die umfassenden Anforderungen an ein Zustandsmodell und Konfliktbehandlung."
+        },
+        {
+          "itemId": "ARCH-19",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Erweiterbarkeit von Profil- und Kommunikationsinhalten, tr\u00E4gt aber keine Anforderungen zu Zustandsmodellen, Sichtbarkeit, Benachrichtigungen oder Konfliktbehandlung."
+        },
+        {
+          "itemId": "ARCH-20",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die dynamische Hinzuf\u00FCgung von Videoinhalten, tr\u00E4gt aber keine Anforderungen zu Zustandsmodellen, Sichtbarkeit, Benachrichtigungen oder Konfliktbehandlung."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-005",
+        "targetType": "requirement",
+        "text": "Vor Produktivstart ist ein Datenschutz- und Datenlebenszykluskonzept festzulegen, das f\u00FCr Bilder, Profildaten und aus Akten \u00FCbernommene Informationen Einwilligungsnachweise, Speicherort, Aufbewahrungsdauer, L\u00F6schregeln bei Widerruf oder Auszug, sowie Export- oder Anonymisierungsbedarf pro Bewohnerprofil definiert.",
+        "rationale": "Die Evidenz benennt sensible Datenquellen, Bildnutzung und Datenschutzfragen, aber keine Regeln f\u00FCr Aufbewahrung und L\u00F6schung. F\u00FCr personenbezogene Bewohnerdaten ist dies vor Projektstart wesentlich.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-46",
+          "REQ-48",
+          "REQ-49",
+          "ARCH-27",
+          "ARCH-34"
+        ],
+        "gapCategory": "data-lifecycle",
+        "impactIfMissing": "Die L\u00F6sung k\u00F6nnte personenbezogene Daten ohne rechtssicheren Lebenszyklus speichern; sp\u00E4tere L\u00F6sch- oder Auskunftspflichten w\u00E4ren technisch nicht oder nur mit hohem Aufwand erf\u00FCllbar.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-48",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker fordert Kl\u00E4rung von Datenschutz und Zustimmung f\u00FCr Bilder vor Nutzung, was das Risiko eines Datenschutz- und Datenlebenszykluskonzepts mit Einwilligungsnachweisen und L\u00F6schregeln plausibel tr\u00E4gt."
+        },
+        {
+          "itemId": "REQ-49",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker kl\u00E4rt nur, dass Einsicht in Bewohnerakten wegen Datenschutz unklar ist und gekl\u00E4rt werden muss, tr\u00E4gt aber nicht die detaillierte Forderung nach einem umfassenden Datenschutz- und Datenlebenszykluskonzept mit Einwilligungsnachweisen, Speicherort, Aufbewahrungsdauer, L\u00F6schregeln, Export- oder Anonymisierungsbedarf."
+        },
+        {
+          "itemId": "ARCH-26",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker stellt nur fest, dass Einsicht in Bewohnerakten wegen Datenschutz unklar ist und gekl\u00E4rt werden muss, tr\u00E4gt aber nicht die umfassende Forderung nach einem Datenschutz- und Datenlebenszykluskonzept mit den genannten Details."
+        },
+        {
+          "itemId": "ARCH-27",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Kl\u00E4rung von Datenschutz und Zustimmung f\u00FCr Bilder zur Nutzung in der App, tr\u00E4gt aber nicht das umfassende Datenschutz- und Datenlebenszykluskonzept mit Einwilligungsnachweisen, Speicherort, Aufbewahrungsdauer, L\u00F6schregeln, Export- oder Anonymisierungsbedarf."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-48"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-006",
+        "targetType": "requirement",
+        "text": "Es sind verbindliche Schutzma\u00DFnahmen gegen Missbrauch zu definieren, darunter abgesicherte Authentisierung, Protokollierung administrativer Rechte\u00E4nderungen, Schutz vor unbefugtem Zugriff auf Bewohnerprofile bei Ger\u00E4teverlust sowie Beschr\u00E4nkungen gegen unautorisierte Einsicht in einrichtungsfremde oder besonders sensible Inhalte.",
+        "rationale": "Die App verarbeitet hochsensible Bewohnerinformationen, sieht Rollenmodelle und Cloud-Speicherung vor, beschreibt aber keine Missbrauchs- oder Schutzanforderungen. Diese Linse ist zudem verpflichtend.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-27",
+          "REQ-37",
+          "REQ-48",
+          "REQ-49",
+          "ARCH-34"
+        ],
+        "gapCategory": "security-misuse",
+        "impactIfMissing": "Bereits ein einzelner Ger\u00E4teverlust, Fehlkonfiguration oder unautorisierter Zugriff kann zu Datenschutzverletzungen und gravierenden Vertrauens- und Compliance-Sch\u00E4den f\u00FChren.",
+        "requiresHumanDecision": false
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-33",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert rollenbasierte Accounts mit unterschiedlichen Rechten, tr\u00E4gt aber nicht die weitergehenden Schutzma\u00DFnahmen wie Protokollierung administrativer Rechte\u00E4nderungen, Schutz bei Ger\u00E4teverlust oder Beschr\u00E4nkungen gegen unautorisierte Einsicht."
+        },
+        {
+          "itemId": "REQ-37",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker fordert einrichtungsbezogene Zugriffsbeschr\u00E4nkungen, was die im Risiko genannten Beschr\u00E4nkungen gegen unautorisierte Einsicht in einrichtungsfremde Inhalte plausibel tr\u00E4gt."
+        },
+        {
+          "itemId": "REQ-51",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die Datenbanktechnologie und offene Fragen zur lokalen Speicherung, tr\u00E4gt aber nicht die definierten Schutzma\u00DFnahmen gegen Missbrauch."
+        },
+        {
+          "itemId": "ARCH-10",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker fordert einrichtungsbezogene Zugriffsbeschr\u00E4nkungen, was die im Risiko genannten Schutzma\u00DFnahmen gegen unautorisierte Einsicht plausibel tr\u00E4gt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-37",
+        "ARCH-10"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-007",
+        "targetType": "requirement",
+        "text": "Zus\u00E4tzlich ist festzulegen, wie sensible Bewohnerdaten gegen interne Fehlbedienung und \u00FCberm\u00E4\u00DFige Einsicht gesch\u00FCtzt werden: mindestens durch rollenabh\u00E4ngige Sichtbarkeitsstufen f\u00FCr Profilbereiche, nachvollziehbare Anzeige, wer Inhalte zuletzt ge\u00E4ndert hat, und eine pr\u00FCfbare Protokollierung von Zugriffen auf besonders sch\u00FCtzenswerte Inhalte wie No-Go- oder Akteninformationen.",
+        "rationale": "Neben externem Missbrauch ist im Pflegekontext auch unberechtigte oder unn\u00F6tige interne Einsicht in sensible Inhalte plausibel. Die vorhandene Evidenz beschreibt solche Schutzmechanismen noch nicht, obwohl mehrere Rollen mit unterschiedlichem Informationsbedarf vorgesehen sind.",
+        "assumptions": [],
+        "intent": "extension",
+        "basedOn": [
+          "REQ-15",
+          "REQ-37",
+          "REQ-46",
+          "REQ-49",
+          "ARCH-17"
+        ],
+        "gapCategory": "security-misuse",
+        "impactIfMissing": "Selbst bei formal korrekter Anmeldung k\u00F6nnen sensible Bewohnerinformationen unn\u00F6tig breit eingesehen oder ohne Nachvollziehbarkeit verwendet werden; Datenschutzvorf\u00E4lle und Vertrauensverlust in den Einrichtungen werden wahrscheinlicher.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-15",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt eine No-Go-Seite mit Verboten in Gegenwart des Bewohners, tr\u00E4gt aber nicht die weitergehenden Schutzma\u00DFnahmen wie rollenabh\u00E4ngige Sichtbarkeitsstufen, \u00C4nderungsnachvollziehbarkeit und Protokollierung von Zugriffen auf besonders sch\u00FCtzenswerte Inhalte."
+        },
+        {
+          "itemId": "REQ-33",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Die Anforderung fordert rollenbasierte Accounts mit unterschiedlichen Rechten, was die Grundlage f\u00FCr rollenabh\u00E4ngige Sichtbarkeitsstufen und Zugriffskontrolle bildet, wie im Risiko beschrieben."
+        },
+        {
+          "itemId": "ARCH-17",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt das Vorhandensein einer No-Go-Seite mit kritischen Dingen, tr\u00E4gt aber nicht zur Festlegung von Schutzma\u00DFnahmen gegen Fehlbedienung oder Einsicht bei."
+        },
+        {
+          "itemId": "ARCH-24",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt das Vorhandensein von Akten als Wissensquelle, tr\u00E4gt aber nicht zur Festlegung von Schutzma\u00DFnahmen gegen Fehlbedienung oder Einsicht bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-33"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-008",
+        "targetType": "requirement",
+        "text": "Es ist zu entscheiden und technisch zu spezifizieren, ob und wie bestehende Bewohnerakten oder andere Dokumentationsquellen in die App \u00FCbernommen werden: manuelle \u00DCbertragung, strukturierte Migration oder reine Referenznutzung; dabei sind Datenquellen, Verantwortlichkeiten und zul\u00E4ssige Importformate festzulegen.",
+        "rationale": "Die Evidenz nennt Akten als relevante Wissensquelle, l\u00E4sst aber offen, ob und wie diese Quelle in die L\u00F6sung einflie\u00DFt. Diese Kl\u00E4rung beeinflusst Architektur, Datenmodell und Einf\u00FChrungsaufwand.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-46",
+          "REQ-49",
+          "ARCH-24",
+          "ARCH-26"
+        ],
+        "gapCategory": "external-integration",
+        "impactIfMissing": "Das Projekt plant Datenmodell und Einf\u00FChrung ohne belastbare Annahme zur Erstbef\u00FCllung; notwendige Schnittstellen oder Migrationsarbeiten werden zu sp\u00E4t erkannt.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-46",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt das Vorhandensein und Ber\u00FCcksichtigung von Akten als Wissensquelle, aber nicht die technische Spezifikation oder Entscheidung zur \u00DCbernahme in die App."
+        },
+        {
+          "itemId": "REQ-49",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung stellt die Datenschutzunsicherheit bei Einsicht in Bewohnerakten fest, tr\u00E4gt aber nicht zur technischen Spezifikation der \u00DCbernahme von Akten bei."
+        },
+        {
+          "itemId": "ARCH-24",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung beschreibt das Vorhandensein von Akten als Wissensquelle, tr\u00E4gt aber nicht zur technischen Spezifikation der \u00DCbernahme bei."
+        },
+        {
+          "itemId": "ARCH-26",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung stellt die Datenschutzunsicherheit bei Einsicht in Bewohnerakten fest, tr\u00E4gt aber nicht zur technischen Spezifikation der \u00DCbernahme bei."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-009",
+        "targetType": "requirement",
+        "text": "F\u00FCr den Einsatz in Einrichtungen ist festzulegen, welche Kernfunktionen bei instabiler oder fehlender Internetverbindung verf\u00FCgbar bleiben m\u00FCssen, wie lokale Zwischenspeicherung auf dem Ger\u00E4t abgesichert wird und wie Synchronisation bzw. Wiederherstellung nach Verbindungsr\u00FCckkehr erfolgt.",
+        "rationale": "Die vorgesehene Firebase-Nutzung und die offene lokale Speicherung zeigen, dass Betriebs- und Offline-Verhalten noch nicht definiert ist. Gerade im Arbeitsalltag darf der Zugriff auf Kernwissen nicht vollst\u00E4ndig an dauerhafte Konnektivit\u00E4t gebunden sein.",
+        "assumptions": [],
+        "intent": "extension",
+        "basedOn": [
+          "ARCH-34",
+          "REQ-51",
+          "REQ-01"
+        ],
+        "gapCategory": "resilience-operations",
+        "impactIfMissing": "Im Realbetrieb kann die App in Versorgungssituationen unbrauchbar werden; zus\u00E4tzlich drohen Datenverlust, Dubletten oder unsichere lokale Kopien nach Verbindungsabbr\u00FCchen.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-51",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Die Anforderung nennt Firebase Firestore als Datenbank und die Notwendigkeit der Konkretisierung lokaler Speicherung und Zwischenspeicherung, was die Grundlage f\u00FCr das Risiko bez\u00FCglich Offline-Funktionalit\u00E4t und Synchronisation bildet."
+        },
+        {
+          "itemId": "ARCH-34",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker nennt Firebase Firestore und die Notwendigkeit der Konkretisierung der lokalen Zwischenspeicherung, was den Kandidaten mit den genannten Aspekten direkt tr\u00E4gt."
+        },
+        {
+          "itemId": "REQ-01",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fokussiert auf Unterst\u00FCtzung beim Verst\u00E4ndnis von Bewohnern, erw\u00E4hnt aber nichts zu Offline-Funktionalit\u00E4ten oder Zwischenspeicherung."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-51",
+        "ARCH-34"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-010",
+        "targetType": "requirement",
+        "text": "Vor der Umsetzung sind messbare Qualit\u00E4tsziele f\u00FCr die MVP-Nutzung festzulegen, mindestens f\u00FCr Anzahl der Einrichtungen, Nutzer und Bewohnerprofile, Such- und Ladezeiten der Profil\u00FCbersicht sowie maximale Wartezeit bis neu hinzugef\u00FCgte Inhalte f\u00FCr berechtigte Nutzer sichtbar sind.",
+        "rationale": "Die L\u00F6sung soll schnelles Nachschlagen und Einarbeitung unterst\u00FCtzen, aber es fehlen Mengenger\u00FCst und Performanceziele. Ohne diese Ziele kann die Architektur nicht angemessen ausgelegt oder bewertet werden.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-07",
+          "REQ-09",
+          "ARCH-25",
+          "ARCH-36"
+        ],
+        "gapCategory": "quality-attributes",
+        "impactIfMissing": "Performanceprobleme werden erst sp\u00E4t sichtbar; die App verfehlt ihren Kernnutzen, wenn Suchen, Laden und Auffinden von Informationen im Alltag zu langsam sind.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-07",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert eine Suchfunktion auf der Profil\u00FCbersichtsseite, tr\u00E4gt aber keine Qualit\u00E4tsziele oder Messgr\u00F6\u00DFen f\u00FCr MVP-Nutzung."
+        },
+        {
+          "itemId": "REQ-31",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt eine optionale Popup-Benachrichtigung bei neuen Inhalten, tr\u00E4gt aber keine Qualit\u00E4tsziele oder Messgr\u00F6\u00DFen."
+        },
+        {
+          "itemId": "ARCH-12",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert eine Suchfunktion auf der Profil\u00FCbersichtsseite, tr\u00E4gt aber keine Qualit\u00E4tsziele oder Messgr\u00F6\u00DFen f\u00FCr MVP-Nutzung."
+        },
+        {
+          "itemId": "ARCH-36",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt den Nutzen f\u00FCr neue Mitarbeiter, Bewohner schneller zu verstehen, tr\u00E4gt aber keine Qualit\u00E4tsziele oder Messgr\u00F6\u00DFen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-011",
+        "targetType": "requirement",
+        "text": "Der Nutzungskontext ist in verbindliche Bedienbarkeitsanforderungen zu \u00FCberf\u00FChren: Zielger\u00E4te, minimale Bildschirmgr\u00F6\u00DFen, Bedienung durch neue Mitarbeiter unter Zeitdruck sowie der konkrete Umfang barrierearmer Eingabe- und Darstellungsformen f\u00FCr Bewohneraccounts sind festzulegen.",
+        "rationale": "Die Evidenz nennt neue Mitarbeiter als MVP-Zielgruppe und alternative Eingaben f\u00FCr beeintr\u00E4chtigte Nutzer, konkretisiert aber weder Einsatzger\u00E4te noch Bedienbarkeitskriterien. Diese Informationen sind f\u00FCr UI- und Technikentscheidungen essenziell.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-03",
+          "REQ-05",
+          "REQ-32",
+          "ARCH-36"
+        ],
+        "gapCategory": "usage-context",
+        "impactIfMissing": "Die entwickelte L\u00F6sung kann an realen Ger\u00E4ten oder in Stresssituationen schwer bedienbar sein und wichtige Nutzergruppen wie Bewohner nicht angemessen unterst\u00FCtzen.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-03",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt Bedienbarkeitsanforderungen und Nutzungskontext, tr\u00E4gt aber nicht die Notwendigkeit verbindlicher Festlegungen."
+        },
+        {
+          "itemId": "REQ-32",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker nennt alternative Eingabemethoden, tr\u00E4gt aber nicht die verbindliche Festlegung von Bedienbarkeitsanforderungen."
+        },
+        {
+          "itemId": "REQ-40",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Kandidat fordert verbindliche Festlegungen zu Zielger\u00E4ten, Bildschirmgr\u00F6\u00DFen, Bedienung unter Zeitdruck und barrierearmen Eingabe-/Darstellungsformen, w\u00E4hrend der Anker nur allgemeine Designhinweise zu Barrierefreiheit (Schriftgr\u00F6\u00DFe, Kontrast, Farben) gibt, ohne verbindliche Anforderungen oder Kontextfestlegungen."
+        },
+        {
+          "itemId": "REQ-42",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Kandidat fordert verbindliche Bedienbarkeitsanforderungen inklusive Zielger\u00E4te und Bedienungskontext, der Anker behandelt nur die Frage, ob die App auf Tablets laufen soll, ohne Anforderungen an Bedienbarkeit oder Kontextfestlegung."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Contradicted",
+      "keptAnchorIds": [
+        "REQ-40"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-012",
+        "targetType": "requirement",
+        "text": "Vor Projektstart ist verbindlich zu kl\u00E4ren, auf welcher Rechtsgrundlage Bewohnerdaten, Bilder und Beitr\u00E4ge von Angeh\u00F6rigen verarbeitet werden und welche organisatorischen Freigaben, Einwilligungsprozesse und Nachweisformen daf\u00FCr in den Einrichtungen eingehalten werden m\u00FCssen.",
+        "rationale": "Die Evidenz weist mehrfach auf Datenschutz und Zustimmungen hin, aber nicht auf den konkreten organisatorisch-rechtlichen Rahmen. F\u00FCr ein sensibles Pflegeumfeld m\u00FCssen diese Vorgaben vor der Umsetzung bekannt sein.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-04",
+          "REQ-48",
+          "REQ-49",
+          "ARCH-27"
+        ],
+        "gapCategory": "constraints-compliance",
+        "impactIfMissing": "Das Projekt k\u00F6nnte Funktionen implementieren, die in den Einrichtungen nicht rechtssicher betrieben oder organisatorisch nicht freigegeben werden k\u00F6nnen.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-48",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Kandidat fordert verbindliche Kl\u00E4rung der Rechtsgrundlage und organisatorischer Prozesse f\u00FCr Bewohnerdaten und Bilder, der Anker verlangt vorab Kl\u00E4rung von Datenschutz und Zustimmung f\u00FCr Bilder, was den Kandidaten tr\u00E4gt."
+        },
+        {
+          "itemId": "REQ-49",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Kandidat fordert verbindliche Kl\u00E4rung der Rechtsgrundlage und organisatorischer Freigaben f\u00FCr Bewohnerdaten, der Anker stellt die Unklarheit der Einsicht in Bewohnerakten wegen Datenschutz dar und fordert Kl\u00E4rung, was den Kandidaten tr\u00E4gt."
+        },
+        {
+          "itemId": "ARCH-26",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Kandidat fordert verbindliche Kl\u00E4rung der Rechtsgrundlage und organisatorischer Prozesse, der Anker beschreibt die Unklarheit der Einsicht in Bewohnerakten wegen Datenschutz und fordert Kl\u00E4rung, was den Kandidaten tr\u00E4gt."
+        },
+        {
+          "itemId": "ARCH-27",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Kandidat fordert verbindliche Kl\u00E4rung der Rechtsgrundlage und organisatorischer Prozesse, der Anker fordert vorab Kl\u00E4rung von Datenschutz und Zustimmung f\u00FCr Bilder, was den Kandidaten tr\u00E4gt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-48",
+        "REQ-49",
+        "ARCH-26",
+        "ARCH-27"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-013",
+        "targetType": "requirement",
+        "text": "Es ist als offene Projektentscheidung vor dem MVP festzulegen, ob Bewohneraccounts, Angeh\u00F6rigenzugriffe, Profil-Neuanlage durch Fachnutzer und sp\u00E4tere Benachrichtigungsfunktionen bereits im ersten Release enthalten sind oder bewusst in sp\u00E4tere Ausbaustufen verschoben werden.",
+        "rationale": "Mehrere Anforderungen sind als gew\u00FCnscht oder kl\u00E4rungsbed\u00FCrftig formuliert, betreffen aber Umfang, Risiko und Einf\u00FChrbarkeit des MVP erheblich. Diese Entscheidungen d\u00FCrfen nicht implizit w\u00E4hrend der Entwicklung fallen.",
+        "assumptions": [],
+        "intent": "gap",
+        "basedOn": [
+          "REQ-04",
+          "REQ-05",
+          "REQ-10",
+          "REQ-31",
+          "REQ-45"
+        ],
+        "gapCategory": "open-decisions",
+        "impactIfMissing": "Release-Planung, Aufwandssch\u00E4tzung und Architektur basieren auf unstabilen Annahmen; kurzfristige Scope-Wechsel gef\u00E4hrden Termine und Qualit\u00E4t.",
+        "requiresHumanDecision": true
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-04",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Kandidat fordert als offene Projektentscheidung vor MVP Festlegung zum Umfang von Bewohneraccounts, Angeh\u00F6rigenzugriffen etc., der Anker beschreibt den Wunsch, dass Angeh\u00F6rige Zugriff erhalten sollen, was den Kandidaten tr\u00E4gt."
+        },
+        {
+          "itemId": "REQ-05",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Kandidat fordert Festlegung, ob Bewohneraccounts mit eingeschr\u00E4nkten Funktionen im ersten Release enthalten sind, der Anker beschreibt einen Bewohner-Account mit eingeschr\u00E4nkten Funktionen als gew\u00FCnschte Anforderung, was den Kandidaten tr\u00E4gt."
+        },
+        {
+          "itemId": "REQ-10",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker REQ-10 fordert Kl\u00E4rung des Anlegens neuer Profile, was die Entscheidung \u00FCber Profil-Neuanlage im MVP betrifft, somit tr\u00E4gt er das Risiko der Projektentscheidung \u00FCber MVP-Inhalte."
+        },
+        {
+          "itemId": "REQ-31",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker REQ-31 beschreibt eine optionale Benachrichtigungsfunktion, deren Aufnahme im MVP unklar ist, was das Risiko der Entscheidung \u00FCber MVP-Inhalte direkt tr\u00E4gt."
+        },
+        {
+          "itemId": "ARCH-36",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker ARCH-36 betont den MVP-relevanten Nutzenfall f\u00FCr neue Mitarbeiter, was die Entscheidung \u00FCber Funktionen im MVP betrifft und somit das Risiko tr\u00E4gt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-04",
+        "REQ-05",
+        "REQ-10",
+        "REQ-31",
+        "ARCH-36"
+      ],
+      "unknownAnchorIds": []
+    }
+  ]
+}

@@ -18,6 +18,8 @@ DotNetEnv.Env.Load(
 
 var runtimeConfig = RunConfig.Load(repoRoot);
 var settings = HostSettings.FromRuntimeConfig(runtimeConfig, repoRoot);
+if (args.Length > 0)
+    args[0] = args[0].Trim();
 
 // Offline-Evaluator (isolierter Bewertungs-Pfad): bewertet ein bestehendes Artefakt mit dem
 // Evaluator, ohne neuen Generierungs-Run / Workflow / Run-Ordner / Change-Note
@@ -444,6 +446,14 @@ if (args.Length > 0 && string.Equals(args[0], "source-claim-selection-spike", St
 if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+if (args.Length > 0)
+{
+    Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
+    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, ledger-build, ledger-adjudicate-ui, review.");
+    Environment.ExitCode = 2;
     return;
 }
 

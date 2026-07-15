@@ -64,7 +64,7 @@ internal sealed class L3AgenticTools
         AIFunctionFactory.Create(CheckLensCoverage, "check_lens_coverage",
             "READ-ONLY Feedback zu DEINEM Kandidatenentwurf: welche Linsen sind über gapCategory adressiert, welche fehlen?"),
         AIFunctionFactory.Create(CheckLensAdequacy, "check_lens_adequacy",
-            "READ-ONLY Oberflächenfeedback zu DEINEM Entwurf: fehlende Begründung, fehlender Impact, unbekannte Kategorie, sehr dünne Pflichtlinse."),
+            "READ-ONLY Substanzfeedback zu DEINEM Entwurf je Linse: substantive, thin, missing, uncertain oder not_applicable."),
         AIFunctionFactory.Create(SaveL3Candidates, "save_l3_candidates",
             "Schreibt DEINE finalen L3-Kandidaten. Rufe es GENAU EINMAL am Ende auf. CandidateIds vergibt der Host stabil.")
     ];
@@ -221,30 +221,111 @@ internal sealed class L3AgenticTools
     {
         var round = Interlocked.Increment(ref _adequacyCheckRounds);
         var items = L3CandidateParsing.AssignIds(ToCandidates(candidates ?? []));
+        var knownLensIds = _spec.LensIds;
         var byLens = _spec.Lenses.Select(l =>
         {
             var lensItems = items.Where(c => string.Equals(c.GapCategory, l.Id, StringComparison.Ordinal)).ToArray();
             var warnings = new List<string>();
-            if (lensItems.Length == 0) warnings.Add("absent");
-            if (l.Mandatory && lensItems.Length == 1) warnings.Add("mandatory_lens_single_candidate_only");
+            if (lensItems.Length == 0)
+            {
+                return new
+                {
+                    lensId = l.Id,
+                    l.Name,
+                    l.Mandatory,
+                    candidateCount = 0,
+                    adequacy = l.Mandatory ? "missing" : "not_applicable",
+                    warnings = l.Mandatory
+                        ? new List<string> { "missing_candidate_for_mandatory_lens" }
+                        : new List<string>(),
+                    guidance = l.Mandatory
+                        ? "Ergaenze mindestens einen projektspezifischen Kandidaten fuer diese Linse oder begruende spaeter im Review, warum sie nicht anwendbar ist."
+                        : "Optionale Linse ohne Kandidat; nur relevant, wenn sie fuer diese Umwelt fachlich passt.",
+                    likelyRequiresHumanDecisionCandidateIds = Array.Empty<string>()
+                };
+            }
+
             if (lensItems.Any(c => string.IsNullOrWhiteSpace(c.Rationale))) warnings.Add("missing_rationale");
             if (lensItems.Any(c => string.IsNullOrWhiteSpace(c.ImpactIfMissing))) warnings.Add("missing_impact_if_missing");
             if (lensItems.Any(c => (c.BasedOn?.Count ?? 0) == 0)) warnings.Add("missing_based_on");
+            if (lensItems.Any(c => string.IsNullOrWhiteSpace(c.Intent))) warnings.Add("missing_intent");
+            if (lensItems.Any(c => c.Text.Length < 80)) warnings.Add("candidate_text_too_short_for_review");
+            if (lensItems.Any(c => !knownLensIds.Contains(c.GapCategory ?? string.Empty))) warnings.Add("unknown_gap_category");
+            if (l.Mandatory && lensItems.Length == 1) warnings.Add("mandatory_lens_single_candidate_only");
+
+            var humanDecisionWarnings = lensItems
+                .Where(c => c.RequiresHumanDecision != true && LooksLikeHumanDecision(c))
+                .Select(c => c.CandidateId)
+                .ToArray();
+            if (humanDecisionWarnings.Length > 0) warnings.Add("likely_requires_human_decision");
+
+            var hasCoreFields = lensItems.All(c =>
+                !string.IsNullOrWhiteSpace(c.Rationale) &&
+                !string.IsNullOrWhiteSpace(c.ImpactIfMissing) &&
+                (c.BasedOn?.Count ?? 0) > 0);
+            var hasReviewableText = lensItems.All(c => c.Text.Length >= 80);
+            var hasLikelyHumanDecisionMiss = humanDecisionWarnings.Length > 0;
+            var adequacy = warnings.Count == 0
+                ? "substantive"
+                : hasCoreFields && hasReviewableText && !hasLikelyHumanDecisionMiss
+                    ? "thin"
+                    : "uncertain";
+
             return new
             {
                 lensId = l.Id,
                 l.Name,
                 l.Mandatory,
                 candidateCount = lensItems.Length,
-                status = warnings.Count == 0 ? "surface_ok" : "needs_agent_review",
-                warnings
+                adequacy,
+                warnings,
+                guidance = adequacy switch
+                {
+                    "thin" => "Pruefe, ob die Linse nur formal abgedeckt ist. Ergaenze Impact, Projektspezifik oder zweiten Kandidaten, falls die Luecke wesentlich ist.",
+                    "uncertain" => "Ueberarbeite vor dem Speichern: Kernfelder, basedOn, Human-Decision-Flag oder Kategorie wirken nicht belastbar.",
+                    _ => "Wirkt als reviewbarer, substanzieller Kandidatensatz fuer diese Linse."
+                },
+                likelyRequiresHumanDecisionCandidateIds = humanDecisionWarnings
             };
         }).ToArray();
         var unknown = items.Where(c => !string.IsNullOrWhiteSpace(c.GapCategory) && !_spec.LensIds.Contains(c.GapCategory!))
             .Select(c => new { c.CandidateId, c.GapCategory })
             .ToArray();
-        _run.AppendEvent(new { type = "L3_AGENTIC_TOOL_CHECK_LENS_ADEQUACY", runId = _run.RunId, round, candidates = items.Count, lensesWithWarnings = byLens.Count(l => l.warnings.Count > 0), unknownCategories = unknown.Length, timestampUtc = DateTime.UtcNow });
-        return JsonSerializer.Serialize(new { round, note = "Heuristik: Oberflächenfeedback fuer Agentenrevision, keine finale fachliche Freigabe.", byLens, unknownCategories = unknown }, Json);
+        _run.AppendEvent(new
+        {
+            type = "L3_AGENTIC_TOOL_CHECK_LENS_ADEQUACY",
+            runId = _run.RunId,
+            round,
+            candidates = items.Count,
+            substantive = byLens.Count(l => l.adequacy == "substantive"),
+            thin = byLens.Count(l => l.adequacy == "thin"),
+            missing = byLens.Count(l => l.adequacy == "missing"),
+            uncertain = byLens.Count(l => l.adequacy == "uncertain"),
+            notApplicable = byLens.Count(l => l.adequacy == "not_applicable"),
+            unknownCategories = unknown.Length,
+            timestampUtc = DateTime.UtcNow
+        });
+        return JsonSerializer.Serialize(new
+        {
+            round,
+            note = "Heuristik: leichtes RE-Substanzfeedback fuer Agentenrevision, keine finale fachliche Freigabe.",
+            rubric = new[] { "substantive", "thin", "missing", "uncertain", "not_applicable" },
+            byLens,
+            unknownCategories = unknown
+        }, Json);
+    }
+
+    private static bool LooksLikeHumanDecision(L3Candidate candidate)
+    {
+        var text = string.Join(' ', candidate.Text, candidate.Rationale ?? string.Empty, candidate.ImpactIfMissing ?? string.Empty);
+        var markers = new[]
+        {
+            "entscheid", "festzulegen", "klaeren", "klären", "scope", "mvp", "prior", "rolle", "rollen",
+            "berechtigung", "datenschutz", "rechtsgrundlage", "compliance", "einwilligung", "betrieb",
+            "offline", "synchron", "import", "schnittstelle", "verantwort", "angehoerige", "angehörige",
+            "bewohner", "open-world"
+        };
+        return markers.Any(m => text.Contains(m, StringComparison.OrdinalIgnoreCase));
     }
 
     private string SaveL3Candidates(L3CandidateDraftDto[] candidates)
