@@ -329,6 +329,41 @@ if (args.Length > 0 && string.Equals(args[0], "l3-review", StringComparison.Ordi
     return;
 }
 
+// Project State: JSON-first fachlicher Projektzustand aus L1/L2-Artefakten + akzeptierten L3-Promotions.
+if (args.Length > 0 && string.Equals(args[0], "project-state-build", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState.ProjectStateBuildRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// L4-v1: Project State -> kanonische Requirements-Baseline + Traceability-Projektionen.
+if (args.Length > 0 && string.Equals(args[0], "l4-baseline", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.L4BaselineRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// L4 ConsolidationPlan: Seed/Check fuer agentische Konsolidierung mit deterministischem Gate.
+if (args.Length > 0 && string.Equals(args[0], "l4-consolidation", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.L4ConsolidationRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L4 Human-Review: ConsolidationPlan-Operationen mit generischer HumanReview-UI autorisieren.
+if (args.Length > 0 && string.Equals(args[0], "l4-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.L4ReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L4 Apply: freigegebenen ConsolidationPlan deterministisch zur kanonischen Requirements-Baseline anwenden.
+if (args.Length > 0 && string.Equals(args[0], "l4-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.L4ApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
 // A2 (Demonstration): Nicht-dekorativ-Beleg — supported-Rate der ledger-geerdeten requirements.md gegen den consumable.
 if (args.Length > 0 && string.Equals(args[0], "ledger-cite-fidelity", StringComparison.OrdinalIgnoreCase))
 {
@@ -452,7 +487,7 @@ if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.Ordinal
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
-    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, ledger-build, ledger-adjudicate-ui, review.");
+    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, l4-baseline, l4-consolidation, l4-review, l4-apply, ledger-build, ledger-adjudicate-ui, review.");
     Environment.ExitCode = 2;
     return;
 }

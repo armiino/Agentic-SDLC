@@ -1,0 +1,369 @@
+diff --git a/.gitignore b/.gitignore
+index a2a2da3..6ecfd6b 100644
+--- a/.gitignore
++++ b/.gitignore
+@@ -43,6 +43,33 @@ Icon?
+ .env
+ .env.local
+ .env.old
++
++# --- Local working notes ---
++todos.md
++infoforclaude.txt
++CLAUDE.md
+ Phasen_KNOWHOW
+ phase1notes
+ phase2notes
++analyse
++commit-rules.md
++NextStep
++LedgerProgressDocumentation
++
++AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/docs
++AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/makerchecker/Plan.md
++AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/chapter-c
++AgenticSdlc.Host/Phases/InterviewAgent/InterviewAgent-BatchLoop-FuturePlan.md
++
++# --- Analysis prose (write thesis yourself; cite raw runs/results, not this) ---
++# Keeps raw evidence + README + Fixtures committed; excludes only the evidence.md prose summaries.
++thesis-evidence/**
++!thesis-evidence/**/
++!thesis-evidence/**/*.json
++!thesis-evidence/**/*-labels.md
++!thesis-evidence/**/*-handlabels.md
++!thesis-evidence/**/*-adjudication.md
++!thesis-evidence/README.md
++# evidence.md-Zusammenfassungen bleiben privat; zum Mitcommitten naechste Zeile entkommentieren:
++# !thesis-evidence/**/*.md
++# input/eval-labels NICHT mehr ignoriert (Fixtures = Inputs fuer Reproduzierbarkeit -> getrackt)
+diff --git a/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3AgenticTools.cs b/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3AgenticTools.cs
+index 137366b..a223431 100644
+--- a/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3AgenticTools.cs
++++ b/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3AgenticTools.cs
+@@ -64,7 +64,7 @@ internal sealed class L3AgenticTools
+         AIFunctionFactory.Create(CheckLensCoverage, "check_lens_coverage",
+             "READ-ONLY Feedback zu DEINEM Kandidatenentwurf: welche Linsen sind über gapCategory adressiert, welche fehlen?"),
+         AIFunctionFactory.Create(CheckLensAdequacy, "check_lens_adequacy",
+-            "READ-ONLY Oberflächenfeedback zu DEINEM Entwurf: fehlende Begründung, fehlender Impact, unbekannte Kategorie, sehr dünne Pflichtlinse."),
++            "READ-ONLY Substanzfeedback zu DEINEM Entwurf je Linse: substantive, thin, missing, uncertain oder not_applicable."),
+         AIFunctionFactory.Create(SaveL3Candidates, "save_l3_candidates",
+             "Schreibt DEINE finalen L3-Kandidaten. Rufe es GENAU EINMAL am Ende auf. CandidateIds vergibt der Host stabil.")
+     ];
+@@ -221,30 +221,111 @@ internal sealed class L3AgenticTools
+     {
+         var round = Interlocked.Increment(ref _adequacyCheckRounds);
+         var items = L3CandidateParsing.AssignIds(ToCandidates(candidates ?? []));
++        var knownLensIds = _spec.LensIds;
+         var byLens = _spec.Lenses.Select(l =>
+         {
+             var lensItems = items.Where(c => string.Equals(c.GapCategory, l.Id, StringComparison.Ordinal)).ToArray();
+             var warnings = new List<string>();
+-            if (lensItems.Length == 0) warnings.Add("absent");
+-            if (l.Mandatory && lensItems.Length == 1) warnings.Add("mandatory_lens_single_candidate_only");
++            if (lensItems.Length == 0)
++            {
++                return new
++                {
++                    lensId = l.Id,
++                    l.Name,
++                    l.Mandatory,
++                    candidateCount = 0,
++                    adequacy = l.Mandatory ? "missing" : "not_applicable",
++                    warnings = l.Mandatory
++                        ? new List<string> { "missing_candidate_for_mandatory_lens" }
++                        : new List<string>(),
++                    guidance = l.Mandatory
++                        ? "Ergaenze mindestens einen projektspezifischen Kandidaten fuer diese Linse oder begruende spaeter im Review, warum sie nicht anwendbar ist."
++                        : "Optionale Linse ohne Kandidat; nur relevant, wenn sie fuer diese Umwelt fachlich passt.",
++                    likelyRequiresHumanDecisionCandidateIds = Array.Empty<string>()
++                };
++            }
++
+             if (lensItems.Any(c => string.IsNullOrWhiteSpace(c.Rationale))) warnings.Add("missing_rationale");
+             if (lensItems.Any(c => string.IsNullOrWhiteSpace(c.ImpactIfMissing))) warnings.Add("missing_impact_if_missing");
+             if (lensItems.Any(c => (c.BasedOn?.Count ?? 0) == 0)) warnings.Add("missing_based_on");
++            if (lensItems.Any(c => string.IsNullOrWhiteSpace(c.Intent))) warnings.Add("missing_intent");
++            if (lensItems.Any(c => c.Text.Length < 80)) warnings.Add("candidate_text_too_short_for_review");
++            if (lensItems.Any(c => !knownLensIds.Contains(c.GapCategory ?? string.Empty))) warnings.Add("unknown_gap_category");
++            if (l.Mandatory && lensItems.Length == 1) warnings.Add("mandatory_lens_single_candidate_only");
++
++            var humanDecisionWarnings = lensItems
++                .Where(c => c.RequiresHumanDecision != true && LooksLikeHumanDecision(c))
++                .Select(c => c.CandidateId)
++                .ToArray();
++            if (humanDecisionWarnings.Length > 0) warnings.Add("likely_requires_human_decision");
++
++            var hasCoreFields = lensItems.All(c =>
++                !string.IsNullOrWhiteSpace(c.Rationale) &&
++                !string.IsNullOrWhiteSpace(c.ImpactIfMissing) &&
++                (c.BasedOn?.Count ?? 0) > 0);
++            var hasReviewableText = lensItems.All(c => c.Text.Length >= 80);
++            var hasLikelyHumanDecisionMiss = humanDecisionWarnings.Length > 0;
++            var adequacy = warnings.Count == 0
++                ? "substantive"
++                : hasCoreFields && hasReviewableText && !hasLikelyHumanDecisionMiss
++                    ? "thin"
++                    : "uncertain";
++
+             return new
+             {
+                 lensId = l.Id,
+                 l.Name,
+                 l.Mandatory,
+                 candidateCount = lensItems.Length,
+-                status = warnings.Count == 0 ? "surface_ok" : "needs_agent_review",
+-                warnings
++                adequacy,
++                warnings,
++                guidance = adequacy switch
++                {
++                    "thin" => "Pruefe, ob die Linse nur formal abgedeckt ist. Ergaenze Impact, Projektspezifik oder zweiten Kandidaten, falls die Luecke wesentlich ist.",
++                    "uncertain" => "Ueberarbeite vor dem Speichern: Kernfelder, basedOn, Human-Decision-Flag oder Kategorie wirken nicht belastbar.",
++                    _ => "Wirkt als reviewbarer, substanzieller Kandidatensatz fuer diese Linse."
++                },
++                likelyRequiresHumanDecisionCandidateIds = humanDecisionWarnings
+             };
+         }).ToArray();
+         var unknown = items.Where(c => !string.IsNullOrWhiteSpace(c.GapCategory) && !_spec.LensIds.Contains(c.GapCategory!))
+             .Select(c => new { c.CandidateId, c.GapCategory })
+             .ToArray();
+-        _run.AppendEvent(new { type = "L3_AGENTIC_TOOL_CHECK_LENS_ADEQUACY", runId = _run.RunId, round, candidates = items.Count, lensesWithWarnings = byLens.Count(l => l.warnings.Count > 0), unknownCategories = unknown.Length, timestampUtc = DateTime.UtcNow });
+-        return JsonSerializer.Serialize(new { round, note = "Heuristik: Oberflächenfeedback fuer Agentenrevision, keine finale fachliche Freigabe.", byLens, unknownCategories = unknown }, Json);
++        _run.AppendEvent(new
++        {
++            type = "L3_AGENTIC_TOOL_CHECK_LENS_ADEQUACY",
++            runId = _run.RunId,
++            round,
++            candidates = items.Count,
++            substantive = byLens.Count(l => l.adequacy == "substantive"),
++            thin = byLens.Count(l => l.adequacy == "thin"),
++            missing = byLens.Count(l => l.adequacy == "missing"),
++            uncertain = byLens.Count(l => l.adequacy == "uncertain"),
++            notApplicable = byLens.Count(l => l.adequacy == "not_applicable"),
++            unknownCategories = unknown.Length,
++            timestampUtc = DateTime.UtcNow
++        });
++        return JsonSerializer.Serialize(new
++        {
++            round,
++            note = "Heuristik: leichtes RE-Substanzfeedback fuer Agentenrevision, keine finale fachliche Freigabe.",
++            rubric = new[] { "substantive", "thin", "missing", "uncertain", "not_applicable" },
++            byLens,
++            unknownCategories = unknown
++        }, Json);
++    }
++
++    private static bool LooksLikeHumanDecision(L3Candidate candidate)
++    {
++        var text = string.Join(' ', candidate.Text, candidate.Rationale ?? string.Empty, candidate.ImpactIfMissing ?? string.Empty);
++        var markers = new[]
++        {
++            "entscheid", "festzulegen", "klaeren", "klären", "scope", "mvp", "prior", "rolle", "rollen",
++            "berechtigung", "datenschutz", "rechtsgrundlage", "compliance", "einwilligung", "betrieb",
++            "offline", "synchron", "import", "schnittstelle", "verantwort", "angehoerige", "angehörige",
++            "bewohner", "open-world"
++        };
++        return markers.Any(m => text.Contains(m, StringComparison.OrdinalIgnoreCase));
+     }
+ 
+     private string SaveL3Candidates(L3CandidateDraftDto[] candidates)
+diff --git a/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3ReviewAdapter.cs b/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3ReviewAdapter.cs
+index d845b5f..2f4f2b3 100644
+--- a/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3ReviewAdapter.cs
++++ b/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3ReviewAdapter.cs
+@@ -16,6 +16,8 @@ public static class L3ReviewAdapter
+     public const string FieldDecision = "decision";
+     public const string FieldEdited = "editedText";
+     public const string FieldReason = "reason";
++    private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase)
++        { "accept", "edit", "reject", "revise" };
+ 
+     private static IReadOnlyList<ReviewFieldSpec> Schema() =>
+     [
+@@ -23,7 +25,8 @@ public static class L3ReviewAdapter
+             ["accept", "edit", "reject", "revise"], Required: true,
+             Help: "accept = als Projekt-Item autorisieren · edit = bearbeitete Fassung übernehmen · reject = verwerfen · revise = mit Feedback zurück an den Agenten"),
+         new ReviewFieldSpec(FieldEdited, "Bearbeiteter Text (nur bei edit)", ReviewInputType.FreeText, [], Required: false),
+-        new ReviewFieldSpec(FieldReason, "Begründung / Feedback (bei revise: Anweisung an den Agenten)", ReviewInputType.FreeText, [], Required: false),
++        new ReviewFieldSpec(FieldReason, "Begründung / Feedback", ReviewInputType.FreeText, [], Required: false,
++            Help: "Für jede Entscheidung erforderlich. Bei revise ist dies die Anweisung an den Agenten."),
+     ];
+ 
+     /// <summary>Baut die Session aus den gerouteten Kandidaten (nur die, die der Mensch entscheiden muss).</summary>
+@@ -55,12 +58,23 @@ public static class L3ReviewAdapter
+             notes.Add(new(a.Verdict is InferenceVerdictKind.Supported ? ReviewNoteKind.Info : ReviewNoteKind.Warning,
+                 $"Anker {a.ItemId} ({a.Relation})", $"{(a.Exists ? a.Verdict?.ToString() ?? "—" : "UNKNOWN (nicht in der Umwelt)")}: {a.Rationale}"));
+         if (r.Candidate.Rationale is { Length: > 0 } rat) notes.Add(new(ReviewNoteKind.Reason, "Begründung (Agent)", rat));
++        if (r.Candidate.ImpactIfMissing is { Length: > 0 } impact) notes.Add(new(ReviewNoteKind.Warning, "Impact wenn ungeklärt", impact));
++        notes.Add(new(ReviewNoteKind.Info, "L3-Metadaten",
++            $"intent={r.Candidate.Intent ?? "?"}; gapCategory={r.Candidate.GapCategory ?? "?"}; requiresHumanDecision={r.Candidate.RequiresHumanDecision?.ToString() ?? "null"}"));
++        if (r.Candidate.BasedOn is { Count: > 0 } basedOn)
++            notes.Add(new(ReviewNoteKind.Info, "BasedOn (Recherche-Hinweise)", string.Join(", ", basedOn)));
++        if (r.Candidate.Assumptions is { Count: > 0 } assumptions)
++            notes.Add(new(ReviewNoteKind.Warning, "Annahmen", string.Join("\n", assumptions.Select(a => $"- {a}"))));
+         if (r.NoAnchorReason is { Length: > 0 } nar) notes.Add(new(ReviewNoteKind.Suggestion, "Kein Anker", nar));
+ 
+-        // Existierende Anker als lazy nachladbarer Umwelt-Kontext (resolverKey = die Item-id).
++        // Existierende Anker und basedOn-Items als lazy nachladbarer Umwelt-Kontext (resolverKey = die Item-id).
+         var ctx = r.Anchors.Where(a => a.Exists)
+-            .Select(a => new ContextBlock(ContextBlockKind.Reference, $"Umwelt-Item {a.ItemId}", a.ItemId))
++            .Select(a => new ContextBlock(ContextBlockKind.Reference, $"Anker {a.ItemId}", a.ItemId))
+             .ToList();
++        var seenContextIds = ctx.Select(c => c.ResolverKey).ToHashSet(StringComparer.Ordinal);
++        foreach (var id in r.Candidate.BasedOn ?? [])
++            if (seenContextIds.Add(id))
++                ctx.Add(new ContextBlock(ContextBlockKind.Reference, $"BasedOn {id}", id));
+ 
+         // Default-Vorschlag aus der Klasse (der Mensch kann ändern).
+         var suggested = r.Class switch
+@@ -92,8 +106,17 @@ public static class L3ReviewAdapter
+     public static string ResolveContext(string resolverKey, IReadOnlyDictionary<string, ArtifactItem> envById)
+         => envById.TryGetValue(resolverKey, out var it) ? $"**{it.ItemId}**\n\n{it.Text}" : $"(Item {resolverKey} nicht in der Umwelt)";
+ 
+-    public static bool Resolved(ReviewItem it) =>
+-        !string.IsNullOrWhiteSpace(it.FieldValues.FirstOrDefault(f => f.FieldKey == FieldDecision)?.Value);
++    public static bool Resolved(ReviewItem it)
++    {
++        var decision = FieldOf(it, FieldDecision);
++        if (!Decisions.Contains(decision)) return false;
++
++        var reason = FieldOf(it, FieldReason);
++        if (string.IsNullOrWhiteSpace(reason)) return false;
++
++        return !string.Equals(decision, "edit", StringComparison.OrdinalIgnoreCase)
++               || !string.IsNullOrWhiteSpace(FieldOf(it, FieldEdited));
++    }
+ 
+     /// <summary>Wandelt die Session-Entscheidungen in die von apply/revise konsumierte <see cref="HumanDecisionsFile"/>.</summary>
+     public static HumanDecisionsFile Apply(string runId, ReviewSession session)
+@@ -107,4 +130,34 @@ public static class L3ReviewAdapter
+         }).ToList();
+         return new HumanDecisionsFile(runId, "human (review-ui)", decisions);
+     }
++
++    /// <summary>
++    /// Re-Launch-Unterstuetzung: traegt eine vorhandene human-decisions.json zurueck in die ReviewSession ein, damit die
++    /// UI eine unterbrochene Sitzung exakt dort fortsetzt, wo der Mensch aufgehoert hat.
++    /// </summary>
++    public static void MergeExistingDecisions(ReviewSession session, HumanDecisionsFile? file)
++    {
++        if (file is null) return;
++        var byCandidate = file.Decisions
++            .Where(d => !string.IsNullOrWhiteSpace(d.CandidateId))
++            .GroupBy(d => d.CandidateId, StringComparer.Ordinal)
++            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
++        foreach (var item in session.Items)
++        {
++            if (!byCandidate.TryGetValue(item.ItemId, out var decision)) continue;
++            Set(item, FieldDecision, decision.Decision);
++            Set(item, FieldEdited, decision.EditedText);
++            Set(item, FieldReason, decision.Reason);
++            item.Resolved = Resolved(item);
++        }
++    }
++
++    private static string FieldOf(ReviewItem it, string key) =>
++        it.FieldValues.FirstOrDefault(f => f.FieldKey == key)?.Value?.Trim() ?? "";
++
++    private static void Set(ReviewItem item, string key, string? value)
++    {
++        item.FieldValues.RemoveAll(f => f.FieldKey == key);
++        item.FieldValues.Add(new ReviewFieldValue(key, value));
++    }
+ }
+diff --git a/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3ReviewRunner.cs b/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3ReviewRunner.cs
+index 739539e..ebf26e3 100644
+--- a/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3ReviewRunner.cs
++++ b/AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/l3/L3ReviewRunner.cs
+@@ -8,7 +8,8 @@ using AgenticSdlc.HumanReview;
+ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+ 
+ /// <summary>
+-/// L3 Human-Review (CLI: <c>l3-review &lt;l3-run|runId&gt;</c>). Config-gesteuert über <c>l3.reviewMode</c>:
++/// L3 Human-Review (CLI: <c>l3-review &lt;l3-run|runId&gt; [--interactive|--file] [--no-browser]</c>).
++/// Config-gesteuert über <c>l3.reviewMode</c>, CLI-Flags überschreiben fuer Einzelruns:
+ /// <list type="bullet">
+ /// <item><b>file</b> (Default): kein UI — weist auf das dateibasierte Paket hin (Mensch editiert
+ /// <c>human-review-package.json</c> → <c>human-decisions.json</c>).</item>
+@@ -23,7 +24,7 @@ public static class L3ReviewRunner
+ 
+     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
+     {
+-        if (args.Length < 2) { Console.Error.WriteLine("Usage: l3-review <l3-run-dir|runId>   (Modus via config l3.reviewMode: file|interactive)"); return 2; }
++        if (args.Length < 2) { Console.Error.WriteLine("Usage: l3-review <l3-run-dir|runId> [--interactive|--file] [--no-browser]"); return 2; }
+         var runDir = ResolveRunDir(repoRoot, args[1]);
+         if (runDir is null) { Console.Error.WriteLine($"[l3-review] L3-Lauf '{args[1]}' nicht gefunden."); return 2; }
+ 
+@@ -32,7 +33,10 @@ public static class L3ReviewRunner
+         var routed = (JsonSerializer.Deserialize<RoutingReport>(await File.ReadAllTextAsync(routingPath).ConfigureAwait(false), Json)?.Items ?? []).ToList();
+         var decisionsPath = Path.Combine(runDir, "human-decisions.json");
+ 
+-        var interactive = string.Equals(settings.L3ReviewMode, "interactive", StringComparison.OrdinalIgnoreCase);
++        var forceInteractive = args.Contains("--interactive", StringComparer.OrdinalIgnoreCase);
++        var forceFile = args.Contains("--file", StringComparer.OrdinalIgnoreCase);
++        var noBrowser = args.Contains("--no-browser", StringComparer.OrdinalIgnoreCase);
++        var interactive = forceInteractive || (!forceFile && string.Equals(settings.L3ReviewMode, "interactive", StringComparison.OrdinalIgnoreCase));
+         if (!interactive)
+         {
+             var open = routed.Count(r => r.Class != L3Class.SupportedAnchored);
+@@ -48,6 +52,10 @@ public static class L3ReviewRunner
+         var runId = Path.GetFileName(runDir);
+         var session = L3ReviewAdapter.BuildSession(runId, routed);
+         if (session.Items.Count == 0) { Console.WriteLine("[l3-review] keine zu entscheidenden Kandidaten (alle SupportedAnchored)."); return 0; }
++        var existingDecisions = await LoadExistingDecisionsAsync(decisionsPath).ConfigureAwait(false);
++        L3ReviewAdapter.MergeExistingDecisions(session, existingDecisions);
++        foreach (var item in session.Items)
++            item.Resolved = L3ReviewAdapter.Resolved(item);
+ 
+         async Task Persist() => await File.WriteAllTextAsync(decisionsPath, JsonSerializer.Serialize(L3ReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
+ 
+@@ -57,10 +65,12 @@ public static class L3ReviewRunner
+             RecomputeResolved = L3ReviewAdapter.Resolved,
+             ResolveContext = (_, key) => Task.FromResult(L3ReviewAdapter.ResolveContext(key, envById)),
+             OnItemSaved = async _ => await Persist().ConfigureAwait(false),   // Autosave-Sicherheitsnetz
+-            OpenBrowser = settings.L3ReviewOpenBrowser
++            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
+         };
+ 
+         Console.WriteLine($"[l3-review] mode=interactive  runId={runId}  {session.Items.Count} Kandidaten");
++        if (existingDecisions is not null)
++            Console.WriteLine($"[l3-review] Re-Launch: vorhandene human-decisions.json geladen ({session.ResolvedCount()}/{session.Items.Count} resolved).");
+         var result = await LocalReviewServerHost.RunAsync(options).ConfigureAwait(false);
+         await Persist().ConfigureAwait(false);   // finaler Stand
+ 
+@@ -69,6 +79,20 @@ public static class L3ReviewRunner
+         return 0;
+     }
+ 
++    private static async Task<HumanDecisionsFile?> LoadExistingDecisionsAsync(string path)
++    {
++        if (!File.Exists(path)) return null;
++        try
++        {
++            return JsonSerializer.Deserialize<HumanDecisionsFile>(await File.ReadAllTextAsync(path).ConfigureAwait(false), Json);
++        }
++        catch (Exception ex)
++        {
++            Console.Error.WriteLine($"[l3-review] WARNUNG: vorhandene human-decisions.json konnte nicht geladen werden: {ex.Message}");
++            return null;
++        }
++    }
++
+     private static async Task<SourceArtifactSet?> LoadEnvAsync(string runDir, string repoRoot)
+     {
+         var configPath = Path.Combine(runDir, "config.json");
+diff --git a/AgenticSdlc.Host/Prompts/phase2_evidence/L3OpenWorldAgent/L3CandidateGenCoverageAgentic1.txt b/AgenticSdlc.Host/Prompts/phase2_evidence/L3OpenWorldAgent/L3CandidateGenCoverageAgentic1.txt
+index 097e193..db6f2da 100644
+--- a/AgenticSdlc.Host/Prompts/phase2_evidence/L3OpenWorldAgent/L3CandidateGenCoverageAgentic1.txt
++++ b/AgenticSdlc.Host/Prompts/phase2_evidence/L3OpenWorldAgent/L3CandidateGenCoverageAgentic1.txt
+@@ -23,6 +23,9 @@ Kandidatenfelder:
+ - `rationale`: warum dieser Kandidat aus RE-Sicht wesentlich ist.
+ - `impactIfMissing`: konkrete Folge, wenn das Projekt ohne Klärung startet.
+ - `assumptions`: nur echte Annahmen, nicht als Begründung missbrauchen.
+-- `requiresHumanDecision`: true, wenn fachliche, rechtliche, Scope- oder Prioritätsentscheidung offen ist.
++- `requiresHumanDecision`: true, wenn fachliche, rechtliche, organisatorische, Scope-, Rollen-, Datenschutz-,
++  Betriebs- oder Prioritätsentscheidungen offen sind. Echte Open-World-Kandidaten, die nicht direkt aus vorhandenen
++  Items uebernommen werden koennen, muessen ebenfalls `true` sein. Setze nur dann `false`, wenn der Kandidat eine
++  klar ableitbare Spezifikationsverfeinerung ohne neue menschliche Entscheidung ist.
+ 
+ Antworte nicht mit einem finalen JSON-Dokument. Das offizielle Ergebnis entsteht ausschließlich über `save_l3_candidates`.
