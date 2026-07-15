@@ -35,7 +35,7 @@ public static class L3Runner
     {
         if (args.Length < 2)
         {
-            Console.Error.WriteLine("Usage: l3 <env1.artifact.json> [env2.artifact.json …] [model] [--coverage|--coverage-measure|--coverage-repair [--repair-rounds N]|--research|--exhaustive|--selective] [--provenance|--force-provenance] [--graph <file> …] [--candidates <file>] [--dry-run]");
+            Console.Error.WriteLine("Usage: l3 <env1.artifact.json> [env2.artifact.json …] [model] [--agentic-coverage|--coverage|--coverage-measure|--coverage-repair [--repair-rounds N]|--research|--exhaustive|--selective] [--provenance|--force-provenance] [--graph <file> …] [--candidates <file>] [--dry-run]");
             return 2;
         }
         var dryRun = args.Contains("--dry-run");
@@ -45,7 +45,8 @@ public static class L3Runner
         // coverage = L3-Über-Agent als Coverage/Gap-Analyst (v10): Prüflinsen über den ganzen Graphen, deklariert je
         // Kandidat gapCategory + impactIfMissing + requiresHumanDecision (additiv zu intent/basedOn). Provenance nicht
         // erzwungen (konsistent mit dem Kohärenz-Learning) → das Tool ist an, aber "wenn nötig".
-        var candidateMode = args.Contains("--coverage") || args.Contains("--coverage-measure") || args.Contains("--coverage-repair") ? "coverage"
+        var candidateMode = args.Contains("--agentic-coverage") ? "agentic-coverage"
+            : args.Contains("--coverage") || args.Contains("--coverage-measure") || args.Contains("--coverage-repair") ? "coverage"
             : args.Contains("--research") ? "research"
             : args.Contains("--exhaustive") ? "exhaustive"
             : args.Contains("--selective") ? "selective"
@@ -53,7 +54,8 @@ public static class L3Runner
         // Coverage-Variante (Schritt 4) — Punkte auf der Priming/Repair-Achse: strong = sichtbarer Voll-Katalog (v2,
         // Einzelpass, primed) · measure = minimal-prime (nur Label-Vokabular, Einzelpass) · repair = measure + gebundener
         // Repair-Loop auf leere Linsen. measure/repair laufen über L3CoverageGenExecutor; strong bleibt der Einzelpass-Baseline.
-        var coverageVariant = candidateMode != "coverage" ? null
+        var coverageVariant = candidateMode == "agentic-coverage" ? "agentic"
+            : candidateMode != "coverage" ? null
             : args.Contains("--coverage-repair") ? "repair"
             : args.Contains("--coverage-measure") ? "measure" : "strong";
         // resolve_provenance-Tool: config l3.provenanceTool; CLI --provenance überschreibt. Default aus (baseline-neutral).
@@ -61,10 +63,10 @@ public static class L3Runner
         // explizit anweisen, resolve_provenance zu nutzen + das Ziel auf gut-verankerte Elaboration schärfen (additiv,
         // die neutralen Prompts bleiben die "angeboten≠genutzt"-Baseline).
         var provenanceForce = args.Contains("--force-provenance");
-        var provenanceOn = provenanceForce || candidateMode == "research" || candidateMode == "coverage" || args.Contains("--provenance") || settings.L3ProvenanceTool;
+        var provenanceOn = provenanceForce || candidateMode == "research" || candidateMode == "coverage" || candidateMode == "agentic-coverage" || args.Contains("--provenance") || settings.L3ProvenanceTool;
         // Coverage-Modus: der geteilte Abdeckungs-Rahmen (Linsen). EINE Quelle für Generator-Prompt (RenderGeneratorBlock
         // → {{coverageLenses}}) UND — Schritt 3 — den LensCoverageGate. Nur im coverage-Modus gebaut.
-        var coverageSpec = candidateMode == "coverage" ? CoverageRegistry.Default : null;
+        var coverageSpec = candidateMode is "coverage" or "agentic-coverage" ? CoverageRegistry.Default : null;
 
         // --candidates <file>: kontrollierte Test-Kandidaten (Plan §11.1) — überspringt Generierung + Resolution und
         // fährt nur die deterministische Klassifikation + den Judge (alle 4 Klassen gezielt provozierbar).
@@ -176,7 +178,8 @@ public static class L3Runner
             // Graph im Prompt sichtbar → der Resolver braucht das Tool nicht (nur der Generator recherchiert in die Tiefe).
             // coverage: strong = v2 (spec-getriebener Voll-Katalog via {{coverageLenses}}, Einzelpass);
             // measure/repair = Measure1 (minimal-prime, nur Label-Vokabular via {{coverageLabels}}). v1 bleibt eingefroren.
-            var genPromptName = candidateMode == "coverage"
+            var genPromptName = candidateMode == "agentic-coverage" ? "L3CandidateGenCoverageAgentic1"
+                : candidateMode == "coverage"
                     ? (coverageVariant == "strong" ? "L3CandidateGenCoverage2" : "L3CandidateGenCoverageMeasure2")
                 : candidateMode == "research" ? "L3CandidateGenResearch1"
                 : provenanceForce ? "L3CandidateGenExhaustiveProv1"
@@ -195,41 +198,61 @@ public static class L3Runner
             // resolve_provenance (optional, config-gated): erlaubt Gen/Resolve die Herkunft eines Umwelt-Items
             // rückzuverfolgen. Gegen SourceArtifactSet gebaut → DB-migrationssicher. Default aus = tools: [] (baseline).
             IReadOnlyList<AITool> tools = [];
+            IReadOnlyDictionary<string, LedgerClaim> claims = new Dictionary<string, LedgerClaim>();
             if (provenanceOn)
             {
                 var ledgerPath = settings.L3LedgerRun is not null ? Resolve(repoRoot, settings.L3LedgerRun) : null;
-                var claims = LedgerClaimIndex.LoadOrEmpty(ledgerPath);
+                claims = LedgerClaimIndex.LoadOrEmpty(ledgerPath);
                 tools = new L3ProvenanceTool(toolEnv, claims, run).Build();
                 var graphNote = graphTypes.Count > 0 ? $"; DB-Scheibe: Tool-Basis={toolEnv.TotalItemCount} items (+[{string.Join(",", graphTypes)}]) ⊋ Prompt-Env={env.TotalItemCount}" : "";
                 Console.WriteLine($"[l3] provenanceTool=on (resolve_provenance an Gen+Resolve; ledgerClaims={claims.Count}{(ledgerPath is null ? ", kein Ledger-Pfad" : "")}{graphNote})");
             }
-            AIAgent genAgent = genClient.AsAIAgent(instructions: genPrompt, name: AgentName, tools: [.. tools]);
-            genAgent = genAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
             AIAgent resolveAgent = resolveClient.AsAIAgent(instructions: resolvePrompt, name: AgentName, tools: [.. tools]);
             resolveAgent = resolveAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
             // measure/repair: Start-Knoten = L3CoverageGenExecutor (knoten-interner Repair-Loop; measure ⇒ 0 Runden).
             // strong + alle Nicht-coverage-Modi: der Einzelpass-L3CandidateGenExecutor (unverändert = Baseline).
             var useCoverageLoop = coverageVariant is "measure" or "repair";
-            workflow = useCoverageLoop
-                ? L3Workflow.Build(
-                    new L3CoverageGenExecutor(genAgent, coverageSpec!, repairRounds, run),
-                    new L3AnchorResolveExecutor(resolveAgent, run),
-                    new L3AnchorValidateExecutor(run),
-                    new L3SupportJudgeExecutor(judge, run),
-                    new L3RoutingExecutor(run),
-                    new L3FinalizeExecutor(run, coverageSpec: coverageSpec))
-                : L3Workflow.Build(
-                    new L3CandidateGenExecutor(genAgent, run),
+            if (candidateMode == "agentic-coverage")
+            {
+                AIAgent AgentFactory(IReadOnlyList<AITool> agentTools)
+                {
+                    var agent = genClient.AsAIAgent(instructions: genPrompt, name: AgentName, tools: [.. agentTools]);
+                    return agent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+                }
+
+                workflow = L3Workflow.Build(
+                    new L3AgenticCoverageExecutor(AgentFactory, coverageSpec!, run, genSettings.ModelId, claims, toolEnv),
                     new L3AnchorResolveExecutor(resolveAgent, run),
                     new L3AnchorValidateExecutor(run),
                     new L3SupportJudgeExecutor(judge, run),
                     new L3RoutingExecutor(run),
                     new L3FinalizeExecutor(run, coverageSpec: coverageSpec));
+            }
+            else
+            {
+                AIAgent genAgent = genClient.AsAIAgent(instructions: genPrompt, name: AgentName, tools: [.. tools]);
+                genAgent = genAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+                workflow = useCoverageLoop
+                    ? L3Workflow.Build(
+                        new L3CoverageGenExecutor(genAgent, coverageSpec!, repairRounds, run),
+                        new L3AnchorResolveExecutor(resolveAgent, run),
+                        new L3AnchorValidateExecutor(run),
+                        new L3SupportJudgeExecutor(judge, run),
+                        new L3RoutingExecutor(run),
+                        new L3FinalizeExecutor(run, coverageSpec: coverageSpec))
+                    : L3Workflow.Build(
+                        new L3CandidateGenExecutor(genAgent, run),
+                        new L3AnchorResolveExecutor(resolveAgent, run),
+                        new L3AnchorValidateExecutor(run),
+                        new L3SupportJudgeExecutor(judge, run),
+                        new L3RoutingExecutor(run),
+                        new L3FinalizeExecutor(run, coverageSpec: coverageSpec));
+            }
         }
 
         if (dryRun)
         {
-            Console.WriteLine("[l3] --dry-run: Graph Build()-bar (Validate[det] → SupportJudge[Judge] → Routing[det] → Finalize, davor Generierung+Resolution außer bei --candidates). Kein LLM.");
+            Console.WriteLine("[l3] --dry-run: Graph Build()-bar (Agentic/Candidate/CoverageGen → AnchorResolve → Validate[det] → SupportJudge[Judge] → Routing[det] → Finalize; bei --candidates ab Validate). Kein LLM.");
             Console.WriteLine($"[l3] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
             return 0;
         }

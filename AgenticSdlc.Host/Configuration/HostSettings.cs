@@ -43,7 +43,7 @@ public sealed record HostSettings(
     // L3 Open-World-Review: "file" (Datei-Paket) | "interactive" (Review-UI). Default file.
     string L3ReviewMode,
     bool L3ReviewOpenBrowser,
-    // L3 Kandidaten-Generierung: "selective" (Handvoll) | "exhaustive" (ergiebige verankerte Elaboration). Default selective.
+    // L3 Kandidaten-Generierung: "selective" | "exhaustive" | "research" | "coverage" | "agentic-coverage". Default selective.
     string L3CandidateMode,
     // L3 resolve_provenance-Tool an Gen/Resolve anhängen (Herkunft rückverfolgen). Default false (baseline-neutral).
     bool L3ProvenanceTool,
@@ -109,8 +109,8 @@ public sealed record HostSettings(
             // L3-Review: Default file (kein UI-Zwang); "interactive" schaltet die Review-UI ein.
             L3ReviewMode: string.Equals(config.L3.ReviewMode?.Trim(), "interactive", StringComparison.OrdinalIgnoreCase) ? "interactive" : "file",
             L3ReviewOpenBrowser: config.L3.ReviewOpenBrowser ?? true,
-            // L3-Kandidaten: Default selective; "exhaustive" schaltet die ergiebige verankerte Elaboration ein.
-            L3CandidateMode: config.L3.CandidateMode?.Trim().ToLowerInvariant() is "exhaustive" or "research" or "coverage" ? config.L3.CandidateMode!.Trim().ToLowerInvariant() : "selective",
+            // L3-Kandidaten: Default selective; agentic-coverage = Tool-Agent analog L2-Agentic.
+            L3CandidateMode: config.L3.CandidateMode?.Trim().ToLowerInvariant() is "exhaustive" or "research" or "coverage" or "agentic-coverage" ? config.L3.CandidateMode!.Trim().ToLowerInvariant() : "selective",
             // L3-Provenienz-Tool: Default false (baseline-neutral); "true" hängt resolve_provenance an Gen + Resolve.
             L3ProvenanceTool: config.L3.ProvenanceTool ?? false,
             L3LedgerRun: string.IsNullOrWhiteSpace(config.L3.LedgerRun) ? null : config.L3.LedgerRun.Trim(),

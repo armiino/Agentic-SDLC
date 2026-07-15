@@ -1,0 +1,326 @@
+{
+  "runId": "20260714_184553_1fdc14",
+  "model": "openai/gpt-5.4",
+  "generatedAtUtc": "2026-07-14T18:47:42.186194Z",
+  "retrievedItemIds": [
+    "ARCH-01",
+    "ARCH-04",
+    "ARCH-05",
+    "ARCH-06",
+    "ARCH-07",
+    "ARCH-08",
+    "ARCH-09",
+    "ARCH-10",
+    "ARCH-11",
+    "ARCH-13",
+    "ARCH-14",
+    "ARCH-15",
+    "ARCH-16",
+    "ARCH-17",
+    "ARCH-19",
+    "ARCH-23",
+    "ARCH-24",
+    "ARCH-25",
+    "ARCH-26",
+    "ARCH-27",
+    "ARCH-28",
+    "ARCH-29",
+    "ARCH-32",
+    "ARCH-33",
+    "ARCH-36",
+    "REQ-01",
+    "REQ-03",
+    "REQ-04",
+    "REQ-05",
+    "REQ-06",
+    "REQ-08",
+    "REQ-09",
+    "REQ-11",
+    "REQ-12",
+    "REQ-13",
+    "REQ-14",
+    "REQ-15",
+    "REQ-17",
+    "REQ-18",
+    "REQ-19",
+    "REQ-20",
+    "REQ-23",
+    "REQ-25",
+    "REQ-26",
+    "REQ-27",
+    "REQ-28",
+    "REQ-29",
+    "REQ-30",
+    "REQ-33",
+    "REQ-34",
+    "REQ-35",
+    "REQ-36",
+    "REQ-37",
+    "REQ-38",
+    "REQ-42",
+    "REQ-45",
+    "REQ-46",
+    "REQ-47",
+    "REQ-48",
+    "REQ-49",
+    "REQ-55",
+    "REQ-57"
+  ],
+  "coverageCheckRounds": 1,
+  "adequacyCheckRounds": 1,
+  "candidates": [
+    {
+      "candidateId": "CAND-001",
+      "targetType": "requirement",
+      "text": "Vor Projektstart ist verbindlich festzulegen, ob der MVP ausschlie\u00DFlich eine Kommunikations- und Einarbeitungshilfe bleibt oder zus\u00E4tzlich Teile der vollst\u00E4ndigen Bewohnerdokumentation \u00FCbernehmen soll; dabei sind ausdr\u00FCcklich in-scope und out-of-scope Datenarten und Arbeitsabl\u00E4ufe zu benennen.",
+      "rationale": "Die Evidenz enth\u00E4lt den Kernnutzen f\u00FCr neue Mitarbeitende, aber zugleich eine offene Scope-Frage zur vollst\u00E4ndigen Dokumentation. Ohne klare Produktgrenze werden Anforderungen, Datenmodell und Priorisierung unscharf.",
+      "assumptions": [],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-03",
+        "REQ-45",
+        "ARCH-05",
+        "ARCH-36"
+      ],
+      "gapCategory": "business-goals",
+      "impactIfMissing": "Das Projekt startet ohne belastbaren MVP-Schnitt, wodurch Funktionsumfang, Aufwand und Architektur in Richtung eines unkontrollierten Dokumentationssystems entgleiten k\u00F6nnen.",
+      "requiresHumanDecision": true
+    },
+    {
+      "candidateId": "CAND-002",
+      "targetType": "requirement",
+      "text": "F\u00FCr die Rollen Mitarbeiter, Admin, Angeh\u00F6rige und optional Bewohner ist eine vollst\u00E4ndige Berechtigungsmatrix zu definieren, die je Funktion und Datentyp festlegt, wer Profile sehen, Inhalte anlegen, \u00E4ndern, freigeben, exportieren oder ausblenden darf; dabei ist auch die einrichtungsbezogene Mandantentrennung verbindlich zu spezifizieren.",
+      "rationale": "Es gibt bereits grobe Rollenregeln, aber keine vollst\u00E4ndige Autorisierung f\u00FCr Angeh\u00F6rige, Bewohner, Sichtbarkeit pro Einrichtung und sensible Inhaltsarten. F\u00FCr Implementierung und Datenschutz reicht die bisherige Granularit\u00E4t nicht aus.",
+      "assumptions": [
+        "Der Bewohner-Account bleibt optional, bis die Produktverantwortlichen ihn best\u00E4tigen."
+      ],
+      "intent": "extension",
+      "basedOn": [
+        "REQ-04",
+        "REQ-05",
+        "REQ-33",
+        "REQ-34",
+        "REQ-35",
+        "REQ-37",
+        "REQ-38",
+        "ARCH-08",
+        "ARCH-09",
+        "ARCH-10"
+      ],
+      "gapCategory": "actors-permissions",
+      "impactIfMissing": "Es drohen Fehlzugriffe auf Bewohnerdaten, widerspr\u00FCchliche UI-Funktionen pro Rolle und teure Nacharbeiten am Berechtigungsmodell.",
+      "requiresHumanDecision": true
+    },
+    {
+      "candidateId": "CAND-003",
+      "targetType": "requirement",
+      "text": "F\u00FCr Kommunikations-Eintr\u00E4ge ist vor Umsetzung der Suche ein verbindliches Erfassungs- und Validierungsschema festzulegen, das Pflichtfelder, kontrollierte Kategorien und Mindestqualit\u00E4t der Beschreibung definiert, damit Eintr\u00E4ge einheitlich auffindbar und verst\u00E4ndlich bleiben.",
+      "rationale": "Die Evidenz fordert Suche und verweist selbst auf ein noch fehlendes Beschreibungsmuster. Das ist eine konkrete RE-L\u00FCcke in Datenerfassung und Validierung.",
+      "assumptions": [],
+      "intent": "extension",
+      "basedOn": [
+        "REQ-13",
+        "REQ-23",
+        "ARCH-23",
+        "ARCH-25",
+        "REQ-47"
+      ],
+      "gapCategory": "input-validation",
+      "impactIfMissing": "Suche und Filter liefern unzuverl\u00E4ssige Ergebnisse; Inhalte werden uneinheitlich erfasst und verlieren ihren Nutzen gerade f\u00FCr neue Mitarbeitende.",
+      "requiresHumanDecision": false
+    },
+    {
+      "candidateId": "CAND-004",
+      "targetType": "requirement",
+      "text": "F\u00FCr neu angelegte oder ge\u00E4nderte Inhalte zu Bewohnerprofilen, Kommunikationshinweisen, No-Go-Eintr\u00E4gen, Bildern und Videos ist ein fachlicher Freigabe- und \u00C4nderungsprozess festzulegen, einschlie\u00DFlich der Zust\u00E4nde \u0027Entwurf\u0027, \u0027freigegeben\u0027, \u0027zur\u00FCckgezogen/archiviert\u0027 sowie des Verhaltens bei konkurrierenden \u00C4nderungen durch mehrere Nutzer.",
+      "rationale": "Viele Rollen d\u00FCrfen Inhalte hinzuf\u00FCgen, aber L\u00F6schen ist eingeschr\u00E4nkt und sensible Inhalte k\u00F6nnen sich \u00E4ndern. Damit fehlt ein belastbares Lebens- und Freigabemodell f\u00FCr Inhalte.",
+      "assumptions": [],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-13",
+        "REQ-15",
+        "REQ-20",
+        "REQ-35",
+        "REQ-37",
+        "ARCH-19"
+      ],
+      "gapCategory": "state-transitions",
+      "impactIfMissing": "Das Team riskiert widerspr\u00FCchliche oder veraltete Bewohnerinformationen im Einsatz; kritische No-Go- oder Kommunikationshinweise k\u00F6nnen ohne klare G\u00FCltigkeit parallel \u00FCberschrieben oder unkontrolliert sichtbar bleiben.",
+      "requiresHumanDecision": false
+    },
+    {
+      "candidateId": "CAND-005",
+      "targetType": "requirement",
+      "text": "F\u00FCr Bilder, Videos und personenbezogene Bewohnerinformationen sind verbindliche Regeln f\u00FCr Einwilligung, Herkunftsnachweis, Aufbewahrungsdauer, Widerruf, Deaktivierung, L\u00F6schung bzw. Anonymisierung sowie einen strukturierten Datenexport pro Bewohner und pro Einrichtung festzulegen.",
+      "rationale": "Die L\u00F6sung verarbeitet hochsensible Personen- und Mediendaten, aber es fehlen operative Regeln f\u00FCr Lebenszyklus und Betroffenenrechte.",
+      "assumptions": [],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-12",
+        "REQ-13",
+        "REQ-20",
+        "REQ-48",
+        "REQ-49",
+        "ARCH-26",
+        "ARCH-27"
+      ],
+      "gapCategory": "data-lifecycle",
+      "impactIfMissing": "Die App kann nicht datenschutzkonform betrieben werden; Einwilligungen, L\u00F6schverlangen oder Einrichtungswechsel lassen sich nicht sicher umsetzen.",
+      "requiresHumanDecision": true
+    },
+    {
+      "candidateId": "CAND-006",
+      "targetType": "requirement",
+      "text": "Das System muss unbefugten Zugriff auf Bewohnerdaten durch technische und organisatorische Schutzma\u00DFnahmen verhindern; mindestens sind Anforderungen f\u00FCr starke Authentifizierung, Sitzungsverwaltung auf gemeinsam genutzten Ger\u00E4ten, Protokollierung sicherheitsrelevanter Zugriffe sowie Schutz vor unberechtigtem haus\u00FCbergreifendem Datenzugriff festzulegen.",
+      "rationale": "Interner Gebrauch allein reduziert das Risiko nicht, insbesondere bei sensiblen Daten, mobilen Ger\u00E4ten und mehreren Einrichtungen. Die Evidenz nennt Rollen, aber keine Missbrauchs- oder Schutzanforderungen.",
+      "assumptions": [
+        "Die App wird zumindest teilweise auf mobilen Endger\u00E4ten mit geteiltem Nutzungskontext verwendet."
+      ],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-27",
+        "REQ-33",
+        "REQ-37",
+        "REQ-48",
+        "ARCH-06",
+        "ARCH-07",
+        "ARCH-10"
+      ],
+      "gapCategory": "security-misuse",
+      "impactIfMissing": "Schon in fr\u00FChen Releases k\u00F6nnen Datenschutzverletzungen, Account-Missbrauch und Einsicht in falsche Bewohnerprofile auftreten.",
+      "requiresHumanDecision": false
+    },
+    {
+      "candidateId": "CAND-007",
+      "targetType": "requirement",
+      "text": "F\u00FCr sensible Inhalts\u00E4nderungen an Bewohnerprofilen, No-Go-Informationen sowie Bild- und Videodateien ist eine nachvollziehbare \u00C4nderungs- und Zugriffsprotokollierung festzulegen, damit missbr\u00E4uchliche \u00C4nderungen, Fehlbedienungen und unberechtigte Einsichten nachtr\u00E4glich erkannt und untersucht werden k\u00F6nnen.",
+      "rationale": "Bei mehreren Rollen, sensiblen Inhalten und eingeschr\u00E4nkten L\u00F6schrechten reicht reine Authentifizierung nicht aus; es fehlt eine explizite Missbrauchsabsicherung \u00FCber Nachvollziehbarkeit und Revision.",
+      "assumptions": [],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-15",
+        "REQ-20",
+        "REQ-35",
+        "REQ-37",
+        "REQ-48",
+        "ARCH-07",
+        "ARCH-10"
+      ],
+      "gapCategory": "security-misuse",
+      "impactIfMissing": "Manipulationen oder unberechtigte Einsichten bleiben unentdeckt; Vorf\u00E4lle lassen sich fachlich und datenschutzrechtlich kaum aufkl\u00E4ren.",
+      "requiresHumanDecision": false
+    },
+    {
+      "candidateId": "CAND-008",
+      "targetType": "requirement",
+      "text": "Es ist zu entscheiden, aus welchen bestehenden Quellen Bewohnerinformationen initial \u00FCbernommen werden d\u00FCrfen und ob daf\u00FCr eine manuelle Erfassung, ein administrativer Import oder eine Schnittstelle zu vorhandenen Akten-/Dokumentationssystemen bereitgestellt wird; f\u00FCr jede zugelassene Quelle sind Datenumfang, Verantwortlichkeit und Aktualisierungsverfahren festzulegen.",
+      "rationale": "Die Evidenz nennt bestehende Akten als Wissensquelle, aber nicht den operativen \u00DCbernahmepfad. Ohne diese Kl\u00E4rung bleibt unklar, wie Inhalte initial in die App gelangen und aktuell gehalten werden.",
+      "assumptions": [
+        "Ein bestehendes Akten- oder Dokumentationssystem kann vorhanden sein, ist aber noch nicht technisch best\u00E4tigt."
+      ],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-46",
+        "REQ-49",
+        "ARCH-24",
+        "ARCH-26",
+        "ARCH-25"
+      ],
+      "gapCategory": "external-integration",
+      "impactIfMissing": "Das Projekt kann keinen realistischen Bef\u00FCllungsprozess planen; Daten bleiben unvollst\u00E4ndig, doppelt gepflegt oder rechtlich unzul\u00E4ssig \u00FCbernommen.",
+      "requiresHumanDecision": true
+    },
+    {
+      "candidateId": "CAND-009",
+      "targetType": "requirement",
+      "text": "F\u00FCr den Einsatz im Pflegealltag ist festzulegen, wie sich die App bei schlechter oder fehlender Netzverbindung verhalten muss, insbesondere ob zuletzt freigegebene Bewohnerprofile lokal lesbar bleiben sollen und wie nach Wiederverbindung Synchronisation und Konfliktbehandlung erfolgen.",
+      "rationale": "Die Nutzung in Unterst\u00FCtzungssituationen verlangt verl\u00E4sslichen Zugriff, w\u00E4hrend Ger\u00E4te- und Einsatzform noch offen sind. Es fehlen Anforderungen f\u00FCr St\u00F6rungsszenarien im Alltag.",
+      "assumptions": [
+        "Die App wird in Situationen mit potenziell schwankender Konnektivit\u00E4t genutzt."
+      ],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-03",
+        "REQ-13",
+        "REQ-20",
+        "REQ-42",
+        "ARCH-29"
+      ],
+      "gapCategory": "resilience-operations",
+      "impactIfMissing": "In kritischen Betreuungssituationen k\u00F6nnten ben\u00F6tigte Informationen nicht verf\u00FCgbar sein oder nach Offline-Nutzung inkonsistent zur\u00FCckgeschrieben werden.",
+      "requiresHumanDecision": true
+    },
+    {
+      "candidateId": "CAND-010",
+      "targetType": "requirement",
+      "text": "Vor Projektstart sind messbare Qualit\u00E4tsziele f\u00FCr die Gr\u00F6\u00DFenordnung des MVP festzulegen, insbesondere Anzahl der Einrichtungen, Nutzerkonten, Bewohnerprofile sowie Zielwerte f\u00FCr Such- und Ladezeiten bei Profilen mit Bildern und Videos.",
+      "rationale": "Die L\u00F6sung enth\u00E4lt Suche und medienhaltige Profile, aber keinerlei Last- oder Performanceziele. Ohne Mengenger\u00FCst kann die Architektur nicht angemessen dimensioniert werden.",
+      "assumptions": [],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-03",
+        "REQ-12",
+        "REQ-20",
+        "REQ-23",
+        "REQ-37",
+        "ARCH-23"
+      ],
+      "gapCategory": "quality-attributes",
+      "impactIfMissing": "Performanceprobleme werden erst sp\u00E4t sichtbar; Suchfunktion, Medienanzeige und Mandantentrennung k\u00F6nnen unter realer Last unzureichend funktionieren.",
+      "requiresHumanDecision": true
+    },
+    {
+      "candidateId": "CAND-011",
+      "targetType": "requirement",
+      "text": "Es ist verbindlich zu entscheiden, welche Ger\u00E4teklassen der MVP unterst\u00FCtzen muss und welche Bedienbarkeitskriterien daraus folgen; mindestens ist zu kl\u00E4ren, ob Smartphones allein gen\u00FCgen oder Tablets im Pflegekontext erforderlich sind und welche Anforderungen daraus f\u00FCr Lesbarkeit, Bild-/Video-Nutzung und einfache Bedienung entstehen.",
+      "rationale": "Tablet-Unterst\u00FCtzung ist offen, obwohl der reale Nutzungskontext stark von Ger\u00E4t und Bedienform abh\u00E4ngt. Diese Entscheidung beeinflusst UI, Testing und technische Priorit\u00E4ten erheblich.",
+      "assumptions": [],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-03",
+        "REQ-42",
+        "ARCH-29",
+        "ARCH-28"
+      ],
+      "gapCategory": "usage-context",
+      "impactIfMissing": "Das Team entwickelt m\u00F6glicherweise an den tats\u00E4chlichen Einsatzbedingungen vorbei; zentrale Screens k\u00F6nnen im Alltag schwer lesbar oder unpraktisch bedienbar sein.",
+      "requiresHumanDecision": true
+    },
+    {
+      "candidateId": "CAND-012",
+      "targetType": "requirement",
+      "text": "Vor Nutzung echter Bewohnerdaten ist ein verbindliches Datenschutz- und Compliance-Konzept zu erstellen, das Rechtsgrundlagen, Einwilligungsprozesse, zul\u00E4ssige Testdaten, Verantwortlichkeiten der Einrichtungen sowie Regeln f\u00FCr den Umgang mit Bildern und Akteninhalten dokumentiert.",
+      "rationale": "Mehrere Evidenzpunkte benennen Datenschutzoffenheiten, aber noch kein operationalisierbares Compliance-Artefakt f\u00FCr Entwicklung, Test und Betrieb.",
+      "assumptions": [],
+      "intent": "extension",
+      "basedOn": [
+        "REQ-36",
+        "REQ-48",
+        "REQ-49",
+        "ARCH-26",
+        "ARCH-27"
+      ],
+      "gapCategory": "constraints-compliance",
+      "impactIfMissing": "Entwicklung und Tests mit Real- oder produktionsnahen Daten k\u00F6nnen blockiert werden oder rechtswidrig erfolgen; Freigaben verz\u00F6gern sich massiv.",
+      "requiresHumanDecision": true
+    },
+    {
+      "candidateId": "CAND-013",
+      "targetType": "requirement",
+      "text": "Es ist offen zu entscheiden, ob Angeh\u00F6rige und Bewohner im MVP bereits enthalten sind oder erst in einer sp\u00E4teren Ausbaustufe freigeschaltet werden; falls sie enthalten sind, m\u00FCssen Onboarding, Identit\u00E4tspr\u00FCfung und fachliche Verantwortlichkeit f\u00FCr ihre Beitr\u00E4ge verbindlich festgelegt werden.",
+      "rationale": "Die Evidenz nennt zus\u00E4tzliche Akteure als gew\u00FCnschte Auspr\u00E4gung, aber nicht, ob sie tats\u00E4chlich MVP-Bestandteil sind oder wie deren Zugang organisatorisch abgesichert wird.",
+      "assumptions": [],
+      "intent": "gap",
+      "basedOn": [
+        "REQ-04",
+        "REQ-05",
+        "ARCH-08",
+        "ARCH-09",
+        "REQ-45"
+      ],
+      "gapCategory": "open-decisions",
+      "impactIfMissing": "Der MVP-Plan bleibt instabil; Team und Architektur k\u00F6nnen sich auf Rollen st\u00FCtzen, die fachlich noch gar nicht entschieden oder organisatorisch nicht tragf\u00E4hig sind.",
+      "requiresHumanDecision": true
+    }
+  ]
+}

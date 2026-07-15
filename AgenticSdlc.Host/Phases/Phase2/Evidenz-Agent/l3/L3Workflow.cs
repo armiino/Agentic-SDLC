@@ -60,6 +60,30 @@ public static class L3Workflow
         return builder.Build();
     }
 
+    /// <summary>Agentische Coverage-Variante: identischer Downstream-Graph, aber der Start-Knoten ist ein echter
+    /// Tool-Agent, der seine Umwelt selbst erkundet und Kandidaten per <c>save_l3_candidates</c> schreibt.</summary>
+    internal static Microsoft.Agents.AI.Workflows.Workflow Build(
+        L3AgenticCoverageExecutor gen,
+        L3AnchorResolveExecutor resolve,
+        L3AnchorValidateExecutor validate,
+        L3SupportJudgeExecutor judge,
+        L3RoutingExecutor routing,
+        L3FinalizeExecutor finalize)
+    {
+        var builder = new WorkflowBuilder(gen)
+            .WithName(WorkflowName)
+            .WithDescription("Agentische Coverage-Analyse mit Tools → Anker suchen → validieren → Tragfähigkeit → "
+                           + "4-Klassen-Routing → Human-Review-Paket.");
+
+        builder.AddEdge(gen, resolve);
+        builder.AddEdge(resolve, validate);
+        builder.AddEdge(validate, judge);
+        builder.AddEdge(judge, routing);
+        builder.AddEdge(routing, finalize);
+        builder.WithOutputFrom(finalize);
+        return builder.Build();
+    }
+
     /// <summary>
     /// Komponenten-Variante (Plan §11.1): startet bei <c>AnchorValidate</c> mit KONTROLLIERTEN Test-Kandidaten
     /// (<see cref="L3Resolved"/>) — überspringt die beiden nondeterministischen Agenten (Generierung + Resolution).
