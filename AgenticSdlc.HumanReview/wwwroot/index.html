@@ -19,6 +19,10 @@
   .bar > span { display:block; height:100%; width:0; background:var(--accent); transition:width .2s; }
   .count { font-size:12px; color:var(--mut); margin-top:4px; }
   .header-actions { display:flex; align-items:center; gap:8px; padding-top:2px; }
+  .info-btn { display:none; width:30px; height:30px; border-radius:50%; border:1px solid var(--edge);
+              background:#0c0e12; color:var(--accent); font-weight:700; cursor:pointer; }
+  .info-btn.show { display:inline-flex; align-items:center; justify-content:center; }
+  .info-btn:hover { border-color:var(--accent); background:#111a26; }
   .toggle { display:inline-flex; align-items:center; gap:7px; font-size:12px; color:var(--fg);
             cursor:pointer; user-select:none; border:1px solid var(--edge); border-radius:999px;
             padding:6px 10px; background:#0c0e12; white-space:nowrap; }
@@ -122,6 +126,19 @@
 
   .drawer-backdrop { position:fixed; inset:0; background:rgba(0,0,0,.58); z-index:40; display:none; }
   .drawer-backdrop.show { display:block; }
+  .help-modal { position:fixed; inset:0; z-index:45; display:none; align-items:center; justify-content:center;
+                background:rgba(0,0,0,.62); padding:24px; }
+  .help-modal.show { display:flex; }
+  .help-card { width:min(820px, 94vw); max-height:min(760px, 88vh); overflow:auto; background:#10141c;
+               border:1px solid var(--edge); border-radius:8px; box-shadow:0 24px 60px rgba(0,0,0,.45); }
+  .help-head { display:flex; gap:12px; align-items:flex-start; justify-content:space-between;
+               padding:16px 18px; border-bottom:1px solid var(--edge); }
+  .help-head h2 { margin:0; font-size:16px; }
+  .help-summary { margin:3px 0 0; color:var(--mut); font-size:13px; white-space:pre-wrap; }
+  .help-body { padding:16px 18px 20px; }
+  .help-section { margin:0 0 18px; }
+  .help-section h3 { margin:0 0 6px; color:var(--accent); font-size:13px; }
+  .help-section div { white-space:pre-wrap; color:var(--fg); font-size:13px; }
   .drawer { position:fixed; top:0; right:0; width:min(760px, 92vw); height:100vh; background:#10141c;
             border-left:1px solid var(--edge); z-index:41; display:none; flex-direction:column; }
   .drawer.show { display:flex; }
@@ -158,6 +175,7 @@
       <div class="count" id="count"></div>
     </div>
     <div class="header-actions">
+      <button class="info-btn" id="infoBtn" type="button" title="Was ist hier zu tun?">i</button>
       <label class="toggle"><input type="checkbox" id="hideResolved"> nur offene zeigen</label>
     </div>
   </div>
@@ -181,6 +199,18 @@
 </main>
 
 <div class="drawer-backdrop" id="drawerBackdrop"></div>
+<section class="help-modal" id="helpModal" aria-hidden="true">
+  <div class="help-card">
+    <div class="help-head">
+      <div>
+        <h2 id="helpTitle">Hilfe</h2>
+        <p class="help-summary" id="helpSummary"></p>
+      </div>
+      <button class="ghost" id="closeHelpBtn" type="button">Schließen</button>
+    </div>
+    <div class="help-body" id="helpBody"></div>
+  </div>
+</section>
 <section class="drawer" id="transcriptDrawer" aria-hidden="true">
   <div class="drawer-head">
     <h2>Transkript-Kontext</h2>
@@ -220,11 +250,18 @@ async function load() {
   session = await fetch('/api/session').then(r => r.json());
   document.getElementById('title').textContent = session.title || 'Human Review';
   document.getElementById('subtitle').textContent = session.subtitle || '';
+  setupHelp();
   updateHeaderHeight();
   ledgerOptions = extractLedgerOptions();
   render();
   renderLedger();
   updateProgress();
+}
+
+function setupHelp() {
+  const btn = document.getElementById('infoBtn');
+  if (session.help) btn.classList.add('show');
+  else btn.classList.remove('show');
 }
 
 function updateHeaderHeight() {
@@ -256,7 +293,7 @@ function render() {
           `<button class="ctx" onclick="event.stopPropagation();loadContext('${esc(item.itemId)}','${esc(cb.resolverKey)}',this)">${esc(cb.label)}</button>`
         ).join('')}</div><div class="ctxout"></div>` : ''}
       <div class="fields" onclick="event.stopPropagation()">
-        ${session.fieldSchema.filter(spec => !isRepairField(spec.fieldKey)).map(spec => renderField(item, spec)).join('')}
+        ${session.fieldSchema.filter(spec => !isRepairField(spec.fieldKey) && fieldVisible(item, spec)).map(spec => renderField(item, spec)).join('')}
       </div>
     </div>`).join('');
 
@@ -315,12 +352,18 @@ function isRepairField(fieldKey) {
 }
 
 function renderRepairControls(item) {
-  const specs = session.fieldSchema.filter(spec => isRepairField(spec.fieldKey) && val(item, spec.fieldKey));
+  const specs = session.fieldSchema.filter(spec => isRepairField(spec.fieldKey) && fieldVisible(item, spec) && val(item, spec.fieldKey));
   if (!specs.length) return '';
   return `<div class="repair-fields" onclick="event.stopPropagation()">
     <div class="repair-title">Repair-Auswahl für apply_repair</div>
     ${specs.map(spec => renderField(item, spec)).join('')}
   </div>`;
+}
+
+function fieldVisible(item, spec) {
+  if (!spec.visibleWhen) return true;
+  const current = val(item, spec.visibleWhen.fieldKey);
+  return (spec.visibleWhen.values || []).includes(current);
 }
 
 function renderField(item, spec) {
@@ -506,11 +549,16 @@ async function save(itemId, fieldKey, value) {
   item.fieldValues = item.fieldValues.filter(f => f.fieldKey !== fieldKey);
   item.fieldValues.push({ fieldKey, value });
   item.resolved = r.resolved;
-  document.querySelector(`.item[data-id="${cssEsc(itemId)}"]`)?.classList.toggle('resolved', r.resolved);
+  if (fieldControlsVisibility(fieldKey)) render();
+  else document.querySelector(`.item[data-id="${cssEsc(itemId)}"]`)?.classList.toggle('resolved', r.resolved);
   applyProgress(r.resolvedCount, r.total, r.allResolved);
   updateSelectedTarget();
   renderLedger();
   flash('Gespeichert.');
+}
+
+function fieldControlsVisibility(fieldKey) {
+  return session.fieldSchema.some(spec => spec.visibleWhen && spec.visibleWhen.fieldKey === fieldKey);
 }
 
 async function loadContext(itemId, blockKey, btn) {
@@ -604,6 +652,9 @@ document.getElementById('ledgerSearch').oninput = renderLedger;
 document.getElementById('searchActiveBtn').onclick = searchFromActive;
 document.getElementById('closeDrawerBtn').onclick = closeTranscriptDrawer;
 document.getElementById('drawerBackdrop').onclick = closeTranscriptDrawer;
+document.getElementById('infoBtn').onclick = openHelp;
+document.getElementById('closeHelpBtn').onclick = closeHelp;
+document.getElementById('helpModal').onclick = (e) => { if (e.target.id === 'helpModal') closeHelp(); };
 document.getElementById('jumpHighlightBtn').onclick = jumpHighlight;
 document.getElementById('transcriptSearch').oninput = applyTranscriptSearch;
 document.getElementById('transcriptSearch').onkeydown = (e) => {
@@ -615,6 +666,24 @@ document.getElementById('transcriptSearch').onkeydown = (e) => {
 document.getElementById('prevTranscriptHitBtn').onclick = () => goTranscriptHit(transcriptSearchIndex - 1);
 document.getElementById('nextTranscriptHitBtn').onclick = () => goTranscriptHit(transcriptSearchIndex + 1);
 window.addEventListener('resize', updateHeaderHeight);
+
+function openHelp() {
+  if (!session.help) return;
+  document.getElementById('helpTitle').textContent = session.help.title || 'Hilfe';
+  document.getElementById('helpSummary').textContent = session.help.summary || '';
+  document.getElementById('helpBody').innerHTML = (session.help.sections || []).map(s => `
+    <section class="help-section">
+      <h3>${esc(s.title || '')}</h3>
+      <div>${esc(s.text || '')}</div>
+    </section>`).join('');
+  document.getElementById('helpModal').classList.add('show');
+  document.getElementById('helpModal').setAttribute('aria-hidden', 'false');
+}
+
+function closeHelp() {
+  document.getElementById('helpModal').classList.remove('show');
+  document.getElementById('helpModal').setAttribute('aria-hidden', 'true');
+}
 
 document.getElementById('finishBtn').onclick = async () => {
   const res = await fetch('/api/finish', { method: 'POST' });

@@ -371,10 +371,59 @@ if (args.Length > 0 && string.Equals(args[0], "l4-quality", StringComparison.Ord
     return;
 }
 
+// L4 Requirements Document: kanonische Baseline deterministisch als RE-Dokument rendern.
+if (args.Length > 0 && string.Equals(args[0], "l4-requirements-doc", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.RequirementsDocumentRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// L4 Completion: Adequacy-Feedback + kontrollierte DISK/OpenDecision-Proposals vor Readiness/IssuePlanning.
+if (args.Length > 0 && string.Equals(args[0], "l4-completion", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.L4CompletionRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L4 Completion Human-Review: Completion-Proposals mit generischer HumanReview-UI autorisieren.
+if (args.Length > 0 && string.Equals(args[0], "l4-completion-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.L4CompletionReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L4 Completion Apply: akzeptierte Completion-Proposals deterministisch in einen erweiterten L4-Stand uebernehmen.
+if (args.Length > 0 && string.Equals(args[0], "l4-completion-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.L4CompletionApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
 // Requirements Readiness: L4-Baseline + Quality deterministisch fuer Issue Planning vorbereiten.
 if (args.Length > 0 && string.Equals(args[0], "requirements-readiness", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.RequirementsReadinessRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// L4 Issue Planning: plan-only Agentenknoten auf Readiness-gefiltertem Input; kein GitHub-Write.
+if (args.Length > 0 && string.Equals(args[0], "l4-issuplanning", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.IssuePlanningRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L4 Issue Planning Human-Review: IssuePlanItems mit generischer HumanReview-UI autorisieren.
+if (args.Length > 0 && string.Equals(args[0], "l4-issuplanning-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.IssuePlanningReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L4 Issue Planning Apply: Human-Decisions deterministisch zu accepted-issue-plan materialisieren.
+if (args.Length > 0 && string.Equals(args[0], "l4-issuplanning-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.IssuePlanningApplyRunner.RunAsync(args, repoRoot);
     return;
 }
 
@@ -501,7 +550,7 @@ if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.Ordinal
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
-    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, requirements-readiness, ledger-build, ledger-adjudicate-ui, review.");
+    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, ledger-build, ledger-adjudicate-ui, review.");
     Environment.ExitCode = 2;
     return;
 }

@@ -64,7 +64,7 @@ public static class L4QualityRunner
         return report.Pass ? 0 : 1;
     }
 
-    private static string RenderMarkdown(L4QualityReport report)
+    public static string RenderMarkdown(L4QualityReport report)
     {
         var sb = new StringBuilder();
         sb.AppendLine("# L4 Quality Report");

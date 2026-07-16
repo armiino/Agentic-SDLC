@@ -1,0 +1,235 @@
+{
+  "schemaVersion": 1,
+  "reportId": "l4-adequacy-20260716_104918",
+  "projectId": "evidenz-agent-demo",
+  "baselineId": "baseline-20260715_172315",
+  "createdUtc": "2026-07-16T10:49:18.847678Z",
+  "sourceRequirementsDocumentPath": "runs/l4/20260715_165408_8d7645/consolidation/applied/requirements-document.md",
+  "findings": [
+    {
+      "findingId": "AF-001",
+      "section": "Scope und Nicht-Ziele",
+      "adequacy": "blocked_by_decision",
+      "summary": "Der Scope ist f\u00FCr den Projektstart nicht ausreichend fixiert, weil die zentrale MVP-Abgrenzung zwischen Unterst\u00FCtzungswerkzeug und m\u00F6glicher Dokumentations\u00FCbernahme offen ist.",
+      "whyItMatters": "Ohne verbindliche Scope-Entscheidung k\u00F6nnen Funktionsumfang, Datenschutzbedarf, Rollenmodell, Datenmodell und Aufwand nicht stabil geplant werden. Ein Projektstart mit offener Hauptabgrenzung erzeugt hohes Rework-Risiko.",
+      "relatedRequirementIds": [
+        "CAN-REQ-001",
+        "CAN-REQ-054",
+        "CAN-REQ-055",
+        "CAN-REQ-047"
+      ],
+      "recommendedAction": "Vor Start eine kurze, verbindliche Scope-Entscheidung mit expliziten Nicht-Zielen dokumentieren und die betroffenen Kapitel dagegen pr\u00FCfen.",
+      "requiresHumanDecision": true
+    },
+    {
+      "findingId": "AF-002",
+      "section": "Nutzerrollen und Berechtigungen",
+      "adequacy": "thin",
+      "summary": "Grundlegende Rollen sind vorhanden, aber das Berechtigungskonzept ist f\u00FCr die Umsetzung noch zu grob und nicht funktionsbezogen vollst\u00E4ndig operationalisiert.",
+      "whyItMatters": "Gerade bei Bewohnerdaten, Angeh\u00F6rigenzugriff, Admin-Funktionen und einrichtungsbezogener Trennung muss f\u00FCr jeden Funktionsbereich klar sein, wer sehen, anlegen, bearbeiten, freigeben, exportieren, verbergen und l\u00F6schen darf. Sonst sind Security-, UI- und Backend-Design nicht belastbar startbar.",
+      "relatedRequirementIds": [
+        "CAN-REQ-002",
+        "CAN-REQ-016",
+        "CAN-REQ-017",
+        "CAN-REQ-044",
+        "CAN-REQ-045",
+        "CAN-REQ-046",
+        "CAN-REQ-048",
+        "CAN-REQ-049"
+      ],
+      "recommendedAction": "Eine Rollen-Rechte-Matrix je Rolle und Funktionsbereich erstellen, inklusive Hausgrenzen, Sonderf\u00E4llen f\u00FCr Angeh\u00F6rige/Bewohner und Admin-Operationen.",
+      "requiresHumanDecision": true
+    },
+    {
+      "findingId": "AF-003",
+      "section": "Funktionale Anforderungen",
+      "adequacy": "substantive",
+      "summary": "Der funktionale Kern f\u00FCr ein Unterst\u00FCtzungswerkzeug ist gut erkennbar: Profil\u00FCbersicht, About-Me, No-Go, Kommunikationsbereiche, Medien und Suchbedarf sind grunds\u00E4tzlich beschrieben.",
+      "whyItMatters": "Damit ist ein umsetzbarer Produktkern sichtbar, der den prim\u00E4ren Nutzen \u0027Bewohner besser verstehen\u0027 st\u00FCtzt. F\u00FCr den Projektstart reicht dies als fachliche Leitplanke, auch wenn einzelne Anforderungen noch verfeinert werden m\u00FCssen.",
+      "relatedRequirementIds": [
+        "CAN-REQ-013",
+        "CAN-REQ-015",
+        "CAN-REQ-024",
+        "CAN-REQ-025",
+        "CAN-REQ-027",
+        "CAN-REQ-028",
+        "CAN-REQ-030",
+        "CAN-REQ-032",
+        "CAN-REQ-033",
+        "CAN-REQ-035",
+        "CAN-REQ-056",
+        "CAN-REQ-057"
+      ],
+      "recommendedAction": "Den funktionalen Kern als MVP-Kandidaten b\u00FCndeln und nur die fachlich offenen Teilbereiche separat nachsch\u00E4rfen, statt den Gesamtkern erneut breit zu diskutieren.",
+      "requiresHumanDecision": false
+    },
+    {
+      "findingId": "AF-004",
+      "section": "UI/UX Anforderungen",
+      "adequacy": "thin",
+      "summary": "Es gibt eine klare Grundstruktur der Screens, aber wesentliche Nutzungs- und Bedienkriterien sind noch offen oder nur als gew\u00FCnschte Ausgestaltung formuliert.",
+      "whyItMatters": "F\u00FCr einen Projektstart fehlen belastbare Leitplanken zu Nutzungskontext, Tablet-Support, Suchinteraktion, Layout-Varianten und barrierefreier Bedienbarkeit. Dadurch bleiben Informationsarchitektur, Komponentenwahl und Testfokus unscharf.",
+      "relatedRequirementIds": [
+        "CAN-REQ-018",
+        "CAN-REQ-019",
+        "CAN-REQ-020",
+        "CAN-REQ-021",
+        "CAN-REQ-023",
+        "CAN-REQ-026",
+        "CAN-REQ-029",
+        "CAN-REQ-031",
+        "CAN-REQ-034",
+        "CAN-REQ-036",
+        "CAN-REQ-037",
+        "CAN-REQ-051",
+        "CAN-REQ-053"
+      ],
+      "recommendedAction": "Die Kern-User-Flows und Mindest-UI-Konventionen f\u00FCr MVP festziehen und offene Ausgestaltungsoptionen von verbindlichen Anforderungen trennen.",
+      "requiresHumanDecision": false
+    },
+    {
+      "findingId": "AF-005",
+      "section": "Datenprivacy",
+      "adequacy": "blocked_by_decision",
+      "summary": "Datenschutz, Rechtsgrundlage, Einwilligungen und Datenlebenszyklus sind als zentrale Projektstartthemen erkannt, aber noch nicht entschieden.",
+      "whyItMatters": "Ohne gekl\u00E4rte Rechtsgrundlage f\u00FCr echte Bewohnerdaten und Bilder sowie ohne L\u00F6sch-, Export-, Archivierungs- und Einwilligungsregeln ist ein sicherer Produktiv- und selbst Testansatz nicht belastbar. Das betrifft Datenmodell, Prozesse und Freigaben gleicherma\u00DFen.",
+      "relatedRequirementIds": [
+        "CAN-REQ-005",
+        "CAN-REQ-006",
+        "CAN-REQ-011",
+        "CAN-REQ-012"
+      ],
+      "recommendedAction": "Vor dem Projektstart die Datenschutz- und Freigabeentscheidungen mit fachlich verantwortlichen Rollen dokumentieren und daraus verbindliche Betriebs- und Testregeln ableiten.",
+      "requiresHumanDecision": true
+    },
+    {
+      "findingId": "AF-006",
+      "section": "Nicht-funktionale Anforderungen",
+      "adequacy": "missing",
+      "summary": "Messbare Qualit\u00E4ts- und Betriebsziele fehlen weitgehend; vorhandene Aussagen sind \u00FCberwiegend qualitativ und noch nicht als \u00FCberpr\u00FCfbare Zielwerte formuliert.",
+      "whyItMatters": "Ohne Zielwerte zu Performance, Last, Profilanzahl, Mediengr\u00F6\u00DFen und Betriebsverhalten kann die Umsetzung zwar beginnen, aber Architektur-, Test- und Abnahmeplanung bleiben spekulativ. Das erh\u00F6ht das Risiko sp\u00E4terer \u00DCberraschungen erheblich.",
+      "relatedRequirementIds": [
+        "CAN-REQ-009",
+        "CAN-REQ-051"
+      ],
+      "recommendedAction": "F\u00FCr MVP wenige, aber messbare Qualit\u00E4tsziele festlegen und sie als \u00FCberpr\u00FCfbare Abnahmeschwellen dokumentieren.",
+      "requiresHumanDecision": true
+    },
+    {
+      "findingId": "AF-007",
+      "section": "Plattform und technische Rahmenbedingungen",
+      "adequacy": "thin",
+      "summary": "Der Stack mit Flutter/Dart und plattform\u00FCbergreifendem Betrieb ist gesetzt, aber wichtige technische Rahmenbedingungen bleiben offen oder uneinheitlich markiert.",
+      "whyItMatters": "Offline-/Sync-Verhalten f\u00FCr Firestore und die Entscheidung zu GetX beeinflussen Architektur, Datenzugriff, Fehlerverhalten und Implementierungsstruktur direkt. Ein Start ist m\u00F6glich, aber technisch mit erh\u00F6htem Richtungsrisiko.",
+      "relatedRequirementIds": [
+        "CAN-REQ-008",
+        "CAN-REQ-052",
+        "CAN-REQ-059",
+        "CAN-REQ-060",
+        "CAN-REQ-061",
+        "CAN-REQ-062",
+        "CAN-REQ-063"
+      ],
+      "recommendedAction": "Technische Startleitplanken f\u00FCr State-Management, Offline-Verhalten und Zielger\u00E4te klarstellen und offene Technikentscheidungen sichtbar von gesetzten Rahmenbedingungen trennen.",
+      "requiresHumanDecision": true
+    },
+    {
+      "findingId": "AF-008",
+      "section": "Prozess- und Vorgehensanforderungen",
+      "adequacy": "thin",
+      "summary": "Es gibt Hinweise auf Anforderungsanalyse und auf einen notwendigen Bearbeitungs-/Freigabeprozess f\u00FCr Inhalte, aber der operative Ablauf ist noch nicht ausreichend beschrieben.",
+      "whyItMatters": "Da Inhalte von Mitarbeitern, Angeh\u00F6rigen und Bewohnern kommen k\u00F6nnen, sind Einreichung, Pr\u00FCfung, Freigabe, Korrektur und Konfliktbehandlung f\u00FCr den Projektstart wesentlich. Ohne diesen Prozess drohen unklare Verantwortlichkeiten und inhaltliche Qualit\u00E4tsprobleme.",
+      "relatedRequirementIds": [
+        "CAN-REQ-004",
+        "CAN-REQ-058"
+      ],
+      "recommendedAction": "Den minimalen Content-Lifecycle f\u00FCr MVP mit Zust\u00E4nden, Verantwortlichkeiten und Konfliktregeln definieren.",
+      "requiresHumanDecision": true
+    },
+    {
+      "findingId": "AF-009",
+      "section": "Akzeptanzkriterien",
+      "adequacy": "missing",
+      "summary": "Kapitel\u00FCbergreifend fehlen f\u00FCr viele Anforderungen konkrete, pr\u00FCfbare Abnahmekriterien; teils wird auf sp\u00E4tere Kl\u00E4rung verwiesen, teils bleiben qualitative Formulierungen stehen.",
+      "whyItMatters": "Ohne eindeutige Akzeptanzkriterien k\u00F6nnen Umsetzungsteams, Test und Fachseite nicht konsistent entscheiden, wann eine Anforderung erf\u00FCllt ist. Das ist f\u00FCr Projektstart und Issue-Planung besonders kritisch.",
+      "relatedRequirementIds": [
+        "CAN-REQ-002",
+        "CAN-REQ-003",
+        "CAN-REQ-009",
+        "CAN-REQ-010",
+        "CAN-REQ-019",
+        "CAN-REQ-051",
+        "CAN-REQ-057"
+      ],
+      "recommendedAction": "F\u00FCr die startrelevanten MVP-Anforderungen kurze testbare Akzeptanzkriterien erg\u00E4nzen, vor allem f\u00FCr Suche, Rollenrechte, Eingaben, Barrierefreiheit und Qualit\u00E4tsziele.",
+      "requiresHumanDecision": true
+    },
+    {
+      "findingId": "AF-010",
+      "section": "Offene Entscheidungen",
+      "adequacy": "blocked_by_decision",
+      "summary": "Die Anzahl und Relevanz offener Entscheidungen ist f\u00FCr einen stabilen Projektstart hoch; mehrere davon betreffen Kernscope, Datenschutz, Plattform und Sicherheitsniveau.",
+      "whyItMatters": "22 offene Entscheidungen bei 64 Requirements bedeuten, dass ein erheblicher Teil der Projektgrundlage noch nicht stabil ist. Besonders kritisch sind Entscheidungen mit direkter Auswirkung auf Architektur, Berechtigung, Datennutzung und Abgrenzung des MVP.",
+      "relatedRequirementIds": [
+        "CAN-REQ-001",
+        "CAN-REQ-004",
+        "CAN-REQ-005",
+        "CAN-REQ-006",
+        "CAN-REQ-007",
+        "CAN-REQ-008",
+        "CAN-REQ-009",
+        "CAN-REQ-010",
+        "CAN-REQ-011",
+        "CAN-REQ-012",
+        "CAN-REQ-014",
+        "CAN-REQ-020",
+        "CAN-REQ-021",
+        "CAN-REQ-022",
+        "CAN-REQ-023",
+        "CAN-REQ-026",
+        "CAN-REQ-029",
+        "CAN-REQ-031",
+        "CAN-REQ-034",
+        "CAN-REQ-037",
+        "CAN-REQ-055",
+        "CAN-REQ-064"
+      ],
+      "recommendedAction": "Die offenen Entscheidungen nach Startkritikalit\u00E4t priorisieren und vor Projektstart mindestens die blockerhaften Entscheidungen zu Scope, Datenschutz, Sicherheit, Offline-Verhalten und Nutzungskontext schlie\u00DFen.",
+      "requiresHumanDecision": true
+    },
+    {
+      "findingId": "AF-011",
+      "section": "Traceability",
+      "adequacy": "substantive",
+      "summary": "Die Traceability ist insgesamt belastbar: Requirements haben nachvollziehbare Quellen, Readiness ist ausgewiesen, und es gibt aktuell keine durch Traceability blockierten Punkte.",
+      "whyItMatters": "F\u00FCr den Projektstart ist positiv, dass Herkunft, Readiness und teils Clusterbeziehungen sichtbar sind. Das erleichtert kontrollierte Nachsch\u00E4rfung, auch wenn inhaltliche L\u00FCcken weiterhin bestehen.",
+      "relatedRequirementIds": [
+        "CAN-REQ-001",
+        "CAN-REQ-002",
+        "CAN-REQ-005",
+        "CAN-REQ-008",
+        "CAN-REQ-009",
+        "CAN-REQ-010",
+        "CAN-REQ-011",
+        "CAN-REQ-012",
+        "CAN-REQ-059"
+      ],
+      "recommendedAction": "Die vorhandene Traceability beibehalten und Nachsch\u00E4rfungen weiterhin an konkrete CAN-REQs und offene Entscheidungscluster zur\u00FCckbinden.",
+      "requiresHumanDecision": false
+    },
+    {
+      "findingId": "AF-012",
+      "section": "Datenmodell und Inhalteingabe",
+      "adequacy": "thin",
+      "summary": "F\u00FCr startrelevante Inhalte sind Pflichtfelder, Formate, Feldl\u00E4ngen und ein einheitliches Beschreibungsschema noch nicht ausreichend festgelegt.",
+      "whyItMatters": "Ohne diese Eingaberegeln bleiben Suche, Datenqualit\u00E4t, Vergleichbarkeit von Eintr\u00E4gen und sinnvolle Moderation unsicher. Das wirkt direkt auf Kernfunktionen wie Kommunikationssuche und dynamische Inhaltspflege.",
+      "relatedRequirementIds": [
+        "CAN-REQ-003",
+        "CAN-REQ-035"
+      ],
+      "recommendedAction": "Ein minimales inhaltliches Erfassungsschema f\u00FCr About-Me-, No-Go-, Kommunikations-, Bild- und Kalendereintr\u00E4ge definieren, inklusive Validierungsregeln.",
+      "requiresHumanDecision": false
+    }
+  ],
+  "overallAssessment": "Der aktuelle L4-Stand ist teilweise tragf\u00E4hig, aber f\u00FCr einen belastbaren Projektstart noch nicht insgesamt ausreichend. Der funktionale MVP-Kern und die Traceability sind substanziell vorhanden. Kritisch unzureichend sind jedoch Scope-Festlegung, Datenschutz/Rechtsgrundlage, offene Entscheidungen, Akzeptanzkriterien sowie mehrere technische und prozessuale Leitplanken. Ein Projektstart ist nur kontrolliert sinnvoll, wenn vorab die blockerhaften Entscheidungen geschlossen und die d\u00FCnnen Bereiche in eine klarere MVP-Basis \u00FCberf\u00FChrt werden."
+}

@@ -27,6 +27,11 @@ public enum ReviewInputType
 /// <summary>Ein vorschlagbarer Wert für ein Feld (Dropdown-Option oder FreeText-Autocomplete via datalist).</summary>
 public sealed record ReviewOption(string Value, string Label);
 
+/// <summary>Optionale UI-Sichtbarkeitsbedingung fuer ein Review-Feld.</summary>
+public sealed record ReviewFieldVisibility(
+    string FieldKey,
+    IReadOnlyList<string> Values);
+
 /// <summary>Beschreibt EIN editierbares Feld pro Item (das Schema gilt session-weit fuer alle Items).</summary>
 public sealed record ReviewFieldSpec(
     string FieldKey,
@@ -35,7 +40,8 @@ public sealed record ReviewFieldSpec(
     IReadOnlyList<string> AllowedValues,
     bool Required,
     string? Help = null,
-    IReadOnlyList<ReviewOption>? Options = null);
+    IReadOnlyList<ReviewOption>? Options = null,
+    ReviewFieldVisibility? VisibleWhen = null);
 
 /// <summary>Konkreter Wert eines Feldes fuer ein Item (mutabel: der Server aktualisiert ihn bei jedem Save).</summary>
 public sealed record ReviewFieldValue(string FieldKey, string? Value);
@@ -65,6 +71,16 @@ public sealed record ReviewReferenceDetails(
     IReadOnlyList<ReviewNote> Notes,
     IReadOnlyList<ContextBlock> ContextBlocks);
 
+/// <summary>Domaenenspezifische Hilfe fuer die generische Review-UI.</summary>
+public sealed record ReviewHelp(
+    string Title,
+    string Summary,
+    IReadOnlyList<ReviewHelpSection> Sections);
+
+public sealed record ReviewHelpSection(
+    string Title,
+    string Text);
+
 /// <summary>Ein zu bearbeitendes Item. Feldwerte + Resolved-Flag sind mutabel (Server-Autosave).</summary>
 public sealed class ReviewItem
 {
@@ -86,6 +102,7 @@ public sealed class ReviewSession
     public required string SessionId { get; init; }
     public required string Title { get; init; }
     public string? Subtitle { get; init; }
+    public ReviewHelp? Help { get; init; }
     public IReadOnlyList<ReviewFieldSpec> FieldSchema { get; init; } = [];
     public required IReadOnlyList<ReviewItem> Items { get; init; }
 

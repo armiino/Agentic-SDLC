@@ -104,6 +104,13 @@ public static class RequirementsReadinessBuilder
         foreach (var finding in qualityFindings.Where(f => f.Classification == "needs_breakdown"))
             reasons.Add(Reason(finding.Code, "hold", finding.Message));
 
+        if (requirement.Metadata.TryGetValue("completion.needsBreakdown", out var needsBreakdown)
+            && bool.TryParse(needsBreakdown, out var marked)
+            && marked)
+        {
+            reasons.Add(Reason("completion_marked_needs_breakdown", "hold", "L4 Completion HumanReview hat dieses Requirement zur weiteren Aufteilung/Praezisierung markiert."));
+        }
+
         var readiness = Classify(reasons);
         return new RequirementReadinessItem(
             RequirementId: requirement.RequirementId,
@@ -131,7 +138,7 @@ public static class RequirementsReadinessBuilder
             return "deferred_or_optional";
         if (reasons.Any(r => r.Code == "decision_marker_in_active_requirement"))
             return "needs_decision";
-        if (reasons.Any(r => r.Code == "operationalization_risk"))
+        if (reasons.Any(r => r.Code == "operationalization_risk" || r.Code == "completion_marked_needs_breakdown"))
             return "needs_breakdown";
         if (reasons.Any(r => r.Severity == "blocker"))
             return "blocked_by_traceability";

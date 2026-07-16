@@ -1,0 +1,188 @@
+[
+  {
+    "proposalItemId": "L4-CP-001",
+    "operation": "ADD_OPEN_DECISION",
+    "category": "Scope und Nicht-Ziele",
+    "title": "Scope-Entscheidung mit expliziten Nicht-Zielen vor Projektstart abschlie\u00DFen",
+    "problem": "Die zentrale Abgrenzung, ob der MVP nur ein Unterst\u00FCtzungswerkzeug zum schnellen Verstehen von Bewohnern bleibt oder zus\u00E4tzlich Teile formaler Dokumentation \u00FCbernimmt, ist zwar als offene Entscheidung vorhanden, aber noch nicht in eine startklare, explizite Entscheidungsgrundlage mit Nicht-Zielen \u00FCberf\u00FChrt. Dadurch bleibt unklar, welche nachgelagerten Anforderungen verbindlich im MVP liegen und welche ausdr\u00FCcklich ausgeschlossen sind.",
+    "suggestedResolution": "Erg\u00E4nze zu CAN-REQ-001/CAN-REQ-055 eine formale offene Entscheidungsfrage mit genau zwei bis drei Scope-Optionen, den jeweiligen Konsequenzen f\u00FCr Datenarten, Rollen, Datenschutz und UI sowie einer Liste expliziter Nicht-Ziele f\u00FCr den MVP.",
+    "whyItMatters": "Diese Entscheidung ist ein Startblocker f\u00FCr Funktionsumfang, Datenmodell, Datenschutzbedarf und Aufwandssch\u00E4tzung. Ohne sie bleibt ein erheblicher Teil der \u00FCbrigen Requirements interpretationsabh\u00E4ngig.",
+    "evidenceState": "derived",
+    "sourceRequirementIds": [
+      "CAN-REQ-001",
+      "CAN-REQ-055"
+    ],
+    "sourceFindingIds": [
+      "AF-001",
+      "AF-010"
+    ],
+    "requiresHumanDecision": true,
+    "metadata": {
+      "priority": "high",
+      "type": "decision-closure",
+      "cluster": "scope"
+    }
+  },
+  {
+    "proposalItemId": "L4-CP-002",
+    "operation": "MARK_NEEDS_BREAKDOWN",
+    "category": "Nutzerrollen und Berechtigungen",
+    "title": "Berechtigungskonzept in Rollen-Rechte-Matrix und Teilanforderungen herunterbrechen",
+    "problem": "CAN-REQ-002 beschreibt das Berechtigungskonzept breit, ist laut Readiness aber nicht issue-planbar. Es fehlt eine operationalisierte Zuordnung je Rolle und Funktionsbereich f\u00FCr lesen, anlegen, bearbeiten, freigeben, exportieren, verbergen und l\u00F6schen, einschlie\u00DFlich Hausgrenzen und Sonderf\u00E4llen f\u00FCr Angeh\u00F6rige/Bewohner.",
+    "suggestedResolution": "Zerlege CAN-REQ-002 in eine Rollen-Rechte-Matrix pro Rolle und Funktionsbereich sowie in \u00FCberpr\u00FCfbare Teilanforderungen f\u00FCr Profilzugriff, Inhaltsbearbeitung, Freigabe, Export/L\u00F6schen und einrichtungs\u00FCbergreifende Zugriffstrennung.",
+    "whyItMatters": "Ohne diese Detaillierung bleiben Security-Design, Backend-Autorisierung, UI-Sichtbarkeit und Testf\u00E4lle nicht belastbar planbar.",
+    "evidenceState": "derived",
+    "sourceRequirementIds": [
+      "CAN-REQ-002"
+    ],
+    "sourceFindingIds": [
+      "AF-002",
+      "AF-009"
+    ],
+    "requiresHumanDecision": true,
+    "metadata": {
+      "priority": "high",
+      "type": "breakdown",
+      "cluster": "authorization"
+    }
+  },
+  {
+    "proposalItemId": "L4-CP-003",
+    "operation": "ADD_OPEN_DECISION",
+    "category": "Datenprivacy",
+    "title": "Rechtsgrundlage und zul\u00E4ssige Datennutzung f\u00FCr echte Bewohnerdaten und Medien entscheiden",
+    "problem": "Die bestehende Datenschutzanforderung CAN-REQ-005 deckt den Datenlebenszyklus ab, benennt aber die startkritische Entscheidung zur Rechtsgrundlage und zum zul\u00E4ssigen Einsatz echter Bewohnerdaten, Bilder und Videos im Test- und Produktivkontext noch nicht als klar abgegrenzte Entscheidungsfrage.",
+    "suggestedResolution": "Erg\u00E4nze eine offene Entscheidung, welche Datenkategorien mit welcher Rechtsgrundlage verarbeitet werden d\u00FCrfen, ob und unter welchen Bedingungen echte Bewohnerdaten/Bilder in Tests zul\u00E4ssig sind und welche Einwilligungs- oder Freigabeschritte daf\u00FCr vorliegen m\u00FCssen.",
+    "whyItMatters": "Diese Entscheidung steuert, ob fachliche Tests mit Echtdaten zul\u00E4ssig sind und welche Prozesse, Datenmodelle und Betriebsregeln \u00FCberhaupt umgesetzt werden d\u00FCrfen.",
+    "evidenceState": "derived",
+    "sourceRequirementIds": [
+      "CAN-REQ-005"
+    ],
+    "sourceFindingIds": [
+      "AF-005",
+      "AF-010"
+    ],
+    "requiresHumanDecision": true,
+    "metadata": {
+      "priority": "high",
+      "type": "decision-closure",
+      "cluster": "privacy-legal-basis"
+    }
+  },
+  {
+    "proposalItemId": "L4-CP-004",
+    "operation": "ADD_DISK_POINT",
+    "category": "Nicht-funktionale Anforderungen",
+    "title": "MVP-Abnahmeschwellen f\u00FCr Verf\u00FCgbarkeit und Wiederanlauf als Diskussionspunkt erg\u00E4nzen",
+    "problem": "Zu den messbaren Qualit\u00E4tszielen existiert mit CAN-REQ-009 bereits ein offener Rahmen f\u00FCr Performance, Last, Profilanzahl und Mediengr\u00F6\u00DFen. Nicht gesagt ist jedoch, welche minimalen Erwartungen f\u00FCr Verf\u00FCgbarkeit, St\u00F6rungsdauer oder Wiederanlauf im MVP gelten sollen.",
+    "suggestedResolution": "Als RE-Diskussionspunkt erg\u00E4nzen, ob f\u00FCr den MVP minimale Zielwerte oder qualitative Leitplanken zu Verf\u00FCgbarkeit, maximal tolerierbarer Ausfallzeit und Wiederanlauf nach St\u00F6rungen festgelegt werden sollen.",
+    "whyItMatters": "Auch bei kleinem MVP beeinflussen solche Betriebsziele Architektur, Monitoring, Supporterwartung und Abnahme. Die Erg\u00E4nzung macht eine plausible, bislang nicht ausgesprochene Qualit\u00E4tsl\u00FCcke sichtbar, ohne sie als beschlossene Wahrheit zu setzen.",
+    "evidenceState": "not_stated",
+    "sourceRequirementIds": [
+      "CAN-REQ-009"
+    ],
+    "sourceFindingIds": [
+      "AF-006"
+    ],
+    "requiresHumanDecision": true,
+    "metadata": {
+      "priority": "medium",
+      "type": "open-world-disk",
+      "cluster": "nfr-operations"
+    }
+  },
+  {
+    "proposalItemId": "L4-CP-005",
+    "operation": "ADD_OPEN_DECISION",
+    "category": "Plattform und technische Rahmenbedingungen",
+    "title": "GetX-Status als offene Technikentscheidung korrekt ausweisen",
+    "problem": "CAN-REQ-059 ist als aktive Anforderung gef\u00FChrt, enth\u00E4lt laut Readiness aber einen Entscheidungsmarker. Dadurch ist unklar, ob GetX bereits als gesetzte Rahmenbedingung gilt oder bewusst noch zur Auswahl steht.",
+    "suggestedResolution": "Reklassifiziere den Inhalt von CAN-REQ-059 in eine explizite offene Technikentscheidung mit klaren Entscheidungsoptionen, Bewertungskriterien und einem Termin, bis zu dem die Wahl f\u00FCr den Projektstart getroffen werden muss.",
+    "whyItMatters": "State-Management beeinflusst Architektur, Zustandsfluss, Testbarkeit und Implementierungsstruktur direkt. Ein uneindeutiger Status erzeugt vermeidbares Richtungsrisiko.",
+    "evidenceState": "derived",
+    "sourceRequirementIds": [
+      "CAN-REQ-059"
+    ],
+    "sourceFindingIds": [
+      "AF-007",
+      "AF-010"
+    ],
+    "requiresHumanDecision": true,
+    "metadata": {
+      "priority": "medium",
+      "type": "decision-closure",
+      "cluster": "state-management"
+    }
+  },
+  {
+    "proposalItemId": "L4-CP-006",
+    "operation": "ADD_OPEN_DECISION",
+    "category": "Prozess- und Vorgehensanforderungen",
+    "title": "Minimalen Content-Lifecycle f\u00FCr nutzergenerierte Inhalte verbindlich entscheiden",
+    "problem": "Mit CAN-REQ-004 ist der Bearbeitungs- und Freigabeprozess zwar als offene Entscheidung erfasst, f\u00FCr den Projektstart fehlen aber eine minimal verbindliche Zielauspr\u00E4gung und die Abgrenzung, welche Zust\u00E4nde und Verantwortlichkeiten im MVP tats\u00E4chlich verpflichtend sind.",
+    "suggestedResolution": "Erg\u00E4nze zu CAN-REQ-004 eine offene Entscheidungsgrundlage f\u00FCr den MVP-Content-Lifecycle mit minimalen Statuswerten, verantwortlichen Rollen je Status\u00FCbergang, Regeln bei Zur\u00FCckweisung/Korrektur und dem Umgang mit parallelen \u00C4nderungen.",
+    "whyItMatters": "Ohne klaren Minimalprozess bleiben Verantwortlichkeiten, Moderation, Inhaltsqualit\u00E4t und Konfliktbehandlung im Kernprozess der Inhalteingabe unsicher.",
+    "evidenceState": "derived",
+    "sourceRequirementIds": [
+      "CAN-REQ-004"
+    ],
+    "sourceFindingIds": [
+      "AF-008",
+      "AF-010"
+    ],
+    "requiresHumanDecision": true,
+    "metadata": {
+      "priority": "high",
+      "type": "decision-closure",
+      "cluster": "content-lifecycle"
+    }
+  },
+  {
+    "proposalItemId": "L4-CP-007",
+    "operation": "MARK_NEEDS_BREAKDOWN",
+    "category": "Akzeptanzkriterien",
+    "title": "Startrelevante MVP-Requirements mit testbaren Akzeptanzkriterien erg\u00E4nzen",
+    "problem": "Mehrere startrelevante Requirements bleiben qualitativ oder verweisen implizit auf sp\u00E4tere Kl\u00E4rung; insbesondere Rollenrechte, Eingaberegeln, Qualit\u00E4tsziele, Suche und Barrierefreiheit sind noch nicht in kurze, pr\u00FCfbare Akzeptanzkriterien \u00FCbersetzt.",
+    "suggestedResolution": "Markiere CAN-REQ-002, CAN-REQ-003, CAN-REQ-009, CAN-REQ-035 und CAN-REQ-051 zur Erg\u00E4nzung um wenige testbare Akzeptanzkriterien, z. B. f\u00FCr erlaubte Aktionen pro Rolle, Validierungsfehler bei leeren Eingaben, Suchtrefferverhalten, messbare Zielwerte und \u00FCberpr\u00FCfbare UI-Barrierefreiheitskriterien.",
+    "whyItMatters": "Ohne Abnahmekriterien k\u00F6nnen Umsetzung, Test und Fachseite nicht konsistent entscheiden, wann die wichtigsten MVP-Funktionen erf\u00FCllt sind.",
+    "evidenceState": "derived",
+    "sourceRequirementIds": [
+      "CAN-REQ-002",
+      "CAN-REQ-003",
+      "CAN-REQ-009",
+      "CAN-REQ-035",
+      "CAN-REQ-051"
+    ],
+    "sourceFindingIds": [
+      "AF-009"
+    ],
+    "requiresHumanDecision": true,
+    "metadata": {
+      "priority": "high",
+      "type": "breakdown",
+      "cluster": "acceptance-criteria"
+    }
+  },
+  {
+    "proposalItemId": "L4-CP-008",
+    "operation": "MARK_NEEDS_BREAKDOWN",
+    "category": "Datenmodell und Inhalteingabe",
+    "title": "Eingaberegeln nach Inhaltstyp getrennt konkretisieren",
+    "problem": "CAN-REQ-003 b\u00FCndelt Pflichtfelder, Formate, Feldl\u00E4ngen und Fehlverhalten f\u00FCr mehrere Inhaltstypen in einer breiten Anforderung. F\u00FCr Umsetzung und Test ist noch nicht ausreichend getrennt, welche Regeln f\u00FCr About-Me, No-Go, Kommunikationsweisen, Bilder und Kalender jeweils gelten.",
+    "suggestedResolution": "Breche CAN-REQ-003 in inhaltstypspezifische Teilanforderungen oder Unterabschnitte auf und erg\u00E4nze pro Inhaltstyp minimale Pflichtfelder, erlaubte Formate, L\u00E4ngen- oder Gr\u00F6\u00DFenlimits sowie Validierungsverhalten.",
+    "whyItMatters": "Nur so werden Datenqualit\u00E4t, Suchbarkeit, Moderation und konsistente Eingabemasken je Inhaltstyp belastbar spezifizierbar.",
+    "evidenceState": "derived",
+    "sourceRequirementIds": [
+      "CAN-REQ-003"
+    ],
+    "sourceFindingIds": [
+      "AF-012"
+    ],
+    "requiresHumanDecision": false,
+    "metadata": {
+      "priority": "medium",
+      "type": "breakdown",
+      "cluster": "content-schema"
+    }
+  }
+]

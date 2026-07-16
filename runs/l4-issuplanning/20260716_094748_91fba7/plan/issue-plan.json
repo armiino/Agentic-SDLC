@@ -1,0 +1,401 @@
+{
+  "schemaVersion": 1,
+  "planId": "issue-plan-20260716_094846",
+  "projectId": "evidenz-agent-demo",
+  "baselineId": "baseline-20260715_172315",
+  "createdUtc": "2026-07-16T09:48:46.427065Z",
+  "sourceIssuePlanningInputPath": "runs/l4/20260715_165408_8d7645/consolidation/applied/issue-planning-input.json",
+  "items": [
+    {
+      "issuePlanId": "IPLAN-001",
+      "operation": "CREATE",
+      "title": "Grundlegende Bewohnerverstaendnis- und Wissensnutzung fuer Profile festlegen",
+      "description": "Plant die grundlegende App-Funktion als Wissensnachschlagewerk fuer Betreuungspersonal. Umfasst den primaeren Zweck, Bewohner besser zu verstehen, und die Beruecksichtigung bestehender Akten sowie dokumentierter Erfahrungen als relevante Wissensquelle fuer Profil- und Kommunikationsinhalte.",
+      "sourceRequirementIds": [
+        "CAN-REQ-013",
+        "CAN-REQ-056"
+      ],
+      "acceptanceCriteria": [
+        "Die geplante Loesung beschreibt die App explizit als Nachschlagewerk, das Betreuungspersonal bei Verstaendnisproblemen zu Kommunikationsweisen unterstuetzt.",
+        "Es ist festgelegt, dass bestehende Akten sowie dokumentierte Erfahrungen und neues Wissen als zulaessige Wissensquellen fuer Bewohnerinformationen beruecksichtigt werden.",
+        "Der Scope grenzt die Wissensnutzung auf das Verstehen von Bewohnern ab und fuehrt kein bidirektionales Uebersetzungssystem ein."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "dependencies": [],
+      "rationale": "CAN-REQ-013 und CAN-REQ-056 bilden zusammen dieselbe fachliche Arbeitseinheit: Wissensbasis und Hauptzweck der App.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "product-foundation"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-002",
+      "operation": "CREATE",
+      "title": "Login-Fluss ohne Selbstregistrierung umsetzen",
+      "description": "Plant den Einstiegsfluss der App mit reinem Login. Umfasst den Login-Screen mit Logo, E-Mail-Feld, Passwort-Feld und Login-Button, schliesst Selbstregistrierung aus und beinhaltet die gewuenschte Platzierung des Logos im oberen Drittel des Screens.",
+      "sourceRequirementIds": [
+        "CAN-REQ-038",
+        "CAN-REQ-039",
+        "CAN-REQ-040"
+      ],
+      "acceptanceCriteria": [
+        "Es gibt einen Login-Screen mit Logo, E-Mail-Eingabe, Passwort-Eingabe und Login-Button.",
+        "Auf dem Login-Screen und im Login-Fluss ist keine Selbstregistrierung vorgesehen.",
+        "Das Logo ist im oberen Drittel des Bildschirms sichtbar und zentriert platziert oder die Umsetzung dokumentiert eine gleichwertige sichtbare Platzierung gemaess Requirement."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "dependencies": [],
+      "rationale": "Die drei Requirements beschreiben dieselbe UI-Arbeitseinheit fuer den App-Einstieg.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "authentication-ui"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-003",
+      "operation": "CREATE",
+      "title": "Profiluebersicht und globale Navigation nach Login bereitstellen",
+      "description": "Plant die erste Ansicht nach erfolgreichem Login sowie die uebergreifende Navigation. Umfasst eine Profiluebersichtsseite mit allen fuer den Nutzer zugaenglichen Profilen, anklickbare Profile zur Weiterleitung auf Detailseiten sowie eine konsistente Appbar mit Einstieg in die Einstellungen.",
+      "sourceRequirementIds": [
+        "CAN-REQ-018",
+        "CAN-REQ-036"
+      ],
+      "acceptanceCriteria": [
+        "Nach dem Login wird eine Profiluebersicht angezeigt, die alle fuer den angemeldeten Nutzer zugaenglichen Profile als Liste darstellt.",
+        "Jedes Profil in der Profiluebersicht ist ausw\u00E4hlbar und fuehrt auf eine weitere zugehoerige Seite.",
+        "Auf allen Seiten nach dem Login ist eine konsistente Appbar vorhanden.",
+        "Die Appbar enthaelt ein Einstellungssymbol, ueber das die Einstellungsseite erreichbar ist."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "dependencies": [
+        "IPLAN-002"
+      ],
+      "rationale": "Beide Requirements betreffen den zusammenhaengenden Navigationsrahmen nach dem Login.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "post-login-navigation"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-004",
+      "operation": "CREATE",
+      "title": "About-Me-Profilansicht mit erweiterbaren Inhalten bereitstellen",
+      "description": "Plant eine persoenliche Profilseite pro Bewohner bzw. Person. Umfasst die About-Me-Seite mit Basisinformationen wie Bilder, Beschreibungen, Hobbys, Name und Alter sowie die Moeglichkeit, Profilinhalte dynamisch zu erweitern, damit neue Erfahrungen und Bilder hinzugefuegt werden koennen.",
+      "sourceRequirementIds": [
+        "CAN-REQ-024",
+        "CAN-REQ-025"
+      ],
+      "acceptanceCriteria": [
+        "Fuer jede Person gibt es eine About-Me-Seite mit mindestens Name, Alter, Beschreibungen, Hobbys und Bildern.",
+        "Die About-Me-Seite vermittelt einen informativen und persoenlichen ersten Eindruck der Person.",
+        "Profilinhalte koennen erweitert werden, sodass neue Erfahrungen und Bilder zu einer Person hinzugefuegt werden koennen."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "dependencies": [
+        "IPLAN-003"
+      ],
+      "rationale": "Die Requirements beschreiben dieselbe Profil-Detailarbeitseinheit.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "profile-about-me"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-005",
+      "operation": "CREATE",
+      "title": "No-Go-Bereich pro Bewohner mit Listenpflege bereitstellen",
+      "description": "Plant einen eigenen Bereich pro Bewohner fuer strikt zu vermeidende Inhalte oder Handlungen. Umfasst eine No-Go-Seite und die dynamische Erweiterung ueber einen Plus-Button, sodass neue No-Gos als Liste gepflegt werden koennen.",
+      "sourceRequirementIds": [
+        "CAN-REQ-027",
+        "CAN-REQ-028"
+      ],
+      "acceptanceCriteria": [
+        "Fuer jeden Bewohner gibt es eine No-Go-Seite oder einen klar abgegrenzten No-Go-Bereich.",
+        "Der Bereich haelt fest, was in Gegenwart des Bewohners absolut nicht geht.",
+        "Nutzer koennen ueber eine klar erkennbare Hinzufuegefunktion neue No-Go-Eintraege zur Liste ergaenzen.",
+        "Neue und bestehende No-Go-Eintraege werden als Liste dargestellt, damit sich Nutzer vorab informieren koennen."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "dependencies": [
+        "IPLAN-003"
+      ],
+      "rationale": "Die Requirements sind unmittelbar komplementaer und bilden ein einzelnes Feature.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "profile-no-go"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-006",
+      "operation": "CREATE",
+      "title": "Kommunikationsbereiche strukturiert, visuell und mit Videos darstellen",
+      "description": "Plant die Darstellung von Kommunikationsinformationen innerhalb von Profilen. Umfasst die strukturelle Unterteilung in verbale und nonverbale Bereiche, die Unterstuetzung visueller Darstellungen wie Bilder sowie die Integration von Videos mit Beschreibungen direkt in diese Kommunikationsbereiche inklusive einfacher Ergaenzung und Sortierung mit dem neuesten Video oben.",
+      "sourceRequirementIds": [
+        "CAN-REQ-030",
+        "CAN-REQ-032",
+        "CAN-REQ-033",
+        "CAN-REQ-050"
+      ],
+      "acceptanceCriteria": [
+        "Kommunikationsinformationen sind in einen verbalen und einen nonverbalen Bereich unterteilt.",
+        "Kommunikationsinhalte koennen neben Text auch visuell, insbesondere mit Bildern, dargestellt werden.",
+        "Videos mit Beschreibungen koennen in den verbalen und/oder nonverbalen Kommunikationsbereichen angezeigt werden, ohne dass dafuer ein separater eigener Screen notwendig ist.",
+        "Neue Videos mit Beschreibungen koennen leicht hinzugefuegt werden.",
+        "In der Videoliste erscheint das jeweils neueste Video an oberster Stelle."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "dependencies": [
+        "IPLAN-004"
+      ],
+      "rationale": "Diese Requirements beschreiben gemeinsam ein koh\u00E4rentes Kommunikationsfeature innerhalb des Profils.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "communication-content"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-007",
+      "operation": "NEEDS_REVIEW",
+      "title": "Such- und Filterfunktion fuer Kommunikationsseiten fachlich vorklaeren",
+      "description": "Die Suchfunktion fuer Kommunikationsseiten ist fachlich noch nicht schnittreif, weil das Requirement selbst voraussetzt, dass zunaechst ein systematisches Beschreibungsmuster fuer Kommunikationsweisen definiert werden muss. Ohne dieses Daten- und Beschreibungsmodell bleibt unklar, wonach gesucht und wie gefiltert werden soll.",
+      "sourceRequirementIds": [
+        "CAN-REQ-035"
+      ],
+      "acceptanceCriteria": [
+        "Ein systematisches Beschreibungsmuster fuer Kommunikationsweisen ist fachlich definiert und als Eingabemodell beschrieben.",
+        "Es ist entschieden, nach welchen Feldern gesucht und welche Filterlogik erwartet wird.",
+        "Danach kann ein separates umsetzbares CREATE-Issue fuer Suche und Filterung erstellt werden."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "dependencies": [
+        "IPLAN-006"
+      ],
+      "rationale": "Das Requirement enthaelt eine vorgelagerte offene Fachentscheidung und ist daher noch nicht als umsetzbares Issue scharf genug.",
+      "requiresHumanReview": true,
+      "metadata": {
+        "theme": "search-review"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-008",
+      "operation": "CREATE",
+      "title": "Rollen- und rechtebasiertes Zugriffsmodell fuer interne Nutzung umsetzen",
+      "description": "Plant das grundlegende Zugriffs- und Berechtigungsmodell der App. Umfasst rollenbasierte Accounts, internen Gebrauch, unterschiedliche Rechte fuer Admin, User, Angehhoerige und Bewohner sowie die Regel, dass nur Admins Accounts anlegen und Rechte verwalten duerfen. User duerfen Inhalte hinzufuegen, aber keine Accounts erstellen und keine Daten loeschen.",
+      "sourceRequirementIds": [
+        "CAN-REQ-016",
+        "CAN-REQ-017",
+        "CAN-REQ-044",
+        "CAN-REQ-045",
+        "CAN-REQ-046",
+        "CAN-REQ-047"
+      ],
+      "acceptanceCriteria": [
+        "Das System unterstuetzt mindestens unterschiedliche Rollen fuer Admin und User sowie zugaengliche Rollen oder Kontotypen fuer Angehhoerige und Bewohner gemaess Requirements.",
+        "Nur Accounts mit Admin-Rechten koennen weitere Accounts anlegen und Rechte verwalten.",
+        "User-Accounts koennen Inhalte hinzufuegen, duerfen jedoch keine Accounts erstellen und keine vorhandenen Daten loeschen.",
+        "Die App und ihr Zugangsmodell sind auf internen Gebrauch ausgerichtet.",
+        "Der Bewohner-Account sieht in der Profiluebersicht nur das eigene Profil und hat nur eingeschraenkte Funktionen, mindestens Zugriff auf den About-Me-Bereich und das Hinzufuegen eigener Bilder.",
+        "Angehoerige koennen zusaetzlich Zugriff erhalten, um ergaenzende Daten und Wissen hinzuzufuegen."
+      ],
+      "labels": [
+        "access-control"
+      ],
+      "dependencies": [
+        "IPLAN-002",
+        "IPLAN-004"
+      ],
+      "rationale": "Diese Requirements bilden zusammen das Kernpaket fuer Rollen, Berechtigungen und erlaubte Aktionen im System.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "rbac-core"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-009",
+      "operation": "NEEDS_REVIEW",
+      "title": "Einrichtungsbezogene Zugriffsbeschraenkung fachlich und technisch ausarbeiten",
+      "description": "Das Requirement zur einrichtungsbezogenen Zugriffsbeschraenkung benennt explizit, dass die technische Umsetzung des Berechtigungsmodells noch auszuarbeiten ist. Vor einem umsetzbaren Issue muss geklaert werden, wie Einrichtungen, Zugehoerigkeiten und Sichtbarkeiten modelliert werden und wie dies mit den Rollen interagiert.",
+      "sourceRequirementIds": [
+        "CAN-REQ-048"
+      ],
+      "acceptanceCriteria": [
+        "Es ist definiert, wie Einrichtungen bzw. Haeuser im Datenmodell repraesentiert werden.",
+        "Es ist festgelegt, wie Nutzer einer Einrichtung zugeordnet werden und wie Profilsichtbarkeit daraus abgeleitet wird.",
+        "Die Wechselwirkung zwischen einrichtungsbezogener Sichtbarkeit und den bestehenden Rollen ist dokumentiert.",
+        "Danach kann ein separates CREATE-Issue fuer die Implementierung erstellt werden."
+      ],
+      "labels": [
+        "access-control"
+      ],
+      "dependencies": [
+        "IPLAN-008"
+      ],
+      "rationale": "Das Requirement ist laut Text noch nicht ausreichend konkretisiert und braucht vorab menschliche Klaerung.",
+      "requiresHumanReview": true,
+      "metadata": {
+        "theme": "facility-scope-review"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-010",
+      "operation": "CREATE",
+      "title": "Rollenabhaengigen Settings-Screen bereitstellen",
+      "description": "Plant die Einstellungsseite der App mit rollenabhaengiger Differenzierung. Admins sollen dort Nutzeraccounts hinzufuegen und Rechte anpassen koennen; alle Nutzer sollen ihr eigenes Profil aendern und Einstellungen wie die Sprache waehlen koennen.",
+      "sourceRequirementIds": [
+        "CAN-REQ-049"
+      ],
+      "acceptanceCriteria": [
+        "Es gibt einen Settings-Screen, der ueber die Appbar erreichbar ist.",
+        "Die sichtbaren Optionen im Settings-Screen unterscheiden sich rollenabhaengig.",
+        "Admins koennen im Settings-Screen Nutzeraccounts hinzufuegen und Rechte anpassen.",
+        "Jeder Nutzer kann im Settings-Screen das eigene Profil aendern und mindestens eine Spracheinstellung waehlen oder aendern."
+      ],
+      "labels": [
+        "frontend",
+        "access-control"
+      ],
+      "dependencies": [
+        "IPLAN-003",
+        "IPLAN-008"
+      ],
+      "rationale": "Das Requirement ist klar als eigenstaendige UI-Arbeitseinheit fuer Einstellungen formulierbar.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "settings"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-011",
+      "operation": "NEEDS_REVIEW",
+      "title": "Barrierearme alternative Eingabemethoden konkretisieren",
+      "description": "Das Requirement fordert, Sprachbefehle oder alternative Eingabemethoden fuer beeintraechtigte Nutzer zu beruecksichtigen, legt jedoch weder Zielgruppen, konkrete Eingabemethoden noch Mindestumfang fest. Vor einem umsetzbaren Issue braucht es eine Produktentscheidung zum Umfang der Barrierefreiheitsfunktionen.",
+      "sourceRequirementIds": [
+        "CAN-REQ-043"
+      ],
+      "acceptanceCriteria": [
+        "Es ist entschieden, welche alternativen Eingabemethoden im ersten Umfang unterstuetzt werden sollen, z. B. Sprachbefehle, vereinfachte Touch-Interaktion oder OS-Assistenzfunktionen.",
+        "Fuer jede gewaehlte Eingabemethode sind Zielnutzer, betroffene Screens und Mindestverhalten beschrieben.",
+        "Danach kann ein oder koennen mehrere CREATE-Issues fuer die Umsetzung erstellt werden."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "dependencies": [],
+      "rationale": "Der Scope ist noch zu offen fuer ein belastbares Implementierungs-Issue.",
+      "requiresHumanReview": true,
+      "metadata": {
+        "theme": "accessibility-review"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-012",
+      "operation": "NO_CHANGE",
+      "title": "Uebersetzungssystem explizit ausserhalb des Scopes belassen",
+      "description": "Kein operatives Umsetzungs-Issue noetig. Das Requirement grenzt den Scope negativ ab: Ein System, das zwischen Bewohnern und Betreuern hin und her uebersetzt, ist ausdruecklich nicht Teil der Loesung.",
+      "sourceRequirementIds": [
+        "CAN-REQ-054"
+      ],
+      "acceptanceCriteria": [
+        "Der IssuePlan fuehrt kein Feature fuer ein bidirektionales Uebersetzungssystem ein.",
+        "Die Scope-Abgrenzung ist im Plan beruecksichtigt und bleibt fuer nachgelagerte Umsetzung nachvollziehbar."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "dependencies": [
+        "IPLAN-001"
+      ],
+      "rationale": "Dies ist eine klare Nicht-Anforderung und erfordert keine eigene operative Aenderung.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "scope-exclusion"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-013",
+      "operation": "CREATE",
+      "title": "Plattform- und Entwicklungsgrundlagen fuer Flutter-Projekt festlegen",
+      "description": "Plant die technischen Grundlagen fuer die App-Entwicklung. Umfasst die Festlegung auf Flutter mit Dart, den plattformuebergreifenden Betrieb auf iOS und Android, die Angleichung der Tool-Versionen im Team sowie die initiale Entwicklung und das Testen gegen Android 11.",
+      "sourceRequirementIds": [
+        "CAN-REQ-052",
+        "CAN-REQ-060",
+        "CAN-REQ-062",
+        "CAN-REQ-063"
+      ],
+      "acceptanceCriteria": [
+        "Das Projekt ist fuer die Entwicklung mit Flutter und Dart angelegt oder entsprechend dokumentiert.",
+        "Die technische Ausrichtung deckt iOS und Android als Zielplattformen ab.",
+        "Es gibt eine dokumentierte Vorgabe oder Konfiguration fuer einheitliche Versionen der relevanten Entwicklungswerkzeuge im Team.",
+        "Die initiale Entwicklungs- und Testausrichtung gegen Android 11 ist dokumentiert oder in der Projektkonfiguration nachvollziehbar."
+      ],
+      "labels": [
+        "platform"
+      ],
+      "dependencies": [],
+      "rationale": "Die Requirements bilden ein zusammenhaengendes technisches Setup-Paket.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "platform-foundation"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-014",
+      "operation": "NO_CHANGE",
+      "title": "Animationen nicht aktiv einplanen",
+      "description": "Kein operatives Umsetzungs-Issue noetig. Das Requirement priorisiert Animationen nicht und setzt nur die Leitplanke, dass vorhandene Animationen nicht ablenkend sein duerfen.",
+      "sourceRequirementIds": [
+        "CAN-REQ-053"
+      ],
+      "acceptanceCriteria": [
+        "Der Plan enthaelt kein eigenes Feature zur aktiven Einplanung von Animationen.",
+        "Falls spaeter Animationen umgesetzt werden, bleibt die Leitplanke erhalten, dass diese nicht ablenkend gestaltet sein duerfen."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "dependencies": [],
+      "rationale": "Dies ist prim\u00E4r eine Priorisierungs- und Designleitplanke statt einer eigenstaendigen Arbeitseinheit.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "theme": "design-guideline"
+      }
+    },
+    {
+      "issuePlanId": "IPLAN-015",
+      "operation": "NEEDS_REVIEW",
+      "title": "Vorgezogene Anforderungsanalyse mit Beteiligten gegen Projektstand abgleichen",
+      "description": "Das Requirement beschreibt eine gewuenschte Vorgehensweise vor der konkreten Ausgestaltung der Loesung. Fuer den aktuellen plan-only IssuePlan ist unklar, ob diese Aktivitaet bereits stattgefunden hat oder noch als separates Discovery-Artefakt geplant werden soll. Deshalb ist eine menschliche Entscheidung noetig.",
+      "sourceRequirementIds": [
+        "CAN-REQ-058"
+      ],
+      "acceptanceCriteria": [
+        "Es ist entschieden, ob die genannte Anforderungsanalyse bereits ausreichend erfolgt ist oder noch als eigene Discovery-Aktivitaet geplant werden muss.",
+        "Falls noch offen, sind Ziel, Teilnehmerkreis und erwartete Ergebnisse der Analyse festgelegt.",
+        "Erst danach wird entschieden, ob ein CREATE-Issue fuer Discovery noetig ist oder NO_CHANGE zutrifft."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "dependencies": [],
+      "rationale": "Der zeitliche und operative Status dieser Vorgehensanforderung ist aus dem Input nicht eindeutig ableitbar.",
+      "requiresHumanReview": true,
+      "metadata": {
+        "theme": "discovery-review"
+      }
+    }
+  ]
+}
