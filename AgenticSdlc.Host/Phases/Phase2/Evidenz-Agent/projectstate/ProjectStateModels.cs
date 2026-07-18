@@ -16,7 +16,9 @@ public sealed record ProjectStateDocument(
     [property: JsonPropertyName("provenance")] IReadOnlyList<ProjectStateProvenance> Provenance,
     [property: JsonPropertyName("proposals")] IReadOnlyList<ProjectStateProposal> Proposals)
 {
-    public const int CurrentSchemaVersion = 1;
+    // v2: ProjectStateItem um identityKey + history erweitert (Core/Ingestion). Abwaertskompatibel:
+    // v1-Dateien deserialisieren (fehlende Felder -> null).
+    public const int CurrentSchemaVersion = 2;
 }
 
 public sealed record ProjectStateSource(
@@ -41,7 +43,22 @@ public sealed record ProjectStateItem(
     [property: JsonPropertyName("sourceCandidateId")] string? SourceCandidateId,
     [property: JsonPropertyName("sourceClaimIds")] IReadOnlyList<string> SourceClaimIds,
     [property: JsonPropertyName("sourceArtifactItemIds")] IReadOnlyList<string> SourceArtifactItemIds,
-    [property: JsonPropertyName("metadata")] IReadOnlyDictionary<string, string> Metadata);
+    [property: JsonPropertyName("metadata")] IReadOnlyDictionary<string, string> Metadata,
+    // Core-Erweiterung (SchemaVersion 2, abwaertskompatibel): identityKey = deterministischer Such-ANKER
+    // (kein Identitaets-Urteil); history = fruehere Fassungen (Ingestion macht den Core versioniert).
+    [property: JsonPropertyName("identityKey")] string? IdentityKey = null,
+    [property: JsonPropertyName("history")] IReadOnlyList<ProjectStateItemVersion>? History = null);
+
+/// <summary>Fruehere Fassung eines Items (Ingestion-Historie). Die aktuelle Fassung steht im Item selbst.</summary>
+public sealed record ProjectStateItemVersion(
+    [property: JsonPropertyName("versionId")] int VersionId,
+    [property: JsonPropertyName("text")] string Text,
+    [property: JsonPropertyName("status")] string Status,
+    [property: JsonPropertyName("origin")] string Origin,
+    [property: JsonPropertyName("sourceRunId")] string? SourceRunId,
+    [property: JsonPropertyName("sourceClaimIds")] IReadOnlyList<string> SourceClaimIds,
+    [property: JsonPropertyName("recordedUtc")] DateTime RecordedUtc,
+    [property: JsonPropertyName("note")] string? Note);
 
 public sealed record ProjectStateRelation(
     [property: JsonPropertyName("fromId")] string FromId,
