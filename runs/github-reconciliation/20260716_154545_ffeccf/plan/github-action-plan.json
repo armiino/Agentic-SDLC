@@ -1,0 +1,480 @@
+{
+  "schemaVersion": 1,
+  "planId": "github-action-plan-20260716_154637",
+  "projectId": "evidenz-agent-demo",
+  "baselineId": "baseline-20260716_130307",
+  "createdUtc": "2026-07-16T15:46:37.057251Z",
+  "sourceAcceptedIssuePlanPath": "runs/l4-issuplanning/20260716_132545_823a03/plan/applied/accepted-issue-plan.json",
+  "repository": "armiino/Agentic-GitHub",
+  "actions": [
+    {
+      "actionId": "GHACT-001",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-001",
+      "sourceRequirementIds": [
+        "CAN-REQ-013"
+      ],
+      "targetIssueNumber": null,
+      "title": "Produktziel Verstehen von Bewohnern durch Funktionsumfang abgedeckt",
+      "body": "Das Requirement beschreibt das \u00FCbergeordnete Produktziel, Bewohner bei Verst\u00E4ndnisproblemen besser zu verstehen. Es erzeugt keine isolierte operative Arbeitseinheit, weil es durch die konkreten Profil-, Kommunikations-, Medien- und Zugriffs-Issues umgesetzt und \u00FCberpr\u00FCfbar gemacht wird.",
+      "acceptanceCriteria": [
+        "Der Issue-Plan enth\u00E4lt konkrete Umsetzungs-Issues f\u00FCr Profil-, Kommunikations- und Wissensdarstellung, die das Ziel des besseren Bewohnerverst\u00E4ndnisses adressieren.",
+        "Es wird kein separates Umsetzungs-Issue nur f\u00FCr das abstrakte Ziel ben\u00F6tigt."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "reason": "Accepted IssuePlanItem explicitly states that no GitHub action is needed.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NO_CHANGE"
+      }
+    },
+    {
+      "actionId": "GHACT-002",
+      "operation": "NEEDS_REVIEW",
+      "issuePlanId": "IPLAN-002",
+      "sourceRequirementIds": [
+        "CAN-REQ-016"
+      ],
+      "targetIssueNumber": null,
+      "title": "Rollen- und Berechtigungskonzept f\u00FCr Angeh\u00F6rigenzugriff fachlich zuschneiden",
+      "body": "Der Angeh\u00F6rigenzugriff ist fachlich gew\u00FCnscht, aber aus den freigegebenen Requirements bleiben Umfang und Einschr\u00E4nkungen unklar: sichtbar zug\u00E4ngliche Profile, Bearbeitungsrechte, Haus-/Einrichtungsbindung und Abgrenzung zu Mitarbeiter- und Bewohner-Rollen m\u00FCssen vor einer umsetzbaren Issue-Erstellung entschieden werden.",
+      "acceptanceCriteria": [
+        "Es ist fachlich entschieden, welche Daten Angeh\u00F6rige sehen, hinzuf\u00FCgen und nicht \u00E4ndern d\u00FCrfen.",
+        "Es ist entschieden, ob Angeh\u00F6rige dem einrichtungsbezogenen Berechtigungsmodell von CAN-REQ-048 unterliegen und wie Zuordnung erfolgt.",
+        "Es ist entschieden, wie sich Angeh\u00F6rigenrechte von Mitarbeiter-, Admin- und Bewohnerrechten unterscheiden."
+      ],
+      "labels": [
+        "access-control"
+      ],
+      "reason": "Accepted IssuePlanItem requires review before GitHub action planning.",
+      "requiresHumanReview": true,
+      "metadata": {
+        "sourceIssuePlanOperation": "NEEDS_REVIEW"
+      }
+    },
+    {
+      "actionId": "GHACT-003",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-003",
+      "sourceRequirementIds": [
+        "CAN-REQ-017",
+        "CAN-REQ-024",
+        "CAN-REQ-025"
+      ],
+      "targetIssueNumber": null,
+      "title": "Bewohnerrolle mit eingeschr\u00E4nkter Profilsicht und About-Me/Bilder-Bearbeitung umsetzen",
+      "body": "F\u00FChre eine eigene Bewohnerrolle ein, die in der Profil\u00FCbersicht nur das eigene Profil sieht und nur eingeschr\u00E4nkte Funktionen erh\u00E4lt. Die Rolle soll insbesondere Zugriff auf den About-Me-Bereich und das Hinzuf\u00FCgen eigener Bilder haben, um Fehlbedienungen zu minimieren.",
+      "acceptanceCriteria": [
+        "Ein Bewohner-Account sieht in der Profil\u00FCbersicht ausschlie\u00DFlich das eigene Profil.",
+        "Ein Bewohner-Account kann die About-Me-Seite des eigenen Profils aufrufen.",
+        "Ein Bewohner-Account kann dem eigenen Profil Bilder hinzuf\u00FCgen.",
+        "Ein Bewohner-Account erh\u00E4lt keine weitergehenden Verwaltungsfunktionen au\u00DFerhalb des definierten eingeschr\u00E4nkten Umfangs."
+      ],
+      "labels": [
+        "frontend",
+        "access-control"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE"
+      }
+    },
+    {
+      "actionId": "GHACT-004",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-004",
+      "sourceRequirementIds": [
+        "CAN-REQ-018"
+      ],
+      "targetIssueNumber": null,
+      "title": "Profil\u00FCbersicht nach Login mit zug\u00E4nglichen Profilen und Navigation bereitstellen",
+      "body": "Implementiere die Seite nach dem Login als Profil\u00FCbersicht. Die Ansicht listet alle f\u00FCr den eingeloggten Nutzer zug\u00E4nglichen Profile auf und erlaubt die Navigation in die jeweilige Profildetailansicht.",
+      "acceptanceCriteria": [
+        "Nach erfolgreichem Login wird die Profil\u00FCbersichtsseite angezeigt.",
+        "Die Profil\u00FCbersicht zeigt nur Profile, auf die der eingeloggte Nutzer gem\u00E4\u00DF Berechtigungsmodell zugreifen darf.",
+        "Jeder Listeneintrag ist anklickbar und f\u00FChrt zu einer zugeh\u00F6rigen Profilseite."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE"
+      }
+    },
+    {
+      "actionId": "GHACT-005",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-005",
+      "sourceRequirementIds": [
+        "CAN-REQ-024",
+        "CAN-REQ-050"
+      ],
+      "targetIssueNumber": null,
+      "title": "About-Me-Seite pro Person mit Basisinformationen und Bildern umsetzen",
+      "body": "Erstelle eine About-Me-Seite pro Person f\u00FCr einen informativen und pers\u00F6nlichen Ersteindruck. Die Seite enth\u00E4lt mindestens Name, Alter, Beschreibungen, Hobbys und Bilder.",
+      "acceptanceCriteria": [
+        "F\u00FCr jedes aufrufbare Profil existiert eine About-Me-Seite.",
+        "Die About-Me-Seite zeigt mindestens Name, Alter, Beschreibungen, Hobbys und Bilder an.",
+        "Die Darstellung unterst\u00FCtzt neben Text auch visuelle Inhalte wie Bilder."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE"
+      }
+    },
+    {
+      "actionId": "GHACT-006",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-006",
+      "sourceRequirementIds": [
+        "CAN-REQ-027",
+        "CAN-REQ-028"
+      ],
+      "targetIssueNumber": null,
+      "title": "No-Go-Seite pro Bewohner mit erweiterbarer Liste umsetzen",
+      "body": "Implementiere pro Bewohner eine No-Go-Seite, auf der Dinge festgehalten werden, die in Gegenwart des Bewohners absolut nicht gehen. Die Seite soll eine Liste der No-Gos anzeigen und \u00FCber einen Plus-Button neue Eintr\u00E4ge erg\u00E4nzbar machen.",
+      "acceptanceCriteria": [
+        "F\u00FCr jedes Profil gibt es eine No-Go-Seite oder einen klar erreichbaren No-Go-Bereich.",
+        "Vorhandene No-Gos werden als Liste angezeigt.",
+        "\u00DCber einen Plus-Button k\u00F6nnen berechtigte Nutzer neue No-Go-Eintr\u00E4ge hinzuf\u00FCgen.",
+        "Neu hinzugef\u00FCgte No-Go-Eintr\u00E4ge sind nach dem Speichern in der Liste sichtbar."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE"
+      }
+    },
+    {
+      "actionId": "GHACT-007",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-007",
+      "sourceRequirementIds": [
+        "CAN-REQ-038",
+        "CAN-REQ-039",
+        "CAN-REQ-040"
+      ],
+      "targetIssueNumber": null,
+      "title": "Login-Flow und Login-Screen ohne Selbstregistrierung umsetzen",
+      "body": "Implementiere einen Login-Screen mit Logo, E-Mail-Feld, Passwort-Feld und Login-Button. Eine Selbstregistrierung oder Registrierungsoption wird nicht angeboten. Das Logo soll sichtbar, zentriert und im oberen Drittel des Bildschirms platziert werden.",
+      "acceptanceCriteria": [
+        "Der Login-Screen enth\u00E4lt ein Logo, ein E-Mail-Feld, ein Passwort-Feld und einen Login-Button.",
+        "Der Login-Screen enth\u00E4lt keine Registrierungsoption und keinen Selbstregistrierungs-Flow.",
+        "Das Logo ist im oberen Drittel des Bildschirms zentriert und gut sichtbar platziert."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE"
+      }
+    },
+    {
+      "actionId": "GHACT-008",
+      "operation": "NEEDS_REVIEW",
+      "issuePlanId": "IPLAN-008",
+      "sourceRequirementIds": [
+        "CAN-REQ-044",
+        "CAN-REQ-045",
+        "CAN-REQ-046",
+        "CAN-REQ-048",
+        "CAN-REQ-049"
+      ],
+      "targetIssueNumber": null,
+      "title": "Rollen-, Rechte- und Einrichtungsmodell vor Implementierung konkretisieren",
+      "body": "Die Requirements zu Rollen, Admin-Rechten, User-Rechten, einrichtungsbezogener Sichtbarkeit und rollenabh\u00E4ngigen Settings beschreiben ein gemeinsames Berechtigungsmodell, lassen aber die technische und teilweise fachliche Ausgestaltung offen. Vor umsetzbaren Issues m\u00FCssen Rollenmatrix, Ressourcenrechte, Hauszuordnung und erlaubte Settings-Operationen pr\u00E4zisiert werden.",
+      "acceptanceCriteria": [
+        "Es liegt eine Rollenmatrix f\u00FCr Admin, Mitarbeiter/User, Angeh\u00F6rige und Bewohner mit Lese-, Erstell-, Bearbeitungs- und L\u00F6schrechten vor.",
+        "Es ist entschieden, wie Nutzer einer Einrichtung/einem Haus zugeordnet werden und wie Profile darauf gefiltert werden.",
+        "Es ist entschieden, welche Aktionen im Settings-Screen je Rolle erlaubt sind.",
+        "Die offene technische Ausgestaltung aus CAN-REQ-048 ist in eine umsetzbare L\u00F6sungsrichtung \u00FCberf\u00FChrt."
+      ],
+      "labels": [
+        "access-control"
+      ],
+      "reason": "Accepted IssuePlanItem requires review before GitHub action planning.",
+      "requiresHumanReview": true,
+      "metadata": {
+        "sourceIssuePlanOperation": "NEEDS_REVIEW"
+      }
+    },
+    {
+      "actionId": "GHACT-009",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-009",
+      "sourceRequirementIds": [
+        "CAN-REQ-030",
+        "CAN-REQ-032"
+      ],
+      "targetIssueNumber": null,
+      "title": "Kommunikationsbereich in verbale und nonverbale Abschnitte mit integrierten Videos strukturieren",
+      "body": "Strukturiere Kommunikationsinformationen pro Person in verbale und nonverbale Bereiche. In beiden Bereichen sollen Videos mit Beschreibungen integriert werden, ohne daf\u00FCr einen eigenen separaten Screen einzuf\u00FChren.",
+      "acceptanceCriteria": [
+        "Kommunikationsinformationen sind in einen verbalen und einen nonverbalen Bereich unterteilt.",
+        "Videos mit Beschreibungen k\u00F6nnen innerhalb der Kommunikationsbereiche angezeigt werden.",
+        "Die Videofunktion erscheint nicht als separater eigener Screen au\u00DFerhalb der Kommunikationsbereiche."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE"
+      }
+    },
+    {
+      "actionId": "GHACT-010",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-010",
+      "sourceRequirementIds": [
+        "CAN-REQ-033",
+        "CAN-REQ-025"
+      ],
+      "targetIssueNumber": null,
+      "title": "Videoliste in Kommunikationsbereichen um Hinzuf\u00FCgen und Sortierung erweitern",
+      "body": "Erg\u00E4nze die in den Kommunikationsbereichen integrierte Videofunktion so, dass neue Videos mit Beschreibungen leicht hinzugef\u00FCgt werden k\u00F6nnen und das neueste Video jeweils oben in der Liste erscheint.",
+      "acceptanceCriteria": [
+        "Berechtigte Nutzer k\u00F6nnen in der Videofunktion ein neues Video mit Beschreibung hinzuf\u00FCgen.",
+        "Nach dem Hinzuf\u00FCgen erscheint das neue Video in der Videoliste.",
+        "Die Videoliste ist so sortiert, dass das neueste Video oben angezeigt wird."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE"
+      }
+    },
+    {
+      "actionId": "GHACT-011",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-011",
+      "sourceRequirementIds": [
+        "CAN-REQ-036"
+      ],
+      "targetIssueNumber": null,
+      "title": "Konsistente Appbar nach Login mit Einstieg in Settings bereitstellen",
+      "body": "Stelle auf allen Seiten nach dem Login eine konsistente Appbar bereit. Die Appbar enth\u00E4lt ein Einstellungssymbol, \u00FCber das der Settings-Screen erreichbar ist.",
+      "acceptanceCriteria": [
+        "Nach dem Login wird auf allen relevanten Seiten dieselbe oder konsistent gestaltete Appbar verwendet.",
+        "Die Appbar enth\u00E4lt ein Einstellungssymbol.",
+        "\u00DCber das Einstellungssymbol kann der Nutzer den Settings-Screen \u00F6ffnen."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE"
+      }
+    },
+    {
+      "actionId": "GHACT-012",
+      "operation": "NEEDS_REVIEW",
+      "issuePlanId": "IPLAN-012",
+      "sourceRequirementIds": [
+        "CAN-REQ-043"
+      ],
+      "targetIssueNumber": null,
+      "title": "Barrierefreie alternative Eingabemethoden konkret ausw\u00E4hlen",
+      "body": "Das Requirement fordert, Sprachbefehle oder alternative Eingabemethoden f\u00FCr beeintr\u00E4chtigte Nutzer zu ber\u00FCcksichtigen, spezifiziert aber weder Zielgruppen noch konkrete Interaktionsformen oder Priorisierung. Vor einer belastbaren Umsetzung muss entschieden werden, welche Eingabemethoden unterst\u00FCtzt werden sollen und in welchen Screens sie relevant sind.",
+      "acceptanceCriteria": [
+        "Es ist entschieden, welche alternativen Eingabemethoden im Scope sind, z. B. Sprachsteuerung, vereinfachte Bedienung oder plattformeigene Accessibility-Interaktionen.",
+        "Die priorisierten Nutzungsszenarien und betroffenen Screens/Funktionen sind benannt.",
+        "Aus der Entscheidung lassen sich konkrete umsetzbare Issues ableiten."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "reason": "Accepted IssuePlanItem requires review before GitHub action planning.",
+      "requiresHumanReview": true,
+      "metadata": {
+        "sourceIssuePlanOperation": "NEEDS_REVIEW"
+      }
+    },
+    {
+      "actionId": "GHACT-013",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-013",
+      "sourceRequirementIds": [
+        "CAN-REQ-047"
+      ],
+      "targetIssueNumber": null,
+      "title": "Interne Nutzung wird durch Zugriffs- und Rollenmodell mitabgedeckt",
+      "body": "Das Requirement \u0027nur f\u00FCr internen Gebrauch\u0027 beschreibt eine Nutzungsgrenze und Governance-Aussage, aber keinen eigenst\u00E4ndigen Liefergegenstand innerhalb des vorliegenden Inputs. Es wird durch Login-only, fehlende Selbstregistrierung und das Rollen-/Berechtigungsmodell adressiert.",
+      "acceptanceCriteria": [
+        "Der Issue-Plan enth\u00E4lt Ma\u00DFnahmen f\u00FCr Login ohne Selbstregistrierung und ein rollenbasiertes Berechtigungsmodell.",
+        "Es ist kein separates operatives Issue allein f\u00FCr die abstrakte Aussage zur internen Nutzung erforderlich."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "reason": "Accepted IssuePlanItem explicitly states that no GitHub action is needed.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NO_CHANGE"
+      }
+    },
+    {
+      "actionId": "GHACT-014",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-014",
+      "sourceRequirementIds": [
+        "CAN-REQ-052",
+        "CAN-REQ-060"
+      ],
+      "targetIssueNumber": null,
+      "title": "Plattformziel iOS/Android durch festgelegten Flutter-Stack bereits in der Planung ber\u00FCcksichtigt",
+      "body": "Das plattform\u00FCbergreifende Ziel erzeugt im aktuellen Plan kein separates operatives Issue, weil die Technologieentscheidung f\u00FCr Flutter/Dart bereits getroffen ist und die Umsetzungs-Issues darauf aufsetzen. Konkrete plattformspezifische Arbeit sollte bei Bedarf aus Implementierungsdetails entstehen, nicht aus diesem abstrakten Ziel allein.",
+      "acceptanceCriteria": [
+        "Der Issue-Plan ber\u00FCcksichtigt Flutter/Dart als plattform\u00FCbergreifenden Technologie-Stack.",
+        "Es ist kein separates Implementierungs-Issue nur f\u00FCr das abstrakte Cross-Platform-Ziel notwendig."
+      ],
+      "labels": [
+        "platform"
+      ],
+      "reason": "Accepted IssuePlanItem explicitly states that no GitHub action is needed.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NO_CHANGE"
+      }
+    },
+    {
+      "actionId": "GHACT-015",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-015",
+      "sourceRequirementIds": [
+        "CAN-REQ-053"
+      ],
+      "targetIssueNumber": null,
+      "title": "Animationen werden nicht eigens eingeplant",
+      "body": "Das Requirement fordert explizit, Animationen nicht zu priorisieren; damit entsteht kein separates Umsetzungs-Issue. Die Nebenbedingung, dass etwaige Animationen nicht ablenkend sein d\u00FCrfen, kann in sp\u00E4teren UI-Reviews ber\u00FCcksichtigt werden.",
+      "acceptanceCriteria": [
+        "Der Plan enth\u00E4lt kein dediziertes Animations-Issue.",
+        "Falls in sp\u00E4teren Umsetzungen Animationen erg\u00E4nzt werden, k\u00F6nnen sie gegen die Vorgabe \u0027nicht ablenkend\u0027 gepr\u00FCft werden."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "reason": "Accepted IssuePlanItem explicitly states that no GitHub action is needed.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NO_CHANGE"
+      }
+    },
+    {
+      "actionId": "GHACT-016",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-016",
+      "sourceRequirementIds": [
+        "CAN-REQ-054"
+      ],
+      "targetIssueNumber": null,
+      "title": "\u00DCbersetzungssystem bleibt explizit au\u00DFerhalb des Scopes",
+      "body": "Das Requirement schlie\u00DFt ein \u00DCbersetzungssystem ausdr\u00FCcklich aus dem L\u00F6sungsumfang aus. Daraus entsteht kein Umsetzungs-Issue; die Aussage dient als Scope-Grenze f\u00FCr sp\u00E4tere Umsetzung und Review.",
+      "acceptanceCriteria": [
+        "Der Plan enth\u00E4lt kein Issue zur Entwicklung eines \u00DCbersetzungssystems zwischen Bewohnern und Betreuern.",
+        "Die Scope-Grenze ist im Plan explizit dokumentiert."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "reason": "Accepted IssuePlanItem explicitly states that no GitHub action is needed.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NO_CHANGE"
+      }
+    },
+    {
+      "actionId": "GHACT-017",
+      "operation": "NEEDS_REVIEW",
+      "issuePlanId": "IPLAN-017",
+      "sourceRequirementIds": [
+        "CAN-REQ-056"
+      ],
+      "targetIssueNumber": null,
+      "title": "Einbindung bestehender Akten und dokumentierter Erfahrungen als Datenquelle konkretisieren",
+      "body": "Die vorhandenen Akten und dokumentierten Erfahrungen sind als Wissensquelle relevant, aber aus den Requirements ist nicht klar, ob Daten migriert, manuell \u00FCbertragen, referenziert oder nur fachlich als Input f\u00FCr Datenerfassung genutzt werden sollen. Vor einer operativen Umsetzung muss die Form der Ber\u00FCcksichtigung entschieden werden.",
+      "acceptanceCriteria": [
+        "Es ist entschieden, ob bestehende Akten technisch importiert, manuell nacherfasst oder lediglich als fachliche Referenz genutzt werden.",
+        "Es ist festgelegt, welche Datenkategorien aus bestehenden Quellen in die App \u00FCbernommen werden sollen.",
+        "Aus der Entscheidung lassen sich konkrete Folge-Issues f\u00FCr Datenmodell, Migration oder Erfassung ableiten."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "reason": "Accepted IssuePlanItem requires review before GitHub action planning.",
+      "requiresHumanReview": true,
+      "metadata": {
+        "sourceIssuePlanOperation": "NEEDS_REVIEW"
+      }
+    },
+    {
+      "actionId": "GHACT-018",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-018",
+      "sourceRequirementIds": [
+        "CAN-REQ-058"
+      ],
+      "targetIssueNumber": null,
+      "title": "Anforderungsanalyse ist vorgelagerte Vorgehensempfehlung und kein Umsetzungs-Issue im aktuellen Plan",
+      "body": "Die gew\u00FCnschte Anforderungsanalyse mit Beteiligten und sp\u00E4teren Nutzern beschreibt ein Vorgehen vor der konkreten Ausgestaltung. Da der vorliegende Input bereits freigegebene Requirements enth\u00E4lt, entsteht daraus innerhalb dieses plan-only Issue-Plans kein separates operatives Produkt-Issue.",
+      "acceptanceCriteria": [
+        "Es wird kein Delivery-Issue f\u00FCr die bereits vorgelagerte Anforderungsanalyse erzeugt.",
+        "Die Begr\u00FCndung dokumentiert, dass das Requirement als Prozessvorgabe und nicht als aktueller Liefergegenstand behandelt wird."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "reason": "Accepted IssuePlanItem explicitly states that no GitHub action is needed.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NO_CHANGE"
+      }
+    },
+    {
+      "actionId": "GHACT-019",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-019",
+      "sourceRequirementIds": [
+        "CAN-REQ-060",
+        "CAN-REQ-062",
+        "CAN-REQ-063"
+      ],
+      "targetIssueNumber": null,
+      "title": "Team-Setup f\u00FCr Flutter/Dart mit abgestimmten Tool-Versionen und Android-11-Startziel dokumentieren",
+      "body": "Lege das initiale Entwicklungs-Setup f\u00FCr das Team fest: Flutter/Dart als Technologie-Stack, abgestimmte Versionen der Entwicklungswerkzeuge und initiale Ausrichtung von Entwicklung und Tests auf Android 11.",
+      "acceptanceCriteria": [
+        "Die zu verwendenden Versionen von Flutter, Dart und weiteren relevanten Entwicklungswerkzeugen sind f\u00FCr das Team dokumentiert.",
+        "Das initiale Zielger\u00E4t bzw. die initiale Testplattform Android 11 ist dokumentiert.",
+        "Das Team-Setup ist konsistent mit der Entscheidung f\u00FCr Flutter/Dart als Technologie-Stack."
+      ],
+      "labels": [
+        "platform"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE"
+      }
+    }
+  ]
+}

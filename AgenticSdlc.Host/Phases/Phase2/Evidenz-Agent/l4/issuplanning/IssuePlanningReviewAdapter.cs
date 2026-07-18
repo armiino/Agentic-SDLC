@@ -158,9 +158,9 @@ public static class IssuePlanningReviewAdapter
             Help: "Leer lassen = Original-Operation behalten.", VisibleWhen: OnlyOnEdit),
         new ReviewFieldSpec(FieldEditTitle, "Edit: Titel", ReviewInputType.FreeText, [], Required: false,
             Help: "Leer lassen = Original-Titel behalten.", VisibleWhen: OnlyOnEdit),
-        new ReviewFieldSpec(FieldEditDescription, "Edit: Beschreibung", ReviewInputType.FreeText, [], Required: false,
+        new ReviewFieldSpec(FieldEditDescription, "Edit: Beschreibung", ReviewInputType.MultiLine, [], Required: false,
             Help: "Leer lassen = Original-Beschreibung behalten.", VisibleWhen: OnlyOnEdit),
-        new ReviewFieldSpec(FieldEditAcceptanceCriteria, "Edit: Acceptance Criteria", ReviewInputType.FreeText, [], Required: false,
+        new ReviewFieldSpec(FieldEditAcceptanceCriteria, "Edit: Acceptance Criteria", ReviewInputType.MultiLine, [], Required: false,
             Help: "Eine Zeile pro Kriterium. Leer lassen = Original-Kriterien behalten.", VisibleWhen: OnlyOnEdit),
         new ReviewFieldSpec(FieldEditLabels, "Edit: Labels", ReviewInputType.FreeText, [], Required: false,
             Help: "Kommagetrennt. Leer lassen = Original-Labels behalten.", VisibleWhen: OnlyOnEdit),
@@ -169,7 +169,7 @@ public static class IssuePlanningReviewAdapter
         new ReviewFieldSpec(FieldEditRequiresHumanReview, "Edit: Requires Human Review", ReviewInputType.Dropdown,
             ["", "true", "false"], Required: false,
             Help: "Leer lassen = Original-Wert behalten.", VisibleWhen: OnlyOnEdit),
-        new ReviewFieldSpec(FieldReason, "Begruendung / Feedback", ReviewInputType.FreeText, [], Required: false,
+        new ReviewFieldSpec(FieldReason, "Begruendung / Feedback", ReviewInputType.MultiLine, [], Required: false,
             Help: "Warum akzeptiert/geaendert/verworfen/revidiert wird. Bei revise ist dies die Anweisung an den Planner.")
     ];
 

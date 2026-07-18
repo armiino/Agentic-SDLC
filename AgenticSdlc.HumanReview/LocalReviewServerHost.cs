@@ -74,7 +74,8 @@ public static class LocalReviewServerHost
         bool IsComplete() => (options.IsComplete ?? (s => s.AllResolved()))(session);
         bool Recompute(ReviewItem it) => (options.RecomputeResolved ?? (i => DefaultResolved(i, session)))(it);
 
-        var builder = WebApplication.CreateBuilder();
+        Console.WriteLine("[review-ui] starte lokalen Review-Server...");
+        var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseUrls("http://127.0.0.1:0"); // OS waehlt freien Port
         builder.Logging.ClearProviders();               // ruhige Konsole
         var app = builder.Build();
@@ -127,6 +128,7 @@ public static class LocalReviewServerHost
 
         app.MapPost("/api/cancel", () => SetAndOk(done, ReviewOutcome.Cancelled));
 
+        Console.WriteLine("[review-ui] binde lokalen Port...");
         await app.StartAsync(ct);
         var url = app.Urls.First();
         Console.WriteLine($"[review-ui] {session.Items.Count} Items — offen unter: {url}");

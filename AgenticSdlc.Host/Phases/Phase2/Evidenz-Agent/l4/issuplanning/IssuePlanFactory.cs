@@ -21,7 +21,13 @@ public static class IssuePlanFactory
                 {
                     ["seed"] = "one_issue_per_requirement",
                     ["l4OperationId"] = item.Provenance?.L4OperationId ?? ""
-                }))
+                })
+                {
+                    KnownContext = BuildKnownContext(item),
+                    ImplementationHints = BuildImplementationHints(item),
+                    OpenQuestions = BuildOpenQuestions(item),
+                    Readiness = "ready_for_dev_with_context"
+                })
             .ToList();
 
         return new IssuePlanDocument(
@@ -63,6 +69,47 @@ public static class IssuePlanFactory
             $"Die Umsetzung erfuellt {item.RequirementId}: {Normalize(item.Title)}.",
             "Die Umsetzung ist anhand der verknuepften Requirement-Quelle rueckpruefbar."
         ];
+
+    private static IReadOnlyList<string> BuildKnownContext(IssuePlanningInputItem item)
+    {
+        var context = new List<string>
+        {
+            $"Akzeptiertes Requirement {item.RequirementId}: {Normalize(item.Text)}"
+        };
+        if (item.SourceItemIds.Count > 0)
+            context.Add($"Rueckfuehrbar auf Source Items: {string.Join(", ", item.SourceItemIds)}.");
+        if (!string.IsNullOrWhiteSpace(item.OriginSummary))
+            context.Add($"Herkunft: {Normalize(item.OriginSummary)}");
+        return context;
+    }
+
+    private static IReadOnlyList<string> BuildImplementationHints(IssuePlanningInputItem item)
+    {
+        var text = $"{item.Title} {item.Text}".ToLowerInvariant();
+        var hints = new List<string>();
+        if (ContainsAny(text, ["login", "screen", "seite", "profil", "button", "navigation"]))
+            hints.Add("Frontend/UI: View, Navigation, relevante Zustaende und Benutzerinteraktion konkretisieren.");
+        if (ContainsAny(text, ["account", "admin", "rechte", "zugriff", "rollen", "berechtigung"]))
+            hints.Add("Backend/Auth: Zugriff und Berechtigungspruefung an der fachlichen Rollenlogik ausrichten.");
+        if (ContainsAny(text, ["bilder", "foto", "upload", "medien", "visuell"]))
+            hints.Add("Daten/Medien: Quelle, Anzeige und Speicher-/Validierungsregeln fuer visuelle Inhalte klaeren oder bewusst begrenzen.");
+        if (hints.Count == 0)
+            hints.Add("Umsetzung in Frontend/Backend/Datenmodell soweit konkretisieren, wie es fuer dieses Requirement erforderlich ist.");
+        return hints;
+    }
+
+    private static IReadOnlyList<string> BuildOpenQuestions(IssuePlanningInputItem item)
+    {
+        var questions = new List<string>();
+        var text = $"{item.Title} {item.Text}".ToLowerInvariant();
+        if (ContainsAny(text, ["bilder", "foto", "upload", "medien"]))
+            questions.Add("Sind Erfassung, Upload, Speicherung und Bearbeitung von Bildern Teil dieses Issues oder nur die Anzeige vorhandener Bilder?");
+        if (ContainsAny(text, ["rolle", "account", "zugriff", "rechte", "berechtigung"]))
+            questions.Add("Welche Rollen duerfen diese Funktion lesen, erstellen, bearbeiten oder loeschen?");
+        if (ContainsAny(text, ["seite", "screen", "profil", "navigation"]))
+            questions.Add("Welche konkreten UI-Zustaende, leere Datenlagen und Fehlersituationen muessen im MVP abgedeckt werden?");
+        return questions;
+    }
 
     private static IReadOnlyList<string> BuildLabels(IssuePlanningInputItem item)
     {

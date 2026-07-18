@@ -2,6 +2,7 @@ using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
 using AgenticSdlc.Host.Prompts;
+using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
@@ -67,17 +68,21 @@ public static class IssuePlanningRunner
             return 2;
         }
 
-        var resolved = ResolveIssuePlanningInput(repoRoot, inputArg);
-        if (resolved is null)
+        IssuePlanningView view;
+        try
         {
-            Console.Error.WriteLine($"[l4-issuplanning] issue-planning-input.json nicht gefunden: {inputArg}");
+            view = await LoadIssuePlanningViewAsync(repoRoot, inputArg).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[l4-issuplanning] IssuePlanningView nicht gefunden: {ex.Message}");
             return 2;
         }
 
-        var input = await LoadInputAsync(resolved.InputPath).ConfigureAwait(false);
-        var plan = IssuePlanFactory.CreateOneIssuePerRequirement(input, Path.GetRelativePath(repoRoot, resolved.InputPath));
+        var input = view.Input;
+        var plan = IssuePlanFactory.CreateOneIssuePerRequirement(input, Path.GetRelativePath(repoRoot, view.IssuePlanningInputPath));
         var gate = IssuePlanGate.Check(input, plan);
-        var outputPath = ResolvePath(repoRoot, output ?? Path.Combine(resolved.OutputDir, "issue-plan-seed.json"));
+        var outputPath = ResolvePath(repoRoot, output ?? Path.Combine(view.SourceDirectory, "issue-plan-seed.json"));
         Directory.CreateDirectory(Path.GetDirectoryName(outputPath) ?? ".");
         await File.WriteAllTextAsync(outputPath, JsonSerializer.Serialize(plan, Json)).ConfigureAwait(false);
         await File.WriteAllTextAsync(Path.Combine(Path.GetDirectoryName(outputPath) ?? ".", "issue-plan-seed-gate-report.json"), JsonSerializer.Serialize(gate, Json)).ConfigureAwait(false);
@@ -116,14 +121,24 @@ public static class IssuePlanningRunner
             else planArg ??= arg;
         }
 
-        var resolved = ResolveIssuePlanningInput(repoRoot, inputArg ?? "");
-        if (resolved is null || string.IsNullOrWhiteSpace(planArg))
+        if (string.IsNullOrWhiteSpace(planArg))
         {
             Usage();
             return 2;
         }
 
-        var input = await LoadInputAsync(resolved.InputPath).ConfigureAwait(false);
+        IssuePlanningView view;
+        try
+        {
+            view = await LoadIssuePlanningViewAsync(repoRoot, inputArg ?? "").ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[l4-issuplanning] IssuePlanningView nicht gefunden: {ex.Message}");
+            return 2;
+        }
+
+        var input = view.Input;
         var planPath = ResolvePath(repoRoot, planArg);
         var plan = await LoadPlanAsync(planPath).ConfigureAwait(false);
         var gate = IssuePlanGate.Check(input, plan);
@@ -167,19 +182,23 @@ public static class IssuePlanningRunner
             else modelArg ??= arg;
         }
 
-        var resolved = ResolveIssuePlanningInput(repoRoot, inputArg ?? "");
-        if (resolved is null)
+        IssuePlanningView view;
+        try
         {
-            Console.Error.WriteLine($"[l4-issuplanning] issue-planning-input.json nicht gefunden: {inputArg}");
+            view = await LoadIssuePlanningViewAsync(repoRoot, inputArg ?? "").ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[l4-issuplanning] IssuePlanningView nicht gefunden: {ex.Message}");
             return 2;
         }
 
-        var input = await LoadInputAsync(resolved.InputPath).ConfigureAwait(false);
+        var input = view.Input;
         var genSettings = modelArg is not null ? settings with { ModelId = modelArg } : settings;
         var run = new RunContext(RunId.New(), "l4-issuplanning");
         run.EnsureFolders();
         var outDir = outputDir is null ? run.OutputDir("plan") : ResolvePath(repoRoot, outputDir);
-        var sourceRelativePath = Path.GetRelativePath(repoRoot, resolved.InputPath);
+        var sourceRelativePath = Path.GetRelativePath(repoRoot, view.IssuePlanningInputPath);
         run.WriteConfig(new
         {
             workflow = IssuePlanningWorkflow.WorkflowName,
@@ -265,36 +284,11 @@ public static class IssuePlanningRunner
         return report.Pass ? 0 : 1;
     }
 
-    private static ResolvedIssuePlanningInput? ResolveIssuePlanningInput(string repoRoot, string token)
+    private static async Task<IssuePlanningView> LoadIssuePlanningViewAsync(string repoRoot, string token)
     {
-        var full = ResolvePath(repoRoot, token);
-        if (File.Exists(full) && string.Equals(Path.GetFileName(full), "issue-planning-input.json", StringComparison.OrdinalIgnoreCase))
-            return new ResolvedIssuePlanningInput(full, Path.GetDirectoryName(full) ?? repoRoot);
-        if (Directory.Exists(full))
-        {
-            var direct = Path.Combine(full, "issue-planning-input.json");
-            if (File.Exists(direct)) return new ResolvedIssuePlanningInput(direct, full);
-            var applied = Path.Combine(full, "consolidation", "applied", "issue-planning-input.json");
-            if (File.Exists(applied)) return new ResolvedIssuePlanningInput(applied, Path.GetDirectoryName(applied) ?? full);
-        }
-
-        var l4Root = Path.Combine(repoRoot, "runs", "l4");
-        if (Directory.Exists(l4Root))
-        {
-            foreach (var runDir in Directory.EnumerateDirectories(l4Root).Where(d => Path.GetFileName(d).Contains(token, StringComparison.OrdinalIgnoreCase)))
-            {
-                var input = Path.Combine(runDir, "consolidation", "applied", "issue-planning-input.json");
-                if (File.Exists(input)) return new ResolvedIssuePlanningInput(input, Path.GetDirectoryName(input) ?? runDir);
-            }
-        }
-        return null;
-    }
-
-    private static async Task<IssuePlanningInput> LoadInputAsync(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<IssuePlanningInput>(json, Json)
-               ?? throw new InvalidOperationException($"IssuePlanningInput konnte nicht gelesen werden: {path}");
+        var viewRepository = new JsonProjectStateViewRepository(repoRoot);
+        return await viewRepository.GetIssuePlanningViewAsync(
+            ProjectScope.FromSourcePath(token, "issue-planning", "current_baseline")).ConfigureAwait(false);
     }
 
     private static async Task<IssuePlanDocument> LoadPlanAsync(string path)
@@ -320,8 +314,6 @@ public static class IssuePlanningRunner
         Console.Error.WriteLine("       l4-issuplanning check <issue-planning-input.json|l4RunId> <issue-plan.json> [--out <report.json>]");
         Console.Error.WriteLine("       l4-issuplanning agent <issue-planning-input.json|l4RunId> [model] [--out <dir>] [--dry-run]");
     }
-
-    private sealed record ResolvedIssuePlanningInput(string InputPath, string OutputDir);
 
     private sealed record IssuePlanRunSummary(
         bool Saved,

@@ -20,6 +20,8 @@ public enum ReviewInputType
     Dropdown,
     /// <summary>Freitext-Eingabe.</summary>
     FreeText,
+    /// <summary>Mehrzeilige Freitext-Eingabe fuer laengere Texte oder listenartige Werte.</summary>
+    MultiLine,
     /// <summary>Nur-Lese-Anzeige (kein Edit; z. B. eine ID/Referenz).</summary>
     Readonly
 }

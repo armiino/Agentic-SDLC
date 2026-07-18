@@ -1,0 +1,528 @@
+# Operationalization Audit
+
+Baseline: `baseline-20260716_130307`
+Project: `evidenz-agent-demo`
+Ready for GitHub write: `True`
+
+## Summary
+
+- Canonical requirements: `69`
+- Readiness items: `69`
+- IssuePlanning input items: `31`
+- IssuePlan items: `16`
+- GitHub actions: `16`
+- ClarificationPlan items: `18`
+- Dry-run operations: `16`
+- Covered IssuePlanning input items: `31`
+- Uncovered IssuePlanning input items: `0`
+- Requirements with delivery coverage: `28`
+- Requirements with clarification coverage: `36`
+- Requirements without operational coverage: `0`
+- Blocked requirements: `0`
+- NO_CHANGE-only requirements: `3`
+
+## Operations
+
+- `CREATE`: `28` requirements
+- `NOT_IN_ISSUE_PLANNING`: `38` requirements
+- `NO_CHANGE`: `3` requirements
+
+## Findings
+
+- `warning` `issue_plan_gate_large_issue_plan` req=`-` issuePlan=`IPLAN-003` action=`-`: IssuePlanItem umfasst mehr als vier Requirements; pruefen, ob Split sinnvoll ist.
+- `info` `deferred_without_issue` req=`CAN-REQ-041` issuePlan=`-` action=`-`: Requirement ist als deferred/optional markiert und bewusst nicht operationalisiert.
+- `info` `deferred_without_issue` req=`CAN-REQ-042` issuePlan=`-` action=`-`: Requirement ist als deferred/optional markiert und bewusst nicht operationalisiert.
+- `info` `no_change_only` req=`CAN-REQ-053` issuePlan=`IPLAN-011` action=`GHACT-011`: Requirement ist bewusst ohne GitHub-Write operationalisiert.
+- `info` `no_change_only` req=`CAN-REQ-054` issuePlan=`IPLAN-012` action=`GHACT-012`: Requirement ist bewusst ohne GitHub-Write operationalisiert.
+- `info` `no_change_only` req=`CAN-REQ-058` issuePlan=`IPLAN-014` action=`GHACT-014`: Requirement ist bewusst ohne GitHub-Write operationalisiert.
+
+## Requirements
+
+- `CAN-DISK-003` MVP-Abnahmeschwellen für Verfügbarkeit und Wiederanlauf als Diskussionspunkt ergänzen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-001`
+  - githubActions: ``
+  - operations: ``
+- `CAN-OPEN-001` Scope-Entscheidung mit expliziten Nicht-Zielen vor Projektstart abschließen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-001`
+  - githubActions: ``
+  - operations: ``
+- `CAN-OPEN-002` Rechtsgrundlage und zulässige Datennutzung für echte Bewohnerdaten und Medien entscheiden
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-002`
+  - githubActions: ``
+  - operations: ``
+- `CAN-OPEN-004` GetX-Status als offene Technikentscheidung korrekt ausweisen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-004`
+  - githubActions: ``
+  - operations: ``
+- `CAN-OPEN-005` Minimalen Content-Lifecycle für nutzergenerierte Inhalte verbindlich entscheiden
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-005`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-001` MVP-Scope zwischen Unterstützungswerkzeug und Dokumentationsumfang festlegen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-001`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-002` Vollständiges Rollen- und Berechtigungskonzept spezifizieren
+  - readiness: `needs_breakdown`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-007`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-003` Eingaberegeln und Beschreibungsschema für Inhalte definieren
+  - readiness: `needs_breakdown`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-008`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-004` Bearbeitungs- und Freigabeprozess für nutzergenerierte Inhalte festlegen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-005`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-005` Datenschutz- und Datenlebenszyklus vor Produktivstart festlegen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-002`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-006` Sicherheitsmaßnahmen für besonders sensible Inhalte festlegen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-010`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-007` Übernahme aus Akten und Drittsystemen entscheiden
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-011`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-008` Offline- und Synchronisationsverhalten für Firestore festlegen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-012`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-009` Messbare Qualitätsziele vor Projektstart festlegen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-001`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-010` Nutzungskontext, Tablet-Support und Barrierefreiheitskriterien festlegen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-013`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-011` Rechtsgrundlage und Freigaben für echte Bewohnerdaten und Bilder festlegen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-002`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-012` Kalender-Scope und Umgang mit medizinisch sensiblen Informationen entscheiden
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-013`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-013` Lösung soll primär das Verstehen von Bewohnern unterstützen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-001`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-001`
+  - operations: `CREATE`
+- `CAN-REQ-014` Digitale Lösung zur Kommunikationsförderung als gewünschtes Zielbild
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-001`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-015` Lösung soll neue Mitarbeiter und Verständigungssituationen unterstützen
+  - readiness: `needs_breakdown`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-019`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-016` Angehörige sollen ergänzenden Zugriff erhalten können
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-003`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-003`
+  - operations: `CREATE`
+- `CAN-REQ-017` Bewohner-Account mit eingeschränkten Funktionen vorsehen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-004`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-004`
+  - operations: `CREATE`
+- `CAN-REQ-018` Profilübersichtsseite nach Login anzeigen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-001`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-001`
+  - operations: `CREATE`
+- `CAN-REQ-019` Suchfunktion auf der Profilübersichtsseite bereitstellen
+  - readiness: `needs_breakdown`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-020`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-020` Sichtbare Suchleiste unter der Appbar auf Profilübersicht vorsehen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-020`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-021` Profile als Kacheln oder Liste mit Vorschaudaten darstellen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-020`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-022` Anlegen neuer Profile über Profilübersicht klären
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-020`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-023` Profil-Detailansicht mit vier Hauptbereichen vorsehen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-024`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-024` About-Me-Seite pro Person bereitstellen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-005`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-005`
+  - operations: `CREATE`
+- `CAN-REQ-025` Profil- und Kommunikationsinhalte dynamisch erweiterbar machen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-005`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-005`
+  - operations: `CREATE`
+- `CAN-REQ-026` About-Me-Seite mit Infobox und Foto-Timeline ausgestalten
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-024`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-027` No-Go-Seite pro Bewohner bereitstellen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-006`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-006`
+  - operations: `CREATE`
+- `CAN-REQ-028` No-Go-Seite dynamisch erweiterbar machen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-006`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-006`
+  - operations: `CREATE`
+- `CAN-REQ-029` No-Go-Seite mit starkem visuellen Symbol ausstatten
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-024`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-030` Kommunikationsinformationen in verbale und nonverbale Bereiche unterteilen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-007`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-007`
+  - operations: `CREATE`
+- `CAN-REQ-031` Trennung der Kommunikationsbereiche visuell kennzeichnen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-024`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-032` Videos mit Beschreibungen in Kommunikationsseiten integrieren
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-008`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-008`
+  - operations: `CREATE`
+- `CAN-REQ-033` Neue Videos leicht hinzufügbar machen und neuestes oben anzeigen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-008`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-008`
+  - operations: `CREATE`
+- `CAN-REQ-034` Plus-Button für nonverbale Videos und Beschreibungen vorsehen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-024`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-035` Suchfunktion auf Kommunikationsseiten mit Beschreibungsmuster ermöglichen
+  - readiness: `needs_breakdown`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-008`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-036` Konsistente Appbar nach Login auf jeder Seite bereitstellen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-009`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-009`
+  - operations: `CREATE`
+- `CAN-REQ-037` Aktuellen Screen-Titel mittig in der Appbar anzeigen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-030`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-038` Nur Login ohne Selbstregistrierung vorsehen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-002`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-002`
+  - operations: `CREATE`
+- `CAN-REQ-039` Login-Screen mit Logo, E-Mail, Passwort und Login-Button gestalten
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-002`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-002`
+  - operations: `CREATE`
+- `CAN-REQ-040` Logo auf Login-Screen sichtbar im oberen Drittel platzieren
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-002`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-002`
+  - operations: `CREATE`
+- `CAN-REQ-041` Optionale Hilfe- oder Tutorial-Funktion vorsehen
+  - readiness: `deferred_or_optional`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `deferred`
+  - issuePlanIds: ``
+  - clarificationPlanIds: ``
+  - githubActions: ``
+  - operations: ``
+  - findings: `deferred_without_issue`
+- `CAN-REQ-042` Optionale Popup-Benachrichtigung bei neuen About-Me-Inhalten vorsehen
+  - readiness: `deferred_or_optional`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `deferred`
+  - issuePlanIds: ``
+  - clarificationPlanIds: ``
+  - githubActions: ``
+  - operations: ``
+  - findings: `deferred_without_issue`
+- `CAN-REQ-043` Alternative Eingabemethoden für beeinträchtigte Nutzer berücksichtigen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-010`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-010`
+  - operations: `CREATE`
+- `CAN-REQ-044` Rollenbasierte Accounts mit unterschiedlichen Rechten unterstützen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-003`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-003`
+  - operations: `CREATE`
+- `CAN-REQ-045` Nur Admin darf Accounts anlegen und Rechte verwalten
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-003`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-003`
+  - operations: `CREATE`
+- `CAN-REQ-046` User-Accounts dürfen Inhalte hinzufügen, aber keine Accounts erstellen oder Daten löschen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-003`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-003`
+  - operations: `CREATE`
+- `CAN-REQ-047` App nur für internen Gebrauch vorsehen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-003`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-003`
+  - operations: `CREATE`
+- `CAN-REQ-048` Zugriffe einrichtungsbezogen beschränken
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-003`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-003`
+  - operations: `CREATE`
+- `CAN-REQ-049` Settings-Screen rollenabhängig differenzieren
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-009`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-009`
+  - operations: `CREATE`
+- `CAN-REQ-050` Kommunikationsinhalte auch visuell darstellen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-005`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-005`
+  - operations: `CREATE`
+- `CAN-REQ-051` Barrierefreiheit im Design berücksichtigen
+  - readiness: `needs_breakdown`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-031`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-052` App plattformübergreifend auf iOS und Android betreiben
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-016`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-016`
+  - operations: `CREATE`
+- `CAN-REQ-053` Animationen nicht priorisieren und nicht ablenkend gestalten
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `no_change`
+  - issuePlanIds: `IPLAN-011`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-011`
+  - operations: `NO_CHANGE`
+  - findings: `no_change_only`
+- `CAN-REQ-054` Übersetzungssystem zwischen Bewohnern und Betreuern aus Scope ausschließen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `no_change`
+  - issuePlanIds: `IPLAN-012`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-012`
+  - operations: `NO_CHANGE`
+  - findings: `no_change_only`
+- `CAN-REQ-055` Offene Entscheidung zur vollständigen Dokumentationsübernahme erhalten
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-032`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-056` Bestehende Akten und dokumentierte Erfahrungen als Wissensquelle berücksichtigen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-013`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-013`
+  - operations: `CREATE`
+- `CAN-REQ-057` Schlechte Nutzbarkeit vorhandener Dokumentation bei Lösungsdesign berücksichtigen
+  - readiness: `needs_breakdown`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-032`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-058` Anforderungsanalyse mit Beteiligten und späteren Nutzern durchführen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `no_change`
+  - issuePlanIds: `IPLAN-014`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-014`
+  - operations: `NO_CHANGE`
+  - findings: `no_change_only`
+- `CAN-REQ-059` Einsatz von GetX als technische Rahmenbedingung prüfen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-004`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-060` Flutter mit Dart als Technologie-Stack verwenden
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-015`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-015`
+  - operations: `CREATE`
+- `CAN-REQ-061` Android Studio als bevorzugte Entwicklungsumgebung nutzen
+  - readiness: `needs_breakdown`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-035`
+  - githubActions: ``
+  - operations: ``
+- `CAN-REQ-062` Versionen der Entwicklungswerkzeuge im Team angleichen
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-015`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-015`
+  - operations: `CREATE`
+- `CAN-REQ-063` Initiale Entwicklung und Tests zunächst gegen Android 11 ausrichten
+  - readiness: `ready_for_issue_planning`, inIssuePlanningInput: `True`
+  - operationalizationStatus: `delivery`
+  - issuePlanIds: `IPLAN-015`
+  - clarificationPlanIds: ``
+  - githubActions: `GHACT-015`
+  - operations: `CREATE`
+- `CAN-REQ-064` Digitalisierung grundsätzlich als vorteilhaft ansehen
+  - readiness: `needs_decision`, inIssuePlanningInput: `False`
+  - operationalizationStatus: `clarification`
+  - issuePlanIds: ``
+  - clarificationPlanIds: `CPLAN-036`
+  - githubActions: ``
+  - operations: ``

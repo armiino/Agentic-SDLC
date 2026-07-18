@@ -1,0 +1,644 @@
+{
+  "schemaVersion": 1,
+  "planId": "github-action-plan-20260717_120409-accepted",
+  "projectId": "evidenz-agent-demo",
+  "baselineId": "baseline-20260716_130307",
+  "createdUtc": "2026-07-17T12:04:26.264821Z",
+  "sourceAcceptedIssuePlanPath": "runs/l4-issuplanning/20260717_110515_301f60/plan/applied/accepted-issue-plan.json",
+  "repository": "armiino/Agentic-GitHub",
+  "actions": [
+    {
+      "actionId": "GHACT-001",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-001",
+      "sourceRequirementIds": [
+        "CAN-REQ-013",
+        "CAN-REQ-018"
+      ],
+      "targetIssueNumber": null,
+      "title": "Kernnavigation und Profilzugang nach Login umsetzen",
+      "body": "Setze den zentralen Nutzungspfad nach dem Login um, damit Betreuer verf\u00FCgbare Bewohnerprofile als Wissenszugang finden und \u00F6ffnen k\u00F6nnen. Das Issue b\u00FCndelt den fachlichen Kernzweck der L\u00F6sung mit der Profil\u00FCbersicht als Einstieg.",
+      "acceptanceCriteria": [
+        "Nach erfolgreichem Login wird eine Profil\u00FCbersichtsseite angezeigt.",
+        "Die Profil\u00FCbersicht listet alle f\u00FCr den eingeloggten Nutzer zug\u00E4nglichen Profile.",
+        "Jedes gelistete Profil ist anklickbar und f\u00FChrt auf eine weitere Profilseite.",
+        "Die umgesetzte Navigation unterst\u00FCtzt den prim\u00E4ren Zweck, Informationen nachzuschlagen, um Bewohner besser zu verstehen."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-013 beschreibt den Prim\u00E4rnutzen der L\u00F6sung als Nachschlagehilfe bei Verst\u00E4ndnisproblemen.",
+          "CAN-REQ-018 fordert die Profil\u00FCbersichtsseite direkt nach dem Login mit klickbaren Profilen.",
+          "Beide Requirements sind auf baseline-Quellen REQ-01 und REQ-06 r\u00FCckf\u00FChrbar."
+        ],
+        "implementationHints": [
+          "Profil\u00FCbersicht als Startscreen nach erfolgreicher Authentifizierung routen.",
+          "Zug\u00E4ngliche Profile bereits \u00FCber das sp\u00E4tere Berechtigungsmodell filtern, soweit vorhanden.",
+          "Leere Zust\u00E4nde f\u00FCr Nutzer ohne sichtbare Profile bewusst behandeln."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      }
+    },
+    {
+      "actionId": "GHACT-002",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-002",
+      "sourceRequirementIds": [
+        "CAN-REQ-038",
+        "CAN-REQ-039",
+        "CAN-REQ-040"
+      ],
+      "targetIssueNumber": null,
+      "title": "Login-Screen ohne Selbstregistrierung gestalten",
+      "body": "Erstelle den Login-Einstieg der App mit den vorgegebenen UI-Elementen und ohne M\u00F6glichkeit zur Selbstregistrierung. Das optionale Layout f\u00FCr die Logo-Position wird im selben Arbeitspaket mit umgesetzt.",
+      "acceptanceCriteria": [
+        "Der Login-Screen enth\u00E4lt ein sichtbares Logo, ein E-Mail-Feld, ein Passwort-Feld und einen Login-Button.",
+        "Auf dem Login-Screen ist keine Registrierungsfunktion und kein Link zur Selbstregistrierung vorhanden.",
+        "Das Logo ist im oberen Drittel des Screens zentriert und gut sichtbar platziert."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-038 schlie\u00DFt Selbstregistrierung aus.",
+          "CAN-REQ-039 definiert die Bestandteile des Login-Screens.",
+          "CAN-REQ-040 beschreibt die gew\u00FCnschte Platzierung des Logos und erw\u00E4hnt, dass das Logo selbst noch zu erstellen ist."
+        ],
+        "implementationHints": [
+          "Falls noch kein finales Markenlogo vorliegt, vorl\u00E4ufigen Platzhalter oder vorhandenes App-Asset einplanen.",
+          "Validierungs- und Fehlerzust\u00E4nde f\u00FCr E-Mail/Passwort im UI mitdenken, auch wenn keine detaillierten Fachvorgaben vorliegen."
+        ],
+        "openQuestions": [
+          "Soll bis zur Verf\u00FCgbarkeit eines finalen Logos ein tempor\u00E4res Platzhalter-Asset verwendet werden?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      }
+    },
+    {
+      "actionId": "GHACT-003",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-003",
+      "sourceRequirementIds": [
+        "CAN-REQ-016",
+        "CAN-REQ-044",
+        "CAN-REQ-045",
+        "CAN-REQ-046",
+        "CAN-REQ-047",
+        "CAN-REQ-048"
+      ],
+      "targetIssueNumber": null,
+      "title": "Rollen- und Berechtigungsmodell f\u00FCr interne Nutzung umsetzen",
+      "body": "Implementiere das grundlegende Rollen- und Berechtigungsmodell der App f\u00FCr interne Nutzung. Das umfasst unterschiedliche Rollen, Admin-Rechte zur Accountverwaltung, eingeschr\u00E4nkte Rechte f\u00FCr regul\u00E4re User, erg\u00E4nzenden Zugriff f\u00FCr Angeh\u00F6rige sowie die einrichtungsbezogene Sichtbarkeit von Profilen.",
+      "acceptanceCriteria": [
+        "Die App unterst\u00FCtzt mindestens unterschiedliche Account-Rollen mit unterschiedlichen Rechten.",
+        "Nur Accounts mit Admin-Rechten k\u00F6nnen weitere Accounts anlegen und Rechte verwalten.",
+        "User-Accounts k\u00F6nnen Inhalte hinzuf\u00FCgen, aber keine Accounts erstellen und keine vorhandenen Daten l\u00F6schen.",
+        "Angeh\u00F6rige k\u00F6nnen Zugriff auf die App erhalten, um erg\u00E4nzende Informationen hinzuzuf\u00FCgen.",
+        "Mitarbeiter sehen nur Profile ihrer eigenen Einrichtung bzw. ihres eigenen Hauses.",
+        "Die Umsetzung ist auf internen Gebrauch ausgerichtet und bietet keine \u00F6ffentliche oder offene Zugangslogik."
+      ],
+      "labels": [
+        "access-control"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-016, CAN-REQ-044, CAN-REQ-045, CAN-REQ-046 und CAN-REQ-048 sind in der Provenienz demselben role-model-cluster zugeordnet.",
+          "CAN-REQ-048 sagt explizit, dass die technische Umsetzung des Berechtigungsmodells noch auszuarbeiten ist.",
+          "CAN-REQ-047 begrenzt die App auf internen Gebrauch."
+        ],
+        "implementationHints": [
+          "Rollen zun\u00E4chst als explizites, testbares Berechtigungsschema modellieren.",
+          "Einrichtungszuordnung als Attribut von Nutzer und/oder Profil vorsehen, damit Sichtbarkeitsregeln durchsetzbar sind.",
+          "Schreibrechte granular von Lese- und Verwaltungsrechten trennen."
+        ],
+        "openQuestions": [
+          "Welche konkreten Rollenbezeichnungen sollen im MVP unterst\u00FCtzt werden, insbesondere f\u00FCr Mitarbeiter und Angeh\u00F6rige?",
+          "D\u00FCrfen Angeh\u00F6rige nur bestimmte Bewohnerprofile sehen oder ausschlie\u00DFlich solche mit expliziter Zuordnung?",
+          "Wie wird \u0027interner Gebrauch\u0027 technisch konkretisiert: geschlossene Benutzeranlage, Netzrestriktionen oder nur fehlende Selbstregistrierung?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      }
+    },
+    {
+      "actionId": "GHACT-004",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-004",
+      "sourceRequirementIds": [
+        "CAN-REQ-017"
+      ],
+      "targetIssueNumber": null,
+      "title": "Bewohner-Account mit eingeschr\u00E4nkter Profilsicht umsetzen",
+      "body": "Erg\u00E4nze einen Bewohner-Account, der nur das eigene Profil sehen kann und nur eingeschr\u00E4nkte Funktionen erh\u00E4lt, insbesondere Zugriff auf den About-Me-Bereich sowie das Hinzuf\u00FCgen eigener Bilder.",
+      "acceptanceCriteria": [
+        "Es gibt einen Bewohner-Account-Typ mit eingeschr\u00E4nkten Rechten.",
+        "Ein Bewohner sieht in der Profil\u00FCbersicht ausschlie\u00DFlich das eigene Profil.",
+        "Ein Bewohner kann den About-Me-Bereich des eigenen Profils \u00F6ffnen.",
+        "Ein Bewohner kann eigene Bilder zum eigenen Profil hinzuf\u00FCgen.",
+        "Der Bewohner-Account bietet keine weitergehenden Funktionen, die den eingeschr\u00E4nkten Umfang verletzen."
+      ],
+      "labels": [
+        "access-control",
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [
+          "IPLAN-003",
+          "IPLAN-005"
+        ],
+        "knownContext": [
+          "CAN-REQ-017 beschreibt den Bewohner-Account als gew\u00FCnschte Anforderung zur Minimierung von Fehlbedienungen.",
+          "Der Bewohner soll nur das eigene Profil in der Profil\u00FCbersicht sehen.",
+          "Genannt sind Zugriff auf den About-Me-Bereich und das Hinzuf\u00FCgen eigener Bilder."
+        ],
+        "implementationHints": [
+          "Rechte des Bewohner-Accounts als Sonderfall des allgemeinen Rollenmodells definieren.",
+          "Bild-Upload auf das eigene Profil begrenzen.",
+          "Falls Bearbeitung anderer Profilfelder nicht gefordert ist, diese im Bewohnermodus bewusst ausblenden."
+        ],
+        "openQuestions": [
+          "D\u00FCrfen Bewohner nur Bilder hinzuf\u00FCgen oder auch bereits hochgeladene eigene Bilder entfernen oder ersetzen?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      }
+    },
+    {
+      "actionId": "GHACT-005",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-005",
+      "sourceRequirementIds": [
+        "CAN-REQ-024",
+        "CAN-REQ-025",
+        "CAN-REQ-050"
+      ],
+      "targetIssueNumber": null,
+      "title": "About-Me-Profilseite mit erweiterbaren Inhalten bereitstellen",
+      "body": "Erstelle pro Person eine informative About-Me-Seite als pers\u00F6nlichen Ersteindruck mit Basisinformationen und dynamisch erweiterbaren Profilinhalten einschlie\u00DFlich visueller Darstellungen.",
+      "acceptanceCriteria": [
+        "F\u00FCr jede Person gibt es eine About-Me-Seite.",
+        "Die About-Me-Seite unterst\u00FCtzt mindestens Name, Alter, Beschreibungen, Hobbys und Bilder.",
+        "Profilinhalte k\u00F6nnen so erweitert werden, dass neue Erfahrungen und zus\u00E4tzliche Bilder hinzugef\u00FCgt werden k\u00F6nnen.",
+        "Kommunikations- oder Profilinhalte werden nicht nur textbasiert, sondern auch mit visuellen Darstellungen wie Bildern unterst\u00FCtzt."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-024 definiert die Inhalte der About-Me-Seite.",
+          "CAN-REQ-025 fordert dynamische Erweiterbarkeit f\u00FCr Profil- und Kommunikationsinhalte.",
+          "CAN-REQ-050 erg\u00E4nzt die visuelle Darstellung, insbesondere mit Bildern."
+        ],
+        "implementationHints": [
+          "Wiederverwendbare Inhaltsbausteine f\u00FCr Text und Bilder vorsehen.",
+          "Zwischen Anzeige bestehender Inhalte und Hinzuf\u00FCgen neuer Inhalte im UI klar unterscheiden.",
+          "Sortierung oder Gruppierung neu hinzugef\u00FCgter Inhalte fr\u00FCh festlegen, um sp\u00E4tere Inkonsistenzen zu vermeiden."
+        ],
+        "openQuestions": [
+          "Sollen neue Erfahrungen und Bilder direkt auf der About-Me-Seite gepflegt werden oder \u00FCber einen separaten Bearbeitungsfluss?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      }
+    },
+    {
+      "actionId": "GHACT-006",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-006",
+      "sourceRequirementIds": [
+        "CAN-REQ-027",
+        "CAN-REQ-028"
+      ],
+      "targetIssueNumber": null,
+      "title": "No-Go-Bereich pro Bewohner mit Listenpflege umsetzen",
+      "body": "Stelle pro Bewohner eine No-Go-Seite bereit und erm\u00F6gliche das Hinzuf\u00FCgen weiterer No-Gos \u00FCber einen Plus-Button in einer verst\u00E4ndlichen Liste.",
+      "acceptanceCriteria": [
+        "F\u00FCr jeden Bewohner gibt es einen No-Go-Bereich bzw. eine No-Go-Seite.",
+        "Die Seite zeigt eine Liste von No-Gos f\u00FCr den jeweiligen Bewohner an.",
+        "Nutzer k\u00F6nnen \u00FCber einen Plus-Button neue No-Gos hinzuf\u00FCgen.",
+        "Neu hinzugef\u00FCgte No-Gos erscheinen in der Liste des betreffenden Bewohners."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-027 fordert die No-Go-Seite pro Bewohner.",
+          "CAN-REQ-028 erg\u00E4nzt die dynamische Erweiterung \u00FCber einen Plus-Button als Liste."
+        ],
+        "implementationHints": [
+          "Eingabe neuer No-Gos mit einfacher, schneller Interaktion gestalten.",
+          "No-Gos pro Bewohner strikt getrennt speichern und anzeigen."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      }
+    },
+    {
+      "actionId": "GHACT-007",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-007",
+      "sourceRequirementIds": [
+        "CAN-REQ-030"
+      ],
+      "targetIssueNumber": null,
+      "title": "Kommunikationsbereiche in verbal und nonverbal strukturieren",
+      "body": "Lege die Grundstruktur f\u00FCr Kommunikationsinformationen fest, indem Inhalte in verbale und nonverbale Bereiche unterteilt werden. Die Videointegration baut darauf auf.",
+      "acceptanceCriteria": [
+        "Kommunikationsinformationen sind strukturell in einen verbalen und einen nonverbalen Bereich unterteilt.",
+        "Die gew\u00E4hlte Struktur ist in Navigation, Datenmodell oder Darstellung so umgesetzt, dass beide Bereiche getrennt adressierbar sind."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-030 fordert explizit die strukturelle Unterteilung in verbale und nonverbale Bereiche."
+        ],
+        "implementationHints": [
+          "Trennung bereits im Datenmodell oder View-Model mitdenken, nicht nur visuell im UI.",
+          "Benennung der beiden Bereiche konsistent \u00FCber Navigation und Detailansichten halten."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      }
+    },
+    {
+      "actionId": "GHACT-008",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-008",
+      "sourceRequirementIds": [
+        "CAN-REQ-032",
+        "CAN-REQ-033"
+      ],
+      "targetIssueNumber": null,
+      "title": "Videofunktion in verbale und nonverbale Kommunikationsseiten integrieren",
+      "body": "Erweitere die Kommunikationsseiten um eine integrierte Videofunktion mit Beschreibungen. Neue Videos sollen leicht hinzuf\u00FCgbar sein, und das jeweils neueste Video soll oben stehen.",
+      "acceptanceCriteria": [
+        "Videos mit Beschreibungen k\u00F6nnen auf den verbalen und/oder nonverbalen Kommunikationsseiten dargestellt werden.",
+        "Die Videofunktion existiert nicht als eigener separater Screen, sondern ist in die Kommunikationsseiten integriert.",
+        "Nutzer k\u00F6nnen neue Videos mit Beschreibungen leicht hinzuf\u00FCgen.",
+        "In der Videoanzeige wird das jeweils neueste Video oben dargestellt."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [
+          "IPLAN-007"
+        ],
+        "knownContext": [
+          "CAN-REQ-032 fordert die Integration der Videofunktion in verbale und nonverbale Kommunikationsseiten.",
+          "CAN-REQ-033 erg\u00E4nzt leichte Hinzuf\u00FCgbarkeit und Sortierung mit neuestem Video oben."
+        ],
+        "implementationHints": [
+          "Sortierung server- oder clientseitig deterministisch nach Erstellungszeit definieren.",
+          "Beschreibungen gemeinsam mit dem Video erfassbar machen.",
+          "UI nicht als separaten Navigationspunkt modellieren, sondern als Abschnitt innerhalb der Kommunikationsseiten."
+        ],
+        "openQuestions": [
+          "Welche Videoquellen oder Upload-Beschr\u00E4nkungen sollen im MVP gelten?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      }
+    },
+    {
+      "actionId": "GHACT-009",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-009",
+      "sourceRequirementIds": [
+        "CAN-REQ-036",
+        "CAN-REQ-049"
+      ],
+      "targetIssueNumber": null,
+      "title": "Konsistente Appbar und rollenspezifischen Settings-Screen umsetzen",
+      "body": "Setze nach dem Login eine konsistente Appbar auf allen Seiten um und binde dar\u00FCber einen Settings-Screen an, dessen Inhalte je nach Rolle differenziert angezeigt werden.",
+      "acceptanceCriteria": [
+        "Nach dem Login ist auf jeder relevanten Seite eine konsistente Appbar vorhanden.",
+        "Die Appbar enth\u00E4lt ein Einstellungssymbol, \u00FCber das der Settings-Screen erreichbar ist.",
+        "Der Settings-Screen zeigt allgemeine Nutzerfunktionen wie Profil\u00E4nderung und Sprachwahl f\u00FCr regul\u00E4re Nutzer an.",
+        "Ein Admin sieht im Settings-Screen zus\u00E4tzlich Funktionen zum Hinzuf\u00FCgen von Nutzeraccounts und zum Anpassen von Rechten."
+      ],
+      "labels": [
+        "frontend",
+        "access-control"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [
+          "IPLAN-003"
+        ],
+        "knownContext": [
+          "CAN-REQ-036 fordert eine konsistente Appbar nach dem Login und einen Einstieg in die Einstellungen.",
+          "CAN-REQ-049 fordert eine rollenabh\u00E4ngig differenzierte Settings-Ansicht mit Admin- und Nutzerfunktionen."
+        ],
+        "implementationHints": [
+          "Settings-Screen zun\u00E4chst nach Rollenabschnitten aufbauen, um sp\u00E4tere Erweiterungen sauber einzuf\u00FCgen.",
+          "Appbar als wiederverwendbare gemeinsame Komponente implementieren."
+        ],
+        "openQuestions": [
+          "Welche weiteren Settings au\u00DFer Sprache und Profil\u00E4nderung sollen im MVP sichtbar sein?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      }
+    },
+    {
+      "actionId": "GHACT-010",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-010",
+      "sourceRequirementIds": [
+        "CAN-REQ-043"
+      ],
+      "targetIssueNumber": null,
+      "title": "DISK: Alternative Eingabemethoden und Sprachbefehle f\u00FCr MVP kl\u00E4ren",
+      "body": "Das Requirement fordert die Ber\u00FCcksichtigung von Sprachbefehlen oder alternativen Eingabemethoden f\u00FCr beeintr\u00E4chtigte Nutzer, beschreibt aber weder den Zielumfang noch die konkrete Form der Umsetzung. Vor einer belastbaren Issue-Erzeugung sollte der gew\u00FCnschte MVP-Schnitt festgelegt werden.",
+      "acceptanceCriteria": [
+        "Es ist entschieden, ob aktive Sprachbefehle im MVP umgesetzt werden.",
+        "Es ist entschieden, ob stattdessen nur Kompatibilit\u00E4t mit Betriebssystem-Bedienhilfen erwartet wird.",
+        "Die priorisierten Nutzergruppen und Nutzungssituationen sind benannt.",
+        "Die Entscheidung ist auf CAN-REQ-043 r\u00FCckf\u00FChrbar."
+      ],
+      "labels": [
+        "accessibility"
+      ],
+      "reason": "Menschliche Entscheidung: Der Punkt soll nicht blockiert bleiben, sondern als explizites DISK-/Klaerungsissue in GitHub sichtbar werden. Inhalt und Umsetzung bleiben offen, bis die MVP-Entscheidung getroffen ist.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NEEDS_REVIEW",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-043 nennt Sprachbefehle oder alternative Eingabemethoden f\u00FCr beeintr\u00E4chtigte Nutzer.",
+          "In der Provenienz ist das Requirement einem accessibility-cluster zugeordnet."
+        ],
+        "implementationHints": [
+          "M\u00F6gliche Schnitte w\u00E4ren Voice-Input f\u00FCr bestimmte Formulare, systemseitige Bedienhilfen-Kompatibilit\u00E4t oder reine Accessibility-Leitplanken."
+        ],
+        "openQuestions": [
+          "Sollen aktive Sprachbefehle implementiert werden oder gen\u00FCgt Kompatibilit\u00E4t mit bestehenden Betriebssystem-Bedienhilfen?",
+          "Welche Nutzergruppen und Nutzungssituationen haben im MVP Priorit\u00E4t?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "needs_refinement"
+      }
+    },
+    {
+      "actionId": "GHACT-011",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-011",
+      "sourceRequirementIds": [
+        "CAN-REQ-053"
+      ],
+      "targetIssueNumber": null,
+      "title": "Animationen vorerst nicht als eigenes Arbeitspaket planen",
+      "body": "F\u00FCr Animationen besteht kein eigenst\u00E4ndiger Umsetzungsauftrag. Das Requirement wirkt als Gestaltungsleitplanke f\u00FCr andere UI-Issues: Animationen sollen nicht priorisiert werden und, falls vorhanden, nicht ablenken.",
+      "acceptanceCriteria": [
+        "Die Vorgabe wird als Designleitplanke in der Umsetzung anderer UI-Issues ber\u00FCcksichtigt.",
+        "Es wird kein separates Feature-Issue allein f\u00FCr Animationen angelegt."
+      ],
+      "labels": [
+        "frontend"
+      ],
+      "reason": "Accepted IssuePlanItem explicitly states that no GitHub action is needed.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NO_CHANGE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-053 sagt, dass Animationen nicht aktiv eingeplant werden sollen und vorhandene Animationen nicht ablenkend sein d\u00FCrfen."
+        ],
+        "implementationHints": [
+          "Bei UI-Review Motion sparsam halten und unn\u00F6tige \u00DCberg\u00E4nge vermeiden."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      }
+    },
+    {
+      "actionId": "GHACT-012",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-012",
+      "sourceRequirementIds": [
+        "CAN-REQ-054"
+      ],
+      "targetIssueNumber": null,
+      "title": "\u00DCbersetzungssystem explizit au\u00DFerhalb des Scopes belassen",
+      "body": "Dieses Requirement schlie\u00DFt ein \u00DCbersetzungssystem zwischen Bewohnern und Betreuern aus dem L\u00F6sungsumfang aus. Daf\u00FCr wird kein operatives Feature-Issue erzeugt; stattdessen dient es als Scope-Grenze f\u00FCr andere Planungen.",
+      "acceptanceCriteria": [
+        "In diesem Issue-Plan ist kein Feature zur bidirektionalen \u00DCbersetzung zwischen Bewohnern und Betreuern vorgesehen.",
+        "Die Scope-Grenze ist f\u00FCr nachgelagerte Umsetzung und Review dokumentiert."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "reason": "Accepted IssuePlanItem explicitly states that no GitHub action is needed.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NO_CHANGE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-054 schlie\u00DFt ein \u00DCbersetzungssystem ausdr\u00FCcklich aus dem L\u00F6sungsumfang aus."
+        ],
+        "implementationHints": [
+          "Bei sp\u00E4teren Kommunikationsfeatures auf diese Scope-Grenze verweisen."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      }
+    },
+    {
+      "actionId": "GHACT-013",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-013",
+      "sourceRequirementIds": [
+        "CAN-REQ-056"
+      ],
+      "targetIssueNumber": null,
+      "title": "Bestehende Akten als fachliche Quelle f\u00FCr manuelle Inhaltserfassung ber\u00FCcksichtigen",
+      "body": "Bestehende Akten und dokumentierte Erfahrungen werden im MVP nicht technisch importiert oder migriert. Sie dienen als fachliche Quelle, um Inhalte manuell in der App zu erfassen und vorhandenes Wissen bei der Ausgestaltung von Profil-, Kommunikations- und Unterst\u00FCtzungsinhalten zu ber\u00FCcksichtigen.",
+      "acceptanceCriteria": [
+        "Es gibt keine technische Import- oder Migrationsfunktion f\u00FCr bestehende Akten im MVP.",
+        "Bestehende Akten und dokumentierte Erfahrungen werden als fachliche Quelle f\u00FCr manuell erfasste App-Inhalte ber\u00FCcksichtigt.",
+        "Die Entscheidung ist in der Traceability zu CAN-REQ-056 dokumentiert."
+      ],
+      "labels": [
+        "data"
+      ],
+      "reason": "Menschliche Entscheidung: Bestehende Akten und dokumentierte Erfahrungen werden im MVP nicht technisch importiert oder migriert. Sie dienen nur als fachliche Quelle fuer manuelle Inhaltserfassung und Ausgestaltung.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NEEDS_REVIEW",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-056 nennt klassische Akten sowie dokumentierte Erfahrungen und neues Wissen als relevante Wissensquelle."
+        ],
+        "implementationHints": [
+          "M\u00F6gliche Zuschnitte: initiale manuelle Datenerfassung, Import-Schnittstelle, Verweis auf bestehende Dokumente oder Datenmodell-Vorbereitung."
+        ],
+        "openQuestions": [
+          "Sollen bestehende Akten technisch importiert werden oder dienen sie nur als Quelle f\u00FCr manuelle \u00DCbertragung in die App?",
+          "Welche Arten dokumentierter Erfahrungen geh\u00F6ren in den MVP?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "needs_refinement"
+      }
+    },
+    {
+      "actionId": "GHACT-014",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-014",
+      "sourceRequirementIds": [
+        "CAN-REQ-058"
+      ],
+      "targetIssueNumber": null,
+      "title": "Anforderungsanalyse ist vorgelagerte Vorgehensweise, kein Dev-Issue",
+      "body": "Die gew\u00FCnschte Anforderungsanalyse mit Beteiligten und sp\u00E4teren Nutzern beschreibt ein Vorgehen vor der konkreten Ausgestaltung der L\u00F6sung. Im vorliegenden plan-only Dev-Issue-Plan entsteht daraus kein separates Umsetzungsissue.",
+      "acceptanceCriteria": [
+        "Die Anforderungsanalyse wird als vorgelagerte Produkt-/Projektaktivit\u00E4t verstanden und nicht als Entwicklungsissue eingeplant.",
+        "Der Issue-Plan enth\u00E4lt keinen f\u00E4lschlichen Dev-Umfang f\u00FCr Einrichtungsbesuche oder Analyseworkshops."
+      ],
+      "labels": [
+        "requirements"
+      ],
+      "reason": "Accepted IssuePlanItem explicitly states that no GitHub action is needed.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "NO_CHANGE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-058 beschreibt als gew\u00FCnschte Vorgehensweise eine Anforderungsanalyse mit Beteiligten und sp\u00E4teren Nutzern vor der konkreten Ausgestaltung der L\u00F6sung."
+        ],
+        "implementationHints": [
+          "Falls gew\u00FCnscht, separat im Projektmanagement statt in der Entwicklungsumsetzung tracken."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      }
+    },
+    {
+      "actionId": "GHACT-015",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-015",
+      "sourceRequirementIds": [
+        "CAN-REQ-060",
+        "CAN-REQ-062",
+        "CAN-REQ-063"
+      ],
+      "targetIssueNumber": null,
+      "title": "Flutter/Dart-Projektbasis mit gemeinsamen Tool-Versionen f\u00FCr Android 11 aufsetzen",
+      "body": "Richte die technische Projektbasis mit Flutter und Dart ein, gleiche die Entwicklungswerkzeug-Versionen teamweit ab und stelle sicher, dass die initiale Entwicklung und Testbarkeit zun\u00E4chst gegen Android 11 ausgerichtet ist.",
+      "acceptanceCriteria": [
+        "Das Projekt ist als Flutter-/Dart-Anwendung aufgesetzt oder entsprechend konfiguriert.",
+        "Die im Team zu verwendenden Versionen der Entwicklungswerkzeuge sind dokumentiert und einheitlich festgelegt.",
+        "Die initiale lokale Entwicklung und das Testen sind gegen Android 11 ausgerichtet und nachvollziehbar beschrieben."
+      ],
+      "labels": [
+        "platform"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [],
+        "knownContext": [
+          "CAN-REQ-060 legt Flutter mit Dart als Technologie-Stack fest.",
+          "CAN-REQ-062 fordert einheitliche Versionen der Entwicklungswerkzeuge im Team.",
+          "CAN-REQ-063 richtet initiale Entwicklung und Tests auf Android 11 aus."
+        ],
+        "implementationHints": [
+          "Versionen in README oder Setup-Dokumentation festhalten.",
+          "Optional Tooling wie FVM oder vergleichbare Version-Pinning-Strategien pr\u00FCfen.",
+          "Android-11-Testger\u00E4t oder Emulator-Konfiguration Teil des Setups machen."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      }
+    },
+    {
+      "actionId": "GHACT-016",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-016",
+      "sourceRequirementIds": [
+        "CAN-REQ-052"
+      ],
+      "targetIssueNumber": null,
+      "title": "Plattform\u00FCbergreifende Lauff\u00E4higkeit f\u00FCr iOS und Android absichern",
+      "body": "Plane und implementiere die technische und QA-seitige Absicherung daf\u00FCr, dass die App plattform\u00FCbergreifend auf iOS und Android betrieben werden kann. Dieses Arbeitspaket baut auf dem Flutter/Dart-Stack auf, geht aber \u00FCber die initiale Android-11-Ausrichtung hinaus.",
+      "acceptanceCriteria": [
+        "Die App ist so konfiguriert und entwickelt, dass Builds f\u00FCr Android und iOS grunds\u00E4tzlich unterst\u00FCtzt werden.",
+        "Plattformspezifische Mindestpr\u00FCfungen oder Testf\u00E4lle f\u00FCr beide Zielplattformen sind definiert.",
+        "Bekannte plattformspezifische Abweichungen sind dokumentiert, sofern sie die grunds\u00E4tzliche Lauff\u00E4higkeit nicht verhindern."
+      ],
+      "labels": [
+        "platform"
+      ],
+      "reason": "Accepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "requiresHumanReview": false,
+      "metadata": {
+        "sourceIssuePlanOperation": "CREATE",
+        "dependencies": [
+          "IPLAN-015"
+        ],
+        "knownContext": [
+          "CAN-REQ-052 fordert Betrieb auf iPhone/iOS und Android.",
+          "CAN-REQ-060 legt Flutter/Dart als Stack fest, was diese Zielsetzung unterst\u00FCtzt."
+        ],
+        "implementationHints": [
+          "CI oder lokale Build-Anleitungen f\u00FCr beide Plattformen vorsehen.",
+          "Fr\u00FCh iOS-Signierung, Simulator/Device-Tests und plattformspezifische Berechtigungen pr\u00FCfen."
+        ],
+        "openQuestions": [
+          "Welche iOS-Zielversion soll im MVP mindestens unterst\u00FCtzt werden?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      }
+    }
+  ]
+}

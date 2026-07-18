@@ -108,9 +108,10 @@
   .repair-fields .repair-title { grid-column:1 / -1; color:var(--accent); font-size:11px;
                                  text-transform:uppercase; letter-spacing:.5px; }
   .repair-fields label { color:var(--mut); font-size:12px; }
-  select, input[type=text] { width:100%; background:#0c0e12; color:var(--fg); border:1px solid var(--edge);
+  select, input[type=text], textarea { width:100%; background:#0c0e12; color:var(--fg); border:1px solid var(--edge);
            border-radius:6px; padding:6px 8px; font:inherit; }
-  select:focus, input:focus { outline:none; border-color:var(--accent); }
+  textarea { min-height:96px; resize:vertical; line-height:1.45; }
+  select:focus, input:focus, textarea:focus { outline:none; border-color:var(--accent); }
 
   footer { position:fixed; bottom:0; left:0; right:0; background:#12151b; border-top:1px solid var(--edge);
            padding:12px 20px; display:flex; gap:12px; justify-content:flex-end; align-items:center; z-index:11; }
@@ -377,6 +378,10 @@ function renderField(item, spec) {
   }
   if (id === 'readonly') {
     return `${lbl}<input data-field="${esc(spec.fieldKey)}" type="text" value="${esc(cur)}" readonly>`;
+  }
+  if (id === 'multiline') {
+    return `${lbl}<textarea data-field="${esc(spec.fieldKey)}" placeholder="${esc(spec.help)}"
+              onchange="save('${esc(item.itemId)}','${esc(spec.fieldKey)}',this.value)">${esc(cur)}</textarea>`;
   }
   if (spec.options && spec.options.length) {
     const listId = `dl-${esc(item.itemId)}-${esc(spec.fieldKey)}`;

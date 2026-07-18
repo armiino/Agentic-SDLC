@@ -1,0 +1,358 @@
+{
+  "schemaVersion": 1,
+  "sourcePlanId": "github-action-plan-20260716_160543-accepted",
+  "repository": "armiino/Agentic-GitHub",
+  "createdUtc": "2026-07-17T09:30:12.186666Z",
+  "readyForExecute": true,
+  "operations": [
+    {
+      "actionId": "GHACT-001",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-001",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "Produktziel Verstehen von Bewohnern durch Funktionsumfang abgedeckt",
+      "body": "Das Requirement beschreibt das \u00FCbergeordnete Produktziel, Bewohner bei Verst\u00E4ndnisproblemen besser zu verstehen. Es erzeugt keine isolierte operative Arbeitseinheit, weil es durch die konkreten Profil-, Kommunikations-, Medien- und Zugriffs-Issues umgesetzt und \u00FCberpr\u00FCfbar gemacht wird.",
+      "labels": [
+        "requirements"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-013"
+      ]
+    },
+    {
+      "actionId": "GHACT-002",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-002",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "Rollen- und Berechtigungskonzept f\u00FCr Angeh\u00F6rigenzugriff fachlich zuschneiden",
+      "body": "Der Angeh\u00F6rigenzugriff ist fachlich gew\u00FCnscht, aber aus den freigegebenen Requirements bleiben Umfang und Einschr\u00E4nkungen unklar: sichtbar zug\u00E4ngliche Profile, Bearbeitungsrechte, Haus-/Einrichtungsbindung und Abgrenzung zu Mitarbeiter- und Bewohner-Rollen m\u00FCssen vor einer umsetzbaren Issue-Erstellung entschieden werden.",
+      "labels": [
+        "access-control"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-016"
+      ]
+    },
+    {
+      "actionId": "GHACT-003",
+      "operation": "LINK",
+      "issuePlanId": "IPLAN-003",
+      "targetIssueNumber": 1,
+      "wouldCall": "NO_GITHUB_WRITE: persistiere lokales Mapping",
+      "title": "Bewohnerrolle mit eingeschr\u00E4nkter Profilsicht und About-Me/Bilder-Bearbeitung umsetzen",
+      "body": "F\u00FChre eine eigene Bewohnerrolle ein, die in der Profil\u00FCbersicht nur das eigene Profil sieht und nur eingeschr\u00E4nkte Funktionen erh\u00E4lt. Die Rolle soll insbesondere Zugriff auf den About-Me-Bereich und das Hinzuf\u00FCgen eigener Bilder haben, um Fehlbedienungen zu minimieren.",
+      "labels": [
+        "frontend",
+        "access-control"
+      ],
+      "blocked": false,
+      "blockReason": "LINK braucht targetIssueNumber.",
+      "sourceRequirementIds": [
+        "CAN-REQ-017",
+        "CAN-REQ-024",
+        "CAN-REQ-025"
+      ]
+    },
+    {
+      "actionId": "GHACT-004",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-004",
+      "targetIssueNumber": null,
+      "wouldCall": "POST /repos/{owner}/{repo}/issues",
+      "title": "Profil\u00FCbersicht nach Login mit zug\u00E4nglichen Profilen und Navigation bereitstellen",
+      "body": "Implementiere die Seite nach dem Login als Profil\u00FCbersicht. Die Ansicht listet alle f\u00FCr den eingeloggten Nutzer zug\u00E4nglichen Profile auf und erlaubt die Navigation in die jeweilige Profildetailansicht.",
+      "labels": [
+        "frontend"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-018"
+      ]
+    },
+    {
+      "actionId": "GHACT-005",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-005",
+      "targetIssueNumber": null,
+      "wouldCall": "POST /repos/{owner}/{repo}/issues",
+      "title": "About-Me-Seite pro Person mit Basisinformationen und Bildern umsetzen",
+      "body": "Erstelle eine About-Me-Seite pro Person f\u00FCr einen informativen und pers\u00F6nlichen Ersteindruck. Die Seite enth\u00E4lt mindestens Name, Alter, Beschreibungen, Hobbys und Bilder.",
+      "labels": [
+        "frontend"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-024",
+        "CAN-REQ-050"
+      ]
+    },
+    {
+      "actionId": "GHACT-006",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-006",
+      "targetIssueNumber": null,
+      "wouldCall": "POST /repos/{owner}/{repo}/issues",
+      "title": "No-Go-Seite pro Bewohner mit erweiterbarer Liste umsetzen",
+      "body": "Implementiere pro Bewohner eine No-Go-Seite, auf der Dinge festgehalten werden, die in Gegenwart des Bewohners absolut nicht gehen. Die Seite soll eine Liste der No-Gos anzeigen und \u00FCber einen Plus-Button neue Eintr\u00E4ge erg\u00E4nzbar machen.",
+      "labels": [
+        "frontend"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-027",
+        "CAN-REQ-028"
+      ]
+    },
+    {
+      "actionId": "GHACT-007",
+      "operation": "REOPEN",
+      "issuePlanId": "IPLAN-007",
+      "targetIssueNumber": 3,
+      "wouldCall": "PATCH /repos/{owner}/{repo}/issues/3 state=open",
+      "title": "Login-Flow und Login-Screen ohne Selbstregistrierung umsetzen",
+      "body": "Implementiere einen Login-Screen mit Logo, E-Mail-Feld, Passwort-Feld und Login-Button. Eine Selbstregistrierung oder Registrierungsoption wird nicht angeboten. Das Logo soll sichtbar, zentriert und im oberen Drittel des Bildschirms platziert werden.",
+      "labels": [
+        "frontend"
+      ],
+      "blocked": false,
+      "blockReason": "REOPEN braucht targetIssueNumber.",
+      "sourceRequirementIds": [
+        "CAN-REQ-038",
+        "CAN-REQ-039",
+        "CAN-REQ-040"
+      ]
+    },
+    {
+      "actionId": "GHACT-008",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-008",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "Rollen-, Rechte- und Einrichtungsmodell vor Implementierung konkretisieren",
+      "body": "Die Requirements zu Rollen, Admin-Rechten, User-Rechten, einrichtungsbezogener Sichtbarkeit und rollenabh\u00E4ngigen Settings beschreiben ein gemeinsames Berechtigungsmodell, lassen aber die technische und teilweise fachliche Ausgestaltung offen. Vor umsetzbaren Issues m\u00FCssen Rollenmatrix, Ressourcenrechte, Hauszuordnung und erlaubte Settings-Operationen pr\u00E4zisiert werden.",
+      "labels": [
+        "access-control"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-044",
+        "CAN-REQ-045",
+        "CAN-REQ-046",
+        "CAN-REQ-048",
+        "CAN-REQ-049"
+      ]
+    },
+    {
+      "actionId": "GHACT-009",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-009",
+      "targetIssueNumber": null,
+      "wouldCall": "POST /repos/{owner}/{repo}/issues",
+      "title": "Kommunikationsbereich in verbale und nonverbale Abschnitte mit integrierten Videos strukturieren",
+      "body": "Strukturiere Kommunikationsinformationen pro Person in verbale und nonverbale Bereiche. In beiden Bereichen sollen Videos mit Beschreibungen integriert werden, ohne daf\u00FCr einen eigenen separaten Screen einzuf\u00FChren.",
+      "labels": [
+        "frontend"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-030",
+        "CAN-REQ-032"
+      ]
+    },
+    {
+      "actionId": "GHACT-010",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-010",
+      "targetIssueNumber": null,
+      "wouldCall": "POST /repos/{owner}/{repo}/issues",
+      "title": "Videoliste in Kommunikationsbereichen um Hinzuf\u00FCgen und Sortierung erweitern",
+      "body": "Erg\u00E4nze die in den Kommunikationsbereichen integrierte Videofunktion so, dass neue Videos mit Beschreibungen leicht hinzugef\u00FCgt werden k\u00F6nnen und das neueste Video jeweils oben in der Liste erscheint.",
+      "labels": [
+        "frontend"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-033",
+        "CAN-REQ-025"
+      ]
+    },
+    {
+      "actionId": "GHACT-011",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-011",
+      "targetIssueNumber": null,
+      "wouldCall": "POST /repos/{owner}/{repo}/issues",
+      "title": "Konsistente Appbar nach Login mit Einstieg in Settings bereitstellen",
+      "body": "Stelle auf allen Seiten nach dem Login eine konsistente Appbar bereit. Die Appbar enth\u00E4lt ein Einstellungssymbol, \u00FCber das der Settings-Screen erreichbar ist.",
+      "labels": [
+        "frontend"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-036"
+      ]
+    },
+    {
+      "actionId": "GHACT-012",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-012",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "Barrierefreie alternative Eingabemethoden konkret ausw\u00E4hlen",
+      "body": "Das Requirement fordert, Sprachbefehle oder alternative Eingabemethoden f\u00FCr beeintr\u00E4chtigte Nutzer zu ber\u00FCcksichtigen, spezifiziert aber weder Zielgruppen noch konkrete Interaktionsformen oder Priorisierung. Vor einer belastbaren Umsetzung muss entschieden werden, welche Eingabemethoden unterst\u00FCtzt werden sollen und in welchen Screens sie relevant sind.",
+      "labels": [
+        "requirements"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-043"
+      ]
+    },
+    {
+      "actionId": "GHACT-013",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-013",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "Interne Nutzung wird durch Zugriffs- und Rollenmodell mitabgedeckt",
+      "body": "Das Requirement \u0027nur f\u00FCr internen Gebrauch\u0027 beschreibt eine Nutzungsgrenze und Governance-Aussage, aber keinen eigenst\u00E4ndigen Liefergegenstand innerhalb des vorliegenden Inputs. Es wird durch Login-only, fehlende Selbstregistrierung und das Rollen-/Berechtigungsmodell adressiert.",
+      "labels": [
+        "requirements"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-047"
+      ]
+    },
+    {
+      "actionId": "GHACT-014",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-014",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "Plattformziel iOS/Android durch festgelegten Flutter-Stack bereits in der Planung ber\u00FCcksichtigt",
+      "body": "Das plattform\u00FCbergreifende Ziel erzeugt im aktuellen Plan kein separates operatives Issue, weil die Technologieentscheidung f\u00FCr Flutter/Dart bereits getroffen ist und die Umsetzungs-Issues darauf aufsetzen. Konkrete plattformspezifische Arbeit sollte bei Bedarf aus Implementierungsdetails entstehen, nicht aus diesem abstrakten Ziel allein.",
+      "labels": [
+        "platform"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-052",
+        "CAN-REQ-060"
+      ]
+    },
+    {
+      "actionId": "GHACT-015",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-015",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "Animationen werden nicht eigens eingeplant",
+      "body": "Das Requirement fordert explizit, Animationen nicht zu priorisieren; damit entsteht kein separates Umsetzungs-Issue. Die Nebenbedingung, dass etwaige Animationen nicht ablenkend sein d\u00FCrfen, kann in sp\u00E4teren UI-Reviews ber\u00FCcksichtigt werden.",
+      "labels": [
+        "requirements"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-053"
+      ]
+    },
+    {
+      "actionId": "GHACT-016",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-016",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "\u00DCbersetzungssystem bleibt explizit au\u00DFerhalb des Scopes",
+      "body": "Das Requirement schlie\u00DFt ein \u00DCbersetzungssystem ausdr\u00FCcklich aus dem L\u00F6sungsumfang aus. Daraus entsteht kein Umsetzungs-Issue; die Aussage dient als Scope-Grenze f\u00FCr sp\u00E4tere Umsetzung und Review.",
+      "labels": [
+        "requirements"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-054"
+      ]
+    },
+    {
+      "actionId": "GHACT-017",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-017",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "Einbindung bestehender Akten und dokumentierter Erfahrungen als Datenquelle konkretisieren",
+      "body": "Die vorhandenen Akten und dokumentierten Erfahrungen sind als Wissensquelle relevant, aber aus den Requirements ist nicht klar, ob Daten migriert, manuell \u00FCbertragen, referenziert oder nur fachlich als Input f\u00FCr Datenerfassung genutzt werden sollen. Vor einer operativen Umsetzung muss die Form der Ber\u00FCcksichtigung entschieden werden.",
+      "labels": [
+        "requirements"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-056"
+      ]
+    },
+    {
+      "actionId": "GHACT-018",
+      "operation": "NO_CHANGE",
+      "issuePlanId": "IPLAN-018",
+      "targetIssueNumber": null,
+      "wouldCall": "NO_OP",
+      "title": "Anforderungsanalyse ist vorgelagerte Vorgehensempfehlung und kein Umsetzungs-Issue im aktuellen Plan",
+      "body": "Die gew\u00FCnschte Anforderungsanalyse mit Beteiligten und sp\u00E4teren Nutzern beschreibt ein Vorgehen vor der konkreten Ausgestaltung. Da der vorliegende Input bereits freigegebene Requirements enth\u00E4lt, entsteht daraus innerhalb dieses plan-only Issue-Plans kein separates operatives Produkt-Issue.",
+      "labels": [
+        "requirements"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-058"
+      ]
+    },
+    {
+      "actionId": "GHACT-019",
+      "operation": "CREATE",
+      "issuePlanId": "IPLAN-019",
+      "targetIssueNumber": null,
+      "wouldCall": "POST /repos/{owner}/{repo}/issues",
+      "title": "Team-Setup f\u00FCr Flutter/Dart mit abgestimmten Tool-Versionen und Android-11-Startziel dokumentieren",
+      "body": "Lege das initiale Entwicklungs-Setup f\u00FCr das Team fest: Flutter/Dart als Technologie-Stack, abgestimmte Versionen der Entwicklungswerkzeuge und initiale Ausrichtung von Entwicklung und Tests auf Android 11.",
+      "labels": [
+        "platform"
+      ],
+      "blocked": false,
+      "blockReason": null,
+      "sourceRequirementIds": [
+        "CAN-REQ-060",
+        "CAN-REQ-062",
+        "CAN-REQ-063"
+      ]
+    }
+  ],
+  "summary": {
+    "actions": 19,
+    "create": 7,
+    "update": 0,
+    "link": 1,
+    "reopen": 1,
+    "noChange": 10,
+    "needsReview": 0,
+    "blocked": 0
+  }
+}

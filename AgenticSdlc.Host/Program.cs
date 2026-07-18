@@ -427,6 +427,133 @@ if (args.Length > 0 && string.Equals(args[0], "l4-issuplanning-apply", StringCom
     return;
 }
 
+// L4 Re-Clarify (RE Backlog Structuring): kanonische Requirements -> Feature-Cluster -> Product Backlog.
+// `cluster` = agentische Feature-Cluster-Bildung (Maker + Coverage-Gate + ReviewAgent).
+if (args.Length > 0 && string.Equals(args[0], "l4-re-clarify", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ReClarifyRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L4 Re-Clarify Cluster Review: HumanReview der vorgeschlagenen Cluster-Korrekturen (Operationen).
+if (args.Length > 0 && string.Equals(args[0], "l4-re-clarify-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ReClarifyClusterReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L4 Re-Clarify Apply: akzeptierte Cluster-Operationen deterministisch anwenden + Coverage-Recheck.
+if (args.Length > 0 && string.Equals(args[0], "l4-re-clarify-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ReClarifyClusterApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// L4 Re-Clarify Backlog Review: HumanReview der Product Backlog Items.
+if (args.Length > 0 && string.Equals(args[0], "l4-re-clarify-backlog-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ReClarifyBacklogReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// L4 Re-Clarify Backlog Apply: akzeptierte/edited PBIs deterministisch als ProductBacklogView materialisieren.
+if (args.Length > 0 && string.Equals(args[0], "l4-re-clarify-backlog-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ReClarifyBacklogApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// L4 Re-Clarify IssuePlan: ProductBacklogView -> accepted-issue-plan (deterministisch, pbiId primaer).
+if (args.Length > 0 && string.Equals(args[0], "l4-re-clarify-issueplan", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ReClarifyBacklogIssuePlanRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// L4 Re-Clarify Backlog Doc: lesbare Markdown-Projektion des Product Backlog.
+if (args.Length > 0 && string.Equals(args[0], "l4-re-clarify-backlog-doc", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ReClarifyBacklogDocRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// GitHub Reconciliation: accepted IssuePlan -> plan-only GitHubActionPlan; kein GitHub-Write.
+if (args.Length > 0 && string.Equals(args[0], "github-reconciliation", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.GithubReconciliationRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// GitHub Reconciliation Human-Review: GitHubActionPlanItems mit generischer HumanReview-UI autorisieren.
+if (args.Length > 0 && string.Equals(args[0], "github-reconciliation-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.GithubReconciliationReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// GitHub Reconciliation Apply: Human-Decisions deterministisch zu accepted-github-action-plan materialisieren.
+if (args.Length > 0 && string.Equals(args[0], "github-reconciliation-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.GithubReconciliationApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// GitHub Snapshot: read-only GitHub Issues in ein reproduzierbares Reconciliation-Input-Format normalisieren.
+if (args.Length > 0 && string.Equals(args[0], "github-snapshot", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.GithubIssueSnapshotRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// GitHub Write: deterministischer Dry-Run ueber akzeptiertem GitHubActionPlan; keine echten GitHub-Writes.
+if (args.Length > 0 && string.Equals(args[0], "github-write", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.GithubWriteDryRunRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Operationalization Audit: prueft Traceability von L4/Readiness bis GitHub-Dry-Run vor echten Writes.
+if (args.Length > 0 && string.Equals(args[0], "operationalization-audit", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.OperationalizationAuditRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Open Requirements Review: klassifiziert nicht operationalisierte Requirements fuer Klaerungsarbeit.
+if (args.Length > 0 && string.Equals(args[0], "open-requirements-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.OpenRequirementsReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Open Requirements Apply: materialisiert Review-Entscheidungen zu ClarificationPlanningInput.
+if (args.Length > 0 && string.Equals(args[0], "open-requirements-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.OpenRequirementsApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Clarification Agent: offene Requirements plan-only als Klaerungs-/Breakdown-Arbeit weiterfuehren; Resolve-Modus ist als Contract vorbereitet.
+if (args.Length > 0 && string.Equals(args[0], "clarification-agent", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ClarificationAgentRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Clarification Agent Human-Review: ClarificationPlanItems mit generischer HumanReview-UI autorisieren.
+if (args.Length > 0 && string.Equals(args[0], "clarification-agent-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ClarificationPlanningReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Clarification Agent Apply: Human-Decisions deterministisch zu accepted-clarification-plan materialisieren.
+if (args.Length > 0 && string.Equals(args[0], "clarification-agent-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ClarificationPlanningApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
 // A2 (Demonstration): Nicht-dekorativ-Beleg — supported-Rate der ledger-geerdeten requirements.md gegen den consumable.
 if (args.Length > 0 && string.Equals(args[0], "ledger-cite-fidelity", StringComparison.OrdinalIgnoreCase))
 {
@@ -550,7 +677,7 @@ if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.Ordinal
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
-    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, ledger-build, ledger-adjudicate-ui, review.");
+    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
     Environment.ExitCode = 2;
     return;
 }

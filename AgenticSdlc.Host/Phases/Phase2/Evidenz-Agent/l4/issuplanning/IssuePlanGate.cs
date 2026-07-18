@@ -73,6 +73,16 @@ public static class IssuePlanGate
                 warnings.Add(Issue("missing_acceptance_criteria", "warning", "CREATE-Plan hat keine Acceptance Criteria.", item.IssuePlanId, item.SourceRequirementIds));
             }
 
+            if (item.Operation.Equals("CREATE", StringComparison.OrdinalIgnoreCase))
+            {
+                if (item.KnownContext.Count == 0)
+                    warnings.Add(Issue("missing_known_context", "warning", "CREATE-Plan enthaelt keinen bekannten Kontext; Entwickler muessen sonst Quellen manuell rekonstruieren.", item.IssuePlanId, item.SourceRequirementIds));
+                if (item.ImplementationHints.Count == 0)
+                    warnings.Add(Issue("missing_implementation_hints", "warning", "CREATE-Plan enthaelt keine Umsetzungshinweise; pruefen, ob das Issue fuer Entwicklung ausreichend konkret ist.", item.IssuePlanId, item.SourceRequirementIds));
+                if (string.IsNullOrWhiteSpace(item.Readiness))
+                    warnings.Add(Issue("missing_readiness", "warning", "CREATE-Plan enthaelt keine Readiness-Einschaetzung.", item.IssuePlanId, item.SourceRequirementIds));
+            }
+
             if (item.SourceRequirementIds.Count > 4)
             {
                 warnings.Add(Issue("large_issue_plan", "warning", "IssuePlanItem umfasst mehr als vier Requirements; pruefen, ob Split sinnvoll ist.", item.IssuePlanId, item.SourceRequirementIds));

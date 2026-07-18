@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
 
 namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
 
@@ -30,35 +31,26 @@ public static class RequirementsReadinessRunner
             }
         }
 
-        var resolved = ResolveInput(repoRoot, args[1]);
-        if (resolved is null)
+        var viewRepository = new JsonProjectStateViewRepository(repoRoot);
+        CanonicalRequirementsView view;
+        try
         {
-            Console.Error.WriteLine($"[requirements-readiness] L4-Applied-Artefakt '{args[1]}' nicht gefunden.");
+            view = await viewRepository.GetCanonicalRequirementsViewAsync(
+                ProjectScope.FromSourcePath(args[1], "requirements-readiness", "current_baseline")).ConfigureAwait(false);
+        }
+        catch (FileNotFoundException ex)
+        {
+            Console.Error.WriteLine($"[requirements-readiness] {ex.Message}");
             return 2;
         }
-        if (!File.Exists(resolved.ProvenancePath))
+        catch (Exception ex)
         {
-            Console.Error.WriteLine("[requirements-readiness] provenance-map.json fehlt. Erst l4-apply mit Provenienz ausfuehren.");
-            return 2;
-        }
-        if (!File.Exists(resolved.QualityReportPath))
-        {
-            Console.Error.WriteLine("[requirements-readiness] quality-report.json fehlt. Erst l4-quality ausfuehren.");
+            Console.Error.WriteLine($"[requirements-readiness] L4-Applied-View konnte nicht geladen werden: {ex.Message}");
             return 2;
         }
 
-        var baseline = JsonSerializer.Deserialize<CanonicalRequirementsBaseline>(
-            await File.ReadAllTextAsync(resolved.BaselinePath).ConfigureAwait(false), Json)
-            ?? throw new InvalidOperationException($"Baseline konnte nicht gelesen werden: {resolved.BaselinePath}");
-        var provenance = JsonSerializer.Deserialize<L4ProvenanceMap>(
-            await File.ReadAllTextAsync(resolved.ProvenancePath).ConfigureAwait(false), Json)
-            ?? throw new InvalidOperationException($"ProvenanceMap konnte nicht gelesen werden: {resolved.ProvenancePath}");
-        var quality = JsonSerializer.Deserialize<L4QualityReport>(
-            await File.ReadAllTextAsync(resolved.QualityReportPath).ConfigureAwait(false), Json)
-            ?? throw new InvalidOperationException($"QualityReport konnte nicht gelesen werden: {resolved.QualityReportPath}");
-
-        var (report, issuePlanningInput) = RequirementsReadinessBuilder.Build(baseline, provenance, quality);
-        var outputDir = ResolvePath(repoRoot, outArg ?? resolved.OutputDir);
+        var (report, issuePlanningInput) = RequirementsReadinessBuilder.Build(view.Baseline, view.Provenance, view.Quality);
+        var outputDir = ResolvePath(repoRoot, outArg ?? view.SourceDirectory);
         Directory.CreateDirectory(outputDir);
 
         await File.WriteAllTextAsync(Path.Combine(outputDir, "requirements-readiness.json"), JsonSerializer.Serialize(report, Json)).ConfigureAwait(false);
@@ -103,49 +95,6 @@ public static class RequirementsReadinessRunner
         return sb.ToString();
     }
 
-    private static ResolvedRequirementsReadinessInput? ResolveInput(string repoRoot, string token)
-    {
-        var full = ResolvePath(repoRoot, token);
-        if (File.Exists(full) && string.Equals(Path.GetFileName(full), "canonical-requirements-baseline.json", StringComparison.OrdinalIgnoreCase))
-        {
-            var dir = Path.GetDirectoryName(full) ?? repoRoot;
-            return ResolveDirectory(dir);
-        }
-
-        if (Directory.Exists(full))
-        {
-            var direct = ResolveDirectory(full);
-            if (direct is not null) return direct;
-            var applied = Path.Combine(full, "consolidation", "applied");
-            if (Directory.Exists(applied)) return ResolveDirectory(applied);
-        }
-
-        var l4Root = Path.Combine(repoRoot, "runs", "l4");
-        if (!Directory.Exists(l4Root)) return null;
-        foreach (var runDir in Directory.EnumerateDirectories(l4Root).Where(d => Path.GetFileName(d).Contains(token, StringComparison.OrdinalIgnoreCase)))
-        {
-            var applied = Path.Combine(runDir, "consolidation", "applied");
-            if (Directory.Exists(applied))
-            {
-                var resolved = ResolveDirectory(applied);
-                if (resolved is not null) return resolved;
-            }
-        }
-
-        return null;
-    }
-
-    private static ResolvedRequirementsReadinessInput? ResolveDirectory(string dir)
-    {
-        var baselinePath = Path.Combine(dir, "canonical-requirements-baseline.json");
-        if (!File.Exists(baselinePath)) return null;
-        return new ResolvedRequirementsReadinessInput(
-            BaselinePath: baselinePath,
-            ProvenancePath: Path.Combine(dir, "provenance-map.json"),
-            QualityReportPath: Path.Combine(dir, "quality-report.json"),
-            OutputDir: dir);
-    }
-
     private static string ResolvePath(string repoRoot, string path)
         => Path.IsPathRooted(path) ? path : Path.Combine(repoRoot, path);
 
@@ -160,9 +109,4 @@ public static class RequirementsReadinessRunner
             _ => 5
         };
 
-    private sealed record ResolvedRequirementsReadinessInput(
-        string BaselinePath,
-        string ProvenancePath,
-        string QualityReportPath,
-        string OutputDir);
 }

@@ -1,0 +1,1016 @@
+{
+  "schemaVersion": 1,
+  "projectId": "evidenz-agent-demo",
+  "baselineId": "baseline-20260716_130307",
+  "createdUtc": "2026-07-17T11:16:29.269464Z",
+  "sourceAcceptedIssuePlanPath": "runs/l4-issuplanning/20260717_110515_301f60/plan/applied/accepted-issue-plan.json",
+  "repository": "armiino/Agentic-GitHub",
+  "acceptedIssuePlan": {
+    "schemaVersion": 1,
+    "planId": "issue-plan-20260717_110705-accepted",
+    "projectId": "evidenz-agent-demo",
+    "baselineId": "baseline-20260716_130307",
+    "createdUtc": "2026-07-17T11:12:54.285469Z",
+    "sourceIssuePlanningInputPath": "runs/l4-completion/20260716_104851_ded72d/completion/applied/issue-planning-input.json",
+    "items": [
+      {
+        "issuePlanId": "IPLAN-001",
+        "operation": "CREATE",
+        "title": "Kernnavigation und Profilzugang nach Login umsetzen",
+        "description": "Setze den zentralen Nutzungspfad nach dem Login um, damit Betreuer verf\u00FCgbare Bewohnerprofile als Wissenszugang finden und \u00F6ffnen k\u00F6nnen. Das Issue b\u00FCndelt den fachlichen Kernzweck der L\u00F6sung mit der Profil\u00FCbersicht als Einstieg.",
+        "sourceRequirementIds": [
+          "CAN-REQ-013",
+          "CAN-REQ-018"
+        ],
+        "acceptanceCriteria": [
+          "Nach erfolgreichem Login wird eine Profil\u00FCbersichtsseite angezeigt.",
+          "Die Profil\u00FCbersicht listet alle f\u00FCr den eingeloggten Nutzer zug\u00E4nglichen Profile.",
+          "Jedes gelistete Profil ist anklickbar und f\u00FChrt auf eine weitere Profilseite.",
+          "Die umgesetzte Navigation unterst\u00FCtzt den prim\u00E4ren Zweck, Informationen nachzuschlagen, um Bewohner besser zu verstehen."
+        ],
+        "labels": [
+          "frontend"
+        ],
+        "dependencies": [],
+        "rationale": "CAN-REQ-013 ist als Produktziel zu abstrakt f\u00FCr ein eigenes isoliertes Arbeitspaket; gemeinsam mit CAN-REQ-018 ergibt sich eine konkrete, entwickelbare Kernfunktion.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "core-navigation",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-013 beschreibt den Prim\u00E4rnutzen der L\u00F6sung als Nachschlagehilfe bei Verst\u00E4ndnisproblemen.",
+          "CAN-REQ-018 fordert die Profil\u00FCbersichtsseite direkt nach dem Login mit klickbaren Profilen.",
+          "Beide Requirements sind auf baseline-Quellen REQ-01 und REQ-06 r\u00FCckf\u00FChrbar."
+        ],
+        "implementationHints": [
+          "Profil\u00FCbersicht als Startscreen nach erfolgreicher Authentifizierung routen.",
+          "Zug\u00E4ngliche Profile bereits \u00FCber das sp\u00E4tere Berechtigungsmodell filtern, soweit vorhanden.",
+          "Leere Zust\u00E4nde f\u00FCr Nutzer ohne sichtbare Profile bewusst behandeln."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      },
+      {
+        "issuePlanId": "IPLAN-002",
+        "operation": "CREATE",
+        "title": "Login-Screen ohne Selbstregistrierung gestalten",
+        "description": "Erstelle den Login-Einstieg der App mit den vorgegebenen UI-Elementen und ohne M\u00F6glichkeit zur Selbstregistrierung. Das optionale Layout f\u00FCr die Logo-Position wird im selben Arbeitspaket mit umgesetzt.",
+        "sourceRequirementIds": [
+          "CAN-REQ-038",
+          "CAN-REQ-039",
+          "CAN-REQ-040"
+        ],
+        "acceptanceCriteria": [
+          "Der Login-Screen enth\u00E4lt ein sichtbares Logo, ein E-Mail-Feld, ein Passwort-Feld und einen Login-Button.",
+          "Auf dem Login-Screen ist keine Registrierungsfunktion und kein Link zur Selbstregistrierung vorhanden.",
+          "Das Logo ist im oberen Drittel des Screens zentriert und gut sichtbar platziert."
+        ],
+        "labels": [
+          "frontend"
+        ],
+        "dependencies": [],
+        "rationale": "Die drei Requirements beschreiben gemeinsam einen zusammenh\u00E4ngenden Login-Screen und sind als ein UI-Issue sinnvoll umsetzbar.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "login-ui",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-038 schlie\u00DFt Selbstregistrierung aus.",
+          "CAN-REQ-039 definiert die Bestandteile des Login-Screens.",
+          "CAN-REQ-040 beschreibt die gew\u00FCnschte Platzierung des Logos und erw\u00E4hnt, dass das Logo selbst noch zu erstellen ist."
+        ],
+        "implementationHints": [
+          "Falls noch kein finales Markenlogo vorliegt, vorl\u00E4ufigen Platzhalter oder vorhandenes App-Asset einplanen.",
+          "Validierungs- und Fehlerzust\u00E4nde f\u00FCr E-Mail/Passwort im UI mitdenken, auch wenn keine detaillierten Fachvorgaben vorliegen."
+        ],
+        "openQuestions": [
+          "Soll bis zur Verf\u00FCgbarkeit eines finalen Logos ein tempor\u00E4res Platzhalter-Asset verwendet werden?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      },
+      {
+        "issuePlanId": "IPLAN-003",
+        "operation": "CREATE",
+        "title": "Rollen- und Berechtigungsmodell f\u00FCr interne Nutzung umsetzen",
+        "description": "Implementiere das grundlegende Rollen- und Berechtigungsmodell der App f\u00FCr interne Nutzung. Das umfasst unterschiedliche Rollen, Admin-Rechte zur Accountverwaltung, eingeschr\u00E4nkte Rechte f\u00FCr regul\u00E4re User, erg\u00E4nzenden Zugriff f\u00FCr Angeh\u00F6rige sowie die einrichtungsbezogene Sichtbarkeit von Profilen.",
+        "sourceRequirementIds": [
+          "CAN-REQ-016",
+          "CAN-REQ-044",
+          "CAN-REQ-045",
+          "CAN-REQ-046",
+          "CAN-REQ-047",
+          "CAN-REQ-048"
+        ],
+        "acceptanceCriteria": [
+          "Die App unterst\u00FCtzt mindestens unterschiedliche Account-Rollen mit unterschiedlichen Rechten.",
+          "Nur Accounts mit Admin-Rechten k\u00F6nnen weitere Accounts anlegen und Rechte verwalten.",
+          "User-Accounts k\u00F6nnen Inhalte hinzuf\u00FCgen, aber keine Accounts erstellen und keine vorhandenen Daten l\u00F6schen.",
+          "Angeh\u00F6rige k\u00F6nnen Zugriff auf die App erhalten, um erg\u00E4nzende Informationen hinzuzuf\u00FCgen.",
+          "Mitarbeiter sehen nur Profile ihrer eigenen Einrichtung bzw. ihres eigenen Hauses.",
+          "Die Umsetzung ist auf internen Gebrauch ausgerichtet und bietet keine \u00F6ffentliche oder offene Zugangslogik."
+        ],
+        "labels": [
+          "access-control"
+        ],
+        "dependencies": [],
+        "rationale": "Diese Requirements bilden laut Provenienz einen gemeinsamen role-model-cluster und ergeben zusammen ein koh\u00E4rentes Arbeitspaket f\u00FCr AuthZ-Grundlagen.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "role-model",
+          "l4RunId": "20260717_110515_301f60",
+          "clusterOperationId": "COP-069"
+        },
+        "knownContext": [
+          "CAN-REQ-016, CAN-REQ-044, CAN-REQ-045, CAN-REQ-046 und CAN-REQ-048 sind in der Provenienz demselben role-model-cluster zugeordnet.",
+          "CAN-REQ-048 sagt explizit, dass die technische Umsetzung des Berechtigungsmodells noch auszuarbeiten ist.",
+          "CAN-REQ-047 begrenzt die App auf internen Gebrauch."
+        ],
+        "implementationHints": [
+          "Rollen zun\u00E4chst als explizites, testbares Berechtigungsschema modellieren.",
+          "Einrichtungszuordnung als Attribut von Nutzer und/oder Profil vorsehen, damit Sichtbarkeitsregeln durchsetzbar sind.",
+          "Schreibrechte granular von Lese- und Verwaltungsrechten trennen."
+        ],
+        "openQuestions": [
+          "Welche konkreten Rollenbezeichnungen sollen im MVP unterst\u00FCtzt werden, insbesondere f\u00FCr Mitarbeiter und Angeh\u00F6rige?",
+          "D\u00FCrfen Angeh\u00F6rige nur bestimmte Bewohnerprofile sehen oder ausschlie\u00DFlich solche mit expliziter Zuordnung?",
+          "Wie wird \u0027interner Gebrauch\u0027 technisch konkretisiert: geschlossene Benutzeranlage, Netzrestriktionen oder nur fehlende Selbstregistrierung?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      },
+      {
+        "issuePlanId": "IPLAN-004",
+        "operation": "CREATE",
+        "title": "Bewohner-Account mit eingeschr\u00E4nkter Profilsicht umsetzen",
+        "description": "Erg\u00E4nze einen Bewohner-Account, der nur das eigene Profil sehen kann und nur eingeschr\u00E4nkte Funktionen erh\u00E4lt, insbesondere Zugriff auf den About-Me-Bereich sowie das Hinzuf\u00FCgen eigener Bilder.",
+        "sourceRequirementIds": [
+          "CAN-REQ-017"
+        ],
+        "acceptanceCriteria": [
+          "Es gibt einen Bewohner-Account-Typ mit eingeschr\u00E4nkten Rechten.",
+          "Ein Bewohner sieht in der Profil\u00FCbersicht ausschlie\u00DFlich das eigene Profil.",
+          "Ein Bewohner kann den About-Me-Bereich des eigenen Profils \u00F6ffnen.",
+          "Ein Bewohner kann eigene Bilder zum eigenen Profil hinzuf\u00FCgen.",
+          "Der Bewohner-Account bietet keine weitergehenden Funktionen, die den eingeschr\u00E4nkten Umfang verletzen."
+        ],
+        "labels": [
+          "access-control",
+          "frontend"
+        ],
+        "dependencies": [
+          "IPLAN-003",
+          "IPLAN-005"
+        ],
+        "rationale": "Das Requirement ist konkret genug f\u00FCr ein eigenes Issue, baut aber fachlich auf dem Rollenmodell und dem About-Me-Bereich auf.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "resident-role",
+          "l4RunId": "20260717_110515_301f60",
+          "clusterOperationId": "COP-069"
+        },
+        "knownContext": [
+          "CAN-REQ-017 beschreibt den Bewohner-Account als gew\u00FCnschte Anforderung zur Minimierung von Fehlbedienungen.",
+          "Der Bewohner soll nur das eigene Profil in der Profil\u00FCbersicht sehen.",
+          "Genannt sind Zugriff auf den About-Me-Bereich und das Hinzuf\u00FCgen eigener Bilder."
+        ],
+        "implementationHints": [
+          "Rechte des Bewohner-Accounts als Sonderfall des allgemeinen Rollenmodells definieren.",
+          "Bild-Upload auf das eigene Profil begrenzen.",
+          "Falls Bearbeitung anderer Profilfelder nicht gefordert ist, diese im Bewohnermodus bewusst ausblenden."
+        ],
+        "openQuestions": [
+          "D\u00FCrfen Bewohner nur Bilder hinzuf\u00FCgen oder auch bereits hochgeladene eigene Bilder entfernen oder ersetzen?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      },
+      {
+        "issuePlanId": "IPLAN-005",
+        "operation": "CREATE",
+        "title": "About-Me-Profilseite mit erweiterbaren Inhalten bereitstellen",
+        "description": "Erstelle pro Person eine informative About-Me-Seite als pers\u00F6nlichen Ersteindruck mit Basisinformationen und dynamisch erweiterbaren Profilinhalten einschlie\u00DFlich visueller Darstellungen.",
+        "sourceRequirementIds": [
+          "CAN-REQ-024",
+          "CAN-REQ-025",
+          "CAN-REQ-050"
+        ],
+        "acceptanceCriteria": [
+          "F\u00FCr jede Person gibt es eine About-Me-Seite.",
+          "Die About-Me-Seite unterst\u00FCtzt mindestens Name, Alter, Beschreibungen, Hobbys und Bilder.",
+          "Profilinhalte k\u00F6nnen so erweitert werden, dass neue Erfahrungen und zus\u00E4tzliche Bilder hinzugef\u00FCgt werden k\u00F6nnen.",
+          "Kommunikations- oder Profilinhalte werden nicht nur textbasiert, sondern auch mit visuellen Darstellungen wie Bildern unterst\u00FCtzt."
+        ],
+        "labels": [
+          "frontend"
+        ],
+        "dependencies": [],
+        "rationale": "Die drei Requirements beschreiben gemeinsam die Profil-/Darstellungseinheit f\u00FCr pers\u00F6nliche Informationen und deren Erweiterbarkeit.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "about-me",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-024 definiert die Inhalte der About-Me-Seite.",
+          "CAN-REQ-025 fordert dynamische Erweiterbarkeit f\u00FCr Profil- und Kommunikationsinhalte.",
+          "CAN-REQ-050 erg\u00E4nzt die visuelle Darstellung, insbesondere mit Bildern."
+        ],
+        "implementationHints": [
+          "Wiederverwendbare Inhaltsbausteine f\u00FCr Text und Bilder vorsehen.",
+          "Zwischen Anzeige bestehender Inhalte und Hinzuf\u00FCgen neuer Inhalte im UI klar unterscheiden.",
+          "Sortierung oder Gruppierung neu hinzugef\u00FCgter Inhalte fr\u00FCh festlegen, um sp\u00E4tere Inkonsistenzen zu vermeiden."
+        ],
+        "openQuestions": [
+          "Sollen neue Erfahrungen und Bilder direkt auf der About-Me-Seite gepflegt werden oder \u00FCber einen separaten Bearbeitungsfluss?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      },
+      {
+        "issuePlanId": "IPLAN-006",
+        "operation": "CREATE",
+        "title": "No-Go-Bereich pro Bewohner mit Listenpflege umsetzen",
+        "description": "Stelle pro Bewohner eine No-Go-Seite bereit und erm\u00F6gliche das Hinzuf\u00FCgen weiterer No-Gos \u00FCber einen Plus-Button in einer verst\u00E4ndlichen Liste.",
+        "sourceRequirementIds": [
+          "CAN-REQ-027",
+          "CAN-REQ-028"
+        ],
+        "acceptanceCriteria": [
+          "F\u00FCr jeden Bewohner gibt es einen No-Go-Bereich bzw. eine No-Go-Seite.",
+          "Die Seite zeigt eine Liste von No-Gos f\u00FCr den jeweiligen Bewohner an.",
+          "Nutzer k\u00F6nnen \u00FCber einen Plus-Button neue No-Gos hinzuf\u00FCgen.",
+          "Neu hinzugef\u00FCgte No-Gos erscheinen in der Liste des betreffenden Bewohners."
+        ],
+        "labels": [
+          "frontend"
+        ],
+        "dependencies": [],
+        "rationale": "Die Requirements beschreiben dieselbe fachliche Einheit: Anzeige und Pflege von No-Go-Informationen.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "no-go",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-027 fordert die No-Go-Seite pro Bewohner.",
+          "CAN-REQ-028 erg\u00E4nzt die dynamische Erweiterung \u00FCber einen Plus-Button als Liste."
+        ],
+        "implementationHints": [
+          "Eingabe neuer No-Gos mit einfacher, schneller Interaktion gestalten.",
+          "No-Gos pro Bewohner strikt getrennt speichern und anzeigen."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      },
+      {
+        "issuePlanId": "IPLAN-007",
+        "operation": "CREATE",
+        "title": "Kommunikationsbereiche in verbal und nonverbal strukturieren",
+        "description": "Lege die Grundstruktur f\u00FCr Kommunikationsinformationen fest, indem Inhalte in verbale und nonverbale Bereiche unterteilt werden. Die Videointegration baut darauf auf.",
+        "sourceRequirementIds": [
+          "CAN-REQ-030"
+        ],
+        "acceptanceCriteria": [
+          "Kommunikationsinformationen sind strukturell in einen verbalen und einen nonverbalen Bereich unterteilt.",
+          "Die gew\u00E4hlte Struktur ist in Navigation, Datenmodell oder Darstellung so umgesetzt, dass beide Bereiche getrennt adressierbar sind."
+        ],
+        "labels": [
+          "frontend"
+        ],
+        "dependencies": [],
+        "rationale": "CAN-REQ-030 ist ein eigenst\u00E4ndiges Struktur-Requirement und dient als Basis f\u00FCr weitere Kommunikationsfeatures.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "communication-structure",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-030 fordert explizit die strukturelle Unterteilung in verbale und nonverbale Bereiche."
+        ],
+        "implementationHints": [
+          "Trennung bereits im Datenmodell oder View-Model mitdenken, nicht nur visuell im UI.",
+          "Benennung der beiden Bereiche konsistent \u00FCber Navigation und Detailansichten halten."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      },
+      {
+        "issuePlanId": "IPLAN-008",
+        "operation": "CREATE",
+        "title": "Videofunktion in verbale und nonverbale Kommunikationsseiten integrieren",
+        "description": "Erweitere die Kommunikationsseiten um eine integrierte Videofunktion mit Beschreibungen. Neue Videos sollen leicht hinzuf\u00FCgbar sein, und das jeweils neueste Video soll oben stehen.",
+        "sourceRequirementIds": [
+          "CAN-REQ-032",
+          "CAN-REQ-033"
+        ],
+        "acceptanceCriteria": [
+          "Videos mit Beschreibungen k\u00F6nnen auf den verbalen und/oder nonverbalen Kommunikationsseiten dargestellt werden.",
+          "Die Videofunktion existiert nicht als eigener separater Screen, sondern ist in die Kommunikationsseiten integriert.",
+          "Nutzer k\u00F6nnen neue Videos mit Beschreibungen leicht hinzuf\u00FCgen.",
+          "In der Videoanzeige wird das jeweils neueste Video oben dargestellt."
+        ],
+        "labels": [
+          "frontend"
+        ],
+        "dependencies": [
+          "IPLAN-007"
+        ],
+        "rationale": "Die Anforderungen geh\u00F6ren zu einer zusammenh\u00E4ngenden Videofunktion innerhalb der Kommunikationsbereiche.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "communication-video",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-032 fordert die Integration der Videofunktion in verbale und nonverbale Kommunikationsseiten.",
+          "CAN-REQ-033 erg\u00E4nzt leichte Hinzuf\u00FCgbarkeit und Sortierung mit neuestem Video oben."
+        ],
+        "implementationHints": [
+          "Sortierung server- oder clientseitig deterministisch nach Erstellungszeit definieren.",
+          "Beschreibungen gemeinsam mit dem Video erfassbar machen.",
+          "UI nicht als separaten Navigationspunkt modellieren, sondern als Abschnitt innerhalb der Kommunikationsseiten."
+        ],
+        "openQuestions": [
+          "Welche Videoquellen oder Upload-Beschr\u00E4nkungen sollen im MVP gelten?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      },
+      {
+        "issuePlanId": "IPLAN-009",
+        "operation": "CREATE",
+        "title": "Konsistente Appbar und rollenspezifischen Settings-Screen umsetzen",
+        "description": "Setze nach dem Login eine konsistente Appbar auf allen Seiten um und binde dar\u00FCber einen Settings-Screen an, dessen Inhalte je nach Rolle differenziert angezeigt werden.",
+        "sourceRequirementIds": [
+          "CAN-REQ-036",
+          "CAN-REQ-049"
+        ],
+        "acceptanceCriteria": [
+          "Nach dem Login ist auf jeder relevanten Seite eine konsistente Appbar vorhanden.",
+          "Die Appbar enth\u00E4lt ein Einstellungssymbol, \u00FCber das der Settings-Screen erreichbar ist.",
+          "Der Settings-Screen zeigt allgemeine Nutzerfunktionen wie Profil\u00E4nderung und Sprachwahl f\u00FCr regul\u00E4re Nutzer an.",
+          "Ein Admin sieht im Settings-Screen zus\u00E4tzlich Funktionen zum Hinzuf\u00FCgen von Nutzeraccounts und zum Anpassen von Rechten."
+        ],
+        "labels": [
+          "frontend",
+          "access-control"
+        ],
+        "dependencies": [
+          "IPLAN-003"
+        ],
+        "rationale": "Die Appbar f\u00FChrt direkt zum Settings-Screen; beide Anforderungen bilden zusammen einen sinnvollen UI-/Navigationsschnitt.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "appbar-settings",
+          "l4RunId": "20260717_110515_301f60",
+          "clusterOperationId": "COP-069"
+        },
+        "knownContext": [
+          "CAN-REQ-036 fordert eine konsistente Appbar nach dem Login und einen Einstieg in die Einstellungen.",
+          "CAN-REQ-049 fordert eine rollenabh\u00E4ngig differenzierte Settings-Ansicht mit Admin- und Nutzerfunktionen."
+        ],
+        "implementationHints": [
+          "Settings-Screen zun\u00E4chst nach Rollenabschnitten aufbauen, um sp\u00E4tere Erweiterungen sauber einzuf\u00FCgen.",
+          "Appbar als wiederverwendbare gemeinsame Komponente implementieren."
+        ],
+        "openQuestions": [
+          "Welche weiteren Settings au\u00DFer Sprache und Profil\u00E4nderung sollen im MVP sichtbar sein?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      },
+      {
+        "issuePlanId": "IPLAN-010",
+        "operation": "NEEDS_REVIEW",
+        "title": "Alternative Eingabemethoden und Sprachbefehle fachlich zuschneiden",
+        "description": "Das Requirement fordert die Ber\u00FCcksichtigung von Sprachbefehlen oder alternativen Eingabemethoden f\u00FCr beeintr\u00E4chtigte Nutzer, beschreibt aber weder den Zielumfang noch die konkrete Form der Umsetzung. Vor einer belastbaren Issue-Erzeugung sollte der gew\u00FCnschte MVP-Schnitt festgelegt werden.",
+        "sourceRequirementIds": [
+          "CAN-REQ-043"
+        ],
+        "acceptanceCriteria": [
+          "Es ist entschieden, welche alternativen Eingabemethoden im MVP konkret unterst\u00FCtzt oder mindestens vorbereitet werden sollen.",
+          "Es ist festgelegt, ob es sich um direkte Produktfunktion, Accessibility-Richtlinie oder sp\u00E4tere Architekturvorbereitung handelt.",
+          "Es gibt einen \u00FCberpr\u00FCfbaren fachlichen Zuschnitt mit klaren Abnahmekriterien."
+        ],
+        "labels": [
+          "accessibility"
+        ],
+        "dependencies": [],
+        "rationale": "Zu unklar f\u00FCr ein umsetzbares CREATE-Issue; \u0027ber\u00FCcksichtigen\u0027 ist ohne Scope und Zielbild nicht hinreichend operationalisiert.",
+        "requiresHumanReview": true,
+        "metadata": {
+          "group": "accessibility-input",
+          "l4RunId": "20260717_110515_301f60",
+          "clusterOperationId": "COP-071"
+        },
+        "knownContext": [
+          "CAN-REQ-043 nennt Sprachbefehle oder alternative Eingabemethoden f\u00FCr beeintr\u00E4chtigte Nutzer.",
+          "In der Provenienz ist das Requirement einem accessibility-cluster zugeordnet."
+        ],
+        "implementationHints": [
+          "M\u00F6gliche Schnitte w\u00E4ren Voice-Input f\u00FCr bestimmte Formulare, systemseitige Bedienhilfen-Kompatibilit\u00E4t oder reine Accessibility-Leitplanken."
+        ],
+        "openQuestions": [
+          "Sollen aktive Sprachbefehle implementiert werden oder gen\u00FCgt Kompatibilit\u00E4t mit bestehenden Betriebssystem-Bedienhilfen?",
+          "Welche Nutzergruppen und Nutzungssituationen haben im MVP Priorit\u00E4t?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "needs_refinement"
+      },
+      {
+        "issuePlanId": "IPLAN-011",
+        "operation": "NO_CHANGE",
+        "title": "Animationen vorerst nicht als eigenes Arbeitspaket planen",
+        "description": "F\u00FCr Animationen besteht kein eigenst\u00E4ndiger Umsetzungsauftrag. Das Requirement wirkt als Gestaltungsleitplanke f\u00FCr andere UI-Issues: Animationen sollen nicht priorisiert werden und, falls vorhanden, nicht ablenken.",
+        "sourceRequirementIds": [
+          "CAN-REQ-053"
+        ],
+        "acceptanceCriteria": [
+          "Die Vorgabe wird als Designleitplanke in der Umsetzung anderer UI-Issues ber\u00FCcksichtigt.",
+          "Es wird kein separates Feature-Issue allein f\u00FCr Animationen angelegt."
+        ],
+        "labels": [
+          "frontend"
+        ],
+        "dependencies": [],
+        "rationale": "Das Requirement fordert prim\u00E4r, Animationen nicht aktiv einzuplanen, daher entsteht kein eigenst\u00E4ndiges operatives Arbeitspaket.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "ui-guideline",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-053 sagt, dass Animationen nicht aktiv eingeplant werden sollen und vorhandene Animationen nicht ablenkend sein d\u00FCrfen."
+        ],
+        "implementationHints": [
+          "Bei UI-Review Motion sparsam halten und unn\u00F6tige \u00DCberg\u00E4nge vermeiden."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      },
+      {
+        "issuePlanId": "IPLAN-012",
+        "operation": "NO_CHANGE",
+        "title": "\u00DCbersetzungssystem explizit au\u00DFerhalb des Scopes belassen",
+        "description": "Dieses Requirement schlie\u00DFt ein \u00DCbersetzungssystem zwischen Bewohnern und Betreuern aus dem L\u00F6sungsumfang aus. Daf\u00FCr wird kein operatives Feature-Issue erzeugt; stattdessen dient es als Scope-Grenze f\u00FCr andere Planungen.",
+        "sourceRequirementIds": [
+          "CAN-REQ-054"
+        ],
+        "acceptanceCriteria": [
+          "In diesem Issue-Plan ist kein Feature zur bidirektionalen \u00DCbersetzung zwischen Bewohnern und Betreuern vorgesehen.",
+          "Die Scope-Grenze ist f\u00FCr nachgelagerte Umsetzung und Review dokumentiert."
+        ],
+        "labels": [
+          "requirements"
+        ],
+        "dependencies": [],
+        "rationale": "Negativabgrenzung ohne eigene Umsetzungsarbeit; deshalb explizit als NO_CHANGE planen.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "scope-guardrail",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-054 schlie\u00DFt ein \u00DCbersetzungssystem ausdr\u00FCcklich aus dem L\u00F6sungsumfang aus."
+        ],
+        "implementationHints": [
+          "Bei sp\u00E4teren Kommunikationsfeatures auf diese Scope-Grenze verweisen."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      },
+      {
+        "issuePlanId": "IPLAN-013",
+        "operation": "NEEDS_REVIEW",
+        "title": "\u00DCbernahme bestehender Akten und Erfahrungen als Wissensquelle konkretisieren",
+        "description": "Das Requirement verlangt, bestehende Akten sowie dokumentierte Erfahrungen als Wissensquelle zu ber\u00FCcksichtigen, legt aber nicht fest, ob Datenmigration, manuelle \u00DCbertragung, Referenzierung oder nur fachliche Ber\u00FCcksichtigung gemeint ist. Vor einem CREATE-Issue braucht es einen klaren Zuschnitt.",
+        "sourceRequirementIds": [
+          "CAN-REQ-056"
+        ],
+        "acceptanceCriteria": [
+          "Es ist festgelegt, welche Form der Ber\u00FCcksichtigung im MVP gemeint ist, z. B. Migration, Import, manuelle Erfassung oder reine inhaltliche Orientierung.",
+          "Die betroffenen Datenquellen und ihr Umfang sind benannt.",
+          "Es gibt pr\u00FCfbare Akzeptanzkriterien f\u00FCr die gew\u00E4hlte Integrations- oder \u00DCbernahmestrategie."
+        ],
+        "labels": [
+          "data"
+        ],
+        "dependencies": [],
+        "rationale": "Zu unklar f\u00FCr direkte Umsetzung; die Form der Ber\u00FCcksichtigung als Wissensquelle ist noch nicht operationalisiert.",
+        "requiresHumanReview": true,
+        "metadata": {
+          "group": "knowledge-sources",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-056 nennt klassische Akten sowie dokumentierte Erfahrungen und neues Wissen als relevante Wissensquelle."
+        ],
+        "implementationHints": [
+          "M\u00F6gliche Zuschnitte: initiale manuelle Datenerfassung, Import-Schnittstelle, Verweis auf bestehende Dokumente oder Datenmodell-Vorbereitung."
+        ],
+        "openQuestions": [
+          "Sollen bestehende Akten technisch importiert werden oder dienen sie nur als Quelle f\u00FCr manuelle \u00DCbertragung in die App?",
+          "Welche Arten dokumentierter Erfahrungen geh\u00F6ren in den MVP?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "needs_refinement"
+      },
+      {
+        "issuePlanId": "IPLAN-014",
+        "operation": "NO_CHANGE",
+        "title": "Anforderungsanalyse ist vorgelagerte Vorgehensweise, kein Dev-Issue",
+        "description": "Die gew\u00FCnschte Anforderungsanalyse mit Beteiligten und sp\u00E4teren Nutzern beschreibt ein Vorgehen vor der konkreten Ausgestaltung der L\u00F6sung. Im vorliegenden plan-only Dev-Issue-Plan entsteht daraus kein separates Umsetzungsissue.",
+        "sourceRequirementIds": [
+          "CAN-REQ-058"
+        ],
+        "acceptanceCriteria": [
+          "Die Anforderungsanalyse wird als vorgelagerte Produkt-/Projektaktivit\u00E4t verstanden und nicht als Entwicklungsissue eingeplant.",
+          "Der Issue-Plan enth\u00E4lt keinen f\u00E4lschlichen Dev-Umfang f\u00FCr Einrichtungsbesuche oder Analyseworkshops."
+        ],
+        "labels": [
+          "requirements"
+        ],
+        "dependencies": [],
+        "rationale": "Es handelt sich um Prozessvorgehen vor Ausgestaltung, nicht um ein operatives Entwicklungsfeature innerhalb dieses Issue-Plans.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "process",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-058 beschreibt als gew\u00FCnschte Vorgehensweise eine Anforderungsanalyse mit Beteiligten und sp\u00E4teren Nutzern vor der konkreten Ausgestaltung der L\u00F6sung."
+        ],
+        "implementationHints": [
+          "Falls gew\u00FCnscht, separat im Projektmanagement statt in der Entwicklungsumsetzung tracken."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      },
+      {
+        "issuePlanId": "IPLAN-015",
+        "operation": "CREATE",
+        "title": "Flutter/Dart-Projektbasis mit gemeinsamen Tool-Versionen f\u00FCr Android 11 aufsetzen",
+        "description": "Richte die technische Projektbasis mit Flutter und Dart ein, gleiche die Entwicklungswerkzeug-Versionen teamweit ab und stelle sicher, dass die initiale Entwicklung und Testbarkeit zun\u00E4chst gegen Android 11 ausgerichtet ist.",
+        "sourceRequirementIds": [
+          "CAN-REQ-060",
+          "CAN-REQ-062",
+          "CAN-REQ-063"
+        ],
+        "acceptanceCriteria": [
+          "Das Projekt ist als Flutter-/Dart-Anwendung aufgesetzt oder entsprechend konfiguriert.",
+          "Die im Team zu verwendenden Versionen der Entwicklungswerkzeuge sind dokumentiert und einheitlich festgelegt.",
+          "Die initiale lokale Entwicklung und das Testen sind gegen Android 11 ausgerichtet und nachvollziehbar beschrieben."
+        ],
+        "labels": [
+          "platform"
+        ],
+        "dependencies": [],
+        "rationale": "Die drei Requirements bilden gemeinsam ein technisches Enablement-Paket f\u00FCr den Projektstart.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "project-bootstrap",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-060 legt Flutter mit Dart als Technologie-Stack fest.",
+          "CAN-REQ-062 fordert einheitliche Versionen der Entwicklungswerkzeuge im Team.",
+          "CAN-REQ-063 richtet initiale Entwicklung und Tests auf Android 11 aus."
+        ],
+        "implementationHints": [
+          "Versionen in README oder Setup-Dokumentation festhalten.",
+          "Optional Tooling wie FVM oder vergleichbare Version-Pinning-Strategien pr\u00FCfen.",
+          "Android-11-Testger\u00E4t oder Emulator-Konfiguration Teil des Setups machen."
+        ],
+        "openQuestions": [],
+        "relatedClarificationIds": [],
+        "readiness": "ready_for_dev"
+      },
+      {
+        "issuePlanId": "IPLAN-016",
+        "operation": "CREATE",
+        "title": "Plattform\u00FCbergreifende Lauff\u00E4higkeit f\u00FCr iOS und Android absichern",
+        "description": "Plane und implementiere die technische und QA-seitige Absicherung daf\u00FCr, dass die App plattform\u00FCbergreifend auf iOS und Android betrieben werden kann. Dieses Arbeitspaket baut auf dem Flutter/Dart-Stack auf, geht aber \u00FCber die initiale Android-11-Ausrichtung hinaus.",
+        "sourceRequirementIds": [
+          "CAN-REQ-052"
+        ],
+        "acceptanceCriteria": [
+          "Die App ist so konfiguriert und entwickelt, dass Builds f\u00FCr Android und iOS grunds\u00E4tzlich unterst\u00FCtzt werden.",
+          "Plattformspezifische Mindestpr\u00FCfungen oder Testf\u00E4lle f\u00FCr beide Zielplattformen sind definiert.",
+          "Bekannte plattformspezifische Abweichungen sind dokumentiert, sofern sie die grunds\u00E4tzliche Lauff\u00E4higkeit nicht verhindern."
+        ],
+        "labels": [
+          "platform"
+        ],
+        "dependencies": [
+          "IPLAN-015"
+        ],
+        "rationale": "Cross-Platform-Betrieb ist ein eigenst\u00E4ndiges Lieferziel \u00FCber das initiale Projekt-Setup hinaus.",
+        "requiresHumanReview": false,
+        "metadata": {
+          "group": "cross-platform",
+          "l4RunId": "20260717_110515_301f60"
+        },
+        "knownContext": [
+          "CAN-REQ-052 fordert Betrieb auf iPhone/iOS und Android.",
+          "CAN-REQ-060 legt Flutter/Dart als Stack fest, was diese Zielsetzung unterst\u00FCtzt."
+        ],
+        "implementationHints": [
+          "CI oder lokale Build-Anleitungen f\u00FCr beide Plattformen vorsehen.",
+          "Fr\u00FCh iOS-Signierung, Simulator/Device-Tests und plattformspezifische Berechtigungen pr\u00FCfen."
+        ],
+        "openQuestions": [
+          "Welche iOS-Zielversion soll im MVP mindestens unterst\u00FCtzt werden?"
+        ],
+        "relatedClarificationIds": [],
+        "readiness": "ready_with_open_questions"
+      }
+    ]
+  },
+  "existingIssues": [
+    {
+      "issueNumber": 26,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/26",
+      "title": "Team-Setup f\u00FCr Flutter/Dart mit abgestimmten Tool-Versionen und Android-11-Startziel dokumentieren",
+      "body": "Lege das initiale Entwicklungs-Setup f\u00FCr das Team fest: Flutter/Dart als Technologie-Stack, abgestimmte Versionen der Entwicklungswerkzeuge und initiale Ausrichtung von Entwicklung und Tests auf Android 11.\n\n## Acceptance Criteria\n- Die zu verwendenden Versionen von Flutter, Dart und weiteren relevanten Entwicklungswerkzeugen sind f\u00FCr das Team dokumentiert.\n- Das initiale Zielger\u00E4t bzw. die initiale Testplattform Android 11 ist dokumentiert.\n- Das Team-Setup ist konsistent mit der Entscheidung f\u00FCr Flutter/Dart als Technologie-Stack.\n\n## Traceability\n- Action: GHACT-019\n- IssuePlanItem: IPLAN-019\n- Source requirements: CAN-REQ-060, CAN-REQ-062, CAN-REQ-063\n\n## Rationale\nNo existing mapping or issue snapshot was found for this implementation-ready accepted item.",
+      "state": "open",
+      "labels": [
+        "platform"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:36:41Z"
+    },
+    {
+      "issueNumber": 25,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/25",
+      "title": "Konsistente Appbar nach Login mit Einstieg in Settings bereitstellen",
+      "body": "Stelle auf allen Seiten nach dem Login eine konsistente Appbar bereit. Die Appbar enth\u00E4lt ein Einstellungssymbol, \u00FCber das der Settings-Screen erreichbar ist.\n\n## Acceptance Criteria\n- Nach dem Login wird auf allen relevanten Seiten dieselbe oder konsistent gestaltete Appbar verwendet.\n- Die Appbar enth\u00E4lt ein Einstellungssymbol.\n- \u00DCber das Einstellungssymbol kann der Nutzer den Settings-Screen \u00F6ffnen.\n\n## Traceability\n- Action: GHACT-011\n- IssuePlanItem: IPLAN-011\n- Source requirements: CAN-REQ-036\n\n## Rationale\nNo existing mapping or issue snapshot was found for this implementation-ready accepted item.",
+      "state": "open",
+      "labels": [
+        "frontend"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:36:41Z"
+    },
+    {
+      "issueNumber": 24,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/24",
+      "title": "Videoliste in Kommunikationsbereichen um Hinzuf\u00FCgen und Sortierung erweitern",
+      "body": "Erg\u00E4nze die in den Kommunikationsbereichen integrierte Videofunktion so, dass neue Videos mit Beschreibungen leicht hinzugef\u00FCgt werden k\u00F6nnen und das neueste Video jeweils oben in der Liste erscheint.\n\n## Acceptance Criteria\n- Berechtigte Nutzer k\u00F6nnen in der Videofunktion ein neues Video mit Beschreibung hinzuf\u00FCgen.\n- Nach dem Hinzuf\u00FCgen erscheint das neue Video in der Videoliste.\n- Die Videoliste ist so sortiert, dass das neueste Video oben angezeigt wird.\n\n## Traceability\n- Action: GHACT-010\n- IssuePlanItem: IPLAN-010\n- Source requirements: CAN-REQ-033, CAN-REQ-025\n\n## Rationale\nThe only nearby snapshot match was issue #1 via shared requirement CAN-REQ-025, but that issue is specifically about resident-role profile restrictions and image editing, not communication videos; create a separate issue.",
+      "state": "open",
+      "labels": [
+        "frontend"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:36:40Z"
+    },
+    {
+      "issueNumber": 23,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/23",
+      "title": "Kommunikationsbereich in verbale und nonverbale Abschnitte mit integrierten Videos strukturieren",
+      "body": "Strukturiere Kommunikationsinformationen pro Person in verbale und nonverbale Bereiche. In beiden Bereichen sollen Videos mit Beschreibungen integriert werden, ohne daf\u00FCr einen eigenen separaten Screen einzuf\u00FChren.\n\n## Acceptance Criteria\n- Kommunikationsinformationen sind in einen verbalen und einen nonverbalen Bereich unterteilt.\n- Videos mit Beschreibungen k\u00F6nnen innerhalb der Kommunikationsbereiche angezeigt werden.\n- Die Videofunktion erscheint nicht als separater eigener Screen au\u00DFerhalb der Kommunikationsbereiche.\n\n## Traceability\n- Action: GHACT-009\n- IssuePlanItem: IPLAN-009\n- Source requirements: CAN-REQ-030, CAN-REQ-032\n\n## Rationale\nNo existing mapping or issue snapshot was found for this implementation-ready accepted item.",
+      "state": "open",
+      "labels": [
+        "frontend"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:36:40Z"
+    },
+    {
+      "issueNumber": 22,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/22",
+      "title": "No-Go-Seite pro Bewohner mit erweiterbarer Liste umsetzen",
+      "body": "Implementiere pro Bewohner eine No-Go-Seite, auf der Dinge festgehalten werden, die in Gegenwart des Bewohners absolut nicht gehen. Die Seite soll eine Liste der No-Gos anzeigen und \u00FCber einen Plus-Button neue Eintr\u00E4ge erg\u00E4nzbar machen.\n\n## Acceptance Criteria\n- F\u00FCr jedes Profil gibt es eine No-Go-Seite oder einen klar erreichbaren No-Go-Bereich.\n- Vorhandene No-Gos werden als Liste angezeigt.\n- \u00DCber einen Plus-Button k\u00F6nnen berechtigte Nutzer neue No-Go-Eintr\u00E4ge hinzuf\u00FCgen.\n- Neu hinzugef\u00FCgte No-Go-Eintr\u00E4ge sind nach dem Speichern in der Liste sichtbar.\n\n## Traceability\n- Action: GHACT-006\n- IssuePlanItem: IPLAN-006\n- Source requirements: CAN-REQ-027, CAN-REQ-028\n\n## Rationale\nNo existing mapping or issue snapshot was found for this implementation-ready accepted item.",
+      "state": "open",
+      "labels": [
+        "frontend"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:36:38Z"
+    },
+    {
+      "issueNumber": 21,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/21",
+      "title": "About-Me-Seite pro Person mit Basisinformationen und Bildern umsetzen",
+      "body": "Erstelle eine About-Me-Seite pro Person f\u00FCr einen informativen und pers\u00F6nlichen Ersteindruck. Die Seite enth\u00E4lt mindestens Name, Alter, Beschreibungen, Hobbys und Bilder.\n\n## Acceptance Criteria\n- F\u00FCr jedes aufrufbare Profil existiert eine About-Me-Seite.\n- Die About-Me-Seite zeigt mindestens Name, Alter, Beschreibungen, Hobbys und Bilder an.\n- Die Darstellung unterst\u00FCtzt neben Text auch visuelle Inhalte wie Bilder.\n\n## Traceability\n- Action: GHACT-005\n- IssuePlanItem: IPLAN-005\n- Source requirements: CAN-REQ-024, CAN-REQ-050\n\n## Rationale\nThe only nearby snapshot match was issue #1 via shared requirement CAN-REQ-024, but that issue is specifically scoped to the resident role and restricted editing, not the standalone About-Me page for all persons; create a separate issue.",
+      "state": "open",
+      "labels": [
+        "frontend"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:36:38Z"
+    },
+    {
+      "issueNumber": 20,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/20",
+      "title": "Profil\u00FCbersicht nach Login mit zug\u00E4nglichen Profilen und Navigation bereitstellen",
+      "body": "Implementiere die Seite nach dem Login als Profil\u00FCbersicht. Die Ansicht listet alle f\u00FCr den eingeloggten Nutzer zug\u00E4nglichen Profile auf und erlaubt die Navigation in die jeweilige Profildetailansicht.\n\n## Acceptance Criteria\n- Nach erfolgreichem Login wird die Profil\u00FCbersichtsseite angezeigt.\n- Die Profil\u00FCbersicht zeigt nur Profile, auf die der eingeloggte Nutzer gem\u00E4\u00DF Berechtigungsmodell zugreifen darf.\n- Jeder Listeneintrag ist anklickbar und f\u00FChrt zu einer zugeh\u00F6rigen Profilseite.\n\n## Traceability\n- Action: GHACT-004\n- IssuePlanItem: IPLAN-004\n- Source requirements: CAN-REQ-018\n\n## Rationale\nNo existing mapping or issue snapshot was found for this implementation-ready accepted item.",
+      "state": "open",
+      "labels": [
+        "frontend"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:36:38Z"
+    },
+    {
+      "issueNumber": 19,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/19",
+      "title": "Klaerung und Breakdown: Dokumentationsuebernahme und Nutzbarkeitsprobleme vorhandener Dokumentation gemeinsam behandeln",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche Entscheidung zur vollstaendigen Dokumentationsuebernahme ist noetig und wie muessen bekannte Nutzbarkeitsprobleme vorhandener Dokumentation in konkrete Folgeanforderungen oder Arbeitspakete zerlegt werden?\n\nBeschreibung:\nDie Entscheidung ueber eine vollstaendige Dokumentationsuebernahme und die Zerlegung der bekannten Nutzbarkeitsprobleme betreffen denselben Problemraum. Eine gemeinsame Planung stellt sicher, dass die Scope-Entscheidung und die daraus resultierende Aufarbeitung nicht auseinanderlaufen.\n\nSource clarification IDs: CLAR-032, CLAR-033\nSource requirement IDs: CAN-REQ-055, CAN-REQ-057\nPriority: high\n\n## Acceptance Criteria\n- Die offene Entscheidung zur Dokumentationsuebernahme ist gemeinsam mit den bekannten Nutzbarkeitsproblemen eingeordnet.\n- Es ist beschrieben, welche Folgearbeit aus der Entscheidung als Zerlegung erforderlich wird.\n- Beide Quell-Requirements bleiben klar rueckverfolgbar.\n\n## Traceability\n- Action: GHACT-016\n- IssuePlanItem: CPLAN-032\n- Source requirements: CAN-REQ-055, CAN-REQ-057\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "clarification",
+        "clarification-plan",
+        "documentation",
+        "merge",
+        "requirements"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:23:00Z"
+    },
+    {
+      "issueNumber": 18,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/18",
+      "title": "Breakdown klaeren: Barrierefreiheit im Design beruecksichtigen",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWie muss \u0027Barrierefreiheit im Design beruecksichtigen\u0027 in konkrete, testbare Requirements oder Arbeitspakete zerlegt werden?\n\nBeschreibung:\nBarrierefreiheit im Design benoetigt eine Zerlegung in konkrete Kriterien, Pruefungen oder Arbeitspakete. Die uebergeordnete Einsatzkontext-Klaerung bleibt separat referenziert.\n\nSource clarification IDs: CLAR-031\nSource requirement IDs: CAN-REQ-051\nPriority: medium\n\n## Acceptance Criteria\n- Fuer CAN-REQ-051 liegt eine konkrete Zerlegung in pruefbare Anforderungen oder Arbeitspakete vor.\n- Die Zerlegung ist mit den spaeter festzulegenden Barrierefreiheitskriterien kompatibel.\n- Offene Entscheidungen innerhalb der Zerlegung sind separat markiert.\n\n## Traceability\n- Action: GHACT-015\n- IssuePlanItem: CPLAN-031\n- Source requirements: CAN-REQ-051\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "accessibility",
+        "breakdown",
+        "clarification",
+        "clarification-plan",
+        "requirements"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:59Z"
+    },
+    {
+      "issueNumber": 17,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/17",
+      "title": "Klaerung: Aktuellen Screen-Titel mittig in der Appbar anzeigen",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche fachliche Entscheidung ist noetig, damit \u0027Aktuellen Screen-Titel mittig in der Appbar anzeigen\u0027 operationalisiert werden kann?\n\nBeschreibung:\nEigenstaendiger UI-Klaerungspunkt zur Appbar-Gestaltung, da kein weiterer offener Punkt dieselbe konkrete Entscheidung abbildet.\n\nSource clarification IDs: CLAR-030\nSource requirement IDs: CAN-REQ-037\nPriority: high\n\n## Acceptance Criteria\n- Die offene Entscheidung zur Appbar-Titelplatzierung ist dokumentiert.\n- Auswirkungen auf das uebrige Oberflaechenlayout sind als Klaerungsgegenstand benannt.\n- Die Entscheidung kann spaeter in konkrete UI-Anforderungen ueberfuehrt werden.\n\n## Traceability\n- Action: GHACT-014\n- IssuePlanItem: CPLAN-030\n- Source requirements: CAN-REQ-037\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "appbar",
+        "clarification",
+        "clarification-plan",
+        "requirements",
+        "ui"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:59Z"
+    },
+    {
+      "issueNumber": 16,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/16",
+      "title": "Klaerung: Informationsarchitektur und visuelle Ausgestaltung der Profil- und Kommunikationsansichten buendeln",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche zusammenhaengenden fachlichen Entscheidungen zur Struktur der Profil-Detailansicht sowie zur visuellen Ausgestaltung von About-Me-, No-Go- und Kommunikationsbereichen muessen gemeinsam getroffen werden?\n\nBeschreibung:\nDiese offenen Punkte betreffen die Informationsarchitektur und visuelle Gestaltung derselben zusammenhaengenden Oberflaechenfamilie: Profil-Detailansicht, About-Me-Seite, No-Go-Seite, visuelle Trennung von Kommunikationsbereichen und Plus-Button fuer nonverbale Inhalte. Eine gemeinsame Klaerung erhoeht Konsistenz.\n\nSource clarification IDs: CLAR-024, CLAR-025, CLAR-026, CLAR-027, CLAR-028\nSource requirement IDs: CAN-REQ-023, CAN-REQ-026, CAN-REQ-029, CAN-REQ-031, CAN-REQ-034\nPriority: high\n\n## Acceptance Criteria\n- Die offenen Entscheidungen zur Struktur der Profilansichten und zur visuellen Ausgestaltung sind in einem gemeinsamen Klaerungspunkt gebuendelt.\n- Abhaengigkeiten zwischen Informationsarchitektur, visueller Kennzeichnung und Interaktionselementen sind beschrieben.\n- Die betroffenen Teilbereiche bleiben auf ihre Quell-Requirements rueckverfolgbar.\n\n## Traceability\n- Action: GHACT-013\n- IssuePlanItem: CPLAN-024\n- Source requirements: CAN-REQ-023, CAN-REQ-026, CAN-REQ-029, CAN-REQ-031, CAN-REQ-034\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "clarification",
+        "clarification-plan",
+        "information-architecture",
+        "merge",
+        "requirements",
+        "ui"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:58Z"
+    },
+    {
+      "issueNumber": 15,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/15",
+      "title": "Klaerung und Breakdown: Profiluebersicht, Suchleiste, Darstellungsform und Profilanlage gemeinsam strukturieren",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche zusammenhaengenden Entscheidungen und welche Zerlegung sind fuer Suchfunktion, sichtbare Suchleiste, Darstellungsform der Profile und Anlegen neuer Profile auf der Profiluebersicht erforderlich?\n\nBeschreibung:\nDie Profiluebersicht bildet einen gemeinsamen UI-/Funktionsbereich. Suchfunktion, Platzierung der Suchleiste, Listen- oder Kachelansicht sowie das Anlegen neuer Profile sollten gemeinsam geklaert und strukturiert werden, weil sie dieselbe Oberflaeche betreffen.\n\nSource clarification IDs: CLAR-020, CLAR-021, CLAR-022, CLAR-023\nSource requirement IDs: CAN-REQ-019, CAN-REQ-020, CAN-REQ-021, CAN-REQ-022\nPriority: high\n\n## Acceptance Criteria\n- Es ist beschrieben, welche offenen Entscheidungen die Profiluebersicht betreffen und welche Teile zunaechst zerlegt werden muessen.\n- Zusammenhaenge zwischen Suchverhalten, Suchleistenplatzierung, Darstellungsform und Profilanlage sind in einem gemeinsamen Planungspunkt dokumentiert.\n- Alle Quell-Requirements bleiben in der gemeinsamen Planung rueckverfolgbar.\n\n## Traceability\n- Action: GHACT-012\n- IssuePlanItem: CPLAN-020\n- Source requirements: CAN-REQ-019, CAN-REQ-020, CAN-REQ-021, CAN-REQ-022\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "clarification",
+        "clarification-plan",
+        "merge",
+        "profile-overview",
+        "requirements",
+        "search",
+        "ui"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:58Z"
+    },
+    {
+      "issueNumber": 14,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/14",
+      "title": "Breakdown klaeren: Loesung soll neue Mitarbeiter und Verstaendigungssituationen unterstuetzen",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWie muss \u0027Loesung soll neue Mitarbeiter und Verstaendigungssituationen unterstuetzen\u0027 in konkrete, testbare Requirements oder Arbeitspakete zerlegt werden?\n\nBeschreibung:\nDer Punkt ist zu allgemein und benoetigt eine Zerlegung in konkrete Nutzungsszenarien und pruefbare Unteranforderungen.\n\nSource clarification IDs: CLAR-019\nSource requirement IDs: CAN-REQ-015\nPriority: medium\n\n## Acceptance Criteria\n- Fuer CAN-REQ-015 liegt eine konkrete Zerlegung in umsetzbare Requirements oder Arbeitspakete vor.\n- Die Zerlegung differenziert mindestens nach Nutzung durch neue Mitarbeiter und nach Verstaendigungssituationen.\n- Offene Entscheidungen aus der Zerlegung sind separat markiert.\n\n## Traceability\n- Action: GHACT-011\n- IssuePlanItem: CPLAN-019\n- Source requirements: CAN-REQ-015\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "breakdown",
+        "clarification",
+        "clarification-plan",
+        "requirements",
+        "user-scenarios"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:57Z"
+    },
+    {
+      "issueNumber": 13,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/13",
+      "title": "Klaerung: Nutzungskontext, Kalender-Scope und Umgang mit sensiblen Informationen abstimmen",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche zusammenhaengenden Entscheidungen zu Nutzungskontext, Tablet-Support, Barrierefreiheitskriterien sowie Kalender-Scope und Umgang mit medizinisch sensiblen Informationen muessen abgestimmt werden?\n\nBeschreibung:\nDiese Punkte beschreiben zusammen den Einsatzkontext und wesentliche Nutzungsgrenzen der Loesung. Eine gebuendelte Klaerung ist sinnvoll, weil Nutzungskontext, Endgeraete, Barrierefreiheit und sensible Kalenderdaten sich gegenseitig beeinflussen.\n\nSource clarification IDs: CLAR-015, CLAR-017\nSource requirement IDs: CAN-REQ-010, CAN-REQ-012\nPriority: high\n\n## Acceptance Criteria\n- Der geplante Nutzungskontext inklusive relevanter Endgeraete ist als Klaerungsgegenstand beschrieben.\n- Offene Entscheidungen zu Barrierefreiheitskriterien und Kalender-Scope sind gemeinsam mit dem Umgang mit sensiblen Informationen abgestimmt.\n- Abhaengigkeiten zwischen Einsatzkontext und Daten-/Funktionsgrenzen sind benannt.\n\n## Traceability\n- Action: GHACT-010\n- IssuePlanItem: CPLAN-013\n- Source requirements: CAN-REQ-010, CAN-REQ-012\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "accessibility",
+        "calendar",
+        "clarification",
+        "clarification-plan",
+        "requirements",
+        "scope"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:57Z"
+    },
+    {
+      "issueNumber": 12,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/12",
+      "title": "Klaerung: Offline- und Synchronisationsverhalten fuer Firestore festlegen",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche fachliche Entscheidung ist noetig, damit \u0027Offline- und Synchronisationsverhalten fuer Firestore festlegen\u0027 operationalisiert werden kann?\n\nBeschreibung:\nEigenstaendiger Architektur-Klaerungspunkt zum Verhalten der Anwendung bei Offline-Nutzung und anschliessender Synchronisation.\n\nSource clarification IDs: CLAR-013\nSource requirement IDs: CAN-REQ-008\nPriority: high\n\n## Acceptance Criteria\n- Die offene Architekturfrage zu Offline- und Synchronisationsverhalten ist dokumentiert.\n- Relevante Nutzungssituationen fuer Offline-Betrieb sind als Klaerungsgegenstand benannt.\n- Die Entscheidung kann spaeter in technische Requirements ueberfuehrt werden.\n\n## Traceability\n- Action: GHACT-009\n- IssuePlanItem: CPLAN-012\n- Source requirements: CAN-REQ-008\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "architecture",
+        "clarification",
+        "clarification-plan",
+        "offline",
+        "requirements"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:56Z"
+    },
+    {
+      "issueNumber": 11,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/11",
+      "title": "Klaerung: Uebernahme aus Akten und Drittsystemen entscheiden",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche fachliche Entscheidung ist noetig, damit \u0027Uebernahme aus Akten und Drittsystemen entscheiden\u0027 operationalisiert werden kann?\n\nBeschreibung:\nEigenstaendiger Klaerungspunkt zur Entscheidung, ob und in welchem Rahmen Daten aus Akten oder Drittsystemen uebernommen werden sollen.\n\nSource clarification IDs: CLAR-012\nSource requirement IDs: CAN-REQ-007\nPriority: high\n\n## Acceptance Criteria\n- Die offene Frage zur Uebernahme aus Akten und Drittsystemen ist als zu treffende Entscheidung beschrieben.\n- Abhaengigkeiten zu Datenqualitaet, Datenschutz oder Scope sind als Auswirkungen benannt.\n- Die weitere operative Konsequenz der Entscheidung ist ableitbar.\n\n## Traceability\n- Action: GHACT-008\n- IssuePlanItem: CPLAN-011\n- Source requirements: CAN-REQ-007\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "clarification",
+        "clarification-plan",
+        "decision",
+        "integration",
+        "requirements"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:55Z"
+    },
+    {
+      "issueNumber": 10,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/10",
+      "title": "Klaerung: Sicherheitsmassnahmen fuer besonders sensible Inhalte festlegen",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche fachliche Entscheidung ist noetig, damit \u0027Sicherheitsmassnahmen fuer besonders sensible Inhalte festlegen\u0027 operationalisiert werden kann?\n\nBeschreibung:\nEigenstaendiger Klaerungspunkt fuer Sicherheitsanforderungen an besonders sensible Inhalte. Trotz Naehe zu Datenschutz ist hier die Schutzmassnahmen-Entscheidung separat weiterzufuehren.\n\nSource clarification IDs: CLAR-011\nSource requirement IDs: CAN-REQ-006\nPriority: high\n\n## Acceptance Criteria\n- Die offene Sicherheitsfrage fuer besonders sensible Inhalte ist als zu treffende Entscheidung dokumentiert.\n- Betroffene Inhaltsarten und die daraus folgenden Schutzanforderungen sind als Klaerungsgegenstand benannt.\n- Abgrenzung zu Datenschutz- und Zugriffsfragen ist fuer die spaetere Bearbeitung nachvollziehbar.\n\n## Traceability\n- Action: GHACT-007\n- IssuePlanItem: CPLAN-010\n- Source requirements: CAN-REQ-006\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "clarification",
+        "clarification-plan",
+        "requirements",
+        "security"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:55Z"
+    },
+    {
+      "issueNumber": 9,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/9",
+      "title": "Breakdown klaeren: Inhaltsschema, Suchmuster und Kommunikationsinhalte gemeinsam zerlegen",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWie muessen Eingaberegeln und Beschreibungsschema fuer Inhalte sowie das Beschreibungsmuster fuer Suchfunktionen auf Kommunikationsseiten in konsistente, testbare Requirements zerlegt werden?\n\nBeschreibung:\nDie Zerlegung von Inhaltsschema und Beschreibungsmustern ist fachlich eng gekoppelt. Die Suchfunktion auf Kommunikationsseiten verweist direkt auf ein Beschreibungsmuster; daher ist eine gemeinsame Breakdown-Planung sinnvoll, um ein konsistentes Inhaltsmodell zu erhalten.\n\nSource clarification IDs: CLAR-008, CLAR-029\nSource requirement IDs: CAN-REQ-003, CAN-REQ-035\nPriority: medium\n\n## Acceptance Criteria\n- Es liegt eine konsistente Zerlegung fuer Inhaltsschema, Eingaberegeln und suchrelevante Beschreibungsmuster vor.\n- Die Abhaengigkeit zwischen Inhaltsmodell und Suchverhalten auf Kommunikationsseiten ist explizit beschrieben.\n- Alle zerlegten Teilpunkte bleiben auf die Quell-Requirements rueckverfolgbar.\n\n## Traceability\n- Action: GHACT-006\n- IssuePlanItem: CPLAN-008\n- Source requirements: CAN-REQ-003, CAN-REQ-035\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "breakdown",
+        "clarification",
+        "clarification-plan",
+        "content-model",
+        "requirements",
+        "search"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:54Z"
+    },
+    {
+      "issueNumber": 8,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/8",
+      "title": "Breakdown klaeren: Vollstaendiges Rollen- und Berechtigungskonzept spezifizieren",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWie muss \u0027Vollstaendiges Rollen- und Berechtigungskonzept spezifizieren\u0027 in konkrete, testbare Requirements oder Arbeitspakete zerlegt werden?\n\nBeschreibung:\nDer offene Punkt benoetigt eine Zerlegung in konkrete Rollen, Berechtigungsgrenzen und pruefbare Teilanforderungen, ohne die fachliche Entscheidung bereits vorwegzunehmen.\n\nSource clarification IDs: CLAR-007\nSource requirement IDs: CAN-REQ-002\nPriority: medium\n\n## Acceptance Criteria\n- Fuer CAN-REQ-002 liegt eine konkrete Zerlegung in umsetzbare Requirements oder Arbeitspakete vor.\n- Jeder zerlegte Punkt ist rueckverfolgbar mit dem offenen Requirement verknuepft.\n- Offene fachliche Entscheidungen innerhalb der Zerlegung sind separat markiert.\n\n## Traceability\n- Action: GHACT-005\n- IssuePlanItem: CPLAN-007\n- Source requirements: CAN-REQ-002\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "authorization",
+        "breakdown",
+        "clarification",
+        "clarification-plan",
+        "requirements"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:53Z"
+    },
+    {
+      "issueNumber": 7,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/7",
+      "title": "Klaerung: Content-Lifecycle sowie Bearbeitungs- und Freigabeprozess fuer nutzergenerierte Inhalte gemeinsam behandeln",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche gemeinsame fachliche Entscheidung ist fuer minimalen Content-Lifecycle sowie Bearbeitungs- und Freigabeprozess nutzergenerierter Inhalte erforderlich?\n\nBeschreibung:\nDie offene Entscheidung zum minimalen Content-Lifecycle und die Entscheidung zu Bearbeitungs- und Freigabeprozess betreffen denselben Governance-Ablauf fuer nutzergenerierte Inhalte. Sie sollten zusammen betrachtet werden.\n\nSource clarification IDs: CLAR-005, CLAR-009\nSource requirement IDs: CAN-OPEN-005, CAN-REQ-004\nPriority: high\n\n## Acceptance Criteria\n- Es ist beschrieben, welche offenen Entscheidungen entlang des Content-Lifecycles bestehen.\n- Der Zusammenhang zwischen Erstellen, Bearbeiten, Freigeben, Aendern und ggf. Entfernen nutzergenerierter Inhalte ist in einem gemeinsamen Klaerungspunkt zusammengefasst.\n- Nachgelagerte Breakdown- oder Umsetzungsarbeit kann auf einem konsistenten Prozessmodell aufbauen.\n\n## Traceability\n- Action: GHACT-004\n- IssuePlanItem: CPLAN-005\n- Source requirements: CAN-OPEN-005, CAN-REQ-004\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "clarification",
+        "clarification-plan",
+        "content-governance",
+        "merge",
+        "requirements"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:53Z"
+    },
+    {
+      "issueNumber": 6,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/6",
+      "title": "Klaerung: Offene GetX-Technikentscheidung zusammenfuehren",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche gemeinsame technische Entscheidung zum Status und Einsatz von GetX muss getroffen werden, damit die Architekturrahmenbedingungen konsistent operationalisiert werden koennen?\n\nBeschreibung:\nZwei offene Items beschreiben dieselbe Architekturentscheidung aus unterschiedlicher Formulierung: Status von GetX und Einsatz als technische Rahmenbedingung. Sie sollten als ein gemeinsamer Klaerungspunkt weitergefuehrt werden.\n\nSource clarification IDs: CLAR-004, CLAR-034\nSource requirement IDs: CAN-OPEN-004, CAN-REQ-059\nPriority: high\n\n## Acceptance Criteria\n- Die offene Technikentscheidung zu GetX ist als ein gemeinsamer Klaerungspunkt beschrieben.\n- Es ist klar dokumentiert, welche Architekturfrage damit beantwortet werden muss und welche Anforderungen davon betroffen sind.\n- Doppelte oder widerspruechliche Nachverfolgung derselben GetX-Entscheidung ist vermieden.\n\n## Traceability\n- Action: GHACT-003\n- IssuePlanItem: CPLAN-004\n- Source requirements: CAN-OPEN-004, CAN-REQ-059\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "architecture",
+        "clarification",
+        "clarification-plan",
+        "merge",
+        "requirements"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:52Z"
+    },
+    {
+      "issueNumber": 5,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/5",
+      "title": "Klaerung: Datenschutz, Datennutzung und Datenlebenszyklus fuer echte Bewohnerdaten gemeinsam behandeln",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche gemeinsame fachliche Entscheidung ist fuer Rechtsgrundlage, zulaessige Nutzung, Freigaben und Datenlebenszyklus echter Bewohnerdaten, Bilder und Medien vor Produktivstart erforderlich?\n\nBeschreibung:\nDiese Punkte betreffen dieselbe uebergeordnete Datenschutzentscheidung fuer reale Bewohnerdaten und Medien. Sie sollten in einem gemeinsamen Klaerungspunkt gebuendelt werden, damit Rechtsgrundlage, Einwilligungen/Freigaben, erlaubte Datenarten und Aufbewahrung/Loeschung konsistent geklaert werden.\n\nSource clarification IDs: CLAR-003, CLAR-010, CLAR-016\nSource requirement IDs: CAN-OPEN-002, CAN-REQ-005, CAN-REQ-011\nPriority: high\n\n## Acceptance Criteria\n- Es ist festgehalten, welche echten Bewohnerdaten, Bilder und Medien grundsaetzlich verarbeitet werden duerfen.\n- Die noch zu treffenden Entscheidungen zu Rechtsgrundlage, erforderlichen Freigaben und Datenlebenszyklus sind in einem gemeinsamen Klaerungspunkt konsistent beschrieben.\n- Abhaengigkeiten zu Produktivstart und nachgelagerten operativen Anforderungen sind benannt.\n\n## Traceability\n- Action: GHACT-002\n- IssuePlanItem: CPLAN-002\n- Source requirements: CAN-OPEN-002, CAN-REQ-005, CAN-REQ-011\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "clarification",
+        "clarification-plan",
+        "merge",
+        "privacy",
+        "requirements"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:52Z"
+    },
+    {
+      "issueNumber": 4,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/4",
+      "title": "Klaerung: Projektweite Scope-, Zielbild- und Qualitaetsentscheidungen fuer MVP buendeln",
+      "body": "Klaerungs-/Breakdown-Arbeit aus accepted ClarificationPlan.\n\nFrage:\nWelche zusammenhaengenden fachlichen Entscheidungen zu MVP-Scope, expliziten Nicht-Zielen, Zielbild, messbaren Qualitaetszielen sowie Abnahmeschwellen fuer Verfuegbarkeit und Wiederanlauf muessen vor der Operationalisierung gemeinsam festgelegt werden?\n\nBeschreibung:\nB\u00FCndelt eng zusammenhaengende Projektstart-Entscheidungen, die gemeinsam den MVP-Rahmen definieren. Betroffen sind Scope-Abgrenzung, Nicht-Ziele, Zielbild, Qualitaetsziele und MVP-Abnahmeschwellen. Eine gemeinsame Klaerung reduziert Widersprueche zwischen separaten Entscheidungen.\n\nSource clarification IDs: CLAR-001, CLAR-002, CLAR-006, CLAR-014, CLAR-018\nSource requirement IDs: CAN-DISK-003, CAN-OPEN-001, CAN-REQ-001, CAN-REQ-009, CAN-REQ-014\nPriority: high\n\n## Acceptance Criteria\n- Es ist dokumentiert, welche Kernfunktionen zum MVP gehoeren und welche explizit nicht Bestandteil sind.\n- Das Zielbild der digitalen Loesung ist mit den MVP-Grenzen konsistent beschrieben.\n- Messbare Qualitaetsziele sowie MVP-Abnahmeschwellen fuer Verfuegbarkeit und Wiederanlauf sind als zu treffende Entscheidungen benannt und gegeneinander abgeglichen.\n\n## Traceability\n- Action: GHACT-001\n- IssuePlanItem: CPLAN-001\n- Source requirements: CAN-DISK-003, CAN-OPEN-001, CAN-REQ-001, CAN-REQ-009, CAN-REQ-014\n\n## Rationale\nAccepted IssuePlanItem is implementation-ready and has no known mapping.",
+      "state": "open",
+      "labels": [
+        "clarification",
+        "clarification-plan",
+        "decision",
+        "mvp",
+        "requirements",
+        "scope"
+      ],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:22:51Z"
+    },
+    {
+      "issueNumber": 3,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/3",
+      "title": "[TEST] Login-Flow ohne Selbstregistrierung vorbereiten",
+      "body": "Testissue fuer Reconciliation. Erwarteter Bezug: IPLAN-007. Dieses Issue ist absichtlich geschlossen, damit Reconciliation REOPEN oder NEEDS_REVIEW pruefen kann. SourceRequirementIds: CAN-REQ-038, CAN-REQ-039, CAN-REQ-040.",
+      "state": "open",
+      "labels": [],
+      "milestone": null,
+      "updatedUtc": "2026-07-17T09:36:39Z"
+    },
+    {
+      "issueNumber": 2,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/2",
+      "title": "[TEST] Rollen- und Rechtekonzept fuer Angehoerigenzugriff klaeren",
+      "body": "Testissue fuer Reconciliation. Erwarteter Bezug: IPLAN-002 und/oder IPLAN-008. Inhalt ist absichtlich nur teilweise konkretisiert: Angehoerige, Einrichtung, Bewohnerrolle, Berechtigungen und Freigaben muessen fachlich zugeschnitten werden.",
+      "state": "open",
+      "labels": [],
+      "milestone": null,
+      "updatedUtc": "2026-07-16T15:58:50Z"
+    },
+    {
+      "issueNumber": 1,
+      "url": "https://github.com/armiino/Agentic-GitHub/issues/1",
+      "title": "[TEST] Bewohnerrolle mit eingeschraenkter Profilsicht umsetzen",
+      "body": "Testissue fuer Reconciliation. Erwarteter Bezug: IPLAN-003. SourceRequirementIds: CAN-REQ-017, CAN-REQ-024, CAN-REQ-025. Dieses Issue soll als vorhandene operative Arbeit fuer Bewohnerrolle, About-Me/Bilder-Bearbeitung und eingeschraenkte Profilsicht erkennbar sein.",
+      "state": "open",
+      "labels": [],
+      "milestone": null,
+      "updatedUtc": "2026-07-16T15:58:49Z"
+    }
+  ],
+  "existingMappings": []
+}
