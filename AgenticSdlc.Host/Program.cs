@@ -385,6 +385,23 @@ if (args.Length > 0 && string.Equals(args[0], "core-view", StringComparison.Ordi
     return;
 }
 
+// Inc 1c-3: incrementeller PBI-Update (affected-view/Delta -> nur betroffene PBIs). Maker / Review / Apply.
+if (args.Length > 0 && string.Equals(args[0], "pbi-update", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate.PbiUpdateRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+if (args.Length > 0 && string.Equals(args[0], "pbi-update-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate.PbiUpdateReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+if (args.Length > 0 && string.Equals(args[0], "pbi-update-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate.PbiUpdateApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
 // L4-v1: Project State -> kanonische Requirements-Baseline + Traceability-Projektionen.
 if (args.Length > 0 && string.Equals(args[0], "l4-baseline", StringComparison.OrdinalIgnoreCase))
 {
@@ -726,7 +743,7 @@ if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.Ordinal
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
-    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, core-seed, ingest-requirements, ingest-review, ingest-apply, core-baseline, core-seed-backlog, core-view, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
+    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, core-seed, ingest-requirements, ingest-review, ingest-apply, core-baseline, core-seed-backlog, core-view, pbi-update, pbi-update-review, pbi-update-apply, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
     Environment.ExitCode = 2;
     return;
 }
