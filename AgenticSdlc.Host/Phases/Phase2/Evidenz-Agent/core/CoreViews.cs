@@ -21,7 +21,10 @@ public sealed record GithubSyncEntry(
     string? Readiness,
     IReadOnlyList<string> CoveredRequirementIds,
     bool BlockedByOpenDecision,
-    string? GithubIssue);
+    string? GithubIssue,
+    // T3.1: operationaler Zustand des gemappten Issues (open/closed) aus der Core-Relation, sonst null.
+    // Relevant fuer Dedup/Drift im naechsten Forward-Lauf (geschlossenes Issue bei aktivem PBI = Drift).
+    string? GithubIssueStatus = null);
 
 public sealed record GithubSyncView(IReadOnlyList<GithubSyncEntry> Entries);
 
@@ -65,6 +68,10 @@ public static class CoreViews
             .GroupBy(r => r.FromId, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.Select(r => r.ToId).ToList(), StringComparer.Ordinal);
 
+        // T3.1: das PBI<->Issue-Mapping kommt jetzt aus der Core-Relation implemented_by_issue (persistent),
+        // nicht mehr nur aus einem Run-Artefakt. Fallback auf die alte metadata["githubIssue"] bleibt.
+        var mappingByPbi = CoreGithubMapping.ByPbi(core);
+
         var entries = core.Items
             .Where(i => Is(i, "pbi") && !IsArchived(i))
             .OrderBy(i => i.ItemId, StringComparer.Ordinal)
@@ -72,6 +79,7 @@ public static class CoreViews
             {
                 var covered = coversByPbi.TryGetValue(p.ItemId, out var c) ? c : [];
                 var blocked = covered.Any(contradictedReqs.Contains);
+                var mapping = mappingByPbi.GetValueOrDefault(p.ItemId);
                 return new GithubSyncEntry(
                     PbiId: p.ItemId,
                     Title: p.Pbi?.Title ?? p.Text,
@@ -79,7 +87,8 @@ public static class CoreViews
                     Readiness: p.Pbi?.Readiness,
                     CoveredRequirementIds: covered,
                     BlockedByOpenDecision: blocked,
-                    GithubIssue: p.Metadata.GetValueOrDefault("githubIssue"));
+                    GithubIssue: mapping is not null ? CoreGithubMapping.IssueRef(mapping.IssueNumber) : p.Metadata.GetValueOrDefault("githubIssue"),
+                    GithubIssueStatus: mapping?.OperationalStatus);
             })
             .ToList();
         return new GithubSyncView(entries);

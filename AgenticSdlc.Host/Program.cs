@@ -385,6 +385,80 @@ if (args.Length > 0 && string.Equals(args[0], "core-view", StringComparison.Ordi
     return;
 }
 
+// Tor 3 / T3.1: PBI<->Issue-Mapping als Core-Relation (implemented_by_issue) pflegen = Dedup-Basis fuer den
+// naechsten GitHub-Delta-Lauf (nicht mehr nur Run-Artefakt). Deterministisch, kein LLM, kein GitHub-Call.
+if (args.Length > 0 && string.Equals(args[0], "github-map", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.CoreGithubMapRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Tor 3 / T3.2: GitHub-READ als deterministische Queries gegen einen reproduzierbaren Issue-Snapshot (kein LLM,
+// kein Token). Dasselbe Verhalten bekommt der Forward-Maker (T3.3) ueber GithubReadTools. Nur lesend.
+if (args.Length > 0 && string.Equals(args[0], "github-read", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubReadRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Tor 3 / T3.3: Forward-Maker — github-sync-Delta gegen GitHub. Deterministischer Vorfilter + agentischer Rest
+// (Suche -> LINK/CREATE) -> GithubForwardPlan -> Gate (inkl. Rev-3-Invariante). Kein Write (Review/Apply folgen).
+if (args.Length > 0 && string.Equals(args[0], "github-forward", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubForwardRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+if (args.Length > 0 && string.Equals(args[0], "github-forward-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubForwardReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// Tor 3 / T3.4: gated Write-Apply — der EINZIGE echte GitHub-Write. Safe-by-default (dry-run ohne --execute);
+// fuehrt NUR akzeptierte Ops aus und schreibt das Mapping (implemented_by_issue, T3.1) in den Core zurueck.
+if (args.Length > 0 && string.Equals(args[0], "github-forward-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubForwardApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Tor 3 / T3.5: Reverse GitHub-Feedback-Ingestion (E4). GitHub-Zustand wird NIE auto-Wahrheit — geschlossenes Issue
+// erzeugt einen gepruefsten StateChange-Vorschlag; `done` entsteht NUR nach menschlicher Verifikation. Maker/Review/Apply.
+if (args.Length > 0 && string.Equals(args[0], "github-reverse", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubReverseRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+if (args.Length > 0 && string.Equals(args[0], "github-reverse-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubReverseReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+if (args.Length > 0 && string.Equals(args[0], "github-reverse-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubReverseApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Tor 3 / T3.6: Vergleichspfad-Harness — deterministischer Matcher (und optional ein Agent-Plan) gegen Drift-Fixtures
+// mit Gold-Labels; misst Dedup-Recall/Precision (wo schlaegt der Agent den Keyword-Matcher, wo reicht Determinismus).
+if (args.Length > 0 && string.Equals(args[0], "github-forward-compare", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubForwardCompareRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Tor 3 / T3.7: Sprint-Re-Run-Test — derselbe Delta zweimal durch den Forward-Vorfilter. Beweis: der zweite Lauf
+// erzeugt KEINE Duplikat-Issues (alles gemappt -> UPDATE/HOLD). Deterministisch, kein LLM, kein GitHub, kein Core.
+if (args.Length > 0 && string.Equals(args[0], "github-forward-rerun-test", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubForwardRerunTest.RunAsync(args, repoRoot);
+    return;
+}
+
 // Inc 1c-3: incrementeller PBI-Update (affected-view/Delta -> nur betroffene PBIs). Maker / Review / Apply.
 if (args.Length > 0 && string.Equals(args[0], "pbi-update", StringComparison.OrdinalIgnoreCase))
 {
@@ -743,7 +817,7 @@ if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.Ordinal
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
-    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, core-seed, ingest-requirements, ingest-review, ingest-apply, core-baseline, core-seed-backlog, core-view, pbi-update, pbi-update-review, pbi-update-apply, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
+    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, core-seed, ingest-requirements, ingest-review, ingest-apply, core-baseline, core-seed-backlog, core-view, github-map, github-read, github-forward, github-forward-review, github-forward-apply, github-reverse, github-reverse-review, github-reverse-apply, github-forward-compare, github-forward-rerun-test, pbi-update, pbi-update-review, pbi-update-apply, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
     Environment.ExitCode = 2;
     return;
 }

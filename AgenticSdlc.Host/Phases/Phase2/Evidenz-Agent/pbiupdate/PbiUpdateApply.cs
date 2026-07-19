@@ -1,3 +1,4 @@
+using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
 using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
 
 namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
@@ -45,7 +46,7 @@ public static class PbiUpdateApply
                 SourceRunId: sourceRun, SourceArtifactId: null, SourceArtifactType: null, SourceDecisionId: null, SourceCandidateId: null,
                 SourceClaimIds: [], SourceArtifactItemIds: [], Metadata: meta, IdentityKey: null, History: [], Feature: null, Pbi: payload));
             relations.Add(new ProjectStateRelation(id, op.FeatureId, "part_of_feature", "pbi-update", new Dictionary<string, string>())); relAdded++;
-            relations.Add(new ProjectStateRelation(id, op.RequirementId, "covers", "pbi-update", new Dictionary<string, string>())); relAdded++;
+            relations.Add(RequirementSwap.Covers(id, op.RequirementId, "pbi-update")); relAdded++;
             newPbis.Add(id);
         }
 
@@ -66,7 +67,7 @@ public static class PbiUpdateApply
                 switch (op.Kind)
                 {
                     case PbiUpdateKind.ExtendPbi:
-                        if (!links.Contains(op.RequirementId)) { links.Add(op.RequirementId); relations.Add(Covers(pbi.ItemId, op.RequirementId)); relAdded++; }
+                        if (!links.Contains(op.RequirementId)) { links.Add(op.RequirementId); relations.Add(RequirementSwap.Covers(pbi.ItemId, op.RequirementId, "pbi-update")); relAdded++; }
                         status = PbiStatus.Max(status, PbiStatus.NeedsClarify);
                         break;
                     case PbiUpdateKind.MarkChanged:
@@ -77,9 +78,10 @@ public static class PbiUpdateApply
                         status = PbiStatus.Max(status, PbiStatus.BlockedByDecision);
                         break;
                     case PbiUpdateKind.SupersedePbi:
-                        if (links.Remove(op.RequirementId)) relRemoved += RemoveCovers(relations, pbi.ItemId, op.RequirementId);
-                        if (op.ReplacementRequirementId is not null && !links.Contains(op.ReplacementRequirementId))
-                        { links.Add(op.ReplacementRequirementId); relations.Add(Covers(pbi.ItemId, op.ReplacementRequirementId)); relAdded++; }
+                        // Geteilter Wahrheitsuebergang (T2.0) — identisch fuer pbi-update und Tor 2 ADOPT_NEW.
+                        var (swAdded, swRemoved) = RequirementSwap.SwapCoverage(
+                            pbi.ItemId, op.RequirementId, op.ReplacementRequirementId, links, relations, "pbi-update");
+                        relAdded += swAdded; relRemoved += swRemoved;
                         status = PbiStatus.Max(status, PbiStatus.NeedsClarify);
                         break;
                 }
@@ -102,13 +104,6 @@ public static class PbiUpdateApply
         var coreUpdated = core with { SchemaVersion = ProjectStateDocument.CurrentSchemaVersion, Items = items, Relations = relations };
         return (coreUpdated, new PbiUpdateApplyReport(newPbis, updated, finalStatus, relAdded, relRemoved, skipped));
     }
-
-    private static ProjectStateRelation Covers(string pbiId, string reqId)
-        => new(pbiId, reqId, "covers", "pbi-update", new Dictionary<string, string>());
-
-    private static int RemoveCovers(List<ProjectStateRelation> relations, string pbiId, string reqId)
-        => relations.RemoveAll(r => string.Equals(r.RelationType, "covers", StringComparison.Ordinal)
-            && string.Equals(r.FromId, pbiId, StringComparison.Ordinal) && string.Equals(r.ToId, reqId, StringComparison.Ordinal));
 
     private static void AddItem(List<string> order, Dictionary<string, ProjectStateItem> byId, ProjectStateItem item)
     { byId[item.ItemId] = item; order.Add(item.ItemId); }

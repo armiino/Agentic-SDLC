@@ -82,6 +82,20 @@ internal sealed class GithubRestIssueClient(HttpClient http, string token, strin
         return ToResult(response);
     }
 
+    // Tor 3 / T3.4: Kommentar an ein bestehendes Issue (Rev 2 — bevorzugt statt Body-Overwrite bei manuell
+    // bearbeiteten Issues). Nicht am Interface, weil nur der gated Forward-Apply es nutzt.
+    public async Task<GithubIssueWriteResult> CreateCommentAsync(
+        string repository,
+        int issueNumber,
+        string body,
+        CancellationToken ct)
+    {
+        var payload = new GithubIssueCommentRequest(body);
+        var response = await SendAsync(HttpMethod.Post, $"/repos/{repository}/issues/{issueNumber}/comments", payload, ct).ConfigureAwait(false);
+        // Antwort ist ein Comment-Objekt (html_url = Kommentar-Link); die Issue-Nummer kennen wir bereits.
+        return new GithubIssueWriteResult(issueNumber, response.HtmlUrl, "", "");
+    }
+
     private async Task<GithubIssueResponse> SendAsync<T>(HttpMethod method, string path, T payload, CancellationToken ct)
     {
         using var request = new HttpRequestMessage(method, new Uri(new Uri("https://api.github.com"), path));
@@ -132,6 +146,9 @@ internal sealed class GithubRestIssueClient(HttpClient http, string token, strin
 
     private sealed record GithubIssueStateRequest(
         [property: JsonPropertyName("state")] string State);
+
+    private sealed record GithubIssueCommentRequest(
+        [property: JsonPropertyName("body")] string Body);
 
     private sealed record GithubIssueResponse(
         [property: JsonPropertyName("number")] int Number,
