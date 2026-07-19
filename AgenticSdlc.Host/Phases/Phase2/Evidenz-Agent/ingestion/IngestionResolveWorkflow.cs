@@ -38,7 +38,9 @@ internal sealed class IngestionResolveExecutor(
                       - NEW          nichts Passendes -> KEIN targetEntityId.
                       - SUPERSEDE    ersetzt eine alte Anforderung -> targetEntityId.
                       - CONTRADICT   widerspricht bestehender Wahrheit -> targetEntityId (wird zur Open Decision, kein Ueberschreiben).
-                   4. Pruefe mit check_state_change_plan (muss pass sein), dann save_state_change_plan (genau einmal).
+                      - ALREADY_DECIDED  der Widerspruch ist schon als Open Decision erfasst -> targetEntityId = DEC-* (No-Op).
+                   4. Vor CONTRADICT: list_open_decisions pruefen. Ist der Widerspruch schon offen, nutze ALREADY_DECIDED (kein Duplikat).
+                   5. Pruefe mit check_state_change_plan (muss pass sein), dann save_state_change_plan (genau einmal).
 
                    Regeln:
                    - Beleg-Pflicht: RESTATE/REFINE/SUPERSEDE/CONTRADICT MUESSEN targetEntityId nennen; NEW/NEW_RELATED duerfen KEINS.

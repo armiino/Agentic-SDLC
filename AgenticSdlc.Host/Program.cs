@@ -364,6 +364,27 @@ if (args.Length > 0 && string.Equals(args[0], "ingest-apply", StringComparison.O
     return;
 }
 
+// Inc 1b: Core -> L4-Applied-Triplet, damit re-clarify (cluster->PBIs->issues) den lebenden Core konsumiert.
+if (args.Length > 0 && string.Equals(args[0], "core-baseline", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.CoreBaselineRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Inc 1c-1: Cluster (Features) + PBIs eines re-clarify-Laufs als persistente Core-Entitaeten in den Core heben.
+if (args.Length > 0 && string.Equals(args[0], "core-seed-backlog", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.CoreSeedBacklogRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Inc 1c-2: arbeitsfaehige Views auf den Core (active-backlog | archive | github-sync).
+if (args.Length > 0 && string.Equals(args[0], "core-view", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.CoreViewRunner.RunAsync(args, repoRoot);
+    return;
+}
+
 // L4-v1: Project State -> kanonische Requirements-Baseline + Traceability-Projektionen.
 if (args.Length > 0 && string.Equals(args[0], "l4-baseline", StringComparison.OrdinalIgnoreCase))
 {
@@ -705,7 +726,7 @@ if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.Ordinal
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
-    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, core-seed, ingest-requirements, ingest-review, ingest-apply, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
+    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, core-seed, ingest-requirements, ingest-review, ingest-apply, core-baseline, core-seed-backlog, core-view, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
     Environment.ExitCode = 2;
     return;
 }

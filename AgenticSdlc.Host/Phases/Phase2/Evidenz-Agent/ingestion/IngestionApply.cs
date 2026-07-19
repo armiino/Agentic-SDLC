@@ -4,19 +4,14 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
 
 public sealed record AppliedOperation(string IncomingItemId, string Kind, string? EntityId, string Outcome);
 
-public sealed record IngestionDeltaSummary(int Added, int Refined, int Reaffirmed, int Superseded, int Contradicted, int Skipped);
+public sealed record IngestionDeltaSummary(int Added, int Refined, int Reaffirmed, int Superseded, int Contradicted, int AlreadyDecided, int Skipped);
 
 public sealed record IngestionApplyReport(
     IReadOnlyList<AppliedOperation> Applied,
     IReadOnlyList<string> Skipped,
     IngestionDeltaSummary Delta);
 
-// affected-view (plan-increment1 §1.7): Delta + Blast-Radius, damit Downstream (L4/re-clarify) entscheiden kann.
-public sealed record AffectedItemsView(
-    DateTime GeneratedUtc,
-    IReadOnlyList<ProjectStateItem> AffectedItems,
-    IReadOnlyList<ProjectStateItem> OpenDecisions,
-    IReadOnlyList<ProjectStateRelation> AffectedRelations);
+// affected-view (Blast-Radius) lebt jetzt in CoreViews (Inc 1c-2) — transitiv ueber den Core-Graphen.
 
 // Deterministischer Upsert-by-Identity der vom Menschen akzeptierten Operationen in den Core (kein LLM).
 // Der Core ist die ID-Autoritaet: neue Entitaeten bekommen HIER eine stabile Core-ID (REQ-<max+1>).
@@ -39,7 +34,7 @@ public static class IngestionApply
         var applied = new List<AppliedOperation>();
         var skipped = new List<string>();
         var affected = new HashSet<string>(StringComparer.Ordinal);
-        int added = 0, refined = 0, reaffirmed = 0, superseded = 0, contradicted = 0;
+        int added = 0, refined = 0, reaffirmed = 0, superseded = 0, contradicted = 0, alreadyDecided = 0;
 
         foreach (var op in plan.Operations.Where(o => acceptedIncomingIds.Contains(o.IncomingItemId)))
         {
@@ -126,6 +121,16 @@ public static class IngestionApply
                     affected.Add(id); affected.Add(t.ItemId); contradicted++;
                     break;
                 }
+                case StateChangeKind.AlreadyDecided:
+                {
+                    // incoming ist bereits als Open Decision erfasst -> nur Provenienz/Claims an die DEC anheften (No-Op).
+                    if (!byId.TryGetValue(op.TargetEntityId ?? "", out var dec) || !string.Equals(dec.ItemType, "decision", StringComparison.OrdinalIgnoreCase))
+                    { skipped.Add($"{op.IncomingItemId}: ALREADY_DECIDED-Ziel ist keine Open Decision"); break; }
+                    byId[dec.ItemId] = dec with { SourceClaimIds = Union(dec.SourceClaimIds, op.ClaimIds) };
+                    applied.Add(new AppliedOperation(op.IncomingItemId, op.Kind, dec.ItemId, "already_decided"));
+                    affected.Add(dec.ItemId); alreadyDecided++;
+                    break;
+                }
                 default:
                     skipped.Add($"{op.IncomingItemId}: unbekannte Operation {op.Kind}");
                     break;
@@ -140,21 +145,8 @@ public static class IngestionApply
             Relations = relations
         };
         var report = new IngestionApplyReport(applied, skipped,
-            new IngestionDeltaSummary(added, refined, reaffirmed, superseded, contradicted, skipped.Count));
+            new IngestionDeltaSummary(added, refined, reaffirmed, superseded, contradicted, alreadyDecided, skipped.Count));
         return (updated, report, affected);
-    }
-
-    public static AffectedItemsView BuildAffectedView(ProjectStateDocument core, IReadOnlySet<string> affectedIds)
-    {
-        var affectedItems = core.Items.Where(i => affectedIds.Contains(i.ItemId)).ToList();
-        var openDecisions = core.Items
-            .Where(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase)
-                        && string.Equals(i.Status, "open_decision", StringComparison.OrdinalIgnoreCase))
-            .ToList();
-        var affectedRelations = core.Relations
-            .Where(r => affectedIds.Contains(r.FromId) || affectedIds.Contains(r.ToId))
-            .ToList();
-        return new AffectedItemsView(DateTime.UtcNow, affectedItems, openDecisions, affectedRelations);
     }
 
     private static ProjectStateItem NewRequirement(string id, string text, ProjectStateItem incoming, IReadOnlyList<string> claimIds, Dictionary<string, string> meta)

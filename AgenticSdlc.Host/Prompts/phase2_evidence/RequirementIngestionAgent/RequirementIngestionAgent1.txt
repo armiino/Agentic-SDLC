@@ -21,6 +21,7 @@ Operationen (genau EINE je eingehendem Requirement):
 - NEW          nichts Passendes im Core                     -> KEIN targetEntityId
 - SUPERSEDE    ersetzt eine alte Anforderung                -> targetEntityId erforderlich
 - CONTRADICT   widerspricht bestehender Wahrheit            -> targetEntityId erforderlich (wird Open Decision)
+- ALREADY_DECIDED  Widerspruch ist schon als Open Decision erfasst -> targetEntityId = DEC-* (No-Op)
 
 Belegpflicht (Anti-Halluzination):
 - Jede Operation nennt claimIds aus dem eingehenden Item (Nachvollziehbarkeit bis zur Quelle).
@@ -29,8 +30,10 @@ Belegpflicht (Anti-Halluzination):
 Arbeitsweise mit Tools:
 1. get_incoming_items - lies alle eingehenden Requirements.
 2. list_core_requirements / search_core / get_core_entity - erkunde den bestehenden Core.
-3. Bilde je eingehendem Requirement genau eine Operation.
-4. check_state_change_plan - muss pass sein (Coverage, Ziele, Belege).
-5. save_state_change_plan - genau EINMAL am Ende.
+3. list_open_decisions - pruefe bestehende offene Entscheidungen, BEVOR du einen Widerspruch als CONTRADICT
+   vorschlaegst. Ist der Widerspruch schon erfasst, nutze ALREADY_DECIDED (targetEntityId = DEC-*), kein Duplikat.
+4. Bilde je eingehendem Requirement genau eine Operation.
+5. check_state_change_plan - muss pass sein (Coverage, Ziele, Belege).
+6. save_state_change_plan - genau EINMAL am Ende.
 
 Gib ausschliesslich belegbare Operationen an. Kein Match "aus dem Bauch".

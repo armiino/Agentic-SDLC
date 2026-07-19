@@ -30,6 +30,8 @@ internal sealed class IngestionTools(
             "Listet die bestehenden Requirement-Entitaeten des Core als Kandidaten (entityId, identityKey, status, text)."),
         AIFunctionFactory.Create(GetCoreEntity, "get_core_entity",
             "Liest eine Core-Entitaet vollstaendig (Text, Status, Herkunft, Historie)."),
+        AIFunctionFactory.Create(ListOpenDecisions, "list_open_decisions",
+            "Listet offene Entscheidungen (DEC-*, status=open_decision) mit dem widersprochenen Ziel. Pruefen, BEVOR du CONTRADICT vorschlaegst - ist der Widerspruch schon erfasst, nutze ALREADY_DECIDED."),
         AIFunctionFactory.Create(SearchCore, "search_core",
             "Sucht in den Core-Requirements nach Stichworten (entityId/text)."),
         AIFunctionFactory.Create(CheckPlan, "check_state_change_plan",
@@ -66,6 +68,17 @@ internal sealed class IngestionTools(
         if (!_coreById.TryGetValue(id, out var item)) return $"UNKNOWN_ENTITY: {id}";
         run.AppendEvent(new { type = "INGEST_TOOL_GET", runId = run.RunId, entityId = id, timestampUtc = DateTime.UtcNow });
         return JsonSerializer.Serialize(item, Json);
+    }
+
+    private string ListOpenDecisions()
+    {
+        var rows = core.Items
+            .Where(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(i.Status, "open_decision", StringComparison.OrdinalIgnoreCase))
+            .Select(i => new { entityId = i.ItemId, contradicts = i.Metadata.GetValueOrDefault("targetEntityId"), text = Truncate(i.Text, 240) })
+            .ToArray();
+        run.AppendEvent(new { type = "INGEST_TOOL_DECISIONS", runId = run.RunId, returned = rows.Length, timestampUtc = DateTime.UtcNow });
+        return JsonSerializer.Serialize(rows, Json);
     }
 
     private string SearchCore(string query, int limit = 30)

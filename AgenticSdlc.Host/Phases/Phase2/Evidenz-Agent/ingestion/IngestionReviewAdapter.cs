@@ -191,6 +191,7 @@ public static class IngestionReviewAdapter
             StateChangeKind.New => $"NEW: {Truncate(op.Statement, 90)}",
             StateChangeKind.Supersede => $"SUPERSEDE: ersetzt {Tgt()}",
             StateChangeKind.Contradict => $"CONTRADICT: widerspricht {Tgt()}",
+            StateChangeKind.AlreadyDecided => $"ALREADY_DECIDED: schon offene Entscheidung {Tgt()}",
             _ => $"{op.Kind}: {Truncate(op.Statement, 80)}"
         };
     }

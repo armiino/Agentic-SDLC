@@ -21,6 +21,11 @@ public static class IngestionGate
             .Select(i => i.ItemId)
             .ToHashSet(StringComparer.Ordinal);
 
+        var coreDecisionIds = core.Items
+            .Where(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase))
+            .Select(i => i.ItemId)
+            .ToHashSet(StringComparer.Ordinal);
+
         foreach (var op in plan.Operations)
         {
             if (!incomingIds.Contains(op.IncomingItemId))
@@ -29,15 +34,18 @@ public static class IngestionGate
             if (!StateChangeKind.All.Contains(op.Kind))
                 errors.Add(Issue("UNKNOWN_KIND", "error", $"Unbekannte Operation '{op.Kind}' fuer '{op.IncomingItemId}'.", op.IncomingItemId, null));
 
-            var requiresTarget = StateChangeKind.RequireTarget.Contains(op.Kind);
+            var requiresReqTarget = StateChangeKind.RequireTarget.Contains(op.Kind);
+            var requiresDecisionTarget = StateChangeKind.RequireDecisionTarget.Contains(op.Kind);
             var forbidsTarget = StateChangeKind.ForbidTarget.Contains(op.Kind);
             var hasTarget = !string.IsNullOrWhiteSpace(op.TargetEntityId);
 
-            if (requiresTarget && !hasTarget)
+            if ((requiresReqTarget || requiresDecisionTarget) && !hasTarget)
                 errors.Add(Issue("TARGET_REQUIRED", "error", $"'{op.Kind}' braucht targetEntityId ('{op.IncomingItemId}').", op.IncomingItemId, null));
             if (forbidsTarget && hasTarget)
                 errors.Add(Issue("TARGET_FORBIDDEN", "error", $"'{op.Kind}' darf kein targetEntityId haben ('{op.IncomingItemId}').", op.IncomingItemId, op.TargetEntityId));
-            if (hasTarget && !coreReqIds.Contains(op.TargetEntityId!))
+            if (hasTarget && requiresDecisionTarget && !coreDecisionIds.Contains(op.TargetEntityId!))
+                errors.Add(Issue("UNKNOWN_TARGET", "error", $"targetEntityId '{op.TargetEntityId}' ist keine bestehende Open Decision.", op.IncomingItemId, op.TargetEntityId));
+            else if (hasTarget && !requiresDecisionTarget && !coreReqIds.Contains(op.TargetEntityId!))
                 errors.Add(Issue("UNKNOWN_TARGET", "error", $"targetEntityId '{op.TargetEntityId}' existiert nicht im Core.", op.IncomingItemId, op.TargetEntityId));
 
             if (op.ClaimIds.Count == 0)

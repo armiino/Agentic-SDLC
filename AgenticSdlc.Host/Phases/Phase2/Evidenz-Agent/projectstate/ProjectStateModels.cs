@@ -16,9 +16,9 @@ public sealed record ProjectStateDocument(
     [property: JsonPropertyName("provenance")] IReadOnlyList<ProjectStateProvenance> Provenance,
     [property: JsonPropertyName("proposals")] IReadOnlyList<ProjectStateProposal> Proposals)
 {
-    // v2: ProjectStateItem um identityKey + history erweitert (Core/Ingestion). Abwaertskompatibel:
-    // v1-Dateien deserialisieren (fehlende Felder -> null).
-    public const int CurrentSchemaVersion = 2;
+    // v2: identityKey + history (Core/Ingestion). v3: feature/pbi-Payloads (Inc 1c-1). Abwaertskompatibel:
+    // aeltere Dateien deserialisieren (fehlende Felder -> null).
+    public const int CurrentSchemaVersion = 3;
 }
 
 public sealed record ProjectStateSource(
@@ -47,7 +47,11 @@ public sealed record ProjectStateItem(
     // Core-Erweiterung (SchemaVersion 2, abwaertskompatibel): identityKey = deterministischer Such-ANKER
     // (kein Identitaets-Urteil); history = fruehere Fassungen (Ingestion macht den Core versioniert).
     [property: JsonPropertyName("identityKey")] string? IdentityKey = null,
-    [property: JsonPropertyName("history")] IReadOnlyList<ProjectStateItemVersion>? History = null);
+    [property: JsonPropertyName("history")] IReadOnlyList<ProjectStateItemVersion>? History = null,
+    // Core-Erweiterung (SchemaVersion 3, Inc 1c-1): typisierte Backlog-Payloads. Nur das zu itemType passende
+    // Feld ist gesetzt (feature -> feature, pbi -> pbi); requirements nutzen die flachen Felder.
+    [property: JsonPropertyName("feature")] FeaturePayload? Feature = null,
+    [property: JsonPropertyName("pbi")] PbiPayload? Pbi = null);
 
 /// <summary>Fruehere Fassung eines Items (Ingestion-Historie). Die aktuelle Fassung steht im Item selbst.</summary>
 public sealed record ProjectStateItemVersion(

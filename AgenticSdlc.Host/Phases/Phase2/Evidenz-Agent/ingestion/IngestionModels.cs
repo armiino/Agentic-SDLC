@@ -46,13 +46,18 @@ public static class StateChangeKind
     public const string NewRelated = "NEW_RELATED"; // fachlich NEU, aber im selben Feature (featureKey)
     public const string Supersede = "SUPERSEDE";    // ersetzt eine alte Anforderung
     public const string Contradict = "CONTRADICT";  // widerspricht bestehender Wahrheit -> Open Decision
+    public const string AlreadyDecided = "ALREADY_DECIDED"; // schon als Open Decision erfasst -> No-Op (P2a)
 
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.Ordinal) { Restate, Refine, New, NewRelated, Supersede, Contradict };
+        new HashSet<string>(StringComparer.Ordinal) { Restate, Refine, New, NewRelated, Supersede, Contradict, AlreadyDecided };
 
-    // Operationen, die eine bestehende Entitaet referenzieren MUESSEN.
+    // Operationen, die eine bestehende Entitaet referenzieren MUESSEN (Requirement-Ziel).
     public static readonly IReadOnlySet<string> RequireTarget =
         new HashSet<string>(StringComparer.Ordinal) { Restate, Refine, Supersede, Contradict };
+
+    // Operationen, die eine bestehende DECISION-Entitaet (DEC-*) referenzieren MUESSEN.
+    public static readonly IReadOnlySet<string> RequireDecisionTarget =
+        new HashSet<string>(StringComparer.Ordinal) { AlreadyDecided };
 
     // Operationen, die KEINE bestehende Entitaet referenzieren duerfen.
     public static readonly IReadOnlySet<string> ForbidTarget =
