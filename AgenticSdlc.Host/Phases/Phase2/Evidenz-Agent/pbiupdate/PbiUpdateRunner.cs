@@ -5,14 +5,15 @@ using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
+using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
 namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
 
 // CLI: pbi-update <ingestion-run> [model] [--dry-run]
-// Maker: deterministische Ableitung (MARK/BLOCK/SUPERSEDE) + agentische Platzierung (EXTEND vs NEW_PBI) neuer
-// Requirements -> PbiStateChangePlan -> Gate. Konsumiert die affected-items-view/das Delta eines Ingestion-Laufs.
+// Incrementeller PBI-Update als MAF-Workflow (Derive -> Maker -> Gate -> Finalize, austauschbare Executor-Knoten,
+// siehe PbiUpdateWorkflow). Konsumiert das Ingestion-Delta (applied/delta.json).
 public static class PbiUpdateRunner
 {
     private const string SourceName = "AgenticSdlc.Host";
@@ -24,11 +25,13 @@ public static class PbiUpdateRunner
     {
         if (args.Length < 2) { Usage(); return 2; }
         var dryRun = args.Contains("--dry-run");
+        var maxAttempts = 2;
         string? token = null, modelArg = null;
         for (var i = 1; i < args.Length; i++)
         {
             var a = args[i];
             if (string.Equals(a, "--dry-run", StringComparison.OrdinalIgnoreCase)) continue;
+            if (string.Equals(a, "--max-attempts", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length && int.TryParse(args[i + 1], out var ma)) { maxAttempts = Math.Max(1, ma); i++; continue; }
             if (a.StartsWith("--", StringComparison.Ordinal)) { Console.Error.WriteLine($"[pbi-update] unbekanntes Argument: {a}"); return 2; }
             if (token is null) token = a; else modelArg ??= a;
         }
@@ -48,66 +51,50 @@ public static class PbiUpdateRunner
         if (!await coreRepo.ExistsAsync().ConfigureAwait(false)) { Console.Error.WriteLine("[pbi-update] Core fehlt."); return 2; }
         var core = await coreRepo.LoadAsync().ConfigureAwait(false);
 
-        var derived = PbiUpdateDerivation.Derive(core, delta.Applied);
-        var placements = new List<PbiStateChangeOperation>();
-
         var genSettings = modelArg is not null ? settings with { ModelId = modelArg } : settings;
         var run = new RunContext(RunId.New(), "pbi-update");
         run.EnsureFolders();
         var outDir = run.OutputDir("plan");
 
-        if (derived.Unplaced.Count > 0 && !dryRun)
-        {
-            using var otel = OtelRunExporters.TryCreate(settings.OtelEnabled, SourceName,
-                Path.Combine(run.LogsDir, "otel-traces.jsonl"), Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
-                settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
-            var prompt = PromptProvider.Load(repoRoot, Phase, AgentName, "PbiPlacementAgent1", new Dictionary<string, string> { ["runId"] = run.RunId });
-            var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, AgentName, SourceName);
-            var tools = new PbiPlacementTools(derived.Unplaced, core, run);
-            var agent = client.AsAIAgent(instructions: prompt, name: AgentName, tools: [.. tools.Build()])
+        using var otel = OtelRunExporters.TryCreate(settings.OtelEnabled, SourceName,
+            Path.Combine(run.LogsDir, "otel-traces.jsonl"), Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+            settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+
+        var prompt = PromptProvider.Load(repoRoot, Phase, AgentName, "PbiPlacementAgent1", new Dictionary<string, string> { ["runId"] = run.RunId });
+        var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, AgentName, SourceName);
+        Func<IReadOnlyList<AITool>, AIAgent> factory = tools =>
+            client.AsAIAgent(instructions: prompt, name: AgentName, tools: [.. tools])
                 .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
-            var task = """
-                       Ordne jedes NEUE Requirement (get_unplaced_requirements) GENAU EINEM PBI zu:
-                       - EXTEND_PBI (mit pbiId), wenn ein bestehendes PBI dieselbe fachliche Aufgabe abdeckt.
-                       - NEW_PBI (mit featureId), wenn es ein eigenes PBI braucht.
-                       Nutze list_features / get_feature_pbis / get_pbi. featureHint ist nur ein Hinweis - waehle ein
-                       ECHTES Feature (featureId) bzw. ein echtes PBI. Belege jede Platzierung (rationale). Speichere
-                       genau einmal mit save_placements (requirementId + kind + pbiId ODER featureId).
-                       """;
-            try { await agent.RunAsync([new ChatMessage(ChatRole.User, task)], cancellationToken: CancellationToken.None).ConfigureAwait(false); }
-            catch (Exception ex) { Console.Error.WriteLine($"[pbi-update] Platzierungs-Agent fehlgeschlagen: {ex.Message}"); return 4; }
-            placements = (tools.SavedPlacements ?? []).ToList();
+
+        var workflow = PbiUpdateWorkflow.Build(
+            new PbiUpdateDeriveExecutor(run),
+            new PbiUpdateMakerExecutor(factory, run),
+            new PbiUpdateGateExecutor(run),
+            new PbiUpdateRepairExecutor(factory, run),
+            new PbiUpdateFinalizeExecutor(run));
+
+        var ctx = new PbiUpdateWfContext(core, delta.Applied, sourceIngestionRun, outDir, dryRun, maxAttempts);
+
+        Console.WriteLine($"[pbi-update] running runId={run.RunId} model={genSettings.ModelId} dryRun={dryRun} maxAttempts={maxAttempts} (Derive->Maker->Gate->[Repair]/Finalize)");
+        try
+        {
+            await InProcessExecution.Default.RunAsync(workflow, ctx, run.RunId, CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[pbi-update] Ausfuehrung fehlgeschlagen: {ex.Message}");
+            run.AppendEvent(new { type = "RUN_FAILED", runId = run.RunId, reason = ex.Message, timestampUtc = DateTime.UtcNow });
+            return 4;
         }
 
-        var operations = derived.DeterministicOps.Concat(placements).ToList();
-        var plan = new PbiStateChangePlanDocument(
-            PbiStateChangePlanDocument.CurrentSchemaVersion, $"pbi-change-plan-{DateTime.UtcNow:yyyyMMdd_HHmmss}",
-            DateTime.UtcNow, sourceIngestionRun, operations);
-
-        var unplacedIds = derived.Unplaced.Select(u => u.RequirementId).ToHashSet(StringComparer.Ordinal);
-        var gate = PbiUpdateGate.Check(core, plan, unplacedIds);
-
-        Directory.CreateDirectory(outDir);
-        await File.WriteAllTextAsync(Path.Combine(outDir, "pbi-change-plan.json"), JsonSerializer.Serialize(plan, Json)).ConfigureAwait(false);
-        await File.WriteAllTextAsync(Path.Combine(outDir, "pbi-update-gate-report.json"), JsonSerializer.Serialize(gate, Json)).ConfigureAwait(false);
-        await File.WriteAllTextAsync(Path.Combine(outDir, "pbi-update-summary.json"), JsonSerializer.Serialize(new
-        {
-            run.RunId,
-            sourceIngestionRun,
-            deterministic = derived.DeterministicOps.Count,
-            unplaced = derived.Unplaced.Count,
-            placements = placements.Count,
-            operations = operations.Count,
-            gatePass = gate.Pass,
-            gateErrors = gate.Errors.Count,
-            byKind = operations.GroupBy(o => o.Kind, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal),
-            dryRun,
-            timestampUtc = DateTime.UtcNow
-        }, Json)).ConfigureAwait(false);
-
-        Console.WriteLine($"[pbi-update] deterministic={derived.DeterministicOps.Count} unplaced={derived.Unplaced.Count} placements={placements.Count} operations={operations.Count} gate={(gate.Pass ? "pass" : "fail")} errors={gate.Errors.Count}");
+        var summaryPath = Path.Combine(outDir, "pbi-update-summary.json");
+        if (!File.Exists(summaryPath)) { Console.Error.WriteLine("[pbi-update] Ausfuehrung unvollstaendig: summary fehlt."); return 4; }
+        using var summary = JsonDocument.Parse(await File.ReadAllTextAsync(summaryPath).ConfigureAwait(false));
+        var s = summary.RootElement;
+        var gatePass = s.GetProperty("gatePass").GetBoolean();
+        Console.WriteLine($"[pbi-update] deterministic={s.GetProperty("deterministic").GetInt32()} unplaced={s.GetProperty("unplaced").GetInt32()} placements={s.GetProperty("placements").GetInt32()} operations={s.GetProperty("operations").GetInt32()} gate={(gatePass ? "pass" : "fail")} errors={s.GetProperty("gateErrors").GetInt32()} attempts={s.GetProperty("attempts").GetInt32()} finalDecision={s.GetProperty("finalDecision").GetString()}");
         Console.WriteLine($"[pbi-update] -> {Path.GetRelativePath(repoRoot, outDir)}");
-        return gate.Pass ? 0 : 1;
+        return gatePass ? 0 : 1;
     }
 
     private static async Task<T> LoadAsync<T>(string path)

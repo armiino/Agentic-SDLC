@@ -74,5 +74,28 @@ public static class GithubForwardGate
         return new GithubForwardGateReport(pass, pass ? "accept" : "block", errors, warnings);
     }
 
-    private static GithubForwardGateIssue Issue(string code, string sev, string msg, string? pbi) => new(code, sev, msg, pbi);
+    private static GithubForwardGateIssue Issue(string code, string sev, string msg, string? pbi)
+        => new(code, sev, msg, pbi, RepairabilityOf(code));
+
+    // R2: Klassifikation je Fehlercode. Reparierbar = betrifft eine AGENTISCHE Entscheidung (LINK/CREATE bzw. ein
+    // nicht adressiertes PBI), die der Maker per GateFeedback korrigieren kann. Der Repair laesst die deterministischen
+    // Seed-Ops unberuehrt; persistiert ein det. Fehler, endet der Loop bei MaxAttempts -> HumanReview (kein Auto-Loop).
+    private static readonly IReadOnlyDictionary<string, string> Classification = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        ["PBI_NOT_ADDRESSED"] = Repairability.Repairable,
+        ["CREATE_WITHOUT_SEARCH_EVIDENCE"] = Repairability.Repairable,
+        ["CREATE_INCOMPLETE"] = Repairability.Repairable,
+        ["CREATE_FOR_BLOCKED"] = Repairability.Repairable,
+        ["LINK_TARGET_UNKNOWN"] = Repairability.Repairable,
+        ["TARGET_REQUIRED"] = Repairability.Repairable,
+        ["DUPLICATE_OP"] = Repairability.Repairable,
+        ["MISSING_ANCHOR"] = Repairability.Repairable,
+        ["UNKNOWN_KIND"] = Repairability.NeedsHuman,
+    };
+
+    private static string RepairabilityOf(string code) => Classification.GetValueOrDefault(code, Repairability.Hard);
+
+    // R1/R3: gate-getriebene Entscheidung ueber das geteilte GateLoop-Primitiv (Core).
+    public static GateDecision Decide(GithubForwardGateReport report, int attempt, int maxAttempts)
+        => GateLoop.Decide(report.Pass, report.Errors.Any(e => string.Equals(e.Repairability, Repairability.Repairable, StringComparison.Ordinal)), attempt, maxAttempts);
 }

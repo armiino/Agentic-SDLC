@@ -35,7 +35,9 @@ public sealed record IngestionGateIssue(
     [property: JsonPropertyName("severity")] string Severity,
     [property: JsonPropertyName("message")] string Message,
     [property: JsonPropertyName("incomingItemId")] string? IncomingItemId,
-    [property: JsonPropertyName("targetEntityId")] string? TargetEntityId);
+    [property: JsonPropertyName("targetEntityId")] string? TargetEntityId,
+    // R7: reparierbar = Resolver-Agent kann per GateFeedback fixen; UNKNOWN_KIND = needs_human. Loop-Primitive: Core.
+    [property: JsonPropertyName("repairability")] string Repairability = Core.Repairability.Hard);
 
 // Das Operations-Vokabular (plan-core-ingestion §6). Klein starten; aus echten Meeting-Daten wachsen.
 public static class StateChangeKind

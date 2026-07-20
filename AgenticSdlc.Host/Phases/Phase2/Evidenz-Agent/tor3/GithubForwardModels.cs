@@ -42,7 +42,10 @@ public sealed record GithubForwardGateIssue(
     [property: JsonPropertyName("code")] string Code,
     [property: JsonPropertyName("severity")] string Severity,
     [property: JsonPropertyName("message")] string Message,
-    [property: JsonPropertyName("pbiId")] string? PbiId);
+    [property: JsonPropertyName("pbiId")] string? PbiId,
+    // R1/R2 (Maker-Checker-Repair): reparierbar (Agent kann per GateFeedback fixen) | hard | needs_human.
+    // Loop-Primitive (GateDecision/Repairability/GateAttempt/GateLoop) sind geteilt in Core/GateLoop.cs (R7).
+    [property: JsonPropertyName("repairability")] string Repairability = Core.Repairability.Hard);
 
 public sealed record GithubForwardDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,

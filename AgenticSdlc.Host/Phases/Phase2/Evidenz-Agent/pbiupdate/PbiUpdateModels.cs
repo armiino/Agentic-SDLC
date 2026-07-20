@@ -34,7 +34,9 @@ public sealed record PbiUpdateGateIssue(
     [property: JsonPropertyName("severity")] string Severity,
     [property: JsonPropertyName("message")] string Message,
     [property: JsonPropertyName("requirementId")] string? RequirementId,
-    [property: JsonPropertyName("pbiId")] string? PbiId);
+    [property: JsonPropertyName("pbiId")] string? PbiId,
+    // R7: reparierbar = Platzierungs-Agent kann per GateFeedback fixen; sonst hard/needs_human. Loop-Primitive: Core.
+    [property: JsonPropertyName("repairability")] string Repairability = Core.Repairability.Hard);
 
 public static class PbiUpdateKind
 {

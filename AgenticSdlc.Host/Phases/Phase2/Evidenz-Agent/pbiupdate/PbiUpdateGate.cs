@@ -65,5 +65,21 @@ public static class PbiUpdateGate
     private static HashSet<string> Ids(ProjectStateDocument core, string type)
         => core.Items.Where(i => string.Equals(i.ItemType, type, StringComparison.OrdinalIgnoreCase)).Select(i => i.ItemId).ToHashSet(StringComparer.Ordinal);
 
-    private static PbiUpdateGateIssue Issue(string code, string sev, string msg, string? req, string? pbi) => new(code, sev, msg, req, pbi);
+    private static PbiUpdateGateIssue Issue(string code, string sev, string msg, string? req, string? pbi)
+        => new(code, sev, msg, req, pbi, RepairabilityOf(code));
+
+    // R7: reparierbar = Fehler der agentischen Platzierung (EXTEND/NEW_PBI); deterministische Ableitungsfehler = hard.
+    private static readonly IReadOnlyDictionary<string, string> Classification = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        ["UNPLACED_REQUIREMENT"] = Core.Repairability.Repairable,
+        ["DUPLICATE_PLACEMENT"] = Core.Repairability.Repairable,
+        ["UNKNOWN_FEATURE"] = Core.Repairability.Repairable,
+        ["FEATURE_REQUIRED"] = Core.Repairability.Repairable,
+        ["UNKNOWN_KIND"] = Core.Repairability.NeedsHuman,
+    };
+
+    private static string RepairabilityOf(string code) => Classification.GetValueOrDefault(code, Core.Repairability.Hard);
+
+    public static Core.GateDecision Decide(PbiUpdateGateReport report, int attempt, int maxAttempts)
+        => Core.GateLoop.Decide(report.Pass, report.Errors.Any(e => string.Equals(e.Repairability, Core.Repairability.Repairable, StringComparison.Ordinal)), attempt, maxAttempts);
 }

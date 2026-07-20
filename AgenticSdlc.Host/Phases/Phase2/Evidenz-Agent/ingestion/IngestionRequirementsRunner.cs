@@ -29,6 +29,7 @@ public static class IngestionRequirementsRunner
         }
 
         var dryRun = args.Contains("--dry-run");
+        var maxAttempts = 2;
         string? deltaToken = null;
         string? outputDir = null;
         string? modelArg = null;
@@ -36,6 +37,7 @@ public static class IngestionRequirementsRunner
         {
             var arg = args[i];
             if (string.Equals(arg, "--out", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) { outputDir = args[++i]; continue; }
+            if (string.Equals(arg, "--max-attempts", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length && int.TryParse(args[i + 1], out var ma)) { maxAttempts = Math.Max(1, ma); i++; continue; }
             if (string.Equals(arg, "--dry-run", StringComparison.OrdinalIgnoreCase)) continue;
             if (arg.StartsWith("--", StringComparison.Ordinal)) { Console.Error.WriteLine($"[ingest-requirements] unbekanntes Argument: {arg}"); Usage(); return 2; }
             if (deltaToken is null) deltaToken = arg; else modelArg ??= arg;
@@ -95,6 +97,7 @@ public static class IngestionRequirementsRunner
         var workflow = RequirementIngestionWorkflow.Build(
             new IngestionResolveExecutor(factory, retriever, run),
             new IngestionGateExecutor(run),
+            new IngestionRepairExecutor(factory, retriever, run),
             new IngestionFinalizeExecutor(run, outDir));
 
         var incomingReq = delta.Items.Count(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase));
@@ -102,7 +105,7 @@ public static class IngestionRequirementsRunner
 
         if (dryRun)
         {
-            Console.WriteLine("[ingest-requirements] --dry-run: Graph Build()-bar (ResolveAgent[Tools] -> Gate[det] -> Finalize). Kein LLM.");
+            Console.WriteLine("[ingest-requirements] --dry-run: Graph Build()-bar (Resolve -> Gate --[repairable]--> Repair (Loop) / Finalize). Kein LLM.");
             Console.WriteLine($"[ingest-requirements] incoming-req={incomingReq} core-req={coreReq} -> {deltaRel}");
             Console.WriteLine($"[ingest-requirements] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
             return 0;
@@ -111,7 +114,7 @@ public static class IngestionRequirementsRunner
         Console.WriteLine($"[ingest-requirements] running runId={run.RunId} model={genSettings.ModelId} incoming-req={incomingReq} core-req={coreReq}");
         try
         {
-            await InProcessExecution.Default.RunAsync(workflow, new IngestionResolveInput(delta, core, deltaRel), run.RunId, CancellationToken.None).ConfigureAwait(false);
+            await InProcessExecution.Default.RunAsync(workflow, new IngestionResolveInput(delta, core, deltaRel, maxAttempts), run.RunId, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

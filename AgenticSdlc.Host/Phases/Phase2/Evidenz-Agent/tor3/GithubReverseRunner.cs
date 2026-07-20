@@ -1,17 +1,16 @@
 using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
 using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
 using AgenticSdlc.Host.Run;
+using Microsoft.Agents.AI.Workflows;
 using System.Text.Json;
 
 namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
 
 // CLI: github-reverse [--issues <snapshot.json>]
-// Reverse-Maker (deterministisch): vergleicht GitHub-Snapshot mit dem Core (Mappings) und schlaegt gepruefte
-// StateChanges vor (PBI_DONE?, Mapping-Sync, Drift) -> Gate -> Review (github-reverse-review) -> Apply.
+// Reverse-Maker als MAF-Workflow (Seed -> Gate -> Finalize, deterministische Executor-Knoten, siehe
+// GithubReverseWorkflow). Vergleicht GitHub-Snapshot mit dem Core und schlaegt gepruefte StateChanges vor.
 public static class GithubReverseRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
-
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {
         string? issuesArg = null;
@@ -26,24 +25,30 @@ public static class GithubReverseRunner
         if (snapshotPath is null) { Console.Error.WriteLine("[github-reverse] kein Issue-Snapshot (--issues <file> oder erst github-snapshot issues)."); return 2; }
         IReadOnlyList<GithubIssueSnapshot> issues = await GithubReadSource.LoadAsync(snapshotPath).ConfigureAwait(false);
 
-        var ops = GithubReverseSeed.Seed(core, issues);
         var run = new RunContext(RunId.New(), "github-reverse");
         run.EnsureFolders();
         var outDir = run.OutputDir("plan");
 
-        var plan = new GithubReversePlanDocument(
-            GithubReversePlanDocument.CurrentSchemaVersion, $"github-reverse-plan-{DateTime.UtcNow:yyyyMMdd_HHmmss}",
-            DateTime.UtcNow, Path.GetRelativePath(repoRoot, snapshotPath), ops);
-        var gate = GithubReverseGate.Check(core, plan);
+        var workflow = GithubReverseWorkflow.Build(
+            new GithubReverseSeedExecutor(run), new GithubReverseGateExecutor(run), new GithubReverseFinalizeExecutor(run));
+        var ctx = new GithubReverseWfContext(core, issues, Path.GetRelativePath(repoRoot, snapshotPath), outDir);
 
-        await File.WriteAllTextAsync(Path.Combine(outDir, "github-reverse-plan.json"), JsonSerializer.Serialize(plan, Json)).ConfigureAwait(false);
-        await File.WriteAllTextAsync(Path.Combine(outDir, "github-reverse-gate-report.json"), JsonSerializer.Serialize(gate, Json)).ConfigureAwait(false);
+        try
+        {
+            await InProcessExecution.Default.RunAsync(workflow, ctx, run.RunId, CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception ex) { Console.Error.WriteLine($"[github-reverse] Ausfuehrung fehlgeschlagen: {ex.Message}"); return 4; }
 
-        Console.WriteLine($"[github-reverse] ops={ops.Count} gate={(gate.Pass ? "pass" : "fail")} errors={gate.Errors.Count}");
-        Console.WriteLine($"[github-reverse] byKind: {string.Join(", ", ops.GroupBy(o => o.Kind, StringComparer.Ordinal).Select(g => $"{g.Key}={g.Count()}"))}");
-        foreach (var e in gate.Errors) Console.WriteLine($"[github-reverse]   ERROR {e.Code} {e.PbiId}: {e.Message}");
+        var summaryPath = Path.Combine(outDir, "github-reverse-summary.json");
+        if (!File.Exists(summaryPath)) { Console.Error.WriteLine("[github-reverse] Ausfuehrung unvollstaendig: summary fehlt."); return 4; }
+        using var summary = JsonDocument.Parse(await File.ReadAllTextAsync(summaryPath).ConfigureAwait(false));
+        var s = summary.RootElement;
+        var gatePass = s.GetProperty("gatePass").GetBoolean();
+        var byKind = string.Join(", ", s.GetProperty("byKind").EnumerateObject().Select(p => $"{p.Name}={p.Value.GetInt32()}"));
+        Console.WriteLine($"[github-reverse] ops={s.GetProperty("ops").GetInt32()} gate={(gatePass ? "pass" : "fail")} errors={s.GetProperty("gateErrors").GetInt32()}");
+        if (byKind.Length > 0) Console.WriteLine($"[github-reverse] byKind: {byKind}");
         Console.WriteLine($"[github-reverse] -> {Path.GetRelativePath(repoRoot, outDir)} (danach: github-reverse-review)");
-        return gate.Pass ? 0 : 1;
+        return gatePass ? 0 : 1;
     }
 
     private static string? ResolveSnapshotPath(string repoRoot, string? issuesArg)

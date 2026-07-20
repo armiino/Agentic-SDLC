@@ -77,5 +77,23 @@ public static class IngestionGate
     private static bool IsRequirement(ProjectStateItem i) => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase);
 
     private static IngestionGateIssue Issue(string code, string severity, string message, string? incoming, string? target)
-        => new(code, severity, message, incoming, target);
+        => new(code, severity, message, incoming, target, RepairabilityOf(code));
+
+    // R7: reparierbar = Plan-Qualitaet des Resolvers (per GateFeedback fixbar); UNKNOWN_KIND = needs_human.
+    private static readonly IReadOnlyDictionary<string, string> Classification = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        ["UNPLACED_INCOMING"] = Core.Repairability.Repairable,
+        ["DUPLICATE_OP"] = Core.Repairability.Repairable,
+        ["MULTIPLE_OPS_SAME_TARGET"] = Core.Repairability.Repairable,
+        ["UNKNOWN_TARGET"] = Core.Repairability.Repairable,
+        ["TARGET_REQUIRED"] = Core.Repairability.Repairable,
+        ["TARGET_FORBIDDEN"] = Core.Repairability.Repairable,
+        ["UNKNOWN_INCOMING"] = Core.Repairability.Repairable,
+        ["UNKNOWN_KIND"] = Core.Repairability.NeedsHuman,
+    };
+
+    private static string RepairabilityOf(string code) => Classification.GetValueOrDefault(code, Core.Repairability.Hard);
+
+    public static Core.GateDecision Decide(IngestionGateReport report, int attempt, int maxAttempts)
+        => Core.GateLoop.Decide(report.Pass, report.Errors.Any(e => string.Equals(e.Repairability, Core.Repairability.Repairable, StringComparison.Ordinal)), attempt, maxAttempts);
 }

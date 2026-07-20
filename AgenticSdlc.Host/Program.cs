@@ -337,6 +337,14 @@ if (args.Length > 0 && string.Equals(args[0], "project-state-build", StringCompa
 }
 
 // Core (die lebende Projektwahrheit): einmaliger Seed aus einem ProjectState-Rebuild.
+// Bootstrap / Start bei null (B1): erstes Transkript, noch kein Core. Modus-Erkennung + deterministische
+// Orchestrierung (project-state-build -> core-seed -> core-baseline). Danach agentische Backlog-Stufe (mit Gates).
+if (args.Length > 0 && string.Equals(args[0], "core-bootstrap-first-transcript", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.CoreBootstrapRunner.RunAsync(args, repoRoot);
+    return;
+}
+
 if (args.Length > 0 && string.Equals(args[0], "core-seed", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.CoreSeedRunner.RunAsync(args, repoRoot);
@@ -456,6 +464,42 @@ if (args.Length > 0 && string.Equals(args[0], "github-forward-compare", StringCo
 if (args.Length > 0 && string.Equals(args[0], "github-forward-rerun-test", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubForwardRerunTest.RunAsync(args, repoRoot);
+    return;
+}
+
+// Tor 2 / T2.1: Decision-Ingestion (deterministischer Kern). Stakeholder-Auflösung einer Open Decision -> Core
+// auflösen (DEC resolved, contradicts->contradicts_resolved) + betroffene PBIs entblocken. Maker/Review/Apply.
+if (args.Length > 0 && string.Equals(args[0], "decision-resolve", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionResolveRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Tor 2 / T2.2: agentischer Resolver — freie Stakeholder-Antwort -> strukturierte Auflösung; danach dieselbe
+// deterministische T2.1-Kette (Derivation/Gate/Apply). Der 4. agentische Knoten.
+if (args.Length > 0 && string.Equals(args[0], "decision-resolve-agent", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionResolveAgentRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+if (args.Length > 0 && string.Equals(args[0], "decision-review", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionReviewRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+if (args.Length > 0 && string.Equals(args[0], "decision-apply", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionApplyRunner.RunAsync(args, repoRoot);
+    return;
+}
+
+// Tor 2 / T2.3: Kreis-Test (Tor 2 -> Tor 3). Blockiertes PBI -> decision-apply -> github-forward-Seed sieht
+// UPDATE/CREATE statt HOLD_BLOCKED. Deterministisch, kein LLM, kein GitHub, kein echter Core.
+if (args.Length > 0 && string.Equals(args[0], "decision-unblock-test", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionUnblockTest.RunAsync(args, repoRoot);
     return;
 }
 
@@ -817,7 +861,7 @@ if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.Ordinal
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
-    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, core-seed, ingest-requirements, ingest-review, ingest-apply, core-baseline, core-seed-backlog, core-view, github-map, github-read, github-forward, github-forward-review, github-forward-apply, github-reverse, github-reverse-review, github-reverse-apply, github-forward-compare, github-forward-rerun-test, pbi-update, pbi-update-review, pbi-update-apply, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
+    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, core-bootstrap-first-transcript, core-seed, ingest-requirements, ingest-review, ingest-apply, core-baseline, core-seed-backlog, core-view, github-map, github-read, github-forward, github-forward-review, github-forward-apply, github-reverse, github-reverse-review, github-reverse-apply, github-forward-compare, github-forward-rerun-test, decision-resolve, decision-resolve-agent, decision-review, decision-apply, decision-unblock-test, pbi-update, pbi-update-review, pbi-update-apply, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
     Environment.ExitCode = 2;
     return;
 }
