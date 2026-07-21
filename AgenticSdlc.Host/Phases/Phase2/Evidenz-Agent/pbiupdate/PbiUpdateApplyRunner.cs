@@ -23,33 +23,23 @@ public static class PbiUpdateApplyRunner
         var plan = await LoadAsync<PbiStateChangePlanDocument>(planPath).ConfigureAwait(false);
         var decisions = await LoadAsync<PbiUpdateDecisionsFile>(decisionsPath).ConfigureAwait(false);
 
-        var coreRepo = new JsonCoreRepository(repoRoot);
-        if (!await coreRepo.ExistsAsync().ConfigureAwait(false)) { Console.Error.WriteLine("[pbi-update-apply] Core fehlt."); return 2; }
-        var core = await coreRepo.LoadAsync().ConfigureAwait(false);
-
-        // akzeptiert = op-<i> mit decision=apply (fehlende Entscheidung -> default apply).
-        var byOp = decisions.Decisions.GroupBy(d => d.OpId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-        var accepted = new HashSet<int>();
-        for (var i = 0; i < plan.Operations.Count; i++)
-            if (!byOp.TryGetValue($"op-{i}", out var d) || string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase))
-                accepted.Add(i);
+        // Geteilte Ausfuehrung (identisch zum MAF-HITL-Pfad, S4). Core-Mutation ueber den Port + Audit-Snapshot.
+        var accepted = PbiUpdateApplyExec.AcceptedFromDecisions(plan, decisions.Decisions);
+        PbiUpdateApplyReport report;
+        try
+        {
+            report = await PbiUpdateApplyExec.ExecuteAsync(planDir, plan, accepted, repoRoot).ConfigureAwait(false);
+        }
+        catch (InvalidOperationException ex)
+        {
+            Console.Error.WriteLine($"[pbi-update-apply] {ex.Message}");
+            return 2;
+        }
 
         var appliedDir = Path.Combine(planDir, "applied");
-        Directory.CreateDirectory(appliedDir);
-        await File.WriteAllTextAsync(Path.Combine(appliedDir, "core-before.json"), JsonSerializer.Serialize(core, Json)).ConfigureAwait(false);
-
-        var (updated, report) = PbiUpdateApply.Apply(core, plan, accepted, plan.SourceIngestionRun);
-        await coreRepo.SaveAsync(updated).ConfigureAwait(false);
-
-        // github-sync-Delta: nur die betroffenen (neuen/aktualisierten) PBIs.
-        var touched = report.NewPbis.Concat(report.UpdatedPbis).ToHashSet(StringComparer.Ordinal);
-        var syncDelta = CoreViews.GithubSync(updated).Entries.Where(e => touched.Contains(e.PbiId)).ToList();
-        await File.WriteAllTextAsync(Path.Combine(appliedDir, "github-sync-delta.json"), JsonSerializer.Serialize(new { newPbis = report.NewPbis, updatedPbis = report.UpdatedPbis, entries = syncDelta }, Json)).ConfigureAwait(false);
-        await File.WriteAllTextAsync(Path.Combine(appliedDir, "pbi-update-apply-report.json"), JsonSerializer.Serialize(report, Json)).ConfigureAwait(false);
-
         Console.WriteLine($"[pbi-update-apply] accepted={accepted.Count}/{plan.Operations.Count} newPbis={report.NewPbis.Count} updatedPbis={report.UpdatedPbis.Count} relations(+{report.RelationsAdded}/-{report.RelationsRemoved}) skipped={report.Skipped.Count}");
         Console.WriteLine($"[pbi-update-apply] finalStatus: {string.Join(", ", report.FinalStatus.Select(kv => $"{kv.Key}={kv.Value}"))}");
-        Console.WriteLine($"[pbi-update-apply] github-sync-Delta: {syncDelta.Count} PBIs -> {Path.GetRelativePath(repoRoot, appliedDir)}");
+        Console.WriteLine($"[pbi-update-apply] github-sync-Delta -> {Path.GetRelativePath(repoRoot, appliedDir)}");
         foreach (var s in report.Skipped) Console.WriteLine($"[pbi-update-apply]   skip {s}");
         return 0;
     }

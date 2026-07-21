@@ -46,148 +46,28 @@ public static class GithubForwardApplyRunner
             .Select(d => d.OpId).ToHashSet(StringComparer.Ordinal);
         var repository = repoArg ?? plan.Repository;
 
-        // Braucht ueberhaupt ein echter Write stattfinden?
-        var writingKinds = new HashSet<string>(StringComparer.Ordinal)
-            { GithubForwardKind.CreateIssue, GithubForwardKind.UpdateIssue, GithubForwardKind.Comment };
-        var hasWrite = plan.Operations.Where((_, i) => accepted.Contains($"op-{i}")).Any(o => writingKinds.Contains(o.Kind));
-
-        GithubRestIssueClient? client = null;
-        HttpClient? http = null;
-        if (execute && hasWrite)
+        // Geteilte Ausfuehrung (identisch zum MAF-HITL-Pfad, S1). Fehlender Repo/Token bei echtem Write -> Exit 2.
+        GithubForwardApplyReport report;
+        try
         {
-            if (string.IsNullOrWhiteSpace(repository)) { Console.Error.WriteLine("[github-forward-apply] --repo owner/name fehlt (fuer echte Writes)."); return 2; }
-            var tok = ResolveToken(tokenEnv);
-            if (string.IsNullOrWhiteSpace(tok)) { Console.Error.WriteLine($"[github-forward-apply] Token fehlt (Env {tokenEnv ?? "GITHUB_TEST_TOKEN/githubtoken"}). Wird nicht persistiert."); return 2; }
-            http = new HttpClient();
-            client = new GithubRestIssueClient(http, tok, UserAgent);
+            report = await GithubForwardApply.ExecuteAsync(planDir, plan, accepted, execute, repoRoot, repository, tokenEnv).ConfigureAwait(false);
         }
-
-        var started = DateTime.UtcNow;
-        var reportOps = new List<GithubForwardApplyOp>();
-        var mappingOps = new List<GithubMappingOp>();
-        int created = 0, updated = 0, commented = 0, linked = 0, flagged = 0, held = 0, noChange = 0, skipped = 0, rejected = 0, failed = 0;
-
-        for (var i = 0; i < plan.Operations.Count; i++)
+        catch (InvalidOperationException ex)
         {
-            var op = plan.Operations[i];
-            var opId = $"op-{i}";
-            if (!accepted.Contains(opId))
-            {
-                reportOps.Add(Op(opId, op, null, null, "skipped", "nicht akzeptiert (skip/keine Entscheidung)"));
-                skipped++;
-                continue;
-            }
-
-            try
-            {
-                switch (op.Kind)
-                {
-                    case GithubForwardKind.CreateIssue:
-                    {
-                        // Rev-3 am irreversiblen Rand: ohne ausgefuehrte Suche kein CREATE.
-                        if (op.SearchedQueries is null || op.SearchedQueries.Count == 0 || string.IsNullOrWhiteSpace(op.SearchEvidence))
-                        { reportOps.Add(Op(opId, op, null, null, "rejected", "CREATE_WITHOUT_SEARCH_EVIDENCE")); rejected++; break; }
-                        if (string.IsNullOrWhiteSpace(op.Title) || string.IsNullOrWhiteSpace(op.Body))
-                        { reportOps.Add(Op(opId, op, null, null, "rejected", "CREATE_INCOMPLETE (Titel/Body fehlt)")); rejected++; break; }
-
-                        if (!execute) { reportOps.Add(Op(opId, op, null, null, "would-create", null)); created++; break; }
-                        var r = await client!.CreateIssueAsync(repository!, op.Title!, op.Body!, op.Labels ?? [], CancellationToken.None).ConfigureAwait(false);
-                        reportOps.Add(Op(opId, op, r.IssueNumber, r.IssueUrl, "created", null));
-                        mappingOps.Add(new GithubMappingOp(op.PbiId, r.IssueNumber, r.IssueUrl, repository, GithubMappingKind.Link, "CREATE"));
-                        created++;
-                        break;
-                    }
-                    case GithubForwardKind.UpdateIssue:
-                    {
-                        if (op.TargetIssueNumber is null) { reportOps.Add(Op(opId, op, null, null, "failed", "UPDATE ohne targetIssueNumber")); failed++; break; }
-                        if (!execute) { reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "would-update", null)); updated++; break; }
-                        var r = await client!.UpdateIssueAsync(repository!, op.TargetIssueNumber.Value, op.Title ?? "", op.Body ?? "", op.Labels ?? [], CancellationToken.None).ConfigureAwait(false);
-                        reportOps.Add(Op(opId, op, r.IssueNumber, r.IssueUrl, "updated", null));
-                        mappingOps.Add(new GithubMappingOp(op.PbiId, op.TargetIssueNumber.Value, r.IssueUrl, repository, GithubMappingKind.Link, "UPDATE"));
-                        updated++;
-                        break;
-                    }
-                    case GithubForwardKind.Comment:
-                    {
-                        if (op.TargetIssueNumber is null) { reportOps.Add(Op(opId, op, null, null, "failed", "COMMENT ohne targetIssueNumber")); failed++; break; }
-                        if (!execute) { reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "would-comment", null)); commented++; break; }
-                        var r = await client!.CreateCommentAsync(repository!, op.TargetIssueNumber.Value, op.Body ?? op.Rationale, CancellationToken.None).ConfigureAwait(false);
-                        reportOps.Add(Op(opId, op, op.TargetIssueNumber, r.IssueUrl, "commented", null));
-                        mappingOps.Add(new GithubMappingOp(op.PbiId, op.TargetIssueNumber.Value, null, repository, GithubMappingKind.Link, "COMMENT"));
-                        commented++;
-                        break;
-                    }
-                    case GithubForwardKind.Link:
-                    {
-                        // Kein GitHub-Write — nur das (menschlich bestaetigte) Mapping in den Core.
-                        if (op.TargetIssueNumber is null) { reportOps.Add(Op(opId, op, null, null, "failed", "LINK ohne targetIssueNumber")); failed++; break; }
-                        reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, execute ? "linked" : "would-link", null));
-                        if (execute) mappingOps.Add(new GithubMappingOp(op.PbiId, op.TargetIssueNumber.Value, null, repository, GithubMappingKind.Link, "LINK"));
-                        linked++;
-                        break;
-                    }
-                    case GithubForwardKind.FlagDrift:
-                        reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "flagged", op.Rationale)); flagged++; break;
-                    case GithubForwardKind.HoldBlocked:
-                        reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "held", op.Rationale)); held++; break;
-                    case GithubForwardKind.NoChange:
-                        reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "noChange", null)); noChange++; break;
-                    default:
-                        reportOps.Add(Op(opId, op, null, null, "skipped", $"unbekannte Operation {op.Kind}")); skipped++; break;
-                }
-            }
-            catch (Exception ex)
-            {
-                reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "failed", ex.Message));
-                failed++;
-            }
+            Console.Error.WriteLine($"[github-forward-apply] {ex.Message}");
+            return 2;
         }
-
-        http?.Dispose();
 
         var appliedDir = Path.Combine(planDir, "applied");
-        Directory.CreateDirectory(appliedDir);
-
-        // Mapping in den Core zurueckschreiben — nur bei echter Ausfuehrung, ueber den Port + Audit-Snapshot.
-        if (execute && mappingOps.Count > 0)
-        {
-            var coreRepo = new JsonCoreRepository(repoRoot);
-            if (!await coreRepo.ExistsAsync().ConfigureAwait(false)) { Console.Error.WriteLine("[github-forward-apply] Core fehlt - Mapping nicht persistiert."); }
-            else
-            {
-                var core = await coreRepo.LoadAsync().ConfigureAwait(false);
-                await File.WriteAllTextAsync(Path.Combine(appliedDir, "core-before.json"), JsonSerializer.Serialize(core, Json)).ConfigureAwait(false);
-                var (updatedCore, mapReport) = CoreGithubMapping.Apply(core, mappingOps);
-                await coreRepo.SaveAsync(updatedCore).ConfigureAwait(false);
-                await File.WriteAllTextAsync(Path.Combine(appliedDir, "mapping-apply-report.json"), JsonSerializer.Serialize(mapReport, Json)).ConfigureAwait(false);
-            }
-        }
-
-        var success = failed == 0 && rejected == 0;
-        var report = new GithubForwardApplyReport(
-            DryRun: !execute, Executed: execute, Success: success, Repository: repository, SourcePlanId: plan.PlanId,
-            StartedUtc: started, CompletedUtc: DateTime.UtcNow, Operations: reportOps,
-            Summary: new GithubForwardApplySummary(accepted.Count, created, updated, commented, linked, flagged, held, noChange, skipped, rejected, failed));
-        await File.WriteAllTextAsync(Path.Combine(appliedDir, "github-forward-apply-report.json"), JsonSerializer.Serialize(report, Json)).ConfigureAwait(false);
-
+        var sum = report.Summary;
         Console.WriteLine(execute
-            ? $"[github-forward-apply] EXECUTED repo={repository} accepted={accepted.Count} created={created} updated={updated} commented={commented} linked={linked} rejected={rejected} failed={failed}"
-            : $"[github-forward-apply] DRY-RUN (kein GitHub-Write, kein Core-Change) accepted={accepted.Count} wouldCreate={created} wouldUpdate={updated} wouldComment={commented} wouldLink={linked} rejected={rejected}");
-        Console.WriteLine($"[github-forward-apply] flagged={flagged} held={held} noChange={noChange} skipped={skipped} mappings={mappingOps.Count}");
-        foreach (var o in reportOps.Where(x => x.Status is "rejected" or "failed")) Console.WriteLine($"[github-forward-apply]   {o.Status.ToUpperInvariant()} {o.OpId} {o.PbiId}: {o.Message}");
+            ? $"[github-forward-apply] EXECUTED repo={repository} accepted={accepted.Count} created={sum.Created} updated={sum.Updated} commented={sum.Commented} linked={sum.Linked} rejected={sum.Rejected} failed={sum.Failed}"
+            : $"[github-forward-apply] DRY-RUN (kein GitHub-Write, kein Core-Change) accepted={accepted.Count} wouldCreate={sum.Created} wouldUpdate={sum.Updated} wouldComment={sum.Commented} wouldLink={sum.Linked} rejected={sum.Rejected}");
+        Console.WriteLine($"[github-forward-apply] flagged={sum.Flagged} held={sum.Held} noChange={sum.NoChange} skipped={sum.Skipped} alreadyApplied={sum.AlreadyApplied}");
+        foreach (var o in report.Operations.Where(x => x.Status is "rejected" or "failed")) Console.WriteLine($"[github-forward-apply]   {o.Status.ToUpperInvariant()} {o.OpId} {o.PbiId}: {o.Message}");
         if (!execute) Console.WriteLine("[github-forward-apply] -> --execute --repo owner/name zum Ausfuehren (Token via Env).");
         Console.WriteLine($"[github-forward-apply] -> {Path.GetRelativePath(repoRoot, appliedDir)}");
-        return success ? 0 : 1;
-    }
-
-    private static GithubForwardApplyOp Op(string opId, GithubForwardOp op, int? resultNumber, string? resultUrl, string status, string? message)
-        => new(opId, op.Kind, op.PbiId, op.TargetIssueNumber, resultNumber, resultUrl, status, message);
-
-    // Mirror der Snapshot-Runner-Logik: expliziter Env-Name, sonst GITHUB_TEST_TOKEN mit Fallback githubtoken.
-    private static string? ResolveToken(string? tokenEnv)
-    {
-        if (!string.IsNullOrWhiteSpace(tokenEnv)) return Environment.GetEnvironmentVariable(tokenEnv);
-        return Environment.GetEnvironmentVariable("GITHUB_TEST_TOKEN") ?? Environment.GetEnvironmentVariable("githubtoken");
+        return report.Success ? 0 : 1;
     }
 
     private static async Task<T> LoadAsync<T>(string path)

@@ -21,12 +21,58 @@ var settings = HostSettings.FromRuntimeConfig(runtimeConfig, repoRoot);
 if (args.Length > 0)
     args[0] = args[0].Trim();
 
+// ============================================================================================================
+// CLI-KOMMANDO-DISPATCH — LANDKARTE (S5, Worklist 20.07). NUR Orientierung: ALLE Kommandos bleiben aufrufbar,
+// kein Entfernen, keine Logikaenderung (append-/reorganize-only). Kategorien aus memory + Code/Git-Evidenz
+// abgeleitet; Grenzfaelle mit (?) markiert -> im Zweifel verifizieren. "Frozen" = eingefrorene Forschung,
+// bewusst NICHT gemergt (Attribuierbarkeit), aber weiter aufrufbar.
+//
+// [LIVE] aktiver Strang (lebender Core + Tor 1/2/3), inkl. der neuen MAF-nativen Human-Gates (*-hitl):
+//   Core:   core-bootstrap-first-transcript, core-seed, core-baseline, core-seed-backlog, core-view, project-state-build
+//   Tor 1:  ingest-requirements, ingest-review, ingest-apply, ingest-requirements-hitl
+//   Place:  pbi-update, pbi-update-review, pbi-update-apply, pbi-update-hitl
+//   Tor 2:  decision-resolve, decision-resolve-agent, decision-review, decision-apply, decision-resolve-hitl, decision-unblock-test
+//   Tor 3:  github-map, github-read, github-snapshot, github-write, github-forward, github-forward-hitl,
+//           github-forward-review, github-forward-apply, github-forward-compare, github-forward-rerun-test,
+//           github-reverse, github-reverse-review, github-reverse-apply
+//
+// [SUPPORT] L4 / Backlog-Qualitaet + Nebenpfade (aktuell, KEIN Spike):
+//   l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc,
+//   l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness,
+//   l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply,
+//   clarification-agent, clarification-agent-review, clarification-agent-apply,
+//   open-requirements-review, open-requirements-apply, operationalization-audit (?)
+//
+// [FROZEN] eingefrorene Forschung / Historie (nur Referenz, NICHT mergen — memory: Ledger/Evaluator-per-item/L3/Phase-2.1):
+//   L3:               l3, l3-apply, l3-revise, l3-review
+//   Ledger:           ledger-build, ledger-build-units, ledger-reference-template, ledger-adjudicate,
+//                     ledger-adjudicate-apply, ledger-adjudicate-ui, ledger-adjudicate-refine, ledger-validate,
+//                     semantic-ledger-extract, semantic-ledger-extraction-spike
+//   Evaluator/Jury per-item + Coverage/Topic/Claim-Spikes: eval-offline, parse-units, classify-units, coverage-units,
+//                     review-agent, merge-review, review-direct, extract-topics, coverage-topics, topic-audit,
+//                     topic-verify, classify-topic-relevance, claim-grounding-spike, claim-evidence-e2e-spike,
+//                     claim-split-spike, source-claim-coverage-spike, source-claim-coverage-matrix,
+//                     source-claim-coverage-matrix-v2, source-claim-coverage-matrix-batch, source-obligation-extraction-spike,
+//                     source-claim-selection-spike, evidence-first-spike, human-artifact-spike, human-artifact-projection, review
+//   Contract/Recipe/Derivation: contract-check, contract-critic, contract-repair, evidence-chain, recipe, derive, derive-metrics
+//   Tor-3-Vorlaeufer (durch github-forward abgeloest): github-reconciliation, github-reconciliation-review, github-reconciliation-apply
+//   Verifikations-Spike (S0): spike-hitl
+// ============================================================================================================
+
 // Offline-Evaluator (isolierter Bewertungs-Pfad): bewertet ein bestehendes Artefakt mit dem
 // Evaluator, ohne neuen Generierungs-Run / Workflow / Run-Ordner / Change-Note
 // ziel: Re-Scoren alter Runs oder zum Testen eines anderen Judge-Modells (evtl später weg..)
 if (args.Length > 0 && string.Equals(args[0], "eval-offline", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.OfflineEvaluatorRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// S0 (Worklist 20.07): Verifikations-Spike fuer MAF-nativen Human-Gate (RequestPort) + durables, prozessuebergreifendes
+// Checkpoint/Resume (FileSystemJsonCheckpointStore). Wegwerf/isoliert, kein LLM, kein Core-Zugriff.
+if (args.Length > 0 && string.Equals(args[0], "spike-hitl", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.HitlSpike.HitlSpikeRunner.RunAsync(args, repoRoot);
     return;
 }
 
@@ -359,6 +405,22 @@ if (args.Length > 0 && string.Equals(args[0], "ingest-requirements", StringCompa
 }
 
 // HumanReview der Ingestion-Operationen (apply/skip je Operation).
+// S6 (Worklist 20.07) — A: EIN MAF-Lauf ueber zwei Stufen (ingest -> pbi-update) mit zwei Human-Gates,
+// prozessuebergreifend resumebar (start -> resume Gate1 -> resume Gate2). Komposition der S4-Stufen.
+if (args.Length > 0 && string.Equals(args[0], "pipeline-hitl", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Pipeline.PipelineComposedRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// S4 (Worklist 20.07): ingestion (Tor 1) als EIN MAF-Lauf mit MAF-nativem Human-Gate (RequestPort) + Checkpoint + UI.
+// Additiv/parallel zum klassischen ingest-requirements / ingest-review / ingest-apply (die bleiben unveraendert).
+if (args.Length > 0 && string.Equals(args[0], "ingest-requirements-hitl", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.IngestionHitlRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 if (args.Length > 0 && string.Equals(args[0], "ingest-review", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.IngestionReviewRunner.RunAsync(args, settings, repoRoot);
@@ -414,6 +476,14 @@ if (args.Length > 0 && string.Equals(args[0], "github-read", StringComparison.Or
 if (args.Length > 0 && string.Equals(args[0], "github-forward", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubForwardRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
+// S1 (Worklist 20.07): github-forward als EIN MAF-Lauf mit MAF-nativem Human-Gate (RequestPort) + Checkpoint.
+// Additiv/parallel zum klassischen github-forward / -review / -apply (die bleiben unveraendert).
+if (args.Length > 0 && string.Equals(args[0], "github-forward-hitl", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubForwardHitlRunner.RunAsync(args, settings, repoRoot);
     return;
 }
 
@@ -483,6 +553,14 @@ if (args.Length > 0 && string.Equals(args[0], "decision-resolve-agent", StringCo
     return;
 }
 
+// S4 (Worklist 20.07): decision (Tor 2) als EIN MAF-Lauf mit MAF-nativem Human-Gate (RequestPort) + Checkpoint + UI.
+// Additiv/parallel zum klassischen decision-resolve(-agent) / -review / -apply (die bleiben unveraendert).
+if (args.Length > 0 && string.Equals(args[0], "decision-resolve-hitl", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionHitlRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 if (args.Length > 0 && string.Equals(args[0], "decision-review", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionReviewRunner.RunAsync(args, settings, repoRoot);
@@ -509,6 +587,14 @@ if (args.Length > 0 && string.Equals(args[0], "pbi-update", StringComparison.Ord
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate.PbiUpdateRunner.RunAsync(args, settings, repoRoot);
     return;
 }
+// S4 (Worklist 20.07): pbi-update als EIN MAF-Lauf mit MAF-nativem Human-Gate (RequestPort) + Checkpoint + UI.
+// Additiv/parallel zum klassischen pbi-update / -review / -apply (die bleiben unveraendert).
+if (args.Length > 0 && string.Equals(args[0], "pbi-update-hitl", StringComparison.OrdinalIgnoreCase))
+{
+    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate.PbiUpdateHitlRunner.RunAsync(args, settings, repoRoot);
+    return;
+}
+
 if (args.Length > 0 && string.Equals(args[0], "pbi-update-review", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate.PbiUpdateReviewRunner.RunAsync(args, settings, repoRoot);
@@ -861,7 +947,16 @@ if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.Ordinal
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
-    Console.Error.WriteLine("Beispiele: l3, l3-review, l3-apply, l3-revise, project-state-build, core-bootstrap-first-transcript, core-seed, ingest-requirements, ingest-review, ingest-apply, core-baseline, core-seed-backlog, core-view, github-map, github-read, github-forward, github-forward-review, github-forward-apply, github-reverse, github-reverse-review, github-reverse-apply, github-forward-compare, github-forward-rerun-test, decision-resolve, decision-resolve-agent, decision-review, decision-apply, decision-unblock-test, pbi-update, pbi-update-review, pbi-update-apply, l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness, l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply, github-reconciliation, github-reconciliation-review, github-reconciliation-apply, github-snapshot, github-write, operationalization-audit, open-requirements-review, open-requirements-apply, clarification-agent, clarification-agent-review, clarification-agent-apply, ledger-build, ledger-adjudicate-ui, review.");
+    // Gruppiert (S5, Worklist 20.07) — vollstaendige Landkarte s. Banner am Dispatch-Anfang. Alle bleiben aufrufbar.
+    Console.Error.WriteLine("[LIVE] core-seed, core-view, project-state-build, ingest-requirements(-hitl), ingest-review, ingest-apply, "
+        + "pbi-update(-hitl), pbi-update-review, pbi-update-apply, decision-resolve(-agent|-hitl), decision-review, decision-apply, "
+        + "github-forward(-hitl), github-forward-review, github-forward-apply, github-reverse(-review|-apply), github-snapshot, github-read.");
+    Console.Error.WriteLine("[SUPPORT/L4] l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, "
+        + "l4-completion(-review|-apply), requirements-readiness, l4-issuplanning(-review|-apply), clarification-agent(-review|-apply), "
+        + "open-requirements-review, open-requirements-apply, operationalization-audit.");
+    Console.Error.WriteLine("[FROZEN/Historie — nur Referenz] l3(-review|-apply|-revise), ledger-build, ledger-adjudicate-ui, ledger-validate, "
+        + "semantic-ledger-extract, eval-offline, review, review-agent, contract-check, recipe, derive, evidence-chain, "
+        + "github-reconciliation(-review|-apply), spike-hitl (u.a. — s. Banner).");
     Environment.ExitCode = 2;
     return;
 }

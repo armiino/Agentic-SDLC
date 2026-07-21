@@ -36,4 +36,6 @@ public sealed record GithubForwardApplySummary(
     [property: JsonPropertyName("noChange")] int NoChange,
     [property: JsonPropertyName("skipped")] int Skipped,
     [property: JsonPropertyName("rejected")] int Rejected,
-    [property: JsonPropertyName("failed")] int Failed);
+    [property: JsonPropertyName("failed")] int Failed,
+    // S3 (Idempotenz): Ops, die uebersprungen wurden, weil das PBI im Core bereits gemappt war (kein erneuter Write).
+    [property: JsonPropertyName("alreadyApplied")] int AlreadyApplied = 0);

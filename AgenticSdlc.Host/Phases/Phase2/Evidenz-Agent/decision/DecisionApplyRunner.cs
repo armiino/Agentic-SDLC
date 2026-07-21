@@ -24,34 +24,24 @@ public static class DecisionApplyRunner
 
         var plan = await LoadAsync<DecisionResolutionPlanDocument>(planPath).ConfigureAwait(false);
         var decisions = await LoadAsync<DecisionResolutionDecisionsFile>(decisionsPath).ConfigureAwait(false);
+        var runId = Path.GetFileName(Path.GetDirectoryName(planDir) ?? planDir);
 
-        var byOp = decisions.Decisions.GroupBy(d => d.OpId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-        var accepted = new HashSet<int>();
-        for (var i = 0; i < plan.Operations.Count; i++)
-            if (byOp.TryGetValue($"op-{i}", out var d) && string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase))
-                accepted.Add(i);
-
-        var coreRepo = new JsonCoreRepository(repoRoot);
-        if (!await coreRepo.ExistsAsync().ConfigureAwait(false)) { Console.Error.WriteLine("[decision-apply] Core fehlt."); return 2; }
-        var core = await coreRepo.LoadAsync().ConfigureAwait(false);
+        // Geteilte Ausfuehrung (identisch zum MAF-HITL-Pfad, S4) inkl. Idempotenz-Marker.
+        var accepted = DecisionApplyExec.AcceptedFromDecisions(plan, decisions.Decisions);
+        DecisionResolutionApplyReport report;
+        try
+        {
+            report = await DecisionApplyExec.ExecuteAsync(planDir, plan, accepted, repoRoot, runId).ConfigureAwait(false);
+        }
+        catch (InvalidOperationException ex)
+        {
+            Console.Error.WriteLine($"[decision-apply] {ex.Message}");
+            return 2;
+        }
 
         var appliedDir = Path.Combine(planDir, "applied");
-        Directory.CreateDirectory(appliedDir);
-        await File.WriteAllTextAsync(Path.Combine(appliedDir, "core-before.json"), JsonSerializer.Serialize(core, Json)).ConfigureAwait(false);
-
-        var runId = Path.GetFileName(Path.GetDirectoryName(planDir) ?? planDir);
-        var (updated, report) = DecisionResolutionApply.Apply(core, plan, accepted, runId);
-        await coreRepo.SaveAsync(updated).ConfigureAwait(false);
-
-        // github-sync-Delta der entblockten/geänderten PBIs (→ Tor 3).
-        var touched = report.UnblockedPbis.Concat(report.SwappedPbis).ToHashSet(StringComparer.Ordinal);
-        var syncDelta = CoreViews.GithubSync(updated).Entries.Where(e => touched.Contains(e.PbiId)).ToList();
-        await File.WriteAllTextAsync(Path.Combine(appliedDir, "github-sync-delta.json"),
-            JsonSerializer.Serialize(new { newPbis = Array.Empty<string>(), updatedPbis = touched.OrderBy(x => x, StringComparer.Ordinal).ToArray(), entries = syncDelta }, Json)).ConfigureAwait(false);
-        await File.WriteAllTextAsync(Path.Combine(appliedDir, "decision-apply-report.json"), JsonSerializer.Serialize(report, Json)).ConfigureAwait(false);
-
         Console.WriteLine($"[decision-apply] accepted={accepted.Count}/{plan.Operations.Count} resolved={report.Resolved.Count} superseded={report.SupersededRequirements.Count} refined={report.RefinedRequirements.Count} newReqs={report.NewRequirements.Count} unblocked={report.UnblockedPbis.Count} swapped={report.SwappedPbis.Count}");
-        Console.WriteLine($"[decision-apply] github-sync-Delta: {syncDelta.Count} PBIs -> {Path.GetRelativePath(repoRoot, appliedDir)}");
+        Console.WriteLine($"[decision-apply] github-sync-Delta -> {Path.GetRelativePath(repoRoot, appliedDir)}");
         foreach (var s in report.Skipped) Console.WriteLine($"[decision-apply]   skip {s}");
         return 0;
     }
