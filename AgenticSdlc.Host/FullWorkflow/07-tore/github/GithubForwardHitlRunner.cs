@@ -26,7 +26,8 @@ public static class GithubForwardHitlRunner
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";
     private const string AgentName = "GithubForwardAgent";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private const string Cmd = "github-forward-hitl";
+    private static readonly JsonSerializerOptions Json = HitlShell.Json; // R2: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -104,44 +105,20 @@ public static class GithubForwardHitlRunner
             humanGate, new GithubForwardApplyExecutor(run, repoRoot, outDir, repoArg, tokenEnv));
 
         var ctx = new GithubForwardWfContext(core, delta.Entries, mappingByPbi, issues, repoArg, sourcePbiUpdateRun, outDir, snapshotRel, dryRun, maxAttempts);
-        using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
-        var manager = CheckpointManager.CreateJson(store, Json);
-
-        Console.WriteLine($"[github-forward-hitl] start runId={run.RunId} deltaPbis={delta.Entries.Count} model={genSettings.ModelId} dryRun={dryRun} maxAttempts={maxAttempts}");
-        CheckpointInfo? pending = null;
-        try
-        {
-            await using var runHandle = await InProcessExecution.RunStreamingAsync(workflow, ctx, manager, run.RunId).ConfigureAwait(false);
-            await foreach (var evt in runHandle.WatchStreamAsync().ConfigureAwait(false))
+        Console.WriteLine($"[{Cmd}] start runId={run.RunId} deltaPbis={delta.Entries.Count} model={genSettings.ModelId} dryRun={dryRun} maxAttempts={maxAttempts}");
+        return await HitlShell.StartAsync(Cmd, workflow, ctx, run, checkpointDir,
+            onManualOutput: data =>
             {
-                if (evt is RequestInfoEvent) Console.WriteLine("[github-forward-hitl] Human-Gate erreicht (Plan wartet auf Freigabe).");
-                if (evt is SuperStepCompletedEvent step && step.CompletionInfo is { } info)
-                {
-                    if (info.Checkpoint is { } cp) pending = cp;
-                    if (info.HasPendingRequests && pending is not null) break;
-                }
-                if (evt is WorkflowOutputEvent outEvt && outEvt.Data is GithubForwardWfResult manual)
-                {
-                    Console.WriteLine($"[github-forward-hitl] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply, kein Checkpoint noetig. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
-                    return 1;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"[github-forward-hitl] Ausfuehrung fehlgeschlagen: {ex.Message}");
-            run.AppendEvent(new { type = "RUN_FAILED", runId = run.RunId, reason = ex.Message, timestampUtc = DateTime.UtcNow });
-            return 4;
-        }
-
-        if (pending is null) { Console.Error.WriteLine("[github-forward-hitl] kein Checkpoint mit offenem Human-Gate erzeugt."); return 4; }
-        await File.WriteAllTextAsync(Path.Combine(checkpointDir, "pointer.json"), JsonSerializer.Serialize(
-            new PointerFile(run.RunId, pending.SessionId, pending.CheckpointId, repoArg, tokenEnv, DateTime.UtcNow), Json)).ConfigureAwait(false);
-
-        Console.WriteLine($"[github-forward-hitl] PAUSIERT am Human-Gate. checkpointId={pending.CheckpointId}");
-        Console.WriteLine($"[github-forward-hitl] Plan: {Path.GetRelativePath(repoRoot, outDir)}/github-forward-plan.json");
-        Console.WriteLine($"[github-forward-hitl] Fortsetzen: github-forward-hitl resume {run.RunId} --accept-all [--execute]");
-        return 0;
+                if (data is not GithubForwardWfResult manual) return null;
+                Console.WriteLine($"[{Cmd}] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply, kein Checkpoint noetig. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
+                return 1;
+            },
+            pausedLines:
+            [
+                $"[{Cmd}] Plan: {Path.GetRelativePath(repoRoot, outDir)}/github-forward-plan.json",
+                $"[{Cmd}] Fortsetzen: {Cmd} resume {run.RunId} --accept-all [--execute]"
+            ],
+            pointerRepository: repoArg, pointerTokenEnv: tokenEnv).ConfigureAwait(false);
     }
 
     // ---------------- RESUME (Prozess B): Checkpoint restaurieren, Entscheidung uebergeben, Apply. ----------------
@@ -171,12 +148,11 @@ public static class GithubForwardHitlRunner
         var runDir = Path.GetDirectoryName(planDir)!;               // .../runs/github-forward/<runId>
         var runId = Path.GetFileName(runDir);
         var checkpointDir = Path.Combine(runDir, "checkpoints");
-        var pointerPath = Path.Combine(checkpointDir, "pointer.json");
-        if (!File.Exists(pointerPath)) { Console.Error.WriteLine($"[github-forward-hitl] pointer.json fehlt unter {checkpointDir} - kein pausierter HITL-Lauf."); return 2; }
-        var pointer = await LoadAsync<PointerFile>(pointerPath).ConfigureAwait(false);
+        var pointer = await HitlShell.LoadPointerAsync(Cmd, checkpointDir).ConfigureAwait(false);
+        if (pointer is null) return 2;
 
         // Akzeptierte OpIds: im UI-Modus interaktiv am Human-Gate (unten), sonst vorab aus --accept-all | --accept | Datei.
-        var plan = await LoadAsync<GithubForwardPlanDocument>(Path.Combine(planDir, "github-forward-plan.json")).ConfigureAwait(false);
+        var plan = await HitlShell.LoadAsync<GithubForwardPlanDocument>(Path.Combine(planDir, "github-forward-plan.json")).ConfigureAwait(false);
         var decisionsPath = Path.Combine(planDir, "human-decisions.json");
         IReadOnlyList<string>? accepted = null;
         if (!uiMode)
@@ -195,40 +171,27 @@ public static class GithubForwardHitlRunner
             new GithubForwardRepairExecutor(noAgent, run), new GithubForwardHitlFinalizeExecutor(run),
             humanGate, new GithubForwardApplyExecutor(run, repoRoot, outDir, repoArg ?? pointer.Repository, tokenEnv ?? pointer.TokenEnv));
 
-        using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
-        var manager = CheckpointManager.CreateJson(store, Json);
-        var checkpoint = new CheckpointInfo(pointer.SessionId, pointer.CheckpointId);
-
-        Console.WriteLine($"[github-forward-hitl] resume runId={runId} mode={(uiMode ? "ui" : "cli")} execute={execute}");
-        await using var runHandle = await InProcessExecution.OpenStreamingAsync(workflow, manager, runId).ConfigureAwait(false);
-        await runHandle.RestoreCheckpointAsync(checkpoint).ConfigureAwait(false);
-
-        // UI-Modus: der Mensch kann lange brauchen -> kein enger Timeout. CLI-Modus: 2 min (automatisiert).
-        using var cts = new CancellationTokenSource(uiMode ? Timeout.InfiniteTimeSpan : TimeSpan.FromMinutes(2));
-        await foreach (var evt in runHandle.WatchStreamAsync(cts.Token).ConfigureAwait(false))
-        {
-            if (evt is RequestInfoEvent req)
+        Console.WriteLine($"[{Cmd}] resume runId={runId} mode={(uiMode ? "ui" : "cli")} execute={execute}");
+        return await HitlShell.ResumeAsync(Cmd, workflow, runId, checkpointDir, pointer, uiMode,
+            makeResponse: async () =>
             {
                 // S2: der offene Request wird prozessuebergreifend re-emittiert. Entscheidung holen (UI oder CLI),
-                // als human-decisions.json festhalten (Evidenz/Fallback) und ueber SendResponseAsync zurueckgeben.
+                // als human-decisions.json festhalten (Evidenz/Fallback) und zurueckgeben.
                 var acc = uiMode
                     ? await CollectViaUiAsync(runId, plan, decisionsPath, settings, noBrowser).ConfigureAwait(false)
                     : accepted!;
-                var response = new ForwardReviewResponse(acc, execute, uiMode ? "human (review-ui)" : "author (cli)");
-                await runHandle.SendResponseAsync(req.Request.CreateResponse(response)).ConfigureAwait(false);
-            }
-            else if (evt is WorkflowOutputEvent outEvt && outEvt.Data is GithubForwardApplyReport report)
+                return new ForwardReviewResponse(acc, execute, uiMode ? "human (review-ui)" : "author (cli)");
+            },
+            onOutput: data =>
             {
+                if (data is not GithubForwardApplyReport report) return null;
                 var s = report.Summary;
                 Console.WriteLine(report.Executed
-                    ? $"[github-forward-hitl] EXECUTED accepted={s.Accepted} created={s.Created} updated={s.Updated} linked={s.Linked} alreadyApplied={s.AlreadyApplied} rejected={s.Rejected} failed={s.Failed}"
-                    : $"[github-forward-hitl] DRY-RUN accepted={s.Accepted} wouldCreate={s.Created} wouldLink={s.Linked} rejected={s.Rejected}");
-                Console.WriteLine($"[github-forward-hitl] -> {Path.GetRelativePath(repoRoot, Path.Combine(planDir, "applied"))}");
+                    ? $"[{Cmd}] EXECUTED accepted={s.Accepted} created={s.Created} updated={s.Updated} linked={s.Linked} alreadyApplied={s.AlreadyApplied} rejected={s.Rejected} failed={s.Failed}"
+                    : $"[{Cmd}] DRY-RUN accepted={s.Accepted} wouldCreate={s.Created} wouldLink={s.Linked} rejected={s.Rejected}");
+                Console.WriteLine($"[{Cmd}] -> {Path.GetRelativePath(repoRoot, Path.Combine(planDir, "applied"))}");
                 return report.Success ? 0 : 1;
-            }
-        }
-        Console.Error.WriteLine("[github-forward-hitl] Resume beendet ohne Apply-Report (Timeout/kein Request?).");
-        return 4;
+            }).ConfigureAwait(false);
     }
 
     // S2: Entscheidung interaktiv ueber die generische HumanReview-UI holen (derselbe Server/Adapter wie
@@ -237,7 +200,7 @@ public static class GithubForwardHitlRunner
         string runId, GithubForwardPlanDocument plan, string decisionsPath, HostSettings settings, bool noBrowser)
     {
         var session = GithubForwardReviewAdapter.BuildSession(runId, plan);
-        var existing = File.Exists(decisionsPath) ? await LoadAsync<GithubForwardDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
+        var existing = File.Exists(decisionsPath) ? await HitlShell.LoadAsync<GithubForwardDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
         GithubForwardReviewAdapter.MergeExistingDecisions(session, existing);
         foreach (var it in session.Items) it.Resolved = GithubForwardReviewAdapter.Resolved(it);
 
@@ -283,11 +246,5 @@ public static class GithubForwardHitlRunner
             .OrderByDescending(File.GetLastWriteTimeUtc).FirstOrDefault();
     }
 
-    private static async Task<T> LoadAsync<T>(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, Json) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
-    }
-
-    private sealed record PointerFile(string RunId, string SessionId, string CheckpointId, string? Repository, string? TokenEnv, DateTime SavedUtc);
+    private static Task<T> LoadAsync<T>(string path) => HitlShell.LoadAsync<T>(path); // R2: geteilt (StartAsync/ResolveAccepted nutzen es)
 }

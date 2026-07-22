@@ -24,7 +24,8 @@ public static class DecisionHitlRunner
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";
     private const string AgentName = "DecisionResolverAgent";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private const string Cmd = "decision-resolve-hitl";
+    private static readonly JsonSerializerOptions Json = HitlShell.Json; // R2: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -107,45 +108,19 @@ public static class DecisionHitlRunner
             startInput = new DecisionResolveInputMsg(ctx, input, Attempt: 1, Source: "maker", History: []);
         }
 
-        using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
-        var manager = CheckpointManager.CreateJson(store, Json);
-        Console.WriteLine($"[decision-resolve-hitl] start runId={run.RunId} mode={(agentic ? "agent" : "det")} maxAttempts={maxAttempts}");
-        CheckpointInfo? pending = null;
-        try
+        Console.WriteLine($"[{Cmd}] start runId={run.RunId} mode={(agentic ? "agent" : "det")} maxAttempts={maxAttempts}");
+        Func<object?, int?> onManualOutput = data =>
         {
-            // WICHTIG: konkreter Typ, damit RunStreamingAsync<T> die Nachricht an den Start-Executor routet
-            // (T=object wuerde nicht matchen -> kein Executor laeuft).
-            await using var runHandle = agentic
-                ? await InProcessExecution.RunStreamingAsync(workflow, (DecisionAnswerMsg)startInput, manager, run.RunId).ConfigureAwait(false)
-                : await InProcessExecution.RunStreamingAsync(workflow, (DecisionResolveInputMsg)startInput, manager, run.RunId).ConfigureAwait(false);
-            await foreach (var evt in runHandle.WatchStreamAsync().ConfigureAwait(false))
-            {
-                if (evt is RequestInfoEvent) Console.WriteLine("[decision-resolve-hitl] Human-Gate erreicht (Plan wartet auf Freigabe).");
-                if (evt is SuperStepCompletedEvent step && step.CompletionInfo is { } info)
-                {
-                    if (info.Checkpoint is { } cp) pending = cp;
-                    if (info.HasPendingRequests && pending is not null) break;
-                }
-                if (evt is WorkflowOutputEvent outEvt && outEvt.Data is DecisionWfResult manual)
-                {
-                    Console.WriteLine($"[decision-resolve-hitl] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
-                    return 1;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"[decision-resolve-hitl] Ausfuehrung fehlgeschlagen: {ex.Message}");
-            run.AppendEvent(new { type = "RUN_FAILED", runId = run.RunId, reason = ex.Message, timestampUtc = DateTime.UtcNow });
-            return 4;
-        }
-
-        if (pending is null) { Console.Error.WriteLine("[decision-resolve-hitl] kein Checkpoint mit offenem Human-Gate erzeugt."); return 4; }
-        await File.WriteAllTextAsync(Path.Combine(checkpointDir, "pointer.json"), JsonSerializer.Serialize(
-            new PointerFile(run.RunId, pending.SessionId, pending.CheckpointId, agentic ? "agent" : "det", DateTime.UtcNow), Json)).ConfigureAwait(false);
-        Console.WriteLine($"[decision-resolve-hitl] PAUSIERT am Human-Gate. checkpointId={pending.CheckpointId}");
-        Console.WriteLine($"[decision-resolve-hitl] Fortsetzen: decision-resolve-hitl resume {run.RunId} --ui   (oder --accept-all)");
-        return 0;
+            if (data is not DecisionWfResult manual) return null;
+            Console.WriteLine($"[{Cmd}] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
+            return 1;
+        };
+        IReadOnlyList<string> pausedLines = [$"[{Cmd}] Fortsetzen: {Cmd} resume {run.RunId} --ui   (oder --accept-all)"];
+        // WICHTIG: konkreter Typ, damit RunStreamingAsync<T> die Nachricht an den Start-Executor routet
+        // (T=object wuerde nicht matchen -> kein Executor laeuft).
+        return agentic
+            ? await HitlShell.StartAsync(Cmd, workflow, (DecisionAnswerMsg)startInput, run, checkpointDir, onManualOutput, pausedLines, pointerMode: "agent").ConfigureAwait(false)
+            : await HitlShell.StartAsync(Cmd, workflow, (DecisionResolveInputMsg)startInput, run, checkpointDir, onManualOutput, pausedLines, pointerMode: "det").ConfigureAwait(false);
     }
 
     // ---------------- RESUME (Prozess B): Checkpoint restaurieren, Entscheidung uebergeben, Apply. ----------------
@@ -172,11 +147,10 @@ public static class DecisionHitlRunner
         var runDir = Path.GetDirectoryName(planDir)!;
         var runId = Path.GetFileName(runDir);
         var checkpointDir = Path.Combine(runDir, "checkpoints");
-        var pointerPath = Path.Combine(checkpointDir, "pointer.json");
-        if (!File.Exists(pointerPath)) { Console.Error.WriteLine($"[decision-resolve-hitl] pointer.json fehlt unter {checkpointDir} - kein pausierter HITL-Lauf."); return 2; }
-        var pointer = await LoadAsync<PointerFile>(pointerPath).ConfigureAwait(false);
+        var pointer = await HitlShell.LoadPointerAsync(Cmd, checkpointDir).ConfigureAwait(false);
+        if (pointer is null) return 2;
 
-        var plan = await LoadAsync<DecisionResolutionPlanDocument>(Path.Combine(planDir, "decision-plan.json")).ConfigureAwait(false);
+        var plan = await HitlShell.LoadAsync<DecisionResolutionPlanDocument>(Path.Combine(planDir, "decision-plan.json")).ConfigureAwait(false);
         var decisionsPath = Path.Combine(planDir, "human-decisions.json");
         IReadOnlyList<string>? accepted = null;
         if (!uiMode)
@@ -195,33 +169,22 @@ public static class DecisionHitlRunner
             ? DecisionHitlWorkflow.BuildAgentic(new DecisionMakerExecutor(noAgent, run), new DecisionDeriveExecutor(run), new DecisionGateExecutor(run), new DecisionRepairExecutor(noAgent, run), finalize, humanGate, apply)
             : DecisionHitlWorkflow.BuildDeterministic(new DecisionDeriveExecutor(run), new DecisionGateExecutor(run), finalize, humanGate, apply);
 
-        using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
-        var manager = CheckpointManager.CreateJson(store, Json);
-        var checkpoint = new CheckpointInfo(pointer.SessionId, pointer.CheckpointId);
-
-        Console.WriteLine($"[decision-resolve-hitl] resume runId={runId} mode={(uiMode ? "ui" : "cli")}/{pointer.Mode}");
-        await using var runHandle = await InProcessExecution.OpenStreamingAsync(workflow, manager, runId).ConfigureAwait(false);
-        await runHandle.RestoreCheckpointAsync(checkpoint).ConfigureAwait(false);
-
-        using var cts = new CancellationTokenSource(uiMode ? Timeout.InfiniteTimeSpan : TimeSpan.FromMinutes(2));
-        await foreach (var evt in runHandle.WatchStreamAsync(cts.Token).ConfigureAwait(false))
-        {
-            if (evt is RequestInfoEvent req)
+        Console.WriteLine($"[{Cmd}] resume runId={runId} mode={(uiMode ? "ui" : "cli")}/{pointer.Mode}");
+        return await HitlShell.ResumeAsync(Cmd, workflow, runId, checkpointDir, pointer, uiMode,
+            makeResponse: async () =>
             {
                 var acc = uiMode
                     ? await CollectViaUiAsync(runId, plan, decisionsPath, repoRoot, settings, noBrowser).ConfigureAwait(false)
                     : accepted!;
-                await runHandle.SendResponseAsync(req.Request.CreateResponse(new DecisionReviewResponse(acc, uiMode ? "human (review-ui)" : "author (cli)"))).ConfigureAwait(false);
-            }
-            else if (evt is WorkflowOutputEvent outEvt && outEvt.Data is DecisionResolutionApplyReport report)
+                return new DecisionReviewResponse(acc, uiMode ? "human (review-ui)" : "author (cli)");
+            },
+            onOutput: data =>
             {
-                Console.WriteLine($"[decision-resolve-hitl] APPLIED resolved={report.Resolved.Count} unblocked={report.UnblockedPbis.Count} swapped={report.SwappedPbis.Count} newReqs={report.NewRequirements.Count} skipped={report.Skipped.Count}");
-                Console.WriteLine($"[decision-resolve-hitl] -> {Path.GetRelativePath(repoRoot, Path.Combine(planDir, "applied"))}");
+                if (data is not DecisionResolutionApplyReport report) return null;
+                Console.WriteLine($"[{Cmd}] APPLIED resolved={report.Resolved.Count} unblocked={report.UnblockedPbis.Count} swapped={report.SwappedPbis.Count} newReqs={report.NewRequirements.Count} skipped={report.Skipped.Count}");
+                Console.WriteLine($"[{Cmd}] -> {Path.GetRelativePath(repoRoot, Path.Combine(planDir, "applied"))}");
                 return 0;
-            }
-        }
-        Console.Error.WriteLine("[decision-resolve-hitl] Resume beendet ohne Apply-Report (Timeout/kein Request?).");
-        return 4;
+            }).ConfigureAwait(false);
     }
 
     private static async Task<IReadOnlyList<string>> CollectViaUiAsync(
@@ -229,7 +192,7 @@ public static class DecisionHitlRunner
     {
         var core = await new JsonCoreRepository(repoRoot).LoadAsync().ConfigureAwait(false);
         var session = DecisionResolutionReviewAdapter.BuildSession(runId, plan, core);
-        var existing = File.Exists(decisionsPath) ? await LoadAsync<DecisionResolutionDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
+        var existing = File.Exists(decisionsPath) ? await HitlShell.LoadAsync<DecisionResolutionDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
         DecisionResolutionReviewAdapter.MergeExistingDecisions(session, existing);
         foreach (var it in session.Items) it.Resolved = DecisionResolutionReviewAdapter.Resolved(it);
 
@@ -264,11 +227,5 @@ public static class DecisionHitlRunner
         return null;
     }
 
-    private static async Task<T> LoadAsync<T>(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, Json) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
-    }
-
-    private sealed record PointerFile(string RunId, string SessionId, string CheckpointId, string Mode, DateTime SavedUtc);
+    private static Task<T> LoadAsync<T>(string path) => HitlShell.LoadAsync<T>(path); // R2: geteilt (StartAsync nutzt es fuer --input)
 }

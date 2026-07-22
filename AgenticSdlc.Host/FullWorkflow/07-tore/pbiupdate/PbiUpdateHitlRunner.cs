@@ -22,7 +22,8 @@ public static class PbiUpdateHitlRunner
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";
     private const string AgentName = "PbiPlacementAgent";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private const string Cmd = "pbi-update-hitl";
+    private static readonly JsonSerializerOptions Json = HitlShell.Json; // R2: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -89,44 +90,19 @@ public static class PbiUpdateHitlRunner
             humanGate, new PbiUpdateApplyExecutor(run, repoRoot, outDir));
 
         var ctx = new PbiUpdateWfContext(core, delta.Applied, sourceIngestionRun, outDir, dryRun, maxAttempts);
-        using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
-        var manager = CheckpointManager.CreateJson(store, Json);
-
-        Console.WriteLine($"[pbi-update-hitl] start runId={run.RunId} model={genSettings.ModelId} dryRun={dryRun} maxAttempts={maxAttempts}");
-        CheckpointInfo? pending = null;
-        try
-        {
-            await using var runHandle = await InProcessExecution.RunStreamingAsync(workflow, ctx, manager, run.RunId).ConfigureAwait(false);
-            await foreach (var evt in runHandle.WatchStreamAsync().ConfigureAwait(false))
+        Console.WriteLine($"[{Cmd}] start runId={run.RunId} model={genSettings.ModelId} dryRun={dryRun} maxAttempts={maxAttempts}");
+        return await HitlShell.StartAsync(Cmd, workflow, ctx, run, checkpointDir,
+            onManualOutput: data =>
             {
-                if (evt is RequestInfoEvent) Console.WriteLine("[pbi-update-hitl] Human-Gate erreicht (Plan wartet auf Freigabe).");
-                if (evt is SuperStepCompletedEvent step && step.CompletionInfo is { } info)
-                {
-                    if (info.Checkpoint is { } cp) pending = cp;
-                    if (info.HasPendingRequests && pending is not null) break;
-                }
-                if (evt is WorkflowOutputEvent outEvt && outEvt.Data is PbiUpdateWfResult manual)
-                {
-                    Console.WriteLine($"[pbi-update-hitl] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
-                    return 1;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"[pbi-update-hitl] Ausfuehrung fehlgeschlagen: {ex.Message}");
-            run.AppendEvent(new { type = "RUN_FAILED", runId = run.RunId, reason = ex.Message, timestampUtc = DateTime.UtcNow });
-            return 4;
-        }
-
-        if (pending is null) { Console.Error.WriteLine("[pbi-update-hitl] kein Checkpoint mit offenem Human-Gate erzeugt."); return 4; }
-        await File.WriteAllTextAsync(Path.Combine(checkpointDir, "pointer.json"), JsonSerializer.Serialize(
-            new PointerFile(run.RunId, pending.SessionId, pending.CheckpointId, DateTime.UtcNow), Json)).ConfigureAwait(false);
-
-        Console.WriteLine($"[pbi-update-hitl] PAUSIERT am Human-Gate. checkpointId={pending.CheckpointId}");
-        Console.WriteLine($"[pbi-update-hitl] Plan: {Path.GetRelativePath(repoRoot, outDir)}/pbi-change-plan.json");
-        Console.WriteLine($"[pbi-update-hitl] Fortsetzen: pbi-update-hitl resume {run.RunId} --ui   (oder --accept-all)");
-        return 0;
+                if (data is not PbiUpdateWfResult manual) return null;
+                Console.WriteLine($"[{Cmd}] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
+                return 1;
+            },
+            pausedLines:
+            [
+                $"[{Cmd}] Plan: {Path.GetRelativePath(repoRoot, outDir)}/pbi-change-plan.json",
+                $"[{Cmd}] Fortsetzen: {Cmd} resume {run.RunId} --ui   (oder --accept-all)"
+            ]).ConfigureAwait(false);
     }
 
     // ---------------- RESUME (Prozess B): Checkpoint restaurieren, Entscheidung uebergeben, Apply. ----------------
@@ -153,11 +129,10 @@ public static class PbiUpdateHitlRunner
         var runDir = Path.GetDirectoryName(planDir)!;
         var runId = Path.GetFileName(runDir);
         var checkpointDir = Path.Combine(runDir, "checkpoints");
-        var pointerPath = Path.Combine(checkpointDir, "pointer.json");
-        if (!File.Exists(pointerPath)) { Console.Error.WriteLine($"[pbi-update-hitl] pointer.json fehlt unter {checkpointDir} - kein pausierter HITL-Lauf."); return 2; }
-        var pointer = await LoadAsync<PointerFile>(pointerPath).ConfigureAwait(false);
+        var pointer = await HitlShell.LoadPointerAsync(Cmd, checkpointDir).ConfigureAwait(false);
+        if (pointer is null) return 2;
 
-        var plan = await LoadAsync<PbiStateChangePlanDocument>(Path.Combine(planDir, "pbi-change-plan.json")).ConfigureAwait(false);
+        var plan = await HitlShell.LoadAsync<PbiStateChangePlanDocument>(Path.Combine(planDir, "pbi-change-plan.json")).ConfigureAwait(false);
         var decisionsPath = Path.Combine(planDir, "human-decisions.json");
         IReadOnlyList<string>? accepted = null;
         if (!uiMode)
@@ -175,33 +150,22 @@ public static class PbiUpdateHitlRunner
             new PbiUpdateRepairExecutor(noAgent, run), new PbiUpdateHitlFinalizeExecutor(run),
             humanGate, new PbiUpdateApplyExecutor(run, repoRoot, outDir));
 
-        using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
-        var manager = CheckpointManager.CreateJson(store, Json);
-        var checkpoint = new CheckpointInfo(pointer.SessionId, pointer.CheckpointId);
-
-        Console.WriteLine($"[pbi-update-hitl] resume runId={runId} mode={(uiMode ? "ui" : "cli")}");
-        await using var runHandle = await InProcessExecution.OpenStreamingAsync(workflow, manager, runId).ConfigureAwait(false);
-        await runHandle.RestoreCheckpointAsync(checkpoint).ConfigureAwait(false);
-
-        using var cts = new CancellationTokenSource(uiMode ? Timeout.InfiniteTimeSpan : TimeSpan.FromMinutes(2));
-        await foreach (var evt in runHandle.WatchStreamAsync(cts.Token).ConfigureAwait(false))
-        {
-            if (evt is RequestInfoEvent req)
+        Console.WriteLine($"[{Cmd}] resume runId={runId} mode={(uiMode ? "ui" : "cli")}");
+        return await HitlShell.ResumeAsync(Cmd, workflow, runId, checkpointDir, pointer, uiMode,
+            makeResponse: async () =>
             {
                 var acc = uiMode
                     ? await CollectViaUiAsync(runId, plan, decisionsPath, repoRoot, settings, noBrowser).ConfigureAwait(false)
                     : accepted!;
-                await runHandle.SendResponseAsync(req.Request.CreateResponse(new PbiUpdateReviewResponse(acc, uiMode ? "human (review-ui)" : "author (cli)"))).ConfigureAwait(false);
-            }
-            else if (evt is WorkflowOutputEvent outEvt && outEvt.Data is PbiUpdateApplyReport report)
+                return new PbiUpdateReviewResponse(acc, uiMode ? "human (review-ui)" : "author (cli)");
+            },
+            onOutput: data =>
             {
-                Console.WriteLine($"[pbi-update-hitl] APPLIED newPbis={report.NewPbis.Count} updatedPbis={report.UpdatedPbis.Count} relations(+{report.RelationsAdded}/-{report.RelationsRemoved}) skipped={report.Skipped.Count}");
-                Console.WriteLine($"[pbi-update-hitl] -> {Path.GetRelativePath(repoRoot, Path.Combine(planDir, "applied"))}");
+                if (data is not PbiUpdateApplyReport report) return null;
+                Console.WriteLine($"[{Cmd}] APPLIED newPbis={report.NewPbis.Count} updatedPbis={report.UpdatedPbis.Count} relations(+{report.RelationsAdded}/-{report.RelationsRemoved}) skipped={report.Skipped.Count}");
+                Console.WriteLine($"[{Cmd}] -> {Path.GetRelativePath(repoRoot, Path.Combine(planDir, "applied"))}");
                 return 0;
-            }
-        }
-        Console.Error.WriteLine("[pbi-update-hitl] Resume beendet ohne Apply-Report (Timeout/kein Request?).");
-        return 4;
+            }).ConfigureAwait(false);
     }
 
     // S2-Muster: Entscheidung interaktiv ueber die generische HumanReview-UI (derselbe Adapter wie pbi-update-review).
@@ -210,7 +174,7 @@ public static class PbiUpdateHitlRunner
     {
         var core = await new JsonCoreRepository(repoRoot).LoadAsync().ConfigureAwait(false);
         var session = PbiUpdateReviewAdapter.BuildSession(runId, plan, core);
-        var existing = File.Exists(decisionsPath) ? await LoadAsync<PbiUpdateDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
+        var existing = File.Exists(decisionsPath) ? await HitlShell.LoadAsync<PbiUpdateDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
         PbiUpdateReviewAdapter.MergeExistingDecisions(session, existing);
         foreach (var it in session.Items) it.Resolved = PbiUpdateReviewAdapter.Resolved(it);
 
@@ -245,11 +209,5 @@ public static class PbiUpdateHitlRunner
         return null;
     }
 
-    private static async Task<T> LoadAsync<T>(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, Json) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
-    }
-
-    private sealed record PointerFile(string RunId, string SessionId, string CheckpointId, DateTime SavedUtc);
+    private static Task<T> LoadAsync<T>(string path) => HitlShell.LoadAsync<T>(path); // R2: geteilt (StartAsync nutzt es noch fuers Delta)
 }

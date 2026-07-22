@@ -22,7 +22,8 @@ public static class IngestionHitlRunner
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";
     private const string AgentName = "RequirementIngestionAgent";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private const string Cmd = "ingest-requirements-hitl";
+    private static readonly JsonSerializerOptions Json = HitlShell.Json; // R2: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -84,42 +85,16 @@ public static class IngestionHitlRunner
             new IngestionHitlResolveExecutor(factory, retriever, run), new IngestionGateExecutor(run), new IngestionRepairExecutor(factory, retriever, run),
             new IngestionHitlFinalizeExecutor(run, outDir), humanGate, new IngestionApplyExecutor(run, repoRoot, outDir));
 
-        using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
-        var manager = CheckpointManager.CreateJson(store, Json);
         var incoming = delta.Items.Count(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase));
-        Console.WriteLine($"[ingest-requirements-hitl] start runId={run.RunId} model={genSettings.ModelId} incoming-req={incoming} maxAttempts={maxAttempts}");
-        CheckpointInfo? pending = null;
-        try
-        {
-            await using var runHandle = await InProcessExecution.RunStreamingAsync(workflow, new IngestionResolveInput(delta, core, deltaRel, maxAttempts), manager, run.RunId).ConfigureAwait(false);
-            await foreach (var evt in runHandle.WatchStreamAsync().ConfigureAwait(false))
+        Console.WriteLine($"[{Cmd}] start runId={run.RunId} model={genSettings.ModelId} incoming-req={incoming} maxAttempts={maxAttempts}");
+        return await HitlShell.StartAsync(Cmd, workflow, new IngestionResolveInput(delta, core, deltaRel, maxAttempts), run, checkpointDir,
+            onManualOutput: data =>
             {
-                if (evt is RequestInfoEvent) Console.WriteLine("[ingest-requirements-hitl] Human-Gate erreicht (Plan wartet auf Freigabe).");
-                if (evt is SuperStepCompletedEvent step && step.CompletionInfo is { } info)
-                {
-                    if (info.Checkpoint is { } cp) pending = cp;
-                    if (info.HasPendingRequests && pending is not null) break;
-                }
-                if (evt is WorkflowOutputEvent outEvt && outEvt.Data is IngestionResult manual)
-                {
-                    Console.WriteLine($"[ingest-requirements-hitl] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
-                    return 1;
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"[ingest-requirements-hitl] Ausfuehrung fehlgeschlagen: {ex.Message}");
-            run.AppendEvent(new { type = "RUN_FAILED", runId = run.RunId, reason = ex.Message, timestampUtc = DateTime.UtcNow });
-            return 4;
-        }
-
-        if (pending is null) { Console.Error.WriteLine("[ingest-requirements-hitl] kein Checkpoint mit offenem Human-Gate erzeugt."); return 4; }
-        await File.WriteAllTextAsync(Path.Combine(checkpointDir, "pointer.json"), JsonSerializer.Serialize(
-            new PointerFile(run.RunId, pending.SessionId, pending.CheckpointId, DateTime.UtcNow), Json)).ConfigureAwait(false);
-        Console.WriteLine($"[ingest-requirements-hitl] PAUSIERT am Human-Gate. checkpointId={pending.CheckpointId}");
-        Console.WriteLine($"[ingest-requirements-hitl] Fortsetzen: ingest-requirements-hitl resume {run.RunId} --ui   (oder --accept-all)");
-        return 0;
+                if (data is not IngestionResult manual) return null;
+                Console.WriteLine($"[{Cmd}] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
+                return 1;
+            },
+            pausedLines: [$"[{Cmd}] Fortsetzen: {Cmd} resume {run.RunId} --ui   (oder --accept-all)"]).ConfigureAwait(false);
     }
 
     // ---------------- RESUME (Prozess B): Checkpoint restaurieren, Entscheidung uebergeben, Apply. ----------------
@@ -146,11 +121,10 @@ public static class IngestionHitlRunner
         var runDir = Path.GetDirectoryName(planDir)!;
         var runId = Path.GetFileName(runDir);
         var checkpointDir = Path.Combine(runDir, "checkpoints");
-        var pointerPath = Path.Combine(checkpointDir, "pointer.json");
-        if (!File.Exists(pointerPath)) { Console.Error.WriteLine($"[ingest-requirements-hitl] pointer.json fehlt unter {checkpointDir} - kein pausierter HITL-Lauf."); return 2; }
-        var pointer = await LoadAsync<PointerFile>(pointerPath).ConfigureAwait(false);
+        var pointer = await HitlShell.LoadPointerAsync(Cmd, checkpointDir).ConfigureAwait(false);
+        if (pointer is null) return 2;
 
-        var plan = await LoadAsync<StateChangePlanDocument>(Path.Combine(planDir, "plan.json")).ConfigureAwait(false);
+        var plan = await HitlShell.LoadAsync<StateChangePlanDocument>(Path.Combine(planDir, "plan.json")).ConfigureAwait(false);
         var decisionsPath = Path.Combine(planDir, "human-decisions.json");
         IReadOnlyList<string>? accepted = null;
         if (!uiMode)
@@ -168,34 +142,23 @@ public static class IngestionHitlRunner
             new IngestionHitlResolveExecutor(noAgent, retriever, run), new IngestionGateExecutor(run), new IngestionRepairExecutor(noAgent, retriever, run),
             new IngestionHitlFinalizeExecutor(run, outDir), humanGate, new IngestionApplyExecutor(run, repoRoot, outDir));
 
-        using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
-        var manager = CheckpointManager.CreateJson(store, Json);
-        var checkpoint = new CheckpointInfo(pointer.SessionId, pointer.CheckpointId);
-
-        Console.WriteLine($"[ingest-requirements-hitl] resume runId={runId} mode={(uiMode ? "ui" : "cli")}");
-        await using var runHandle = await InProcessExecution.OpenStreamingAsync(workflow, manager, runId).ConfigureAwait(false);
-        await runHandle.RestoreCheckpointAsync(checkpoint).ConfigureAwait(false);
-
-        using var cts = new CancellationTokenSource(uiMode ? Timeout.InfiniteTimeSpan : TimeSpan.FromMinutes(2));
-        await foreach (var evt in runHandle.WatchStreamAsync(cts.Token).ConfigureAwait(false))
-        {
-            if (evt is RequestInfoEvent req)
+        Console.WriteLine($"[{Cmd}] resume runId={runId} mode={(uiMode ? "ui" : "cli")}");
+        return await HitlShell.ResumeAsync(Cmd, workflow, runId, checkpointDir, pointer, uiMode,
+            makeResponse: async () =>
             {
                 var acc = uiMode
                     ? await CollectViaUiAsync(runId, plan, decisionsPath, repoRoot, settings, noBrowser).ConfigureAwait(false)
                     : accepted!;
-                await runHandle.SendResponseAsync(req.Request.CreateResponse(new IngestionReviewResponse(acc, uiMode ? "human (review-ui)" : "author (cli)"))).ConfigureAwait(false);
-            }
-            else if (evt is WorkflowOutputEvent outEvt && outEvt.Data is IngestionApplyReport report)
+                return new IngestionReviewResponse(acc, uiMode ? "human (review-ui)" : "author (cli)");
+            },
+            onOutput: data =>
             {
+                if (data is not IngestionApplyReport report) return null;
                 var d = report.Delta;
-                Console.WriteLine($"[ingest-requirements-hitl] APPLIED applied={report.Applied.Count} skipped={report.Skipped.Count} (added={d.Added} refined={d.Refined} superseded={d.Superseded} contradicted={d.Contradicted})");
-                Console.WriteLine($"[ingest-requirements-hitl] -> {Path.GetRelativePath(repoRoot, Path.Combine(planDir, "applied"))}");
+                Console.WriteLine($"[{Cmd}] APPLIED applied={report.Applied.Count} skipped={report.Skipped.Count} (added={d.Added} refined={d.Refined} superseded={d.Superseded} contradicted={d.Contradicted})");
+                Console.WriteLine($"[{Cmd}] -> {Path.GetRelativePath(repoRoot, Path.Combine(planDir, "applied"))}");
                 return 0;
-            }
-        }
-        Console.Error.WriteLine("[ingest-requirements-hitl] Resume beendet ohne Apply-Report (Timeout/kein Request?).");
-        return 4;
+            }).ConfigureAwait(false);
     }
 
     private static async Task<IReadOnlyList<string>> CollectViaUiAsync(
@@ -206,7 +169,7 @@ public static class IngestionHitlRunner
         var meetingDelta = (await JsonProjectStateRepository.LoadAsync(deltaFull).ConfigureAwait(false)).Document;
 
         var session = IngestionReviewAdapter.BuildSession(runId, plan, meetingDelta, core);
-        var existing = File.Exists(decisionsPath) ? await LoadAsync<IngestionHumanDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
+        var existing = File.Exists(decisionsPath) ? await HitlShell.LoadAsync<IngestionHumanDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
         IngestionReviewAdapter.MergeExistingDecisions(session, existing);
         foreach (var it in session.Items) it.Resolved = IngestionReviewAdapter.Resolved(it);
 
@@ -241,11 +204,4 @@ public static class IngestionHitlRunner
         return null;
     }
 
-    private static async Task<T> LoadAsync<T>(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, Json) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
-    }
-
-    private sealed record PointerFile(string RunId, string SessionId, string CheckpointId, DateTime SavedUtc);
 }
