@@ -16,16 +16,6 @@ public sealed record GithubReconciliationInput(
     public const int CurrentSchemaVersion = 1;
 }
 
-public sealed record GithubIssueSnapshot(
-    [property: JsonPropertyName("issueNumber")] int IssueNumber,
-    [property: JsonPropertyName("url")] string? Url,
-    [property: JsonPropertyName("title")] string Title,
-    [property: JsonPropertyName("body")] string? Body,
-    [property: JsonPropertyName("state")] string State,
-    [property: JsonPropertyName("labels")] IReadOnlyList<string> Labels,
-    [property: JsonPropertyName("milestone")] string? Milestone,
-    [property: JsonPropertyName("updatedUtc")] DateTime? UpdatedUtc);
-
 public sealed record GithubIssueMapping(
     [property: JsonPropertyName("issuePlanId")] string IssuePlanId,
     [property: JsonPropertyName("sourceRequirementIds")] IReadOnlyList<string> SourceRequirementIds,

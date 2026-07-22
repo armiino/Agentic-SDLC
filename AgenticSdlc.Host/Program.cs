@@ -1,7 +1,5 @@
 ﻿using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase1;
-using AgenticSdlc.Host.Phases.Phase2;
 using AgenticSdlc.Host.Run;
 using System.Diagnostics;
 
@@ -22,10 +20,11 @@ if (args.Length > 0)
     args[0] = args[0].Trim();
 
 // ============================================================================================================
-// CLI-KOMMANDO-DISPATCH — LANDKARTE (S5, Worklist 20.07). NUR Orientierung: ALLE Kommandos bleiben aufrufbar,
-// kein Entfernen, keine Logikaenderung (append-/reorganize-only). Kategorien aus memory + Code/Git-Evidenz
-// abgeleitet; Grenzfaelle mit (?) markiert -> im Zweifel verifizieren. "Frozen" = eingefrorene Forschung,
-// bewusst NICHT gemergt (Attribuierbarkeit), aber weiter aufrufbar.
+// CLI-KOMMANDO-DISPATCH — LANDKARTE (aktualisiert Move 3, 2026-07-22).
+// Die frueheren Evaluation-/Phase-Kommandos (eval-offline, parse-units, review*, topic*, claim*, source-claim*,
+// evidence-first-spike, human-artifact*, semantic-ledger-extract*, review + AGENT_PHASE phase1/phase2_1) sind
+// ARCHIVIERT (archive/, ausserhalb des Builds) — lauffaehig ueber die Stations-Tags:
+//   git checkout v-s0-phase1 | v-s1-phase2-dag | v-s3-evaluator-review
 //
 // [LIVE] aktiver Strang (lebender Core + Tor 1/2/3), inkl. der neuen MAF-nativen Human-Gates (*-hitl):
 //   Core:   core-bootstrap-first-transcript, core-seed, core-baseline, core-seed-backlog, core-view, project-state-build
@@ -43,201 +42,25 @@ if (args.Length > 0)
 //   clarification-agent, clarification-agent-review, clarification-agent-apply,
 //   open-requirements-review, open-requirements-apply, operationalization-audit (?)
 //
-// [FROZEN] eingefrorene Forschung / Historie (nur Referenz, NICHT mergen — memory: Ledger/Evaluator-per-item/L3/Phase-2.1):
-//   L3:               l3, l3-apply, l3-revise, l3-review
+// [FRONT] Produkt-Front (Ledger-Pfad, intendierter Transkript->MeetingDelta-Weg — s. lokale PRODUCT-CAPABILITY-MAP):
 //   Ledger:           ledger-build, ledger-build-units, ledger-reference-template, ledger-adjudicate,
 //                     ledger-adjudicate-apply, ledger-adjudicate-ui, ledger-adjudicate-refine, ledger-validate,
-//                     semantic-ledger-extract, semantic-ledger-extraction-spike
-//   Evaluator/Jury per-item + Coverage/Topic/Claim-Spikes: eval-offline, parse-units, classify-units, coverage-units,
-//                     review-agent, merge-review, review-direct, extract-topics, coverage-topics, topic-audit,
-//                     topic-verify, classify-topic-relevance, claim-grounding-spike, claim-evidence-e2e-spike,
-//                     claim-split-spike, source-claim-coverage-spike, source-claim-coverage-matrix,
-//                     source-claim-coverage-matrix-v2, source-claim-coverage-matrix-batch, source-obligation-extraction-spike,
-//                     source-claim-selection-spike, evidence-first-spike, human-artifact-spike, human-artifact-projection, review
-//   Contract/Recipe/Derivation: contract-check, contract-critic, contract-repair, evidence-chain, recipe, derive, derive-metrics
-//   Tor-3-Vorlaeufer (durch github-forward abgeloest): github-reconciliation, github-reconciliation-review, github-reconciliation-apply
-//   Verifikations-Spike (S0): spike-hitl
+//                     facet-validation-eval, ledger-reference-recall, ledger-reference-recall-fast, ledger-cite-fidelity
+//   Front-Mitte:      recipe, baseline-fanout, artifact-branch, assign-artifact-ids (consumable -> Baselines)
+//   L3 (dormant):     l3, l3-apply, l3-revise, l3-review
+//
+// [CAPSTONE/RESEARCH — Kommandos noch aufrufbar, Code in Place bzw. research/]:
+//   Contract/Derivation: contract-check, contract-critic, contract-repair, evidence-chain, derive, derive-metrics,
+//                        checker-repair-workflow, inference-check, derive-risks, derive-review
+//   Tor-3-Vorlaeufer (research/, abgeloest durch github-forward): github-reconciliation(-review|-apply), github-write
+//   Verifikations-Spike (S0/S-9): spike-hitl
 // ============================================================================================================
-
-// Offline-Evaluator (isolierter Bewertungs-Pfad): bewertet ein bestehendes Artefakt mit dem
-// Evaluator, ohne neuen Generierungs-Run / Workflow / Run-Ordner / Change-Note
-// ziel: Re-Scoren alter Runs oder zum Testen eines anderen Judge-Modells (evtl später weg..)
-if (args.Length > 0 && string.Equals(args[0], "eval-offline", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.OfflineEvaluatorRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
 
 // S0 (Worklist 20.07): Verifikations-Spike fuer MAF-nativen Human-Gate (RequestPort) + durables, prozessuebergreifendes
 // Checkpoint/Resume (FileSystemJsonCheckpointStore). Wegwerf/isoliert, kein LLM, kein Core-Zugriff.
 if (args.Length > 0 && string.Equals(args[0], "spike-hitl", StringComparison.OrdinalIgnoreCase))
 {
     Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.HitlSpike.HitlSpikeRunner.RunAsync(args, repoRoot);
-    return;
-}
-
-// DISK-14 Phase 1 (additiv, isoliert): Artefakte deterministisch in Pruefeinheiten zerlegen (kein LLM).
-// Verwerfen des Per-Item-Ansatzes = PerItem-Ordner loeschen + diese Zeile entfernen.
-if (args.Length > 0 && string.Equals(args[0], "parse-units", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.UnitParseRunner.RunAsync(args, repoRoot);
-    return;
-}
-
-// DISK-14 Phase 2 (additiv, isoliert): Per-Item-Klassifikation → paralleler GroundingScore (echter LLM-Call)
-// Verwerfen = PerItem-Ordner löschen + diese Zeile entfernen.
-if (args.Length > 0 && string.Equals(args[0], "classify-units", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClassifyUnitsRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// DISK-14 MISSING/Coverage-Achse (additiv, isoliert): Transkript-Turns -> covered/missing je Artefakt
-if (args.Length > 0 && string.Equals(args[0], "coverage-units", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.CoverageRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// PILOTtest (isoliert): echter MAF-Agent als Reviewer (vs. post-hoc IEvaluator). Verwerfen = ReviewAgent-Ordner + diese Zeile.
-if (args.Length > 0 && string.Equals(args[0], "review-agent", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.ReviewAgent.ReviewAgentRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Z4.2-light (additiv, isoliert, kein LLM): achsen-spezifische *.review.json eines Runs zu EINEM mergen.
-if (args.Length > 0 && string.Equals(args[0], "merge-review", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.Review.ReviewMergeRunner.RunAsync(args, repoRoot);
-    return;
-}
-
-// Z6.2 (DISK-COV): Topics eines Transkripts EINMAL extrahieren (LLM) → eingefrorene Fixture input/topics/.
-if (args.Length > 0 && string.Equals(args[0], "extract-topics", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ExtractTopicsRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Z6.3 (DISK-COV): topic-basierte Coverage gegen ein Artefakt → <base>.topic-coverage.<model>.review.json.
-if (args.Length > 0 && string.Equals(args[0], "coverage-topics", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.CoverageTopicsRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Z7 (DISK-COV-2, kein LLM): Topic-Fixture-Audit (formale Checks + Jury-Cross-Check/Capture-Recapture).
-if (args.Length > 0 && string.Equals(args[0], "topic-audit", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.TopicAuditRunner.RunAsync(args, repoRoot);
-    return;
-}
-
-// Z8 (DISK-COV-5): begrenzter Topic-Completeness-Verifier (1 LLM-Pass) → input/topics/<base>.verify-candidates.json.
-if (args.Length > 0 && string.Equals(args[0], "topic-verify", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.TopicVerifyRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Z10 / v02 (Call 2, separat): relevantFor je Topic separat klassifizieren → Sidecar
-// input/topics/<base>.relevance.<model>.json (Frozen-Fixture bleibt unberührt). Test B: v01 vs v02.
-if (args.Length > 0 && string.Equals(args[0], "classify-topic-relevance", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClassifyTopicRelevanceRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// D1 / R0: DirectTranscriptReview — Artefakt direkt gegen Roh-Transkript (ohne Fixture) → thesis-evidence/.
-if (args.Length > 0 && string.Equals(args[0], "review-direct", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ReviewDirectRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// B47-Spike: lokaler Claim-Evidence-Grounding-Test (isoliert, nicht Teil der produktiven GroundingAxis).
-if (args.Length > 0 && string.Equals(args[0], "claim-grounding-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClaimGroundingSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Claim-Pilot Stufe 2: END-TO-END (Claim → AUTO-EvidenceSelector → Verifier). Testet den Engpass Evidence-Auswahl.
-if (args.Length > 0 && string.Equals(args[0], "claim-evidence-e2e-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClaimEvidenceE2ESpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Claim-Pilot Stufe 3: ClaimSplitter (Unit → atomare Claims); mit Transkript volle Kette split→select→verify.
-if (args.Length > 0 && string.Equals(args[0], "claim-split-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ClaimSplitSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Coverage-Spike: source-native Claims gegen Artefakt prüfen (Quelle -> Artefakt), isoliert.
-if (args.Length > 0 && string.Equals(args[0], "source-claim-coverage-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimCoverageSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Coverage-Matrix-Spike: kuratierte SourceClaims gegen alle Artefakte pruefen; not_applicable bleibt sichtbar.
-if (args.Length > 0 && string.Equals(args[0], "source-claim-coverage-matrix", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimCoverageMatrixRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Coverage-Matrix-v2-Spike: Applicability und Coverage getrennt gegen adjudizierte Matrix pruefen.
-if (args.Length > 0 && string.Equals(args[0], "source-claim-coverage-matrix-v2", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimCoverageMatrixV2Runner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Coverage-Matrix-Batch-Spike: alle SourceClaims gegen ein Artefakt in einem Call pruefen.
-if (args.Length > 0 && string.Equals(args[0], "source-claim-coverage-matrix-batch", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimCoverageMatrixBatchRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Evidence-first Semantic-Ledger-Spike: bestaetigte Quellsemantik -> traceable Artefakt -> lokale Verifikation.
-if (args.Length > 0 && string.Equals(args[0], "evidence-first-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.EvidenceFirstSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Human-Artefakt-Spike: evidence-first claims.json -> lesbares Markdown mit sichtbaren SourceClaim-Refs.
-if (args.Length > 0 && string.Equals(args[0], "human-artifact-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.HumanArtifactSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Human-Artefakt-Projektion: claims.json -> Markdown entlang sichtbarer SourceClaim-Refs deterministisch pruefen.
-if (args.Length > 0 && string.Equals(args[0], "human-artifact-projection", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.HumanArtifactProjectionRunner.RunAsync(args, repoRoot);
-    return;
-}
-
-// Semantic-Ledger-Extraction-Spike: Transkript -> facettierter Ledger -> Recall gegen bestaetigte Fixture.
-if (args.Length > 0 && string.Equals(args[0], "semantic-ledger-extraction-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SemanticLedgerExtractionSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Semantic-Ledger-Extract (NUR Extraktion+Canonicalization, keine Fixture/kein Match):
-// Kandidaten-Ledger fuer ein NEUES Transkript erzeugen, aus dem dann manuell eine Fixture bestaetigt wird.
-if (args.Length > 0 && string.Equals(args[0], "semantic-ledger-extract", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SemanticLedgerExtractRunner.RunAsync(args, settings, repoRoot);
     return;
 }
 
@@ -902,48 +725,6 @@ if (args.Length > 0 && string.Equals(args[0], "ledger-reference-recall", StringC
     return;
 }
 
-// Coverage-Spike Stufe 2: Transcript -> auto SourceClaims -> Recall + E2E Coverage gegen Fixture, isoliert.
-if (args.Length > 0 && string.Equals(args[0], "source-claim-extraction-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimExtractionSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Coverage-Spike Stufe 3: Transcript einmal -> globaler SourceClaim-Ledger -> Recall + E2E Coverage, isoliert.
-if (args.Length > 0 && string.Equals(args[0], "source-claim-ledger-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.GlobalSourceClaimExtractionSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Coverage-Spike Stufe 4: Global SourceClaim Ledger -> ArtifactObligation -> Recall/Kandidatenreduktion, isoliert.
-if (args.Length > 0 && string.Equals(args[0], "source-claim-obligation-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ArtifactObligationSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Coverage-Spike Stufe 5: Transcript einmal -> artefaktspezifische SourceObligations -> Recall, isoliert.
-if (args.Length > 0 && string.Equals(args[0], "source-obligation-extraction-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceObligationExtractionSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// Coverage-Spike Stufe 6: Global SourceClaim Ledger -> konservative Selection -> Recall/Kandidatenreduktion.
-if (args.Length > 0 && string.Equals(args[0], "source-claim-selection-spike", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.SourceClaimSelectionSpikeRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
-// C1: zusammengesetzter Review (Grounding + Coverage) → EIN ReviewResult pro Artefakt (offline, ReviewService).
-if (args.Length > 0 && string.Equals(args[0], "review", StringComparison.OrdinalIgnoreCase))
-{
-    Environment.ExitCode = await AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem.ReviewRunner.RunAsync(args, settings, repoRoot);
-    return;
-}
-
 if (args.Length > 0)
 {
     Console.Error.WriteLine($"Unknown command '{args[0]}'. Der normale Phase-Runner startet nur ohne CLI-Command.");
@@ -972,12 +753,7 @@ CleanDocsFolder();
 static string ResolveRunFolder(HostSettings settings)
     => settings.AgentPhase switch
     {
-        "phase2_1" => settings.Phase2ContextStrategy switch
-        {
-            "artifact_state" => "phase2B",
-            "independent_source_reads" => "phase2C",
-            _ => "phase2_1"   // message_passing (A)
-        },
+        // phase2_1/2B/2C-Ordnerwahl archiviert (Move 3, 2026-07-22).
         // Kapitel B (Evidenz-Agent): runs/phase2evidenz-agent/<arm>/<runId> — Arme (ledger|transcript) getrennt.
         "phase2_evidence" => $"phase2evidenz-agent/{settings.EvidenceSource}",
         _ => settings.AgentPhase
@@ -1031,35 +807,7 @@ var config = new
     {
         chars = settings.LlmPreviewChars,
     },
-    jury = new
-    {
-        enabled = settings.JuryEnabled,
-        judgeModel = settings.JuryJudgeModel,
-        structuredOutput = settings.JuryStructuredOutput,
-        // DISK-12/G3: Call-1 pro Kategorie gesplittet (Mess-Instrument-Parameter, einfrieren für Vergleiche).
-        splitGeneration = settings.JurySplitGeneration,
-        // DISK-12/B22: effektive aktive Kategorien je Artefakttyp (Default-Profil + run-config-Override).
-        categories = new AgenticSdlc.Host.Phases.Phase2.Evaluation.JuryCategoryProfile(
-            settings.JuryCategoriesByArtifact).Describe(),
-        // DISK-7: aktive Verifikations-Policy pro Kategorie (für reproduzierbare A/B/C-Vergleiche).
-        verification = new
-        {
-            falseClaim = settings.JuryVerifyFalseClaim,
-            falseCertainty = settings.JuryVerifyFalseCertainty,
-            missingTopic = settings.JuryVerifyMissingTopic,
-            custom = settings.JuryVerifyCustom,
-            // DISK-9: Batch-Limit des MISSING_TOPIC-Verifiers (Mess-Instrument-Parameter, einfrieren für Vergleiche).
-            missingTopicBatchSize = settings.JuryMissingTopicBatchSize
-        }
-    },
-    // Nur für Phase 2.1B (artifact_state) relevant: dokumentiert die aktive Shared-State-Policy.
-    phase2BState = (settings.AgentPhase == "phase2_1" && settings.Phase2ContextStrategy == "artifact_state")
-        ? new
-        {
-            writeArtifacts = settings.Phase2BWriteArtifacts,
-            reads = settings.Phase2BReads
-        }
-        : null,
+    // jury-Config archiviert mit Evaluation (Move 3, 2026-07-22) — Jury war S-3-Messinstrument.
     ollamaBaseUrl = settings.OllamaBaseUrl,
     openRouterBaseUrl = settings.LlmProvider == "openrouter" ? settings.OpenRouterBaseUrl : null,
     timestampUtc = DateTime.UtcNow
@@ -1093,39 +841,13 @@ static void WriteRunChangeNote(RunContext run)
     run.AppendEvent(new { type = "RUN_CHANGE_NOTE", runId = run.RunId, note, timestampUtc = DateTime.UtcNow });
 }
 
+// "phase1" / "phase2_1" sind archiviert (archive/phase1, archive/phase2-dag, archive/phase2b — Move 3, 2026-07-22).
+// Lauffaehige Historie: git checkout v-s0-phase1 / v-s1-phase2-dag / v-s3-evaluator-review.
 Environment.ExitCode = settings.AgentPhase switch
 {
-    "phase1" => await RunPhase1Async(),
-    "phase2_1" => await RunPhase2_1Async(),
     "phase2_evidence" => await RunPhase2EvidenceAsync(),
     _ => UnknownPhase(settings.AgentPhase, run)
 };
-
-async Task<int> RunPhase1Async()
-{
-    var runner = new Phase1Runner(
-        settings: settings,
-        run: run,
-        sourceName: sourceName,
-        activitySource: activitySource,
-        repoRoot: repoRoot
-    );
-
-    return await runner.RunAsync();
-}
-
-async Task<int> RunPhase2_1Async()
-{
-    var runner = new Phase2Runner(
-        settings: settings,
-        run: run,
-        sourceName: sourceName,
-        activitySource: activitySource,
-        repoRoot: repoRoot
-    );
-
-    return await runner.RunAsync();
-}
 
 // Kapitel B (Evidenz-Agent): eigener, DÜNNER Runner; komponiert die vorhandenen Bausteine
 // (Phase2AgentFactory / Pipeline), lässt Phase2Runner unangetastet. E0 = Gerüst-Durchstich.
@@ -1150,55 +872,20 @@ static int UnknownPhase(string phase, RunContext run)
         runId = run.RunId,
         reason = "Unknown AGENT_PHASE.",
         phase,
-        allowedPhases = new[] { "phase1", "phase2_1", "phase2_evidence" },
+        allowedPhases = new[] { "phase2_evidence" },
         timestampUtc = DateTime.UtcNow
     });
 
-    Console.Error.WriteLine($"RUN FAILED - Unknown AGENT_PHASE '{phase}'. Allowed values: phase1, phase2_1, phase2_evidence.");
+    Console.Error.WriteLine($"RUN FAILED - Unknown AGENT_PHASE '{phase}'. Allowed: phase2_evidence. (phase1/phase2_1 archiviert -> Tags v-s0/v-s1/v-s3.)");
     return 4;
 }
 
 static string ResolvePhaseName(string phase)
-    => phase switch
-    {
-        "phase1" => Phase1Artifacts.PhaseName,
-        "phase2_1" => Phase2Artifacts.PhaseName,
-        _ => phase
-    };
+    => phase; // phase1/phase2_1-Namensaufloesung archiviert (Move 3); einzig verbliebene Phase: phase2_evidence.
 
 static object ResolvePromptConfig(HostSettings settings)
 {
-    if (settings.AgentPhase == "phase1")
-    {
-        return new
-        {
-            phase1 = new
-            {
-                agent = "Phase1SinglePass",
-                promptName = settings.GetPromptName("Phase1SinglePass")
-            }
-        };
-    }
-
-    if (settings.AgentPhase == "phase2_1")
-    {
-        return new
-        {
-            phase2_1 = new
-            {
-                contextStrategy = settings.Phase2ContextStrategy,
-                agents = new
-                {
-                    context = settings.GetPromptName(Phase2AgentFactory.ContextAgentName),
-                    requirements = settings.GetPromptName(Phase2AgentFactory.RequirementsAgentName),
-                    risks = settings.GetPromptName(Phase2AgentFactory.RisksAgentName),
-                    architecture = settings.GetPromptName(Phase2AgentFactory.ArchitectureAgentName),
-                    openQuestions = settings.GetPromptName(Phase2AgentFactory.OpenQuestionsAgentName)
-                }
-            }
-        };
-    }
-
+    // phase1/phase2_1-Prompt-Konfig archiviert (Move 3). Verhalten fuer phase2_evidence unveraendert (wie vorher Fallback).
     return new { unknownPhase = settings.AgentPhase };
 }
 
