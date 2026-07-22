@@ -1,12 +1,12 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
 using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// Schmale Tool-Umwelt für den agentischen L3-Coverage-Modus. Der Agent entscheidet selbst, welche Umweltteile er liest,

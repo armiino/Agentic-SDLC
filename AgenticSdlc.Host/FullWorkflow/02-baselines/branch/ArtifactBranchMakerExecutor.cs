@@ -1,10 +1,10 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow;
+using AgenticSdlc.Host.FullWorkflow.MakerChecker.Workflow;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Branch;
+namespace AgenticSdlc.Host.FullWorkflow.Branch;
 
 /// <summary>
 /// Start-Stufe eines Artefakt-Zweigs (E-c): der Evidence-Baseline-Agent erzeugt das Artefakt aus der übergebenen

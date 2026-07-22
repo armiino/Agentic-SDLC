@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
 using AgenticSdlc.Host.Run;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+namespace AgenticSdlc.Host.FullWorkflow.Derivation;
 
 /// <summary>
 /// Geteilte, EINZIGE Quelle der Reflect-Logik (Task-Texte, Gate-Auswertung, Per-Runde-Snapshot, Item-Diff, Reports).

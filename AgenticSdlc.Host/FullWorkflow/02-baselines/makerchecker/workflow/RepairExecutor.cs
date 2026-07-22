@@ -1,9 +1,9 @@
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow;
+namespace AgenticSdlc.Host.FullWorkflow.MakerChecker.Workflow;
 
 /// <summary>
 /// Stufe „Repair" des MAF-Workflows: patcht die vom Checker bestätigten Zeilen-Verstöße und schickt das

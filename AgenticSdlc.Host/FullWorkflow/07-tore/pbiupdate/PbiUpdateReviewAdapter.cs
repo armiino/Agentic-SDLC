@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 public sealed record PbiUpdateDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,
@@ -25,8 +25,10 @@ public static class PbiUpdateReviewAdapter
 
     public static ReviewSession BuildSession(string runId, PbiStateChangePlanDocument plan, ProjectStateDocument core)
     {
-        var byId = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
-        var items = plan.Operations.Select((op, i) => BuildItem($"op-{i}", op, byId)).ToList();
+        // R5: byId-Dictionary entfernt — BuildItem nutzte es nie (Test-Fund Log #24); core bleibt in der
+        // Signatur (einheitliche Adapter-Form; kuenftige Kontext-Anreicherung moeglich).
+        _ = core;
+        var items = plan.Operations.Select((op, i) => BuildItem($"op-{i}", op)).ToList();
         return new ReviewSession
         {
             SessionId = $"pbi-update-{runId}",
@@ -59,12 +61,8 @@ public static class PbiUpdateReviewAdapter
             it.ItemId, FieldOf(it, FieldDecision), FieldOf(it, FieldReason) is { Length: > 0 } r ? r : null)).ToList());
 
     public static void MergeExistingDecisions(ReviewSession session, PbiUpdateDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byOp = file.Decisions.GroupBy(d => d.OpId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-        foreach (var item in session.Items)
-            if (byOp.TryGetValue(item.ItemId, out var d)) { Set(item, FieldDecision, d.Decision); Set(item, FieldReason, d.Reason); item.Resolved = Resolved(item); }
-    }
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.OpId,
+            (item, d) => { Set(item, FieldDecision, d.Decision); Set(item, FieldReason, d.Reason); }, Resolved);
 
     public static string ResolveContext(string key, PbiStateChangePlanDocument plan, ProjectStateDocument core)
     {
@@ -78,7 +76,7 @@ public static class PbiUpdateReviewAdapter
         return $"(Unbekannter Kontext: {key})";
     }
 
-    private static ReviewItem BuildItem(string opId, PbiStateChangeOperation op, IReadOnlyDictionary<string, ProjectStateItem> byId)
+    private static ReviewItem BuildItem(string opId, PbiStateChangeOperation op)
     {
         var idx = opId["op-".Length..];
         var target = op.PbiId ?? op.FeatureId;

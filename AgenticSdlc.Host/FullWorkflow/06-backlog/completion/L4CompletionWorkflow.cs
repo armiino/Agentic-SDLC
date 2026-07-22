@@ -4,7 +4,7 @@ using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 internal sealed record L4AdequacyDraft(L4CompletionInput Input, L4AdequacyReport Report, bool Saved);
 internal sealed record L4CompletionDraft(L4CompletionInput Input, L4AdequacyReport Adequacy, L4CompletionProposalDocument Proposals, bool Saved, int ToolCheckRounds);

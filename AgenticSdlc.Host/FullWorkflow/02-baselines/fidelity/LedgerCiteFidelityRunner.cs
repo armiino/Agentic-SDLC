@@ -3,12 +3,12 @@ using System.Text.RegularExpressions;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Fidelity;
+namespace AgenticSdlc.Host.FullWorkflow.Fidelity;
 
 /// <summary>
 /// A2 (Capstone-Rahmung „Demonstration"): der NICHT-DEKORATIV-Beleg für den direkten, ledger-geerdeten Arm B.

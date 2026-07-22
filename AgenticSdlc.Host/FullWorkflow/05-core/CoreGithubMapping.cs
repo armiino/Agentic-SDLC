@@ -1,7 +1,7 @@
 using System.Globalization;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Tor 3 / T3.1 — Mapping "PBI <-> GitHub-Issue" als CORE-RELATION (nicht mehr nur Run-Artefakt).
 //

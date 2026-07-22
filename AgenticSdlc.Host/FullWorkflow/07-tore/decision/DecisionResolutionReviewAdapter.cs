@@ -1,8 +1,8 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // HumanReview der Decision-Auflösungen (apply/skip je Op). Der Mensch autorisiert die Auflösung (die Stakeholder-
 // Antwort ist der Beleg). Generische HumanReview-UI, wie ingest-review / github-forward-review.
@@ -49,12 +49,8 @@ public static class DecisionResolutionReviewAdapter
             it.ItemId, FieldOf(it, FieldDecision), FieldOf(it, FieldReason) is { Length: > 0 } r ? r : null)).ToList());
 
     public static void MergeExistingDecisions(ReviewSession session, DecisionResolutionDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byOp = file.Decisions.GroupBy(d => d.OpId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-        foreach (var item in session.Items)
-            if (byOp.TryGetValue(item.ItemId, out var d)) { Set(item, FieldDecision, d.Decision); Set(item, FieldReason, d.Reason); item.Resolved = Resolved(item); }
-    }
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.OpId,
+            (item, d) => { Set(item, FieldDecision, d.Decision); Set(item, FieldReason, d.Reason); }, Resolved);
 
     public static string ResolveContext(string key, DecisionResolutionPlanDocument plan, ProjectStateDocument core)
     {

@@ -1,8 +1,8 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // GETEILTE Apply-Ausfuehrung fuer decision (Tor 2, S4): setzt die freigegebenen Auflösungen in den Core (DEC=resolved,
 // Requirement-Swap, PBIs entblockt) und schreibt ein github-sync-Delta. Genutzt von ZWEI Aufrufern (Paritaet):

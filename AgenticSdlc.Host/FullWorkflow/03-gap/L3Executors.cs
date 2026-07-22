@@ -1,14 +1,14 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 // v1-Prepare-Pipeline (linear, MAF-nativ). Verzweigung je Klasse + Human-Loop = Apply-Phase (Workflow 2, §5.3) → future.
 

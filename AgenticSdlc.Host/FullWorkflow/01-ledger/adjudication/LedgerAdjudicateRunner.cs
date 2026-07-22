@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Zweistufige, deterministische Adjudikations-CLI (Bauvorschlag §1.5, R1-Muster). KEIN LLM.

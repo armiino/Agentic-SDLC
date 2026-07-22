@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>Geteiltes Parsing der Generator-Antwort (RawCandidate → L3Candidate). EIN Ort für die Feld-Zuordnung, damit
 /// Einzelpass-Generierung (<see cref="L3CandidateGenExecutor"/>) und Coverage-Repair-Loop (<see cref="L3CoverageGenExecutor"/>)

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Recipes;
+namespace AgenticSdlc.Host.FullWorkflow.Recipes;
 
 /// <summary>
 /// Deklaratives Rezept (§10): beschreibt EINEN Lauf über drei Achsen — (1) Baseline-Modus (build|load) + welche

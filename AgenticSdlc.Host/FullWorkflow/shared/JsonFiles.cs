@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent;
+namespace AgenticSdlc.Host.FullWorkflow;
 
 // R3a Welle 2 (2026-07-22): EIN JSON-Datei-IO fuer die Kette — dieselben Optionen (Web + Indented) existierten
 // als private Kopie in dutzenden Runnern/Adaptern. Verhalten identisch (gleiche Options-Werte).

@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 /// <summary>LLM-Matcher fuer erwartete Semantic-Ledger-Eintraege gegen automatisch extrahierte Eintraege.</summary>
 public sealed class SemanticLedgerRecallMatcher

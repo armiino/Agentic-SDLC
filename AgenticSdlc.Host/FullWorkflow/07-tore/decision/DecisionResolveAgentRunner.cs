@@ -1,14 +1,14 @@
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // CLI: decision-resolve-agent <stakeholder-answer.txt|inline-text> [model]
 // T2.2 — agentischer Aufsatz auf T2.1 als MAF-Workflow: Maker -> Derive -> Gate -> Finalize. Der Maker deutet die

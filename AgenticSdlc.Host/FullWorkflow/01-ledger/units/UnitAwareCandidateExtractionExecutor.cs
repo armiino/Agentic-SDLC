@@ -1,8 +1,8 @@
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 [SendsMessage(typeof(UnitAwareCandidateLedgerMessage))]
 internal sealed class UnitAwareCandidateExtractionExecutor : Executor<AtomicUnitsMessage>

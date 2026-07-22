@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow;
+namespace AgenticSdlc.Host.FullWorkflow.MakerChecker.Workflow;
 
 /// <summary>
 /// Typisierte Edge-Payloads des eigenständigen Checker-Repair-Workflows (Transport = Message-Passing, wie im

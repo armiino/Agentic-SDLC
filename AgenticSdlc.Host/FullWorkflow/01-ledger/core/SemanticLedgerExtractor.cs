@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 /// <summary>Extrahiert einen facettierten Semantic Ledger aus einem Transkript. Isolierter Spike.</summary>
 public sealed class SemanticLedgerExtractor

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Erzeugt aus der (akzeptierten) ProductBacklogView deterministisch einen accepted-issue-plan,
 // den die bestehende GitHub-Reconciliation konsumiert. Kein LLM. Bevorzugt applied/product-backlog.json.

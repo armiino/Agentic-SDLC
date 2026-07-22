@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Deterministisches, STRUKTURELLES Coverage-Gate fuer die agentische Cluster-Bildung.
 // Es beweist KEINE fachliche Richtigkeit (das ist Sache von ReviewAgent + Human Review),

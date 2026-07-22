@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 // ── L3 CoverageSpec: der geteilte Abdeckungs-Rahmen (Analogon zu DerivationSpec) ──────────────────────────────────
 // EINE Quelle für zwei Konsumenten (kein Drift): (1) der Coverage-Generator-Prompt rendert die Linsen via

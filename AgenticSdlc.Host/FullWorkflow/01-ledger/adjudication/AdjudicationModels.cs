@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Config-gesteuerter Modus des Human-in-the-Loop-Adjudikationsschritts im Ledger-Workflow (Plan §4).

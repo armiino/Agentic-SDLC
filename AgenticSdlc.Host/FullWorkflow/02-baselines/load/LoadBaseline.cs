@@ -1,10 +1,10 @@
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.FanOut;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Load;
+namespace AgenticSdlc.Host.FullWorkflow.Load;
 
 /// <summary>
 /// Bau-Punkt 3 (<c>mode:load</c>): Baseline-Quelle OHNE frischen Fan-out. Liest je Quelltyp ein bereits vorhandenes

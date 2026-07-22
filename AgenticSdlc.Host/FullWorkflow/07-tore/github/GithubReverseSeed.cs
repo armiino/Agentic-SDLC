@@ -1,8 +1,8 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.5 — deterministischer Reverse-Detektor: vergleicht den GitHub-Zustand (Snapshot) mit dem Core ueber die
 // implemented_by_issue-Mappings und schlaegt StateChanges VOR (kein Apply). Kein Agent: der Zustandsdiff ist

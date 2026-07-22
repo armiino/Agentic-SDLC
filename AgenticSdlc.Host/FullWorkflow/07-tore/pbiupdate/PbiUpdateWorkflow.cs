@@ -1,12 +1,12 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 // Inc 1c-3 als MAF-Workflow MIT gate-getriebenem Repair-Loop (R7, Pattern wie GithubForward):
 //   Derive -> Maker[PbiPlacementAgent] -> Gate --[repairable&&attempt<max]--> Repair (Loop) / sonst Finalize.

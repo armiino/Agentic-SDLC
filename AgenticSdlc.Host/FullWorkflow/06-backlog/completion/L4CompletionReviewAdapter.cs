@@ -2,7 +2,7 @@ using AgenticSdlc.HumanReview;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public sealed record L4CompletionHumanDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,
@@ -210,16 +210,8 @@ public static class L4CompletionReviewAdapter
     }
 
     public static void MergeExistingDecisions(ReviewSession session, L4CompletionHumanDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byProposal = file.Decisions
-            .Where(d => !string.IsNullOrWhiteSpace(d.ProposalItemId))
-            .GroupBy(d => d.ProposalItemId, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-
-        foreach (var item in session.Items)
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.ProposalItemId, (item, decision) =>
         {
-            if (!byProposal.TryGetValue(item.ItemId, out var decision)) continue;
             Set(item, FieldDecision, decision.Decision);
             if (!string.IsNullOrWhiteSpace(decision.EditedProposalJson))
             {
@@ -234,9 +226,7 @@ public static class L4CompletionReviewAdapter
                 }
             }
             Set(item, FieldReason, decision.Reason);
-            item.Resolved = Resolved(item);
-        }
-    }
+        }, Resolved);
 
     public static string ResolveContext(
         string resolverKey,

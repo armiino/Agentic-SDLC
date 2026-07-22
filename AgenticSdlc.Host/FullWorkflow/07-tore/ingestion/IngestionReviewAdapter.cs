@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 public sealed record IngestionHumanDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,
@@ -61,21 +61,11 @@ public static class IngestionReviewAdapter
     }
 
     public static void MergeExistingDecisions(ReviewSession session, IngestionHumanDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byIncoming = file.Decisions
-            .Where(d => !string.IsNullOrWhiteSpace(d.IncomingItemId))
-            .GroupBy(d => d.IncomingItemId, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-
-        foreach (var item in session.Items)
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.IncomingItemId, (item, decision) =>
         {
-            if (!byIncoming.TryGetValue(item.ItemId, out var decision)) continue;
             Set(item, FieldDecision, decision.Decision);
             Set(item, FieldReason, decision.Reason);
-            item.Resolved = Resolved(item);
-        }
-    }
+        }, Resolved);
 
     public static string ResolveContext(string resolverKey, StateChangePlanDocument plan, ProjectStateDocument meetingDelta, ProjectStateDocument core)
     {

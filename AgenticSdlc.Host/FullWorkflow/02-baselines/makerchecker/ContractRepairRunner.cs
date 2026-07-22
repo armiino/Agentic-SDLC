@@ -1,9 +1,9 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker;
+namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
 
 /// <summary>
 /// MC2-CLI: <c>contract-repair &lt;artifact.md&gt; &lt;consumable.json&gt; [model] [out.md]

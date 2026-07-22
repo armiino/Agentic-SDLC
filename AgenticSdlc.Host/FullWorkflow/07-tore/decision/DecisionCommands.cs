@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 /// <summary>
 /// CLI-Kommandos dieses Kettenglieds — registriert im Host-Dispatch (R1, 2026-07-22).
@@ -10,22 +10,22 @@ public static class DecisionCommands
     {
         // Tor 2 / T2.1: Decision-Ingestion (deterministischer Kern). Stakeholder-Auflösung einer Open Decision -> Core
         // auflösen (DEC resolved, contradicts->contradicts_resolved) + betroffene PBIs entblocken. Maker/Review/Apply.
-        map["decision-resolve"] = (args, settings, repoRoot) => AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionResolveRunner.RunAsync(args, repoRoot);
+        map["decision-resolve"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Decision.DecisionResolveRunner.RunAsync(args, repoRoot);
 
         // Tor 2 / T2.2: agentischer Resolver — freie Stakeholder-Antwort -> strukturierte Auflösung; danach dieselbe
         // deterministische T2.1-Kette (Derivation/Gate/Apply). Der 4. agentische Knoten.
-        map["decision-resolve-agent"] = (args, settings, repoRoot) => AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionResolveAgentRunner.RunAsync(args, settings, repoRoot);
+        map["decision-resolve-agent"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Decision.DecisionResolveAgentRunner.RunAsync(args, settings, repoRoot);
 
         // S4 (Worklist 20.07): decision (Tor 2) als EIN MAF-Lauf mit MAF-nativem Human-Gate (RequestPort) + Checkpoint + UI.
         // Additiv/parallel zum klassischen decision-resolve(-agent) / -review / -apply (die bleiben unveraendert).
-        map["decision-resolve-hitl"] = (args, settings, repoRoot) => AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionHitlRunner.RunAsync(args, settings, repoRoot);
+        map["decision-resolve-hitl"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Decision.DecisionHitlRunner.RunAsync(args, settings, repoRoot);
 
-        map["decision-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionReviewRunner.RunAsync(args, settings, repoRoot);
+        map["decision-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Decision.DecisionReviewRunner.RunAsync(args, settings, repoRoot);
 
-        map["decision-apply"] = (args, settings, repoRoot) => AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionApplyRunner.RunAsync(args, repoRoot);
+        map["decision-apply"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Decision.DecisionApplyRunner.RunAsync(args, repoRoot);
 
         // Tor 2 / T2.3: Kreis-Test (Tor 2 -> Tor 3). Blockiertes PBI -> decision-apply -> github-forward-Seed sieht
         // UPDATE/CREATE statt HOLD_BLOCKED. Deterministisch, kein LLM, kein GitHub, kein echter Core.
-        map["decision-unblock-test"] = (args, settings, repoRoot) => AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionUnblockTest.RunAsync(args, repoRoot);
+        map["decision-unblock-test"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Decision.DecisionUnblockTest.RunAsync(args, repoRoot);
     }
 }

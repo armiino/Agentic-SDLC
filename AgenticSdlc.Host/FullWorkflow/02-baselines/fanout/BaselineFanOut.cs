@@ -1,10 +1,10 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut;
+namespace AgenticSdlc.Host.FullWorkflow.FanOut;
 
 /// <summary>Ein Eintrag im Verified Baseline Set: das Ergebnis EINES Artefakt-Zweigs (Index; die vollen Items
 /// liegen je Zweig in <c>{type}.artifact.json</c>).</summary>

@@ -1,7 +1,7 @@
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public static class OpenRequirementsReviewAdapter
 {
@@ -77,25 +77,15 @@ public static class OpenRequirementsReviewAdapter
     }
 
     public static void MergeExistingDecisions(ReviewSession session, OpenRequirementHumanDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byRequirement = file.Decisions
-            .Where(d => !string.IsNullOrWhiteSpace(d.RequirementId))
-            .GroupBy(d => d.RequirementId, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-
-        foreach (var item in session.Items)
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.RequirementId, (item, decision) =>
         {
-            if (!byRequirement.TryGetValue(item.ItemId, out var decision)) continue;
             Set(item, FieldDecision, decision.Decision);
             Set(item, FieldClarificationType, decision.ClarificationType);
             Set(item, FieldPriority, decision.Priority);
             Set(item, FieldIssueTitle, decision.IssueTitle);
             Set(item, FieldQuestion, decision.Question);
             Set(item, FieldReason, decision.Reason);
-            item.Resolved = Resolved(item);
-        }
-    }
+        }, Resolved);
 
     public static string ResolveContext(string resolverKey, OperationalizationAuditDocument audit, RequirementsReadinessReport? readiness)
     {

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // T2.1 — Decision-Ingestion, deterministischer Kern (KEIN LLM). Eingabe: strukturierte Auflösung(en) einer offenen
 // Decision (decisionId + Outcome + optional neue Aussage). Daraus wird deterministisch ein StateChange-Plan

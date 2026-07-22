@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public static class L4CompletionApply
 {
@@ -119,7 +119,7 @@ public static class L4CompletionApply
                     break;
                 case "edit":
                     if (string.IsNullOrWhiteSpace(decision.EditedProposalJson)) break;
-                    var edited = System.Text.Json.JsonSerializer.Deserialize<L4CompletionProposalItem>(decision.EditedProposalJson, ProjectState.ProjectStateJson.Options);
+                    var edited = System.Text.Json.JsonSerializer.Deserialize<L4CompletionProposalItem>(decision.EditedProposalJson, Delta.ProjectStateJson.Options);
                     if (edited is not null) effective.Add(edited);
                     break;
             }

@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.3 — deterministisches Gate ueber den Forward-Plan (plan-tor3 §4). Kernregeln:
 //   - Rev-3-INVARIANTE: CREATE_ISSUE ohne searchedQueries[] + searchEvidence -> CREATE_WITHOUT_SEARCH_EVIDENCE.

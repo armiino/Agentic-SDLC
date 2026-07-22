@@ -1,6 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+using AgenticSdlc.Host.FullWorkflow.Tore.Github;
+
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public sealed record GithubReconciliationInput(
     [property: JsonPropertyName("schemaVersion")] int SchemaVersion,

@@ -2,7 +2,7 @@ using AgenticSdlc.HumanReview;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public sealed record ClarificationPlanningHumanDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,
@@ -96,16 +96,8 @@ public static class ClarificationPlanningReviewAdapter
     }
 
     public static void MergeExistingDecisions(ReviewSession session, ClarificationPlanningHumanDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byItem = file.Decisions
-            .Where(d => !string.IsNullOrWhiteSpace(d.ClarificationPlanId))
-            .GroupBy(d => d.ClarificationPlanId, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-
-        foreach (var item in session.Items)
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.ClarificationPlanId, (item, decision) =>
         {
-            if (!byItem.TryGetValue(item.ItemId, out var decision)) continue;
             Set(item, FieldDecision, decision.Decision);
             if (!string.IsNullOrWhiteSpace(decision.EditedClarificationPlanItemJson))
             {
@@ -120,9 +112,7 @@ public static class ClarificationPlanningReviewAdapter
                 }
             }
             Set(item, FieldReason, decision.Reason);
-            item.Resolved = Resolved(item);
-        }
-    }
+        }, Resolved);
 
     public static string ResolveContext(string resolverKey, ClarificationPlanningInput input, ClarificationPlanDocument plan, ClarificationPlanGateReport gate)
     {

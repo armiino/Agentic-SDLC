@@ -1,10 +1,10 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
 using AgenticSdlc.Host.Run;
 using AgenticSdlc.HumanReview;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+namespace AgenticSdlc.Host.FullWorkflow.Derivation;
 
 /// <summary>
 /// I-d-CLI: <c>derive-review &lt;derived-risks.json&gt; &lt;inference-check-report.json&gt;

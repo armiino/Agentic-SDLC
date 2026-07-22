@@ -1,7 +1,7 @@
 using System.Text;
 using AgenticSdlc.HumanReview;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Der erste Adapter der generischen Human-Review-Schicht (<see cref="AgenticSdlc.HumanReview"/>):

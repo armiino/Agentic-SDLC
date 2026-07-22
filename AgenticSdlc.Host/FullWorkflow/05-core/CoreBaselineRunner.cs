@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // CLI: core-baseline [--out <dir>]
 // Materialisiert das L4-Applied-Triplet aus dem lebenden Core, damit die re-clarify-Kette (cluster ->

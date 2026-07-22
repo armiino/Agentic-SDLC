@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // T2.0 — der GETEILTE Wahrheitsuebergang "Requirement-Swap auf einem PBI": ein PBI deckt statt des alten (z.B.
 // superseded) Requirements das Ersatz-Requirement. Extrahiert aus PbiUpdateApply (SUPERSEDE_PBI), damit Tor 2

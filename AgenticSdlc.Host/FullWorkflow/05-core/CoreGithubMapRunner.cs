@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using AgenticSdlc.Host.Run;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // CLI: github-map apply <mappings.json>   -> traegt PBI<->Issue-Mappings als Core-Relation ein (Dedup-Basis).
 //      github-map list                     -> zeigt die aktuellen Mappings aus dem Core.

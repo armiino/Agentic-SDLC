@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Typisierte Edge-Payloads des Ledger-Workflows (Transport = Message-Passing, NICHT Shared State).

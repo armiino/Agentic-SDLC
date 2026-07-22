@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 // Deterministische Ableitung der PBI-Operationen aus dem Ingestion-Delta + Core-Relationen (kein LLM):
 // REFINE -> MARK_CHANGED · CONTRADICT -> BLOCK_PBI · SUPERSEDE -> SUPERSEDE_PBI (mit Ersatz aus supersedes-Relation).

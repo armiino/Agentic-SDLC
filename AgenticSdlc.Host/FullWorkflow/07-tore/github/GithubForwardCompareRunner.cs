@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // CLI: github-forward-compare [fixtures.json] [--threshold N] [--plan <agent-plan.json>] [--out <file>]
 //

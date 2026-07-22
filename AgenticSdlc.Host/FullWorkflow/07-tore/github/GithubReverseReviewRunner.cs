@@ -2,7 +2,7 @@ using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // HumanReview des Reverse-Plans (apply/skip; bei PBI_DONE = Verifikation, E4). Runner um die generische UI.
 public static class GithubReverseReviewRunner

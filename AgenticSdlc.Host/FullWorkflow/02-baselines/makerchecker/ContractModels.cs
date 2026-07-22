@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker;
+namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
 
 /// <summary>
 /// Datenmodell des Maker-Checker-Contracts (MC0). Exakt nach <c>makerchecker/Contract.md</c> §2–§6.

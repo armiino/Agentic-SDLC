@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public sealed record L4HumanDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,
@@ -100,22 +100,12 @@ public static class L4ReviewAdapter
     }
 
     public static void MergeExistingDecisions(ReviewSession session, L4HumanDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byOperation = file.Decisions
-            .Where(d => !string.IsNullOrWhiteSpace(d.OperationId))
-            .GroupBy(d => d.OperationId, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-
-        foreach (var item in session.Items)
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.OperationId, (item, decision) =>
         {
-            if (!byOperation.TryGetValue(item.ItemId, out var decision)) continue;
             Set(item, FieldDecision, decision.Decision);
             Set(item, FieldEditedOperationJson, decision.EditedOperationJson);
             Set(item, FieldReason, decision.Reason);
-            item.Resolved = Resolved(item);
-        }
-    }
+        }, Resolved);
 
     public static string ResolveContext(string resolverKey, ProjectStateDocument state, ConsolidationPlan plan)
     {

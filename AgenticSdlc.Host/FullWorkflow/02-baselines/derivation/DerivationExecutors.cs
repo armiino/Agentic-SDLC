@@ -1,13 +1,13 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+namespace AgenticSdlc.Host.FullWorkflow.Derivation;
 
 /// <summary>Stufe 1: der GENERATOR — ein echter <see cref="AIAgent"/> (Prompt/Persona + Middleware-Pipeline).
 /// Liest die (vereinten) Quell-Items aus 1..N Artefakten, erzeugt Roh-Ableitungen (JSON). Semantische Generierung

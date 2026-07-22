@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
 using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.2 — GitHub-READ als Agent-Tools (Variante B: schmale Client-/Snapshot-Tools statt MCP-Server; E-B).
 // READ-ONLY: hier gibt es KEINEN Write-Pfad (create/update/close bleiben im gated Apply, T3.4). Die Tools lesen

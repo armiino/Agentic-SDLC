@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.3 — Forward-Maker: der github-sync-Delta wird gegen GitHub abgeglichen. Der Plan ist ein VORSCHLAG
 // (kein Write): erst Gate, dann HumanReview, dann gated Apply (T3.4). Ein Op je Delta-PBI.

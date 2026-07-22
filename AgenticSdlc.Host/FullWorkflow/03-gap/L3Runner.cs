@@ -2,15 +2,15 @@ using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// L3 Open-World-Ableitung (CLI: <c>l3 &lt;env1.artifact.json&gt; [env2 …] [model] [--dry-run]</c>). Fährt den

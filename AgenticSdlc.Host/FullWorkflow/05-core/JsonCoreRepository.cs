@@ -1,7 +1,7 @@
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // JSON-Implementierung des Core-Ports. Nutzt dieselbe Serialisierung wie der ProjectState
 // (ProjectStateJson.Options) - EIN Modell, EIN Format. DB-Adapter spaeter hinter demselben Interface.

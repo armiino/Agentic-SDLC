@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 // Deterministisches Gate (plan-increment1c3 §5). MULTI_CAUSE_MERGE: mehrere Ops pro PBI sind ERLAUBT (additiv,
 // Merge im Apply). Geprueft: gueltige Ziele, Platzierungs-Coverage, Block-Decision-Ref, Supersede-Ersatz.

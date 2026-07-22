@@ -1,8 +1,8 @@
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Gap;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+namespace AgenticSdlc.Host.FullWorkflow.Delta;
 
 public static class ProjectStateBuilder
 {

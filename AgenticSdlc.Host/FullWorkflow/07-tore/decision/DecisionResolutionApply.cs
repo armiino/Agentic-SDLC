@@ -1,8 +1,8 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.PbiUpdate;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // T2.1 — die deterministische State-Maschine der Decision-Ingestion. Für jede freigegebene Auflösung:
 //   RESOLVE_DECISION (DEC open_decision -> resolved, History + resolutionOutcome; contradicts -> contradicts_resolved,

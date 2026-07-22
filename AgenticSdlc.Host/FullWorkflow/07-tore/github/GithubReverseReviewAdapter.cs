@@ -1,7 +1,7 @@
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // HumanReview des Reverse-Plans. Zentraler Punkt (E4): bei PBI_DONE VERIFIZIERT der Mensch, dass die Arbeit
 // wirklich fertig ist — apply setzt dann done, skip verwirft. Generische HumanReview-UI, wie github-forward-review.
@@ -47,12 +47,8 @@ public static class GithubReverseReviewAdapter
             it.ItemId, FieldOf(it, FieldDecision), FieldOf(it, FieldReason) is { Length: > 0 } r ? r : null)).ToList());
 
     public static void MergeExistingDecisions(ReviewSession session, GithubReverseDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byOp = file.Decisions.GroupBy(d => d.OpId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-        foreach (var item in session.Items)
-            if (byOp.TryGetValue(item.ItemId, out var d)) { Set(item, FieldDecision, d.Decision); Set(item, FieldReason, d.Reason); item.Resolved = Resolved(item); }
-    }
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.OpId,
+            (item, d) => { Set(item, FieldDecision, d.Decision); Set(item, FieldReason, d.Reason); }, Resolved);
 
     public static string ResolveContext(string key, GithubReversePlanDocument plan)
     {

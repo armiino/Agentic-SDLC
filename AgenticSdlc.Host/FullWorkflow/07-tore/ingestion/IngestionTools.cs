@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // MAKER-Tools der Requirement-Ingestion: der Resolver erkundet eingehende Items + den Core (Retrieval Stufe 0)
 // und speichert einen StateChangePlan. Beleg-Pflicht: MATCH/REFINE/SUPERSEDE/CONTRADICT nennen targetEntityId.

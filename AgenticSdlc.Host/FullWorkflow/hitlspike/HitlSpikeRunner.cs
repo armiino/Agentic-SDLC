@@ -2,7 +2,7 @@ using Microsoft.Agents.AI.Workflows;
 using Microsoft.Agents.AI.Workflows.Checkpointing;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.HitlSpike;
+namespace AgenticSdlc.Host.FullWorkflow.HitlSpike;
 
 // S0 — Verifikations-Spike (Worklist 20.07, Step S0). ZWECK: mit Bordmitteln beweisen, dass ein MAF-Workflow
 //   (1) an einem Human-Gate (RequestPort) pausiert,

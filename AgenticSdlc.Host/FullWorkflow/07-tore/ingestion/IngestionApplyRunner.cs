@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Deterministischer Apply: fuehrt die vom Menschen akzeptierten Ingestion-Operationen in den Core aus
 // (Upsert-by-Identity, kein LLM). Schreibt den Core NUR ueber den Repository-Port + Audit-Snapshot + Delta

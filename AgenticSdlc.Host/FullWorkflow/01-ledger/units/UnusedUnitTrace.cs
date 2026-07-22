@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>Ein aufgelöster Verweis eines unused-Unit-Compare-Items: Kandidat → finaler kanonischer Claim.</summary>
 public sealed record UnusedUnitTraceReference(

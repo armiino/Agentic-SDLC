@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Deterministisches Gate der Requirement-Ingestion (plan-increment1 §1.4): kein stiller Fehler,
 // kein Halluzinations-Match. Prueft die Operationen gegen MeetingDelta (Coverage) und Core (Ziele).

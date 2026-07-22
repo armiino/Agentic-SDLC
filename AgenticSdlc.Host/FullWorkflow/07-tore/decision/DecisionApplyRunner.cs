@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // CLI: decision-apply <decision-run|dir>
 // T2.1 Apply (deterministisch): führt die freigegebenen Auflösungen in den Core aus (DEC resolved, Widerspruch

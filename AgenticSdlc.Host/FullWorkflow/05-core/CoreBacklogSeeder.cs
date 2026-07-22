@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Inc 1c-1: hebt Cluster (Features) + PBIs eines re-clarify-Laufs als persistente Core-Entitaeten in den Core.
 // Deterministisch, kein LLM. Core = ID-Autoritaet: PBIs bekommen NEUE Core-IDs (PBI-<n>), Features uebernehmen

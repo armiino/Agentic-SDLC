@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 internal sealed record UnusedUnitReviewFixture(
     [property: JsonPropertyName("items")] IReadOnlyList<UnusedUnitReviewItem> Items);

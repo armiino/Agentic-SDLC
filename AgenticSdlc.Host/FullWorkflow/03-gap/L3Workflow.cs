@@ -1,6 +1,6 @@
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// L3-Prepare-Workflow (Workflow 1, §5.3): der MAF-native lineare Pfad

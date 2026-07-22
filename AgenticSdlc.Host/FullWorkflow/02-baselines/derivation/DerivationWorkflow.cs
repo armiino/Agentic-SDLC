@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+namespace AgenticSdlc.Host.FullWorkflow.Derivation;
 
 // ---- Edge-Payloads der generischen Derivation (Generate → Anker → Check) ----
 

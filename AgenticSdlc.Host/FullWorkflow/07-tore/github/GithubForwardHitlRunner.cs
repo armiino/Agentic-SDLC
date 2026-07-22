@@ -1,9 +1,9 @@
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
+using AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using AgenticSdlc.HumanReview;
@@ -13,7 +13,7 @@ using Microsoft.Agents.AI.Workflows.Checkpointing;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // S1 (Worklist 20.07): github-forward als EIN MAF-Lauf mit MAF-nativem Human-Gate + Checkpoint.
 //   github-forward-hitl start  <pbi-update-run> [model] [--issues <snap>] [--repo o/n] [--dry-run] [--max-attempts n] [--token-env NAME]

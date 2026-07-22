@@ -1,7 +1,7 @@
 using System.Text;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent;
+namespace AgenticSdlc.Host.FullWorkflow;
 
 /// <summary>
 /// Projiziert die freigegebenen Ledger-Claims lesbar für einen Konsumenten-Agenten (Arm B): id + Facetten +

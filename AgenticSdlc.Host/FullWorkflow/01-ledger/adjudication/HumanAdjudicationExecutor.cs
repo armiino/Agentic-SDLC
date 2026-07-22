@@ -1,7 +1,7 @@
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Terminaler, config-gesteuerter Human-in-the-Loop-Schritt des Ledger-Workflows (Plan §4). Wird NUR bei

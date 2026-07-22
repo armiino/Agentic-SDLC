@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.4 — Bericht des gated Write-Apply. dryRun=true: nur Vorschau (kein GitHub-Write, kein Core-Change).
 // executed=true: die akzeptierten Ops wurden ausgefuehrt; das Mapping wurde ueber T3.1 in den Core geschrieben.

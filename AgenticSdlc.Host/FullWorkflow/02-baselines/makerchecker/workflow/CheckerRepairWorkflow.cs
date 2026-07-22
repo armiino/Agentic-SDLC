@@ -1,6 +1,6 @@
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow;
+namespace AgenticSdlc.Host.FullWorkflow.MakerChecker.Workflow;
 
 /// <summary>
 /// Baut den Checker-Repair-Zyklus als eigenständigen MAF-<see cref="Microsoft.Agents.AI.Workflows.Workflow"/> aus

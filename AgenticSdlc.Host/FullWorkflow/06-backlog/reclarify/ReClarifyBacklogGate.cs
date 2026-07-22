@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Deterministisches, STRUKTURELLES Gate fuer die aus Feature-Clustern geschnittenen PBIs (Definition of Ready).
 // Beweist KEINE fachliche Vollstaendigkeit (das ist HumanReview) - garantiert: kein Cluster-Core geht verloren,

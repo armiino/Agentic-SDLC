@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+namespace AgenticSdlc.Host.FullWorkflow.Artifacts;
 
 /// <summary>
 /// Q-a — das MINIMALE, produktive Artifact-Item-Modell (IST_Soll §6 minimal-first, §7.2 D1/D2). Die stabile,

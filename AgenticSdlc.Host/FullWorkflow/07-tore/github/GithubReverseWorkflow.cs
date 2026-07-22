@@ -1,10 +1,10 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.5 Reverse als MAF-Workflow — rein DETERMINISTISCH (kein Agent), aber der Konsistenz/Austauschbarkeit wegen
 // als Executor-Graph statt Inline-Runner:

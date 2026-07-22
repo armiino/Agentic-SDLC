@@ -1,7 +1,7 @@
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Bringt die zwei strukturell unterschiedlichen Signalquellen (Normal-Mode `recall-fast`-Misses,

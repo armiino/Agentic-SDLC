@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 /// <summary>
 /// Normalisiert einen breit extrahierten Candidate Semantic Ledger zu kanonischen Eintraegen.

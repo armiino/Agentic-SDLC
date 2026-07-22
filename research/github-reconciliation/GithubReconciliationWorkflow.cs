@@ -4,7 +4,7 @@ using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 internal sealed record GithubReconciliationDraft(GithubReconciliationInput Input, GithubActionPlanDocument Plan, bool Saved, int ToolCheckRounds);
 internal sealed record GithubReconciliationVerdict(GithubReconciliationInput Input, GithubActionPlanDocument Plan, GithubActionPlanGateReport Report, bool Saved, int ToolCheckRounds);

@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+namespace AgenticSdlc.Host.FullWorkflow.Delta;
 
 public sealed class JsonProjectStateRepository(ProjectStateDocument document) : IProjectStateRepository
 {

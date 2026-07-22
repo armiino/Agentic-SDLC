@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
 using AgenticSdlc.HumanReview;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+namespace AgenticSdlc.Host.FullWorkflow.Derivation;
 
 /// <summary>
 /// I-d — projiziert die abgeleiteten Risiken + ihre I-c-Verdikte in eine domänen-agnostische

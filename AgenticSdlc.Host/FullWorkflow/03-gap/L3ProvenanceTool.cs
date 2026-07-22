@@ -1,10 +1,10 @@
 using System.Text;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
 using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// Optionales, read-only Agent-Tool für die L3-Agenten: <c>resolve_provenance(itemId)</c> verfolgt die HERKUNFT eines

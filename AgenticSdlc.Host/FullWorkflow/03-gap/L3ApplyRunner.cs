@@ -1,7 +1,7 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// L3 Apply-Phase (Workflow 2, §5.3 — CLI: <c>l3-apply &lt;l3-run|runId&gt; [--decisions &lt;human-decisions.json&gt;]</c>).

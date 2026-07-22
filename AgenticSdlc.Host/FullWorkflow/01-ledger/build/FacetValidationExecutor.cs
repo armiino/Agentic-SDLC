@@ -1,7 +1,7 @@
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Stufe 3 des Ledger-Workflows: chunked Per-Item-Validierung der kanonischen Einträge gegen das Transcript

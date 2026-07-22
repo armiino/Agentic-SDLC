@@ -1,8 +1,8 @@
 using System.Text.RegularExpressions;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker;
+namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
 
 /// <summary>
 /// MC0 — der deterministische Contract-Checker. Reine C#-Logik, KEIN LLM, KEIN Workflow:

@@ -1,8 +1,8 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // GETEILTE Apply-Ausfuehrung fuer ingestion (Tor 1, S4): der deterministische Upsert-by-Identity der akzeptierten
 // Operationen in den Core (neue stabile IDs, REFINE-Versionen, CONTRADICT->Open Decision). Genutzt von ZWEI

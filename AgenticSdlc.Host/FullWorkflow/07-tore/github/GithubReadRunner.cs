@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // CLI: github-read <list|get|search|labels> <snapshot.json> [args]
 //   list   <snapshot> [--state open|closed|all] [--limit N]
@@ -20,7 +20,7 @@ public static class GithubReadRunner
         var sub = args[1].ToLowerInvariant();
         var snapshotPath = Path.IsPathRooted(args[2]) ? args[2] : Path.Combine(repoRoot, args[2]);
 
-        IReadOnlyList<L4.GithubIssueSnapshot> issues;
+        IReadOnlyList<GithubIssueSnapshot> issues;
         try
         {
             issues = await GithubReadSource.LoadAsync(snapshotPath).ConfigureAwait(false);

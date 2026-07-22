@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// Deterministische Aggregation mehrerer Anker-Urteile eines Kandidaten zu genau EINER Routing-Klasse (§2.4). Bewusst

@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>Ein einzelner Gate-Verstoß (Schweregrad + Code + betroffene ids).</summary>
 public sealed record GateViolation(

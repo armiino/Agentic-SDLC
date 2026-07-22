@@ -1,12 +1,12 @@
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Load;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
+using AgenticSdlc.Host.FullWorkflow.FanOut;
+using AgenticSdlc.Host.FullWorkflow.Load;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Chain;
+namespace AgenticSdlc.Host.FullWorkflow.Chain;
 
 /// <summary>
 /// Bindeglied der vollen Komposition: nimmt das <see cref="VerifiedBaselineSet"/> des Fan-outs und wählt die

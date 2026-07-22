@@ -2,7 +2,7 @@ using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // MAKER-Tools des Clarify-Agenten: pro Feature-Cluster den vollen Kontext (core + crossCutting mit Text)
 // erkunden, PBIs pruefen und speichern. Der Agent verhoert jedes Feature (Zweck/Daten/Regeln/Fehler/Abnahme)

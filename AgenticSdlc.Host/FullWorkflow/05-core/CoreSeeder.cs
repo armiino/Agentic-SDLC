@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Einmaliger Seed: hebt einen bestehenden ProjectState-Rebuild als Ausgangs-WAHRHEIT in den Core.
 // Deterministisch, kein LLM: setzt je Item einen identityKey (Retrieval-Anker) + leere Historie und

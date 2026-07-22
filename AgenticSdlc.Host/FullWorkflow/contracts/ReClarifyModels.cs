@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Produkt-Modell des l4-re-clarify-Knotens: ein Product Backlog als Menge stabiler PBIs.
 // Siehe docs/17.07/plan-pb.md (Datenmodell) und plan-re-backlog.md (Prozess).

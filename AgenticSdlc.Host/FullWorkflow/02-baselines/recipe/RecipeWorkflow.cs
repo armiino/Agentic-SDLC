@@ -1,11 +1,11 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Chain;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Load;
+using AgenticSdlc.Host.FullWorkflow.Chain;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
+using AgenticSdlc.Host.FullWorkflow.FanOut;
+using AgenticSdlc.Host.FullWorkflow.Load;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Recipes;
+namespace AgenticSdlc.Host.FullWorkflow.Recipes;
 
 /// <summary>
 /// Der Rezept-Assembler (§10): montiert aus einer Baseline-Quelle + 0..N Ableitungen EINEN MAF-Graphen zur Laufzeit

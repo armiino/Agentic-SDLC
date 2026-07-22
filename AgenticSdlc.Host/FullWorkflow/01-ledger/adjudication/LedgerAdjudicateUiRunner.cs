@@ -1,7 +1,7 @@
 using System.Text.Json;
 using AgenticSdlc.HumanReview;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Interactive-Modus / Re-Launch (§9) der Adjudikation: startet den generischen lokalen Review-Server

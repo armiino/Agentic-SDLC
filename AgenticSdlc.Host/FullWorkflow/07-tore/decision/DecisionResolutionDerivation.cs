@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // T2.1 — deterministische Ableitung des StateChange-Plans aus den Auflösungen (kein LLM). Findet je Decision das
 // Ziel-Requirement (via contradicts-Relation) und die betroffenen PBIs (blockiert durch die DEC ∪ — bei

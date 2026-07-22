@@ -1,7 +1,7 @@
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 [SendsMessage(typeof(AtomicUnitsMessage))]
 internal sealed class AtomicUnitSegmentationExecutor : Executor<string>

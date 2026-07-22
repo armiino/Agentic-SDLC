@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // CLI: core-seed <project-state.json>
 // Hebt einen bestehenden ProjectState-Rebuild als Ausgangs-Wahrheit in den Core (state/core/project-state.json).

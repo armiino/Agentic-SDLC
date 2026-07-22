@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public sealed record CanonicalRequirementsBaseline(
     [property: JsonPropertyName("baselineId")] string BaselineId,
@@ -110,7 +110,7 @@ public sealed record L4ProjectItemTrace(
     [property: JsonPropertyName("sourceDecisionId")] string? SourceDecisionId,
     [property: JsonPropertyName("sourceClaimIds")] IReadOnlyList<string> SourceClaimIds,
     [property: JsonPropertyName("sourceArtifactItemIds")] IReadOnlyList<string> SourceArtifactItemIds,
-    [property: JsonPropertyName("provenanceLinks")] IReadOnlyList<ProjectState.ProjectStateProvenanceLink> ProvenanceLinks);
+    [property: JsonPropertyName("provenanceLinks")] IReadOnlyList<Delta.ProjectStateProvenanceLink> ProvenanceLinks);
 
 public sealed record L4LinkedClusterTrace(
     [property: JsonPropertyName("operationId")] string OperationId,

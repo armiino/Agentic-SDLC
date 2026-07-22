@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Materialisiert die menschlich akzeptierten/edited PBIs deterministisch als ProductBacklogView
 // (applied/product-backlog.json) + erneutes DoR-Gate. Analog l4-issuplanning-apply. Kein LLM.

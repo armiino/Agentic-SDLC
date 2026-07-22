@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // CLI: decision-resolve <resolution-input.json>
 // T2.1 Maker (deterministisch, KEIN LLM) als MAF-Workflow: Derive -> Gate -> Finalize (dieselben Executor-Knoten,

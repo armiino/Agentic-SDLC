@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public static partial class L4QualityGate
 {

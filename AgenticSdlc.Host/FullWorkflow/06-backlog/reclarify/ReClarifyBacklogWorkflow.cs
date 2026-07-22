@@ -4,7 +4,7 @@ using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 internal sealed record ReClarifyBacklogInput(FeatureClusterSet Clusters, CanonicalRequirementsBaseline Baseline, string SourceClustersPath);
 

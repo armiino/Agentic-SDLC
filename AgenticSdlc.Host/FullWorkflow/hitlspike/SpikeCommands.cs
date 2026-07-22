@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.HitlSpike;
+namespace AgenticSdlc.Host.FullWorkflow.HitlSpike;
 
 /// <summary>
 /// CLI-Kommandos dieses Kettenglieds — registriert im Host-Dispatch (R1, 2026-07-22).
@@ -10,6 +10,6 @@ public static class SpikeCommands
     {
         // S0 (Worklist 20.07): Verifikations-Spike fuer MAF-nativen Human-Gate (RequestPort) + durables, prozessuebergreifendes
         // Checkpoint/Resume (FileSystemJsonCheckpointStore). Wegwerf/isoliert, kein LLM, kein Core-Zugriff.
-        map["spike-hitl"] = (args, settings, repoRoot) => AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.HitlSpike.HitlSpikeRunner.RunAsync(args, repoRoot);
+        map["spike-hitl"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.HitlSpike.HitlSpikeRunner.RunAsync(args, repoRoot);
     }
 }

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 // ── L3 Apply-Phase (Workflow 2, §5.3) — Datenverträge ────────────────────────────────────────────────────────────
 // Deterministisch: der Mensch hat im Human-Review-Paket entschieden (accept/edit/reject); die Anwendung ist auditierbar.

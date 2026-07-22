@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.5 — deterministisches Gate ueber den Reverse-Plan. Kern (E4): ein PBI_DONE MUSS verifikationspflichtig sein
 // (requiresVerification=true) und auf ein echtes PBI zeigen — `done` darf strukturell nie an der Verifikation vorbei.

@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 // Deterministischer Apply der akzeptierten PBI-Operationen in den Core (Update-by-Identity, Merge/Praezedenz,
 // Requirement-Swap). Core NUR ueber den Port + Audit-Snapshot. Schreibt ein github-sync-Delta (betroffene PBIs).

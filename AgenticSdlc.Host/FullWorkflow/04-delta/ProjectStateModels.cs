@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+namespace AgenticSdlc.Host.FullWorkflow.Delta;
 
 /// <summary>
 /// Fachlicher Projektzustand als speicherneutrale Sicht auf L1/L2/L3-Artefakte. JSON ist nur die erste Persistenzform;

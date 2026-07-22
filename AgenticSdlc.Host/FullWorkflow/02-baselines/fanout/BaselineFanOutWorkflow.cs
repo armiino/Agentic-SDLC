@@ -1,7 +1,7 @@
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut;
+namespace AgenticSdlc.Host.FullWorkflow.FanOut;
 
 /// <summary>
 /// E-d — der Fan-out/Fan-in-Außengraph: der Ledger wird an mehrere Artefakt-Zweige verteilt (parallel), deren

@@ -1,8 +1,8 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker;
+namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
 
 /// <summary>
 /// MC0-CLI: <c>contract-check &lt;requirements.md&gt; &lt;consumable.json&gt; [out.json] [--iteration N] [--max N]</c>.

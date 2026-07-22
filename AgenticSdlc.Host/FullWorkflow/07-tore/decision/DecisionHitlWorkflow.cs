@@ -1,10 +1,10 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 using System.Globalization;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // S4 (Worklist 20.07): decision (Tor 2) als EIN MAF-Lauf mit MAF-nativem Human-Gate (RequestPort), Muster wie
 // github-forward/pbi-update. Zwei Graphen (wie das Original), beide mit Human-Gate + Apply:

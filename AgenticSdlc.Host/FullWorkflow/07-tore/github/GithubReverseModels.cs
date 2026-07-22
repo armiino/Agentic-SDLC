@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.5 — Reverse GitHub-Feedback-Ingestion (plan-tor3 §6, E4). GitHub-Zustand wird NIE automatisch Wahrheit:
 // ein geschlossenes Issue erzeugt einen VORSCHLAG (StateChange), der erst nach menschlicher Verifikation greift.

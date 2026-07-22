@@ -1,10 +1,10 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Pipeline;
+namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 
 // S6 (Worklist 20.07) — A: die migrierten Stufen-Workflows zu EINEM durchgehenden MAF-Graphen komponiert. Beleg an
 // der natuerlichsten Kette ingest -> pbi-update (ingest-Apply erzeugt das Delta, das pbi-update-Derive konsumiert):

@@ -2,17 +2,17 @@ using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Branch;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.Branch;
+using AgenticSdlc.Host.FullWorkflow.MakerChecker;
+using AgenticSdlc.Host.FullWorkflow.MakerChecker.Workflow;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut;
+namespace AgenticSdlc.Host.FullWorkflow.FanOut;
 
 /// <summary>
 /// E-d-CLI: <c>baseline-fanout [consumable.json] [model] [--artifacts requirements,risks] [--k N] [--min-votes N]

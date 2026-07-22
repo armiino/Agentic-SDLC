@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+namespace AgenticSdlc.Host.FullWorkflow.Delta;
 
 /// <summary>
 /// Speicherneutrale fachliche Operationen auf dem Projektzustand. Implementierungen koennen JSON, SQLite oder spaeter

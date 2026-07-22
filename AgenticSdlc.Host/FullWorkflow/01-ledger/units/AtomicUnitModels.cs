@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 public sealed record AtomicUnitFixture(
     [property: JsonPropertyName("units")] IReadOnlyList<AtomicUnit> Units);

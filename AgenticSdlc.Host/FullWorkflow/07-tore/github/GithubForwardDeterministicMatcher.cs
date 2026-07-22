@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.6 — der DETERMINISTISCHE Gegenspieler zum GithubForwardAgent fuer den unmapped-Fall: reiner Keyword-Overlap
 // (GithubIssueQueries.Search) statt semantischer Zuordnung. Ueber Schwelle -> LINK, sonst CREATE. Erzeugt dasselbe

@@ -1,7 +1,7 @@
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using AgenticSdlc.HumanReview;
@@ -11,7 +11,7 @@ using Microsoft.Agents.AI.Workflows.Checkpointing;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // S4 (Worklist 20.07): ingestion (Tor 1) als EIN MAF-Lauf mit MAF-nativem Human-Gate + Checkpoint (Muster wie
 // pbi-update-hitl/decision-resolve-hitl). Alter Pfad (ingest-requirements / -review / -apply) bleibt parallel.

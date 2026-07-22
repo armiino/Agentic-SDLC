@@ -1,10 +1,10 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // CLI: github-reverse [--issues <snapshot.json>]
 // Reverse-Maker als MAF-Workflow (Seed -> Gate -> Finalize, deterministische Executor-Knoten, siehe

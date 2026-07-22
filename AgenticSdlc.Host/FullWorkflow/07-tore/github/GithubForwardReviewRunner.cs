@@ -2,7 +2,7 @@ using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // HumanReview des Forward-Plans (apply/skip). Runner um die generische HumanReview-UI, wie pbi-update-review.
 public static class GithubForwardReviewRunner

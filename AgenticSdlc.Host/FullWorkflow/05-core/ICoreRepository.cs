@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Schreib-/Lese-Port des Core. JSON jetzt (JsonCoreRepository), DB spaeter (gleicher Port).
 // Bewusst der EINZIGE Schreibweg in den Core (kein File.Write daneben) -> DB-tauschbar (IST-Zustand §6/§7).

@@ -2,7 +2,7 @@ using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Run;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+namespace AgenticSdlc.Host.FullWorkflow.Artifacts;
 
 /// <summary>
 /// I-a-CLI: <c>assign-artifact-ids &lt;artifact.md&gt; [--type requirements|risks|architecture|open-questions]

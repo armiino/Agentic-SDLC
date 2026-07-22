@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 // ── L3 Open-World-Ableitung: Datenverträge + Edge-Payloads ───────────────────────────────────────────────────────
 // Siehe docs/L3-openworld-plan.md. v1 = linearer Prepare-Pfad:

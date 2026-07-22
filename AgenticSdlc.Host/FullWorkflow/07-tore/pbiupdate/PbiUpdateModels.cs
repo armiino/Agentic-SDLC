@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 // Inc 1c-3: incrementeller PBI-Update. Aus der affected-items-view + dem Ingestion-Delta werden NUR betroffene
 // PBIs gezielt aktualisiert (stabile IDs). Sparse: unberuehrte PBIs erscheinen NICHT im Plan.

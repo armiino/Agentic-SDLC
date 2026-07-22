@@ -1,7 +1,7 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Run;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Schreibt die Pro-Stufe-Outputs des Ledger-Workflows nach <c>runs/ledger/&lt;runId&gt;/step-NN-name/</c>.

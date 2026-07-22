@@ -1,11 +1,11 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker;
+namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
 
 /// <summary>
 /// C7 / MC3 — der bounded Evidence-Support-Critic. Prüft, ob jedes konkrete Detail einer Artefakt-Zeile durch ihr

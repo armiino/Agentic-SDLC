@@ -4,7 +4,7 @@ using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 internal sealed record ClarificationPlanningDraft(ClarificationPlanningInput Input, ClarificationPlanDocument Plan, bool Saved, int ToolCheckRounds);
 internal sealed record ClarificationPlanningVerdict(ClarificationPlanningInput Input, ClarificationPlanDocument Plan, ClarificationPlanGateReport Report, bool Saved, int ToolCheckRounds);

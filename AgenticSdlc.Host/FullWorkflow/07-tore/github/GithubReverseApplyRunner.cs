@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // CLI: github-reverse-apply <github-reverse-run|dir>
 // Deterministischer Apply der VERIFIZIERTEN Reverse-Ops in den Core (E4: done nur ueber freigegebenes PBI_DONE).

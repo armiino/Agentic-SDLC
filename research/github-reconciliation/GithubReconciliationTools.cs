@@ -2,7 +2,7 @@ using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 internal sealed class GithubReconciliationTools(GithubReconciliationInput input, RunContext run)
 {

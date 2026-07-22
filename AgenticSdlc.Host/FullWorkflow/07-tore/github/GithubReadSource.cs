@@ -1,7 +1,7 @@
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.2 — laedt den reproduzierbaren Issue-Snapshot fuer die Read-Tools. Akzeptiert das Format von
 // `github-snapshot issues` (reines GithubIssueSnapshot[]-Array) ODER einen Wrapper { "issues": [...] }.

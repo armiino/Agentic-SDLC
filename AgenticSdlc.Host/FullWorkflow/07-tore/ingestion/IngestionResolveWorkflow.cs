@@ -1,11 +1,11 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 internal sealed record IngestionResolveInput(ProjectStateDocument MeetingDelta, ProjectStateDocument Core, string SourceMeetingDeltaPath, int MaxAttempts);
 internal sealed record IngestionDraft(ProjectStateDocument MeetingDelta, ProjectStateDocument Core, string SourcePath, IReadOnlyList<StateChangeOperation> Operations, bool Saved, int CheckRounds, int Attempt, string Source, int MaxAttempts, IReadOnlyList<GateAttempt> History);

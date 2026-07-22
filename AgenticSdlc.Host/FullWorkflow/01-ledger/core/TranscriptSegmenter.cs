@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 /// <summary>Eine deterministisch segmentierte Transkript-äusserung (Sprecher-Turn).</summary>
 public sealed record TranscriptTurn(int Index, string Speaker, string Text);

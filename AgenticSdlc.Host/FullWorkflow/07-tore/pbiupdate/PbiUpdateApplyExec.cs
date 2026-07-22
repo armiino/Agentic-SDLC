@@ -1,8 +1,8 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 // S4/S3-analog: Idempotenz-Marker. Haelt die planId, die zuletzt erfolgreich angewendet wurde. Ein zweiter Apply
 // desselben Plans (Doppel-Resume / Re-Run) ist dann ein No-Op — kein zweiter Core-Write (kein NEW_PBI-Duplikat,

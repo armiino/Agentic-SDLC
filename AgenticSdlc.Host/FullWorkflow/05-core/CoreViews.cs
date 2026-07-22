@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Inc 1c-2: die arbeitsfaehigen Views auf den Core (deterministische Queries, kein LLM). Der Core bleibt die
 // vollstaendige Wahrheit mit Historie; Agenten/Workflows bekommen gezielte Ausschnitte (plan-core-ingestion §3):

@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // Einziges live-geteiltes GitHub-Modell (17 tor3-Dateien + decision-Test).
 // Die reconciliation-only Modelle (GithubReconciliationInput, GithubIssueMapping, GithubActionPlan*)

@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // T2.1 — deterministisches Gate über den Decision-Resolution-Plan (plan-tor2 §6). Kernregeln inkl. Rev-2-
 // Nachvollziehbarkeit (Outcome gesetzt) und Coverage bei ADOPT_NEW (neue Aussage vorhanden → Swap kann decken).

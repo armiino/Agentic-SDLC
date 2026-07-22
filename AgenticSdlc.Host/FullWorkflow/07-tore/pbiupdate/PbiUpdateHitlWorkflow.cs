@@ -1,10 +1,10 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 using System.Globalization;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 // S4 (Worklist 20.07): pbi-update als EIN MAF-Lauf MIT MAF-nativem Human-Gate (RequestPort) statt CLI -review/-apply.
 // Muster identisch zu GithubForwardHitlWorkflow (S1). Wiederverwendet Derive/Maker/Gate/Repair unveraendert.

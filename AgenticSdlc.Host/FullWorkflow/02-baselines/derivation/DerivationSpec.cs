@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+namespace AgenticSdlc.Host.FullWorkflow.Derivation;
 
 /// <summary>
 /// Beschreibt EINE Ableitung der config-gesteuerten Derivation-Familie: „aus Quelle(n) X leite Ziel Y mit Prompt Z ab".

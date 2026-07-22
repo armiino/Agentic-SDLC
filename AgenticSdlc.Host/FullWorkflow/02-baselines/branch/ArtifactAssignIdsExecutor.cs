@@ -1,10 +1,10 @@
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.MakerChecker.Workflow;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Branch;
+namespace AgenticSdlc.Host.FullWorkflow.Branch;
 
 /// <summary>
 /// Terminale Stufe eines Artefakt-Zweigs (E-c): nimmt das <see cref="CheckerRepairResult"/> des gebundenen

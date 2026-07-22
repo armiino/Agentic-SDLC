@@ -1,9 +1,9 @@
 using System.Text;
 using System.Text.Json;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Ledger;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
 /// <summary>
 /// Stufe 3 (Kern): <b>chunked Per-Item-Validierung</b> kanonischer Ledger-Einträge gegen das Transcript.

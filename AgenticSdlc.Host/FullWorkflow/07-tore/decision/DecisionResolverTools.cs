@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // T2.2 — Tools des Decision-Resolver-Agenten (der 4. agentische Knoten): er deutet eine freie Stakeholder-Antwort
 // in eine strukturierte Auflösung je offener Decision (Outcome + optional neue Aussage). Die eigentliche State-

@@ -1,9 +1,9 @@
 using AgenticSdlc.Host.Configuration;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 // HumanReview der PBI-Operationen (apply/skip). Runner um die generische HumanReview-UI, wie ingest-review.
 public static class PbiUpdateReviewRunner

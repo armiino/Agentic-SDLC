@@ -1,11 +1,11 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.MakerChecker;
+using AgenticSdlc.Host.FullWorkflow.MakerChecker.Workflow;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Branch;
+namespace AgenticSdlc.Host.FullWorkflow.Branch;
 
 /// <summary>
 /// E-c — komponiert EINEN Artefakt-Zweig MAF-nativ: der Evidence-Baseline-Agent, der gebundene CheckerRepair-

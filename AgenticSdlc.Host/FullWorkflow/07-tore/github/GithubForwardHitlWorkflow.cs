@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // S1 (Worklist 20.07): github-forward als EIN MAF-Lauf MIT MAF-nativem Human-Gate (RequestPort) statt dem
 // CLI-Split -review/-apply. Wiederverwendet Seed/Maker/Gate/Repair (unveraendert). Graph:

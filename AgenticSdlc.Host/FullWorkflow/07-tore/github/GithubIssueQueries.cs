@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.2 — reine, deterministische Read-Queries ueber einen GithubIssueSnapshot[] (kein LLM, kein Netz, kein Token).
 // Quelle ist ein reproduzierbarer Issue-Snapshot (github-snapshot issues bzw. eine gecachte Datei). Sowohl die

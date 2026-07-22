@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+namespace AgenticSdlc.Host.FullWorkflow.Derivation;
 
 /// <summary>
 /// Rollen-basiertes Ausgabe-Layout eines Ableitungs-Ordners (<c>derivations/&lt;spec&gt;/</c>). Macht „woher kommt was"

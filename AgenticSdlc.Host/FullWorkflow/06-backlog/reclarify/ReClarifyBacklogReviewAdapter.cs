@@ -2,7 +2,7 @@ using AgenticSdlc.HumanReview;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public sealed record BacklogHumanDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,
@@ -83,16 +83,8 @@ public static class ReClarifyBacklogReviewAdapter
     }
 
     public static void MergeExistingDecisions(ReviewSession session, BacklogHumanDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byItem = file.Decisions
-            .Where(d => !string.IsNullOrWhiteSpace(d.PbiId))
-            .GroupBy(d => d.PbiId, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-
-        foreach (var item in session.Items)
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.PbiId, (item, decision) =>
         {
-            if (!byItem.TryGetValue(item.ItemId, out var decision)) continue;
             Set(item, FieldDecision, decision.Decision);
             if (!string.IsNullOrWhiteSpace(decision.EditedPbiJson))
             {
@@ -104,9 +96,7 @@ public static class ReClarifyBacklogReviewAdapter
                 catch { Set(item, FieldEditStatement, decision.EditedPbiJson); }
             }
             Set(item, FieldReason, decision.Reason);
-            item.Resolved = Resolved(item);
-        }
-    }
+        }, Resolved);
 
     public static string ResolveContext(string resolverKey, CanonicalRequirementsBaseline baseline, ProductBacklogDocument backlog, ReClarifyGateReport gate)
     {

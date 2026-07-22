@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Deterministische, lesbare Markdown-Projektion des Product Backlog. Wahrheit bleibt product-backlog.json;
 // das MD ist nur eine Arbeitsansicht (wie l4-requirements-doc fuer die Baseline). Kein LLM.

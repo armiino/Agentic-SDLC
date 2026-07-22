@@ -2,11 +2,11 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker;
+namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
 
 /// <summary>
 /// MC2 — bounded Repair. Patcht NUR die von einem Verstoß betroffenen Zeilen (nie das ganze Artefakt), damit ein

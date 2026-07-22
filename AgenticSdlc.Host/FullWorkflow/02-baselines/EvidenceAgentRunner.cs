@@ -3,14 +3,14 @@ using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent;
+namespace AgenticSdlc.Host.FullWorkflow;
 
 /// <summary>
 /// Kapitel B (Evidenz-Agent): Artefakt-Generierung aus dem Ledger (Arm B) vs. Rohtranskript (Arm A),

@@ -1,7 +1,7 @@
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using AgenticSdlc.HumanReview;
@@ -11,7 +11,7 @@ using Microsoft.Agents.AI.Workflows.Checkpointing;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
+namespace AgenticSdlc.Host.FullWorkflow.Decision;
 
 // S4 (Worklist 20.07): decision (Tor 2) als EIN MAF-Lauf mit MAF-nativem Human-Gate + Checkpoint (Muster wie
 // pbi-update-hitl). Zwei Modi (wie das Original): deterministisch (--input, KEIN LLM) + agentisch (--answer, LLM).

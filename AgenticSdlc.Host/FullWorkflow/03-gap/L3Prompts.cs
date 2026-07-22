@@ -1,7 +1,7 @@
 using System.Text;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// Baut die USER-Nachrichten (Umwelt-Kontext) für die L3-Agenten. Die Persona/Instruktion kommt getrennt aus den

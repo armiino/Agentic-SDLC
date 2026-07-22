@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Stufe 0: liefert alle AKTIVEN Requirement-Entitaeten als Kandidaten. Bei ~69 Items ist der Agent
 // selbst der semantische Matcher (kein Index noetig) - siehe plan-core-ingestion §7. incomingText wird

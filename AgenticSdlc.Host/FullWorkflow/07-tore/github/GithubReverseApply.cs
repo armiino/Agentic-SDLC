@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.5 — deterministischer Apply der VERIFIZIERTEN (menschlich freigegebenen) Reverse-Ops in den Core.
 // E4-Invariante: PBI-Status `done` entsteht AUSSCHLIESSLICH hier, ueber ein freigegebenes PBI_DONE — nie aus

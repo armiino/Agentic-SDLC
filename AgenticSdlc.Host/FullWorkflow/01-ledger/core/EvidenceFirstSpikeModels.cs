@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.Evaluation.PerItem;
+namespace AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 public sealed record SemanticLedgerFixture(
     [property: JsonPropertyName("entries")] IReadOnlyList<SemanticLedgerEntry> Entries);

@@ -2,7 +2,7 @@ using AgenticSdlc.HumanReview;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public sealed record ClusterHumanDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,
@@ -65,21 +65,11 @@ public static class ReClarifyClusterReviewAdapter
     }
 
     public static void MergeExistingDecisions(ReviewSession session, ClusterHumanDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byOp = file.Decisions
-            .Where(d => !string.IsNullOrWhiteSpace(d.OpId))
-            .GroupBy(d => d.OpId, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-
-        foreach (var item in session.Items)
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.OpId, (item, decision) =>
         {
-            if (!byOp.TryGetValue(item.ItemId, out var decision)) continue;
             Set(item, FieldDecision, decision.Decision);
             Set(item, FieldReason, decision.Reason);
-            item.Resolved = Resolved(item);
-        }
-    }
+        }, Resolved);
 
     public static string ResolveContext(string resolverKey, CanonicalRequirementsBaseline baseline, FeatureClusterSet clusters, ReClarifyGateReport gate, ClusterReviewReport review)
     {

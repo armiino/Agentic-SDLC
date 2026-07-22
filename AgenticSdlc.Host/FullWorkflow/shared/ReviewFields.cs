@@ -1,6 +1,6 @@
 using AgenticSdlc.HumanReview;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent;
+namespace AgenticSdlc.Host.FullWorkflow;
 
 // Adapter-Basis Welle 1 (2026-07-22): die Feld-Zugriffs-Mechanik der Review-Adapter — existierte als
 // identische private Kopie in 13 Adaptern. Of() trimmt bewusst (Entscheidungen wie "apply " zaehlen).

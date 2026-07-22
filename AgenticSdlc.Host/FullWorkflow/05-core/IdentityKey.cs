@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Deterministischer Such-ANKER fuer Retrieval/Dedup - NICHT das Identitaets-Urteil (das faellt im
 // Resolver + Gate + HumanReview, plan-core-ingestion §4). Normalisiert einen Requirement-Text auf einen

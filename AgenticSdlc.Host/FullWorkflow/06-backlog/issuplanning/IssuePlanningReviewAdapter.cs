@@ -2,7 +2,7 @@ using AgenticSdlc.HumanReview;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 public sealed record IssuePlanningHumanDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,
@@ -94,16 +94,8 @@ public static class IssuePlanningReviewAdapter
     }
 
     public static void MergeExistingDecisions(ReviewSession session, IssuePlanningHumanDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byItem = file.Decisions
-            .Where(d => !string.IsNullOrWhiteSpace(d.IssuePlanId))
-            .GroupBy(d => d.IssuePlanId, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-
-        foreach (var item in session.Items)
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.IssuePlanId, (item, decision) =>
         {
-            if (!byItem.TryGetValue(item.ItemId, out var decision)) continue;
             Set(item, FieldDecision, decision.Decision);
             if (!string.IsNullOrWhiteSpace(decision.EditedIssuePlanItemJson))
             {
@@ -118,9 +110,7 @@ public static class IssuePlanningReviewAdapter
                 }
             }
             Set(item, FieldReason, decision.Reason);
-            item.Resolved = Resolved(item);
-        }
-    }
+        }, Resolved);
 
     public static string ResolveContext(string resolverKey, IssuePlanningInput input, IssuePlanDocument plan, IssuePlanGateReport gate)
     {

@@ -1,9 +1,9 @@
 using AgenticSdlc.Host.Configuration;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // HumanReview der Ingestion-Operationen - Runner um die generische AgenticSdlc.HumanReview-UI,
 // exakt wie ReClarifyClusterReviewRunner. Schreibt human-decisions.json in den Ingestion-Run.

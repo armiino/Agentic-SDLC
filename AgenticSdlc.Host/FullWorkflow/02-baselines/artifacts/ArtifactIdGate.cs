@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
+namespace AgenticSdlc.Host.FullWorkflow.Artifacts;
 
 /// <summary>
 /// I-a — das deterministische ID-Gate. Wandelt ein geprüftes Baseline-Artefakt (Markdown, Listenzeilen mit

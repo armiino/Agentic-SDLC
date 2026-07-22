@@ -1,7 +1,7 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+using AgenticSdlc.Host.FullWorkflow.Backlog;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.6 — Drift-Fixture: ein Issue-Snapshot + unmapped-PBI-Faelle mit GOLD-Label (was der ideale Matcher tun sollte).
 // Bewusst die Faelle aus plan-tor3 §9: Paraphrase, entfernte Requirement-IDs (Dedup-Recall) sowie klarer Treffer /

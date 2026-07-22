@@ -2,17 +2,17 @@ using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.FanOut;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Load;
-using AgenticSdlc.Host.Phases.Phase2.Ledger;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
+using AgenticSdlc.Host.FullWorkflow.FanOut;
+using AgenticSdlc.Host.FullWorkflow.Load;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Recipes;
+namespace AgenticSdlc.Host.FullWorkflow.Recipes;
 
 /// <summary>
 /// Der Rezept-Assembler-Runner (CLI: <c>recipe &lt;recipe.json&gt; [model] [--dry-run]</c>): liest ein deklaratives

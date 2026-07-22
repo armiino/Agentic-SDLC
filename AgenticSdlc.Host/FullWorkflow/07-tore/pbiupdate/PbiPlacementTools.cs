@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
+namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 // Tools des Platzierungs-Agenten (der EINZIGE agentische Teil von 1c-3): entscheidet je NEUEM Requirement
 // EXTEND_PBI (welches bestehende PBI) vs NEW_PBI (in welchem Feature). Beleg ueber Requirement-Overlap/Feature.

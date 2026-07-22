@@ -1,9 +1,9 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Authored-Relations-Nachschlag (L4/L3-Relationen aus dem ProjectState) auf CAN-REQ-Ebene.
 // Best-effort: laedt den ProjectState ueber baseline.SourceProjectStatePath; faellt sonst leer aus.

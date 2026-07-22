@@ -1,11 +1,11 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 internal sealed record L4ConsolidationDraft(ProjectStateDocument State, ConsolidationPlan Plan, bool Saved, int ToolCheckRounds);
 internal sealed record L4ConsolidationVerdict(ProjectStateDocument State, ConsolidationPlan Plan, ConsolidationGateReport Report, bool Saved, int ToolCheckRounds);

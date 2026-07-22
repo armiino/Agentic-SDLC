@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+namespace AgenticSdlc.Host.FullWorkflow.Derivation;
 
 /// <summary>
 /// COVERAGE-RECHENSCHAFT (Accountable-Arm) — deterministischer, CLOSED-WORLD-Scorecard über den GEGEBENEN Input:

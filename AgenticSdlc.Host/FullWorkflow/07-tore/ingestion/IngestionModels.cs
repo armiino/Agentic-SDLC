@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // StateChangePlan = die vom Resolver vorgeschlagenen OPERATIONEN auf dem Core (plan-core-ingestion §6),
 // vor Gate/HumanReview/Apply. Wiederverwendung des operationsbasierten Musters (wie ClusterOperation).

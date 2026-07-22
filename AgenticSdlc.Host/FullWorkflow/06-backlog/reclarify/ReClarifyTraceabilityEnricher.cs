@@ -1,6 +1,6 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Setzt PBI.traceability DETERMINISTISCH aus der echten Provenienz, statt dem (unpraezisen) Agentenfeld
 // zu vertrauen. Kette: PBI.requirementIds (CAN-REQ) -> canonical baseline.sourceItemIds (ProjectState-Items

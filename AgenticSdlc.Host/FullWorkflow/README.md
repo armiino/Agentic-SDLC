@@ -22,4 +22,4 @@ ZWISCHEN den Stufen übergeben Datei-Artefakte mit Human-Gates (bewusst — jede
 - **Laufender Betrieb (pro Meeting):** 01 → 02 → 04 (= MeetingDelta) → 07 Tore mutieren 05 → `07-tore/github` projiziert nach GitHub. GitHub ist NIE Quelle — Rückweg nur als kontrolliertes Feedback (Reverse).
 
 Historie/Genealogie: Tags `v-s0…v-s9`, `archive/README.md`, lokale Karten (`PROJECT-GENEALOGY.md` u.a.).
-Hinweis: Namespaces tragen noch die historischen Namen (`…Phases.Phase2.EvidenzAgent.*`) — Angleich folgt als eigener Schritt.
+Namespaces = Struktur seit R6 (2026-07-22): `AgenticSdlc.Host.FullWorkflow.{Ledger, Ledger.Core, Backlog, Gap, Delta, Core, PbiUpdate, Decision, Tore.Github, Pipeline, …}`. Rest-Notizen: NS `Core` deckt core+ingestion; contracts-Modelle im `Backlog`-NS.

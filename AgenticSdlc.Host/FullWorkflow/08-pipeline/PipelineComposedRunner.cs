@@ -1,9 +1,9 @@
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.PbiUpdate;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
@@ -12,7 +12,7 @@ using Microsoft.Agents.AI.Workflows.Checkpointing;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Pipeline;
+namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 
 // S6 (Worklist 20.07) — A: EIN MAF-Lauf ueber ZWEI Stufen (ingest -> pbi-update) mit ZWEI Human-Gates,
 // prozessuebergreifend resumebar. Ablauf: start -> resume (Gate 1) -> resume (Gate 2).

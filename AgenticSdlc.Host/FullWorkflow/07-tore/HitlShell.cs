@@ -4,7 +4,7 @@ using Microsoft.Agents.AI.Workflows.Checkpointing;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent;
+namespace AgenticSdlc.Host.FullWorkflow;
 
 // R2 (2026-07-22): geteilte HITL-Shell der *-hitl-Runner (vorher 4x nahezu identisch dupliziert).
 // Kapselt NUR die Mechanik: Checkpoint-Store, Start-Schleife (bis Human-Gate + pointer.json), Resume-Schleife

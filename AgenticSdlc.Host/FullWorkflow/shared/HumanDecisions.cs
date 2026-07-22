@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent;
+namespace AgenticSdlc.Host.FullWorkflow;
 
 // R3a (2026-07-22): geteilte Accept-Aufloesung der Human-Gates — die Dreifach-Logik
 // (--accept-all | --accept ID,ID | human-decisions.json) existierte 4x kopiert in den *-hitl-Runnern.

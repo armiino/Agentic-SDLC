@@ -1,8 +1,8 @@
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Artifacts;
-using AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using AgenticSdlc.Host.FullWorkflow.Derivation;
 using AgenticSdlc.HumanReview;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// Projiziert das L3-Human-Review-Paket (die Kandidaten, die eine menschliche Entscheidung brauchen — alles außer
@@ -156,21 +156,12 @@ public static class L3ReviewAdapter
     /// UI eine unterbrochene Sitzung exakt dort fortsetzt, wo der Mensch aufgehoert hat.
     /// </summary>
     public static void MergeExistingDecisions(ReviewSession session, HumanDecisionsFile? file)
-    {
-        if (file is null) return;
-        var byCandidate = file.Decisions
-            .Where(d => !string.IsNullOrWhiteSpace(d.CandidateId))
-            .GroupBy(d => d.CandidateId, StringComparer.Ordinal)
-            .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-        foreach (var item in session.Items)
+        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.CandidateId, (item, decision) =>
         {
-            if (!byCandidate.TryGetValue(item.ItemId, out var decision)) continue;
             Set(item, FieldDecision, decision.Decision);
             Set(item, FieldEdited, decision.EditedText);
             Set(item, FieldReason, decision.Reason);
-            item.Resolved = Resolved(item);
-        }
-    }
+        }, Resolved);
 
     private static string FieldOf(ReviewItem item, string key) => ReviewFields.Of(item, key); // Basis-W1
 

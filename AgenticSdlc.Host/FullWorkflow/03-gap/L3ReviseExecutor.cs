@@ -4,7 +4,7 @@ using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// Reflect-Sub-Workflow (NEEDS_REVISION, §5.3/§9): der REVISE-Agent überarbeitet je Kandidat den vorigen Entwurf anhand

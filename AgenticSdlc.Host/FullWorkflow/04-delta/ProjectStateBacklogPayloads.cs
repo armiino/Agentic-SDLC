@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
+namespace AgenticSdlc.Host.FullWorkflow.Delta;
 
 // Typisierte Payloads fuer Backlog-Entitaeten im Core (Increment 1c-1). ProjectStateItem bleibt die CoreItem-
 // Basis; nur das zu itemType passende Payload ist gesetzt (feature -> FeaturePayload, pbi -> PbiPayload).

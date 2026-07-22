@@ -59,19 +59,19 @@ if (args.Length > 0)
 // ── Kommando-Dispatch (R1, 2026-07-22): Kommandos registrieren sich je Kettenglied (*Commands.cs).
 // Verhalten unveraendert (case-insensitive Lookup statt if-Kette). Unbekannte Kommandos: s.u.
 var commands = new Dictionary<string, AgenticSdlc.Host.CommandHandler>(StringComparer.OrdinalIgnoreCase);
-AgenticSdlc.Host.Phases.Phase2.Ledger.LedgerCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.BaselineCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3.GapCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState.DeltaCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.CoreCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.BacklogCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core.IngestionCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate.PbiUpdateCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision.DecisionCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3.GithubCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Pipeline.PipelineCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.HitlSpike.SpikeCommands.Register(commands);
-AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4.ResearchCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Ledger.LedgerCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.BaselineCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Gap.GapCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Delta.DeltaCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Core.CoreCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Backlog.BacklogCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Core.IngestionCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.PbiUpdate.PbiUpdateCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Decision.DecisionCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.HitlSpike.SpikeCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Backlog.ResearchCommands.Register(commands);
 if (args.Length > 0 && commands.TryGetValue(args[0], out var commandHandler))
 {
     Environment.ExitCode = await commandHandler(args, settings, repoRoot);
@@ -206,7 +206,7 @@ Environment.ExitCode = settings.AgentPhase switch
 // (Phase2AgentFactory / Pipeline), lässt Phase2Runner unangetastet. E0 = Gerüst-Durchstich.
 async Task<int> RunPhase2EvidenceAsync()
 {
-    var runner = new AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.EvidenceAgentRunner(
+    var runner = new AgenticSdlc.Host.FullWorkflow.EvidenceAgentRunner(
         settings: settings,
         run: run,
         sourceName: sourceName,

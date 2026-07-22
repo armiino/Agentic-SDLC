@@ -3,7 +3,9 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+using AgenticSdlc.Host.FullWorkflow.Backlog; // R6-Randnotiz: GithubIssueWriteResult liegt (noch) bei research/github-write — Typ-Heimat beim Typ-Schnitt klaeren
+
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 internal interface IGithubIssueClient
 {

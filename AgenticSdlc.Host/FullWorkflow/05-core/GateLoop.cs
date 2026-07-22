@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // Geteilte Primitive des gate-getriebenen Maker-Checker-Repair-Loops (R7) — EINE Entscheidungsform fuer alle
 // agentischen Knoten (GithubForward, pbi-update, Decision, Requirement-Resolver), Form des CheckerRepairWorkflow.

@@ -1,6 +1,6 @@
 using AgenticSdlc.HumanReview;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent;
+namespace AgenticSdlc.Host.FullWorkflow;
 
 // R3b (2026-07-22): geteilte UI-Review-Orchestrierung — das CollectViaUi-Muster existierte 4x in den *-hitl-
 // Runnern (und aehnlich in den -review-Runnern): Resolved setzen, Review-Server mit Autosave-Persist fahren,

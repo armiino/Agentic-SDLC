@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
+namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 // CLI: core-view <active-backlog|archive|github-sync> [--out <file>]
 // Materialisiert eine arbeitsfaehige View auf den Core (deterministisch, kein LLM). Die affected-items-view

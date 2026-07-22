@@ -1,4 +1,4 @@
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
+namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Deterministische Projektion ProductBacklogView -> IssuePlan (plan-pb §8).
 // Die PBIs sind bereits geklaert + human-reviewed, daher ist die Issue-Abbildung mechanisch:

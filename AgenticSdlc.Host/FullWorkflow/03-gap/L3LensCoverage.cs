@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
+namespace AgenticSdlc.Host.FullWorkflow.Gap;
 
 /// <summary>
 /// LENS-COVERAGE-GATE (Schritt 3) — DETERMINISTISCHER, closed-world Scorecard über die generierten Kandidaten gegen den
