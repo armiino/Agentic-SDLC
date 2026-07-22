@@ -251,14 +251,9 @@ public static class L4ReviewAdapter
             ? "auto: Gate-pflichtige semantische Operation; bitte fachlich prüfen."
             : "auto: Kontrolloperation ohne Gate-pflichtige Semantik; im Review editierbar.";
 
-    private static string FieldOf(ReviewItem it, string key) =>
-        it.FieldValues.FirstOrDefault(f => f.FieldKey == key)?.Value?.Trim() ?? "";
+    private static string FieldOf(ReviewItem item, string key) => ReviewFields.Of(item, key); // Basis-W1
 
-    private static void Set(ReviewItem item, string key, string? value)
-    {
-        item.FieldValues.RemoveAll(f => f.FieldKey == key);
-        item.FieldValues.Add(new ReviewFieldValue(key, value));
-    }
+    private static void Set(ReviewItem item, string key, string? value) => ReviewFields.Set(item, key, value); // Basis-W1
 
     private static string Truncate(string value, int max)
     {

@@ -364,14 +364,9 @@ public static class L4CompletionReviewAdapter
             ? "auto: DISK ist Open-World und muss bewusst angenommen, editiert oder abgelehnt werden."
             : "auto: Completion-Proposal aus Adequacy-Feedback; bitte fachlich pruefen.";
 
-    private static string FieldOf(ReviewItem item, string key) =>
-        item.FieldValues.FirstOrDefault(f => f.FieldKey == key)?.Value?.Trim() ?? "";
+    private static string FieldOf(ReviewItem item, string key) => ReviewFields.Of(item, key); // Basis-W1
 
-    private static void Set(ReviewItem item, string key, string? value)
-    {
-        item.FieldValues.RemoveAll(f => f.FieldKey == key);
-        item.FieldValues.Add(new ReviewFieldValue(key, value));
-    }
+    private static void Set(ReviewItem item, string key, string? value) => ReviewFields.Set(item, key, value); // Basis-W1
 
     private static void SetChangedProposalFields(ReviewItem item, L4CompletionProposalItem proposal)
     {

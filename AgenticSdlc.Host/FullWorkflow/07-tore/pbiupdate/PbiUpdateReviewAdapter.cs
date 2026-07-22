@@ -107,6 +107,6 @@ public static class PbiUpdateReviewAdapter
         return item;
     }
 
-    private static string FieldOf(ReviewItem item, string key) => item.FieldValues.FirstOrDefault(f => f.FieldKey == key)?.Value?.Trim() ?? "";
-    private static void Set(ReviewItem item, string key, string? value) { item.FieldValues.RemoveAll(f => f.FieldKey == key); item.FieldValues.Add(new ReviewFieldValue(key, value)); }
+    private static string FieldOf(ReviewItem item, string key) => ReviewFields.Of(item, key); // Basis-W1
+    private static void Set(ReviewItem item, string key, string? value) => ReviewFields.Set(item, key, value); // Basis-W1
 }
