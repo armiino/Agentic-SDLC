@@ -14,7 +14,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
 public static class GithubForwardApplyRunner
 {
     private const string UserAgent = "Agentic-SDLC";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {

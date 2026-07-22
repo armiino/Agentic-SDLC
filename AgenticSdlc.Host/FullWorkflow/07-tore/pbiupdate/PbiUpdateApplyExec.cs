@@ -18,7 +18,7 @@ public sealed record PbiUpdateAppliedMarker(
 // Core NUR ueber den Repository-Port + Audit-Snapshot (core-before.json).
 public static class PbiUpdateApplyExec
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<PbiUpdateApplyReport> ExecuteAsync(
         string planDir, PbiStateChangePlanDocument plan, ISet<int> accepted, string repoRoot, CancellationToken ct = default)

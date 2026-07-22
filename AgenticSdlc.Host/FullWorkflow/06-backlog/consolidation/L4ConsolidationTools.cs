@@ -7,7 +7,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
 
 internal sealed class L4ConsolidationTools(ProjectStateDocument state, string sourceProjectStatePath, RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, ProjectStateItem> _itemsById = state.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
     private readonly List<ConsolidationPlan> _savedPlans = [];
     private int _checkRounds;

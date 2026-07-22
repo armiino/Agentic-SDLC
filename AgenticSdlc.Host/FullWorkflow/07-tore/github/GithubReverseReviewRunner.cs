@@ -7,7 +7,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
 // HumanReview des Reverse-Plans (apply/skip; bei PBI_DONE = Verifikation, E4). Runner um die generische UI.
 public static class GithubReverseReviewRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

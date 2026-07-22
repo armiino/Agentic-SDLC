@@ -9,7 +9,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
 // und schneidet es in wertorientierte PBIs mit Akzeptanzkriterien + expliziten offenen Entscheidungen.
 internal sealed class ReClarifyBacklogTools(FeatureClusterSet clusters, CanonicalRequirementsBaseline baseline, RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, CanonicalRequirement> _byReq = baseline.Requirements.ToDictionary(r => r.RequirementId, StringComparer.Ordinal);
     private readonly Dictionary<string, FeatureCluster> _byCluster = clusters.Clusters.ToDictionary(c => c.ClusterId, StringComparer.Ordinal);
     private IReadOnlyList<ProductBacklogItem>? _saved;

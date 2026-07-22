@@ -21,7 +21,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Branch;
 [YieldsOutput(typeof(ArtifactDocument))]
 internal sealed class ArtifactAssignIdsExecutor : Executor<CheckerRepairResult>
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     private readonly RunContext _run;
     private readonly string _artifactType;

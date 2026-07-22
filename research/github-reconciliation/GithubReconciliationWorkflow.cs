@@ -78,7 +78,7 @@ internal sealed class GithubReconciliationGateExecutor(RunContext run) : Executo
 [YieldsOutput(typeof(GithubReconciliationResult))]
 internal sealed class GithubReconciliationFinalizeExecutor(RunContext run, string outDir) : Executor<GithubReconciliationVerdict>("GithubReconciliationFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(GithubReconciliationVerdict verdict, IWorkflowContext context, CancellationToken ct = default)
     {

@@ -22,7 +22,7 @@ public static class ReClarifyRunner
     private const string MakerName = "L4ReClarifyClusterAgent";
     private const string ReviewName = "L4ReClarifyClusterReviewAgent";
     private const string ClarifyName = "L4ReClarifyBacklogAgent";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

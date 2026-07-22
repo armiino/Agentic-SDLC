@@ -27,7 +27,7 @@ public sealed record PbiUpdateReviewResponse(IReadOnlyList<string> AcceptedOpIds
 [YieldsOutput(typeof(PbiUpdateWfResult))]
 internal sealed class PbiUpdateHitlFinalizeExecutor(RunContext run) : Executor<PbiUpdateVerdict>("PbiUpdateHitlFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(PbiUpdateVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -68,7 +68,7 @@ internal sealed class PbiUpdateHitlFinalizeExecutor(RunContext run) : Executor<P
 [YieldsOutput(typeof(PbiUpdateApplyReport))]
 internal sealed class PbiUpdateApplyExecutor(RunContext run, string repoRoot, string outDir) : Executor<PbiUpdateReviewResponse>("PbiUpdateApply")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(PbiUpdateReviewResponse resp, IWorkflowContext context, CancellationToken ct = default)
     {

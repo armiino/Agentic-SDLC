@@ -9,7 +9,7 @@ internal sealed class ClarificationPlanningTools(
     string sourceClarificationPlanningInputPath,
     RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, ClarificationPlanningInputItem> _itemsById = input.Items.ToDictionary(i => i.ClarificationId, StringComparer.Ordinal);
     private readonly List<ClarificationPlanDocument> _savedPlans = [];
     private int _checkRounds;

@@ -26,7 +26,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
 [YieldsOutput(typeof(DerivationResult))]
 internal sealed class DerivationAgenticExecutor : Executor<SourceArtifactSet>
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private static readonly JsonSerializerOptions Read = new(JsonSerializerDefaults.Web);
 
     private readonly Func<IReadOnlyList<AITool>, AIAgent> _agentFactory;

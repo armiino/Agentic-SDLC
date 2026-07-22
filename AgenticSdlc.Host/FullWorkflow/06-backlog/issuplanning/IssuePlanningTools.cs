@@ -6,7 +6,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
 
 internal sealed class IssuePlanningTools(IssuePlanningInput input, string sourceIssuePlanningInputPath, RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, IssuePlanningInputItem> _itemsById = input.Items.ToDictionary(i => i.RequirementId, StringComparer.Ordinal);
     private readonly List<IssuePlanDocument> _savedPlans = [];
     private int _checkRounds;

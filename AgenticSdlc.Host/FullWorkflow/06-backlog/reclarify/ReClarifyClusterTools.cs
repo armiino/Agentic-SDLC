@@ -57,7 +57,7 @@ internal sealed class RelationLookup
 // MAKER-Tools: der Cluster-Agent erkundet Requirements + authored Relationen und speichert Cluster.
 internal sealed class ReClarifyClusterTools(CanonicalRequirementsBaseline baseline, RelationLookup relations, RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, CanonicalRequirement> _byId =
         baseline.Requirements.ToDictionary(r => r.RequirementId, StringComparer.Ordinal);
     private IReadOnlyList<FeatureCluster>? _saved;
@@ -156,7 +156,7 @@ internal sealed class ReClarifyClusterTools(CanonicalRequirementsBaseline baseli
 // CHECKER-Tools: der zweite Agent kritisiert die vorgeschlagenen Cluster und speichert ein Review.
 internal sealed class ReClarifyClusterReviewTools(CanonicalRequirementsBaseline baseline, RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, CanonicalRequirement> _byId =
         baseline.Requirements.ToDictionary(r => r.RequirementId, StringComparer.Ordinal);
     private ClusterReviewReport? _saved;

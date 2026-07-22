@@ -48,7 +48,7 @@ internal sealed class IngestionHitlResolveExecutor(Func<IReadOnlyList<AITool>, A
 [YieldsOutput(typeof(IngestionResult))]
 internal sealed class IngestionHitlFinalizeExecutor(RunContext run, string outDir) : Executor<IngestionVerdict>("RequirementIngestionHitlFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(IngestionVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -84,7 +84,7 @@ internal sealed class IngestionHitlFinalizeExecutor(RunContext run, string outDi
 [YieldsOutput(typeof(IngestionApplyReport))]
 internal sealed class IngestionApplyExecutor(RunContext run, string repoRoot, string outDir) : Executor<IngestionReviewResponse>("RequirementIngestionApply")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(IngestionReviewResponse resp, IWorkflowContext context, CancellationToken ct = default)
     {

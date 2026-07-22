@@ -24,13 +24,9 @@ public sealed record HitlPointer(
 
 public static class HitlShell
 {
-    public static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    public static readonly JsonSerializerOptions Json = JsonFiles.Json;   // R3a: geteilte Optionen
 
-    public static async Task<T> LoadAsync<T>(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, Json) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
-    }
+    public static Task<T> LoadAsync<T>(string path) => JsonFiles.LoadAsync<T>(path);
 
     // pointer.json laden; Fehlermeldung + null, wenn kein pausierter HITL-Lauf existiert.
     public static async Task<HitlPointer?> LoadPointerAsync(string cmd, string checkpointDir)
@@ -44,13 +40,19 @@ public static class HitlShell
         return await LoadAsync<HitlPointer>(pointerPath).ConfigureAwait(false);
     }
 
+    public static async Task WritePointerAsync(string checkpointDir, HitlPointer pointer)
+        => await File.WriteAllTextAsync(Path.Combine(checkpointDir, "pointer.json"),
+            JsonSerializer.Serialize(pointer, Json)).ConfigureAwait(false);
+
     // START (Prozess A): Workflow bis zum Human-Gate fahren, Checkpoint sichern, pausieren.
     // onManualOutput: WorkflowOutputEvent.Data -> Exit-Code (Stufe druckt ihre Gate-Fail-Meldung selbst) oder null.
     // pausedLines: stufen-spezifische Zeilen NACH der PAUSIERT-Meldung (Plan-Pfad, Fortsetzen-Hinweis).
+    // gateReachedLine/pausedHeadline: optionale Text-Overrides (z.B. pipeline: "Gate 1 (Ingest) erreicht." / "PAUSIERT an Gate 1...").
     public static async Task<int> StartAsync<TInput>(
         string cmd, Workflow workflow, TInput input, RunContext run, string checkpointDir,
         Func<object?, int?> onManualOutput, IReadOnlyList<string> pausedLines,
-        string? pointerMode = null, string? pointerRepository = null, string? pointerTokenEnv = null)
+        string? pointerMode = null, string? pointerRepository = null, string? pointerTokenEnv = null,
+        string? gateReachedLine = null, string? pausedHeadline = null)
         where TInput : notnull
     {
         using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
@@ -61,7 +63,7 @@ public static class HitlShell
             await using var runHandle = await InProcessExecution.RunStreamingAsync(workflow, input, manager, run.RunId).ConfigureAwait(false);
             await foreach (var evt in runHandle.WatchStreamAsync().ConfigureAwait(false))
             {
-                if (evt is RequestInfoEvent) Console.WriteLine($"[{cmd}] Human-Gate erreicht (Plan wartet auf Freigabe).");
+                if (evt is RequestInfoEvent) Console.WriteLine(gateReachedLine ?? $"[{cmd}] Human-Gate erreicht (Plan wartet auf Freigabe).");
                 if (evt is SuperStepCompletedEvent step && step.CompletionInfo is { } info)
                 {
                     if (info.Checkpoint is { } cp) pending = cp;
@@ -83,9 +85,9 @@ public static class HitlShell
             Console.Error.WriteLine($"[{cmd}] kein Checkpoint mit offenem Human-Gate erzeugt.");
             return 4;
         }
-        await File.WriteAllTextAsync(Path.Combine(checkpointDir, "pointer.json"), JsonSerializer.Serialize(
-            new HitlPointer(run.RunId, pending.SessionId, pending.CheckpointId, pointerMode, pointerRepository, pointerTokenEnv, DateTime.UtcNow), Json)).ConfigureAwait(false);
-        Console.WriteLine($"[{cmd}] PAUSIERT am Human-Gate. checkpointId={pending.CheckpointId}");
+        await WritePointerAsync(checkpointDir,
+            new HitlPointer(run.RunId, pending.SessionId, pending.CheckpointId, pointerMode, pointerRepository, pointerTokenEnv, DateTime.UtcNow)).ConfigureAwait(false);
+        Console.WriteLine(pausedHeadline ?? $"[{cmd}] PAUSIERT am Human-Gate. checkpointId={pending.CheckpointId}");
         foreach (var line in pausedLines) Console.WriteLine(line);
         return 0;
     }

@@ -96,7 +96,7 @@ internal sealed class PbiUpdateRepairExecutor(Func<IReadOnlyList<AITool>, AIAgen
 [YieldsOutput(typeof(PbiUpdateWfResult))]
 internal sealed class PbiUpdateFinalizeExecutor(RunContext run) : Executor<PbiUpdateVerdict>("PbiUpdateFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(PbiUpdateVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {

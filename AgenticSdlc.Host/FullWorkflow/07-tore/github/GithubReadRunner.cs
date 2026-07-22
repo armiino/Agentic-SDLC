@@ -12,7 +12,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
 // dasselbe Verhalten, das der Forward-Maker (T3.3) ueber GithubReadTools bekommt. Nur lesend.
 public static class GithubReadRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {

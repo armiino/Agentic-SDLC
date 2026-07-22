@@ -11,7 +11,7 @@ public static class DecisionResolutionReviewAdapter
     public const string FieldDecision = "decision";
     public const string FieldReason = "reason";
     private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase) { "apply", "skip" };
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static ReviewSession BuildSession(string runId, DecisionResolutionPlanDocument plan, ProjectStateDocument core)
     {

@@ -15,7 +15,7 @@ public sealed record IngestionAppliedMarker(
 
 public static class IngestionApplyExec
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     // accepted = Menge der IncomingItemIds mit decision=apply. MeetingDelta wird aus plan.SourceMeetingDeltaPath geladen.
     public static async Task<IngestionApplyReport> ExecuteAsync(

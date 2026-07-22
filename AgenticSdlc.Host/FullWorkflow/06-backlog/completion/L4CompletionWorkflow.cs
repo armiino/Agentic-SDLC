@@ -122,7 +122,7 @@ internal sealed class L4CompletionGateExecutor(RunContext run) : Executor<L4Comp
 [YieldsOutput(typeof(L4CompletionResult))]
 internal sealed class L4CompletionFinalizeExecutor(RunContext run, string outDir) : Executor<L4CompletionVerdict>("L4CompletionFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(L4CompletionVerdict verdict, IWorkflowContext context, CancellationToken ct = default)
     {

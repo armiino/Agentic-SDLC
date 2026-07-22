@@ -157,7 +157,11 @@ public static class GithubForwardHitlRunner
         IReadOnlyList<string>? accepted = null;
         if (!uiMode)
         {
-            accepted = await ResolveAcceptedAsync(planDir, plan, acceptAll, acceptList).ConfigureAwait(false);
+            accepted = await HumanDecisions.ResolveAcceptedAsync(acceptAll, acceptList, decisionsPath,
+                allIds: () => Enumerable.Range(0, plan.Operations.Count).Select(i => $"op-{i}").ToList(),
+                acceptedFromFile: async p =>
+                    (await HitlShell.LoadAsync<GithubForwardDecisionsFile>(p).ConfigureAwait(false)).Decisions
+                        .Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId).ToList()).ConfigureAwait(false);
             if (accepted is null) { Console.Error.WriteLine("[github-forward-hitl] keine Entscheidung: --ui, --accept-all, --accept op-0,.. oder human-decisions.json noetig."); return 2; }
         }
 
@@ -219,21 +223,6 @@ public static class GithubForwardHitlRunner
         var accepted = decisions.Decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId).ToList();
         Console.WriteLine($"[github-forward-hitl] UI {result.Outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
         return accepted;
-    }
-
-    // Akzeptierte OpIds: explizit (--accept-all / --accept) hat Vorrang, sonst aus human-decisions.json.
-    private static async Task<IReadOnlyList<string>?> ResolveAcceptedAsync(string planDir, GithubForwardPlanDocument plan, bool acceptAll, string? acceptList)
-    {
-        if (acceptAll) return Enumerable.Range(0, plan.Operations.Count).Select(i => $"op-{i}").ToList();
-        if (!string.IsNullOrWhiteSpace(acceptList))
-            return acceptList.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
-        var decisionsPath = Path.Combine(planDir, "human-decisions.json");
-        if (File.Exists(decisionsPath))
-        {
-            var decisions = await LoadAsync<GithubForwardDecisionsFile>(decisionsPath).ConfigureAwait(false);
-            return decisions.Decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId).ToList();
-        }
-        return null;
     }
 
     private static string? ResolveSnapshotPath(string repoRoot, string? issuesArg)

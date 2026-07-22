@@ -7,7 +7,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
 // clarify -> PBIs -> issues) den Core als Requirement-Quelle nutzt. Deterministisch, kein LLM. Inc 1b.
 public static class CoreBaselineRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {

@@ -27,7 +27,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker.Workflow;
 /// </remarks>
 public static class CheckerRepairRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private const string SourceName = "AgenticSdlc.Host";
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)

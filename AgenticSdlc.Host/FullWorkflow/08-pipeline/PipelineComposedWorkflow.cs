@@ -20,7 +20,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Pipeline;
 [SendsMessage(typeof(IngestionApplyReport))]
 internal sealed class IngestComposedApplyExecutor(RunContext run, string repoRoot, string ingestOutDir) : Executor<IngestionReviewResponse>("PipelineIngestApply")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(IngestionReviewResponse resp, IWorkflowContext context, CancellationToken ct = default)
     {

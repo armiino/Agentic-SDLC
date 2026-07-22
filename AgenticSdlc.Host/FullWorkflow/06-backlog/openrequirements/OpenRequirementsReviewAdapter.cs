@@ -12,7 +12,7 @@ public static class OpenRequirementsReviewAdapter
     public const string FieldQuestion = "question";
     public const string FieldReason = "reason";
 
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase)
     {
         "create_clarification_issue", "defer", "out_of_scope", "promote_to_delivery_planning",

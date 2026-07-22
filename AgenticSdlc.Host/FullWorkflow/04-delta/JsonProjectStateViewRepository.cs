@@ -5,7 +5,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.ProjectState;
 
 public sealed class JsonProjectStateViewRepository(string repoRoot) : IProjectStateViewRepository
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public async ValueTask<CanonicalRequirementsView> GetCanonicalRequirementsViewAsync(ProjectScope scope, CancellationToken ct = default)
     {

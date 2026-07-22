@@ -14,7 +14,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
 // Live-Client oder den GitHub-MCP-Server (Variante A) -> in den Notes als bewusst zurueckgestellt dokumentiert.
 internal sealed class GithubReadTools(IReadOnlyList<GithubIssueSnapshot> issues, string? repository, RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public IReadOnlyList<AITool> Build() =>
     [

@@ -137,7 +137,10 @@ public static class PbiUpdateHitlRunner
         IReadOnlyList<string>? accepted = null;
         if (!uiMode)
         {
-            accepted = ResolveAccepted(planDir, plan, acceptAll, acceptList, decisionsPath);
+            accepted = await HumanDecisions.ResolveAcceptedAsync(acceptAll, acceptList, decisionsPath,
+                allIds: () => Enumerable.Range(0, plan.Operations.Count).Select(i => $"op-{i}").ToList(),
+                acceptedFromFile: async p => PbiUpdateApplyExec.AcceptedFromDecisions(plan,
+                    (await HitlShell.LoadAsync<PbiUpdateDecisionsFile>(p).ConfigureAwait(false)).Decisions).Select(i => $"op-{i}").ToList()).ConfigureAwait(false);
             if (accepted is null) { Console.Error.WriteLine("[pbi-update-hitl] keine Entscheidung: --ui, --accept-all, --accept op-0,.. oder human-decisions.json noetig."); return 2; }
         }
 
@@ -193,20 +196,6 @@ public static class PbiUpdateHitlRunner
         var accepted = decisions.Decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId).ToList();
         Console.WriteLine($"[pbi-update-hitl] UI {result.Outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
         return accepted;
-    }
-
-    // Akzeptierte OpIds: --accept-all | --accept Liste | human-decisions.json (fehlende Entscheidung -> default apply).
-    private static IReadOnlyList<string>? ResolveAccepted(string planDir, PbiStateChangePlanDocument plan, bool acceptAll, string? acceptList, string decisionsPath)
-    {
-        if (acceptAll) return Enumerable.Range(0, plan.Operations.Count).Select(i => $"op-{i}").ToList();
-        if (!string.IsNullOrWhiteSpace(acceptList))
-            return acceptList.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
-        if (File.Exists(decisionsPath))
-        {
-            var decisions = JsonSerializer.Deserialize<PbiUpdateDecisionsFile>(File.ReadAllText(decisionsPath), Json)!;
-            return PbiUpdateApplyExec.AcceptedFromDecisions(plan, decisions.Decisions).Select(i => $"op-{i}").ToList();
-        }
-        return null;
     }
 
     private static Task<T> LoadAsync<T>(string path) => HitlShell.LoadAsync<T>(path); // R2: geteilt (StartAsync nutzt es noch fuers Delta)

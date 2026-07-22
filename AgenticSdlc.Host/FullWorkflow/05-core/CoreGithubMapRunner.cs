@@ -12,7 +12,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
 // wird NUR ueber den Repository-Port geschrieben; ein Audit-Snapshot (core-before) liegt unter runs/github-map/.
 public static class CoreGithubMapRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private static readonly JsonSerializerOptions OpsJson = new(JsonSerializerDefaults.Web)
     {
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase, allowIntegerValues: false) }

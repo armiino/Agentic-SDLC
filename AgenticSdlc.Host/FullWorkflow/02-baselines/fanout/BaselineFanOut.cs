@@ -50,7 +50,7 @@ internal sealed class BaselineFanOutDispatchExecutor : Executor<string>
 internal sealed class BaselineCollectorExecutor : Executor<ArtifactDocument>
 {
     public const string ExecutorName = "BaselineCollector";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     private readonly RunContext _run;
     private readonly int _expected;

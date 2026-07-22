@@ -129,7 +129,10 @@ public static class IngestionHitlRunner
         IReadOnlyList<string>? accepted = null;
         if (!uiMode)
         {
-            accepted = ResolveAccepted(plan, acceptAll, acceptList, decisionsPath);
+            accepted = await HumanDecisions.ResolveAcceptedAsync(acceptAll, acceptList, decisionsPath,
+                allIds: () => plan.Operations.Select(o => o.IncomingItemId).ToList(),
+                acceptedFromFile: async p => IngestionApplyExec.AcceptedFromDecisions(
+                    (await HitlShell.LoadAsync<IngestionHumanDecisionsFile>(p).ConfigureAwait(false)).Decisions).ToList()).ConfigureAwait(false);
             if (accepted is null) { Console.Error.WriteLine("[ingest-requirements-hitl] keine Entscheidung: --ui, --accept-all, --accept ID,.. oder human-decisions.json noetig."); return 2; }
         }
 
@@ -188,20 +191,6 @@ public static class IngestionHitlRunner
         var accepted = IngestionApplyExec.AcceptedFromDecisions(decisions.Decisions).ToList();
         Console.WriteLine($"[ingest-requirements-hitl] UI {result.Outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
         return accepted;
-    }
-
-    // Akzeptierte IncomingItemIds: --accept-all | --accept Liste | human-decisions.json.
-    private static IReadOnlyList<string>? ResolveAccepted(StateChangePlanDocument plan, bool acceptAll, string? acceptList, string decisionsPath)
-    {
-        if (acceptAll) return plan.Operations.Select(o => o.IncomingItemId).ToList();
-        if (!string.IsNullOrWhiteSpace(acceptList))
-            return acceptList.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
-        if (File.Exists(decisionsPath))
-        {
-            var decisions = JsonSerializer.Deserialize<IngestionHumanDecisionsFile>(File.ReadAllText(decisionsPath), Json)!;
-            return IngestionApplyExec.AcceptedFromDecisions(decisions.Decisions).ToList();
-        }
-        return null;
     }
 
 }

@@ -7,7 +7,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
 // HumanReview des Forward-Plans (apply/skip). Runner um die generische HumanReview-UI, wie pbi-update-review.
 public static class GithubForwardReviewRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

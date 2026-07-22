@@ -32,7 +32,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Derivation;
 /// </remarks>
 internal sealed class DerivationTools
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     private readonly SourceArtifactSet _sources;
     private readonly DerivationSpec _spec;

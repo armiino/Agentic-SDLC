@@ -29,7 +29,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Chain;
 /// </remarks>
 public static class EvidenceChainRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";
 

@@ -155,7 +155,10 @@ public static class DecisionHitlRunner
         IReadOnlyList<string>? accepted = null;
         if (!uiMode)
         {
-            accepted = ResolveAccepted(plan, acceptAll, acceptList, decisionsPath);
+            accepted = await HumanDecisions.ResolveAcceptedAsync(acceptAll, acceptList, decisionsPath,
+                allIds: () => Enumerable.Range(0, plan.Operations.Count).Select(i => $"op-{i}").ToList(),
+                acceptedFromFile: async p => DecisionApplyExec.AcceptedFromDecisions(plan,
+                    (await HitlShell.LoadAsync<DecisionResolutionDecisionsFile>(p).ConfigureAwait(false)).Decisions).Select(i => $"op-{i}").ToList()).ConfigureAwait(false);
             if (accepted is null) { Console.Error.WriteLine("[decision-resolve-hitl] keine Entscheidung: --ui, --accept-all, --accept op-0,.. oder human-decisions.json noetig."); return 2; }
         }
 
@@ -211,20 +214,6 @@ public static class DecisionHitlRunner
         var accepted = decisions.Decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId).ToList();
         Console.WriteLine($"[decision-resolve-hitl] UI {result.Outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
         return accepted;
-    }
-
-    // Akzeptierte OpIds: --accept-all | --accept Liste | human-decisions.json (EXPLIZIT apply, kein Default).
-    private static IReadOnlyList<string>? ResolveAccepted(DecisionResolutionPlanDocument plan, bool acceptAll, string? acceptList, string decisionsPath)
-    {
-        if (acceptAll) return Enumerable.Range(0, plan.Operations.Count).Select(i => $"op-{i}").ToList();
-        if (!string.IsNullOrWhiteSpace(acceptList))
-            return acceptList.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
-        if (File.Exists(decisionsPath))
-        {
-            var decisions = JsonSerializer.Deserialize<DecisionResolutionDecisionsFile>(File.ReadAllText(decisionsPath), Json)!;
-            return DecisionApplyExec.AcceptedFromDecisions(plan, decisions.Decisions).Select(i => $"op-{i}").ToList();
-        }
-        return null;
     }
 
     private static Task<T> LoadAsync<T>(string path) => HitlShell.LoadAsync<T>(path); // R2: geteilt (StartAsync nutzt es fuer --input)

@@ -23,7 +23,8 @@ public static class PipelineComposedRunner
 {
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private const string Cmd = "pipeline-hitl";
+    private static readonly JsonSerializerOptions Json = HitlShell.Json; // R2: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -94,37 +95,24 @@ public static class PipelineComposedRunner
             AgentFactory(repoRoot, settings, genSettings, run, "RequirementIngestionAgent", "RequirementIngestionAgent1"),
             AgentFactory(repoRoot, settings, genSettings, run, "PbiPlacementAgent", "PbiPlacementAgent1"));
 
-        using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
-        var manager = CheckpointManager.CreateJson(store, Json);
-        Console.WriteLine($"[pipeline-hitl] start runId={run.RunId} model={genSettings.ModelId} maxAttempts={maxAttempts} (Ingest -> [Gate1] -> Apply -> Bridge -> PbiUpdate -> [Gate2] -> Apply)");
-        CheckpointInfo? pending = null;
-        try
-        {
-            await using var runHandle = await InProcessExecution.RunStreamingAsync(workflow, new IngestionResolveInput(delta, core, deltaRel, maxAttempts), manager, run.RunId).ConfigureAwait(false);
-            await foreach (var evt in runHandle.WatchStreamAsync().ConfigureAwait(false))
+        Console.WriteLine($"[{Cmd}] start runId={run.RunId} model={genSettings.ModelId} maxAttempts={maxAttempts} (Ingest -> [Gate1] -> Apply -> Bridge -> PbiUpdate -> [Gate2] -> Apply)");
+        return await HitlShell.StartAsync(Cmd, workflow, new IngestionResolveInput(delta, core, deltaRel, maxAttempts), run, checkpointDir,
+            onManualOutput: data =>
             {
-                if (evt is RequestInfoEvent) Console.WriteLine("[pipeline-hitl] Gate 1 (Ingest) erreicht.");
-                if (evt is SuperStepCompletedEvent step && step.CompletionInfo is { } info)
-                {
-                    if (info.Checkpoint is { } cp) pending = cp;
-                    if (info.HasPendingRequests && pending is not null) break;
-                }
-                if (evt is WorkflowOutputEvent outEvt && outEvt.Data is IngestionResult manual)
-                {
-                    Console.WriteLine($"[pipeline-hitl] Ingest-Gate NICHT bestanden ({manual.FinalDecision}) - Pipeline-Abbruch.");
-                    return 1;
-                }
-            }
-        }
-        catch (Exception ex) { Console.Error.WriteLine($"[pipeline-hitl] fehlgeschlagen: {ex.Message}"); run.AppendEvent(new { type = "RUN_FAILED", runId = run.RunId, reason = ex.Message }); return 4; }
-
-        if (pending is null) { Console.Error.WriteLine("[pipeline-hitl] kein Checkpoint mit offenem Gate erzeugt."); return 4; }
-        await WritePointer(checkpointDir, run.RunId, pending).ConfigureAwait(false);
-        Console.WriteLine($"[pipeline-hitl] PAUSIERT an Gate 1. Fortsetzen: pipeline-hitl resume {run.RunId} --accept-all");
-        return 0;
+                if (data is not IngestionResult manual) return null;
+                Console.WriteLine($"[{Cmd}] Ingest-Gate NICHT bestanden ({manual.FinalDecision}) - Pipeline-Abbruch.");
+                return 1;
+            },
+            pausedLines: [],
+            gateReachedLine: $"[{Cmd}] Gate 1 (Ingest) erreicht.",
+            pausedHeadline: $"[{Cmd}] PAUSIERT an Gate 1. Fortsetzen: {Cmd} resume {run.RunId} --accept-all").ConfigureAwait(false);
     }
 
     // ---------------- RESUME (Prozess B/C): auf das offene Gate antworten; pausiert am naechsten Gate oder terminiert. ----------------
+    // R2-Entscheid: der Pipeline-Resume bleibt BEWUSST eigen (nicht HitlShell.ResumeAsync) — Mehr-Gate-Komposition:
+    // antworten -> ggf. am NAECHSTEN Gate erneut pausieren (neuer pointer.json), Dispatch per Port-IDENTITAET
+    // (PortId "ingest-gate"/"pbi-gate", nicht Datentyp — TryGetDataAs wuerde falsch matchen). Das in die Shell zu
+    // generalisieren waere Overengineering fuer genau einen Nutzer; geteilt sind Pointer-Format + IO (HitlShell).
     private static async Task<int> ResumeAsync(string[] args, HostSettings settings, string repoRoot)
     {
         if (args.Length < 3) return Usage();
@@ -146,7 +134,7 @@ public static class PipelineComposedRunner
         var checkpointDir = Path.Combine(runDir, "checkpoints");
         var pointerPath = Path.Combine(checkpointDir, "pointer.json");
         if (!File.Exists(pointerPath)) { Console.Error.WriteLine("[pipeline-hitl] pointer.json fehlt - kein pausierter Lauf."); return 2; }
-        var pointer = await LoadAsync<PointerFile>(pointerPath).ConfigureAwait(false);
+        var pointer = await HitlShell.LoadAsync<HitlPointer>(pointerPath).ConfigureAwait(false);
 
         var acceptListItems = string.IsNullOrWhiteSpace(acceptList) ? [] : acceptList.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
         var run = new RunContext(runId, "pipeline");
@@ -222,9 +210,8 @@ public static class PipelineComposedRunner
         return tools => client.AsAIAgent(instructions: prompt, name: agentName, tools: [.. tools]).AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
     }
 
-    private static async Task WritePointer(string checkpointDir, string runId, CheckpointInfo cp)
-        => await File.WriteAllTextAsync(Path.Combine(checkpointDir, "pointer.json"),
-            JsonSerializer.Serialize(new PointerFile(runId, cp.SessionId, cp.CheckpointId, DateTime.UtcNow), Json)).ConfigureAwait(false);
+    private static Task WritePointer(string checkpointDir, string runId, CheckpointInfo cp)
+        => HitlShell.WritePointerAsync(checkpointDir, new HitlPointer(runId, cp.SessionId, cp.CheckpointId, null, null, null, DateTime.UtcNow));
 
     private static string? ResolveRunDir(string repoRoot, string token)
     {
@@ -235,11 +222,4 @@ public static class PipelineComposedRunner
         return Directory.EnumerateDirectories(root).FirstOrDefault(d => Path.GetFileName(d).Contains(token, StringComparison.OrdinalIgnoreCase));
     }
 
-    private static async Task<T> LoadAsync<T>(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, Json) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
-    }
-
-    private sealed record PointerFile(string RunId, string SessionId, string CheckpointId, DateTime SavedUtc);
 }

@@ -144,7 +144,7 @@ internal sealed class L3RoutingExecutor(RunContext run) : Executor<L3Judged>("L3
 [YieldsOutput(typeof(L3Result))]
 internal sealed class L3FinalizeExecutor(RunContext run, string outSuffix = "", CoverageSpec? coverageSpec = null) : Executor<L3Routed>("L3-Finalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(L3Routed msg, IWorkflowContext context, CancellationToken ct = default)
     {

@@ -12,7 +12,7 @@ internal sealed class PbiPlacementTools(
     ProjectStateDocument core,
     RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, ProjectStateItem> _byId = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
     private IReadOnlyList<PbiStateChangeOperation>? _saved;
 

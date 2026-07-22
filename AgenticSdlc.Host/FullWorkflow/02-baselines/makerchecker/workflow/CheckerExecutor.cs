@@ -24,7 +24,7 @@ internal sealed class CheckerExecutor : Executor<CheckArtifactMessage>
 {
     public const string ExecutorName = "MakerCheckerChecker";
 
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     private readonly ContractCritic _critic;
     private readonly ConsumableLedger _ledger;

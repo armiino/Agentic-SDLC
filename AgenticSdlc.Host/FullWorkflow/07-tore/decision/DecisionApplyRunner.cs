@@ -9,7 +9,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
 // entblockten/geänderten PBIs → der nächste github-forward bringt die freigewordene Arbeit nach GitHub (Kreis zu).
 public static class DecisionApplyRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {

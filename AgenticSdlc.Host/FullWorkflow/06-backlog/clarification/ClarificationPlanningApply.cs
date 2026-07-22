@@ -5,7 +5,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
 
 public static class ClarificationPlanningApply
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static ClarificationPlanningApplyResult Apply(
         ClarificationPlanningInput input,

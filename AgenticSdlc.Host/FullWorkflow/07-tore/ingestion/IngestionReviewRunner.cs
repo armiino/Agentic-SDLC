@@ -9,7 +9,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Core;
 // exakt wie ReClarifyClusterReviewRunner. Schreibt human-decisions.json in den Ingestion-Run.
 public static class IngestionReviewRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

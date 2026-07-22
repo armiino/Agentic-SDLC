@@ -7,7 +7,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.PbiUpdate;
 // Requirement-Swap). Core NUR ueber den Port + Audit-Snapshot. Schreibt ein github-sync-Delta (betroffene PBIs).
 public static class PbiUpdateApplyRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {

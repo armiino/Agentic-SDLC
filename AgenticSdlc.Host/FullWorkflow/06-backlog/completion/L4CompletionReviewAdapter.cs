@@ -37,7 +37,7 @@ public static class L4CompletionReviewAdapter
     private static readonly HashSet<string> EvidenceStates = new(StringComparer.OrdinalIgnoreCase)
         { "stated", "derived", "weakly_inferred", "not_stated" };
 
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private static readonly ReviewFieldVisibility OnlyOnEdit = new(FieldDecision, ["edit"]);
 
     private static IReadOnlyList<ReviewFieldSpec> Schema() =>

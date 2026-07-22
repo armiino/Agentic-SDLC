@@ -142,7 +142,7 @@ internal sealed class DerivationAnchorExecutor : Executor<GeneratedDerivation>
 [YieldsOutput(typeof(DerivationResult))]
 internal sealed class DerivationCheckExecutor : Executor<AnchoredDerivation>
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     private readonly InferenceChecker _checker;
     private readonly DerivationSpec _spec;

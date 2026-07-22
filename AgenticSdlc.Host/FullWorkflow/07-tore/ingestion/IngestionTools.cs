@@ -13,7 +13,7 @@ internal sealed class IngestionTools(
     ICandidateRetriever retriever,
     RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, ProjectStateItem> _coreById = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
     private IReadOnlyList<StateChangeOperation>? _saved;
     private int _checkRounds;

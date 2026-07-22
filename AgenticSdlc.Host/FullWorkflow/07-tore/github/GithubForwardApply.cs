@@ -14,7 +14,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
 public static class GithubForwardApply
 {
     private const string UserAgent = "Agentic-SDLC";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     // Fuehrt den Plan gegen die akzeptierten OpIds aus, schreibt applied/ + (bei execute) das Core-Mapping und
     // gibt den Report zurueck. planDir = das Verzeichnis mit github-forward-plan.json (dort entsteht applied/).

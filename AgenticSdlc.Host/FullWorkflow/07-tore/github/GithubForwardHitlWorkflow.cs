@@ -27,7 +27,7 @@ public sealed record ForwardReviewResponse(IReadOnlyList<string> AcceptedOpIds, 
 [YieldsOutput(typeof(GithubForwardWfResult))]
 internal sealed class GithubForwardHitlFinalizeExecutor(RunContext run) : Executor<GithubForwardVerdict>("GithubForwardHitlFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(GithubForwardVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -80,7 +80,7 @@ internal sealed class GithubForwardHitlFinalizeExecutor(RunContext run) : Execut
 internal sealed class GithubForwardApplyExecutor(RunContext run, string repoRoot, string outDir, string? repository, string? tokenEnv)
     : Executor<ForwardReviewResponse>("GithubForwardApply")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(ForwardReviewResponse resp, IWorkflowContext context, CancellationToken ct = default)
     {

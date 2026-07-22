@@ -22,7 +22,7 @@ internal sealed class RepairExecutor : Executor<CheckVerdictMessage>
 {
     public const string ExecutorName = "MakerCheckerRepair";
 
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     private readonly ContractRepair _repair;
     private readonly ConsumableLedger _ledger;

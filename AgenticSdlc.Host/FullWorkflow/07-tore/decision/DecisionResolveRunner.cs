@@ -10,7 +10,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
 // die der agentische decision-resolve-agent hinter dem Maker wiederverwendet).
 public static class DecisionResolveRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {

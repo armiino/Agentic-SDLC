@@ -75,7 +75,7 @@ internal sealed class L4ConsolidationGateExecutor(RunContext run) : Executor<L4C
 [YieldsOutput(typeof(L4ConsolidationResult))]
 internal sealed class L4ConsolidationFinalizeExecutor(RunContext run, string outDir) : Executor<L4ConsolidationVerdict>("L4-ConsolidationFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(L4ConsolidationVerdict verdict, IWorkflowContext context, CancellationToken ct = default)
     {

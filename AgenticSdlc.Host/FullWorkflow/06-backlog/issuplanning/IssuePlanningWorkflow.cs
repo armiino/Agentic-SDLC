@@ -78,7 +78,7 @@ internal sealed class IssuePlanningGateExecutor(RunContext run) : Executor<Issue
 [YieldsOutput(typeof(IssuePlanningResult))]
 internal sealed class IssuePlanningFinalizeExecutor(RunContext run, string outDir) : Executor<IssuePlanningVerdict>("IssuePlanningFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(IssuePlanningVerdict verdict, IWorkflowContext context, CancellationToken ct = default)
     {

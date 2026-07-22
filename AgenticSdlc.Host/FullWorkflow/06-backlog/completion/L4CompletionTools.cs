@@ -6,7 +6,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
 
 internal sealed class L4AdequacyTools(L4CompletionInput input, RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, CanonicalRequirement> _requirementsById =
         input.Baseline.Requirements.ToDictionary(r => r.RequirementId, StringComparer.Ordinal);
     private readonly List<L4AdequacyReport> _savedReports = [];
@@ -123,7 +123,7 @@ internal sealed class L4AdequacyTools(L4CompletionInput input, RunContext run)
 
 internal sealed class L4CompletionTools(L4CompletionInput input, L4AdequacyReport adequacy, RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, CanonicalRequirement> _requirementsById =
         input.Baseline.Requirements.ToDictionary(r => r.RequirementId, StringComparer.Ordinal);
     private readonly Dictionary<string, L4AdequacyFinding> _findingsById =

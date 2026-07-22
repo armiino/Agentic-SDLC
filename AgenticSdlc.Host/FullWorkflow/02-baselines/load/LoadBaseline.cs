@@ -22,7 +22,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Load;
 internal sealed class LoadBaselineExecutor : Executor<string>
 {
     public const string ExecutorName = "LoadBaseline";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     private readonly IReadOnlyList<string> _artifactTypes;
     private readonly string _sourceDir;

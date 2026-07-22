@@ -127,7 +127,7 @@ public static class GithubForwardRunner
     private static async Task<T> LoadAsync<T>(string path)
     {
         var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true }) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
+        return JsonSerializer.Deserialize<T>(json, JsonFiles.Json) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
     }
 
     private static void Usage()

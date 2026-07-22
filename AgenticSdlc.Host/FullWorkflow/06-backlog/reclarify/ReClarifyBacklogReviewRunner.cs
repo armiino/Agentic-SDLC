@@ -8,7 +8,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
 // HumanReview der Product Backlog Items - Runner um die generische HumanReview-UI (wie IssuePlanning).
 public static class ReClarifyBacklogReviewRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

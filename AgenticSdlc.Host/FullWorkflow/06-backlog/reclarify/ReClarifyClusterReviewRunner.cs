@@ -9,7 +9,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L4;
 // exakt wie IssuePlanningReviewRunner. Schreibt human-decisions.json in den Cluster-Run.
 public static class ReClarifyClusterReviewRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

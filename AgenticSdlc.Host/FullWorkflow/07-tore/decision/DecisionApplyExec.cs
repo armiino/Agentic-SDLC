@@ -16,7 +16,7 @@ public sealed record DecisionAppliedMarker(
 
 public static class DecisionApplyExec
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<DecisionResolutionApplyReport> ExecuteAsync(
         string planDir, DecisionResolutionPlanDocument plan, ISet<int> accepted, string repoRoot, string runId, CancellationToken ct = default)

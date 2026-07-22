@@ -28,7 +28,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Recipes;
 /// </remarks>
 public static class RecipeRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private static readonly JsonSerializerOptions JsonRead = new(JsonSerializerDefaults.Web) { PropertyNameCaseInsensitive = true };
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";

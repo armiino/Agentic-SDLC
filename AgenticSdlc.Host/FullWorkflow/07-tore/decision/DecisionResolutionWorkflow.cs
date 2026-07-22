@@ -47,7 +47,7 @@ internal sealed class DecisionMakerExecutor(Func<IReadOnlyList<AITool>, AIAgent>
 [SendsMessage(typeof(DecisionDraftMsg))]
 internal sealed class DecisionDeriveExecutor(RunContext run) : Executor<DecisionResolveInputMsg>("DecisionDerive")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(DecisionResolveInputMsg msg, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -103,7 +103,7 @@ internal sealed class DecisionRepairExecutor(Func<IReadOnlyList<AITool>, AIAgent
 [YieldsOutput(typeof(DecisionWfResult))]
 internal sealed class DecisionFinalizeExecutor(RunContext run) : Executor<DecisionVerdictMsg>("DecisionFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(DecisionVerdictMsg v, IWorkflowContext context, CancellationToken ct = default)
     {

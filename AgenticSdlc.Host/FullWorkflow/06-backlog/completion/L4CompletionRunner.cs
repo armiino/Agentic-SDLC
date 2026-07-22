@@ -16,7 +16,7 @@ public static class L4CompletionRunner
     private const string Phase = "phase2_evidence";
     private const string AdequacyAgentName = "L4AdequacyFeedbackAgent";
     private const string CompletionAgentName = "L4CompletionAgent";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

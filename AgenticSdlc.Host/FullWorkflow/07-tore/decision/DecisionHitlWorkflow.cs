@@ -23,7 +23,7 @@ public sealed record DecisionReviewResponse(IReadOnlyList<string> AcceptedOpIds,
 [YieldsOutput(typeof(DecisionWfResult))]
 internal sealed class DecisionHitlFinalizeExecutor(RunContext run) : Executor<DecisionVerdictMsg>("DecisionHitlFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(DecisionVerdictMsg v, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -57,7 +57,7 @@ internal sealed class DecisionHitlFinalizeExecutor(RunContext run) : Executor<De
 [YieldsOutput(typeof(DecisionResolutionApplyReport))]
 internal sealed class DecisionApplyExecutor(RunContext run, string repoRoot, string outDir) : Executor<DecisionReviewResponse>("DecisionApply")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(DecisionReviewResponse resp, IWorkflowContext context, CancellationToken ct = default)
     {

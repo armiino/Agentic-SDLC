@@ -11,7 +11,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
 // bewährte Derivation → Gate → Apply-Kette verarbeitet. Kein Write, kein Core-Zugriff jenseits Lesen.
 internal sealed class DecisionResolverTools(ProjectStateDocument core, RunContext run)
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, ProjectStateItem> _byId = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
     private IReadOnlyList<DecisionResolutionRequest>? _saved;
 

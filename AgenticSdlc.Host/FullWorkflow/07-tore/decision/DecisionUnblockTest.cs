@@ -14,7 +14,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Decision;
 // Beweis: VOR = HOLD_BLOCKED, NACH = UPDATE (gemappt) bzw. unmapped/CREATE-Kandidat (nicht gemappt). Exit 0 = PASS.
 public static class DecisionUnblockTest
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {

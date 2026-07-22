@@ -25,7 +25,7 @@ public static class L4ReviewAdapter
     private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase)
         { "accept", "edit", "reject", "revise" };
 
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     private static IReadOnlyList<ReviewFieldSpec> Schema() =>
     [

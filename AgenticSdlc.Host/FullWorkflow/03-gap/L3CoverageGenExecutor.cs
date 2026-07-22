@@ -24,7 +24,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.L3;
 internal sealed class L3CoverageGenExecutor(AIAgent agent, CoverageSpec spec, int maxRepairRounds, RunContext run)
     : Executor<SourceArtifactSet>("L3-CoverageGen")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(SourceArtifactSet env, IWorkflowContext context, CancellationToken ct = default)
     {

@@ -122,7 +122,7 @@ internal sealed class GithubForwardRepairExecutor(Func<IReadOnlyList<AITool>, AI
 [YieldsOutput(typeof(GithubForwardWfResult))]
 internal sealed class GithubForwardFinalizeExecutor(RunContext run) : Executor<GithubForwardVerdict>("GithubForwardFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(GithubForwardVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {

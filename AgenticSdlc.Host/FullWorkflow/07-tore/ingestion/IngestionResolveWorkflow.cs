@@ -85,7 +85,7 @@ internal sealed class IngestionRepairExecutor(Func<IReadOnlyList<AITool>, AIAgen
 [YieldsOutput(typeof(IngestionResult))]
 internal sealed class IngestionFinalizeExecutor(RunContext run, string outDir) : Executor<IngestionVerdict>("RequirementIngestionFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(IngestionVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {

@@ -88,7 +88,7 @@ internal sealed class ClusterReviewExecutor(
     RunContext run)
     : Executor<ClusterVerdict>("L4ReClarifyClusterReviewAgent")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(ClusterVerdict verdict, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -145,7 +145,7 @@ internal sealed class ClusterReviewExecutor(
 [YieldsOutput(typeof(ClusterResult))]
 internal sealed class ClusterFinalizeExecutor(RunContext run, string outDir) : Executor<ClusterReviewed>("L4ReClarifyClusterFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(ClusterReviewed reviewed, IWorkflowContext context, CancellationToken ct = default)
     {

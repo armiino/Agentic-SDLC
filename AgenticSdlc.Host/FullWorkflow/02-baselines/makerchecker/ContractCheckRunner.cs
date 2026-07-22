@@ -11,7 +11,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.MakerChecker;
 /// </summary>
 public static class ContractCheckRunner
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {

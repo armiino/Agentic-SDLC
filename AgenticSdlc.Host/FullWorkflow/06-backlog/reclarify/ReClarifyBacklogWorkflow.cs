@@ -65,7 +65,7 @@ internal sealed class BacklogGateExecutor(RunContext run) : Executor<BacklogDraf
 [YieldsOutput(typeof(BacklogResult))]
 internal sealed class BacklogFinalizeExecutor(RunContext run, string outDir) : Executor<BacklogVerdict>("L4ReClarifyBacklogFinalize")
 {
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public override async ValueTask HandleAsync(BacklogVerdict verdict, IWorkflowContext context, CancellationToken ct = default)
     {

@@ -69,11 +69,11 @@ public static class PbiUpdateReviewAdapter
     public static string ResolveContext(string key, PbiStateChangePlanDocument plan, ProjectStateDocument core)
     {
         if (key.StartsWith("op:", StringComparison.Ordinal) && int.TryParse(key["op:".Length..], out var idx) && idx >= 0 && idx < plan.Operations.Count)
-            return JsonSerializer.Serialize(plan.Operations[idx], new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true });
+            return JsonSerializer.Serialize(plan.Operations[idx], JsonFiles.Json);
         if (key.StartsWith("pbi:", StringComparison.Ordinal))
         {
             var it = core.Items.FirstOrDefault(x => string.Equals(x.ItemId, key["pbi:".Length..], StringComparison.Ordinal));
-            return it is null ? "(unbekannt)" : JsonSerializer.Serialize(new { it.ItemId, it.Status, it.Pbi }, new JsonSerializerOptions(JsonSerializerDefaults.Web) { WriteIndented = true });
+            return it is null ? "(unbekannt)" : JsonSerializer.Serialize(new { it.ItemId, it.Status, it.Pbi }, JsonFiles.Json);
         }
         return $"(Unbekannter Kontext: {key})";
     }

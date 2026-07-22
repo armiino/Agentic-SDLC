@@ -10,7 +10,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
 public static class GithubForwardCompareRunner
 {
     private const string DefaultFixtures = "AgenticSdlc.Host/FullWorkflow/07-tore/github/fixtures/drift-fixtures.json";
-    private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {
