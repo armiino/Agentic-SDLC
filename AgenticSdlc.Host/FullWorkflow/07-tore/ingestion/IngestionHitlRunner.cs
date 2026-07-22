@@ -174,22 +174,15 @@ public static class IngestionHitlRunner
         var session = IngestionReviewAdapter.BuildSession(runId, plan, meetingDelta, core);
         var existing = File.Exists(decisionsPath) ? await HitlShell.LoadAsync<IngestionHumanDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
         IngestionReviewAdapter.MergeExistingDecisions(session, existing);
-        foreach (var it in session.Items) it.Resolved = IngestionReviewAdapter.Resolved(it);
 
-        async Task Persist() => await File.WriteAllTextAsync(decisionsPath, JsonSerializer.Serialize(IngestionReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
-        var result = await LocalReviewServerHost.RunAsync(new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = IngestionReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(IngestionReviewAdapter.ResolveContext(key, plan, meetingDelta, core)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        }).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
+        var (decisions, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: IngestionReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(IngestionReviewAdapter.ResolveContext(key, plan, meetingDelta, core)),
+            apply: s => IngestionReviewAdapter.Apply(runId, s),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
 
-        var decisions = IngestionReviewAdapter.Apply(runId, session);
         var accepted = IngestionApplyExec.AcceptedFromDecisions(decisions.Decisions).ToList();
-        Console.WriteLine($"[ingest-requirements-hitl] UI {result.Outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
+        Console.WriteLine($"[{Cmd}] UI {outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
         return accepted;
     }
 

@@ -179,22 +179,15 @@ public static class PbiUpdateHitlRunner
         var session = PbiUpdateReviewAdapter.BuildSession(runId, plan, core);
         var existing = File.Exists(decisionsPath) ? await HitlShell.LoadAsync<PbiUpdateDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
         PbiUpdateReviewAdapter.MergeExistingDecisions(session, existing);
-        foreach (var it in session.Items) it.Resolved = PbiUpdateReviewAdapter.Resolved(it);
 
-        async Task Persist() => await File.WriteAllTextAsync(decisionsPath, JsonSerializer.Serialize(PbiUpdateReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
-        var result = await LocalReviewServerHost.RunAsync(new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = PbiUpdateReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(PbiUpdateReviewAdapter.ResolveContext(key, plan, core)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        }).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
+        var (decisions, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: PbiUpdateReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(PbiUpdateReviewAdapter.ResolveContext(key, plan, core)),
+            apply: s => PbiUpdateReviewAdapter.Apply(runId, s),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
 
-        var decisions = PbiUpdateReviewAdapter.Apply(runId, session);
         var accepted = decisions.Decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId).ToList();
-        Console.WriteLine($"[pbi-update-hitl] UI {result.Outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
+        Console.WriteLine($"[{Cmd}] UI {outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
         return accepted;
     }
 

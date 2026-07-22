@@ -206,22 +206,15 @@ public static class GithubForwardHitlRunner
         var session = GithubForwardReviewAdapter.BuildSession(runId, plan);
         var existing = File.Exists(decisionsPath) ? await HitlShell.LoadAsync<GithubForwardDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
         GithubForwardReviewAdapter.MergeExistingDecisions(session, existing);
-        foreach (var it in session.Items) it.Resolved = GithubForwardReviewAdapter.Resolved(it);
 
-        async Task Persist() => await File.WriteAllTextAsync(decisionsPath, JsonSerializer.Serialize(GithubForwardReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
-        var result = await LocalReviewServerHost.RunAsync(new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = GithubForwardReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(GithubForwardReviewAdapter.ResolveContext(key, plan)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        }).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
+        var (decisions, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: GithubForwardReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(GithubForwardReviewAdapter.ResolveContext(key, plan)),
+            apply: s => GithubForwardReviewAdapter.Apply(runId, s),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
 
-        var decisions = GithubForwardReviewAdapter.Apply(runId, session);
         var accepted = decisions.Decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId).ToList();
-        Console.WriteLine($"[github-forward-hitl] UI {result.Outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
+        Console.WriteLine($"[{Cmd}] UI {outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
         return accepted;
     }
 
