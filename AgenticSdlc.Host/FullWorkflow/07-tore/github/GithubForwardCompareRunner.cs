@@ -9,7 +9,7 @@ namespace AgenticSdlc.Host.Phases.Phase2.EvidenzAgent.Tor3;
 // dieselben Gold-Labels gemessen -> direkter Vergleich agentisch vs deterministisch (Dedup-Recall / Precision).
 public static class GithubForwardCompareRunner
 {
-    private const string DefaultFixtures = "AgenticSdlc.Host/Phases/Phase2/Evidenz-Agent/tor3/fixtures/drift-fixtures.json";
+    private const string DefaultFixtures = "AgenticSdlc.Host/FullWorkflow/07-tore/github/fixtures/drift-fixtures.json";
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
 
     public static async Task<int> RunAsync(string[] args, string repoRoot)
