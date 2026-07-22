@@ -71,33 +71,19 @@ public static class IngestionReviewRunner
             return 0;
         }
 
-        async Task Persist() => await File.WriteAllTextAsync(
-            decisionsPath,
-            JsonSerializer.Serialize(IngestionReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
-
-        var options = new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = IngestionReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(IngestionReviewAdapter.ResolveContext(key, plan, delta, core)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        };
-
         Console.WriteLine($"[ingest-review] mode=interactive runId={runId} {session.Items.Count} Operationen");
         if (existing is not null)
             Console.WriteLine($"[ingest-review] Re-Launch: vorhandene human-decisions.json geladen ({session.ResolvedCount()}/{session.Items.Count} resolved).");
-        var result = await LocalReviewServerHost.RunAsync(options).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
-        Console.WriteLine($"[ingest-review] {result.Outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
+        var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: IngestionReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(IngestionReviewAdapter.ResolveContext(key, plan, delta, core)),
+            apply: s => IngestionReviewAdapter.Apply(runId, s),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+        Console.WriteLine($"[ingest-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
         return 0;
     }
 
-    private static async Task<T> LoadAsync<T>(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, Json) ?? throw new InvalidOperationException($"Datei konnte nicht gelesen werden: {path}");
-    }
+    private static Task<T> LoadAsync<T>(string path) => JsonFiles.LoadAsync<T>(path); // R3b: geteilt
 
     private static async Task<IngestionHumanDecisionsFile?> LoadExistingDecisionsAsync(string path)
     {

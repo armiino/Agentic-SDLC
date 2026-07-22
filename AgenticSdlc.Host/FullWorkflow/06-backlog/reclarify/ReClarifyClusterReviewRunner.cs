@@ -80,25 +80,15 @@ public static class ReClarifyClusterReviewRunner
             return 0;
         }
 
-        async Task Persist() => await File.WriteAllTextAsync(
-            decisionsPath,
-            JsonSerializer.Serialize(ReClarifyClusterReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
-
-        var options = new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = ReClarifyClusterReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(ReClarifyClusterReviewAdapter.ResolveContext(key, baseline, clusters, gate, review)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        };
-
         Console.WriteLine($"[l4-re-clarify-review] mode=interactive scope={scope} runId={runId} {session.Items.Count} vorgeschlagene Korrekturen");
         if (existing is not null)
             Console.WriteLine($"[l4-re-clarify-review] Re-Launch: vorhandene human-decisions.json geladen ({session.ResolvedCount()}/{session.Items.Count} resolved).");
-        var result = await LocalReviewServerHost.RunAsync(options).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
-        Console.WriteLine($"[l4-re-clarify-review] {result.Outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
+        var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: ReClarifyClusterReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(ReClarifyClusterReviewAdapter.ResolveContext(key, baseline, clusters, gate, review)),
+            apply: s => ReClarifyClusterReviewAdapter.Apply(runId, s),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+        Console.WriteLine($"[l4-re-clarify-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
         return 0;
     }
 

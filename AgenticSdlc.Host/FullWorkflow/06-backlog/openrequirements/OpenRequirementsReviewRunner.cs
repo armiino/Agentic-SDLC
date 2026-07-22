@@ -52,25 +52,15 @@ public static class OpenRequirementsReviewRunner
             return 0;
         }
 
-        async Task Persist() => await File.WriteAllTextAsync(
-            decisionsPath,
-            JsonSerializer.Serialize(OpenRequirementsReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
-
-        var options = new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = OpenRequirementsReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(OpenRequirementsReviewAdapter.ResolveContext(key, audit, readiness)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        };
-
         Console.WriteLine($"[open-requirements-review] mode=interactive scope={scope} runId={runId} {session.Items.Count} offene Requirements");
         if (existing is not null)
             Console.WriteLine($"[open-requirements-review] Re-Launch: vorhandene Decisions geladen ({session.ResolvedCount()}/{session.Items.Count} resolved).");
-        var result = await LocalReviewServerHost.RunAsync(options).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
-        Console.WriteLine($"[open-requirements-review] {result.Outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> open-requirement-decisions.json");
+        var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: OpenRequirementsReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(OpenRequirementsReviewAdapter.ResolveContext(key, audit, readiness)),
+            apply: s => OpenRequirementsReviewAdapter.Apply(runId, s),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+        Console.WriteLine($"[open-requirements-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> open-requirement-decisions.json");
         Console.WriteLine("[open-requirements-review] Danach: open-requirements-apply.");
         return 0;
     }

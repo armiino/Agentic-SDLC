@@ -61,24 +61,15 @@ public static class L3ReviewRunner
         foreach (var item in session.Items)
             item.Resolved = L3ReviewAdapter.Resolved(item);
 
-        async Task Persist() => await File.WriteAllTextAsync(decisionsPath, JsonSerializer.Serialize(L3ReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
-
-        var options = new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = L3ReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(L3ReviewAdapter.ResolveContext(key, envById)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),   // Autosave-Sicherheitsnetz
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        };
-
         Console.WriteLine($"[l3-review] mode=interactive  scope={scope}  runId={runId}  {session.Items.Count} Kandidaten");
         if (existingDecisions is not null)
             Console.WriteLine($"[l3-review] Re-Launch: vorhandene human-decisions.json geladen ({session.ResolvedCount()}/{session.Items.Count} resolved).");
-        var result = await LocalReviewServerHost.RunAsync(options).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);   // finaler Stand
-
-        Console.WriteLine($"[l3-review] {result.Outcome} — {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
+        var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: L3ReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(L3ReviewAdapter.ResolveContext(key, envById)),
+            apply: s => L3ReviewAdapter.Apply(runId, s),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+        Console.WriteLine($"[l3-review] {outcome} — {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
         Console.WriteLine($"[l3-review] Anwenden: `l3-apply {runId}` (accept/edit/reject) und/oder `l3-revise {runId}` (revise).");
         return 0;
     }

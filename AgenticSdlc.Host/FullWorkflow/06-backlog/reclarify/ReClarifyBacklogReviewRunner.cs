@@ -58,24 +58,15 @@ public static class ReClarifyBacklogReviewRunner
             return 0;
         }
 
-        async Task Persist() => await File.WriteAllTextAsync(
-            decisionsPath, JsonSerializer.Serialize(ReClarifyBacklogReviewAdapter.Apply(runId, session, backlog), Json)).ConfigureAwait(false);
-
-        var options = new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = ReClarifyBacklogReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(ReClarifyBacklogReviewAdapter.ResolveContext(key, baseline, backlog, gate)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        };
-
         Console.WriteLine($"[l4-re-clarify-backlog-review] mode=interactive scope={scope} runId={runId} {session.Items.Count} PBIs");
         if (existing is not null)
             Console.WriteLine($"[l4-re-clarify-backlog-review] Re-Launch: {session.ResolvedCount()}/{session.Items.Count} resolved.");
-        var result = await LocalReviewServerHost.RunAsync(options).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
-        Console.WriteLine($"[l4-re-clarify-backlog-review] {result.Outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
+        var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: ReClarifyBacklogReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(ReClarifyBacklogReviewAdapter.ResolveContext(key, baseline, backlog, gate)),
+            apply: s => ReClarifyBacklogReviewAdapter.Apply(runId, s, backlog),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+        Console.WriteLine($"[l4-re-clarify-backlog-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
         Console.WriteLine("[l4-re-clarify-backlog-review] Danach: l4-re-clarify-backlog-apply.");
         return 0;
     }

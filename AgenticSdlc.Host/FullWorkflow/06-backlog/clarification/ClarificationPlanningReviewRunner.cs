@@ -78,25 +78,15 @@ public static class ClarificationPlanningReviewRunner
             return 0;
         }
 
-        async Task Persist() => await File.WriteAllTextAsync(
-            decisionsPath,
-            JsonSerializer.Serialize(ClarificationPlanningReviewAdapter.Apply(runId, session, plan), Json)).ConfigureAwait(false);
-
-        var options = new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = ClarificationPlanningReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(ClarificationPlanningReviewAdapter.ResolveContext(key, input, plan, gate)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        };
-
         Console.WriteLine($"[clarification-agent-review] mode=interactive scope={scope} runId={runId} {session.Items.Count} ClarificationPlanItems");
         if (existing is not null)
             Console.WriteLine($"[clarification-agent-review] Re-Launch: vorhandene human-decisions.json geladen ({session.ResolvedCount()}/{session.Items.Count} resolved).");
-        var result = await LocalReviewServerHost.RunAsync(options).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
-        Console.WriteLine($"[clarification-agent-review] {result.Outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
+        var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: ClarificationPlanningReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(ClarificationPlanningReviewAdapter.ResolveContext(key, input, plan, gate)),
+            apply: s => ClarificationPlanningReviewAdapter.Apply(runId, s, plan),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+        Console.WriteLine($"[clarification-agent-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
         Console.WriteLine("[clarification-agent-review] Danach: clarification-agent-apply (naechster Schritt).");
         return 0;
     }

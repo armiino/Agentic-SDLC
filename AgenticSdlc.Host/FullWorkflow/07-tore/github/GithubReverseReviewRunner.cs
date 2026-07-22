@@ -37,17 +37,12 @@ public static class GithubReverseReviewRunner
             return 0;
         }
 
-        async Task Persist() => await File.WriteAllTextAsync(decisionsPath, JsonSerializer.Serialize(GithubReverseReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
-        var result = await LocalReviewServerHost.RunAsync(new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = GithubReverseReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(GithubReverseReviewAdapter.ResolveContext(key, plan)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        }).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
-        Console.WriteLine($"[github-reverse-review] {result.Outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
+        var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: GithubReverseReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(GithubReverseReviewAdapter.ResolveContext(key, plan)),
+            apply: s => GithubReverseReviewAdapter.Apply(runId, s),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+        Console.WriteLine($"[github-reverse-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
         return 0;
     }
 
@@ -66,9 +61,5 @@ public static class GithubReverseReviewRunner
         return null;
     }
 
-    private static async Task<T> LoadAsync<T>(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, Json) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
-    }
+    private static Task<T> LoadAsync<T>(string path) => JsonFiles.LoadAsync<T>(path); // R3b: geteilt
 }

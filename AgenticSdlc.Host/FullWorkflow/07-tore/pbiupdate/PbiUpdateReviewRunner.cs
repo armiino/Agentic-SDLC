@@ -42,17 +42,12 @@ public static class PbiUpdateReviewRunner
             return 0;
         }
 
-        async Task Persist() => await File.WriteAllTextAsync(decisionsPath, JsonSerializer.Serialize(PbiUpdateReviewAdapter.Apply(runId, session), Json)).ConfigureAwait(false);
-        var result = await LocalReviewServerHost.RunAsync(new ReviewServerOptions
-        {
-            Session = session,
-            RecomputeResolved = PbiUpdateReviewAdapter.Resolved,
-            ResolveContext = (_, key) => Task.FromResult(PbiUpdateReviewAdapter.ResolveContext(key, plan, core)),
-            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
-            OpenBrowser = settings.L3ReviewOpenBrowser && !noBrowser
-        }).ConfigureAwait(false);
-        await Persist().ConfigureAwait(false);
-        Console.WriteLine($"[pbi-update-review] {result.Outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
+        var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
+            resolved: PbiUpdateReviewAdapter.Resolved,
+            resolveContext: (_, key) => Task.FromResult(PbiUpdateReviewAdapter.ResolveContext(key, plan, core)),
+            apply: s => PbiUpdateReviewAdapter.Apply(runId, s),
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+        Console.WriteLine($"[pbi-update-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
         return 0;
     }
 
@@ -71,9 +66,5 @@ public static class PbiUpdateReviewRunner
         return null;
     }
 
-    private static async Task<T> LoadAsync<T>(string path)
-    {
-        var json = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-        return JsonSerializer.Deserialize<T>(json, Json) ?? throw new InvalidOperationException($"Datei nicht lesbar: {path}");
-    }
+    private static Task<T> LoadAsync<T>(string path) => JsonFiles.LoadAsync<T>(path); // R3b: geteilt
 }
