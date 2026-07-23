@@ -77,6 +77,9 @@ public sealed class SemanticLedgerExtractor
             }
           ]
         }
+        SPRACHE (Pflicht): Antworte inhaltlich auf DEUTSCH - propositions, reasons, suggestedProposition
+        und alle Freitexte in deutscher Sprache. NUR Schema-Werte/Enums (kind, status, modality, verdict,
+        suggestedAction, IDs usw.) bleiben englisch.
         """;
 
     private const string SchemaJson = """

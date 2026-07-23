@@ -1,0 +1,493 @@
+{
+  "iteration": 2,
+  "decision": "Repair",
+  "mc0": {
+    "pass": true,
+    "iteration": 2,
+    "decision": "Pass",
+    "violations": [
+      {
+        "code": "FACET_OVERSTATED",
+        "severity": "Warning",
+        "repairable": false,
+        "message": "Heuristik-Kandidat: harte Formulierung trotz weicher Facette. Best\u00E4tigung durch Critic (MC3) n\u00F6tig.",
+        "lineNumber": 11,
+        "artifactQuote": "- Es muss eine Suche nach Stichworten \u00FCber alle Bewohnerprofile hinweg geben. Der Umsetzungszeitpunkt ist noch nicht pr\u00E4zisiert. [suche-ueber-alle-bewohnerprofile]",
+        "claimIds": [
+          "suche-ueber-alle-bewohnerprofile"
+        ],
+        "ledgerFacets": {
+          "candidates": "suche-ueber-alle-bewohnerprofile: status=decided,modality=must,timeScope=mvp_or_later_unclear"
+        },
+        "suggestedAction": "Formulierung an die Facette angleichen, falls Critic den Versto\u00DF best\u00E4tigt."
+      },
+      {
+        "code": "FACET_OVERSTATED",
+        "severity": "Warning",
+        "repairable": false,
+        "message": "Heuristik-Kandidat: harte Formulierung trotz weicher Facette. Best\u00E4tigung durch Critic (MC3) n\u00F6tig.",
+        "lineNumber": 20,
+        "artifactQuote": "- Wenn zwei Personen denselben Eintrag offline ge\u00E4ndert haben, muss eine klare Konfliktanzeige erfolgen. Es darf nichts stillschweigend \u00FCberschrieben werden, und der Nutzer entscheidet, welche Version\u2026",
+        "claimIds": [
+          "offline-konfliktbehandlung"
+        ],
+        "ledgerFacets": {
+          "candidates": "offline-konfliktbehandlung: status=decided,modality=must,timeScope=mvp_or_later_unclear"
+        },
+        "suggestedAction": "Formulierung an die Facette angleichen, falls Critic den Versto\u00DF best\u00E4tigt."
+      }
+    ],
+    "repairItems": [],
+    "checks": {
+      "requirementLines": 24,
+      "citation": {
+        "lines": 24,
+        "cited": 24,
+        "missing": 0
+      },
+      "knownId": {
+        "citedDistinct": 23,
+        "unknown": 0
+      },
+      "disposition": {
+        "notApplicableCited": 0
+      },
+      "requiredCoverage": {
+        "required": 14,
+        "unused": 0
+      },
+      "facetHeuristic": {
+        "candidates": 2,
+        "note": "Warning-only; Best\u00E4tigung durch Critic (MC3)"
+      }
+    }
+  },
+  "c7": {
+    "pass": false,
+    "k": 3,
+    "minViolationVotes": 2,
+    "requirementLines": 24,
+    "citedCandidates": 24,
+    "skippedByPrefilter": 14,
+    "llmCheckedPerRun": 10,
+    "totalLlmCalls": 3,
+    "votes": [
+      {
+        "lineNumber": 5,
+        "line": "- No-Go-Eintr\u00E4ge m\u00FCssen pro Bewohner gef\u00FChrt werden und d\u00FCrfen nicht global f\u00FCr alle Bewohner gelten. [no-go-pro-bewohner-nicht-global]",
+        "claimIds": [
+          "no-go-pro-bewohner-nicht-global"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": true,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 6,
+        "line": "- F\u00FCr die No-Go-Seite besteht der Wunsch nach einem roten Stopp-Symbol als deutliches Warnsignal, damit sofort erkennbar ist, dass die Inhalte kritisch sind. Dieser Punkt ist noch offen. [no-go-warnsymbol]",
+        "claimIds": [
+          "no-go-warnsymbol"
+        ],
+        "aggregatedVerdict": "FacetOverstated",
+        "byLlm": true,
+        "votes": {
+          "FacetOverstated": 3
+        },
+        "violationVotes": 3,
+        "k": 3,
+        "rationale": "Das Paket hat modality=must bei status=open; die Zeile spricht nur von einem \u0027Wunsch\u0027 statt des im Paket formulierten Soll-/Muss-Bedarfs. \u0027noch offen\u0027 ist zwar passend, aber die Modality wird abgeschw\u00E4cht.",
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 7,
+        "line": "- F\u00FCr Eintr\u00E4ge auf der No-Go-Seite besteht der Bedarf, dass sie nachtr\u00E4glich bearbeitet und gel\u00F6scht werden k\u00F6nnen. Dieser Punkt ist noch offen. [no-go-bearbeiten-loeschen]",
+        "claimIds": [
+          "no-go-bearbeiten-loeschen"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": true,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 8,
+        "line": "- F\u00FCr die Anlage von No-Gos kann optional eine Vorlagen-Liste mit h\u00E4ufigen No-Gos angeboten werden; daraus darf jedoch nichts automatisch global gelten. [no-go-vorlagenliste-optional]",
+        "claimIds": [
+          "no-go-vorlagenliste-optional"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": true,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 9,
+        "line": "- Der Sofortinfo-Bereich in der Profil-Detailansicht muss auf maximal f\u00FCnf Eintr\u00E4ge begrenzt werden. [sofortinfo-max-fuenf]",
+        "claimIds": [
+          "sofortinfo-max-fuenf"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 10,
+        "line": "- Beim Anlegen eines Bewohners muss mindestens ein Sofortinfo-Eintrag verpflichtend sein. [sofortinfo-mindestens-eins]",
+        "claimIds": [
+          "sofortinfo-mindestens-eins"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 11,
+        "line": "- Es muss eine Suche nach Stichworten \u00FCber alle Bewohnerprofile hinweg geben. Der Umsetzungszeitpunkt ist noch nicht pr\u00E4zisiert. [suche-ueber-alle-bewohnerprofile]",
+        "claimIds": [
+          "suche-ueber-alle-bewohnerprofile"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": true,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 12,
+        "line": "- Es besteht der Bedarf nach einer \u00DCbergabe-Notiz pro Schicht, die der n\u00E4chsten Schicht beim \u00D6ffnen der App prominent angezeigt wird. Dieser Punkt ist noch offen. [uebergabe-notizen-schichtworkflow]",
+        "claimIds": [
+          "uebergabe-notizen-schichtworkflow"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": true,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 13,
+        "line": "- F\u00FCr \u00DCbergabe-Notizen besteht der Bedarf, sie bewohnerbezogen verlinkbar zu machen, sodass direkt auf das Profil eines Bewohners verwiesen werden kann. Dieser Punkt ist noch offen. [uebergabe-notizen-bewohnerverlinkung]",
+        "claimIds": [
+          "uebergabe-notizen-bewohnerverlinkung"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": true,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 14,
+        "line": "- F\u00FCr \u00DCbergabe-Notizen besteht der Wunsch, sie nach sieben Tagen automatisch zu archivieren; archivierte Notizen sollen jedoch weiterhin auffindbar bleiben. Dieser Punkt ist noch offen. [uebergabe-notizen-archivierung-un\u2026",
+        "claimIds": [
+          "uebergabe-notizen-archivierung-und-auffindbarkeit"
+        ],
+        "aggregatedVerdict": "FacetOverstated",
+        "byLlm": true,
+        "votes": {
+          "FacetOverstated": 3
+        },
+        "violationVotes": 3,
+        "k": 3,
+        "rationale": "Das Paket hat modality=must; die Zeile formuliert nur einen \u0027Wunsch\u0027 und schw\u00E4cht damit die im Claim-Paket festgehaltene Anforderung ab. \u0027noch offen\u0027 ist passend.",
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 18,
+        "line": "- Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschlie\u00DFlich wer wann welches Profil angesehen hat. [zugriffsprotokoll-pflicht-revisionssicher-adminsicht]",
+        "claimIds": [
+          "zugriffsprotokoll-pflicht-revisionssicher-adminsicht"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 19,
+        "line": "- Einsicht in das Zugriffsprotokoll d\u00FCrfen nur Admins haben; normale Nutzer d\u00FCrfen dieses Protokoll nicht einsehen. [zugriffsprotokoll-pflicht-revisionssicher-adminsicht]",
+        "claimIds": [
+          "zugriffsprotokoll-pflicht-revisionssicher-adminsicht"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 20,
+        "line": "- Wenn zwei Personen denselben Eintrag offline ge\u00E4ndert haben, muss eine klare Konfliktanzeige erfolgen. Es darf nichts stillschweigend \u00FCberschrieben werden, und der Nutzer entscheidet, welche Version gilt. Der Umsetzung\u2026",
+        "claimIds": [
+          "offline-konfliktbehandlung"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 24,
+        "line": "- Die About-Me-Seite darf im MVP in ihrer aktuellen Form nicht ver\u00E4ndert werden. [about-me-unveraendert]",
+        "claimIds": [
+          "about-me-unveraendert"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": true,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 28,
+        "line": "- Es muss mit der Datenschutzbeauftragten gekl\u00E4rt werden, ob Angeh\u00F6rige selbst Inhalte eintragen d\u00FCrfen, zum Beispiel auf der About-Me-Seite, oder nur Leserechte erhalten. Bis dahin bleibt diese Rechtefrage unentschieden\u2026",
+        "claimIds": [
+          "angehoerige-schreibrechte-offen"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 29,
+        "line": "- F\u00FCr die Planung soll aktuell von einer Mindestunterst\u00FCtzung ab Android 10 ausgegangen werden; die finale Festlegung muss jedoch noch mit dem Tr\u00E4ger gekl\u00E4rt werden. [android-10-mindestanforderung-offen]",
+        "claimIds": [
+          "android-10-mindestanforderung-offen"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 30,
+        "line": "- Falls im Haus Ger\u00E4te unter Android 10 vorhanden sind, m\u00FCssten diese ausgetauscht werden; dieses Risiko ist abh\u00E4ngig vom Ger\u00E4tebestand und der Abstimmung mit dem Tr\u00E4ger. [altgeraete-austausch-risiko]",
+        "claimIds": [
+          "altgeraete-austausch-risiko"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 31,
+        "line": "- Zum Thema Piktogramme besteht ein noch nicht ausreichend konkretisierter \u00C4nderungswunsch; vor einer Umsetzung muss pr\u00E4zisiert werden, was mit \u201Egr\u00F6\u00DFer denken\u201C gemeint ist. [piktogramme-unklar]",
+        "claimIds": [
+          "piktogramme-unklar"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": true,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 32,
+        "line": "- Firebase Firestore ist als Persistenztechnologie f\u00FCr die L\u00F6sung festgelegt; Alternativen werden nicht weiter diskutiert. [firestore-fixiert]",
+        "claimIds": [
+          "firestore-fixiert"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 33,
+        "line": "- Es ist unklar, ob aus dem Hinweis auf die anstehende \u00DCbergabe eine eigenst\u00E4ndige fachliche Anforderung zur Unterst\u00FCtzung schneller \u00DCbergabeprozesse abgeleitet werden soll. [ADJ-GAP-AU-0002]",
+        "claimIds": [
+          "ADJ-GAP-AU-0002"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 34,
+        "line": "- Es ist unklar, welcher zuvor genannte Punkt aus Sicht der Angeh\u00F6rigen besonders wichtig ist und ob daraus ein eigener Claim folgt. [ADJ-GAP-AU-0026]",
+        "claimIds": [
+          "ADJ-GAP-AU-0026"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 35,
+        "line": "- Gegebenenfalls ist zu kl\u00E4ren, ob Aufgabenverfolgung oder Terminplanung als eigene organisatorische Anforderungen an das Projekt festgehalten werden sollen. [ADJ-GAP-AU-0035]",
+        "claimIds": [
+          "ADJ-GAP-AU-0035"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 39,
+        "line": "- Ein Dunkelmodus ist ein Wunsch, insbesondere f\u00FCr den Nachtdienst, hat jedoch keine hohe Priorit\u00E4t und ist eher sp\u00E4ter m\u00F6glich. [dark-mode-wunsch]",
+        "claimIds": [
+          "dark-mode-wunsch"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      },
+      {
+        "lineNumber": 40,
+        "line": "- Eine einstellbare Schriftgr\u00F6\u00DFe ist ein Wunsch zur Unterst\u00FCtzung \u00E4lterer Kolleginnen, hat jedoch keine hohe Priorit\u00E4t und ist eher sp\u00E4ter m\u00F6glich. [schriftgroesse-einstellbar-wunsch]",
+        "claimIds": [
+          "schriftgroesse-einstellbar-wunsch"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      }
+    ],
+    "violations": [
+      {
+        "code": "FACET_OVERSTATED",
+        "severity": "Error",
+        "repairable": true,
+        "message": "Das Paket hat modality=must bei status=open; die Zeile spricht nur von einem \u0027Wunsch\u0027 statt des im Paket formulierten Soll-/Muss-Bedarfs. \u0027noch offen\u0027 ist zwar passend, aber die Modality wird abgeschw\u00E4cht. (Mehrheit: 3/3)",
+        "lineNumber": 6,
+        "artifactQuote": "- F\u00FCr die No-Go-Seite besteht der Wunsch nach einem roten Stopp-Symbol als deutliches Warnsignal, damit sofort erkennbar ist, dass die Inhalte kritisch sind. Dieser Punkt ist noch offen. [no-go-warnsymbol]",
+        "claimIds": [
+          "no-go-warnsymbol"
+        ],
+        "ledgerFacets": {
+          "votes": "FacetOverstated:3"
+        },
+        "suggestedAction": "Formulierung an die Facette angleichen."
+      },
+      {
+        "code": "FACET_OVERSTATED",
+        "severity": "Error",
+        "repairable": true,
+        "message": "Das Paket hat modality=must; die Zeile formuliert nur einen \u0027Wunsch\u0027 und schw\u00E4cht damit die im Claim-Paket festgehaltene Anforderung ab. \u0027noch offen\u0027 ist passend. (Mehrheit: 3/3)",
+        "lineNumber": 14,
+        "artifactQuote": "- F\u00FCr \u00DCbergabe-Notizen besteht der Wunsch, sie nach sieben Tagen automatisch zu archivieren; archivierte Notizen sollen jedoch weiterhin auffindbar bleiben. Dieser Punkt ist noch offen. [uebergabe-notizen-archivierung-un\u2026",
+        "claimIds": [
+          "uebergabe-notizen-archivierung-und-auffindbarkeit"
+        ],
+        "ledgerFacets": {
+          "votes": "FacetOverstated:3"
+        },
+        "suggestedAction": "Formulierung an die Facette angleichen."
+      }
+    ]
+  }
+}

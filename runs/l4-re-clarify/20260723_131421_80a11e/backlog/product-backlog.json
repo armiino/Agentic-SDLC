@@ -1,0 +1,2374 @@
+{
+  "schemaVersion": 1,
+  "backlogId": "product-backlog-20260723_131905",
+  "projectId": "einrichtung-fresh",
+  "baselineId": "core-baseline-20260723_124020",
+  "createdUtc": "2026-07-23T13:19:05.810245Z",
+  "sourcePath": "runs/l4-re-clarify/20260723_130243_a96fda/clusters/applied/feature-clusters.json",
+  "items": [
+    {
+      "pbiId": "PBI-FC01-01",
+      "identityKey": "produktziel-kernnutzung-festlegen",
+      "version": 1,
+      "type": "clarification",
+      "title": "Produktziel und L\u00F6sungsrahmen f\u00FCr unterst\u00FCtzte Kommunikation festlegen",
+      "requirementIds": [
+        "REQ-01",
+        "REQ-02",
+        "REQ-03",
+        "REQ-04",
+        "REQ-52"
+      ],
+      "goal": "Als Product Owner will ich das konkrete Produktziel und den zul\u00E4ssigen L\u00F6sungsrahmen der App festlegen, damit sp\u00E4tere Features die unterst\u00FCtzte Kommunikation verbessern, ohne in eine beidseitige \u00DCbersetzungsl\u00F6sung abzugleiten.",
+      "scope": {
+        "inScope": [
+          "Produktziel f\u00FCr die erste Version als Unterst\u00FCtzung zum besseren Verstehen von Bewohnern konkretisieren",
+          "Kernnutzen der Profil- und Kommunikationswissens-App beschreiben",
+          "Nicht-Ziel \u0027keine bidirektionale \u00DCbersetzung\u0027 verbindlich festhalten",
+          "Leitplanken f\u00FCr sp\u00E4tere Feature-Entscheidungen ableiten"
+        ],
+        "outOfScope": [
+          "Detailliertes UX- oder Screen-Design",
+          "Technologie- oder Architekturwahl",
+          "Ausformulierung aller Fachfelder einzelner Profile"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine freigegebene Zielbeschreibung vor, die den prim\u00E4ren Nutzen \u0027Betreuer und andere Personen verstehen Bewohner besser\u0027 explizit benennt.",
+        "Es liegt eine dokumentierte Abgrenzung vor, dass keine individuelle bidirektionale \u00DCbersetzungsfunktion Teil des L\u00F6sungsansatzes ist.",
+        "Es sind mindestens die Kernanwendungsf\u00E4lle \u0027Profilwissen nachsehen bei Verst\u00E4ndnisschwierigkeiten\u0027 und \u0027Kommunikationswissen bereitstellen\u0027 fachlich beschrieben.",
+        "Alle nachfolgenden Delivery-PBIs k\u00F6nnen sich auf diese Zielbeschreibung beziehen, ohne dem Ausschluss aus REQ-04 zu widersprechen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Wie weit soll die App in der ersten Version \u00FCber reine Nachschlageunterst\u00FCtzung hinausgehen, z. B. aktive Handlungsempfehlungen oder Interaktionshilfen?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 1,
+      "dependencies": [],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-01",
+          "REQ-02",
+          "REQ-03",
+          "REQ-04",
+          "REQ-52"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-01",
+          "REQ-02",
+          "REQ-03",
+          "REQ-04",
+          "REQ-52"
+        ],
+        "claims": [
+          "Produktziel konkretisiert",
+          "\u00DCbersetzungsansatz ausgeschlossen"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-01",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-01 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC02-01",
+      "identityKey": "interne-accounts-und-rollenkern",
+      "version": 1,
+      "type": "delivery",
+      "title": "Interne Accounts mit Basisrollen und ohne Selbstregistrierung bereitstellen",
+      "requirementIds": [
+        "REQ-05",
+        "REQ-06",
+        "REQ-07",
+        "REQ-41",
+        "L3-REQ-009",
+        "L3-REQ-010"
+      ],
+      "goal": "Als Admin will ich interne Accounts mit Basisrollen verwalten, damit nur berechtigte Personen ohne Selbstregistrierung auf die App zugreifen k\u00F6nnen.",
+      "scope": {
+        "inScope": [
+          "Login nur mit intern vergebenen Accounts",
+          "Keine Selbstregistrierung im Produkt",
+          "Basisrollen Admin, User und Bewohner ber\u00FCcksichtigen",
+          "Admins k\u00F6nnen Accounts anlegen und Rollen vergeben",
+          "Automatische erneute Authentifizierung nach Inaktivit\u00E4t vorsehen",
+          "Admin-gest\u00FCtztes Zur\u00FCcksetzen von Passw\u00F6rtern"
+        ],
+        "outOfScope": [
+          "Feingranulare Rechte f\u00FCr Angeh\u00F6rige",
+          "Einrichtungs\u00FCbergreifende Sichtbarkeitslogik",
+          "Optionaler Self-Service zum Passwort-Reset"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Die App bietet keine Selbstregistrierung an; neue Zug\u00E4nge k\u00F6nnen nur durch Admins angelegt werden.",
+        "Ein Admin kann einen Account mit der Rolle Admin, User oder Bewohner anlegen und speichern.",
+        "Ein User kann sich mit vergebenem Account anmelden, aber keine Administrationsfunktionen aufrufen.",
+        "Ein Bewohner-Account ist als eigener Rollentyp vorhanden und kann f\u00FCr eingeschr\u00E4nkte Nutzung freigeschaltet werden.",
+        "Nach konfigurierbarer Inaktivit\u00E4t wird eine erneute Authentifizierung verlangt.",
+        "Ein Admin kann f\u00FCr einen bestehenden Account einen Passwort-Reset-Prozess ansto\u00DFen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Soll es zus\u00E4tzlich zu Admin, User und Bewohner noch weitere Standardrollen oder Rollenkombinationen geben?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        },
+        {
+          "question": "Soll ein sicherer Self-Service-Prozess zum Passwort-Reset zus\u00E4tzlich zum Admin-Reset angeboten werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "mvp",
+      "priorityRank": 2,
+      "dependencies": [
+        "PBI-FC01-01"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-05",
+          "REQ-06",
+          "REQ-07",
+          "REQ-41",
+          "L3-REQ-009",
+          "L3-REQ-010"
+        ],
+        "l3": [
+          "L3-REQ-009",
+          "L3-REQ-010"
+        ],
+        "l1Req": [
+          "REQ-05",
+          "REQ-06",
+          "REQ-07",
+          "REQ-41"
+        ],
+        "claims": [
+          "Keine Selbstregistrierung",
+          "Basisrollen vorhanden",
+          "Admin verwaltet Accounts"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-02",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-02 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC02-02",
+      "identityKey": "rechte-fuer-angehoerige-und-einrichtungen-klaeren",
+      "version": 1,
+      "type": "clarification",
+      "title": "Rechtemodell f\u00FCr Angeh\u00F6rige und Einrichtungssicht festlegen",
+      "requirementIds": [
+        "REQ-08",
+        "REQ-09",
+        "REQ-10"
+      ],
+      "goal": "Als Product Owner will ich das Rechtemodell f\u00FCr Angeh\u00F6rige und die Begrenzung auf Einrichtungsprofile festlegen, damit Zugriffe fachlich korrekt und datenschutzgerecht abgegrenzt werden.",
+      "scope": {
+        "inScope": [
+          "Beteiligung von Angeh\u00F6rigen fachlich beschreiben",
+          "Rechteunterschiede zwischen Mitarbeitern, Angeh\u00F6rigen und Bewohnern festlegen",
+          "Sichtbarkeitsgrenze pro Einrichtung definieren",
+          "Entscheidungsvorlage f\u00FCr sp\u00E4tere Umsetzung erstellen"
+        ],
+        "outOfScope": [
+          "Technische Implementierung des finalen Berechtigungsmodells",
+          "Vertragliche oder rechtliche Detailpr\u00FCfung au\u00DFerhalb des Produktumfangs"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine Rollen-/Rechtematrix f\u00FCr mindestens Admin, User, Bewohner und Angeh\u00F6rige vor.",
+        "Es ist dokumentiert, welche Profil- und Inhaltsbereiche Angeh\u00F6rige lesen, hinzuf\u00FCgen, bearbeiten oder nicht sehen d\u00FCrfen.",
+        "Es ist dokumentiert, nach welchem Fachprinzip Mitarbeiter nur Profile ihrer Einrichtung sehen d\u00FCrfen.",
+        "Offene Punkte zur technischen Umsetzung der Einrichtungstrennung sind f\u00FCr die Umsetzung separat benannt."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche konkreten Rechte sollen Angeh\u00F6rige je Bereich erhalten?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        },
+        {
+          "question": "Wie wird die Zugeh\u00F6rigkeit eines Mitarbeiters zu genau einer oder mehreren Einrichtungen fachlich gepflegt?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 3,
+      "dependencies": [
+        "PBI-FC02-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-08",
+          "REQ-09",
+          "REQ-10"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-08",
+          "REQ-09",
+          "REQ-10"
+        ],
+        "claims": [
+          "Angeh\u00F6rigenrechte gekl\u00E4rt",
+          "Einrichtungssicht abgegrenzt"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-02",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-02 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC02-03",
+      "identityKey": "aenderungsnachweis-bei-inhalten",
+      "version": 1,
+      "type": "delivery",
+      "title": "Ersteller- und \u00C4nderungsnachweis f\u00FCr Inhalte erfassen",
+      "requirementIds": [
+        "L3-REQ-001"
+      ],
+      "goal": "Als Nutzer will ich bei Inhalts\u00E4nderungen nachvollziehen k\u00F6nnen, wer einen Eintrag erstellt oder ge\u00E4ndert hat und wann das passiert ist, damit Wissen vertrauensw\u00FCrdig und nachverfolgbar bleibt.",
+      "scope": {
+        "inScope": [
+          "Ersteller bei neuen Inhalten speichern",
+          "Zeitpunkt der Erstellung speichern",
+          "letzten Bearbeiter und \u00C4nderungszeitpunkt speichern",
+          "Nachweis bei inhaltlichen Eintr\u00E4gen verf\u00FCgbar machen"
+        ],
+        "outOfScope": [
+          "Vollst\u00E4ndige Historie aller Versionen",
+          "Freigabeworkflows",
+          "separates Audit-Reporting f\u00FCr Administration"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Beim Anlegen eines Inhalts wird der aktuelle Account als Ersteller mit Zeitstempel gespeichert.",
+        "Beim Bearbeiten eines bestehenden Inhalts wird der aktuelle Account als letzter Bearbeiter mit Zeitstempel gespeichert.",
+        "Die gespeicherten Nachweisdaten sind f\u00FCr den jeweiligen Inhalt abrufbar oder sichtbar.",
+        "Das Speichern eines Inhalts ohne diese Nachweisdaten ist nicht zul\u00E4ssig."
+      ],
+      "openDecisions": [],
+      "mvp": "required_for_mvp",
+      "priorityRank": 8,
+      "dependencies": [
+        "PBI-FC02-01"
+      ],
+      "readiness": "backlog_ready",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "L3-REQ-001"
+        ],
+        "l3": [
+          "L3-REQ-001"
+        ],
+        "l1Req": [],
+        "claims": [
+          "\u00C4nderungsnachweis vorhanden"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-02",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-02 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC03-01",
+      "identityKey": "login-screen-und-fehlerfeedback",
+      "version": 1,
+      "type": "delivery",
+      "title": "Login-Screen mit sicherem Fehlerfeedback bereitstellen",
+      "requirementIds": [
+        "REQ-11",
+        "REQ-12",
+        "L3-REQ-011",
+        "REQ-05"
+      ],
+      "goal": "Als Nutzer will ich mich \u00FCber einen klaren Login-Screen mit E-Mail und Passwort anmelden, damit ich sicher in die App einsteigen kann.",
+      "scope": {
+        "inScope": [
+          "Zentriertes Logo im oberen Drittel des Login-Screens",
+          "E-Mail-Feld, Passwort-Feld und Login-Button",
+          "Keine Registrierungsm\u00F6glichkeit auf dem Screen",
+          "Verst\u00E4ndliche, sicherheitsneutrale Fehlermeldungen bei fehlgeschlagenem Login"
+        ],
+        "outOfScope": [
+          "Kontoerstellung durch Endnutzer",
+          "Passwort-Self-Service",
+          "Design des finalen Kommunikations-Logos"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Der Login-Screen enth\u00E4lt ein sichtbares Logo im oberen Drittel, ein E-Mail-Feld, ein Passwort-Feld und einen Login-Button.",
+        "Der Screen enth\u00E4lt keine Funktion zur Selbstregistrierung.",
+        "Bei ung\u00FCltigen Zugangsdaten zeigt die App eine verst\u00E4ndliche Fehlermeldung, ohne preiszugeben, ob ein bestimmter Account existiert.",
+        "Bei erfolgreicher Anmeldung wird der Nutzer in den gesch\u00FCtzten Bereich weitergeleitet."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welches finale Kommunikations-Logo wird verwendet?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "mvp",
+      "priorityRank": 4,
+      "dependencies": [
+        "PBI-FC02-01"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-11",
+          "REQ-12",
+          "L3-REQ-011",
+          "REQ-05"
+        ],
+        "l3": [
+          "L3-REQ-011"
+        ],
+        "l1Req": [
+          "REQ-11",
+          "REQ-12",
+          "REQ-05"
+        ],
+        "claims": [
+          "Login-Screen vorhanden",
+          "Keine Registrierung",
+          "Sicheres Fehlerfeedback"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-03",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-03 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC03-02",
+      "identityKey": "letzten-kontext-nach-login-anbieten",
+      "version": 1,
+      "type": "clarification",
+      "title": "Datenschutzkonformen Schnellzugriff auf zuletzt genutzten Kontext festlegen",
+      "requirementIds": [
+        "L3-REQ-005",
+        "L3-REQ-009"
+      ],
+      "goal": "Als Nutzer will ich nach dem Login meinen zuletzt genutzten Bewohner oder meine zuletzt ge\u00F6ffnete Einrichtung schneller wiederfinden, damit wiederkehrende Arbeitsschritte weniger Zeit kosten.",
+      "scope": {
+        "inScope": [
+          "Fachlichen Nutzen des Schnellzugriffs festlegen",
+          "Pr\u00FCfen, ob letzter Bewohner oder letzte Einrichtung datenschutzkonform vorgemerkt werden darf",
+          "Entscheiden, wie sichtbar und wie dauerhaft diese Information sein darf"
+        ],
+        "outOfScope": [
+          "Technische Implementierung einer Verlaufshistorie",
+          "Allgemeines Caching anderer Inhaltsdaten"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine Entscheidung vor, ob letzter Bewohner, letzte Einrichtung oder kein letzter Kontext gespeichert wird.",
+        "Es ist dokumentiert, unter welchen Datenschutz- und Ger\u00E4tekontextbedingungen der Schnellzugriff zul\u00E4ssig ist.",
+        "Es ist beschrieben, ob der Schnellzugriff automatisch angezeigt oder nur optional angeboten wird."
+      ],
+      "openDecisions": [
+        {
+          "question": "Darf die App den zuletzt betrachteten Bewohner oder die zuletzt ge\u00F6ffnete Einrichtung auf gemeinsam genutzten Ger\u00E4ten speichern und wieder anzeigen?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "undecided",
+      "priorityRank": 18,
+      "dependencies": [
+        "PBI-FC02-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "L3-REQ-005",
+          "L3-REQ-009"
+        ],
+        "l3": [
+          "L3-REQ-005",
+          "L3-REQ-009"
+        ],
+        "l1Req": [],
+        "claims": [
+          "Schnellzugriff fachlich gekl\u00E4rt"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-03",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-03 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC04-01",
+      "identityKey": "globale-appbar-und-basisnavigation",
+      "version": 1,
+      "type": "delivery",
+      "title": "Konsistente Appbar mit Basisnavigation nach dem Login bereitstellen",
+      "requirementIds": [
+        "REQ-14",
+        "REQ-15",
+        "REQ-38"
+      ],
+      "goal": "Als eingeloggter Nutzer will ich auf jeder Seite eine konsistente Appbar mit Orientierung und Grundaktionen haben, damit ich mich sicher durch die App bewegen kann.",
+      "scope": {
+        "inScope": [
+          "Konsistente Appbar auf allen Seiten nach dem Login",
+          "R\u00FCcknavigation",
+          "Seitentitel in der Appbar",
+          "Zugriff auf Einstellungen",
+          "Logout-Zugriff",
+          "Barrierearme Gestaltung mit gut lesbarer Schrift und ausreichendem Kontrast"
+        ],
+        "outOfScope": [
+          "Inhalt der Einstellungsseite",
+          "Hilfetour oder Tutorial",
+          "aufw\u00E4ndige Animationen"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Jede Seite im eingeloggten Bereich zeigt eine Appbar.",
+        "Die Appbar unterst\u00FCtzt R\u00FCcknavigation, zeigt den aktuellen Seitentitel und bietet Zugriff auf Einstellungen sowie Logout.",
+        "Schriftgr\u00F6\u00DFe und Kontrast der Appbar sind so gestaltet, dass die Bedienelemente gut lesbar sind.",
+        "Verwendete Farben und visuelle Effekte beeintr\u00E4chtigen die Orientierung nicht."
+      ],
+      "openDecisions": [],
+      "mvp": "mvp",
+      "priorityRank": 5,
+      "dependencies": [
+        "PBI-FC03-01"
+      ],
+      "readiness": "backlog_ready",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-14",
+          "REQ-15",
+          "REQ-38"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-14",
+          "REQ-15",
+          "REQ-38"
+        ],
+        "claims": [
+          "Globale Navigation vorhanden",
+          "Barrierearme Appbar"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-04",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-04 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC04-02",
+      "identityKey": "hilfe-und-erste-tour",
+      "version": 1,
+      "type": "delivery",
+      "title": "Erstlogin-Hilfe und erneut aufrufbaren Hilfebereich bereitstellen",
+      "requirementIds": [
+        "REQ-46"
+      ],
+      "goal": "Als neuer Nutzer will ich beim ersten Login eine kurze Einf\u00FChrung und sp\u00E4ter einen wiederaufrufbaren Hilfebereich nutzen, damit ich die App ohne lange Einarbeitung bedienen kann.",
+      "scope": {
+        "inScope": [
+          "Kurze Tour beim ersten Login",
+          "Hilfebereich sp\u00E4ter erneut aufrufbar",
+          "Inhalte auf zentrale Bedienkonzepte beschr\u00E4nken"
+        ],
+        "outOfScope": [
+          "Umfangreiche Schulungsplattform",
+          "Kontextsensitive Hilfe f\u00FCr jede einzelne Fachfunktion"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Beim ersten erfolgreichen Login kann eine kurze Tour angezeigt werden.",
+        "Die Tour kann \u00FCbersprungen oder beendet werden.",
+        "Nach dem ersten Login ist ein Hilfebereich erneut aufrufbar.",
+        "Die Hilfe erkl\u00E4rt mindestens Navigation, Profilsuche und Profilbereiche auf knappe Weise."
+      ],
+      "openDecisions": [
+        {
+          "question": "Soll die Hilfe verpflichtend durchlaufen werden oder optional \u00FCberspringbar sein?",
+          "kind": "engineering_default",
+          "evidence": "not_stated",
+          "resolution": "proposed_default",
+          "blocksScope": false,
+          "proposedResolution": "Die Tour ist optional und kann \u00FCbersprungen werden, damit wiederkehrende Nutzer nicht blockiert werden."
+        }
+      ],
+      "mvp": "later",
+      "priorityRank": 19,
+      "dependencies": [
+        "PBI-FC04-01",
+        "PBI-FC05-01"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-46"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-46"
+        ],
+        "claims": [
+          "Hilfe/Tutorial verf\u00FCgbar"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-04",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-04 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC05-01",
+      "identityKey": "profiluebersicht-suchen-und-oeffnen",
+      "version": 1,
+      "type": "delivery",
+      "title": "Profil\u00FCbersicht mit Suche und \u00F6ffnbaren Profilkarten bereitstellen",
+      "requirementIds": [
+        "REQ-13",
+        "REQ-16",
+        "REQ-17",
+        "REQ-18",
+        "REQ-07",
+        "REQ-09"
+      ],
+      "goal": "Als Nutzer will ich in einer Profil\u00FCbersicht berechtigte Bewohnerprofile sehen, nach Namen suchen und ein Profil \u00F6ffnen, damit ich relevante Informationen schnell finde.",
+      "scope": {
+        "inScope": [
+          "Profil\u00FCbersicht nach dem Login",
+          "Liste oder Kartenansicht sichtbarer Profile",
+          "Anzeige von Vorschaubild, Name und kurzer Beschreibung",
+          "Suche nach Namen",
+          "\u00D6ffnen eines Profils aus der \u00DCbersicht",
+          "Bewohner sehen nur das eigene Profil",
+          "Mitarbeiter sehen nur Profile ihrer Einrichtung entsprechend dem Rechtemodell"
+        ],
+        "outOfScope": [
+          "Anlegen neuer Profile",
+          "Sortierung nach Aktualit\u00E4t",
+          "Kennzeichnung neuer Inhalte in \u00DCbersichten"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Nach dem Login wird eine Profil\u00FCbersicht angezeigt.",
+        "Jedes sichtbare Profil zeigt Vorschaubild, Name und kurze Beschreibung.",
+        "Die \u00DCbersicht enth\u00E4lt eine Suche, mit der Profile nach Namen gefiltert werden k\u00F6nnen.",
+        "Ein Klick oder Tap auf ein Profil \u00F6ffnet die Detailansicht dieses Profils.",
+        "Ein Bewohner-Account sieht in der \u00DCbersicht nur das eigene Profil.",
+        "Nutzer sehen keine Profile au\u00DFerhalb ihrer fachlich zugeordneten Sichtbarkeit."
+      ],
+      "openDecisions": [
+        {
+          "question": "Soll die \u00DCbersicht als Liste, als Kacheln oder in einer umschaltbaren Darstellung umgesetzt werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        },
+        {
+          "question": "Ist das Rechtemodell f\u00FCr Einrichtungszuordnung rechtzeitig konkret genug, um die Sichtbarkeitsfilter belastbar umzusetzen?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "partial",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "mvp",
+      "priorityRank": 6,
+      "dependencies": [
+        "PBI-FC02-01",
+        "PBI-FC02-02",
+        "PBI-FC03-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-13",
+          "REQ-16",
+          "REQ-17",
+          "REQ-18",
+          "REQ-07",
+          "REQ-09"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-13",
+          "REQ-16",
+          "REQ-17",
+          "REQ-18",
+          "REQ-07",
+          "REQ-09"
+        ],
+        "claims": [
+          "Profil\u00FCbersicht vorhanden",
+          "Namenssuche vorhanden",
+          "Berechtigte Profile sichtbar"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-05",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-05 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC05-02",
+      "identityKey": "profile-anlegen-mit-dublettenpruefung",
+      "version": 1,
+      "type": "delivery",
+      "title": "Neue Bewohnerprofile mit Basisdaten und Dublettenpr\u00FCfung anlegen",
+      "requirementIds": [
+        "REQ-45",
+        "L3-REQ-008"
+      ],
+      "goal": "Als berechtigter Nutzer will ich ein neues Bewohnerprofil mit Bild, Name und Beschreibung anlegen k\u00F6nnen, damit neues Profilwissen strukturiert erfasst wird.",
+      "scope": {
+        "inScope": [
+          "Start des Anlegens \u00FCber Plus-Symbol in der Profil\u00FCbersicht",
+          "Dialog oder vergleichbarer Eingabefluss f\u00FCr Bild, Name und Beschreibung",
+          "Pr\u00FCfung auf gleiche oder sehr \u00E4hnliche Namen vor dem Anlegen",
+          "R\u00FCckmeldung bei m\u00F6glicher Dublette"
+        ],
+        "outOfScope": [
+          "Feingranulare Rechtepr\u00FCfung f\u00FCr alle Rollen",
+          "Massenimport aus Akten",
+          "Bearbeiten oder Archivieren bestehender Profile"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Berechtigte Nutzer k\u00F6nnen aus der Profil\u00FCbersicht einen Anlegefluss f\u00FCr neue Profile starten.",
+        "Der Anlegefluss erfasst mindestens Name, kurze Beschreibung und optional ein Bild.",
+        "Vor dem Speichern pr\u00FCft die App, ob Profile mit gleichem oder sehr \u00E4hnlichem Namen bereits existieren.",
+        "Bei m\u00F6glicher Dublette wird der Nutzer vor dem endg\u00FCltigen Anlegen darauf hingewiesen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche Rollen d\u00FCrfen neue Bewohnerprofile anlegen: nur Admins, auch User oder zus\u00E4tzlich Angeh\u00F6rige?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        },
+        {
+          "question": "Soll das Profilbild beim Anlegen verpflichtend oder optional sein?",
+          "kind": "stakeholder_decision",
+          "evidence": "weakly_inferred",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 9,
+      "dependencies": [
+        "PBI-FC02-02",
+        "PBI-FC05-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-45",
+          "L3-REQ-008"
+        ],
+        "l3": [
+          "L3-REQ-008"
+        ],
+        "l1Req": [
+          "REQ-45"
+        ],
+        "claims": [
+          "Profilanlage m\u00F6glich",
+          "Dublettenhinweis vorhanden"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-05",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-05 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC05-03",
+      "identityKey": "sortierung-status-und-neu-markierungen",
+      "version": 1,
+      "type": "delivery",
+      "title": "Profil\u00FCbersicht um Sortierung, Profilstatus und Neu-Markierungen erweitern",
+      "requirementIds": [
+        "L3-REQ-006",
+        "L3-REQ-007",
+        "L3-REQ-013"
+      ],
+      "goal": "Als Nutzer will ich Profile sortieren, ihren Status erkennen und neue oder aktualisierte Inhalte sehen, damit ich in der \u00DCbersicht schneller priorisieren kann.",
+      "scope": {
+        "inScope": [
+          "Sortierung nach Name",
+          "optionale Sortierung nach zuletzt aktualisiert",
+          "Profilstatus aktiv, archiviert und optional in Vorbereitung anzeigen",
+          "neue oder aktualisierte Inhalte in \u00DCbersichten kennzeichnen"
+        ],
+        "outOfScope": [
+          "Benachrichtigungs-Popups",
+          "Komplexe Filter \u00FCber viele Merkmale",
+          "Archivierungsworkflow selbst"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Die Profil\u00FCbersicht unterst\u00FCtzt eine Sortierung nach Name.",
+        "Wenn eine Sortierung nach Aktualit\u00E4t aktiviert ist, werden zuletzt aktualisierte Profile entsprechend geordnet dargestellt.",
+        "Profile k\u00F6nnen mit einem Status \u0027aktiv\u0027 oder \u0027archiviert\u0027 dargestellt werden.",
+        "Neue oder aktualisierte Inhalte sind in der \u00DCbersicht erkennbar markiert."
+      ],
+      "openDecisions": [
+        {
+          "question": "Wird zus\u00E4tzlich zum Status \u0027aktiv\u0027 und \u0027archiviert\u0027 auch der Status \u0027in Vorbereitung\u0027 fachlich ben\u00F6tigt?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        },
+        {
+          "question": "Nach welcher fachlichen Regel gilt ein Profil oder Inhalt als \u0027neu\u0027 oder \u0027aktualisiert seit letztem Besuch\u0027?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "later",
+      "priorityRank": 20,
+      "dependencies": [
+        "PBI-FC05-01",
+        "PBI-FC02-03"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "L3-REQ-006",
+          "L3-REQ-007",
+          "L3-REQ-013"
+        ],
+        "l3": [
+          "L3-REQ-006",
+          "L3-REQ-007",
+          "L3-REQ-013"
+        ],
+        "l1Req": [],
+        "claims": [
+          "Sortierung vorhanden",
+          "Profilstatus sichtbar",
+          "Neu-Markierungen vorhanden"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-05",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-05 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC06-01",
+      "identityKey": "profil-detail-mit-bereichseinstieg",
+      "version": 1,
+      "type": "delivery",
+      "title": "Profil-Detailansicht mit gro\u00DFem Profilbild, Schnellinfos und Bereichseinstiegen bereitstellen",
+      "requirementIds": [
+        "REQ-19",
+        "L3-REQ-002",
+        "REQ-20",
+        "REQ-24",
+        "REQ-32"
+      ],
+      "goal": "Als Nutzer will ich auf einer Profil-Detailseite einen schnellen \u00DCberblick und direkte Einstiege in die wichtigsten Profilbereiche erhalten, damit ich in Verst\u00E4ndnissituationen sofort relevantes Wissen finde.",
+      "scope": {
+        "inScope": [
+          "Gro\u00DFe Anzeige des gew\u00E4hlten Profilbilds",
+          "Interaktive Einstiege in Hauptbereiche des Profils",
+          "Kompakter Sofortinformationsbereich mit zentralen Kommunikationshinweisen und kritischen No-Gos",
+          "Einstiege mindestens in About-Me, Kommunikation und No-Go"
+        ],
+        "outOfScope": [
+          "Vollst\u00E4ndige Inhalte der Unterseiten",
+          "Finale Festlegung weiterer zus\u00E4tzlicher Hauptbereiche",
+          "Bearbeiten von Inhalten direkt auf der Hub-Seite"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Die Detailansicht zeigt das ausgew\u00E4hlte Profilbild gr\u00F6\u00DFer als in der \u00DCbersicht an.",
+        "Die Detailansicht bietet interaktive Einstiege zu den Bereichen About-Me, Kommunikation und No-Go.",
+        "Ein kompakter Bereich zeigt besonders wichtige Sofortinformationen wie kritische No-Gos und zentrale Kommunikationshinweise.",
+        "Von der Detailansicht aus k\u00F6nnen Nutzer die jeweiligen Unterseiten mit einem Schritt \u00F6ffnen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche weiteren Hauptbereiche neben About-Me, Kommunikation und No-Go sollen langfristig als Buttons auf der Detailansicht erscheinen?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "mvp",
+      "priorityRank": 7,
+      "dependencies": [
+        "PBI-FC05-01"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-19",
+          "L3-REQ-002",
+          "REQ-20",
+          "REQ-24",
+          "REQ-32"
+        ],
+        "l3": [
+          "L3-REQ-002"
+        ],
+        "l1Req": [
+          "REQ-19",
+          "REQ-20",
+          "REQ-24",
+          "REQ-32"
+        ],
+        "claims": [
+          "Profilhub vorhanden",
+          "Schnellinfos sichtbar",
+          "Bereichseinstiege vorhanden"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-06",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-06 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC07-01",
+      "identityKey": "about-me-anzeigen",
+      "version": 1,
+      "type": "delivery",
+      "title": "About-Me-Seite mit pers\u00F6nlichen Kurzinfos anzeigen",
+      "requirementIds": [
+        "REQ-20",
+        "REQ-07"
+      ],
+      "goal": "Als Nutzer will ich eine About-Me-Seite mit pers\u00F6nlichen Kurzinfos eines Bewohners sehen, damit ich schnell einen ersten Eindruck der Person bekomme.",
+      "scope": {
+        "inScope": [
+          "About-Me-Seite pro Bewohner",
+          "Anzeige von Name, Alter, Hobbys oder vergleichbaren Kurzinfos",
+          "Anzeige vorhandener Bilder im About-Me-Kontext",
+          "Bewohner-Account darf den eigenen About-Me-Bereich nutzen"
+        ],
+        "outOfScope": [
+          "Foto-Timeline mit Upload",
+          "Benachrichtigungen \u00FCber neue Inhalte",
+          "rechtliche Kl\u00E4rung von Bildeinwilligungen"
+        ]
+      },
+      "acceptanceCriteria": [
+        "F\u00FCr jeden Bewohner ist eine About-Me-Seite aufrufbar.",
+        "Die Seite zeigt pers\u00F6nliche Kurzinfos f\u00FCr den ersten Eindruck, darunter mindestens Name sowie weitere beschreibende Angaben, sofern gepflegt.",
+        "Vorhandene Bilder k\u00F6nnen im About-Me-Bereich angezeigt werden.",
+        "Ein Bewohner-Account kann den eigenen About-Me-Bereich \u00F6ffnen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche Kurzinfos au\u00DFer Name, Alter und Hobbys sollen im MVP verbindlich angezeigt werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "weakly_inferred",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "mvp",
+      "priorityRank": 10,
+      "dependencies": [
+        "PBI-FC06-01"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-20",
+          "REQ-07"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-20",
+          "REQ-07"
+        ],
+        "claims": [
+          "About-Me verf\u00FCgbar",
+          "Erster Eindruck m\u00F6glich"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-07",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-07 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC07-02",
+      "identityKey": "about-me-foto-timeline-und-upload",
+      "version": 1,
+      "type": "delivery",
+      "title": "About-Me-Foto-Timeline mit Upload und neuester Anzeige bereitstellen",
+      "requirementIds": [
+        "REQ-21",
+        "REQ-22",
+        "REQ-23",
+        "L3-REQ-003",
+        "L3-REQ-001"
+      ],
+      "goal": "Als berechtigter Nutzer will ich in der About-Me-Seite Bilder mit Beschreibung hinzuf\u00FCgen und in einer Timeline sehen, damit pers\u00F6nliche Eindr\u00FCcke aktuell und nachvollziehbar erweitert werden k\u00F6nnen.",
+      "scope": {
+        "inScope": [
+          "Foto-Timeline mit Beschreibungen",
+          "Hinzuf\u00FCgen neuer Eintr\u00E4ge per Plus-Button",
+          "Neueste Eintr\u00E4ge oben anzeigen",
+          "Medien vor Speicherung f\u00FCr Speicher- und Ladezeit optimieren",
+          "Ersteller- und \u00C4nderungsnachweis f\u00FCr Timeline-Eintr\u00E4ge speichern"
+        ],
+        "outOfScope": [
+          "Video-Unterst\u00FCtzung in About-Me",
+          "Benachrichtigungs-Popups",
+          "Kl\u00E4rung rechtlicher Bildfreigaben"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Die About-Me-Seite zeigt eine Timeline von Foto-Eintr\u00E4gen mit Beschreibung.",
+        "Berechtigte Nutzer k\u00F6nnen neue Foto-Eintr\u00E4ge \u00FCber einen Plus-Button hinzuf\u00FCgen.",
+        "Neu hinzugef\u00FCgte Foto-Eintr\u00E4ge erscheinen nach dem Speichern an oberster Stelle der Timeline.",
+        "Beim Speichern werden Medien in geeigneter Form komprimiert oder umgewandelt, sodass der Upload erfolgreich abgeschlossen werden kann.",
+        "F\u00FCr neue oder ge\u00E4nderte Eintr\u00E4ge werden Ersteller bzw. letzter Bearbeiter und Zeitstempel erfasst."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche Rollen d\u00FCrfen im About-Me-Bereich Bilder hinzuf\u00FCgen: nur Mitarbeiter, auch Angeh\u00F6rige und/oder Bewohner?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 11,
+      "dependencies": [
+        "PBI-FC02-02",
+        "PBI-FC02-03",
+        "PBI-FC07-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-21",
+          "REQ-22",
+          "REQ-23",
+          "L3-REQ-003",
+          "L3-REQ-001"
+        ],
+        "l3": [
+          "L3-REQ-003",
+          "L3-REQ-001"
+        ],
+        "l1Req": [
+          "REQ-21",
+          "REQ-22",
+          "REQ-23"
+        ],
+        "claims": [
+          "Foto-Timeline vorhanden",
+          "Upload m\u00F6glich",
+          "Neueste Bilder oben"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-07",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-07 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC07-03",
+      "identityKey": "bilddatenschutz-fuer-about-me-klaeren",
+      "version": 1,
+      "type": "clarification",
+      "title": "Einwilligungen und Datenschutz f\u00FCr Bilder im About-Me-Bereich festlegen",
+      "requirementIds": [
+        "REQ-35"
+      ],
+      "goal": "Als Product Owner will ich die Einwilligungs- und Datenschutzregeln f\u00FCr Bilder festlegen, damit Fotos im About-Me-Bereich rechtssicher genutzt werden k\u00F6nnen.",
+      "scope": {
+        "inScope": [
+          "Kl\u00E4ren, welche Einwilligungen f\u00FCr echte und Testbilder erforderlich sind",
+          "Festlegen, wer Bildfreigaben pr\u00FCft oder dokumentiert",
+          "Entscheiden, ob Bilder ohne nachgewiesene Freigabe hochgeladen werden d\u00FCrfen"
+        ],
+        "outOfScope": [
+          "Technische Umsetzung eines vollst\u00E4ndigen Consent-Management-Systems",
+          "Datenschutzregeln f\u00FCr alle anderen Datentypen"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine dokumentierte Regel vor, unter welchen Voraussetzungen Bilder in der App verwendet werden d\u00FCrfen.",
+        "Es ist festgelegt, wie mit Testbildern umzugehen ist.",
+        "Es ist festgelegt, ob und wie fehlende Einwilligungen im Produktfluss sichtbar gemacht oder blockiert werden."
+      ],
+      "openDecisions": [
+        {
+          "question": "Muss die App den Nachweis einer Einwilligung technisch erzwingen, bevor Bilder gespeichert oder angezeigt werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 12,
+      "dependencies": [
+        "PBI-FC01-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-35"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-35"
+        ],
+        "claims": [
+          "Bilddatenschutz gekl\u00E4rt"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-07",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-07 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC07-04",
+      "identityKey": "about-me-neu-markierungen-und-benachrichtigung",
+      "version": 1,
+      "type": "deferred",
+      "title": "About-Me-Neu-Markierungen und Einrichtungs-Benachrichtigungen sp\u00E4ter ausbauen",
+      "requirementIds": [
+        "REQ-40",
+        "L3-REQ-013"
+      ],
+      "goal": "Als verbundener Nutzer will ich erkennen oder gemeldet bekommen, wenn im About-Me-Bereich neue Inhalte vorliegen, damit ich aktuelles Wissen schneller wahrnehme.",
+      "scope": {
+        "inScope": [
+          "Neu- oder Aktualisiert-Markierungen f\u00FCr About-Me-Inhalte",
+          "Pr\u00FCfung von Popup-Benachrichtigungen f\u00FCr verbundene Nutzer derselben Einrichtung",
+          "Abgrenzung als sp\u00E4terer Ausbau"
+        ],
+        "outOfScope": [
+          "Umsetzung im MVP",
+          "Push-Infrastruktur \u00FCber Betriebssysteme hinweg",
+          "Benachrichtigungen f\u00FCr alle anderen Bereiche"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dieses Backlog Item ist als sp\u00E4terer Ausbau nach dem MVP gekennzeichnet.",
+        "Die sp\u00E4tere Umsetzung soll mindestens Neu-Markierungen in der App und die Option von Popups f\u00FCr verbundene Nutzer derselben Einrichtung ber\u00FCcksichtigen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Soll zuerst nur eine In-App-Neu-Markierung oder direkt zus\u00E4tzlich ein Popup-Benachrichtigungsmechanismus umgesetzt werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        },
+        {
+          "question": "Nach welcher fachlichen Regel gelten Inhalte als \u0027neu\u0027 f\u00FCr verbundene Nutzer?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "later",
+      "priorityRank": 24,
+      "dependencies": [
+        "PBI-FC07-02",
+        "PBI-FC05-03"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-40",
+          "L3-REQ-013"
+        ],
+        "l3": [
+          "L3-REQ-013"
+        ],
+        "l1Req": [
+          "REQ-40"
+        ],
+        "claims": [
+          "Sp\u00E4terer Ausbau f\u00FCr Neu-/Benachrichtigungslogik abgegrenzt"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-07",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-07 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC07-05",
+      "identityKey": "medien-barrierefreiheit-fuer-about-me-pruefen",
+      "version": 1,
+      "type": "clarification",
+      "title": "Barrierearme Medienbeschreibungen im About-Me-Bereich festlegen",
+      "requirementIds": [
+        "L3-REQ-012"
+      ],
+      "goal": "Als Product Owner will ich festlegen, ob Bilder und andere Medien im About-Me-Bereich mit Textzusammenfassungen oder \u00E4hnlichen Hilfen erg\u00E4nzt werden, damit Inhalte zug\u00E4nglicher und besser auffindbar werden.",
+      "scope": {
+        "inScope": [
+          "Pr\u00FCfen von Kurztexten, Bildbeschreibungen oder vergleichbaren Medienzus\u00E4tzen",
+          "Nutzen f\u00FCr Zug\u00E4nglichkeit und Suchbarkeit bewerten",
+          "Ergebnis f\u00FCr sp\u00E4tere Umsetzung festhalten"
+        ],
+        "outOfScope": [
+          "Automatische Untertitelgenerierung",
+          "Volltextsuche \u00FCber Medieninhalte im MVP"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine Entscheidung vor, ob Medien im About-Me-Bereich verpflichtende oder optionale Textzusammenfassungen erhalten sollen.",
+        "Die Entscheidung beschreibt den Mindestumfang der Zusatzinformationen pro Medium."
+      ],
+      "openDecisions": [
+        {
+          "question": "Sollen f\u00FCr Bilder im About-Me-Bereich verpflichtende beschreibende Texte erfasst werden, um Zug\u00E4nglichkeit und Suchbarkeit zu verbessern?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "later",
+      "priorityRank": 25,
+      "dependencies": [
+        "PBI-FC07-01"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "L3-REQ-012"
+        ],
+        "l3": [
+          "L3-REQ-012"
+        ],
+        "l1Req": [],
+        "claims": [
+          "Medienbeschreibungen fachlich bewertet"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-07",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-07 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC08-01",
+      "identityKey": "kommunikationsansicht-anzeigen",
+      "version": 1,
+      "type": "delivery",
+      "title": "Kommunikationsansicht mit klarer Trennung von verbal und nonverbal bereitstellen",
+      "requirementIds": [
+        "REQ-24",
+        "REQ-25"
+      ],
+      "goal": "Als Nutzer will ich Kommunikationswissen in klar getrennten verbalen und nonverbalen Bereichen sehen, damit ich Signale und Ausdrucksweisen schneller richtig einordnen kann.",
+      "scope": {
+        "inScope": [
+          "Kommunikationsansicht pro Bewohner",
+          "Visuelle Trennung von verbal und nonverbal",
+          "Kennzeichnung der Bereiche mit Symbolen oder gleichwertigen visuellen Merkmalen"
+        ],
+        "outOfScope": [
+          "Suche innerhalb der Kommunikationsinhalte",
+          "Erfassen neuer Eintr\u00E4ge",
+          "Video-Uploads"
+        ]
+      },
+      "acceptanceCriteria": [
+        "F\u00FCr einen Bewohner ist eine Kommunikationsansicht aufrufbar.",
+        "Die Ansicht trennt verbale und nonverbale Kommunikation visuell klar.",
+        "Die beiden Bereiche sind mit Symbolen oder gleichwertigen visuellen Kennzeichnungen unterscheidbar."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche konkreten Symbole oder visuellen Kennzeichnungen werden verwendet?",
+          "kind": "engineering_default",
+          "evidence": "stated",
+          "resolution": "proposed_default",
+          "blocksScope": false,
+          "proposedResolution": "Es werden einfache, barrierearme Standard-Icons und klare Abschnitts\u00FCberschriften verwendet, solange kein anderes Design entschieden ist."
+        }
+      ],
+      "mvp": "mvp",
+      "priorityRank": 13,
+      "dependencies": [
+        "PBI-FC06-01"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-24",
+          "REQ-25"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-24",
+          "REQ-25"
+        ],
+        "claims": [
+          "Kommunikationsansicht vorhanden",
+          "Verbale/nonverbale Trennung sichtbar"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-08",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-08 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC08-02",
+      "identityKey": "kommunikations-eintraege-erfassen",
+      "version": 1,
+      "type": "delivery",
+      "title": "Kommunikationsweisen mit Text und Bildern erfassen und erweitern",
+      "requirementIds": [
+        "REQ-26",
+        "REQ-27",
+        "L3-REQ-003",
+        "L3-REQ-001",
+        "REQ-35"
+      ],
+      "goal": "Als berechtigter Nutzer will ich neue Kommunikationsweisen mit Text und Bildern hinzuf\u00FCgen k\u00F6nnen, damit wachsendes Erfahrungswissen zum Bewohner laufend dokumentiert wird.",
+      "scope": {
+        "inScope": [
+          "Dynamisch erweiterbare Kommunikations-Eintr\u00E4ge",
+          "Erfassung von Text und Bildern",
+          "Medienoptimierung vor Speicherung",
+          "Ersteller- und \u00C4nderungsnachweis",
+          "Ber\u00FCcksichtigung von Bilddatenschutz als Voraussetzung"
+        ],
+        "outOfScope": [
+          "Video-Eintr\u00E4ge",
+          "Such- und Filterlogik",
+          "vollst\u00E4ndige Freigabeworkflows f\u00FCr Medien"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Berechtigte Nutzer k\u00F6nnen neue Kommunikations-Eintr\u00E4ge anlegen.",
+        "Ein Eintrag kann mindestens eine textliche Beschreibung enthalten und optional mit Bildmaterial erg\u00E4nzt werden.",
+        "Kommunikations-Eintr\u00E4ge k\u00F6nnen nachtr\u00E4glich erweitert werden, sodass neues Erfahrungswissen erg\u00E4nzt werden kann.",
+        "Beim Speichern von Bildern werden Medien in geeigneter Form komprimiert oder umgewandelt.",
+        "F\u00FCr neue oder ge\u00E4nderte Eintr\u00E4ge werden Ersteller bzw. letzter Bearbeiter und Zeitstempel erfasst."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche Rollen d\u00FCrfen Kommunikationswissen hinzuf\u00FCgen oder bearbeiten?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        },
+        {
+          "question": "Muss vor jedem Bild-Upload die gekl\u00E4rte Einwilligungsregel technisch gepr\u00FCft werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "partial",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 14,
+      "dependencies": [
+        "PBI-FC02-02",
+        "PBI-FC02-03",
+        "PBI-FC07-03",
+        "PBI-FC08-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-26",
+          "REQ-27",
+          "L3-REQ-003",
+          "L3-REQ-001",
+          "REQ-35"
+        ],
+        "l3": [
+          "L3-REQ-003",
+          "L3-REQ-001"
+        ],
+        "l1Req": [
+          "REQ-26",
+          "REQ-27",
+          "REQ-35"
+        ],
+        "claims": [
+          "Kommunikationswissen erfassbar",
+          "Bildunterst\u00FCtzung vorhanden",
+          "Nachweis gespeichert"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-08",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-08 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC08-03",
+      "identityKey": "kommunikationssuche-und-beschreibungsmuster",
+      "version": 1,
+      "type": "clarification",
+      "title": "Beschreibungsmuster und Suchlogik f\u00FCr Kommunikationswissen festlegen",
+      "requirementIds": [
+        "REQ-28"
+      ],
+      "goal": "Als Product Owner will ich ein strukturiertes Beschreibungsmuster f\u00FCr Kommunikationsweisen und die darauf aufbauende Suchlogik festlegen, damit Kommunikationswissen sp\u00E4ter systematisch gefunden und gefiltert werden kann.",
+      "scope": {
+        "inScope": [
+          "Beschreibungsmuster f\u00FCr Kommunikations-Eintr\u00E4ge festlegen",
+          "Such- und Filterziele definieren",
+          "Pflicht- und optionale Felder f\u00FCr sp\u00E4tere Durchsuchbarkeit bestimmen"
+        ],
+        "outOfScope": [
+          "Technische Umsetzung einer Volltextsuche",
+          "Automatische Klassifikation von Kommunikationsweisen"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt ein dokumentiertes Beschreibungsmuster f\u00FCr Kommunikations-Eintr\u00E4ge vor.",
+        "Das Muster beschreibt mindestens, welche Angaben f\u00FCr sp\u00E4tere Suche oder Filterung relevant sind.",
+        "Es ist entschieden, welche Sucharten in einer sp\u00E4teren Umsetzung unterst\u00FCtzt werden sollen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche strukturierten Felder sollen pro Kommunikationsweise verpflichtend erfasst werden, damit Suche und Filter sinnvoll funktionieren?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 15,
+      "dependencies": [
+        "PBI-FC08-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-28"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-28"
+        ],
+        "claims": [
+          "Beschreibungsmuster gekl\u00E4rt",
+          "Suchlogik vorbereitet"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-08",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-08 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC08-04",
+      "identityKey": "kommunikationsvideos-integriert",
+      "version": 1,
+      "type": "delivery",
+      "title": "Kommunikationsvideos integriert in der Kommunikationsansicht verwalten",
+      "requirementIds": [
+        "REQ-29",
+        "REQ-30",
+        "REQ-31",
+        "L3-REQ-003"
+      ],
+      "goal": "Als berechtigter Nutzer will ich Videos von Kommunikationssituationen direkt in der Kommunikationsansicht hinzuf\u00FCgen und sehen, damit wichtige Ausdrucksweisen realit\u00E4tsnah dokumentiert werden.",
+      "scope": {
+        "inScope": [
+          "Video-Eintr\u00E4ge mit Beschreibung",
+          "Hinzuf\u00FCgen per Plus-Button innerhalb der Kommunikationsansicht",
+          "Neueste Videos oben anzeigen",
+          "Keine separate Videoseite",
+          "Medienoptimierung vor Speicherung"
+        ],
+        "outOfScope": [
+          "Automatische Untertitelung",
+          "Eigener Video-Hub au\u00DFerhalb der Kommunikationsansicht",
+          "Erweiterte Videobearbeitung"
+        ]
+      },
+      "acceptanceCriteria": [
+        "In der Kommunikationsansicht k\u00F6nnen Video-Eintr\u00E4ge mit Beschreibung angezeigt werden.",
+        "Berechtigte Nutzer k\u00F6nnen neue Videos \u00FCber einen Plus-Button direkt aus der Kommunikationsansicht hinzuf\u00FCgen.",
+        "Neu hinzugef\u00FCgte Videos werden nach dem Speichern oberhalb \u00E4lterer Videos angezeigt.",
+        "Die Videofunktion ist Teil der Kommunikationsansicht und nicht als separater Screen umgesetzt.",
+        "Vor der Speicherung werden Videos in eine f\u00FCr Speicherbedarf und Ladezeit geeignete Form \u00FCberf\u00FChrt."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche Rollen d\u00FCrfen Videos hinzuf\u00FCgen oder ansehen, insbesondere f\u00FCr Angeh\u00F6rige und Bewohner?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        },
+        {
+          "question": "Wie gro\u00DF oder lang d\u00FCrfen Videos maximal sein?",
+          "kind": "engineering_default",
+          "evidence": "not_stated",
+          "resolution": "proposed_default",
+          "blocksScope": false,
+          "proposedResolution": "Es wird initial eine konservative Obergrenze definiert, die auf mobilen Upload und schnelles Nachschlagen ausgelegt ist, bis fachliche Limits beschlossen sind."
+        }
+      ],
+      "mvp": "later",
+      "priorityRank": 21,
+      "dependencies": [
+        "PBI-FC02-02",
+        "PBI-FC08-01",
+        "PBI-FC07-03"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-29",
+          "REQ-30",
+          "REQ-31",
+          "L3-REQ-003"
+        ],
+        "l3": [
+          "L3-REQ-003"
+        ],
+        "l1Req": [
+          "REQ-29",
+          "REQ-30",
+          "REQ-31"
+        ],
+        "claims": [
+          "Videos integriert",
+          "Upload per Plus",
+          "Neueste Videos oben"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-08",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-08 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC08-05",
+      "identityKey": "barrierearme-videobeschreibungen-pruefen",
+      "version": 1,
+      "type": "clarification",
+      "title": "Untertitel, Transkripte oder Kurztexte f\u00FCr Kommunikationsmedien festlegen",
+      "requirementIds": [
+        "L3-REQ-012",
+        "L3-REQ-013"
+      ],
+      "goal": "Als Product Owner will ich festlegen, welche zus\u00E4tzlichen Beschreibungen Kommunikationsmedien erhalten sollen, damit Inhalte zug\u00E4nglicher und besser auffindbar werden.",
+      "scope": {
+        "inScope": [
+          "Bewertung von Untertiteln, Transkripten oder Kurztexten f\u00FCr Medien",
+          "Abgrenzung f\u00FCr Bilder und Videos im Kommunikationsbereich",
+          "Zusammenhang zu Neu-/Aktualisiert-Kennzeichnung ber\u00FCcksichtigen"
+        ],
+        "outOfScope": [
+          "Automatische KI-Transkription im MVP",
+          "Umsetzung einer allgemeinen Notification-L\u00F6sung"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine Entscheidung vor, ob Videos und Bilder im Kommunikationsbereich verpflichtende oder optionale Zusatzbeschreibungen erhalten.",
+        "Die Entscheidung beschreibt, welche Medienarten im Umfang sind und welcher Mindestinhalt je Zusatzbeschreibung erwartet wird."
+      ],
+      "openDecisions": [
+        {
+          "question": "Sollen Videos im Kommunikationsbereich verpflichtend mit Transkript, Untertitel oder kurzer Textzusammenfassung versehen werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        },
+        {
+          "question": "Soll die Kennzeichnung neuer Medien \u00FCber den Kommunikationsbereich separat von allgemeinen \u00DCbersichten geregelt werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "weakly_inferred",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "later",
+      "priorityRank": 26,
+      "dependencies": [
+        "PBI-FC08-04"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "L3-REQ-012",
+          "L3-REQ-013"
+        ],
+        "l3": [
+          "L3-REQ-012",
+          "L3-REQ-013"
+        ],
+        "l1Req": [],
+        "claims": [
+          "Medienzusatzbeschreibungen f\u00FCr Kommunikation bewertet"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-08",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-08 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC09-01",
+      "identityKey": "no-go-liste-anzeigen-und-erweitern",
+      "version": 1,
+      "type": "delivery",
+      "title": "No-Go-Seite mit kompakter, erweiterbarer Liste bereitstellen",
+      "requirementIds": [
+        "REQ-32",
+        "REQ-33",
+        "REQ-34"
+      ],
+      "goal": "Als Nutzer will ich kritische No-Gos kompakt sehen und erg\u00E4nzen k\u00F6nnen, damit ich in Gegenwart des Bewohners problematische Themen oder Handlungen vermeide.",
+      "scope": {
+        "inScope": [
+          "No-Go-Seite pro Bewohner",
+          "Kompakte, leicht durchforstbare Liste",
+          "Hinzuf\u00FCgen neuer No-Gos per Plus-Button",
+          "Eintr\u00E4ge auf wichtigste Informationen begrenzen"
+        ],
+        "outOfScope": [
+          "Komplexe Kategorien oder Workflows",
+          "Benachrichtigungen \u00FCber neue No-Gos",
+          "Prominente Anzeige auf der Detailansicht"
+        ]
+      },
+      "acceptanceCriteria": [
+        "F\u00FCr einen Bewohner ist eine No-Go-Seite aufrufbar.",
+        "Die No-Go-Seite zeigt eine kompakte Liste mit den wichtigsten Informationen pro Eintrag.",
+        "Berechtigte Nutzer k\u00F6nnen neue No-Go-Eintr\u00E4ge \u00FCber einen Plus-Button hinzuf\u00FCgen.",
+        "Die Liste ist so aufgebaut, dass Eintr\u00E4ge schnell \u00FCberflogen werden k\u00F6nnen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche Rollen d\u00FCrfen No-Go-Eintr\u00E4ge anlegen oder \u00E4ndern?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        },
+        {
+          "question": "Welche Mindestfelder geh\u00F6ren zu den \u0027wichtigsten Informationen\u0027 eines No-Go-Eintrags?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 16,
+      "dependencies": [
+        "PBI-FC02-02",
+        "PBI-FC06-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-32",
+          "REQ-33",
+          "REQ-34"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-32",
+          "REQ-33",
+          "REQ-34"
+        ],
+        "claims": [
+          "No-Go-Seite vorhanden",
+          "No-Gos erg\u00E4nzbar",
+          "Kompakte Darstellung"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-09",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-09 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC10-01",
+      "identityKey": "lokaler-cache-und-offline-verhalten-klaeren",
+      "version": 1,
+      "type": "clarification",
+      "title": "Lokalen Cache, Offline-Erfassung und Synchronisationsverhalten festlegen",
+      "requirementIds": [
+        "REQ-36",
+        "L3-REQ-004"
+      ],
+      "goal": "Als Product Owner will ich entscheiden, ob und wie Inhalte lokal gespeichert, offline erfasst und sp\u00E4ter synchronisiert werden, damit Datenschutz, Nutzbarkeit und Konfliktbehandlung vor der Umsetzung klar sind.",
+      "scope": {
+        "inScope": [
+          "Kl\u00E4ren, ob Cloud-Daten lokal gecacht werden d\u00FCrfen",
+          "Kl\u00E4ren, ob Inhalte offline erfasst werden d\u00FCrfen",
+          "Regeln f\u00FCr Kennzeichnung ausstehender Synchronisationen definieren",
+          "Umgang mit Synchronisationskonflikten fachlich beschreiben"
+        ],
+        "outOfScope": [
+          "Technische Implementierung eines Offline-Stacks",
+          "Leistungsoptimierung anderer App-Bereiche"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine dokumentierte Entscheidung vor, ob lokaler Cache verwendet wird und f\u00FCr welche Datentypen.",
+        "Es ist entschieden, ob Nutzer Inhalte offline erfassen d\u00FCrfen.",
+        "Falls Offline-Erfassung zul\u00E4ssig ist, sind Regeln f\u00FCr die Kennzeichnung ausstehender Synchronisationen dokumentiert.",
+        "Falls Konflikte auftreten k\u00F6nnen, ist deren sichtbare Behandlung fachlich beschrieben."
+      ],
+      "openDecisions": [
+        {
+          "question": "D\u00FCrfen personenbezogene Profil- und Medieninhalte lokal auf gemeinsam genutzten Ger\u00E4ten zwischengespeichert werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        },
+        {
+          "question": "Soll die erste Version ganz auf Offline-Erfassung verzichten, bis Datenschutz- und Synchronisationsregeln gekl\u00E4rt sind?",
+          "kind": "engineering_default",
+          "evidence": "derived",
+          "resolution": "proposed_default",
+          "blocksScope": false,
+          "proposedResolution": "MVP ohne Offline-Erfassung ausliefern und erst nach entschiedenen Regeln erweitern."
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 17,
+      "dependencies": [
+        "PBI-FC01-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-36",
+          "L3-REQ-004"
+        ],
+        "l3": [
+          "L3-REQ-004"
+        ],
+        "l1Req": [
+          "REQ-36"
+        ],
+        "claims": [
+          "Cache-/Offline-Regeln gekl\u00E4rt"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-10",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-10 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC11-01",
+      "identityKey": "mobile-plattformbasis-und-visuelle-barrierefreiheit",
+      "version": 1,
+      "type": "delivery",
+      "title": "Plattform\u00FCbergreifende mobile Nutzung mit visueller Barrierefreiheit sicherstellen",
+      "requirementIds": [
+        "REQ-37",
+        "REQ-38",
+        "REQ-47"
+      ],
+      "goal": "Als Nutzer will ich die App auf iPhone und Android in gut lesbarer, nicht ablenkender Form verwenden k\u00F6nnen, damit sie im Alltag zuverl\u00E4ssig und zug\u00E4nglich einsetzbar ist.",
+      "scope": {
+        "inScope": [
+          "Nutzung auf iPhone und Android",
+          "gro\u00DFe gut lesbare Schrift",
+          "ausreichender Kontrast",
+          "zur\u00FCckhaltender Farbeinsatz",
+          "Animationen nur wenn nicht ablenkend"
+        ],
+        "outOfScope": [
+          "Tablet-spezifische Optimierung",
+          "Sprachsteuerung",
+          "plattformnative Sonderfunktionen jenseits der Kernnutzung"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Die App ist auf iPhone und Android lauff\u00E4hig.",
+        "Zentrale Oberfl\u00E4chen verwenden gut lesbare Schriftgr\u00F6\u00DFen und ausreichende Kontraste.",
+        "Farben werden zur\u00FCckhaltend eingesetzt, sodass Inhalte im Vordergrund stehen.",
+        "Falls Animationen verwendet werden, lenken sie die Bedienung nicht ab."
+      ],
+      "openDecisions": [],
+      "mvp": "mvp",
+      "priorityRank": 22,
+      "dependencies": [],
+      "readiness": "backlog_ready",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-37",
+          "REQ-38",
+          "REQ-47"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-37",
+          "REQ-38",
+          "REQ-47"
+        ],
+        "claims": [
+          "iPhone/Android unterst\u00FCtzt",
+          "visuelle Barrierefreiheit ber\u00FCcksichtigt"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-11",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-11 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC11-02",
+      "identityKey": "tablet-und-alternative-eingaben-pruefen",
+      "version": 1,
+      "type": "clarification",
+      "title": "Tablet-Nutzung und alternative Eingabemethoden bewerten",
+      "requirementIds": [
+        "REQ-39",
+        "REQ-43"
+      ],
+      "goal": "Als Product Owner will ich bewerten, ob Tablet-Nutzung und alternative Eingabemethoden sp\u00E4ter unterst\u00FCtzt werden sollen, damit Erweiterungen an realen Bedarfen ausgerichtet sind.",
+      "scope": {
+        "inScope": [
+          "Nutzen von Tablets im Arbeitsalltag pr\u00FCfen",
+          "Sprachbefehle oder andere Eingabemethoden als sp\u00E4tere Accessibility-Erweiterung bewerten",
+          "Ergebnis f\u00FCr Roadmap festhalten"
+        ],
+        "outOfScope": [
+          "Implementierung von Tablet-Layouts",
+          "Umsetzung von Sprachsteuerung im MVP"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine Bewertung vor, ob Tablet-Nutzung einen priorisierten Ausbaupfad darstellt.",
+        "Es liegt eine Bewertung vor, ob alternative Eingabemethoden wie Sprachbefehle weiterverfolgt werden sollen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Gibt es im Nutzungskontext gen\u00FCgend reale Tablet- oder freih\u00E4ndige Anwendungsszenarien, um diese Erweiterungen zu priorisieren?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "later",
+      "priorityRank": 27,
+      "dependencies": [
+        "PBI-FC13A-01"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-39",
+          "REQ-43"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-39",
+          "REQ-43"
+        ],
+        "claims": [
+          "Tablet- und Accessibility-Erweiterungen bewertet"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-11",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-11 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC12-01",
+      "identityKey": "dokumentationsfokus-und-integration-klaeren",
+      "version": 1,
+      "type": "clarification",
+      "title": "Umfang der Dokumentationsintegration und Daten\u00FCbernahme festlegen",
+      "requirementIds": [
+        "REQ-44",
+        "REQ-48",
+        "REQ-49",
+        "L3-REQ-014"
+      ],
+      "goal": "Als Product Owner will ich festlegen, wie stark die App vorhandene Dokumentation integriert oder Daten daraus \u00FCbernimmt, damit der Fokus auf unterst\u00FCtzender Kommunikation erhalten bleibt und Doppeldokumentation begrenzt wird.",
+      "scope": {
+        "inScope": [
+          "Rolle vorhandener Akten im Zielprozess kl\u00E4ren",
+          "Grenzen der App gegen\u00FCber allgemeiner Dokumentation festlegen",
+          "Pr\u00FCfen, ob strukturierte Daten\u00FCbernahme aus Akten sinnvoll ist",
+          "Pers\u00F6nliche Einsch\u00E4tzung zur schlechten Nutzbarkeit vorhandener Akten als zu validierende Hypothese behandeln"
+        ],
+        "outOfScope": [
+          "Implementierung konkreter Schnittstellen",
+          "Vollst\u00E4ndige elektronische Aktenf\u00FChrung"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine dokumentierte Abgrenzung vor, welche Dokumentationsaufgaben die App \u00FCbernehmen soll und welche nicht.",
+        "Es ist bewertet, ob Informationen aus vorhandenen Akten teilweise strukturiert \u00FCbernommen werden sollen.",
+        "Die Annahme, dass bestehende Akten schwer nutzbar sind, ist als validierte oder nicht validierte Hypothese dokumentiert."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche Informationen aus bestehenden Akten sollen in die App \u00FCbernommen werden, ohne den Kommunikationsfokus zu verw\u00E4ssern?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "later",
+      "priorityRank": 28,
+      "dependencies": [
+        "PBI-FC13A-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-44",
+          "REQ-48",
+          "REQ-49",
+          "L3-REQ-014"
+        ],
+        "l3": [
+          "L3-REQ-014"
+        ],
+        "l1Req": [
+          "REQ-44",
+          "REQ-48",
+          "REQ-49"
+        ],
+        "claims": [
+          "Dokumentationsintegration abgegrenzt",
+          "Daten\u00FCbernahme bewertet"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-12",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-12 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC12-02",
+      "identityKey": "kalender-und-medikation-spaeter-bewerten",
+      "version": 1,
+      "type": "deferred",
+      "title": "Kalender- und Medikationsfunktionen als sp\u00E4teren Ausbau bewerten",
+      "requirementIds": [
+        "REQ-42"
+      ],
+      "goal": "Als Product Owner will ich Kalender- und m\u00F6gliche Medikationsfunktionen erst nach dem Kommunikationskern bewerten, damit sensible Zusatzfunktionen nicht den Fokus der ersten Version verschieben.",
+      "scope": {
+        "inScope": [
+          "Kalenderfunktion als m\u00F6glicher Ausbaupfad kennzeichnen",
+          "Pr\u00FCfung einer m\u00F6glichen Medikationsintegration vormerken",
+          "Vertraulichkeit dieser Daten als zentrale Bedingung festhalten"
+        ],
+        "outOfScope": [
+          "Umsetzung im MVP",
+          "Festlegung medizinischer Dokumentationsprozesse"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Dieses Backlog Item ist als sp\u00E4terer Ausbau au\u00DFerhalb des MVP gekennzeichnet.",
+        "Die sp\u00E4tere Bewertung ber\u00FCcksichtigt ausdr\u00FCcklich die besondere Vertraulichkeit von Medikationsdaten."
+      ],
+      "openDecisions": [
+        {
+          "question": "Soll zuerst nur ein Kalender ohne Gesundheitsdaten oder auch eine Medikationsfunktion betrachtet werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "later",
+      "priorityRank": 29,
+      "dependencies": [
+        "PBI-FC12-01"
+      ],
+      "readiness": "ready_with_nonblocking_questions",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-42"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-42"
+        ],
+        "claims": [
+          "Zusatzfunktionen als sp\u00E4terer Ausbau abgegrenzt"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-12",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-12 geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC13A-01",
+      "identityKey": "anforderungsanalyse-vor-ort-und-erfolgskriterien",
+      "version": 1,
+      "type": "clarification",
+      "title": "Anforderungsanalyse, Vor-Ort-Forschung und Pilot-Erfolgskriterien durchf\u00FChren",
+      "requirementIds": [
+        "REQ-50",
+        "REQ-51",
+        "L3-REQ-015"
+      ],
+      "goal": "Als Product Owner will ich Anforderungen mit Beteiligten vor Ort erheben und messbare Pilot-Erfolgskriterien definieren, damit Produktentscheidungen auf realen Nutzungssituationen basieren.",
+      "scope": {
+        "inScope": [
+          "Anforderungsanalyse mit mehreren Beteiligten und k\u00FCnftigen Nutzern",
+          "Vor-Ort-Termine in Einrichtungen",
+          "Beobachtung realer Kommunikationssituationen",
+          "Messbare Erfolgskriterien f\u00FCr den Pilot definieren"
+        ],
+        "outOfScope": [
+          "Technische Implementierung von Produktfeatures",
+          "Statistisch repr\u00E4sentative Langzeitstudie"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es wurden Vor-Ort-Termine in Einrichtungen geplant und durchgef\u00FChrt oder verbindlich terminiert.",
+        "Erkenntnisse aus mehreren Beteiligten- und Nutzerperspektiven sind dokumentiert.",
+        "F\u00FCr den Pilot liegen messbare Erfolgskriterien vor, z. B. zur schnelleren Auffindbarkeit relevanter Informationen oder verbesserten Verst\u00E4ndigung in ausgew\u00E4hlten Situationen."
+      ],
+      "openDecisions": [
+        {
+          "question": "Welche Einrichtungen und Nutzergruppen sollen f\u00FCr die erste Anforderungsanalyse und den Pilot priorisiert werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "not_stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 23,
+      "dependencies": [
+        "PBI-FC01-01"
+      ],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-50",
+          "REQ-51",
+          "L3-REQ-015"
+        ],
+        "l3": [
+          "L3-REQ-015"
+        ],
+        "l1Req": [
+          "REQ-50",
+          "REQ-51"
+        ],
+        "claims": [
+          "Forschung durchgef\u00FChrt",
+          "Pilot-Erfolgskriterien definiert"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-13A",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-13A geschnitten"
+          }
+        ]
+      }
+    },
+    {
+      "pbiId": "PBI-FC13B-01",
+      "identityKey": "technologiestack-festlegen",
+      "version": 1,
+      "type": "clarification",
+      "title": "Technologiestack f\u00FCr App, State-Management und Datenbank festlegen",
+      "requirementIds": [
+        "REQ-53",
+        "REQ-54",
+        "REQ-55"
+      ],
+      "goal": "Als Product Owner will ich die wesentlichen Technologie- und Architekturentscheidungen verbindlich festlegen, damit die Umsetzung auf einem freigegebenen technischen Rahmen startet.",
+      "scope": {
+        "inScope": [
+          "Flutter/Dart als Zieltechnologie bewerten oder best\u00E4tigen",
+          "GetX als technische Option bewerten",
+          "Firestore als vorl\u00E4ufige Datenbankentscheidung pr\u00FCfen und entscheiden"
+        ],
+        "outOfScope": [
+          "Detailliertes Low-Level-Architekturdesign",
+          "Umsetzung einzelner technischer Tasks"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Es liegt eine dokumentierte Entscheidung vor, ob Flutter mit Dart als verbindliche Umsetzungsbasis verwendet wird.",
+        "Es ist entschieden, ob GetX eingesetzt, verworfen oder durch eine Alternative ersetzt wird.",
+        "Es ist entschieden, ob Firestore als Datenbank verbindlich verwendet wird oder welche Alternative stattdessen gilt."
+      ],
+      "openDecisions": [
+        {
+          "question": "Bleibt Firestore die endg\u00FCltige Datenbankl\u00F6sung oder wird eine Alternative gew\u00E4hlt?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": true,
+          "proposedResolution": null
+        },
+        {
+          "question": "Soll GetX verbindlich eingef\u00FChrt oder nur prototypisch erprobt werden?",
+          "kind": "stakeholder_decision",
+          "evidence": "stated",
+          "resolution": "open_decision",
+          "blocksScope": false,
+          "proposedResolution": null
+        }
+      ],
+      "mvp": "required_for_mvp",
+      "priorityRank": 30,
+      "dependencies": [],
+      "readiness": "blocked_by_decision",
+      "traceability": {
+        "canonicalRequirementIds": [
+          "REQ-53",
+          "REQ-54",
+          "REQ-55"
+        ],
+        "l3": [],
+        "l1Req": [
+          "REQ-53",
+          "REQ-54",
+          "REQ-55"
+        ],
+        "claims": [
+          "Technologierahmen festgelegt"
+        ]
+      },
+      "provenance": {
+        "featureContextId": "FC-13B",
+        "clarifyRunId": "20260723_131421_80a11e",
+        "humanDecisionIds": [],
+        "derivationHistory": [
+          {
+            "version": 1,
+            "runId": "20260723_131421_80a11e",
+            "change": "Initial aus Cluster FC-13B geschnitten"
+          }
+        ]
+      }
+    }
+  ]
+}

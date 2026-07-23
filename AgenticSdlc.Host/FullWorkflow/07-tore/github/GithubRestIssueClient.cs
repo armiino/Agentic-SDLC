@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-using AgenticSdlc.Host.FullWorkflow.Backlog; // R6-Randnotiz: GithubIssueWriteResult liegt (noch) bei research/github-write — Typ-Heimat beim Typ-Schnitt klaeren
 
 namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
@@ -144,7 +143,8 @@ internal sealed class GithubRestIssueClient(HttpClient http, string token, strin
         [property: JsonPropertyName("title")] string Title,
         [property: JsonPropertyName("body")] string Body,
         [property: JsonPropertyName("labels")] IReadOnlyList<string> Labels,
-        [property: JsonPropertyName("state")] string? State);
+        // R-22: state=null darf NICHT mitgesendet werden — GitHubs PATCH-Schema lehnt null ab (422 oneOf).
+        [property: JsonPropertyName("state")][property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? State);
 
     private sealed record GithubIssueStateRequest(
         [property: JsonPropertyName("state")] string State);

@@ -74,6 +74,7 @@ public static class CoreBootstrapRunner
         Console.WriteLine("[core-bootstrap] Stufe 2 (agentisch, MIT HumanReview-Gates) — Backlog aufbauen:");
         Console.WriteLine($"[core-bootstrap]   l4-re-clarify cluster {baselineRel} <model>");
         Console.WriteLine("[core-bootstrap]   -> l4-re-clarify-review -> l4-re-clarify-apply");
+        Console.WriteLine("[core-bootstrap]   -> l4-re-clarify clarify <l4-re-clarify-run>   (Cluster -> PBIs; erzeugt den Backlog-Lauf)");
         Console.WriteLine("[core-bootstrap]   -> l4-re-clarify-backlog-review -> l4-re-clarify-backlog-apply");
         Console.WriteLine("[core-bootstrap]   -> core-seed-backlog <l4-re-clarify-run>   (Features + PBIs in den Core)");
         Console.WriteLine("[core-bootstrap] Danach normaler Delta-Modus: ingest-requirements <meeting-delta>.");

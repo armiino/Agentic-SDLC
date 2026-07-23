@@ -117,6 +117,17 @@ public static class HitlShell
             }
             else if (evt is WorkflowOutputEvent outEvt && onOutput(outEvt.Data) is { } exit)
                 return exit;
+            // R-18: Fehler-Events wurden bisher STILL verschluckt (Stream endete „ohne Apply-Report").
+            else if (evt is ExecutorFailedEvent failed)
+            {
+                Console.Error.WriteLine($"[{cmd}] EXECUTOR-FEHLER im Resume: {failed.ExecutorId}: {failed.Data?.Message}");
+                return 3;
+            }
+            else if (evt is WorkflowErrorEvent err)
+            {
+                Console.Error.WriteLine($"[{cmd}] WORKFLOW-FEHLER im Resume: {err.Exception?.Message ?? err.ToString()}");
+                return 3;
+            }
         }
         Console.Error.WriteLine($"[{cmd}] Resume beendet ohne Apply-Report (Timeout/kein Request?).");
         return 4;

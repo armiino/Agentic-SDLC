@@ -1,0 +1,1456 @@
+{
+  "total": 35,
+  "byClass": {
+    "SupportedAnchored": 15,
+    "Unreferenced": 15,
+    "Contradicted": 5
+  },
+  "items": [
+    {
+      "candidate": {
+        "candidateId": "CAND-001",
+        "targetType": "requirement",
+        "text": "Die App sollte f\u00FCr jedes Bewohnerprofil einen klar sichtbaren Hinweis anzeigen, wenn f\u00FCr Bilder oder Videos noch keine dokumentierte Einwilligung vorliegt, sodass solche Medien nicht versehentlich hochgeladen oder angezeigt werden.",
+        "rationale": "Datenschutz und Einwilligungen sind bereits als offener Pflichtpunkt benannt; ein operativer Hinweis in der App w\u00FCrde das im Alltag absichern.",
+        "assumptions": [
+          "Einwilligungsst\u00E4nde werden pro Bewohner oder Medium erfasst.",
+          "Mediennutzung kann technisch eingeschr\u00E4nkt oder zumindest kenntlich gemacht werden."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-35",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker verlangt vor Bildnutzung gekl\u00E4rte Einwilligungen; ein sichtbarer Hinweis bei fehlender dokumentierter Einwilligung ist eine plausible Ma\u00DFnahme, um diese Vorgabe einzuhalten."
+        },
+        {
+          "itemId": "ARCH-14",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker fordert gekl\u00E4rte Datenschutzfragen und Einwilligungen vor Bildnutzung; ein Warnhinweis bei fehlender Einwilligungsdokumentation ist eine naheliegende, nicht widerspr\u00FCchliche Konkretisierung."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-35",
+        "ARCH-14"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-002",
+        "targetType": "requirement",
+        "text": "Beim Hinzuf\u00FCgen oder Bearbeiten von Inhalten sollte die App erfassen, welcher Account den Eintrag erstellt oder ge\u00E4ndert hat und wann dies geschehen ist.",
+        "rationale": "Bei gemeinsam gepflegtem Wissen erh\u00F6ht Nachvollziehbarkeit die Vertrauensw\u00FCrdigkeit und erleichtert R\u00FCckfragen.",
+        "assumptions": [
+          "Mehrere Personen arbeiten parallel an denselben Profilen.",
+          "Basis-Metadaten pro Eintrag sind fachlich ausreichend."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-08",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker spricht \u00FCber zus\u00E4tzliche Nutzergruppen und unterschiedliche Rechte, aber nicht \u00FCber Protokollierung von Ersteller/\u00C4nderer oder Zeitpunkten."
+        },
+        {
+          "itemId": "ARCH-09",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Unterschiedliche Rechte f\u00FCr Mitarbeiter und Angeh\u00F6rige tragen keine Anforderung zur Erfassung von Account und Zeit bei \u00C4nderungen; das ist neuer, nicht gest\u00FCtzter Inhalt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-003",
+        "targetType": "requirement",
+        "text": "F\u00FCr inhaltliche Eintr\u00E4ge sollte eine Bearbeitungsfunktion vorgesehen werden, auch wenn regul\u00E4re Nutzer Inhalte nicht l\u00F6schen d\u00FCrfen.",
+        "rationale": "Dynamisch wachsende Inhalte m\u00FCssen korrigierbar sein, ohne dass das L\u00F6schverbot f\u00FCr User aufgehoben wird.",
+        "assumptions": [
+          "Fehleingaben oder veraltete Formulierungen treten im Alltag auf.",
+          "Bearbeiten ist von L\u00F6schen fachlich zu trennen."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-06",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn User Inhalte hinzuf\u00FCgen, aber nichts l\u00F6schen d\u00FCrfen, ist eine Bearbeitungsfunktion f\u00FCr Inhalte eine plausible Erg\u00E4nzung, die den Anker nicht widerspricht und das Nicht-L\u00F6schen ausdr\u00FCcklich respektiert."
+        },
+        {
+          "itemId": "ARCH-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker erlaubt Hinzuf\u00FCgen, verbietet aber L\u00F6schen f\u00FCr User; eine Bearbeitungsfunktion ist eine naheliegende, scope-konforme Konkretisierung ohne Widerspruch."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-06",
+        "ARCH-08"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-004",
+        "targetType": "requirement",
+        "text": "Statt physischem L\u00F6schen sollte f\u00FCr berechtigte Rollen eine Archivierungs- oder Deaktivierungsfunktion f\u00FCr veraltete Eintr\u00E4ge erwogen werden.",
+        "rationale": "So bleiben Informationen nachvollziehbar, ohne die sichtbaren Ansichten mit veralteten Inhalten zu \u00FCberladen.",
+        "assumptions": [
+          "Ein vollst\u00E4ndiges Entfernen von Inhalten ist organisatorisch unerw\u00FCnscht oder sensibel.",
+          "Nicht alle alten Eintr\u00E4ge sollen dauerhaft prominent sichtbar bleiben."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-06",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn User nichts l\u00F6schen d\u00FCrfen, ist eine Archivierungs- oder Deaktivierungsfunktion f\u00FCr berechtigte Rollen eine plausible Konsequenz, um veraltete Eintr\u00E4ge zu behandeln, ohne den L\u00F6schrahmen zu verletzen."
+        },
+        {
+          "itemId": "ARCH-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker schlie\u00DFt L\u00F6schen f\u00FCr User aus; Archivieren/Deaktivieren durch berechtigte Rollen ist eine st\u00FCtzbare Alternative und keine unzul\u00E4ssige Versch\u00E4rfung."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-06",
+        "ARCH-08"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-005",
+        "targetType": "requirement",
+        "text": "Die Suchfunktion in Kommunikationsinhalten sollte sowohl Freitext als auch strukturierte Filter nach Kategorien oder Schlagworten unterst\u00FCtzen, sofern ein Beschreibungsschema eingef\u00FChrt wird.",
+        "rationale": "Die bereits angedachte Suchbarkeit wird durch kombinierte Suche im Alltag deutlich nutzbarer.",
+        "assumptions": [
+          "Kommunikationseintr\u00E4ge werden ausreichend strukturiert erfasst.",
+          "Nutzer suchen teils explorativ, teils gezielt."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-28",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker fordert Suchfunktion plus Beschreibungsmuster, damit sp\u00E4ter gesucht und gefiltert werden kann; Freitextsuche und strukturierte Filter sind eine plausible Konkretisierung davon."
+        },
+        {
+          "itemId": "ARCH-24",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker nennt Suchfunktion sowie standardisiertes Beschreibungsmuster, damit Suche und sp\u00E4tere Filterung funktionieren; Freitextsuche und Filter nach Kategorien/Schlagworten werden dadurch plausibel getragen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-28",
+        "ARCH-24"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-006",
+        "targetType": "requirement",
+        "text": "F\u00FCr Kommunikationseintr\u00E4ge sollte ein einheitliches Eingabeformular mit Feldern wie Situation, beobachtetes Signal, vermutete Bedeutung und hilfreiche Reaktion gepr\u00FCft werden.",
+        "rationale": "Ein solches Muster konkretisiert die bereits geforderte Standardisierung und verbessert Vergleichbarkeit und Suche.",
+        "assumptions": [
+          "Das Team ist bereit, Erfahrungen in teilstrukturierter Form zu dokumentieren."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-28",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Ein systematisches Beschreibungsmuster f\u00FCr Kommunikationseintr\u00E4ge kann plausibel als einheitliches Eingabeformular mit entsprechenden Feldern konkretisiert werden; der Kandidat formuliert dies zudem nur als Pr\u00FCfung."
+        },
+        {
+          "itemId": "ARCH-24",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Das geforderte standardisierte Beschreibungsmuster f\u00FCr Kommunikationseintr\u00E4ge kann plausibel durch ein einheitliches Eingabeformular mit benannten Feldern umgesetzt werden; das ist eine tragf\u00E4hige Konkretisierung."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-28",
+        "ARCH-24"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-007",
+        "targetType": "requirement",
+        "text": "No-Go-Eintr\u00E4ge sollten nach Dringlichkeit oder Kritikalit\u00E4t gekennzeichnet werden k\u00F6nnen, damit besonders wichtige Hinweise schneller erkennbar sind.",
+        "rationale": "Nicht alle No-Gos sind gleich kritisch; eine Priorisierung unterst\u00FCtzt schnelles Erfassen.",
+        "assumptions": [
+          "Es gibt fachlich relevante Unterschiede zwischen sensiblen und weniger kritischen Hinweisen."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-32",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker verlangt nur eine No-Go-Seite mit kritischen Dingen; eine zus\u00E4tzliche Kennzeichnung nach Dringlichkeit/Kritikalit\u00E4t wird daraus nicht getragen."
+        },
+        {
+          "itemId": "REQ-34",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn No-Go-Eintr\u00E4ge einfach zu durchforsten sein und nur die wichtigsten Informationen enthalten sollen, ist eine Kennzeichnung nach Dringlichkeit/Kritikalit\u00E4t eine plausible Unterst\u00FCtzung f\u00FCr schnelle Erkennbarkeit wichtiger Hinweise."
+        },
+        {
+          "itemId": "ARCH-25",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert eine No-Go-Seite mit dynamisch erweiterbarer Liste f\u00FCr kritische Dinge, sagt aber nichts \u00FCber Priorisierung oder Kennzeichnung nach Dringlichkeit aus."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-34"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-008",
+        "targetType": "requirement",
+        "text": "Auf der Profil-Detailansicht sollte ein kompakter Bereich mit besonders wichtigen Sofortinformationen angezeigt werden, etwa zentrale Kommunikationshinweise und kritische No-Gos.",
+        "rationale": "Nutzer ben\u00F6tigen in akuten Situationen wahrscheinlich einen schnellen \u00DCberblick, ohne mehrere Unterseiten \u00F6ffnen zu m\u00FCssen.",
+        "assumptions": [
+          "Kurze Orientierung vor Detailtiefe ist in Nutzungssituationen wertvoll."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-19",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt Profilbild und Hauptbereiche als Buttons in der Detailansicht; ein kompakter Bereich mit Sofortinformationen zu Kommunikation und No-Gos wird daraus nicht getragen."
+        },
+        {
+          "itemId": "ARCH-18",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker nennt gr\u00F6\u00DFeres Profilbild und interaktive Hauptbereiche; ein kompakter Sofortinfo-Bereich mit Kommunikationshinweisen/No-Gos wird daraus nicht getragen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-009",
+        "targetType": "requirement",
+        "text": "Die App sollte Medienuploads vor dem Speichern automatisch komprimieren oder in geeignete Aufl\u00F6sungen umwandeln, um Speicherbedarf und Ladezeiten zu begrenzen.",
+        "rationale": "Bilder und Videos sind zentral vorgesehen; ohne Begrenzung k\u00F6nnten Performance und Kosten leiden.",
+        "assumptions": [
+          "Mobile Datenverbindungen und Ger\u00E4tespeicher sind im Einsatzkontext relevant."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-29",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker verlangt nur, dass Videos mit Beschreibungen erfasst werden k\u00F6nnen; automatische Komprimierung/Aufl\u00F6sungsumwandlung folgt daraus nicht."
+        },
+        {
+          "itemId": "REQ-36",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker betrifft die Kl\u00E4rung von lokalem Speichern/Caching von Cloud-Daten, nicht Upload-Komprimierung von Medien vor dem Speichern."
+        },
+        {
+          "itemId": "ARCH-40",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker betrifft die offene Frage zu lokalem Speichern/Caching von Cloud-Daten, nicht Medienkomprimierung oder Aufl\u00F6sungsanpassung beim Upload."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-010",
+        "targetType": "requirement",
+        "text": "F\u00FCr Bilder und Videos sollten maximale Dateigr\u00F6\u00DFen oder Formatvorgaben definiert werden.",
+        "rationale": "Klare Upload-Grenzen vermeiden technische Probleme und schaffen erwartbares Verhalten.",
+        "assumptions": [
+          "Die Zielplattformen und das Backend haben begrenzte Ressourcen."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-27",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn Bilder und weitere Darstellungsformen erfasst und angezeigt werden m\u00FCssen, sind Formatvorgaben bzw. Dateigr\u00F6\u00DFenlimits eine plausible, konkretisierende Ableitung zur Umsetzbarkeit."
+        },
+        {
+          "itemId": "REQ-29",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn Videos erfasst werden m\u00FCssen, sind maximale Dateigr\u00F6\u00DFen oder Formatvorgaben eine naheliegende Konkretisierung der Upload-/Verarbeitungsanforderung."
+        },
+        {
+          "itemId": "ARCH-23",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Die Erfassung integrierter Videos mit Beschreibungen tr\u00E4gt als technische Konkretisierung auch die Definition von zul\u00E4ssigen Dateigr\u00F6\u00DFen oder Formaten."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-27",
+        "REQ-29",
+        "ARCH-23"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-011",
+        "targetType": "requirement",
+        "text": "Die App sollte bei instabiler oder fehlender Internetverbindung zumindest zuletzt geladene, freigegebene Profilinformationen lesbar halten, sofern Datenschutz und Caching-Konzept dies erlauben.",
+        "rationale": "Die offene Frage zum lokalen Cache legt nahe, einen sinnvollen Offline-Nutzen fachlich zu konkretisieren.",
+        "assumptions": [
+          "Nutzung findet auch in Umgebungen mit schwankender Konnektivit\u00E4t statt.",
+          "Nicht alle Daten m\u00FCssen offline verf\u00FCgbar sein."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-36",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Die offene Kl\u00E4rung zu lokalem Speichern/Caching tr\u00E4gt plausibel die Ableitung, zuletzt geladene Profilinformationen offline lesbar zu halten, sofern Datenschutz und Caching-Konzept dies zulassen."
+        },
+        {
+          "itemId": "ARCH-40",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker verlangt die Kl\u00E4rung von lokalem Speichern/Caching von Cloud-Daten; lesbares Vorhalten zuletzt geladener Daten bei Offline-Verbindung ist eine plausible Konkretisierung davon, mit Einschr\u00E4nkung auf Datenschutz/Caching-Konzept."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-36",
+        "ARCH-40"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-012",
+        "targetType": "requirement",
+        "text": "Wenn Inhalte offline erfasst werden k\u00F6nnen, sollte die App ausstehende Synchronisationen kenntlich machen und Konflikte beim sp\u00E4teren Abgleich erkennbar behandeln.",
+        "rationale": "Offline-F\u00E4higkeit ohne Sync-Transparenz birgt Datenverlust- oder Verwirrungsrisiken.",
+        "assumptions": [
+          "Offline-Erfassung wird als m\u00F6gliche Erweiterung betrachtet."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-36",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker betrifft nur die Kl\u00E4rung von lokalem Speichern/Caching. Kennzeichnung ausstehender Synchronisationen und Konfliktbehandlung wird daraus nicht tragf\u00E4hig abgeleitet."
+        },
+        {
+          "itemId": "ARCH-40",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Lokales Speichern/Caching allein tr\u00E4gt keine Aussage zu Sync-Statusanzeige oder Konfliktbehandlung bei sp\u00E4terem Abgleich."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-013",
+        "targetType": "requirement",
+        "text": "Nach dem Login sollte die App die zuletzt ge\u00F6ffnete Einrichtung oder den zuletzt betrachteten Bewohner optional schneller wieder zug\u00E4nglich machen, sofern dies datenschutzkonform ist.",
+        "rationale": "Wiederkehrende Arbeitsabl\u00E4ufe k\u00F6nnten dadurch beschleunigt werden.",
+        "assumptions": [
+          "Nutzer arbeiten h\u00E4ufig wiederholt mit denselben Profilen.",
+          "Solche Schnellzugriffe lassen sich pro Rolle angemessen absichern."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-13",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Dass nach dem Login eine Profil\u00FCbersicht angezeigt werden soll, tr\u00E4gt nicht die zus\u00E4tzliche Funktion, zuletzt ge\u00F6ffnete Einrichtung/Bewohner schneller wieder zug\u00E4nglich zu machen."
+        },
+        {
+          "itemId": "REQ-09",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Zugriffsbeschr\u00E4nkung auf Profile der eigenen Einrichtung tr\u00E4gt keine Aussage \u00FCber eine Schnellzugriffsfunktion auf zuletzt ge\u00F6ffnete Inhalte; der Datenschutzvorbehalt allein reicht nicht."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-014",
+        "targetType": "requirement",
+        "text": "Die Profil\u00FCbersicht sollte zus\u00E4tzlich zur Namenssuche eine Sortierung nach Name und optional nach zuletzt aktualisiert unterst\u00FCtzen.",
+        "rationale": "Bei wachsender Zahl von Profilen verbessert Sortierung die Auffindbarkeit.",
+        "assumptions": [
+          "Mehr als nur wenige Profile pro Einrichtung sind realistisch."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-17",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Eine Suchleiste zum Finden nach Namen tr\u00E4gt nicht zus\u00E4tzlich eine Sortierfunktion nach Name oder zuletzt aktualisiert."
+        },
+        {
+          "itemId": "REQ-18",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Darstellung mit Vorschaubild, Name und Beschreibung sowie offene Listen-/Kachelform liefert keine Grundlage f\u00FCr Sortierung nach Name oder Aktualit\u00E4t."
+        },
+        {
+          "itemId": "ARCH-16",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Suchleiste auf der Profil\u00FCbersicht ist thematisch nah, tr\u00E4gt aber keine zus\u00E4tzliche Sortierfunktion."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-015",
+        "targetType": "requirement",
+        "text": "F\u00FCr Bewohnerprofile sollte ein Status vorgesehen werden, der zwischen aktiv, archiviert und gegebenenfalls in Vorbereitung unterscheidet.",
+        "rationale": "Einrichtungsrealit\u00E4t ver\u00E4ndert sich; Statusangaben erleichtern organisatorischen Umgang mit Profilen.",
+        "assumptions": [
+          "Profile werden nicht nur neu angelegt, sondern auch sp\u00E4ter aus dem aktiven Bestand genommen."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-45",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker betrifft nur das erwogene Anlegen neuer Profile mit Bild, Name und Beschreibung; ein Profilstatus (aktiv/archiviert/in Vorbereitung) wird nicht getragen."
+        },
+        {
+          "itemId": "ARCH-27",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker nennt lediglich das erwogene Anlegen neuer Profile per Plus-Symbol/Dialog; daraus folgt kein Statuskonzept f\u00FCr Profile."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-016",
+        "targetType": "requirement",
+        "text": "Beim Anlegen eines neuen Bewohnerprofils sollte gepr\u00FCft werden, ob ein Profil mit gleichem oder sehr \u00E4hnlichem Namen bereits existiert, um Dubletten zu vermeiden.",
+        "rationale": "Gemeinsame Datenpflege durch mehrere Personen erh\u00F6ht das Risiko doppelter Profile.",
+        "assumptions": [
+          "Die App kann einfache Plausibilit\u00E4tspr\u00FCfungen durchf\u00FChren."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-45",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker tr\u00E4gt das Anlegen neuer Profile, aber keine Dublettenpr\u00FCfung auf gleiche oder \u00E4hnliche Namen."
+        },
+        {
+          "itemId": "ARCH-27",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Das zitierte Item behandelt nur die M\u00F6glichkeit, neue Profile anzulegen; eine Pr\u00FCfung auf bestehende \u00E4hnliche Namen ist darin nicht angelegt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-017",
+        "targetType": "requirement",
+        "text": "Die App sollte ein minimales Pflichtdatenset f\u00FCr neu angelegte Bewohnerprofile definieren, damit Profile nicht ohne grundlegende Identifizierbarkeit entstehen.",
+        "rationale": "Einheitliche Mindestangaben verbessern \u00DCbersicht und Suchbarkeit.",
+        "assumptions": [
+          "Nicht alle Felder m\u00FCssen verpflichtend sein, aber einige Kernfelder sind sinnvoll."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-18",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Anker beschreibt nur die Darstellung vorhandener Profile in der \u00DCbersicht. Der Kandidat leitet daraus ein Pflichtdatenset f\u00FCr neu angelegte Profile ab und verst\u00E4rkt den Scope unzul\u00E4ssig."
+        },
+        {
+          "itemId": "REQ-45",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn ein Dialog zum Anlegen neuer Profile Bild, Name und Beschreibung vorsieht, ist ein minimales Pflichtdatenset f\u00FCr die grundlegende Identifizierbarkeit eine plausible, vom Anker getragene Konkretisierung."
+        },
+        {
+          "itemId": "ARCH-27",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der erwogene Anlagedialog mit Bild, Name und Beschreibung tr\u00E4gt plausibel die Ableitung, ein minimales Pflichtdatenset f\u00FCr neue Profile festzulegen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Contradicted",
+      "keptAnchorIds": [
+        "REQ-18"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-018",
+        "targetType": "requirement",
+        "text": "F\u00FCr Angeh\u00F6rige sollte eine eingeschr\u00E4nkte Freigabelogik erwogen werden, bei der ihre neuen Beitr\u00E4ge erst nach Sichtung durch Mitarbeiter im Profil sichtbar werden.",
+        "rationale": "Angeh\u00F6rige sollen beitragen k\u00F6nnen, gleichzeitig kann Qualit\u00E4tssicherung oder Abstimmung fachlich n\u00F6tig sein.",
+        "assumptions": [
+          "Beitr\u00E4ge von Angeh\u00F6rigen k\u00F6nnen organisatorisch pr\u00FCfbed\u00FCrftig sein."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-08",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker sagt, dass Angeh\u00F6rige Inhalte beitragen k\u00F6nnen und unterschiedliche Rechte vorgesehen sind, deren Ausgestaltung offen ist. Eine eingeschr\u00E4nkte Freigabelogik mit Sichtung durch Mitarbeiter ist eine plausible Konkretisierung dieser offenen Rechtegestaltung."
+        },
+        {
+          "itemId": "REQ-10",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker sagt, dass die Rechteverwaltung noch festzulegen ist; die vorgeschlagene Freigabelogik ist eine plausible konkrete Ausgestaltungsoption und wird nur als Erw\u00E4gung formuliert."
+        },
+        {
+          "itemId": "ARCH-09",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker nennt Angeh\u00F6rige als beitragende Nutzer mit unterschiedlichen, noch nicht konkretisierten Rechten. Eine Sichtungs-/Freigabelogik f\u00FCr ihre Beitr\u00E4ge ist eine plausible Konkretisierung."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-08",
+        "REQ-10",
+        "ARCH-09"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-019",
+        "targetType": "requirement",
+        "text": "Bewohner-Accounts sollten keine Inhalte anderer Bewohner \u00FCber Suche, Navigation oder Benachrichtigungen indirekt erkennen k\u00F6nnen.",
+        "rationale": "Die bereits genannte Beschr\u00E4nkung auf das eigene Profil sollte auch gegen indirekte Sichtbarkeit abgesichert werden.",
+        "assumptions": [
+          "Datenschutz und Privatsph\u00E4re zwischen Bewohnern sind relevant."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-07",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn Bewohner nur das eigene Profil sehen d\u00FCrfen und nur eingeschr\u00E4nkte Funktionen haben, folgt plausibel, dass andere Bewohner auch nicht indirekt \u00FCber Suche, Navigation oder Benachrichtigungen erkennbar sein sollten."
+        },
+        {
+          "itemId": "ARCH-10",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker beschr\u00E4nkt Bewohner auf das eigene Profil und eingeschr\u00E4nkte Funktionen; daraus folgt plausibel, dass keine indirekte Sichtbarkeit anderer Bewohner entstehen sollte."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-07",
+        "ARCH-10"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-020",
+        "targetType": "requirement",
+        "text": "Die App sollte nach einer konfigurierbaren Zeit ohne Aktivit\u00E4t automatisch eine erneute Authentifizierung verlangen, insbesondere auf gemeinsam genutzten Ger\u00E4ten.",
+        "rationale": "Der Einsatz in Einrichtungen macht unbeaufsichtigte Ger\u00E4te wahrscheinlich; ein Timeout reduziert Datenschutzrisiken.",
+        "assumptions": [
+          "Ger\u00E4te werden nicht immer personengebunden verwendet."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-05",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Login mit intern vergebenen Accounts und verbietet Selbstregistrierung, tr\u00E4gt aber keine Aussage zu automatischer Re-Authentifizierung nach Inaktivit\u00E4t."
+        },
+        {
+          "itemId": "REQ-35",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker betrifft Datenschutz und Einwilligungen f\u00FCr Bilder, nicht Sitzungs-Timeouts oder erneute Authentifizierung."
+        },
+        {
+          "itemId": "ARCH-07",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker verlangt Login mit intern vergebenen Accounts, liefert aber keine tragf\u00E4hige Basis f\u00FCr ein konfigurierbares Inaktivit\u00E4ts-Timeout mit erneuter Anmeldung."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-021",
+        "targetType": "requirement",
+        "text": "Passw\u00F6rter sollten \u00FCber einen geregelten Prozess durch Admins zur\u00FCckgesetzt werden k\u00F6nnen; optional sollte ein sicherer Selbsthilfeprozess gepr\u00FCft werden, falls organisatorisch gew\u00FCnscht.",
+        "rationale": "Bei Login-basiertem Zugang ist Passwortverlust ein naheliegender Betriebsfall.",
+        "assumptions": [
+          "Selbstregistrierung bleibt ausgeschlossen."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-05",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Aus der Vorgabe \u0027kein Selbstregistrierung, nur Login mit intern vergebenen Accounts\u0027 folgt kein Reset-Prozess durch Admins und auch kein optionaler Selbsthilfeprozess."
+        },
+        {
+          "itemId": "REQ-06",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Die Anforderung nennt Rollen sowie Account-Anlage und Rechteverwaltung, aber keinen Passwort-Reset-Prozess oder Self-Service."
+        },
+        {
+          "itemId": "ARCH-13",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker erw\u00E4hnt einen Admin-Bildschirm f\u00FCr Account-Anlage und Rollenvergabe, tr\u00E4gt aber keinen Passwort-Reset-Prozess."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-022",
+        "targetType": "requirement",
+        "text": "Fehlermeldungen bei Login-Problemen sollten verst\u00E4ndlich formuliert sein und keine unn\u00F6tigen sicherheitskritischen Details \u00FCber existierende Accounts preisgeben.",
+        "rationale": "So werden Bedienbarkeit und Sicherheit sinnvoll balanciert.",
+        "assumptions": [
+          "Auch weniger technikaffine Nutzer m\u00FCssen Login-Probleme einordnen k\u00F6nnen."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-12",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt nur die Elemente des Login-Screens und verbietet Registrierung dort; Aussagen zu Fehlermeldungen oder Informationspreisgabe folgen daraus nicht."
+        },
+        {
+          "itemId": "ARCH-07",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Nur weil Zugang per Login mit intern vergebenen Accounts erfolgt, ist nichts \u00FCber Formulierung oder Sicherheitsgehalt von Login-Fehlermeldungen gesagt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-023",
+        "targetType": "requirement",
+        "text": "Die Hilfe-Funktion sollte kontextsensitive Hilfetexte direkt auf zentralen Seiten wie About Me, Kommunikation und No-Go anbieten.",
+        "rationale": "Eine allgemeine Tour allein gen\u00FCgt oft nicht f\u00FCr wiederkehrende Detailfragen im Alltag.",
+        "assumptions": [
+          "Nutzer ben\u00F6tigen Hilfen an der Stelle der Aufgabe, nicht nur beim Einstieg."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-46",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Anker fordert allgemein eine Hilfe-Funktion oder ein Tutorial; der Kandidat verengt dies unzul\u00E4ssig auf kontextsensitive Hilfen auf konkreten Seiten."
+        },
+        {
+          "itemId": "ARCH-34",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Anker nennt allgemein Tour/Hilfebereich; der Kandidat erg\u00E4nzt ohne Grundlage konkrete kontextsensitive Hilfen auf bestimmten Seiten und verst\u00E4rkt damit den Scope."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Contradicted",
+      "keptAnchorIds": [
+        "REQ-46",
+        "ARCH-34"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-024",
+        "targetType": "requirement",
+        "text": "F\u00FCr zentrale Aktionen wie Upload, Speichern oder Hinzuf\u00FCgen neuer Eintr\u00E4ge sollte die App eindeutige R\u00FCckmeldungen \u00FCber Erfolg oder Fehler geben.",
+        "rationale": "Gerade bei Medien und schwankender Verbindung brauchen Nutzer Klarheit, ob eine Aktion abgeschlossen wurde.",
+        "assumptions": [
+          "Unklare Systemzust\u00E4nde w\u00FCrden im Nutzungskontext schnell zu Doppelaktionen f\u00FChren."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-22",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn neue Eintr\u00E4ge per Plus-Button hinzugef\u00FCgt werden m\u00FCssen, sind klare Erfolgs-/Fehlerr\u00FCckmeldungen f\u00FCr diese zentrale Aktion eine plausible, vom Anker getragene Konkretisierung."
+        },
+        {
+          "itemId": "REQ-26",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Da neue Erfahrungen hinzugef\u00FCgt werden k\u00F6nnen m\u00FCssen, sind eindeutige R\u00FCckmeldungen bei dieser zentralen Aktion eine naheliegende und tragf\u00E4hige Konkretisierung."
+        },
+        {
+          "itemId": "REQ-31",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-31 fordert nur das Hinzuf\u00FCgen neuer Videos per Plus-Button und deren Sortierung; R\u00FCckmeldungen bei Erfolg/Fehler f\u00FCr Aktionen werden nicht getragen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-22",
+        "REQ-26"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-025",
+        "targetType": "requirement",
+        "text": "L\u00E4ngere Listen wie Timeline-, Kommunikations- und No-Go-Eintr\u00E4ge sollten so gestaltet werden, dass sie auch bei vielen Inhalten performant und \u00FCbersichtlich bleiben, etwa durch abschnittsweise Nachladen oder visuelle Gruppierung.",
+        "rationale": "Die Inhalte sind ausdr\u00FCcklich dynamisch erweiterbar; Skalierung der Ansichten ist daher naheliegend.",
+        "assumptions": [
+          "Eintr\u00E4ge k\u00F6nnen im Zeitverlauf zahlreich werden."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-22",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Eine dynamisch erweiterbare Timeline impliziert potenziell wachsende Listen; Anforderungen an \u00DCbersichtlichkeit/Performance bei vielen Eintr\u00E4gen sind eine plausible Konsequenz."
+        },
+        {
+          "itemId": "REQ-26",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Dynamisch erweiterbare Kommunikationseintr\u00E4ge deuten auf wachsende Listen; Ma\u00DFnahmen f\u00FCr \u00DCbersichtlichkeit und Performance bei vielen Inhalten sind plausibel daraus abgeleitet."
+        },
+        {
+          "itemId": "REQ-33",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Eine dynamisch erweiterbare No-Go-Liste kann l\u00E4nger werden; Gestaltung f\u00FCr \u00DCbersichtlichkeit und Performance bei vielen Eintr\u00E4gen ist eine naheliegende Konsequenz."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-22",
+        "REQ-26",
+        "REQ-33"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-026",
+        "targetType": "requirement",
+        "text": "Videos sollten nach M\u00F6glichkeit mit Vorschaubild und kurzer Zusammenfassung angezeigt werden, damit Nutzer relevante Situationen schneller ausw\u00E4hlen k\u00F6nnen.",
+        "rationale": "Reine Dateilisten w\u00E4ren f\u00FCr den fachlichen Zweck wenig praktikabel.",
+        "assumptions": [
+          "Videomaterial wird nicht nur vereinzelt genutzt."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-29",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "REQ-29 tr\u00E4gt nur Beschreibungen; der Kandidat erg\u00E4nzt zus\u00E4tzlich Vorschaubilder und macht daraus eine allgemeine Soll-Aussage ohne Grundlage."
+        },
+        {
+          "itemId": "REQ-30",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-30 betrifft nur die Integration der Videofunktion in Kommunikationsseiten, nicht Vorschaubilder oder Zusammenfassungen zur Auswahlunterst\u00FCtzung."
+        },
+        {
+          "itemId": "ARCH-23",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "ARCH-23 tr\u00E4gt Beschreibungen und Integration in Kommunikationsseiten, aber nicht Vorschaubilder; der Kandidat erweitert den Inhalt \u00FCber den Anker hinaus."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Contradicted",
+      "keptAnchorIds": [
+        "REQ-29",
+        "ARCH-23"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-027",
+        "targetType": "requirement",
+        "text": "F\u00FCr Medieninhalte sollte gepr\u00FCft werden, ob Untertitel, Transkripte oder kurze Textzusammenfassungen unterst\u00FCtzt werden k\u00F6nnen, um Zug\u00E4nglichkeit und Suchbarkeit zu verbessern.",
+        "rationale": "Dies erweitert Barrierefreiheit und erleichtert Wiederfinden in videozentrierten Inhalten.",
+        "assumptions": [
+          "Nicht alle Nutzer k\u00F6nnen oder m\u00F6chten Audio jederzeit anh\u00F6ren."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-38",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-38 nennt konkrete Barrierefreiheitsaspekte wie Schriftgr\u00F6\u00DFe, Kontrast und Farbeinsatz; Untertitel, Transkripte oder Textzusammenfassungen f\u00FCr Medien werden daraus nicht getragen."
+        },
+        {
+          "itemId": "REQ-29",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker verlangt nur beschreibende Erfassung von Videos; Untertitel, Transkripte, Textzusammenfassungen sowie Suchbarkeit/Zug\u00E4nglichkeit werden daraus nicht tragf\u00E4hig abgeleitet."
+        },
+        {
+          "itemId": "ARCH-32",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker betrifft alternative Eingabemethoden per Sprachbefehl als Accessibility-Erweiterung, nicht Medienausgabe wie Untertitel, Transkripte oder Zusammenfassungen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-028",
+        "targetType": "requirement",
+        "text": "Benachrichtigungen \u00FCber neue Inhalte sollten pro Nutzer konfigurierbar sein, damit Personen derselben Einrichtung nicht unn\u00F6tig \u00FCberlastet werden.",
+        "rationale": "Die angedachte Popup-Benachrichtigung d\u00FCrfte nur dann alltagstauglich sein, wenn sie steuerbar ist.",
+        "assumptions": [
+          "Benachrichtigungen werden nicht f\u00FCr alle Rollen und Situationen gleich gew\u00FCnscht."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-40",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Anker sieht Popup-Benachrichtigungen nur als sp\u00E4tere m\u00F6gliche Erweiterung vor; der Kandidat macht daraus eine weitergehende Anforderung nach pro-Nutzer-Konfigurierbarkeit und verst\u00E4rkt den Scope."
+        },
+        {
+          "itemId": "ARCH-42",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "Der Anker fordert nur Benachrichtigung verbundener Nutzer derselben Einrichtung per Popup; eine pro-Nutzer-Konfiguration wird zus\u00E4tzlich erfunden und erweitert den Scope unzul\u00E4ssig."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Contradicted",
+      "keptAnchorIds": [
+        "REQ-40",
+        "ARCH-42"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-029",
+        "targetType": "requirement",
+        "text": "Bei Benachrichtigungen und \u00DCbersichten sollte klar erkennbar sein, welche Inhalte seit dem letzten Besuch neu oder aktualisiert sind.",
+        "rationale": "Der Nutzen von Updates steigt, wenn \u00C4nderungen nicht manuell gesucht werden m\u00FCssen.",
+        "assumptions": [
+          "Nutzer kehren wiederholt zu Profilen zur\u00FCck."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-40",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker verlangt Popup-Benachrichtigungen bei neuen Uploads; Kennzeichnung von seit dem letzten Besuch neuen oder aktualisierten Inhalten in Benachrichtigungen/\u00DCbersichten wird nicht getragen."
+        },
+        {
+          "itemId": "ARCH-42",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Aus einer Popup-Benachrichtigung bei neuen Uploads folgt nicht tragf\u00E4hig eine allgemeine Kennzeichnung neuer oder aktualisierter Inhalte seit dem letzten Besuch in \u00DCbersichten."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-030",
+        "targetType": "requirement",
+        "text": "Die App sollte sensible Bereiche wie m\u00F6gliche Medikamenteninformationen technisch und visuell deutlich von kommunikationsbezogenen Inhalten trennen, falls diese Funktion sp\u00E4ter aufgenommen wird.",
+        "rationale": "So bleibt der Fokus erhalten und Vertraulichkeit kann differenzierter behandelt werden.",
+        "assumptions": [
+          "Medikationsdaten w\u00FCrden strengere Zugriffsregeln erfordern als allgemeine Kommunikationshinweise."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-42",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn Medikamentengaben ggf. integriert werden und deren Vertraulichkeit besonders zu ber\u00FCcksichtigen ist, ist eine klare technische/visuelle Trennung von anderen Inhalten eine plausible, vom Anker getragene Konkretisierung."
+        },
+        {
+          "itemId": "ARCH-26",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker betont m\u00F6gliche Integration von Medikamentengaben und besondere Vertraulichkeit; eine deutliche Trennung von kommunikationsbezogenen Inhalten ist eine plausible Konkretisierung daraus."
+        },
+        {
+          "itemId": "REQ-44",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-44 spricht nur allgemein von einer m\u00F6glichen begrenzten Ausweitung der Dokumentationsfunktionen ohne Fokusverlust. Die konkrete Forderung nach technischer/visueller Trennung sensibler Medikamenteninformationen wird daraus nicht getragen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-42",
+        "ARCH-26"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-031",
+        "targetType": "requirement",
+        "text": "F\u00FCr Tablet-Nutzung sollte gepr\u00FCft werden, ob die App auf gr\u00F6\u00DFeren Displays Mehrspaltenansichten nutzen kann, etwa Profil\u00FCbersicht neben Detailvorschau.",
+        "rationale": "Die bereits erwogene Tablet-Unterst\u00FCtzung wird dadurch konkreter und k\u00F6nnte den Arbeitsfluss verbessern.",
+        "assumptions": [
+          "Tablet-Nutzung findet eher in ruhigen Dokumentationssituationen statt."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-39",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn Tablet-Nutzung evaluiert werden soll, ist die Pr\u00FCfung tabletgerechter Layouts wie Mehrspaltenansichten eine naheliegende und nicht \u00FCberzogene Konkretisierung."
+        },
+        {
+          "itemId": "ARCH-41",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Der Anker fordert die Evaluation der Nutzbarkeit auf Tablets; die Pr\u00FCfung von Mehrspaltenansichten auf gr\u00F6\u00DFeren Displays ist eine plausible Konkretisierung dieser Evaluation."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-39",
+        "ARCH-41"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-032",
+        "targetType": "requirement",
+        "text": "Die App sollte eine datensparsame Standardsicht verwenden, in der nur Informationen angezeigt werden, die f\u00FCr die jeweilige Aufgabe oder Rolle erforderlich sind.",
+        "rationale": "Das unterst\u00FCtzt Datenschutz und reduziert kognitive Last in einer informationsreichen Anwendung.",
+        "assumptions": [
+          "Nicht jede Rolle ben\u00F6tigt jederzeit dieselbe Informationstiefe."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-10",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "REQ-10 sagt nur, dass die Rechteverwaltung sp\u00E4ter entschieden werden muss. Der Kandidat legt bereits eine konkrete datensparsame Standardsicht fest und verst\u00E4rkt den offenen Punkt unzul\u00E4ssig."
+        },
+        {
+          "itemId": "REQ-35",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-35 betrifft Datenschutz und Einwilligungen bei Bildern. Eine allgemeine datensparsame Standardsicht nach Aufgabe oder Rolle wird dadurch nicht getragen."
+        },
+        {
+          "itemId": "ARCH-12",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Contradicts",
+          "rationale": "ARCH-12 h\u00E4lt die Ausgestaltung der Rechteverwaltung ausdr\u00FCcklich offen. Der Kandidat bestimmt bereits ein konkretes Anzeigeprinzip und geht damit \u00FCber den Anker hinaus."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Contradicted",
+      "keptAnchorIds": [
+        "REQ-10",
+        "ARCH-12"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-033",
+        "targetType": "requirement",
+        "text": "Vor dem erstmaligen produktiven Einsatz sollte ein inhaltliches Pflegekonzept festgelegt werden, das Verantwortlichkeiten f\u00FCr Aktualit\u00E4t, Pr\u00FCfung und Qualit\u00E4t der Profile beschreibt.",
+        "rationale": "Die App lebt von aktuellem Wissen; ohne Zust\u00E4ndigkeiten droht fachliche Veralterung.",
+        "assumptions": [
+          "Organisatorische Prozesse sind f\u00FCr den Projekterfolg mitentscheidend."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-50",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "REQ-50 fordert Anforderungsanalyse zur Ermittlung von Bed\u00FCrfnissen und Funktionen. Ein konkretes Pflegekonzept mit Verantwortlichkeiten f\u00FCr Aktualit\u00E4t und Qualit\u00E4t folgt daraus nicht."
+        },
+        {
+          "itemId": "REQ-08",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Supported",
+          "rationale": "Wenn Mitarbeitende und Angeh\u00F6rige Inhalte beitragen k\u00F6nnen und unterschiedliche Rechte vorgesehen sind, ist ein Pflegekonzept mit Verantwortlichkeiten f\u00FCr Aktualit\u00E4t, Pr\u00FCfung und Qualit\u00E4t eine plausible Konsequenz vor produktivem Einsatz."
+        },
+        {
+          "itemId": "ARCH-43",
+          "relation": "relates_to",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker fordert Anforderungsanalyse mit Beteiligten zur Ermittlung von Bed\u00FCrfnissen/Funktionen. Ein konkretes Pflegekonzept mit Verantwortlichkeiten f\u00FCr Aktualit\u00E4t, Pr\u00FCfung und Profilqualit\u00E4t wird daraus nicht getragen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "SupportedAnchored",
+      "keptAnchorIds": [
+        "REQ-08"
+      ],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-034",
+        "targetType": "requirement",
+        "text": "Es sollte gepr\u00FCft werden, ob bestehende Informationen aus vorhandenen Akten teilweise strukturiert in die App \u00FCbernommen werden k\u00F6nnen, um Doppeldokumentation zu reduzieren.",
+        "rationale": "Bestehende Dokumentationen sind bekannt; eine sinnvolle \u00DCbernahme k\u00F6nnte Akzeptanz und Einf\u00FChrung erleichtern.",
+        "assumptions": [
+          "Ein Teil der Bestandsinformationen ist digital oder \u00FCbertragbar verf\u00FCgbar."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-48",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker sagt nur, dass bereits klassische Akten/Dokumentationen existieren. Die Pr\u00FCfung einer strukturierten \u00DCbernahme in die App zur Reduktion von Doppeldokumentation folgt daraus nicht."
+        },
+        {
+          "itemId": "REQ-49",
+          "relation": "mitigates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker beschreibt die eingeschr\u00E4nkte Nutzbarkeit vorhandener Akten im Alltag. Daraus ergibt sich nicht tragf\u00E4hig die Pr\u00FCfung einer strukturierten \u00DCbernahme in die App zur Vermeidung von Doppeldokumentation."
+        },
+        {
+          "itemId": "ARCH-05",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Dass bestehende Akten als Bestandssituation zu ber\u00FCcksichtigen sind, tr\u00E4gt noch nicht die weitergehende Ma\u00DFnahme, Informationen strukturiert in die App zu \u00FCbernehmen."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    },
+    {
+      "candidate": {
+        "candidateId": "CAND-035",
+        "targetType": "requirement",
+        "text": "F\u00FCr den Pilotbetrieb sollten messbare Erfolgskriterien definiert werden, etwa schnellere Auffindbarkeit relevanter Informationen oder verbesserte Verst\u00E4ndigung in ausgew\u00E4hlten Situationen.",
+        "rationale": "Das Produktziel ist noch relativ offen; konkrete Evaluationskriterien helfen bei Priorisierung und sp\u00E4terer Bewertung.",
+        "assumptions": [
+          "Das Projekt wird iterativ eingef\u00FChrt oder getestet."
+        ],
+        "intent": null,
+        "basedOn": [],
+        "gapCategory": null,
+        "impactIfMissing": null,
+        "requiresHumanDecision": null
+      },
+      "anchors": [
+        {
+          "itemId": "REQ-50",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker verlangt Anforderungsanalyse zur Ermittlung von Bed\u00FCrfnissen und Funktionen. Messbare Erfolgskriterien f\u00FCr einen Pilotbetrieb werden daraus nicht abgeleitet."
+        },
+        {
+          "itemId": "REQ-51",
+          "relation": "depends_on",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Vor-Ort-Termine zur Nutzerforschung dienen dem besseren Verst\u00E4ndnis realer Situationen und Bed\u00FCrfnisse. Das tr\u00E4gt keine Definition messbarer Erfolgskriterien f\u00FCr den Pilotbetrieb."
+        },
+        {
+          "itemId": "ARCH-43",
+          "relation": "elaborates",
+          "exists": true,
+          "verdict": "Unrelated",
+          "rationale": "Der Anker betrifft Anforderungsanalyse mit Beteiligten. Erfolgskriterien f\u00FCr einen Pilotbetrieb, etwa schnellere Auffindbarkeit oder verbesserte Verst\u00E4ndigung, sind dadurch nicht hinreichend gest\u00FCtzt."
+        }
+      ],
+      "noAnchorReason": null,
+      "class": "Unreferenced",
+      "keptAnchorIds": [],
+      "unknownAnchorIds": []
+    }
+  ]
+}

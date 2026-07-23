@@ -174,6 +174,8 @@ public static class IngestionApply
             .Max();
     }
 
-    private static IReadOnlyList<string> Union(IEnumerable<string> a, IEnumerable<string> b)
-        => a.Concat(b).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToList();
+    // R-19: null-tolerant — Deltas ohne Claim-Provenance (sourceClaimIds=null) sind schema-legal und
+    // dürfen den Apply nicht mit ArgumentNullException töten (Fund: Mini-Meeting-3, Run 150814).
+    private static IReadOnlyList<string> Union(IEnumerable<string>? a, IEnumerable<string>? b)
+        => (a ?? []).Concat(b ?? []).Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.Ordinal).OrderBy(x => x, StringComparer.Ordinal).ToList();
 }

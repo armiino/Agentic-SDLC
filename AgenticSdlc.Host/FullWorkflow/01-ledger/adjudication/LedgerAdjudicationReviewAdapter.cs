@@ -27,16 +27,16 @@ public static class LedgerAdjudicationReviewAdapter
         new(FieldAction, "Aktion", ReviewInputType.Dropdown, AdjudicationActions.All, Required: true,
             Help: "unit_signal: promote_to_claim (eigener Claim) | attach_evidence (an Ziel-Claim hängen) | mark_covered_by | reject | defer · "
                   + "review_required: apply_repair | accept_gap | merge_existing | reject | defer"),
-        new(FieldRepairStatus, "Repair Status", ReviewInputType.Dropdown,
+        new(FieldRepairStatus, "Repair: Status", ReviewInputType.Dropdown,
             ["decided", "open", "rejected", "uncertain", "required"], Required: false,
             Help: "nur bei apply_repair: gewählten Status in den finalen Claim übernehmen"),
-        new(FieldRepairModality, "Repair Modality", ReviewInputType.Dropdown,
+        new(FieldRepairModality, "Repair: Modalität", ReviewInputType.Dropdown,
             ["must", "must_clarify", "must_consider", "must_note", "must_not", "desired", "optional"], Required: false,
             Help: "nur bei apply_repair: gewählte Modalität in den finalen Claim übernehmen"),
-        new(FieldRepairTimeScope, "Repair TimeScope", ReviewInputType.Dropdown,
+        new(FieldRepairTimeScope, "Repair: Zeitbezug", ReviewInputType.Dropdown,
             ["mvp", "later_possible", "mvp_or_later_unclear"], Required: false,
             Help: "nur bei apply_repair: gewählten Zeitbezug in den finalen Claim übernehmen"),
-        new(FieldRepairScope, "Repair Scope", ReviewInputType.FreeText, [], Required: false,
+        new(FieldRepairScope, "Repair: Geltungsbereich", ReviewInputType.FreeText, [], Required: false,
             Help: "nur bei apply_repair: optionalen Scope-Repair übernehmen"),
         new(FieldReason, "Begründung", ReviewInputType.FreeText, [], Required: false,
             Help: "kurze Begründung der Entscheidung (optional)"),
@@ -58,10 +58,85 @@ public static class LedgerAdjudicationReviewAdapter
             SessionId = queue.SourceValidatedRunId ?? "adjudication",
             Title = "Ledger-Adjudikation",
             Subtitle = sub,
+            Help = BuildHelp(),
             FieldSchema = Schema(referenceOptions),
             Items = items,
         };
     }
+
+    /// <summary>i-Button-Inhalt (R-5/Autor-Wunsch 2026-07-23): Felder, Werte UND Wirkung beim Apply —
+    /// muss synchron bleiben mit <see cref="AdjudicationCompletenessGate.Project"/> und `01-ledger/README.md`.</summary>
+    private static ReviewHelp BuildHelp() => new(
+        "Ledger-Adjudikation",
+        "Du bist die letzte Instanz vor der freigegebenen Evidenzschicht (consumable.json). Alles, was du hier "
+        + "annimmst, wird Faktenbasis für Baselines → Core → Backlog → GitHub-Issues. Was du ablehnst, verlässt "
+        + "den Produktpfad endgültig (bleibt aber im Audit nachvollziehbar).",
+        [
+            new ReviewHelpSection("Die zwei Item-Typen",
+                "review_required_claim (RR::…): ein extrahierter Claim, dessen Facetten-Validierung nicht 'grounded' war "
+                + "(partial/overstated/unsupported) — der Validator-Befund steht im System-Vorschlag.\n"
+                + "unit_signal (US::…): eine Transkript-Aussage, die der Ledger NICHT abdeckt (missing_claim) oder die das "
+                + "System nicht sicher zuordnen konnte (needs_human) bzw. als Zusatz-Evidenz vorschlägt (attach)."),
+            new ReviewHelpSection("Aktion — was beim Apply WIRKLICH passiert",
+                "accept_gap: Claim wird AS-IS in den consumable übernommen (bei unit_signal: neuer Claim aus der Aussage, "
+                + "Facetten noch offen → facetStatus=pending, danach ledger-adjudicate-refine).\n"
+                + "apply_repair (nur RR): Claim wird MIT deinen Repair-Feldern (unten) korrigiert übernommen.\n"
+                + "promote_to_claim (nur unit_signal): die Aussage wird ein EIGENER neuer Claim (facetStatus=pending → refine).\n"
+                + "attach_evidence (nur unit_signal, braucht Referenz-Ziel): das Transkript-Zitat wird als zusätzliche Evidenz "
+                + "an den Ziel-Claim gehängt — KEIN neuer Claim.\n"
+                + "merge_existing / mark_covered_by (brauchen Referenz-Ziel): NUR Audit-Eintrag 'gehört zu X' / 'ist durch X "
+                + "abgedeckt' — der consumable ändert sich NICHT.\n"
+                + "reject: Claim/Aussage kommt NICHT in den consumable — endgültig raus aus dem Produktpfad (Audit bleibt).\n"
+                + "defer: keine Entscheidung — zählt als pending und blockiert den sauberen Abschluss (Ziel: pending=0)."),
+            new ReviewHelpSection("Repair: Status (nur bei apply_repair) — Entscheidungsstand des Claims",
+                "decided: im Gespräch entschieden · open: bewusst offen · rejected: im Gespräch verworfen · "
+                + "uncertain: unklar/widersprüchlich · required: EXTERN verpflichtend (Gesetz/Auflage).\n"
+                + "Achtung Rasierklingen-Regel: status=required verlangt Modalität must oder must_not — sonst schlägt das "
+                + "Ledger-Gate fehl (INCONSISTENT_REQUIRED_MODALITY)."),
+            new ReviewHelpSection("Repair: Modalität (nur bei apply_repair) — Verbindlichkeit",
+                "must: harte Pflicht · must_not: Verbot · must_clarify: MUSS noch geklärt werden · "
+                + "must_consider: muss berücksichtigt/abgewogen werden · must_note: muss festgehalten werden · "
+                + "desired: gewünscht, nicht verpflichtend · optional: nice-to-have.\n"
+                + "Wirkung (belegt): steht dem Baseline-Maker als Claim-Kontext im Prompt UND der Contract-Checker (C3) "
+                + "verbietet dem Artefakt harte Formulierungen ('muss/entschieden'), wenn die Facette WEICH ist "
+                + "(desired/optional/must_clarify/must_consider/must_note). Entscheidend ist also vor allem die Seite "
+                + "hart↔weich; Feinunterschiede INNERHALB 'weich' haben derzeit keinen maschinellen Konsumenten (Doku/Audit)."),
+            new ReviewHelpSection("Repair: Zeitbezug (nur bei apply_repair)",
+                "mvp: gehört in den MVP · later_possible: später möglich/geplant · mvp_or_later_unclear: Zuordnung unklar.\n"
+                + "Wirkung (belegt): weiche Zeitwerte (later_possible/unclear) verbieten dem Artefakt MVP-Behauptungen "
+                + "(Contract-Checker C3). Einen direkten deterministischen Backlog-Schnitt-Konsumenten gibt es derzeit "
+                + "NICHT — weiterer Einfluss läuft über den generierten Artefakt-Text."),
+            new ReviewHelpSection("Repair: Geltungsbereich (nur bei apply_repair)",
+                "Freitext: FÜR WEN/WO gilt der Claim (z. B. 'Pflegekräfte', 'gesamte Einrichtung'). "
+                + "Leer lassen = Geltungsbereich des Claims bleibt unverändert."),
+            new ReviewHelpSection("Referenz-Ziel",
+                "Pflicht bei attach_evidence, merge_existing, mark_covered_by: die ID des existierenden Ziel-Claims "
+                + "(Autocomplete: 'id — Proposition'). Ohne gültiges Ziel gilt die Zeile als nicht entschieden."),
+            new ReviewHelpSection("Vorbelegung & System-Vorschlag",
+                "Repair-Felder sind mit dem Validator-Vorschlag vorbelegt (observed → suggested) — du kannst jeden Wert "
+                + "übersteuern. Der System-Vorschlag ist nie bindend: DU entscheidest."),
+            new ReviewHelpSection("Woher kommen die Items & Vorschläge?",
+                "RR-Items + Repair-Vorschläge: aus der Facetten-Validierung (step-03) — ein Prüf-LLM bewertet jeden "
+                + "kanonischen Claim einzeln gegen das Transkript (grounded/partial/overstated/unsupported) und schlägt "
+                + "Facetten-Korrekturen vor (observed → suggested). US-Items: aus der Unused-Pipeline (step-01c/01d) — "
+                + "deterministisch segmentierte, nicht verwendete Transkript-Aussagen, die ein Vergleichs-LLM als "
+                + "fehlend/unklar/anhängbar einstuft.\n"
+                + "Vorschläge sind IMMER Modell-Urteile — die Mechanik (Gates/Traces) garantiert nur, dass nichts "
+                + "unbilanziert verloren geht."),
+            new ReviewHelpSection("Was die Adjudikation NICHT ändert (Grenzen)",
+                "merge_existing / mark_covered_by sind reine Audit-Einträge — sie verändern den consumable NICHT.\n"
+                + "Die Adjudikation bestimmt, WAS Fakt ist — nicht die spätere FORMULIERUNG: das Paraphrasieren "
+                + "übernehmen die Folgestufen; deren Treue prüfen eigene Gates (Fidelity/Checker).\n"
+                + "Drei Wege laufen bewusst an dir vorbei (sonst müsstest du alle Units einzeln reviewen): "
+                + "grounded-Claims (direkt approved), als noise triagierte Units (step-01c), already_covered mit "
+                + "gültiger Referenz (seit R-1 referenz-erzwungen). Alle drei sind in den Run-Artefakten auditierbar."),
+            new ReviewHelpSection("Was nach 'Fertig' passiert",
+                "ledger-adjudicate-apply schreibt: adjudicated-ledger.json (Audit ALLER Entscheidungen), consumable.json "
+                + "(finale Claim-Menge = approved + deine Annahmen − rejects) und gate.json (hartes Vollständigkeits-Gate — "
+                + "unentschiedene Zeilen oder fehlende Referenz-Ziele = Fehler). Bei neuen Claims (accept_gap aus Unit / "
+                + "promote_to_claim): ledger-adjudicate-refine vergibt die fehlenden Facetten. Der consumable ist danach "
+                + "der Input für 02-baselines (recipe)."),
+        ]);
 
     private static ReviewItem BuildItem(AdjudicationItem a)
     {

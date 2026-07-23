@@ -55,12 +55,17 @@ public static class GithubForwardApply
             }
         }
 
-        // "Schon angewendet?" — CREATE: jedes bestehende Mapping zaehlt (Issue existiert bereits). Ziel-Ops
-        // (LINK/UPDATE/COMMENT): nur wenn bereits auf DASSELBE Issue gemappt (ein anderes Ziel = echte Aenderung).
+        // "Schon angewendet?" — CREATE: jedes bestehende Mapping zaehlt (Issue existiert bereits).
+        // LINK: idempotent, wenn bereits auf DASSELBE Issue gemappt (ein anderes Ziel = echte Aenderung).
+        // R-21 (E11-Fund 2026-07-23): UPDATE/COMMENT sind hier AUSGENOMMEN — bei ihnen ist das Mapping auf
+        // dasselbe Issue die VORAUSSETZUNG des Ops, nicht der Beweis seiner Anwendung; der alte Kurzschluss
+        // machte den gesamten Update-Pfad zu totem Code (EXECUTED … alreadyApplied=2, updated=0).
         bool AlreadyApplied(GithubForwardOp o)
         {
             if (!execute || !mappingByPbi.TryGetValue(o.PbiId, out var m)) return false;
             if (string.Equals(o.Kind, GithubForwardKind.CreateIssue, StringComparison.Ordinal)) return true;
+            if (string.Equals(o.Kind, GithubForwardKind.UpdateIssue, StringComparison.Ordinal)
+                || string.Equals(o.Kind, GithubForwardKind.Comment, StringComparison.Ordinal)) return false;
             return o.TargetIssueNumber is not null && m.IssueNumber == o.TargetIssueNumber.Value;
         }
 

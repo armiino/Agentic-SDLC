@@ -32,6 +32,12 @@ internal sealed class UnusedUnitLedgerComparer
         create_candidate
         human_review
 
+        STRENGE REGEL (Pflicht):
+        - attach_as_evidence und already_covered_indirectly sind NUR erlaubt, wenn relatedCandidateIds
+          mindestens EINE existierende Candidate-ID aus existingCandidates enthaelt.
+        - Kannst du keinen konkreten Kandidaten benennen, waehle needs_human (oder missing_claim,
+          wenn eine eigenstaendige Aussage fehlt). NIEMALS Deckung ohne Referenz behaupten.
+
         Antworte ausschliesslich mit JSON:
         {
           "items": [
@@ -45,6 +51,9 @@ internal sealed class UnusedUnitLedgerComparer
             }
           ]
         }
+        SPRACHE (Pflicht): Antworte inhaltlich auf DEUTSCH - propositions, reasons, suggestedProposition
+        und alle Freitexte in deutscher Sprache. NUR Schema-Werte/Enums (kind, status, modality, verdict,
+        suggestedAction, IDs usw.) bleiben englisch.
         """;
 
     private const string SchemaJson = """
@@ -104,7 +113,88 @@ internal sealed class UnusedUnitLedgerComparer
         var all = new List<UnusedUnitLedgerCompareItem>();
         foreach (var batch in relevantUnits.Chunk(BatchSize))
             all.AddRange(await CompareBatchAsync(batch, candidates, ct).ConfigureAwait(false));
-        return all;
+        return await RepairCoverageReferencesAsync(all, relevantUnits, candidates, ct).ConfigureAwait(false);
+    }
+
+    // R-1 (2026-07-23): Deckungs-Urteile ohne gueltige Referenz -> EIN gezielter Nachfrage-Pass nur fuer die
+    // Verstoss-Units; was danach immer noch referenzlos ist, wird deterministisch zu needs_human umgestuft
+    // (landet via Miss-Signal in der Adjudikations-Queue) statt den ganzen Lauf am Trace-Check scheitern zu lassen.
+    private async Task<IReadOnlyList<UnusedUnitLedgerCompareItem>> RepairCoverageReferencesAsync(
+        List<UnusedUnitLedgerCompareItem> items,
+        IReadOnlyList<AtomicUnit> relevantUnits,
+        IReadOnlyList<SemanticLedgerEntry> candidates,
+        CancellationToken ct)
+    {
+        var candidateIds = candidates.Select(c => c.Id).ToHashSet(StringComparer.Ordinal);
+        var offenders = items.Where(i => UnusedUnitCompareRepair.ClaimsCoverageWithoutValidReference(i, candidateIds)).ToList();
+        if (offenders.Count == 0) return items;
+
+        var unitById = relevantUnits.GroupBy(u => u.Id).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+        var repairedById = new Dictionary<string, UnusedUnitLedgerCompareItem>(StringComparer.Ordinal);
+        foreach (var batch in offenders.Chunk(BatchSize))
+            foreach (var r in await RepairBatchAsync(batch, unitById, candidates, ct).ConfigureAwait(false))
+                repairedById[r.UnitId] = r;
+
+        var offenderIds = offenders.Select(o => o.UnitId).ToHashSet(StringComparer.Ordinal);
+        var resolved = items.Select(item =>
+        {
+            if (!offenderIds.Contains(item.UnitId)) return item;
+            if (repairedById.TryGetValue(item.UnitId, out var repaired))
+            {
+                // Nur existierende IDs zaehlen — halluzinierte Repair-Referenzen wuerden sonst als brokenRefs den Trace kippen.
+                var sanitized = repaired with { RelatedCandidateIds = repaired.RelatedCandidateIds.Where(candidateIds.Contains).ToList() };
+                if (!UnusedUnitCompareRepair.ClaimsCoverageWithoutValidReference(sanitized, candidateIds)) return sanitized;
+            }
+            return UnusedUnitCompareRepair.Downgrade(item);
+        }).ToList();
+
+        var downgraded = resolved.Count(r => r.Reason.StartsWith(UnusedUnitCompareRepair.DowngradePrefix, StringComparison.Ordinal));
+        Console.WriteLine($"[unused-compare] reference-repair: offenders={offenders.Count} repaired={offenders.Count - downgraded} downgraded->needs_human={downgraded}");
+        return resolved;
+    }
+
+    private const string RepairSystemPrompt = """
+        Du hast unused Units gegen einen Candidate Ledger verglichen und fuer die folgenden Units Deckung
+        behauptet (attach_as_evidence oder already_covered_indirectly), aber KEINE existierende Candidate-ID
+        benannt. Das ist unzulaessig. Korrigiere JEDE dieser Units:
+        - Traegt ein konkreter Kandidat die Deckung wirklich: nenne seine ID(s) aus existingCandidates in relatedCandidateIds.
+        - Sonst stufe ehrlich um: missing_claim (mit suggestedProposition) oder needs_human.
+        Antworte ausschliesslich mit demselben JSON-Format ({"items":[...]}) und denselben erlaubten Werten wie zuvor.
+        SPRACHE (Pflicht): Antworte inhaltlich auf DEUTSCH - propositions, reasons, suggestedProposition
+        und alle Freitexte in deutscher Sprache. NUR Schema-Werte/Enums (kind, status, modality, verdict,
+        suggestedAction, IDs usw.) bleiben englisch.
+        """;
+
+    private async Task<IReadOnlyList<UnusedUnitLedgerCompareItem>> RepairBatchAsync(
+        IReadOnlyList<UnusedUnitLedgerCompareItem> offenders,
+        IReadOnlyDictionary<string, AtomicUnit> unitById,
+        IReadOnlyList<SemanticLedgerEntry> candidates,
+        CancellationToken ct)
+    {
+        var options = new ChatOptions { Temperature = 0.0f };
+        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+
+        var payload = new
+        {
+            unitsToFix = offenders.Select(o => new
+            {
+                id = o.UnitId,
+                speaker = unitById.GetValueOrDefault(o.UnitId)?.Speaker,
+                text = unitById.GetValueOrDefault(o.UnitId)?.Text,
+                previousVerdict = o.Verdict,
+                previousReason = o.Reason
+            }),
+            existingCandidates = candidates.Select(c => new { c.Id, c.Proposition, c.Status, c.Modality, c.Scope })
+        };
+
+        var response = await _client.GetResponseAsync(
+            [
+                new ChatMessage(ChatRole.System, RepairSystemPrompt),
+                new ChatMessage(ChatRole.User, JsonSerializer.Serialize(payload, Json))
+            ],
+            options, ct).ConfigureAwait(false);
+
+        return Parse(response.Text);
     }
 
     private async Task<IReadOnlyList<UnusedUnitLedgerCompareItem>> CompareBatchAsync(

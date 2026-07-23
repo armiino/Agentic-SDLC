@@ -71,7 +71,7 @@ AgenticSdlc.Host.FullWorkflow.Decision.DecisionCommands.Register(commands);
 AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubCommands.Register(commands);
 AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineCommands.Register(commands);
 AgenticSdlc.Host.FullWorkflow.HitlSpike.SpikeCommands.Register(commands);
-AgenticSdlc.Host.FullWorkflow.Backlog.ResearchCommands.Register(commands);
+// research/ 2026-07-23 nach archive/ (Typ-Schnitt erledigt) — Kommandos deregistriert.
 if (args.Length > 0 && commands.TryGetValue(args[0], out var commandHandler))
 {
     Environment.ExitCode = await commandHandler(args, settings, repoRoot);

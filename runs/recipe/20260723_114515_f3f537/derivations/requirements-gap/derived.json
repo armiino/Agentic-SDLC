@@ -1,0 +1,156 @@
+{
+  "artifactId": "DREQ",
+  "artifactType": "requirements",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260723_114515_f3f537",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "RequirementsGapFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DREQ-01",
+      "origin": "Derived",
+      "text": "Das System muss jede Anmeldung einem intern vergebenen Account mit genau einer zugewiesenen Rolle zuordnen und auf Basis dieser Rolle die jeweils erlaubten Funktionen durchsetzen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-06",
+        "REQ-07",
+        "REQ-08",
+        "REQ-10"
+      ],
+      "assumptions": [
+        "Die in den Quellanforderungen genannten Rollen und Rechte sollen nicht nur organisatorisch definiert, sondern im System wirksam erzwungen werden."
+      ],
+      "derivationRationale": "Ohne systemseitige Zuordnung von Accounts zu Rollen und Durchsetzung der Berechtigungen sind die geforderten Unterschiede zwischen Admin, User, Bewohner und weiteren vorgesehenen Nutzergruppen nicht erf\u00FCllbar."
+    },
+    {
+      "itemId": "DREQ-02",
+      "origin": "Derived",
+      "text": "Das System muss Profile einer Einrichtung eindeutig einer Einrichtung zuordnen und beim Anzeigen der Profil\u00FCbersicht sicherstellen, dass Mitarbeiter nur die f\u00FCr ihren Account freigegebenen Profile ihrer eigenen Einrichtung sehen k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-09",
+        "REQ-13",
+        "REQ-16"
+      ],
+      "assumptions": [
+        "Die Sichtbarkeit in der Profil\u00FCbersicht wird systemseitig aus Account- und Profildaten abgeleitet."
+      ],
+      "derivationRationale": "Die Beschr\u00E4nkung des Profilzugriffs auf die eigene Einrichtung kann nur erf\u00FCllt werden, wenn Profile und Mitarbeiter einer Einrichtung zugeordnet und die \u00DCbersicht entsprechend gefiltert werden."
+    },
+    {
+      "itemId": "DREQ-03",
+      "origin": "Derived",
+      "text": "F\u00FCr Angeh\u00F6rige muss das System eine eigene oder anderweitig klar abgegrenzte Berechtigungszuordnung unterst\u00FCtzen, damit sie Zugriff erhalten und Inhalte beitragen k\u00F6nnen, ohne automatisch die Rechte von Mitarbeitern, Admins oder Bewohnern zu erhalten.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-07",
+        "REQ-08",
+        "REQ-10"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige sind eine von Mitarbeitern, Admins und Bewohnern fachlich unterscheidbare Nutzergruppe."
+      ],
+      "derivationRationale": "Da Angeh\u00F6rige Zugriff erhalten und Inhalte beitragen sollen, zugleich aber unterschiedliche Rechte vorgesehen sind, ist eine eigene berechtigungstechnische Abgrenzung logisch erforderlich."
+    },
+    {
+      "itemId": "DREQ-04",
+      "origin": "Derived",
+      "text": "Wenn User nichts l\u00F6schen d\u00FCrfen, muss das System f\u00FCr von Usern hinzuf\u00FCgbare Inhalte mindestens eine nicht l\u00F6schende Pflegeform vorsehen, insbesondere das Hinzuf\u00FCgen neuer Eintr\u00E4ge ohne L\u00F6schzwang f\u00FCr bestehende Inhalte.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-22",
+        "REQ-26",
+        "REQ-31",
+        "REQ-33"
+      ],
+      "assumptions": [
+        "Die in den Fachseiten erweiterbaren Inhalte werden auch von Usern gepflegt."
+      ],
+      "derivationRationale": "Die Fachanforderungen verlangen wiederholt das Hinzuf\u00FCgen neuer Inhalte; zugleich verbietet die Rollenanforderung Usern das L\u00F6schen. Daher muss die Inhaltsverwaltung mit additiver Pflege erf\u00FCllbar sein, ohne L\u00F6schung als notwendige Aktion vorauszusetzen."
+    },
+    {
+      "itemId": "DREQ-05",
+      "origin": "Derived",
+      "text": "Jeder \u00FCber Plus-Button neu erzeugte Inhaltseintrag muss beim Speichern dem aktuell ge\u00F6ffneten Bewohnerprofil und dem jeweiligen Inhaltsbereich eindeutig zugeordnet werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-16",
+        "REQ-19",
+        "REQ-22",
+        "REQ-26",
+        "REQ-31",
+        "REQ-33"
+      ],
+      "assumptions": [
+        "Ein Nutzer f\u00FCgt neue Inhalte aus der Detailansicht eines konkret ausgew\u00E4hlten Bewohnerprofils heraus hinzu."
+      ],
+      "derivationRationale": "Da Inhalte in mehreren Bereichen pro Bewohner dynamisch erg\u00E4nzt werden sollen, ist eine eindeutige Zuordnung zum gew\u00E4hlten Profil und Bereich notwendig, damit die Eintr\u00E4ge anschlie\u00DFend korrekt angezeigt werden k\u00F6nnen."
+    },
+    {
+      "itemId": "DREQ-06",
+      "origin": "Derived",
+      "text": "Die Kommunikationsansicht muss f\u00FCr Eintr\u00E4ge eine strukturierte Erfassung nach dem noch zu definierenden Beschreibungsmuster unterst\u00FCtzen, damit sp\u00E4tere Suche und Filterung auf den Kommunikationsseiten m\u00F6glich werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-26",
+        "REQ-27",
+        "REQ-28",
+        "REQ-29"
+      ],
+      "assumptions": [
+        "Das in REQ-28 genannte Beschreibungsmuster soll nicht nur dokumentiert, sondern bei der Erfassung tats\u00E4chlich verwendet werden."
+      ],
+      "derivationRationale": "Die geforderte Such- und Filterf\u00E4higkeit setzt voraus, dass Kommunikationsinhalte bei der Eingabe strukturiert und konsistent beschrieben werden."
+    },
+    {
+      "itemId": "DREQ-07",
+      "origin": "Derived",
+      "text": "Die Suchfunktion der Profil\u00FCbersicht darf nur innerhalb der f\u00FCr den aktuell angemeldeten Nutzer sichtbaren Bewohnerprofile suchen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-09",
+        "REQ-16",
+        "REQ-17"
+      ],
+      "assumptions": [
+        "Die Suchleiste arbeitet auf der angezeigten Profilmenge der \u00DCbersicht."
+      ],
+      "derivationRationale": "Ohne diese Beschr\u00E4nkung k\u00F6nnte die Suchfunktion die inhaltliche Zugriffsbeschr\u00E4nkung nach Einrichtung umgehen oder Informationen \u00FCber nicht sichtbare Profile offenlegen."
+    },
+    {
+      "itemId": "DREQ-08",
+      "origin": "Derived",
+      "text": "Vor dem Speichern oder Anzeigen von Bildern in Bewohnerprofilen muss gepr\u00FCft werden, ob f\u00FCr das jeweilige Bild eine gekl\u00E4rte datenschutzrechtliche Freigabe beziehungsweise Einwilligung vorliegt.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-20",
+        "REQ-21",
+        "REQ-22",
+        "REQ-35"
+      ],
+      "assumptions": [
+        "Gekl\u00E4rte Einwilligungen m\u00FCssen auf einzelne verwendete Bilder oder Bildbest\u00E4nde anwendbar sein und d\u00FCrfen nicht nur au\u00DFerhalb des Systems unverbindlich angenommen werden."
+      ],
+      "derivationRationale": "Da die App Bilder in Profilen und Timelines verwendet, ist die Nutzung dieser Inhalte nur erf\u00FCllbar, wenn die zuvor geforderte Kl\u00E4rung der Datenschutz- und Einwilligungslage vor der Verwendung beachtet wird."
+    },
+    {
+      "itemId": "DREQ-09",
+      "origin": "Derived",
+      "text": "Vor dem Speichern oder Anzeigen von Testbildern in der App muss dieselbe datenschutzrechtliche Freigabe beziehungsweise Einwilligung gepr\u00FCft werden wie f\u00FCr produktive Bilder.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-35"
+      ],
+      "assumptions": [
+        "Testbilder k\u00F6nnen personenbezogene oder anderweitig einwilligungsbed\u00FCrftige Inhalte enthalten."
+      ],
+      "derivationRationale": "REQ-35 nennt ausdr\u00FCcklich, dass die Kl\u00E4rung auch f\u00FCr Testbilder gilt; daraus folgt als notwendige System- oder Prozessanforderung eine gleichartige Pr\u00FCfung vor deren Nutzung."
+    }
+  ]
+}

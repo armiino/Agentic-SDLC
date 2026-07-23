@@ -1,0 +1,164 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260723_114515_f3f537",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArch1"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Unklare Rechteausgestaltung kann die geforderte Einrichtungsabgrenzung und den Angeh\u00F6rigen-/Bewohnerzugriff unzureichend absichern \u2014 Die Architektur sieht mehrere Rollen und Beitragende vor, legt die Rechteverwaltung aber noch nicht konkret fest. Dadurch besteht das Risiko, dass beim Umsetzen der Zugriffslogik Profile oder Inhalte nicht sauber nach Einrichtung, Rolle und Eigenprofil getrennt werden und die geforderten Sichtbarkeitsgrenzen nicht verl\u00E4sslich eingehalten werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-07",
+        "REQ-08",
+        "REQ-09",
+        "REQ-10",
+        "ARCH-09",
+        "ARCH-10",
+        "ARCH-11",
+        "ARCH-12"
+      ],
+      "assumptions": [
+        "Die Rollen Angeh\u00F6rige und Bewohner ben\u00F6tigen gegen\u00FCber Mitarbeitern tats\u00E4chlich abweichende Sicht- und Bearbeitungsrechte auf Profil- und Medienelemente.",
+        "Die zun\u00E4chst gew\u00E4hlte Daten- und Berechtigungsumsetzung erzwingt keine automatisch korrekte Mandantentrennung, sondern muss explizit modelliert werden."
+      ],
+      "derivationRationale": "Aus den Anforderungen folgen unterschiedliche Zugriffsgrenzen f\u00FCr Bewohner, Angeh\u00F6rige und Mitarbeiter sowie eine Beschr\u00E4nkung auf die eigene Einrichtung. Die Architektur \u00FCbernimmt diese Ziele, l\u00E4sst aber die konkrete Rechteverwaltung und technische Umsetzung der Einrichtungsbeschr\u00E4nkung offen. Daraus folgt ein nicht explizit genannter Umsetzungs- und Schutzbedarf mit Fehlkonfigurationsrisiko."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Lokales Caching kann Zugriffsbeschr\u00E4nkungen und Datenschutzanforderungen unterlaufen \u2014 Wenn Cloud-Daten lokal gespeichert oder gecacht werden, bevor Rechte- und Ger\u00E4teschutzkonzept gekl\u00E4rt sind, k\u00F6nnen Bilder, Profilinformationen oder No-Go-/Kommunikationsinhalte auf Ger\u00E4ten verf\u00FCgbar bleiben, obwohl der Zugriff in der App eigentlich rollen- oder einrichtungsbezogen eingeschr\u00E4nkt sein soll.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-09",
+        "REQ-35",
+        "REQ-36",
+        "ARCH-11",
+        "ARCH-14",
+        "ARCH-40"
+      ],
+      "assumptions": [
+        "Lokaler Cache w\u00FCrde potenziell personenbezogene Profil-, Bild- oder Kommunikationsdaten enthalten.",
+        "F\u00FCr lokal gespeicherte Daten ist noch kein separates Schutzkonzept definiert."
+      ],
+      "derivationRationale": "Die Anforderungen verlangen Einrichtungsgrenzen und gekl\u00E4rte Datenschutz-/Einwilligungsfragen f\u00FCr Bilder; zugleich ist offen, ob und wie Cloud-Daten lokal gecacht werden. Die Architektur best\u00E4tigt dieselbe offene Cache-Entscheidung. Damit entsteht aus dem Zusammenspiel das Risiko, dass Datenhaltung auf dem Ger\u00E4t Schutz- und Zugriffsvorgaben faktisch aushebelt."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Geplante Popup-Benachrichtigungen k\u00F6nnen mit der Einrichtungsgebundenheit und noch ungekl\u00E4rten Rechten kollidieren \u2014 Die Benachrichtigung verbundener Nutzer derselben Einrichtung \u00FCber neue About-Me-Inhalte setzt voraus, dass Zugeh\u00F6rigkeiten, Empf\u00E4ngerkreise und Ausnahmen pr\u00E4zise bestimmt sind. Solange Rechte und Einrichtungslogik nicht vollst\u00E4ndig ausdefiniert sind, besteht das Risiko, dass Benachrichtigungen unvollst\u00E4ndig, falsch adressiert oder f\u00FCr nicht berechtigte Nutzer sichtbar werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-08",
+        "REQ-09",
+        "REQ-10",
+        "REQ-40",
+        "ARCH-11",
+        "ARCH-12",
+        "ARCH-42"
+      ],
+      "assumptions": [
+        "Popup-Benachrichtigungen werden anhand derselben Rollen- und Einrichtungsinformationen gesteuert wie der eigentliche Datenzugriff.",
+        "Angeh\u00F6rige oder andere externe Nutzer k\u00F6nnen technisch als \u0027verbundene Nutzer\u0027 modelliert werden."
+      ],
+      "derivationRationale": "Die optionale Benachrichtigungsfunktion h\u00E4ngt direkt von sauberer Mandanten- und Rechtezuordnung ab. Da diese laut Anforderungen und Architektur noch zu kl\u00E4ren ist, entsteht ein abgeleitetes Risiko speziell f\u00FCr die korrekte und datensparsame Zustellung von Popups."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Suchfunktion f\u00FCr Kommunikationsinhalte kann ohne verbindliches Beschreibungsschema ihr Nutzungsziel verfehlen \u2014 Die App soll Wissen schnell nachschlagbar machen, zugleich sollen Kommunikationsweisen in vielf\u00E4ltigen Formaten inklusive Bildern und Videos erfasst werden. Wenn das geforderte systematische Beschreibungsmuster f\u00FCr Eintr\u00E4ge nicht fr\u00FCh verbindlich definiert wird, kann die Suche trotz vorhandener Inhalte uneinheitlich oder wenig hilfreich werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "REQ-24",
+        "REQ-27",
+        "REQ-28",
+        "REQ-29",
+        "ARCH-22",
+        "ARCH-23",
+        "ARCH-24"
+      ],
+      "assumptions": [
+        "Die Suchfunktion soll sich nicht nur auf freie Volltextsuche beschr\u00E4nken, sondern von strukturierten Beschreibungen abh\u00E4ngen.",
+        "Nutzer erfassen Inhalte dezentral und mit unterschiedlichen Formulierungen."
+      ],
+      "derivationRationale": "Das Produktziel ist schnelles Nachsehen bei Verst\u00E4ndnisschwierigkeiten. Gleichzeitig erlaubt die Architektur heterogene, dynamisch erweiterbare Kommunikationsinhalte und fordert erst noch ein standardisiertes Beschreibungsmuster. Daraus folgt das Risiko, dass die Wissensbasis ohne fr\u00FChe Standardisierung zwar w\u00E4chst, aber nicht wirksam durchsuchbar wird."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Dynamisch erweiterbare Inhalte aus mehreren Bereichen k\u00F6nnen den Fokus auf schnelle Orientierung untergraben \u2014 About-Me, Kommunikation, Videos und No-Go-Inhalte sind jeweils offen erweiterbar. Ohne \u00FCbergreifende Begrenzungs-, Strukturierungs- oder Priorisierungsregeln besteht das Risiko, dass Profile mit der Zeit \u00E4hnlich un\u00FCbersichtlich werden wie die heute als schwer nutzbar beschriebenen Akten, wodurch das Kernziel des schnellen Verstehens im Alltag geschw\u00E4cht wird.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "REQ-22",
+        "REQ-26",
+        "REQ-31",
+        "REQ-33",
+        "REQ-48",
+        "REQ-49",
+        "ARCH-05",
+        "ARCH-06",
+        "ARCH-20",
+        "ARCH-22",
+        "ARCH-23",
+        "ARCH-25"
+      ],
+      "assumptions": [
+        "Es ist m\u00F6glich, dass viele Nutzer \u00FCber l\u00E4ngere Zeit Inhalte zu demselben Bewohner erg\u00E4nzen.",
+        "Es gibt bislang keine explizit festgelegten Mechanismen f\u00FCr Verdichtung, Archivierung oder Hervorhebung besonders relevanter Eintr\u00E4ge."
+      ],
+      "derivationRationale": "Die Anforderungen begr\u00FCnden die App mit besserer Auffindbarkeit gegen\u00FCber klassischen Akten. Die Architektur setzt jedoch auf viele dynamisch wachsende Inhaltsbereiche. Daraus folgt neu das Risiko, dass ohne Informationsarchitektur die digitale L\u00F6sung denselben Un\u00FCbersichtlichkeitsnachteil reproduziert."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Bewohner d\u00FCrfen eigene Bilder hinzuf\u00FCgen, obwohl Einwilligungs- und Datenschutzkl\u00E4rung f\u00FCr Bilder vorgelagert ist \u2014 Die Architektur erlaubt Bewohner-Accounts eingeschr\u00E4nktes eigenes Beitragen \u00FCber Bilder, w\u00E4hrend f\u00FCr jede Bildnutzung vorab Datenschutz- und Einwilligungsfragen gekl\u00E4rt sein m\u00FCssen. Ohne vorgeschaltete Freigabe- oder Pr\u00FCfmechanismen besteht das Risiko, dass die gew\u00FCnschte Bewohnerbeteiligung mit den Bildvoraussetzungen kollidiert.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-07",
+        "REQ-22",
+        "REQ-35",
+        "ARCH-10",
+        "ARCH-14",
+        "ARCH-20"
+      ],
+      "assumptions": [
+        "Von Bewohnern hochgeladene Bilder k\u00F6nnen Personenbezug haben und unter dieselben Einwilligungsanforderungen fallen wie andere Bilder in der App.",
+        "Es ist noch kein Workflow beschrieben, der Upload und sp\u00E4tere Freigabe trennt."
+      ],
+      "derivationRationale": "Aus der Kombination von Bild-Uploadm\u00F6glichkeit f\u00FCr Bewohner und der vorgelagerten Pflicht zur Kl\u00E4rung von Datenschutz und Einwilligungen entsteht ein neuer operativer Konflikt: Die Beteiligungsfunktion ben\u00F6tigt zus\u00E4tzliche Kontrollschritte, die in der Architektur noch nicht erkennbar abgesichert sind."
+    },
+    {
+      "itemId": "DRISK-07",
+      "origin": "Derived",
+      "text": "Vorl\u00E4ufige Datenbankwahl kann f\u00FCr feingranulare Rollen- und Mandantenlogik zu einer verdeckten Vorbedingung werden \u2014 Die Datenbankl\u00F6sung ist nur vorl\u00E4ufig festgelegt, w\u00E4hrend die L\u00F6sung bereits differenzierte Rollen, Bewohner-Selbstsicht und Einrichtungsgrenzen tragen soll. Es besteht das Risiko, dass fr\u00FChe Implementierungsentscheidungen auf Basis der vorl\u00E4ufigen Datenbank eine Datenstruktur oder Zugriffslogik verfestigen, die sp\u00E4tere Rechteentscheidungen nur mit hohem Umbau abbilden kann.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-06",
+        "REQ-07",
+        "REQ-08",
+        "REQ-09",
+        "REQ-10",
+        "REQ-55",
+        "ARCH-08",
+        "ARCH-09",
+        "ARCH-10",
+        "ARCH-11",
+        "ARCH-12",
+        "ARCH-39"
+      ],
+      "assumptions": [
+        "Die konkrete Modellierung von Rollen, Einrichtungen und Profilsicht h\u00E4ngt wesentlich von der gew\u00E4hlten Datenstruktur und Zugriffsdurchsetzung ab.",
+        "Vor der finalen Rechteentscheidung k\u00F6nnten bereits produktpr\u00E4gende Implementierungen entstehen."
+      ],
+      "derivationRationale": "Die Anforderungen verlangen komplexe Zugriffsunterschiede, die Architektur benennt aber sowohl offene Rechteausgestaltung als auch nur vorl\u00E4ufige Datenbankwahl. Daraus folgt das Risiko einer fr\u00FChzeitig verfestigten technischen Grundlage, die sp\u00E4tere fachliche Entscheidungen erschwert."
+    }
+  ]
+}
