@@ -10,7 +10,7 @@ ZWISCHEN den Stufen übergeben Datei-Artefakte mit Human-Gates (bewusst — jede
 | `02-baselines/` | consumable → geprüfte Artefakt-Baselines (Evidence-Agent „Arm B" + Recipe/Fan-out; Bausteine: MakerChecker/Chain/Derivation, Messwerkzeug Fidelity) | `baselines/{type}/artifact.json` |
 | `03-gap/` | Open-World Gap/Coverage-Prüfung (l3) — optionaler Zusatz, Promotions via Human-Review | promoted items |
 | `04-delta/` | die gemeinsame ProjectState-SPRACHE (Modelle/Repos/Views) + Bau von Erst-State & MeetingDeltas | `project-state.json` / MeetingDelta |
-| `05-core/` | **DIE WAHRHEIT** — der lebende ProjectState hinter dem `ICoreRepository`-Port (versioniert, History) | `state/core/project-state.json` |
+| `05-core/` | **DIE WAHRHEIT** — der lebende ProjectState hinter dem `ICoreRepository`-Port. Versioniert heißt konkret: `schemaVersion` + `provenance` im Dokument, UND seit 2026-07-23 legt jeder inhaltsändernde `SaveAsync` den Vorzustand als Snapshot nach `state/core/history/` (lokal, gitignored — Restore = zurückkopieren) | `state/core/project-state.json` |
 | `06-backlog/` | kanonische Baseline → Readiness → PBI-Schnitt (re-clarify) → IssuePlanning/Clarification | `product-backlog.json`, `accepted-issue-plan.json` |
 | `07-tore/` | die kontrollierten Zugänge zur Wahrheit: `ingestion` (Tor 1) · `pbiupdate` (Placement) · `decision` (Tor 2) · `github` (Tor 3, Forward/Reverse) | `github-sync-delta.json`, GitHub Issues |
 | `08-pipeline/` | HITL-Super-Workflow über den Toren (RequestPort-Gates, durable Checkpoints) | Checkpoint/Resume |

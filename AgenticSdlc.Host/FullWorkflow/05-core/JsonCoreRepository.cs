@@ -23,6 +23,22 @@ public sealed class JsonCoreRepository(string repoRoot) : ICoreRepository
     public async Task SaveAsync(ProjectStateDocument core, CancellationToken ct = default)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(_file) ?? ".");
-        await File.WriteAllTextAsync(_file, JsonSerializer.Serialize(core, ProjectStateJson.Options), ct).ConfigureAwait(false);
+        var json = JsonSerializer.Serialize(core, ProjectStateJson.Options);
+        await SnapshotBeforeOverwriteAsync(json, ct).ConfigureAwait(false);
+        await File.WriteAllTextAsync(_file, json, ct).ConfigureAwait(false);
+    }
+
+    // Wiederherstell-Schutz: der bisherige Stand wandert vor dem Ueberschreiben nach state/core/history/
+    // (nur bei echter Aenderung — 0-Ops-Applies erzeugen keine identischen Kopien). Restore = Snapshot zurueckkopieren.
+    private async Task SnapshotBeforeOverwriteAsync(string newJson, CancellationToken ct)
+    {
+        if (!File.Exists(_file)) return;
+        var current = await File.ReadAllTextAsync(_file, ct).ConfigureAwait(false);
+        if (string.Equals(current, newJson, StringComparison.Ordinal)) return;
+
+        var historyDir = Path.Combine(Path.GetDirectoryName(_file)!, "history");
+        Directory.CreateDirectory(historyDir);
+        var snapshot = Path.Combine(historyDir, $"project-state.{DateTime.UtcNow:yyyyMMdd_HHmmss_fff}.json");
+        await File.WriteAllTextAsync(snapshot, current, ct).ConfigureAwait(false);
     }
 }
