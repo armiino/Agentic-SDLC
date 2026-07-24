@@ -15,7 +15,7 @@ ZWISCHEN den Stufen übergeben Datei-Artefakte mit Human-Gates (bewusst — jede
 | `07-tore/` | die kontrollierten Zugänge zur Wahrheit: `ingestion` (Tor 1) · `pbiupdate` (Placement) · `decision` (Tor 2) · `github` (Tor 3, Forward/Reverse) | `github-sync-delta.json`, GitHub Issues |
 | `08-pipeline/` | HITL-Super-Workflow über den Toren (RequestPort-Gates, durable Checkpoints) | Checkpoint/Resume |
 | `contracts/` | geteilte Datenverträge (quer zur Kette) | — |
-| `docs/` `fixtures/` `hitlspike/` | Notes (lokal/gitignored), Test-Fixtures, HITL-Spike | — |
+| `fixtures/` `hitlspike/` | Test-Fixtures, HITL-Spike (Doku: siehe /docs im Repo-Root) | — |
 
 **Ablauf-Geschichten:**
 - **Bootstrap (einmal, `core-bootstrap-first-transcript`):** 01 → 02 → (03) → 04 → `core-seed` (05 existiert) → 06-Schnitt → `core-seed-backlog`.
