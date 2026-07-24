@@ -1,6 +1,8 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
+using AgenticSdlc.Host.Observability;
+using AgenticSdlc.Host.Run;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger;
@@ -20,6 +22,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 public static class LedgerReferenceRecallRunner
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private const string SourceName = "AgenticSdlc.Host";
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -56,7 +59,16 @@ public static class LedgerReferenceRecallRunner
             ? "model-drafted (provisional, NOT author-adjudicated -> recall is circular until reviewed)"
             : "author-confirmed-or-external (recall is non-circular w.r.t. this reference)";
 
-        var client = ChatClientFactory.Create(judgeSettings);
+        // W1b: Judge-Call observability-verdrahtet (ChatDecisionLogger + InputContext + OTel) über AgentChatPipelineBuilder.Build.
+        var run = new RunContext(RunId.New(), "ledger-reference-recall");
+        run.EnsureFolders();
+        using var otel = OtelRunExporters.TryCreate(
+            enabled: settings.OtelEnabled,
+            sourceName: SourceName,
+            tracesPath: Path.Combine(run.LogsDir, "otel-traces.jsonl"),
+            metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+            rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+        var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "SemanticLedgerRecallMatcher", SourceName);
         var matcher = new SemanticLedgerRecallMatcher(client, settings.JuryStructuredOutput);
 
         Console.WriteLine($"[ref-recall] reference={Path.GetRelativePath(repoRoot, refPath)} ({reference.Count}) auto={Path.GetRelativePath(repoRoot, autoPath)} ({auto.Count}) model={judgeSettings.ModelId}");

@@ -1,6 +1,8 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
+using AgenticSdlc.Host.Observability;
+using AgenticSdlc.Host.Run;
 using AgenticSdlc.Host.FullWorkflow.Ledger;
 
 namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
@@ -14,6 +16,7 @@ namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
 public static class ContractCriticRunner
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
+    private const string SourceName = "AgenticSdlc.Host";
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -59,7 +62,18 @@ public static class ContractCriticRunner
             : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! }
             : settings;
 
-        var critic = new ContractCritic(ChatClientFactory.Create(judgeSettings), settings.JuryStructuredOutput);
+        // W1b: Judge-Call observability-verdrahtet (ChatDecisionLogger + InputContext + OTel) über AgentChatPipelineBuilder.Build.
+        var run = new RunContext(RunId.New(), "contract-critic");
+        run.EnsureFolders();
+        using var otel = OtelRunExporters.TryCreate(
+            enabled: settings.OtelEnabled,
+            sourceName: SourceName,
+            tracesPath: Path.Combine(run.LogsDir, "otel-traces.jsonl"),
+            metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+            rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+        var critic = new ContractCritic(
+            AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "ContractCritic", SourceName),
+            settings.JuryStructuredOutput);
         Console.WriteLine($"[contract-critic] artifact={Path.GetRelativePath(repoRoot, reqPath)}  claims={ledger.Claims.Count}  model={judgeSettings.ModelId}  repeat={repeat}");
 
         try

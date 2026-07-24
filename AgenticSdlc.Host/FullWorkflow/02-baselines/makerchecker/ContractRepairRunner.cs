@@ -1,6 +1,8 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
+using AgenticSdlc.Host.Observability;
+using AgenticSdlc.Host.Run;
 using AgenticSdlc.Host.FullWorkflow.Ledger;
 
 namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
@@ -19,6 +21,7 @@ namespace AgenticSdlc.Host.FullWorkflow.MakerChecker;
 public static class ContractRepairRunner
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
+    private const string SourceName = "AgenticSdlc.Host";
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -57,8 +60,21 @@ public static class ContractRepairRunner
             : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! }
             : settings;
 
-        var critic = new ContractCritic(ChatClientFactory.Create(judgeSettings), settings.JuryStructuredOutput);
-        var repair = new ContractRepair(ChatClientFactory.Create(judgeSettings), settings.JuryStructuredOutput);
+        // W1b: Judge-/Repair-Calls observability-verdrahtet (ChatDecisionLogger + InputContext + OTel) über AgentChatPipelineBuilder.Build.
+        var run = new RunContext(RunId.New(), "contract-repair");
+        run.EnsureFolders();
+        using var otel = OtelRunExporters.TryCreate(
+            enabled: settings.OtelEnabled,
+            sourceName: SourceName,
+            tracesPath: Path.Combine(run.LogsDir, "otel-traces.jsonl"),
+            metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+            rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+        var critic = new ContractCritic(
+            AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "ContractCritic", SourceName),
+            settings.JuryStructuredOutput);
+        var repair = new ContractRepair(
+            AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "ContractRepair", SourceName),
+            settings.JuryStructuredOutput);
 
         var mc0Before = ContractChecker.Check(markdown, ledger, artifactDisposition: artifactDisposition);
         Console.WriteLine($"[contract-repair] artifact={Path.GetRelativePath(repoRoot, artPath)} model={judgeSettings.ModelId} k={repeat} max={maxIter} artifactDisp={artifactDisposition}");

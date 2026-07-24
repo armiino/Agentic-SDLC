@@ -1,6 +1,8 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
+using AgenticSdlc.Host.Observability;
+using AgenticSdlc.Host.Run;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger;
@@ -21,6 +23,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 public static class FacetValidationEvalRunner
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private const string SourceName = "AgenticSdlc.Host";
 
     private static readonly Dictionary<string, Dictionary<string, string>> Flip = new()
     {
@@ -54,7 +57,18 @@ public static class FacetValidationEvalRunner
             modelArg is not null ? settings with { ModelId = modelArg }
             : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! }
             : settings;
-        var validator = new FacetValidator(ChatClientFactory.Create(judgeSettings), settings.JuryStructuredOutput);
+        // W1b: Judge-Call observability-verdrahtet (ChatDecisionLogger + InputContext + OTel) über AgentChatPipelineBuilder.Build.
+        var run = new RunContext(RunId.New(), "facet-validation-eval");
+        run.EnsureFolders();
+        using var otel = OtelRunExporters.TryCreate(
+            enabled: settings.OtelEnabled,
+            sourceName: SourceName,
+            tracesPath: Path.Combine(run.LogsDir, "otel-traces.jsonl"),
+            metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+            rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+        var validator = new FacetValidator(
+            AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "FacetValidator", SourceName),
+            settings.JuryStructuredOutput);
 
         // Perturbiert-Set: eindeutige ids (Suffix), damit sich die Batches nicht überschneiden.
         var perturbed = gold.Select(g =>

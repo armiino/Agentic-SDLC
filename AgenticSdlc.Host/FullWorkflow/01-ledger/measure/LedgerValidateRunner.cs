@@ -1,6 +1,8 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
+using AgenticSdlc.Host.Observability;
+using AgenticSdlc.Host.Run;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger;
@@ -18,6 +20,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 public static class LedgerValidateRunner
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private const string SourceName = "AgenticSdlc.Host";
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -52,7 +55,18 @@ public static class LedgerValidateRunner
             modelArg is not null ? settings with { ModelId = modelArg }
             : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! }
             : settings;
-        var validator = new FacetValidator(ChatClientFactory.Create(judgeSettings), settings.JuryStructuredOutput);
+        // W1b: Judge-Call observability-verdrahtet (ChatDecisionLogger + InputContext + OTel) über AgentChatPipelineBuilder.Build.
+        var run = new RunContext(RunId.New(), "ledger-validate");
+        run.EnsureFolders();
+        using var otel = OtelRunExporters.TryCreate(
+            enabled: settings.OtelEnabled,
+            sourceName: SourceName,
+            tracesPath: Path.Combine(run.LogsDir, "otel-traces.jsonl"),
+            metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+            rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+        var validator = new FacetValidator(
+            AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "FacetValidator", SourceName),
+            settings.JuryStructuredOutput);
 
         Console.WriteLine($"[ledger-validate] ledger={Path.GetRelativePath(repoRoot, ledgerPath)} entries={entries.Count} mode={mode} model={judgeSettings.ModelId}");
 

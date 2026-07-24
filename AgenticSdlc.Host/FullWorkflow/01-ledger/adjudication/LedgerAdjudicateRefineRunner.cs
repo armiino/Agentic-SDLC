@@ -1,6 +1,8 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
+using AgenticSdlc.Host.Observability;
+using AgenticSdlc.Host.Run;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger;
@@ -14,6 +16,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 public static class LedgerAdjudicateRefineRunner
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+    private const string SourceName = "AgenticSdlc.Host";
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -53,7 +56,17 @@ public static class LedgerAdjudicateRefineRunner
             : settings;
         Console.WriteLine($"[refine] Facetten-Zuweisung für {pendingIdx.Count} Claim(s) mit model={judgeSettings.ModelId} (transcript={(transcript is null ? "nein" : "ja")})");
 
-        var assigner = new FacetAssigner(ChatClientFactory.Create(judgeSettings), settings.JuryStructuredOutput);
+        // W1b: Judge-Call observability-verdrahtet (ChatDecisionLogger + InputContext + OTel) über AgentChatPipelineBuilder.Build.
+        var run = new RunContext(RunId.New(), "ledger-adjudicate-refine");
+        run.EnsureFolders();
+        using var otel = OtelRunExporters.TryCreate(
+            enabled: settings.OtelEnabled,
+            sourceName: SourceName,
+            tracesPath: Path.Combine(run.LogsDir, "otel-traces.jsonl"),
+            metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+            rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+        var refineClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "FacetAssigner", SourceName);
+        var assigner = new FacetAssigner(refineClient, settings.JuryStructuredOutput);
         IReadOnlyList<SemanticLedgerEntry> refined;
         try
         {

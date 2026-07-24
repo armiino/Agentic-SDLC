@@ -1,6 +1,8 @@
 using System.Text.Json;
 using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
+using AgenticSdlc.Host.Observability;
+using AgenticSdlc.Host.Run;
 using AgenticSdlc.Host.FullWorkflow.Artifacts;
 
 namespace AgenticSdlc.Host.FullWorkflow.Derivation;
@@ -22,6 +24,7 @@ public static class DerivationMetricsAggregator
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private static readonly JsonSerializerOptions Read = new(JsonSerializerDefaults.Web);
+    private const string SourceName = "AgenticSdlc.Host";
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -55,13 +58,27 @@ public static class DerivationMetricsAggregator
             return 2;
         }
 
-        // R3-Judge-Client (nur bei --judge): Jury-Modell bevorzugt, sonst Default/Override. Kein Run-Logging nötig (offline).
+        // R3-Judge-Client (nur bei --judge): Jury-Modell bevorzugt, sonst Default/Override.
+        // W1b: Judge-Call ist jetzt observability-verdrahtet (ChatDecisionLogger + InputContext + OTel) über AgentChatPipelineBuilder.Build.
+        // otel MUSS Methoden-Scope haben (Judge-Schleife läuft weiter unten) — daher hier, nicht im if-Block disposen.
         ScopeCreepChecker? scopeChecker = null;
+        var run = new RunContext(RunId.New(), "derive-metrics");
+        if (judge) run.EnsureFolders();
+        using var otel = judge
+            ? OtelRunExporters.TryCreate(
+                enabled: settings.OtelEnabled,
+                sourceName: SourceName,
+                tracesPath: Path.Combine(run.LogsDir, "otel-traces.jsonl"),
+                metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+                rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null)
+            : null;
         if (judge)
         {
             var judgeSettings = modelArg is not null ? settings with { ModelId = modelArg }
                 : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! } : settings;
-            scopeChecker = new ScopeCreepChecker(ChatClientFactory.Create(judgeSettings), settings.JuryStructuredOutput);
+            scopeChecker = new ScopeCreepChecker(
+                AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "ScopeCreepChecker", SourceName),
+                settings.JuryStructuredOutput);
             Console.WriteLine($"[derive-metrics] R3-Judge AN (model={judgeSettings.ModelId}).");
         }
 
