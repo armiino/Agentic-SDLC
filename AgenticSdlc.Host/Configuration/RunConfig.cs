@@ -45,6 +45,8 @@ public sealed class RunConfig
     public LedgerConfig Ledger { get; set; } = new();
     public EvidenceAgentConfig EvidenceAgent { get; set; } = new();
     public L3Config L3 { get; set; } = new();
+    // W1e': nur vom pipeline-full-Runner gelesen. Ganze Kette als EIN durabler Graph.
+    public FullWorkflowConfig FullWorkflow { get; set; } = new();
 
     /// <summary>
     /// Lädt `run-config.json` aus dem Repo-Root
@@ -83,6 +85,30 @@ public sealed class ObservabilityConfig
     // W1a: reasoning-Feld-Steuerung je Lauf: "off" | "optional" | "enforced" (Default enforced).
     // "off" = Baseline-vergleichbar (M-1, 0 Extra-Tokens); "enforced" = garantiert (Fehleranalyse).
     public string? CaptureReasoning { get; set; }
+}
+
+/// <summary>
+/// W1e': `run-config.fullworkflow` — Konfiguration der GANZEN Kette als EIN durabler MAF-Graph.
+/// Roh-POCO (nullable, JSON-Bindung); aufgelöst zu <c>FullWorkflowSettings</c> (Pipeline-Namespace).
+/// </summary>
+public sealed class FullWorkflowConfig
+{
+    public string? Transcript { get; set; }
+    public string? Repo { get; set; }
+    public string? TokenEnv { get; set; }
+    // Default false — KEIN externer GitHub-Write; jeder Write braucht explizite Policy. (Gates sind heilig.)
+    public bool? Execute { get; set; }
+    // "interactive" | "accept-all" | "replay:<pfad>" — Standard-Policy für alle Gates ohne eigenen Eintrag.
+    public string? PolicyProfile { get; set; }
+    public Dictionary<string, string>? Models { get; set; }      // stufe -> modell (W2-Ablation)
+    public Dictionary<string, int>? MaxAttempts { get; set; }    // stufe -> n
+    public Dictionary<string, string>? Stages { get; set; }      // z. B. { "l3": "off" } (v1)
+    public Dictionary<string, GateConfig>? Gates { get; set; }   // gateName -> { policy }
+}
+
+public sealed class GateConfig
+{
+    public string? Policy { get; set; }   // "interactive" | "accept-all" | "replay:<pfad>"
 }
 
 public sealed class LlmPreviewConfig
