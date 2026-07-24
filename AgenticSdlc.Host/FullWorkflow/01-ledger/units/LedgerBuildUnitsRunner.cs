@@ -8,6 +8,25 @@ using Microsoft.Agents.AI.Workflows;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
+/// <summary>
+/// Ergebnis des wiederverwendbaren Ledger-Kerns <see cref="LedgerBuildUnitsRunner.BuildAsync"/>.
+/// </summary>
+public sealed record LedgerBuildResult(
+    bool WorkflowOk,
+    bool StepOutputsPresent,
+    bool GatePass,
+    string ValidatedLedgerPath,
+    int UnitCount,
+    int CandidateCount,
+    int CanonicalCount,
+    int ValidatedCount,
+    int NeedsHumanCount,
+    int MissingClaimCount,
+    string? FailureCode)
+{
+    public bool Success => WorkflowOk && StepOutputsPresent && GatePass;
+}
+
 public static class LedgerBuildUnitsRunner
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web) { WriteIndented = true };
@@ -52,6 +71,35 @@ public static class LedgerBuildUnitsRunner
 
         Console.WriteLine($"[ledger-build-units] runId={run.RunId} transcript={Path.GetRelativePath(repoRoot, transcriptPath)} model={judgeSettings.ModelId}");
 
+        var result = await BuildAsync(
+            transcript, Path.GetFileName(transcriptPath), settings, judgeSettings, run, CancellationToken.None).ConfigureAwait(false);
+
+        Console.WriteLine($"[ledger-build-units] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
+        return result switch
+        {
+            { WorkflowOk: false } => Fail(repoRoot, run, "workflow failed"),
+            { StepOutputsPresent: false } => Fail(repoRoot, run, "required step output missing"),
+            { GatePass: false } => Fail(repoRoot, run, "GATE FAILED", 4),
+            _ => 0
+        };
+    }
+
+    private static int Fail(string repoRoot, RunContext run, string msg, int code = 3)
+    {
+        Console.Error.WriteLine($"[ledger-build-units] {msg} -> {Path.GetRelativePath(repoRoot, Path.Combine(run.LogsDir, "diagnosis.json"))}");
+        return code;
+    }
+
+    /// <summary>
+    /// W1e' — der wiederverwendbare Ledger-Kern (Schritte 2-7 aus <see cref="RunAsync"/>): baut die Node-Clients,
+    /// führt den LedgerBuilderUnitCoverage-Workflow in-process aus, liest die Step-Outputs, bewertet das
+    /// Quality-Gate und liefert ein <see cref="LedgerBuildResult"/>. EINE Quelle für CLI-Runner UND
+    /// pipeline-full-Wrapper (LedgerWrapperExecutor) — keine Kopie. Schreibt Diagnose/Gate/Trace in <paramref name="run"/>.
+    /// </summary>
+    public static async Task<LedgerBuildResult> BuildAsync(
+        string transcript, string transcriptSourceName, HostSettings settings, HostSettings judgeSettings,
+        RunContext run, CancellationToken ct)
+    {
         using var otel = OtelRunExporters.TryCreate(
             enabled: settings.OtelEnabled,
             sourceName: SourceName,
@@ -73,7 +121,6 @@ public static class LedgerBuildUnitsRunner
         var canonicalizer = new SemanticLedgerCanonicalizer(canonicalClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
         var coverageRepairer = new CanonicalCoverageRepairer(coverageRepairClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
         var facetValidator = new FacetValidator(facetClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
-        var sourceName = Path.GetFileName(transcriptPath);
 
         var workflow = LedgerBuilderWorkflow.BuildUnitCoverage(
             extractor,
@@ -83,16 +130,16 @@ public static class LedgerBuildUnitsRunner
             coverageRepairer,
             facetValidator,
             transcript,
-            sourceName,
+            transcriptSourceName,
             run);
 
         Console.WriteLine("[ledger-build-units] running workflow (units -> extraction -> unit-gate -> unused-triage -> unused-compare -> canonicalization -> coverage-repair -> facet-validation)...");
         var workflowRun = await InProcessExecution.Default
-            .RunAsync(workflow, transcript, run.RunId, CancellationToken.None)
+            .RunAsync(workflow, transcript, run.RunId, ct)
             .ConfigureAwait(false);
 
         var hasWorkflowFailure = RecordWorkflowEvents(run, workflowRun);
-        var workflowStatus = await workflowRun.GetStatusAsync(CancellationToken.None).ConfigureAwait(false);
+        var workflowStatus = await workflowRun.GetStatusAsync(ct).ConfigureAwait(false);
         run.AppendEvent(new
         {
             type = "WORKFLOW_FINISHED",
@@ -104,6 +151,8 @@ public static class LedgerBuildUnitsRunner
             timestampUtc = DateTime.UtcNow
         });
 
+        var validatedPath = Path.Combine(run.RunDir, "step-03-facet-validation", "output.json");
+
         if (hasWorkflowFailure)
         {
             WriteDiagnosis(run, new
@@ -114,9 +163,7 @@ public static class LedgerBuildUnitsRunner
                 rootCause = new { code = "LEDGER_UNIT_WORKFLOW_EXECUTOR_FAILED" },
                 timestampUtc = DateTime.UtcNow
             });
-            Console.Error.WriteLine($"[ledger-build-units] workflow failed -> {Path.GetRelativePath(repoRoot, Path.Combine(run.LogsDir, "diagnosis.json"))}");
-            Console.WriteLine($"[ledger-build-units] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
-            return 3;
+            return new LedgerBuildResult(false, false, false, validatedPath, 0, 0, 0, 0, 0, 0, "LEDGER_UNIT_WORKFLOW_EXECUTOR_FAILED");
         }
 
         var unitsFixture = LedgerRunArtifacts.ReadStepOutput<AtomicUnitFixture>(run, "step-00-atomic-units");
@@ -146,9 +193,9 @@ public static class LedgerBuildUnitsRunner
                 },
                 timestampUtc = DateTime.UtcNow
             });
-            Console.Error.WriteLine($"[ledger-build-units] required step output missing -> {Path.GetRelativePath(repoRoot, Path.Combine(run.LogsDir, "diagnosis.json"))}");
-            Console.WriteLine($"[ledger-build-units] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
-            return 3;
+            return new LedgerBuildResult(true, false, false, validatedPath,
+                unitsFixture?.Units.Count ?? 0, candidateFixture?.Entries.Count ?? 0, canonicalFixture?.Entries.Count ?? 0,
+                validatedLedger?.Entries.Count ?? 0, 0, 0, "LEDGER_UNIT_STEP_OUTPUT_MISSING");
         }
 
         var candidate = candidateFixture.Entries;
@@ -196,13 +243,12 @@ public static class LedgerBuildUnitsRunner
                 },
                 timestampUtc = DateTime.UtcNow
             });
-            Console.Error.WriteLine($"[ledger-build-units] GATE FAILED -> {Path.GetRelativePath(repoRoot, gateDir)}");
-            Console.WriteLine($"[ledger-build-units] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
-            return 4;
+            return new LedgerBuildResult(true, true, false, validatedPath,
+                unitsFixture.Units.Count, candidate.Count, canonical.Count, validated.Count, needsHuman, missingClaim, "LEDGER_UNIT_QUALITY_GATE_FAILED");
         }
 
-        Console.WriteLine($"[ledger-build-units] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
-        return 0;
+        return new LedgerBuildResult(true, true, true, validatedPath,
+            unitsFixture.Units.Count, candidate.Count, canonical.Count, validated.Count, needsHuman, missingClaim, null);
     }
 
     private static bool RecordWorkflowEvents(RunContext run, Microsoft.Agents.AI.Workflows.Run workflowRun)
