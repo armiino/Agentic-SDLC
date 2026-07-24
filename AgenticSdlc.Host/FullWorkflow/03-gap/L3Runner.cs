@@ -157,7 +157,7 @@ public static class L3Runner
         // Judge (immer) — wiederverwendeter InferenceChecker-Kern mit L3-Maßstab, über die Standard-Pipeline.
         var judgeClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "L3-SupportJudge", SourceName);
         var judgePrompt = PromptProvider.Load(repoRoot, Phase, AgentName, "L3SupportJudge1", new Dictionary<string, string>());
-        var judge = new InferenceChecker(judgeClient, settings.JuryStructuredOutput, systemPrompt: judgePrompt);
+        var judge = new InferenceChecker(judgeClient, settings.JuryStructuredOutput, systemPrompt: judgePrompt, reasoning: settings.ReasoningCapture);
 
         Microsoft.Agents.AI.Workflows.Workflow workflow;
         L3Resolved? injected = null;

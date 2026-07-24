@@ -75,6 +75,14 @@ public sealed class ObservabilityConfig
     public bool? EnableOtelRaw { get; set; }
     //Pro inner-cycle Reasoning Logging: ChatDecisionLogger innerhalb FunctionInvocation positionieren
     public bool? InnerCycleLogging { get; set; }
+
+    // W1a: max. Zeichen für den response-text.md-Volltext je Runde. 0 = unbegrenzt (Forschungs-Default).
+    // Getrennt von LlmPreview.Chars, das NUR die kompakten Event-Previews (CHAT_RESPONSE_TEXT) kappt.
+    public int? ResponseTextMaxChars { get; set; }
+
+    // W1a: reasoning-Feld-Steuerung je Lauf: "off" | "optional" | "enforced" (Default enforced).
+    // "off" = Baseline-vergleichbar (M-1, 0 Extra-Tokens); "enforced" = garantiert (Fehleranalyse).
+    public string? CaptureReasoning { get; set; }
 }
 
 public sealed class LlmPreviewConfig

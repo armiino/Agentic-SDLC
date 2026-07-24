@@ -128,7 +128,7 @@ public static class EvidenceChainRunner
         var genClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, $"DerivationGenerate-{spec.Id}", SourceName);
         var checkClient = AgentChatPipelineBuilder.Build(judgeBase, settings, run, $"DerivationCheck-{spec.Id}", SourceName);
         var judgeSystemPrompt = string.IsNullOrWhiteSpace(spec.JudgePromptName) ? null : PromptProvider.Load(repoRoot, Phase, spec.AgentName, spec.JudgePromptName!, new Dictionary<string, string>());
-        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt);
+        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt, reasoning: settings.ReasoningCapture);
         var outScope = $"derivations/{spec.Id}";
 
         Microsoft.Agents.AI.Workflows.Workflow derivation;

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using Microsoft.Extensions.AI;
 
@@ -57,7 +58,7 @@ internal sealed class UnitAwareSemanticLedgerExtractor
         suggestedAction, IDs usw.) bleiben englisch.
         """;
 
-    private const string SchemaJson = """
+    private const string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
@@ -66,7 +67,7 @@ internal sealed class UnitAwareSemanticLedgerExtractor
               "items": {
                 "type": "object",
                 "properties": {
-                  "id": { "type": "string" },
+                  __REASONING_PROP__"id": { "type": "string" },
                   "proposition": { "type": "string" },
                   "kind": { "type": "string" },
                   "status": { "type": "string", "enum": ["decided", "open", "rejected", "uncertain", "required"] },
@@ -103,7 +104,7 @@ internal sealed class UnitAwareSemanticLedgerExtractor
                     "items": { "type": "string" }
                   }
                 },
-                "required": ["id", "proposition", "kind", "status", "modality", "scope", "timeScope", "evidence", "disposition", "riskLevel", "notes", "sourceUnitIds"],
+                "required": [__REASONING_REQ__"id", "proposition", "kind", "status", "modality", "scope", "timeScope", "evidence", "disposition", "riskLevel", "notes", "sourceUnitIds"],
                 "additionalProperties": false
               }
             }
@@ -124,18 +125,26 @@ internal sealed class UnitAwareSemanticLedgerExtractor
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "unit_aware_semantic_ledger_extraction",
-        "Facettierter Semantic Source Ledger mit Atomic-Unit-Trace.");
+    // W1a: Schema je ReasoningCapture-Modus (reasoning-Property/required via Marker-Ersetzung, kein Brace-Doubling).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public UnitAwareSemanticLedgerExtractor(IChatClient client, bool structuredOutput = true)
+    public UnitAwareSemanticLedgerExtractor(IChatClient client, bool structuredOutput = true, ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
         _structuredOutput = structuredOutput;
+        // W1a: reasoning log-only via Prompt-Appendix + Schema-Feld (bei off beides leer).
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "unit_aware_semantic_ledger_extraction",
+            "Facettierter Semantic Source Ledger mit Atomic-Unit-Trace.");
     }
 
     public async Task<IReadOnlyList<SemanticLedgerEntry>> ExtractAsync(
@@ -143,11 +152,11 @@ internal sealed class UnitAwareSemanticLedgerExtractor
         CancellationToken ct)
     {
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var response = await _client.GetResponseAsync(
             [
-                new ChatMessage(ChatRole.System, SystemPrompt),
+                new ChatMessage(ChatRole.System, _systemPrompt),
                 new ChatMessage(ChatRole.User, JsonSerializer.Serialize(new AtomicUnitFixture(units), Json))
             ],
             options, ct).ConfigureAwait(false);

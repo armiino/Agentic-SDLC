@@ -68,7 +68,7 @@ public static class FacetValidationEvalRunner
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
         var validator = new FacetValidator(
             AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "FacetValidator", SourceName),
-            settings.JuryStructuredOutput);
+            settings.JuryStructuredOutput, settings.ReasoningCapture);
 
         // Perturbiert-Set: eindeutige ids (Suffix), damit sich die Batches nicht überschneiden.
         var perturbed = gold.Select(g =>

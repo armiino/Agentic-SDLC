@@ -66,7 +66,7 @@ public static class LedgerValidateRunner
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
         var validator = new FacetValidator(
             AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "FacetValidator", SourceName),
-            settings.JuryStructuredOutput);
+            settings.JuryStructuredOutput, settings.ReasoningCapture);
 
         Console.WriteLine($"[ledger-validate] ledger={Path.GetRelativePath(repoRoot, ledgerPath)} entries={entries.Count} mode={mode} model={judgeSettings.ModelId}");
 

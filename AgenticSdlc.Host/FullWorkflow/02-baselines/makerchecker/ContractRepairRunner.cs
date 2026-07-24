@@ -71,10 +71,10 @@ public static class ContractRepairRunner
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
         var critic = new ContractCritic(
             AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "ContractCritic", SourceName),
-            settings.JuryStructuredOutput);
+            settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
         var repair = new ContractRepair(
             AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "ContractRepair", SourceName),
-            settings.JuryStructuredOutput);
+            settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
 
         var mc0Before = ContractChecker.Check(markdown, ledger, artifactDisposition: artifactDisposition);
         Console.WriteLine($"[contract-repair] artifact={Path.GetRelativePath(repoRoot, artPath)} model={judgeSettings.ModelId} k={repeat} max={maxIter} artifactDisp={artifactDisposition}");

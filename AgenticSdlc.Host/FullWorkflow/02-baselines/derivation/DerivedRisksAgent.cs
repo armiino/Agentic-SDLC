@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Artifacts;
 using Microsoft.Extensions.AI;
 
@@ -22,11 +23,11 @@ public sealed class DerivedRisksAgent
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
-    private static readonly string SchemaJson = """
+    private static readonly string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
-            "decision": { "type": "string" },
+            __REASONING_PROP__"decision": { "type": "string" },
             "risks": {
               "type": "array",
               "items": {
@@ -42,25 +43,31 @@ public sealed class DerivedRisksAgent
               }
             }
           },
-          "required": ["decision", "risks"],
+          "required": [__REASONING_REQ__"decision", "risks"],
           "additionalProperties": false
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "derived_risks",
-        "Abgeleitete Risiken mit Anker (sourceArtifactItemIds) und expliziten Annahmen.");
+    // W1a: Schema je ReasoningCapture-Modus (Marker-Ersetzung, kein Brace-Doubling).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly string _systemPrompt;
     private readonly bool _structuredOutput;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public DerivedRisksAgent(IChatClient client, string systemPrompt, bool structuredOutput = true)
+    public DerivedRisksAgent(IChatClient client, string systemPrompt, bool structuredOutput = true, ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
-        _systemPrompt = systemPrompt;
+        // W1a: reasoning log-only via Prompt-Appendix + Schema-Feld (bei off beides leer).
+        _systemPrompt = systemPrompt + ReasoningSchema.PromptAppendix(reasoning);
         _structuredOutput = structuredOutput;
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "derived_risks",
+            "Abgeleitete Risiken mit Anker (sourceArtifactItemIds) und expliziten Annahmen.");
     }
 
     /// <summary>Leitet Risiken aus den Baseline-Items ab. Liefert die Roh-Risiken + die Entscheidung
@@ -69,7 +76,7 @@ public sealed class DerivedRisksAgent
         IReadOnlyList<ArtifactItem> baseline, CancellationToken ct)
     {
         var options = new ChatOptions { Temperature = 0.2f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var response = await _client.GetResponseAsync(
             [new ChatMessage(ChatRole.System, _systemPrompt), new ChatMessage(ChatRole.User, BuildUser(baseline))],

@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using AgenticSdlc.Host.FullWorkflow.Ledger;
 using Microsoft.Extensions.AI;
@@ -44,7 +45,7 @@ public sealed class ContractRepair
         { "items": [ { "ref": "<exakt die Input-ref>", "repairedText": "- … [claimId]" } ] }
         """;
 
-    private static readonly string SchemaJson = """
+    private const string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
@@ -52,8 +53,8 @@ public sealed class ContractRepair
               "type": "array",
               "items": {
                 "type": "object",
-                "properties": { "ref": { "type": "string" }, "repairedText": { "type": "string" } },
-                "required": ["ref","repairedText"],
+                "properties": { __REASONING_PROP__"ref": { "type": "string" }, "repairedText": { "type": "string" } },
+                "required": [__REASONING_REQ__"ref","repairedText"],
                 "additionalProperties": false
               }
             }
@@ -63,20 +64,28 @@ public sealed class ContractRepair
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "line_repair_batch",
-        "Reparierte Artefakt-Zeilen (nur betroffene, fixer Nenner).");
+    // W1a: Schema je ReasoningCapture-Modus (reasoning-Property/required via Marker-Ersetzung, kein Brace-Doubling).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
     private readonly int _batchSize;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public ContractRepair(IChatClient client, bool structuredOutput = true, int batchSize = DefaultBatchSize)
+    public ContractRepair(IChatClient client, bool structuredOutput = true, int batchSize = DefaultBatchSize, ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
         _structuredOutput = structuredOutput;
         _batchSize = Math.Clamp(batchSize, 1, 12);
+        // W1a: reasoning log-only via Prompt-Appendix + Schema-Feld (bei off beides leer).
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "line_repair_batch",
+            "Reparierte Artefakt-Zeilen (nur betroffene, fixer Nenner).");
     }
 
     /// <summary>Ein Patch-Durchgang: repariert die übergebenen Zeilen-Verstöße und liefert das gepatchte Markdown
@@ -132,10 +141,10 @@ public sealed class ContractRepair
         IReadOnlyDictionary<string, SemanticLedgerEntry> claims, CancellationToken ct)
     {
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var response = await _client.GetResponseAsync(
-            [new ChatMessage(ChatRole.System, SystemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, lines, claims))],
+            [new ChatMessage(ChatRole.System, _systemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, lines, claims))],
             options, ct).ConfigureAwait(false);
 
         var parsed = Parse(response.Text);

@@ -80,7 +80,7 @@ public static class DerivedRisksRunner
 
         var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(derivSettings), settings, run, AgentName, SourceName);
         var systemPrompt = PromptProvider.Load(repoRoot, Phase, AgentName, PromptName, new Dictionary<string, string> { ["runId"] = run.RunId });
-        var agent = new DerivedRisksAgent(client, systemPrompt, settings.JuryStructuredOutput);
+        var agent = new DerivedRisksAgent(client, systemPrompt, settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
 
         string decision;
         IReadOnlyList<RawDerivedRisk> raw;

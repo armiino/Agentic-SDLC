@@ -98,7 +98,7 @@ public static class L3ReviseRunner
         reviseAgent = reviseAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(origRun).InvokeAsync).Build();
         AIAgent resolveAgent = resolveClient.AsAIAgent(instructions: resolvePrompt, name: AgentName, tools: []);
         resolveAgent = resolveAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(origRun).InvokeAsync).Build();
-        var judge = new InferenceChecker(judgeClient, settings.JuryStructuredOutput, systemPrompt: judgePrompt);
+        var judge = new InferenceChecker(judgeClient, settings.JuryStructuredOutput, systemPrompt: judgePrompt, reasoning: settings.ReasoningCapture);
 
         var workflow = L3Workflow.BuildRevise(
             new L3ReviseExecutor(reviseAgent, origRun),

@@ -207,8 +207,8 @@ public static class BaselineFanOutRunner
         AIAgent baseAgent = chat.AsAIAgent(instructions: instructions, name: agentName, tools: []);
         var agent = baseAgent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
 
-        var critic = new ContractCritic(checkerClient, settings.JuryStructuredOutput);
-        var repair = new ContractRepair(repairClient, settings.JuryStructuredOutput);
+        var critic = new ContractCritic(checkerClient, settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
+        var repair = new ContractRepair(repairClient, settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
 
         return ArtifactBranchWorkflow.Build(
             agent, critic, repair, ledger, artifactType, dispositionKey, k, minVotes, maxIter, settings.ModelId, run);

@@ -69,7 +69,7 @@ public static class LedgerReferenceRecallRunner
             metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
         var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "SemanticLedgerRecallMatcher", SourceName);
-        var matcher = new SemanticLedgerRecallMatcher(client, settings.JuryStructuredOutput);
+        var matcher = new SemanticLedgerRecallMatcher(client, settings.JuryStructuredOutput, settings.ReasoningCapture);
 
         Console.WriteLine($"[ref-recall] reference={Path.GetRelativePath(repoRoot, refPath)} ({reference.Count}) auto={Path.GetRelativePath(repoRoot, autoPath)} ({auto.Count}) model={judgeSettings.ModelId}");
         Console.WriteLine($"[ref-recall] referenceStatus: {referenceStatus}");

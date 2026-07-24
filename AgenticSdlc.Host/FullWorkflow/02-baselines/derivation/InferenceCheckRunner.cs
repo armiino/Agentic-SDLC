@@ -71,7 +71,7 @@ public static class InferenceCheckRunner
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
 
         var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, AgentName, SourceName);
-        var checker = new InferenceChecker(client, settings.JuryStructuredOutput);
+        var checker = new InferenceChecker(client, settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
         var baselineById = baseline.Items.ToDictionary(i => i.ItemId, i => i, StringComparer.Ordinal);
 
         InferenceCheckReport report;

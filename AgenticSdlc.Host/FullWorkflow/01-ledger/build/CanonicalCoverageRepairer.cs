@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using Microsoft.Extensions.AI;
 
@@ -43,7 +44,7 @@ public sealed class CanonicalCoverageRepairer
         suggestedAction, IDs usw.) bleiben englisch.
         """;
 
-    private const string SchemaJson = """
+    private const string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
@@ -52,7 +53,7 @@ public sealed class CanonicalCoverageRepairer
               "items": {
                 "type": "object",
                 "properties": {
-                  "id": { "type": "string" },
+                  __REASONING_PROP__"id": { "type": "string" },
                   "proposition": { "type": "string" },
                   "kind": { "type": "string", "enum": ["decision", "requirement", "constraint", "risk", "open_requirement", "open_question", "scope", "compliance_constraint", "process_constraint", "non_functional_requirement", "meta"] },
                   "status": { "type": "string", "enum": ["decided", "open", "rejected", "uncertain", "required"] },
@@ -87,7 +88,7 @@ public sealed class CanonicalCoverageRepairer
                   "candidateIds": { "type": "array", "items": { "type": "string" } },
                   "assumedRelation": { "type": "string", "enum": ["same_proposition", "refines", "temporal_sequence", "elaborates", "standalone"] }
                 },
-                "required": ["id", "proposition", "kind", "status", "modality", "scope", "timeScope", "evidence", "disposition", "riskLevel", "notes", "candidateIds", "assumedRelation"],
+                "required": [__REASONING_REQ__"id", "proposition", "kind", "status", "modality", "scope", "timeScope", "evidence", "disposition", "riskLevel", "notes", "candidateIds", "assumedRelation"],
                 "additionalProperties": false
               }
             }
@@ -97,18 +98,26 @@ public sealed class CanonicalCoverageRepairer
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "semantic_ledger_canonical_coverage_repair",
-        "Reparierter kanonischer Semantic Ledger ohne fehlende Candidate-IDs.");
+    // W1a: Schema je ReasoningCapture-Modus (reasoning-Property/required via Marker-Ersetzung, kein Brace-Doubling).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public CanonicalCoverageRepairer(IChatClient client, bool structuredOutput = true)
+    public CanonicalCoverageRepairer(IChatClient client, bool structuredOutput = true, ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
         _structuredOutput = structuredOutput;
+        // W1a: reasoning log-only via Prompt-Appendix + Schema-Feld (bei off beides leer).
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "semantic_ledger_canonical_coverage_repair",
+            "Reparierter kanonischer Semantic Ledger ohne fehlende Candidate-IDs.");
     }
 
     public async Task<IReadOnlyList<SemanticLedgerEntry>> RepairAsync(
@@ -120,7 +129,7 @@ public sealed class CanonicalCoverageRepairer
         if (missingCandidateIds.Count == 0) return canonicalDraft;
 
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var missing = candidates
             .Where(c => missingCandidateIds.Contains(c.Id, StringComparer.Ordinal))
@@ -136,7 +145,7 @@ public sealed class CanonicalCoverageRepairer
 
         var response = await _client.GetResponseAsync(
             [
-                new ChatMessage(ChatRole.System, SystemPrompt),
+                new ChatMessage(ChatRole.System, _systemPrompt),
                 new ChatMessage(ChatRole.User, JsonSerializer.Serialize(payload, Json))
             ],
             options, ct).ConfigureAwait(false);

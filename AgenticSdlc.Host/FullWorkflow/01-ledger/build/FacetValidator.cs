@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using Microsoft.Extensions.AI;
 
@@ -71,7 +72,9 @@ public sealed class FacetValidator
         suggestedAction, IDs usw.) bleiben englisch.
         """;
 
-    private const string SchemaJson = """
+    // W1a: Template mit Markern; reasoning-Property + required werden je ReasoningCapture-Modus eingesetzt
+    // (off = ganz weg; optional = Property ohne required; enforced = Property + required).
+    private const string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
@@ -80,7 +83,7 @@ public sealed class FacetValidator
               "items": {
                 "type": "object",
                 "properties": {
-                  "id": { "type": "string" },
+                  __REASONING_PROP__"id": { "type": "string" },
                   "verdict": { "type": "string" },
                   "facetIssues": {
                     "type": "array",
@@ -98,7 +101,7 @@ public sealed class FacetValidator
                   },
                   "reason": { "type": "string" }
                 },
-                "required": ["id", "verdict", "facetIssues", "reason"],
+                "required": [__REASONING_REQ__"id", "verdict", "facetIssues", "reason"],
                 "additionalProperties": false
               }
             }
@@ -108,20 +111,32 @@ public sealed class FacetValidator
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "facet_validation_batch",
-        "Chunked Per-Item-Validierung von Ledger-Einträgen gegen das Transcript (fixer Nenner).");
+    // W1a: Schema wird je ReasoningCapture-Modus gebaut — reasoning-Property + required konditional.
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
     private readonly int _batchSize;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public FacetValidator(IChatClient client, bool structuredOutput = true, int batchSize = DefaultBatchSize)
+    public FacetValidator(
+        IChatClient client,
+        bool structuredOutput = true,
+        ReasoningCapture reasoning = ReasoningCapture.Enforced,
+        int batchSize = DefaultBatchSize)
     {
         _client = client;
         _structuredOutput = structuredOutput;
         _batchSize = Math.Clamp(batchSize, 1, 12);
+        // W1a: reasoning je Modus in Prompt (Anhang) + Schema einsetzen (off => kein Feld, 0 Extra-Tokens).
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "facet_validation_batch",
+            "Chunked Per-Item-Validierung von Ledger-Einträgen gegen das Transcript (fixer Nenner).");
     }
 
     public int BatchSize => _batchSize;
@@ -144,10 +159,10 @@ public sealed class FacetValidator
         IReadOnlyList<SemanticLedgerEntry> batch, string transcript, CancellationToken ct)
     {
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var response = await _client.GetResponseAsync(
-            [new ChatMessage(ChatRole.System, SystemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, transcript))],
+            [new ChatMessage(ChatRole.System, _systemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, transcript))],
             options, ct).ConfigureAwait(false);
 
         var parsed = Parse(response.Text);

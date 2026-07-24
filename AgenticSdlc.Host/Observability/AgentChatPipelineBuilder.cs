@@ -46,7 +46,8 @@ public static class AgentChatPipelineBuilder
                     inner, run, agentName,
                     scope: LoggingScope.ModelRound,
                     writeResponseText: true,
-                    previewChars: settings.LlmPreviewChars))
+                    previewChars: settings.LlmPreviewChars,
+                    responseTextMaxChars: settings.ResponseTextMaxChars))
                 .UseOpenTelemetry(
                     sourceName: sourceName,
                     configure: cfg => cfg.EnableSensitiveData = settings.OtelSensitive)
@@ -81,7 +82,8 @@ public static class AgentChatPipelineBuilder
                 chat, run, agentName,
                 scope: LoggingScope.AgentChat,
                 writeResponseText: true,
-                previewChars: settings.LlmPreviewChars);
+                previewChars: settings.LlmPreviewChars,
+                responseTextMaxChars: settings.ResponseTextMaxChars);
 
             return chat;
         }

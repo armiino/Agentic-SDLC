@@ -17,6 +17,8 @@ public sealed record HostSettings(
     bool OtelRawEnabled,
     bool InnerCycleLogging,
     int LlmPreviewChars,
+    int ResponseTextMaxChars,
+    ReasoningCapture ReasoningCapture,
     string AgentPhase,
     string Phase2ContextStrategy,
     IReadOnlyDictionary<string, string> Prompts,
@@ -75,6 +77,10 @@ public sealed record HostSettings(
             OtelRawEnabled: config.Observability.EnableOtelRaw ?? ReadFlag("ENABLE_OTEL_RAW"),
             InnerCycleLogging: config.Observability.InnerCycleLogging ?? ReadFlag("INNER_CYCLE_LOGGING"),
             LlmPreviewChars: Math.Clamp(config.LlmPreview.Chars ?? ReadInt("LLM_PREVIEW_CHARS", 800), 100, 8000),
+            // W1a: Volltext-Kappung für response-text.md; 0 = unbegrenzt (Forschungs-Default). Getrennt vom Event-Preview.
+            ResponseTextMaxChars: Math.Max(0, config.Observability.ResponseTextMaxChars ?? ReadInt("RESPONSE_TEXT_MAX_CHARS", 0)),
+            // W1a: reasoning-Steuerung; Default enforced. off = Baseline-vergleichbar (M-1).
+            ReasoningCapture: ReasoningCaptureParser.Parse(config.Observability.CaptureReasoning ?? Environment.GetEnvironmentVariable("CAPTURE_REASONING")),
             AgentPhase: agentPhase,
             Phase2ContextStrategy: phase2Strategy,
             Prompts: BuildPromptSelection(config.Prompts, agentPhase, phase2Strategy, evidenceSource),

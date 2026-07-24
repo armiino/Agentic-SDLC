@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AgenticSdlc.Host.Configuration;
 using Microsoft.Extensions.AI;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger.Core;
@@ -51,11 +52,11 @@ public sealed class SemanticLedgerRecallMatcher
         }
         """;
 
-    private const string SchemaJson = """
+    private const string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
-            "verdict": { "type": "string" },
+            __REASONING_PROP__"verdict": { "type": "string" },
             "matchedIds": { "type": "array", "items": { "type": "string" } },
             "propositionMatch": { "type": "string" },
             "statusMatch": { "type": "string" },
@@ -66,23 +67,31 @@ public sealed class SemanticLedgerRecallMatcher
             "dispositionMatch": { "type": "string" },
             "reason": { "type": "string" }
           },
-          "required": ["verdict", "matchedIds", "propositionMatch", "statusMatch", "modalityMatch", "scopeMatch", "timeScopeMatch", "evidenceMatch", "dispositionMatch", "reason"],
+          "required": [__REASONING_REQ__"verdict", "matchedIds", "propositionMatch", "statusMatch", "modalityMatch", "scopeMatch", "timeScopeMatch", "evidenceMatch", "dispositionMatch", "reason"],
           "additionalProperties": false
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "semantic_ledger_recall_match",
-        "Recall-Match eines Semantic-Ledger-Eintrags gegen extrahierten Ledger.");
+    // W1a: Schema je ReasoningCapture-Modus (reasoning-Property/required via Marker-Ersetzung, kein Brace-Doubling).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public SemanticLedgerRecallMatcher(IChatClient client, bool structuredOutput = true)
+    public SemanticLedgerRecallMatcher(IChatClient client, bool structuredOutput = true, ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
         _structuredOutput = structuredOutput;
+        // W1a: reasoning log-only via Prompt-Appendix + Schema-Feld (bei off beides leer).
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "semantic_ledger_recall_match",
+            "Recall-Match eines Semantic-Ledger-Eintrags gegen extrahierten Ledger.");
     }
 
     public async Task<SemanticLedgerRecallVerdict> MatchAsync(
@@ -119,10 +128,10 @@ public sealed class SemanticLedgerRecallMatcher
             """;
 
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var response = await _client.GetResponseAsync(
-            [new ChatMessage(ChatRole.System, SystemPrompt), new ChatMessage(ChatRole.User, user)],
+            [new ChatMessage(ChatRole.System, _systemPrompt), new ChatMessage(ChatRole.User, user)],
             options, ct).ConfigureAwait(false);
 
         return Parse(response.Text)?.Normalized() ?? new SemanticLedgerRecallVerdict(

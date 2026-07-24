@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AgenticSdlc.Host.Configuration;
 using Microsoft.Extensions.AI;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger;
@@ -46,7 +47,7 @@ internal sealed class UnusedUnitTriageReviewer
         suggestedAction, IDs usw.) bleiben englisch.
         """;
 
-    private const string SchemaJson = """
+    private const string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
@@ -55,7 +56,7 @@ internal sealed class UnusedUnitTriageReviewer
               "items": {
                 "type": "object",
                 "properties": {
-                  "unitId": { "type": "string" },
+                  __REASONING_PROP__"unitId": { "type": "string" },
                   "triage": {
                     "type": "string",
                     "enum": ["trash", "smalltalk", "acknowledgement", "repetition", "low_signal", "potentially_relevant"]
@@ -66,7 +67,7 @@ internal sealed class UnusedUnitTriageReviewer
                     "items": { "type": "string" }
                   }
                 },
-                "required": ["unitId", "triage", "reason", "keywords"],
+                "required": [__REASONING_REQ__"unitId", "triage", "reason", "keywords"],
                 "additionalProperties": false
               }
             }
@@ -76,18 +77,25 @@ internal sealed class UnusedUnitTriageReviewer
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "unused_unit_triage",
-        "Triage ungenutzter Atomic Units vor Ledger-Vergleich.");
+    // W1a: Schema je ReasoningCapture-Modus (Marker-Ersetzung, kein Brace-Doubling).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public UnusedUnitTriageReviewer(IChatClient client, bool structuredOutput = true)
+    public UnusedUnitTriageReviewer(IChatClient client, bool structuredOutput = true, ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
         _structuredOutput = structuredOutput;
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "unused_unit_triage",
+            "Triage ungenutzter Atomic Units vor Ledger-Vergleich.");
     }
 
     public async Task<IReadOnlyList<UnusedUnitTriageItem>> TriageAsync(
@@ -107,7 +115,7 @@ internal sealed class UnusedUnitTriageReviewer
         if (units.Count == 0) return [];
 
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var payload = new
         {
@@ -116,7 +124,7 @@ internal sealed class UnusedUnitTriageReviewer
 
         var response = await _client.GetResponseAsync(
             [
-                new ChatMessage(ChatRole.System, SystemPrompt),
+                new ChatMessage(ChatRole.System, _systemPrompt),
                 new ChatMessage(ChatRole.User, JsonSerializer.Serialize(payload, Json))
             ],
             options, ct).ConfigureAwait(false);

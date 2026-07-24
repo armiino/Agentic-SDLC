@@ -78,7 +78,7 @@ public static class DerivationMetricsAggregator
                 : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! } : settings;
             scopeChecker = new ScopeCreepChecker(
                 AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "ScopeCreepChecker", SourceName),
-                settings.JuryStructuredOutput);
+                settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
             Console.WriteLine($"[derive-metrics] R3-Judge AN (model={judgeSettings.ModelId}).");
         }
 

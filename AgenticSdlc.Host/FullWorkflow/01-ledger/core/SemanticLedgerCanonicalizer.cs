@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AgenticSdlc.Host.Configuration;
 using Microsoft.Extensions.AI;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger.Core;
@@ -101,7 +102,7 @@ public sealed class SemanticLedgerCanonicalizer
         suggestedAction, IDs usw.) bleiben englisch.
         """;
 
-    private const string SchemaJson = """
+    private const string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
@@ -110,7 +111,7 @@ public sealed class SemanticLedgerCanonicalizer
               "items": {
                 "type": "object",
                 "properties": {
-                  "id": { "type": "string" },
+                  __REASONING_PROP__"id": { "type": "string" },
                   "proposition": { "type": "string" },
                   "kind": { "type": "string", "enum": ["decision", "requirement", "constraint", "risk", "open_requirement", "open_question", "scope", "compliance_constraint", "process_constraint", "non_functional_requirement", "meta"] },
                   "status": { "type": "string", "enum": ["decided", "open", "rejected", "uncertain", "required"] },
@@ -145,7 +146,7 @@ public sealed class SemanticLedgerCanonicalizer
                   "candidateIds": { "type": "array", "items": { "type": "string" } },
                   "assumedRelation": { "type": "string", "enum": ["same_proposition", "refines", "temporal_sequence", "elaborates", "standalone"] }
                 },
-                "required": ["id", "proposition", "kind", "status", "modality", "scope", "timeScope", "evidence", "disposition", "riskLevel", "notes", "candidateIds", "assumedRelation"],
+                "required": [__REASONING_REQ__"id", "proposition", "kind", "status", "modality", "scope", "timeScope", "evidence", "disposition", "riskLevel", "notes", "candidateIds", "assumedRelation"],
                 "additionalProperties": false
               }
             }
@@ -155,18 +156,26 @@ public sealed class SemanticLedgerCanonicalizer
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "semantic_ledger_canonicalization",
-        "Kanonischer Semantic Ledger mit Cluster-Trace (candidateIds + assumedRelation).");
+    // W1a: Schema je ReasoningCapture-Modus (reasoning-Property/required via Marker-Ersetzung, kein Brace-Doubling).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public SemanticLedgerCanonicalizer(IChatClient client, bool structuredOutput = true)
+    public SemanticLedgerCanonicalizer(IChatClient client, bool structuredOutput = true, ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
         _structuredOutput = structuredOutput;
+        // W1a: reasoning log-only via Prompt-Appendix + Schema-Feld (bei off beides leer).
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "semantic_ledger_canonicalization",
+            "Kanonischer Semantic Ledger mit Cluster-Trace (candidateIds + assumedRelation).");
     }
 
     public async Task<IReadOnlyList<SemanticLedgerEntry>> CanonicalizeAsync(
@@ -176,11 +185,11 @@ public sealed class SemanticLedgerCanonicalizer
         var options = new ChatOptions { Temperature = 0.0f };
         // L2: eigener, BENANNTER Schema (semantic_ledger_canonicalization) — vermeidet die früher
         // befürchtete Schema-Namens-Kollision mit dem Extractor und erzwingt den Cluster-Trace.
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var response = await _client.GetResponseAsync(
             [
-                new ChatMessage(ChatRole.System, SystemPrompt),
+                new ChatMessage(ChatRole.System, _systemPrompt),
                 new ChatMessage(ChatRole.User, $"CANDIDATE_LEDGER:\n{JsonSerializer.Serialize(new SemanticLedgerFixture(candidateLedger), Json)}")
             ],
             options, ct).ConfigureAwait(false);

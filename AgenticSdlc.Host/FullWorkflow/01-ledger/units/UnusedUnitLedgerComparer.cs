@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using Microsoft.Extensions.AI;
 
@@ -56,7 +57,7 @@ internal sealed class UnusedUnitLedgerComparer
         suggestedAction, IDs usw.) bleiben englisch.
         """;
 
-    private const string SchemaJson = """
+    private const string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
@@ -65,7 +66,7 @@ internal sealed class UnusedUnitLedgerComparer
               "items": {
                 "type": "object",
                 "properties": {
-                  "unitId": { "type": "string" },
+                  __REASONING_PROP__"unitId": { "type": "string" },
                   "verdict": {
                     "type": "string",
                     "enum": ["already_covered_indirectly", "attach_as_evidence", "missing_claim", "needs_human"]
@@ -81,7 +82,7 @@ internal sealed class UnusedUnitLedgerComparer
                     "items": { "type": "string" }
                   }
                 },
-                "required": ["unitId", "verdict", "suggestedAction", "reason", "suggestedProposition", "relatedCandidateIds"],
+                "required": [__REASONING_REQ__"unitId", "verdict", "suggestedAction", "reason", "suggestedProposition", "relatedCandidateIds"],
                 "additionalProperties": false
               }
             }
@@ -91,18 +92,29 @@ internal sealed class UnusedUnitLedgerComparer
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "unused_unit_ledger_compare",
-        "Vergleich potenziell relevanter unused Units gegen Candidate Ledger.");
+    // W1a: Schema je ReasoningCapture-Modus (reasoning-Property/required via Marker-Ersetzung, kein Brace-Doubling).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
+    private readonly string _systemPrompt;
+    private readonly string _repairSystemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public UnusedUnitLedgerComparer(IChatClient client, bool structuredOutput = true)
+    public UnusedUnitLedgerComparer(IChatClient client, bool structuredOutput = true, ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
         _structuredOutput = structuredOutput;
+        // W1a: reasoning log-only via Prompt-Appendix + Schema-Feld (bei off beides leer). Beide Calls (Compare + Repair)
+        // teilen das Schema, also bekommt auch der Repair-Prompt den Appendix (sonst reasoning ohne Anleitung).
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _repairSystemPrompt = RepairSystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "unused_unit_ledger_compare",
+            "Vergleich potenziell relevanter unused Units gegen Candidate Ledger.");
     }
 
     public async Task<IReadOnlyList<UnusedUnitLedgerCompareItem>> CompareAsync(
@@ -172,7 +184,7 @@ internal sealed class UnusedUnitLedgerComparer
         CancellationToken ct)
     {
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var payload = new
         {
@@ -189,7 +201,7 @@ internal sealed class UnusedUnitLedgerComparer
 
         var response = await _client.GetResponseAsync(
             [
-                new ChatMessage(ChatRole.System, RepairSystemPrompt),
+                new ChatMessage(ChatRole.System, _repairSystemPrompt),
                 new ChatMessage(ChatRole.User, JsonSerializer.Serialize(payload, Json))
             ],
             options, ct).ConfigureAwait(false);
@@ -205,7 +217,7 @@ internal sealed class UnusedUnitLedgerComparer
         if (relevantUnits.Count == 0) return [];
 
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var payload = new
         {
@@ -224,7 +236,7 @@ internal sealed class UnusedUnitLedgerComparer
 
         var response = await _client.GetResponseAsync(
             [
-                new ChatMessage(ChatRole.System, SystemPrompt),
+                new ChatMessage(ChatRole.System, _systemPrompt),
                 new ChatMessage(ChatRole.User, JsonSerializer.Serialize(payload, Json))
             ],
             options, ct).ConfigureAwait(false);

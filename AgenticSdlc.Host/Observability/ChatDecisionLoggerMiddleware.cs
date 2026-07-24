@@ -75,6 +75,13 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
     private readonly int _previewChars;
 
     /*
+     * W1a: Volltext-Kappung NUR für response-text.md (die lesbare Forschungsquelle inkl. Reasoning-Feld).
+     * 0 = unbegrenzt. Bewusst getrennt von _previewChars: die kompakten Events (CHAT_RESPONSE_TEXT)
+     * bleiben preview-klein/abfragbar, während response-text.md den vollen Modell-Output behält.
+     */
+    private readonly int _responseTextMaxChars;
+
+    /*
      * Scope AgentChat: zählt Agent-Chat-Aufrufe (in Phase 2.1 genau 1; bei Repair-Loops >1).
      * Scope ModelRound: zählt LLM-Roundtrips innerhalb des FunctionInvocation-Loops (1..N).
      */
@@ -86,7 +93,8 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
         string? agentName = null,
         LoggingScope scope = LoggingScope.AgentChat,
         bool writeResponseText = true,
-        int previewChars = 1200)
+        int previewChars = 1200,
+        int responseTextMaxChars = 0)
         : base(innerClient)
     {
         _run = run;
@@ -94,6 +102,7 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
         _scope = scope;
         _writeResponseText = writeResponseText;
         _previewChars = previewChars;
+        _responseTextMaxChars = responseTextMaxChars;
     }
 
     // Event-Namen je Scope - eine Stelle, damit die Benennung konsistent bleibt.
@@ -311,8 +320,11 @@ public sealed class ChatDecisionLoggerMiddleware : DelegatingChatClient
         // Das "Warum" jedes Writes bleibt zusätzlich in tool-calls.jsonl (reason/evidence der fs_write-Args).
         if (_writeResponseText && _agentName is not null && (hasText || hasToolCalls))
         {
-            var truncated = assistantText.Length > _previewChars;
-            var content = Truncate(assistantText.Trim(), _previewChars);
+            // W1a: response-text.md behält den VOLLEN Modell-Output (inkl. reasoning-Feld), wenn
+            // _responseTextMaxChars == 0. >0 kappt weiterhin (Schutz vor Riesen-Echos, wenn gewünscht).
+            var full = assistantText.Trim();
+            var truncated = _responseTextMaxChars > 0 && full.Length > _responseTextMaxChars;
+            var content = truncated ? full[.._responseTextMaxChars] + " ...(truncated)" : full;
             _run.AppendAgentResponseText(
                 _agentName,
                 BuildResponseTextMarkdown(round, distinctToolCallNames, content, assistantText.Length, truncated));

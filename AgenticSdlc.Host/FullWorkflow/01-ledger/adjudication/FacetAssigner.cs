@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using Microsoft.Extensions.AI;
 
@@ -22,7 +23,8 @@ public sealed class FacetAssigner
     public const int DefaultBatchSize = 8;
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
-    private const string SystemPrompt = """
+    // W1a: Template mit Markern; die reasoning-Zeilen werden je ReasoningCapture-Modus im Ctor eingesetzt.
+    private const string SystemPromptTemplate = """
         Du WEIST einem Ledger-Claim seine Facetten ZU (assignment), basierend auf seiner Proposition und der
         angehängten Evidence. Du erfindest KEINE neuen Claims und änderst die Proposition NICHT.
 
@@ -30,6 +32,7 @@ public sealed class FacetAssigner
         keine zusätzlichen ids, keine fehlenden ids.
 
         Weise pro Claim zu (geschlossene Taxonomie — nur diese Werte):
+        %%REASONING_RULE%%
         - kind:      requirement | non_functional_requirement | constraint | compliance_constraint |
                      process_constraint | decision | scope | risk | open_question | open_requirement | context
         - status:    decided | open | rejected | uncertain | required
@@ -50,6 +53,7 @@ public sealed class FacetAssigner
         {
           "items": [
             {
+              %%REASONING_EXAMPLE%%
               "id": "<exakt die Input-id>",
               "kind": "requirement",
               "status": "open",
@@ -81,7 +85,9 @@ public sealed class FacetAssigner
           "additionalProperties": false }
         """;
 
-    private static readonly string SchemaJson = $$"""
+    // W1a: Schema wird je ReasoningCapture-Modus gebaut — reasoning-Property + required konditional
+    // (off = ganz weg; optional = Property ohne required; enforced = Property + required).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => $$"""
         {
           "type": "object",
           "properties": {
@@ -90,7 +96,7 @@ public sealed class FacetAssigner
               "items": {
                 "type": "object",
                 "properties": {
-                  "id": { "type": "string" },
+                  {{ReasoningSchema.PropertyJson(reasoning)}}"id": { "type": "string" },
                   "kind": { "type": "string" },
                   "status": { "type": "string" },
                   "modality": { "type": "string" },
@@ -109,7 +115,7 @@ public sealed class FacetAssigner
                     "additionalProperties": false
                   }
                 },
-                "required": ["id","kind","status","modality","scope","timeScope","riskLevel","disposition"],
+                "required": [{{ReasoningSchema.RequiredToken(reasoning)}}"id","kind","status","modality","scope","timeScope","riskLevel","disposition"],
                 "additionalProperties": false
               }
             }
@@ -119,20 +125,29 @@ public sealed class FacetAssigner
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "facet_assignment_batch",
-        "Facetten-Zuweisung an neu geminteten Ledger-Claims (fixer Nenner).");
-
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
     private readonly int _batchSize;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public FacetAssigner(IChatClient client, bool structuredOutput = true, int batchSize = DefaultBatchSize)
+    public FacetAssigner(
+        IChatClient client,
+        bool structuredOutput = true,
+        ReasoningCapture reasoning = ReasoningCapture.Enforced,
+        int batchSize = DefaultBatchSize)
     {
         _client = client;
         _structuredOutput = structuredOutput;
         _batchSize = Math.Clamp(batchSize, 1, 12);
+        // W1a: reasoning-Zeilen je Modus in Prompt + Schema einsetzen (off => beide leer, kein Feld).
+        _systemPrompt = SystemPromptTemplate
+            .Replace("%%REASONING_RULE%%", ReasoningSchema.PromptRule(reasoning))
+            .Replace("%%REASONING_EXAMPLE%%", ReasoningSchema.PromptExampleField(reasoning));
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "facet_assignment_batch",
+            "Facetten-Zuweisung an neu geminteten Ledger-Claims (fixer Nenner).");
     }
 
     /// <summary>Weist ALLEN Einträgen (in Batches) Facetten zu und liefert die zugewiesenen, voll facettierten Claims.</summary>
@@ -153,10 +168,10 @@ public sealed class FacetAssigner
         IReadOnlyList<SemanticLedgerEntry> batch, string? transcript, CancellationToken ct)
     {
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var response = await _client.GetResponseAsync(
-            [new ChatMessage(ChatRole.System, SystemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, transcript))],
+            [new ChatMessage(ChatRole.System, _systemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, transcript))],
             options, ct).ConfigureAwait(false);
 
         var parsed = Parse(response.Text);
@@ -242,6 +257,9 @@ public sealed class FacetAssigner
 }
 
 public sealed record AssignedFacets(
+    // W1a: model-declared Begründung der Zuweisung. NUR fürs Logging (response-text.md) — wird NICHT in den
+    // Ledger persistiert (Mapping in AssignBatchAsync ignoriert es bewusst; keine Fachlogik-Änderung).
+    [property: JsonPropertyName("reasoning")] string? Reasoning,
     [property: JsonPropertyName("id")] string Id,
     [property: JsonPropertyName("kind")] string Kind,
     [property: JsonPropertyName("status")] string Status,

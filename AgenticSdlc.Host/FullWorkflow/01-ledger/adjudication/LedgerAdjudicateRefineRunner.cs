@@ -66,7 +66,7 @@ public static class LedgerAdjudicateRefineRunner
             metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
         var refineClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "FacetAssigner", SourceName);
-        var assigner = new FacetAssigner(refineClient, settings.JuryStructuredOutput);
+        var assigner = new FacetAssigner(refineClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
         IReadOnlyList<SemanticLedgerEntry> refined;
         try
         {

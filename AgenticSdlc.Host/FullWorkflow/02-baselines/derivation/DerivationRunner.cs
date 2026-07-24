@@ -209,8 +209,8 @@ public static class DerivationRunner
         var judgeSystemPrompt = string.IsNullOrWhiteSpace(spec.JudgePromptName)
             ? null
             : PromptProvider.Load(repoRoot, Phase, spec.AgentName, spec.JudgePromptName!, new Dictionary<string, string>());
-        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt);
-        var postHocChecker = independentPostHoc ? new InferenceChecker(postHocClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt) : checker;
+        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt, reasoning: settings.ReasoningCapture);
+        var postHocChecker = independentPostHoc ? new InferenceChecker(postHocClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt, reasoning: settings.ReasoningCapture) : checker;
         var outScope = $"derivations/{spec.Id}";
 
         Microsoft.Agents.AI.Workflows.Workflow workflow;

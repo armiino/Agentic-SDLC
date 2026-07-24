@@ -138,7 +138,7 @@ public static class RecipeRunner
             var deriv = DerivationWorkflow.Build(
                 new DerivationGenerateExecutor(agent, spec, run),
                 new DerivationAnchorExecutor(spec, run),
-                new DerivationCheckExecutor(new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt), spec, genSettings.ModelId, run, $"derivations/{spec.Id}"));
+                new DerivationCheckExecutor(new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgeSystemPrompt, reasoning: settings.ReasoningCapture), spec, genSettings.ModelId, run, $"derivations/{spec.Id}"));
             derivations.Add((spec, deriv));
         }
 

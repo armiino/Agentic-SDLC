@@ -73,7 +73,7 @@ public static class ContractCriticRunner
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
         var critic = new ContractCritic(
             AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "ContractCritic", SourceName),
-            settings.JuryStructuredOutput);
+            settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
         Console.WriteLine($"[contract-critic] artifact={Path.GetRelativePath(repoRoot, reqPath)}  claims={ledger.Claims.Count}  model={judgeSettings.ModelId}  repeat={repeat}");
 
         try

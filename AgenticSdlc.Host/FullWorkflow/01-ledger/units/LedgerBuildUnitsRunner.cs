@@ -67,12 +67,12 @@ public static class LedgerBuildUnitsRunner
         var coverageRepairClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, CanonicalCoverageRepairExecutor.ExecutorName, SourceName);
         var facetClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, FacetValidationExecutor.ExecutorName, SourceName);
 
-        var extractor = new UnitAwareSemanticLedgerExtractor(extractionClient, settings.JuryStructuredOutput);
-        var unusedUnitTriageReviewer = new UnusedUnitTriageReviewer(unusedTriageClient, settings.JuryStructuredOutput);
-        var unusedUnitLedgerComparer = new UnusedUnitLedgerComparer(unusedCompareClient, settings.JuryStructuredOutput);
-        var canonicalizer = new SemanticLedgerCanonicalizer(canonicalClient, settings.JuryStructuredOutput);
-        var coverageRepairer = new CanonicalCoverageRepairer(coverageRepairClient, settings.JuryStructuredOutput);
-        var facetValidator = new FacetValidator(facetClient, settings.JuryStructuredOutput);
+        var extractor = new UnitAwareSemanticLedgerExtractor(extractionClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
+        var unusedUnitTriageReviewer = new UnusedUnitTriageReviewer(unusedTriageClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
+        var unusedUnitLedgerComparer = new UnusedUnitLedgerComparer(unusedCompareClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
+        var canonicalizer = new SemanticLedgerCanonicalizer(canonicalClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
+        var coverageRepairer = new CanonicalCoverageRepairer(coverageRepairClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
+        var facetValidator = new FacetValidator(facetClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
         var sourceName = Path.GetFileName(transcriptPath);
 
         var workflow = LedgerBuilderWorkflow.BuildUnitCoverage(

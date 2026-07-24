@@ -125,7 +125,7 @@ public static class LedgerCiteFidelityRunner
         // (3) InferenceChecker-Kern (unverändert) mit Requirement-Treue-Maßstab.
         var checkClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "LedgerCiteFidelity", SourceName);
         var judgePrompt = PromptProvider.Load(repoRoot, Phase, AgentName, JudgePromptName, new Dictionary<string, string>());
-        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgePrompt);
+        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgePrompt, reasoning: settings.ReasoningCapture);
 
         InferenceCheckReport report;
         try
@@ -241,7 +241,7 @@ public static class LedgerCiteFidelityRunner
 
         var checkClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "LedgerCiteFidelityProbe", SourceName);
         var judgePrompt = PromptProvider.Load(repoRoot, Phase, AgentName, JudgePromptName, new Dictionary<string, string>());
-        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgePrompt);
+        var checker = new InferenceChecker(checkClient, settings.JuryStructuredOutput, systemPrompt: judgePrompt, reasoning: settings.ReasoningCapture);
 
         InferenceCheckReport report;
         try

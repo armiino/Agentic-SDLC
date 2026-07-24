@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using AgenticSdlc.Host.FullWorkflow.Ledger;
 using Microsoft.Extensions.AI;
@@ -60,7 +61,7 @@ public sealed class ContractCritic
         }
         """;
 
-    private static readonly string SchemaJson = """
+    private const string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
@@ -69,12 +70,12 @@ public sealed class ContractCritic
               "items": {
                 "type": "object",
                 "properties": {
-                  "ref": { "type": "string" },
+                  __REASONING_PROP__"ref": { "type": "string" },
                   "verdict": { "type": "string" },
                   "rationale": { "type": "string" },
                   "unsupportedSpan": { "type": "string" }
                 },
-                "required": ["ref","verdict","rationale","unsupportedSpan"],
+                "required": [__REASONING_REQ__"ref","verdict","rationale","unsupportedSpan"],
                 "additionalProperties": false
               }
             }
@@ -84,10 +85,10 @@ public sealed class ContractCritic
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "evidence_support_batch",
-        "Evidence-Support-Verdikt je Artefakt-Zeile gegen das zitierte Claim-Paket (fixer Nenner).");
+    // W1a: Schema je ReasoningCapture-Modus (reasoning-Property/required via Marker-Ersetzung, kein Brace-Doubling).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private static readonly HashSet<string> Stop = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -101,14 +102,23 @@ public sealed class ContractCritic
     private readonly bool _structuredOutput;
     private readonly int _batchSize;
     private readonly double _coverageSkip;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
     public ContractCritic(IChatClient client, bool structuredOutput = true,
-        int batchSize = DefaultBatchSize, double coverageSkip = DefaultCoverageSkip)
+        int batchSize = DefaultBatchSize, double coverageSkip = DefaultCoverageSkip,
+        ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
         _structuredOutput = structuredOutput;
         _batchSize = Math.Clamp(batchSize, 1, 16);
         _coverageSkip = Math.Clamp(coverageSkip, 0.0, 1.0);
+        // W1a: reasoning log-only via Prompt-Appendix + Schema-Feld (bei off beides leer).
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "evidence_support_batch",
+            "Evidence-Support-Verdikt je Artefakt-Zeile gegen das zitierte Claim-Paket (fixer Nenner).");
     }
 
     public async Task<CriticReport> CheckAsync(string markdown, ConsumableLedger ledger, CancellationToken ct)
@@ -248,10 +258,10 @@ public sealed class ContractCritic
         IReadOnlyList<(int LineNo, string Text, List<SemanticLedgerEntry> Pkgs)> batch, CancellationToken ct)
     {
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var response = await _client.GetResponseAsync(
-            [new ChatMessage(ChatRole.System, SystemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch))],
+            [new ChatMessage(ChatRole.System, _systemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch))],
             options, ct).ConfigureAwait(false);
 
         var parsed = Parse(response.Text).ToDictionary(v => v.Ref, v => v, StringComparer.OrdinalIgnoreCase);

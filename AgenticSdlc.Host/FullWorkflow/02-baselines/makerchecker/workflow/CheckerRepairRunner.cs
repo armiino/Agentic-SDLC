@@ -100,8 +100,8 @@ public static class CheckerRepairRunner
         var checkerClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, CheckerExecutor.ExecutorName, SourceName);
         var repairClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, RepairExecutor.ExecutorName, SourceName);
 
-        var critic = new ContractCritic(checkerClient, settings.JuryStructuredOutput);
-        var repair = new ContractRepair(repairClient, settings.JuryStructuredOutput);
+        var critic = new ContractCritic(checkerClient, settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
+        var repair = new ContractRepair(repairClient, settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
 
         var scope = $"baselines/{artifactDisposition}";
         var checker = new CheckerExecutor(critic, ledger, artifactDisposition, k, minVotes, maxIter, run, scope);

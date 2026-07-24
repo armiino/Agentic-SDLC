@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Artifacts;
 using Microsoft.Extensions.AI;
 
@@ -45,7 +46,7 @@ public sealed class ScopeCreepChecker
         { "items": [ { "ref": "<exakt die ref>", "verdict": "clean", "rationale": "<kurz>" } ] }
         """;
 
-    private static readonly string SchemaJson = """
+    private static readonly string SchemaTemplate = """
         {
           "type": "object",
           "properties": {
@@ -54,11 +55,11 @@ public sealed class ScopeCreepChecker
               "items": {
                 "type": "object",
                 "properties": {
-                  "ref": { "type": "string" },
+                  __REASONING_PROP__"ref": { "type": "string" },
                   "verdict": { "type": "string" },
                   "rationale": { "type": "string" }
                 },
-                "required": ["ref", "verdict", "rationale"],
+                "required": [__REASONING_REQ__"ref", "verdict", "rationale"],
                 "additionalProperties": false
               }
             }
@@ -68,20 +69,27 @@ public sealed class ScopeCreepChecker
         }
         """;
 
-    private static readonly ChatResponseFormat ResponseFormat = ChatResponseFormat.ForJsonSchema(
-        JsonDocument.Parse(SchemaJson).RootElement.Clone(),
-        "scope_creep_batch",
-        "Scope-Creep-/Halluzinations-Verdikt je abgeleitetem Item gegen seine zitierten Anker.");
+    // W1a: Schema je ReasoningCapture-Modus (Marker-Ersetzung).
+    private static string BuildSchemaJson(ReasoningCapture reasoning) => SchemaTemplate
+        .Replace("__REASONING_PROP__", ReasoningSchema.PropertyJson(reasoning))
+        .Replace("__REASONING_REQ__", ReasoningSchema.RequiredToken(reasoning));
 
     private readonly IChatClient _client;
     private readonly bool _structuredOutput;
     private readonly int _batchSize;
+    private readonly string _systemPrompt;
+    private readonly ChatResponseFormat _responseFormat;
 
-    public ScopeCreepChecker(IChatClient client, bool structuredOutput = true, int batchSize = DefaultBatchSize)
+    public ScopeCreepChecker(IChatClient client, bool structuredOutput = true, int batchSize = DefaultBatchSize, ReasoningCapture reasoning = ReasoningCapture.Enforced)
     {
         _client = client;
         _structuredOutput = structuredOutput;
         _batchSize = Math.Clamp(batchSize, 1, 16);
+        _systemPrompt = SystemPrompt + ReasoningSchema.PromptAppendix(reasoning);
+        _responseFormat = ChatResponseFormat.ForJsonSchema(
+            JsonDocument.Parse(BuildSchemaJson(reasoning)).RootElement.Clone(),
+            "scope_creep_batch",
+            "Scope-Creep-/Halluzinations-Verdikt je abgeleitetem Item gegen seine zitierten Anker.");
     }
 
     public async Task<ScopeCreepReport> CheckAsync(
@@ -103,10 +111,10 @@ public sealed class ScopeCreepChecker
         IReadOnlyList<ArtifactItem> batch, IReadOnlyDictionary<string, ArtifactItem> baselineById, CancellationToken ct)
     {
         var options = new ChatOptions { Temperature = 0.0f };
-        if (_structuredOutput) options.ResponseFormat = ResponseFormat;
+        if (_structuredOutput) options.ResponseFormat = _responseFormat;
 
         var response = await _client.GetResponseAsync(
-            [new ChatMessage(ChatRole.System, SystemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, baselineById))],
+            [new ChatMessage(ChatRole.System, _systemPrompt), new ChatMessage(ChatRole.User, BuildUser(batch, baselineById))],
             options, ct).ConfigureAwait(false);
 
         var parsed = Parse(response.Text).ToDictionary(v => v.Ref, v => v, StringComparer.OrdinalIgnoreCase);

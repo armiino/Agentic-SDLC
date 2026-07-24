@@ -132,8 +132,8 @@ public static class ArtifactBranchRunner
         var instructions = header.TrimEnd() + "\n\n" + core;
         var agent = BuildAgent(makerClient, instructions, agentName, run);
 
-        var critic = new ContractCritic(checkerClient, settings.JuryStructuredOutput);
-        var repair = new ContractRepair(repairClient, settings.JuryStructuredOutput);
+        var critic = new ContractCritic(checkerClient, settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
+        var repair = new ContractRepair(repairClient, settings.JuryStructuredOutput, reasoning: settings.ReasoningCapture);
 
         var branch = ArtifactBranchWorkflow.Build(
             agent, critic, repair, ledger, artifact, dispositionKey, k, minVotes, maxIter, settings.ModelId, run);
