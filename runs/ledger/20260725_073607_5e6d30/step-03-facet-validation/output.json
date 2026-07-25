@@ -1,0 +1,171 @@
+{
+  "entries": [
+    {
+      "entry": {
+        "id": "canonical-auth-email-password",
+        "proposition": "Das System muss die Anmeldung per E-Mail und Passwort unterst\u00FCtzen.",
+        "kind": "requirement",
+        "status": "required",
+        "modality": "must",
+        "scope": "authentifizierung",
+        "timeScope": null,
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "Anna: Das System muss die Anmeldung per E-Mail und Passwort unterst\u00FCtzen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "facet repair: Status von decided auf required normalisiert, da es sich um eine verbindliche Anforderung handelt.",
+        "candidateIds": [
+          "auth-email-password"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0001"
+        ]
+      },
+      "validation": {
+        "id": "canonical-auth-email-password",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "required",
+            "problem": "Die Quelle belegt eine Anforderung, aber \u0022required\u0022 ist hier kein passender Entscheidungsstatus; als getroffene Anforderung besser als entschieden modellieren.",
+            "suggested": "decided"
+          }
+        ],
+        "reason": "Proposition und Modalit\u00E4t sind gedeckt; nur der Status ist taxonomisch leicht daneben."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "canonical-encrypt-user-data",
+        "proposition": "Nutzerdaten sollen verschl\u00FCsselt gespeichert werden.",
+        "kind": "non_functional_requirement",
+        "status": "decided",
+        "modality": "desired",
+        "scope": "datenspeicherung/sicherheit",
+        "timeScope": null,
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "Bernd: Einverstanden. Au\u00DFerdem sollen Nutzerdaten verschl\u00FCsselt gespeichert werden."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "optional",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: gew\u00FCnschte Modalit\u00E4t bewusst nicht zu must versch\u00E4rft.",
+        "candidateIds": [
+          "encrypt-user-data"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0002"
+        ]
+      },
+      "validation": {
+        "id": "canonical-encrypt-user-data",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Proposition, Status, Modalit\u00E4t und Evidence sind durch das Transcript gedeckt."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "canonical-sso-later-open",
+        "proposition": "Ob sp\u00E4ter Single-Sign-On ben\u00F6tigt wird, ist noch offen.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "authentifizierung",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "Anna: Ob wir sp\u00E4ter auch Single-Sign-On brauchen, ist noch offen."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "question"
+          },
+          "risks": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "facet repair: sp\u00E4tere M\u00F6glichkeit und offener Status getrennt von MVP-Basislogin erhalten.",
+        "candidateIds": [
+          "sso-later-open"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0003"
+        ]
+      },
+      "validation": {
+        "id": "canonical-sso-later-open",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "timescope",
+            "observed": "later_possible",
+            "problem": "Die Quelle sagt nur, dass ein m\u00F6glicher sp\u00E4terer Bedarf offen ist; ob es sp\u00E4ter kommt, bleibt unklar.",
+            "suggested": "mvp_or_later_unclear"
+          }
+        ],
+        "reason": "Kern der offenen Frage zu Single-Sign-On ist gedeckt, aber der TimeScope ist etwas zu konkret."
+      },
+      "claimStatus": "review_required"
+    }
+  ]
+}

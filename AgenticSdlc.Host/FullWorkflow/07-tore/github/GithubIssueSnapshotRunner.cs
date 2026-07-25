@@ -258,7 +258,7 @@ public static class GithubIssueSnapshotRunner
         return issues;
     }
 
-    private static async Task<IReadOnlyList<GithubIssueSnapshot>> LoadWithGitHubApiAsync(string repository, int limit, string? explicitToken = null)
+    internal static async Task<IReadOnlyList<GithubIssueSnapshot>> LoadWithGitHubApiAsync(string repository, int limit, string? explicitToken = null)
     {
         if (repository.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Length != 2)
             throw new InvalidOperationException("--repo muss die Form owner/name haben.");

@@ -18,6 +18,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 /// <paramref name="judgeSettings"/> trägt das Stufen-Modell (aus <c>run-config.fullworkflow.models</c>, vom
 /// Assembler gesetzt — Schritt 4).
 /// </remarks>
+[SendsMessage(typeof(LedgerStageOutput))]
 internal sealed class LedgerWrapperExecutor(
     HostSettings settings, HostSettings judgeSettings, RunContext parentRun)
     : Executor<TranscriptInput>("PipelineLedger")

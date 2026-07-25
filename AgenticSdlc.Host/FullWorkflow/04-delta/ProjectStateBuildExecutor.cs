@@ -20,6 +20,7 @@ internal sealed record ProjectStateBuildRequest(
     string? L3RunDir = null,
     string? ProjectId = null);
 
+[SendsMessage(typeof(ProjectStateDocument))]
 internal sealed class ProjectStateBuildExecutor(RunContext run, string repoRoot)
     : Executor<ProjectStateBuildRequest>("PipelineDeltaBuild")
 {

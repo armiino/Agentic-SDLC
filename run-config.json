@@ -64,9 +64,15 @@
   "fullworkflow": {
     "execute": false,
     "policyProfile": "interactive",
+    "repo": "armiino/Agentic-GitHub-refactor",
+    "tokenEnv": "GITHUB_AGENTIC_REFACTOR_TOKEN",
+    "models": { "01-ledger": "openai/gpt-4.1-mini", "02-baselines": "openai/gpt-4.1-mini" },
     "stages": { "l3": "off" },
     "gates": {
-      "github-forward-gate": { "policy": "interactive" }
+      "adjudication-gate": { "policy": "accept-all" },
+      "ingest-gate": { "policy": "accept-all" },
+      "pbi-gate": { "policy": "accept-all" },
+      "github-forward-gate": { "policy": "accept-all" }
     }
   },
   "jury": {

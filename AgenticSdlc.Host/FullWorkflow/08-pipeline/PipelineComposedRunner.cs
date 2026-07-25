@@ -45,7 +45,7 @@ public static class PipelineComposedRunner
         return 2;
     }
 
-    private static Workflow BuildWorkflow(
+    internal static Workflow BuildWorkflow(
         RunContext run, string repoRoot, string ingestOutDir, string pbiOutDir, int maxAttempts,
         Func<IReadOnlyList<AITool>, AIAgent> ingestFactory, Func<IReadOnlyList<AITool>, AIAgent> pbiFactory)
     {
@@ -203,7 +203,7 @@ public static class PipelineComposedRunner
         return 4;
     }
 
-    private static Func<IReadOnlyList<AITool>, AIAgent> AgentFactory(string repoRoot, HostSettings settings, HostSettings genSettings, RunContext run, string agentName, string promptName)
+    internal static Func<IReadOnlyList<AITool>, AIAgent> AgentFactory(string repoRoot, HostSettings settings, HostSettings genSettings, RunContext run, string agentName, string promptName)
     {
         var prompt = PromptProvider.Load(repoRoot, Phase, agentName, promptName, new Dictionary<string, string> { ["runId"] = run.RunId });
         var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, agentName, SourceName);
