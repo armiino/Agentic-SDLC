@@ -72,9 +72,13 @@ public static class GithubForwardKind
     public const string NoChange = "NO_CHANGE";
     public const string FlagDrift = "FLAG_DRIFT";
     public const string HoldBlocked = "HOLD_BLOCKED";
+    // R-26: neues + noch unklares PBI (needs_clarify) OHNE Mapping, im unbeaufsichtigten Lauf (kein Mensch, der ein
+    // Issue autorisiert) → geparkt, KEIN Auto-CREATE. Deterministisches Spiegelbild zu HoldBlocked (nie ein CREATE).
+    // Aufloesen (needs_clarify->active) ist Folgeschritt (Option C / Parkplatz-Mechanismus im Core, s. design-note §9).
+    public const string HoldClarify = "HOLD_CLARIFY";
 
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
-        { CreateIssue, UpdateIssue, Comment, Link, NoChange, FlagDrift, HoldBlocked };
+        { CreateIssue, UpdateIssue, Comment, Link, NoChange, FlagDrift, HoldBlocked, HoldClarify };
 
     // Ops, die auf ein bestehendes Issue zeigen muessen.
     public static readonly IReadOnlySet<string> RequireIssueTarget = new HashSet<string>(StringComparer.Ordinal)

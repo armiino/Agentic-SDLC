@@ -25,7 +25,7 @@ public static class GithubForwardReviewAdapter
                 [
                     new ReviewHelpSection("Operationen",
                         "CREATE_ISSUE (neu, nur nach ausgefuehrter Suche) · UPDATE_ISSUE (Patch-Vorschlag) · COMMENT · " +
-                        "LINK (bestehendes Issue zuordnen) · NO_CHANGE · FLAG_DRIFT (manuell pruefen) · HOLD_BLOCKED (wartet auf Tor 2)."),
+                        "LINK (bestehendes Issue zuordnen) · NO_CHANGE · FLAG_DRIFT (manuell pruefen) · HOLD_BLOCKED (wartet auf Tor 2) · HOLD_CLARIFY (neu+unklar, geparkt)."),
                     new ReviewHelpSection("Auswirkung",
                         "Nach Fertig -> human-decisions.json. Der gated Apply (T3.4) fuehrt NUR die akzeptierten Ops aus " +
                         "und schreibt das Mapping (implemented_by_issue) in den Core zurueck.")
@@ -68,6 +68,7 @@ public static class GithubForwardReviewAdapter
             GithubForwardKind.Link => $"LINK {op.PbiId}{target}",
             GithubForwardKind.FlagDrift => $"FLAG_DRIFT {op.PbiId}{target}",
             GithubForwardKind.HoldBlocked => $"HOLD_BLOCKED {op.PbiId} (blockiert)",
+            GithubForwardKind.HoldClarify => $"HOLD_CLARIFY {op.PbiId} (neu, unklar — geparkt)",
             GithubForwardKind.NoChange => $"NO_CHANGE {op.PbiId}",
             _ => $"{op.Kind} {op.PbiId}"
         };

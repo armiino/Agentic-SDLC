@@ -144,6 +144,7 @@ public static class GithubForwardApply
                     case GithubForwardKind.FlagDrift:
                         reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "flagged", op.Rationale)); flagged++; break;
                     case GithubForwardKind.HoldBlocked:
+                    case GithubForwardKind.HoldClarify:
                         reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "held", op.Rationale)); held++; break;
                     case GithubForwardKind.NoChange:
                         reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "noChange", null)); noChange++; break;

@@ -27,7 +27,8 @@ internal sealed record GithubForwardWfContext(
     string OutDir,
     string? SnapshotRel,
     bool DryRun,
-    int MaxAttempts);
+    int MaxAttempts,
+    bool HoldUnclearNewPbis = false);
 
 internal sealed record GithubForwardSeeded(GithubForwardWfContext Ctx, IReadOnlyList<GithubForwardOp> DeterministicOps, IReadOnlyList<GithubSyncEntry> Unmapped);
 internal sealed record GithubForwardDraft(
@@ -45,7 +46,7 @@ internal sealed class GithubForwardSeedExecutor(RunContext run) : Executor<Githu
 {
     public override async ValueTask HandleAsync(GithubForwardWfContext ctx, IWorkflowContext context, CancellationToken ct = default)
     {
-        var seed = GithubForwardSeed.Seed(ctx.Entries, ctx.MappingByPbi, ctx.Issues);
+        var seed = GithubForwardSeed.Seed(ctx.Entries, ctx.MappingByPbi, ctx.Issues, ctx.HoldUnclearNewPbis);
         run.AppendEvent(new { type = "GITHUB_FWD_SEED", runId = run.RunId, deterministic = seed.DeterministicOps.Count, unmapped = seed.UnmappedPbis.Count, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(new GithubForwardSeeded(ctx, seed.DeterministicOps, seed.UnmappedPbis)).ConfigureAwait(false);
     }

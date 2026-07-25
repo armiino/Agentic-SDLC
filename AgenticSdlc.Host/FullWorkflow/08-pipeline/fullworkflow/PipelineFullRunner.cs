@@ -317,7 +317,11 @@ public static class PipelineFullRunner
             humanGate, new GithubForwardApplyExecutor(run, repoRoot, outDir, null, null));
 
         var dryRun = !fw.Execute;
-        var ctx = new GithubForwardWfContext(core, delta.Entries, mappingByPbi, issues, fw.Repo, "pipeline-full", outDir, snapshotRel, dryRun, maxAttempts);
+        // R-26: im unbeaufsichtigten accept-all-Lauf ist KEIN Mensch da, der ein Issue fuer ein neues, unklares PBI
+        // autorisiert → solche PBIs parken (HOLD_CLARIFY) statt Auto-CREATE. interactive/replay tragen die
+        // Menschen-Autorisierung → Flag aus, Verhalten identisch zum CLI (M-1 Vergleichbarkeit).
+        var holdUnclear = fw.GateFor("github-forward-gate").Kind == GatePolicyKind.AcceptAll;
+        var ctx = new GithubForwardWfContext(core, delta.Entries, mappingByPbi, issues, fw.Repo, "pipeline-full", outDir, snapshotRel, dryRun, maxAttempts, holdUnclear);
         run.AppendEvent(new { type = "STAGE_FORWARD_START", deltaPbis = delta.Entries.Count, dryRun, timestampUtc = DateTime.UtcNow });
         Console.WriteLine($"[{Cmd}] Forward (DRY-RUN={dryRun}): {delta.Entries.Count} PBI-Ops -> GitHub-Plan (realer Write nur bei execute=true)");
 

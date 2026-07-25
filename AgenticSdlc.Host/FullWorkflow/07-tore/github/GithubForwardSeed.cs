@@ -5,6 +5,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 // T3.3 — deterministischer Vorfilter (plan-tor3 §4). NUR die klaren Faelle, kein Urteil:
 //   - blocked_by_decision  -> HOLD_BLOCKED (NIE ein CREATE; wartet auf Tor 2), bestehendes Issue nur kommentieren.
+//   - needs_clarify + unmapped + holdUnclearNewPbis -> HOLD_CLARIFY (R-26: unbeaufsichtigt kein Auto-Issue, geparkt).
 //   - Mapping vorhanden + Issue offen        -> UPDATE_ISSUE (vorgeschlagener Patch, KEIN Auto-Overwrite, Rev 2).
 //   - Mapping vorhanden + Issue geschlossen, PBI aktiv/needs_clarify -> FLAG_DRIFT.
 //   - Mapping vorhanden, Issue nicht im Snapshot                     -> FLAG_DRIFT (Mapping veraltet).
@@ -16,7 +17,8 @@ public static class GithubForwardSeed
     public static GithubForwardSeedResult Seed(
         IReadOnlyList<GithubSyncEntry> deltaEntries,
         IReadOnlyDictionary<string, GithubMappingRecord> mappingByPbi,
-        IReadOnlyList<GithubIssueSnapshot> issues)
+        IReadOnlyList<GithubIssueSnapshot> issues,
+        bool holdUnclearNewPbis = false)
     {
         var issueByNumber = issues.GroupBy(i => i.IssueNumber).ToDictionary(g => g.Key, g => g.Last());
         var deterministic = new List<GithubForwardOp>();
@@ -40,6 +42,18 @@ public static class GithubForwardSeed
 
             if (mapping is null)
             {
+                // R-26: neues, noch unklares PBI ohne Mapping + niemand da, der ein Issue autorisiert (accept-all) →
+                // PARKEN statt agentisch CREATE erzwingen. Deterministisch, sichtbar, keine Sackgasse. Gemappte
+                // needs_clarify bleiben unberuehrt (UPDATE, s. u.). Aufloesen = Folgeschritt (Option C / Parkplatz-Core).
+                if (holdUnclearNewPbis && string.Equals(e.Status, "needs_clarify", StringComparison.OrdinalIgnoreCase))
+                {
+                    deterministic.Add(new GithubForwardOp(
+                        GithubForwardKind.HoldClarify, e.PbiId, null, null, null, null, null, null,
+                        Anchor: $"pbi {e.PbiId}",
+                        Rationale: "PBI ist neu und noch unklar (needs_clarify) — im unbeaufsichtigten Lauf kein Auto-Issue; geparkt bis zur Klaerung (needs_clarify->active).",
+                        Origin: "deterministic"));
+                    continue;
+                }
                 unmapped.Add(e);
                 continue;
             }
