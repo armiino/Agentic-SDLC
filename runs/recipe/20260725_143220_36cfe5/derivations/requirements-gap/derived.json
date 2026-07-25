@@ -1,0 +1,68 @@
+{
+  "artifactId": "DREQ",
+  "artifactType": "requirements",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260725_143220_36cfe5",
+    "model": "openai/gpt-4.1-mini",
+    "promptVersion": "RequirementsGapFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DREQ-01",
+      "origin": "Derived",
+      "text": "Das System muss sicherstellen, dass die Liste der No-Go-Eintr\u00E4ge konsistent bleibt, wenn Eintr\u00E4ge nachtr\u00E4glich bearbeitet oder gel\u00F6scht werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-01",
+        "REQ-03"
+      ],
+      "assumptions": [
+        "Es wird vorausgesetzt, dass die nachtr\u00E4gliche Bearbeitung und L\u00F6schung von Eintr\u00E4gen die Datenintegrit\u00E4t der No-Go-Liste nicht beeintr\u00E4chtigen darf."
+      ],
+      "derivationRationale": "Um die Anforderungen REQ-01 (Liste mit Plus-Button) und REQ-03 (Bearbeiten und L\u00F6schen der Eintr\u00E4ge) erf\u00FCllbar zu machen, muss die Konsistenz und Integrit\u00E4t der Liste gewahrt bleiben."
+    },
+    {
+      "itemId": "DREQ-02",
+      "origin": "Derived",
+      "text": "F\u00FCr neue Eintr\u00E4ge, die \u00FCber den Plus-Button hinzugef\u00FCgt werden, muss sichergestellt werden, dass sie alle erforderlichen Informationen zur eindeutigen Identifikation und Bearbeitung enthalten.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-01"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass neue No-Go-Eintr\u00E4ge eine Mindestmenge von Informationen ben\u00F6tigen, um sinnvoll bearbeitet oder gel\u00F6scht werden zu k\u00F6nnen."
+      ],
+      "derivationRationale": "Da in REQ-01 das Hinzuf\u00FCgen neuer No-Go-Eintr\u00E4ge gefordert wird und in REQ-03 die Bearbeitung und L\u00F6schung beschrieben wird, m\u00FCssen neue Eintr\u00E4ge von Anfang an vollst\u00E4ndig und strukturiert sein."
+    },
+    {
+      "itemId": "DREQ-03",
+      "origin": "Derived",
+      "text": "Die No-Go-Seite muss eine visuelle R\u00FCckmeldung geben, wenn ein No-Go-Eintrag erfolgreich hinzugef\u00FCgt, bearbeitet oder gel\u00F6scht wurde.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-01",
+        "REQ-03",
+        "REQ-02"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass der Benutzer \u00FCber \u00C4nderungen an der No-Go-Liste informiert werden muss, um Fehlbedienungen zu vermeiden."
+      ],
+      "derivationRationale": "Um die Anforderungen an die Bedienbarkeit und Verst\u00E4ndlichkeit (REQ-01 Plus-Button und REQ-03 Bearbeiten/L\u00F6schen) sowie das Warnsignal (REQ-02) zu erf\u00FCllen, ist eine visuelle R\u00FCckmeldung nach Aktionen notwendig."
+    },
+    {
+      "itemId": "DREQ-04",
+      "origin": "Derived",
+      "text": "Es muss eine Regelung implementiert werden, ob No-Gos global bewohner\u00FCbergreifend oder bewohnerbezogen verwaltet werden, sobald die Kl\u00E4rung aus REQ-05 erfolgt ist.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05"
+      ],
+      "assumptions": [
+        "REQ-05 ist eine noch offene Kl\u00E4rung, deren Ergebnis als Voraussetzung f\u00FCr eine Implementierung dient."
+      ],
+      "derivationRationale": "Die Kl\u00E4rung in REQ-05 impliziert, dass eine zuk\u00FCnftige Entscheidung erfolgen muss, die dann technisch umgesetzt werden muss, um die Einhaltung der gew\u00FCnschten Systemlogik sicherzustellen."
+    }
+  ]
+}

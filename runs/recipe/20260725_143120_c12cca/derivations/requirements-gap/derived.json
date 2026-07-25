@@ -1,0 +1,84 @@
+{
+  "artifactId": "DREQ",
+  "artifactType": "requirements",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260725_143120_c12cca",
+    "model": "openai/gpt-4.1-mini",
+    "promptVersion": "RequirementsGapFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DREQ-01",
+      "origin": "Derived",
+      "text": "Die No-Go-Liste muss eine M\u00F6glichkeit bieten, einzelne Eintr\u00E4ge eindeutig zu identifizieren, um ein gezieltes Bearbeiten und L\u00F6schen zu erm\u00F6glichen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-01",
+        "REQ-03"
+      ],
+      "assumptions": [
+        "Zum Bearbeiten und L\u00F6schen einzelner No-Go-Eintr\u00E4ge ist eine eindeutige Identifikation erforderlich."
+      ],
+      "derivationRationale": "REQ-03 fordert Bearbeiten und L\u00F6schen einzelner No-Gos, daher ist eine eindeutige Identifikation dieser Eintr\u00E4ge notwendig."
+    },
+    {
+      "itemId": "DREQ-02",
+      "origin": "Derived",
+      "text": "Die Benutzeroberfl\u00E4che der No-Go-Seite muss das Hinzuf\u00FCgen, Bearbeiten und L\u00F6schen von Eintr\u00E4gen konsistent und intuitiv gestalten, um Fehlbedienungen zu minimieren.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-01",
+        "REQ-03"
+      ],
+      "assumptions": [
+        "Benutzerfreundlichkeit ist erforderlich, damit die Funktionalit\u00E4ten wie Hinzuf\u00FCgen, Bearbeiten und L\u00F6schen tats\u00E4chlich genutzt werden k\u00F6nnen."
+      ],
+      "derivationRationale": "Da REQ-01 und REQ-03 den Umgang mit No-Go-Eintr\u00E4gen verlangen, ist eine konsistente UI zur Nutzung dieser Funktionen notwendig."
+    },
+    {
+      "itemId": "DREQ-03",
+      "origin": "Derived",
+      "text": "Die Darstellung des roten Stopp-Symbols muss auf allen relevanten Bildschirmen und Kontexten der No-Go-Seite eingebunden sein, um eine durchg\u00E4ngige Warnwirkung sicherzustellen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02"
+      ],
+      "assumptions": [
+        "Das Stopp-Symbol als Warnsignal soll die Aufmerksamkeit aller Nutzer auf No-Gos gew\u00E4hrleisten."
+      ],
+      "derivationRationale": "REQ-02 verlangt ein rotes Stopp-Symbol als deutliches Warnsignal, was impliziert, dass dieses an allen Stellen sichtbar sein muss, wo No-Gos angezeigt werden."
+    },
+    {
+      "itemId": "DREQ-04",
+      "origin": "Derived",
+      "text": "Die Erfassung und Verwaltung von No-Go-Eintr\u00E4gen muss so gestaltet sein, dass eine potenzielle Entscheidung \u00FCber die bewohner\u00FCbergreifende oder individuelle G\u00FCltigkeit (vgl. REQ-05) technisch unterst\u00FCtzt werden kann.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-01",
+        "REQ-03"
+      ],
+      "assumptions": [
+        "Die Entscheidung zur G\u00FCltigkeit der No-Gos (global oder pro Bewohner) erfordert eine zugrundeliegende Struktur zur Abbildung dieser Differenzierung."
+      ],
+      "derivationRationale": "REQ-05 fordert Kl\u00E4rung \u00FCber die G\u00FCltigkeit der No-Gos, deshalb muss die technische Umsetzung diese M\u00F6glichkeit vorsehen, was im Hinblick auf REQ-01 und REQ-03 essentiell ist."
+    },
+    {
+      "itemId": "DREQ-05",
+      "origin": "Derived",
+      "text": "Die Schicht\u00FCbergabe-Notiz muss die aktuellen No-Go-Eintr\u00E4ge enthalten oder auf diese verweisen, damit relevante Warnungen bei Schichtwechseln bekannt sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-01",
+        "REQ-02"
+      ],
+      "assumptions": [
+        "Da No-Gos relevante Einschr\u00E4nkungen darstellen, sind sie Teil der Schicht\u00FCbergabe-Informationen."
+      ],
+      "derivationRationale": "REQ-04 fordert Schicht\u00FCbergabe-Notizen und REQ-01/REQ-02 definieren die No-Gos, also m\u00FCssen diese in den Notizen ber\u00FCcksichtigt werden."
+    }
+  ]
+}

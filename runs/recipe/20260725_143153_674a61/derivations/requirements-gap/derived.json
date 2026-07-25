@@ -1,0 +1,95 @@
+{
+  "artifactId": "DREQ",
+  "artifactType": "requirements",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260725_143153_674a61",
+    "model": "openai/gpt-4.1-mini",
+    "promptVersion": "RequirementsGapFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DREQ-01",
+      "origin": "Derived",
+      "text": "Beim Hinzuf\u00FCgen eines neuen No-Go-Eintrags \u00FCber den Plus-Button muss eine Eingabemaske bereitgestellt werden, die die erforderlichen Informationen erfasst.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-01"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass zum Hinzuf\u00FCgen neuer Eintr\u00E4ge weitere Eingaben durch den Nutzer notwendig sind."
+      ],
+      "derivationRationale": "REQ-01 fordert die Beibehaltung eines Plus-Buttons zum Hinzuf\u00FCgen von Eintr\u00E4gen, aber ohne eine Eingabemaske kann kein valider Eintrag hinzugef\u00FCgt werden."
+    },
+    {
+      "itemId": "DREQ-02",
+      "origin": "Derived",
+      "text": "Es muss ein Mechanismus zur Datenvalidierung vorhanden sein, um sicherzustellen, dass bearbeitete oder neu erstellte No-Go-Eintr\u00E4ge korrekte und vollst\u00E4ndige Daten enthalten.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass beim Bearbeiten und Hinzuf\u00FCgen von Eintr\u00E4gen eine Validierung notwendig ist, um Inkonsistenzen oder fehlerhafte Eintr\u00E4ge zu vermeiden."
+      ],
+      "derivationRationale": "REQ-03 beschreibt das Bearbeiten und L\u00F6schen von No-Go-Eintr\u00E4gen, es muss aber sichergestellt werden, dass bearbeitete oder neue Eintr\u00E4ge g\u00FCltig sind, um die Datenqualit\u00E4t zu gew\u00E4hrleisten."
+    },
+    {
+      "itemId": "DREQ-03",
+      "origin": "Derived",
+      "text": "Die Anzeige der No-Go-Seite muss das rote Stopp-Symbol jederzeit sichtbar und gut erkennbar darstellen, auch wenn sich eine Eingabemaske oder andere Interaktionselemente auf der Seite befinden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-02",
+        "REQ-01"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass durch die Integration von Interaktionselementen wie dem Plus-Button die Sichtbarkeit des Warnsignals beeintr\u00E4chtigt werden k\u00F6nnte."
+      ],
+      "derivationRationale": "Um die Funktion der deutlichen Warnsignalwirkung (REQ-02) nicht zu beeintr\u00E4chtigen, muss das rote Stopp-Symbol auch bei komplexeren Seitenlayouts mit Funktionen zum Hinzuf\u00FCgen (REQ-01) immer pr\u00E4sent bleiben."
+    },
+    {
+      "itemId": "DREQ-04",
+      "origin": "Derived",
+      "text": "Es muss ein Berechtigungskonzept geben, welches festlegt, wer No-Go-Eintr\u00E4ge hinzuf\u00FCgen, bearbeiten und l\u00F6schen darf.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-03",
+        "REQ-01"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass der Zugriff auf diese Funktionen nicht frei f\u00FCr alle Nutzer sein soll, um Missbrauch oder Fehler zu verhindern."
+      ],
+      "derivationRationale": "Da No-Go-Eintr\u00E4ge bearbeitet und gel\u00F6scht werden k\u00F6nnen (REQ-03) und neue hinzugef\u00FCgt werden k\u00F6nnen (REQ-01), ist es logisch notwendig zu kl\u00E4ren, wer diese Aktionen ausf\u00FChren darf."
+    },
+    {
+      "itemId": "DREQ-05",
+      "origin": "Derived",
+      "text": "Die Systemarchitektur muss die M\u00F6glichkeit vorsehen, No-Go-Eintr\u00E4ge entweder bewohner\u00FCbergreifend oder pro Bewohner zu verwalten, je nach kl\u00E4rungsw\u00FCrdiger Entscheidung.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass auf Basis von REQ-05 diese Entscheidung erst getroffen wird und das System beide Varianten technisch unterst\u00FCtzen k\u00F6nnen muss."
+      ],
+      "derivationRationale": "Da in REQ-05 noch die Kl\u00E4rung erfolgt, ob No-Gos global oder bewohnerbezogen gelten, ist es notwendig, das System so zu gestalten, dass beide Modelle technisch abbildbar sind, um sp\u00E4ter flexibel reagieren zu k\u00F6nnen."
+    },
+    {
+      "itemId": "DREQ-06",
+      "origin": "Derived",
+      "text": "Die Schicht\u00FCbergabe-Notiz f\u00FCr jede Schicht muss sicherstellen, dass alle relevanten No-Go-Eintr\u00E4ge der vorherigen Schicht enthalten sind, sofern sie f\u00FCr die n\u00E4chste Schicht relevant sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-04",
+        "REQ-01",
+        "REQ-03"
+      ],
+      "assumptions": [
+        "Es wird angenommen, dass No-Go-Eintr\u00E4ge Teil der Informationen sind, die in die Schicht\u00FCbergabe-Notiz aufgenommen werden m\u00FCssen."
+      ],
+      "derivationRationale": "Da No-Gos als wichtige Warnungen gelten (REQ-01, REQ-02) und bearbeitet werden k\u00F6nnen (REQ-03), m\u00FCssen deren aktuelle Eintr\u00E4ge in der Schicht\u00FCbergabe-Notiz angezeigt werden (REQ-04) um die \u00DCbergabe vollst\u00E4ndig und sicher zu gestalten."
+    }
+  ]
+}
