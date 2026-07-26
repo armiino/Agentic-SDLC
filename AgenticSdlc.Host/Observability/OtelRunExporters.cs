@@ -138,6 +138,15 @@ public sealed class OtelRunExporters : IDisposable
         _tracerProvider?.Dispose();
     }
 
+    /// <summary>Erzwingt den Export gepufferter Spans/Metrics OHNE die Provider zu schließen. Nötig, wenn ein
+    /// Verbraucher (z. B. der MetricsFinalizer) die otel-traces.jsonl NOCH WÄHREND des Laufs lesen muss
+    /// (BatchExportProcessor schreibt sonst erst beim Dispose).</summary>
+    public void ForceFlush()
+    {
+        _tracerProvider?.ForceFlush();
+        _meterProvider?.ForceFlush();
+    }
+
     /*
      * Raw Trace Exporter.
      *

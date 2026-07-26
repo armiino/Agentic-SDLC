@@ -95,6 +95,17 @@ public static class PipelineFullRunner
         run.OutputDir("01-ledger");
         run.OutputDir("checkpoints");
 
+        // Telemetrie-Fix (25.07.): EIN Faden-Exporter für den GANZEN pipeline-full-Lauf. Die inline-Stufen
+        // (Ingest/Pbi/Forward) haben keinen eigenen Sub-Run + Exporter → ihre Token-Spans (gen_ai.usage.*) fielen
+        // bisher weg (kein TracerProvider hörte zu). Dieser Faden-Provider ist der dauerhafte "Boden", der auch
+        // nach dem Dispose der Sub-Run-Provider (Ledger/Recipe) weiter zuhört. Fasst NUR den Exporter-Lebenszyklus
+        // an — Middleware-Logs (response-text.md, tool-calls.jsonl …) sind RunContext-basiert und davon unabhängig.
+        using var fadenOtel = OtelRunExporters.TryCreate(
+            settings.OtelEnabled, "AgenticSdlc.Host",
+            Path.Combine(run.LogsDir, "otel-traces.jsonl"),
+            Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+            settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+
         // Stufen-Modell: fullworkflow.models["01-ledger"] > jury.judgeModel > default.
         var ledgerModel = fw.Models.TryGetValue("01-ledger", out var m) && !string.IsNullOrWhiteSpace(m) ? m
             : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings.JuryJudgeModel!
@@ -140,6 +151,15 @@ public static class PipelineFullRunner
             exit = await RunForwardAsync(run, settings, judgeSettings, fw, repoRoot, manager, cts.Token).ConfigureAwait(false);
 
         run.AppendEvent(new { type = "PIPELINE_RUN_DONE", runId = run.RunId, exit, timestampUtc = DateTime.UtcNow });
+
+        // W1e' Schritt 5 — metrics.json (reiner Sammler). Faden-otel VOR dem Lesen flushen (BatchProcessor);
+        // coreItemsAfter = Live-Core JETZT (nach Ingest/Pbi-Apply, vor evtl. Restore). Metrics-Fehler kippen den Lauf nicht.
+        fadenOtel?.ForceFlush();
+        var coreRepoForMetrics = new JsonCoreRepository(repoRoot);
+        var coreAfter = await coreRepoForMetrics.ExistsAsync().ConfigureAwait(false)
+            ? (await coreRepoForMetrics.LoadAsync().ConfigureAwait(false)).Items.Count : 0;
+        await MetricsFinalizer.WriteAsync(run, repoRoot, fw, settings, coreAfter, cts.Token).ConfigureAwait(false);
+
         Console.WriteLine($"[{Cmd}] Faden: runs/fullworkflow/{run.RunId}/  exit={exit}");
         return exit;
     }
