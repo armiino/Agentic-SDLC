@@ -60,7 +60,20 @@ internal static class PipelineComposedWorkflow
         var b = new WorkflowBuilder(ingestResolve)
             .WithName("Pipeline-Ingest-PbiUpdate-HITL")
             .WithDescription("Ingest -> [Human] -> Apply -> Bridge -> PbiUpdate -> [Human] -> Apply. Zwei Gates, ein Graph.");
+        AddTo(b, ingestResolve, ingestGate, ingestRepair, ingestFinalize, ingestPort, ingestApply,
+            bridge, pbiDerive, pbiMaker, pbiGate, pbiRepair, pbiFinalize, pbiPort, pbiApply);
+        return b.Build();
+    }
 
+    // U2 (Ein-Graph): DIESELBE Kanten-Verdrahtung fuer den Standalone-Graph (pipeline-hitl) UND den
+    // Ein-Graph von pipeline-full — eine Quelle, keine Kopie.
+    public static void AddTo(WorkflowBuilder b,
+        IngestionHitlResolveExecutor ingestResolve, IngestionGateExecutor ingestGate, IngestionRepairExecutor ingestRepair,
+        IngestionHitlFinalizeExecutor ingestFinalize, RequestPort ingestPort, IngestComposedApplyExecutor ingestApply,
+        IngestPbiBridgeExecutor bridge,
+        PbiUpdateDeriveExecutor pbiDerive, PbiUpdateMakerExecutor pbiMaker, PbiUpdateGateExecutor pbiGate, PbiUpdateRepairExecutor pbiRepair,
+        PbiUpdateHitlFinalizeExecutor pbiFinalize, RequestPort pbiPort, PbiUpdateApplyExecutor pbiApply)
+    {
         // Stufe 1: Ingest
         b.AddEdge(ingestResolve, ingestGate);
         b.AddEdge<IngestionVerdict>(ingestGate, ingestRepair, m => m is not null && m.Decision == GateDecision.Repair);
@@ -85,6 +98,5 @@ internal static class PipelineComposedWorkflow
         b.WithOutputFrom(ingestFinalize);  // terminal, falls Ingest-Gate scheitert (Pipeline-Abbruch)
         b.WithOutputFrom(pbiFinalize);     // terminal, falls Pbi-Gate scheitert
         b.WithOutputFrom(pbiApply);        // terminal bei Erfolg
-        return b.Build();
     }
 }

@@ -66,6 +66,7 @@ internal sealed class PbiUpdateHitlFinalizeExecutor(RunContext run) : Executor<P
 // APPLY (HITL): konsumiert die menschliche Response. Laedt den Plan FRISCH von Platte, Core FRISCH (in ExecuteAsync)
 // -> identisch zum CLI-Apply. Mutiert den Core deterministisch + schreibt github-sync-Delta.
 [YieldsOutput(typeof(PbiUpdateApplyReport))]
+[SendsMessage(typeof(PbiUpdateApplyReport))] // U2 (Ein-Graph): Report fließt zusätzlich als Message weiter (Forward-Bridge); ohne Kante wirkungslos
 internal sealed class PbiUpdateApplyExecutor(RunContext run, string repoRoot, string outDir) : Executor<PbiUpdateReviewResponse>("PbiUpdateApply")
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
@@ -83,6 +84,7 @@ internal sealed class PbiUpdateApplyExecutor(RunContext run, string repoRoot, st
         var report = await PbiUpdateApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot, ct).ConfigureAwait(false);
         run.AppendEvent(new { type = "PBI_UPDATE_DONE", runId = run.RunId, applied = true, newPbis = report.NewPbis.Count, updatedPbis = report.UpdatedPbis.Count, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(report, ct).ConfigureAwait(false);
+        await context.SendMessageAsync(report).ConfigureAwait(false);
     }
 }
 

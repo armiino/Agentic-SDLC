@@ -38,30 +38,46 @@ public static class ReClarifyClusterApplyRunner
             return 2;
         }
 
-        var clusters = await LoadAsync<FeatureClusterSet>(clustersPath).ConfigureAwait(false);
-        var review = await LoadAsync<ClusterReviewReport>(reviewPath).ConfigureAwait(false);
         var decisions = await LoadAsync<ClusterHumanDecisionsFile>(decisionsPath).ConfigureAwait(false);
-
-        CanonicalRequirementsBaseline baseline;
-        try
-        {
-            var view = await new JsonProjectStateViewRepository(repoRoot)
-                .GetCanonicalRequirementsViewAsync(ProjectScope.FromSourcePath(clusters.SourceBaselinePath, "re-clarify", "current_baseline"))
-                .ConfigureAwait(false);
-            baseline = view.Baseline;
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"[l4-re-clarify-apply] Baseline nicht gefunden ({clusters.SourceBaselinePath}): {ex.Message}");
-            return 2;
-        }
-
         var accepted = decisions.Decisions
             .Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase))
             .Select(d => d.OpId)
             .ToHashSet(StringComparer.Ordinal);
 
-        var result = ReClarifyClusterApply.Apply(baseline, clusters, review.Operations, accepted);
+        ClusterApplyResult result;
+        int clustersBefore;
+        try
+        {
+            (result, clustersBefore, _) = await ExecuteAsync(clustersDir, repoRoot, accepted).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[l4-re-clarify-apply] {ex.Message}");
+            return 2;
+        }
+
+        Console.WriteLine($"[l4-re-clarify-apply] accepted={accepted.Count} applied={result.AppliedOpIds.Count} skipped={result.SkippedOps.Count} "
+                        + $"clusters {clustersBefore}->{result.Updated.Clusters.Count} gate={(result.Gate.Pass ? "pass" : "fail")} errors={result.Gate.Errors.Count}");
+        foreach (var s in result.SkippedOps) Console.WriteLine($"[l4-re-clarify-apply]   skip {s}");
+        Console.WriteLine($"[l4-re-clarify-apply] -> {Path.GetRelativePath(repoRoot, Path.Combine(clustersDir, "applied"))}");
+        return result.Gate.Pass ? 0 : 1;
+    }
+
+    // pipeline-full (B3): der EINE Apply-Kern fuer CLI-Runner UND Graph-Knoten (Muster: IngestionApplyExec).
+    // Laedt clusters+review aus clustersDir, wendet die akzeptierten Operationen deterministisch an
+    // (ReClarifyClusterApply.Apply) und materialisiert applied/. Wirft bei fehlenden Artefakten/Baseline.
+    internal static async Task<(ClusterApplyResult Result, int ClustersBefore, string AppliedDir)> ExecuteAsync(
+        string clustersDir, string repoRoot, ISet<string> acceptedOpIds)
+    {
+        var clustersPath = Path.Combine(clustersDir, "feature-clusters.json");
+        var clusters = await LoadAsync<FeatureClusterSet>(clustersPath).ConfigureAwait(false);
+        var review = await LoadAsync<ClusterReviewReport>(Path.Combine(clustersDir, "cluster-review.json")).ConfigureAwait(false);
+
+        var view = await new JsonProjectStateViewRepository(repoRoot)
+            .GetCanonicalRequirementsViewAsync(ProjectScope.FromSourcePath(clusters.SourceBaselinePath, "re-clarify", "current_baseline"))
+            .ConfigureAwait(false);
+
+        var result = ReClarifyClusterApply.Apply(view.Baseline, clusters, review.Operations, acceptedOpIds);
 
         var appliedDir = Path.Combine(clustersDir, "applied");
         Directory.CreateDirectory(appliedDir);
@@ -70,7 +86,7 @@ public static class ReClarifyClusterApplyRunner
         await File.WriteAllTextAsync(Path.Combine(appliedDir, "cluster-apply-report.json"), JsonSerializer.Serialize(new
         {
             sourceClusters = Path.GetRelativePath(repoRoot, clustersPath),
-            acceptedOps = accepted.Count,
+            acceptedOps = acceptedOpIds.Count,
             appliedOps = result.AppliedOpIds,
             skippedOps = result.SkippedOps,
             removedEmptyClusters = result.RemovedClusters,
@@ -81,11 +97,7 @@ public static class ReClarifyClusterApplyRunner
             timestampUtc = DateTime.UtcNow
         }, Json)).ConfigureAwait(false);
 
-        Console.WriteLine($"[l4-re-clarify-apply] accepted={accepted.Count} applied={result.AppliedOpIds.Count} skipped={result.SkippedOps.Count} "
-                        + $"clusters {clusters.Clusters.Count}->{result.Updated.Clusters.Count} gate={(result.Gate.Pass ? "pass" : "fail")} errors={result.Gate.Errors.Count}");
-        foreach (var s in result.SkippedOps) Console.WriteLine($"[l4-re-clarify-apply]   skip {s}");
-        Console.WriteLine($"[l4-re-clarify-apply] -> {Path.GetRelativePath(repoRoot, appliedDir)}");
-        return result.Gate.Pass ? 0 : 1;
+        return (result, clusters.Clusters.Count, appliedDir);
     }
 
     private static async Task<T> LoadAsync<T>(string path)

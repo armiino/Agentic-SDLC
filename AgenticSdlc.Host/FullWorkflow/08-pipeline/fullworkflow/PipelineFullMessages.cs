@@ -36,6 +36,43 @@ public sealed record MeetingDeltaOutput(
     [property: JsonPropertyName("itemCount")] int ItemCount,
     [property: JsonPropertyName("relationCount")] int RelationCount);
 
+/// <summary>U0 (Ein-Graph): das Delta, geroutet in den Bootstrap-Zweig (Core leer / mode=bootstrap).</summary>
+public sealed record BootstrapDelta([property: JsonPropertyName("delta")] Delta.ProjectStateDocument Delta);
+
+/// <summary>U0 (Ein-Graph): das Delta, geroutet in den Betriebs-Zweig (Core existiert / mode=operational).</summary>
+public sealed record OperationalDelta([property: JsonPropertyName("delta")] Delta.ProjectStateDocument Delta);
+
+/// <summary>Bootstrap-Zweig B1: Core geseedet + L4-Baseline-Triplet materialisiert (Input für re-clarify cluster).</summary>
+public sealed record CoreBootstrapOutput(
+    [property: JsonPropertyName("baselineDir")] string BaselineDir,
+    [property: JsonPropertyName("baselinePath")] string BaselinePath,
+    [property: JsonPropertyName("coreItems")] int CoreItems,
+    [property: JsonPropertyName("requirements")] int Requirements);
+
+/// <summary>Bootstrap-Zweig B3: Ergebnis des deterministischen Cluster-Apply (Input für clarify, B4).</summary>
+public sealed record ClusterApplyOutput(
+    [property: JsonPropertyName("appliedClustersPath")] string AppliedClustersPath,
+    [property: JsonPropertyName("applied")] int Applied,
+    [property: JsonPropertyName("skipped")] int Skipped,
+    [property: JsonPropertyName("gatePass")] bool GatePass,
+    [property: JsonPropertyName("clusters")] int Clusters);
+
+/// <summary>Bootstrap-Zweig B4: Ergebnis des deterministischen Backlog-Apply (Input für core-seed-backlog).</summary>
+public sealed record BacklogApplyOutput(
+    [property: JsonPropertyName("appliedBacklogPath")] string AppliedBacklogPath,
+    [property: JsonPropertyName("pbisBefore")] int PbisBefore,
+    [property: JsonPropertyName("pbisAfter")] int PbisAfter,
+    [property: JsonPropertyName("dropped")] int Dropped,
+    [property: JsonPropertyName("gatePass")] bool GatePass);
+
+/// <summary>Bootstrap-Zweig B4: Backlog im Core — der Bootstrap ist inhaltlich komplett (B5 = initial-sync).</summary>
+public sealed record BacklogSeedOutput(
+    [property: JsonPropertyName("featuresAdded")] int FeaturesAdded,
+    [property: JsonPropertyName("pbisAdded")] int PbisAdded,
+    [property: JsonPropertyName("relationsAdded")] int RelationsAdded,
+    [property: JsonPropertyName("coreItemsBefore")] int CoreItemsBefore,
+    [property: JsonPropertyName("coreItemsAfter")] int CoreItemsAfter);
+
 /// <summary>Snapshot vor Forward (R-16): frischer github-snapshot + Issue-Zahl.</summary>
 public sealed record GithubSnapshotOutput(
     [property: JsonPropertyName("snapshotPath")] string SnapshotPath,

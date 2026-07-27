@@ -1,0 +1,118 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "cluster-review-20260727_090839",
+  "verdict": "revise",
+  "summary": "Einige Querschnittsanforderungen sind f\u00E4lschlich als Core-Requirements in Feature-Clustern statt als CrossCutting klassifiziert, und einige Anforderungen wurden in falschen Clustern platziert.",
+  "findings": [
+    {
+      "clusterId": "feature-communication-app-1",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-04 (Account-Typen, Rechte) ist ein Querschnitts-Requirement und sollte nicht als Core im Kommunikations-App-Cluster sein."
+    },
+    {
+      "clusterId": "feature-communication-app-1",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-07 (Login-Funktion) ist ein Querschnitts-Requirement und sollte nicht als Core im Kommunikations-App-Cluster sein."
+    },
+    {
+      "clusterId": "feature-user-management-1",
+      "kind": "wrong_split",
+      "severity": "error",
+      "message": "REQ-04 und REQ-07 sind Core-Anforderungen f\u00FCr Benutzerverwaltung, aber sie sind irrt\u00FCmlich sowohl im Benutzerverwaltungs-Cluster als auch f\u00E4lschlich als CrossCutting im Kommunikations-App-Cluster verteilt."
+    },
+    {
+      "clusterId": "feature-navigation-and-usability-1",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-05 (Suchfunktion) ist aktuell als Core im Navigation-Cluster, wird aber in Kommunikations-App als CrossCutting gef\u00FChrt. Suchfunktion betrifft mehrere Bereiche und sollte als CrossCutting behandelt werden."
+    },
+    {
+      "clusterId": "feature-navigation-and-usability-1",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-09 (Profil\u00FCbersicht mit Suchleiste) ist im Navigation-Cluster Core, aber Suchfunktion ist Querschnitt und sollte als CrossCutting gef\u00FChrt werden."
+    },
+    {
+      "clusterId": "feature-platform-and-accessibility-1",
+      "kind": "wrong_merge",
+      "severity": "warning",
+      "message": "REQ-12, REQ-14, REQ-15 sind als Core im Plattform- und Barrierefreiheits-Cluster zusammengef\u00FChrt. Diese Anforderungen sind technisch und querschnittlich und sollten idealerweise als CrossCutting behandelt oder in enger Verkn\u00FCpfung gehalten werden. Aktuelle Granularit\u00E4t wegen Mischung von plattform-spezifischen und barrierefreiheitsbezogenen Anforderungen sollte bedacht werden."
+    }
+  ],
+  "operations": [
+    {
+      "opId": "op1",
+      "kind": "remove_crosscutting",
+      "rationale": "REQ-04 ist Kern des Benutzerverwaltungs-Clusters und daher nicht als CrossCutting im Kommunikations-App-Cluster geeignet.",
+      "requirementId": "REQ-04",
+      "fromClusterId": "feature-communication-app-1",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op2",
+      "kind": "remove_crosscutting",
+      "rationale": "REQ-07 ist Kern des Benutzerverwaltungs-Clusters und daher nicht als CrossCutting im Kommunikations-App-Cluster geeignet.",
+      "requirementId": "REQ-07",
+      "fromClusterId": "feature-communication-app-1",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op3",
+      "kind": "remove_crosscutting",
+      "rationale": "REQ-05 ist eine Querschnittsanforderung (Suchfunktion) und sollte daher aus Core des Navigation-Clusters entfernt werden.",
+      "requirementId": "REQ-05",
+      "fromClusterId": "feature-navigation-and-usability-1",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op4",
+      "kind": "remove_crosscutting",
+      "rationale": "REQ-09 ist Funktion mit Suchbezug und sollte als CrossCutting gef\u00FChrt werden statt Core im Navigation-Cluster.",
+      "requirementId": "REQ-09",
+      "fromClusterId": "feature-navigation-and-usability-1",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op5",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-05 muss als Querschnittsanforderung auch in Kommunikations-App als CrossCutting gesetzt werden, da Suche verschiedene Bereiche betrifft.",
+      "requirementId": "REQ-05",
+      "fromClusterId": null,
+      "toClusterId": "feature-communication-app-1",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op6",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-09 muss als Querschnittsfunktion in Kommunikations-App als CrossCutting gef\u00FChrt werden.",
+      "requirementId": "REQ-09",
+      "fromClusterId": null,
+      "toClusterId": "feature-communication-app-1",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    }
+  ]
+}

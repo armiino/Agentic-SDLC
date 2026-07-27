@@ -25,41 +25,51 @@ public static class CoreSeedBacklogRunner
             Console.Error.WriteLine($"[core-seed-backlog] product-backlog.json fuer '{args[1]}' nicht gefunden.");
             return 2;
         }
+        var sourceRunId = InferRunId(backlogPath);
+        CoreBacklogSeeder.Report report;
+        int itemsBefore, itemsAfter;
+        try
+        {
+            (report, itemsBefore, itemsAfter) = await ExecuteAsync(backlogPath, repoRoot, sourceRunId).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[core-seed-backlog] {ex.Message}");
+            return ex is InvalidOperationException && ex.Message.StartsWith("ABBRUCH", StringComparison.Ordinal) ? 1 : 2;
+        }
+
+        Console.WriteLine($"[core-seed-backlog] featuresAdded={report.FeaturesAdded} pbisAdded={report.PbisAdded} relations={report.RelationsAdded} skippedExisting={report.SkippedExisting} unresolvedReqRefs={report.RequirementRefsUnresolved}");
+        Console.WriteLine($"[core-seed-backlog] Core items {itemsBefore}->{itemsAfter} -> {Path.GetRelativePath(repoRoot, CorePaths.CoreFile(repoRoot))} (sourceRun {sourceRunId})");
+        if (report.FeaturesAdded == 0 && report.PbisAdded == 0)
+            Console.WriteLine("[core-seed-backlog] nichts Neues (idempotent: bereits geseedet).");
+        return 0;
+    }
+
+    // pipeline-full (B4): der EINE Seed-Kern fuer CLI-Runner UND Graph-Knoten. Idempotent (CoreBacklogSeeder);
+    // Payload/itemType-Verstoesse => Abbruch VOR dem Save (kein kaputter Core).
+    internal static async Task<(CoreBacklogSeeder.Report Report, int ItemsBefore, int ItemsAfter)> ExecuteAsync(
+        string backlogPath, string repoRoot, string sourceRunId)
+    {
         var backlog = await LoadAsync<ProductBacklogDocument>(backlogPath).ConfigureAwait(false);
 
         var clustersFull = Path.IsPathRooted(backlog.SourcePath) ? backlog.SourcePath : Path.Combine(repoRoot, backlog.SourcePath);
         if (!File.Exists(clustersFull))
-        {
-            Console.Error.WriteLine($"[core-seed-backlog] Quell-Cluster nicht gefunden: {backlog.SourcePath}");
-            return 2;
-        }
+            throw new InvalidOperationException($"Quell-Cluster nicht gefunden: {backlog.SourcePath}");
         var clusters = await LoadAsync<FeatureClusterSet>(clustersFull).ConfigureAwait(false);
 
         var repo = new JsonCoreRepository(repoRoot);
         if (!await repo.ExistsAsync().ConfigureAwait(false))
-        {
-            Console.Error.WriteLine("[core-seed-backlog] Core fehlt - erst 'core-seed' fahren.");
-            return 2;
-        }
+            throw new InvalidOperationException("Core fehlt - erst 'core-seed' fahren.");
         var core = await repo.LoadAsync().ConfigureAwait(false);
 
-        var sourceRunId = InferRunId(backlogPath);
         var (updated, report) = CoreBacklogSeeder.Seed(core, clusters, backlog, sourceRunId);
 
         var problems = ValidatePayloadItemType(updated);
         if (problems.Count > 0)
-        {
-            Console.Error.WriteLine($"[core-seed-backlog] ABBRUCH: {problems.Count} Payload/itemType-Verstoesse (z.B. {problems[0]}).");
-            return 1;
-        }
+            throw new InvalidOperationException($"ABBRUCH: {problems.Count} Payload/itemType-Verstoesse (z.B. {problems[0]}).");
 
         await repo.SaveAsync(updated).ConfigureAwait(false);
-
-        Console.WriteLine($"[core-seed-backlog] featuresAdded={report.FeaturesAdded} pbisAdded={report.PbisAdded} relations={report.RelationsAdded} skippedExisting={report.SkippedExisting} unresolvedReqRefs={report.RequirementRefsUnresolved}");
-        Console.WriteLine($"[core-seed-backlog] Core items {core.Items.Count}->{updated.Items.Count} -> {Path.GetRelativePath(repoRoot, CorePaths.CoreFile(repoRoot))} (sourceRun {sourceRunId})");
-        if (report.FeaturesAdded == 0 && report.PbisAdded == 0)
-            Console.WriteLine("[core-seed-backlog] nichts Neues (idempotent: bereits geseedet).");
-        return 0;
+        return (report, core.Items.Count, updated.Items.Count);
     }
 
     // Payload passt zu itemType: feature-Payload nur bei feature, pbi-Payload nur bei pbi; nie beide.

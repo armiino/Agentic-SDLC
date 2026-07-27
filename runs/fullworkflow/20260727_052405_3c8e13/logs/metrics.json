@@ -1,0 +1,99 @@
+{
+  "runId": "20260727_052405_3c8e13",
+  "benchmarkVersion": "input/transcripts/Interview-Einrichtung.txt",
+  "policyProfile": "Interactive",
+  "models": {
+    "01-ledger": "openai/gpt-5.4",
+    "02-baselines": "openai/gpt-5.4",
+    "default": "openai/gpt-5.4"
+  },
+  "stages": [
+    {
+      "stage": "01-ledger",
+      "wallMs": 329666,
+      "attempts": 1,
+      "gate": {
+        "pass": true,
+        "errors": 4,
+        "warnings": 0
+      },
+      "tokens": {
+        "in": 133343,
+        "out": 40223
+      }
+    },
+    {
+      "stage": "02-baselines",
+      "wallMs": 124899,
+      "attempts": 1,
+      "gate": null,
+      "tokens": {
+        "in": 41020,
+        "out": 11508
+      }
+    },
+    {
+      "stage": "04-delta",
+      "wallMs": 13,
+      "attempts": 1,
+      "gate": null,
+      "tokens": {
+        "in": 0,
+        "out": 0
+      }
+    },
+    {
+      "stage": "07-ingest",
+      "wallMs": 0,
+      "attempts": 1,
+      "gate": null,
+      "tokens": {
+        "in": 312259,
+        "out": 79518
+      }
+    },
+    {
+      "stage": "07-pbi-update",
+      "wallMs": 0,
+      "attempts": 1,
+      "gate": null,
+      "tokens": {
+        "in": 312259,
+        "out": 79518
+      }
+    },
+    {
+      "stage": "07-github",
+      "wallMs": 28,
+      "attempts": 2,
+      "gate": {
+        "pass": false,
+        "errors": 21,
+        "warnings": 0
+      },
+      "tokens": {
+        "in": 0,
+        "out": 0
+      }
+    }
+  ],
+  "humanGates": [
+    {
+      "gate": "cluster-review-gate",
+      "answeredBy": "AcceptAll"
+    },
+    {
+      "gate": "backlog-review-gate",
+      "answeredBy": "AcceptAll"
+    }
+  ],
+  "coreItemsBefore": 0,
+  "coreItemsAfter": 71,
+  "issuesCreated": 0,
+  "issuesUpdated": 0,
+  "violations": [
+    "01-ledger:gate-errors=4",
+    "07-github:gate-errors=21"
+  ],
+  "recall": null
+}

@@ -109,6 +109,16 @@ internal static class GithubForwardHitlWorkflow
         var b = new WorkflowBuilder(seed)
             .WithName(WorkflowName)
             .WithDescription("Delta -> Seed -> Maker -> Gate -> [Repair] -> Finalize -> [RequestPort Human] -> Apply.");
+        AddTo(b, seed, maker, gate, repair, finalize, humanGate, apply);
+        return b.Build();
+    }
+
+    // U2 (Ein-Graph): DIESELBE Kanten-Verdrahtung fuer den Standalone-Graph UND den Ein-Graph — eine Quelle.
+    public static void AddTo(WorkflowBuilder b,
+        GithubForwardSeedExecutor seed, GithubForwardMakerExecutor maker, GithubForwardGateExecutor gate,
+        GithubForwardRepairExecutor repair, GithubForwardHitlFinalizeExecutor finalize,
+        RequestPort humanGate, GithubForwardApplyExecutor apply)
+    {
         b.AddEdge(seed, maker);
         b.AddEdge(maker, gate);
         b.AddEdge<GithubForwardVerdict>(gate, repair, m => m is not null && m.Decision == GateDecision.Repair);
@@ -118,6 +128,5 @@ internal static class GithubForwardHitlWorkflow
         b.AddEdge(humanGate, apply);      // ForwardReviewResponse
         b.WithOutputFrom(finalize);       // terminaler "needs manual"-Output
         b.WithOutputFrom(apply);          // terminaler Apply-Report
-        return b.Build();
     }
 }

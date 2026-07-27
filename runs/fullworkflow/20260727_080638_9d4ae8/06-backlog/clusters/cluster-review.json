@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "cluster-review-20260727_081711",
+  "verdict": "revise",
+  "summary": "Datenschutz-Requirement REQ-19 ist f\u00E4lschlich als Core im Cluster \u0027feature-datenschutz\u0027 eingeordnet. Datenschutz ist ein Querschnittsaspekt und sollte als CrossCutting-Requirement in mehreren Clustern gef\u00FChrt werden. Keine falschen Zusammenlegungen oder Splits bei den anderen Clustern festgestellt.",
+  "findings": [
+    {
+      "clusterId": "feature-datenschutz",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-19 ist als Core in \u0027feature-datenschutz\u0027 eingeordnet, sollte aber Querschnitts-Requirement sein."
+    }
+  ],
+  "operations": [
+    {
+      "opId": "op1",
+      "kind": "remove_core",
+      "rationale": "Datenschutz ist ein Querschnittsaspekt und darf nicht als Core nur in einem Cluster verbleiben.",
+      "requirementId": "REQ-19",
+      "fromClusterId": "feature-datenschutz",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op2",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-19 betrifft Datenschutz auch in der digitalen Kommunikationsl\u00F6sung.",
+      "requirementId": "REQ-19",
+      "fromClusterId": null,
+      "toClusterId": "feature-digitale-loesung",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op3",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-19 betrifft Datenschutz auch in den App-Funktionalit\u00E4ten.",
+      "requirementId": "REQ-19",
+      "fromClusterId": null,
+      "toClusterId": "feature-app-funktionalitaeten",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op4",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-19 betrifft Datenschutz auch bei der Benutzerverwaltung und Rechteverwaltung.",
+      "requirementId": "REQ-19",
+      "fromClusterId": null,
+      "toClusterId": "feature-benutzerverwaltung",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    }
+  ]
+}

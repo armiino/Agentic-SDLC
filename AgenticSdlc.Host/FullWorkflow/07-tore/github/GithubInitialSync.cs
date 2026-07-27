@@ -1,0 +1,51 @@
+using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Delta;
+
+namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
+
+// R-15 / Bootstrap-Plan B5: deterministischer initial-sync — der Erst-Sync eines frischen Repos braucht ein
+// Voll-CREATE-Delta (ALLE unmapped PBIs), nicht das inkrementelle update-Delta aus pbi-update. Bisher wurde das
+// einmalig als handgelegtes Run-Artefakt simuliert (runsArchive/pbi-update/initial-sync-20260720); dieser Kern
+// erzeugt exakt dasselbe Format (GithubSyncDeltaDocument) aus der github-sync-Core-View. Kein LLM, keine
+// Interpretation — die Entscheidung CREATE vs. LINK trifft weiterhin der Forward-Agent + Gate (Dry-Run-Default).
+public static class GithubInitialSync
+{
+    /// <summary>Alle unmapped, nicht archivierten PBIs des Cores als Voll-CREATE-Delta (newPbis = alle).</summary>
+    public static GithubSyncDeltaDocument BuildDelta(ProjectStateDocument core)
+    {
+        var unmapped = CoreViews.GithubSync(core).Entries
+            .Where(e => string.IsNullOrWhiteSpace(e.GithubIssue))
+            .ToList();
+        return new GithubSyncDeltaDocument(
+            NewPbis: unmapped.Select(e => e.PbiId).ToList(),
+            UpdatedPbis: [],
+            Entries: unmapped);
+    }
+
+    /// <summary>
+    /// R-27: deterministischer Erst-Sync-PLAN — je unmapped PBI (NACH dem Seed-Vorfilter: keine blocked/
+    /// needs_clarify-Holds mehr dabei) ein gate-konformer CREATE (Title+Body aus dem Core-Zustand,
+    /// ehrliche Such-Evidenz: leerer Snapshot ⇒ Duplikatsuche gegenstandslos). R-17-Präzedenz vom 23.07.
+    /// </summary>
+    public static List<GithubForwardOp> BuildCreateOps(IReadOnlyList<GithubSyncEntry> unmapped)
+        => unmapped.Select(e => new GithubForwardOp(
+            GithubForwardKind.CreateIssue, e.PbiId, null,
+            Title: e.Title,
+            Body: InitialSyncBody(e),
+            Labels: ["initial-sync"],
+            SearchedQueries: [e.Title],
+            SearchEvidence: "Initial-Sync (deterministisch): frisches Repo / leerer Issue-Snapshot — keine plausiblen Treffer möglich, Duplikatsuche gegenstandslos.",
+            Anchor: e.CoveredRequirementIds.Count == 0 ? $"pbi {e.PbiId}" : $"pbi {e.PbiId} <- {string.Join(", ", e.CoveredRequirementIds)}",
+            Rationale: "Erst-Sync eines frischen Repos: unmapped PBI ohne Issue — CREATE deterministisch aus dem Core-Payload (R-15/R-17).",
+            Origin: "deterministic")).ToList();
+
+    // Issue-Body aus dem Core-Zustand (Beleg, kein freier Text) — Stil wie GithubForwardSeed.ProposedBody.
+    private static string InitialSyncBody(GithubSyncEntry e)
+    {
+        var reqs = e.CoveredRequirementIds.Count == 0 ? "-" : string.Join(", ", e.CoveredRequirementIds);
+        var readiness = string.IsNullOrWhiteSpace(e.Readiness) ? "-" : e.Readiness;
+        return $"PBI {e.PbiId} — Status: {e.Status}, Readiness: {readiness}\n\n" +
+               $"Abgedeckte Requirements: {reqs}\n\n" +
+               "Quelle: Initial-Sync aus Core-PBI (deterministisch, R-15).";
+    }
+}

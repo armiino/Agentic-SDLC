@@ -24,6 +24,39 @@ public static class ReClarifyRunner
     private const string ClarifyName = "L4ReClarifyBacklogAgent";
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
+    // pipeline-full (B3): dieselben Maker/Review-Agents wie RunClusterAsync, fuer die Graph-Komposition
+    // gehoben (Muster: PipelineComposedRunner.AgentFactory). Eine Quelle, keine Kopie.
+    internal static (Func<IReadOnlyList<AITool>, AIAgent> Maker, Func<IReadOnlyList<AITool>, AIAgent> Review)
+        BuildClusterAgentFactories(string repoRoot, HostSettings settings, HostSettings genSettings, RunContext run)
+    {
+        var vars = new Dictionary<string, string> { ["runId"] = run.RunId };
+        var makerPrompt = PromptProvider.Load(repoRoot, Phase, MakerName, "L4ReClarifyClusterAgent1", vars);
+        var reviewPrompt = PromptProvider.Load(repoRoot, Phase, ReviewName, "L4ReClarifyClusterReviewAgent1", vars);
+
+        var makerClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, MakerName, SourceName);
+        var reviewClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, ReviewName, SourceName);
+
+        Func<IReadOnlyList<AITool>, AIAgent> maker = tools =>
+            makerClient.AsAIAgent(instructions: makerPrompt, name: MakerName, tools: [.. tools])
+                .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+        Func<IReadOnlyList<AITool>, AIAgent> review = tools =>
+            reviewClient.AsAIAgent(instructions: reviewPrompt, name: ReviewName, tools: [.. tools])
+                .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+        return (maker, review);
+    }
+
+    // pipeline-full (B4): derselbe Clarify-Agent wie RunClarifyAsync, fuer die Graph-Komposition gehoben.
+    internal static Func<IReadOnlyList<AITool>, AIAgent> BuildClarifyAgentFactory(
+        string repoRoot, HostSettings settings, HostSettings genSettings, RunContext run)
+    {
+        var vars = new Dictionary<string, string> { ["runId"] = run.RunId };
+        var prompt = PromptProvider.Load(repoRoot, Phase, ClarifyName, "L4ReClarifyBacklogAgent1", vars);
+        var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, ClarifyName, SourceName);
+        return tools =>
+            client.AsAIAgent(instructions: prompt, name: ClarifyName, tools: [.. tools])
+                .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+    }
+
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
         if (args.Length < 2)
@@ -119,12 +152,7 @@ public static class ReClarifyRunner
             metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
 
-        var vars = new Dictionary<string, string> { ["runId"] = run.RunId };
-        var prompt = PromptProvider.Load(repoRoot, Phase, ClarifyName, "L4ReClarifyBacklogAgent1", vars);
-        var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, ClarifyName, SourceName);
-        Func<IReadOnlyList<AITool>, AIAgent> factory = tools =>
-            client.AsAIAgent(instructions: prompt, name: ClarifyName, tools: [.. tools])
-                .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+        var factory = BuildClarifyAgentFactory(repoRoot, settings, genSettings, run);
 
         var workflow = ReClarifyBacklogWorkflow.Build(
             new ClarifyAgentExecutor(factory, run),
@@ -365,7 +393,6 @@ public static class ReClarifyRunner
             return 2;
         }
 
-        var relations = await RelationLookup.BuildAsync(view.Baseline, repoRoot).ConfigureAwait(false);
         var genSettings = modelArg is not null ? settings with { ModelId = modelArg } : settings;
         var run = new RunContext(RunId.New(), "l4-re-clarify");
         run.EnsureFolders();
@@ -376,7 +403,7 @@ public static class ReClarifyRunner
             workflow = ReClarifyClusterWorkflow.WorkflowName,
             runId = run.RunId,
             baseline = sourceRelativePath,
-            relations = relations.HasData,
+            // U1: relations.HasData steht jetzt im RE_CLARIFY_CLUSTER_AGENT_DONE-Event (Lookup baut der Executor zur Laufzeit).
             provider = settings.LlmProvider,
             model = genSettings.ModelId,
             outDir = Path.GetRelativePath(repoRoot, outDir),
@@ -391,26 +418,10 @@ public static class ReClarifyRunner
             metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
 
-        var vars = new Dictionary<string, string> { ["runId"] = run.RunId };
-        var makerPrompt = PromptProvider.Load(repoRoot, Phase, MakerName, "L4ReClarifyClusterAgent1", vars);
-        var reviewPrompt = PromptProvider.Load(repoRoot, Phase, ReviewName, "L4ReClarifyClusterReviewAgent1", vars);
-
-        var makerClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, MakerName, SourceName);
-        var reviewClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, ReviewName, SourceName);
-
-        Func<IReadOnlyList<AITool>, AIAgent> makerFactory = tools =>
-        {
-            var agent = makerClient.AsAIAgent(instructions: makerPrompt, name: MakerName, tools: [.. tools]);
-            return agent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
-        };
-        Func<IReadOnlyList<AITool>, AIAgent> reviewFactory = tools =>
-        {
-            var agent = reviewClient.AsAIAgent(instructions: reviewPrompt, name: ReviewName, tools: [.. tools]);
-            return agent.AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
-        };
+        var (makerFactory, reviewFactory) = BuildClusterAgentFactories(repoRoot, settings, genSettings, run);
 
         var workflow = ReClarifyClusterWorkflow.Build(
-            new ClusterAgentExecutor(makerFactory, relations, run),
+            new ClusterAgentExecutor(makerFactory, repoRoot, run),
             new ClusterGateExecutor(run),
             new ClusterReviewExecutor(reviewFactory, run),
             new ClusterFinalizeExecutor(run, outDir));
@@ -418,7 +429,7 @@ public static class ReClarifyRunner
         if (dryRun)
         {
             Console.WriteLine("[l4-re-clarify] --dry-run: Graph Build()-bar (ClusterAgent[Tools] -> Gate[det] -> ReviewAgent[Tools] -> Finalize). Kein LLM.");
-            Console.WriteLine($"[l4-re-clarify] requirements={view.Baseline.Requirements.Count} relations={relations.HasData}");
+            Console.WriteLine($"[l4-re-clarify] requirements={view.Baseline.Requirements.Count} (RelationLookup baut der Executor zur Laufzeit)");
             Console.WriteLine($"[l4-re-clarify] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
             return 0;
         }

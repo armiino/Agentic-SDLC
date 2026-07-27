@@ -57,6 +57,11 @@ public static class MetricsFinalizer
         DateTime? tBridge = EventTime(events, "PIPELINE_BRIDGE");
         DateTime? tForward = EventTime(events, "STAGE_FORWARD_START");
         DateTime? tEnd = EventTime(events, "GITHUB_FWD_DONE") ?? EventTime(events, "PIPELINE_RUN_DONE");
+        // R-28: Bootstrap-Zweig hat eigene Stufen/Fenster (Ingest/Pbi laufen dort NIE — ihre Betriebs-Anker fehlen,
+        // und ohne Anker würde SumTokens fensterlos den GANZEN Faden doppelt zuschreiben).
+        DateTime? tBoot = EventTime(events, "STAGE_BOOTSTRAP_START");
+        DateTime? tClusterApplied = EventTime(events, "PIPELINE_CLUSTER_APPLIED") ?? EventTime(events, "CLUSTER_GATE_REQUEST");
+        var bootstrapBranch = tBoot.HasValue;
 
         var fadenOtel = Path.Combine(runDir, "logs", "otel-traces.jsonl");
         var ledgerRunId = EventString(events, "STAGE_LEDGER_DONE", "ledgerRunId");
@@ -78,17 +83,34 @@ public static class MetricsFinalizer
         // 04-delta: deterministisch (kein LLM) → 0 Token, kein Gate.
         stages.Add(new StageMetric("04-delta", Wall(tBaselines, tDelta ?? tBackhalf), 1, null, new TokenMetric(0, 0)));
 
-        // 07-ingest: Faden-otel gefenstert [Backhalf .. Bridge]; Gate/Attempts aus Report/Summary.
-        stages.Add(new StageMetric("07-ingest", Wall(tBackhalf, tBridge),
-            Attempts: SummaryInt(runDir, "07-ingest", "ingestion-summary.json", "attempts") ?? 1,
-            Gate: ReadGate(runDir, "07-ingest", "ingestion-gate-report.json"),
-            Tokens: SumTokens(fadenOtel, tBackhalf, tBridge)));
+        if (bootstrapBranch)
+        {
+            // 06-backlog-cluster: Faden-otel gefenstert [Bootstrap .. Cluster-Applied] (Maker+ReviewAgent).
+            stages.Add(new StageMetric("06-backlog-cluster", Wall(tBoot, tClusterApplied),
+                Attempts: 1,
+                Gate: ReadGate(runDir, Path.Combine("06-backlog", "clusters"), "cluster-gate-report.json"),
+                Tokens: SumTokens(fadenOtel, tBoot, tClusterApplied)));
 
-        // 07-pbi-update: Faden-otel gefenstert [Bridge .. Forward].
-        stages.Add(new StageMetric("07-pbi-update", Wall(tBridge, tForward),
-            Attempts: SummaryInt(runDir, "07-pbi-update", "pbi-update-summary.json", "attempts") ?? 1,
-            Gate: ReadGate(runDir, "07-pbi-update", "pbi-update-gate-report.json"),
-            Tokens: SumTokens(fadenOtel, tBridge, tForward)));
+            // 06-backlog-clarify: [Cluster-Applied .. Forward] (ClarifyAgent + det. Applies/Seed).
+            stages.Add(new StageMetric("06-backlog-clarify", Wall(tClusterApplied, tForward ?? tEnd),
+                Attempts: 1,
+                Gate: ReadGate(runDir, Path.Combine("06-backlog", "backlog"), "backlog-gate-report.json"),
+                Tokens: SumTokens(fadenOtel, tClusterApplied, tForward ?? tEnd)));
+        }
+        else
+        {
+            // 07-ingest: Faden-otel gefenstert [Backhalf .. Bridge]; Gate/Attempts aus Report/Summary.
+            stages.Add(new StageMetric("07-ingest", Wall(tBackhalf, tBridge),
+                Attempts: SummaryInt(runDir, "07-ingest", "ingestion-summary.json", "attempts") ?? 1,
+                Gate: ReadGate(runDir, "07-ingest", "ingestion-gate-report.json"),
+                Tokens: SumTokens(fadenOtel, tBackhalf, tBridge)));
+
+            // 07-pbi-update: Faden-otel gefenstert [Bridge .. Forward].
+            stages.Add(new StageMetric("07-pbi-update", Wall(tBridge, tForward),
+                Attempts: SummaryInt(runDir, "07-pbi-update", "pbi-update-summary.json", "attempts") ?? 1,
+                Gate: ReadGate(runDir, "07-pbi-update", "pbi-update-gate-report.json"),
+                Tokens: SumTokens(fadenOtel, tBridge, tForward)));
+        }
 
         // 07-github (Forward): Faden-otel gefenstert [Forward .. Ende].
         stages.Add(new StageMetric("07-github", Wall(tForward, tEnd),

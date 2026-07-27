@@ -63,6 +63,7 @@ internal sealed class BacklogGateExecutor(RunContext run) : Executor<BacklogDraf
 }
 
 [YieldsOutput(typeof(BacklogResult))]
+[SendsMessage(typeof(BacklogResult))] // pipeline-full (B4): Ergebnis fließt zusätzlich als Message weiter (Gate-Komposition); im CLI-Graph ohne Kante wirkungslos
 internal sealed class BacklogFinalizeExecutor(RunContext run, string outDir) : Executor<BacklogVerdict>("L4ReClarifyBacklogFinalize")
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
@@ -85,7 +86,9 @@ internal sealed class BacklogFinalizeExecutor(RunContext run, string outDir) : E
         }, Json), ct).ConfigureAwait(false);
 
         run.AppendEvent(new { type = "RE_CLARIFY_BACKLOG_DONE", runId = run.RunId, gatePass = verdict.Report.Pass, pbis = verdict.Backlog.Items.Count, timestampUtc = DateTime.UtcNow });
-        await context.YieldOutputAsync(new BacklogResult(verdict.Backlog, verdict.Report)).ConfigureAwait(false);
+        var result = new BacklogResult(verdict.Backlog, verdict.Report);
+        await context.YieldOutputAsync(result).ConfigureAwait(false);
+        await context.SendMessageAsync(result).ConfigureAwait(false);
     }
 }
 

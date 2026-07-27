@@ -36,32 +36,49 @@ public static class ReClarifyBacklogApplyRunner
             return 2;
         }
 
-        var backlog = await LoadAsync<ProductBacklogDocument>(backlogPath).ConfigureAwait(false);
         var decisions = await LoadAsync<BacklogHumanDecisionsFile>(decisionsPath).ConfigureAwait(false);
+
+        BacklogApplyExecResult exec;
+        try
+        {
+            exec = await ExecuteAsync(backlogDir, repoRoot, decisions.Decisions).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[l4-re-clarify-backlog-apply] {ex.Message}");
+            return 2;
+        }
+
+        Console.WriteLine($"[l4-re-clarify-backlog-apply] pbis {exec.PbisBefore}->{exec.PbisAfter} dropped={exec.Dropped.Count} gate={(exec.Gate.Pass ? "pass" : "fail")} errors={exec.Gate.Errors.Count}");
+        foreach (var d in exec.Dropped) Console.WriteLine($"[l4-re-clarify-backlog-apply]   drop {d}");
+        Console.WriteLine($"[l4-re-clarify-backlog-apply] ProductBacklogView -> {Path.GetRelativePath(repoRoot, exec.AppliedBacklogPath)}");
+        return exec.Gate.Pass ? 0 : 1;
+    }
+
+    public sealed record BacklogApplyExecResult(
+        string AppliedBacklogPath, int PbisBefore, int PbisAfter, IReadOnlyList<string> Dropped, ReClarifyGateReport Gate);
+
+    // pipeline-full (B4): der EINE Apply-Kern fuer CLI-Runner UND Graph-Knoten (Muster: IngestionApplyExec).
+    // Semantik unveraendert: fehlender Entscheid = accept; edit ersetzt das PBI durch EditedPbiJson; reject/revise
+    // droppt. Danach deterministisches Traceability-Enrichment + erneutes DoR-Gate + applied/-Materialisierung.
+    internal static async Task<BacklogApplyExecResult> ExecuteAsync(
+        string backlogDir, string repoRoot, IReadOnlyList<BacklogHumanDecision> decisions)
+    {
+        var backlogPath = Path.Combine(backlogDir, "product-backlog.json");
+        var backlog = await LoadAsync<ProductBacklogDocument>(backlogPath).ConfigureAwait(false);
 
         // Cluster + Baseline fuer das erneute DoR-Gate (Coverage der Cluster-Cores).
         var clustersFull = Path.IsPathRooted(backlog.SourcePath) ? backlog.SourcePath : Path.Combine(repoRoot, backlog.SourcePath);
         if (!File.Exists(clustersFull))
-        {
-            Console.Error.WriteLine($"[l4-re-clarify-backlog-apply] Quell-Cluster nicht gefunden: {backlog.SourcePath}");
-            return 2;
-        }
+            throw new InvalidOperationException($"Quell-Cluster nicht gefunden: {backlog.SourcePath}");
         var clusters = await LoadAsync<FeatureClusterSet>(clustersFull).ConfigureAwait(false);
-        CanonicalRequirementsBaseline baseline;
-        try
-        {
-            var view = await new JsonProjectStateViewRepository(repoRoot)
-                .GetCanonicalRequirementsViewAsync(ProjectScope.FromSourcePath(clusters.SourceBaselinePath, "re-clarify", "current_baseline"))
-                .ConfigureAwait(false);
-            baseline = view.Baseline;
-        }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine($"[l4-re-clarify-backlog-apply] Baseline nicht gefunden ({clusters.SourceBaselinePath}): {ex.Message}");
-            return 2;
-        }
 
-        var byPbi = decisions.Decisions.GroupBy(d => d.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+        var view = await new JsonProjectStateViewRepository(repoRoot)
+            .GetCanonicalRequirementsViewAsync(ProjectScope.FromSourcePath(clusters.SourceBaselinePath, "re-clarify", "current_baseline"))
+            .ConfigureAwait(false);
+        var baseline = view.Baseline;
+
+        var byPbi = decisions.GroupBy(d => d.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
         var applied = new List<ProductBacklogItem>();
         var dropped = new List<string>();
         foreach (var pbi in backlog.Items)
@@ -108,7 +125,8 @@ public static class ReClarifyBacklogApplyRunner
 
         var appliedOutDir = Path.Combine(backlogDir, "applied");
         Directory.CreateDirectory(appliedOutDir);
-        await File.WriteAllTextAsync(Path.Combine(appliedOutDir, "product-backlog.json"), JsonSerializer.Serialize(appliedDoc, Json)).ConfigureAwait(false);
+        var appliedBacklogPath = Path.Combine(appliedOutDir, "product-backlog.json");
+        await File.WriteAllTextAsync(appliedBacklogPath, JsonSerializer.Serialize(appliedDoc, Json)).ConfigureAwait(false);
         await File.WriteAllTextAsync(Path.Combine(appliedOutDir, "backlog-gate-report.json"), JsonSerializer.Serialize(gate, Json)).ConfigureAwait(false);
         await File.WriteAllTextAsync(Path.Combine(appliedOutDir, "backlog-apply-report.json"), JsonSerializer.Serialize(new
         {
@@ -121,10 +139,7 @@ public static class ReClarifyBacklogApplyRunner
             timestampUtc = DateTime.UtcNow
         }, Json)).ConfigureAwait(false);
 
-        Console.WriteLine($"[l4-re-clarify-backlog-apply] pbis {backlog.Items.Count}->{appliedDoc.Items.Count} dropped={dropped.Count} gate={(gate.Pass ? "pass" : "fail")} errors={gate.Errors.Count}");
-        foreach (var d in dropped) Console.WriteLine($"[l4-re-clarify-backlog-apply]   drop {d}");
-        Console.WriteLine($"[l4-re-clarify-backlog-apply] ProductBacklogView -> {Path.GetRelativePath(repoRoot, Path.Combine(appliedOutDir, "product-backlog.json"))}");
-        return gate.Pass ? 0 : 1;
+        return new BacklogApplyExecResult(appliedBacklogPath, backlog.Items.Count, appliedDoc.Items.Count, dropped, gate);
     }
 
     private static async Task<T> LoadAsync<T>(string path)

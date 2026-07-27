@@ -28,7 +28,10 @@ internal sealed record GithubForwardWfContext(
     string? SnapshotRel,
     bool DryRun,
     int MaxAttempts,
-    bool HoldUnclearNewPbis = false);
+    bool HoldUnclearNewPbis = false,
+    // R-27 (Bootstrap B5/B6): Erst-Sync-Modus — unmapped PBIs werden DETERMINISTISCH als CREATE geplant
+    // (GithubInitialSync.BuildCreateOps, R-17-Präzedenz) statt agentisch gesucht. Nur pipeline-full-Bootstrap.
+    bool InitialSyncDeterministic = false);
 
 internal sealed record GithubForwardSeeded(GithubForwardWfContext Ctx, IReadOnlyList<GithubForwardOp> DeterministicOps, IReadOnlyList<GithubSyncEntry> Unmapped);
 internal sealed record GithubForwardDraft(
@@ -168,7 +171,11 @@ internal static class GithubForwardAgentRunner
         GithubForwardWfContext ctx, IReadOnlyList<GithubSyncEntry> unmapped,
         Func<IReadOnlyList<AITool>, AIAgent> factory, RunContext run, string task, CancellationToken ct)
     {
-        if (unmapped.Count == 0 || ctx.DryRun) return [];
+        if (unmapped.Count == 0) return [];
+        // R-27: Erst-Sync deterministisch — auf einem frischen Repo gibt es nichts zu suchen; CREATE-Ops kommen
+        // aus den Core-Payloads (R-17-Präzedenz). Läuft AUCH im Dry-Run (der Plan ist der Zweck des Dry-Runs).
+        if (ctx.InitialSyncDeterministic) return GithubInitialSync.BuildCreateOps(unmapped);
+        if (ctx.DryRun) return [];
         var readTools = new GithubReadTools(ctx.Issues, ctx.Repository, run);
         var fwdTools = new GithubForwardTools(unmapped, ctx.Core, ctx.Issues, run);
         var agent = factory([.. readTools.Build(), .. fwdTools.Build()]);

@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "cluster-review-20260727_071409",
+  "verdict": "revise",
+  "summary": "Die Cluster sind \u00FCberwiegend tragf\u00E4hig, aber es gibt drei fachliche Probleme: Das Profil-Container-Feature ist k\u00FCnstlich vom Profilinhalt getrennt, zwei echte Querschnittsanforderungen sind f\u00E4lschlich als Core in eigenen Clustern gef\u00FChrt, und die Datenschutzkl\u00E4rung zu Bewohnerbildern ist dem fachlich n\u00E4herliegenden Bild-/About-Me-Feature nicht als Cross-Cutting zugeordnet.",
+  "findings": [
+    {
+      "clusterId": "CL-03",
+      "kind": "wrong_split",
+      "severity": "error",
+      "message": "REQ-06 beschreibt die Detailansicht eines Bewohnerprofils als Einstieg zu About Me, Kommunikation, Kalender und No-Go. Dieses Container-/Navigations-Requirement ist fachlich kein eigenst\u00E4ndiges Feature, sondern Teil desselben Bewohnerprofil-Features wie die Detailbereiche. Die Trennung von CL-03 gegen\u00FCber CL-04/05/06/07 ist f\u00FCr die Backlog-Planung zu fein und zerrei\u00DFt ein zusammenh\u00E4ngendes Featurebild."
+    },
+    {
+      "clusterId": "CL-11",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-23 (\u0027barrierearm gestalten\u0027) ist eine echte Querschnittsanforderung und sollte nicht als Core eines eigenen Features gef\u00FChrt werden. Sie wirkt \u00FCber Profil\u00FCbersicht, Detailseiten, Hilfe und Navigation hinweg."
+    },
+    {
+      "clusterId": "CL-11",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-29 (\u0027ablenkende Animationen vermeiden\u0027) ist ebenfalls eine UI-weite Querschnittsregel und kein eigenst\u00E4ndiges Kernfeature. Die Einordnung als Core in CL-11 ist fachlich unpassend."
+    },
+    {
+      "clusterId": "CL-14",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-34 zur datenschutzrechtlichen Kl\u00E4rung der Nutzung von Bewohnerbildern wirkt direkt auf den About-Me-Bereich mit Bildliste und Bildpflege (REQ-07). Als Cross-Cutting-Verweis fehlt diese Anforderung im betroffenen Featurecluster CL-04."
+    },
+    {
+      "clusterId": "CL-11",
+      "kind": "granularity",
+      "severity": "warning",
+      "message": "Der Cluster \u0027Barrierearmut \u0026 alternative Eingabe\u0027 ist nach Umklassifizierung von REQ-23 und REQ-29 sehr klein und best\u00FCnde fachlich im Wesentlichen nur noch aus REQ-22 als m\u00F6glicher sp\u00E4terer Ausbau. Das ist noch vertretbar, sollte aber bei der weiteren Backlog-Struktur beobachtet werden."
+    }
+  ],
+  "operations": [
+    {
+      "opId": "op-01",
+      "kind": "merge_clusters",
+      "rationale": "CL-03 enth\u00E4lt mit REQ-06 nur den Profil-Container/Einstieg in dieselben Detailbereiche, die in CL-04 bis CL-07 separat ausgepr\u00E4gt sind. F\u00FCr ein tragf\u00E4higes Featurebild sollte der Profil-Container mit dem inhaltlich n\u00E4chstliegenden Profil-Feature zusammengef\u00FChrt werden statt als isoliertes Ein-Requirement-Cluster zu bestehen.",
+      "requirementId": null,
+      "fromClusterId": "CL-03",
+      "toClusterId": "CL-04",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-02",
+      "kind": "remove_crosscutting",
+      "rationale": "REQ-23 ist keine clusterspezifische Kernfunktion, sondern eine allgemeine Gestaltungsregel. Die Core-Einordnung in CL-11 soll entfernt werden, damit die Anforderung nur als Cross-Cutting an betroffenen Features gef\u00FChrt wird.",
+      "requirementId": "REQ-23",
+      "fromClusterId": "CL-11",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-03",
+      "kind": "remove_crosscutting",
+      "rationale": "REQ-29 ist eine allgemeine UX-/Accessibility-Regel und kein Kernfeature. Die Core-Einordnung in CL-11 soll entfernt werden, damit die Anforderung nicht als eigenst\u00E4ndige Fachfunktion missverstanden wird.",
+      "requirementId": "REQ-29",
+      "fromClusterId": "CL-11",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-04",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-34 betrifft die datenschutzrechtliche Zul\u00E4ssigkeit von Bewohnerbildern und wirkt unmittelbar auf die Bildliste und Bildpflege im About-Me-Bereich (REQ-07). Daher sollte die Anforderung als Cross-Cutting in CL-04 referenziert werden.",
+      "requirementId": "REQ-34",
+      "fromClusterId": null,
+      "toClusterId": "CL-04",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    }
+  ]
+}

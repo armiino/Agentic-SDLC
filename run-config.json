@@ -62,16 +62,26 @@
     "chars": 1200
   },
   "fullworkflow": {
+    // B6-Beweislauf (27.07.): empty->GitHub-Dry-Run, unbeaufsichtigt. execute=false = KEIN GitHub-Write.
     "execute": false,
-    "policyProfile": "interactive",
-    "repo": "armiino/Agentic-GitHub-refactor",
-    "tokenEnv": "GITHUB_AGENTIC_REFACTOR_TOKEN",
-    "models": { "01-ledger": "openai/gpt-4.1-mini", "02-baselines": "openai/gpt-4.1-mini" },
+    "policyProfile": "interactive",           // Fallback bewusst interactive: unbekanntes Gate => lauter Exit 5
+    "transcript": "input/transcripts/Interview-Einrichtung.txt",
+    "mode": "auto",                           // leerer Core (geparkt) => Bootstrap-Zweig
+    "timeoutMinutes": 90,                     // 5 LLM-Stufen; 20-min-Default reicht nicht
+    // repo/tokenEnv fuer B6 AUS: leerer Snapshot => Forward plant reine CREATEs (Vergleich mit 23.07.).
+    // Fuer operative Laeufe wieder aktivieren:
+    // "repo": "armiino/Agentic-GitHub-refactor",
+    // "tokenEnv": "GITHUB_AGENTIC_REFACTOR_TOKEN",
+    // Standard-Zuschnitt (5.4, unbeaufsichtigt). H1/H2-Live-Beweis 27.07. lief mit mini + 2x interactive
+    // (Runs 074919 + 080638 — Pause/Resume/zweite Pause real bewiesen, s. Reibungs-Log R-29).
+    "models": { "01-ledger": "openai/gpt-5.4", "02-baselines": "openai/gpt-5.4" },
     "stages": { "l3": "off" },
     "gates": {
       "adjudication-gate": { "policy": "accept-all" },
       "ingest-gate": { "policy": "accept-all" },
       "pbi-gate": { "policy": "accept-all" },
+      "cluster-review-gate": { "policy": "accept-all" },
+      "backlog-review-gate": { "policy": "accept-all" },
       "github-forward-gate": { "policy": "accept-all" }
     }
   },

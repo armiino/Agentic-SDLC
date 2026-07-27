@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "cluster-review-20260727_080247",
+  "verdict": "revise",
+  "summary": "Querschnittliche Zugriffs- und Rollenanforderungen REQ-14 und REQ-22 sind im falschen Cluster als Core in Kommunikations-App statt als crossCutting im Benutzer- und Rollenmanagement. REQ-34 zur Datenhaltung ist fachlich besser als eigenst\u00E4ndiges Feature-Cluster zu f\u00FChren.",
+  "findings": [
+    {
+      "clusterId": "cluster-kommunikations-app",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-14 und REQ-22 sind Querschnittsthemen (Rollen und Zugriffsrechte) und sollten als CrossCutting im Cluster Benutzer- und Rollenmanagement gef\u00FChrt werden, nicht als Core in der Kommunikations-App."
+    },
+    {
+      "clusterId": "cluster-eingabe-datenhaltung",
+      "kind": "granularity",
+      "severity": "warning",
+      "message": "REQ-34 behandelt eine technische Datenhaltungsthematik (Firebase/Local Storage) getrennt vom Feature \u0027Eingabe von Kommunikationsweisen\u0027 (REQ-32). Ein eigenes Cluster w\u00E4re sinnvoll."
+    }
+  ],
+  "operations": [
+    {
+      "opId": "removeCrossReq14FromKommunikationsApp",
+      "kind": "remove_crosscutting",
+      "rationale": "REQ-14 ist Querschnitts-Requirement zu Zugriffsrechten und geh\u00F6rt nicht core zu Kommunikations-App.",
+      "requirementId": "REQ-14",
+      "fromClusterId": "cluster-kommunikations-app",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "removeCrossReq22FromKommunikationsApp",
+      "kind": "remove_crosscutting",
+      "rationale": "REQ-22 ist Querschnitts-Requirement zu Zugriffsrechten und geh\u00F6rt nicht core zu Kommunikations-App.",
+      "requirementId": "REQ-22",
+      "fromClusterId": "cluster-kommunikations-app",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "addCrossReq14ToUserManagement",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-14 ist Zugriffs-/Rollenquerschnitt und geh\u00F6rt als crossCutting zum Cluster Benutzer- und Rollenmanagement.",
+      "requirementId": "REQ-14",
+      "fromClusterId": null,
+      "toClusterId": "cluster-benutzer-rollenmanagement",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "addCrossReq22ToUserManagement",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-22 ist Zugriffs-/Rollenquerschnitt und geh\u00F6rt als crossCutting zum Cluster Benutzer- und Rollenmanagement.",
+      "requirementId": "REQ-22",
+      "fromClusterId": null,
+      "toClusterId": "cluster-benutzer-rollenmanagement",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "moveCoreReq14ToUserManagement",
+      "kind": "move_core",
+      "rationale": "REQ-14 ist Kern-Anforderung f\u00FCr das Benutzer- und Rollenmanagement und sollte dort als core liegen.",
+      "requirementId": "REQ-14",
+      "fromClusterId": "cluster-kommunikations-app",
+      "toClusterId": "cluster-benutzer-rollenmanagement",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "moveCoreReq22ToUserManagement",
+      "kind": "move_core",
+      "rationale": "REQ-22 ist Kern-Anforderung f\u00FCr das Benutzer- und Rollenmanagement und sollte dort als core liegen.",
+      "requirementId": "REQ-22",
+      "fromClusterId": "cluster-kommunikations-app",
+      "toClusterId": "cluster-benutzer-rollenmanagement",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "newClusterForReq34",
+      "kind": "new_cluster",
+      "rationale": "REQ-34 beschreibt technische Datenhaltung (Firebase, lokale Speicherung) und ist besser als eigenes Feature-Cluster zu f\u00FChren, nicht zusammen mit Eingabe Kommunikationsweisen.",
+      "requirementId": null,
+      "fromClusterId": null,
+      "toClusterId": null,
+      "newClusterId": "cluster-datenhaltung",
+      "label": "Datenhaltung (Firebase, Lokalspeicherung)",
+      "identityKey": "datenhaltung",
+      "coreRequirementIds": [
+        "REQ-34"
+      ]
+    }
+  ]
+}

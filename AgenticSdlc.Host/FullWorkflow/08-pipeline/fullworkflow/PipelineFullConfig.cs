@@ -5,12 +5,16 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 /// <summary>W1e': Gate-Policy-Art. `replay` trägt zusätzlich einen Pfad zu den gespeicherten Entscheiden.</summary>
 public enum GatePolicyKind
 {
-    /// <summary>Pausieren + Checkpoint, auf den Menschen warten (wie heute; UI wie ledger-adjudicate-ui).</summary>
+    /// <summary>DURABLE Pause: Checkpoint + pointer.json, Prozess ENDET; weiter via `pipeline-full resume`.</summary>
     Interactive,
     /// <summary>Alle Ops akzeptieren — deklarierter EXPERIMENT-Modus.</summary>
     AcceptAll,
     /// <summary>Gespeicherte Entscheide (queue/decision-log) per ItemId einspielen — Standard für N≥3.</summary>
-    Replay
+    Replay,
+    /// <summary>INLINE: Prozess bleibt am Gate stehen (Host-Muster A), öffnet optional die UI (`--open-ui`)
+    /// und wartet auf die Entscheid-Datei; ohne Terminal degradiert er zur durablen Pause. Checkpoints
+    /// laufen weiter (Crash-Schutz bleibt).</summary>
+    InteractiveInline
 }
 
 /// <summary>
@@ -27,6 +31,7 @@ public sealed record GatePolicy(GatePolicyKind Kind, string? ReplayPath = null)
         if (string.IsNullOrWhiteSpace(s)) return Interactive;
 
         var lower = s.ToLowerInvariant();
+        if (lower is "interactive-inline" or "inline") return new GatePolicy(GatePolicyKind.InteractiveInline);
         if (lower is "interactive") return Interactive;
         if (lower is "accept-all" or "acceptall") return new GatePolicy(GatePolicyKind.AcceptAll);
         if (lower.StartsWith("replay", StringComparison.Ordinal))
@@ -38,6 +43,17 @@ public sealed record GatePolicy(GatePolicyKind Kind, string? ReplayPath = null)
         // Unbekannt → sicherste Governance-Wahl (Gates sind heilig): pausieren.
         return Interactive;
     }
+}
+
+/// <summary>Bootstrap-Plan B0: Phasen-Wahl der Hinterhälfte. `Auto` = Core-Detektion (Produktweg).</summary>
+public enum PipelineMode
+{
+    /// <summary>Core existiert → Betriebs-Zweig, sonst Bootstrap-Zweig (ExistsAsync-Detektion).</summary>
+    Auto,
+    /// <summary>Erzwungener Bootstrap-Zweig (leer → Core → Backlog) — kontrollierte Läufe/Ablation.</summary>
+    Bootstrap,
+    /// <summary>Erzwungener Betriebs-Zweig (bestehender Core → update).</summary>
+    Operational
 }
 
 /// <summary>
@@ -53,8 +69,28 @@ public sealed record FullWorkflowSettings(
     IReadOnlyDictionary<string, string> Models,
     IReadOnlyDictionary<string, int> MaxAttempts,
     IReadOnlyDictionary<string, string> Stages,
-    IReadOnlyDictionary<string, GatePolicy> Gates)
+    IReadOnlyDictionary<string, GatePolicy> Gates,
+    PipelineMode Mode = PipelineMode.Auto,
+    int TimeoutMinutes = 20)
 {
+    /// <summary>B0: `fullworkflow.mode` lesen; unbekannt/leer → Auto (Detektion = sicherste Wahl).</summary>
+    public static PipelineMode ParseMode(string? raw) => raw?.Trim().ToLowerInvariant() switch
+    {
+        "bootstrap" => PipelineMode.Bootstrap,
+        "operational" => PipelineMode.Operational,
+        _ => PipelineMode.Auto,
+    };
+
+    /// <summary>
+    /// B0: die EINE Phasen-Wahl-Regel (pure Funktion, testbar). Der Runner füttert sie mit dem
+    /// `ICoreRepository.ExistsAsync`-Ergebnis — Detektion passiert genau einmal, vor der Hinterhälfte.
+    /// </summary>
+    public static bool UseBootstrapBranch(PipelineMode mode, bool coreExists) => mode switch
+    {
+        PipelineMode.Bootstrap => true,
+        PipelineMode.Operational => false,
+        _ => !coreExists,
+    };
     /// <summary>v1: l3 ist per Default AUS (Betriebs-Zyklus braucht es nicht).</summary>
     public bool L3Enabled =>
         Stages.TryGetValue("l3", out var v) && !string.Equals(v, "off", StringComparison.OrdinalIgnoreCase);
@@ -70,6 +106,8 @@ public sealed record FullWorkflowSettings(
             Transcript: Trim(cfg.Transcript),
             Repo: Trim(cfg.Repo),
             TokenEnv: Trim(cfg.TokenEnv),
+            Mode: ParseMode(cfg.Mode),
+            TimeoutMinutes: cfg.TimeoutMinutes is > 0 ? cfg.TimeoutMinutes.Value : 20,
             Execute: cfg.Execute ?? false, // Default: KEIN externer Write
             PolicyProfile: GatePolicy.Parse(cfg.PolicyProfile),
             Models: cfg.Models is null ? Empty<string>() : new Dictionary<string, string>(cfg.Models),

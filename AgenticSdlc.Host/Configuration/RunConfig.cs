@@ -96,6 +96,11 @@ public sealed class FullWorkflowConfig
     public string? Transcript { get; set; }
     public string? Repo { get; set; }
     public string? TokenEnv { get; set; }
+    // "auto" | "bootstrap" | "operational" — Phasen-Wahl der Hinterhälfte (Bootstrap-Plan B0).
+    // auto = Produktweg (Core-Detektion); die expliziten Modi für kontrollierte Läufe/Ablationen.
+    public string? Mode { get; set; }
+    // Gesamt-Timeout des pipeline-full-Laufs in Minuten (Default 20). Bootstrap-Läufe haben 5 LLM-Stufen -> anheben.
+    public int? TimeoutMinutes { get; set; }
     // Default false — KEIN externer GitHub-Write; jeder Write braucht explizite Policy. (Gates sind heilig.)
     public bool? Execute { get; set; }
     // "interactive" | "accept-all" | "replay:<pfad>" — Standard-Policy für alle Gates ohne eigenen Eintrag.

@@ -1,0 +1,108 @@
+{
+  "runId": "20260727_074919_b2c654",
+  "benchmarkVersion": "input/transcripts/Interview-Einrichtung.txt",
+  "policyProfile": "Interactive",
+  "models": {
+    "01-ledger": "openai/gpt-4.1-mini",
+    "02-baselines": "openai/gpt-4.1-mini",
+    "06-backlog": "openai/gpt-4.1-mini",
+    "default": "openai/gpt-5.4"
+  },
+  "stages": [
+    {
+      "stage": "01-ledger",
+      "wallMs": 456630,
+      "attempts": 1,
+      "gate": {
+        "pass": true,
+        "errors": 21,
+        "warnings": 0
+      },
+      "tokens": {
+        "in": 94640,
+        "out": 29529
+      }
+    },
+    {
+      "stage": "02-baselines",
+      "wallMs": 218827,
+      "attempts": 1,
+      "gate": null,
+      "tokens": {
+        "in": 64181,
+        "out": 18103
+      }
+    },
+    {
+      "stage": "04-delta",
+      "wallMs": 13,
+      "attempts": 1,
+      "gate": null,
+      "tokens": {
+        "in": 0,
+        "out": 0
+      }
+    },
+    {
+      "stage": "06-backlog-cluster",
+      "wallMs": 115998,
+      "attempts": 1,
+      "gate": {
+        "pass": true,
+        "errors": 0,
+        "warnings": 0
+      },
+      "tokens": {
+        "in": 70504,
+        "out": 6975
+      }
+    },
+    {
+      "stage": "06-backlog-clarify",
+      "wallMs": 41490,
+      "attempts": 1,
+      "gate": {
+        "pass": false,
+        "errors": 47,
+        "warnings": 0
+      },
+      "tokens": {
+        "in": 26321,
+        "out": 1779
+      }
+    },
+    {
+      "stage": "07-github",
+      "wallMs": 0,
+      "attempts": 1,
+      "gate": null,
+      "tokens": {
+        "in": 255646,
+        "out": 56386
+      }
+    }
+  ],
+  "humanGates": [
+    {
+      "gate": "adjudication-gate",
+      "answeredBy": "Interactive"
+    },
+    {
+      "gate": "cluster-review-gate",
+      "answeredBy": "Interactive"
+    },
+    {
+      "gate": "backlog-review-gate",
+      "answeredBy": "AcceptAll"
+    }
+  ],
+  "coreItemsBefore": 0,
+  "coreItemsAfter": 54,
+  "issuesCreated": 0,
+  "issuesUpdated": 0,
+  "violations": [
+    "01-ledger:gate-errors=21",
+    "06-backlog-clarify:gate-errors=47"
+  ],
+  "recall": null
+}

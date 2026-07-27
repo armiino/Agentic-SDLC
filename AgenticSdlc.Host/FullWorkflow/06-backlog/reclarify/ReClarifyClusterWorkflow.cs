@@ -14,15 +14,18 @@ internal sealed record ClusterReviewed(CanonicalRequirementsBaseline Baseline, s
 internal sealed record ClusterResult(FeatureClusterSet Clusters, ReClarifyGateReport Report, ClusterReviewReport Review);
 
 // MAKER: gruppiert Requirements semantisch zu Feature-Clustern (Bedeutung, nicht Wortabgleich).
+// U1 (Ein-Graph): RelationLookup wird zur LAUFZEIT im Handler gebaut (Baseline steckt in der Message) —
+// MAF-konform und Voraussetzung dafür, dass der Knoten VOR Existenz der Baseline konstruierbar ist.
 [SendsMessage(typeof(ClusterDraft))]
 internal sealed class ClusterAgentExecutor(
     Func<IReadOnlyList<AITool>, AIAgent> agentFactory,
-    RelationLookup relations,
+    string repoRoot,
     RunContext run)
     : Executor<ReClarifyClusterInput>("L4ReClarifyClusterAgent")
 {
     public override async ValueTask HandleAsync(ReClarifyClusterInput input, IWorkflowContext context, CancellationToken ct = default)
     {
+        var relations = await RelationLookup.BuildAsync(input.Baseline, repoRoot, ct).ConfigureAwait(false);
         var tools = new ReClarifyClusterTools(input.Baseline, relations, run);
         var agent = agentFactory(tools.Build());
         var task = """
@@ -53,6 +56,7 @@ internal sealed class ClusterAgentExecutor(
             saved = tools.Saved,
             clusters = clusters.Count,
             toolCheckRounds = tools.CheckRounds,
+            relations = relations.HasData,
             timestampUtc = DateTime.UtcNow
         });
         await context.SendMessageAsync(new ClusterDraft(input.Baseline, input.SourceBaselinePath, clusters, tools.Saved, tools.CheckRounds)).ConfigureAwait(false);
@@ -143,6 +147,7 @@ internal sealed class ClusterReviewExecutor(
 }
 
 [YieldsOutput(typeof(ClusterResult))]
+[SendsMessage(typeof(ClusterResult))] // pipeline-full (B3): Ergebnis fließt zusätzlich als Message weiter (Gate-Komposition); im CLI-Graph ohne Kante wirkungslos
 internal sealed class ClusterFinalizeExecutor(RunContext run, string outDir) : Executor<ClusterReviewed>("L4ReClarifyClusterFinalize")
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
@@ -184,7 +189,9 @@ internal sealed class ClusterFinalizeExecutor(RunContext run, string outDir) : E
             clusters = reviewed.Clusters.Count,
             timestampUtc = DateTime.UtcNow
         });
-        await context.YieldOutputAsync(new ClusterResult(set, reviewed.Report, reviewed.Review)).ConfigureAwait(false);
+        var result = new ClusterResult(set, reviewed.Report, reviewed.Review);
+        await context.YieldOutputAsync(result).ConfigureAwait(false);
+        await context.SendMessageAsync(result).ConfigureAwait(false);
     }
 }
 
