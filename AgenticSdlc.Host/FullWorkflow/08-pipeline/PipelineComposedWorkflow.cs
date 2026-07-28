@@ -55,13 +55,13 @@ internal static class PipelineComposedWorkflow
         IngestPbiBridgeExecutor bridge,
         // Pbi-Knoten
         PbiUpdateDeriveExecutor pbiDerive, PbiUpdateMakerExecutor pbiMaker, PbiUpdateGateExecutor pbiGate, PbiUpdateRepairExecutor pbiRepair,
-        PbiUpdateHitlFinalizeExecutor pbiFinalize, RequestPort pbiPort, PbiUpdateApplyExecutor pbiApply)
+        PbiAlignExecutor pbiAlign, PbiUpdateHitlFinalizeExecutor pbiFinalize, RequestPort pbiPort, PbiUpdateApplyExecutor pbiApply)
     {
         var b = new WorkflowBuilder(ingestResolve)
             .WithName("Pipeline-Ingest-PbiUpdate-HITL")
             .WithDescription("Ingest -> [Human] -> Apply -> Bridge -> PbiUpdate -> [Human] -> Apply. Zwei Gates, ein Graph.");
         AddTo(b, ingestResolve, ingestGate, ingestRepair, ingestFinalize, ingestPort, ingestApply,
-            bridge, pbiDerive, pbiMaker, pbiGate, pbiRepair, pbiFinalize, pbiPort, pbiApply);
+            bridge, pbiDerive, pbiMaker, pbiGate, pbiRepair, pbiAlign, pbiFinalize, pbiPort, pbiApply);
         return b.Build();
     }
 
@@ -72,7 +72,7 @@ internal static class PipelineComposedWorkflow
         IngestionHitlFinalizeExecutor ingestFinalize, RequestPort ingestPort, IngestComposedApplyExecutor ingestApply,
         IngestPbiBridgeExecutor bridge,
         PbiUpdateDeriveExecutor pbiDerive, PbiUpdateMakerExecutor pbiMaker, PbiUpdateGateExecutor pbiGate, PbiUpdateRepairExecutor pbiRepair,
-        PbiUpdateHitlFinalizeExecutor pbiFinalize, RequestPort pbiPort, PbiUpdateApplyExecutor pbiApply)
+        PbiAlignExecutor pbiAlign, PbiUpdateHitlFinalizeExecutor pbiFinalize, RequestPort pbiPort, PbiUpdateApplyExecutor pbiApply)
     {
         // Stufe 1: Ingest
         b.AddEdge(ingestResolve, ingestGate);
@@ -90,7 +90,11 @@ internal static class PipelineComposedWorkflow
         b.AddEdge(pbiDerive, pbiMaker);
         b.AddEdge(pbiMaker, pbiGate);
         b.AddEdge<PbiUpdateVerdict>(pbiGate, pbiRepair, m => m is not null && m.Decision == GateDecision.Repair);
-        b.AddEdge<PbiUpdateVerdict>(pbiGate, pbiFinalize, m => m is not null && m.Decision != GateDecision.Repair);
+        // R-26-C: NUR bei bestandenem Gate (Pass) reichert der Angleichungs-Agent den Plan an — VOR dem
+        // Human-Gate. HumanReview/MaxAttemptsReached gehen direkt zu Finalize (kein LLM-Call).
+        b.AddEdge<PbiUpdateVerdict>(pbiGate, pbiAlign, m => m is not null && m.Decision == GateDecision.Pass);
+        b.AddEdge(pbiAlign, pbiFinalize);
+        b.AddEdge<PbiUpdateVerdict>(pbiGate, pbiFinalize, m => m is not null && m.Decision is not GateDecision.Pass and not GateDecision.Repair);
         b.AddEdge(pbiRepair, pbiGate);
         b.AddEdge(pbiFinalize, pbiPort);
         b.AddEdge(pbiPort, pbiApply);

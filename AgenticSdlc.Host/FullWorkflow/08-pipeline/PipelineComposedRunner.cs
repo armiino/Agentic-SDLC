@@ -47,7 +47,8 @@ public static class PipelineComposedRunner
 
     internal static Workflow BuildWorkflow(
         RunContext run, string repoRoot, string ingestOutDir, string pbiOutDir, int maxAttempts,
-        Func<IReadOnlyList<AITool>, AIAgent> ingestFactory, Func<IReadOnlyList<AITool>, AIAgent> pbiFactory)
+        Func<IReadOnlyList<AITool>, AIAgent> ingestFactory, Func<IReadOnlyList<AITool>, AIAgent> pbiFactory,
+        Func<IReadOnlyList<AITool>, AIAgent> pbiAlignFactory)
     {
         ICandidateRetriever retriever = new ShowAllRequirementRetriever();
         var ingestPort = RequestPort.Create<IngestionReviewRequest, IngestionReviewResponse>("ingest-gate");
@@ -57,7 +58,7 @@ public static class PipelineComposedRunner
             new IngestionHitlFinalizeExecutor(run, ingestOutDir), ingestPort, new IngestComposedApplyExecutor(run, repoRoot, ingestOutDir),
             new IngestPbiBridgeExecutor(run, repoRoot, pbiOutDir, maxAttempts),
             new PbiUpdateDeriveExecutor(run), new PbiUpdateMakerExecutor(pbiFactory, run), new PbiUpdateGateExecutor(run), new PbiUpdateRepairExecutor(pbiFactory, run),
-            new PbiUpdateHitlFinalizeExecutor(run), pbiPort, new PbiUpdateApplyExecutor(run, repoRoot, pbiOutDir));
+            new PbiAlignExecutor(pbiAlignFactory, run), new PbiUpdateHitlFinalizeExecutor(run), pbiPort, new PbiUpdateApplyExecutor(run, repoRoot, pbiOutDir));
     }
 
     // ---------------- START (Prozess A): bis zum Gate 1 (Ingest), Checkpoint, Pause. ----------------
@@ -93,7 +94,8 @@ public static class PipelineComposedRunner
 
         var workflow = BuildWorkflow(run, repoRoot, ingestOutDir, pbiOutDir, maxAttempts,
             AgentFactory(repoRoot, settings, genSettings, run, "RequirementIngestionAgent", "RequirementIngestionAgent1"),
-            AgentFactory(repoRoot, settings, genSettings, run, "PbiPlacementAgent", "PbiPlacementAgent1"));
+            AgentFactory(repoRoot, settings, genSettings, run, "PbiPlacementAgent", "PbiPlacementAgent1"),
+            AgentFactory(repoRoot, settings, genSettings, run, "PbiAlignmentAgent", "PbiAlignmentAgent1")); // R-26-C
 
         Console.WriteLine($"[{Cmd}] start runId={run.RunId} model={genSettings.ModelId} maxAttempts={maxAttempts} (Ingest -> [Gate1] -> Apply -> Bridge -> PbiUpdate -> [Gate2] -> Apply)");
         return await HitlShell.StartAsync(Cmd, workflow, new IngestionResolveInput(delta, core, deltaRel, maxAttempts), run, checkpointDir,
@@ -141,7 +143,7 @@ public static class PipelineComposedRunner
         var ingestOutDir = run.OutputDir("ingest");
         var pbiOutDir = run.OutputDir("pbi-update");
         Func<IReadOnlyList<AITool>, AIAgent> noAgent = _ => throw new InvalidOperationException("Maker darf beim Resume nicht laufen.");
-        var workflow = BuildWorkflow(run, repoRoot, ingestOutDir, pbiOutDir, 2, noAgent, noAgent);
+        var workflow = BuildWorkflow(run, repoRoot, ingestOutDir, pbiOutDir, 2, noAgent, noAgent, noAgent); // R-26-C: Align läuft beim Resume nicht
 
         using var store = new FileSystemJsonCheckpointStore(new DirectoryInfo(checkpointDir));
         var manager = CheckpointManager.CreateJson(store, Json);

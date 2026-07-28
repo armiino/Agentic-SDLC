@@ -22,6 +22,7 @@ public static class PbiUpdateHitlRunner
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";
     private const string AgentName = "PbiPlacementAgent";
+    private const string AlignAgentName = "PbiAlignmentAgent"; // R-26-C
     private const string Cmd = "pbi-update-hitl";
     private static readonly JsonSerializerOptions Json = HitlShell.Json; // R2: geteilte Optionen
 
@@ -82,11 +83,15 @@ public static class PbiUpdateHitlRunner
         Func<IReadOnlyList<AITool>, AIAgent> factory = tools =>
             client.AsAIAgent(instructions: prompt, name: AgentName, tools: [.. tools])
                 .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+        var alignPrompt = PromptProvider.Load(repoRoot, Phase, AlignAgentName, "PbiAlignmentAgent1", new Dictionary<string, string> { ["runId"] = run.RunId }); // R-26-C
+        Func<IReadOnlyList<AITool>, AIAgent> alignFactory = tools =>
+            client.AsAIAgent(instructions: alignPrompt, name: AlignAgentName, tools: [.. tools])
+                .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
 
         var humanGate = RequestPort.Create<PbiUpdateReviewRequest, PbiUpdateReviewResponse>("pbi-update-gate");
         var workflow = PbiUpdateHitlWorkflow.Build(
             new PbiUpdateDeriveExecutor(run), new PbiUpdateMakerExecutor(factory, run), new PbiUpdateGateExecutor(run),
-            new PbiUpdateRepairExecutor(factory, run), new PbiUpdateHitlFinalizeExecutor(run),
+            new PbiUpdateRepairExecutor(factory, run), new PbiAlignExecutor(alignFactory, run), new PbiUpdateHitlFinalizeExecutor(run),
             humanGate, new PbiUpdateApplyExecutor(run, repoRoot, outDir));
 
         var ctx = new PbiUpdateWfContext(core, delta.Applied, sourceIngestionRun, outDir, dryRun, maxAttempts);
@@ -150,17 +155,22 @@ public static class PbiUpdateHitlRunner
         var humanGate = RequestPort.Create<PbiUpdateReviewRequest, PbiUpdateReviewResponse>("pbi-update-gate");
         var workflow = PbiUpdateHitlWorkflow.Build(
             new PbiUpdateDeriveExecutor(run), new PbiUpdateMakerExecutor(noAgent, run), new PbiUpdateGateExecutor(run),
-            new PbiUpdateRepairExecutor(noAgent, run), new PbiUpdateHitlFinalizeExecutor(run),
+            new PbiUpdateRepairExecutor(noAgent, run), new PbiAlignExecutor(noAgent, run), new PbiUpdateHitlFinalizeExecutor(run),
             humanGate, new PbiUpdateApplyExecutor(run, repoRoot, outDir));
 
         Console.WriteLine($"[{Cmd}] resume runId={runId} mode={(uiMode ? "ui" : "cli")}");
         return await HitlShell.ResumeAsync(Cmd, workflow, runId, checkpointDir, pointer, uiMode,
             makeResponse: async () =>
             {
-                var acc = uiMode
-                    ? await CollectViaUiAsync(runId, plan, decisionsPath, repoRoot, settings, noBrowser).ConfigureAwait(false)
-                    : accepted!;
-                return new PbiUpdateReviewResponse(acc, uiMode ? "human (review-ui)" : "author (cli)");
+                // R-26-C: im UI-Modus traegt die Response auch die autorisierten Angleichungen; im CLI-Modus
+                // (--accept-all/--accept) werden bewusst KEINE Angleichungen geschrieben (Inhalts-Mutation
+                // braucht eine explizite menschliche Freigabe im Review).
+                if (uiMode)
+                {
+                    var (ops, aligns) = await CollectViaUiAsync(runId, plan, decisionsPath, repoRoot, settings, noBrowser).ConfigureAwait(false);
+                    return new PbiUpdateReviewResponse(ops, "human (review-ui)", aligns);
+                }
+                return new PbiUpdateReviewResponse(accepted!, "author (cli)");
             },
             onOutput: data =>
             {
@@ -172,7 +182,8 @@ public static class PbiUpdateHitlRunner
     }
 
     // S2-Muster: Entscheidung interaktiv ueber die generische HumanReview-UI (derselbe Adapter wie pbi-update-review).
-    private static async Task<IReadOnlyList<string>> CollectViaUiAsync(
+    // R-26-C: liefert zusaetzlich die AKZEPTIERTEN Angleichungen (accept/edit) fuer die Response.
+    private static async Task<(IReadOnlyList<string> Ops, IReadOnlyList<PbiAlignment> Aligns)> CollectViaUiAsync(
         string runId, PbiStateChangePlanDocument plan, string decisionsPath, string repoRoot, HostSettings settings, bool noBrowser)
     {
         var core = await new JsonCoreRepository(repoRoot).LoadAsync().ConfigureAwait(false);
@@ -187,8 +198,9 @@ public static class PbiUpdateHitlRunner
             openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
 
         var accepted = decisions.Decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId).ToList();
-        Console.WriteLine($"[{Cmd}] UI {outcome}: {accepted.Count}/{plan.Operations.Count} akzeptiert -> human-decisions.json");
-        return accepted;
+        var aligns = PbiUpdateApplyExec.AcceptedAlignments(plan, decisions.AlignmentDecisions);
+        Console.WriteLine($"[{Cmd}] UI {outcome}: {accepted.Count}/{plan.Operations.Count} Ops + {aligns.Count} Angleichung(en) -> human-decisions.json");
+        return (accepted, aligns);
     }
 
     private static Task<T> LoadAsync<T>(string path) => HitlShell.LoadAsync<T>(path); // R2: geteilt (StartAsync nutzt es noch fuers Delta)

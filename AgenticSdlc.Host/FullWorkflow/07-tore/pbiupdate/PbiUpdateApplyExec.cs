@@ -21,7 +21,8 @@ public static class PbiUpdateApplyExec
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<PbiUpdateApplyReport> ExecuteAsync(
-        string planDir, PbiStateChangePlanDocument plan, ISet<int> accepted, string repoRoot, CancellationToken ct = default)
+        string planDir, PbiStateChangePlanDocument plan, ISet<int> accepted, string repoRoot,
+        IReadOnlyList<PbiAlignment>? acceptedAlignments = null, CancellationToken ct = default)
     {
         var appliedDir = Path.Combine(planDir, "applied");
         var markerPath = Path.Combine(appliedDir, "applied.marker");
@@ -46,7 +47,7 @@ public static class PbiUpdateApplyExec
         Directory.CreateDirectory(appliedDir);
         await File.WriteAllTextAsync(Path.Combine(appliedDir, "core-before.json"), JsonSerializer.Serialize(core, Json), ct).ConfigureAwait(false);
 
-        var (updated, report) = PbiUpdateApply.Apply(core, plan, accepted, plan.SourceIngestionRun);
+        var (updated, report) = PbiUpdateApply.Apply(core, plan, accepted, plan.SourceIngestionRun, acceptedAlignments);
         await coreRepo.SaveAsync(updated).ConfigureAwait(false);
 
         // github-sync-Delta: nur die betroffenen (neuen/aktualisierten) PBIs.
@@ -71,4 +72,31 @@ public static class PbiUpdateApplyExec
                 accepted.Add(i);
         return accepted;
     }
+
+    // R-26-C: die akzeptierten/edierten Angleichungen aus den Entscheidungen ziehen. GOVERNANCE: ohne explizite
+    // accept/edit-Entscheidung wird NICHT angeglichen (Inhalts-Mutation an der Wahrheit braucht Freigabe; kein
+    // stilles Auto-Apply wie bei den Struktur-Ops). skip => der PBI bleibt ehrlich needs_clarify.
+    public static List<PbiAlignment> AcceptedAlignments(PbiStateChangePlanDocument plan, IReadOnlyList<PbiAlignmentDecision>? decisions)
+    {
+        var proposals = (plan.Alignments ?? []).GroupBy(a => a.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+        var byPbi = (decisions ?? []).GroupBy(d => d.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+        var result = new List<PbiAlignment>();
+        foreach (var (pbiId, proposal) in proposals)
+        {
+            if (!byPbi.TryGetValue(pbiId, out var d)) continue;                       // keine Freigabe => nicht angleichen
+            if (string.Equals(d.Decision, "skip", StringComparison.OrdinalIgnoreCase)) continue;
+            if (string.Equals(d.Decision, "edit", StringComparison.OrdinalIgnoreCase))
+                result.Add(proposal with
+                {
+                    ProposedTitle = Override(d.EditedTitle, proposal.ProposedTitle),
+                    ProposedStatement = Override(d.EditedStatement, proposal.ProposedStatement),
+                    ProposedAcceptanceCriteria = d.EditedAcceptanceCriteria is { Count: > 0 } ? d.EditedAcceptanceCriteria : proposal.ProposedAcceptanceCriteria
+                });
+            else if (string.Equals(d.Decision, "accept", StringComparison.OrdinalIgnoreCase))
+                result.Add(proposal);
+        }
+        return result;
+    }
+
+    private static string? Override(string? edited, string? original) => string.IsNullOrWhiteSpace(edited) ? original : edited.Trim();
 }

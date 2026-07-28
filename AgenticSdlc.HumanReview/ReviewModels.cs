@@ -23,7 +23,10 @@ public enum ReviewInputType
     /// <summary>Mehrzeilige Freitext-Eingabe fuer laengere Texte oder listenartige Werte.</summary>
     MultiLine,
     /// <summary>Nur-Lese-Anzeige (kein Edit; z. B. eine ID/Referenz).</summary>
-    Readonly
+    Readonly,
+    /// <summary>Nicht gerendertes Traeger-Feld: haelt einen Wert (z. B. Item-Art) NUR fuer <see cref="ReviewFieldSpec.VisibleWhen"/>,
+    /// erscheint aber nirgends in der UI. Erlaubt zwei Item-Arten in EINER Session ueber bedingte Sichtbarkeit.</summary>
+    Hidden
 }
 
 /// <summary>Ein vorschlagbarer Wert für ein Feld (Dropdown-Option oder FreeText-Autocomplete via datalist).</summary>

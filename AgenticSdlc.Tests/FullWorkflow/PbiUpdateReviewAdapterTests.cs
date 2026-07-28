@@ -122,4 +122,78 @@ public sealed class PbiUpdateReviewAdapterTests
         Assert.Contains(session.Items[0].Notes,
             n => n.Label.StartsWith("Warum diese Zuordnung") && n.Text.Contains("Rechte-Vorgabe"));
     }
+
+    private static PbiStateChangePlanDocument PlanWithAlign(IReadOnlyList<PbiStateChangeOperation> ops, IReadOnlyList<PbiAlignment> aligns)
+        => new(1, "p1", DateTime.UnixEpoch, "src", ops, aligns);
+
+    // R-26-C: die Angleichung wird DIREKT am zugehörigen MARK_CHANGED-Op-Item eingebettet (gleicher Kontext),
+    // die Edit-Felder mit dem Vorschlag vorbefüllt.
+    [Fact]
+    public void Alignment_wird_am_MarkChanged_Op_eingebettet()
+    {
+        var core = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [], [PbiItem("PBI-1", "Alter Titel")], [], [], []);
+        var align = new PbiAlignment("PBI-1", "Neuer Titel", "Als X …", ["AK neu"], "an REQ-1 angeglichen", ["REQ-1"]);
+        var session = PbiUpdateReviewAdapter.BuildSession("r1", PlanWithAlign([Op("MARK_CHANGED")], [align]), core);
+
+        var op = Assert.Single(session.Items);  // EIN Item — Struktur + Angleichung zusammen
+        Assert.Equal("yes", FieldOf(op, PbiUpdateReviewAdapter.FieldHasAlign));
+        Assert.Equal("PBI-1", FieldOf(op, PbiUpdateReviewAdapter.FieldAlignPbiId));
+        Assert.Equal("Neuer Titel", FieldOf(op, PbiUpdateReviewAdapter.FieldAlignTitle));  // vorbefüllt
+        Assert.Contains(op.Notes, n => n.Label.Contains("AKTUELL") && n.Text.Contains("Alter Titel"));
+        Assert.Contains(op.Notes, n => n.Label.Contains("ANGEGLICHEN") && n.Text.Contains("Neuer Titel"));
+        Assert.False(op.Resolved);
+    }
+
+    // R-26-C — der "nicht heimlich vermischen"-Kontrakt: Struktur und Angleichung sind UNABHÄNGIGE Felder.
+    // Angleichung startet auf 'accept' (Autor-Wunsch: Vorschlag ist der Normalfall); Struktur hat KEINEN Default
+    // (Durchwink-Schutz). Struktur apply + Angleichung skip ist möglich — der Apply trennt beide sauber.
+    [Fact]
+    public void Struktur_und_Angleichung_sind_unabhaengig()
+    {
+        var core = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [], [PbiItem("PBI-1", "Alter Titel")], [], [], []);
+        var align = new PbiAlignment("PBI-1", "Neuer Titel", null, null, "x", ["REQ-1"]);
+        var session = PbiUpdateReviewAdapter.BuildSession("r1", PlanWithAlign([Op("MARK_CHANGED")], [align]), core);
+        var op = session.Items[0];
+
+        Assert.Equal("accept", FieldOf(op, PbiUpdateReviewAdapter.FieldAlignDecision)); // Default Übernehmen
+        Assert.Equal("", FieldOf(op, PbiUpdateReviewAdapter.FieldDecision));            // Struktur kein Default
+        Assert.False(op.Resolved);                                                     // Struktur noch offen
+
+        Set(op, PbiUpdateReviewAdapter.FieldDecision, "apply");
+        Assert.True(PbiUpdateReviewAdapter.Resolved(op));                              // beide entschieden (Angleichung default accept)
+
+        // Angleichung unabhängig auf skip drehen — Struktur bleibt apply, Apply trennt sauber.
+        Set(op, PbiUpdateReviewAdapter.FieldAlignDecision, "skip");
+        Set(op, PbiUpdateReviewAdapter.FieldReason, "erst später klären");
+        var file = PbiUpdateReviewAdapter.Apply("r1", session);
+        Assert.Equal("apply", file.Decisions[0].Decision);
+        Assert.Equal("skip", file.AlignmentDecisions![0].Decision);
+    }
+
+    // R-26-C: Roundtrip — beide Entscheidungen am selben Item; Apply trennt sie sauber, Merge stellt sie wieder her.
+    [Fact]
+    public void Alignment_Apply_und_Merge_Roundtrip()
+    {
+        var core = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [], [PbiItem("PBI-1", "Alter Titel")], [], [], []);
+        var align = new PbiAlignment("PBI-1", "Neuer Titel", null, null, "angeglichen", ["REQ-1"]);
+        var plan = PlanWithAlign([Op("MARK_CHANGED")], [align]);
+        var session = PbiUpdateReviewAdapter.BuildSession("r1", plan, core);
+
+        var op = session.Items[0];
+        Set(op, PbiUpdateReviewAdapter.FieldDecision, "apply");
+        Set(op, PbiUpdateReviewAdapter.FieldAlignDecision, "accept");
+
+        var file = PbiUpdateReviewAdapter.Apply("r1", session);
+        Assert.Equal("apply", file.Decisions[0].Decision);
+        var ad = Assert.Single(file.AlignmentDecisions!);
+        Assert.Equal("PBI-1", ad.PbiId);
+        Assert.Equal("accept", ad.Decision);
+
+        var fresh = PbiUpdateReviewAdapter.BuildSession("r1", plan, core);
+        PbiUpdateReviewAdapter.MergeExistingDecisions(fresh, file);
+        var merged = fresh.Items[0];
+        Assert.Equal("apply", FieldOf(merged, PbiUpdateReviewAdapter.FieldDecision));
+        Assert.Equal("accept", FieldOf(merged, PbiUpdateReviewAdapter.FieldAlignDecision));
+        Assert.True(merged.Resolved);
+    }
 }

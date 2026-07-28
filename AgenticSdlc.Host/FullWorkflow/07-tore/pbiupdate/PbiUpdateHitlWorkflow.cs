@@ -19,7 +19,10 @@ namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 
 public sealed record PbiUpdateReviewRequest(string RunId, string SourceIngestionRun, IReadOnlyList<PbiUpdateReviewOpView> Ops);
 public sealed record PbiUpdateReviewOpView(string OpId, string Kind, string? PbiId, string? RequirementId, string Rationale);
-public sealed record PbiUpdateReviewResponse(IReadOnlyList<string> AcceptedOpIds, string Reviewer);
+// R-26-C: die Response traegt zusaetzlich die AKZEPTIERTEN Angleichungen (schon mit den Human-Edits) — sie
+// werden im selben Review autorisiert. Optional/abwaertskompatibel: alte 2-Positional-Aufrufer bleiben gueltig.
+public sealed record PbiUpdateReviewResponse(IReadOnlyList<string> AcceptedOpIds, string Reviewer,
+    IReadOnlyList<PbiAlignment>? AcceptedAlignments = null);
 
 // FINALIZE (HITL): schreibt Plan/Gate/Attempts/Summary (Evidenz, wie PbiUpdateFinalize) und verzweigt:
 //   Decision==Pass -> PbiUpdateReviewRequest an den Port. Sonst -> terminaler "needs manual"-Output.
@@ -80,8 +83,9 @@ internal sealed class PbiUpdateApplyExecutor(RunContext run, string repoRoot, st
             .Select(id => id.StartsWith("op-", StringComparison.Ordinal) && int.TryParse(id["op-".Length..], NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) ? n : -1)
             .Where(n => n >= 0).ToHashSet();
 
-        run.AppendEvent(new { type = "PBI_UPDATE_APPLY_START", runId = run.RunId, accepted = accepted.Count, reviewer = resp.Reviewer, timestampUtc = DateTime.UtcNow });
-        var report = await PbiUpdateApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot, ct).ConfigureAwait(false);
+        run.AppendEvent(new { type = "PBI_UPDATE_APPLY_START", runId = run.RunId, accepted = accepted.Count, alignments = resp.AcceptedAlignments?.Count ?? 0, reviewer = resp.Reviewer, timestampUtc = DateTime.UtcNow });
+        // R-26-C: die im Review autorisierten Angleichungen werden mitgeschrieben (needs_clarify -> active).
+        var report = await PbiUpdateApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot, acceptedAlignments: resp.AcceptedAlignments, ct: ct).ConfigureAwait(false);
         run.AppendEvent(new { type = "PBI_UPDATE_DONE", runId = run.RunId, applied = true, newPbis = report.NewPbis.Count, updatedPbis = report.UpdatedPbis.Count, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(report, ct).ConfigureAwait(false);
         await context.SendMessageAsync(report).ConfigureAwait(false);
@@ -94,16 +98,21 @@ internal static class PbiUpdateHitlWorkflow
 
     public static Workflow Build(
         PbiUpdateDeriveExecutor derive, PbiUpdateMakerExecutor maker, PbiUpdateGateExecutor gate,
-        PbiUpdateRepairExecutor repair, PbiUpdateHitlFinalizeExecutor finalize,
+        PbiUpdateRepairExecutor repair, PbiAlignExecutor align, PbiUpdateHitlFinalizeExecutor finalize,
         RequestPort humanGate, PbiUpdateApplyExecutor apply)
     {
         var b = new WorkflowBuilder(derive)
             .WithName(WorkflowName)
-            .WithDescription("Ingestion-Delta -> Derive -> Maker -> Gate -> [Repair] -> Finalize -> [RequestPort Human] -> Apply.");
+            .WithDescription("Ingestion-Delta -> Derive -> Maker -> Gate -> [Repair] -> Align (R-26-C) -> Finalize -> [RequestPort Human] -> Apply.");
         b.AddEdge(derive, maker);
         b.AddEdge(maker, gate);
         b.AddEdge<PbiUpdateVerdict>(gate, repair, m => m is not null && m.Decision == GateDecision.Repair);
-        b.AddEdge<PbiUpdateVerdict>(gate, finalize, m => m is not null && m.Decision != GateDecision.Repair);
+        // R-26-C: NUR bei bestandenem Gate (Pass) reichert der Angleichungs-Agent den Plan an — VOR dem
+        // Human-Gate, damit der Mensch die Angleichungen im selben Review autorisiert. HumanReview/
+        // MaxAttemptsReached gehen direkt zu Finalize (terminaler manual-Output, kein LLM-Call).
+        b.AddEdge<PbiUpdateVerdict>(gate, align, m => m is not null && m.Decision == GateDecision.Pass);
+        b.AddEdge(align, finalize);
+        b.AddEdge<PbiUpdateVerdict>(gate, finalize, m => m is not null && m.Decision is not GateDecision.Pass and not GateDecision.Repair);
         b.AddEdge(repair, gate);
         b.AddEdge(finalize, humanGate);   // PbiUpdateReviewRequest (nur bei Decision==Pass gesendet)
         b.AddEdge(humanGate, apply);      // PbiUpdateReviewResponse

@@ -19,6 +19,7 @@ public static class PbiUpdateRunner
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";
     private const string AgentName = "PbiPlacementAgent";
+    private const string AlignAgentName = "PbiAlignmentAgent"; // R-26-C
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
@@ -66,11 +67,18 @@ public static class PbiUpdateRunner
             client.AsAIAgent(instructions: prompt, name: AgentName, tools: [.. tools])
                 .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
 
+        // R-26-C: eigener Agent (eigener Prompt) fuer die inhaltliche Angleichung — geteilter ChatClient.
+        var alignPrompt = PromptProvider.Load(repoRoot, Phase, AlignAgentName, "PbiAlignmentAgent1", new Dictionary<string, string> { ["runId"] = run.RunId });
+        Func<IReadOnlyList<AITool>, AIAgent> alignFactory = tools =>
+            client.AsAIAgent(instructions: alignPrompt, name: AlignAgentName, tools: [.. tools])
+                .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+
         var workflow = PbiUpdateWorkflow.Build(
             new PbiUpdateDeriveExecutor(run),
             new PbiUpdateMakerExecutor(factory, run),
             new PbiUpdateGateExecutor(run),
             new PbiUpdateRepairExecutor(factory, run),
+            new PbiAlignExecutor(alignFactory, run),
             new PbiUpdateFinalizeExecutor(run));
 
         var ctx = new PbiUpdateWfContext(core, delta.Applied, sourceIngestionRun, outDir, dryRun, maxAttempts);

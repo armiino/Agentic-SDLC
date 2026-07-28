@@ -91,6 +91,7 @@
   .note-line .effect-text { flex:1; min-width:220px; }
   .note-line.diff-add { color:var(--ok); background:rgba(61,220,151,.07); border-radius:4px; padding:2px 6px; }
   .note-line.diff-del { color:var(--danger); background:rgba(255,107,107,.07); border-radius:4px; padding:2px 6px; }
+  .line-label { font-weight:600; color:var(--accent); margin-right:2px; }
   .term { border-bottom:1px dotted var(--mut); cursor:help; }
   .glossary-row { display:grid; grid-template-columns:minmax(180px,260px) 1fr; gap:10px; padding:4px 0;
                   font-size:13px; border-bottom:1px solid rgba(42,47,58,.5); }
@@ -349,7 +350,7 @@ function render() {
           `<button class="ctx" onclick="event.stopPropagation();loadContext('${esc(item.itemId)}','${esc(cb.resolverKey)}',this)">${esc(cb.label)}</button>`
         ).join('')}</div><div class="ctxout"></div>` : ''}
       <div class="fields" onclick="event.stopPropagation()">
-        ${session.fieldSchema.filter(spec => !isRepairField(spec.fieldKey) && fieldVisible(item, spec)).map(spec => renderField(item, spec)).join('')}
+        ${session.fieldSchema.filter(spec => !isRepairField(spec.fieldKey) && !isHidden(spec) && fieldVisible(item, spec)).map(spec => renderField(item, spec)).join('')}
       </div>
     </div>`).join('');
 
@@ -363,7 +364,9 @@ function renderNote(n) {
 
 function renderNoteBody(kind, text) {
   const t = text || '';
-  if (kind === 'suggestion' && t.includes('\n')) {
+  // Facet-Vorschlaege (mit Pfeil alt → neu) behalten ihr Pill-Layout; normale Mehrzeiler (z. B. gelabelte
+  // PBI-Module Titel/Statement/AK) fallen auf die einheitliche Zeilen-Darstellung durch (wie 'info').
+  if (kind === 'suggestion' && t.includes('\n') && /→|->/.test(t)) {
     return `<div class="suggestion-list">${t.split('\n').filter(Boolean)
       .map(line => `<div class="suggestion-row">${renderFacetSuggestion(line)}</div>`).join('')}</div>`;
   }
@@ -401,11 +404,14 @@ function renderNoteBody(kind, text) {
   return glossify(t);
 }
 
-// „Begriff ⇒ Wirkung"-Zeilen (Wirkungs-Banner) als Pille + Text rendern.
+// Zeilen-Rendering: „Begriff ⇒ Wirkung" (Wirkungs-Banner) als Pille + Text; „Label: value" (z. B.
+// Titel/Statement/Akzeptanzkriterien) mit hervorgehobenem Label — sonst nur glossify.
 function renderEffectLine(line) {
-  const m = (line || '').match(/^(.{2,48}?)\s*⇒\s*(.*)$/);
-  if (!m) return glossify(line);
-  return `<span class="pill key">${esc(m[1])}</span> <span class="effect-text">${glossify(m[2])}</span>`;
+  const eff = (line || '').match(/^(.{2,48}?)\s*⇒\s*(.*)$/);
+  if (eff) return `<span class="pill key">${esc(eff[1])}</span> <span class="effect-text">${glossify(eff[2])}</span>`;
+  const lbl = (line || '').match(/^([A-ZÄÖÜ][\wäöüÄÖÜß /()-]{1,28}):\s*(.*)$/);
+  if (lbl) return `<span class="line-label">${esc(lbl[1])}:</span> ${glossify(lbl[2])}`;
+  return glossify(line);
 }
 
 function renderFacetSuggestion(line) {
@@ -419,6 +425,11 @@ function renderFacetSuggestion(line) {
 
 function isRepairField(fieldKey) {
   return (fieldKey || '').startsWith('repair.');
+}
+
+// Hidden-Felder tragen nur einen Wert für VisibleWhen (z. B. Item-Art) und werden NICHT gerendert.
+function isHidden(spec) {
+  return (spec.inputType || '').toLowerCase() === 'hidden';
 }
 
 function renderRepairControls(item) {

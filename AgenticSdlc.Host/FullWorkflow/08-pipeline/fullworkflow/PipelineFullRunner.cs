@@ -196,6 +196,7 @@ public static class PipelineFullRunner
 
         var ingestFactory = PipelineComposedRunner.AgentFactory(repoRoot, settings, judgeSettings, run, "RequirementIngestionAgent", "RequirementIngestionAgent1");
         var pbiFactory = PipelineComposedRunner.AgentFactory(repoRoot, settings, judgeSettings, run, "PbiPlacementAgent", "PbiPlacementAgent1");
+        var pbiAlignFactory = PipelineComposedRunner.AgentFactory(repoRoot, settings, judgeSettings, run, "PbiAlignmentAgent", "PbiAlignmentAgent1"); // R-26-C
         ICandidateRetriever retriever = new ShowAllRequirementRetriever();
 
         // Forward ist der anspruchsvollste Agent (jeden Delta-PBI adressieren) → eigenes Modell:
@@ -245,7 +246,7 @@ public static class PipelineFullRunner
                 new IngestComposedApplyExecutor(run, repoRoot, ingestOutDir),
                 new IngestPbiBridgeExecutor(run, repoRoot, pbiOutDir, maxAttempts),
                 new PbiUpdateDeriveExecutor(run), new PbiUpdateMakerExecutor(pbiFactory, run), new PbiUpdateGateExecutor(run),
-                new PbiUpdateRepairExecutor(pbiFactory, run), new PbiUpdateHitlFinalizeExecutor(run),
+                new PbiUpdateRepairExecutor(pbiFactory, run), new PbiAlignExecutor(pbiAlignFactory, run), new PbiUpdateHitlFinalizeExecutor(run),
                 RequestPort.Create<PbiUpdateReviewRequest, PbiUpdateReviewResponse>("pbi-gate"),
                 new PbiUpdateApplyExecutor(run, repoRoot, pbiOutDir)),
             new ForwardNodes(

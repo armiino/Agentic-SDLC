@@ -7,11 +7,24 @@ namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 public sealed record PbiUpdateDecisionsFile(
     [property: JsonPropertyName("runId")] string RunId,
     [property: JsonPropertyName("reviewer")] string Reviewer,
-    [property: JsonPropertyName("decisions")] IReadOnlyList<PbiUpdateDecision> Decisions);
+    [property: JsonPropertyName("decisions")] IReadOnlyList<PbiUpdateDecision> Decisions,
+    // R-26-C (A1, additiv): Entscheidungen zu den Angleichungs-Vorschlägen (accept/edit/skip je PBI). Alte
+    // Dateien ohne dieses Feld => null => keine Angleichung (Inhalts-Mutation NUR mit expliziter Freigabe).
+    [property: JsonPropertyName("alignmentDecisions")] IReadOnlyList<PbiAlignmentDecision>? AlignmentDecisions = null);
 
 public sealed record PbiUpdateDecision(
     [property: JsonPropertyName("opId")] string OpId,
     [property: JsonPropertyName("decision")] string Decision,
+    [property: JsonPropertyName("reason")] string? Reason);
+
+// R-26-C: Entscheidung des Menschen zum Angleichungs-Vorschlag eines PBI. accept = Vorschlag übernehmen,
+// edit = mit den editierten Feldern übernehmen, skip = nicht angleichen (PBI bleibt needs_clarify).
+public sealed record PbiAlignmentDecision(
+    [property: JsonPropertyName("pbiId")] string PbiId,
+    [property: JsonPropertyName("decision")] string Decision,
+    [property: JsonPropertyName("editedTitle")] string? EditedTitle,
+    [property: JsonPropertyName("editedStatement")] string? EditedStatement,
+    [property: JsonPropertyName("editedAcceptanceCriteria")] IReadOnlyList<string>? EditedAcceptanceCriteria,
     [property: JsonPropertyName("reason")] string? Reason);
 
 // Projiziert die PBI-Operationen in die generische HumanReview-UI: 1 Item je Operation (opId = op-<index>),
@@ -26,20 +39,40 @@ public static class PbiUpdateReviewAdapter
 {
     public const string FieldDecision = "decision";
     public const string FieldReason = "reason";
+    // R-26-C: die Angleichung wird DIREKT am zugehoerigen MARK_CHANGED/SUPERSEDE-Op-Item gezeigt (gleicher
+    // PBI-Kontext, bessere UX) — zwei getrennte Entscheidungen (Struktur + Inhalt) in EINEM Item. Versteckte
+    // Traeger-Felder steuern die Sichtbarkeit + tragen die pbiId fuer den Apply.
+    public const string FieldHasAlign = "hasAlign";       // "yes" => dieses Op-Item traegt eine Angleichung
+    public const string FieldAlignPbiId = "alignPbiId";   // pbiId der Angleichung (fuer den Apply)
+    public const string FieldAlignDecision = "alignDecision";
+    public const string FieldAlignTitle = "alignTitle";
+    public const string FieldAlignStatement = "alignStatement";
+    public const string FieldAlignAcceptance = "alignAcceptance";
     private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase) { "apply", "skip" };
+    private static readonly HashSet<string> AlignDecisions = new(StringComparer.OrdinalIgnoreCase) { "accept", "edit", "skip" };
+    private static readonly ReviewFieldVisibility OnlyHasAlign = new(FieldHasAlign, ["yes"]);
+    private static readonly ReviewFieldVisibility OnlyAlignEdit = new(FieldAlignDecision, ["edit"]);
     private const int TextPreviewChars = 500;
 
     public static ReviewSession BuildSession(string runId, PbiStateChangePlanDocument plan, ProjectStateDocument core)
     {
         var byId = core.Items.GroupBy(i => i.ItemId).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-        var items = plan.Operations.Select((op, i) => BuildItem($"op-{i}", i, op, byId)).ToList();
+        // R-26-C: jede Angleichung an ihr ERSTES passendes MARK_CHANGED/SUPERSEDE-Op (gleicher PBI) haengen,
+        // damit Struktur + Inhaltsangleichung im selben Item stehen. (Angleichungen entstehen nur fuer diese
+        // Op-Arten; ein PBI mit mehreren Ops zeigt die Angleichung genau einmal, am ersten Op.)
+        var opAlign = MapAlignmentsToOps(plan);
+        var items = plan.Operations.Select((op, i) => BuildItem($"op-{i}", i, op, byId, opAlign.GetValueOrDefault(i))).ToList();
+
+        var alignCount = opAlign.Count;
         return new ReviewSession
         {
             SessionId = $"pbi-update-{runId}",
             Title = "Incrementeller PBI-Update — Backlog-Aenderungen",
-            Subtitle = plan.Operations.Count == 0
+            Subtitle = plan.Operations.Count == 0 && alignCount == 0
                 ? "Keine PBI-Aenderungen."
-                : $"{plan.Operations.Count} Backlog-Operationen aus dem letzten Meeting — je Op: uebernehmen oder ueberspringen.",
+                : $"{plan.Operations.Count} Struktur-Operationen"
+                  + (alignCount > 0 ? $" + {alignCount} Inhalts-Angleichung(en)" : "")
+                  + " aus dem letzten Meeting.",
             Help = BuildHelp(),
             Notes = SessionNotes(),
             Glossary = Glossary(),
@@ -48,44 +81,120 @@ public static class PbiUpdateReviewAdapter
                 Set:
                 [
                     new ReviewFieldValue(FieldDecision, "apply"),
+                    new ReviewFieldValue(FieldAlignDecision, "accept"),
                     new ReviewFieldValue(FieldReason, "Sammel-Freigabe durch Reviewer (accept-all im UI).")
                 ],
-                Confirm: "{n} Operationen ohne Entscheid auf 'Uebernehmen' setzen? ACHTUNG: apply aendert die "
+                Confirm: "{n} offene Punkte uebernehmen (Struktur-Ops + Angleichungen)? ACHTUNG: aendert die "
                     + "Projektwahrheit (Core) und speist danach den GitHub-Sync. Bereits getroffene Entscheide bleiben unberuehrt."),
             FieldSchema =
             [
-                new ReviewFieldSpec(FieldDecision, "Entscheidung", ReviewInputType.Dropdown, ["apply", "skip"], Required: true,
-                    Help: "Was mit dieser Aenderung passiert — Details im Banner 'Was bewirkt dein Entscheid?'.",
+                new ReviewFieldSpec(FieldHasAlign, "", ReviewInputType.Hidden, [], Required: false),
+                new ReviewFieldSpec(FieldAlignPbiId, "", ReviewInputType.Hidden, [], Required: false),
+                new ReviewFieldSpec(FieldDecision, "Struktur-Entscheidung", ReviewInputType.Dropdown, ["apply", "skip"], Required: true,
+                    Help: "Ob dieses PBI von der Aenderung betroffen ist — Details im Banner 'Was bewirkt dein Entscheid?'.",
                     Options:
                     [
                         new ReviewOption("apply", "Uebernehmen — aendert die Projektwahrheit (Core)"),
                         new ReviewOption("skip", "Ueberspringen — Aenderung verwerfen (Begruendung Pflicht)")
                     ]),
+                new ReviewFieldSpec(FieldAlignDecision, "Inhaltliche Angleichung", ReviewInputType.Dropdown, ["accept", "edit", "skip"], Required: true,
+                    Help: "Wie der angepasste PBI-Inhalt in die Wahrheit uebernommen wird (eigene Entscheidung, unabhaengig von der Struktur).",
+                    Options:
+                    [
+                        new ReviewOption("accept", "Uebernehmen — Vorschlag wird PBI-Inhalt, PBI wird geklaert (active)"),
+                        new ReviewOption("edit", "Anpassen — deine Fassung wird uebernommen"),
+                        new ReviewOption("skip", "Nicht angleichen — PBI bleibt ungeklaert (needs_clarify), Begruendung Pflicht")
+                    ],
+                    VisibleWhen: OnlyHasAlign),
+                new ReviewFieldSpec(FieldAlignTitle, "Titel (angeglichen)", ReviewInputType.FreeText, [], Required: false,
+                    Help: "Angepasster PBI-Titel. Leer = Vorschlag behalten.", VisibleWhen: OnlyAlignEdit),
+                new ReviewFieldSpec(FieldAlignStatement, "Statement (angeglichen)", ReviewInputType.MultiLine, [], Required: false,
+                    Help: "Als <Rolle> will ich ... Leer = Vorschlag behalten.", VisibleWhen: OnlyAlignEdit),
+                new ReviewFieldSpec(FieldAlignAcceptance, "Akzeptanzkriterien (angeglichen)", ReviewInputType.MultiLine, [], Required: false,
+                    Help: "Eine Zeile pro Kriterium. Leer = Vorschlag behalten.", VisibleWhen: OnlyAlignEdit),
                 new ReviewFieldSpec(FieldReason, "Begruendung (Audit-Protokoll)", ReviewInputType.MultiLine, [], Required: false,
-                    Help: "Pflicht beim Ueberspringen (warum weicht der Mensch vom Vorschlag ab?). Landet als Beleg in "
-                        + "human-decisions.json — keine Anweisung ans System.")
+                    Help: "Pflicht beim Ueberspringen/Nicht-angleichen. Landet als Beleg in human-decisions.json — keine Anweisung ans System.")
             ],
             Items = items
         };
     }
 
-    // E0.3: Items starten offen; Begruendung nur beim skip Pflicht (Abweichung vom Vorschlag dokumentieren).
+    // E0.3/R-26-C: Items starten offen; Begruendung nur beim skip Pflicht. Traegt ein Op-Item eine Angleichung,
+    // braucht es BEIDE Entscheidungen (Struktur + Inhalt) — getrennt, nie automatisch voneinander abgeleitet.
     public static bool Resolved(ReviewItem item)
     {
         var decision = FieldOf(item, FieldDecision);
         if (!Decisions.Contains(decision)) return false;
         if (string.Equals(decision, "skip", StringComparison.OrdinalIgnoreCase)
             && string.IsNullOrWhiteSpace(FieldOf(item, FieldReason))) return false;
+        if (HasAlign(item))
+        {
+            var ad = FieldOf(item, FieldAlignDecision);
+            if (!AlignDecisions.Contains(ad)) return false;
+            if (string.Equals(ad, "skip", StringComparison.OrdinalIgnoreCase)
+                && string.IsNullOrWhiteSpace(FieldOf(item, FieldReason))) return false;
+        }
         return true;
     }
 
     public static PbiUpdateDecisionsFile Apply(string runId, ReviewSession session)
-        => new(runId, "human (review-ui)", session.Items.Select(it => new PbiUpdateDecision(
-            it.ItemId, FieldOf(it, FieldDecision), FieldOf(it, FieldReason) is { Length: > 0 } r ? r : null)).ToList());
+    {
+        var ops = session.Items
+            .Select(it => new PbiUpdateDecision(it.ItemId, FieldOf(it, FieldDecision), NullIfEmpty(FieldOf(it, FieldReason))))
+            .ToList();
+        var aligns = session.Items.Where(HasAlign)
+            .Select(it => new PbiAlignmentDecision(
+                FieldOf(it, FieldAlignPbiId),
+                FieldOf(it, FieldAlignDecision),
+                NullIfEmpty(FieldOf(it, FieldAlignTitle)),
+                NullIfEmpty(FieldOf(it, FieldAlignStatement)),
+                SplitLines(FieldOf(it, FieldAlignAcceptance)),
+                NullIfEmpty(FieldOf(it, FieldReason))))
+            .ToList();
+        return new(runId, "human (review-ui)", ops, aligns.Count > 0 ? aligns : null);
+    }
 
     public static void MergeExistingDecisions(ReviewSession session, PbiUpdateDecisionsFile? file)
-        => ReviewMerge.ByItemId(session, file?.Decisions, d => d.OpId,
+    {
+        ReviewMerge.ByItemId(session, file?.Decisions, d => d.OpId,
             (item, d) => { Set(item, FieldDecision, d.Decision); Set(item, FieldReason, d.Reason); }, Resolved);
+        // Angleichungs-Entscheidungen per pbiId -> das Op-Item, das diese Angleichung traegt (alignPbiId).
+        foreach (var ad in file?.AlignmentDecisions ?? [])
+        {
+            var item = session.Items.FirstOrDefault(it => string.Equals(FieldOf(it, FieldAlignPbiId), ad.PbiId, StringComparison.Ordinal));
+            if (item is null) continue;
+            Set(item, FieldAlignDecision, ad.Decision);
+            Set(item, FieldAlignTitle, ad.EditedTitle);
+            Set(item, FieldAlignStatement, ad.EditedStatement);
+            Set(item, FieldAlignAcceptance, ad.EditedAcceptanceCriteria is { Count: > 0 } c ? string.Join('\n', c) : null);
+            if (!string.IsNullOrWhiteSpace(ad.Reason)) Set(item, FieldReason, ad.Reason);
+            item.Resolved = Resolved(item);
+        }
+    }
+
+    private static bool HasAlign(ReviewItem item) => string.Equals(FieldOf(item, FieldHasAlign), "yes", StringComparison.Ordinal);
+    private static string? NullIfEmpty(string v) => string.IsNullOrWhiteSpace(v) ? null : v;
+
+    // Ordnet jede Angleichung ihrem ersten passenden MARK_CHANGED/SUPERSEDE-Op zu (gleicher PBI).
+    private static IReadOnlyDictionary<int, PbiAlignment> MapAlignmentsToOps(PbiStateChangePlanDocument plan)
+    {
+        var map = new Dictionary<int, PbiAlignment>();
+        foreach (var a in plan.Alignments ?? [])
+        {
+            for (var i = 0; i < plan.Operations.Count; i++)
+            {
+                var op = plan.Operations[i];
+                if (map.ContainsKey(i)) continue;
+                if (string.Equals(op.PbiId, a.PbiId, StringComparison.Ordinal)
+                    && (op.Kind == PbiUpdateKind.MarkChanged || op.Kind == PbiUpdateKind.SupersedePbi))
+                { map[i] = a; break; }
+            }
+        }
+        return map;
+    }
+    private static IReadOnlyList<string>? SplitLines(string v)
+        => string.IsNullOrWhiteSpace(v) ? null
+           : v.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Where(l => l.Length > 0).ToArray();
 
     // E0.3d: Drilldowns loesen zu LESBAREM Text auf statt Roh-JSON.
     public static string ResolveContext(string key, PbiStateChangePlanDocument plan, ProjectStateDocument core)
@@ -127,8 +236,9 @@ public static class PbiUpdateReviewAdapter
             + "Was genau: neues Backlog-Item anlegen, Anforderung zuordnen, Item als geaendert/blockiert markieren oder "
             + "eine Anforderung ersetzen.\n"
             + "Ueberspringen ⇒ die Aenderung wird nicht uebernommen, der Core bleibt wie er ist. Bitte kurz begruenden.\n"
-            + "Markierungen (needs_clarify, blocked_by_decision) ⇒ das Item ist dann vorgemerkt, aber inhaltlich noch "
-            + "offen — die eigentliche Klaerung ist ein spaeterer Schritt.")
+            + "Angleichung (ANGLEICHUNG) ⇒ hier wird der PBI-INHALT (Titel/Statement/Akzeptanzkriterien) an die "
+            + "geaenderte Anforderung angepasst. Uebernehmen klaert das PBI (needs_clarify -> active); Nicht-angleichen "
+            + "laesst es ungeklaert.")
     ];
 
     // E0.3e: Fach-Begriffe in Klartext mit Wirkungs-Ehrlichkeit (Muster wie Forward-Review).
@@ -145,7 +255,7 @@ public static class PbiUpdateReviewAdapter
     ];
 
     private static ReviewItem BuildItem(string opId, int idx, PbiStateChangeOperation op,
-        IReadOnlyDictionary<string, ProjectStateItem> byId)
+        IReadOnlyDictionary<string, ProjectStateItem> byId, PbiAlignment? align)
     {
         var pbi = op.PbiId is not null ? byId.GetValueOrDefault(op.PbiId) : null;
         var req = byId.GetValueOrDefault(op.RequirementId);
@@ -180,7 +290,7 @@ public static class PbiUpdateReviewAdapter
                     ? new ReviewNote(ReviewNoteKind.Suggestion, $"Anforderung {op.RequirementId} (neue Fassung)", ReqBody(req))
                     : new ReviewNote(ReviewNoteKind.Info, $"Anforderung {op.RequirementId} — Vorher/Nachher (− alt · + neu)",
                         $"− {Truncate(prev, TextPreviewChars)}\n+ {ReqBody(req)}"));
-                notes.Add(NeedsClarifyNote(op.RequirementId));
+                if (align is null) notes.Add(NeedsClarifyNote(op.RequirementId)); // ohne Angleichungs-Vorschlag: Lücke sichtbar
                 break;
             }
             case PbiUpdateKind.SupersedePbi:
@@ -189,7 +299,7 @@ public static class PbiUpdateReviewAdapter
                 notes.Add(new ReviewNote(ReviewNoteKind.Info,
                     $"Anforderungs-Ersatz ({op.RequirementId} → {op.ReplacementRequirementId})",
                     $"− {Truncate(req?.Text ?? op.RequirementId, TextPreviewChars)}\n+ {Truncate(repl?.Text ?? op.ReplacementRequirementId ?? "?", TextPreviewChars)}"));
-                notes.Add(NeedsClarifyNote(op.ReplacementRequirementId ?? op.RequirementId));
+                if (align is null) notes.Add(NeedsClarifyNote(op.ReplacementRequirementId ?? op.RequirementId));
                 break;
             }
             case PbiUpdateKind.BlockPbi:
@@ -219,22 +329,65 @@ public static class PbiUpdateReviewAdapter
         if (PbiUpdateKind.Placement.Contains(op.Kind) && !string.IsNullOrWhiteSpace(op.Rationale))
             notes.Add(new ReviewNote(ReviewNoteKind.Reason, "Warum diese Zuordnung? (Vorschlag des Platzierungs-Agenten)", op.Rationale));
 
+        // R-26-C: die Inhalts-Angleichung DIREKT an diesem Op-Item — gleicher PBI-Kontext, getrennte Entscheidung.
+        if (align is not null && pbi is not null)
+        {
+            notes.Add(new ReviewNote(ReviewNoteKind.Reason, "Inhaltliche Angleichung — warum",
+                align.Rationale + $"\nAusgeloest durch: {(align.TriggerRequirementIds.Count == 0 ? "-" : string.Join(", ", align.TriggerRequirementIds))}"));
+            notes.Add(new ReviewNote(ReviewNoteKind.Info, "PBI-Inhalt AKTUELL",
+                PbiContentBlock(pbi.Pbi?.Title ?? pbi.Text, pbi.Pbi?.Goal, pbi.Pbi?.AcceptanceCriteria)));
+            notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, "PBI-Inhalt ANGEGLICHEN (Vorschlag)",
+                PbiContentBlock(align.ProposedTitle, align.ProposedStatement, align.ProposedAcceptanceCriteria)));
+        }
+
         var context = new List<ContextBlock> { new(ContextBlockKind.Generic, "Operation im Detail", $"op:{idx}") };
         if (op.PbiId is not null) context.Add(new ContextBlock(ContextBlockKind.Reference, $"PBI {op.PbiId} komplett", $"pbi:{op.PbiId}"));
         context.Add(new ContextBlock(ContextBlockKind.Reference, $"Anforderung {op.RequirementId}", $"requirement:{op.RequirementId}"));
 
+        // E0.3c: kein Vorentscheid — der Mensch entscheidet aktiv (Accept all nur ueber den Bestaetigungs-Button).
+        var fields = new List<ReviewFieldValue>
+        {
+            new(FieldDecision, ""),
+            new(FieldReason, ""),
+            new(FieldHasAlign, align is not null ? "yes" : ""),
+            new(FieldAlignPbiId, align?.PbiId ?? "")
+        };
+        if (align is not null)
+        {
+            // Autor-Wunsch: die Angleichung startet auf "Uebernehmen" (der Vorschlag ist der erwartete Normalfall).
+            // Die STRUKTUR-Entscheidung hat weiter KEINEN Default (Durchwink-Schutz) — beide bleiben getrennt.
+            fields.Add(new ReviewFieldValue(FieldAlignDecision, "accept"));
+            fields.Add(new ReviewFieldValue(FieldAlignTitle, align.ProposedTitle ?? ""));
+            fields.Add(new ReviewFieldValue(FieldAlignStatement, align.ProposedStatement ?? ""));
+            fields.Add(new ReviewFieldValue(FieldAlignAcceptance, align.ProposedAcceptanceCriteria is { Count: > 0 } c ? string.Join('\n', c) : ""));
+        }
+
         var item = new ReviewItem
         {
             ItemId = opId,
-            Summary = summary,
+            Summary = align is not null ? summary + "  ·  + Inhalts-Angleichung" : summary,
             Badge = op.Kind,
             Notes = notes,
             ContextBlocks = context,
-            // E0.3c: kein Vorentscheid — der Mensch entscheidet aktiv (Accept all nur ueber den Bestaetigungs-Button).
-            FieldValues = [new ReviewFieldValue(FieldDecision, ""), new ReviewFieldValue(FieldReason, "")]
+            FieldValues = fields
         };
         item.Resolved = Resolved(item);
         return item;
+    }
+
+    // Zeigt die drei PBI-Module klar getrennt (Titel / Statement / Akzeptanzkriterien) — die UI hebt die
+    // "Label:"-Zeilen hervor, sodass alt und neu Modul-fuer-Modul vergleichbar sind.
+    private static string PbiContentBlock(string? title, string? statement, IReadOnlyList<string>? acceptance)
+    {
+        var sb = new System.Text.StringBuilder();
+        sb.Append("Titel: ").Append(string.IsNullOrWhiteSpace(title) ? "(unveraendert)" : title);
+        sb.Append("\nStatement: ").Append(string.IsNullOrWhiteSpace(statement) ? "(unveraendert)" : statement);
+        sb.Append("\nAkzeptanzkriterien:");
+        if (acceptance is { Count: > 0 } ac)
+            foreach (var c in ac) sb.Append("\n- ").Append(c);
+        else
+            sb.Append(" (unveraendert)");
+        return sb.ToString();
     }
 
     // Der ehrliche R-26-Hinweis am Item — verbindet dieses Gate mit der offenen Klaerungs-Luecke.

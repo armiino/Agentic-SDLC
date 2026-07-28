@@ -137,19 +137,61 @@ internal static class PbiPlacementRunner
     }
 }
 
+// R-26-C (Slice 3): ANGLEICHUNG nach bestandenem Gate — je betroffenem PBI (MARK_CHANGED/SUPERSEDE) schlaegt der
+// Agent den angeglichenen Inhalt vor. Reine Anreicherung des Plans (plan.Alignments); Gate/Repair unberuehrt.
+// Der Vorschlag ist NICHT autorisiert — erst das PBI-Update-Review + Apply schreiben in den Core.
+internal static class PbiAlignRunner
+{
+    public static async Task<IReadOnlyList<PbiAlignment>> RunAsync(
+        PbiUpdateWfContext ctx, PbiStateChangePlanDocument plan,
+        Func<IReadOnlyList<AITool>, AIAgent> factory, RunContext run, string task, CancellationToken ct)
+    {
+        var targets = PbiAlignTargets.Collect(plan, ctx.Core);
+        if (targets.Count == 0 || ctx.DryRun) return [];
+        var tools = new PbiAlignTools(targets, run);
+        var agent = factory(tools.Build());
+        await agent.RunAsync([new ChatMessage(ChatRole.User, task)], cancellationToken: ct).ConfigureAwait(false);
+        return (tools.SavedAlignments ?? []).ToList();
+    }
+}
+
+[SendsMessage(typeof(PbiUpdateVerdict))]
+internal sealed class PbiAlignExecutor(Func<IReadOnlyList<AITool>, AIAgent> agentFactory, RunContext run)
+    : Executor<PbiUpdateVerdict>("PbiAlign")
+{
+    private const string Task = """
+                                Gleiche die betroffenen PBIs an ihre geaenderten Anforderungen an:
+                                get_alignment_targets -> je PBI EIN angeglichener Inhaltsvorschlag (nur was sich
+                                aendert; offene Fragen ehrlich benennen). save_alignments GENAU EINMAL.
+                                """;
+
+    public override async ValueTask HandleAsync(PbiUpdateVerdict v, IWorkflowContext context, CancellationToken ct = default)
+    {
+        var alignments = await PbiAlignRunner.RunAsync(v.Ctx, v.Plan, agentFactory, run, Task, ct).ConfigureAwait(false);
+        run.AppendEvent(new { type = "PBI_ALIGN", runId = run.RunId, alignments = alignments.Count, dryRun = v.Ctx.DryRun, timestampUtc = DateTime.UtcNow });
+        var plan = v.Plan with { Alignments = alignments.Count > 0 ? alignments : null };
+        await context.SendMessageAsync(v with { Plan = plan }).ConfigureAwait(false);
+    }
+}
+
 internal static class PbiUpdateWorkflow
 {
     public const string WorkflowName = "Incremental-PBI-Update";
 
-    public static Workflow Build(PbiUpdateDeriveExecutor derive, PbiUpdateMakerExecutor maker, PbiUpdateGateExecutor gate, PbiUpdateRepairExecutor repair, PbiUpdateFinalizeExecutor finalize)
+    public static Workflow Build(PbiUpdateDeriveExecutor derive, PbiUpdateMakerExecutor maker, PbiUpdateGateExecutor gate,
+        PbiUpdateRepairExecutor repair, PbiAlignExecutor align, PbiUpdateFinalizeExecutor finalize)
     {
         var b = new WorkflowBuilder(derive)
             .WithName(WorkflowName)
-            .WithDescription("Ingestion-Delta -> Derive -> Maker -> Gate --[repairable]--> Repair (Loop) / sonst Finalize.");
+            .WithDescription("Ingestion-Delta -> Derive -> Maker -> Gate --[repairable]--> Repair (Loop) / sonst Align (R-26-C) -> Finalize.");
         b.AddEdge(derive, maker);
         b.AddEdge(maker, gate);
         b.AddEdge<PbiUpdateVerdict>(gate, repair, m => m is not null && m.Decision == GateDecision.Repair);
-        b.AddEdge<PbiUpdateVerdict>(gate, finalize, m => m is not null && m.Decision != GateDecision.Repair);
+        // R-26-C: NUR bei bestandenem Gate (Pass) reichert der Angleichungs-Agent den Plan an — bei
+        // HumanReview/MaxAttemptsReached geht es direkt zu Finalize (kein Review/Apply -> kein LLM-Call).
+        b.AddEdge<PbiUpdateVerdict>(gate, align, m => m is not null && m.Decision == GateDecision.Pass);
+        b.AddEdge(align, finalize);
+        b.AddEdge<PbiUpdateVerdict>(gate, finalize, m => m is not null && m.Decision is not GateDecision.Pass and not GateDecision.Repair);
         b.AddEdge(repair, gate);
         b.WithOutputFrom(finalize);
         return b.Build();

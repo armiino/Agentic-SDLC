@@ -9,10 +9,25 @@ public sealed record PbiStateChangePlanDocument(
     [property: JsonPropertyName("planId")] string PlanId,
     [property: JsonPropertyName("createdUtc")] DateTime CreatedUtc,
     [property: JsonPropertyName("sourceIngestionRun")] string SourceIngestionRun,
-    [property: JsonPropertyName("operations")] IReadOnlyList<PbiStateChangeOperation> Operations)
+    [property: JsonPropertyName("operations")] IReadOnlyList<PbiStateChangeOperation> Operations,
+    // R-26-C (A1, additiv/abwaertskompatibel): Angleichungs-Vorschlaege je betroffenem PBI (MARK_CHANGED/
+    // SUPERSEDE). Alte Plaene ohne dieses Feld => null. Der Mensch autorisiert/editiert im PBI-Update-Review;
+    // der Apply uebernimmt nur die AKZEPTIERTEN und setzt needs_clarify -> active.
+    [property: JsonPropertyName("alignments")] IReadOnlyList<PbiAlignment>? Alignments = null)
 {
     public const int CurrentSchemaVersion = 1;
 }
+
+// R-26-C: Vorschlag zur inhaltlichen Angleichung eines PBI an eine geaenderte Anforderung. Leeres Feld =
+// Original behalten. Der Agent erzeugt den Vorschlag; die menschliche Fassung (accept/edit) gilt.
+public sealed record PbiAlignment(
+    [property: JsonPropertyName("pbiId")] string PbiId,
+    [property: JsonPropertyName("proposedTitle")] string? ProposedTitle,
+    [property: JsonPropertyName("proposedStatement")] string? ProposedStatement,
+    [property: JsonPropertyName("proposedAcceptanceCriteria")] IReadOnlyList<string>? ProposedAcceptanceCriteria,
+    [property: JsonPropertyName("rationale")] string Rationale,
+    // Welche geaenderten/ersetzten Requirements diese Angleichung ausgeloest haben (Provenance + Review-Kontext).
+    [property: JsonPropertyName("triggerRequirementIds")] IReadOnlyList<string> TriggerRequirementIds);
 
 public sealed record PbiStateChangeOperation(
     [property: JsonPropertyName("kind")] string Kind,

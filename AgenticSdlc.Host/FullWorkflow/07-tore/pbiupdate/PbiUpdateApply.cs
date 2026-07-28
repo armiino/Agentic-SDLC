@@ -17,7 +17,8 @@ public sealed record PbiUpdateApplyReport(
 public static class PbiUpdateApply
 {
     public static (ProjectStateDocument Core, PbiUpdateApplyReport Report) Apply(
-        ProjectStateDocument core, PbiStateChangePlanDocument plan, ISet<int> acceptedIndices, string sourceRun)
+        ProjectStateDocument core, PbiStateChangePlanDocument plan, ISet<int> acceptedIndices, string sourceRun,
+        IReadOnlyList<PbiAlignment>? acceptedAlignments = null)
     {
         var order = core.Items.Select(i => i.ItemId).ToList();
         var byId = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
@@ -27,6 +28,9 @@ public static class PbiUpdateApply
         var newPbis = new List<string>();
         var updated = new List<string>();
         var skipped = new List<string>();
+        // R-26-C: akzeptierte/edierte Angleichungen je PBI (letzte gewinnt). Leer => kein Alignment.
+        var alignByPbi = (acceptedAlignments ?? [])
+            .GroupBy(a => a.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
 
         var accepted = plan.Operations.Where((_, i) => acceptedIndices.Contains(i)).ToList();
 
@@ -87,14 +91,34 @@ public static class PbiUpdateApply
                 }
             }
 
+            // R-26-C: akzeptierte Angleichung uebernimmt den PBI-Inhalt und klaert needs_clarify -> active.
+            // Leere Vorschlagsfelder = Original behalten. Blocked bleibt blocked (staerker als needs_clarify).
+            var title = pbi.Pbi.Title;
+            var goal = pbi.Pbi.Goal;
+            var acceptance = pbi.Pbi.AcceptanceCriteria;
+            var aligned = false;
+            if (alignByPbi.TryGetValue(pbi.ItemId, out var align))
+            {
+                if (!string.IsNullOrWhiteSpace(align.ProposedTitle)) title = align.ProposedTitle!.Trim();
+                if (!string.IsNullOrWhiteSpace(align.ProposedStatement)) goal = align.ProposedStatement!.Trim();
+                if (align.ProposedAcceptanceCriteria is { Count: > 0 } ac) acceptance = ac;
+                if (string.Equals(status, PbiStatus.NeedsClarify, StringComparison.OrdinalIgnoreCase)) status = PbiStatus.Active;
+                reasons.Add($"ALIGN(R-26-C): {align.Rationale}");
+                aligned = true;
+            }
+
             var history = (pbi.History ?? []).Append(new ProjectStateItemVersion(
                 pbi.Version, pbi.Text, pbi.Status, pbi.Origin, pbi.SourceRunId, pbi.SourceClaimIds, DateTime.UtcNow, string.Join(" | ", reasons))).ToList();
             byId[pbi.ItemId] = pbi with
             {
+                // R-31: bei inhaltlicher Angleichung traegt die neue Fassung den ausloesenden Lauf als Ursprung
+                // (statt den alten Baseline-Lauf zu erben); reine Struktur-Ops lassen die Provenance unberuehrt.
+                Text = title,
                 Status = status,
                 Version = pbi.Version + 1,
+                SourceRunId = aligned ? sourceRun : pbi.SourceRunId,
                 History = history,
-                Pbi = pbi.Pbi with { LinkedRequirementIds = links, OpenDecisionRefs = decRefs }
+                Pbi = pbi.Pbi with { Title = title, Goal = goal, AcceptanceCriteria = acceptance, LinkedRequirementIds = links, OpenDecisionRefs = decRefs }
             };
             updated.Add(pbi.ItemId);
         }

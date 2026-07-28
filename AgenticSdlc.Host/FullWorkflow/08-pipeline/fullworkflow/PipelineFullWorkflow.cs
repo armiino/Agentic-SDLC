@@ -29,7 +29,7 @@ internal sealed record OperationalNodes(
     IngestionHitlFinalizeExecutor IngestFinalize, RequestPort IngestPort, IngestComposedApplyExecutor IngestApply,
     IngestPbiBridgeExecutor Bridge,
     PbiUpdateDeriveExecutor PbiDerive, PbiUpdateMakerExecutor PbiMaker, PbiUpdateGateExecutor PbiGate,
-    PbiUpdateRepairExecutor PbiRepair, PbiUpdateHitlFinalizeExecutor PbiFinalize, RequestPort PbiPort,
+    PbiUpdateRepairExecutor PbiRepair, PbiAlignExecutor PbiAlign, PbiUpdateHitlFinalizeExecutor PbiFinalize, RequestPort PbiPort,
     PbiUpdateApplyExecutor PbiApply);
 
 internal sealed record ForwardNodes(
@@ -90,7 +90,7 @@ internal static class PipelineFullWorkflow
         b.AddEdge(op.IngestBridge, op.IngestResolve);
         PipelineComposedWorkflow.AddTo(b, op.IngestResolve, op.IngestGate, op.IngestRepair, op.IngestFinalize,
             op.IngestPort, op.IngestApply, op.Bridge, op.PbiDerive, op.PbiMaker, op.PbiGate, op.PbiRepair,
-            op.PbiFinalize, op.PbiPort, op.PbiApply);
+            op.PbiAlign, op.PbiFinalize, op.PbiPort, op.PbiApply);
 
         // Gemeinsames Ende: beide Zweige -> Forward-Prep -> Snapshot -> Forward (+Gate) -> Apply (Dry-Run-Default)
         b.AddEdge(boot.Seed, fwd.BootstrapBridge);
