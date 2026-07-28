@@ -24,7 +24,11 @@ public sealed record GithubSyncEntry(
     string? GithubIssue,
     // T3.1: operationaler Zustand des gemappten Issues (open/closed) aus der Core-Relation, sonst null.
     // Relevant fuer Dedup/Drift im naechsten Forward-Lauf (geschlossenes Issue bei aktivem PBI = Drift).
-    string? GithubIssueStatus = null);
+    string? GithubIssueStatus = null,
+    // E0.1c/R-23: Akzeptanzkriterien + Statement (Story-Form) aus dem Core-Payload — landen im
+    // deterministischen Issue-Body.
+    IReadOnlyList<string>? AcceptanceCriteria = null,
+    string? Statement = null);
 
 public sealed record GithubSyncView(IReadOnlyList<GithubSyncEntry> Entries);
 
@@ -88,7 +92,9 @@ public static class CoreViews
                     CoveredRequirementIds: covered,
                     BlockedByOpenDecision: blocked,
                     GithubIssue: mapping is not null ? CoreGithubMapping.IssueRef(mapping.IssueNumber) : p.Metadata.GetValueOrDefault("githubIssue"),
-                    GithubIssueStatus: mapping?.OperationalStatus);
+                    GithubIssueStatus: mapping?.OperationalStatus,
+                    AcceptanceCriteria: p.Pbi?.AcceptanceCriteria ?? [],
+                    Statement: p.Pbi?.Goal);
             })
             .ToList();
         return new GithubSyncView(entries);

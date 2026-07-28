@@ -81,6 +81,7 @@ public static class ReClarifyBacklogApplyRunner
         var byPbi = decisions.GroupBy(d => d.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
         var applied = new List<ProductBacklogItem>();
         var dropped = new List<string>();
+        var droppedItems = new List<ProductBacklogItem>();
         foreach (var pbi in backlog.Items)
         {
             if (!byPbi.TryGetValue(pbi.PbiId, out var d) || string.Equals(d.Decision, "accept", StringComparison.OrdinalIgnoreCase))
@@ -95,8 +96,20 @@ public static class ReClarifyBacklogApplyRunner
             else
             {
                 dropped.Add($"{pbi.PbiId}: {d.Decision}");
+                droppedItems.Add(pbi);
             }
         }
+
+        // E0.1h: Requirements, die NUR von verworfenen PBIs gedeckt waren, verlieren ihre Deckung.
+        // Es gibt (noch) keinen Wiederaufroll-Mechanismus — das Artefakt macht die Luecke sichtbar.
+        var coveredByApplied = applied.SelectMany(p => p.RequirementIds).ToHashSet(StringComparer.Ordinal);
+        var uncovered = droppedItems
+            .SelectMany(p => p.RequirementIds.Select(reqId => (reqId, p.PbiId)))
+            .Where(x => !coveredByApplied.Contains(x.reqId))
+            .GroupBy(x => x.reqId, StringComparer.Ordinal)
+            .OrderBy(g => g.Key, StringComparer.Ordinal)
+            .Select(g => new { requirementId = g.Key, lostCoverageFrom = g.Select(x => x.PbiId).Distinct().ToList() })
+            .ToList();
 
         var appliedDoc = backlog with
         {
@@ -128,11 +141,18 @@ public static class ReClarifyBacklogApplyRunner
         var appliedBacklogPath = Path.Combine(appliedOutDir, "product-backlog.json");
         await File.WriteAllTextAsync(appliedBacklogPath, JsonSerializer.Serialize(appliedDoc, Json)).ConfigureAwait(false);
         await File.WriteAllTextAsync(Path.Combine(appliedOutDir, "backlog-gate-report.json"), JsonSerializer.Serialize(gate, Json)).ConfigureAwait(false);
+        if (uncovered.Count > 0)
+        {
+            await File.WriteAllTextAsync(Path.Combine(appliedOutDir, "uncovered-requirements.json"),
+                JsonSerializer.Serialize(uncovered, Json)).ConfigureAwait(false);
+            Console.WriteLine($"[l4-re-clarify-backlog-apply] WARNUNG: {uncovered.Count} Requirements ohne Deckung nach Verwerfen -> applied/uncovered-requirements.json");
+        }
         await File.WriteAllTextAsync(Path.Combine(appliedOutDir, "backlog-apply-report.json"), JsonSerializer.Serialize(new
         {
             pbisBefore = backlog.Items.Count,
             pbisAfter = appliedDoc.Items.Count,
             dropped,
+            uncoveredRequirements = uncovered.Count,
             gatePass = gate.Pass,
             gateErrors = gate.Errors.Count,
             gateWarnings = gate.Warnings.Count,

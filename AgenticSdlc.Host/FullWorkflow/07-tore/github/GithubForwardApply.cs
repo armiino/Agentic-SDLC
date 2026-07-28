@@ -116,7 +116,8 @@ public static class GithubForwardApply
                     {
                         if (op.TargetIssueNumber is null) { reportOps.Add(Op(opId, op, null, null, "failed", "UPDATE ohne targetIssueNumber")); failed++; break; }
                         if (!execute) { reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "would-update", null)); updated++; break; }
-                        var r = await client!.UpdateIssueAsync(repository!, op.TargetIssueNumber.Value, op.Title ?? "", op.Body ?? "", op.Labels ?? [], ct).ConfigureAwait(false);
+                        // R-30: op.Labels null ⇒ Labels nicht anfassen (?? [] haette sie auf GitHub GELEERT).
+                        var r = await client!.UpdateIssueAsync(repository!, op.TargetIssueNumber.Value, op.Title ?? "", op.Body ?? "", op.Labels, ct).ConfigureAwait(false);
                         reportOps.Add(Op(opId, op, r.IssueNumber, r.IssueUrl, "updated", null));
                         mappingOps.Add(new GithubMappingOp(op.PbiId, op.TargetIssueNumber.Value, r.IssueUrl, repository, GithubMappingKind.Link, "UPDATE"));
                         updated++;

@@ -9,11 +9,12 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // pbi-update-Delta (GithubSyncDeltaDocument), damit Forward-Gate + Apply unverändert konsumieren.
 public sealed class GithubInitialSyncTests
 {
-    private static ProjectStateItem Pbi(string id, string text, string status = "active", string? githubIssue = null) => new(
+    private static ProjectStateItem Pbi(string id, string text, string status = "active", string? githubIssue = null,
+        IReadOnlyList<string>? acceptance = null, string? goal = null) => new(
         id, "pbi", text, status, "test", null, 1,
         null, null, null, null, null, [], [],
         githubIssue is null ? new Dictionary<string, string>() : new Dictionary<string, string> { ["githubIssue"] = githubIssue },
-        Pbi: new PbiPayload(Goal: null, Title: text, AcceptanceCriteria: [], LinkedRequirementIds: [],
+        Pbi: new PbiPayload(Goal: goal, Title: text, AcceptanceCriteria: acceptance ?? [], LinkedRequirementIds: [],
             OpenDecisionRefs: [], PriorityRank: null, Readiness: "backlog_ready", Mvp: null, Trace: null));
 
     private static ProjectStateDocument Core(params ProjectStateItem[] items) => new(
@@ -52,7 +53,8 @@ public sealed class GithubInitialSyncTests
     public void BuildCreateOps_nach_Seed_bestehen_das_echte_forward_gate()
     {
         var core = Core(
-            Pbi("PBI-001", "Normales neues PBI"),
+            Pbi("PBI-001", "Normales neues PBI", acceptance: ["Login klappt mit 2FA", "Fehlerfall zeigt Meldung"],
+                goal: "Als Kunde will ich mich sicher anmelden, damit meine Daten geschuetzt sind."),
             Pbi("PBI-002", "Blockiertes PBI", status: "blocked_by_decision"),
             Pbi("PBI-003", "Unklares neues PBI", status: "needs_clarify"));
         var delta = GithubInitialSync.BuildDelta(core);
@@ -67,6 +69,11 @@ public sealed class GithubInitialSyncTests
         Assert.Equal("PBI-001", create.PbiId);
         Assert.Equal("deterministic", create.Origin);
         Assert.Contains("Initial-Sync", create.Body);
+        // E0.1c/R-23: Statement (das WARUM) + Akzeptanzkriterien aus dem Core-Payload stehen im
+        // deterministischen Issue-Body.
+        Assert.Contains("Als Kunde will ich mich sicher anmelden", create.Body);
+        Assert.Contains("Akzeptanzkriterien:", create.Body);
+        Assert.Contains("- Login klappt mit 2FA", create.Body);
 
         var plan = new GithubForwardPlanDocument(GithubForwardPlanDocument.CurrentSchemaVersion,
             "plan-test", DateTime.UnixEpoch, "test", null, ops);

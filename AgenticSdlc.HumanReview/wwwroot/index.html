@@ -35,6 +35,11 @@
 
   .workspace { display:grid; grid-template-columns:minmax(0,1fr) 390px; gap:16px; padding:28px 20px 120px;
                max-width:1480px; margin:0 auto; align-items:start; }
+  body.no-ledger .workspace { grid-template-columns:minmax(0,1fr); max-width:1080px; }
+  body.no-ledger .ledger-panel { display:none; }
+  .main-col { min-width:0; }
+  .session-notes { display:none; flex-direction:column; gap:6px; margin-bottom:14px; }
+  .session-notes.show { display:flex; }
   #items { min-width:0; }
   .ledger-panel { position:sticky; top:calc(var(--header-h) + 20px); max-height:calc(100vh - var(--header-h) - 46px); overflow:hidden;
                   background:var(--panel); border:1px solid var(--edge); border-radius:8px; }
@@ -82,6 +87,14 @@
   .note-reason { border-left-color:var(--warn); }
   .note-reason .note-label { color:var(--warn); }
   .note-warning { border-left-color:var(--danger); }
+  .note-line { padding:2px 0; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .note-line .effect-text { flex:1; min-width:220px; }
+  .note-line.diff-add { color:var(--ok); background:rgba(61,220,151,.07); border-radius:4px; padding:2px 6px; }
+  .note-line.diff-del { color:var(--danger); background:rgba(255,107,107,.07); border-radius:4px; padding:2px 6px; }
+  .term { border-bottom:1px dotted var(--mut); cursor:help; }
+  .glossary-row { display:grid; grid-template-columns:minmax(180px,260px) 1fr; gap:10px; padding:4px 0;
+                  font-size:13px; border-bottom:1px solid rgba(42,47,58,.5); }
+  .glossary-row .term-name { color:var(--accent); overflow-wrap:anywhere; }
   .facet-note { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
   .suggestion-list { display:flex; flex-direction:column; gap:5px; }
   .suggestion-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
@@ -183,7 +196,10 @@
 </header>
 
 <main class="workspace">
-  <section id="items"></section>
+  <div class="main-col">
+    <div class="session-notes" id="sessionNotes"></div>
+    <section id="items"></section>
+  </div>
   <aside class="ledger-panel">
     <div class="ledger-head">
       <h2>Claim-Ledger</h2>
@@ -230,6 +246,7 @@
 
 <footer>
   <span class="msg" id="msg"></span>
+  <button class="ghost" id="bulkBtn" style="display:none"></button>
   <button class="ghost" id="cancelBtn">Abbrechen / Später</button>
   <button class="primary" id="finishBtn" disabled>Weiter / Fertig</button>
 </footer>
@@ -238,11 +255,20 @@
 let session = null;
 let activeItemId = null;
 let ledgerOptions = [];
+let glossary = [];
 let transcriptSearchIndex = -1;
 let transcriptSearchHits = [];
 let openReferenceId = null;
 
 const esc = s => (s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+// esc + Glossar-Tooltips; Platzhalter verhindern, dass Meanings erneut ersetzt werden.
+function glossify(text) {
+  let html = esc(text);
+  if (!glossary.length) return html;
+  glossary.forEach((g, i) => { html = html.split(esc(g.term)).join(`\u0001${i}\u0001`); });
+  return html.replace(/\u0001(\d+)\u0001/g, (_, i) =>
+    `<span class="term" title="${esc(glossary[+i].meaning)}">${esc(glossary[+i].term)}</span>`);
+}
 const val = (item, key) => (item.fieldValues.find(f => f.fieldKey === key) || {}).value ?? '';
 const cssEsc = s => (window.CSS && CSS.escape) ? CSS.escape(s) : s.replace(/["\\]/g, '\\$&');
 
@@ -251,9 +277,13 @@ async function load() {
   session = await fetch('/api/session').then(r => r.json());
   document.getElementById('title').textContent = session.title || 'Human-Review';
   document.getElementById('subtitle').textContent = session.subtitle || '';
+  glossary = (session.glossary || []).slice().sort((a, b) => (b.term || '').length - (a.term || '').length);
   setupHelp();
   updateHeaderHeight();
   ledgerOptions = extractLedgerOptions();
+  document.body.classList.toggle('no-ledger', ledgerOptions.length === 0);
+  renderSessionNotes();
+  setupBulk();
   render();
   renderLedger();
   updateProgress();
@@ -261,8 +291,33 @@ async function load() {
 
 function setupHelp() {
   const btn = document.getElementById('infoBtn');
-  if (session.help) btn.classList.add('show');
+  if (session.help || glossary.length) btn.classList.add('show');
   else btn.classList.remove('show');
+}
+
+function renderSessionNotes() {
+  const el = document.getElementById('sessionNotes');
+  const notes = session.notes || [];
+  el.innerHTML = notes.map(renderNote).join('');
+  el.classList.toggle('show', notes.length > 0);
+}
+
+function setupBulk() {
+  const b = session.bulkAction;
+  const btn = document.getElementById('bulkBtn');
+  if (!b || !(b.set || []).length) { btn.style.display = 'none'; return; }
+  btn.style.display = '';
+  btn.textContent = b.label;
+  btn.onclick = async () => {
+    const key = b.set[0].fieldKey;
+    const open = session.items.filter(i => !i.resolved && !val(i, key));
+    if (!open.length) { flash('Keine Items ohne Entscheidung übrig.'); return; }
+    if (!confirm((b.confirm || 'Sammel-Aktion ausführen?').replace('{n}', open.length))) return;
+    for (const it of open)
+      for (const f of b.set) await save(it.itemId, f.fieldKey, f.value);
+    render();
+    flash(`${open.length} Items gesetzt.`);
+  };
 }
 
 function updateHeaderHeight() {
@@ -283,10 +338,10 @@ function render() {
     <div class="item ${item.resolved ? 'resolved' : ''} ${item.itemId === activeItemId ? 'active' : ''}"
          data-id="${esc(item.itemId)}" onclick="selectItem('${esc(item.itemId)}')">
       <div class="top">
-        ${item.badge ? `<span class="badge">${esc(item.badge)}</span>` : ''}
+        ${item.badge ? `<span class="badge">${glossify(item.badge)}</span>` : ''}
         <span class="mono" style="color:var(--mut);font-size:11px">${esc(item.itemId)}</span>
       </div>
-      <div class="summary">${esc(item.summary)}</div>
+      <div class="summary">${glossify(item.summary)}</div>
       ${item.notes && item.notes.length ? `<div class="notes">${item.notes.map(renderNote).join('')}</div>` : ''}
       ${renderRepairControls(item)}
       ${item.contextBlocks && item.contextBlocks.length ? `<div class="ctxrow">${
@@ -316,6 +371,13 @@ function renderNoteBody(kind, text) {
   if (kind === 'suggestion' && facet) {
     return `<div class="suggestion-row">${renderFacetSuggestion(t)}</div>`;
   }
+  if (t.includes('\n')) {
+    return t.split('\n').filter(Boolean)
+      .map(line => {
+        const cls = line.startsWith('+ ') ? ' diff-add' : line.startsWith('− ') ? ' diff-del' : '';
+        return `<div class="note-line${cls}">${renderEffectLine(line)}</div>`;
+      }).join('');
+  }
   if (kind === 'info' && t.includes('=')) {
     const chips = t.split(';')
       .map(x => x.trim())
@@ -324,7 +386,7 @@ function renderNoteBody(kind, text) {
         const parts = x.split('=');
         const key = parts.shift() || '';
         const value = parts.join('=') || '';
-        return `<span class="pill"><span class="pill-key">${esc(key)}</span>${esc(value)}</span>`;
+        return `<span class="pill"><span class="pill-key">${esc(key)}</span>${glossify(value)}</span>`;
       })
       .join('');
     return `<div class="facet-note">${chips}</div>`;
@@ -336,7 +398,14 @@ function renderNoteBody(kind, text) {
       <span>${esc(verdict[2])}</span>
     </div>`;
   }
-  return esc(t);
+  return glossify(t);
+}
+
+// „Begriff ⇒ Wirkung"-Zeilen (Wirkungs-Banner) als Pille + Text rendern.
+function renderEffectLine(line) {
+  const m = (line || '').match(/^(.{2,48}?)\s*⇒\s*(.*)$/);
+  if (!m) return glossify(line);
+  return `<span class="pill key">${esc(m[1])}</span> <span class="effect-text">${glossify(m[2])}</span>`;
 }
 
 function renderFacetSuggestion(line) {
@@ -372,8 +441,11 @@ function renderField(item, spec) {
   const id = (spec.inputType || '').toLowerCase();
   const lbl = `<label class="${spec.required ? 'req' : ''}" title="${esc(spec.help)}">${esc(spec.label)}</label>`;
   if (id === 'dropdown') {
+    const choices = (spec.options && spec.options.length)
+      ? spec.options
+      : (spec.allowedValues || []).map(v => ({ value: v, label: v }));
     const opts = ['<option value="">— wählen —</option>']
-      .concat((spec.allowedValues || []).map(v => `<option value="${esc(v)}" ${v === cur ? 'selected' : ''}>${esc(v)}</option>`));
+      .concat(choices.map(o => `<option value="${esc(o.value)}" ${o.value === cur ? 'selected' : ''}>${esc(o.label)}</option>`));
     return `${lbl}<select data-field="${esc(spec.fieldKey)}" onchange="save('${esc(item.itemId)}','${esc(spec.fieldKey)}',this.value)">${opts.join('')}</select>`;
   }
   if (id === 'readonly') {
@@ -673,14 +745,21 @@ document.getElementById('nextTranscriptHitBtn').onclick = () => goTranscriptHit(
 window.addEventListener('resize', updateHeaderHeight);
 
 function openHelp() {
-  if (!session.help) return;
-  document.getElementById('helpTitle').textContent = session.help.title || 'Hilfe';
-  document.getElementById('helpSummary').textContent = session.help.summary || '';
-  document.getElementById('helpBody').innerHTML = (session.help.sections || []).map(s => `
+  if (!session.help && !glossary.length) return;
+  const help = session.help || {};
+  document.getElementById('helpTitle').textContent = help.title || 'Hilfe';
+  document.getElementById('helpSummary').textContent = help.summary || '';
+  const sections = (help.sections || []).map(s => `
     <section class="help-section">
       <h3>${esc(s.title || '')}</h3>
       <div>${esc(s.text || '')}</div>
     </section>`).join('');
+  const gloss = glossary.length ? `
+    <section class="help-section">
+      <h3>Begriffe</h3>
+      <div>${glossary.map(g => `<div class="glossary-row"><span class="term-name">${esc(g.term)}</span><span>${esc(g.meaning)}</span></div>`).join('')}</div>
+    </section>` : '';
+  document.getElementById('helpBody').innerHTML = sections + gloss;
   document.getElementById('helpModal').classList.add('show');
   document.getElementById('helpModal').setAttribute('aria-hidden', 'false');
 }

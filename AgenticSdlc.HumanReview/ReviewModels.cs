@@ -73,6 +73,20 @@ public sealed record ReviewReferenceDetails(
     IReadOnlyList<ReviewNote> Notes,
     IReadOnlyList<ContextBlock> ContextBlocks);
 
+/// <summary>Glossar-Eintrag: erklaert einen Fach-Begriff (z. B. einen Status-Wert) in Klartext.
+/// Die UI zeigt Tooltips ueberall, wo der Begriff auftaucht, und listet das Glossar in der Hilfe.</summary>
+public sealed record ReviewGlossaryEntry(string Term, string Meaning);
+
+/// <summary>
+/// Optionale Sammel-Aktion („Accept-all"): setzt die angegebenen Feldwerte auf allen Items, die noch
+/// keinen Entscheid tragen — NUR nach expliziter Bestaetigung durch den Menschen (Confirm-Dialog).
+/// Bewusster Ein-Klick-Akt, kein Governance-Bypass: bereits gesetzte Entscheide werden nie ueberschrieben.
+/// </summary>
+public sealed record ReviewBulkAction(
+    string Label,
+    IReadOnlyList<ReviewFieldValue> Set,
+    string Confirm);
+
 /// <summary>Domaenenspezifische Hilfe fuer die generische Review-UI.</summary>
 public sealed record ReviewHelp(
     string Title,
@@ -105,6 +119,12 @@ public sealed class ReviewSession
     public required string Title { get; init; }
     public string? Subtitle { get; init; }
     public ReviewHelp? Help { get; init; }
+    /// <summary>Session-weite Notizen (z. B. „Was bewirkt dein Entscheid?") — Banner ueber den Items.</summary>
+    public IReadOnlyList<ReviewNote> Notes { get; init; } = [];
+    /// <summary>Fach-Begriffe in Klartext; UI rendert Tooltips + Glossar-Abschnitt in der Hilfe.</summary>
+    public IReadOnlyList<ReviewGlossaryEntry> Glossary { get; init; } = [];
+    /// <summary>Optionale bestaetigungspflichtige Sammel-Aktion fuer alle noch unentschiedenen Items.</summary>
+    public ReviewBulkAction? BulkAction { get; init; }
     public IReadOnlyList<ReviewFieldSpec> FieldSchema { get; init; } = [];
     public required IReadOnlyList<ReviewItem> Items { get; init; }
 

@@ -73,8 +73,10 @@ public static class GithubForwardSeed
             }
             else
             {
+                // R-30: KEINE Labels am UPDATE — GitHubs PATCH ersetzt die komplette Label-Liste; null heisst
+                // hier ausdruecklich "Labels nicht anfassen" (Requirement-IDs stehen im Body, nicht als Labels).
                 deterministic.Add(new GithubForwardOp(
-                    GithubForwardKind.UpdateIssue, e.PbiId, mapping.IssueNumber, e.Title, ProposedBody(e), e.CoveredRequirementIds.ToList(),
+                    GithubForwardKind.UpdateIssue, e.PbiId, mapping.IssueNumber, e.Title, ProposedBody(e), null,
                     null, null, anchor,
                     "PBI hat sich geaendert — vorgeschlagener Patch/Kommentar (kein Auto-Overwrite).", "deterministic"));
             }
@@ -85,10 +87,31 @@ public static class GithubForwardSeed
 
     // Vorgeschlagener Issue-Body aus dem Core-Zustand (Beleg, kein freier Text).
     private static string ProposedBody(GithubSyncEntry e)
+        => GithubIssueBodySections.Build(e, "Forward-Update aus Core-PBI (deterministisch)");
+}
+
+// E0.1c/E0.2 (koppelt R-23): der EINE deterministische Issue-Body fuer CREATE (Initial-Sync) und
+// UPDATE-Vorschlag (Forward). Aufbau nach Autor-Direktive „sauberer Output": erst der INHALT
+// (Statement = das WARUM, Akzeptanzkriterien, Requirements), interne Projekt-Zustaende erst als
+// deklarierte Sync-Metadaten-Fusszeile — statt als kryptische Kopfzeile.
+public static class GithubIssueBodySections
+{
+    public static string Build(GithubSyncEntry e, string quelle)
     {
+        var sb = new System.Text.StringBuilder();
+        if (!string.IsNullOrWhiteSpace(e.Statement)) sb.Append(e.Statement).Append("\n\n");
+        if (e.AcceptanceCriteria is { Count: > 0 })
+        {
+            sb.Append("Akzeptanzkriterien:\n");
+            foreach (var c in e.AcceptanceCriteria) sb.Append("- ").Append(c).Append('\n');
+            sb.Append('\n');
+        }
         var reqs = e.CoveredRequirementIds.Count == 0 ? "-" : string.Join(", ", e.CoveredRequirementIds);
+        sb.Append("Abgedeckte Requirements: ").Append(reqs).Append("\n\n");
         var readiness = string.IsNullOrWhiteSpace(e.Readiness) ? "-" : e.Readiness;
-        return $"PBI {e.PbiId} — Status: {e.Status}, Readiness: {readiness}\n\nAbgedeckte Requirements: {reqs}";
+        sb.Append("---\n")
+          .Append($"Sync-Metadaten: PBI {e.PbiId} · Status {e.Status} · Readiness {readiness} · Quelle: {quelle}");
+        return sb.ToString();
     }
 }
 

@@ -24,7 +24,13 @@ public static class GithubForwardReviewRunner
         var interactive = args.Contains("--interactive", StringComparer.OrdinalIgnoreCase) || !args.Contains("--file", StringComparer.OrdinalIgnoreCase);
         var noBrowser = args.Contains("--no-browser", StringComparer.OrdinalIgnoreCase);
 
-        var session = GithubForwardReviewAdapter.BuildSession(runId, plan);
+        // E0.2a: Snapshot des Laufs (Summary verlinkt ihn) fuer Vorher/Nachher bei UPDATE — best-effort:
+        // ohne Snapshot laeuft das Review weiter, das Item warnt dann sichtbar.
+        var issuesByNumber = await LoadIssuesAsync(repoRoot, planDir).ConfigureAwait(false);
+        if (issuesByNumber is null)
+            Console.WriteLine("[github-forward-review] HINWEIS: Issue-Snapshot nicht ladbar — UPDATE-Items ohne Vorher-Ansicht.");
+
+        var session = GithubForwardReviewAdapter.BuildSession(runId, plan, issuesByNumber);
         if (session.Items.Count == 0) { Console.WriteLine("[github-forward-review] keine Operationen."); return 0; }
 
         var existing = File.Exists(decisionsPath) ? await LoadAsync<GithubForwardDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
@@ -39,7 +45,7 @@ public static class GithubForwardReviewRunner
 
         var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
             resolved: GithubForwardReviewAdapter.Resolved,
-            resolveContext: (_, key) => Task.FromResult(GithubForwardReviewAdapter.ResolveContext(key, plan)),
+            resolveContext: (_, key) => Task.FromResult(GithubForwardReviewAdapter.ResolveContext(key, plan, issuesByNumber)),
             apply: s => GithubForwardReviewAdapter.Apply(runId, s),
             openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
         Console.WriteLine($"[github-forward-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
@@ -59,6 +65,26 @@ public static class GithubForwardReviewRunner
             if (File.Exists(Path.Combine(plan, "github-forward-plan.json"))) return plan;
         }
         return null;
+    }
+
+    internal static async Task<IReadOnlyDictionary<int, GithubIssueSnapshot>?> LoadIssuesAsync(string repoRoot, string planDir)
+    {
+        try
+        {
+            var summaryPath = Path.Combine(planDir, "github-forward-summary.json");
+            if (!File.Exists(summaryPath)) return null;
+            using var doc = System.Text.Json.JsonDocument.Parse(await File.ReadAllTextAsync(summaryPath).ConfigureAwait(false));
+            if (!doc.RootElement.TryGetProperty("snapshot", out var snap) || snap.ValueKind != System.Text.Json.JsonValueKind.String)
+                return null;
+            var snapshotPath = Path.Combine(repoRoot, snap.GetString()!);
+            if (!File.Exists(snapshotPath)) return null;
+            var issues = await GithubReadSource.LoadAsync(snapshotPath).ConfigureAwait(false);
+            return issues.GroupBy(i => i.IssueNumber).ToDictionary(g => g.Key, g => g.Last());
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     private static Task<T> LoadAsync<T>(string path) => JsonFiles.LoadAsync<T>(path); // R3b: geteilt

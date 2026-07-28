@@ -1,0 +1,347 @@
+{
+  "schemaVersion": 1,
+  "planId": "github-forward-plan-20260723_142517",
+  "createdUtc": "2026-07-23T14:25:17.932099Z",
+  "sourcePbiUpdateRun": "20260723_141409_8ea1c5",
+  "repository": "armiino/github-agentic-refactor",
+  "operations": [
+    {
+      "kind": "LINK",
+      "pbiId": "PBI-002",
+      "targetIssueNumber": 29,
+      "title": null,
+      "body": null,
+      "labels": [],
+      "searchedQueries": [],
+      "searchEvidence": null,
+      "anchor": "REQ-05 keine Selbstregistrierung; REQ-06 Rollen Admin/User; REQ-07 Bewohner-Account; L3-REQ-010 Passwort-Reset",
+      "rationale": "Issue 29 deckt das Rollen- und Berechtigungsmodell f\u00FCr interne Nutzung fachlich am besten ab; es passt st\u00E4rker zum Gesamtziel als die engeren Einzelissues zu Login oder Admin-Screen.",
+      "origin": "agent"
+    },
+    {
+      "kind": "LINK",
+      "pbiId": "PBI-003",
+      "targetIssueNumber": 41,
+      "title": null,
+      "body": null,
+      "labels": [],
+      "searchedQueries": [],
+      "searchEvidence": null,
+      "anchor": "REQ-08 Angeh\u00F6rigenrechte offen; REQ-09 einrichtungsbezogener Profilzugriff; REQ-10 Rechteverwaltung festlegen",
+      "rationale": "Issue 41 entspricht direkt der fachlichen Kl\u00E4rung von Rollen- und einrichtungsbezogenen Zugriffsregeln inklusive Angeh\u00F6rigen- und Einrichtungssicht.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-010",
+      "targetIssueNumber": null,
+      "title": "Neue Bewohnerprofile mit Basisdaten und Dublettenpr\u00FCfung anlegen",
+      "body": "## Ziel\nAls berechtigter Nutzer will ich ein neues Bewohnerprofil mit Bild, Name und Beschreibung anlegen k\u00F6nnen, damit neues Profilwissen strukturiert erfasst wird.\n\n## Abgedeckte Anforderungen\n- L3-REQ-008: Beim Anlegen eines neuen Bewohnerprofils sollte gepr\u00FCft werden, ob ein Profil mit gleichem oder sehr \u00E4hnlichem Namen bereits existiert, um Dubletten zu vermeiden.\n- REQ-45: In der Profil\u00FCbersicht soll erwogen werden, das Anlegen neuer Profile per Plus-Symbol und Dialog f\u00FCr Bild, Name und Beschreibung zu erm\u00F6glichen.\n- REQ-59: Beim Anlegen eines Bewohners muss mindestens ein Sofortinfo-Eintrag verpflichtend sein.\n\n## Akzeptanzhinweise\n- Berechtigte Nutzer k\u00F6nnen aus der Profil\u00FCbersicht einen Anlegefluss f\u00FCr neue Profile starten.\n- Der Anlegefluss erfasst mindestens Name, kurze Beschreibung und optional ein Bild.\n- Vor dem Speichern pr\u00FCft die App, ob Profile mit gleichem oder sehr \u00E4hnlichem Namen bereits existieren.\n- Bei m\u00F6glicher Dublette wird der Nutzer vor dem endg\u00FCltigen Anlegen darauf hingewiesen.\n- Beim Anlegen ist mindestens ein Sofortinfo-Eintrag verpflichtend.",
+      "labels": [
+        "frontend",
+        "profile"
+      ],
+      "searchedQueries": [
+        "Bewohnerprofil anlegen Bild Name Beschreibung Dublettenpr\u00FCfung \u00E4hnlicher Name Plus Dialog"
+      ],
+      "searchEvidence": "Treffer wie #46 betreffen die Profil\u00FCbersicht, nicht den Anlegefluss mit Dublettenpr\u00FCfung; #15 ist nur eine geschlossene Kl\u00E4rungs-/Breakdown-Issue. Kein plausibles bestehendes Umsetzungsissue f\u00FCr Profilanlage inkl. Dublettenpr\u00FCfung und Pflicht-Sofortinfo gefunden.",
+      "anchor": null,
+      "rationale": "Es gibt keinen hinreichend deckungsgleichen Issue-Kandidaten f\u00FCr Profilanlage mit Dublettenpr\u00FCfung und Mindest-Sofortinfo.",
+      "origin": "agent"
+    },
+    {
+      "kind": "LINK",
+      "pbiId": "PBI-012",
+      "targetIssueNumber": 16,
+      "title": null,
+      "body": null,
+      "labels": [],
+      "searchedQueries": [],
+      "searchEvidence": null,
+      "anchor": "REQ-19 Profil-Detailansicht mit Hauptbereichen; REQ-20 About-Me; REQ-24 Kommunikation; REQ-32 bewohnerbezogener No-Go-Bereich; L3-REQ-002 Sofortinfo",
+      "rationale": "Die geschlossene Kl\u00E4rungsissue 16 b\u00FCndelt genau die Informationsarchitektur und visuelle Ausgestaltung der Profil- und Kommunikationsansichten inklusive der hier geforderten Bereichseinstiege.",
+      "origin": "agent"
+    },
+    {
+      "kind": "LINK",
+      "pbiId": "PBI-023",
+      "targetIssueNumber": 32,
+      "title": null,
+      "body": null,
+      "labels": [],
+      "searchedQueries": [],
+      "searchEvidence": null,
+      "anchor": "REQ-32 bewohnerbezogene No-Gos; REQ-33 erweiterbare Liste per Plus-Button; REQ-34 kompakte, schnell erfassbare Eintr\u00E4ge",
+      "rationale": "Issue 32 passt fachlich direkt zur No-Go-Seite pro Bewohner mit Listenpflege und ist der beste offene Umsetzungs-Kandidat.",
+      "origin": "agent"
+    },
+    {
+      "kind": "LINK",
+      "pbiId": "PBI-024",
+      "targetIssueNumber": 60,
+      "title": null,
+      "body": null,
+      "labels": [],
+      "searchedQueries": [],
+      "searchEvidence": null,
+      "anchor": "REQ-36 lokaler Cache/Offline-Nutzung kl\u00E4ren; L3-REQ-004 Konfliktanzeige bei Offline-Konflikten",
+      "rationale": "Issue 60 adressiert genau das Offline- und Synchronisationsverhalten bei instabilen Verbindungen und deckt damit die fachliche Entscheidung zu Cache, Offline-Erfassung und Konfliktbehandlung am besten ab.",
+      "origin": "agent"
+    },
+    {
+      "kind": "LINK",
+      "pbiId": "PBI-027",
+      "targetIssueNumber": 58,
+      "title": null,
+      "body": null,
+      "labels": [],
+      "searchedQueries": [],
+      "searchEvidence": null,
+      "anchor": "L3-REQ-014 strukturierte \u00DCbernahme aus Akten; REQ-44 Umfang der Dokumentationsintegration; REQ-48/49 vorhandene Akten und Nutzbarkeitsprobleme",
+      "rationale": "Issue 58 entspricht der Kernfrage nach \u00DCbernahme aus Akten und Drittsystemen; zusammen mit der Integrationsabgrenzung ist das der plausibelste bestehende Kandidat.",
+      "origin": "agent"
+    },
+    {
+      "kind": "LINK",
+      "pbiId": "PBI-030",
+      "targetIssueNumber": 63,
+      "title": null,
+      "body": null,
+      "labels": [],
+      "searchedQueries": [],
+      "searchEvidence": null,
+      "anchor": "REQ-54 GetX als State-Management explizit kl\u00E4ren; REQ-53 Flutter/Dart; REQ-70 Firestore festgelegt",
+      "rationale": "Issue 63 greift die noch offene State-Management-Entscheidung direkt auf und ist im Kontext des Technologiestacks der spezifischste passende Kandidat; die \u00FCbrigen Technikpunkte sind bereits anderweitig konkretisiert.",
+      "origin": "agent"
+    },
+    {
+      "kind": "LINK",
+      "pbiId": "PBI-031",
+      "targetIssueNumber": 47,
+      "title": null,
+      "body": null,
+      "labels": [],
+      "searchedQueries": [],
+      "searchEvidence": null,
+      "anchor": "REQ-60 Suche nach Stichworten \u00FCber alle Bewohnerprofile hinweg",
+      "rationale": "Issue 47 adressiert direkt die Suchfunktion auf der Profil\u00FCbersicht und ist der klare fachliche Treffer.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-032",
+      "targetIssueNumber": null,
+      "title": "\u00DCbergabe-Notiz pro Schicht mit prominenter Anzeige beim App-Start bereitstellen",
+      "body": "## Ziel\nEs soll eine \u00DCbergabe-Notiz pro Schicht geben, die der n\u00E4chsten Schicht beim \u00D6ffnen der App prominent angezeigt wird.\n\n## Abgedeckte Anforderungen\n- REQ-61: Es soll eine \u00DCbergabe-Notiz pro Schicht geben, die der n\u00E4chsten Schicht beim \u00D6ffnen der App prominent angezeigt wird.\n\n## Akzeptanzhinweise\n- Pro Schicht kann eine \u00DCbergabe-Notiz erfasst und gespeichert werden.\n- Die n\u00E4chste Schicht sieht diese Notiz beim \u00D6ffnen der App prominent.\n- Die Anzeige unterst\u00FCtzt den schnellen \u00DCbergabeprozess zu Schichtbeginn.",
+      "labels": [
+        "handover",
+        "frontend"
+      ],
+      "searchedQueries": [
+        "\u00DCbergabe-Notiz pro Schicht n\u00E4chste Schicht prominent angezeigt"
+      ],
+      "searchEvidence": "Die Trefferliste enth\u00E4lt keinen plausiblen Issue-Kandidaten zu schichtbezogenen \u00DCbergabe-Notizen; die angezeigten Treffer sind generische Profil-/Navigationsissues ohne Handover-Fokus.",
+      "anchor": null,
+      "rationale": "Kein bestehendes Issue deckt \u00DCbergabe-Notizen pro Schicht mit prominenter Startanzeige ab.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-033",
+      "targetIssueNumber": null,
+      "title": "\u00DCbergabe-Notizen nach sieben Tagen archivieren und weiterhin auffindbar halten",
+      "body": "## Ziel\n\u00DCbergabe-Notizen sollen nach sieben Tagen automatisch archiviert werden; archivierte Notizen m\u00FCssen weiterhin auffindbar bleiben.\n\n## Abgedeckte Anforderungen\n- REQ-63: \u00DCbergabe-Notizen sollen nach sieben Tagen automatisch archiviert werden; archivierte Notizen m\u00FCssen weiterhin auffindbar bleiben.\n\n## Akzeptanzhinweise\n- \u00DCbergabe-Notizen werden nach sieben Tagen automatisch archiviert.\n- Archivierte \u00DCbergabe-Notizen bleiben f\u00FCr berechtigte Nutzer auffindbar.\n- Die Archivierung entfernt die Notizen aus der prominenten aktuellen \u00DCbergabeansicht, nicht aber aus der Historie.",
+      "labels": [
+        "handover",
+        "data"
+      ],
+      "searchedQueries": [
+        "\u00DCbergabe-Notizen sieben Tage archiviert auffindbar"
+      ],
+      "searchEvidence": "Es wurde kein plausibler Handover-/Archivierungs-Issue gefunden; der einzige Treffer (#46) betrifft Profil\u00FCbersicht und ist fachlich unpassend.",
+      "anchor": null,
+      "rationale": "F\u00FCr automatische Archivierung und Auffindbarkeit von \u00DCbergabe-Notizen existiert kein plausibler Kandidat.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-034",
+      "targetIssueNumber": null,
+      "title": "Revisionssichere Protokollierung jeder Einsichtnahme in Bewohnerdaten umsetzen",
+      "body": "## Ziel\nJede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschlie\u00DFlich wer wann welches Profil angesehen hat.\n\n## Abgedeckte Anforderungen\n- REQ-64: Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschlie\u00DFlich wer wann welches Profil angesehen hat.\n\n## Akzeptanzhinweise\n- Jede Einsichtnahme in ein Bewohnerprofil erzeugt einen revisionssicheren Protokolleintrag.\n- Protokolliert werden mindestens Nutzeridentit\u00E4t, Zeitpunkt und betroffenes Profil.\n- Das Protokoll ist so ausgelegt, dass nachtr\u00E4gliche Nachvollziehbarkeit gew\u00E4hrleistet ist.",
+      "labels": [
+        "audit",
+        "security"
+      ],
+      "searchedQueries": [
+        "revisionssicher protokolliert Einsichtnahme Bewohnerdaten wer wann welches Profil angesehen"
+      ],
+      "searchEvidence": "Treffer wie #41 oder #65 behandeln Zugriffsregeln bzw. Rechtsgrundlage, aber nicht die revisionssichere View-Audit-Protokollierung selbst. Kein direkter Implementierungs- oder Kl\u00E4rungsissue gefunden.",
+      "anchor": null,
+      "rationale": "Es fehlt ein bestehendes Issue f\u00FCr revisionssicheres Access-Logging auf Profilebene.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-035",
+      "targetIssueNumber": null,
+      "title": "About-Me-Seite im MVP unver\u00E4ndert lassen",
+      "body": "## Ziel\nDie About-Me-Seite darf im MVP in ihrer aktuellen Form nicht ver\u00E4ndert werden.\n\n## Abgedeckte Anforderungen\n- REQ-66: Die About-Me-Seite darf im MVP in ihrer aktuellen Form nicht ver\u00E4ndert werden.\n\n## Akzeptanzhinweise\n- F\u00FCr den MVP werden keine inhaltlichen oder strukturellen \u00C4nderungen an der bestehenden About-Me-Seite umgesetzt.\n- Erweiterungen an der About-Me-Seite werden explizit au\u00DFerhalb des MVP behandelt.",
+      "labels": [
+        "scope",
+        "mvp"
+      ],
+      "searchedQueries": [
+        "About-Me Seite MVP aktuelle Form nicht ver\u00E4ndert"
+      ],
+      "searchEvidence": "Gefundene Issues (#31, #48, #49) behandeln Ausbau oder Anzeige der About-Me-Seite, nicht die Scope-Entscheidung, sie im MVP unver\u00E4ndert zu lassen. Kein passender Scope-/Guardrail-Issue vorhanden.",
+      "anchor": null,
+      "rationale": "Es existiert kein passender bestehender Issue-Kandidat f\u00FCr die MVP-Nicht\u00E4nderungsregel der About-Me-Seite.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-036",
+      "targetIssueNumber": null,
+      "title": "Mindestunterst\u00FCtzung ab Android 10 f\u00FCr die Planung festlegen",
+      "body": "## Ziel\nF\u00FCr die Planung soll aktuell von einer Mindestunterst\u00FCtzung ab Android 10 ausgegangen werden; die finale Festlegung muss noch mit dem Tr\u00E4ger gekl\u00E4rt werden.\n\n## Abgedeckte Anforderungen\n- REQ-67: F\u00FCr die Planung soll aktuell von einer Mindestunterst\u00FCtzung ab Android 10 ausgegangen werden; die finale Festlegung muss noch mit dem Tr\u00E4ger gekl\u00E4rt werden.\n\n## Akzeptanzhinweise\n- Die aktuelle Planungsannahme dokumentiert Android 10 als Mindestunterst\u00FCtzung.\n- Die finale Verbindlichkeit bleibt bis zur Abstimmung mit dem Tr\u00E4ger offen.\n- Abh\u00E4ngigkeiten zu Ger\u00E4tebestand und technischer Umsetzung werden transparent benannt.",
+      "labels": [
+        "platform",
+        "decision"
+      ],
+      "searchedQueries": [
+        "Android 10 Mindestunterst\u00FCtzung Planung Tr\u00E4ger"
+      ],
+      "searchEvidence": "Die gefundenen Treffer sind zu allgemein (#59 Qualit\u00E4tsziele) oder nennen Android nur indirekt (#26 Android-11-Startziel). Kein Issue bildet die konkrete Planungsannahme \u0027Android 10 minimum, finale Kl\u00E4rung mit Tr\u00E4ger\u0027 plausibel ab.",
+      "anchor": null,
+      "rationale": "Kein bestehendes Issue deckt die konkrete Mindestversions-Planungsentscheidung ausreichend ab.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-037",
+      "targetIssueNumber": null,
+      "title": "Risiko durch m\u00F6gliche Ger\u00E4te unter Android 10 und n\u00F6tigen Ger\u00E4teaustausch kl\u00E4ren",
+      "body": "## Ziel\nFalls im Haus Ger\u00E4te unter Android 10 vorhanden sind, besteht ein Risiko durch n\u00F6tigen Ger\u00E4teaustausch; dies ist vom Ger\u00E4tebestand und der Abstimmung mit dem Tr\u00E4ger abh\u00E4ngig.\n\n## Abgedeckte Anforderungen\n- REQ-68: Falls im Haus Ger\u00E4te unter Android 10 vorhanden sind, besteht ein Risiko durch n\u00F6tigen Ger\u00E4teaustausch; dies ist vom Ger\u00E4tebestand und der Abstimmung mit dem Tr\u00E4ger abh\u00E4ngig.\n\n## Akzeptanzhinweise\n- Das Risiko veralteter Ger\u00E4te unterhalb der geplanten Mindestversion ist dokumentiert.\n- Es ist beschrieben, wie der tats\u00E4chliche Ger\u00E4tebestand erhoben wird.\n- Die Abstimmung mit dem Tr\u00E4ger zum m\u00F6glichen Ger\u00E4teaustausch ist als offener Kl\u00E4rungspunkt festgehalten.",
+      "labels": [
+        "platform",
+        "risk"
+      ],
+      "searchedQueries": [
+        "Ger\u00E4te unter Android 10 Risiko Ger\u00E4teaustausch Ger\u00E4tebestand Tr\u00E4ger"
+      ],
+      "searchEvidence": "Treffer wie #59 oder #39 sind generisch zu Qualit\u00E4tszielen bzw. Plattformf\u00E4higkeit und behandeln nicht das konkrete Beschaffungs-/Bestandsrisiko unter Android 10.",
+      "anchor": null,
+      "rationale": "F\u00FCr das Risiko veralteter Ger\u00E4te und m\u00F6glichen Austausch gibt es keinen belastbaren bestehenden Kandidaten.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-038",
+      "targetIssueNumber": null,
+      "title": "\u00C4nderungswunsch zu Piktogrammen fachlich pr\u00E4zisieren",
+      "body": "## Ziel\nZum Thema Piktogramme besteht ein noch nicht ausreichend konkretisierter \u00C4nderungswunsch; vor einer Umsetzung muss pr\u00E4zisiert werden, was mit \u201Egr\u00F6\u00DFer denken\u201C gemeint ist.\n\n## Abgedeckte Anforderungen\n- REQ-69: Zum Thema Piktogramme besteht ein noch nicht ausreichend konkretisierter \u00C4nderungswunsch; vor einer Umsetzung muss pr\u00E4zisiert werden, was mit \u201Egr\u00F6\u00DFer denken\u201C gemeint ist.\n\n## Akzeptanzhinweise\n- Der \u00C4nderungswunsch zu Piktogrammen ist inhaltlich pr\u00E4zisiert.\n- Es ist dokumentiert, ob Gr\u00F6\u00DFe, Einsatzbereich, Interaktionsmuster oder Symbolkonzept gemeint sind.\n- Erst danach wird \u00FCber eine Umsetzung entschieden.",
+      "labels": [
+        "clarification",
+        "ui"
+      ],
+      "searchedQueries": [
+        "Piktogramme \u00C4nderungswunsch gr\u00F6\u00DFer denken pr\u00E4zisieren"
+      ],
+      "searchEvidence": "Die Suche lieferte keine fachlich passenden Piktogramm-Issues; Treffer wie #28 oder #33 teilen nur ein unspezifisches Wort und sind thematisch unverbunden.",
+      "anchor": null,
+      "rationale": "Kein plausibler bestehender Issue-Kandidat zum unkonkretisierten Piktogramm-Wunsch gefunden.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-039",
+      "targetIssueNumber": null,
+      "title": "Kl\u00E4ren, ob schnelle \u00DCbergabeprozesse eine eigene fachliche Anforderung sind",
+      "body": "## Ziel\nEs ist unklar, ob aus dem Hinweis auf die anstehende \u00DCbergabe eine eigenst\u00E4ndige fachliche Anforderung zur Unterst\u00FCtzung schneller \u00DCbergabeprozesse abgeleitet werden soll.\n\n## Abgedeckte Anforderungen\n- REQ-71: Es ist unklar, ob aus dem Hinweis auf die anstehende \u00DCbergabe eine eigenst\u00E4ndige fachliche Anforderung zur Unterst\u00FCtzung schneller \u00DCbergabeprozesse abgeleitet werden soll.\n\n## Akzeptanzhinweise\n- Es ist entschieden, ob schnelle \u00DCbergabeprozesse als eigener fachlicher Scope aufgenommen werden.\n- Falls ja, ist die Anforderung gegen\u00FCber bestehenden \u00DCbergabe-Notiz-Funktionen abgegrenzt.\n- Falls nein, ist dokumentiert, dass kein zus\u00E4tzlicher eigenst\u00E4ndiger Scope entsteht.",
+      "labels": [
+        "clarification",
+        "scope"
+      ],
+      "searchedQueries": [
+        "anstehende \u00DCbergabe schnelle \u00DCbergabeprozesse fachliche Anforderung"
+      ],
+      "searchEvidence": "Die Treffer enthalten keinen handover-spezifischen Kandidaten; #40 behandelt generischen MVP-Scope und ist zu unspezifisch, um diese konkrete Fachfrage abzudecken.",
+      "anchor": null,
+      "rationale": "Die konkrete Scope-/Anforderungs-Kl\u00E4rung zu schnellen \u00DCbergabeprozessen ist noch nicht in einem passenden Issue vertreten.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-040",
+      "targetIssueNumber": null,
+      "title": "Wichtigsten Punkt aus Sicht der Angeh\u00F6rigen und m\u00F6glichen eigenen Claim kl\u00E4ren",
+      "body": "## Ziel\nEs ist unklar, welcher zuvor genannte Punkt aus Sicht der Angeh\u00F6rigen besonders wichtig ist und ob daraus ein eigener Claim folgt.\n\n## Abgedeckte Anforderungen\n- REQ-72: Es ist unklar, welcher zuvor genannte Punkt aus Sicht der Angeh\u00F6rigen besonders wichtig ist und ob daraus ein eigener Claim folgt.\n\n## Akzeptanzhinweise\n- Es ist dokumentiert, welcher fachliche Punkt f\u00FCr Angeh\u00F6rige die h\u00F6chste Relevanz hat.\n- Es ist entschieden, ob daraus ein eigener Claim bzw. eine eigene Anforderung abgeleitet wird.\n- Die Entscheidung ist gegen\u00FCber dem bestehenden Rechtemodell f\u00FCr Angeh\u00F6rige abgegrenzt.",
+      "labels": [
+        "clarification",
+        "stakeholder"
+      ],
+      "searchedQueries": [
+        "Angeh\u00F6rigen besonders wichtig eigener Claim"
+      ],
+      "searchEvidence": "Die Suchtreffer sind nur zuf\u00E4llige Wort\u00FCberschneidungen; kein Issue behandelt die Priorisierung aus Angeh\u00F6rigensicht oder die Frage nach einem separaten Claim.",
+      "anchor": null,
+      "rationale": "Es gibt keinen plausiblen bestehenden Kandidaten f\u00FCr diese Stakeholder-Kl\u00E4rung.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-041",
+      "targetIssueNumber": null,
+      "title": "Kl\u00E4ren, ob Aufgabenverfolgung oder Terminplanung eigene organisatorische Anforderungen werden",
+      "body": "## Ziel\nEs ist zu kl\u00E4ren, ob Aufgabenverfolgung oder Terminplanung als eigene organisatorische Anforderungen an das Projekt festgehalten werden sollen.\n\n## Abgedeckte Anforderungen\n- REQ-73: Es ist zu kl\u00E4ren, ob Aufgabenverfolgung oder Terminplanung als eigene organisatorische Anforderungen an das Projekt festgehalten werden sollen.\n\n## Akzeptanzhinweise\n- Es ist entschieden, ob Aufgabenverfolgung als eigener Scope aufgenommen wird.\n- Es ist entschieden, ob Terminplanung als eigener Scope aufgenommen wird.\n- Falls eines davon aufgenommen wird, ist die Abgrenzung zum bisherigen MVP und zur Kommunikationsunterst\u00FCtzung dokumentiert.",
+      "labels": [
+        "clarification",
+        "scope"
+      ],
+      "searchedQueries": [
+        "Aufgabenverfolgung Terminplanung organisatorische Anforderungen"
+      ],
+      "searchEvidence": "Es wurden keine plausiblen Issues zu Aufgabenverfolgung oder Terminplanung gefunden; die Treffer sind generische Anforderungs-/Scope-Issues ohne diese Fachthemen.",
+      "anchor": null,
+      "rationale": "F\u00FCr die m\u00F6gliche Scope-Erweiterung um Aufgabenverfolgung oder Terminplanung existiert kein passender Kandidat.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-042",
+      "targetIssueNumber": null,
+      "title": "Dunkelmodus als sp\u00E4teren Wunsch mit niedriger Priorit\u00E4t festhalten",
+      "body": "## Ziel\nEin Dunkelmodus ist ein Wunsch, insbesondere f\u00FCr den Nachtdienst, mit niedriger Priorit\u00E4t und eher sp\u00E4terer Umsetzung.\n\n## Abgedeckte Anforderungen\n- REQ-74: Ein Dunkelmodus ist ein Wunsch, insbesondere f\u00FCr den Nachtdienst, mit niedriger Priorit\u00E4t und eher sp\u00E4terer Umsetzung.\n\n## Akzeptanzhinweise\n- Der Wunsch nach Dunkelmodus ist dokumentiert.\n- Die niedrige Priorit\u00E4t und sp\u00E4tere Einordnung au\u00DFerhalb des MVP sind festgehalten.\n- Der Nutzen f\u00FCr den Nachtdienst ist als Begr\u00FCndung beschrieben.",
+      "labels": [
+        "accessibility",
+        "later"
+      ],
+      "searchedQueries": [
+        "Dunkelmodus Nachtdienst niedrige Priorit\u00E4t"
+      ],
+      "searchEvidence": "Es gibt keinen plausiblen Dark-Mode-Issue-Treffer; #36 betrifft alternative Eingabemethoden und ist fachlich unpassend.",
+      "anchor": null,
+      "rationale": "Kein bestehendes Issue bildet den Wunsch nach Dunkelmodus mit sp\u00E4ter Priorisierung ab.",
+      "origin": "agent"
+    },
+    {
+      "kind": "CREATE_ISSUE",
+      "pbiId": "PBI-043",
+      "targetIssueNumber": null,
+      "title": "Einstellbare Schriftgr\u00F6\u00DFe als sp\u00E4teren Wunsch mit niedriger Priorit\u00E4t festhalten",
+      "body": "## Ziel\nEine einstellbare Schriftgr\u00F6\u00DFe ist ein Wunsch zur Unterst\u00FCtzung \u00E4lterer Kolleginnen, mit niedriger Priorit\u00E4t und eher sp\u00E4terer Umsetzung.\n\n## Abgedeckte Anforderungen\n- REQ-75: Eine einstellbare Schriftgr\u00F6\u00DFe ist ein Wunsch zur Unterst\u00FCtzung \u00E4lterer Kolleginnen, mit niedriger Priorit\u00E4t und eher sp\u00E4terer Umsetzung.\n\n## Akzeptanzhinweise\n- Der Wunsch nach einstellbarer Schriftgr\u00F6\u00DFe ist dokumentiert.\n- Die niedrige Priorit\u00E4t und sp\u00E4tere Einordnung au\u00DFerhalb des MVP sind festgehalten.\n- Der Nutzen f\u00FCr \u00E4ltere Kolleginnen ist als Begr\u00FCndung beschrieben.",
+      "labels": [
+        "accessibility",
+        "later"
+      ],
+      "searchedQueries": [
+        "einstellbare Schriftgr\u00F6\u00DFe \u00E4ltere Kolleginnen niedrige Priorit\u00E4t"
+      ],
+      "searchEvidence": "Es wurde kein passender Issue-Kandidat f\u00FCr konfigurierbare Schriftgr\u00F6\u00DFe gefunden; #59 ist nur allgemein barrierefreiheitsbezogen und deckt den konkreten Wunsch nicht ausreichend ab.",
+      "anchor": null,
+      "rationale": "Kein bestehender Issue deckt den spezifischen Wunsch nach einstellbarer Schriftgr\u00F6\u00DFe plausibel ab.",
+      "origin": "agent"
+    }
+  ]
+}

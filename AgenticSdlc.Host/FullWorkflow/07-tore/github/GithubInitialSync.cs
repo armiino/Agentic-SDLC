@@ -39,13 +39,7 @@ public static class GithubInitialSync
             Rationale: "Erst-Sync eines frischen Repos: unmapped PBI ohne Issue — CREATE deterministisch aus dem Core-Payload (R-15/R-17).",
             Origin: "deterministic")).ToList();
 
-    // Issue-Body aus dem Core-Zustand (Beleg, kein freier Text) — Stil wie GithubForwardSeed.ProposedBody.
+    // Issue-Body aus dem Core-Zustand (Beleg, kein freier Text) — gemeinsame Quelle GithubIssueBodySections.
     private static string InitialSyncBody(GithubSyncEntry e)
-    {
-        var reqs = e.CoveredRequirementIds.Count == 0 ? "-" : string.Join(", ", e.CoveredRequirementIds);
-        var readiness = string.IsNullOrWhiteSpace(e.Readiness) ? "-" : e.Readiness;
-        return $"PBI {e.PbiId} — Status: {e.Status}, Readiness: {readiness}\n\n" +
-               $"Abgedeckte Requirements: {reqs}\n\n" +
-               "Quelle: Initial-Sync aus Core-PBI (deterministisch, R-15).";
-    }
+        => GithubIssueBodySections.Build(e, "Initial-Sync aus Core-PBI (deterministisch, R-15)");
 }

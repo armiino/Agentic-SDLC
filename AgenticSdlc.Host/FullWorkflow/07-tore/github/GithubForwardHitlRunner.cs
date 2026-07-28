@@ -182,7 +182,7 @@ public static class GithubForwardHitlRunner
                 // S2: der offene Request wird prozessuebergreifend re-emittiert. Entscheidung holen (UI oder CLI),
                 // als human-decisions.json festhalten (Evidenz/Fallback) und zurueckgeben.
                 var acc = uiMode
-                    ? await CollectViaUiAsync(runId, plan, decisionsPath, settings, noBrowser).ConfigureAwait(false)
+                    ? await CollectViaUiAsync(runId, plan, decisionsPath, settings, noBrowser, repoRoot).ConfigureAwait(false)
                     : accepted!;
                 return new ForwardReviewResponse(acc, execute, uiMode ? "human (review-ui)" : "author (cli)");
             },
@@ -201,15 +201,19 @@ public static class GithubForwardHitlRunner
     // S2: Entscheidung interaktiv ueber die generische HumanReview-UI holen (derselbe Server/Adapter wie
     // github-forward-review). Nach Fertig -> human-decisions.json (Evidenz/Fallback) + akzeptierte OpIds.
     private static async Task<IReadOnlyList<string>> CollectViaUiAsync(
-        string runId, GithubForwardPlanDocument plan, string decisionsPath, HostSettings settings, bool noBrowser)
+        string runId, GithubForwardPlanDocument plan, string decisionsPath, HostSettings settings, bool noBrowser, string repoRoot)
     {
-        var session = GithubForwardReviewAdapter.BuildSession(runId, plan);
+        // E0.2a: Snapshot des Laufs (Summary im planDir verlinkt ihn) fuer Vorher/Nachher bei UPDATE — best-effort.
+        var planDir = Path.GetDirectoryName(decisionsPath)!;
+        var issuesByNumber = await GithubForwardReviewRunner.LoadIssuesAsync(repoRoot, planDir).ConfigureAwait(false);
+
+        var session = GithubForwardReviewAdapter.BuildSession(runId, plan, issuesByNumber);
         var existing = File.Exists(decisionsPath) ? await HitlShell.LoadAsync<GithubForwardDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
         GithubForwardReviewAdapter.MergeExistingDecisions(session, existing);
 
         var (decisions, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
             resolved: GithubForwardReviewAdapter.Resolved,
-            resolveContext: (_, key) => Task.FromResult(GithubForwardReviewAdapter.ResolveContext(key, plan)),
+            resolveContext: (_, key) => Task.FromResult(GithubForwardReviewAdapter.ResolveContext(key, plan, issuesByNumber)),
             apply: s => GithubForwardReviewAdapter.Apply(runId, s),
             openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
 

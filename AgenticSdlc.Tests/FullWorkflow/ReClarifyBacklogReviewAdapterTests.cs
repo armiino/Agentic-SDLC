@@ -39,15 +39,22 @@ public sealed class ReClarifyBacklogReviewAdapterTests
         Assert.Equal(["PBI-2"], blocked.Items.Select(i => i.ItemId));
     }
 
+    // E0.1b/i: Items starten OHNE Vorentscheid; Begruendung ist nur beim Verwerfen Pflicht (Audit-Gewicht) —
+    // bei accept ist der explizite Entscheid selbst die Autorisierung.
     [Fact]
-    public void Resolved_verlangt_Entscheidung_UND_Begruendung()
+    public void Resolved_startet_offen_accept_ohne_Begruendung_reject_nur_mit()
     {
         var session = ReClarifyBacklogReviewAdapter.BuildSession("r1", Baseline(), Backlog(Pbi()), Gate(), "all");
         var it = session.Items[0];
+        Assert.False(it.Resolved);
+        Assert.Equal("", FieldOf(it, ReClarifyBacklogReviewAdapter.FieldDecision));
+
         Set(it, ReClarifyBacklogReviewAdapter.FieldDecision, "accept");
-        Set(it, ReClarifyBacklogReviewAdapter.FieldReason, "");
+        Assert.True(ReClarifyBacklogReviewAdapter.Resolved(it));
+
+        Set(it, ReClarifyBacklogReviewAdapter.FieldDecision, "reject");
         Assert.False(ReClarifyBacklogReviewAdapter.Resolved(it));
-        Set(it, ReClarifyBacklogReviewAdapter.FieldReason, "deckt CAN-REQ-1");
+        Set(it, ReClarifyBacklogReviewAdapter.FieldReason, "kein echtes PBI");
         Assert.True(ReClarifyBacklogReviewAdapter.Resolved(it));
     }
 

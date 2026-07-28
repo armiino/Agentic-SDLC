@@ -15,12 +15,14 @@ internal interface IGithubIssueClient
         IReadOnlyList<string> labels,
         CancellationToken ct);
 
+    // R-30: labels=null bedeutet "Labels nicht anfassen" (Feld wird im PATCH weggelassen) —
+    // eine Liste (auch leer!) ERSETZT auf GitHub die komplette Label-Liste.
     Task<GithubIssueWriteResult> UpdateIssueAsync(
         string repository,
         int issueNumber,
         string title,
         string body,
-        IReadOnlyList<string> labels,
+        IReadOnlyList<string>? labels,
         CancellationToken ct);
 
     Task<GithubIssueWriteResult> ReopenIssueAsync(
@@ -55,7 +57,7 @@ internal sealed class GithubRestIssueClient(HttpClient http, string token, strin
         int issueNumber,
         string title,
         string body,
-        IReadOnlyList<string> labels,
+        IReadOnlyList<string>? labels,
         CancellationToken ct)
     {
         var payload = new GithubIssueUpdateRequest(title, body, labels, null);
@@ -142,7 +144,8 @@ internal sealed class GithubRestIssueClient(HttpClient http, string token, strin
     private sealed record GithubIssueUpdateRequest(
         [property: JsonPropertyName("title")] string Title,
         [property: JsonPropertyName("body")] string Body,
-        [property: JsonPropertyName("labels")] IReadOnlyList<string> Labels,
+        // R-30: labels=null wird weggelassen (Labels bleiben unangetastet) — eine mitgesendete Liste ERSETZT sie.
+        [property: JsonPropertyName("labels")][property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] IReadOnlyList<string>? Labels,
         // R-22: state=null darf NICHT mitgesendet werden — GitHubs PATCH-Schema lehnt null ab (422 oneOf).
         [property: JsonPropertyName("state")][property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? State);
 
