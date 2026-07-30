@@ -30,7 +30,9 @@ internal sealed class PbiPlacementTools(
         AIFunctionFactory.Create(GetPbi, "get_pbi",
             "Liest ein PBI (Titel, goal, acceptanceCriteria, linkedRequirementIds)."),
         AIFunctionFactory.Create(SavePlacements, "save_placements",
-            "Speichert je unplaced Requirement GENAU EINE Platzierung: kind=EXTEND_PBI (mit pbiId) ODER NEW_PBI (mit featureId). Genau einmal."),
+            "Speichert je unplaced Requirement GENAU EINE Platzierung: kind=EXTEND_PBI (mit pbiId, bestehendes PBI) "
+            + "ODER NEW_PBI (mit featureId, bestehendes Feature) ODER NEW_FEATURE (mit proposedFeatureLabel, wenn KEIN "
+            + "bestehendes Feature fachlich passt). Genau einmal."),
     ];
 
     private string GetUnplaced()

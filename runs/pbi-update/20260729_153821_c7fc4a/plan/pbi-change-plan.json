@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "planId": "pbi-change-plan-20260729_153838",
+  "createdUtc": "2026-07-29T15:38:38.561082Z",
+  "sourceIngestionRun": "ingestion",
+  "operations": [
+    {
+      "kind": "NEW_FEATURE",
+      "requirementId": "REQ-78",
+      "pbiId": null,
+      "featureId": null,
+      "replacementRequirementId": null,
+      "openDecisionRef": null,
+      "rationale": "Das Requirement etabliert ausdr\u00FCcklich einen neuen, eigenst\u00E4ndigen Medikamenten-Bereich und grenzt ihn von Profil und No-Go ab. Kein bestehendes Feature deckt diesen fachlichen Kern inhaltlich ab; FC-12 enth\u00E4lt nur sp\u00E4tere Integrations-/Erweiterungsthemen und ist kein passendes Heimat-Feature f\u00FCr einen neuen Dom\u00E4nenbereich.",
+      "proposedFeatureLabel": "Medikationsbereich"
+    },
+    {
+      "kind": "NEW_PBI",
+      "requirementId": "REQ-79",
+      "pbiId": null,
+      "featureId": "FC-12",
+      "replacementRequirementId": null,
+      "openDecisionRef": null,
+      "rationale": "Die Medikamenten\u00FCbersicht ist eine eigene fachliche Einheit innerhalb des Medikationskontexts. Sie passt nicht zu Profil-/No-Go-PBIs und auch nicht zu PBI-028, das nur die sp\u00E4tere Bewertung von Medikationsfunktionen behandelt statt deren Umsetzung. Da bereits ein bestehendes Feature mit Medikations-/Erweiterungskontext existiert, ist dies am ehesten ein neues PBI unter FC-12.",
+      "proposedFeatureLabel": null
+    },
+    {
+      "kind": "NEW_PBI",
+      "requirementId": "REQ-80",
+      "pbiId": null,
+      "featureId": "FC-12",
+      "replacementRequirementId": null,
+      "openDecisionRef": null,
+      "rationale": "Aktive Erinnerungen an f\u00E4llige Medikamentengaben sind eine eigene funktionale Einheit und deutlich mehr als eine Listenanzeige. Kein bestehendes PBI deckt dieselbe Aufgabe ab; insbesondere PBI-028 ist nur eine Bewertungs-/Sp\u00E4ter-Ausbau-Entscheidung. Deshalb als eigenes PBI in dem bestehenden Erweiterungs-/Medikationskontext FC-12.",
+      "proposedFeatureLabel": null
+    },
+    {
+      "kind": "NEW_PBI",
+      "requirementId": "REQ-81",
+      "pbiId": null,
+      "featureId": "FC-12",
+      "replacementRequirementId": null,
+      "openDecisionRef": null,
+      "rationale": "Der dokumentierte Nachweis pro Medikamentengabe ist fachlich eigenst\u00E4ndig gegen\u00FCber \u00DCbersicht und Erinnerung und wegen der noch offenen Umsetzungsentscheidung nicht blo\u00DF ein Detail eines bestehenden PBI. Es gibt kein vorhandenes PBI mit derselben Aufgabe; daher als neues PBI im bestehenden Medikations-/Erweiterungskontext FC-12.",
+      "proposedFeatureLabel": null
+    }
+  ],
+  "alignments": [
+    {
+      "pbiId": null,
+      "proposedTitle": "\u00DCbersicht aktueller Medikamente je Bewohner anzeigen",
+      "proposedStatement": "Als Pflegekraft will ich im Medikamenten-Bereich f\u00FCr jeden Bewohner eine \u00DCbersicht der aktuellen Medikamente sehen, damit ich die anstehenden Medikamentengaben mit Name, Dosis und Zeitpunkt einsehen kann.",
+      "proposedAcceptanceCriteria": [
+        "Im Medikamenten-Bereich ist f\u00FCr jeden Bewohner eine \u00DCbersicht der aktuellen Medikamente verf\u00FCgbar.",
+        "Jeder Eintrag in der \u00DCbersicht enth\u00E4lt mindestens den Namen des Medikaments.",
+        "Jeder Eintrag in der \u00DCbersicht enth\u00E4lt mindestens die Dosis des Medikaments.",
+        "Jeder Eintrag in der \u00DCbersicht enth\u00E4lt mindestens den Zeitpunkt, wann das Medikament zu geben ist."
+      ],
+      "rationale": "Neues PBI auf Basis von REQ-79 erstellt. Die Anforderung fordert eine Medikamenten\u00FCbersicht je Bewohner mit den Mindestangaben Name, Dosis und Zeitpunkt; daraus werden Titel, Story und Akzeptanzkriterien direkt abgeleitet.",
+      "triggerRequirementIds": [
+        "REQ-79"
+      ],
+      "targetRequirementId": "REQ-79",
+      "targetFeatureId": "FC-12"
+    },
+    {
+      "pbiId": null,
+      "proposedTitle": "An f\u00E4llige Medikamentengaben aktiv erinnern",
+      "proposedStatement": "Als Pflegekraft will ich von der App aktiv an f\u00E4llige Medikamentengaben erinnert werden, damit anstehende Gaben nicht \u00FCbersehen werden.",
+      "proposedAcceptanceCriteria": [
+        "Die App erinnert aktiv an f\u00E4llige Medikamentengaben.",
+        "Eine reine Liste der Medikamente erf\u00FCllt diese Anforderung nicht ohne aktive Erinnerung."
+      ],
+      "rationale": "Neues PBI auf Basis von REQ-80 erstellt. Die Anforderung erg\u00E4nzt ausdr\u00FCcklich eine aktive Erinnerung an f\u00E4llige Medikamentengaben und grenzt dies von einer blo\u00DFen Medikamentenliste ab.",
+      "triggerRequirementIds": [
+        "REQ-80"
+      ],
+      "targetRequirementId": "REQ-80",
+      "targetFeatureId": "FC-12"
+    },
+    {
+      "pbiId": null,
+      "proposedTitle": "Nachweis der Medikamentengabe mit offenem Umsetzungsentscheid kl\u00E4ren und abbilden",
+      "proposedStatement": "Als Pflegekraft will ich f\u00FCr jede Medikamentengabe einen Nachweis mit Zeitpunkt dokumentieren k\u00F6nnen, damit nachvollziehbar ist, ob die Gabe tats\u00E4chlich erfolgt ist. Die konkrete Umsetzung beziehungsweise Entscheidung dazu ist noch offen.",
+      "proposedAcceptanceCriteria": [
+        "F\u00FCr jede Medikamentengabe soll ein Nachweis mit Zeitpunkt dokumentiert werden k\u00F6nnen.",
+        "Der Nachweis soll nachvollziehbar machen, ob die Medikamentengabe tats\u00E4chlich erfolgt ist.",
+        "Die konkrete Umsetzung beziehungsweise die Entscheidung zur Ausgestaltung ist noch offen und muss vor der finalen Umsetzung gekl\u00E4rt werden."
+      ],
+      "rationale": "Neues PBI auf Basis von REQ-81 erstellt. Die Anforderung beschreibt den gew\u00FCnschten Nachweis je Medikamentengabe, benennt aber ausdr\u00FCcklich, dass die konkrete Umsetzung noch offen ist; diese Offenheit wird im Vorschlag ehrlich \u00FCbernommen.",
+      "triggerRequirementIds": [
+        "REQ-81"
+      ],
+      "targetRequirementId": "REQ-81",
+      "targetFeatureId": "FC-12"
+    },
+    {
+      "pbiId": null,
+      "proposedTitle": "Eigenst\u00E4ndigen Medikamenten-Bereich pro Bewohner bereitstellen",
+      "proposedStatement": "Als Pflegekraft will ich pro Bewohner einen eigenst\u00E4ndigen Medikamenten-Bereich nutzen, damit Medikamenteninformationen nicht als Teil des Profils oder von No-Go gef\u00FChrt werden.",
+      "proposedAcceptanceCriteria": [
+        "Die Anwendung stellt pro Bewohner einen neuen Medikamenten-Bereich bereit.",
+        "Der Medikamenten-Bereich ist eigenst\u00E4ndig.",
+        "Der Medikamenten-Bereich ist kein Teil des Profils.",
+        "Der Medikamenten-Bereich ist kein Teil von No-Go."
+      ],
+      "rationale": "Neues PBI auf Basis von REQ-78 erstellt. Die Anforderung fordert einen neuen, eigenst\u00E4ndigen Medikamenten-Bereich pro Bewohner und grenzt ihn explizit von Profil und No-Go ab.",
+      "triggerRequirementIds": [
+        "REQ-78"
+      ],
+      "targetRequirementId": "REQ-78",
+      "targetFeatureId": null
+    }
+  ]
+}

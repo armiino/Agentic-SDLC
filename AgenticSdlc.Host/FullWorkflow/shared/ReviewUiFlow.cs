@@ -13,7 +13,10 @@ public static class ReviewUiFlow
         Func<ReviewItem, bool> resolved,
         Func<string, string, Task<string>>? resolveContext,
         Func<ReviewSession, TFile> apply,
-        bool openBrowser)
+        bool openBrowser,
+        // B1: optionaler Referenz-Katalog-Resolver (rechte Kontext-Leiste, z. B. die Feature-Landkarte). null =
+        // keine Referenz-Details (Stufen ohne rechte Leiste bleiben unberührt).
+        Func<string, Task<ReviewReferenceDetails?>>? resolveReference = null)
     {
         foreach (var it in session.Items) it.Resolved = resolved(it);
         async Task Persist() => await JsonFiles.SaveAsync(decisionsPath, apply(session)).ConfigureAwait(false);
@@ -22,6 +25,7 @@ public static class ReviewUiFlow
             Session = session,
             RecomputeResolved = resolved,
             ResolveContext = resolveContext,
+            ResolveReference = resolveReference,
             OnItemSaved = async _ => await Persist().ConfigureAwait(false),
             OpenBrowser = openBrowser
         }).ConfigureAwait(false);

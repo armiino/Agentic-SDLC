@@ -1,4 +1,5 @@
 using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -22,7 +23,8 @@ public static class PbiUpdateApplyExec
 
     public static async Task<PbiUpdateApplyReport> ExecuteAsync(
         string planDir, PbiStateChangePlanDocument plan, ISet<int> accepted, string repoRoot,
-        IReadOnlyList<PbiAlignment>? acceptedAlignments = null, CancellationToken ct = default)
+        IReadOnlyList<PbiAlignment>? acceptedAlignments = null,
+        IReadOnlyList<PbiFeatureOverride>? featureOverrides = null, CancellationToken ct = default)
     {
         var appliedDir = Path.Combine(planDir, "applied");
         var markerPath = Path.Combine(appliedDir, "applied.marker");
@@ -43,6 +45,11 @@ public static class PbiUpdateApplyExec
         var coreRepo = new JsonCoreRepository(repoRoot);
         if (!await coreRepo.ExistsAsync().ConfigureAwait(false)) throw new InvalidOperationException("Core fehlt.");
         var core = await coreRepo.LoadAsync().ConfigureAwait(false);
+
+        // B1: vom Menschen korrigierte NEW_PBI-Feature-Zuordnungen VOR dem Apply in den Plan einweben. Nur auf ein
+        // EXISTIERENDES Feature (defensiv: Dropdown liefert nur bestehende — ungültiges Ziel => Vorschlag behalten,
+        // statt die Op fallen zu lassen). PlanId bleibt gleich => Idempotenz-Marker unberührt.
+        plan = ApplyFeatureOverrides(plan, featureOverrides, core);
 
         Directory.CreateDirectory(appliedDir);
         await File.WriteAllTextAsync(Path.Combine(appliedDir, "core-before.json"), JsonSerializer.Serialize(core, Json), ct).ConfigureAwait(false);
@@ -78,12 +85,14 @@ public static class PbiUpdateApplyExec
     // stilles Auto-Apply wie bei den Struktur-Ops). skip => der PBI bleibt ehrlich needs_clarify.
     public static List<PbiAlignment> AcceptedAlignments(PbiStateChangePlanDocument plan, IReadOnlyList<PbiAlignmentDecision>? decisions)
     {
-        var proposals = (plan.Alignments ?? []).GroupBy(a => a.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
-        var byPbi = (decisions ?? []).GroupBy(d => d.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+        // O3b: Match über DraftKey (bestehende PbiId für align/extend ODER Ziel-Requirement für create).
+        // Die Decision trägt diesen Key im FieldAlignPbiId → PbiAlignmentDecision.PbiId.
+        var proposals = (plan.Alignments ?? []).GroupBy(a => a.DraftKey, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+        var byKey = (decisions ?? []).GroupBy(d => d.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
         var result = new List<PbiAlignment>();
-        foreach (var (pbiId, proposal) in proposals)
+        foreach (var (key, proposal) in proposals)
         {
-            if (!byPbi.TryGetValue(pbiId, out var d)) continue;                       // keine Freigabe => nicht angleichen
+            if (!byKey.TryGetValue(key, out var d)) continue;                         // keine Freigabe => nicht angleichen
             if (string.Equals(d.Decision, "skip", StringComparison.OrdinalIgnoreCase)) continue;
             if (string.Equals(d.Decision, "edit", StringComparison.OrdinalIgnoreCase))
                 result.Add(proposal with
@@ -96,6 +105,60 @@ public static class PbiUpdateApplyExec
                 result.Add(proposal);
         }
         return result;
+    }
+
+    // B1: die vom Menschen geänderten Feature-Zuordnungen der NEW_PBI-Ops aus den Entscheidungen ziehen. Nur echte
+    // Änderungen (abweichend vom Vorschlag) werden zum Override — unveränderte Felder ändern nichts. Persistiert in
+    // human-decisions.json (Decision.FeatureId); der CLI- UND der HITL-Pfad rechnen darüber (Parität).
+    public static List<PbiFeatureOverride> FeatureOverrides(PbiStateChangePlanDocument plan, IReadOnlyList<PbiUpdateDecision> decisions)
+    {
+        var byOp = decisions.GroupBy(d => d.OpId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+        var result = new List<PbiFeatureOverride>();
+        for (var i = 0; i < plan.Operations.Count; i++)
+        {
+            var op = plan.Operations[i];
+            if (!string.Equals(op.Kind, PbiUpdateKind.NewPbi, StringComparison.Ordinal)) continue;
+            if (!byOp.TryGetValue($"op-{i}", out var d) || string.IsNullOrWhiteSpace(d.FeatureId)) continue;
+            // B2: Sentinel-Wert "proposed:<Label>" => Ziel ist ein im Plan vorgeschlagenes NEUES Feature (immer eine
+            // Änderung, da op.FeatureId ein echter FC-Id/null ist). Sonst B1: bestehendes Feature, nur bei echter Änderung.
+            if (d.FeatureId!.StartsWith(PbiUpdateReviewAdapter.ProposedPrefix, StringComparison.Ordinal))
+                result.Add(new PbiFeatureOverride($"op-{i}", ProposedFeatureLabel: d.FeatureId[PbiUpdateReviewAdapter.ProposedPrefix.Length..]));
+            else if (!string.Equals(d.FeatureId, op.FeatureId, StringComparison.Ordinal))
+                result.Add(new PbiFeatureOverride($"op-{i}", FeatureId: d.FeatureId));
+        }
+        return result;
+    }
+
+    // B1/B2: die Overrides in den Plan einweben — nur NEW_PBI-Ops.
+    //   B1: Ziel = bestehendes Feature (existiert im Core) -> op.FeatureId umschreiben.
+    //   B2: Ziel = im Plan vorgeschlagenes neues Feature (Label passt zu einer NEW_FEATURE-Op) -> die Op wird zu
+    //       NEW_FEATURE mit diesem Label konvertiert; ApplyNewFeatures gruppiert sie dann per Label mit dem/den
+    //       schon vorgeschlagenen NEW_FEATURE-Op(s) -> EIN Feature, mehrere PBIs (die eigentliche Kopplung).
+    // Ungültiges Ziel (Feature/Label nicht vorhanden) -> Vorschlag behalten, Op fällt nie. PlanId unverändert.
+    public static PbiStateChangePlanDocument ApplyFeatureOverrides(
+        PbiStateChangePlanDocument plan, IReadOnlyList<PbiFeatureOverride>? featureOverrides, ProjectStateDocument core)
+    {
+        if (featureOverrides is not { Count: > 0 }) return plan;
+        var featureIds = core.Items.Where(i => string.Equals(i.ItemType, "feature", StringComparison.OrdinalIgnoreCase))
+            .Select(i => i.ItemId).ToHashSet(StringComparer.Ordinal);
+        var proposedLabels = plan.Operations
+            .Where(o => string.Equals(o.Kind, PbiUpdateKind.NewFeature, StringComparison.Ordinal) && !string.IsNullOrWhiteSpace(o.ProposedFeatureLabel))
+            .Select(o => o.ProposedFeatureLabel!.Trim()).ToHashSet(StringComparer.Ordinal);
+        var byOp = featureOverrides.GroupBy(o => o.OpId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+        return plan with
+        {
+            Operations = [.. plan.Operations.Select((op, i) =>
+            {
+                if (!string.Equals(op.Kind, PbiUpdateKind.NewPbi, StringComparison.Ordinal)) return op;
+                if (!byOp.TryGetValue($"op-{i}", out var o)) return op;
+                var label = o.ProposedFeatureLabel?.Trim();
+                if (!string.IsNullOrWhiteSpace(label) && proposedLabels.Contains(label))   // B2: in vorgeschlagenes neues Feature
+                    return op with { Kind = PbiUpdateKind.NewFeature, FeatureId = null, ProposedFeatureLabel = label };
+                if (!string.IsNullOrWhiteSpace(o.FeatureId) && featureIds.Contains(o.FeatureId))   // B1: in bestehendes Feature
+                    return op with { FeatureId = o.FeatureId };
+                return op;
+            })]
+        };
     }
 
     private static string? Override(string? edited, string? original) => string.IsNullOrWhiteSpace(edited) ? original : edited.Trim();

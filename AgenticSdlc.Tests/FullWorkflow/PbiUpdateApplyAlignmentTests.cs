@@ -138,12 +138,20 @@ public sealed class PbiUpdateApplyAlignmentTests
         Assert.Equal("Archivierung nach sieben Tagen", trig.OldText);
     }
 
+    // O3a + O3b: Collect sammelt EXTEND_PBI (extend, mit PbiId) UND NEW_PBI (create, mit TargetRequirementId,
+    // PbiId null). MARK_CHANGED/SUPERSEDE bleiben align (in eigenen Tests abgedeckt).
     [Fact]
-    public void AlignTargets_ignoriert_EXTEND_und_NEW()
+    public void AlignTargets_sammelt_EXTEND_und_NEW()
     {
         var core = Core(Pbi("PBI-1", "X"));
-        var plan = Plan([new PbiStateChangeOperation("EXTEND_PBI", "REQ-1", "PBI-1", null, null, null, "x")]);
-        Assert.Empty(PbiAlignTargets.Collect(plan, core));
+        var plan = Plan([
+            new PbiStateChangeOperation("EXTEND_PBI", "REQ-1", "PBI-1", null, null, null, "x"),
+            new PbiStateChangeOperation("NEW_PBI", "REQ-2", null, "FC-01", null, null, "y")]);
+
+        var targets = PbiAlignTargets.Collect(plan, core);
+        Assert.Equal(2, targets.Count);
+        Assert.Contains(targets, t => t.PbiId == "PBI-1");                                   // extend
+        Assert.Contains(targets, t => t.PbiId is null && t.TargetRequirementId == "REQ-2");  // create
     }
 
     // R-26-C Slice 3: SUPERSEDE nimmt das ERSATZ-Requirement als neue Fassung, das ersetzte als alte Fassung.

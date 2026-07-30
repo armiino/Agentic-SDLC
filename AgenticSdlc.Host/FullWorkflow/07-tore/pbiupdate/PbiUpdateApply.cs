@@ -1,3 +1,4 @@
+using AgenticSdlc.Host.FullWorkflow.Backlog;
 using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.FullWorkflow.Delta;
 
@@ -28,9 +29,14 @@ public static class PbiUpdateApply
         var newPbis = new List<string>();
         var updated = new List<string>();
         var skipped = new List<string>();
-        // R-26-C: akzeptierte/edierte Angleichungen je PBI (letzte gewinnt). Leer => kein Alignment.
+        // R-26-C: akzeptierte/edierte Angleichungen je bestehendem PBI (letzte gewinnt). Leer => kein Alignment.
         var alignByPbi = (acceptedAlignments ?? [])
-            .GroupBy(a => a.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+            .Where(a => a.PbiId is not null)
+            .GroupBy(a => a.PbiId!, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+        // O3b (create): Drafts fuer NEW_PBI sind ueber die Ziel-Requirement adressiert (kein PbiId).
+        var alignByRequirement = (acceptedAlignments ?? [])
+            .Where(a => a.PbiId is null && a.TargetRequirementId is not null)
+            .GroupBy(a => a.TargetRequirementId!, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
 
         var accepted = plan.Operations.Where((_, i) => acceptedIndices.Contains(i)).ToList();
 
@@ -39,14 +45,23 @@ public static class PbiUpdateApply
         {
             if (op.FeatureId is null || !byId.ContainsKey(op.FeatureId)) { skipped.Add($"NEW_PBI {op.RequirementId}: feature '{op.FeatureId}' unbekannt"); continue; }
             var id = $"PBI-{nextPbi++:D3}";
-            var title = byId.TryGetValue(op.RequirementId, out var rq) ? Truncate(rq.Text, 90) : op.RequirementId;
+            var skeletonTitle = byId.TryGetValue(op.RequirementId, out var rq) ? Truncate(rq.Text, 90) : op.RequirementId;
+
+            // O3b (create): akzeptierter Draft macht aus dem Skelett ein volles PBI (Titel/Goal/AK) + active;
+            // ohne Draft bleibt es das ehrliche Skelett (needs_clarify). Leere Draft-Felder => Skelett-Wert.
+            var draft = alignByRequirement.GetValueOrDefault(op.RequirementId);
+            var title = !string.IsNullOrWhiteSpace(draft?.ProposedTitle) ? draft!.ProposedTitle!.Trim() : skeletonTitle;
+            var goal = string.IsNullOrWhiteSpace(draft?.ProposedStatement) ? null : draft!.ProposedStatement!.Trim();
+            var acceptance = draft?.ProposedAcceptanceCriteria is { Count: > 0 } ac ? ac : (IReadOnlyList<string>)[];
+            var readiness = draft is not null ? PbiStatus.Active : PbiStatus.NeedsClarify;
+
             var payload = new PbiPayload(
-                Goal: null, Title: title, AcceptanceCriteria: [], LinkedRequirementIds: [op.RequirementId],
-                OpenDecisionRefs: [], PriorityRank: null, Readiness: PbiStatus.NeedsClarify, Mvp: null, Trace: null);
+                Goal: goal, Title: title, AcceptanceCriteria: acceptance, LinkedRequirementIds: [op.RequirementId],
+                OpenDecisionRefs: [], PriorityRank: null, Readiness: readiness, Mvp: null, Trace: null);
             var meta = new Dictionary<string, string>(StringComparer.Ordinal)
             { ["sourceRunId"] = sourceRun, ["createdFromRequirement"] = op.RequirementId, ["featureId"] = op.FeatureId };
             AddItem(order, byId, new ProjectStateItem(
-                ItemId: id, ItemType: "pbi", Text: title, Status: PbiStatus.NeedsClarify, Origin: "pbi-update", Stage: null, Version: 1,
+                ItemId: id, ItemType: "pbi", Text: title, Status: readiness, Origin: "pbi-update", Stage: null, Version: 1,
                 SourceRunId: sourceRun, SourceArtifactId: null, SourceArtifactType: null, SourceDecisionId: null, SourceCandidateId: null,
                 SourceClaimIds: [], SourceArtifactItemIds: [], Metadata: meta, IdentityKey: null, History: [], Feature: null, Pbi: payload));
             relations.Add(new ProjectStateRelation(id, op.FeatureId, "part_of_feature", "pbi-update", new Dictionary<string, string>())); relAdded++;
@@ -124,9 +139,90 @@ public static class PbiUpdateApply
         }
 
         var items = order.Select(id => byId[id]).ToList();
-        var finalStatus = newPbis.Concat(updated).ToDictionary(id => id, id => byId[id].Status, StringComparer.Ordinal);
         var coreUpdated = core with { SchemaVersion = ProjectStateDocument.CurrentSchemaVersion, Items = items, Relations = relations };
-        return (coreUpdated, new PbiUpdateApplyReport(newPbis, updated, finalStatus, relAdded, relRemoved, skipped));
+
+        // O4b (Fall C): akzeptierte NEW_FEATURE-Ops NACH den normalen Ops -> Seeder-Adapter (neues Feature + PBI).
+        var (coreFinal, featurePbis, featureRels) = ApplyNewFeatures(coreUpdated, accepted, alignByRequirement, sourceRun, skipped);
+        newPbis.AddRange(featurePbis);
+        relAdded += featureRels;
+
+        var byIdFinal = coreFinal.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
+        var finalStatus = newPbis.Concat(updated).Where(byIdFinal.ContainsKey)
+            .ToDictionary(id => id, id => byIdFinal[id].Status, StringComparer.Ordinal);
+        return (coreFinal, new PbiUpdateApplyReport(newPbis, updated, finalStatus, relAdded, relRemoved, skipped));
+    }
+
+    // O4b (Fall C): legt neue Features + ihre PBIs an — via den geprueften CoreBacklogSeeder (Option 3). Der
+    // PBI-Inhalt kommt aus dem O3b-Create-Draft (per RequirementId). Reihenfolge: NACH den normalen Ops.
+    // WICHTIG (Kollegen-Fund): mehrere NEW_FEATURE-Ops mit DEMSELBEN proposedFeatureLabel gehoeren zu EINEM neuen
+    // Feature (mit mehreren PBIs), NICHT zu N separaten Features — der Placement-Agent liefert pro Requirement
+    // eine eigene Op mit gleichem Label. Governance: nur Ops MIT akzeptiertem Draft werden PBIs; eine Gruppe ohne
+    // jeden Draft legt KEIN Feature an (kein aktives leeres Skelett).
+    private static (ProjectStateDocument Core, List<string> NewPbis, int RelationsAdded) ApplyNewFeatures(
+        ProjectStateDocument core, List<PbiStateChangeOperation> accepted,
+        IReadOnlyDictionary<string, PbiAlignment> alignByRequirement, string sourceRun, List<string> skipped)
+    {
+        var ops = accepted.Where(o => string.Equals(o.Kind, PbiUpdateKind.NewFeature, StringComparison.Ordinal)
+                                      && !string.IsNullOrWhiteSpace(o.ProposedFeatureLabel)).ToList();
+        if (ops.Count == 0) return (core, [], 0);
+
+        var current = core;
+        var addedPbis = new List<string>();
+        var relsAdded = 0;
+        foreach (var group in ops.GroupBy(o => o.ProposedFeatureLabel!.Trim(), StringComparer.Ordinal))
+        {
+            var withDraft = new List<(PbiStateChangeOperation Op, PbiAlignment Draft)>();
+            foreach (var op in group)
+            {
+                var draft = alignByRequirement.GetValueOrDefault(op.RequirementId);
+                if (draft is null)
+                    skipped.Add($"NEW_FEATURE {op.RequirementId}: kein akzeptierter Create-Draft — nicht angelegt.");
+                else
+                    withDraft.Add((op, draft));
+            }
+            if (withDraft.Count == 0) continue;   // ganze Label-Gruppe ohne Draft -> kein leeres Feature
+
+            var fcId = NextFeatureId(current);
+            var fcCompact = fcId.Replace("-", "");
+            var reqIds = withDraft.Select(x => x.Op.RequirementId).ToList();
+            var cluster = new FeatureCluster(fcId, fcId, group.Key, reqIds, [], withDraft[0].Op.Rationale);
+            var clusterSet = new FeatureClusterSet(FeatureClusterSet.CurrentSchemaVersion, $"cs-{fcId}",
+                core.ProjectId, "op", DateTime.UtcNow, "pbi-update", [cluster]);
+
+            // Ein PBI je Op der Gruppe — alle im selben Feature (PBI-<fcCompact>-nn -> ResolveFeatureId -> fcId).
+            var pbiItems = withDraft.Select((x, idx) => new ProductBacklogItem(
+                $"PBI-{fcCompact}-{idx + 1:D2}", $"ik-{fcId}-{idx + 1}", 1, "delivery",
+                x.Draft.ProposedTitle ?? x.Op.RequirementId, [x.Op.RequirementId])
+            {
+                Goal = x.Draft.ProposedStatement,
+                AcceptanceCriteria = x.Draft.ProposedAcceptanceCriteria ?? [],
+                Traceability = new PbiTraceability([], [], [x.Op.RequirementId], [])
+            }).ToList();
+            var backlog = new ProductBacklogDocument(ProductBacklogDocument.CurrentSchemaVersion, $"bk-{fcId}",
+                core.ProjectId, "op", DateTime.UtcNow, "pbi-update", pbiItems);
+
+            var before = current.Items.Select(i => i.ItemId).ToHashSet(StringComparer.Ordinal);
+            var (seeded, report) = CoreBacklogSeeder.Seed(current, clusterSet, backlog, sourceRun);
+            current = seeded;
+            relsAdded += report.RelationsAdded;
+            addedPbis.AddRange(seeded.Items
+                .Where(i => !before.Contains(i.ItemId) && string.Equals(i.ItemType, "pbi", StringComparison.OrdinalIgnoreCase))
+                .Select(i => i.ItemId));
+        }
+        return (current, addedPbis, relsAdded);
+    }
+
+    // Freie FC-<n>-ID (numerisch, kollisionssicher gegen bestehende Features inkl. Suffix-Varianten wie FC-13A).
+    private static string NextFeatureId(ProjectStateDocument core)
+    {
+        var existing = core.Items.Where(i => string.Equals(i.ItemType, "feature", StringComparison.OrdinalIgnoreCase))
+            .Select(i => i.ItemId).ToHashSet(StringComparer.Ordinal);
+        var max = existing.Where(id => id.StartsWith("FC-", StringComparison.Ordinal))
+            .Select(id => new string(id["FC-".Length..].TakeWhile(char.IsDigit).ToArray()))
+            .Where(s => s.Length > 0).Select(int.Parse).DefaultIfEmpty(0).Max();
+        string candidate;
+        do { candidate = $"FC-{++max:D2}"; } while (existing.Contains(candidate));
+        return candidate;
     }
 
     private static void AddItem(List<string> order, Dictionary<string, ProjectStateItem> byId, ProjectStateItem item)

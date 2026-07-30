@@ -15,7 +15,10 @@ public sealed record PbiUpdateDecisionsFile(
 public sealed record PbiUpdateDecision(
     [property: JsonPropertyName("opId")] string OpId,
     [property: JsonPropertyName("decision")] string Decision,
-    [property: JsonPropertyName("reason")] string? Reason);
+    [property: JsonPropertyName("reason")] string? Reason,
+    // B1: bei NEW_PBI die (evtl. vom Menschen geänderte) Feature-Zuordnung. null/leer = Vorschlag des Agenten.
+    // Alte Dateien ohne dieses Feld => null => keine Korrektur. Der Apply liest es und schreibt die Op um.
+    [property: JsonPropertyName("featureId")] string? FeatureId = null);
 
 // R-26-C: Entscheidung des Menschen zum Angleichungs-Vorschlag eines PBI. accept = Vorschlag übernehmen,
 // edit = mit den editierten Feldern übernehmen, skip = nicht angleichen (PBI bleibt needs_clarify).
@@ -48,10 +51,20 @@ public static class PbiUpdateReviewAdapter
     public const string FieldAlignTitle = "alignTitle";
     public const string FieldAlignStatement = "alignStatement";
     public const string FieldAlignAcceptance = "alignAcceptance";
+    // B1 (Fall-C-Bündelung, Lösungsweg B): editierbare Feature-Zuordnung eines NEW_PBI. BEWUSST der Feldschlüssel
+    // "referenceTarget" — daran ist die generische Review-UI fest verdrahtet: die rechte Kontext-Leiste zeigt die
+    // Optionen dieses Feldes als Katalog (hier die Feature-Landkarte), und ein Klick auf einen Eintrag setzt genau
+    // dieses Feld am aktiven Item. So bekommt B1 Landkarte + Klick-zu-Zuweisen OHNE Änderung an der geteilten UI.
+    public const string FieldFeature = "referenceTarget";
+    public const string FieldKind = "opKind";             // Hidden-Träger: op.Kind für die VisibleWhen-Bedingung
+    // B2: Sentinel-Präfix für Optionen, die auf ein im selben Plan VORGESCHLAGENES neues Feature zeigen (existiert
+    // noch nicht im Core → kein echter featureId). Wert = "proposed:<Label>". Feature-IDs sind "FC-nn" → kollisionsfrei.
+    public const string ProposedPrefix = "proposed:";
     private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase) { "apply", "skip" };
     private static readonly HashSet<string> AlignDecisions = new(StringComparer.OrdinalIgnoreCase) { "accept", "edit", "skip" };
     private static readonly ReviewFieldVisibility OnlyHasAlign = new(FieldHasAlign, ["yes"]);
     private static readonly ReviewFieldVisibility OnlyAlignEdit = new(FieldAlignDecision, ["edit"]);
+    private static readonly ReviewFieldVisibility OnlyNewPbi = new(FieldKind, [PbiUpdateKind.NewPbi]);
     private const int TextPreviewChars = 500;
 
     public static ReviewSession BuildSession(string runId, PbiStateChangePlanDocument plan, ProjectStateDocument core)
@@ -62,6 +75,10 @@ public static class PbiUpdateReviewAdapter
         // Op-Arten; ein PBI mit mehreren Ops zeigt die Angleichung genau einmal, am ersten Op.)
         var opAlign = MapAlignmentsToOps(plan);
         var items = plan.Operations.Select((op, i) => BuildItem($"op-{i}", i, op, byId, opAlign.GetValueOrDefault(i))).ToList();
+
+        // B1/B2: die bestehenden Features + die im Plan vorgeschlagenen NEUEN Features als Katalog. Speist die rechte
+        // Feature-Landkarte (über den referenceTarget-Feldschlüssel) UND das editierbare Feature-Dropdown je NEW_PBI.
+        var featureOptions = FeatureOptions(plan, core);
 
         var alignCount = opAlign.Count;
         return new ReviewSession
@@ -90,6 +107,14 @@ public static class PbiUpdateReviewAdapter
             [
                 new ReviewFieldSpec(FieldHasAlign, "", ReviewInputType.Hidden, [], Required: false),
                 new ReviewFieldSpec(FieldAlignPbiId, "", ReviewInputType.Hidden, [], Required: false),
+                new ReviewFieldSpec(FieldKind, "", ReviewInputType.Hidden, [], Required: false),  // B1: Träger für VisibleWhen NEW_PBI
+                // B1: nur bei NEW_PBI sichtbar. Der Platzierungs-Agent schlägt ein bestehendes Feature vor; der Mensch
+                // kann es hier (oder per Klick in der Feature-Landkarte rechts) auf ein anderes bestehendes Feature
+                // korrigieren. Der Apply schreibt die Op auf das gewählte Feature um. (B2 später: neue In-Plan-Features.)
+                new ReviewFieldSpec(FieldFeature, "Feature-Zuordnung", ReviewInputType.Dropdown, [], Required: false,
+                    Help: "Unter welchem bestehenden Feature dieses neue PBI angelegt wird. Änderbar — wähle ein anderes "
+                        + "Feature aus der Liste oder klicke es in der Feature-Landkarte (rechts) an.",
+                    Options: featureOptions, VisibleWhen: OnlyNewPbi),
                 new ReviewFieldSpec(FieldDecision, "Struktur-Entscheidung", ReviewInputType.Dropdown, ["apply", "skip"], Required: true,
                     Help: "Ob dieses PBI von der Aenderung betroffen ist — Details im Banner 'Was bewirkt dein Entscheid?'.",
                     Options:
@@ -140,7 +165,10 @@ public static class PbiUpdateReviewAdapter
     public static PbiUpdateDecisionsFile Apply(string runId, ReviewSession session)
     {
         var ops = session.Items
-            .Select(it => new PbiUpdateDecision(it.ItemId, FieldOf(it, FieldDecision), NullIfEmpty(FieldOf(it, FieldReason))))
+            .Select(it => new PbiUpdateDecision(it.ItemId, FieldOf(it, FieldDecision), NullIfEmpty(FieldOf(it, FieldReason)),
+                // B1: die (evtl. geänderte) Feature-Zuordnung NUR bei NEW_PBI mitschreiben — sonst irrelevant.
+                FeatureId: string.Equals(FieldOf(it, FieldKind), PbiUpdateKind.NewPbi, StringComparison.Ordinal)
+                    ? NullIfEmpty(FieldOf(it, FieldFeature)) : null))
             .ToList();
         var aligns = session.Items.Where(HasAlign)
             .Select(it => new PbiAlignmentDecision(
@@ -157,7 +185,13 @@ public static class PbiUpdateReviewAdapter
     public static void MergeExistingDecisions(ReviewSession session, PbiUpdateDecisionsFile? file)
     {
         ReviewMerge.ByItemId(session, file?.Decisions, d => d.OpId,
-            (item, d) => { Set(item, FieldDecision, d.Decision); Set(item, FieldReason, d.Reason); }, Resolved);
+            (item, d) =>
+            {
+                Set(item, FieldDecision, d.Decision);
+                Set(item, FieldReason, d.Reason);
+                // B1: nur eine explizit gesetzte Feature-Korrektur zurückspielen; sonst bleibt der Vorschlag (Default).
+                if (!string.IsNullOrWhiteSpace(d.FeatureId)) Set(item, FieldFeature, d.FeatureId);
+            }, Resolved);
         // Angleichungs-Entscheidungen per pbiId -> das Op-Item, das diese Angleichung traegt (alignPbiId).
         foreach (var ad in file?.AlignmentDecisions ?? [])
         {
@@ -175,7 +209,8 @@ public static class PbiUpdateReviewAdapter
     private static bool HasAlign(ReviewItem item) => string.Equals(FieldOf(item, FieldHasAlign), "yes", StringComparison.Ordinal);
     private static string? NullIfEmpty(string v) => string.IsNullOrWhiteSpace(v) ? null : v;
 
-    // Ordnet jede Angleichung ihrem ersten passenden MARK_CHANGED/SUPERSEDE-Op zu (gleicher PBI).
+    // Ordnet jede Angleichung ihrem ersten passenden MARK_CHANGED/SUPERSEDE/EXTEND_PBI-Op zu (gleicher PBI).
+    // O3a: EXTEND_PBI traegt jetzt ebenfalls einen Draft (extend-Modus), muss also als Angleichungsblock erscheinen.
     private static IReadOnlyDictionary<int, PbiAlignment> MapAlignmentsToOps(PbiStateChangePlanDocument plan)
     {
         var map = new Dictionary<int, PbiAlignment>();
@@ -185,9 +220,17 @@ public static class PbiUpdateReviewAdapter
             {
                 var op = plan.Operations[i];
                 if (map.ContainsKey(i)) continue;
-                if (string.Equals(op.PbiId, a.PbiId, StringComparison.Ordinal)
-                    && (op.Kind == PbiUpdateKind.MarkChanged || op.Kind == PbiUpdateKind.SupersedePbi))
-                { map[i] = a; break; }
+                // align/extend: an das bestehende PBI-Op (gleiche PbiId). O3b create: an das NEW_PBI-Op mit
+                // passender Ziel-Requirement (das PBI existiert noch nicht, daher kein PbiId-Match).
+                var matchesExisting = a.PbiId is not null
+                    && string.Equals(op.PbiId, a.PbiId, StringComparison.Ordinal)
+                    && (op.Kind == PbiUpdateKind.MarkChanged || op.Kind == PbiUpdateKind.SupersedePbi || op.Kind == PbiUpdateKind.ExtendPbi);
+                // O3b: NEW_PBI (create im bestehenden Feature) · O4b: NEW_FEATURE (create im NEUEN Feature) —
+                // beide tragen den PBI-Draft, damit der Mensch ihn vor Freigabe sieht (Gate-Sinn).
+                var matchesCreate = a.PbiId is null && a.TargetRequirementId is not null
+                    && (op.Kind == PbiUpdateKind.NewPbi || op.Kind == PbiUpdateKind.NewFeature)
+                    && string.Equals(op.RequirementId, a.TargetRequirementId, StringComparison.Ordinal);
+                if (matchesExisting || matchesCreate) { map[i] = a; break; }
             }
         }
         return map;
@@ -208,6 +251,70 @@ public static class PbiUpdateReviewAdapter
         if (key.StartsWith("requirement:", StringComparison.Ordinal))
             return byId.TryGetValue(key["requirement:".Length..], out var r) ? DescribeRequirement(r) : "(Anforderung nicht im Core gefunden)";
         return $"(Unbekannter Kontext: {key})";
+    }
+
+    // B1/B2: Auswahl-Katalog. Bestehende Features (Value=featureId, Label "FC-xx — Label") + die im selben Plan
+    // vorgeschlagenen NEUEN Features (Value="proposed:<Label>", Label "🆕 NEU: <Label>", dedup per Label). Die
+    // generische UI zerlegt das Label (id — proposition) für die rechte Feature-Landkarte.
+    private static IReadOnlyList<ReviewOption> FeatureOptions(PbiStateChangePlanDocument plan, ProjectStateDocument core)
+    {
+        var existing = core.Items.Where(i => string.Equals(i.ItemType, "feature", StringComparison.OrdinalIgnoreCase))
+            .Select(f => new ReviewOption(f.ItemId, $"{f.ItemId} — {f.Feature?.Label ?? f.Text}"));
+        // B2: die NEW_FEATURE-Ops dieses Plans als wählbare Ziele — so kann der Mensch ein NEW_PBI in ein gerade
+        // vorgeschlagenes neues Feature umhängen (die eigentliche Kopplung).
+        var proposed = plan.Operations
+            .Where(o => string.Equals(o.Kind, PbiUpdateKind.NewFeature, StringComparison.Ordinal) && !string.IsNullOrWhiteSpace(o.ProposedFeatureLabel))
+            .Select(o => o.ProposedFeatureLabel!.Trim())
+            .Distinct(StringComparer.Ordinal)
+            .Select(label => new ReviewOption(ProposedPrefix + label, $"🆕 NEU: {label}"));
+        return existing.Concat(proposed).ToList();
+    }
+
+    // B1/B2: Detailkarte in der rechten Landkarte. Bestehendes Feature -> seine PBIs (über part_of_feature).
+    // Vorgeschlagenes neues Feature ("proposed:<Label>") -> die geplanten Anforderungen aus dem Plan. Rein
+    // informativ (Lese-Landkarte, hilft der Feature-Wahl); löst KEINE Wahrheits-Mutation aus.
+    public static ReviewReferenceDetails? ResolveReference(string reference, ProjectStateDocument core, PbiStateChangePlanDocument? plan = null)
+    {
+        var byId = core.Items.GroupBy(i => i.ItemId).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
+        // B2: vorgeschlagenes neues Feature — existiert noch nicht im Core, Details kommen aus dem Plan.
+        if (reference.StartsWith(ProposedPrefix, StringComparison.Ordinal))
+        {
+            if (plan is null) return null;
+            var label = reference[ProposedPrefix.Length..];
+            var reqs = plan.Operations
+                .Where(o => string.Equals(o.Kind, PbiUpdateKind.NewFeature, StringComparison.Ordinal)
+                            && string.Equals(o.ProposedFeatureLabel?.Trim(), label, StringComparison.Ordinal))
+                .Select(o => byId.TryGetValue(o.RequirementId, out var r) ? r.Text : o.RequirementId)
+                .ToList();
+            var pnotes = new List<ReviewNote>
+            {
+                new(ReviewNoteKind.Suggestion, $"🆕 Neues Feature „{label}“", "Wird beim Übernehmen neu angelegt (Fall C).")
+            };
+            foreach (var t in reqs) pnotes.Add(new ReviewNote(ReviewNoteKind.Info, "Geplante Anforderung", Truncate(t, TextPreviewChars)));
+            return new ReviewReferenceDetails(reference, $"🆕 {label}", $"Neues Feature, {reqs.Count} geplante Anforderung(en).", pnotes, []);
+        }
+        var featureId = reference;
+        if (!byId.TryGetValue(featureId, out var feat) || !string.Equals(feat.ItemType, "feature", StringComparison.OrdinalIgnoreCase))
+            return null;
+        // part_of_feature: pbi -> feature (FromId = PBI, ToId = Feature).
+        var pbiIds = core.Relations
+            .Where(r => string.Equals(r.RelationType, "part_of_feature", StringComparison.Ordinal)
+                        && string.Equals(r.ToId, featureId, StringComparison.Ordinal))
+            .Select(r => r.FromId)
+            .Where(id => byId.TryGetValue(id, out var it) && string.Equals(it.ItemType, "pbi", StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.Ordinal).ToList();
+        var notes = new List<ReviewNote>
+        {
+            new(ReviewNoteKind.Info, $"Feature {feat.ItemId} ({feat.Status})", feat.Feature?.Label ?? feat.Text)
+        };
+        if (pbiIds.Count == 0)
+            notes.Add(new ReviewNote(ReviewNoteKind.Info, "PBIs in diesem Feature", "(noch keine)"));
+        else
+            foreach (var pid in pbiIds)
+                notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, $"{pid} ({byId[pid].Status})",
+                    byId[pid].Pbi?.Title ?? byId[pid].Text));
+        return new ReviewReferenceDetails(featureId, feat.Feature?.Label ?? feat.Text,
+            $"{pbiIds.Count} PBI(s) in diesem Feature.", notes, []);
     }
 
     private static ReviewHelp BuildHelp() => new(
@@ -318,6 +425,11 @@ public static class PbiUpdateReviewAdapter
                     $"Feature: {feat?.Feature?.Label ?? feat?.Text ?? op.FeatureId ?? "-"}"));
                 break;
             }
+            case PbiUpdateKind.NewFeature:  // O4: kein bestehendes Feature passt -> neues Feature + erstes PBI
+                notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, $"Neue Anforderung {op.RequirementId}", ReqBody(req)));
+                notes.Add(new ReviewNote(ReviewNoteKind.Info, "Einordnung",
+                    $"NEUES Feature wird angelegt: {op.ProposedFeatureLabel ?? "-"}"));
+                break;
             case PbiUpdateKind.ExtendPbi:
                 notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, $"Zusaetzliche Anforderung {op.RequirementId}", ReqBody(req)));
                 break;
@@ -329,7 +441,7 @@ public static class PbiUpdateReviewAdapter
         if (PbiUpdateKind.Placement.Contains(op.Kind) && !string.IsNullOrWhiteSpace(op.Rationale))
             notes.Add(new ReviewNote(ReviewNoteKind.Reason, "Warum diese Zuordnung? (Vorschlag des Platzierungs-Agenten)", op.Rationale));
 
-        // R-26-C: die Inhalts-Angleichung DIREKT an diesem Op-Item — gleicher PBI-Kontext, getrennte Entscheidung.
+        // R-26-C / O3a: Angleichung an einem BESTEHENDEN PBI — AKTUELL + ANGEGLICHEN nebeneinander.
         if (align is not null && pbi is not null)
         {
             notes.Add(new ReviewNote(ReviewNoteKind.Reason, "Inhaltliche Angleichung — warum",
@@ -337,6 +449,15 @@ public static class PbiUpdateReviewAdapter
             notes.Add(new ReviewNote(ReviewNoteKind.Info, "PBI-Inhalt AKTUELL",
                 PbiContentBlock(pbi.Pbi?.Title ?? pbi.Text, pbi.Pbi?.Goal, pbi.Pbi?.AcceptanceCriteria)));
             notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, "PBI-Inhalt ANGEGLICHEN (Vorschlag)",
+                PbiContentBlock(align.ProposedTitle, align.ProposedStatement, align.ProposedAcceptanceCriteria)));
+        }
+        // O3b create (NEW_PBI): es gibt noch KEIN aktuelles PBI — aber der vorgeschlagene Inhalt MUSS sichtbar sein.
+        // Sonst uebernaehme der Mensch bei Default "accept" ungesehenen Inhalt in die Core-Wahrheit (Gate-Sinn).
+        else if (align is not null)
+        {
+            notes.Add(new ReviewNote(ReviewNoteKind.Reason, "Neues PBI — warum",
+                align.Rationale + $"\nAusgeloest durch: {(align.TriggerRequirementIds.Count == 0 ? "-" : string.Join(", ", align.TriggerRequirementIds))}"));
+            notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, "Neues PBI — so wuerde es entstehen (Vorschlag)",
                 PbiContentBlock(align.ProposedTitle, align.ProposedStatement, align.ProposedAcceptanceCriteria)));
         }
 
@@ -350,7 +471,11 @@ public static class PbiUpdateReviewAdapter
             new(FieldDecision, ""),
             new(FieldReason, ""),
             new(FieldHasAlign, align is not null ? "yes" : ""),
-            new(FieldAlignPbiId, align?.PbiId ?? "")
+            // O3b: DraftKey = bestehende PbiId (align/extend) ODER Ziel-Requirement (create) — einheitlicher Match.
+            new(FieldAlignPbiId, align?.DraftKey ?? ""),
+            new(FieldKind, op.Kind),   // B1: Träger für VisibleWhen (Feature-Feld nur bei NEW_PBI)
+            // B1: vorbelegt mit dem Vorschlag des Platzierungs-Agenten; nur bei NEW_PBI sichtbar/relevant.
+            new(FieldFeature, op.Kind == PbiUpdateKind.NewPbi ? op.FeatureId ?? "" : "")
         };
         if (align is not null)
         {

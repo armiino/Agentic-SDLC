@@ -46,7 +46,8 @@ public static class PbiUpdateReviewRunner
             resolved: PbiUpdateReviewAdapter.Resolved,
             resolveContext: (_, key) => Task.FromResult(PbiUpdateReviewAdapter.ResolveContext(key, plan, core)),
             apply: s => PbiUpdateReviewAdapter.Apply(runId, s),
-            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser,
+            resolveReference: reference => Task.FromResult(PbiUpdateReviewAdapter.ResolveReference(reference, core, plan))).ConfigureAwait(false); // B1/B2: Feature-Landkarte
         Console.WriteLine($"[pbi-update-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
         return 0;
     }

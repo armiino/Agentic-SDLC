@@ -49,6 +49,59 @@ public sealed class PbiUpdateReviewAdapterTests
     }
 
     [Fact]
+    public void ExtendPbi_zeigt_den_Angleichungs_Draft_Block()   // O3a
+    {
+        var core = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [], [PbiItem("PBI-1", "Alter Titel")], [], [], []);
+        var align = new PbiAlignment("PBI-1", "Titel inkl. Export", null, ["AK: Export als PDF"], "um REQ-2 erweitert", ["REQ-2"]);
+        var plan = new PbiStateChangePlanDocument(1, "p1", DateTime.UnixEpoch, "src", [Op("EXTEND_PBI", "REQ-2", "PBI-1")], [align]);
+
+        var it = PbiUpdateReviewAdapter.BuildSession("r1", plan, core).Items[0];
+
+        // O3a: EXTEND_PBI muss ebenfalls den Angleichungsblock tragen (frueher nur MARK_CHANGED/SUPERSEDE).
+        Assert.Equal("yes", FieldOf(it, PbiUpdateReviewAdapter.FieldHasAlign));
+        Assert.Equal("PBI-1", FieldOf(it, PbiUpdateReviewAdapter.FieldAlignPbiId));
+    }
+
+    [Fact]
+    public void NewPbi_mit_Create_Draft_zeigt_den_Draft_Block()   // O3b
+    {
+        var core = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [],
+            [new ProjectStateItem("FC-01", "feature", "Export", "active", "test", null, 1,
+                null, null, null, null, null, [], [], new Dictionary<string, string>())], [], [], []);
+        var draft = new PbiAlignment(null, "PDF-Export", "Als X will ich Daten exportieren", ["Export als PDF"],
+            "neues PBI aus REQ-9", ["REQ-9"], TargetRequirementId: "REQ-9", TargetFeatureId: "FC-01");
+        var plan = new PbiStateChangePlanDocument(1, "p1", DateTime.UnixEpoch, "src",
+            [Op("NEW_PBI", "REQ-9", pbi: null)], [draft]);
+
+        var it = PbiUpdateReviewAdapter.BuildSession("r1", plan, core).Items[0];
+
+        // O3b: NEW_PBI trägt den create-Draft; der DraftKey ist die Ziel-Requirement (kein PbiId).
+        Assert.Equal("yes", FieldOf(it, PbiUpdateReviewAdapter.FieldHasAlign));
+        Assert.Equal("REQ-9", FieldOf(it, PbiUpdateReviewAdapter.FieldAlignPbiId));
+        // O3b-Polish (Gate-Sinn): der vorgeschlagene neue PBI-Inhalt MUSS sichtbar sein, auch ohne bestehendes PBI.
+        Assert.Contains(it.Notes, n => n.Label.Contains("Neues PBI") && n.Text.Contains("PDF-Export"));
+    }
+
+    [Fact]
+    public void NewFeature_zeigt_neues_Feature_Label_und_den_PBI_Draft_Block()   // O4b
+    {
+        var core = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [], [Req("REQ-9", "Übergabe-Notiz pro Schicht")], [], [], []);
+        var draft = new PbiAlignment(null, "Schicht-Übergabe-Notiz", "Als Pflegekraft will ich …", ["AK: Notiz je Schicht"],
+            "neues Feature-PBI", ["REQ-9"], TargetRequirementId: "REQ-9");
+        var op = new PbiStateChangeOperation("NEW_FEATURE", "REQ-9", null, null, null, null, "neues Thema",
+            ProposedFeatureLabel: "Schichtübergabe");
+        var plan = new PbiStateChangePlanDocument(1, "p1", DateTime.UnixEpoch, "src", [op], [draft]);
+
+        var it = PbiUpdateReviewAdapter.BuildSession("r1", plan, core).Items[0];
+
+        // Gate-Sinn: der Mensch sieht das neue Feature-Label UND den PBI-Draft, bevor er es in den Core übernimmt.
+        Assert.Equal("yes", FieldOf(it, PbiUpdateReviewAdapter.FieldHasAlign));
+        Assert.Equal("REQ-9", FieldOf(it, PbiUpdateReviewAdapter.FieldAlignPbiId));
+        Assert.Contains(it.Notes, n => n.Text.Contains("Schichtübergabe"));
+        Assert.Contains(it.Notes, n => n.Label.Contains("Neues PBI") && n.Text.Contains("Schicht-Übergabe-Notiz"));
+    }
+
+    [Fact]
     public void Resolved_apply_ohne_Begruendung_skip_nur_mit()
     {
         var session = PbiUpdateReviewAdapter.BuildSession("r1", Plan(Op()), EmptyCore);

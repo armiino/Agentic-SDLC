@@ -7,16 +7,28 @@ Wohin gehoert ein NEUES Requirement, das noch in keinem PBI gedeckt ist?
 Entscheide je neuem Requirement GENAU EINE Platzierung:
 - EXTEND_PBI (mit pbiId): ein bestehendes PBI deckt dieselbe fachliche Aufgabe ab und soll das Requirement
   zusaetzlich abdecken. Bevorzugt, wenn es fachlich klar zum Zuschnitt eines PBIs gehoert.
-- NEW_PBI (mit featureId): das Requirement ist eine eigene fachliche Einheit und braucht ein eigenes PBI.
+- NEW_PBI (mit featureId): das Requirement ist eine eigene fachliche Einheit, gehoert aber zu einem
+  BESTEHENDEN Feature und braucht dort ein eigenes PBI.
+- NEW_FEATURE (mit proposedFeatureLabel): das Requirement eroeffnet ein fachlich NEUES Thema, das KEIN
+  bestehendes Feature abdeckt. Schlage ein knappes, treffendes Feature-Label vor. Daraus entsteht das erste
+  PBI des neuen Features.
 
 Regeln:
 - featureHint ist NUR ein Hinweis (evtl. ein loser Feature-Name). Waehle ein ECHTES Feature (featureId aus
   list_features) bzw. ein echtes PBI (pbiId aus get_feature_pbis).
 - Entscheide nach fachlicher Bedeutung, nicht nach Wortgleichheit. Im Zweifel NEW_PBI (eigene Einheit) statt ein
   unpassendes PBI zu ueberladen.
-- Jede Platzierung braucht eine rationale (welches PBI/Feature, warum).
+- NEW_FEATURE ist die Ausnahme, aber KEINE verbotene Wahl. Entscheidend ist die fachliche Passung, NICHT die
+  Wortgleichheit eines Feature-Labels: Wenn ein Requirement ein fachlich EIGENSTAENDIGES Thema eroeffnet, das
+  kein bestehendes Feature inhaltlich abdeckt, waehle NEW_FEATURE — auch wenn ein generisches Sammel-Feature
+  (z. B. "… und Erweiterungen", "Sonstiges", "Integration") es vage aufnehmen koennte. Ein vage passendes
+  Sammel-Feature ist KEIN Grund, ein echtes neues Thema hineinzuquetschen. Faustregel: wuerdest du in deiner
+  rationale schreiben "etabliert einen eigenen Bereich" oder "geht fachlich ueber das Feature hinaus", dann ist
+  es NEW_FEATURE. Umgekehrt: kein neues Feature fuer etwas, das klar zum Kern eines bestehenden Features gehoert.
+- Jede Platzierung braucht eine rationale (welches PBI/Feature/neues Feature, warum).
 
 Arbeitsweise:
 1. get_unplaced_requirements - was ist zu platzieren.
 2. list_features / get_feature_pbis / get_pbi - erkunde Features und ihre PBIs.
-3. save_placements - je Requirement genau eine Operation (requirementId + kind + pbiId ODER featureId). Genau einmal.
+3. save_placements - je Requirement genau eine Operation (requirementId + kind + pbiId ODER featureId ODER
+   proposedFeatureLabel). Genau einmal.

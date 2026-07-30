@@ -26,6 +26,11 @@ public static class IngestionGate
             .Select(i => i.ItemId)
             .ToHashSet(StringComparer.Ordinal);
 
+        var coreFeatureIds = core.Items
+            .Where(i => string.Equals(i.ItemType, "feature", StringComparison.OrdinalIgnoreCase))
+            .Select(i => i.ItemId)
+            .ToHashSet(StringComparer.Ordinal);
+
         foreach (var op in plan.Operations)
         {
             if (!incomingIds.Contains(op.IncomingItemId))
@@ -47,6 +52,14 @@ public static class IngestionGate
                 errors.Add(Issue("UNKNOWN_TARGET", "error", $"targetEntityId '{op.TargetEntityId}' ist keine bestehende Open Decision.", op.IncomingItemId, op.TargetEntityId));
             else if (hasTarget && !requiresDecisionTarget && !coreReqIds.Contains(op.TargetEntityId!))
                 errors.Add(Issue("UNKNOWN_TARGET", "error", $"targetEntityId '{op.TargetEntityId}' existiert nicht im Core.", op.IncomingItemId, op.TargetEntityId));
+
+            // O1 (Variante c): NEW_RELATED verweist per featureKey auf ein bestehendes Feature. Ein gesetzter
+            // featureKey MUSS im Core existieren, sonst schreibt IngestionApply eine part_of_feature-Relation ins
+            // Leere. Fehlender featureKey bleibt hier bewusst unveraendert (haerter erst mit Feature-Placement/O4).
+            if (string.Equals(op.Kind, StateChangeKind.NewRelated, StringComparison.Ordinal)
+                && !string.IsNullOrWhiteSpace(op.FeatureKey)
+                && !coreFeatureIds.Contains(op.FeatureKey!))
+                errors.Add(Issue("UNKNOWN_FEATURE", "error", $"featureKey '{op.FeatureKey}' ist kein bestehendes Core-Feature ('{op.IncomingItemId}').", op.IncomingItemId, op.FeatureKey));
 
             if (op.ClaimIds.Count == 0)
                 warnings.Add(Issue("MISSING_EVIDENCE", "warning", $"Operation '{op.IncomingItemId}' ohne claimIds (Beleg).", op.IncomingItemId, op.TargetEntityId));
@@ -89,6 +102,7 @@ public static class IngestionGate
         ["TARGET_REQUIRED"] = Core.Repairability.Repairable,
         ["TARGET_FORBIDDEN"] = Core.Repairability.Repairable,
         ["UNKNOWN_INCOMING"] = Core.Repairability.Repairable,
+        ["UNKNOWN_FEATURE"] = Core.Repairability.Repairable,
         ["UNKNOWN_KIND"] = Core.Repairability.NeedsHuman,
     };
 

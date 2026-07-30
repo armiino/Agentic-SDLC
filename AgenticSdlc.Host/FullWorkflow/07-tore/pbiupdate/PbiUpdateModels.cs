@@ -21,13 +21,33 @@ public sealed record PbiStateChangePlanDocument(
 // R-26-C: Vorschlag zur inhaltlichen Angleichung eines PBI an eine geaenderte Anforderung. Leeres Feld =
 // Original behalten. Der Agent erzeugt den Vorschlag; die menschliche Fassung (accept/edit) gilt.
 public sealed record PbiAlignment(
-    [property: JsonPropertyName("pbiId")] string PbiId,
+    // align/extend: das Ziel-PBI (echte Core-ID). create (NEW_PBI): null — das PBI existiert noch nicht.
+    [property: JsonPropertyName("pbiId")] string? PbiId,
     [property: JsonPropertyName("proposedTitle")] string? ProposedTitle,
     [property: JsonPropertyName("proposedStatement")] string? ProposedStatement,
     [property: JsonPropertyName("proposedAcceptanceCriteria")] IReadOnlyList<string>? ProposedAcceptanceCriteria,
     [property: JsonPropertyName("rationale")] string Rationale,
     // Welche geaenderten/ersetzten Requirements diese Angleichung ausgeloest haben (Provenance + Review-Kontext).
-    [property: JsonPropertyName("triggerRequirementIds")] IReadOnlyList<string> TriggerRequirementIds);
+    [property: JsonPropertyName("triggerRequirementIds")] IReadOnlyList<string> TriggerRequirementIds,
+    // O3b (create/NEW_PBI, Variante 2): das Draft-Ziel, wenn noch KEIN PBI existiert. PbiId bleibt dann null;
+    // das Draft wird ueber die Ziel-Requirement-ID an die NEW_PBI-Operation gebunden. KEIN Fake-PbiId.
+    [property: JsonPropertyName("targetRequirementId")] string? TargetRequirementId = null,
+    [property: JsonPropertyName("targetFeatureId")] string? TargetFeatureId = null)
+{
+    // Einheitlicher Draft-Schluessel: bestehendes PBI (align/extend) ODER die NEW_PBI-Ziel-Requirement (create).
+    [System.Text.Json.Serialization.JsonIgnore]
+    public string DraftKey => PbiId ?? TargetRequirementId ?? "";
+}
+
+// B1/B2 (Fall-C-Bündelung, Lösungsweg B): der Mensch hat im Review die Feature-Zuordnung eines NEW_PBI korrigiert.
+// Getragen von der Entscheidung bis zum Apply, der die Op VOR dem Schreiben umschreibt. Genau EINES der Ziele ist
+// gesetzt: FeatureId (B1: bestehendes Feature) ODER ProposedFeatureLabel (B2: ein im selben Plan vorgeschlagenes
+// NEUES Feature — der Apply konvertiert die Op dann zu NEW_FEATURE, damit die Label-Gruppierung greift).
+// Abwärtskompatibel: kein Override => Vorschlag des Agenten gilt.
+public sealed record PbiFeatureOverride(
+    [property: JsonPropertyName("opId")] string OpId,
+    [property: JsonPropertyName("featureId")] string? FeatureId = null,
+    [property: JsonPropertyName("proposedFeatureLabel")] string? ProposedFeatureLabel = null);
 
 public sealed record PbiStateChangeOperation(
     [property: JsonPropertyName("kind")] string Kind,
@@ -36,7 +56,8 @@ public sealed record PbiStateChangeOperation(
     [property: JsonPropertyName("featureId")] string? FeatureId,            // NEW_PBI
     [property: JsonPropertyName("replacementRequirementId")] string? ReplacementRequirementId, // SUPERSEDE_PBI
     [property: JsonPropertyName("openDecisionRef")] string? OpenDecisionRef, // BLOCK_PBI
-    [property: JsonPropertyName("rationale")] string Rationale);
+    [property: JsonPropertyName("rationale")] string Rationale,
+    [property: JsonPropertyName("proposedFeatureLabel")] string? ProposedFeatureLabel = null); // O4: NEW_FEATURE
 
 public sealed record PbiUpdateGateReport(
     [property: JsonPropertyName("pass")] bool Pass,
@@ -60,17 +81,21 @@ public static class PbiUpdateKind
     public const string MarkChanged = "MARK_CHANGED";
     public const string BlockPbi = "BLOCK_PBI";
     public const string SupersedePbi = "SUPERSEDE_PBI";
+    // O4 (Fall C): neues Requirement passt in kein bestehendes Feature -> neues Feature + erstes PBI (atomar,
+    // via CoreBacklogSeeder-Adapter im Apply). Der PBI-Inhalt kommt aus dem O3b-Create-Draft (TargetRequirementId).
+    public const string NewFeature = "NEW_FEATURE";
 
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.Ordinal) { NewPbi, ExtendPbi, MarkChanged, BlockPbi, SupersedePbi };
+        new HashSet<string>(StringComparer.Ordinal) { NewPbi, ExtendPbi, MarkChanged, BlockPbi, SupersedePbi, NewFeature };
 
     // Operationen mit Ziel-PBI (bestehend).
     public static readonly IReadOnlySet<string> RequirePbi =
         new HashSet<string>(StringComparer.Ordinal) { ExtendPbi, MarkChanged, BlockPbi, SupersedePbi };
 
-    // Platzierung neuer Requirements (agentisch): EXTEND vs NEW.
+    // Platzierung neuer Requirements (agentisch): EXTEND (bestehendes PBI) · NEW_PBI (bestehendes Feature) ·
+    // NEW_FEATURE (kein passendes Feature).
     public static readonly IReadOnlySet<string> Placement =
-        new HashSet<string>(StringComparer.Ordinal) { NewPbi, ExtendPbi };
+        new HashSet<string>(StringComparer.Ordinal) { NewPbi, ExtendPbi, NewFeature };
 }
 
 // PBI-Status-Praezedenz beim Merge mehrerer Ursachen (MULTI_CAUSE_MERGE).

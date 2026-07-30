@@ -167,8 +167,8 @@ public static class PbiUpdateHitlRunner
                 // braucht eine explizite menschliche Freigabe im Review).
                 if (uiMode)
                 {
-                    var (ops, aligns) = await CollectViaUiAsync(runId, plan, decisionsPath, repoRoot, settings, noBrowser).ConfigureAwait(false);
-                    return new PbiUpdateReviewResponse(ops, "human (review-ui)", aligns);
+                    var (ops, aligns, overrides) = await CollectViaUiAsync(runId, plan, decisionsPath, repoRoot, settings, noBrowser).ConfigureAwait(false);
+                    return new PbiUpdateReviewResponse(ops, "human (review-ui)", aligns, overrides);
                 }
                 return new PbiUpdateReviewResponse(accepted!, "author (cli)");
             },
@@ -183,7 +183,7 @@ public static class PbiUpdateHitlRunner
 
     // S2-Muster: Entscheidung interaktiv ueber die generische HumanReview-UI (derselbe Adapter wie pbi-update-review).
     // R-26-C: liefert zusaetzlich die AKZEPTIERTEN Angleichungen (accept/edit) fuer die Response.
-    private static async Task<(IReadOnlyList<string> Ops, IReadOnlyList<PbiAlignment> Aligns)> CollectViaUiAsync(
+    private static async Task<(IReadOnlyList<string> Ops, IReadOnlyList<PbiAlignment> Aligns, IReadOnlyList<PbiFeatureOverride> Overrides)> CollectViaUiAsync(
         string runId, PbiStateChangePlanDocument plan, string decisionsPath, string repoRoot, HostSettings settings, bool noBrowser)
     {
         var core = await new JsonCoreRepository(repoRoot).LoadAsync().ConfigureAwait(false);
@@ -195,12 +195,16 @@ public static class PbiUpdateHitlRunner
             resolved: PbiUpdateReviewAdapter.Resolved,
             resolveContext: (_, key) => Task.FromResult(PbiUpdateReviewAdapter.ResolveContext(key, plan, core)),
             apply: s => PbiUpdateReviewAdapter.Apply(runId, s),
-            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
+            openBrowser: settings.L3ReviewOpenBrowser && !noBrowser,
+            // B1/B2: die rechte Feature-Landkarte — bestehendes Feature -> seine PBIs, vorgeschlagenes neues Feature
+            // -> die geplanten Anforderungen (aus dem Plan).
+            resolveReference: reference => Task.FromResult(PbiUpdateReviewAdapter.ResolveReference(reference, core, plan))).ConfigureAwait(false);
 
         var accepted = decisions.Decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId).ToList();
         var aligns = PbiUpdateApplyExec.AcceptedAlignments(plan, decisions.AlignmentDecisions);
-        Console.WriteLine($"[{Cmd}] UI {outcome}: {accepted.Count}/{plan.Operations.Count} Ops + {aligns.Count} Angleichung(en) -> human-decisions.json");
-        return (accepted, aligns);
+        var overrides = PbiUpdateApplyExec.FeatureOverrides(plan, decisions.Decisions);   // B1: geänderte Feature-Zuordnungen
+        Console.WriteLine($"[{Cmd}] UI {outcome}: {accepted.Count}/{plan.Operations.Count} Ops + {aligns.Count} Angleichung(en) + {overrides.Count} Feature-Korrektur(en) -> human-decisions.json");
+        return (accepted, aligns, overrides);
     }
 
     private static Task<T> LoadAsync<T>(string path) => HitlShell.LoadAsync<T>(path); // R2: geteilt (StartAsync nutzt es noch fuers Delta)

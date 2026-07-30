@@ -12,9 +12,13 @@ namespace AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 // erst in den Core (needs_clarify -> active).
 
 // Das Ziel einer Angleichung: ein betroffenes PBI + seine aktuelle Fassung + die ausloesenden Anforderungen.
+// O3b (create): fuer NEW_PBI existiert noch kein PBI — dann ist PbiId null und die create-Felder (Ziel-Requirement,
+// Ziel-Feature + Label, Titel der bestehenden Feature-PBIs als Duplikat-Kontext) tragen den Kontext.
 public sealed record PbiAlignTarget(
-    string PbiId, string? CurrentTitle, string? CurrentStatement, IReadOnlyList<string> CurrentAcceptance,
-    IReadOnlyList<PbiAlignTrigger> Triggers);
+    string? PbiId, string? CurrentTitle, string? CurrentStatement, IReadOnlyList<string> CurrentAcceptance,
+    IReadOnlyList<PbiAlignTrigger> Triggers,
+    string? TargetRequirementId = null, string? TargetFeatureId = null, string? FeatureLabel = null,
+    IReadOnlyList<string>? SiblingPbiTitles = null);
 
 public sealed record PbiAlignTrigger(string RequirementId, string NewText, string? OldText);
 
@@ -26,7 +30,7 @@ public static class PbiAlignTargets
         var byId = core.Items.GroupBy(i => i.ItemId).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
         var targets = new List<PbiAlignTarget>();
         foreach (var g in plan.Operations
-                     .Where(o => (o.Kind == PbiUpdateKind.MarkChanged || o.Kind == PbiUpdateKind.SupersedePbi) && o.PbiId is not null)
+                     .Where(o => (o.Kind == PbiUpdateKind.MarkChanged || o.Kind == PbiUpdateKind.SupersedePbi || o.Kind == PbiUpdateKind.ExtendPbi) && o.PbiId is not null)
                      .GroupBy(o => o.PbiId!, StringComparer.Ordinal))
         {
             if (!byId.TryGetValue(g.Key, out var pbi) || pbi.Pbi is null) continue;
@@ -35,6 +39,8 @@ public static class PbiAlignTargets
             {
                 // SUPERSEDE: die NEUE Anforderung ist der Ersatz; die alte ist das ersetzte Requirement.
                 // MARK_CHANGED: dieselbe Anforderung wurde verfeinert; die alte Fassung steht in der History.
+                // EXTEND_PBI (O3a, extend-Modus): eine NEUE Anforderung kommt zum PBI hinzu — keine alte Fassung
+                // (oldText = null); der Agent erweitert den PBI-Inhalt, damit er sie mit abdeckt.
                 var newReqId = op.Kind == PbiUpdateKind.SupersedePbi ? op.ReplacementRequirementId ?? op.RequirementId : op.RequirementId;
                 var newReq = byId.GetValueOrDefault(newReqId);
                 var oldText = op.Kind == PbiUpdateKind.SupersedePbi
@@ -44,6 +50,39 @@ public static class PbiAlignTargets
                 triggers.Add(new PbiAlignTrigger(newReqId, newReq?.Text ?? newReqId, oldText));
             }
             targets.Add(new PbiAlignTarget(g.Key, pbi.Pbi.Title, pbi.Pbi.Goal, pbi.Pbi.AcceptanceCriteria, triggers));
+        }
+
+        // O3b (create): NEW_PBI hat noch KEIN PBI — ein Draft-Ziel je neuer Anforderung, adressiert ueber die
+        // Requirement-ID + das Ziel-Feature (Label + Titel der bestehenden Feature-PBIs als Duplikat-Kontext).
+        foreach (var op in plan.Operations.Where(o => o.Kind == PbiUpdateKind.NewPbi && o.FeatureId is not null))
+        {
+            var feature = byId.GetValueOrDefault(op.FeatureId!);
+            var newReq = byId.GetValueOrDefault(op.RequirementId);
+            var siblings = core.Relations
+                .Where(r => string.Equals(r.RelationType, "part_of_feature", StringComparison.Ordinal)
+                            && string.Equals(r.ToId, op.FeatureId, StringComparison.Ordinal))
+                .Select(r => byId.GetValueOrDefault(r.FromId))
+                .Where(i => i is not null && string.Equals(i!.ItemType, "pbi", StringComparison.OrdinalIgnoreCase))
+                .Select(i => i!.Pbi?.Title ?? i.Text)
+                .ToList();
+            targets.Add(new PbiAlignTarget(
+                PbiId: null, CurrentTitle: null, CurrentStatement: null, CurrentAcceptance: [],
+                Triggers: [new PbiAlignTrigger(op.RequirementId, newReq?.Text ?? op.RequirementId, null)],
+                TargetRequirementId: op.RequirementId, TargetFeatureId: op.FeatureId,
+                FeatureLabel: feature?.Feature?.Label ?? feature?.Text, SiblingPbiTitles: siblings));
+        }
+
+        // O4/O5 (create fuer NEW_FEATURE, im isolierten UI-E2E aufgedeckt): das Feature existiert noch NICHT
+        // (kein FeatureId, dafuer proposedFeatureLabel). Ohne dieses Draft-Ziel bekaeme der Agent nichts ->
+        // 0 Drafts -> O4b skippt jede NEW_FEATURE-Op. TargetFeatureId bleibt null (Feature wird erst angelegt).
+        foreach (var op in plan.Operations.Where(o => o.Kind == PbiUpdateKind.NewFeature && !string.IsNullOrWhiteSpace(o.ProposedFeatureLabel)))
+        {
+            var newReq = byId.GetValueOrDefault(op.RequirementId);
+            targets.Add(new PbiAlignTarget(
+                PbiId: null, CurrentTitle: null, CurrentStatement: null, CurrentAcceptance: [],
+                Triggers: [new PbiAlignTrigger(op.RequirementId, newReq?.Text ?? op.RequirementId, null)],
+                TargetRequirementId: op.RequirementId, TargetFeatureId: null,
+                FeatureLabel: op.ProposedFeatureLabel, SiblingPbiTitles: []));
         }
         return targets;
     }
@@ -71,8 +110,10 @@ internal sealed class PbiAlignTools(IReadOnlyList<PbiAlignTarget> targets, RunCo
             "Die betroffenen PBIs (pbiId, aktueller Titel/Statement/Akzeptanzkriterien) plus die ausloesenden "
             + "Anforderungen (requirementId, neueFassung, alteFassung)."),
         AIFunctionFactory.Create(SaveAlignments, "save_alignments",
-            "Speichert je PBI GENAU EINE Angleichung (pbiId, proposedTitle, proposedStatement, "
-            + "proposedAcceptanceCriteria, rationale, triggerRequirementIds). Genau einmal aufrufen."),
+            "Speichert je Ziel GENAU EINEN Draft (proposedTitle, proposedStatement, proposedAcceptanceCriteria, "
+            + "rationale, triggerRequirementIds). Bei bestehendem PBID: pbiId setzen. Bei einem NEUEN PBI "
+            + "(zielRequirementId war gesetzt, pbiId war null): pbiId LEER lassen und stattdessen targetRequirementId "
+            + "(+ targetFeatureId) setzen. Genau einmal aufrufen."),
     ];
 
     private string GetTargets()
@@ -83,6 +124,11 @@ internal sealed class PbiAlignTools(IReadOnlyList<PbiAlignTarget> targets, RunCo
             aktuellerTitel = t.CurrentTitle,
             aktuellesStatement = t.CurrentStatement,
             aktuelleAkzeptanzkriterien = t.CurrentAcceptance,
+            // O3b (create): wenn pbiId null ist, ist dies ein NEUES PBI fuer zielRequirementId im zielFeature.
+            zielRequirementId = t.TargetRequirementId,
+            zielFeatureId = t.TargetFeatureId,
+            zielFeatureLabel = t.FeatureLabel,
+            bestehendePbisImFeature = t.SiblingPbiTitles,
             geaenderteAnforderungen = t.Triggers.Select(tr => new { requirementId = tr.RequirementId, neueFassung = tr.NewText, alteFassung = tr.OldText })
         }).ToArray();
         run.AppendEvent(new { type = "PBI_ALIGN_TARGETS", runId = run.RunId, returned = rows.Length, timestampUtc = DateTime.UtcNow });

@@ -33,6 +33,14 @@ public static class PbiUpdateGate
                 else if (!featureIds.Contains(op.FeatureId)) errors.Add(Issue("UNKNOWN_FEATURE", "error", $"featureId '{op.FeatureId}' existiert nicht.", op.RequirementId, null));
             }
 
+            // O4 (Fall C): NEW_FEATURE legt ein NEUES Feature an -> KEIN featureId-Match (kein UNKNOWN_FEATURE),
+            // braucht aber ein Label (sonst kann der Seeder-Adapter das Feature nicht benennen).
+            if (string.Equals(op.Kind, PbiUpdateKind.NewFeature, StringComparison.Ordinal))
+            {
+                if (string.IsNullOrWhiteSpace(op.ProposedFeatureLabel))
+                    errors.Add(Issue("FEATURE_LABEL_REQUIRED", "error", "NEW_FEATURE braucht proposedFeatureLabel.", op.RequirementId, null));
+            }
+
             if (string.Equals(op.Kind, PbiUpdateKind.BlockPbi, StringComparison.Ordinal))
             {
                 if (string.IsNullOrWhiteSpace(op.OpenDecisionRef) || !decisionIds.Contains(op.OpenDecisionRef!))
@@ -75,6 +83,7 @@ public static class PbiUpdateGate
         ["DUPLICATE_PLACEMENT"] = Core.Repairability.Repairable,
         ["UNKNOWN_FEATURE"] = Core.Repairability.Repairable,
         ["FEATURE_REQUIRED"] = Core.Repairability.Repairable,
+        ["FEATURE_LABEL_REQUIRED"] = Core.Repairability.Repairable,
         ["UNKNOWN_KIND"] = Core.Repairability.NeedsHuman,
     };
 

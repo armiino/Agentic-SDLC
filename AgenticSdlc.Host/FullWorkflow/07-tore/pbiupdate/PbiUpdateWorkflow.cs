@@ -34,9 +34,12 @@ internal sealed class PbiUpdateMakerExecutor(Func<IReadOnlyList<AITool>, AIAgent
     : Executor<PbiUpdateSeeded>("PbiUpdateMaker")
 {
     private const string Task = """
-                                Ordne jedes NEUE Requirement (get_unplaced_requirements) GENAU EINEM PBI zu:
+                                Ordne jedes NEUE Requirement (get_unplaced_requirements) GENAU EINER Platzierung zu:
                                 - EXTEND_PBI (mit pbiId), wenn ein bestehendes PBI dieselbe fachliche Aufgabe abdeckt.
-                                - NEW_PBI (mit featureId), wenn es ein eigenes PBI braucht.
+                                - NEW_PBI (mit featureId), wenn es ein eigenes PBI in einem BESTEHENDEN Feature braucht.
+                                - NEW_FEATURE (mit proposedFeatureLabel), wenn das Requirement ein fachlich
+                                  EIGENSTAENDIGES Thema eroeffnet, das kein bestehendes Feature inhaltlich abdeckt
+                                  (ein vage passendes Sammel-Feature wie "… Erweiterungen" zaehlt NICHT als Passung).
                                 Nutze list_features / get_feature_pbis / get_pbi. Belege jede Platzierung (rationale).
                                 Speichere genau einmal mit save_placements.
                                 """;
@@ -81,7 +84,8 @@ internal sealed class PbiUpdateRepairExecutor(Func<IReadOnlyList<AITool>, AIAgen
                     {errors}
 
                     Korrigiere: JEDES Requirement aus get_unplaced_requirements bekommt GENAU EINE Platzierung
-                    (EXTEND_PBI mit gueltiger pbiId ODER NEW_PBI mit gueltiger featureId aus list_features).
+                    (EXTEND_PBI mit gueltiger pbiId ODER NEW_PBI mit gueltiger featureId aus list_features ODER
+                    NEW_FEATURE mit proposedFeatureLabel, wenn kein bestehendes Feature fachlich passt).
                     save_placements GENAU EINMAL.
                     """;
         // Der Repair kennt nur die deterministischen Ops nicht mehr direkt — er erzeugt neue Placements; die det.

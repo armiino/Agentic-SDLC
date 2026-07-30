@@ -22,7 +22,9 @@ public sealed record PbiUpdateReviewOpView(string OpId, string Kind, string? Pbi
 // R-26-C: die Response traegt zusaetzlich die AKZEPTIERTEN Angleichungen (schon mit den Human-Edits) — sie
 // werden im selben Review autorisiert. Optional/abwaertskompatibel: alte 2-Positional-Aufrufer bleiben gueltig.
 public sealed record PbiUpdateReviewResponse(IReadOnlyList<string> AcceptedOpIds, string Reviewer,
-    IReadOnlyList<PbiAlignment>? AcceptedAlignments = null);
+    IReadOnlyList<PbiAlignment>? AcceptedAlignments = null,
+    // B1: die im Review korrigierten NEW_PBI-Feature-Zuordnungen. Optional/abwärtskompatibel (alte Aufrufer null).
+    IReadOnlyList<PbiFeatureOverride>? FeatureOverrides = null);
 
 // FINALIZE (HITL): schreibt Plan/Gate/Attempts/Summary (Evidenz, wie PbiUpdateFinalize) und verzweigt:
 //   Decision==Pass -> PbiUpdateReviewRequest an den Port. Sonst -> terminaler "needs manual"-Output.
@@ -83,9 +85,11 @@ internal sealed class PbiUpdateApplyExecutor(RunContext run, string repoRoot, st
             .Select(id => id.StartsWith("op-", StringComparison.Ordinal) && int.TryParse(id["op-".Length..], NumberStyles.Integer, CultureInfo.InvariantCulture, out var n) ? n : -1)
             .Where(n => n >= 0).ToHashSet();
 
-        run.AppendEvent(new { type = "PBI_UPDATE_APPLY_START", runId = run.RunId, accepted = accepted.Count, alignments = resp.AcceptedAlignments?.Count ?? 0, reviewer = resp.Reviewer, timestampUtc = DateTime.UtcNow });
+        run.AppendEvent(new { type = "PBI_UPDATE_APPLY_START", runId = run.RunId, accepted = accepted.Count, alignments = resp.AcceptedAlignments?.Count ?? 0, featureOverrides = resp.FeatureOverrides?.Count ?? 0, reviewer = resp.Reviewer, timestampUtc = DateTime.UtcNow });
         // R-26-C: die im Review autorisierten Angleichungen werden mitgeschrieben (needs_clarify -> active).
-        var report = await PbiUpdateApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot, acceptedAlignments: resp.AcceptedAlignments, ct: ct).ConfigureAwait(false);
+        // B1: die korrigierten NEW_PBI-Feature-Zuordnungen werden vor dem Apply in den Plan eingewoben.
+        var report = await PbiUpdateApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot,
+            acceptedAlignments: resp.AcceptedAlignments, featureOverrides: resp.FeatureOverrides, ct: ct).ConfigureAwait(false);
         run.AppendEvent(new { type = "PBI_UPDATE_DONE", runId = run.RunId, applied = true, newPbis = report.NewPbis.Count, updatedPbis = report.UpdatedPbis.Count, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(report, ct).ConfigureAwait(false);
         await context.SendMessageAsync(report).ConfigureAwait(false);
