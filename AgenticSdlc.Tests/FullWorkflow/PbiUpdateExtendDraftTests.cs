@@ -9,15 +9,15 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // needs_clarify -> active. Ohne akzeptierten Draft bleibt es ehrlich needs_clarify (nur der Link kommt hinzu).
 public sealed class PbiUpdateExtendDraftTests
 {
-    private static ProjectStateItem Pbi(string id, string title, string status = "needs_clarify") => new(
-        id, "pbi", title, status, "test", null, 3,
+    private static ProjectStateItem Pbi(string id, string title, string status = "needs_clarify") => new ProjectStateItem(
+        id, "pbi", title, "test", null, 3,
         "baseline-run", null, null, null, null, [], [], new Dictionary<string, string>(),
         Pbi: new PbiPayload(Goal: "altes Ziel", Title: title, AcceptanceCriteria: ["alt AK"], LinkedRequirementIds: ["REQ-1"],
-            OpenDecisionRefs: [], PriorityRank: null, Readiness: "needs_clarify", Mvp: null, Trace: null));
+            OpenDecisionRefs: [], PriorityRank: null, Readiness: "needs_clarify", Mvp: null, Trace: null)).WithStatus(CoreStatus.From(status));
 
-    private static ProjectStateItem Req(string id, string text) => new(
-        id, "requirement", text, "accepted", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Req(string id, string text) => new ProjectStateItem(
+        id, "requirement", text, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("accepted"));
 
     private static ProjectStateDocument Core(params ProjectStateItem[] items)
         => new("p", 3, DateTime.UnixEpoch, [], [.. items], [], [], []);

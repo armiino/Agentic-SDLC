@@ -2,6 +2,7 @@ using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
 using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
@@ -40,7 +41,7 @@ public static class DecisionResolveAgentRunner
         var core = await coreRepo.LoadAsync().ConfigureAwait(false);
 
         var openCount = core.Items.Count(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase)
-            && string.Equals(i.Status, DecisionStatus.Open, StringComparison.OrdinalIgnoreCase));
+            && i.ReadStatus().IsOpenDecision);
         if (openCount == 0) { Console.WriteLine("[decision-resolve-agent] keine offenen Decisions im Core."); return 0; }
 
         var genSettings = modelArg is not null ? settings with { ModelId = modelArg } : settings;

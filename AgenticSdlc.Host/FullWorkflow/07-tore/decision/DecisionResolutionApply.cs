@@ -31,7 +31,7 @@ public static class DecisionResolutionApply
 
         foreach (var op in accepted)
         {
-            if (!byId.TryGetValue(op.DecisionId, out var dec) || !string.Equals(dec.Status, DecisionStatus.Open, StringComparison.OrdinalIgnoreCase))
+            if (!byId.TryGetValue(op.DecisionId, out var dec) || !dec.ReadStatus().IsOpenDecision)
             { skipped.Add($"{op.DecisionId}: nicht (mehr) offen"); continue; }
             if (!byId.TryGetValue(op.TargetRequirementId, out var target))
             { skipped.Add($"{op.DecisionId}: Ziel-Requirement fehlt"); continue; }
@@ -79,9 +79,10 @@ public static class DecisionResolutionApply
             // 3) DEC resolved (History + resolutionOutcome).
             var decMeta = new Dictionary<string, string>(dec.Metadata, StringComparer.Ordinal)
             { ["resolutionOutcome"] = op.Outcome, ["resolvedUtc"] = DateTime.UtcNow.ToString("O") };
-            byId[op.DecisionId] = dec with
+            // §5-S7 (Option A): Status ist Projektion — der Resolved-Zustand wird über die Decision-Achse gesetzt
+            // (ToLegacyString prüft Decision zuerst → "resolved", bit-identisch). Governance/Rest-Achsen bleiben erhalten.
+            byId[op.DecisionId] = dec.WithStatus(dec.ReadStatus() with { Decision = DecisionState.Resolved }) with
             {
-                Status = DecisionStatus.Resolved,
                 Version = dec.Version + 1,
                 Metadata = decMeta,
                 History = Hist(dec, $"resolved={op.Outcome}; war contradicts {target.ItemId}")
@@ -133,12 +134,12 @@ public static class DecisionResolutionApply
             it.Version, it.Text, it.Status, it.Origin, it.SourceRunId, it.SourceClaimIds, DateTime.UtcNow, note)).ToList();
 
     private static ProjectStateItem NewRequirement(string id, string text, ProjectStateItem from, string sourceRun, string decisionId)
-        => new(
-            ItemId: id, ItemType: "requirement", Text: text, Status: "accepted", Origin: "decision-tor2",
+        => new ProjectStateItem(
+            ItemId: id, ItemType: "requirement", Text: text, Origin: "decision-tor2",
             Stage: from.Stage, Version: 1, SourceRunId: sourceRun, SourceArtifactId: null, SourceArtifactType: null,
             SourceDecisionId: decisionId, SourceCandidateId: null, SourceClaimIds: [], SourceArtifactItemIds: [],
             Metadata: new Dictionary<string, string>(StringComparer.Ordinal) { ["adoptedFromDecision"] = decisionId },
-            IdentityKey: IdentityKey.From(text), History: []);
+            IdentityKey: IdentityKey.From(text), History: []).WithStatus(CoreStatus.From("accepted"));   // §5-S7: Status→Achsen
 
     private static void AddItem(List<string> order, Dictionary<string, ProjectStateItem> byId, ProjectStateItem item)
     { byId[item.ItemId] = item; order.Add(item.ItemId); }

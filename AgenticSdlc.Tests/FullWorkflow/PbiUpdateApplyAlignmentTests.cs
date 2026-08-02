@@ -9,11 +9,11 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // Ohne Alignment bleibt alles wie bisher (Regressionsschutz für den bestehenden Struktur-Pfad).
 public sealed class PbiUpdateApplyAlignmentTests
 {
-    private static ProjectStateItem Pbi(string id, string title, string status = "needs_clarify") => new(
-        id, "pbi", title, status, "test", null, 3,
+    private static ProjectStateItem Pbi(string id, string title, string status = "needs_clarify") => new ProjectStateItem(
+        id, "pbi", title, "test", null, 3,
         "baseline-run", null, null, null, null, [], [], new Dictionary<string, string>(),
         Pbi: new PbiPayload(Goal: "altes Ziel", Title: title, AcceptanceCriteria: ["alt AK"], LinkedRequirementIds: ["REQ-1"],
-            OpenDecisionRefs: [], PriorityRank: null, Readiness: "needs_clarify", Mvp: null, Trace: null));
+            OpenDecisionRefs: [], PriorityRank: null, Readiness: "needs_clarify", Mvp: null, Trace: null)).WithStatus(CoreStatus.From(status));
 
     private static ProjectStateDocument Core(params ProjectStateItem[] items)
         => new("p", 3, DateTime.UnixEpoch, [], [.. items], [], [], []);
@@ -123,9 +123,9 @@ public sealed class PbiUpdateApplyAlignmentTests
     [Fact]
     public void AlignTargets_sammelt_MarkChanged_mit_Vorher_Nachher()
     {
-        var req = new ProjectStateItem("REQ-1", "requirement", "Archivierung nach vierzehn Tagen", "accepted", "test", null, 2,
+        var req = new ProjectStateItem("REQ-1", "requirement", "Archivierung nach vierzehn Tagen", "test", null, 2,
             "run", null, null, null, null, [], [], new Dictionary<string, string>(),
-            History: [new ProjectStateItemVersion(1, "Archivierung nach sieben Tagen", "accepted", "test", null, [], DateTime.UnixEpoch, null)]);
+            History: [new ProjectStateItemVersion(1, "Archivierung nach sieben Tagen", "accepted", "test", null, [], DateTime.UnixEpoch, null)]).WithStatus(CoreStatus.From("accepted"));
         var core = Core(req, Pbi("PBI-1", "Automatische Archivierung"));
         var plan = Plan([MarkChanged("PBI-1", "REQ-1")]);
 
@@ -158,10 +158,10 @@ public sealed class PbiUpdateApplyAlignmentTests
     [Fact]
     public void AlignTargets_SUPERSEDE_nimmt_Ersatz_als_neue_altes_als_alte_Fassung()
     {
-        var oldReq = new ProjectStateItem("REQ-1", "requirement", "Archivierung nach sieben Tagen", "superseded", "test", null, 1,
-            "run", null, null, null, null, [], [], new Dictionary<string, string>());
-        var newReq = new ProjectStateItem("REQ-2", "requirement", "Archivierung nach vierzehn Tagen", "accepted", "test", null, 1,
-            "run", null, null, null, null, [], [], new Dictionary<string, string>());
+        var oldReq = new ProjectStateItem("REQ-1", "requirement", "Archivierung nach sieben Tagen", "test", null, 1,
+            "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("superseded"));
+        var newReq = new ProjectStateItem("REQ-2", "requirement", "Archivierung nach vierzehn Tagen", "test", null, 1,
+            "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("accepted"));
         var core = Core(oldReq, newReq, Pbi("PBI-1", "Automatische Archivierung"));
         var plan = Plan([new PbiStateChangeOperation("SUPERSEDE_PBI", "REQ-1", "PBI-1", null, "REQ-2", null, "REQ-1 ersetzt durch REQ-2")]);
 

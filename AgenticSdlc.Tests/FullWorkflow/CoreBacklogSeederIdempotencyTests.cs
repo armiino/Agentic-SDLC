@@ -11,15 +11,15 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // Fall-C-Seeder-Adapter (O4, Option 3): er ruft Seed mit einem Mini-ClusterSet des NEUEN Features auf.
 public sealed class CoreBacklogSeederIdempotencyTests
 {
-    private static ProjectStateItem Feature(string id) => new(
-        id, "feature", "Label " + id, "active", "re-clarify", null, 1,
+    private static ProjectStateItem Feature(string id) => new ProjectStateItem(
+        id, "feature", "Label " + id, "re-clarify", null, 1,
         "old-run", null, null, null, null, [], [],
-        new Dictionary<string, string> { ["legacyClusterId"] = id });
+        new Dictionary<string, string> { ["legacyClusterId"] = id }).WithStatus(CoreStatus.From("active"));
 
-    private static ProjectStateItem Pbi(string id, string legacyPbiId) => new(
-        id, "pbi", "PBI " + id, "active", "re-clarify", null, 1,
+    private static ProjectStateItem Pbi(string id, string legacyPbiId) => new ProjectStateItem(
+        id, "pbi", "PBI " + id, "re-clarify", null, 1,
         "old-run", null, null, null, null, [], [],
-        new Dictionary<string, string> { ["legacyPbiId"] = legacyPbiId });
+        new Dictionary<string, string> { ["legacyPbiId"] = legacyPbiId }).WithStatus(CoreStatus.From("active"));
 
     private static ProjectStateDocument Core(params ProjectStateItem[] items)
         => new("p", 3, DateTime.UnixEpoch, [], [.. items], [], [], []);

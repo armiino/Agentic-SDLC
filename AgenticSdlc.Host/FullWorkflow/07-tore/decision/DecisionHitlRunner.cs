@@ -2,6 +2,7 @@ using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.Llm;
 using AgenticSdlc.Host.Observability;
 using AgenticSdlc.Host.FullWorkflow.Core;
+using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Prompts;
 using AgenticSdlc.Host.Run;
 using AgenticSdlc.HumanReview;
@@ -83,7 +84,7 @@ public static class DecisionHitlRunner
             var answerPath = Path.IsPathRooted(answerArg!) ? answerArg! : Path.Combine(repoRoot, answerArg!);
             var stakeholderAnswer = File.Exists(answerPath) ? await File.ReadAllTextAsync(answerPath).ConfigureAwait(false) : answerArg!;
             if (string.IsNullOrWhiteSpace(stakeholderAnswer)) { Console.Error.WriteLine("[decision-resolve-hitl] leere Stakeholder-Antwort."); return 2; }
-            var openCount = core.Items.Count(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase) && string.Equals(i.Status, DecisionStatus.Open, StringComparison.OrdinalIgnoreCase));
+            var openCount = core.Items.Count(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase) && i.ReadStatus().IsOpenDecision);
             if (openCount == 0) { Console.WriteLine("[decision-resolve-hitl] keine offenen Decisions im Core."); return 0; }
 
             var prompt = PromptProvider.Load(repoRoot, Phase, AgentName, "DecisionResolverAgent1", new Dictionary<string, string> { ["runId"] = run.RunId });

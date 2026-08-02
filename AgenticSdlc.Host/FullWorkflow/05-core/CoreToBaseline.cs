@@ -32,7 +32,7 @@ public static class CoreToBaseline
 
         var openDecisions = core.Items
             .Where(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase)
-                        && string.Equals(i.Status, "open_decision", StringComparison.OrdinalIgnoreCase))
+                        && i.ReadStatus().IsOpenDecision)
             .OrderBy(i => i.ItemId, StringComparer.Ordinal)
             .Select(i => new CanonicalOpenDecision(
                 DecisionId: i.ItemId,

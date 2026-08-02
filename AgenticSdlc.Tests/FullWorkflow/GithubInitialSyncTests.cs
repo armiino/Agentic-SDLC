@@ -10,12 +10,12 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 public sealed class GithubInitialSyncTests
 {
     private static ProjectStateItem Pbi(string id, string text, string status = "active", string? githubIssue = null,
-        IReadOnlyList<string>? acceptance = null, string? goal = null) => new(
-        id, "pbi", text, status, "test", null, 1,
+        IReadOnlyList<string>? acceptance = null, string? goal = null) => new ProjectStateItem(
+        id, "pbi", text, "test", null, 1,
         null, null, null, null, null, [], [],
         githubIssue is null ? new Dictionary<string, string>() : new Dictionary<string, string> { ["githubIssue"] = githubIssue },
         Pbi: new PbiPayload(Goal: goal, Title: text, AcceptanceCriteria: acceptance ?? [], LinkedRequirementIds: [],
-            OpenDecisionRefs: [], PriorityRank: null, Readiness: "backlog_ready", Mvp: null, Trace: null));
+            OpenDecisionRefs: [], PriorityRank: null, Readiness: "backlog_ready", Mvp: null, Trace: null)).WithStatus(CoreStatus.From(status));
 
     private static ProjectStateDocument Core(params ProjectStateItem[] items) => new(
         "sync-test", ProjectStateDocument.CurrentSchemaVersion, DateTime.UnixEpoch,

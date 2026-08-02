@@ -9,9 +9,9 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // Seeder-Adapter in O4b braucht es zum Anlegen). KEIN UNKNOWN_FEATURE, weil das Feature erst entsteht.
 public sealed class PbiUpdateNewFeatureGateTests
 {
-    private static ProjectStateItem Feature(string id, string label) => new(
-        id, "feature", label, "active", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Feature(string id, string label) => new ProjectStateItem(
+        id, "feature", label, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("active"));
 
     private static ProjectStateDocument Core(params ProjectStateItem[] items)
         => new("p", 3, DateTime.UnixEpoch, [], [.. items], [], [], []);

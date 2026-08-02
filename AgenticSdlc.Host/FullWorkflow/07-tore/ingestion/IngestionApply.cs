@@ -112,11 +112,11 @@ public static class IngestionApply
                         ["ingestedFrom"] = op.IncomingItemId
                     };
                     AddItem(order, byId, new ProjectStateItem(
-                        ItemId: id, ItemType: "decision", Text: $"Widerspruch zu {t.ItemId}: {statement}", Status: "open_decision",
+                        ItemId: id, ItemType: "decision", Text: $"Widerspruch zu {t.ItemId}: {statement}",
                         Origin: "INGESTION_CONTRADICTION", Stage: null, Version: 1, SourceRunId: incoming.SourceRunId,
                         SourceArtifactId: null, SourceArtifactType: null, SourceDecisionId: null, SourceCandidateId: null,
                         SourceClaimIds: claimIds, SourceArtifactItemIds: [], Metadata: meta,
-                        IdentityKey: IdentityKey.From(statement), History: []));
+                        IdentityKey: IdentityKey.From(statement), History: []).WithStatus(CoreStatus.From("open_decision")));   // §5-S7: Status→Achsen
                     relations.Add(new ProjectStateRelation(id, t.ItemId, "contradicts", "ingestion", new Dictionary<string, string>()));
                     applied.Add(new AppliedOperation(op.IncomingItemId, op.Kind, id, "contradicted"));
                     affected.Add(id); affected.Add(t.ItemId); contradicted++;
@@ -151,12 +151,12 @@ public static class IngestionApply
     }
 
     private static ProjectStateItem NewRequirement(string id, string text, ProjectStateItem incoming, IReadOnlyList<string> claimIds, Dictionary<string, string> meta)
-        => new(
-            ItemId: id, ItemType: "requirement", Text: text, Status: "accepted", Origin: incoming.Origin,
+        => new ProjectStateItem(
+            ItemId: id, ItemType: "requirement", Text: text, Origin: incoming.Origin,
             Stage: incoming.Stage, Version: 1, SourceRunId: incoming.SourceRunId, SourceArtifactId: incoming.SourceArtifactId,
             SourceArtifactType: incoming.SourceArtifactType, SourceDecisionId: null, SourceCandidateId: null,
             SourceClaimIds: claimIds, SourceArtifactItemIds: incoming.SourceArtifactItemIds, Metadata: meta,
-            IdentityKey: IdentityKey.From(text), History: []);
+            IdentityKey: IdentityKey.From(text), History: []).WithStatus(CoreStatus.From("accepted"));   // §5-S7: Status→Achsen
 
     private static void AddItem(List<string> order, Dictionary<string, ProjectStateItem> byId, ProjectStateItem item)
     {

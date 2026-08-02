@@ -61,9 +61,9 @@ public static class PbiUpdateApply
             var meta = new Dictionary<string, string>(StringComparer.Ordinal)
             { ["sourceRunId"] = sourceRun, ["createdFromRequirement"] = op.RequirementId, ["featureId"] = op.FeatureId };
             AddItem(order, byId, new ProjectStateItem(
-                ItemId: id, ItemType: "pbi", Text: title, Status: readiness, Origin: "pbi-update", Stage: null, Version: 1,
+                ItemId: id, ItemType: "pbi", Text: title, Origin: "pbi-update", Stage: null, Version: 1,
                 SourceRunId: sourceRun, SourceArtifactId: null, SourceArtifactType: null, SourceDecisionId: null, SourceCandidateId: null,
-                SourceClaimIds: [], SourceArtifactItemIds: [], Metadata: meta, IdentityKey: null, History: [], Feature: null, Pbi: payload));
+                SourceClaimIds: [], SourceArtifactItemIds: [], Metadata: meta, IdentityKey: null, History: [], Feature: null, Pbi: payload).WithStatus(CoreStatus.From(readiness)));   // §5-S7: Status→Achsen
             relations.Add(new ProjectStateRelation(id, op.FeatureId, "part_of_feature", "pbi-update", new Dictionary<string, string>())); relAdded++;
             relations.Add(RequirementSwap.Covers(id, op.RequirementId, "pbi-update")); relAdded++;
             newPbis.Add(id);

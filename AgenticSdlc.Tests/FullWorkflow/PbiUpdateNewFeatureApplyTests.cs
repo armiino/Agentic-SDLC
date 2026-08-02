@@ -9,9 +9,9 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // Requirement, Requirement→Feature). Enger Scope: ein NEW_FEATURE; gemischte Deltas sind O5.
 public sealed class PbiUpdateNewFeatureApplyTests
 {
-    private static ProjectStateItem Req(string id, string text) => new(
-        id, "requirement", text, "accepted", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Req(string id, string text) => new ProjectStateItem(
+        id, "requirement", text, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("accepted"));
 
     private static ProjectStateDocument Core(params ProjectStateItem[] items)
         => new("p", 3, DateTime.UnixEpoch, [], [.. items], [], [], []);
@@ -76,8 +76,8 @@ public sealed class PbiUpdateNewFeatureApplyTests
     {
         var core = Core(
             Req("REQ-9", "Neues Thema"),
-            new ProjectStateItem("FC-01", "feature", "Bestehend", "active", "test", null, 1,
-                "run", null, null, null, null, [], [], new Dictionary<string, string>()));
+            new ProjectStateItem("FC-01", "feature", "Bestehend", "test", null, 1,
+                "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("active")));
         var draft = CreateDraft("REQ-9", "Titel", "Statement", ["AK"]);
         var plan = Plan([NewFeature("REQ-9", "Neues Feature")], [draft]);
 

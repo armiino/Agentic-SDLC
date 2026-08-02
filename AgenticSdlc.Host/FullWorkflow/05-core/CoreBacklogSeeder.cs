@@ -68,10 +68,10 @@ public static class CoreBacklogSeeder
             if (featureId is not null) meta["featureId"] = featureId;
 
             AddItem(order, byId, new ProjectStateItem(
-                ItemId: newId, ItemType: "pbi", Text: p.Title, Status: "active", Origin: "re-clarify", Stage: null, Version: 1,
+                ItemId: newId, ItemType: "pbi", Text: p.Title, Origin: "re-clarify", Stage: null, Version: 1,
                 SourceRunId: sourceRunId, SourceArtifactId: null, SourceArtifactType: null, SourceDecisionId: null, SourceCandidateId: null,
                 SourceClaimIds: trace?.Claims ?? [], SourceArtifactItemIds: [], Metadata: meta,
-                IdentityKey: p.IdentityKey, History: [], Feature: null, Pbi: payload));
+                IdentityKey: p.IdentityKey, History: [], Feature: null, Pbi: payload).WithStatus(CoreStatus.From("active")));   // §5-S7: Status→Achsen
             pbisAdded++;
 
             if (featureId is not null)
@@ -98,11 +98,11 @@ public static class CoreBacklogSeeder
                 ["legacyCrossCutting"] = string.Join(",", c.CrossCuttingRequirementIds)
             };
             AddItem(order, byId, new ProjectStateItem(
-                ItemId: c.ClusterId, ItemType: "feature", Text: c.Label, Status: "active", Origin: "re-clarify", Stage: null, Version: 1,
+                ItemId: c.ClusterId, ItemType: "feature", Text: c.Label, Origin: "re-clarify", Stage: null, Version: 1,
                 SourceRunId: sourceRunId, SourceArtifactId: null, SourceArtifactType: null, SourceDecisionId: null, SourceCandidateId: null,
                 SourceClaimIds: [], SourceArtifactItemIds: [], Metadata: meta,
                 IdentityKey: c.IdentityKey, History: [],
-                Feature: new FeaturePayload(c.Label, c.Rationale, reqs, []), Pbi: null));
+                Feature: new FeaturePayload(c.Label, c.Rationale, reqs, []), Pbi: null).WithStatus(CoreStatus.From("active")));   // §5-S7: Status→Achsen
             featuresAdded++;
 
             foreach (var r in reqs) AddRel(r, c.ClusterId, "part_of_feature");

@@ -8,9 +8,9 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // Seed → Save → Baseline-Triplet. Der „Core existiert"-Fall ist ein LAUTER Abbruch (kein Überschreiben).
 public sealed class CoreBootstrapStageTests
 {
-    private static ProjectStateItem Req(string id, string text) => new(
-        id, "requirement", text, "accepted", "test", null, 0,
-        null, null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Req(string id, string text) => new ProjectStateItem(
+        id, "requirement", text, "test", null, 0,
+        null, null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("accepted"));
 
     private static ProjectStateDocument Doc() => new(
         "boot-test", ProjectStateDocument.CurrentSchemaVersion, DateTime.UnixEpoch,

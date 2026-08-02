@@ -70,6 +70,18 @@ public sealed class CoreStatusMappingTests
         Assert.Equal(DecisionState.Resolved, CoreStatus.From("resolved").Decision);
     }
 
+    // C-Dosis-Oracle (§5-S7): beweist die Verhaltensgleichheit der 6 typisierten Decision-Umstellungen
+    // (`x.Status == "open_decision"` → `x.ReadStatus().IsOpenDecision`) für JEDEN Status-Wert. Grün = die Umstellung
+    // ist bewiesen, kein Einzel-Urteil pro Stelle.
+    [Theory]
+    [InlineData("open_decision")] [InlineData("resolved")]  [InlineData("active")]
+    [InlineData("baseline")]      [InlineData("accepted")]   [InlineData("needs_clarify")]
+    [InlineData("blocked_by_decision")] [InlineData("superseded")] [InlineData("done")]
+    public void IsOpenDecision_ist_bit_gleich_zum_open_decision_String_Vergleich(string status)
+        => Assert.Equal(
+               string.Equals(status, "open_decision", StringComparison.OrdinalIgnoreCase),
+               CoreStatus.From(status).IsOpenDecision);
+
     [Fact]
     public void SourceRunId_wandert_in_den_Governance_Audit_Verweis()
         => Assert.Equal("run-123", CoreStatus.From("accepted", "run-123").ConfirmedInRun);
@@ -88,7 +100,7 @@ public sealed class CoreStatusMappingTests
     public void Neue_Statusfelder_serialisieren_als_String_und_lassen_Nulls_weg()
     {
         var item = new ProjectStateItem(
-            ItemId: "REQ-1", ItemType: "requirement", Text: "x", Status: "active", Origin: "Extracted",
+            ItemId: "REQ-1", ItemType: "requirement", Text: "x", Origin: "Extracted",
             Stage: null, Version: 1, SourceRunId: null, SourceArtifactId: null, SourceArtifactType: null,
             SourceDecisionId: null, SourceCandidateId: null, SourceClaimIds: [], SourceArtifactItemIds: [],
             Metadata: new Dictionary<string, string>())
@@ -111,16 +123,18 @@ public sealed class CoreStatusMappingTests
         Assert.Null(back.Progress);
     }
 
-    // S4-Lese-Naht: ReadStatus nutzt die typisierten Felder wenn gesetzt, sonst leitet es transitorisch aus dem Alt-String ab.
+    // Lese-Naht (S7/Option A): ReadStatus liest AUSSCHLIESSLICH die typisierten Achsen (kein Alt-String-Fallback mehr —
+    // der wäre unter der berechneten Status-Projektion Rekursion). Der Guard-Fall (Item ohne Achsen wirft) steht in
+    // CoreStatusProjectionTests.
     [Fact]
-    public void ReadStatus_leitet_aus_dem_Alt_String_ab_wenn_keine_Felder_gesetzt()
-        => Assert.Equal(Blocker.NeedsClarify, Item("needs_clarify").ReadStatus().Blocker);   // neue Felder null -> From(Status)
+    public void ReadStatus_liefert_den_Blocker_aus_den_typisierten_Achsen()
+        => Assert.Equal(Blocker.NeedsClarify, Item("needs_clarify").ReadStatus().Blocker);   // Item() setzt die Achsen via WithStatus
 
     [Fact]
-    public void ReadStatus_bevorzugt_gesetzte_Felder_vor_dem_Alt_String()
+    public void ReadStatus_liest_die_Validity_aus_den_Achsen()
     {
-        var item = Item("active") with { Validity = Validity.Superseded };   // Feld gesetzt, Alt-String abweichend
-        Assert.Equal(Validity.Superseded, item.ReadStatus().Validity);       // das Feld gewinnt
+        var item = Item("active") with { Validity = Validity.Superseded };   // Achse überschrieben
+        Assert.Equal(Validity.Superseded, item.ReadStatus().Validity);       // ReadStatus folgt der Achse
     }
 
     // S5: Escalate MUSS das alte PbiStatus.Max-Ranking (blocked>superseded>needs_clarify>active) bit-gleich reproduzieren.
@@ -149,9 +163,9 @@ public sealed class CoreStatusMappingTests
         Assert.Equal("run-9", eskaliert.ConfirmedInRun);           // Audit erhalten
     }
 
-    private static ProjectStateItem Item(string status) => new(
-        ItemId: "X", ItemType: "pbi", Text: "x", Status: status, Origin: "test",
+    private static ProjectStateItem Item(string status) => new ProjectStateItem(
+        ItemId: "X", ItemType: "pbi", Text: "x", Origin: "test",
         Stage: null, Version: 1, SourceRunId: null, SourceArtifactId: null, SourceArtifactType: null,
         SourceDecisionId: null, SourceCandidateId: null, SourceClaimIds: [], SourceArtifactItemIds: [],
-        Metadata: new Dictionary<string, string>());
+        Metadata: new Dictionary<string, string>()).WithStatus(CoreStatus.From(status));
 }

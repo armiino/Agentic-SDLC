@@ -10,13 +10,13 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // Regel („NEW_RELATED braucht ein Feature") kommt erst mit Feature-Placement/O4, wenn der Reparaturpfad steht.
 public sealed class IngestionGateFeatureKeyTests
 {
-    private static ProjectStateItem Feature(string id, string label) => new(
-        id, "feature", label, "active", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Feature(string id, string label) => new ProjectStateItem(
+        id, "feature", label, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("active"));
 
-    private static ProjectStateItem Req(string id, string text) => new(
-        id, "requirement", text, "accepted", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Req(string id, string text) => new ProjectStateItem(
+        id, "requirement", text, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("accepted"));
 
     private static ProjectStateDocument Doc(params ProjectStateItem[] items)
         => new("p", 3, DateTime.UnixEpoch, [], [.. items], [], [], []);

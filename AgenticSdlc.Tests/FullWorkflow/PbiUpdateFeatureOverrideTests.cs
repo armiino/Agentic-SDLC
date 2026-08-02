@@ -11,17 +11,17 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // und die Feature-Landkarte (ResolveReference).
 public sealed class PbiUpdateFeatureOverrideTests
 {
-    private static ProjectStateItem Req(string id, string text) => new(
-        id, "requirement", text, "accepted", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Req(string id, string text) => new ProjectStateItem(
+        id, "requirement", text, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("accepted"));
 
-    private static ProjectStateItem Feature(string id, string label) => new(
-        id, "feature", label, "active", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Feature(string id, string label) => new ProjectStateItem(
+        id, "feature", label, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("active"));
 
-    private static ProjectStateItem Pbi(string id, string title) => new(
-        id, "pbi", title, "active", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Pbi(string id, string title) => new ProjectStateItem(
+        id, "pbi", title, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("active"));
 
     private static ProjectStateDocument Core(IReadOnlyList<ProjectStateItem> items, IReadOnlyList<ProjectStateRelation>? rels = null)
         => new("p", 3, DateTime.UnixEpoch, [], [.. items], rels ?? [], [], []);

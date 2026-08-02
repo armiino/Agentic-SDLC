@@ -32,7 +32,7 @@ internal sealed class DecisionResolverTools(ProjectStateDocument core, RunContex
     {
         var rows = core.Items
             .Where(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase)
-                        && string.Equals(i.Status, DecisionStatus.Open, StringComparison.OrdinalIgnoreCase))
+                        && i.ReadStatus().IsOpenDecision)
             .OrderBy(i => i.ItemId, StringComparer.Ordinal)
             .Select(i => new { decisionId = i.ItemId, text = i.Text, targetRequirementId = TargetOf(i), })
             .ToArray();

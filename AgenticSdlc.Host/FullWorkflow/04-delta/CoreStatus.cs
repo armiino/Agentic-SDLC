@@ -14,8 +14,10 @@ namespace AgenticSdlc.Host.FullWorkflow.Delta;
 // WO: bei ProjectStateItem (04-delta), das es typisiert — Delta bleibt self-contained (keine Abhängigkeit auf Core;
 // Core → Delta einseitig).
 //
-// STAND (S1/S2): Enums + Mapping + die additiven Item-Felder existieren; Alt-`Status`-String bleibt bis S7 die QUELLE.
-// From/ToLegacy dienen S3–S6 als transitorisches Lazy-Derive und fliegen mit dem Alt-Feld in S7 raus (kein bleibender Adapter).
+// STAND (S7/Option A, fertig): Die typisierten Achsen SIND die Quelle. `ProjectStateItem.Status` ist eine berechnete
+// get-only-Projektion (`=> ReadStatus().ToLegacyString()`), kein gespeichertes Feld. `ToLegacyString` bleibt dauerhaft als
+// Boundary-Serializer (History/GitHub/LLM), `From(string)` als Erzeuger von Achsen aus einem Status-Literal (Konstruktion);
+// einen Runtime-Fallback gibt es NICHT — ReadStatus wirft bei fehlenden Achsen (kein stilles Raten, keine Rekursion).
 //
 // SPRACHE: Enum-/Identifier englisch (Projektregel); Doc-Texte + Labels deutsch (Inhalt).
 // SCOPE: ausschließlich ProjectStateItem.Status. NICHT: Ledger-Facetten-Status, GitHub-Issue-Status, ProjectStateProposal.Status.
@@ -73,11 +75,11 @@ public enum DecisionState
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Confirmation
 {
-    /// <summary>Ein Mensch hat es autorisiert (Alt-Status `accepted`).</summary>
+    /// <summary>Ein Mensch hat es autorisiert (Status-Wert `accepted`).</summary>
     Human,
-    /// <summary>Ein Agent hat es erzeugt/verankert (Alt-Status `baseline`).</summary>
+    /// <summary>Ein Agent hat es erzeugt/verankert (Status-Wert `baseline`).</summary>
     Agent,
-    /// <summary>Governance nicht aufgezeichnet (Alt-Status `active` — trug nie einen Marker; ehrlich unmarkiert, nicht erfunden).</summary>
+    /// <summary>Governance nicht aufgezeichnet (Status-Wert `active` — trug nie einen Marker; ehrlich unmarkiert, nicht erfunden).</summary>
     Unmarked,
 }
 
@@ -120,7 +122,8 @@ public sealed record CoreStatus(
     }
 
     // -- Verlustfreies Mapping alt↔neu. Round-Trip alt→neu→alt ist bit-gleich für die 5 heutigen + 2 operativen Werte
-    //    (Test: CoreStatusMappingTests). Transitorisches Lazy-Derive für S3–S6; fliegt mit dem Alt-Feld in S7 raus.
+    //    (Test: CoreStatusMappingTests). `From` erzeugt Achsen aus einem Status-Literal (Konstruktion); `ToLegacyString`
+    //    projiziert die Achsen zurück in den String (Grenzen: History/GitHub/LLM + die berechnete `Status`-Projektion).
 
     /// <summary>Parst einen Alt-<c>Status</c>-String (+ optional sourceRunId für den Audit-Verweis) in die Achsen.
     /// Wirft bei unbekanntem Wert (LAUT statt still falsch mappen — wichtig für die Migration).</summary>
@@ -143,7 +146,7 @@ public sealed record CoreStatus(
             "open_decision"       => new(Validity.Active,     null,                Blocker.None,              Confirmation.Agent,    sourceRunId, DecisionState.Open),
             "resolved"            => new(Validity.Active,     null,                Blocker.None,              Confirmation.Unmarked, sourceRunId, DecisionState.Resolved),
             _ => throw new ArgumentOutOfRangeException(nameof(legacyStatus), legacyStatus,
-                     "Unbekannter Alt-Status — Mapping fehlt (§5/status-modell-refactor.md §2). Bewusst LAUT statt still falsch mappen."),
+                     "Unbekannter Status-Wert — Mapping fehlt (§5/status-modell-refactor.md §2). Bewusst LAUT statt still falsch mappen."),
         };
     }
 
@@ -160,14 +163,13 @@ public sealed record CoreStatus(
       : ConfirmedBy == Confirmation.Human    ? "accepted"
       :                                        "active";
 
-    /// <summary>Bequemer Einstieg vom Item (nutzt dessen Alt-<c>Status</c> + <c>SourceRunId</c>). Solange bis S3+ die
-    /// typisierten Felder am Item gefüllt sind — danach entfällt der Umweg über den Alt-String.</summary>
-    public static CoreStatus From(ProjectStateItem item) => From(item.Status, item.SourceRunId);
+    // (Der From(ProjectStateItem)-Overload wurde mit der S6-Migration entfernt (S7/Option A, 02.08.) — Items lesen ihren
+    //  Status jetzt über ReadStatus() aus den Achsen, nicht über einen Alt-String-Umweg.)
 }
 
-/// <summary>Schreib-Naht für den Status (S3). EINE Stelle, die den Status eines Items ändert — setzt die neuen
-/// Achsen-Felder UND (transitorisch bis S7) den Alt-<c>Status</c>-String synchron via <see cref="CoreStatus.ToLegacyString"/>.
-/// So bleiben Leser auf dem Alt-String (bis S4) und auf den neuen Feldern (ab S4) konsistent. In S7 entfällt der Alt-Teil.</summary>
+/// <summary>Schreib-Naht für den Status. EINE Stelle, die den Status eines Items ändert — setzt die typisierten
+/// Achsen-Felder (die alleinige Quelle). Der <c>Status</c>-String folgt automatisch als berechnete Projektion; ein
+/// Alt-String wird NICHT mehr geschrieben (S7/Option A).</summary>
 public static class CoreStatusWrite
 {
     /// <summary>Ändert den Status eines bestehenden Items auf <paramref name="status"/> — beide Repräsentationen synchron.
@@ -183,7 +185,7 @@ public static class CoreStatusWrite
 
         return item with
         {
-            Status = status.ToLegacyString(),   // transitorisch (bis S7) — hält Alt-String-Leser synchron
+            // §5-S7 (Option A): `Status` wird NICHT mehr geschrieben — es ist eine berechnete Projektion der Achsen.
             Validity = status.Validity,
             Progress = status.Progress,
             Blocker = status.Blocker,
@@ -195,10 +197,10 @@ public static class CoreStatusWrite
     }
 }
 
-/// <summary>Lese-Naht für den Status (S4) — Gegenstück zu <see cref="CoreStatusWrite.WithStatus"/>. EINE Stelle, die den
-/// Status eines Items LIEST: typisierte Felder wenn gesetzt (ab S3/Migration S6), sonst transitorisch aus dem Alt-String
-/// abgeleitet (<see cref="CoreStatus.From"/>). Read-Sites fragen <c>item.ReadStatus().Blocker</c> statt roher String-Vergleiche.
-/// In S7 (nach Migration sind die Felder immer gesetzt) entfällt der From-Fallback.</summary>
+/// <summary>Lese-Naht für den Status — Gegenstück zu <see cref="CoreStatusWrite.WithStatus"/>. EINE Stelle, die den Status
+/// eines Items LIEST: ausschließlich aus den typisierten Achsen-Feldern (die Quelle). KEIN Alt-String-Fallback mehr — ein
+/// Item ohne Achsen ist ein Konstruktions-Fehler und wirft LAUT (S7/Option A). Read-Sites fragen typisiert
+/// (<c>item.ReadStatus().Blocker</c> / <c>.IsOpenDecision</c>) statt roher String-Vergleiche.</summary>
 public static class CoreStatusRead
 {
     /// <summary>Liefert den Status als typisierte Achsen — aus den neuen Feldern, sonst (un-migriert) aus dem Alt-String.</summary>
@@ -206,7 +208,11 @@ public static class CoreStatusRead
         => item.Validity is { } v
             ? new CoreStatus(v, item.Progress, item.Blocker ?? Blocker.None,
                              item.ConfirmedBy ?? Confirmation.Unmarked, item.ConfirmedInRun, item.Decision)
-            : CoreStatus.From(item.Status, item.SourceRunId);
+            // §5-S7 (Option A): KEIN From-Runtime-Fallback mehr (alle Items migriert, S6). Ein Item ohne Achsen ist ein
+            // Konstruktions-Fehler → LAUT scheitern statt still aus einem Alt-String zu raten. (Achtung: `item.Status` ist
+            // jetzt selbst eine Projektion über ReadStatus — ein Fallback darauf wäre Endlos-Rekursion.)
+            : throw new InvalidOperationException(
+                  $"Item {item.ItemId} ({item.ItemType}) ohne Status-Achsen — Konstruktion muss WithStatus/CoreStatus.From setzen (§5-S7/Option A).");
 }
 
 // (S1 hatte hier eine zentrale `CoreStatusLabels`-Klasse angelegt — in S4 (01.08.) entfernt: die Review-Adapter-Glossare

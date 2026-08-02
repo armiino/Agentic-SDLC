@@ -107,15 +107,15 @@ public static class DecisionUnblockTest
     }
 
     private static ProjectStateItem Req(string id, string text)
-        => new(id, "requirement", text, "accepted", "test", null, 1, null, null, null, null, null, [], [],
-            new Dictionary<string, string>(), null, [], null, null);
+        => new ProjectStateItem(id, "requirement", text, "test", null, 1, null, null, null, null, null, [], [],
+            new Dictionary<string, string>(), null, [], null, null).WithStatus(CoreStatus.From("accepted"));
 
     private static ProjectStateItem Decision(string id, string text, string targetReq)
-        => new(id, "decision", text, DecisionStatus.Open, "test", null, 1, null, null, null, null, null, [], [],
-            new Dictionary<string, string>(StringComparer.Ordinal) { ["targetEntityId"] = targetReq }, null, [], null, null);
+        => new ProjectStateItem(id, "decision", text, "test", null, 1, null, null, null, null, null, [], [],
+            new Dictionary<string, string>(StringComparer.Ordinal) { ["targetEntityId"] = targetReq }, null, [], null, null).WithStatus(CoreStatus.From(DecisionStatus.Open));
 
     private static ProjectStateItem Pbi(string id, string title, bool blocked, IReadOnlyList<string> reqs, IReadOnlyList<string> decRefs)
-        => new(id, "pbi", title, blocked ? "blocked_by_decision" : "active", "test", null, 1, null, null, null, null, null, [], [],
+        => new ProjectStateItem(id, "pbi", title, "test", null, 1, null, null, null, null, null, [], [],
             new Dictionary<string, string>(), null, [], null,
-            new PbiPayload(null, title, [], reqs, decRefs, null, "ready", null, null));
+            new PbiPayload(null, title, [], reqs, decRefs, null, "ready", null, null)).WithStatus(CoreStatus.From(blocked ? "blocked_by_decision" : "active"));
 }

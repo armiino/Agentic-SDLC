@@ -20,16 +20,16 @@ public sealed class PbiUpdateReviewAdapterTests
     private static PbiStateChangePlanDocument Plan(params PbiStateChangeOperation[] ops)
         => new(SchemaVersion: 1, PlanId: "p1", CreatedUtc: DateTime.UnixEpoch, SourceIngestionRun: "src", Operations: ops);
 
-    private static ProjectStateItem Req(string id, string text, string? prev = null) => new(
-        id, "requirement", text, "accepted", "test", null, 2,
+    private static ProjectStateItem Req(string id, string text, string? prev = null) => new ProjectStateItem(
+        id, "requirement", text, "test", null, 2,
         null, null, null, null, null, [], [], new Dictionary<string, string>(),
-        History: prev is null ? null : [new ProjectStateItemVersion(1, prev, "accepted", "test", null, [], DateTime.UnixEpoch, null)]);
+        History: prev is null ? null : [new ProjectStateItemVersion(1, prev, "accepted", "test", null, [], DateTime.UnixEpoch, null)]).WithStatus(CoreStatus.From("accepted"));
 
-    private static ProjectStateItem PbiItem(string id, string title, string status = "needs_clarify") => new(
-        id, "pbi", title, status, "test", null, 1,
+    private static ProjectStateItem PbiItem(string id, string title, string status = "needs_clarify") => new ProjectStateItem(
+        id, "pbi", title, "test", null, 1,
         null, null, null, null, null, [], [], new Dictionary<string, string>(),
         Pbi: new PbiPayload(Goal: "Als Team will ich …", Title: title, AcceptanceCriteria: ["AK 1"], LinkedRequirementIds: [],
-            OpenDecisionRefs: [], PriorityRank: null, Readiness: "backlog_ready", Mvp: null, Trace: null));
+            OpenDecisionRefs: [], PriorityRank: null, Readiness: "backlog_ready", Mvp: null, Trace: null)).WithStatus(CoreStatus.From(status));
 
     private static string FieldOf(ReviewItem it, string key) => it.FieldValues.First(f => f.FieldKey == key).Value ?? "";
 
@@ -66,8 +66,8 @@ public sealed class PbiUpdateReviewAdapterTests
     public void NewPbi_mit_Create_Draft_zeigt_den_Draft_Block()   // O3b
     {
         var core = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [],
-            [new ProjectStateItem("FC-01", "feature", "Export", "active", "test", null, 1,
-                null, null, null, null, null, [], [], new Dictionary<string, string>())], [], [], []);
+            [new ProjectStateItem("FC-01", "feature", "Export", "test", null, 1,
+                null, null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("active"))], [], [], []);
         var draft = new PbiAlignment(null, "PDF-Export", "Als X will ich Daten exportieren", ["Export als PDF"],
             "neues PBI aus REQ-9", ["REQ-9"], TargetRequirementId: "REQ-9", TargetFeatureId: "FC-01");
         var plan = new PbiStateChangePlanDocument(1, "p1", DateTime.UnixEpoch, "src",

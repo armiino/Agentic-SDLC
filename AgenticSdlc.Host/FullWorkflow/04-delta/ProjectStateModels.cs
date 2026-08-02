@@ -18,7 +18,8 @@ public sealed record ProjectStateDocument(
 {
     // v2: identityKey + history (Core/Ingestion). v3: feature/pbi-Payloads (Inc 1c-1). v4: §5 Statusmodell — typisierte
     // Status-Achsen additiv am Item (validity/progress/blocker/confirmedBy/confirmedInRun/decision). Abwaertskompatibel:
-    // aeltere Dateien deserialisieren (fehlende Felder -> null); Alt-`status` bleibt bis S7 die Quelle.
+    // aeltere Dateien deserialisieren (fehlende Felder -> null). S7/Option A: die typisierten Achsen SIND die Quelle;
+    // `status` ist eine berechnete get-only-Projektion daraus (kein gespeichertes Feld mehr).
     public const int CurrentSchemaVersion = 4;
 }
 
@@ -33,7 +34,7 @@ public sealed record ProjectStateItem(
     [property: JsonPropertyName("itemId")] string ItemId,
     [property: JsonPropertyName("itemType")] string ItemType,
     [property: JsonPropertyName("text")] string Text,
-    [property: JsonPropertyName("status")] string Status,
+    // §5-S7 (Option A): `Status` ist KEIN gespeichertes Feld mehr — s. berechnete Projektion unten (Record-Body).
     [property: JsonPropertyName("origin")] string Origin,
     [property: JsonPropertyName("stage")] string? Stage,
     [property: JsonPropertyName("version")] int Version,
@@ -54,15 +55,23 @@ public sealed record ProjectStateItem(
     [property: JsonPropertyName("feature")] FeaturePayload? Feature = null,
     [property: JsonPropertyName("pbi")] PbiPayload? Pbi = null,
     // Core-Erweiterung (SchemaVersion 4, §5 Statusmodell-Refactor): der Item-Lifecycle-Status als getrennte, typisierte
-    // Achsen (siehe CoreStatus.cs), die das eine rohe `status`-Feld ablösen. S2 = ADDITIV + nullable: Alt-`Status` bleibt
-    // bis S7 die QUELLE, diese Felder sind bis zur Migration (S6) null (dann via CoreStatus.From gefüllt). WhenWritingNull
-    // hält un-migrierte JSON sauber. Enums serialisieren als String (JsonConverter an der Enum-Definition).
+    // Achsen (siehe CoreStatus.cs), die das eine rohe `status`-Feld ABGELÖST haben (S7/Option A). Diese Achsen SIND die
+    // Quelle; `Status` ist eine berechnete Projektion daraus (get-only). Nullable nur zur Deserialisierungs-Toleranz — ein
+    // valides Item trägt sie IMMER (fehlende Achsen = Konstruktions-Fehler → ReadStatus wirft). WhenWritingNull hält die
+    // JSON schlank; Enums serialisieren als String (JsonConverter an der Enum-Definition).
     [property: JsonPropertyName("validity"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Validity? Validity = null,
     [property: JsonPropertyName("progress"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Progress? Progress = null,
     [property: JsonPropertyName("blocker"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Blocker? Blocker = null,
     [property: JsonPropertyName("confirmedBy"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Confirmation? ConfirmedBy = null,
     [property: JsonPropertyName("confirmedInRun"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? ConfirmedInRun = null,
-    [property: JsonPropertyName("decision"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] DecisionState? Decision = null);
+    [property: JsonPropertyName("decision"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] DecisionState? Decision = null)
+{
+    /// <summary>§5-S7 (Option A): der Legacy-Status-String als BERECHNETE get-only-Projektion aus den typisierten Achsen —
+    /// KEINE gespeicherte Wahrheit mehr, nur noch Ausgabeformat für Grenzen (History/GitHub/LLM). Wird in die JSON
+    /// geschrieben (`status`), beim Deserialisieren aber IGNORIERT (kein Setter) → die Achsen sind die einzige Quelle.</summary>
+    [JsonInclude, JsonPropertyName("status")]
+    public string Status => this.ReadStatus().ToLegacyString();
+}
 
 /// <summary>Fruehere Fassung eines Items (Ingestion-Historie). Die aktuelle Fassung steht im Item selbst.</summary>
 public sealed record ProjectStateItemVersion(

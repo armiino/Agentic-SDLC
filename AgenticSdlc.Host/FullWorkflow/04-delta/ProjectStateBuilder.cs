@@ -65,7 +65,6 @@ public static class ProjectStateBuilder
             ItemId: item.ItemId,
             ItemType: NormalizeItemType(artifact.ArtifactType),
             Text: item.Text,
-            Status: "baseline",
             Origin: item.Origin.ToString(),
             Stage: artifact.Stage,
             Version: artifact.Version,
@@ -76,7 +75,7 @@ public static class ProjectStateBuilder
             SourceCandidateId: null,
             SourceClaimIds: Clean(item.SourceClaimIds),
             SourceArtifactItemIds: Clean(item.SourceArtifactItemIds),
-            Metadata: metadata);
+            Metadata: metadata).WithStatus(CoreStatus.From("baseline"));   // §5-S7: Status→Achsen (kein gespeichertes Feld mehr)
     }
 
     private static ProjectStateProvenance FromArtifactProvenance(ArtifactItem item, ArtifactDocument artifact, string sourceId)
@@ -147,7 +146,6 @@ public static class ProjectStateBuilder
                 ItemId: item.ItemId,
                 ItemType: item.ItemType,
                 Text: item.Text,
-                Status: item.Status.ToLowerInvariant(),
                 Origin: item.Origin,
                 Stage: "l3_promoted",
                 Version: item.Version,
@@ -158,7 +156,7 @@ public static class ProjectStateBuilder
                 SourceCandidateId: candidateId,
                 SourceClaimIds: [],
                 SourceArtifactItemIds: Clean(item.SourceArtifactItemIds),
-                Metadata: metadata));
+                Metadata: metadata).WithStatus(CoreStatus.From(item.Status.ToLowerInvariant())));   // §5-S7: Status→Achsen
 
             relations.Add(new ProjectStateRelation(item.ItemId, item.SourceDecisionId, "accepted_by_human_decision", "l3.apply", new Dictionary<string, string>()));
             relations.Add(new ProjectStateRelation(item.ItemId, candidateId, "promoted_from_l3_candidate", "l3.apply", new Dictionary<string, string>()));

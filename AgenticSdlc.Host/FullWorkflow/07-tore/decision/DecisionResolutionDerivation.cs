@@ -18,7 +18,7 @@ public static class DecisionResolutionDerivation
         {
             if (!byId.TryGetValue(r.DecisionId, out var dec) || !string.Equals(dec.ItemType, "decision", StringComparison.OrdinalIgnoreCase))
             { problems.Add($"{r.DecisionId}: keine Decision im Core"); continue; }
-            if (!string.Equals(dec.Status, DecisionStatus.Open, StringComparison.OrdinalIgnoreCase))
+            if (!dec.ReadStatus().IsOpenDecision)
             { problems.Add($"{r.DecisionId}: nicht offen (status={dec.Status})"); continue; }
 
             // Ziel-Requirement: contradicts-Relation der DEC, sonst metadata targetEntityId.

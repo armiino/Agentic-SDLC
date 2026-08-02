@@ -12,19 +12,19 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // fehlende, keine doppelte Projektion.
 public sealed class PbiUpdateMixedDeltaTests
 {
-    private static ProjectStateItem FeatureItem(string id, string label) => new(
-        id, "feature", label, "active", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem FeatureItem(string id, string label) => new ProjectStateItem(
+        id, "feature", label, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("active"));
 
-    private static ProjectStateItem Pbi(string id, string title) => new(
-        id, "pbi", title, "needs_clarify", "test", null, 3,
+    private static ProjectStateItem Pbi(string id, string title) => new ProjectStateItem(
+        id, "pbi", title, "test", null, 3,
         "baseline-run", null, null, null, null, [], [], new Dictionary<string, string>(),
         Pbi: new PbiPayload(Goal: "altes Ziel", Title: title, AcceptanceCriteria: ["alt AK"], LinkedRequirementIds: ["REQ-1"],
-            OpenDecisionRefs: [], PriorityRank: null, Readiness: "needs_clarify", Mvp: null, Trace: null));
+            OpenDecisionRefs: [], PriorityRank: null, Readiness: "needs_clarify", Mvp: null, Trace: null)).WithStatus(CoreStatus.From("needs_clarify"));
 
-    private static ProjectStateItem Req(string id, string text) => new(
-        id, "requirement", text, "accepted", "test", null, 1,
-        "run", null, null, null, null, [], [], new Dictionary<string, string>());
+    private static ProjectStateItem Req(string id, string text) => new ProjectStateItem(
+        id, "requirement", text, "test", null, 1,
+        "run", null, null, null, null, [], [], new Dictionary<string, string>()).WithStatus(CoreStatus.From("accepted"));
 
     private static ProjectStateDocument Core(params ProjectStateItem[] items)
         => new("p", 3, DateTime.UnixEpoch, [], [.. items], [], [], []);
