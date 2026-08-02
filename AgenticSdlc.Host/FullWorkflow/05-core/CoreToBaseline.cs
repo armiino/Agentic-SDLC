@@ -9,8 +9,6 @@ namespace AgenticSdlc.Host.FullWorkflow.Core;
 // Kein LLM. Aktive Requirements = alle ausser superseded/retired; Requirement-Identitaet = Core-ItemId.
 public static class CoreToBaseline
 {
-    private static readonly HashSet<string> Inactive = new(StringComparer.OrdinalIgnoreCase) { "superseded", "retired" };
-
     public static (CanonicalRequirementsBaseline Baseline, L4ProvenanceMap Provenance, L4QualityReport Quality) Project(
         ProjectStateDocument core, string coreSourcePath)
     {
@@ -18,7 +16,7 @@ public static class CoreToBaseline
         var baselineId = $"core-baseline-{stamp:yyyyMMdd_HHmmss}";
 
         var reqItems = core.Items
-            .Where(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase) && !Inactive.Contains(i.Status))
+            .Where(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase) && i.ReadStatus().Validity == Validity.Active)   // §5-S4
             .OrderBy(i => i.ItemId, StringComparer.Ordinal)
             .ToList();
 

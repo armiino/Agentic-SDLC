@@ -27,5 +27,9 @@ public static class CoreCommands
         // Tor 3 / T3.1: PBI<->Issue-Mapping als Core-Relation (implemented_by_issue) pflegen = Dedup-Basis fuer den
         // naechsten GitHub-Delta-Lauf (nicht mehr nur Run-Artefakt). Deterministisch, kein LLM, kein GitHub-Call.
         map["github-map"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Core.CoreGithubMapRunner.RunAsync(args, repoRoot);
+
+        // §5-S6: einmalige, verlustfreie Migration der Status-Achsen (Alt-String -> typisierte Felder). Default = VERIFY
+        // (dry-run, beweist Round-Trip + Konsumenten-Stabilitaet); --apply schreibt (snapshot-geschuetzt). Kein LLM, kein Gate.
+        map["core-migrate-status"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Core.CoreStatusMigrationRunner.RunAsync(args, repoRoot);
     }
 }

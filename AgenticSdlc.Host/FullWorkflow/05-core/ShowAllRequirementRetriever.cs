@@ -7,12 +7,10 @@ namespace AgenticSdlc.Host.FullWorkflow.Core;
 // hier (bewusst) ignoriert; spaetere Stufen nutzen ihn zum Filtern/Ranken.
 public sealed class ShowAllRequirementRetriever : ICandidateRetriever
 {
-    private static readonly HashSet<string> Inactive = new(StringComparer.OrdinalIgnoreCase) { "superseded", "retired" };
-
     public IReadOnlyList<ProjectStateItem> GetCandidates(string incomingText, ProjectStateDocument core)
         => core.Items
             .Where(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase))
-            .Where(i => !Inactive.Contains(i.Status))
+            .Where(i => i.ReadStatus().Validity == Validity.Active)   // §5-S4: aktiv (nicht superseded); retired war tot
             .OrderBy(i => i.ItemId, StringComparer.Ordinal)
             .ToList();
 }

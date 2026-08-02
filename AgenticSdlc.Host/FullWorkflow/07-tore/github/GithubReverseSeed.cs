@@ -9,8 +9,8 @@ namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 // eindeutig; die eigentliche Bedeutungs-Entscheidung ("ist das wirklich fertig?") ist die menschliche Verifikation.
 public static class GithubReverseSeed
 {
-    private static readonly HashSet<string> DoneCandidate = new(StringComparer.OrdinalIgnoreCase) { "active", "needs_clarify" };
-    private static readonly HashSet<string> AlreadyClosedish = new(StringComparer.OrdinalIgnoreCase) { "done", "superseded", "retired" };
+    // §5-S4: die Alt-String-Sets durch typisierte Achsen ersetzt (s. unten): DoneCandidate = aktiv & nicht-done &
+    // nicht-blockiert; AlreadyClosedish = IsArchived (superseded ODER done). retired war tot.
 
     public static IReadOnlyList<GithubReverseOp> Seed(ProjectStateDocument core, IReadOnlyList<GithubIssueSnapshot> issues)
     {
@@ -24,19 +24,21 @@ public static class GithubReverseSeed
             if (!issueByNumber.TryGetValue(m.IssueNumber, out var issue)) continue; // fehlendes Issue = Forward-Drift, nicht reverse.
 
             var closed = issue.State.Equals("closed", StringComparison.OrdinalIgnoreCase);
-            var status = pbi.Status;
+            var cs = pbi.ReadStatus();
+            var status = pbi.Status;   // Alt-String nur für Anzeige/Op-Feld (bis S7 gepflegt)
+            var canBeDone = cs.Validity == Validity.Active && cs.Progress != Progress.Done && cs.Blocker != Blocker.BlockedByDecision;
 
-            if (closed && DoneCandidate.Contains(status))
+            if (closed && canBeDone)
             {
                 ops.Add(new GithubReverseOp(GithubReverseKind.PbiDone, m.PbiId, m.IssueNumber, status, "done", RequiresVerification: true,
                     $"Issue #{m.IssueNumber} ist geschlossen, PBI '{status}'. Vorschlag: done — NUR nach deiner Verifikation, dass die Arbeit wirklich fertig ist (E4)."));
             }
-            else if (closed && AlreadyClosedish.Contains(status) && string.Equals(m.OperationalStatus, "open", StringComparison.OrdinalIgnoreCase))
+            else if (closed && cs.IsArchived && string.Equals(m.OperationalStatus, "open", StringComparison.OrdinalIgnoreCase))
             {
                 ops.Add(new GithubReverseOp(GithubReverseKind.MappingSyncClosed, m.PbiId, m.IssueNumber, status, null, RequiresVerification: false,
                     $"Issue #{m.IssueNumber} geschlossen, PBI bereits '{status}'. Nur Mapping-Status auf closed nachziehen (keine PBI-Aenderung)."));
             }
-            else if (!closed && (string.Equals(m.OperationalStatus, "closed", StringComparison.OrdinalIgnoreCase) || AlreadyClosedish.Contains(status)))
+            else if (!closed && (string.Equals(m.OperationalStatus, "closed", StringComparison.OrdinalIgnoreCase) || cs.IsArchived))
             {
                 ops.Add(new GithubReverseOp(GithubReverseKind.FlagReopened, m.PbiId, m.IssueNumber, status, null, RequiresVerification: false,
                     $"Issue #{m.IssueNumber} ist (wieder) offen, PBI/Mapping aber abgeschlossen. Drift — bitte pruefen (kein Auto-Change)."));

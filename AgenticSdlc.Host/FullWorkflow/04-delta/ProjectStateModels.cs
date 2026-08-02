@@ -16,9 +16,10 @@ public sealed record ProjectStateDocument(
     [property: JsonPropertyName("provenance")] IReadOnlyList<ProjectStateProvenance> Provenance,
     [property: JsonPropertyName("proposals")] IReadOnlyList<ProjectStateProposal> Proposals)
 {
-    // v2: identityKey + history (Core/Ingestion). v3: feature/pbi-Payloads (Inc 1c-1). Abwaertskompatibel:
-    // aeltere Dateien deserialisieren (fehlende Felder -> null).
-    public const int CurrentSchemaVersion = 3;
+    // v2: identityKey + history (Core/Ingestion). v3: feature/pbi-Payloads (Inc 1c-1). v4: §5 Statusmodell — typisierte
+    // Status-Achsen additiv am Item (validity/progress/blocker/confirmedBy/confirmedInRun/decision). Abwaertskompatibel:
+    // aeltere Dateien deserialisieren (fehlende Felder -> null); Alt-`status` bleibt bis S7 die Quelle.
+    public const int CurrentSchemaVersion = 4;
 }
 
 public sealed record ProjectStateSource(
@@ -51,7 +52,17 @@ public sealed record ProjectStateItem(
     // Core-Erweiterung (SchemaVersion 3, Inc 1c-1): typisierte Backlog-Payloads. Nur das zu itemType passende
     // Feld ist gesetzt (feature -> feature, pbi -> pbi); requirements nutzen die flachen Felder.
     [property: JsonPropertyName("feature")] FeaturePayload? Feature = null,
-    [property: JsonPropertyName("pbi")] PbiPayload? Pbi = null);
+    [property: JsonPropertyName("pbi")] PbiPayload? Pbi = null,
+    // Core-Erweiterung (SchemaVersion 4, §5 Statusmodell-Refactor): der Item-Lifecycle-Status als getrennte, typisierte
+    // Achsen (siehe CoreStatus.cs), die das eine rohe `status`-Feld ablösen. S2 = ADDITIV + nullable: Alt-`Status` bleibt
+    // bis S7 die QUELLE, diese Felder sind bis zur Migration (S6) null (dann via CoreStatus.From gefüllt). WhenWritingNull
+    // hält un-migrierte JSON sauber. Enums serialisieren als String (JsonConverter an der Enum-Definition).
+    [property: JsonPropertyName("validity"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Validity? Validity = null,
+    [property: JsonPropertyName("progress"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Progress? Progress = null,
+    [property: JsonPropertyName("blocker"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Blocker? Blocker = null,
+    [property: JsonPropertyName("confirmedBy"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] Confirmation? ConfirmedBy = null,
+    [property: JsonPropertyName("confirmedInRun"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? ConfirmedInRun = null,
+    [property: JsonPropertyName("decision"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] DecisionState? Decision = null);
 
 /// <summary>Fruehere Fassung eines Items (Ingestion-Historie). Die aktuelle Fassung steht im Item selbst.</summary>
 public sealed record ProjectStateItemVersion(

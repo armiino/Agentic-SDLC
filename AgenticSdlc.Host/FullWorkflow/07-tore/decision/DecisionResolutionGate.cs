@@ -20,7 +20,7 @@ public static class DecisionResolutionGate
 
             if (!byId.TryGetValue(op.DecisionId, out var dec) || !string.Equals(dec.ItemType, "decision", StringComparison.OrdinalIgnoreCase))
                 errors.Add(Issue("UNKNOWN_DECISION", "error", $"'{op.DecisionId}' ist keine Decision.", op.DecisionId));
-            else if (!string.Equals(dec.Status, DecisionStatus.Open, StringComparison.OrdinalIgnoreCase))
+            else if (!dec.ReadStatus().IsOpenDecision)   // §5-S4 (Alt-String im Text bleibt bis S7 gepflegt)
                 errors.Add(Issue("DECISION_NOT_OPEN", "error", $"'{op.DecisionId}' ist nicht offen (status={dec.Status}).", op.DecisionId));
 
             if (!byId.ContainsKey(op.TargetRequirementId))

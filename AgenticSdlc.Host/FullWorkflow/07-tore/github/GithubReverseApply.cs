@@ -32,11 +32,11 @@ public static class GithubReverseApply
             {
                 case GithubReverseKind.PbiDone:
                 {
-                    // E4: done nur hier, nach Freigabe. History bewahrt den vorherigen Zustand.
-                    var history = (pbi.History ?? []).Append(new ProjectStateItemVersion(
-                        pbi.Version, pbi.Text, pbi.Status, pbi.Origin, pbi.SourceRunId, pbi.SourceClaimIds, DateTime.UtcNow,
-                        $"done via GitHub #{op.IssueNumber} (verifiziert/freigegeben)")).ToList();
-                    byId[pbi.ItemId] = pbi with { Status = "done", Version = pbi.Version + 1, History = history };
+                    // E4: done nur hier, nach Freigabe. §5-S3: zentrale Status-Naht (neue Felder + Alt-String synchron;
+                    // die History-Notiz bewahrt wie zuvor den vorherigen Zustand).
+                    byId[pbi.ItemId] = pbi
+                        .WithStatus(CoreStatus.From("done"), $"done via GitHub #{op.IssueNumber} (verifiziert/freigegeben)")
+                        with { Version = pbi.Version + 1 };
                     mappingCloses.Add(new GithubMappingOp(op.PbiId, op.IssueNumber, null, null, GithubMappingKind.Close, "REVERSE_DONE"));
                     markedDone.Add($"{op.PbiId} (#{op.IssueNumber})");
                     break;

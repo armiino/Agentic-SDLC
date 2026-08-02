@@ -77,7 +77,7 @@ public static class PbiUpdateApply
 
             var links = pbi.Pbi.LinkedRequirementIds.ToList();
             var decRefs = pbi.Pbi.OpenDecisionRefs.ToList();
-            var status = pbi.Status;
+            var status = pbi.ReadStatus();   // §5-S5: typisiert; Blocker-Eskalation via Escalate statt PbiStatus.Max
             var reasons = new List<string>();
 
             foreach (var op in g)
@@ -87,21 +87,21 @@ public static class PbiUpdateApply
                 {
                     case PbiUpdateKind.ExtendPbi:
                         if (!links.Contains(op.RequirementId)) { links.Add(op.RequirementId); relations.Add(RequirementSwap.Covers(pbi.ItemId, op.RequirementId, "pbi-update")); relAdded++; }
-                        status = PbiStatus.Max(status, PbiStatus.NeedsClarify);
+                        status = status.Escalate(Blocker.NeedsClarify);
                         break;
                     case PbiUpdateKind.MarkChanged:
-                        status = PbiStatus.Max(status, PbiStatus.NeedsClarify);
+                        status = status.Escalate(Blocker.NeedsClarify);
                         break;
                     case PbiUpdateKind.BlockPbi:
                         if (op.OpenDecisionRef is not null && !decRefs.Contains(op.OpenDecisionRef)) decRefs.Add(op.OpenDecisionRef);
-                        status = PbiStatus.Max(status, PbiStatus.BlockedByDecision);
+                        status = status.Escalate(Blocker.BlockedByDecision);
                         break;
                     case PbiUpdateKind.SupersedePbi:
                         // Geteilter Wahrheitsuebergang (T2.0) — identisch fuer pbi-update und Tor 2 ADOPT_NEW.
                         var (swAdded, swRemoved) = RequirementSwap.SwapCoverage(
                             pbi.ItemId, op.RequirementId, op.ReplacementRequirementId, links, relations, "pbi-update");
                         relAdded += swAdded; relRemoved += swRemoved;
-                        status = PbiStatus.Max(status, PbiStatus.NeedsClarify);
+                        status = status.Escalate(Blocker.NeedsClarify);
                         break;
                 }
             }
@@ -117,24 +117,24 @@ public static class PbiUpdateApply
                 if (!string.IsNullOrWhiteSpace(align.ProposedTitle)) title = align.ProposedTitle!.Trim();
                 if (!string.IsNullOrWhiteSpace(align.ProposedStatement)) goal = align.ProposedStatement!.Trim();
                 if (align.ProposedAcceptanceCriteria is { Count: > 0 } ac) acceptance = ac;
-                if (string.Equals(status, PbiStatus.NeedsClarify, StringComparison.OrdinalIgnoreCase)) status = PbiStatus.Active;
+                if (status.Blocker == Blocker.NeedsClarify) status = status with { Blocker = Blocker.None };   // R-26-C: needs_clarify -> active
                 reasons.Add($"ALIGN(R-26-C): {align.Rationale}");
                 aligned = true;
             }
 
-            var history = (pbi.History ?? []).Append(new ProjectStateItemVersion(
-                pbi.Version, pbi.Text, pbi.Status, pbi.Origin, pbi.SourceRunId, pbi.SourceClaimIds, DateTime.UtcNow, string.Join(" | ", reasons))).ToList();
-            byId[pbi.ItemId] = pbi with
-            {
-                // R-31: bei inhaltlicher Angleichung traegt die neue Fassung den ausloesenden Lauf als Ursprung
-                // (statt den alten Baseline-Lauf zu erben); reine Struktur-Ops lassen die Provenance unberuehrt.
-                Text = title,
-                Status = status,
-                Version = pbi.Version + 1,
-                SourceRunId = aligned ? sourceRun : pbi.SourceRunId,
-                History = history,
-                Pbi = pbi.Pbi with { Title = title, Goal = goal, AcceptanceCriteria = acceptance, LinkedRequirementIds = links, OpenDecisionRefs = decRefs }
-            };
+            // §5-S3: zentrale Status-Naht — Alt-String bleibt (via Max) die Rechen-Grundlage, neue Felder abgeleitet
+            // (`From`; der `Max`-Hack fliegt erst in S5). History-Notiz inklusive.
+            byId[pbi.ItemId] = pbi
+                .WithStatus(status, string.Join(" | ", reasons))
+                with
+                {
+                    // R-31: bei inhaltlicher Angleichung traegt die neue Fassung den ausloesenden Lauf als Ursprung
+                    // (statt den alten Baseline-Lauf zu erben); reine Struktur-Ops lassen die Provenance unberuehrt.
+                    Text = title,
+                    Version = pbi.Version + 1,
+                    SourceRunId = aligned ? sourceRun : pbi.SourceRunId,
+                    Pbi = pbi.Pbi with { Title = title, Goal = goal, AcceptanceCriteria = acceptance, LinkedRequirementIds = links, OpenDecisionRefs = decRefs }
+                };
             updated.Add(pbi.ItemId);
         }
 

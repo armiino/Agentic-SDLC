@@ -92,7 +92,8 @@ public static class IngestionApply
                 case StateChangeKind.Supersede:
                 {
                     if (!byId.TryGetValue(op.TargetEntityId ?? "", out var t)) { skipped.Add($"{op.IncomingItemId}: SUPERSEDE-Ziel unbekannt"); break; }
-                    byId[t.ItemId] = t with { Status = "superseded" };
+                    // §5-S3: Status über die zentrale Naht (Alt-String + neue Felder synchron) + History-Notiz (schließt E-10-Lücke).
+                    byId[t.ItemId] = t.WithStatus(CoreStatus.From("superseded"), $"superseded via Ingestion-SUPERSEDE ({op.IncomingItemId})");
                     var id = $"REQ-{nextReq++:D2}";
                     AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds,
                         new Dictionary<string, string>(StringComparer.Ordinal) { ["ingestedFrom"] = op.IncomingItemId }));

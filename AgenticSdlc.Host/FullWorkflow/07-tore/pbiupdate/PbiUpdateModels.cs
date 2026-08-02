@@ -105,11 +105,7 @@ public static class PbiStatus
     public const string NeedsClarify = "needs_clarify";
     public const string BlockedByDecision = "blocked_by_decision";
     public const string Superseded = "superseded";
-
-    private static readonly Dictionary<string, int> Rank = new(StringComparer.OrdinalIgnoreCase)
-    {
-        [Active] = 0, [NeedsClarify] = 1, [Superseded] = 2, [BlockedByDecision] = 3
-    };
-
-    public static string Max(string a, string b) => Rank.GetValueOrDefault(a, 0) >= Rank.GetValueOrDefault(b, 0) ? a : b;
+    // §5-S5: der Max/Rank-Hack (Blocker + Gültigkeit in EIN ranged Feld gequetscht) ENTFERNT — ersetzt durch die
+    // typisierte Achsen-Eskalation `CoreStatus.Escalate` (verhaltensgleich, gegen das alte Ranking getestet). Die
+    // Konstanten bleiben, solange Creation-Sites den Alt-String erzeugen (bis S7).
 }

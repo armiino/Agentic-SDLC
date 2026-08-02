@@ -54,7 +54,8 @@ public static class DecisionResolutionApply
                     refined.Add(target.ItemId);
                     break;
                 case DecisionOutcome.AdoptNew:
-                    byId[target.ItemId] = target with { Status = "superseded", History = Hist(target, $"superseded via {op.DecisionId} (ADOPT_NEW)") };
+                    // §5-S3: zentrale Status-Naht (setzt neue Felder + Alt-String synchron; History-Notiz inklusive).
+                    byId[target.ItemId] = target.WithStatus(CoreStatus.From("superseded"), $"superseded via {op.DecisionId} (ADOPT_NEW)");
                     newReqId = $"REQ-{nextReq++:D2}";
                     AddItem(order, byId, NewRequirement(newReqId, op.NewStatement!, target, sourceRun, op.DecisionId));
                     relations.Add(new ProjectStateRelation(newReqId, target.ItemId, DecisionRelations.Supersedes, "decision-tor2", new Dictionary<string, string>()));
@@ -109,17 +110,15 @@ public static class DecisionResolutionApply
 
                 var newStatus = wasBlocked
                     ? (decRefs.Count > 0 ? PbiStatus.BlockedByDecision : unblockStatus)
-                    : (string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal) ? pbi.Status : PbiStatus.Max(pbi.Status, PbiStatus.NeedsClarify));
+                    : (string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal) ? pbi.Status : pbi.ReadStatus().Escalate(Blocker.NeedsClarify).ToLegacyString());   // §5-S5: Escalate statt PbiStatus.Max
                 if (!string.Equals(newStatus, pbi.Status, StringComparison.Ordinal)) { reasons.Add($"status {pbi.Status}->{newStatus}"); changed = true; }
 
                 if (!changed) continue;
-                byId[pbiId] = pbi with
-                {
-                    Status = newStatus,
-                    Version = pbi.Version + 1,
-                    History = Hist(pbi, string.Join(" | ", reasons)),
-                    Pbi = pbi.Pbi with { LinkedRequirementIds = links, OpenDecisionRefs = decRefs }
-                };
+                // §5-S3: zentrale Status-Naht — Alt-String bleibt (via Max) die Rechen-Grundlage, neue Felder werden
+                // daraus abgeleitet (`From`); der `Max`-Hack selbst fliegt erst in S5. History-Notiz inklusive.
+                byId[pbiId] = pbi
+                    .WithStatus(CoreStatus.From(newStatus), string.Join(" | ", reasons))
+                    with { Version = pbi.Version + 1, Pbi = pbi.Pbi with { LinkedRequirementIds = links, OpenDecisionRefs = decRefs } };
                 if (wasBlocked) unblocked.Add(pbiId);
             }
         }

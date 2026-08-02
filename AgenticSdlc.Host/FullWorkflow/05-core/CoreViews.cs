@@ -46,7 +46,7 @@ public sealed record AffectedItemsView(
 
 public static class CoreViews
 {
-    private static readonly HashSet<string> Archived = new(StringComparer.OrdinalIgnoreCase) { "done", "superseded", "retired" };
+    // §5-S4: Archived-Set entfernt — IsArchived fragt jetzt CoreStatus.IsArchived (Superseded ODER Done); retired war ohnehin tot.
 
     public static ActiveBacklogView ActiveBacklog(ProjectStateDocument core)
     {
@@ -127,7 +127,8 @@ public static class CoreViews
             Relations: relations);
     }
 
-    private static bool IsArchived(ProjectStateItem i) => Archived.Contains(i.Status);
-    private static bool IsOpenDecision(ProjectStateItem i) => string.Equals(i.Status, "open_decision", StringComparison.OrdinalIgnoreCase);
+    // §5-S4: über die zentrale Lese-Naht (typisierte Achsen; retired entfällt — war tot). Verhalten gleich.
+    private static bool IsArchived(ProjectStateItem i) => i.ReadStatus().IsArchived;
+    private static bool IsOpenDecision(ProjectStateItem i) => i.ReadStatus().IsOpenDecision;
     private static bool Is(ProjectStateItem i, string type) => string.Equals(i.ItemType, type, StringComparison.OrdinalIgnoreCase);
 }
