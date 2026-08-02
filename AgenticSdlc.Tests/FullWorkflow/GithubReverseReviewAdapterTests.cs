@@ -50,4 +50,40 @@ public sealed class GithubReverseReviewAdapterTests
             new GithubReverseDecisionsFile("r1", "x", [new GithubReverseDecision("op-0", "", null)]));
         Assert.False(session.Items[0].Resolved);
     }
+
+    // E0.5: Klartext-Optionen je Op-Art (interner Value bleibt apply/skip; Label ist op-spezifisch).
+    [Fact]
+    public void Entscheidungs_Optionen_sind_je_OpArt_in_Klartext()
+    {
+        var session = GithubReverseReviewAdapter.BuildSession("r1", Plan(Op(), Op("FLAG_REOPENED", "PBI-2")));
+        var done = session.Items[0].FieldOptions[GithubReverseReviewAdapter.FieldDecision];
+        var flag = session.Items[1].FieldOptions[GithubReverseReviewAdapter.FieldDecision];
+        Assert.Equal(["apply", "skip"], done.Select(o => o.Value));         // Werte unveraendert (Apply-Vertrag)
+        Assert.Contains("fertig", done[0].Label, StringComparison.OrdinalIgnoreCase);
+        Assert.NotEqual(done[0].Label, flag[0].Label);                      // Fertig-Meldung != Drift-Warnung
+    }
+
+    // E0.5: mit Kontext zeigt die Summary den PBI-Titel und dass das Issue geschlossen ist.
+    [Fact]
+    public void Summary_zeigt_PBI_Titel_und_geschlossenes_Issue_mit_Kontext()
+    {
+        var ctx = new ReverseReviewContext(
+            new Dictionary<string, string> { ["PBI-1"] = "Medikamentengabe protokollieren" },
+            new Dictionary<int, GithubIssueSnapshot>
+            {
+                [60] = new(60, "http://x/60", "Doku-Issue", null, "closed", [], null, null)
+            });
+        var session = GithubReverseReviewAdapter.BuildSession("r1", Plan(Op()), ctx);
+        Assert.Contains("Medikamentengabe protokollieren", session.Items[0].Summary);
+        Assert.Contains("geschlossen", session.Items[0].Summary);
+    }
+
+    // E0.5: die deklarierte Experiment-Bulk-Linie ist vorhanden und setzt apply.
+    [Fact]
+    public void Experiment_Bulk_Linie_ist_gesetzt()
+    {
+        var session = GithubReverseReviewAdapter.BuildSession("r1", Plan(Op()));
+        Assert.NotNull(session.BulkAction);
+        Assert.Contains(session.BulkAction!.Set, s => s.FieldKey == GithubReverseReviewAdapter.FieldDecision && s.Value == "apply");
+    }
 }

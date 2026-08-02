@@ -1,4 +1,5 @@
 using AgenticSdlc.Host.Configuration;
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.HumanReview;
 using System.Text.Json;
 
@@ -24,7 +25,11 @@ public static class GithubReverseReviewRunner
         var interactive = args.Contains("--interactive", StringComparer.OrdinalIgnoreCase) || !args.Contains("--file", StringComparer.OrdinalIgnoreCase);
         var noBrowser = args.Contains("--no-browser", StringComparer.OrdinalIgnoreCase);
 
-        var session = GithubReverseReviewAdapter.BuildSession(runId, plan);
+        // E0.5: Anzeige-Kontext laden (PBI-Titel aus dem Core, Issue-Titel/-Zustand aus dem Snapshot). Rein additiv —
+        // scheitert das Laden, faellt das Gate auf die reine ID-Anzeige zurueck (context = null).
+        var context = await LoadContextAsync(repoRoot, plan).ConfigureAwait(false);
+
+        var session = GithubReverseReviewAdapter.BuildSession(runId, plan, context);
         if (session.Items.Count == 0) { Console.WriteLine("[github-reverse-review] keine Vorschlaege."); return 0; }
 
         var existing = File.Exists(decisionsPath) ? await LoadAsync<GithubReverseDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
@@ -39,7 +44,7 @@ public static class GithubReverseReviewRunner
 
         var (_, outcome) = await ReviewUiFlow.RunAsync(session, decisionsPath,
             resolved: GithubReverseReviewAdapter.Resolved,
-            resolveContext: (_, key) => Task.FromResult(GithubReverseReviewAdapter.ResolveContext(key, plan)),
+            resolveContext: (_, key) => Task.FromResult(GithubReverseReviewAdapter.ResolveContext(key, plan, context)),
             apply: s => GithubReverseReviewAdapter.Apply(runId, s),
             openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
         Console.WriteLine($"[github-reverse-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
@@ -62,4 +67,37 @@ public static class GithubReverseReviewRunner
     }
 
     private static Task<T> LoadAsync<T>(string path) => JsonFiles.LoadAsync<T>(path); // R3b: geteilt
+
+    // E0.5 — PBI-Titel aus dem Core + Issue-Titel/-Zustand aus dem Plan-Snapshot. Best-effort: fehlt eine Quelle,
+    // bleibt der jeweilige Teil leer (das Gate zeigt dann nur die IDs). Kein Einfluss auf Entscheidung/Apply.
+    private static async Task<ReverseReviewContext?> LoadContextAsync(string repoRoot, GithubReversePlanDocument plan)
+    {
+        var pbiTitles = new Dictionary<string, string>(StringComparer.Ordinal);
+        try
+        {
+            var coreRepo = new JsonCoreRepository(repoRoot);
+            if (await coreRepo.ExistsAsync().ConfigureAwait(false))
+            {
+                var core = await coreRepo.LoadAsync().ConfigureAwait(false);
+                foreach (var it in core.Items.Where(i => string.Equals(i.ItemType, "pbi", StringComparison.OrdinalIgnoreCase)))
+                    pbiTitles[it.ItemId] = it.Text;
+            }
+        }
+        catch { /* best-effort: ohne Core-Titel weiter */ }
+
+        var issues = new Dictionary<int, GithubIssueSnapshot>();
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(plan.Snapshot))
+            {
+                var snapshotPath = Path.IsPathRooted(plan.Snapshot) ? plan.Snapshot : Path.Combine(repoRoot, plan.Snapshot);
+                if (File.Exists(snapshotPath))
+                    foreach (var iss in await GithubReadSource.LoadAsync(snapshotPath).ConfigureAwait(false))
+                        issues[iss.IssueNumber] = iss;
+            }
+        }
+        catch { /* best-effort: ohne Issue-Titel weiter */ }
+
+        return pbiTitles.Count == 0 && issues.Count == 0 ? null : new ReverseReviewContext(pbiTitles, issues);
+    }
 }
