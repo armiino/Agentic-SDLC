@@ -67,6 +67,11 @@ public enum ReviewNoteKind { Info, Suggestion, Reason, Warning }
 /// Im Gegensatz zu <see cref="ContextBlock"/> nicht lazy — kurzer Text, direkt gerendert.</summary>
 public sealed record ReviewNote(ReviewNoteKind Kind, string Label, string Text);
 
+/// <summary>Ein-Klick-Aktion an einem Item: ein Button, der ein Feld auf einen Wert setzt (z. B. „Anpassen" →
+/// action=apply_repair). Wiederverwendbar über alle Gates; die UI speichert wie bei jedem Feld-Edit (Autosave +
+/// Re-Render, sodass <see cref="ReviewFieldSpec.VisibleWhen"/> neu greift). Additiv: leere Liste = kein Button.</summary>
+public sealed record ReviewQuickAction(string Label, string FieldKey, string Value);
+
 /// <summary>Detailansicht zu einer auswählbaren Referenz (z. B. Claim aus einem Katalog). Generisch:
 /// Der Core kennt nur Titel, Summary, Notes und lazy ContextBlocks.</summary>
 public sealed record ReviewReferenceDetails(
@@ -81,14 +86,17 @@ public sealed record ReviewReferenceDetails(
 public sealed record ReviewGlossaryEntry(string Term, string Meaning);
 
 /// <summary>
-/// Optionale Sammel-Aktion („Accept-all"): setzt die angegebenen Feldwerte auf allen Items, die noch
-/// keinen Entscheid tragen — NUR nach expliziter Bestaetigung durch den Menschen (Confirm-Dialog).
-/// Bewusster Ein-Klick-Akt, kein Governance-Bypass: bereits gesetzte Entscheide werden nie ueberschrieben.
+/// Optionale Sammel-Aktion („Accept-all"): setzt die angegebenen Feldwerte (<see cref="Set"/>) auf allen Items, die
+/// noch keinen Entscheid tragen — NUR nach expliziter Bestaetigung (Confirm-Dialog). Bewusster Ein-Klick-Akt, kein
+/// Governance-Bypass: bereits gesetzte Entscheide werden nie ueberschrieben.
+/// <para><see cref="ApplyItemQuickActions"/>=true: statt <see cref="Set"/> wird je offenem Item dessen EIGENE erste
+/// <see cref="ReviewQuickAction"/> angewendet (heterogene Vorschläge je Item; Items ohne QuickAction bleiben offen).</para>
 /// </summary>
 public sealed record ReviewBulkAction(
     string Label,
     IReadOnlyList<ReviewFieldValue> Set,
-    string Confirm);
+    string Confirm,
+    bool ApplyItemQuickActions = false);
 
 /// <summary>Domaenenspezifische Hilfe fuer die generische Review-UI.</summary>
 public sealed record ReviewHelp(
@@ -110,6 +118,13 @@ public sealed class ReviewItem
     /// <summary>Hervorgehobene, direkt sichtbare Notizen (System-Vorschlag, Grund, Warnung ...).</summary>
     public IReadOnlyList<ReviewNote> Notes { get; init; } = [];
     public IReadOnlyList<ContextBlock> ContextBlocks { get; init; } = [];
+    /// <summary>Optionale Ein-Klick-Aktionen (Buttons, die ein Feld setzen) — s. <see cref="ReviewQuickAction"/>.</summary>
+    public IReadOnlyList<ReviewQuickAction> QuickActions { get; init; } = [];
+    /// <summary>Optionale PER-ITEM-Optionen je Dropdown-Feld: überschreiben die session-weiten
+    /// <see cref="ReviewFieldSpec.Options"/> NUR für dieses Item (z. B. je Item-Typ nur die gültigen Aktionen).
+    /// Leer = Schema-Optionen gelten. Wiederverwendbar über alle Gates.</summary>
+    public IReadOnlyDictionary<string, IReadOnlyList<ReviewOption>> FieldOptions { get; init; }
+        = new Dictionary<string, IReadOnlyList<ReviewOption>>();
     public List<ReviewFieldValue> FieldValues { get; set; } = [];
     /// <summary>Wird nach jedem Save neu berechnet (domaenen-spezifisch, s. ReviewServerOptions.RecomputeResolved).</summary>
     public bool Resolved { get; set; }

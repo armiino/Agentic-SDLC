@@ -111,8 +111,13 @@
                border-radius:4px; padding:3px 8px; font-size:12px; cursor:pointer; }
   button.ctx:hover, button.small:hover { border-color:var(--accent); }
   .ctxout { display:none; background:#0c0e12; border:1px solid var(--edge); border-radius:6px;
-            padding:8px 10px; margin:6px 0; white-space:pre-wrap; color:var(--mut); font-size:13px; }
+            padding:8px 10px; margin:6px 0; color:var(--mut); font-size:13px; }
   .ctxout.show { display:block; }
+  .ctx-head { color:var(--mut); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin:9px 0 3px; }
+  .ctx-head:first-child { margin-top:0; }
+  .ctx-card { background:#0f1420; border:1px solid var(--edge); border-radius:6px; padding:6px 9px; margin:4px 0; color:var(--fg); }
+  .ctx-card.focus { border-color:var(--accent); background:#111a26; }
+  .ctx-card .ctx-meta { color:var(--accent); font-weight:600; margin-right:6px; }
   .fields { display:grid; grid-template-columns:130px 1fr; gap:8px 12px; align-items:center; margin-top:8px; }
   .fields label { color:var(--mut); font-size:12px; }
   .fields .req::after { content:" *"; color:var(--warn); }
@@ -306,16 +311,22 @@ function renderSessionNotes() {
 function setupBulk() {
   const b = session.bulkAction;
   const btn = document.getElementById('bulkBtn');
-  if (!b || !(b.set || []).length) { btn.style.display = 'none'; return; }
+  const perItem = !!(b && b.applyItemQuickActions);
+  if (!b || (!perItem && !(b.set || []).length)) { btn.style.display = 'none'; return; }
   btn.style.display = '';
   btn.textContent = b.label;
   btn.onclick = async () => {
-    const key = b.set[0].fieldKey;
-    const open = session.items.filter(i => !i.resolved && !val(i, key));
-    if (!open.length) { flash('Keine Items ohne Entscheidung übrig.'); return; }
+    // perItem: je offenem Item die EIGENE erste QuickAction (Vorschlag) — Items ohne Vorschlag bleiben offen.
+    // flach: den festen b.set auf alle offenen. Beide überschreiben nie bereits gesetzte Entscheide.
+    const open = perItem
+      ? session.items.filter(i => (i.quickActions || []).length && !val(i, i.quickActions[0].fieldKey))
+      : session.items.filter(i => !i.resolved && !val(i, b.set[0].fieldKey));
+    if (!open.length) { flash('Keine offenen Items mit Vorschlag übrig.'); return; }
     if (!confirm((b.confirm || 'Sammel-Aktion ausführen?').replace('{n}', open.length))) return;
-    for (const it of open)
-      for (const f of b.set) await save(it.itemId, f.fieldKey, f.value);
+    for (const it of open) {
+      if (perItem) { const qa = it.quickActions[0]; await save(it.itemId, qa.fieldKey, qa.value); }
+      else for (const f of b.set) await save(it.itemId, f.fieldKey, f.value);
+    }
     render();
     flash(`${open.length} Items gesetzt.`);
   };
@@ -344,6 +355,10 @@ function render() {
       </div>
       <div class="summary">${glossify(item.summary)}</div>
       ${item.notes && item.notes.length ? `<div class="notes">${item.notes.map(renderNote).join('')}</div>` : ''}
+      ${item.quickActions && item.quickActions.length ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px" onclick="event.stopPropagation()">${
+        item.quickActions.map(qa =>
+          `<button class="small" style="background:var(--accent);color:#08111f;border:0;font-weight:600" onclick="save('${esc(item.itemId)}','${esc(qa.fieldKey)}','${esc(qa.value)}')">${esc(qa.label)}</button>`
+        ).join('')}</div>` : ''}
       ${renderRepairControls(item)}
       ${item.contextBlocks && item.contextBlocks.length ? `<div class="ctxrow">${
         item.contextBlocks.map(cb =>
@@ -452,7 +467,10 @@ function renderField(item, spec) {
   const id = (spec.inputType || '').toLowerCase();
   const lbl = `<label class="${spec.required ? 'req' : ''}" title="${esc(spec.help)}">${esc(spec.label)}</label>`;
   if (id === 'dropdown') {
-    const choices = (spec.options && spec.options.length)
+    const perItem = item.fieldOptions && item.fieldOptions[spec.fieldKey];
+    const choices = (perItem && perItem.length)
+      ? perItem
+      : (spec.options && spec.options.length)
       ? spec.options
       : (spec.allowedValues || []).map(v => ({ value: v, label: v }));
     const opts = ['<option value="">— wählen —</option>']
@@ -568,7 +586,7 @@ async function loadReferenceContext(referenceId, blockKey, btn) {
   if (blockKey === 'transcript') { openTranscriptDrawer(text); return; }
   const out = btn.closest('.reference-detail').querySelector('.reference-context');
   if (out.classList.contains('show') && out.dataset.key === blockKey) { out.classList.remove('show'); return; }
-  out.textContent = text;
+  out.innerHTML = renderContextCards(text);
   out.classList.add('show');
   out.dataset.key = blockKey;
 }
@@ -649,6 +667,20 @@ function fieldControlsVisibility(fieldKey) {
   return session.fieldSchema.some(spec => spec.visibleWhen && spec.visibleWhen.fieldKey === fieldKey);
 }
 
+// Evidenz-/Referenz-Kontext als Karten statt Fließtext: Kopfzeilen (enden auf ":") als Label, Sprecher/Turn-Zeilen
+// mit Meta-Badge, „>>"-Zeilen hervorgehoben. Rein darstellend (Text-Contract der Resolver unverändert).
+function renderContextCards(text) {
+  return (text || '').split('\n').map(line => {
+    const focus = line.startsWith('>> ');
+    const t = (focus ? line.slice(3) : line).trim();
+    if (!t) return '';
+    if (t.endsWith(':')) return `<div class="ctx-head">${esc(t)}</div>`;
+    const m = t.match(/^(?:\S+\s*\|\s*)?(.+?\(Turn\s*\d+\)):\s*(.*)$/);
+    if (m) return `<div class="ctx-card ${focus ? 'focus' : ''}"><span class="ctx-meta">${esc(m[1])}</span>${esc(m[2])}</div>`;
+    return `<div class="ctx-card ${focus ? 'focus' : ''}">${esc(t)}</div>`;
+  }).join('');
+}
+
 async function loadContext(itemId, blockKey, btn) {
   selectItem(itemId, false);
   const text = await fetch(`/api/context/${encodeURIComponent(itemId)}/${encodeURIComponent(blockKey)}`).then(r => r.text());
@@ -656,7 +688,7 @@ async function loadContext(itemId, blockKey, btn) {
 
   const out = btn.closest('.item').querySelector('.ctxout');
   if (out.classList.contains('show') && out.dataset.key === blockKey) { out.classList.remove('show'); return; }
-  out.textContent = text;
+  out.innerHTML = renderContextCards(text);
   out.classList.add('show');
   out.dataset.key = blockKey;
 }

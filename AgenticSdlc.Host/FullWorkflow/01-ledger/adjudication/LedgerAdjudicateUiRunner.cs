@@ -75,7 +75,7 @@ public static class LedgerAdjudicateUiRunner
         Console.WriteLine($"[adjudicate-ui] Anreicherung: {validatedProps.Count} validierte Claims (Referenz-Katalog), "
                           + $"{claimProps.Count} Claims gesamt (ID-Auflösung), {units.Count} Units (Evidenz).");
 
-        var session = LedgerAdjudicationReviewAdapter.BuildSession(queue, referenceOptions);
+        var session = LedgerAdjudicationReviewAdapter.BuildSession(queue, referenceOptions, candidateToCanonicalClaimIds);
         // Anfangs-Resolved-Flags aus dem geladenen Stand (teil-befuellte queue.json -> Re-Launch).
         foreach (var ri in session.Items) ri.Resolved = LedgerAdjudicationReviewAdapter.Resolved(ri);
 
@@ -203,21 +203,22 @@ public static class LedgerAdjudicateUiRunner
                 var status = GetString(obj, "status") ?? "?";
                 var modality = GetString(obj, "modality") ?? "?";
                 var timeScope = GetString(obj, "timeScope") ?? "null";
-                var kind = GetString(obj, "kind") ?? "?";
-                var scope = GetString(obj, "scope") ?? "?";
                 var notes = new List<ReviewNote>();
                 notes.Add(new(ReviewNoteKind.Info, "Facetten",
-                    $"status={status}; modality={modality}; timeScope={timeScope}"));
-                notes.Add(new(ReviewNoteKind.Info, "Typ",
-                    $"kind={kind}; scope={scope}"));
+                    $"Verbindlichkeit: {LedgerAdjudicationReviewAdapter.FacetValueLabel("modality", modality)} · "
+                    + $"Entscheidungsstand: {LedgerAdjudicationReviewAdapter.FacetValueLabel("status", status)} · "
+                    + $"Zeitbezug: {LedgerAdjudicationReviewAdapter.FacetValueLabel("timescope", timeScope)}"));
                 if (wrapper.TryGetProperty("claimStatus", out var cs) && cs.ValueKind == JsonValueKind.String)
-                    notes.Add(new(ReviewNoteKind.Suggestion, "Claim-Status", cs.GetString()!));
+                    notes.Add(new(ReviewNoteKind.Suggestion, "Claim-Status",
+                        LedgerAdjudicationReviewAdapter.ClaimStatusLabel(cs.GetString())));
                 if (wrapper.TryGetProperty("validation", out var validation) && validation.ValueKind == JsonValueKind.Object)
                 {
                     var verdict = GetString(validation, "verdict");
                     var reason = GetString(validation, "reason");
                     if (!string.IsNullOrWhiteSpace(verdict) || !string.IsNullOrWhiteSpace(reason))
-                        notes.Add(new(ReviewNoteKind.Reason, "Validierung", $"verdict={verdict ?? "?"}; {reason ?? ""}".Trim()));
+                        notes.Add(new(ReviewNoteKind.Reason, "Validierung",
+                            $"{LedgerAdjudicationReviewAdapter.ValidationVerdictLabel(verdict)}"
+                            + (string.IsNullOrWhiteSpace(reason) ? "" : $" — {reason}")));
                 }
 
                 var evidence = ReadEvidence(obj);

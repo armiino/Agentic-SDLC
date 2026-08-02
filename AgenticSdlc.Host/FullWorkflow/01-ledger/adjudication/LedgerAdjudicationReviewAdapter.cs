@@ -22,34 +22,163 @@ public static class LedgerAdjudicationReviewAdapter
     /// <summary>Transkript-Herkunft eines Atomic-Unit (für die Evidenz-Auflösung von unit_signal-Items).</summary>
     public sealed record UnitRef(string Speaker, int TurnIndex, string Text);
 
-    private static IReadOnlyList<ReviewFieldSpec> Schema(IReadOnlyList<ReviewOption>? referenceOptions) =>
+    // E0.4: EINE Label-Quelle für Dropdown-Optionen UND den System-Vorschlag (kein Drift). Value = Enum (intern),
+    // Label = kurzer Klartext; die hart/weich-Einordnung (die einzige, die C3 unterscheidet) steht in der Feld-Hilfe.
+    private static readonly ReviewOption[] StatusOptions =
     [
-        new(FieldAction, "Aktion", ReviewInputType.Dropdown, AdjudicationActions.All, Required: true,
-            Help: "unit_signal: promote_to_claim (eigener Claim) | attach_evidence (an Ziel-Claim hängen) | mark_covered_by | reject | defer · "
-                  + "review_required: apply_repair | accept_gap | merge_existing | reject | defer"),
-        new(FieldRepairStatus, "Repair: Status", ReviewInputType.Dropdown,
-            ["decided", "open", "rejected", "uncertain", "required"], Required: false,
-            Help: "nur bei apply_repair: gewählten Status in den finalen Claim übernehmen"),
-        new(FieldRepairModality, "Repair: Modalität", ReviewInputType.Dropdown,
-            ["must", "must_clarify", "must_consider", "must_note", "must_not", "desired", "optional"], Required: false,
-            Help: "nur bei apply_repair: gewählte Modalität in den finalen Claim übernehmen"),
-        new(FieldRepairTimeScope, "Repair: Zeitbezug", ReviewInputType.Dropdown,
-            ["mvp", "later_possible", "mvp_or_later_unclear"], Required: false,
-            Help: "nur bei apply_repair: gewählten Zeitbezug in den finalen Claim übernehmen"),
-        new(FieldRepairScope, "Repair: Geltungsbereich", ReviewInputType.FreeText, [], Required: false,
-            Help: "nur bei apply_repair: optionalen Scope-Repair übernehmen"),
-        new(FieldReason, "Begründung", ReviewInputType.FreeText, [], Required: false,
-            Help: "kurze Begründung der Entscheidung (optional)"),
-        new(FieldTarget, "Referenz-Ziel", ReviewInputType.FreeText, [], Required: false,
-            Help: "bei attach_evidence / merge_existing / mark_covered_by: Claim-ID tippen oder aus der Liste wählen (bei unit_signal mit Systemvorschlag vorbelegt)",
-            Options: referenceOptions),
+        new("decided", "entschieden"),
+        new("open", "offen"),
+        new("rejected", "verworfen"),
+        new("uncertain", "unklar / widersprüchlich"),
+        new("required", "extern vorgeschrieben"),
     ];
+    private static readonly ReviewOption[] ModalityOptions =
+    [
+        new("must", "MUSS"),
+        new("must_not", "DARF NICHT"),
+        new("must_clarify", "muss erst GEKLÄRT werden"),
+        new("must_consider", "muss ABGEWOGEN werden"),
+        new("must_note", "muss FESTGEHALTEN werden"),
+        new("desired", "gewünscht"),
+        new("optional", "optional"),
+    ];
+    private static readonly ReviewOption[] TimeScopeOptions =
+    [
+        new("mvp", "MVP"),
+        new("later_possible", "später möglich / geplant"),
+        new("mvp_or_later_unclear", "unklar"),
+    ];
+
+    // Gültige Aktionen je Item-Typ (E0.4-Filter): RR = review_required_claim, US = unit_signal/coverage_miss. WIRKUNG oben,
+    // AUDIT unten. mark_covered_by ist mit merge_existing zusammengeführt (am consumable identisch) — nicht mehr angeboten.
+    private static readonly ReviewOption[] RrActionOptions =
+    [
+        new(AdjudicationActions.AcceptGap, "Unverändert übernehmen"),
+        new(AdjudicationActions.ApplyRepair, "Korrektur übernehmen"),
+        new(AdjudicationActions.MergeExisting, "Gehört zu / abgedeckt durch bestehenden (Audit)"),
+        new(AdjudicationActions.Reject, "Verwerfen (Audit)"),
+        new(AdjudicationActions.Defer, "Offen lassen (Audit)"),
+    ];
+    private static readonly ReviewOption[] UsActionOptions =
+    [
+        new(AdjudicationActions.PromoteToClaim, "Als neuen Claim übernehmen"),
+        new(AdjudicationActions.AttachEvidence, "Als Beleg an bestehenden Claim anhängen"),
+        new(AdjudicationActions.MergeExisting, "Gehört zu / abgedeckt durch bestehenden (Audit)"),
+        new(AdjudicationActions.Reject, "Verwerfen (Audit)"),
+        new(AdjudicationActions.Defer, "Offen lassen (Audit)"),
+    ];
+
+    private static bool IsReviewRequired(AdjudicationItem a) =>
+        string.Equals(a.ItemType, "review_required_claim", StringComparison.OrdinalIgnoreCase);
+
+    // US-Vorschlag (compare_classification): das Verdikt des Vergleichs-LLM in Klartext statt des rohen Enum-Werts.
+    private static readonly IReadOnlyDictionary<string, string> VerdictLabels = new Dictionary<string, string>(StringComparer.Ordinal)
+    {
+        ["missing_claim"] = "Fehlt als eigener Claim",
+        ["attach_as_evidence"] = "Zusatz-Beleg für einen bestehenden Claim",
+        ["already_covered_indirectly"] = "Schon durch einen bestehenden Claim abgedeckt",
+        ["needs_human"] = "Unklar — bitte selbst entscheiden",
+    };
+
+    // Verdikte, für die es ein sinnvolles Ziel (relatedCandidate) gibt → Referenz-Ziel vorbelegen.
+    private static bool VerdictWantsTarget(string? verdict) =>
+        string.Equals(verdict, "attach_as_evidence", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(verdict, "already_covered_indirectly", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Klartext-Titel einer Facette (auch für die rechte Claim-Detail-Ansicht wiederverwendet).</summary>
+    public static string FacetTitle(string? facet) => NormalizeFacet(facet) switch
+    {
+        "modality" => "Verbindlichkeit",
+        "timescope" => "Zeitbezug",
+        "status" => "Entscheidungsstand",
+        "scope" => "Geltungsbereich",
+        _ => facet ?? "?",
+    };
+
+    /// <summary>Klartext-Label eines Facetten-Werts — dieselbe Quelle wie die Dropdowns (auch rechte Detail-Ansicht).</summary>
+    public static string FacetValueLabel(string? facet, string? value)
+    {
+        if (string.IsNullOrEmpty(value)) return "?";
+        var opts = NormalizeFacet(facet) switch
+        {
+            "modality" => ModalityOptions,
+            "timescope" => TimeScopeOptions,
+            "status" => StatusOptions,
+            _ => null,
+        };
+        return opts?.FirstOrDefault(o => string.Equals(o.Value, value, StringComparison.OrdinalIgnoreCase))?.Label ?? value;
+    }
+
+    /// <summary>Validierungs-Verdikt eines Claims in Klartext (rechte Detail-Ansicht).</summary>
+    public static string ValidationVerdictLabel(string? verdict) => verdict?.Trim().ToLowerInvariant() switch
+    {
+        "grounded" => "belegt",
+        "partial" => "teilweise belegt",
+        "overstated" => "überzogen formuliert",
+        "unsupported" => "nicht belegt",
+        _ => verdict ?? "?",
+    };
+
+    /// <summary>Claim-Status (Validierungs-Ergebnis) in Klartext (rechte Detail-Ansicht).</summary>
+    public static string ClaimStatusLabel(string? status) => status?.Trim().ToLowerInvariant() switch
+    {
+        "approved" => "freigegeben",
+        "review_required" => "zur Prüfung markiert (Validierung unsicher)",
+        _ => status ?? "?",
+    };
+
+    private static IReadOnlyList<ReviewFieldSpec> Schema(IReadOnlyList<ReviewOption>? referenceOptions)
+    {
+        // E0.4: Repair-Felder nur bei apply_repair zeigen, Referenz-Ziel nur bei Verknüpfen — der Rest ist Ballast je Zeile.
+        var onlyRepair = new ReviewFieldVisibility(FieldAction, [AdjudicationActions.ApplyRepair]);
+        var onlyReference = new ReviewFieldVisibility(FieldAction,
+            [AdjudicationActions.AttachEvidence, AdjudicationActions.MergeExisting, AdjudicationActions.MarkCoveredBy]);
+        return
+        [
+            // Aktion: Labels + Reihenfolge kommen PER ITEM (RR- vs US-Set, s. ReviewItem.FieldOptions in BuildItem) — je Item
+            // nur die GÜLTIGEN Aktionen. AllowedValues bleibt die volle Menge (Validierung). WIRKUNG oben / AUDIT unten.
+            new(FieldAction, "Aktion", ReviewInputType.Dropdown, AdjudicationActions.All, Required: true,
+                Help: "Was mit dem Item passiert. OBEN ändert die Evidenzschicht (consumable): Übernehmen · Korrektur · neuer Claim · "
+                      + "Beleg anhängen. UNTEN = nur Audit, KEIN consumable-Effekt (Vermerk, warum das Item KEIN neuer Claim wird). "
+                      + "Offen-lassen bleibt pending und wird NICHT automatisch aufgelöst."),
+
+            // Repair-Facetten — Klartext-Labels (Wert bleibt intern das Enum), hart↔weich sichtbar; die harte/weiche Grenze
+            // ist das einzige, was der Contract-Checker C3 unterscheidet, die Fein-Werte sind LLM-Kontext + Audit.
+            new(FieldRepairStatus, "Entscheidungsstand (Status)", ReviewInputType.Dropdown,
+                ["decided", "open", "rejected", "uncertain", "required"], Required: false,
+                Help: "Wie steht es um den Claim? Der Wert extern-vorgeschrieben verlangt Modalität MUSS oder DARF NICHT (sonst Gate-Fehler).",
+                Options: StatusOptions,
+                VisibleWhen: onlyRepair),
+            new(FieldRepairModality, "Verbindlichkeit (Modalität)", ReviewInputType.Dropdown,
+                ["must", "must_clarify", "must_consider", "must_note", "must_not", "desired", "optional"], Required: false,
+                Help: "Wie verbindlich ist der Claim? Formt die Wortwahl der Folge-Artefakte; hart (MUSS/DARF NICHT) vs. weich wird geprüft — weiche Facette + harte Artefakt-Sprache löst eine Warnung aus.",
+                Options: ModalityOptions,
+                VisibleWhen: onlyRepair),
+            new(FieldRepairTimeScope, "Zeitbezug (MVP?)", ReviewInputType.Dropdown,
+                ["mvp", "later_possible", "mvp_or_later_unclear"], Required: false,
+                Help: "Gehört der Claim in den MVP oder später? Weiche Werte (später/unklar) verbieten dem Artefakt MVP-Behauptungen (sonst Warnung); kein automatischer Backlog-Schnitt.",
+                Options: TimeScopeOptions,
+                VisibleWhen: onlyRepair),
+            new(FieldRepairScope, "Geltungsbereich", ReviewInputType.FreeText, [], Required: false,
+                Help: "FÜR WEN/WO gilt der Claim (z. B. Pflegekräfte, gesamte Einrichtung). Leer lassen = Geltungsbereich unverändert.",
+                VisibleWhen: onlyRepair),
+
+            new(FieldReason, "Begründung (nur Audit)", ReviewInputType.FreeText, [], Required: false,
+                Help: "Nur Audit/Nachvollziehbarkeit — landet im adjudicated-ledger.json, hat KEINEN automatischen Konsumenten "
+                      + "(kein consumable-/Downstream-Effekt). Optional."),
+            new(FieldTarget, "Referenz-Ziel", ReviewInputType.FreeText, [], Required: false,
+                Help: "bei Verknüpfen (anhängen / gehört-zu / abgedeckt): Claim-ID tippen oder aus der Liste wählen (bei unit_signal mit Systemvorschlag vorbelegt)",
+                Options: referenceOptions,
+                VisibleWhen: onlyReference),
+        ];
+    }
 
     /// <param name="referenceOptions">Katalog vorhandener Claims (Value=id, Label="id — proposition") für das
     /// Referenz-Ziel-Autocomplete. null = einfaches Freitextfeld (wenn kein validated Ledger geladen).</param>
-    public static ReviewSession BuildSession(AdjudicationQueue queue, IReadOnlyList<ReviewOption>? referenceOptions = null)
+    public static ReviewSession BuildSession(AdjudicationQueue queue, IReadOnlyList<ReviewOption>? referenceOptions = null,
+        IReadOnlyDictionary<string, string>? candidateToCanonical = null)
     {
-        var items = queue.Items.Select(BuildItem).ToList();
+        var items = queue.Items.Select(a => BuildItem(a, candidateToCanonical)).ToList();
         var sub = $"validated={queue.SourceValidatedRunId ?? "?"}"
                   + (queue.SourceUnitRunId is { } u ? $" · units={u}" : "")
                   + $" · {items.Count} Items";
@@ -59,6 +188,13 @@ public static class LedgerAdjudicationReviewAdapter
             Title = "Ledger-Adjudikation",
             Subtitle = sub,
             Help = BuildHelp(),
+            // Sammel-Aktion: je offenem Item den EIGENEN System-Vorschlag übernehmen (RR: Korrektur · US: Verdikt-Aktion);
+            // Items ohne Vorschlag (needs_human) bleiben offen; bereits Entschiedenes wird nicht überschrieben.
+            BulkAction = new ReviewBulkAction(
+                "✓ Alle Vorschläge übernehmen",
+                [],
+                "Für {n} offene Items den jeweiligen System-Vorschlag übernehmen? (needs_human bleibt offen; bereits Entschiedenes bleibt unberührt.)",
+                ApplyItemQuickActions: true),
             FieldSchema = Schema(referenceOptions),
             Items = items,
         };
@@ -77,17 +213,18 @@ public static class LedgerAdjudicationReviewAdapter
                 + "(partial/overstated/unsupported) — der Validator-Befund steht im System-Vorschlag.\n"
                 + "unit_signal (US::…): eine Transkript-Aussage, die der Ledger NICHT abdeckt (missing_claim) oder die das "
                 + "System nicht sicher zuordnen konnte (needs_human) bzw. als Zusatz-Evidenz vorschlägt (attach)."),
-            new ReviewHelpSection("Aktion — was beim Apply WIRKLICH passiert",
-                "accept_gap: Claim wird AS-IS in den consumable übernommen (bei unit_signal: neuer Claim aus der Aussage, "
-                + "Facetten noch offen → facetStatus=pending, danach ledger-adjudicate-refine).\n"
-                + "apply_repair (nur RR): Claim wird MIT deinen Repair-Feldern (unten) korrigiert übernommen.\n"
-                + "promote_to_claim (nur unit_signal): die Aussage wird ein EIGENER neuer Claim (facetStatus=pending → refine).\n"
-                + "attach_evidence (nur unit_signal, braucht Referenz-Ziel): das Transkript-Zitat wird als zusätzliche Evidenz "
-                + "an den Ziel-Claim gehängt — KEIN neuer Claim.\n"
-                + "merge_existing / mark_covered_by (brauchen Referenz-Ziel): NUR Audit-Eintrag 'gehört zu X' / 'ist durch X "
-                + "abgedeckt' — der consumable ändert sich NICHT.\n"
-                + "reject: Claim/Aussage kommt NICHT in den consumable — endgültig raus aus dem Produktpfad (Audit bleibt).\n"
-                + "defer: keine Entscheidung — zählt als pending und blockiert den sauberen Abschluss (Ziel: pending=0)."),
+            new ReviewHelpSection("Aktion — was WIRKT vs. was nur Audit ist",
+                "OBEN (ändert die Evidenzschicht / consumable):\n"
+                + "• Übernehmen (unverändert) — Claim/Aussage kommt as-is rein (bei US: neuer Claim, Facetten danach via refine).\n"
+                + "• Korrektur übernehmen (nur RR) — Claim kommt MIT deiner Facetten-Korrektur (Felder unten) rein.\n"
+                + "• Als neuen Claim übernehmen (nur US) — die Aussage wird ein eigener neuer Claim.\n"
+                + "• Als Beleg an bestehenden Claim anhängen (nur US, braucht Referenz-Ziel) — das Zitat stärkt einen bestehenden Claim (KEIN neuer).\n"
+                + "UNTEN (nur Audit — KEIN consumable-Effekt, nur Vermerk im adjudicated-ledger.json):\n"
+                + "• Gehört zu / abgedeckt durch bestehenden (braucht Referenz-Ziel) — redundant mit einem bestehenden Claim.\n"
+                + "• Verwerfen — Claim/Aussage kommt nicht in den consumable.\n"
+                + "• Offen lassen — keine Entscheidung; bleibt pending (der Lauf geht trotzdem durch), wird NICHT automatisch aufgelöst.\n"
+                + "Je Item werden nur die für seinen Typ (RR/US) gültigen Aktionen angeboten. Der Button ✓ Korrektur/Vorschlag "
+                + "übernehmen setzt die vom System vorgeschlagene Aktion mit einem Klick (Repair-Felder bzw. Referenz-Ziel sind vorbelegt)."),
             new ReviewHelpSection("Repair: Status (nur bei apply_repair) — Entscheidungsstand des Claims",
                 "decided: im Gespräch entschieden · open: bewusst offen · rejected: im Gespräch verworfen · "
                 + "uncertain: unklar/widersprüchlich · required: EXTERN verpflichtend (Gesetz/Auflage).\n"
@@ -110,7 +247,7 @@ public static class LedgerAdjudicationReviewAdapter
                 "Freitext: FÜR WEN/WO gilt der Claim (z. B. 'Pflegekräfte', 'gesamte Einrichtung'). "
                 + "Leer lassen = Geltungsbereich des Claims bleibt unverändert."),
             new ReviewHelpSection("Referenz-Ziel",
-                "Pflicht bei attach_evidence, merge_existing, mark_covered_by: die ID des existierenden Ziel-Claims "
+                "Pflicht bei Beleg-anhängen / Gehört-zu-abgedeckt: die ID des existierenden Ziel-Claims "
                 + "(Autocomplete: 'id — Proposition'). Ohne gültiges Ziel gilt die Zeile als nicht entschieden."),
             new ReviewHelpSection("Vorbelegung & System-Vorschlag",
                 "Repair-Felder sind mit dem Validator-Vorschlag vorbelegt (observed → suggested) — du kannst jeden Wert "
@@ -124,7 +261,7 @@ public static class LedgerAdjudicationReviewAdapter
                 + "Vorschläge sind IMMER Modell-Urteile — die Mechanik (Gates/Traces) garantiert nur, dass nichts "
                 + "unbilanziert verloren geht."),
             new ReviewHelpSection("Was die Adjudikation NICHT ändert (Grenzen)",
-                "merge_existing / mark_covered_by sind reine Audit-Einträge — sie verändern den consumable NICHT.\n"
+                "Gehört-zu / abgedeckt durch bestehenden ist ein reiner Audit-Eintrag — verändert den consumable NICHT.\n"
                 + "Die Adjudikation bestimmt, WAS Fakt ist — nicht die spätere FORMULIERUNG: das Paraphrasieren "
                 + "übernehmen die Folgestufen; deren Treue prüfen eigene Gates (Fidelity/Checker).\n"
                 + "Drei Wege laufen bewusst an dir vorbei (sonst müsstest du alle Units einzeln reviewen): "
@@ -138,14 +275,14 @@ public static class LedgerAdjudicationReviewAdapter
                 + "der Input für 02-baselines (recipe)."),
         ]);
 
-    private static ReviewItem BuildItem(AdjudicationItem a)
+    private static ReviewItem BuildItem(AdjudicationItem a, IReadOnlyDictionary<string, string>? candidateToCanonical)
     {
         // System-Vorschlag + Grund als hervorgehobene Notes (nicht mehr als Fließtext in der Summary).
         var notes = new List<ReviewNote>();
         var suggestions = EffectiveSuggestions(a).ToList();
+        var hasFacetRepairs = suggestions.Any(s => string.Equals(s.Kind, "facet_repair", StringComparison.OrdinalIgnoreCase));
         if (suggestions.Count > 0)
         {
-            var hasFacetRepairs = suggestions.Any(s => string.Equals(s.Kind, "facet_repair", StringComparison.OrdinalIgnoreCase));
             var text = string.Join("\n", suggestions.Select(FormatSuggestion));
             var label = hasFacetRepairs && suggestions.Count > 1
                 ? $"System-Vorschlag · facet_repair ({suggestions.Count})"
@@ -173,14 +310,22 @@ public static class LedgerAdjudicationReviewAdapter
             Summary = a.Proposition,
             Notes = notes,
             ContextBlocks = ctx,
+            // E0.4: nur die für DIESEN Item-Typ gültigen Aktionen anbieten (RR vs US) — verhindert typ-fremde Picks.
+            FieldOptions = new Dictionary<string, IReadOnlyList<ReviewOption>>(StringComparer.Ordinal)
+            {
+                [FieldAction] = IsReviewRequired(a) ? RrActionOptions : UsActionOptions,
+            },
+            // E0.4: Ein-Klick „Vorschlag übernehmen" — RR: Facetten-Korrektur (apply_repair) · US: die zum Verdikt passende
+            // Aktion. Repair-Felder bzw. Referenz-Ziel sind vorbelegt; VisibleWhen klappt sie nach dem Klick auf.
+            QuickActions = BuildQuickActions(a, hasFacetRepairs),
             FieldValues =
             [
                 new(FieldAction, a.Action),
                 ..RepairFieldValues(a),
                 new(FieldReason, a.ActionReason),
-                // KEIN Pre-Fill aus claimId: unit_signal-claimIds sind Candidate-IDs (nach Canonicalization nicht
-                // im validated Ledger). Der Autor wählt das kanonische Ziel über das A5-Autocomplete (referenceTarget).
-                new(FieldTarget, a.ReferenceTarget),
+                // E0.4: Referenz-Ziel bei attach/covered-Verdikten VORBELEGEN — der vorgeschlagene Candidate wird auf den
+                // kanonischen Claim gemappt (Candidate-IDs stehen nach Canonicalization nicht 1:1 im validated Ledger).
+                new(FieldTarget, SuggestedTarget(a, candidateToCanonical)),
             ],
             Resolved = false, // wird gleich neu berechnet
         };
@@ -217,11 +362,44 @@ public static class LedgerAdjudicationReviewAdapter
         return item.SystemSuggestion is null ? [] : [item.SystemSuggestion];
     }
 
+    /// <summary>Vorbelegtes Referenz-Ziel: bereits gewählt → das; sonst bei attach/covered-Verdikt der vorgeschlagene
+    /// Candidate (relatedCandidateIds[0] = a.ClaimId), auf den kanonischen Claim gemappt (matcht den Referenz-Katalog).</summary>
+    private static string? SuggestedTarget(AdjudicationItem a, IReadOnlyDictionary<string, string>? candidateToCanonical)
+    {
+        if (!string.IsNullOrWhiteSpace(a.ReferenceTarget)) return a.ReferenceTarget;   // Mensch hat schon gewählt
+        if (!VerdictWantsTarget(Verdict(a)) || a.ClaimId is not { } cand) return null;
+        return candidateToCanonical is not null && candidateToCanonical.TryGetValue(cand, out var canonical) ? canonical : cand;
+    }
+
+    /// <summary>Das compare_classification-Verdikt eines US-Items (missing_claim/attach_as_evidence/…), sonst null.</summary>
+    private static string? Verdict(AdjudicationItem a) => EffectiveSuggestions(a)
+        .FirstOrDefault(s => string.Equals(s.Kind, "compare_classification", StringComparison.OrdinalIgnoreCase))?.Classification;
+
+    /// <summary>Die zum US-Verdikt passende Aktion für den „Vorschlag übernehmen"-Button (needs_human = keine).</summary>
+    private static string? VerdictAction(string? verdict) => verdict?.Trim().ToLowerInvariant() switch
+    {
+        "missing_claim" => AdjudicationActions.PromoteToClaim,
+        "attach_as_evidence" => AdjudicationActions.AttachEvidence,
+        "already_covered_indirectly" => AdjudicationActions.MergeExisting,
+        _ => null,
+    };
+
+    /// <summary>Ein-Klick-Buttons: RR → „Korrektur übernehmen" (apply_repair); US → „Vorschlag übernehmen" (Verdikt-Aktion).</summary>
+    private static IReadOnlyList<ReviewQuickAction> BuildQuickActions(AdjudicationItem a, bool hasFacetRepairs)
+    {
+        if (hasFacetRepairs)
+            return [new ReviewQuickAction("✓ Korrektur übernehmen", FieldAction, AdjudicationActions.ApplyRepair)];
+        return VerdictAction(Verdict(a)) is { } action
+            ? [new ReviewQuickAction("✓ Vorschlag übernehmen", FieldAction, action)]
+            : [];
+    }
+
     private static string FormatSuggestion(AdjudicationSuggestion s)
     {
+        // E0.4: Klartext statt roher Enum-Werte — dieselben Labels wie die Dropdowns (z. B. „Verbindlichkeit: MUSS … → muss ABGEWOGEN …").
         if (s.Facet is not null)
-            return $"{s.Facet}: {s.Observed ?? "?"} -> {s.Suggested ?? "?"}";
-        return s.Classification ?? "(ohne Detail)";
+            return $"{FacetTitle(s.Facet)}: {FacetValueLabel(s.Facet, s.Observed)} → {FacetValueLabel(s.Facet, s.Suggested)}";
+        return s.Classification is { } v ? VerdictLabels.GetValueOrDefault(v, v) : "(ohne Detail)";
     }
 
     private static ReviewFieldValue[] RepairFieldValues(AdjudicationItem item)
