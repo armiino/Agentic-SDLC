@@ -15,6 +15,11 @@ public sealed class GithubReverseReviewAdapterTests
         => new(SchemaVersion: 1, PlanId: "p1", CreatedUtc: DateTime.UnixEpoch, Snapshot: null, Operations: ops);
 
     private static string FieldOf(ReviewItem it, string key) => it.FieldValues.First(f => f.FieldKey == key).Value ?? "";
+    private static void Set(ReviewItem it, string key, string value)
+    {
+        it.FieldValues.RemoveAll(f => f.FieldKey == key);
+        it.FieldValues.Add(new ReviewFieldValue(key, value));
+    }
 
     [Fact]
     public void BuildSession_erzeugt_Items_je_Op()
@@ -85,5 +90,17 @@ public sealed class GithubReverseReviewAdapterTests
         var session = GithubReverseReviewAdapter.BuildSession("r1", Plan(Op()));
         Assert.NotNull(session.BulkAction);
         Assert.Contains(session.BulkAction!.Set, s => s.FieldKey == GithubReverseReviewAdapter.FieldDecision && s.Value == "apply");
+    }
+
+    // E0.9-P2a: Ablehnen ohne Begründung gilt nicht als erledigt (Audit-Symmetrie).
+    [Fact]
+    public void Skip_ohne_Begruendung_ist_nicht_resolved()
+    {
+        var session = GithubReverseReviewAdapter.BuildSession("r1", Plan(Op()));
+        var it = session.Items[0];
+        Set(it, GithubReverseReviewAdapter.FieldDecision, "skip");
+        Assert.False(GithubReverseReviewAdapter.Resolved(it));
+        Set(it, GithubReverseReviewAdapter.FieldReason, "Vorschlag passt fachlich nicht");
+        Assert.True(GithubReverseReviewAdapter.Resolved(it));
     }
 }

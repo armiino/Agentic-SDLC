@@ -21,7 +21,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 /// </summary>
 /// <remarks>
 /// Stand U2 (ein-graph-vereinheitlichung): <c>run</c> assembliert die GANZE Kette (Front → Branch →
-/// Bootstrap | Betrieb → Snapshot → Forward, 7 Gates) in <see cref="PipelineFullWorkflow.Assemble"/> und
+/// Bootstrap | Betrieb → Snapshot → Forward, 6 Human-Gates) in <see cref="PipelineFullWorkflow.Assemble"/> und
 /// startet EINEN Stream — keine Phasen-Sequenzierung mehr im Runner. <c>run --dry-run</c> = LLM-freie
 /// Build()-Validierung des Gesamtgraphen. <c>start</c> = Skeleton (Faden-Ordner + Plan-Events, kein LLM);
 /// <c>resume</c> ist noch No-op (H1). Gate-Antworten kommen aus dem zentralen Responder
@@ -132,7 +132,7 @@ public static class PipelineFullRunner
         // U1/U2: LLM-freie Validierung des GANZEN Assemble (Build() lief soeben — Kanten/Typen geprüft).
         if (args.Contains("--dry-run"))
         {
-            Console.WriteLine($"[{Cmd}] --dry-run: Ein-Graph Build()-bar (Front -> Branch -> Bootstrap | Betrieb -> Snapshot -> Forward; 7 Gates). Kein LLM.");
+            Console.WriteLine($"[{Cmd}] --dry-run: Ein-Graph Build()-bar (Front -> Branch -> Bootstrap | Betrieb -> Snapshot -> Forward; 6 Human-Gates). Kein LLM.");
             return 0;
         }
 

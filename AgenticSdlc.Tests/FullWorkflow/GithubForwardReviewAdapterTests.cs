@@ -35,6 +35,30 @@ public sealed class GithubForwardReviewAdapterTests
         Assert.All(session.Items, i => Assert.False(i.Resolved));
     }
 
+    // E0.2-Retrofit: Badge/Optionen/Wirkung sind Klartext, keine rohen Op-Enums mehr sichtbar.
+    [Fact]
+    public void Klartext_Badge_Optionen_und_Wirkung_je_OpArt()
+    {
+        var session = GithubForwardReviewAdapter.BuildSession("r1", Plan(Op("CREATE_ISSUE", "PBI-1"), Op("LINK", "PBI-2")));
+        var create = session.Items[0];
+        var link = session.Items[1];
+
+        // Badge Klartext (nicht CREATE_ISSUE · agent)
+        Assert.StartsWith("Neues Issue", create.Badge!);
+        Assert.Contains("vom Agenten", create.Badge!);
+        Assert.DoesNotContain("CREATE_ISSUE", create.Badge!);
+
+        // Per-Item-Optionen je Op-Art, Value bleibt apply/skip
+        var opt = create.FieldOptions[GithubForwardReviewAdapter.FieldDecision];
+        Assert.Equal(["apply", "skip"], opt.Select(o => o.Value));
+        Assert.Contains("anlegen", opt[0].Label);
+        Assert.NotEqual(opt[0].Label, link.FieldOptions[GithubForwardReviewAdapter.FieldDecision][0].Label);
+
+        // Wirkung graded: CREATE = extern, LINK = nur Core
+        Assert.Contains(create.Notes, n => n.Label == "Wirkung" && n.Text.Contains("EXTERN"));
+        Assert.Contains(link.Notes, n => n.Label == "Wirkung" && n.Text.Contains("im Core"));
+    }
+
     [Fact]
     public void Resolved_apply_ohne_Begruendung_skip_nur_mit()
     {

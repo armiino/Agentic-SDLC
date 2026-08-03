@@ -157,9 +157,24 @@ public sealed class PbiUpdateReviewAdapterTests
         var diff = Assert.Single(notes, n => n.Label.Contains("Vorher/Nachher"));
         Assert.Contains("− Archivierung nach sieben Tagen", diff.Text);
         Assert.Contains("+ Archivierung nach vierzehn Tagen", diff.Text);
-        Assert.Contains(notes, n => n.Label == "Danach: needs_clarify" && n.Kind == ReviewNoteKind.Warning && n.Text.Contains("R-26-C"));
+        Assert.Contains(notes, n => n.Label == "Danach: geändert · ungeklärt" && n.Kind == ReviewNoteKind.Warning && n.Text.Contains("ungeklaert"));
         // MARK_CHANGED ist deterministisch -> die Leersatz-Rationale wird NICHT als Platzierungs-Begruendung gezeigt.
         Assert.DoesNotContain(notes, n => n.Label.StartsWith("Warum diese Zuordnung"));
+    }
+
+    // E0.3-Retrofit: Badge + Wirkung sind Klartext (kein rohes Op-Enum), Glossar ist gruppiert.
+    [Fact]
+    public void Klartext_Badge_Wirkung_und_gruppiertes_Glossar()
+    {
+        var core = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [],
+            [Req("REQ-1", "X"), PbiItem("PBI-1", "Titel")], [], [], []);
+        var session = PbiUpdateReviewAdapter.BuildSession("r1", Plan(Op("MARK_CHANGED")), core);
+        var it = session.Items[0];
+
+        Assert.Equal("Als geändert markieren", it.Badge);           // nicht "MARK_CHANGED"
+        Assert.Contains(it.Notes, n => n.Label == "Wirkung" && n.Text.Contains("geändert · ungeklärt"));
+        Assert.Equal(["apply", "skip"], it.FieldOptions[PbiUpdateReviewAdapter.FieldDecision].Select(o => o.Value));
+        Assert.All(session.Glossary, g => Assert.False(string.IsNullOrEmpty(g.Group)));   // alle Begriffe kategorisiert
     }
 
     // E0.3: bei EXTEND/NEW (agentische Platzierung) wird die Rationale als handlungsleitende Begruendung gezeigt.

@@ -63,4 +63,69 @@ public sealed class ReClarifyClusterReviewAdapterTests
             new ClusterHumanDecisionsFile("r1", "x", [new ClusterHumanDecision("op-1", "", null)]));
         Assert.False(session.Items[0].Resolved);
     }
+
+    // E0.6: Default ist LEER (aktive Absegnung), nicht mehr vorbelegtes apply.
+    [Fact]
+    public void Default_Entscheidung_ist_leer()
+    {
+        var session = ReClarifyClusterReviewAdapter.BuildSession("r1", Baseline(), Clusters(), Gate(), Review(Op()), "all");
+        Assert.Equal("", FieldOf(session.Items[0], ReClarifyClusterReviewAdapter.FieldDecision));
+        Assert.False(session.Items[0].Resolved);
+    }
+
+    // E0.6: Klartext-Optionen je Op-Art (interner Value bleibt apply/skip).
+    [Fact]
+    public void Entscheidungs_Optionen_sind_je_OpArt_in_Klartext()
+    {
+        var session = ReClarifyClusterReviewAdapter.BuildSession("r1", Baseline(), Clusters(), Gate(),
+            Review(Op("op-1", "move_core"), Op("op-2", "merge_clusters")), "all");
+        var move = session.Items[0].FieldOptions[ReClarifyClusterReviewAdapter.FieldDecision];
+        var merge = session.Items[1].FieldOptions[ReClarifyClusterReviewAdapter.FieldDecision];
+        Assert.Equal(["apply", "skip"], move.Select(o => o.Value));
+        Assert.Contains("Verschiebung", move[0].Label);
+        Assert.NotEqual(move[0].Label, merge[0].Label);
+    }
+
+    // E0.6: die deklarierte Experiment-Bulk-Linie ist vorhanden und setzt apply.
+    [Fact]
+    public void Experiment_Bulk_Linie_ist_gesetzt()
+    {
+        var session = ReClarifyClusterReviewAdapter.BuildSession("r1", Baseline(), Clusters(), Gate(), Review(Op()), "all");
+        Assert.NotNull(session.BulkAction);
+        Assert.Contains(session.BulkAction!.Set, s => s.FieldKey == ReClarifyClusterReviewAdapter.FieldDecision && s.Value == "apply");
+    }
+
+    // E0.6: der Kontext ist ein lesbarer Vorher→Nachher-Diff (kein rohes JSON).
+    [Fact]
+    public void ResolveContext_zeigt_Vorher_Nachher_Diff()
+    {
+        var clusters = new FeatureClusterSet(1, "cs", "p1", "b1", T, "baseline.json",
+        [
+            new FeatureCluster("CL-1", "k1", "Profil", ["CAN-REQ-1"], [], null),
+            new FeatureCluster("CL-2", "k2", "Medikamente", ["CAN-REQ-2"], [], null)
+        ]);
+        var move = new ClusterOperation("op-1", "move_core", "gehört zu Medikamente")
+            { RequirementId = "CAN-REQ-1", FromClusterId = "CL-1", ToClusterId = "CL-2" };
+        var review = Review(move);
+
+        var text = ReClarifyClusterReviewAdapter.ResolveContext("op:op-1", Baseline(), clusters, Gate(), review);
+
+        Assert.Contains("Vorher:", text);
+        Assert.Contains("Nachher:", text);
+        Assert.Contains("CAN-REQ-1", text);
+        Assert.Contains("Medikamente", text);
+        Assert.DoesNotContain("{", text); // kein rohes JSON mehr
+    }
+
+    // E0.9-P2a: Ablehnen ohne Begründung gilt nicht als erledigt (Audit-Symmetrie).
+    [Fact]
+    public void Skip_ohne_Begruendung_ist_nicht_resolved()
+    {
+        var session = ReClarifyClusterReviewAdapter.BuildSession("r1", Baseline(), Clusters(), Gate(), Review(Op()), "all");
+        var it = session.Items[0];
+        Set(it, ReClarifyClusterReviewAdapter.FieldDecision, "skip");
+        Assert.False(ReClarifyClusterReviewAdapter.Resolved(it));
+        Set(it, ReClarifyClusterReviewAdapter.FieldReason, "Vorschlag passt fachlich nicht");
+        Assert.True(ReClarifyClusterReviewAdapter.Resolved(it));
+    }
 }

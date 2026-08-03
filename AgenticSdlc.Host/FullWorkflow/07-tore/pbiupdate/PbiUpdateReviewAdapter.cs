@@ -94,7 +94,7 @@ public static class PbiUpdateReviewAdapter
             Notes = SessionNotes(),
             Glossary = Glossary(),
             BulkAction = new ReviewBulkAction(
-                Label: "Accept all",
+                Label: "✓ Alle übernehmen (Experiment — ohne Einzelprüfung)",
                 Set:
                 [
                     new ReviewFieldValue(FieldDecision, "apply"),
@@ -305,34 +305,39 @@ public static class PbiUpdateReviewAdapter
             .Distinct(StringComparer.Ordinal).ToList();
         var notes = new List<ReviewNote>
         {
-            new(ReviewNoteKind.Info, $"Feature {feat.ItemId} ({feat.Status})", feat.Feature?.Label ?? feat.Text)
+            new(ReviewNoteKind.Info, $"Feature {feat.ItemId} ({StatusLabel(feat.Status)})", feat.Feature?.Label ?? feat.Text)
         };
         if (pbiIds.Count == 0)
             notes.Add(new ReviewNote(ReviewNoteKind.Info, "PBIs in diesem Feature", "(noch keine)"));
         else
             foreach (var pid in pbiIds)
-                notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, $"{pid} ({byId[pid].Status})",
+                notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, $"{pid} ({StatusLabel(byId[pid].Status)})",
                     byId[pid].Pbi?.Title ?? byId[pid].Text));
         return new ReviewReferenceDetails(featureId, feat.Feature?.Label ?? feat.Text,
             $"{pbiIds.Count} PBI(s) in diesem Feature.", notes, []);
     }
 
     private static ReviewHelp BuildHelp() => new(
-        "Incrementeller PBI-Update",
+        "Backlog an neue Anforderungen anpassen",
         "Ein neues Meeting hat die Projektwahrheit geaendert. Hier autorisierst du, wie die betroffenen Backlog-Items "
         + "(PBIs) darauf reagieren — bevor daraus ein GitHub-Sync entsteht.",
         [
-            new ReviewHelpSection("Woher kommen diese Operationen?",
-                "Sie werden regelbasiert aus dem Meeting-Delta abgeleitet: ein verfeinertes Requirement -> MARK_CHANGED, "
-                + "ein Widerspruch -> BLOCK_PBI, ein Ersatz -> SUPERSEDE_PBI, ein neues Requirement -> NEW_PBI/EXTEND_PBI. "
-                + "Kein LLM entscheidet hier den Op-Typ."),
+            new ReviewHelpSection("Zwei getrennte Entscheidungen je Item",
+                "• Struktur — was mit dem PBI passiert (übernehmen/überspringen): anlegen, erweitern, als geändert markieren, "
+                + "blockieren, Anforderung ersetzen oder neues Feature. Die Wirkung-Zeile sagt es je Item konkret.\n"
+                + "• Inhaltliche Angleichung (falls angeboten) — der vorgeschlagene neue Titel/Statement/Akzeptanzkriterien. "
+                + "Übernehmen klärt das PBI (geändert · ungeklärt → aktiv); bearbeiten oder ablehnen geht auch.\n"
+                + "\n"
+                + "Beide Entscheidungen sind unabhängig voneinander."),
+            new ReviewHelpSection("Woher kommen die Operationen?",
+                "Sie werden regelbasiert aus dem Meeting-Delta abgeleitet (kein LLM entscheidet den Op-Typ). Nur die "
+                + "Platzierung (neues PBI vs. Erweiterung vs. neues Feature) und der Angleichungs-Vorschlag kommen von einem Agenten."),
+            new ReviewHelpSection("Alle übernehmen (Experiment)",
+                "Der Sammel-Button setzt alle noch offenen Struktur-Entscheidungen auf Übernehmen — bewusst OHNE Einzelprüfung. "
+                + "Deklarierter Experiment-Modus (wie accept-all/replay), NICHT der Normalweg. Bereits gesetzte Entscheidungen bleiben unberührt."),
             new ReviewHelpSection("Was passiert nach Fertig",
                 "Die UI schreibt human-decisions.json. pbi-update-apply fuehrt die uebernommenen Operationen deterministisch "
-                + "aus, aendert den Core (Status/Deckung der PBIs) und schreibt ein github-sync-Delta -> naechstes Gate (Forward)."),
-            new ReviewHelpSection("Wichtig: needs_clarify wird hier nur GESETZT, nicht aufgeloest",
-                "MARK_CHANGED und SUPERSEDE markieren ein PBI als 'geaendert, aber inhaltlich noch ungeklaert' — Titel und "
-                + "Akzeptanzkriterien sind dann NICHT automatisch an die neue Anforderung angeglichen. Ein Schritt, der das "
-                + "tut, fehlt aktuell in der Kette (R-26-C). Bis dahin: bewusst uebernehmen und die Klaerung im Blick behalten.")
+                + "aus, aendert den Core (Status/Deckung der PBIs) und schreibt ein github-sync-Delta -> naechstes Gate (Forward).")
         ]);
 
     // E0.3e: die Wirkungskette IM UI — in Sprache, die auch Projektfremde verstehen.
@@ -344,22 +349,76 @@ public static class PbiUpdateReviewAdapter
             + "eine Anforderung ersetzen.\n"
             + "Ueberspringen ⇒ die Aenderung wird nicht uebernommen, der Core bleibt wie er ist. Bitte kurz begruenden.\n"
             + "Angleichung (ANGLEICHUNG) ⇒ hier wird der PBI-INHALT (Titel/Statement/Akzeptanzkriterien) an die "
-            + "geaenderte Anforderung angepasst. Uebernehmen klaert das PBI (needs_clarify -> active); Nicht-angleichen "
+            + "geaenderte Anforderung angepasst. Uebernehmen klaert das PBI (geändert · ungeklärt → aktiv); Nicht-angleichen "
             + "laesst es ungeklaert.")
     ];
 
     // E0.3e: Fach-Begriffe in Klartext mit Wirkungs-Ehrlichkeit (Muster wie Forward-Review).
+    private const string GOps = "Operationen — was mit dem PBI passiert";
+    private const string GStates = "PBI-Zustände";
+    private const string GMisc = "Weiteres";
+
     private static IReadOnlyList<ReviewGlossaryEntry> Glossary() =>
     [
-        new("NEW_PBI", "WIRKT: legt ein neues Backlog-Item (PBI) fuer eine neue Anforderung an."),
-        new("EXTEND_PBI", "WIRKT: ordnet einem bestehenden PBI zusaetzlich eine Anforderung zu."),
-        new("MARK_CHANGED", "WIRKT: markiert das PBI als 'geaendert, ungeklaert' (needs_clarify), weil seine Anforderung verfeinert wurde."),
-        new("BLOCK_PBI", "WIRKT: setzt das PBI auf 'blockiert' (blocked_by_decision) — es wartet auf eine offene Entscheidung."),
-        new("SUPERSEDE_PBI", "WIRKT: tauscht eine abgeloeste Anforderung gegen ihren Ersatz aus (und markiert das PBI als ungeklaert)."),
-        new("needs_clarify", "Interner PBI-Zustand: geaendert, aber Inhalt noch nicht an die neue Anforderung angeglichen."),
-        new("blocked_by_decision", "Interner PBI-Zustand: wartet auf eine Entscheidung — es entsteht (noch) kein GitHub-Issue."),
-        new("verfeinert", "Die Anforderung wurde inhaltlich praezisiert — eine neue Fassung ersetzt die alte (Vorher/Nachher unten).")
+        new("Neues PBI", "Legt ein neues Backlog-Item (PBI) fuer eine neue Anforderung an.", GOps),
+        new("PBI erweitern", "Ordnet einem bestehenden PBI zusaetzlich eine Anforderung zu.", GOps),
+        new("Als geändert markieren", "Markiert das PBI als geaendert · ungeklaert, weil seine Anforderung verfeinert wurde — die Angleichung klaert Titel/Kriterien.", GOps),
+        new("Blockieren", "Setzt das PBI auf blockiert · Entscheidung — es wartet auf eine offene Entscheidung, es entsteht kein Issue.", GOps),
+        new("Anforderung ersetzen", "Tauscht eine abgeloeste Anforderung gegen ihren Ersatz aus (und markiert das PBI als geaendert · ungeklaert).", GOps),
+        new("Neues Feature", "Kein bestehendes Feature passt — legt ein neues Feature + erstes PBI an.", GOps),
+        new("geändert · ungeklärt", "PBI-Zustand: geaendert, aber Titel/Kriterien noch nicht an die neue Anforderung angeglichen (intern: needs_clarify).", GStates),
+        new("blockiert · Entscheidung", "PBI-Zustand: wartet auf eine Entscheidung — es entsteht (noch) kein GitHub-Issue (intern: blocked_by_decision).", GStates),
+        new("verfeinert", "Die Anforderung wurde inhaltlich praezisiert — eine neue Fassung ersetzt die alte (Vorher/Nachher unten).", GMisc)
     ];
+
+    // ---- Klartext-Helfer (E0.3-Retrofit 03.08.; nur Anzeige) ------------------------------------------
+    private static string KindBadge(string kind) => kind switch
+    {
+        PbiUpdateKind.NewPbi => "Neues PBI",
+        PbiUpdateKind.ExtendPbi => "PBI erweitern",
+        PbiUpdateKind.MarkChanged => "Als geändert markieren",
+        PbiUpdateKind.BlockPbi => "Blockieren",
+        PbiUpdateKind.SupersedePbi => "Anforderung ersetzen",
+        PbiUpdateKind.NewFeature => "Neues Feature",
+        _ => kind
+    };
+
+    private static string KindEffect(string kind) => kind switch
+    {
+        PbiUpdateKind.NewPbi => "Legt ein neues Backlog-Item (PBI) im Core an.",
+        PbiUpdateKind.ExtendPbi => "Ordnet einem bestehenden PBI zusätzlich eine Anforderung zu (PBI wird geändert · ungeklärt).",
+        PbiUpdateKind.MarkChanged => "Markiert das PBI als geändert · ungeklärt — die Angleichung unten klärt Titel/Kriterien.",
+        PbiUpdateKind.BlockPbi => "Setzt das PBI auf blockiert (wartet auf eine offene Entscheidung) — es entsteht kein Issue.",
+        PbiUpdateKind.SupersedePbi => "Tauscht die abgelöste Anforderung gegen ihren Ersatz (PBI wird geändert · ungeklärt).",
+        PbiUpdateKind.NewFeature => "Legt ein NEUES Feature + erstes PBI im Core an.",
+        _ => "—"
+    };
+
+    private static string StatusLabel(string status) => status switch
+    {
+        "active" => "aktiv",
+        "needs_clarify" => "geändert · ungeklärt",
+        "blocked_by_decision" => "blockiert · Entscheidung",
+        "done" => "fertig",
+        "superseded" => "abgelöst",
+        "baseline" => "Baseline",
+        "accepted" => "angenommen",
+        "open_decision" => "offene Entscheidung",
+        "resolved" => "aufgelöst",
+        _ => status
+    };
+
+    private static readonly IReadOnlyList<ReviewOption> SkipOption = [new("skip", "Überspringen")];
+    private static IReadOnlyList<ReviewOption> DecisionOptions(string kind) => kind switch
+    {
+        PbiUpdateKind.NewPbi => [new("apply", "✓ PBI anlegen"), .. SkipOption],
+        PbiUpdateKind.ExtendPbi => [new("apply", "✓ Erweiterung übernehmen"), .. SkipOption],
+        PbiUpdateKind.MarkChanged => [new("apply", "✓ Änderung übernehmen"), .. SkipOption],
+        PbiUpdateKind.BlockPbi => [new("apply", "✓ Blockieren übernehmen"), .. SkipOption],
+        PbiUpdateKind.SupersedePbi => [new("apply", "✓ Ersetzen übernehmen"), .. SkipOption],
+        PbiUpdateKind.NewFeature => [new("apply", "✓ Feature + PBI anlegen"), .. SkipOption],
+        _ => [new("apply", "✓ Übernehmen"), .. SkipOption]
+    };
 
     private static ReviewItem BuildItem(string opId, int idx, PbiStateChangeOperation op,
         IReadOnlyDictionary<string, ProjectStateItem> byId, PbiAlignment? align)
@@ -376,14 +435,15 @@ public static class PbiUpdateReviewAdapter
             PbiUpdateKind.MarkChanged => $"{PbiTitle(pbi, op.PbiId)}: Anforderung wurde verfeinert",
             PbiUpdateKind.BlockPbi => $"{PbiTitle(pbi, op.PbiId)}: blockiert durch offene Entscheidung",
             PbiUpdateKind.SupersedePbi => $"{PbiTitle(pbi, op.PbiId)}: Anforderung wird ersetzt",
-            _ => $"{op.Kind} {op.PbiId}"
+            PbiUpdateKind.NewFeature => $"NEU: Feature + Backlog-Item für „{reqShort}“",
+            _ => $"{KindBadge(op.Kind)} {op.PbiId}"
         };
 
-        var notes = new List<ReviewNote>();
+        var notes = new List<ReviewNote> { new(ReviewNoteKind.Info, "Wirkung", KindEffect(op.Kind)) };
 
         // Betroffenes PBI (aktueller Inhalt) — bei allen ausser NEW_PBI.
         if (pbi is not null)
-            notes.Add(new ReviewNote(ReviewNoteKind.Info, $"Betroffenes PBI ({pbi.ItemId}, {pbi.Status})",
+            notes.Add(new ReviewNote(ReviewNoteKind.Info, $"Betroffenes PBI ({pbi.ItemId}, {StatusLabel(pbi.Status)})",
                 $"{pbi.Pbi?.Title ?? pbi.Text}"
                 + (string.IsNullOrWhiteSpace(pbi.Pbi?.Goal) ? "" : $"\n{pbi.Pbi!.Goal}")));
 
@@ -491,8 +551,9 @@ public static class PbiUpdateReviewAdapter
         {
             ItemId = opId,
             Summary = align is not null ? summary + "  ·  + Inhalts-Angleichung" : summary,
-            Badge = op.Kind,
+            Badge = KindBadge(op.Kind),
             Notes = notes,
+            FieldOptions = new Dictionary<string, IReadOnlyList<ReviewOption>> { [FieldDecision] = DecisionOptions(op.Kind) },
             ContextBlocks = context,
             FieldValues = fields
         };
@@ -517,15 +578,15 @@ public static class PbiUpdateReviewAdapter
 
     // Der ehrliche R-26-Hinweis am Item — verbindet dieses Gate mit der offenen Klaerungs-Luecke.
     private static ReviewNote NeedsClarifyNote(string reqId) => new(ReviewNoteKind.Warning,
-        "Danach: needs_clarify",
-        "Uebernehmen setzt das PBI auf 'geaendert, ungeklaert'. Titel und Akzeptanzkriterien sind dann NICHT an die "
-        + $"neue Fassung von {reqId} angeglichen — dieser Angleichungs-Schritt fehlt aktuell in der Kette (R-26-C). "
-        + "Bis dahin bleibt die inhaltliche Klaerung eine offene Aufgabe.");
+        "Danach: geändert · ungeklärt",
+        "Für diese Operation liegt KEIN Angleichungs-Vorschlag vor. Uebernehmen setzt das PBI auf 'geaendert · ungeklaert'; "
+        + $"Titel und Akzeptanzkriterien sind dann (noch) nicht an die neue Fassung von {reqId} angeglichen — die inhaltliche "
+        + "Klaerung bleibt eine offene Aufgabe.");
 
     private static string DescribeOp(PbiStateChangeOperation op, IReadOnlyDictionary<string, ProjectStateItem> byId)
     {
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"{op.Kind}");
+        sb.AppendLine($"{KindBadge(op.Kind)}");
         if (op.PbiId is not null) sb.AppendLine($"Ziel-PBI: {PbiTitle(byId.GetValueOrDefault(op.PbiId), op.PbiId)}");
         if (op.FeatureId is not null) sb.AppendLine($"Feature: {byId.GetValueOrDefault(op.FeatureId)?.Feature?.Label ?? op.FeatureId}");
         sb.AppendLine($"Anforderung: {op.RequirementId} — {byId.GetValueOrDefault(op.RequirementId)?.Text ?? "(nicht im Core)"}");
@@ -540,7 +601,7 @@ public static class PbiUpdateReviewAdapter
     private static string DescribePbi(ProjectStateItem p)
     {
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"{p.ItemId} — {p.Pbi?.Title ?? p.Text}  ({p.Status})");
+        sb.AppendLine($"{p.ItemId} — {p.Pbi?.Title ?? p.Text}  ({StatusLabel(p.Status)})");
         if (!string.IsNullOrWhiteSpace(p.Pbi?.Goal)) sb.AppendLine().AppendLine(p.Pbi!.Goal);
         if (p.Pbi?.AcceptanceCriteria is { Count: > 0 } ac)
         {
@@ -553,7 +614,7 @@ public static class PbiUpdateReviewAdapter
     private static string DescribeRequirement(ProjectStateItem r)
     {
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"{r.ItemId} ({r.Status}, v{r.Version})");
+        sb.AppendLine($"{r.ItemId} ({StatusLabel(r.Status)}, v{r.Version})");
         sb.AppendLine().AppendLine(r.Text);
         var prev = PreviousText(r);
         if (prev is not null) sb.AppendLine().AppendLine("Fruehere Fassung:").AppendLine(prev);
@@ -572,8 +633,7 @@ public static class PbiUpdateReviewAdapter
         return string.IsNullOrWhiteSpace(prev) || string.Equals(prev, item!.Text, StringComparison.Ordinal) ? null : prev;
     }
 
-    private static string Truncate(string value, int max)
-        => value.Length <= max ? value : value[..max] + " …";
+    private static string Truncate(string value, int max) => ReviewFields.TruncateRaw(value, max); // Basis-W2
 
     private static string FieldOf(ReviewItem item, string key) => ReviewFields.Of(item, key); // Basis-W1
     private static void Set(ReviewItem item, string key, string? value) => ReviewFields.Set(item, key, value); // Basis-W1

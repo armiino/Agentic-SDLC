@@ -21,15 +21,15 @@ public static class GithubForwardReviewAdapter
         return new ReviewSession
         {
             SessionId = $"github-forward-{runId}",
-            Title = "GitHub Forward-Reconciliation — Delta gegen GitHub",
+            Title = "PBIs nach GitHub spiegeln",
             Subtitle = plan.Operations.Count == 0
                 ? "Keine Operationen."
-                : $"{plan.Operations.Count} Operationen — je Op: ausfuehren oder ueberspringen. Kein GitHub-Write vor dem gated Apply.",
+                : $"{plan.Operations.Count} Operationen — je Op: ausführen oder überspringen. Nach GitHub geschrieben wird erst im gesicherten Apply-Schritt.",
             Help = BuildHelp(),
             Notes = SessionNotes(),
             Glossary = Glossary(),
             BulkAction = new ReviewBulkAction(
-                Label: "Accept all",
+                Label: "✓ Alle ausführen (Experiment — ohne Einzelprüfung)",
                 Set:
                 [
                     new ReviewFieldValue(FieldDecision, "apply"),
@@ -58,13 +58,7 @@ public static class GithubForwardReviewAdapter
     // E0.2c: Items starten offen; Begruendung nur beim skip Pflicht (Abweichung vom Plan dokumentieren) —
     // beim apply ist der explizite Entscheid selbst die Autorisierung.
     public static bool Resolved(ReviewItem item)
-    {
-        var decision = FieldOf(item, FieldDecision);
-        if (!Decisions.Contains(decision)) return false;
-        if (string.Equals(decision, "skip", StringComparison.OrdinalIgnoreCase)
-            && string.IsNullOrWhiteSpace(FieldOf(item, FieldReason))) return false;
-        return true;
-    }
+        => ReviewFields.ResolvedRequiringReason(item, Decisions, FieldDecision, FieldReason, "skip"); // Basis-W2
 
     public static GithubForwardDecisionsFile Apply(string runId, ReviewSession session)
         => new(runId, "human (review-ui)", session.Items.Select(it => new GithubForwardDecision(
@@ -89,21 +83,31 @@ public static class GithubForwardReviewAdapter
     }
 
     private static ReviewHelp BuildHelp() => new(
-        "GitHub Forward-Reconciliation",
-        "Der github-sync-Delta wird gegen GitHub abgeglichen. Du autorisierst den PLAN — geschrieben wird erst im gated Apply.",
+        "PBIs nach GitHub spiegeln",
+        "Der Abgleich zwischen deinen PBIs und GitHub schlägt Operationen vor (Issue anlegen/aktualisieren/kommentieren, "
+        + "verknüpfen). Du autorisierst den PLAN — nach GitHub geschrieben wird erst im gesicherten Apply-Schritt.",
         [
-            new ReviewHelpSection("Woher kommt der Plan?",
-                "Deterministische Ops (origin=deterministic) entstehen regelbasiert aus Core-Mapping + Issue-Snapshot; "
-                + "agentische Ops (origin=agent) aus der Suche des Forward-Agenten (LINK oder CREATE, mit Such-Evidenz — "
-                + "das Gate lehnt CREATE ohne Suche ab)."),
+            new ReviewHelpSection("Was jede Operation bewirkt",
+                "• Neues Issue / Issue aktualisieren / Kommentar — schreiben EXTERN nach GitHub (das einzige Gate mit Außenwirkung!).\n"
+                + "• Verknüpfen — nur im Core: ordnet dem PBI ein bestehendes Issue zu, kein GitHub-Schreiben.\n"
+                + "• Drift-Hinweis / Zurückgehalten / Keine Änderung — nur Information, keine Aktion.\n"
+                + "\n"
+                + "Die Wirkung-Zeile an jeder Operation sagt es dir konkret."),
+            new ReviewHelpSection("Woher kommt der Vorschlag?",
+                "• regelbasiert — deterministisch aus dem Core-Mapping + dem Issue-Stand erzeugt (kein LLM).\n"
+                + "• vom Agenten — aus der Suche des Forward-Agenten (Verknüpfen oder Neues Issue, mit Such-Evidenz; "
+                + "ein Neues-Issue ohne vorherige Suche wird abgelehnt)."),
+            new ReviewHelpSection("Vorher/Nachher beim Aktualisieren",
+                "Am Item siehst du, was sich fachlich ändert (Titel, Requirement-Deckung, Status/Readiness) — Gleiches wird "
+                + "nicht angezeigt. Achte auf die Label-Warnung: GitHub ERSETZT beim Update die komplette Label-Liste (R-30). "
+                + "Volltexte gibt es über die Detail-Buttons."),
+            new ReviewHelpSection("Alle ausführen (Experiment)",
+                "Der Sammel-Button setzt alle noch offenen Operationen auf Ausführen — bewusst OHNE Einzelprüfung. Deklarierter "
+                + "Experiment-Modus (wie accept-all/replay), NICHT der Normalweg. ACHTUNG: der Apply schreibt die Schreib-Ops "
+                + "dann extern nach GitHub, sobald execute aktiv ist. Bereits gesetzte Entscheidungen bleiben unberührt."),
             new ReviewHelpSection("Was passiert nach Fertig",
-                "Die UI schreibt human-decisions.json. Der gated Apply (T3.4) fuehrt NUR die ausfuehren-Ops aus: "
-                + "CREATE/UPDATE/COMMENT schreiben nach GitHub (EXTERN — einziges Gate mit Aussenwirkung!), LINK schreibt "
-                + "nur das Mapping (implemented_by_issue) in den Core. Default ist Dry-Run; real geschrieben wird nur mit "
-                + "expliziter execute-Policy."),
-            new ReviewHelpSection("Vorher/Nachher bei UPDATE",
-                "'Issue AKTUELL' kommt aus dem Snapshot des Laufs, 'VORSCHLAG NEU' ist der Body aus dem Plan — genau das, "
-                + "was beim Ausfuehren im Issue stehen wuerde. Vergleiche beide, bevor du ausfuehrst (R-23).")
+                "Die UI schreibt human-decisions.json. Der gesicherte Apply führt NUR die Ausführen-Operationen aus. "
+                + "Standard ist Testmodus (Dry-Run); real nach GitHub geschrieben wird nur mit ausdrücklich aktivierter execute-Freigabe.")
         ]);
 
     // E0.2e: die Wirkungskette IM UI — in Sprache, die auch Projektfremde verstehen (Autor-Nachschärfung).
@@ -113,27 +117,36 @@ public static class GithubForwardReviewAdapter
             "Ausfuehren ⇒ die Aenderung wird im naechsten Schritt wirklich gemacht (Issue anlegen, aendern oder "
             + "kommentieren). Solange der Testmodus (Dry-Run) aktiv ist, wird dabei noch nichts nach GitHub geschrieben.\n"
             + "Ueberspringen ⇒ es passiert nichts, alles bleibt wie es ist. Bitte kurz begruenden, warum.\n"
-            + "Hinweis-Zeilen (FLAG_DRIFT, HOLD_…, NO_CHANGE) ⇒ nur Information — dort passiert unabhaengig vom "
+            + "Hinweis-Zeilen (Drift-Hinweis, Zurückgehalten, Keine Änderung) ⇒ nur Information — dort passiert unabhaengig vom "
             + "Entscheid nie etwas.")
     ];
 
     // E0.2e: Fach-Begriffe in Klartext (Wirkungs-Ehrlichkeit wie im Backlog-Review).
+    private const string GOps = "Operationen — was der Vorschlag tut";
+    private const string GOrigin = "Herkunft der Operation";
+    private const string GStates = "PBI-Zustände (Werte, die im Issue-Text auftauchen)";
+    private const string GMisc = "Weiteres";
+
     private static IReadOnlyList<ReviewGlossaryEntry> Glossary() =>
     [
-        new("CREATE_ISSUE", "WIRKT: legt ein neues GitHub-Issue an (nur nach ausgefuehrter Duplikat-Suche zulaessig)."),
-        new("UPDATE_ISSUE", "WIRKT: patcht Titel/Body des bestehenden Issues — Vorher/Nachher am Item pruefen!"),
-        new("COMMENT", "WIRKT: schreibt einen Kommentar ans bestehende Issue."),
-        new("LINK", "WIRKT nur im Core: ordnet dem PBI ein bestehendes Issue zu (Mapping implemented_by_issue) — kein GitHub-Write."),
-        new("NO_CHANGE", "Keine Aktion — PBI und Issue sind synchron."),
-        new("FLAG_DRIFT", "Nur Marker, keine Aktion: Issue-Zustand passt nicht zum PBI (z. B. geschlossen bei aktivem PBI) — manuell pruefen."),
-        new("HOLD_BLOCKED", "Nur Marker, keine Aktion: PBI wartet auf eine blockierende Entscheidung — bewusst KEIN Issue."),
-        new("HOLD_CLARIFY", "Nur Marker, keine Aktion: neues, noch unklares PBI — geparkt statt Auto-CREATE."),
-        new("deterministic", "Regelbasiert aus Core-Mapping + Snapshot erzeugt — kein LLM beteiligt."),
-        new("agent", "Vom Forward-Agenten vorgeschlagen (Suche + Evidenz) — deshalb dieses Review."),
-        new("Sync-Metadaten", "Fusszeile im Issue-Body: aus welchem internen Projekt-Zustand das Issue erzeugt wurde — Beleg fuer die Nachvollziehbarkeit, kein Arbeitsauftrag."),
-        new("needs_clarify", "Interner PBI-Zustand: Inhalt noch unklar — im Projekt-Core geparkt, bis er geschaerft ist."),
-        new("blocked_by_decision", "Interner PBI-Zustand: eine offene Entscheidung blockiert — deshalb wird kein Issue angelegt (HOLD)."),
-        new("backlog_ready", "Interner PBI-Zustand: geklaert und planbar.")
+        // Operationen — erst die extern schreibenden, dann Core-only, dann die reinen Hinweise.
+        new("Neues Issue", "Schreibt EXTERN: legt ein neues GitHub-Issue an (nur nach ausgefuehrter Duplikat-Suche zulaessig).", GOps),
+        new("Issue aktualisieren", "Schreibt EXTERN: aendert Titel/Body des bestehenden Issues — Vorher/Nachher am Item pruefen!", GOps),
+        new("Kommentar", "Schreibt EXTERN: fuegt einen Kommentar am bestehenden Issue hinzu.", GOps),
+        new("Verknüpfen", "Nur im Core: ordnet dem PBI ein bestehendes Issue zu (Mapping) — kein GitHub-Schreiben.", GOps),
+        new("Keine Änderung", "Keine Aktion — PBI und Issue sind synchron.", GOps),
+        new("Drift-Hinweis", "Nur Hinweis, keine Aktion: Issue-Zustand passt nicht zum PBI (z. B. geschlossen bei aktivem PBI) — manuell pruefen.", GOps),
+        new("Zurückgehalten · blockiert", "Nur Hinweis, keine Aktion: PBI wartet auf eine blockierende Entscheidung — bewusst KEIN Issue.", GOps),
+        new("Zurückgehalten · Klärung", "Nur Hinweis, keine Aktion: neues, noch unklares PBI — geparkt statt automatischem Anlegen.", GOps),
+        // Herkunft
+        new("regelbasiert", "Deterministisch aus Core-Mapping + Issue-Stand erzeugt — kein LLM beteiligt.", GOrigin),
+        new("vom Agenten", "Vom Forward-Agenten vorgeschlagen (Suche + Evidenz) — deshalb dieses Review.", GOrigin),
+        // PBI-Zustaende (erscheinen als Status/Readiness-Wert im Issue-Text / Diff)
+        new("needs_clarify", "PBI wurde geaendert, aber Titel/Kriterien sind noch nicht an die neuen Requirements angeglichen — Inhalt also noch unklar.", GStates),
+        new("blocked_by_decision", "Eine offene Entscheidung blockiert das PBI — deshalb wird kein Issue angelegt (Zurueckgehalten).", GStates),
+        new("backlog_ready", "Geklaert und planbar — nichts steht im Weg.", GStates),
+        // Weiteres
+        new("Sync-Metadaten", "Fusszeile im Issue-Body: aus welchem internen Projekt-Zustand das Issue erzeugt wurde — Beleg fuer die Nachvollziehbarkeit, kein Arbeitsauftrag.", GMisc)
     ];
 
     private static ReviewItem BuildItem(string opId, int idx, GithubForwardOp op,
@@ -147,18 +160,22 @@ public static class GithubForwardReviewAdapter
             + (issue is null ? "" : $" „{Truncate(issue.Title, 80)}“");
         var summary = op.Kind switch
         {
-            GithubForwardKind.CreateIssue => $"CREATE_ISSUE fuer {op.PbiId}: {op.Title}",
-            GithubForwardKind.UpdateIssue => $"UPDATE_ISSUE {op.PbiId}{issueRef}",
-            GithubForwardKind.Comment => $"COMMENT {op.PbiId}{issueRef}",
-            GithubForwardKind.Link => $"LINK {op.PbiId}{issueRef}",
-            GithubForwardKind.FlagDrift => $"FLAG_DRIFT {op.PbiId}{issueRef}",
-            GithubForwardKind.HoldBlocked => $"HOLD_BLOCKED {op.PbiId} (blockiert)",
-            GithubForwardKind.HoldClarify => $"HOLD_CLARIFY {op.PbiId} (neu, unklar — geparkt)",
-            GithubForwardKind.NoChange => $"NO_CHANGE {op.PbiId}",
-            _ => $"{op.Kind} {op.PbiId}"
+            GithubForwardKind.CreateIssue => $"Neues Issue für {op.PbiId}: {op.Title}",
+            GithubForwardKind.UpdateIssue => $"Issue aktualisieren: {op.PbiId}{issueRef}",
+            GithubForwardKind.Comment => $"Kommentar: {op.PbiId}{issueRef}",
+            GithubForwardKind.Link => $"Verknüpfen: {op.PbiId}{issueRef}",
+            GithubForwardKind.FlagDrift => $"Drift-Hinweis: {op.PbiId}{issueRef}",
+            GithubForwardKind.HoldBlocked => $"Zurückgehalten (blockiert): {op.PbiId}",
+            GithubForwardKind.HoldClarify => $"Zurückgehalten (neu, unklar): {op.PbiId}",
+            GithubForwardKind.NoChange => $"Keine Änderung: {op.PbiId}",
+            _ => $"{KindBadge(op.Kind)} {op.PbiId}"
         };
 
-        var notes = new List<ReviewNote> { new(ReviewNoteKind.Reason, "Begruendung", op.Rationale) };
+        var notes = new List<ReviewNote>
+        {
+            new(ReviewNoteKind.Info, "Wirkung", KindEffect(op.Kind)),
+            new(ReviewNoteKind.Reason, "Begründung", op.Rationale)
+        };
         // E0.2a: bei UPDATE zaehlt die AENDERUNG — Diff statt zweier Volltexte (Autor-Nachschärfung:
         // „ich sehe nicht, welche Aenderung greifen soll"). Volltexte bleiben in den Drilldowns.
         if (op.Kind == GithubForwardKind.UpdateIssue)
@@ -207,8 +224,9 @@ public static class GithubForwardReviewAdapter
         {
             ItemId = opId,
             Summary = summary,
-            Badge = $"{op.Kind} · {op.Origin}",
+            Badge = $"{KindBadge(op.Kind)} · {OriginLabel(op.Origin)}",
             Notes = notes,
+            FieldOptions = new Dictionary<string, IReadOnlyList<ReviewOption>> { [FieldDecision] = DecisionOptions(op.Kind) },
             ContextBlocks = context,
             // E0.2c: KEIN Vorentscheid — der Mensch entscheidet aktiv (Accept all nur ueber den Bestaetigungs-Button).
             FieldValues = [new ReviewFieldValue(FieldDecision, ""), new ReviewFieldValue(FieldReason, "")]
@@ -273,7 +291,7 @@ public static class GithubForwardReviewAdapter
     private static string DescribeOp(GithubForwardOp op)
     {
         var sb = new System.Text.StringBuilder();
-        sb.AppendLine($"{op.Kind} fuer {op.PbiId}{(op.TargetIssueNumber is null ? "" : $" -> Issue #{op.TargetIssueNumber}")}  (origin: {op.Origin})");
+        sb.AppendLine($"{KindBadge(op.Kind)} für {op.PbiId}{(op.TargetIssueNumber is null ? "" : $" -> Issue #{op.TargetIssueNumber}")}  (Herkunft: {OriginLabel(op.Origin)})");
         if (!string.IsNullOrWhiteSpace(op.Title)) sb.AppendLine($"Titel: {op.Title}");
         if (op.Labels is { Count: > 0 }) sb.AppendLine($"Labels: {string.Join(", ", op.Labels)}");
         sb.AppendLine($"Begruendung: {op.Rationale}");
@@ -305,8 +323,55 @@ public static class GithubForwardReviewAdapter
         return sb.ToString();
     }
 
-    private static string Truncate(string value, int max)
-        => value.Length <= max ? value : value[..max] + " …";
+    // ---- Klartext-Helfer (E0.2-Retrofit 03.08.) -------------------------------------------------------
+    private static string KindBadge(string kind) => kind switch
+    {
+        GithubForwardKind.CreateIssue => "Neues Issue",
+        GithubForwardKind.UpdateIssue => "Issue aktualisieren",
+        GithubForwardKind.Comment => "Kommentar",
+        GithubForwardKind.Link => "Verknüpfen",
+        GithubForwardKind.NoChange => "Keine Änderung",
+        GithubForwardKind.FlagDrift => "Drift-Hinweis",
+        GithubForwardKind.HoldBlocked => "Zurückgehalten · blockiert",
+        GithubForwardKind.HoldClarify => "Zurückgehalten · Klärung",
+        _ => kind
+    };
+
+    private static string OriginLabel(string origin) => origin switch
+    {
+        "deterministic" => "regelbasiert",
+        "agent" => "vom Agenten",
+        _ => origin
+    };
+
+    // Ehrlich abgestufte Wirkung: extern schreiben (Create/Update/Comment) · nur Core (Link) · nur Hinweis (Rest).
+    private static string KindEffect(string kind) => kind switch
+    {
+        GithubForwardKind.CreateIssue => "Schreibt EXTERN: legt ein neues GitHub-Issue an (nur nach ausgeführter Duplikat-Suche).",
+        GithubForwardKind.UpdateIssue => "Schreibt EXTERN: ändert Titel/Body des bestehenden Issues.",
+        GithubForwardKind.Comment => "Schreibt EXTERN: fügt einen Kommentar am Issue hinzu.",
+        GithubForwardKind.Link => "Nur im Core: verknüpft das PBI mit einem bestehenden Issue (kein GitHub-Schreiben).",
+        GithubForwardKind.NoChange => "Kein Effekt — PBI und Issue sind synchron.",
+        GithubForwardKind.FlagDrift => "Nur Hinweis: Issue und PBI weichen ab — keine Aktion.",
+        GithubForwardKind.HoldBlocked => "Nur Hinweis: PBI wartet auf eine blockierende Entscheidung — bewusst kein Issue.",
+        GithubForwardKind.HoldClarify => "Nur Hinweis: neues/unklares PBI wird geparkt statt automatisch angelegt.",
+        _ => "—"
+    };
+
+    private static readonly IReadOnlyList<ReviewOption> SkipOption = [new("skip", "Überspringen")];
+    private static IReadOnlyList<ReviewOption> DecisionOptions(string kind) => kind switch
+    {
+        GithubForwardKind.CreateIssue => [new("apply", "✓ Issue anlegen"), .. SkipOption],
+        GithubForwardKind.UpdateIssue => [new("apply", "✓ Issue aktualisieren"), .. SkipOption],
+        GithubForwardKind.Comment => [new("apply", "✓ Kommentar schreiben"), .. SkipOption],
+        GithubForwardKind.Link => [new("apply", "✓ Verknüpfen (nur Core)"), .. SkipOption],
+        GithubForwardKind.NoChange or GithubForwardKind.FlagDrift
+            or GithubForwardKind.HoldBlocked or GithubForwardKind.HoldClarify
+            => [new("apply", "✓ Als gesehen markieren"), .. SkipOption],
+        _ => [new("apply", "✓ Ausführen"), .. SkipOption]
+    };
+
+    private static string Truncate(string value, int max) => ReviewFields.TruncateRaw(value, max); // Basis-W2
 
     private static string FieldOf(ReviewItem item, string key) => ReviewFields.Of(item, key); // Basis-W1
     private static void Set(ReviewItem item, string key, string? value) => ReviewFields.Set(item, key, value); // Basis-W1

@@ -56,7 +56,7 @@ public static class LedgerAdjudicationReviewAdapter
         new(AdjudicationActions.AcceptGap, "Unverändert übernehmen"),
         new(AdjudicationActions.ApplyRepair, "Korrektur übernehmen"),
         new(AdjudicationActions.MergeExisting, "Gehört zu / abgedeckt durch bestehenden (Audit)"),
-        new(AdjudicationActions.Reject, "Verwerfen (Audit)"),
+        new(AdjudicationActions.Reject, "Verwerfen (Audit) — Begründung Pflicht"),
         new(AdjudicationActions.Defer, "Offen lassen (Audit)"),
     ];
     private static readonly ReviewOption[] UsActionOptions =
@@ -64,12 +64,48 @@ public static class LedgerAdjudicationReviewAdapter
         new(AdjudicationActions.PromoteToClaim, "Als neuen Claim übernehmen"),
         new(AdjudicationActions.AttachEvidence, "Als Beleg an bestehenden Claim anhängen"),
         new(AdjudicationActions.MergeExisting, "Gehört zu / abgedeckt durch bestehenden (Audit)"),
-        new(AdjudicationActions.Reject, "Verwerfen (Audit)"),
+        new(AdjudicationActions.Reject, "Verwerfen (Audit) — Begründung Pflicht"),
         new(AdjudicationActions.Defer, "Offen lassen (Audit)"),
     ];
 
     private static bool IsReviewRequired(AdjudicationItem a) =>
         string.Equals(a.ItemType, "review_required_claim", StringComparison.OrdinalIgnoreCase);
+
+    // E0.9-Konsistenz (03.08.): Badge in Klartext statt rohem itemType — Voraussetzung dafür, dass das Glossar
+    // (wie an allen Gates) auf die ANGEZEIGTEN Labels keyen kann.
+    private static string BadgeLabel(string itemType) => itemType?.Trim().ToLowerInvariant() switch
+    {
+        "review_required_claim" => "Claim zur Prüfung",
+        "unit_signal" => "Transkript-Signal",
+        "coverage_miss" => "Abdeckungs-Lücke",
+        _ => itemType ?? "?",
+    };
+
+    private const string GTypes = "Item-Typen (Badge)";
+    private const string GActions = "Aktionen — Wirkung vs. Audit";
+    private const string GFacets = "Facetten (Claim-Eigenschaften)";
+    private const string GTerms = "Begriffe";
+
+    private static IReadOnlyList<ReviewGlossaryEntry> Glossary() =>
+    [
+        new("Claim zur Prüfung", "Ein extrahierter Claim, dessen Facetten-Validierung nicht sicher war (teilweise belegt / überzogen / nicht belegt) — der Validator-Befund steht im System-Vorschlag.", GTypes),
+        new("Transkript-Signal", "Eine Transkript-Aussage, die der Ledger nicht abdeckt oder nicht sicher zuordnen konnte — das Vergleichs-Verdikt steht im System-Vorschlag.", GTypes),
+        new("Abdeckungs-Lücke", "Eine vom Vergleich gemeldete Stelle, an der der Ledger eine Aussage des Transkripts nicht abdeckt.", GTypes),
+        new("Unverändert übernehmen", "WIRKT: der Claim geht unverändert in die finale Claim-Menge (consumable).", GActions),
+        new("Korrektur übernehmen", "WIRKT: der Claim geht mit deinen korrigierten Facetten in die finale Claim-Menge.", GActions),
+        new("Als neuen Claim übernehmen", "WIRKT: aus der Transkript-Aussage wird ein neuer Claim (Facetten vergibt der Refine-Schritt).", GActions),
+        new("Als Beleg an bestehenden Claim anhängen", "WIRKT: die Aussage wird Zusatz-Evidenz am gewählten bestehenden Claim.", GActions),
+        new("Gehört zu / abgedeckt durch bestehenden (Audit)", "Nur Audit: vermerkt die Zuordnung im Protokoll — die finale Claim-Menge ändert sich nicht.", GActions),
+        new("Verwerfen (Audit)", "Nur Audit: das Item kommt nicht in die finale Claim-Menge. Begründung ist Pflicht — sie ist die einzige Spur der Ablehnung.", GActions),
+        new("Offen lassen (Audit)", "Nur Audit: bleibt als unentschieden protokolliert — blockiert das Gate NICHT.", GActions),
+        new("Verbindlichkeit", "Wie verpflichtend die Anforderung ist (MUSS · DARF NICHT · gewünscht · optional · Klärungs-/Abwägungs-/Notiz-Pflicht).", GFacets),
+        new("Zeitbezug", "Wann es gelten soll: MVP · später möglich/geplant · unklar.", GFacets),
+        new("Entscheidungsstand", "Wie entschieden die Sache ist: entschieden · offen · verworfen · unklar/widersprüchlich · extern vorgeschrieben.", GFacets),
+        new("Geltungsbereich", "Für wen/was der Claim gilt (z. B. App, Rolle, Bereich).", GFacets),
+        new("Claim", "Eine belegte Einzel-Aussage aus dem Transkript — die kleinste Einheit der Evidenzschicht.", GTerms),
+        new("consumable", "Die finale Claim-Menge dieses Laufs (freigegeben + deine Annahmen − Verworfenes) — der Input für die Baselines.", GTerms),
+        new("System-Vorschlag", "Was Validator bzw. Vergleichs-LLM für dieses Item empfehlen — der Ein-Klick-Button übernimmt genau das.", GTerms)
+    ];
 
     // US-Vorschlag (compare_classification): das Verdikt des Vergleichs-LLM in Klartext statt des rohen Enum-Werts.
     private static readonly IReadOnlyDictionary<string, string> VerdictLabels = new Dictionary<string, string>(StringComparer.Ordinal)
@@ -164,8 +200,8 @@ public static class LedgerAdjudicationReviewAdapter
                 VisibleWhen: onlyRepair),
 
             new(FieldReason, "Begründung (nur Audit)", ReviewInputType.FreeText, [], Required: false,
-                Help: "Nur Audit/Nachvollziehbarkeit — landet im adjudicated-ledger.json, hat KEINEN automatischen Konsumenten "
-                      + "(kein consumable-/Downstream-Effekt). Optional."),
+                Help: "PFLICHT beim Verwerfen (warum kommt das Item nicht in die Claim-Menge?) — sonst optional. "
+                      + "Nur Audit: landet im adjudicated-ledger.json, hat keinen automatischen Konsumenten."),
             new(FieldTarget, "Referenz-Ziel", ReviewInputType.FreeText, [], Required: false,
                 Help: "bei Verknüpfen (anhängen / gehört-zu / abgedeckt): Claim-ID tippen oder aus der Liste wählen (bei unit_signal mit Systemvorschlag vorbelegt)",
                 Options: referenceOptions,
@@ -188,12 +224,13 @@ public static class LedgerAdjudicationReviewAdapter
             Title = "Ledger-Adjudikation",
             Subtitle = sub,
             Help = BuildHelp(),
+            Glossary = Glossary(),
             // Sammel-Aktion: je offenem Item den EIGENEN System-Vorschlag übernehmen (RR: Korrektur · US: Verdikt-Aktion);
             // Items ohne Vorschlag (needs_human) bleiben offen; bereits Entschiedenes wird nicht überschrieben.
             BulkAction = new ReviewBulkAction(
-                "✓ Alle Vorschläge übernehmen",
+                "✓ Alle Vorschläge übernehmen (Experiment — ohne Einzelprüfung)",
                 [],
-                "Für {n} offene Items den jeweiligen System-Vorschlag übernehmen? (needs_human bleibt offen; bereits Entschiedenes bleibt unberührt.)",
+                "Für {n} offene Items den jeweiligen System-Vorschlag OHNE Einzelprüfung übernehmen? (needs_human bleibt offen; bereits Entschiedenes bleibt unberührt.)",
                 ApplyItemQuickActions: true),
             FieldSchema = Schema(referenceOptions),
             Items = items,
@@ -209,70 +246,82 @@ public static class LedgerAdjudicationReviewAdapter
         + "den Produktpfad endgültig (bleibt aber im Audit nachvollziehbar).",
         [
             new ReviewHelpSection("Die zwei Item-Typen",
-                "review_required_claim (RR::…): ein extrahierter Claim, dessen Facetten-Validierung nicht 'grounded' war "
-                + "(partial/overstated/unsupported) — der Validator-Befund steht im System-Vorschlag.\n"
-                + "unit_signal (US::…): eine Transkript-Aussage, die der Ledger NICHT abdeckt (missing_claim) oder die das "
-                + "System nicht sicher zuordnen konnte (needs_human) bzw. als Zusatz-Evidenz vorschlägt (attach)."),
+                "• Claim zur Prüfung (RR::…) — ein extrahierter Claim, dessen Facetten-Validierung nicht sicher war "
+                + "(teilweise belegt / überzogen / nicht belegt). Der Validator-Befund steht im System-Vorschlag.\n"
+                + "• Transkript-Signal (US::…) — eine Transkript-Aussage, die der Ledger NICHT abdeckt oder die das "
+                + "System nicht sicher zuordnen konnte bzw. als Zusatz-Evidenz vorschlägt."),
             new ReviewHelpSection("Aktion — was WIRKT vs. was nur Audit ist",
-                "OBEN (ändert die Evidenzschicht / consumable):\n"
-                + "• Übernehmen (unverändert) — Claim/Aussage kommt as-is rein (bei US: neuer Claim, Facetten danach via refine).\n"
+                "WIRKT (ändert die Evidenzschicht / consumable):\n"
+                + "• Unverändert übernehmen — Claim/Aussage kommt as-is rein (bei US: neuer Claim, Facetten danach automatisch via Refine).\n"
                 + "• Korrektur übernehmen (nur RR) — Claim kommt MIT deiner Facetten-Korrektur (Felder unten) rein.\n"
                 + "• Als neuen Claim übernehmen (nur US) — die Aussage wird ein eigener neuer Claim.\n"
-                + "• Als Beleg an bestehenden Claim anhängen (nur US, braucht Referenz-Ziel) — das Zitat stärkt einen bestehenden Claim (KEIN neuer).\n"
-                + "UNTEN (nur Audit — KEIN consumable-Effekt, nur Vermerk im adjudicated-ledger.json):\n"
+                + "• Als Beleg an bestehenden Claim anhängen (nur US, braucht Referenz-Ziel) — das Zitat stärkt einen bestehenden Claim.\n"
+                + "\n"
+                + "Nur AUDIT (kein consumable-Effekt, nur Vermerk im Protokoll):\n"
                 + "• Gehört zu / abgedeckt durch bestehenden (braucht Referenz-Ziel) — redundant mit einem bestehenden Claim.\n"
-                + "• Verwerfen — Claim/Aussage kommt nicht in den consumable.\n"
-                + "• Offen lassen — keine Entscheidung; bleibt pending (der Lauf geht trotzdem durch), wird NICHT automatisch aufgelöst.\n"
-                + "Je Item werden nur die für seinen Typ (RR/US) gültigen Aktionen angeboten. Der Button ✓ Korrektur/Vorschlag "
-                + "übernehmen setzt die vom System vorgeschlagene Aktion mit einem Klick (Repair-Felder bzw. Referenz-Ziel sind vorbelegt)."),
-            new ReviewHelpSection("Repair: Status (nur bei apply_repair) — Entscheidungsstand des Claims",
-                "decided: im Gespräch entschieden · open: bewusst offen · rejected: im Gespräch verworfen · "
-                + "uncertain: unklar/widersprüchlich · required: EXTERN verpflichtend (Gesetz/Auflage).\n"
-                + "Achtung Rasierklingen-Regel: status=required verlangt Modalität must oder must_not — sonst schlägt das "
-                + "Ledger-Gate fehl (INCONSISTENT_REQUIRED_MODALITY)."),
-            new ReviewHelpSection("Repair: Modalität (nur bei apply_repair) — Verbindlichkeit",
-                "must: harte Pflicht · must_not: Verbot · must_clarify: MUSS noch geklärt werden · "
-                + "must_consider: muss berücksichtigt/abgewogen werden · must_note: muss festgehalten werden · "
-                + "desired: gewünscht, nicht verpflichtend · optional: nice-to-have.\n"
+                + "• Verwerfen (Begründung Pflicht) — kommt nicht in den consumable.\n"
+                + "• Offen lassen — bleibt unentschieden protokolliert; blockiert das Gate NICHT.\n"
+                + "\n"
+                + "Je Item werden nur die für seinen Typ (RR/US) gültigen Aktionen angeboten. Der Ein-Klick-Button "
+                + "übernimmt den System-Vorschlag (Felder vorbelegt)."),
+            new ReviewHelpSection("Korrektur-Feld: Entscheidungsstand (nur bei Korrektur übernehmen)",
+                "• entschieden — im Gespräch entschieden\n"
+                + "• offen — bewusst offengelassen\n"
+                + "• verworfen — im Gespräch verworfen\n"
+                + "• unklar / widersprüchlich\n"
+                + "• extern vorgeschrieben — verpflichtend durch Gesetz/Auflage\n"
+                + "\n"
+                + "Achtung: extern vorgeschrieben verlangt die Verbindlichkeit MUSS oder DARF NICHT — sonst schlägt das Ledger-Gate fehl."),
+            new ReviewHelpSection("Korrektur-Feld: Verbindlichkeit (nur bei Korrektur übernehmen)",
+                "• MUSS — harte Pflicht\n"
+                + "• DARF NICHT — Verbot\n"
+                + "• muss erst GEKLÄRT / ABGEWOGEN / FESTGEHALTEN werden — weiche Pflicht-Stufen\n"
+                + "• gewünscht — nicht verpflichtend\n"
+                + "• optional — nice-to-have\n"
+                + "\n"
                 + "Wirkung (belegt): steht dem Baseline-Maker als Claim-Kontext im Prompt UND der Contract-Checker (C3) "
-                + "verbietet dem Artefakt harte Formulierungen ('muss/entschieden'), wenn die Facette WEICH ist "
-                + "(desired/optional/must_clarify/must_consider/must_note). Entscheidend ist also vor allem die Seite "
-                + "hart↔weich; Feinunterschiede INNERHALB 'weich' haben derzeit keinen maschinellen Konsumenten (Doku/Audit)."),
-            new ReviewHelpSection("Repair: Zeitbezug (nur bei apply_repair)",
-                "mvp: gehört in den MVP · later_possible: später möglich/geplant · mvp_or_later_unclear: Zuordnung unklar.\n"
-                + "Wirkung (belegt): weiche Zeitwerte (later_possible/unclear) verbieten dem Artefakt MVP-Behauptungen "
-                + "(Contract-Checker C3). Einen direkten deterministischen Backlog-Schnitt-Konsumenten gibt es derzeit "
-                + "NICHT — weiterer Einfluss läuft über den generierten Artefakt-Text."),
-            new ReviewHelpSection("Repair: Geltungsbereich (nur bei apply_repair)",
+                + "verbietet dem Artefakt harte Formulierungen ('muss/entschieden'), wenn die Facette WEICH ist. "
+                + "Entscheidend ist vor allem die Seite hart↔weich; Feinunterschiede innerhalb 'weich' sind derzeit Doku/Audit."),
+            new ReviewHelpSection("Korrektur-Feld: Zeitbezug (nur bei Korrektur übernehmen)",
+                "• MVP — gehört in den MVP\n"
+                + "• später möglich / geplant\n"
+                + "• unklar — Zuordnung offen\n"
+                + "\n"
+                + "Wirkung (belegt): weiche Zeitwerte verbieten dem Artefakt MVP-Behauptungen (Contract-Checker C3). "
+                + "Einen direkten deterministischen Backlog-Schnitt-Konsumenten gibt es derzeit NICHT."),
+            new ReviewHelpSection("Korrektur-Feld: Geltungsbereich (nur bei Korrektur übernehmen)",
                 "Freitext: FÜR WEN/WO gilt der Claim (z. B. 'Pflegekräfte', 'gesamte Einrichtung'). "
-                + "Leer lassen = Geltungsbereich des Claims bleibt unverändert."),
+                + "Leer lassen = bleibt unverändert."),
             new ReviewHelpSection("Referenz-Ziel",
-                "Pflicht bei Beleg-anhängen / Gehört-zu-abgedeckt: die ID des existierenden Ziel-Claims "
+                "Pflicht bei Beleg-anhängen / Gehört-zu: die ID des existierenden Ziel-Claims "
                 + "(Autocomplete: 'id — Proposition'). Ohne gültiges Ziel gilt die Zeile als nicht entschieden."),
             new ReviewHelpSection("Vorbelegung & System-Vorschlag",
-                "Repair-Felder sind mit dem Validator-Vorschlag vorbelegt (observed → suggested) — du kannst jeden Wert "
-                + "übersteuern. Der System-Vorschlag ist nie bindend: DU entscheidest."),
+                "Korrektur-Felder sind mit dem Validator-Vorschlag vorbelegt — du kannst jeden Wert übersteuern. "
+                + "Der System-Vorschlag ist nie bindend: DU entscheidest."),
             new ReviewHelpSection("Woher kommen die Items & Vorschläge?",
-                "RR-Items + Repair-Vorschläge: aus der Facetten-Validierung (step-03) — ein Prüf-LLM bewertet jeden "
-                + "kanonischen Claim einzeln gegen das Transkript (grounded/partial/overstated/unsupported) und schlägt "
-                + "Facetten-Korrekturen vor (observed → suggested). US-Items: aus der Unused-Pipeline (step-01c/01d) — "
-                + "deterministisch segmentierte, nicht verwendete Transkript-Aussagen, die ein Vergleichs-LLM als "
-                + "fehlend/unklar/anhängbar einstuft.\n"
+                "• Claims zur Prüfung + Korrektur-Vorschläge: aus der Facetten-Validierung (step-03) — ein Prüf-LLM bewertet "
+                + "jeden Claim gegen das Transkript (belegt / teilweise belegt / überzogen / nicht belegt).\n"
+                + "• Transkript-Signale: aus der Unused-Pipeline (step-01c/01d) — nicht verwendete Transkript-Aussagen, "
+                + "die ein Vergleichs-LLM als fehlend/unklar/anhängbar einstuft.\n"
+                + "\n"
                 + "Vorschläge sind IMMER Modell-Urteile — die Mechanik (Gates/Traces) garantiert nur, dass nichts "
                 + "unbilanziert verloren geht."),
             new ReviewHelpSection("Was die Adjudikation NICHT ändert (Grenzen)",
-                "Gehört-zu / abgedeckt durch bestehenden ist ein reiner Audit-Eintrag — verändert den consumable NICHT.\n"
-                + "Die Adjudikation bestimmt, WAS Fakt ist — nicht die spätere FORMULIERUNG: das Paraphrasieren "
-                + "übernehmen die Folgestufen; deren Treue prüfen eigene Gates (Fidelity/Checker).\n"
-                + "Drei Wege laufen bewusst an dir vorbei (sonst müsstest du alle Units einzeln reviewen): "
-                + "grounded-Claims (direkt approved), als noise triagierte Units (step-01c), already_covered mit "
-                + "gültiger Referenz (seit R-1 referenz-erzwungen). Alle drei sind in den Run-Artefakten auditierbar."),
+                "• Gehört-zu / abgedeckt ist reiner Audit-Eintrag — verändert den consumable NICHT.\n"
+                + "• Die Adjudikation bestimmt, WAS Fakt ist — nicht die spätere FORMULIERUNG (das prüfen eigene Gates).\n"
+                + "• Drei Wege laufen bewusst an dir vorbei: voll belegte Claims (direkt freigegeben), als Rauschen "
+                + "aussortierte Aussagen, bereits-Abgedecktes mit gültiger Referenz — alle in den Run-Artefakten auditierbar."),
+            new ReviewHelpSection("Alle Vorschläge übernehmen (Experiment)",
+                "Der Sammel-Button übernimmt je offenem Item dessen EIGENEN System-Vorschlag — bewusst OHNE Einzelprüfung. "
+                + "Deklarierter Experiment-Modus (wie accept-all/replay), NICHT der Normalweg. Items ohne Vorschlag "
+                + "(Unklar — bitte selbst entscheiden) bleiben offen; bereits Entschiedenes bleibt unberührt."),
             new ReviewHelpSection("Was nach 'Fertig' passiert",
-                "ledger-adjudicate-apply schreibt: adjudicated-ledger.json (Audit ALLER Entscheidungen), consumable.json "
-                + "(finale Claim-Menge = approved + deine Annahmen − rejects) und gate.json (hartes Vollständigkeits-Gate — "
-                + "unentschiedene Zeilen oder fehlende Referenz-Ziele = Fehler). Bei neuen Claims (accept_gap aus Unit / "
-                + "promote_to_claim): ledger-adjudicate-refine vergibt die fehlenden Facetten. Der consumable ist danach "
-                + "der Input für 02-baselines (recipe)."),
+                "• adjudicated-ledger.json — Audit ALLER Entscheidungen\n"
+                + "• consumable.json — finale Claim-Menge (freigegeben + deine Annahmen − Verworfenes)\n"
+                + "• gate.json — hartes Vollständigkeits-Gate (unentschiedene Zeilen / fehlende Referenz-Ziele = Fehler)\n"
+                + "\n"
+                + "Bei NEUEN Claims vergibt der automatische Refine-Schritt die fehlenden Facetten. "
+                + "Der consumable ist danach der Input für 02-baselines."),
         ]);
 
     private static ReviewItem BuildItem(AdjudicationItem a, IReadOnlyDictionary<string, string>? candidateToCanonical)
@@ -306,7 +355,7 @@ public static class LedgerAdjudicationReviewAdapter
         return new ReviewItem
         {
             ItemId = a.ItemId,
-            Badge = a.ItemType,
+            Badge = BadgeLabel(a.ItemType),
             Summary = a.Proposition,
             Notes = notes,
             ContextBlocks = ctx,
@@ -338,6 +387,10 @@ public static class LedgerAdjudicationReviewAdapter
     {
         var action = FieldOf(it, FieldAction);
         if (!AdjudicationActions.IsValid(action)) return false;
+        // E0.9-P2a: Verwerfen braucht ein begründetes Warum (Audit-Symmetrie); defer bleibt bewusst frei
+        // (Vertagen ist kein Widerspruch, Zwangs-Begründung dort wäre Tippzwang ohne Audit-Wert).
+        if (string.Equals(action, AdjudicationActions.Reject, StringComparison.OrdinalIgnoreCase)
+            && string.IsNullOrWhiteSpace(FieldOf(it, FieldReason))) return false;
         var needsTarget = string.Equals(action, AdjudicationActions.MergeExisting, StringComparison.OrdinalIgnoreCase)
                           || string.Equals(action, AdjudicationActions.MarkCoveredBy, StringComparison.OrdinalIgnoreCase)
                           || string.Equals(action, AdjudicationActions.AttachEvidence, StringComparison.OrdinalIgnoreCase);

@@ -39,6 +39,17 @@ public sealed class ReClarifyBacklogReviewAdapterTests
         Assert.Equal(["PBI-2"], blocked.Items.Select(i => i.ItemId));
     }
 
+    // E0.1-Retrofit: die Badge ist Klartext (Readiness zuerst), nie ein rohes Enum.
+    [Fact]
+    public void Badge_ist_Klartext_nicht_roh_Enum()
+    {
+        var backlog = Backlog(Pbi("PBI-1", readiness: "backlog_ready"), Pbi("PBI-2", readiness: "blocked_by_decision"));
+        var s = ReClarifyBacklogReviewAdapter.BuildSession("r1", Baseline(), backlog, Gate(), "all");
+        Assert.Equal("bereit", s.Items[0].Badge);
+        Assert.Equal("blockiert · Entscheidung", s.Items[1].Badge);
+        Assert.DoesNotContain(s.Items, i => i.Badge is "backlog_ready" or "blocked_by_decision");
+    }
+
     // E0.1b/i: Items starten OHNE Vorentscheid; Begruendung ist nur beim Verwerfen Pflicht (Audit-Gewicht) —
     // bei accept ist der explizite Entscheid selbst die Autorisierung.
     [Fact]

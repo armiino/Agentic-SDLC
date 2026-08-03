@@ -89,6 +89,8 @@
   .note-warning { border-left-color:var(--danger); }
   .note-line { padding:2px 0; display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
   .note-line .effect-text { flex:1; min-width:220px; }
+  .note-card { background:#0f1420; border:1px solid var(--edge); border-radius:6px; padding:5px 9px; margin:4px 0; color:var(--fg); line-height:1.35; }
+  .note-foot { color:var(--mut); font-size:12px; padding:3px 0 0; }
   .note-line.diff-add { color:var(--ok); background:rgba(61,220,151,.07); border-radius:4px; padding:2px 6px; }
   .note-line.diff-del { color:var(--danger); background:rgba(255,107,107,.07); border-radius:4px; padding:2px 6px; }
   .line-label { font-weight:600; color:var(--accent); margin-right:2px; }
@@ -96,6 +98,8 @@
   .glossary-row { display:grid; grid-template-columns:minmax(180px,260px) 1fr; gap:10px; padding:4px 0;
                   font-size:13px; border-bottom:1px solid rgba(42,47,58,.5); }
   .glossary-row .term-name { color:var(--accent); overflow-wrap:anywhere; }
+  .glossary-group { font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:var(--mut); font-weight:600; margin:14px 0 5px; border-bottom:1px solid var(--edge); padding-bottom:3px; }
+  .glossary-group:first-child { margin-top:2px; }
   .facet-note { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
   .suggestion-list { display:flex; flex-direction:column; gap:5px; }
   .suggestion-row { display:flex; align-items:center; gap:7px; flex-wrap:wrap; }
@@ -159,6 +163,9 @@
   .help-section { margin:0 0 18px; }
   .help-section h3 { margin:0 0 6px; color:var(--accent); font-size:13px; }
   .help-section div { white-space:pre-wrap; color:var(--fg); font-size:13px; }
+  .help-li { padding:2px 0 2px 16px; text-indent:-12px; }
+  .help-p { margin:0 0 8px; }
+  .help-p:last-child { margin-bottom:0; }
   .drawer { position:fixed; top:0; right:0; width:min(760px, 92vw); height:100vh; background:#10141c;
             border-left:1px solid var(--edge); z-index:41; display:none; flex-direction:column; }
   .drawer.show { display:flex; }
@@ -390,10 +397,16 @@ function renderNoteBody(kind, text) {
     return `<div class="suggestion-row">${renderFacetSuggestion(t)}</div>`;
   }
   if (t.includes('\n')) {
+    // Nur wenn die Note ueberhaupt "- " Listenpunkte enthaelt, auf Karten-Darstellung wechseln (Bullets → Karten,
+    // Erklaer-/Meta-Zeilen darunter als dezenter Fusstext). Sonst unveraendert (Wirkungs-Banner, Diff-Notes etc.).
+    const hasBullets = t.split('\n').some(l => l.startsWith('- '));
     return t.split('\n').filter(Boolean)
       .map(line => {
+        if (line.startsWith('- ')) return `<div class="note-card">${glossify(line.slice(2))}</div>`;
         const cls = line.startsWith('+ ') ? ' diff-add' : line.startsWith('− ') ? ' diff-del' : '';
-        return `<div class="note-line${cls}">${renderEffectLine(line)}</div>`;
+        if (cls) return `<div class="note-line${cls}">${renderEffectLine(line)}</div>`;
+        if (hasBullets) return `<div class="note-foot">${glossify(line)}</div>`;
+        return `<div class="note-line">${renderEffectLine(line)}</div>`;
       }).join('');
   }
   if (kind === 'info' && t.includes('=')) {
@@ -792,15 +805,34 @@ function openHelp() {
   const help = session.help || {};
   document.getElementById('helpTitle').textContent = help.title || 'Hilfe';
   document.getElementById('helpSummary').textContent = help.summary || '';
+  const renderHelpText = text => {
+    const paras = (text || '').split(/\n\s*\n/);
+    return paras.map(p => `<div class="help-p">${p.split('\n').map(line =>
+      line.trimStart().startsWith('• ')
+        ? `<div class="help-li">${esc(line.trim())}</div>`
+        : esc(line)).join('\n')}</div>`).join('');
+  };
   const sections = (help.sections || []).map(s => `
     <section class="help-section">
       <h3>${esc(s.title || '')}</h3>
-      <div>${esc(s.text || '')}</div>
+      <div>${renderHelpText(s.text)}</div>
     </section>`).join('');
-  const gloss = glossary.length ? `
+  // Anzeige aus session.glossary (Original-Reihenfolge = gewollte Gruppen-Reihenfolge); das length-sortierte
+  // `glossary` dient nur dem Tooltip-Matching. Gruppen in Reihenfolge des ersten Auftretens.
+  const gEntries = (session.glossary || []);
+  const row = g => `<div class="glossary-row"><span class="term-name">${esc(g.term)}</span><span>${esc(g.meaning)}</span></div>`;
+  let glossInner = '';
+  if (gEntries.some(g => g.group)) {
+    const order = [], byGroup = {};
+    gEntries.forEach(g => { const k = g.group || 'Weitere'; if (!byGroup[k]) { byGroup[k] = []; order.push(k); } byGroup[k].push(g); });
+    glossInner = order.map(k => `<div class="glossary-group">${esc(k)}</div>${byGroup[k].map(row).join('')}`).join('');
+  } else {
+    glossInner = gEntries.map(row).join('');
+  }
+  const gloss = gEntries.length ? `
     <section class="help-section">
       <h3>Begriffe</h3>
-      <div>${glossary.map(g => `<div class="glossary-row"><span class="term-name">${esc(g.term)}</span><span>${esc(g.meaning)}</span></div>`).join('')}</div>
+      <div>${glossInner}</div>
     </section>` : '';
   document.getElementById('helpBody').innerHTML = sections + gloss;
   document.getElementById('helpModal').classList.add('show');

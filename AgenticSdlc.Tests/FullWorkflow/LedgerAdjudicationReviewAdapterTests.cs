@@ -31,6 +31,32 @@ public sealed class LedgerAdjudicationReviewAdapterTests
         Assert.Equal(["ADJ-1", "ADJ-2"], session.Items.Select(i => i.ItemId));
     }
 
+    // E0.9-Konsistenz: Badge in Klartext (kein rohes itemType-Enum) + gruppiertes Glossar wie an allen Gates.
+    [Fact]
+    public void Klartext_Badge_und_gruppiertes_Glossar()
+    {
+        var session = LedgerAdjudicationReviewAdapter.BuildSession(Queue(Item()));
+        Assert.Equal("Claim zur Prüfung", session.Items[0].Badge);
+        Assert.NotEmpty(session.Glossary);
+        Assert.All(session.Glossary, g => Assert.False(string.IsNullOrEmpty(g.Group)));
+    }
+
+    // E0.9-P2a: Verwerfen braucht ein begründetes Warum; Offen lassen (defer) bewusst nicht.
+    [Fact]
+    public void Verwerfen_braucht_Begruendung_defer_nicht()
+    {
+        var session = LedgerAdjudicationReviewAdapter.BuildSession(Queue(Item()));
+        var it = session.Items[0];
+        Set(it, LedgerAdjudicationReviewAdapter.FieldAction, "reject");
+        Assert.False(LedgerAdjudicationReviewAdapter.Resolved(it));
+        Set(it, LedgerAdjudicationReviewAdapter.FieldReason, "kein Beleg im Transkript");
+        Assert.True(LedgerAdjudicationReviewAdapter.Resolved(it));
+
+        var it2 = LedgerAdjudicationReviewAdapter.BuildSession(Queue(Item("ADJ-2"))).Items[0];
+        Set(it2, LedgerAdjudicationReviewAdapter.FieldAction, "defer");
+        Assert.True(LedgerAdjudicationReviewAdapter.Resolved(it2)); // Vertagen bleibt begründungsfrei
+    }
+
     [Fact]
     public void Ziel_Aktionen_verlangen_referenceTarget()
     {
@@ -38,7 +64,8 @@ public sealed class LedgerAdjudicationReviewAdapterTests
         var it = session.Items[0];
 
         Set(it, LedgerAdjudicationReviewAdapter.FieldAction, "reject");
-        Assert.True(LedgerAdjudicationReviewAdapter.Resolved(it)); // reject braucht kein Ziel
+        Set(it, LedgerAdjudicationReviewAdapter.FieldReason, "kein Beleg im Transkript");
+        Assert.True(LedgerAdjudicationReviewAdapter.Resolved(it)); // reject braucht kein Ziel (aber seit P2a eine Begründung)
 
         Set(it, LedgerAdjudicationReviewAdapter.FieldAction, "merge_existing");
         Set(it, LedgerAdjudicationReviewAdapter.FieldTarget, "");

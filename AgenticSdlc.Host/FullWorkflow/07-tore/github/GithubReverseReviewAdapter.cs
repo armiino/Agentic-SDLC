@@ -10,8 +10,8 @@ namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 // E0.5 (02.08.): Klartext statt roher apply/skip- und Kind-Keys; ehrliche Wirkungs-Kennzeichnung je Op-Art
 // (PBI_DONE WIRKT, MAPPING_SYNC = Housekeeping, FLAG_REOPENED = nur Hinweis); PBI-Titel + „geschlossen“-Marker aus
 // dem Core/Snapshot (via ReverseReviewContext), damit man beim Lesen weiss, WAS man als fertig bestaetigt und dass es
-// um ein geschlossenes Issue geht; deklarierte Experiment-Bulk-Linie „Alle uebernehmen“ (nicht Default). Die Apply-/
-// Merge-/Resolved-Logik ist UNVERAENDERT — nur Anzeige + Datenanbindung.
+// um ein geschlossenes Issue geht; deklarierte Experiment-Bulk-Linie „Alle uebernehmen“ (nicht Default). Apply-/Merge-
+// Logik unveraendert. E0.9-P2a (03.08.): skip verlangt eine Begruendung (Resolved).
 public static class GithubReverseReviewAdapter
 {
     public const string FieldDecision = "decision";
@@ -21,7 +21,10 @@ public static class GithubReverseReviewAdapter
 
     // Klartext-Optionen fuers Entscheidungs-Dropdown (Value = interner Key bleibt englisch; Label = Klartext).
     private static readonly IReadOnlyList<ReviewOption> BaseDecisionOptions =
-        [new("apply", "✓ Übernehmen"), new("skip", "Nicht übernehmen")];
+        [new("apply", "✓ Übernehmen"), new("skip", "Nicht übernehmen (Begründung Pflicht)")];
+
+    private const string GKinds = "Arten von Rückmeldungen";
+    private const string GTerms = "Begriffe";
 
     public static ReviewSession BuildSession(string runId, GithubReversePlanDocument plan, ReverseReviewContext? context = null)
     {
@@ -35,18 +38,18 @@ public static class GithubReverseReviewAdapter
                 : $"{plan.Operations.Count} Vorschläge aus geschlossenen/geänderten Issues. Du bestätigst, was in den Core übernommen wird.",
             Glossary =
             [
-                new ReviewGlossaryEntry("geschlossenes Issue", "Ein GitHub-Issue, das jemand auf „closed“ gesetzt hat. Das ist nur ein SIGNAL — es ändert den Core nicht automatisch."),
-                new ReviewGlossaryEntry("PBI abschließen (Normalfall)", "Issue geschlossen, PBI noch aktiv → Vorschlag, das PBI im Core auf fertig (done) zu setzen. Wirkt nur nach deiner Bestätigung (E4). Schließt die Verknüpfung gleich mit."),
-                new ReviewGlossaryEntry("Verknüpfung aufräumen (Ausnahme)", "Das PBI ist im Core schon abgeschlossen, nur die interne Issue↔PBI-Verknüpfung hängt noch auf „offen“. Wird hier geschlossen — keine PBI-Änderung. Taucht im sauberen Ablauf normal nicht auf."),
-                new ReviewGlossaryEntry("Wieder geöffnet – prüfen (Ausnahme)", "Ein Issue ist wieder offen, obwohl das PBI/die Verknüpfung abgeschlossen ist. Nur ein Hinweis auf eine Abweichung — kein automatischer Change."),
-                new ReviewGlossaryEntry("fertig (done)", "Der Core-Status, der bedeutet: die Arbeit an diesem PBI ist abgeschlossen. Entsteht AUSSCHLIESSLICH über ein hier bestätigtes „PBI abschließen“ — nie aus GitHub allein.")
+                new ReviewGlossaryEntry("PBI abschließen (Normalfall)", "Issue geschlossen, PBI noch aktiv → Vorschlag, das PBI im Core auf fertig (done) zu setzen. Wirkt nur nach deiner Bestätigung (E4). Schließt die Verknüpfung gleich mit.", GKinds),
+                new ReviewGlossaryEntry("Verknüpfung aufräumen (Ausnahme)", "Das PBI ist im Core schon abgeschlossen, nur die interne Issue↔PBI-Verknüpfung hängt noch auf „offen“. Wird hier geschlossen — keine PBI-Änderung. Taucht im sauberen Ablauf normal nicht auf.", GKinds),
+                new ReviewGlossaryEntry("Wieder geöffnet – prüfen (Ausnahme)", "Ein Issue ist wieder offen, obwohl das PBI/die Verknüpfung abgeschlossen ist. Nur ein Hinweis auf eine Abweichung — kein automatischer Change.", GKinds),
+                new ReviewGlossaryEntry("geschlossenes Issue", "Ein GitHub-Issue, das jemand auf „closed“ gesetzt hat. Das ist nur ein SIGNAL — es ändert den Core nicht automatisch.", GTerms),
+                new ReviewGlossaryEntry("fertig (done)", "Der Core-Status, der bedeutet: die Arbeit an diesem PBI ist abgeschlossen. Entsteht AUSSCHLIESSLICH über ein hier bestätigtes „PBI abschließen“ — nie aus GitHub allein.", GTerms)
             ],
             Help = new ReviewHelp("GitHub-Rückmeldung in den Core",
                 "GitHub ist Projektion, nie Quelle. Ein geschlossenes Issue ist nur ein Vorschlag — der Core ändert sich erst durch deine Freigabe hier.",
                 [
                     new ReviewHelpSection("Verifikation (E4)",
                         "Ein „PBI abschließen“ heißt NICHT „Issue zu = fertig“. Übernimm es NUR, wenn du bestätigst, dass die " +
-                        "Arbeit wirklich abgeschlossen ist. Sonst „Nicht übernehmen“. Der Status „fertig“ entsteht ausschließlich über diese Freigabe."),
+                        "Arbeit wirklich abgeschlossen ist. Sonst „Nicht übernehmen“ — mit kurzer Begründung (Pflicht; sie ist die einzige Spur der Ablehnung). Der Status „fertig“ entsteht ausschließlich über diese Freigabe."),
                     new ReviewHelpSection("Die drei Arten von Rückmeldungen",
                         "• PBI abschließen (Normalfall): setzt das PBI auf fertig (done) und schließt die Verknüpfung mit. Das verifizierst du.\n" +
                         "• Verknüpfung aufräumen (Ausnahme): PBI war schon fertig, nur die Verknüpfung hängt noch offen — wird geschlossen, keine PBI-Änderung.\n" +
@@ -61,7 +64,7 @@ public static class GithubReverseReviewAdapter
                     Help: "Übernehmen (bei „PBI abschließen“ = fertig verifiziert) oder nicht übernehmen.",
                     Options: BaseDecisionOptions),
                 new ReviewFieldSpec(FieldReason, "Begründung (nur Audit)", ReviewInputType.MultiLine, [], Required: false,
-                    Help: "Optionale Notiz — wird protokolliert, ändert aber nichts am Core.")
+                    Help: "PFLICHT beim Nicht-Übernehmen/Ignorieren (warum weichst du vom Vorschlag ab?) — sonst optional.")
             ],
             // Deklarierte Experiment-Bulk-Linie: alle noch offenen Vorschläge auf apply setzen (kein Default, Confirm-Dialog).
             // Das ist die MANUELLE Vorstufe der späteren Steward-Auto-Policy (s. plan-project-steward §5.1 / E-E).
@@ -74,7 +77,9 @@ public static class GithubReverseReviewAdapter
         };
     }
 
-    public static bool Resolved(ReviewItem item) => Decisions.Contains(FieldOf(item, FieldDecision));
+    // E0.9-P2a: Ablehnen braucht ein begründetes Warum (Muster: GithubForwardReviewAdapter.Resolved).
+    public static bool Resolved(ReviewItem item)
+        => ReviewFields.ResolvedRequiringReason(item, Decisions, FieldDecision, FieldReason, "skip"); // Basis-W2
 
     public static GithubReverseDecisionsFile Apply(string runId, ReviewSession session)
         => new(runId, "human (review-ui)", session.Items.Select(it => new GithubReverseDecision(
@@ -152,9 +157,9 @@ public static class GithubReverseReviewAdapter
 
     private static IReadOnlyList<ReviewOption> DecisionOptions(string kind) => kind switch
     {
-        GithubReverseKind.PbiDone => [new("apply", "✓ Als fertig bestätigen"), new("skip", "Nicht übernehmen (offen lassen)")],
-        GithubReverseKind.MappingSyncClosed => [new("apply", "✓ Aufräumen übernehmen"), new("skip", "Nicht übernehmen")],
-        GithubReverseKind.FlagReopened => [new("apply", "✓ Als gesehen markieren"), new("skip", "Ignorieren")],
+        GithubReverseKind.PbiDone => [new("apply", "✓ Als fertig bestätigen"), new("skip", "Nicht übernehmen (Begründung Pflicht)")],
+        GithubReverseKind.MappingSyncClosed => [new("apply", "✓ Aufräumen übernehmen"), new("skip", "Nicht übernehmen (Begründung Pflicht)")],
+        GithubReverseKind.FlagReopened => [new("apply", "✓ Als gesehen markieren"), new("skip", "Ignorieren (Begründung Pflicht)")],
         _ => BaseDecisionOptions
     };
 

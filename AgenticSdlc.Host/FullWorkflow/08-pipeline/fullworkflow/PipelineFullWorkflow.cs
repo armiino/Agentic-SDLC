@@ -42,7 +42,7 @@ internal sealed record ForwardNodes(
 /// <summary>
 /// U2 — die EINE Bauzeit-Orchestrierungsstelle der GANZEN Kette (ein-graph-vereinheitlichung §7).
 /// Der komplette Graph steht hier: Front → Branch (Typ-Routing) → Bootstrap-Zweig | Betriebs-Zweig →
-/// gemeinsames Forward-Ende. 7 Gates, Conditional Edges, keine Orchestrierung außerhalb
+/// gemeinsames Forward-Ende. 6 Human-Gates (RequestPorts), Conditional Edges, keine Orchestrierung außerhalb
 /// (Design-Regel: keine CLI-Aufrufe aus Executors; der Runner startet nur noch EINEN Stream).
 /// Zweig-Verdrahtung per AddTo aus den Standalone-Workflows (eine Quelle, keine Kopie).
 /// </summary>

@@ -83,7 +83,9 @@ public sealed record ReviewReferenceDetails(
 
 /// <summary>Glossar-Eintrag: erklaert einen Fach-Begriff (z. B. einen Status-Wert) in Klartext.
 /// Die UI zeigt Tooltips ueberall, wo der Begriff auftaucht, und listet das Glossar in der Hilfe.</summary>
-public sealed record ReviewGlossaryEntry(string Term, string Meaning);
+/// <summary>Ein Glossar-Eintrag. <paramref name="Group"/> ist optional: gesetzt → die Hilfe rendert die Begriffe
+/// gruppiert unter Zwischenüberschriften (in der Reihenfolge des ersten Auftretens); null → flache Liste (wie bisher).</summary>
+public sealed record ReviewGlossaryEntry(string Term, string Meaning, string? Group = null);
 
 /// <summary>
 /// Optionale Sammel-Aktion („Accept-all"): setzt die angegebenen Feldwerte (<see cref="Set"/>) auf allen Items, die

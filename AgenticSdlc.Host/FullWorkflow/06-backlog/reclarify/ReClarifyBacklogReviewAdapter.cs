@@ -46,7 +46,7 @@ public static class ReClarifyBacklogReviewAdapter
         return new ReviewSession
         {
             SessionId = $"l4-re-clarify-backlog-{runId}",
-            Title = "L4 Re-Clarify — Product Backlog Review",
+            Title = "Product-Backlog freigeben",
             Subtitle = scope == "blocked"
                 ? $"{items.Count} PBIs mit blockierenden offenen Entscheidungen. Gate={(gate.Pass ? "pass" : "fail")}."
                 : $"{items.Count} Product Backlog Items — je Item: akzeptieren, anpassen oder verwerfen. Gate={(gate.Pass ? "pass" : "fail")}.",
@@ -79,19 +79,25 @@ public static class ReClarifyBacklogReviewAdapter
     // E0.1m: Fach-Begriffe in Klartext — UI zeigt Tooltips + Glossar in der Hilfe. Wirkungs-Ehrlichkeit
     // (Autor-Frage 27.07.): NUR blockierende Fragen haben eine automatische Wirkung (Forward-HOLD);
     // alle anderen Begriffe sind Einordnung fuer den Menschen — jeder Eintrag sagt das explizit.
+    // E0.1m + Retrofit 03.08.: Begriffe = die im UI angezeigten KLARTEXT-Labels (nicht mehr die rohen Enums),
+    // damit Tooltips + Glossar-Liste zu dem passen, was der Mensch tatsaechlich sieht (Badge/Einordnung).
+    private const string GReady = "PBI-Reifegrad (Badge)";
+    private const string GOpenDec = "Offene Entscheidungen";
+    private const string GMvp = "MVP-Einordnung (nur Doku)";
+
     private static IReadOnlyList<ReviewGlossaryEntry> Glossary() =>
     [
-        new("backlog_ready", "DoR erfuellt — kann geplant werden, nichts steht im Weg."),
-        new("ready_with_nonblocking_questions", "Umsetzbar — die offenen Fragen laufen nur als Doku mit, keine blockiert den Scope; Forward/Issue laufen normal."),
-        new("blocked_by_decision", "WIRKT: der GitHub-Forward parkt das PBI (HOLD), bis die blockierende Frage geklaert ist."),
-        new("BLOCKIERT den Scope", "WIRKT: diese Frage trifft den PBI-Kern — readiness wird blocked_by_decision, der GitHub-Forward parkt das PBI."),
-        new("Team-Default moeglich", "Das Team kann selbst mit einem sinnvollen Default entscheiden. Nur Einordnung — keine automatische Wirkung."),
-        new("Stakeholder muss entscheiden", "Braucht eine fachliche Entscheidung der Stakeholder. Nur Einordnung — keine automatische Wirkung."),
-        new("teilweise geklaert", "Es gibt Teilbeleg im Transkript, aber keine vollstaendige Antwort. Nur Einordnung — keine automatische Wirkung."),
-        new("Default vorgeschlagen", "Der Agent schlaegt einen Default vor — noch nicht autorisiert. Nur Einordnung — keine automatische Wirkung."),
-        new("required_for_mvp", "Voraussetzung fuer das MVP. Nur Doku — kein Konsument in der Kette."),
-        new("out_of_scope", "Bewusst ausserhalb des Scopes. ACHTUNG: nur Doku — das PBI wird trotzdem ein Issue, nichts filtert nach MVP."),
-        new("undecided", "MVP-Einordnung noch offen. Nur Doku — kein Konsument in der Kette.")
+        new("bereit", "DoR erfuellt — kann geplant werden, nichts steht im Weg.", GReady),
+        new("bereit · offene Fragen", "Umsetzbar — die offenen Fragen laufen nur als Doku mit, keine blockiert den Scope; Forward/Issue laufen normal.", GReady),
+        new("blockiert · Entscheidung", "WIRKT: der GitHub-Forward parkt das PBI (HOLD), bis die blockierende Frage geklaert ist.", GReady),
+        new("BLOCKIERT den Scope", "WIRKT: diese Frage trifft den PBI-Kern — Readiness wird blockiert · Entscheidung, der GitHub-Forward parkt das PBI.", GOpenDec),
+        new("Team-Default moeglich", "Das Team kann selbst mit einem sinnvollen Default entscheiden. Nur Einordnung — keine automatische Wirkung.", GOpenDec),
+        new("Stakeholder muss entscheiden", "Braucht eine fachliche Entscheidung der Stakeholder. Nur Einordnung — keine automatische Wirkung.", GOpenDec),
+        new("teilweise geklaert", "Es gibt Teilbeleg im Transkript, aber keine vollstaendige Antwort. Nur Einordnung — keine automatische Wirkung.", GOpenDec),
+        new("Default vorgeschlagen", "Der Agent schlaegt einen Default vor — noch nicht autorisiert. Nur Einordnung — keine automatische Wirkung.", GOpenDec),
+        new("für MVP erforderlich", "Voraussetzung fuer das MVP. Nur Doku — kein Konsument in der Kette.", GMvp),
+        new("außerhalb Scope", "Bewusst ausserhalb des Scopes. ACHTUNG: nur Doku — das PBI wird trotzdem ein Issue, nichts filtert nach MVP.", GMvp),
+        new("unentschieden", "MVP-Einordnung noch offen. Nur Doku — kein Konsument in der Kette.", GMvp)
     ];
 
     public static bool Resolved(ReviewItem item)
@@ -218,6 +224,39 @@ public static class ReClarifyBacklogReviewAdapter
         _ => resolution
     };
 
+    // Klartext-Badge (E0.1-Retrofit): Readiness zuerst (aussagekraeftigster PBI-Zustand), sonst Type. Roh-Enum nie anzeigen.
+    private static string BadgeLabel(ProductBacklogItem p)
+        => p.Readiness is { Length: > 0 } r ? ReadinessLabel(r) : TypeLabel(p.Type);
+
+    private static string ReadinessLabel(string readiness) => readiness switch
+    {
+        "backlog_ready" => "bereit",
+        "ready_with_nonblocking_questions" => "bereit · offene Fragen",
+        "blocked_by_decision" => "blockiert · Entscheidung",
+        _ => readiness
+    };
+
+    private static string TypeLabel(string type) => type switch
+    {
+        "delivery" => "Umsetzung",
+        "clarification" => "Klärung",
+        "deferred" => "zurückgestellt",
+        "out_of_scope" => "außerhalb Scope",
+        "pbi" => "PBI",
+        _ => type
+    };
+
+    private static string MvpLabel(string? mvp) => mvp switch
+    {
+        "mvp" => "MVP",
+        "required_for_mvp" => "für MVP erforderlich",
+        "later" => "später",
+        "out_of_scope" => "außerhalb Scope",
+        "undecided" => "unentschieden",
+        null or "" => "-",
+        _ => mvp
+    };
+
     private static IReadOnlyList<ReviewFieldSpec> Schema() =>
     [
         new ReviewFieldSpec(FieldDecision, "Entscheidung", ReviewInputType.Dropdown,
@@ -237,38 +276,65 @@ public static class ReClarifyBacklogReviewAdapter
             Help: "Eine Zeile pro Kriterium. Leer = Original.", VisibleWhen: OnlyOnEdit),
         new ReviewFieldSpec(FieldEditMvp, "Edit: MVP", ReviewInputType.Dropdown,
             ["", "mvp", "required_for_mvp", "later", "out_of_scope", "undecided"], Required: false,
-            Help: "Leer = Original.", VisibleWhen: OnlyOnEdit),
+            Help: "Leer = Original.", VisibleWhen: OnlyOnEdit,
+            Options:
+            [
+                new ReviewOption("", "(Original behalten)"), new ReviewOption("mvp", "MVP"),
+                new ReviewOption("required_for_mvp", "für MVP erforderlich"), new ReviewOption("later", "später"),
+                new ReviewOption("out_of_scope", "außerhalb Scope"), new ReviewOption("undecided", "unentschieden")
+            ]),
         new ReviewFieldSpec(FieldEditPriority, "Edit: priorityRank", ReviewInputType.FreeText, [], Required: false,
             Help: "Ganzzahl. Leer = Original.", VisibleWhen: OnlyOnEdit),
         new ReviewFieldSpec(FieldEditReadiness, "Edit: Readiness", ReviewInputType.Dropdown,
             ["", "backlog_ready", "ready_with_nonblocking_questions", "blocked_by_decision"], Required: false,
-            Help: "Leer = Original.", VisibleWhen: OnlyOnEdit),
+            Help: "Leer = Original.", VisibleWhen: OnlyOnEdit,
+            Options:
+            [
+                new ReviewOption("", "(Original behalten)"), new ReviewOption("backlog_ready", "bereit"),
+                new ReviewOption("ready_with_nonblocking_questions", "bereit · offene Fragen"),
+                new ReviewOption("blocked_by_decision", "blockiert · Entscheidung")
+            ]),
         new ReviewFieldSpec(FieldReason, "Begruendung (Audit-Protokoll)", ReviewInputType.MultiLine, [], Required: false,
             Help: "Warum du so entscheidest. Landet als Beleg in human-decisions.json + Core-History — "
                 + "keine Anweisung ans System, niemand liest sie maschinell.")
     ];
 
     private static ReviewHelp BuildHelp() => new(
-        Title: "L4 Re-Clarify Product Backlog Review",
-        Summary: "Du gibst die aus den Feature-Clustern geschnittenen PBIs frei, bevor sie Projekt-Wahrheit werden und Issues entstehen.",
+        Title: "Product-Backlog freigeben",
+        Summary: "Der Clarify-Agent hat jedes Feature in PBIs geschnitten. Hier gibst du sie frei (oder korrigierst sie), BEVOR sie Projekt-Wahrheit (Core) werden und daraus GitHub-Issues entstehen. Das ist der letzte menschliche Check vor dem Erst-Backlog.",
         Sections:
         [
-            new ReviewHelpSection("Ziel",
-                "Der Clarify-Agent hat jedes Feature in PBIs geschnitten (Akzeptanzkriterien + explizite offene Entscheidungen). "
-                + "Du bestaetigst/korrigierst. Offene Entscheidungen sind sichtbar; blockierende sind hervorgehoben."),
-            new ReviewHelpSection("Entscheidung",
-                "Akzeptieren = PBI ist gut. Anpassen = Titel/Statement/Kriterien/MVP/Prioritaet/Readiness "
-                + "aendern (nur ausgefuellte Felder ueberschreiben das Original). Verwerfen = PBI raus — Begruendung ist "
-                + "dann Pflicht, und seine Requirements sind erstmal wieder ohne Verwendung."),
+            new ReviewHelpSection("Was du pro PBI siehst",
+                "• Titel + Statement (Als <Rolle> will ich ..., damit ...).\n"
+                + "• Badge = Reifegrad (Readiness): bereit · bereit · offene Fragen · blockiert · Entscheidung.\n"
+                + "• Einordnung: MVP + Rang (nur Doku, kein Automatismus).\n"
+                + "• Akzeptanzkriterien (als Karten): die testbaren Bedingungen, wann das PBI erfuellt ist.\n"
+                + "• Offene Entscheidungen: beim Schneiden markierte Fragen — blockierende sind rot hervorgehoben.\n"
+                + "• Abgedeckte Requirements: woraus das PBI geschnitten ist (wird beim Seed zur covers-Relation = Rueckverfolgbarkeit bis ins Issue).\n"
+                + "Ueber Details oeffnen siehst du PBI und Requirements im Volltext."),
+            new ReviewHelpSection("Deine Entscheidung",
+                "• Akzeptieren — PBI ist gut, so übernehmen.\n"
+                + "• Anpassen — Titel/Statement/Kriterien/MVP/Priorität/Readiness ändern; nur AUSGEFÜLLTE Felder überschreiben das Original (ergibt Version+1).\n"
+                + "• Verwerfen — PBI entfällt; Begründung ist PFLICHT. Seine Requirements sind dann erstmal ohne Verwendung (das DoR-Gate meldet die Lücke).\n"
+                + "\n"
+                + "Wirksamkeit (was wie stark greift): Readiness (steuert den Forward-HOLD) > Titel/Statement (bis ins Issue) > "
+                + "Akzeptanzkriterien (Core + Issue-Body) > MVP/Rang (nur Doku). Die Begründung ist reines Audit."),
             new ReviewHelpSection("Offene Entscheidungen — Herkunft und Verbleib",
-                "Sie entstehen beim Schneiden: jede Annahme ohne Transkript-Beleg wird als offene Frage markiert statt als "
-                + "Fakt erfunden. Sie bleiben am PBI dokumentiert und werden (noch) NICHT zu eigenen Decision-Items. "
-                + "Nicht-blockierende Fragen laufen nur als Doku mit; blockierende setzen readiness=blocked_by_decision — "
-                + "der GitHub-Forward parkt das PBI dann, bis entschieden ist."),
+                "• Herkunft: der Agent darf keine unbelegte Annahme als Fakt erfinden — jedes PBI braucht Akzeptanzkriterien ODER explizite offene Fragen (Gate-Regel).\n"
+                + "• Warum nicht hier beantworten: die Antwort gehört den Stakeholdern (Meeting). Der Auflöse-Weg (Frage → eigenes Decision-Item → Entscheidungs-Tor) ist geplant, aber noch nicht gebaut (R-14).\n"
+                + "• Sofort-Weg, wenn DU die Antwort kennst: Anpassen und die Akzeptanzkriterien selbst schärfen.\n"
+                + "\n"
+                + "Wo sie beim Akzeptieren landen: das PBI kommt MIT seinen offenen Fragen ins Backlog (im Core als Fragen-Zähler-Metadatum; Volltexte im Lauf-Artefakt).\n"
+                + "• bereit · offene Fragen — nur Doku, Forward/Issue laufen normal.\n"
+                + "• blockiert · Entscheidung — WIRKT: der GitHub-Forward parkt das PBI (HOLD, kein Issue), bis entschieden ist."),
+            new ReviewHelpSection("Alle akzeptieren (Experiment)",
+                "Der Sammel-Button setzt alle noch offenen PBIs auf Akzeptieren — bewusst OHNE Einzelpruefung. Deklarierter "
+                + "Experiment-Modus (wie accept-all/replay), NICHT der Normalweg. Bereits gesetzte Entscheidungen bleiben unberuehrt."),
             new ReviewHelpSection("Was passiert nach Fertig",
-                "Die UI schreibt human-decisions.json. Der Apply materialisiert die uebernommenen/geaenderten PBIs als "
-                + "ProductBacklogView, setzt die Traceability deterministisch neu und faehrt das DoR-Gate erneut. Danach "
-                + "hebt core-seed-backlog die PBIs als Projekt-Wahrheit in den Core; der GitHub-Sync erzeugt daraus Issues.")
+                "Die UI schreibt human-decisions.json. Der Apply materialisiert die uebernommenen/geaenderten PBIs, setzt die "
+                + "Traceability deterministisch neu und faehrt das DoR-Gate (Definition of Ready) erneut. Danach hebt "
+                + "core-seed-backlog die PBIs als Projekt-Wahrheit in den Core; der GitHub-Sync erzeugt daraus Issues. "
+                + "Verworfene PBIs kommen nicht in den Core.")
         ]);
 
     private static ReviewItem BuildItem(ProductBacklogItem p, IReadOnlyDictionary<string, CanonicalRequirement> byReq, ReClarifyGateReport gate)
@@ -282,7 +348,7 @@ public static class ReClarifyBacklogReviewAdapter
         var notes = new List<ReviewNote>
         {
             // Readiness steht schon als Badge, type ist immer "pbi" — hier nur, was zusaetzlich traegt.
-            new(ReviewNoteKind.Info, "Einordnung", $"MVP={p.Mvp ?? "-"}; Rang={p.PriorityRank?.ToString() ?? "-"}"),
+            new(ReviewNoteKind.Info, "Einordnung", $"MVP={MvpLabel(p.Mvp)}; Rang={p.PriorityRank?.ToString() ?? "-"}"),
             new(ReviewNoteKind.Reason, "Statement", p.Goal ?? "(kein Statement)"),
             new(ReviewNoteKind.Info, $"Akzeptanzkriterien ({p.AcceptanceCriteria.Count})", p.AcceptanceCriteria.Count == 0 ? "(keine)" : string.Join("\n", p.AcceptanceCriteria.Select(c => "- " + c))),
             new(p.OpenDecisions.Any(o => o.BlocksScope) ? ReviewNoteKind.Warning : ReviewNoteKind.Info,
@@ -308,7 +374,7 @@ public static class ReClarifyBacklogReviewAdapter
         {
             ItemId = p.PbiId,
             Summary = $"{p.Title}\n\n{Truncate(p.Goal ?? "", 500)}",
-            Badge = p.Readiness ?? p.Type,
+            Badge = BadgeLabel(p),
             Notes = notes,
             ContextBlocks = context,
             // E0.1b: KEIN Vorentscheid, KEIN Reason-Prefill — jedes Item startet offen; der Mensch
@@ -400,9 +466,5 @@ public static class ReClarifyBacklogReviewAdapter
 
     private static void Set(ReviewItem item, string key, string? value) => ReviewFields.Set(item, key, value); // Basis-W1
 
-    private static string Truncate(string value, int max)
-    {
-        var normalized = string.Join(' ', (value ?? string.Empty).Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
-        return normalized.Length <= max ? normalized : normalized[..max] + "...";
-    }
+    private static string Truncate(string value, int max) => ReviewFields.TruncateOneLine(value, max); // Basis-W2
 }
