@@ -1,0 +1,190 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "cluster-review-20260804_073821",
+  "verdict": "revise",
+  "summary": "Die Cluster sind \u00FCberwiegend tragf\u00E4hig, enthalten aber zwei fachliche Probleme: (1) Medienfreigabe/Einwilligung ist als eigenst\u00E4ndiges Feature \u00FCberzogen und fachlich querschnittlich zu den inhaltsbezogenen Medienfeatures; (2) die \u00C4nderungskennzeichnung ist kein eigenst\u00E4ndiges Fachfeature, sondern ein bereichs\u00FCbergreifender Mechanismus und sollte nicht als separater Core-Cluster gef\u00FChrt werden.",
+  "findings": [
+    {
+      "clusterId": "FC-17",
+      "kind": "granularity",
+      "severity": "error",
+      "message": "FC-17 ist f\u00FCr die Backlog-Planung zu fein bzw. fachlich falsch verselbst\u00E4ndigt: REQ-35 (Einwilligung/Datenschutz f\u00FCr Bilder), L3-REQ-003 (Medien-Kompression) und L3-REQ-012 (Untertitel/Transkripte/Zusammenfassungen) sind keine gemeinsam nutzbare Endnutzer-Funktion, sondern querschnittliche Regeln bzw. Qualit\u00E4tsmechanismen f\u00FCr Medieninhalte in About-Me (REQ-20/21) und Kommunikationswissen mit Video/Medien (REQ-27/29)."
+    },
+    {
+      "clusterId": "FC-18",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "L3-REQ-013 ist in FC-18 f\u00E4lschlich als Core eines eigenen Features eingeordnet. Der Requirement-Text beschreibt explizit einen bereichs\u00FCbergreifenden Mechanismus f\u00FCr Benachrichtigungen und \u00DCbersichten (\u0027neu oder aktualisiert\u0027) und ist damit querschnittlich zu Inhaltsfeatures wie Profil\u00FCbersicht, About-Me, Kommunikationswissen und No-Go-Hinweisen."
+    }
+  ],
+  "operations": [
+    {
+      "opId": "op-01",
+      "kind": "move_core",
+      "rationale": "REQ-35 regelt Einwilligung und Datenschutz vor Bildnutzung und wirkt fachlich als Querschnitt auf den About-Me-Bereich, wo Bilder zentraler Inhaltsbestandteil sind. Es sollte nicht in einem separaten Mini-Feature als Core verbleiben.",
+      "requirementId": "REQ-35",
+      "fromClusterId": "FC-17",
+      "toClusterId": "FC-08",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-02",
+      "kind": "move_core",
+      "rationale": "L3-REQ-003 beschreibt automatische Kompression/Umwandlung von Medienuploads und passt fachlich als unterst\u00FCtzende Medienregel direkt zum Kommunikationswissen mit Video/Medien, statt als isoliertes eigenes Core-Feature.",
+      "requirementId": "L3-REQ-003",
+      "fromClusterId": "FC-17",
+      "toClusterId": "FC-09",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-03",
+      "kind": "move_core",
+      "rationale": "L3-REQ-012 beschreibt Untertitel/Transkripte/Textzusammenfassungen f\u00FCr Medieninhalte und ist funktional eng an das Kommunikationswissen mit Medieninhalten gekoppelt; als separates Core-Feature ist es zu fein granuliert.",
+      "requirementId": "L3-REQ-012",
+      "fromClusterId": "FC-17",
+      "toClusterId": "FC-09",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-04",
+      "kind": "remove_crosscutting",
+      "rationale": "Nachdem REQ-35 als fachlich zugeh\u00F6riges Requirement in den About-Me-Cluster verschoben wird, sollte der bisherige Cross-Cutting-Verweis in FC-08 entfernt werden, um die widerspr\u00FCchliche Einordnung zu bereinigen.",
+      "requirementId": "REQ-35",
+      "fromClusterId": "FC-08",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-05",
+      "kind": "remove_crosscutting",
+      "rationale": "Nachdem L3-REQ-003 in den Kommunikationswissen-Cluster verschoben wird, sollte der bisherige Cross-Cutting-Verweis in FC-08 entfernt werden; die Medienkompression ist dort nicht eigenst\u00E4ndig erforderlich belegt.",
+      "requirementId": "L3-REQ-003",
+      "fromClusterId": "FC-08",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-06",
+      "kind": "remove_crosscutting",
+      "rationale": "Nachdem L3-REQ-003 als Core zu FC-09 verschoben wird, sollte der bisherige Cross-Cutting-Verweis in FC-09 entfernt werden, damit die Einordnung konsistent ist.",
+      "requirementId": "L3-REQ-003",
+      "fromClusterId": "FC-09",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-07",
+      "kind": "remove_crosscutting",
+      "rationale": "Nachdem L3-REQ-012 als Core zu FC-09 verschoben wird, sollte der bisherige Cross-Cutting-Verweis in FC-09 entfernt werden, damit die Einordnung konsistent ist.",
+      "requirementId": "L3-REQ-012",
+      "fromClusterId": "FC-09",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-08",
+      "kind": "move_core",
+      "rationale": "L3-REQ-013 beschreibt einen bereichs\u00FCbergreifenden Mechanismus zur Kennzeichnung neuer/aktualisierter Inhalte; wegen der expliziten Relevanz f\u00FCr \u00DCbersichten ist die Profil\u00FCbersicht ein plausibler Ankercluster statt eines eigenen isolierten Core-Clusters.",
+      "requirementId": "L3-REQ-013",
+      "fromClusterId": "FC-18",
+      "toClusterId": "FC-05",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-09",
+      "kind": "add_crosscutting",
+      "rationale": "Die \u00C4nderungskennzeichnung wirkt fachlich auch im About-Me-Bereich, wie bereits durch die bisherige Modellierung angedeutet; nach Aufl\u00F6sung von FC-18 sollte L3-REQ-013 dort als Querschnitt angebunden bleiben.",
+      "requirementId": "L3-REQ-013",
+      "fromClusterId": null,
+      "toClusterId": "FC-08",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-10",
+      "kind": "add_crosscutting",
+      "rationale": "Die \u00C4nderungskennzeichnung wirkt fachlich im Kommunikationswissen auf \u00DCbersichten und Benachrichtigungskontexte und sollte nach Aufl\u00F6sung von FC-18 dort als Querschnitt referenziert werden.",
+      "requirementId": "L3-REQ-013",
+      "fromClusterId": null,
+      "toClusterId": "FC-09",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-11",
+      "kind": "add_crosscutting",
+      "rationale": "Die \u00C4nderungskennzeichnung betrifft auch No-Go-Inhalte, sofern dort neue oder ge\u00E4nderte Eintr\u00E4ge in \u00DCbersichten erkennbar sein sollen; die bisherige Modellierung nennt REQ-32 bereits als betroffenen Bereich.",
+      "requirementId": "L3-REQ-013",
+      "fromClusterId": null,
+      "toClusterId": "FC-10",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-12",
+      "kind": "remove_crosscutting",
+      "rationale": "Nach der Verschiebung von L3-REQ-013 in einen Ankercluster sollte der bisherige Cross-Cutting-Verweis in FC-08 bereinigt werden, falls die Zielmodellierung ausschlie\u00DFlich einen Core-Anker plus gezielte Cross-Cutting-Referenzen verwenden soll.",
+      "requirementId": "L3-REQ-013",
+      "fromClusterId": "FC-08",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-13",
+      "kind": "merge_clusters",
+      "rationale": "FC-17 besitzt nach der fachlich gebotenen Umverteilung keinen tragf\u00E4higen eigenst\u00E4ndigen Featurekern mehr; der Cluster sollte in die inhaltsnahen Zielcluster aufgel\u00F6st werden.",
+      "requirementId": null,
+      "fromClusterId": "FC-17",
+      "toClusterId": "FC-09",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-14",
+      "kind": "merge_clusters",
+      "rationale": "FC-18 ist als separates Feature nicht erforderlich, da L3-REQ-013 ein Querschnittsmechanismus ist; der Cluster sollte in den Ankercluster Profil\u00FCbersicht \u00FCberf\u00FChrt und dort von weiteren Features referenziert werden.",
+      "requirementId": null,
+      "fromClusterId": "FC-18",
+      "toClusterId": "FC-05",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    }
+  ]
+}

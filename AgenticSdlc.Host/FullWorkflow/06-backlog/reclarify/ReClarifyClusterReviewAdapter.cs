@@ -313,6 +313,7 @@ public static class ReClarifyClusterReviewAdapter
     {
         "approve" => "keine Einwände",
         "revise" => "Korrekturen empfohlen",
+        "skipped" => "übersprungen (Gate nicht bestanden)",   // R-33 S2: Review läuft nur bei bestandenem Gate
         _ => verdict ?? "?",
     };
 

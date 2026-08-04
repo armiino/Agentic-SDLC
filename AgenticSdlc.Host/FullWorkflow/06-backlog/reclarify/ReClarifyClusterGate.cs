@@ -1,3 +1,5 @@
+using AgenticSdlc.Host.FullWorkflow.Core;
+
 namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Deterministisches, STRUKTURELLES Coverage-Gate fuer die agentische Cluster-Bildung.
@@ -20,17 +22,17 @@ public static class ReClarifyClusterGate
         foreach (var c in clusters)
         {
             if (c.CoreRequirementIds.Count == 0)
-                errors.Add(new("EMPTY_CLUSTER", "error", $"Cluster {c.ClusterId} hat keine coreRequirementIds.", c.ClusterId, []));
+                errors.Add(Error("EMPTY_CLUSTER", $"Cluster {c.ClusterId} hat keine coreRequirementIds.", c.ClusterId, []));
 
             foreach (var id in c.CoreRequirementIds)
             {
                 coreCount[id] = coreCount.TryGetValue(id, out var n) ? n + 1 : 1;
                 if (!allReqIds.Contains(id))
-                    errors.Add(new("UNKNOWN_REQUIREMENT", "error", $"coreRequirementId {id} existiert nicht in der Baseline.", c.ClusterId, [id]));
+                    errors.Add(Error("UNKNOWN_REQUIREMENT", $"coreRequirementId {id} existiert nicht in der Baseline.", c.ClusterId, [id]));
             }
             foreach (var id in c.CrossCuttingRequirementIds)
                 if (!allReqIds.Contains(id))
-                    errors.Add(new("UNKNOWN_REQUIREMENT", "error", $"crossCuttingRequirementId {id} existiert nicht in der Baseline.", c.ClusterId, [id]));
+                    errors.Add(Error("UNKNOWN_REQUIREMENT", $"crossCuttingRequirementId {id} existiert nicht in der Baseline.", c.ClusterId, [id]));
         }
 
         // Coverage-Invariante: jedes nicht-stillgelegte Requirement genau einmal CORE.
@@ -38,9 +40,9 @@ public static class ReClarifyClusterGate
         {
             var n = coreCount.TryGetValue(id, out var c) ? c : 0;
             if (n == 0)
-                errors.Add(new("UNPLACED_REQUIREMENT", "error", $"Requirement {id} ist in keinem Cluster core (Recall-Verletzung).", null, [id]));
+                errors.Add(Error("UNPLACED_REQUIREMENT", $"Requirement {id} ist in keinem Cluster core (Recall-Verletzung).", null, [id]));
             else if (n > 1)
-                errors.Add(new("DUPLICATE_CORE", "error", $"Requirement {id} ist in {n} Clustern core (muss genau eins sein).", null, [id]));
+                errors.Add(Error("DUPLICATE_CORE", $"Requirement {id} ist in {n} Clustern core (muss genau eins sein).", null, [id]));
         }
 
         // Querschnitt sollte irgendwo core sein (sonst nur referenziert, aber nie geplant).
@@ -48,7 +50,7 @@ public static class ReClarifyClusterGate
         foreach (var c in clusters)
             foreach (var id in c.CrossCuttingRequirementIds)
                 if (allReqIds.Contains(id) && !coreSet.Contains(id))
-                    warnings.Add(new("CROSSCUTTING_NOT_CORE", "warning", $"crossCutting {id} ist in keinem Cluster core.", c.ClusterId, [id]));
+                    warnings.Add(Warn("CROSSCUTTING_NOT_CORE", $"crossCutting {id} ist in keinem Cluster core.", c.ClusterId, [id]));
 
         var pass = errors.Count == 0;
         var checks = new Dictionary<string, object>
@@ -60,6 +62,21 @@ public static class ReClarifyClusterGate
         };
         return new ReClarifyGateReport(pass, pass ? "pass" : "fail", errors, warnings, checks);
     }
+
+    // R-33 S0: Severity + Repairability werden AN DER REGEL deklariert (eine Stelle je Regel, kein Neben-
+    // Register). Alle heutigen Regeln sind Plan-Qualitaet des Cluster-Agenten (Gruppierungs-Fehler) -> per
+    // GateFeedback fixbar; eine kuenftig nicht-reparierbare Regel deklariert das explizit am Aufruf.
+    private static ReClarifyGateIssue Error(string code, string message, string? subjectId,
+        IReadOnlyList<string> requirementIds, string repairability = Repairability.Repairable)
+        => new(code, "error", message, subjectId, requirementIds, repairability);
+
+    private static ReClarifyGateIssue Warn(string code, string message, string? subjectId, IReadOnlyList<string> requirementIds)
+        => new(code, "warning", message, subjectId, requirementIds, Repairability.Repairable);
+
+    public static GateDecision Decide(ReClarifyGateReport report, int attempt, int maxAttempts)
+        => GateLoop.Decide(report.Pass,
+            report.Errors.Any(e => string.Equals(e.Repairability, Repairability.Repairable, StringComparison.Ordinal)),
+            attempt, maxAttempts);
 
     private static bool IsRetired(string status)
         => string.Equals(status, "deprecated", StringComparison.OrdinalIgnoreCase)

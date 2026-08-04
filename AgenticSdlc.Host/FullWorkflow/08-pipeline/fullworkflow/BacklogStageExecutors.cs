@@ -43,7 +43,7 @@ public static class BacklogReviewResolver
 // BRIDGE (U1): Stufengrenze cluster-apply -> clarify. Lädt die applied Cluster + Baseline FRISCH
 // (exakt die CLI-Präferenz applied > roh) und baut den Clarify-Input. Muster: IngestPbiBridgeExecutor.
 [SendsMessage(typeof(ReClarifyBacklogInput))]
-internal sealed class BacklogBridgeExecutor(RunContext run, string repoRoot) : Executor<ClusterApplyOutput>("PipelineBacklogBridge")
+internal sealed class BacklogBridgeExecutor(RunContext run, string repoRoot, int maxAttempts) : Executor<ClusterApplyOutput>("PipelineBacklogBridge")
 {
     private static readonly System.Text.Json.JsonSerializerOptions Json = JsonFiles.Json;
 
@@ -55,7 +55,7 @@ internal sealed class BacklogBridgeExecutor(RunContext run, string repoRoot) : E
             .GetCanonicalRequirementsViewAsync(AgenticSdlc.Host.FullWorkflow.Delta.ProjectScope.FromSourcePath(clusters.SourceBaselinePath, "re-clarify", "current_baseline"))
             .ConfigureAwait(false);
         run.AppendEvent(new { type = "PIPELINE_BACKLOG_BRIDGE", clusters = clusters.Clusters.Count, timestampUtc = DateTime.UtcNow });
-        await context.SendMessageAsync(new ReClarifyBacklogInput(clusters, view.Baseline, Path.GetRelativePath(repoRoot, input.AppliedClustersPath))).ConfigureAwait(false);
+        await context.SendMessageAsync(new ReClarifyBacklogInput(clusters, view.Baseline, Path.GetRelativePath(repoRoot, input.AppliedClustersPath), maxAttempts)).ConfigureAwait(false);
     }
 }
 

@@ -40,6 +40,24 @@ public static class PbiUpdateApply
 
         var accepted = plan.Operations.Where((_, i) => acceptedIndices.Contains(i)).ToList();
 
+        // R-36 v2: REQ→Feature wird DETERMINISTISCH aus der bestaetigten Deckung abgeleitet — die Seed-Regel
+        // („requirement→part_of_feature aus den PBIs abgeleitet", CoreBacklogSeeder) auch im Betrieb. Nie
+        // agent-benannt, feuert erst NACH der Gate-/Human-Bestaetigung, idempotent gegen Doppel-Kanten.
+        void EnsureReqFeature(string? reqId, string? featureId)
+        {
+            if (string.IsNullOrWhiteSpace(reqId) || string.IsNullOrWhiteSpace(featureId) || !byId.ContainsKey(featureId!)) return;
+            if (relations.Any(r => string.Equals(r.RelationType, "part_of_feature", StringComparison.Ordinal)
+                                   && string.Equals(r.FromId, reqId, StringComparison.Ordinal)
+                                   && string.Equals(r.ToId, featureId, StringComparison.Ordinal))) return;
+            relations.Add(new ProjectStateRelation(reqId!, featureId!, "part_of_feature", "pbi-update", new Dictionary<string, string>())); relAdded++;
+        }
+
+        // Feature eines bestehenden PBI: primaer die part_of_feature-Relation, Fallback Metadatum featureId.
+        string? FeatureOf(ProjectStateItem pbi)
+            => relations.FirstOrDefault(r => string.Equals(r.RelationType, "part_of_feature", StringComparison.Ordinal)
+                                             && string.Equals(r.FromId, pbi.ItemId, StringComparison.Ordinal))?.ToId
+               ?? pbi.Metadata.GetValueOrDefault("featureId");
+
         // 1) NEW_PBI: neue Core-PBI-Entitaet je Operation.
         foreach (var op in accepted.Where(o => string.Equals(o.Kind, PbiUpdateKind.NewPbi, StringComparison.Ordinal)))
         {
@@ -66,6 +84,7 @@ public static class PbiUpdateApply
                 SourceClaimIds: [], SourceArtifactItemIds: [], Metadata: meta, IdentityKey: null, History: [], Feature: null, Pbi: payload).WithStatus(CoreStatus.From(readiness)));   // §5-S7: Status→Achsen
             relations.Add(new ProjectStateRelation(id, op.FeatureId, "part_of_feature", "pbi-update", new Dictionary<string, string>())); relAdded++;
             relations.Add(RequirementSwap.Covers(id, op.RequirementId, "pbi-update")); relAdded++;
+            EnsureReqFeature(op.RequirementId, op.FeatureId);   // R-36 v2: abgeleitete REQ→Feature-Kante
             newPbis.Add(id);
         }
 
@@ -87,6 +106,7 @@ public static class PbiUpdateApply
                 {
                     case PbiUpdateKind.ExtendPbi:
                         if (!links.Contains(op.RequirementId)) { links.Add(op.RequirementId); relations.Add(RequirementSwap.Covers(pbi.ItemId, op.RequirementId, "pbi-update")); relAdded++; }
+                        EnsureReqFeature(op.RequirementId, FeatureOf(pbi));   // R-36 v2: REQ erbt das Feature des PBI
                         status = status.Escalate(Blocker.NeedsClarify);
                         break;
                     case PbiUpdateKind.MarkChanged:
@@ -101,6 +121,7 @@ public static class PbiUpdateApply
                         var (swAdded, swRemoved) = RequirementSwap.SwapCoverage(
                             pbi.ItemId, op.RequirementId, op.ReplacementRequirementId, links, relations, "pbi-update");
                         relAdded += swAdded; relRemoved += swRemoved;
+                        EnsureReqFeature(op.ReplacementRequirementId, FeatureOf(pbi));   // R-36 v2: Ersatz-REQ erbt das Feature
                         status = status.Escalate(Blocker.NeedsClarify);
                         break;
                 }

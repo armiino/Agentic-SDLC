@@ -1,3 +1,5 @@
+using AgenticSdlc.Host.FullWorkflow.Core;
+
 namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 
 // Deterministisches, STRUKTURELLES Gate fuer die aus Feature-Clustern geschnittenen PBIs (Definition of Ready).
@@ -21,39 +23,39 @@ public static class ReClarifyBacklogGate
         var pbiReqUnion = backlog.Items.SelectMany(i => i.RequirementIds).ToHashSet(StringComparer.Ordinal);
         foreach (var id in coreReqs.OrderBy(x => x, StringComparer.Ordinal))
             if (!pbiReqUnion.Contains(id))
-                errors.Add(new("UNCOVERED_CORE", "error", $"Cluster-Core-Requirement {id} ist in keinem PBI (Coverage-Verletzung).", null, [id]));
+                errors.Add(Error("UNCOVERED_CORE", $"Cluster-Core-Requirement {id} ist in keinem PBI (Coverage-Verletzung).", null, [id]));
 
         var seenPbi = new HashSet<string>(StringComparer.Ordinal);
         foreach (var pbi in backlog.Items)
         {
             if (string.IsNullOrWhiteSpace(pbi.PbiId))
-                errors.Add(new("MISSING_PBI_ID", "error", "PBI ohne pbiId.", null, pbi.RequirementIds));
+                errors.Add(Error("MISSING_PBI_ID", "PBI ohne pbiId.", null, pbi.RequirementIds));
             else if (!seenPbi.Add(pbi.PbiId))
-                errors.Add(new("DUPLICATE_PBI_ID", "error", $"pbiId {pbi.PbiId} mehrfach.", pbi.PbiId, pbi.RequirementIds));
+                errors.Add(Error("DUPLICATE_PBI_ID", $"pbiId {pbi.PbiId} mehrfach.", pbi.PbiId, pbi.RequirementIds));
 
             if (pbi.RequirementIds.Count == 0)
-                errors.Add(new("EMPTY_PBI", "error", $"PBI {pbi.PbiId} hat keine requirementIds.", pbi.PbiId, []));
+                errors.Add(Error("EMPTY_PBI", $"PBI {pbi.PbiId} hat keine requirementIds.", pbi.PbiId, []));
             foreach (var id in pbi.RequirementIds)
                 if (!allReqIds.Contains(id))
-                    errors.Add(new("UNKNOWN_REQUIREMENT", "error", $"requirementId {id} existiert nicht.", pbi.PbiId, [id]));
+                    errors.Add(Error("UNKNOWN_REQUIREMENT", $"requirementId {id} existiert nicht.", pbi.PbiId, [id]));
 
             if (string.IsNullOrWhiteSpace(pbi.Title))
-                errors.Add(new("MISSING_TITLE", "error", $"PBI {pbi.PbiId} ohne title.", pbi.PbiId, pbi.RequirementIds));
+                errors.Add(Error("MISSING_TITLE", $"PBI {pbi.PbiId} ohne title.", pbi.PbiId, pbi.RequirementIds));
 
             // Kern-Invariante "keine stille Luecke": entweder pruefbar ODER offene Punkte explizit.
             if (pbi.AcceptanceCriteria.Count == 0 && pbi.OpenDecisions.Count == 0)
-                errors.Add(new("NO_TESTABILITY", "error",
+                errors.Add(Error("NO_TESTABILITY",
                     $"PBI {pbi.PbiId} hat weder Akzeptanzkriterien noch offene Entscheidungen (stille Luecke).", pbi.PbiId, pbi.RequirementIds));
 
             if (!string.IsNullOrWhiteSpace(pbi.Type) && !Types.Contains(pbi.Type))
-                warnings.Add(new("UNKNOWN_TYPE", "warning", $"PBI {pbi.PbiId}: unbekannter type '{pbi.Type}'.", pbi.PbiId, []));
+                warnings.Add(Warn("UNKNOWN_TYPE", $"PBI {pbi.PbiId}: unbekannter type '{pbi.Type}'.", pbi.PbiId, []));
             if (pbi.Readiness is { Length: > 0 } rd && !Readiness.Contains(rd))
-                warnings.Add(new("UNKNOWN_READINESS", "warning", $"PBI {pbi.PbiId}: unbekannte readiness '{rd}'.", pbi.PbiId, []));
+                warnings.Add(Warn("UNKNOWN_READINESS", $"PBI {pbi.PbiId}: unbekannte readiness '{rd}'.", pbi.PbiId, []));
 
             // Scope-Konsistenz: blockierende offene Entscheidung -> nicht backlog_ready.
             var hasBlocking = pbi.OpenDecisions.Any(d => d.BlocksScope);
             if (hasBlocking && string.Equals(pbi.Readiness, "backlog_ready", StringComparison.OrdinalIgnoreCase))
-                warnings.Add(new("READINESS_INCONSISTENT", "warning",
+                warnings.Add(Warn("READINESS_INCONSISTENT",
                     $"PBI {pbi.PbiId}: blockierende offene Entscheidung, aber readiness=backlog_ready.", pbi.PbiId, []));
         }
 
@@ -67,4 +69,19 @@ public static class ReClarifyBacklogGate
         };
         return new ReClarifyGateReport(pass, pass ? "pass" : "fail", errors, warnings, checks);
     }
+
+    // R-33 S0: Severity + Repairability werden AN DER REGEL deklariert (eine Stelle je Regel, kein Neben-
+    // Register). Alle heutigen Regeln sind Plan-Qualitaet des Clarify-Agenten -> per GateFeedback fixbar;
+    // eine kuenftig nicht-reparierbare Regel deklariert ihre Repairability explizit am Aufruf.
+    private static ReClarifyGateIssue Error(string code, string message, string? subjectId,
+        IReadOnlyList<string> requirementIds, string repairability = Repairability.Repairable)
+        => new(code, "error", message, subjectId, requirementIds, repairability);
+
+    private static ReClarifyGateIssue Warn(string code, string message, string? subjectId, IReadOnlyList<string> requirementIds)
+        => new(code, "warning", message, subjectId, requirementIds, Repairability.Repairable);
+
+    public static GateDecision Decide(ReClarifyGateReport report, int attempt, int maxAttempts)
+        => GateLoop.Decide(report.Pass,
+            report.Errors.Any(e => string.Equals(e.Repairability, Repairability.Repairable, StringComparison.Ordinal)),
+            attempt, maxAttempts);
 }

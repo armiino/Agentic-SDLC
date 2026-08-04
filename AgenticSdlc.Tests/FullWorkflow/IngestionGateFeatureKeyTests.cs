@@ -4,10 +4,11 @@ using Xunit;
 
 namespace AgenticSdlc.Tests.FullWorkflow;
 
-// O1 (Variante c, deterministisch, kein LLM): IngestionGate prüft, dass ein bei NEW_RELATED gesetzter
-// featureKey auf ein bestehendes Core-Feature zeigt — sonst schriebe IngestionApply eine part_of_feature-
-// Relation ins Leere (stille Core-Inkonsistenz). Fehlender featureKey bleibt bewusst unverändert; die härtere
-// Regel („NEW_RELATED braucht ein Feature") kommt erst mit Feature-Placement/O4, wenn der Reparaturpfad steht.
+// R-36 v2: der featureKey bei NEW_RELATED ist ein reines HINWEIS-Metadatum fuer die Placement-Stufe —
+// IngestionApply schreibt KEINE part_of_feature-Relation mehr (der alte Direkt-Write mit Agent-Freitext
+// als Relationsziel war der Verursacher der 12 Audit-Defekte). Die REQ→Feature-Kante entsteht deterministisch
+// im pbi-update-Apply (Seed-Regel). Ein nicht aufloesbarer Hinweis ist darum kein Blocker mehr, bleibt aber
+// als Gate-WARNUNG sichtbar (Review).
 public sealed class IngestionGateFeatureKeyTests
 {
     private static ProjectStateItem Feature(string id, string label) => new ProjectStateItem(
@@ -28,7 +29,7 @@ public sealed class IngestionGateFeatureKeyTests
         => new(StateChangePlanDocument.CurrentSchemaVersion, "plan-1", DateTime.UnixEpoch, "delta-path", [.. ops]);
 
     [Fact]
-    public void NewRelated_mit_gueltigem_featureKey_passt()
+    public void NewRelated_mit_gueltigem_featureKey_passt_ohne_Warnung()
     {
         var report = IngestionGate.Check(
             Doc(Req("REQ-9", "neue Anforderung")),
@@ -36,22 +37,24 @@ public sealed class IngestionGateFeatureKeyTests
             Plan(NewRelated("REQ-9", "FC-01")));
 
         Assert.True(report.Pass);
-        Assert.DoesNotContain(report.Errors, e => e.Code == "UNKNOWN_FEATURE");
+        Assert.DoesNotContain(report.Warnings, w => w.Code == "UNKNOWN_FEATURE");
     }
 
     [Fact]
-    public void NewRelated_mit_unbekanntem_featureKey_faellt_deterministisch()
+    public void NewRelated_mit_unbekanntem_featureKey_ist_Warnung_kein_Blocker()
     {
+        // R-36 v2: der Key ist kein Relationsziel mehr -> unaufloesbarer Hinweis blockt nicht, wird aber gemeldet.
         var report = IngestionGate.Check(
             Doc(Req("REQ-9", "neue Anforderung")),
             Doc(Feature("FC-01", "Zugang und Rechte")),
             Plan(NewRelated("REQ-9", "FC-99")));
 
-        Assert.False(report.Pass);
-        var issue = Assert.Single(report.Errors, e => e.Code == "UNKNOWN_FEATURE");
-        Assert.Equal("repairable", issue.Repairability);
+        Assert.True(report.Pass);
+        Assert.DoesNotContain(report.Errors, e => e.Code == "UNKNOWN_FEATURE");
+        var issue = Assert.Single(report.Warnings, w => w.Code == "UNKNOWN_FEATURE");
         Assert.Equal("REQ-9", issue.IncomingItemId);
         Assert.Equal("FC-99", issue.TargetEntityId);
+        Assert.Equal(GateDecision.Pass, IngestionGate.Decide(report, attempt: 1, maxAttempts: 3));
     }
 
     [Fact]
@@ -62,18 +65,23 @@ public sealed class IngestionGateFeatureKeyTests
             Doc(Feature("FC-01", "Zugang und Rechte")),
             Plan(NewRelated("REQ-9", null)));
 
-        Assert.DoesNotContain(report.Errors, e => e.Code == "UNKNOWN_FEATURE");
+        Assert.DoesNotContain(report.Warnings, w => w.Code == "UNKNOWN_FEATURE");
         Assert.True(report.Pass);
     }
 
     [Fact]
-    public void Unbekannter_featureKey_ist_reparierbar_Gate_entscheidet_Repair()
+    public void Apply_NewRelated_schreibt_Hinweis_Metadatum_aber_KEINE_Relation()
     {
-        var report = IngestionGate.Check(
-            Doc(Req("REQ-9", "neue Anforderung")),
-            Doc(Feature("FC-01", "Zugang und Rechte")),
-            Plan(NewRelated("REQ-9", "FC-99")));
+        // R-36 v2 Kern: kein Code-Pfad mehr, auf dem Agent-Freitext zur Graph-Kante wird.
+        var core = Doc(Feature("FC-01", "Zugang und Rechte"), Req("REQ-1", "bestehend"));
+        var delta = Doc(Req("REQ-9", "neue Anforderung"));
+        var (updated, report, _) = IngestionApply.Apply(core, delta, Plan(NewRelated("REQ-9", "no-go")),
+            new HashSet<string>(StringComparer.Ordinal) { "REQ-9" });
 
-        Assert.Equal(GateDecision.Repair, IngestionGate.Decide(report, attempt: 1, maxAttempts: 3));
+        var added = Assert.Single(report.Applied);
+        Assert.Equal("added", added.Outcome);
+        var newReq = updated.Items.Single(i => i.ItemId == added.EntityId);
+        Assert.Equal("no-go", newReq.Metadata.GetValueOrDefault("featureKey"));
+        Assert.DoesNotContain(updated.Relations, r => r.RelationType == "part_of_feature" && r.FromId == newReq.ItemId);
     }
 }

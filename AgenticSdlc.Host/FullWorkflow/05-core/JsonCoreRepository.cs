@@ -22,6 +22,15 @@ public sealed class JsonCoreRepository(string repoRoot) : ICoreRepository
 
     public async Task SaveAsync(ProjectStateDocument core, CancellationToken ct = default)
     {
+        // R-33 S4: der Wachhund (CoreKangal) prüft VOR Snapshot+Write — bei Invarianten-Fehlern wird NICHTS
+        // persistiert (auch kein Snapshot). Warnungen sind laut, blocken aber nie. Gilt für ALLE Schreiber.
+        var watch = CoreKangal.Check(core);
+        foreach (var w in watch.Warnings)
+            Console.Error.WriteLine($"[core-kangal] WARNUNG {w.Code}: {w.Message}");
+        if (!watch.Pass)
+            throw new InvalidOperationException(
+                "CORE_KANGAL: Save abgebrochen - " + string.Join(" | ", watch.Errors.Select(e => $"{e.Code}: {e.Message}")));
+
         Directory.CreateDirectory(Path.GetDirectoryName(_file) ?? ".");
         var json = JsonSerializer.Serialize(core, ProjectStateJson.Options);
         await SnapshotBeforeOverwriteAsync(json, ct).ConfigureAwait(false);

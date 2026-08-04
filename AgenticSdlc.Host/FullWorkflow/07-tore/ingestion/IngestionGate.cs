@@ -53,13 +53,13 @@ public static class IngestionGate
             else if (hasTarget && !requiresDecisionTarget && !coreReqIds.Contains(op.TargetEntityId!))
                 errors.Add(Issue("UNKNOWN_TARGET", "error", $"targetEntityId '{op.TargetEntityId}' existiert nicht im Core.", op.IncomingItemId, op.TargetEntityId));
 
-            // O1 (Variante c): NEW_RELATED verweist per featureKey auf ein bestehendes Feature. Ein gesetzter
-            // featureKey MUSS im Core existieren, sonst schreibt IngestionApply eine part_of_feature-Relation ins
-            // Leere. Fehlender featureKey bleibt hier bewusst unveraendert (haerter erst mit Feature-Placement/O4).
+            // R-36 v2: featureKey ist nur noch ein HINWEIS fuer die Placement-Stufe (IngestionApply schreibt keine
+            // part_of_feature-Relation mehr; die Kante entsteht deterministisch im pbi-update-Apply). Ein nicht
+            // aufloesbarer Hinweis ist darum kein Blocker mehr — aber sichtbar (Warnung im Review).
             if (string.Equals(op.Kind, StateChangeKind.NewRelated, StringComparison.Ordinal)
                 && !string.IsNullOrWhiteSpace(op.FeatureKey)
                 && !coreFeatureIds.Contains(op.FeatureKey!))
-                errors.Add(Issue("UNKNOWN_FEATURE", "error", $"featureKey '{op.FeatureKey}' ist kein bestehendes Core-Feature ('{op.IncomingItemId}').", op.IncomingItemId, op.FeatureKey));
+                warnings.Add(Issue("UNKNOWN_FEATURE", "warning", $"featureKey '{op.FeatureKey}' ist kein bestehendes Core-Feature ('{op.IncomingItemId}') — nur Hinweis, keine Relation.", op.IncomingItemId, op.FeatureKey));
 
             if (op.ClaimIds.Count == 0)
                 warnings.Add(Issue("MISSING_EVIDENCE", "warning", $"Operation '{op.IncomingItemId}' ohne claimIds (Beleg).", op.IncomingItemId, op.TargetEntityId));

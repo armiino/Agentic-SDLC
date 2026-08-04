@@ -87,10 +87,12 @@ public static class ReClarifyRunner
         string? token = null;
         string? outputDir = null;
         string? modelArg = null;
+        var maxAttempts = 2;   // R-33 S1: default wie alle Loop-Knoten (PbiUpdateRunner)
         for (var i = 2; i < args.Length; i++)
         {
             var arg = args[i];
             if (string.Equals(arg, "--out", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) { outputDir = args[++i]; continue; }
+            if (string.Equals(arg, "--max-attempts", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length && int.TryParse(args[i + 1], out var ma)) { maxAttempts = Math.Max(1, ma); i++; continue; }
             if (string.Equals(arg, "--dry-run", StringComparison.OrdinalIgnoreCase)) continue;
             if (arg.StartsWith("--", StringComparison.Ordinal)) { Console.Error.WriteLine($"[l4-re-clarify] unbekanntes Argument: {arg}"); Usage(); return 2; }
             if (token is null) token = arg;
@@ -157,11 +159,12 @@ public static class ReClarifyRunner
         var workflow = ReClarifyBacklogWorkflow.Build(
             new ClarifyAgentExecutor(factory, run),
             new BacklogGateExecutor(run),
+            new BacklogRepairExecutor(factory, run),
             new BacklogFinalizeExecutor(run, outDir));
 
         if (dryRun)
         {
-            Console.WriteLine("[l4-re-clarify] --dry-run: Graph Build()-bar (ClarifyAgent[Tools] -> BacklogGate[det] -> Finalize). Kein LLM.");
+            Console.WriteLine("[l4-re-clarify] --dry-run: Graph Build()-bar (ClarifyAgent[Tools] -> BacklogGate[det] --[Repair]--> Repair (Loop) / Finalize). Kein LLM.");
             Console.WriteLine($"[l4-re-clarify] clusters={clusters.Clusters.Count} baseline={baseline.Requirements.Count} -> {sourceRelativePath}");
             Console.WriteLine($"[l4-re-clarify] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
             return 0;
@@ -170,7 +173,7 @@ public static class ReClarifyRunner
         Console.WriteLine($"[l4-re-clarify] running backlog workflow runId={run.RunId} model={genSettings.ModelId} clusters={clusters.Clusters.Count}");
         try
         {
-            await InProcessExecution.Default.RunAsync(workflow, new ReClarifyBacklogInput(clusters, baseline, sourceRelativePath), run.RunId, CancellationToken.None).ConfigureAwait(false);
+            await InProcessExecution.Default.RunAsync(workflow, new ReClarifyBacklogInput(clusters, baseline, sourceRelativePath, maxAttempts), run.RunId, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -361,6 +364,7 @@ public static class ReClarifyRunner
         string? inputArg = null;
         string? outputDir = null;
         string? modelArg = null;
+        var maxAttempts = 2;   // R-33 S2: default wie alle Loop-Knoten
         for (var i = 2; i < args.Length; i++)
         {
             var arg = args[i];
@@ -369,6 +373,7 @@ public static class ReClarifyRunner
                 outputDir = args[++i];
                 continue;
             }
+            if (string.Equals(arg, "--max-attempts", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length && int.TryParse(args[i + 1], out var ma)) { maxAttempts = Math.Max(1, ma); i++; continue; }
             if (string.Equals(arg, "--dry-run", StringComparison.OrdinalIgnoreCase)) continue;
             if (arg.StartsWith("--", StringComparison.Ordinal))
             {
@@ -423,6 +428,7 @@ public static class ReClarifyRunner
         var workflow = ReClarifyClusterWorkflow.Build(
             new ClusterAgentExecutor(makerFactory, repoRoot, run),
             new ClusterGateExecutor(run),
+            new ClusterRepairExecutor(makerFactory, repoRoot, run),
             new ClusterReviewExecutor(reviewFactory, run),
             new ClusterFinalizeExecutor(run, outDir));
 
@@ -437,7 +443,7 @@ public static class ReClarifyRunner
         Console.WriteLine($"[l4-re-clarify] running cluster workflow runId={run.RunId} model={genSettings.ModelId}");
         try
         {
-            await InProcessExecution.Default.RunAsync(workflow, new ReClarifyClusterInput(view.Baseline, sourceRelativePath), run.RunId, CancellationToken.None).ConfigureAwait(false);
+            await InProcessExecution.Default.RunAsync(workflow, new ReClarifyClusterInput(view.Baseline, sourceRelativePath, maxAttempts), run.RunId, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

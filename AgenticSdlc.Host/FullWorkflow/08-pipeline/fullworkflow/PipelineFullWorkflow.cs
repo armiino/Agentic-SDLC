@@ -16,10 +16,10 @@ internal sealed record FrontNodes(
 
 internal sealed record BootstrapNodes(
     CoreBootstrapStageExecutor CoreBootstrap, ClusterBridgeExecutor ClusterBridge,
-    ClusterAgentExecutor ClusterAgent, ClusterGateExecutor ClusterGate, ClusterReviewExecutor ClusterReview,
+    ClusterAgentExecutor ClusterAgent, ClusterGateExecutor ClusterGate, ClusterRepairExecutor ClusterRepair, ClusterReviewExecutor ClusterReview,
     ClusterFinalizeExecutor ClusterFinalize, ClusterGateRequestExecutor ClusterGateRequest, RequestPort ClusterPort,
     ClusterComposedApplyExecutor ClusterApply, BacklogBridgeExecutor BacklogBridge,
-    ClarifyAgentExecutor ClarifyAgent, BacklogGateExecutor BacklogGate, BacklogFinalizeExecutor BacklogFinalize,
+    ClarifyAgentExecutor ClarifyAgent, BacklogGateExecutor BacklogGate, BacklogRepairExecutor BacklogRepair, BacklogFinalizeExecutor BacklogFinalize,
     BacklogGateRequestExecutor BacklogGateRequest, RequestPort BacklogPort,
     BacklogComposedApplyExecutor BacklogApply, CoreSeedBacklogExecutor Seed);
 
@@ -71,16 +71,15 @@ internal static class PipelineFullWorkflow
         // Bootstrap-Zweig: core-bootstrap -> Cluster (+Gate) -> Clarify (+Gate) -> Seed
         b.AddEdge(boot.CoreBootstrap, boot.ClusterBridge);
         b.AddEdge(boot.ClusterBridge, boot.ClusterAgent);
-        b.AddEdge(boot.ClusterAgent, boot.ClusterGate);
-        b.AddEdge(boot.ClusterGate, boot.ClusterReview);
-        b.AddEdge(boot.ClusterReview, boot.ClusterFinalize);
+        // R-33 S2: Loop-Kanten aus der EINEN Quelle (ReClarifyClusterWorkflow.AddTo) — CLI und Ein-Graph identisch.
+        ReClarifyClusterWorkflow.AddTo(b, boot.ClusterAgent, boot.ClusterGate, boot.ClusterRepair, boot.ClusterReview, boot.ClusterFinalize);
         b.AddEdge(boot.ClusterFinalize, boot.ClusterGateRequest);
         b.AddEdge(boot.ClusterGateRequest, boot.ClusterPort);
         b.AddEdge(boot.ClusterPort, boot.ClusterApply);
         b.AddEdge(boot.ClusterApply, boot.BacklogBridge);
         b.AddEdge(boot.BacklogBridge, boot.ClarifyAgent);
-        b.AddEdge(boot.ClarifyAgent, boot.BacklogGate);
-        b.AddEdge(boot.BacklogGate, boot.BacklogFinalize);
+        // R-33 S1: Loop-Kanten aus der EINEN Quelle (ReClarifyBacklogWorkflow.AddTo) — CLI und Ein-Graph identisch.
+        ReClarifyBacklogWorkflow.AddTo(b, boot.ClarifyAgent, boot.BacklogGate, boot.BacklogRepair, boot.BacklogFinalize);
         b.AddEdge(boot.BacklogFinalize, boot.BacklogGateRequest);
         b.AddEdge(boot.BacklogGateRequest, boot.BacklogPort);
         b.AddEdge(boot.BacklogPort, boot.BacklogApply);

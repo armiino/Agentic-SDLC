@@ -79,11 +79,12 @@ public static class IngestionApply
                 {
                     var id = $"REQ-{nextReq++:D2}";
                     var meta = new Dictionary<string, string>(StringComparer.Ordinal) { ["ingestedFrom"] = op.IncomingItemId };
+                    // R-36 v2: featureKey ist ein reines HINWEIS-Metadatum fuer die Placement-Stufe — hier entsteht
+                    // KEINE part_of_feature-Relation mehr. Die REQ→Feature-Kante wird deterministisch im
+                    // pbi-update-Apply aus der bestaetigten Deckung abgeleitet (Seed-Regel, CoreBacklogSeeder).
+                    // (Der alte Direkt-Write hier schrieb Agent-Freitext als Relationsziel = die 12 Defekte des Audits.)
                     if (op.Kind == StateChangeKind.NewRelated && !string.IsNullOrWhiteSpace(op.FeatureKey))
-                    {
                         meta["featureKey"] = op.FeatureKey!;
-                        relations.Add(new ProjectStateRelation(id, op.FeatureKey!, "part_of_feature", "ingestion", new Dictionary<string, string>()));
-                    }
                     AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds, meta));
                     applied.Add(new AppliedOperation(op.IncomingItemId, op.Kind, id, "added"));
                     affected.Add(id); added++;

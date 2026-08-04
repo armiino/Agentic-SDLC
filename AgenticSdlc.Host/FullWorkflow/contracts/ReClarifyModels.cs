@@ -113,7 +113,10 @@ public sealed record ReClarifyGateIssue(
     [property: JsonPropertyName("message")] string Message,
     // generischer Bezug: pbiId (PBI-Gate) oder clusterId (Cluster-Gate)
     [property: JsonPropertyName("subjectId")] string? SubjectId,
-    [property: JsonPropertyName("requirementIds")] IReadOnlyList<string> RequirementIds);
+    [property: JsonPropertyName("requirementIds")] IReadOnlyList<string> RequirementIds,
+    // R-33 S0: Repairability-Klassifikation (repairable|hard|needs_human) — von den Gates beim Report-Bau
+    // getaggt (Naht zu GateLoop.Decide). Optional: alte Run-Artefakte ohne das Feld bleiben lesbar.
+    [property: JsonPropertyName("repairability")] string? Repairability = null);
 
 // Analyse-Granularitaet (ASSEMBLE, agentisch): der Cluster-Agent gruppiert Requirements zu
 // Feature-Clustern. coreRequirementIds = das Feature selbst; crossCuttingRequirementIds = Regeln,

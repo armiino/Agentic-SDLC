@@ -28,5 +28,7 @@ public static class CoreCommands
         // naechsten GitHub-Delta-Lauf (nicht mehr nur Run-Artefakt). Deterministisch, kein LLM, kein GitHub-Call.
         map["github-map"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Core.CoreGithubMapRunner.RunAsync(args, repoRoot);
         // §5-S6-Migration (core-migrate-status) war Einmal-Werkzeug (Alt-String → Achsen); mit S7/Option A vestigial → entfernt (02.08.).
+        // R-36-Bestands-Heilung (core-heal-features) war Einmal-Werkzeug (defekte featureKey-Relationen -> Seed-Ableitung);
+        // nach bewiesener Heilung 12->0 wieder entfernt (03.08., Audit: runs/core-heal-features/20260803_172914_4bfacc).
     }
 }

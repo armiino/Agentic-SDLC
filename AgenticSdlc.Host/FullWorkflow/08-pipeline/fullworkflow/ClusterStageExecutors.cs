@@ -40,7 +40,7 @@ public static class ClusterReviewReplay
 // BRIDGE (U1): Stufengrenze core-bootstrap -> cluster. Lädt die eben materialisierte Baseline FRISCH über
 // den View-Port (exakt der CLI-Weg) und baut den Cluster-Input. Muster: IngestPbiBridgeExecutor.
 [SendsMessage(typeof(ReClarifyClusterInput))]
-internal sealed class ClusterBridgeExecutor(RunContext run, string repoRoot) : Executor<CoreBootstrapOutput>("PipelineClusterBridge")
+internal sealed class ClusterBridgeExecutor(RunContext run, string repoRoot, int maxAttempts) : Executor<CoreBootstrapOutput>("PipelineClusterBridge")
 {
     public override async ValueTask HandleAsync(CoreBootstrapOutput input, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -48,7 +48,7 @@ internal sealed class ClusterBridgeExecutor(RunContext run, string repoRoot) : E
             .GetCanonicalRequirementsViewAsync(AgenticSdlc.Host.FullWorkflow.Delta.ProjectScope.FromSourcePath(input.BaselinePath, "re-clarify", "current_baseline"))
             .ConfigureAwait(false);
         run.AppendEvent(new { type = "PIPELINE_CLUSTER_BRIDGE", requirements = view.Baseline.Requirements.Count, timestampUtc = DateTime.UtcNow });
-        await context.SendMessageAsync(new ReClarifyClusterInput(view.Baseline, Path.GetRelativePath(repoRoot, input.BaselinePath))).ConfigureAwait(false);
+        await context.SendMessageAsync(new ReClarifyClusterInput(view.Baseline, Path.GetRelativePath(repoRoot, input.BaselinePath), maxAttempts)).ConfigureAwait(false);
     }
 }
 
