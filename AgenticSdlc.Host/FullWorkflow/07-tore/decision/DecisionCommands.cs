@@ -22,6 +22,9 @@ public static class DecisionCommands
 
         map["decision-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Decision.DecisionReviewRunner.RunAsync(args, settings, repoRoot);
 
+        // R-14 G1-b (= E0.8): edit-faehige Review-UI des operativen decision-gate (pipeline-full/pipeline-hitl).
+        map["decision-gate-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Decision.DecisionGateReviewRunner.RunAsync(args, repoRoot);
+
         map["decision-apply"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Decision.DecisionApplyRunner.RunAsync(args, repoRoot);
 
         // Tor 2 / T2.3: Kreis-Test (Tor 2 -> Tor 3). Blockiertes PBI -> decision-apply -> github-forward-Seed sieht

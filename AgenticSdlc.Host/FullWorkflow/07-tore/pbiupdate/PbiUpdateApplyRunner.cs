@@ -27,10 +27,11 @@ public static class PbiUpdateApplyRunner
         var accepted = PbiUpdateApplyExec.AcceptedFromDecisions(plan, decisions.Decisions);
         var acceptedAligns = PbiUpdateApplyExec.AcceptedAlignments(plan, decisions.AlignmentDecisions); // R-26-C
         var featureOverrides = PbiUpdateApplyExec.FeatureOverrides(plan, decisions.Decisions);          // B1
+        var decisionRequests = PbiUpdateReviewAdapter.DecisionRequestsFrom(plan, decisions.Decisions);  // R-14 D2
         PbiUpdateApplyReport report;
         try
         {
-            report = await PbiUpdateApplyExec.ExecuteAsync(planDir, plan, accepted, repoRoot, acceptedAligns, featureOverrides).ConfigureAwait(false);
+            report = await PbiUpdateApplyExec.ExecuteAsync(planDir, plan, accepted, repoRoot, acceptedAligns, featureOverrides, decisionRequests).ConfigureAwait(false);
         }
         catch (InvalidOperationException ex)
         {

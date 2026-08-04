@@ -27,6 +27,7 @@ internal sealed record OperationalNodes(
     IngestBridgeExecutor IngestBridge,
     IngestionHitlResolveExecutor IngestResolve, IngestionGateExecutor IngestGate, IngestionRepairExecutor IngestRepair,
     IngestionHitlFinalizeExecutor IngestFinalize, RequestPort IngestPort, IngestComposedApplyExecutor IngestApply,
+    DecisionScanExecutor DecisionScan, RequestPort DecisionPort, DecisionComposedApplyExecutor DecisionApply,
     IngestPbiBridgeExecutor Bridge,
     PbiUpdateDeriveExecutor PbiDerive, PbiUpdateMakerExecutor PbiMaker, PbiUpdateGateExecutor PbiGate,
     PbiUpdateRepairExecutor PbiRepair, PbiAlignExecutor PbiAlign, PbiUpdateHitlFinalizeExecutor PbiFinalize, RequestPort PbiPort,
@@ -42,7 +43,7 @@ internal sealed record ForwardNodes(
 /// <summary>
 /// U2 — die EINE Bauzeit-Orchestrierungsstelle der GANZEN Kette (ein-graph-vereinheitlichung §7).
 /// Der komplette Graph steht hier: Front → Branch (Typ-Routing) → Bootstrap-Zweig | Betriebs-Zweig →
-/// gemeinsames Forward-Ende. 6 Human-Gates (RequestPorts), Conditional Edges, keine Orchestrierung außerhalb
+/// gemeinsames Forward-Ende. 7 Human-Gates (RequestPorts; decision-gate/Tor 2 seit R-14 G1), Conditional Edges, keine Orchestrierung außerhalb
 /// (Design-Regel: keine CLI-Aufrufe aus Executors; der Runner startet nur noch EINEN Stream).
 /// Zweig-Verdrahtung per AddTo aus den Standalone-Workflows (eine Quelle, keine Kopie).
 /// </summary>
@@ -88,7 +89,8 @@ internal static class PipelineFullWorkflow
         // Betriebs-Zweig: Ingest -> [Gate] -> Apply -> Bridge -> PbiUpdate -> [Gate] -> Apply (eine Quelle: AddTo)
         b.AddEdge(op.IngestBridge, op.IngestResolve);
         PipelineComposedWorkflow.AddTo(b, op.IngestResolve, op.IngestGate, op.IngestRepair, op.IngestFinalize,
-            op.IngestPort, op.IngestApply, op.Bridge, op.PbiDerive, op.PbiMaker, op.PbiGate, op.PbiRepair,
+            op.IngestPort, op.IngestApply, op.DecisionScan, op.DecisionPort, op.DecisionApply,
+            op.Bridge, op.PbiDerive, op.PbiMaker, op.PbiGate, op.PbiRepair,
             op.PbiAlign, op.PbiFinalize, op.PbiPort, op.PbiApply);
 
         // Gemeinsames Ende: beide Zweige -> Forward-Prep -> Snapshot -> Forward (+Gate) -> Apply (Dry-Run-Default)

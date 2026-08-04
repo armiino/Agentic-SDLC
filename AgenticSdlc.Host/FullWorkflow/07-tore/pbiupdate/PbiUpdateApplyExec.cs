@@ -24,7 +24,8 @@ public static class PbiUpdateApplyExec
     public static async Task<PbiUpdateApplyReport> ExecuteAsync(
         string planDir, PbiStateChangePlanDocument plan, ISet<int> accepted, string repoRoot,
         IReadOnlyList<PbiAlignment>? acceptedAlignments = null,
-        IReadOnlyList<PbiFeatureOverride>? featureOverrides = null, CancellationToken ct = default)
+        IReadOnlyList<PbiFeatureOverride>? featureOverrides = null,
+        IReadOnlyList<Decision.PbiDecisionRequest>? decisionRequests = null, CancellationToken ct = default)
     {
         var appliedDir = Path.Combine(planDir, "applied");
         var markerPath = Path.Combine(appliedDir, "applied.marker");
@@ -55,6 +56,20 @@ public static class PbiUpdateApplyExec
         await File.WriteAllTextAsync(Path.Combine(appliedDir, "core-before.json"), JsonSerializer.Serialize(core, Json), ct).ConfigureAwait(false);
 
         var (updated, report) = PbiUpdateApply.Apply(core, plan, accepted, plan.SourceIngestionRun, acceptedAlignments);
+
+        // R-14 D2: „→ Entscheidung"-Antraege im SELBEN Save mitpraegen (ein Snapshot, ein Kangal-Pass):
+        // offene DEC je Antrag + antragendes PBI geblockt; das decision-gate legt sie beim naechsten Lauf vor.
+        if (decisionRequests is { Count: > 0 })
+        {
+            var (withDecs, minted, mintSkipped) = Decision.DecisionRequestMint.Mint(updated, decisionRequests, plan.SourceIngestionRun);
+            updated = withDecs;
+            if (minted.Count > 0)
+                Console.WriteLine($"[pbi-update-apply] R-14 D2: {minted.Count} offene Entscheidung(en) geprägt: {string.Join(", ", minted)} — Vorlage am decision-gate beim nächsten Lauf.");
+            foreach (var sk in mintSkipped) Console.WriteLine($"[pbi-update-apply]   antrag übersprungen: {sk}");
+            await File.WriteAllTextAsync(Path.Combine(appliedDir, "decision-requests.json"),
+                JsonSerializer.Serialize(new { requests = decisionRequests, minted, skipped = mintSkipped }, Json), ct).ConfigureAwait(false);
+        }
+
         await coreRepo.SaveAsync(updated).ConfigureAwait(false);
 
         // github-sync-Delta: nur die betroffenen (neuen/aktualisierten) PBIs.

@@ -51,6 +51,8 @@ internal static class PipelineComposedWorkflow
         // Ingest-Knoten
         IngestionHitlResolveExecutor ingestResolve, IngestionGateExecutor ingestGate, IngestionRepairExecutor ingestRepair,
         IngestionHitlFinalizeExecutor ingestFinalize, RequestPort ingestPort, IngestComposedApplyExecutor ingestApply,
+        // R-14 G1: Tor 2 (Scan -> [decision-gate] -> Apply) zwischen Ingest-Apply und Bruecke
+        DecisionScanExecutor decisionScan, RequestPort decisionPort, DecisionComposedApplyExecutor decisionApply,
         // Bruecke
         IngestPbiBridgeExecutor bridge,
         // Pbi-Knoten
@@ -59,8 +61,9 @@ internal static class PipelineComposedWorkflow
     {
         var b = new WorkflowBuilder(ingestResolve)
             .WithName("Pipeline-Ingest-PbiUpdate-HITL")
-            .WithDescription("Ingest -> [Human] -> Apply -> Bridge -> PbiUpdate -> [Human] -> Apply. Zwei Gates, ein Graph.");
+            .WithDescription("Ingest -> [Human] -> Apply -> Decision (Tor 2, bei offenen DECs) -> Bridge -> PbiUpdate -> [Human] -> Apply.");
         AddTo(b, ingestResolve, ingestGate, ingestRepair, ingestFinalize, ingestPort, ingestApply,
+            decisionScan, decisionPort, decisionApply,
             bridge, pbiDerive, pbiMaker, pbiGate, pbiRepair, pbiAlign, pbiFinalize, pbiPort, pbiApply);
         return b.Build();
     }
@@ -70,6 +73,7 @@ internal static class PipelineComposedWorkflow
     public static void AddTo(WorkflowBuilder b,
         IngestionHitlResolveExecutor ingestResolve, IngestionGateExecutor ingestGate, IngestionRepairExecutor ingestRepair,
         IngestionHitlFinalizeExecutor ingestFinalize, RequestPort ingestPort, IngestComposedApplyExecutor ingestApply,
+        DecisionScanExecutor decisionScan, RequestPort decisionPort, DecisionComposedApplyExecutor decisionApply,
         IngestPbiBridgeExecutor bridge,
         PbiUpdateDeriveExecutor pbiDerive, PbiUpdateMakerExecutor pbiMaker, PbiUpdateGateExecutor pbiGate, PbiUpdateRepairExecutor pbiRepair,
         PbiAlignExecutor pbiAlign, PbiUpdateHitlFinalizeExecutor pbiFinalize, RequestPort pbiPort, PbiUpdateApplyExecutor pbiApply)
@@ -82,8 +86,13 @@ internal static class PipelineComposedWorkflow
         b.AddEdge(ingestFinalize, ingestPort);
         b.AddEdge(ingestPort, ingestApply);
 
-        // Bruecke Stufe 1 -> Stufe 2
-        b.AddEdge(ingestApply, bridge);
+        // R-14 G1 — Tor 2 zwischen Ingest-Apply und Bruecke: Scan routet per MESSAGE-TYP (Muster BranchDetector):
+        // 0 offene DECs -> IngestionApplyReport direkt zur Bruecke · sonst -> [decision-gate] -> Apply -> Bruecke.
+        b.AddEdge(ingestApply, decisionScan);
+        b.AddEdge(decisionScan, bridge);          // Typ IngestionApplyReport (keine offenen DECs)
+        b.AddEdge(decisionScan, decisionPort);    // Typ PipelineDecisionReviewRequest
+        b.AddEdge(decisionPort, decisionApply);
+        b.AddEdge(decisionApply, bridge);         // Original-Report + synthetische Ops (bzw. unveraendert bei defer)
         b.AddEdge(bridge, pbiDerive);
 
         // Stufe 2: PbiUpdate
@@ -100,6 +109,7 @@ internal static class PipelineComposedWorkflow
         b.AddEdge(pbiPort, pbiApply);
 
         b.WithOutputFrom(ingestFinalize);  // terminal, falls Ingest-Gate scheitert (Pipeline-Abbruch)
+        b.WithOutputFrom(decisionApply);   // terminal, falls der Aufloesungs-Plan mechanisch ungueltig ist (SP2-Muster)
         b.WithOutputFrom(pbiFinalize);     // terminal, falls Pbi-Gate scheitert
         b.WithOutputFrom(pbiApply);        // terminal bei Erfolg
     }

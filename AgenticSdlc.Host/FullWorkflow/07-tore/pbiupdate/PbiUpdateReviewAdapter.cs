@@ -60,7 +60,7 @@ public static class PbiUpdateReviewAdapter
     // B2: Sentinel-Präfix für Optionen, die auf ein im selben Plan VORGESCHLAGENES neues Feature zeigen (existiert
     // noch nicht im Core → kein echter featureId). Wert = "proposed:<Label>". Feature-IDs sind "FC-nn" → kollisionsfrei.
     public const string ProposedPrefix = "proposed:";
-    private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase) { "apply", "skip" };
+    private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase) { "apply", "skip", "to_decision" };   // R-14 D2: dritter Weg
     private static readonly HashSet<string> AlignDecisions = new(StringComparer.OrdinalIgnoreCase) { "accept", "edit", "skip" };
     private static readonly ReviewFieldVisibility OnlyHasAlign = new(FieldHasAlign, ["yes"]);
     private static readonly ReviewFieldVisibility OnlyAlignEdit = new(FieldAlignDecision, ["edit"]);
@@ -115,12 +115,14 @@ public static class PbiUpdateReviewAdapter
                     Help: "Unter welchem bestehenden Feature dieses neue PBI angelegt wird. Änderbar — wähle ein anderes "
                         + "Feature aus der Liste oder klicke es in der Feature-Landkarte (rechts) an.",
                     Options: featureOptions, VisibleWhen: OnlyNewPbi),
-                new ReviewFieldSpec(FieldDecision, "Struktur-Entscheidung", ReviewInputType.Dropdown, ["apply", "skip"], Required: true,
-                    Help: "Ob dieses PBI von der Aenderung betroffen ist — Details im Banner 'Was bewirkt dein Entscheid?'.",
+                new ReviewFieldSpec(FieldDecision, "Struktur-Entscheidung", ReviewInputType.Dropdown, ["apply", "skip", "to_decision"], Required: true,
+                    Help: "Ob dieses PBI von der Aenderung betroffen ist — Details im Banner 'Was bewirkt dein Entscheid?'. "
+                        + "'→ Entscheidung' = das ist NICHT deine Entscheidung (Stakeholder noetig): praegt eine offene Entscheidung, das PBI wird geschuetzt geblockt, das decision-gate legt sie beim naechsten Lauf vor.",
                     Options:
                     [
                         new ReviewOption("apply", "Uebernehmen — aendert die Projektwahrheit (Core)"),
-                        new ReviewOption("skip", "Ueberspringen — Aenderung verwerfen (Begruendung Pflicht)")
+                        new ReviewOption("skip", "Ueberspringen — Aenderung verwerfen (Begruendung Pflicht)"),
+                        new ReviewOption("to_decision", "→ Entscheidung noetig (Stakeholder) — praegt offene Entscheidung, PBI wird geblockt (Begruendung Pflicht = die Frage)")
                     ]),
                 new ReviewFieldSpec(FieldAlignDecision, "Inhaltliche Angleichung", ReviewInputType.Dropdown, ["accept", "edit", "skip"], Required: true,
                     Help: "Wie der angepasste PBI-Inhalt in die Wahrheit uebernommen wird (eigene Entscheidung, unabhaengig von der Struktur).",
@@ -150,7 +152,9 @@ public static class PbiUpdateReviewAdapter
     {
         var decision = FieldOf(item, FieldDecision);
         if (!Decisions.Contains(decision)) return false;
-        if (string.Equals(decision, "skip", StringComparison.OrdinalIgnoreCase)
+        // Begruendung Pflicht bei skip (P2a) UND to_decision (R-14 D2: die Begruendung WIRD der Entscheidungs-Text).
+        if ((string.Equals(decision, "skip", StringComparison.OrdinalIgnoreCase)
+             || string.Equals(decision, "to_decision", StringComparison.OrdinalIgnoreCase))
             && string.IsNullOrWhiteSpace(FieldOf(item, FieldReason))) return false;
         if (HasAlign(item))
         {
@@ -181,6 +185,19 @@ public static class PbiUpdateReviewAdapter
             .ToList();
         return new(runId, "human (review-ui)", ops, aligns.Count > 0 ? aligns : null);
     }
+
+    // R-14 D2: aus den Review-Entscheiden die „→ Entscheidung"-Antraege extrahieren (op-<i> → Op des Plans).
+    // Die PFLICHT-Begruendung ist die Stakeholder-Frage; ohne sie (defensiv) kein Antrag.
+    public static IReadOnlyList<Decision.PbiDecisionRequest> DecisionRequestsFrom(
+        PbiStateChangePlanDocument plan, IReadOnlyList<PbiUpdateDecision> decisions)
+        => decisions
+            .Where(d => string.Equals(d.Decision, "to_decision", StringComparison.OrdinalIgnoreCase)
+                        && !string.IsNullOrWhiteSpace(d.Reason))
+            .Select(d => d.OpId.StartsWith("op-", StringComparison.Ordinal) && int.TryParse(d.OpId["op-".Length..], out var i)
+                         && i >= 0 && i < plan.Operations.Count ? (Op: plan.Operations[i], d.Reason) : (Op: null!, d.Reason))
+            .Where(x => x.Op is not null)
+            .Select(x => new Decision.PbiDecisionRequest(x.Op.RequirementId, x.Op.PbiId, x.Reason!))
+            .ToList();
 
     public static void MergeExistingDecisions(ReviewSession session, PbiUpdateDecisionsFile? file)
     {

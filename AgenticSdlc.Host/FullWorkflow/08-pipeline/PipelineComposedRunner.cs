@@ -52,10 +52,13 @@ public static class PipelineComposedRunner
     {
         ICandidateRetriever retriever = new ShowAllRequirementRetriever();
         var ingestPort = RequestPort.Create<IngestionReviewRequest, IngestionReviewResponse>("ingest-gate");
+        var decisionPort = RequestPort.Create<PipelineDecisionReviewRequest, PipelineDecisionReviewResponse>("decision-gate");
         var pbiPort = RequestPort.Create<PbiUpdateReviewRequest, PbiUpdateReviewResponse>("pbi-gate");
         return PipelineComposedWorkflow.Build(
             new IngestionHitlResolveExecutor(ingestFactory, retriever, run), new IngestionGateExecutor(run), new IngestionRepairExecutor(ingestFactory, retriever, run),
             new IngestionHitlFinalizeExecutor(run, ingestOutDir), ingestPort, new IngestComposedApplyExecutor(run, repoRoot, ingestOutDir),
+            new DecisionScanExecutor(run, repoRoot, Path.Combine(Path.GetDirectoryName(ingestOutDir)!, "07-decision")), decisionPort,
+            new DecisionComposedApplyExecutor(run, repoRoot, ingestOutDir, Path.Combine(Path.GetDirectoryName(ingestOutDir)!, "07-decision")),
             new IngestPbiBridgeExecutor(run, repoRoot, pbiOutDir, maxAttempts),
             new PbiUpdateDeriveExecutor(run), new PbiUpdateMakerExecutor(pbiFactory, run), new PbiUpdateGateExecutor(run), new PbiUpdateRepairExecutor(pbiFactory, run),
             new PbiAlignExecutor(pbiAlignFactory, run), new PbiUpdateHitlFinalizeExecutor(run), pbiPort, new PbiUpdateApplyExecutor(run, repoRoot, pbiOutDir));
@@ -166,6 +169,13 @@ public static class PipelineComposedRunner
                     var acc = acceptAll ? ir!.Ops.Select(o => o.IncomingItemId).ToList() : acceptListItems;
                     await runHandle.SendResponseAsync(req.Request.CreateResponse(new IngestionReviewResponse(acc, "author (cli)"))).ConfigureAwait(false);
                     Console.WriteLine($"[pipeline-hitl] Gate 1 (Ingest) beantwortet: {acc.Count} akzeptiert.");
+                }
+                else if (string.Equals(portId, "decision-gate", StringComparison.Ordinal) && req.Request.TryGetDataAs<PipelineDecisionReviewRequest>(out var dr))
+                {
+                    // R-14 G1 Governance-Politik: CLI-Flags koennen keine Wahrheits-Konflikte entscheiden (Outcome/
+                    // neuer Text waeren erfunden) -> defer-all; Aufloesen kommt mit dem E0.8-UI (G1-b) bzw. on-demand.
+                    await runHandle.SendResponseAsync(req.Request.CreateResponse(DecisionStage.DeferAll(dr!, "author (cli/defer-all)"))).ConfigureAwait(false);
+                    Console.WriteLine($"[pipeline-hitl] decision-gate: {dr!.Decisions.Count} offene Entscheidung(en) VERTAGT (CLI kann nicht aufloesen — UI/G1-b).");
                 }
                 else if (string.Equals(portId, "pbi-gate", StringComparison.Ordinal) && req.Request.TryGetDataAs<PbiUpdateReviewRequest>(out var pr))
                 {

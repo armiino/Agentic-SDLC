@@ -24,7 +24,10 @@ public sealed record PbiUpdateReviewOpView(string OpId, string Kind, string? Pbi
 public sealed record PbiUpdateReviewResponse(IReadOnlyList<string> AcceptedOpIds, string Reviewer,
     IReadOnlyList<PbiAlignment>? AcceptedAlignments = null,
     // B1: die im Review korrigierten NEW_PBI-Feature-Zuordnungen. Optional/abwärtskompatibel (alte Aufrufer null).
-    IReadOnlyList<PbiFeatureOverride>? FeatureOverrides = null);
+    IReadOnlyList<PbiFeatureOverride>? FeatureOverrides = null,
+    // R-14 D2: „→ Entscheidung"-Anträge aus dem Review (statt skip) — der Apply prägt daraus offene DECs und
+    // blockt die antragenden PBIs. Optional/abwärtskompatibel; accept-all/CLI-Flags beantragen nie.
+    IReadOnlyList<Decision.PbiDecisionRequest>? DecisionRequests = null);
 
 // FINALIZE (HITL): schreibt Plan/Gate/Attempts/Summary (Evidenz, wie PbiUpdateFinalize) und verzweigt:
 //   Decision==Pass -> PbiUpdateReviewRequest an den Port. Sonst -> terminaler "needs manual"-Output.
@@ -89,7 +92,8 @@ internal sealed class PbiUpdateApplyExecutor(RunContext run, string repoRoot, st
         // R-26-C: die im Review autorisierten Angleichungen werden mitgeschrieben (needs_clarify -> active).
         // B1: die korrigierten NEW_PBI-Feature-Zuordnungen werden vor dem Apply in den Plan eingewoben.
         var report = await PbiUpdateApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot,
-            acceptedAlignments: resp.AcceptedAlignments, featureOverrides: resp.FeatureOverrides, ct: ct).ConfigureAwait(false);
+            acceptedAlignments: resp.AcceptedAlignments, featureOverrides: resp.FeatureOverrides,
+            decisionRequests: resp.DecisionRequests, ct: ct).ConfigureAwait(false);
         run.AppendEvent(new { type = "PBI_UPDATE_DONE", runId = run.RunId, applied = true, newPbis = report.NewPbis.Count, updatedPbis = report.UpdatedPbis.Count, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(report, ct).ConfigureAwait(false);
         await context.SendMessageAsync(report).ConfigureAwait(false);

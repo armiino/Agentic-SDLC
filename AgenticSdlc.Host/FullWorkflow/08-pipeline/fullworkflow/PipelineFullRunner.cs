@@ -21,7 +21,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 /// </summary>
 /// <remarks>
 /// Stand U2 (ein-graph-vereinheitlichung): <c>run</c> assembliert die GANZE Kette (Front → Branch →
-/// Bootstrap | Betrieb → Snapshot → Forward, 6 Human-Gates) in <see cref="PipelineFullWorkflow.Assemble"/> und
+/// Bootstrap | Betrieb → Snapshot → Forward, 7 Human-Gates) in <see cref="PipelineFullWorkflow.Assemble"/> und
 /// startet EINEN Stream — keine Phasen-Sequenzierung mehr im Runner. <c>run --dry-run</c> = LLM-freie
 /// Build()-Validierung des Gesamtgraphen. <c>start</c> = Skeleton (Faden-Ordner + Plan-Events, kein LLM);
 /// <c>resume</c> ist noch No-op (H1). Gate-Antworten kommen aus dem zentralen Responder
@@ -44,6 +44,7 @@ public static class PipelineFullRunner
         if (s.L3Enabled) stages.Add(new("03-gap", "03-gap", null));     // v1: per Default aus
         stages.Add(new("04-delta",      "04-delta",      null));        // det. Executor (Spike 1)
         stages.Add(new("07-ingest",     "07-ingest",     "ingest-gate"));
+        stages.Add(new("07-decision",   "07-decision",   "decision-gate")); // R-14 G1: Tor 2 (nur bei offenen DECs)
         stages.Add(new("07-pbi-update", "07-pbi-update", "pbi-gate"));
         stages.Add(new("snapshot",      "07-github",     null));        // Pflicht VOR Forward (R-16)
         stages.Add(new("07-github",     "07-github",     "github-forward-gate"));
@@ -132,7 +133,7 @@ public static class PipelineFullRunner
         // U1/U2: LLM-freie Validierung des GANZEN Assemble (Build() lief soeben — Kanten/Typen geprüft).
         if (args.Contains("--dry-run"))
         {
-            Console.WriteLine($"[{Cmd}] --dry-run: Ein-Graph Build()-bar (Front -> Branch -> Bootstrap | Betrieb -> Snapshot -> Forward; 6 Human-Gates). Kein LLM.");
+            Console.WriteLine($"[{Cmd}] --dry-run: Ein-Graph Build()-bar (Front -> Branch -> Bootstrap | Betrieb -> Snapshot -> Forward; 7 Human-Gates inkl. decision-gate/Tor 2). Kein LLM.");
             return 0;
         }
 
@@ -246,6 +247,9 @@ public static class PipelineFullRunner
                 new IngestionHitlFinalizeExecutor(run, ingestOutDir),
                 RequestPort.Create<IngestionReviewRequest, IngestionReviewResponse>("ingest-gate"),
                 new IngestComposedApplyExecutor(run, repoRoot, ingestOutDir),
+                new DecisionScanExecutor(run, repoRoot, run.OutputDir("07-decision")),
+                RequestPort.Create<PipelineDecisionReviewRequest, PipelineDecisionReviewResponse>("decision-gate"),
+                new DecisionComposedApplyExecutor(run, repoRoot, ingestOutDir, run.OutputDir("07-decision")),
                 new IngestPbiBridgeExecutor(run, repoRoot, pbiOutDir, maxAttempts),
                 new PbiUpdateDeriveExecutor(run), new PbiUpdateMakerExecutor(pbiFactory, run), new PbiUpdateGateExecutor(run),
                 new PbiUpdateRepairExecutor(pbiFactory, run), new PbiAlignExecutor(pbiAlignFactory, run), new PbiUpdateHitlFinalizeExecutor(run),
@@ -344,6 +348,19 @@ public static class PipelineFullRunner
                         {
                             await handle.SendResponseAsync(req.Request.CreateResponse(new IngestionReviewResponse(r.AcceptedItemIds, "author (pipeline-full)"))).ConfigureAwait(false);
                             run.AppendEvent(new { type = "GATE_ANSWERED", gate = portId, policy = gatePolicy.Kind.ToString(), accepted = r.AcceptedItemIds.Count, rejected = r.RejectedItemIds.Count, timestampUtc = DateTime.UtcNow });
+                            answered = true;
+                        }
+                    }
+                    else if (portId == "decision-gate" && req.Request.TryGetDataAs<PipelineDecisionReviewRequest>(out var dq) && dq is not null)
+                    {
+                        // R-14 G1 Governance-Politik (Autor 04.08.): accept-all/replay koennen keine Wahrheits-
+                        // Konflikte entscheiden (Outcome/neuer Text waeren ERFUNDEN) -> Experiment-Modi vertagen
+                        // ALLE Entscheidungen (defer-all): DECs parken sichtbar, der Block haelt, Replay bleibt konstant.
+                        if (gatePolicy.Kind != GatePolicyKind.Interactive)
+                        {
+                            await handle.SendResponseAsync(req.Request.CreateResponse(DecisionStage.DeferAll(dq, $"author (pipeline-full/{gatePolicy.Kind}/defer-all)"))).ConfigureAwait(false);
+                            run.AppendEvent(new { type = "GATE_ANSWERED", gate = portId, policy = gatePolicy.Kind.ToString(), deferred = dq.Decisions.Count, timestampUtc = DateTime.UtcNow });
+                            Console.WriteLine($"[{Cmd}] decision-gate: {dq.Decisions.Count} offene Entscheidung(en) VERTAGT (Politik {gatePolicy.Kind}: Experiment-Modi entscheiden keine Wahrheits-Konflikte).");
                             answered = true;
                         }
                     }
@@ -479,6 +496,9 @@ public static class PipelineFullRunner
             [$"  Review-UI: l4-re-clarify-review runs/fullworkflow/{run.RunId}/06-backlog/clusters  → human-decisions.json"],
         "backlog-review-gate" =>
             [$"  Review-UI: l4-re-clarify-backlog-review runs/fullworkflow/{run.RunId}/06-backlog/backlog  → human-decisions.json"],
+        "decision-gate" =>
+            [$"  Review-UI: decision-gate-review runs/fullworkflow/{run.RunId}/07-decision  → decision-gate-decisions.json (Ausgang je Widerspruch, vertagen erlaubt)",
+             "  Flags/accept-all koennen hier NICHT aufloesen (Wahrheits-Konflikt) — sie vertagen alles (laut)."],
         "github-forward-gate" =>
             [$"  Entscheide: runs/fullworkflow/{run.RunId}/07-github/github-forward-decisions.json (opId/decision apply|skip)",
              "  oder beim Resume: --accept-all | --accept opId1,opId2"],
@@ -543,6 +563,29 @@ public static class PipelineFullRunner
                 return await AnswerAsync(new IngestionReviewResponse(accepted, "author (interactive)"),
                     new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = accepted.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
             }
+            case "decision-gate" when req.Request.TryGetDataAs<PipelineDecisionReviewRequest>(out var dq) && dq is not null:
+            {
+                // G1-b: die UI (decision-gate-review) schreibt decision-gate-decisions.json — die ist die Antwort
+                // (DECs ohne Eintrag werden sicher VERTAGT). Ohne Datei: Flags koennen keine Outcomes erfinden ->
+                // --accept-all/'a' = laut defer-all; sonst warten (Inline-Loop/UI).
+                var decisionsPath = Path.Combine(run.RunDir, "07-decision", "decision-gate-decisions.json");
+                if (File.Exists(decisionsPath))
+                {
+                    var file = JsonSerializer.Deserialize<Decision.PipelineDecisionDecisionsFile>(
+                        await File.ReadAllTextAsync(decisionsPath).ConfigureAwait(false), JsonFiles.Json);
+                    if (file is not null)
+                    {
+                        var response = Decision.PipelineDecisionReviewAdapter.ToResponse(file, dq);
+                        var resolvedCount = response.Resolutions.Count(r => string.Equals(r.Action, DecisionStage.ActionResolve, StringComparison.OrdinalIgnoreCase));
+                        return await AnswerAsync(response,
+                            new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", resolved = resolvedCount, deferred = response.Resolutions.Count - resolvedCount, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+                    }
+                }
+                if (answers is null) return false;   // warten: UI nutzen (decision-gate-review) und erneut pruefen
+                Console.WriteLine($"[{Cmd}] decision-gate: {dq.Decisions.Count} offene Entscheidung(en) — Flags koennen nicht aufloesen, alle VERTAGT (UI: decision-gate-review).");
+                return await AnswerAsync(DecisionStage.DeferAll(dq, "author (resume/defer-all)"),
+                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", deferred = dq.Decisions.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+            }
             case "pbi-gate" when req.Request.TryGetDataAs<PbiUpdateReviewRequest>(out var pr) && pr is not null:
             {
                 var accepted = Flags(pr.Ops.Select(o => o.OpId));
@@ -601,6 +644,7 @@ public static class PipelineFullRunner
             "adjudication-gate" => $"ledger-adjudicate-ui runs/fullworkflow/{run.RunId}/01-ledger/queue.json",
             "cluster-review-gate" => $"l4-re-clarify-review runs/fullworkflow/{run.RunId}/06-backlog/clusters",
             "backlog-review-gate" => $"l4-re-clarify-backlog-review runs/fullworkflow/{run.RunId}/06-backlog/backlog",
+            "decision-gate" => $"decision-gate-review runs/fullworkflow/{run.RunId}/07-decision",
             _ => null,
         };
         if (uiArgs is null)
@@ -677,6 +721,17 @@ public static class PipelineFullRunner
             Console.WriteLine(paused == 0
                 ? $"[{Cmd}] Keine pausierten Läufe unter runs/fullworkflow/."
                 : $"[{Cmd}] {paused} pausierte(r) Lauf/Läufe.");
+
+        // R-14 D4: der Parkplatz ist IMMER sichtbar („unsichtbar = rottet") + Kangal-Integritätszeile (read-only) —
+        // status ist die eine Seite für „wie geht es der Wahrheit": fachlich Offenes getrennt von strukturell Lautem.
+        var coreRepo = new JsonCoreRepository(repoRoot);
+        if (await coreRepo.ExistsAsync().ConfigureAwait(false))
+        {
+            var core = await coreRepo.LoadAsync().ConfigureAwait(false);
+            Console.WriteLine($"[{Cmd}] Core ({core.Items.Count} Items):");
+            foreach (var line in CoreParkplatz.RenderLines(CoreParkplatz.Count(core), CoreKangal.Check(core)))
+                Console.WriteLine(line);
+        }
         return 0;
     }
 
