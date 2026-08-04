@@ -48,7 +48,8 @@ public static class IngestionReviewAdapter
             .Where(r => string.Equals(r.RelationType, "covers", StringComparison.Ordinal))
             .GroupBy(r => r.ToId, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => (IReadOnlyList<string>)g.Select(r => r.FromId).Distinct(StringComparer.Ordinal).ToList(), StringComparer.Ordinal);
-        var items = plan.Operations.Select(op => BuildItem(op, incomingById, coreById, pbisByReq)).ToList();
+        var rejections = IngestionRejections.Of(core);
+        var items = plan.Operations.Select(op => BuildItem(op, incomingById, coreById, pbisByReq, rejections)).ToList();
 
         return new ReviewSession
         {
@@ -149,7 +150,7 @@ public static class IngestionReviewAdapter
                 "Experiment-Modus (wie accept-all/replay), NICHT der Normalweg an einem Wahrheits-Gate.")
         ]);
 
-    private static ReviewItem BuildItem(StateChangeOperation op, IReadOnlyDictionary<string, ProjectStateItem> incomingById, IReadOnlyDictionary<string, ProjectStateItem> coreById, IReadOnlyDictionary<string, IReadOnlyList<string>> pbisByReq)
+    private static ReviewItem BuildItem(StateChangeOperation op, IReadOnlyDictionary<string, ProjectStateItem> incomingById, IReadOnlyDictionary<string, ProjectStateItem> coreById, IReadOnlyDictionary<string, IReadOnlyList<string>> pbisByReq, IReadOnlyList<ProjectStateProposal> rejections)
     {
         var notes = new List<ReviewNote>
         {
@@ -161,6 +162,8 @@ public static class IngestionReviewAdapter
                 "Übernehmen mutiert den Core — nur bestätigen, wenn die Änderung stimmt."));
         var blast = BlastRadiusNote(op, coreById, pbisByReq);
         if (blast is not null) notes.Add(blast);
+        var rejection = RejectionNote(op, rejections);
+        if (rejection is not null) notes.Add(rejection);
 
         var item = new ReviewItem
         {
@@ -175,6 +178,35 @@ public static class IngestionReviewAdapter
         };
         item.Resolved = Resolved(item);
         return item;
+    }
+
+    // R-35 Wiedervorlage-Note: „schon einmal abgelehnt" — zwei Erkennungswege, beide fail-open (keine Note ist
+    // schlimmstenfalls der heutige Zustand): ① Resolver-HINWEIS (relatedRejectionId, semantisches Agent-Urteil),
+    // ② deterministischer Exakt-Match über den IdentityKey (LLM-frei, fängt wortgleiche Wiederholungen immer).
+    // KEIN Auto-Skip — der Mensch entscheidet; die Note liefert Datum + damalige Begründung.
+    private static ReviewNote? RejectionNote(StateChangeOperation op, IReadOnlyList<ProjectStateProposal> rejections)
+    {
+        if (rejections.Count == 0) return null;
+
+        var hit = op.RelatedRejectionId is { Length: > 0 } refId
+            ? rejections.FirstOrDefault(p => string.Equals(p.ProposalId, refId, StringComparison.Ordinal))
+            : null;
+        var via = hit is not null ? "Resolver-Einschätzung: inhaltlich gleich" : null;
+
+        if (hit is null)
+        {
+            var key = IdentityKey.From(op.Statement);
+            hit = rejections.FirstOrDefault(p => string.Equals(p.Metadata.GetValueOrDefault("identityKey"), key, StringComparison.Ordinal));
+            via = hit is not null ? "wortgleicher Vorschlag (exakter Abgleich)" : null;
+        }
+        if (hit is null) return null;
+
+        var reason = hit.Metadata.GetValueOrDefault("reason");
+        var date = hit.Metadata.GetValueOrDefault("date");
+        return new ReviewNote(ReviewNoteKind.Warning, "Schon einmal abgelehnt",
+            $"Ähnlicher Vorschlag wurde am {(string.IsNullOrWhiteSpace(date) ? "früheren Datum" : date)} abgelehnt ({hit.ProposalId}; {via})."
+            + $" Damalige Begründung: {(string.IsNullOrWhiteSpace(reason) ? "(keine erfasst)" : reason)}"
+            + " — du entscheidest neu; kein automatisches Überspringen.");
     }
 
     // Blast-Radius: welche PBIs die Ziel-Anforderung abdecken → werden am NÄCHSTEN Gate (pbi-update) behandelt.

@@ -63,6 +63,13 @@ public static class IngestionGate
 
             if (op.ClaimIds.Count == 0)
                 warnings.Add(Issue("MISSING_EVIDENCE", "warning", $"Operation '{op.IncomingItemId}' ohne claimIds (Beleg).", op.IncomingItemId, op.TargetEntityId));
+
+            // R-35: relatedRejectionId ist ein HINWEIS (rendert die Wiedervorlage-Note) — ein nicht aufloesbarer
+            // Verweis blockt nicht (fail-open, wie der featureKey-Hinweis), wird aber sichtbar gemacht.
+            if (!string.IsNullOrWhiteSpace(op.RelatedRejectionId)
+                && !core.Proposals.Any(p => string.Equals(p.ProposalType, IngestionRejections.ProposalType, StringComparison.Ordinal)
+                                            && string.Equals(p.ProposalId, op.RelatedRejectionId, StringComparison.Ordinal)))
+                warnings.Add(Issue("UNKNOWN_REJECTION_REF", "warning", $"relatedRejectionId '{op.RelatedRejectionId}' ist keine bekannte Ablehnung ('{op.IncomingItemId}') — Note entfaellt.", op.IncomingItemId, op.RelatedRejectionId));
         }
 
         // Coverage: jedes eingehende Requirement genau eine Operation.
@@ -103,6 +110,7 @@ public static class IngestionGate
         ["TARGET_FORBIDDEN"] = Core.Repairability.Repairable,
         ["UNKNOWN_INCOMING"] = Core.Repairability.Repairable,
         ["UNKNOWN_FEATURE"] = Core.Repairability.Repairable,
+        ["UNKNOWN_REJECTION_REF"] = Core.Repairability.Repairable,
         ["UNKNOWN_KIND"] = Core.Repairability.NeedsHuman,
     };
 

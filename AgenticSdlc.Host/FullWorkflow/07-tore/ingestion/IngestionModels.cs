@@ -22,7 +22,10 @@ public sealed record StateChangeOperation(
     [property: JsonPropertyName("targetEntityId")] string? TargetEntityId,
     [property: JsonPropertyName("featureKey")] string? FeatureKey,
     [property: JsonPropertyName("claimIds")] IReadOnlyList<string> ClaimIds,
-    [property: JsonPropertyName("rationale")] string Rationale);
+    [property: JsonPropertyName("rationale")] string Rationale,
+    // R-35: HINWEIS des Resolvers auf einen frueher abgelehnten, inhaltlich gleichen Vorschlag (REJ-*).
+    // Optional (alte Plaene bleiben lesbar); reine Anzeige-Referenz — kein Auto-Skip, der Mensch entscheidet.
+    [property: JsonPropertyName("relatedRejectionId")] string? RelatedRejectionId = null);
 
 public sealed record IngestionGateReport(
     [property: JsonPropertyName("pass")] bool Pass,

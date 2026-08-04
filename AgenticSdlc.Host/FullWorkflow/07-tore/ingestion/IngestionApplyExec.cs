@@ -49,6 +49,30 @@ public static class IngestionApplyExec
 
         var (updatedCore, report, affectedIds) = IngestionApply.Apply(core, meetingDelta, plan, accepted);
         var affectedView = CoreViews.AffectedItems(updatedCore, affectedIds);
+
+        // R-35: menschliche Skips (mit P2a-Begruendung) als ingest_rejection-Proposals mitheben — Wiedervorlage-
+        // Wissen, im SELBEN Save (ein Snapshot, ein Kangal-Pass). Quelle: human-decisions.json im planDir (CLI und
+        // Graph schreiben sie dorthin). Fehlt sie (Experiment-Modi accept-all/replay), wird bewusst nichts
+        // aufgezeichnet — fail-open, laut.
+        var decisionsPath = Path.Combine(planDir, "human-decisions.json");
+        if (File.Exists(decisionsPath))
+        {
+            var decisionsFile = JsonSerializer.Deserialize<IngestionHumanDecisionsFile>(
+                await File.ReadAllTextAsync(decisionsPath, ct).ConfigureAwait(false), Json);
+            if (decisionsFile is not null)
+            {
+                var planRel = Path.GetRelativePath(repoRoot, Path.Combine(planDir, "plan.json"));
+                var (withRejections, recorded) = IngestionRejections.Record(updatedCore, plan, decisionsFile.Decisions, planRel);
+                updatedCore = withRejections;
+                if (recorded.Count > 0)
+                    Console.WriteLine($"[ingest-apply] R-35: {recorded.Count} Ablehnung(en) als Wiedervorlage-Wissen im Core: {string.Join(", ", recorded)}");
+            }
+        }
+        else
+        {
+            Console.WriteLine("[ingest-apply] R-35: keine human-decisions.json im Plan-Ordner — Ablehnungen werden nicht aufgezeichnet (Experiment-Modus?).");
+        }
+
         await coreRepo.SaveAsync(updatedCore).ConfigureAwait(false);
 
         await File.WriteAllTextAsync(reportPath, JsonSerializer.Serialize(report, Json), ct).ConfigureAwait(false);

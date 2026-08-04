@@ -34,6 +34,9 @@ internal sealed class IngestionTools(
             "Listet offene Entscheidungen (DEC-*, status=open_decision) mit dem widersprochenen Ziel. Pruefen, BEVOR du CONTRADICT vorschlaegst - ist der Widerspruch schon erfasst, nutze ALREADY_DECIDED."),
         AIFunctionFactory.Create(SearchCore, "search_core",
             "Sucht in den Core-Requirements nach Stichworten (entityId/text)."),
+        AIFunctionFactory.Create(SearchRejections, "search_rejections",
+            "Sucht in frueher ABGELEHNTEN Vorschlaegen (Wiedervorlage-Wissen, REJ-*). Ohne query: alle. "
+            + "Ist ein eingehendes Requirement inhaltlich gleich, relatedRejectionId auf der Operation setzen — trotzdem normal vorschlagen, der Mensch entscheidet."),
         AIFunctionFactory.Create(CheckPlan, "check_state_change_plan",
             "Prueft die Operationen deterministisch (Coverage/Ziele/Belege). Vor dem Speichern nutzen."),
         AIFunctionFactory.Create(SavePlan, "save_state_change_plan",
@@ -78,6 +81,39 @@ internal sealed class IngestionTools(
             .Select(i => new { entityId = i.ItemId, contradicts = i.Metadata.GetValueOrDefault("targetEntityId"), text = Truncate(i.Text, 240) })
             .ToArray();
         run.AppendEvent(new { type = "INGEST_TOOL_DECISIONS", runId = run.RunId, returned = rows.Length, timestampUtc = DateTime.UtcNow });
+        return JsonSerializer.Serialize(rows, Json);
+    }
+
+    // R-35: Wiedervorlage-Wissen (abgelehnte Vorschlaege) abfrage-foermig — leere query = alle (die Liste ist
+    // human-gated klein); die Signatur ist die Austausch-Naht fuer einen spaeteren Index (Implementierung wechselbar,
+    // Agent/Gate/UI bleiben unberuehrt — Muster ICoreRepository).
+    private string SearchRejections(string? query = null, int limit = 30)
+    {
+        var terms = (query ?? string.Empty).Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var rows = IngestionRejections.Of(core)
+            .Select(p => new
+            {
+                p,
+                statement = p.Metadata.GetValueOrDefault("statement") ?? "",
+                reason = p.Metadata.GetValueOrDefault("reason") ?? "",
+            })
+            .Where(x => terms.Length == 0 || terms.Any(t =>
+                x.p.ProposalId.Contains(t, StringComparison.OrdinalIgnoreCase)
+                || x.statement.Contains(t, StringComparison.OrdinalIgnoreCase)
+                || x.reason.Contains(t, StringComparison.OrdinalIgnoreCase)))
+            .OrderBy(x => x.p.ProposalId, StringComparer.Ordinal)
+            .Take(Math.Clamp(limit, 1, 80))
+            .Select(x => new
+            {
+                rejectionId = x.p.ProposalId,
+                statement = Truncate(x.statement, 300),
+                reason = Truncate(x.reason, 200),
+                date = x.p.Metadata.GetValueOrDefault("date"),
+                kind = x.p.Metadata.GetValueOrDefault("kind"),
+                targetEntityId = x.p.Metadata.GetValueOrDefault("targetEntityId"),
+            })
+            .ToArray();
+        run.AppendEvent(new { type = "INGEST_TOOL_REJECTIONS", runId = run.RunId, query, returned = rows.Length, timestampUtc = DateTime.UtcNow });
         return JsonSerializer.Serialize(rows, Json);
     }
 

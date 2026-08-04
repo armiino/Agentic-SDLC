@@ -21,6 +21,9 @@ internal static class IngestionResolveTask
     public const string Text = """
                                Loese die eingehenden Requirements dieses Meetings gegen den bestehenden Core auf.
                                1. get_incoming_items · 2. list_core_requirements / search_core / get_core_entity.
+                               2b. search_rejections: Wurde etwas inhaltlich Gleiches frueher ABGELEHNT? Wenn ja,
+                                   relatedRejectionId (REJ-*) auf der Operation setzen — die Operation trotzdem
+                                   normal vorschlagen, die Entscheidung trifft der Mensch am Gate.
                                3. Je eingehendem Requirement GENAU EINE Operation: RESTATE/REFINE/SUPERSEDE/CONTRADICT
                                   (mit targetEntityId) · NEW/NEW_RELATED (ohne targetEntityId) · ALREADY_DECIDED (DEC-*).
                                   Vor CONTRADICT: list_open_decisions pruefen (sonst ALREADY_DECIDED).
