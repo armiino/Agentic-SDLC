@@ -51,6 +51,21 @@ internal sealed class BaselineStageExecutor(HostSettings settings, string? basel
             return;
         }
 
+        // SP2-Fix (= R-32): das Checker-Verdikt AUFDECKEN statt still weiterreichen. Ein "Rest -> Mensch"-Artefakt
+        // (MaxIterationsReached/HumanReview) beendet die Stufe laut (Muster des FAILED-Pfads oben) — kein stiller
+        // Fluss Richtung Core. Fehlender/unlesbarer Report (Alt-Laeufe) = Warn-Event, weiter (fail-open).
+        var verdict = BaselineFinalReport.TryRead(Path.GetDirectoryName(artifactPath)!);
+        if (BaselineFinalReport.NeedsHuman(verdict))
+        {
+            parentRun.AppendEvent(new { type = "STAGE_BASELINES_NEEDS_HUMAN", decision = verdict!.Decision, recipeRun = Path.GetFileName(recipeRunDir!), artifactPath, timestampUtc = DateTime.UtcNow });
+            await context.YieldOutputAsync(
+                $"02-baselines: Checker-Verdikt '{verdict.Decision}' (Rest -> Mensch) — Artefakt wird NICHT still in den Core gereicht. " +
+                $"final-report: {Path.Combine(Path.GetDirectoryName(artifactPath)!, BaselineFinalReport.FileName)}").ConfigureAwait(false);
+            return;
+        }
+        if (verdict is null)
+            parentRun.AppendEvent(new { type = "STAGE_BASELINES_VERDICT_MISSING", recipeRun = Path.GetFileName(recipeRunDir!), timestampUtc = DateTime.UtcNow });
+
         await File.WriteAllTextAsync(Path.Combine(outDir, "baseline-stage.json"),
             JsonSerializer.Serialize(new { recipeRunDir, artifactPaths = new[] { artifactPath } }, Json), ct).ConfigureAwait(false);
         parentRun.AppendEvent(new
