@@ -35,12 +35,10 @@ if (args.Length > 0)
 //           github-forward-review, github-forward-apply, github-forward-compare, github-forward-rerun-test,
 //           github-reverse, github-reverse-review, github-reverse-apply
 //
-// [SUPPORT] L4 / Backlog-Qualitaet + Nebenpfade (aktuell, KEIN Spike):
-//   l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc,
-//   l4-completion, l4-completion-review, l4-completion-apply, requirements-readiness,
-//   l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply,
-//   clarification-agent, clarification-agent-review, clarification-agent-apply,
-//   open-requirements-review, open-requirements-apply, operationalization-audit (?)
+// [SUPPORT] L4 / Backlog (re-clarify = der lebende Backlog-Bau; issuplanning = LIVE/Bridge):
+//   l4-re-clarify(-review|-apply|-backlog-review|-backlog-apply|-issueplan|-backlog-doc),
+//   l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply
+//   (Alt-L4-Kette 04.08. archiviert -> archive/phase2-l4-dormant/ + docs/aktiv/backlog-genealogie.md)
 //
 // [FRONT] Produkt-Front (Ledger-Pfad, intendierter Transkript->MeetingDelta-Weg — s. lokale PRODUCT-CAPABILITY-MAP):
 //   Ledger:           ledger-build, ledger-build-units, ledger-reference-template, ledger-adjudicate,
@@ -85,9 +83,8 @@ if (args.Length > 0)
     Console.Error.WriteLine("[LIVE] core-seed, core-view, project-state-build, ingest-requirements(-hitl), ingest-review, ingest-apply, "
         + "pbi-update(-hitl), pbi-update-review, pbi-update-apply, decision-resolve(-agent|-hitl), decision-review, decision-apply, "
         + "github-forward(-hitl), github-forward-review, github-forward-apply, github-reverse(-review|-apply), github-snapshot, github-read.");
-    Console.Error.WriteLine("[SUPPORT/L4] l4-baseline, l4-consolidation, l4-review, l4-apply, l4-quality, l4-requirements-doc, "
-        + "l4-completion(-review|-apply), requirements-readiness, l4-issuplanning(-review|-apply), clarification-agent(-review|-apply), "
-        + "open-requirements-review, open-requirements-apply, operationalization-audit.");
+    Console.Error.WriteLine("[SUPPORT/L4] l4-re-clarify(-review|-apply|-backlog-review|-backlog-apply|-issueplan|-backlog-doc), "
+        + "l4-issuplanning(-review|-apply). (Alt-L4-Kette archiviert: archive/phase2-l4-dormant/)");
     Console.Error.WriteLine("[FROZEN/Historie — nur Referenz] l3(-review|-apply|-revise), ledger-build, ledger-adjudicate-ui, ledger-validate, "
         + "semantic-ledger-extract, eval-offline, review, review-agent, contract-check, recipe, derive, evidence-chain, "
         + "github-reconciliation(-review|-apply), spike-hitl (u.a. — s. Banner).");

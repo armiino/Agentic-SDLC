@@ -35,25 +35,11 @@ public sealed record CanonicalRequirementsView(
     L4ProvenanceMap Provenance,
     L4QualityReport Quality);
 
-public sealed record ReadinessView(
-    ProjectScope Scope,
-    string SourceDirectory,
-    string ReadinessReportPath,
-    string IssuePlanningInputPath,
-    RequirementsReadinessReport Report,
-    IssuePlanningInput IssuePlanningInput);
-
 public sealed record IssuePlanningView(
     ProjectScope Scope,
     string SourceDirectory,
     string IssuePlanningInputPath,
     IssuePlanningInput Input);
-
-public sealed record ClarificationPlanningView(
-    ProjectScope Scope,
-    string SourceDirectory,
-    string ClarificationPlanningInputPath,
-    ClarificationPlanningInput Input);
 
 public sealed record AcceptedIssuePlanView(
     ProjectScope Scope,
@@ -63,14 +49,6 @@ public sealed record AcceptedIssuePlanView(
     IssuePlanDocument Plan,
     IssuePlanGateReport Gate);
 
-public sealed record AcceptedClarificationPlanView(
-    ProjectScope Scope,
-    string SourceDirectory,
-    string AcceptedClarificationPlanPath,
-    string GateReportPath,
-    ClarificationPlanDocument Plan,
-    ClarificationPlanGateReport Gate);
-
 // Produkt des l4-re-clarify-Knotens: der Product Backlog als abgeleitete View (siehe plan-pb.md).
 public sealed record ProductBacklogView(
     ProjectScope Scope,
@@ -78,13 +56,11 @@ public sealed record ProductBacklogView(
     string ProductBacklogPath,
     ProductBacklogDocument Backlog);
 
+// Schlank seit dem Alt-Ketten-Rückbau (04.08.): nur die LEBEND konsumierten Views bleiben als Repository-Methoden
+// (re-clarify + pipeline lesen Canonical; issuplanning liest IssuePlanning). AcceptedIssuePlanView/ProductBacklogView
+// leben als Records weiter — re-clarify baut sie selbst (kein Repository-Getter nötig).
 public interface IProjectStateViewRepository
 {
     ValueTask<CanonicalRequirementsView> GetCanonicalRequirementsViewAsync(ProjectScope scope, CancellationToken ct = default);
-    ValueTask<ReadinessView> GetReadinessViewAsync(ProjectScope scope, CancellationToken ct = default);
     ValueTask<IssuePlanningView> GetIssuePlanningViewAsync(ProjectScope scope, CancellationToken ct = default);
-    ValueTask<ClarificationPlanningView> GetClarificationPlanningViewAsync(ProjectScope scope, CancellationToken ct = default);
-    ValueTask<AcceptedIssuePlanView> GetAcceptedIssuePlanViewAsync(ProjectScope scope, CancellationToken ct = default);
-    ValueTask<AcceptedClarificationPlanView> GetAcceptedClarificationPlanViewAsync(ProjectScope scope, CancellationToken ct = default);
-    ValueTask<ProductBacklogView> GetProductBacklogViewAsync(ProjectScope scope, CancellationToken ct = default);
 }

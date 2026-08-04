@@ -42,7 +42,8 @@ public static class IngestionApplyRunner
         IngestionApplyReport report;
         try
         {
-            report = await IngestionApplyExec.ExecuteAsync(planDir, plan, accepted, repoRoot).ConfigureAwait(false);
+            report = await IngestionApplyExec.ExecuteAsync(planDir, plan, accepted, repoRoot,
+                IngestionApplyExec.RunIdFromPlanDir(planDir)).ConfigureAwait(false);
         }
         catch (InvalidOperationException ex)
         {

@@ -3,6 +3,9 @@ using System.Text.Json;
 
 namespace AgenticSdlc.Host.FullWorkflow.Delta;
 
+// Schlank seit dem Alt-Ketten-Rückbau (04.08.): nur die lebend konsumierten Views (Canonical fuer re-clarify/pipeline,
+// IssuePlanning fuer issuplanning). Die Resolver kennen weiterhin die Alt-Lauf-Layouts (consolidation/completion/applied),
+// damit archivierte Laeufe (runsArchive, Thesis-Evidenz) lesbar bleiben.
 public sealed class JsonProjectStateViewRepository(string repoRoot) : IProjectStateViewRepository
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
@@ -29,23 +32,6 @@ public sealed class JsonProjectStateViewRepository(string repoRoot) : IProjectSt
             Quality: await LoadAsync<L4QualityReport>(qualityPath, ct).ConfigureAwait(false));
     }
 
-    public async ValueTask<ReadinessView> GetReadinessViewAsync(ProjectScope scope, CancellationToken ct = default)
-    {
-        var dir = ResolveL4AppliedDirectory(scope)
-                  ?? throw new FileNotFoundException($"Readiness view konnte nicht aufgeloest werden: {scope.SourcePath ?? scope.BaselineId ?? scope.ScopeType}");
-        var reportPath = Path.Combine(dir, "requirements-readiness.json");
-        var inputPath = Path.Combine(dir, "issue-planning-input.json");
-        RequireFile(reportPath, "requirements-readiness.json");
-        RequireFile(inputPath, "issue-planning-input.json");
-        return new ReadinessView(
-            Scope: scope,
-            SourceDirectory: dir,
-            ReadinessReportPath: reportPath,
-            IssuePlanningInputPath: inputPath,
-            Report: await LoadAsync<RequirementsReadinessReport>(reportPath, ct).ConfigureAwait(false),
-            IssuePlanningInput: await LoadAsync<IssuePlanningInput>(inputPath, ct).ConfigureAwait(false));
-    }
-
     public async ValueTask<IssuePlanningView> GetIssuePlanningViewAsync(ProjectScope scope, CancellationToken ct = default)
     {
         var resolved = ResolveIssuePlanningInput(scope)
@@ -55,91 +41,6 @@ public sealed class JsonProjectStateViewRepository(string repoRoot) : IProjectSt
             SourceDirectory: resolved.SourceDirectory,
             IssuePlanningInputPath: resolved.IssuePlanningInputPath,
             Input: await LoadAsync<IssuePlanningInput>(resolved.IssuePlanningInputPath, ct).ConfigureAwait(false));
-    }
-
-    public async ValueTask<ClarificationPlanningView> GetClarificationPlanningViewAsync(ProjectScope scope, CancellationToken ct = default)
-    {
-        var resolved = ResolveClarificationPlanningInput(scope)
-                       ?? throw new FileNotFoundException($"ClarificationPlanning view konnte nicht aufgeloest werden: {scope.SourcePath ?? scope.BaselineId ?? scope.ScopeType}");
-        return new ClarificationPlanningView(
-            Scope: scope,
-            SourceDirectory: resolved.SourceDirectory,
-            ClarificationPlanningInputPath: resolved.ClarificationPlanningInputPath,
-            Input: await LoadAsync<ClarificationPlanningInput>(resolved.ClarificationPlanningInputPath, ct).ConfigureAwait(false));
-    }
-
-    public async ValueTask<AcceptedIssuePlanView> GetAcceptedIssuePlanViewAsync(ProjectScope scope, CancellationToken ct = default)
-    {
-        var dir = ResolveIssuePlanAppliedDirectory(scope)
-                  ?? throw new FileNotFoundException($"AcceptedIssuePlan view konnte nicht aufgeloest werden: {scope.SourcePath ?? scope.BaselineId ?? scope.ScopeType}");
-        var planPath = Path.Combine(dir, "accepted-issue-plan.json");
-        var gatePath = Path.Combine(dir, "accepted-issue-plan-gate-report.json");
-        RequireFile(planPath, "accepted-issue-plan.json");
-        RequireFile(gatePath, "accepted-issue-plan-gate-report.json");
-        return new AcceptedIssuePlanView(
-            Scope: scope,
-            SourceDirectory: dir,
-            AcceptedIssuePlanPath: planPath,
-            GateReportPath: gatePath,
-            Plan: await LoadAsync<IssuePlanDocument>(planPath, ct).ConfigureAwait(false),
-            Gate: await LoadAsync<IssuePlanGateReport>(gatePath, ct).ConfigureAwait(false));
-    }
-
-    public async ValueTask<AcceptedClarificationPlanView> GetAcceptedClarificationPlanViewAsync(ProjectScope scope, CancellationToken ct = default)
-    {
-        var dir = ResolveClarificationPlanAppliedDirectory(scope)
-                  ?? throw new FileNotFoundException($"AcceptedClarificationPlan view konnte nicht aufgeloest werden: {scope.SourcePath ?? scope.BaselineId ?? scope.ScopeType}");
-        var planPath = Path.Combine(dir, "accepted-clarification-plan.json");
-        var gatePath = Path.Combine(dir, "accepted-clarification-plan-gate-report.json");
-        RequireFile(planPath, "accepted-clarification-plan.json");
-        RequireFile(gatePath, "accepted-clarification-plan-gate-report.json");
-        return new AcceptedClarificationPlanView(
-            Scope: scope,
-            SourceDirectory: dir,
-            AcceptedClarificationPlanPath: planPath,
-            GateReportPath: gatePath,
-            Plan: await LoadAsync<ClarificationPlanDocument>(planPath, ct).ConfigureAwait(false),
-            Gate: await LoadAsync<ClarificationPlanGateReport>(gatePath, ct).ConfigureAwait(false));
-    }
-
-    public async ValueTask<ProductBacklogView> GetProductBacklogViewAsync(ProjectScope scope, CancellationToken ct = default)
-    {
-        var dir = ResolveProductBacklogDirectory(scope)
-                  ?? throw new FileNotFoundException($"ProductBacklog view konnte nicht aufgeloest werden: {scope.SourcePath ?? scope.BaselineId ?? scope.ScopeType}");
-        var backlogPath = Path.Combine(dir, "product-backlog.json");
-        RequireFile(backlogPath, "product-backlog.json");
-        return new ProductBacklogView(
-            Scope: scope,
-            SourceDirectory: dir,
-            ProductBacklogPath: backlogPath,
-            Backlog: await LoadAsync<ProductBacklogDocument>(backlogPath, ct).ConfigureAwait(false));
-    }
-
-    private string? ResolveProductBacklogDirectory(ProjectScope scope)
-    {
-        var token = scope.SourcePath ?? scope.BaselineId ?? "";
-        var full = ResolvePath(token);
-        if (File.Exists(full) && string.Equals(Path.GetFileName(full), "product-backlog.json", StringComparison.OrdinalIgnoreCase))
-            return Path.GetDirectoryName(full);
-        if (Directory.Exists(full))
-        {
-            if (File.Exists(Path.Combine(full, "product-backlog.json"))) return full;
-            var applied = Path.Combine(full, "applied");
-            if (File.Exists(Path.Combine(applied, "product-backlog.json"))) return applied;
-            var backlogApplied = Path.Combine(full, "backlog", "applied");
-            if (File.Exists(Path.Combine(backlogApplied, "product-backlog.json"))) return backlogApplied;
-        }
-
-        var root = Path.Combine(repoRoot, "runs", "l4-re-clarify");
-        if (!Directory.Exists(root)) return null;
-        foreach (var runDir in Directory.EnumerateDirectories(root).Where(d => Path.GetFileName(d).Contains(token, StringComparison.OrdinalIgnoreCase)))
-        {
-            var backlog = Path.Combine(runDir, "backlog");
-            if (File.Exists(Path.Combine(backlog, "product-backlog.json"))) return backlog;
-            var backlogApplied = Path.Combine(backlog, "applied");
-            if (File.Exists(Path.Combine(backlogApplied, "product-backlog.json"))) return backlogApplied;
-        }
-        return null;
     }
 
     private ResolvedIssuePlanningInput? ResolveIssuePlanningInput(ProjectScope scope)
@@ -174,37 +75,6 @@ public sealed class JsonProjectStateViewRepository(string repoRoot) : IProjectSt
         return null;
     }
 
-    private ResolvedClarificationPlanningInput? ResolveClarificationPlanningInput(ProjectScope scope)
-    {
-        var token = scope.SourcePath ?? scope.BaselineId ?? "";
-        var full = ResolvePath(token);
-        if (File.Exists(full) && string.Equals(Path.GetFileName(full), "clarification-planning-input.json", StringComparison.OrdinalIgnoreCase))
-            return new ResolvedClarificationPlanningInput(full, Path.GetDirectoryName(full) ?? repoRoot);
-        if (Directory.Exists(full))
-        {
-            var direct = Path.Combine(full, "clarification-planning-input.json");
-            if (File.Exists(direct)) return new ResolvedClarificationPlanningInput(direct, full);
-
-            var applied = Path.Combine(full, "applied", "clarification-planning-input.json");
-            if (File.Exists(applied)) return new ResolvedClarificationPlanningInput(applied, Path.GetDirectoryName(applied) ?? full);
-
-            var operationalizationApplied = Path.Combine(full, "plan", "applied", "operationalization-audit", "applied", "clarification-planning-input.json");
-            if (File.Exists(operationalizationApplied)) return new ResolvedClarificationPlanningInput(operationalizationApplied, Path.GetDirectoryName(operationalizationApplied) ?? full);
-
-            var nestedOperationalizationApplied = Path.Combine(full, "operationalization-audit", "applied", "clarification-planning-input.json");
-            if (File.Exists(nestedOperationalizationApplied)) return new ResolvedClarificationPlanningInput(nestedOperationalizationApplied, Path.GetDirectoryName(nestedOperationalizationApplied) ?? full);
-        }
-
-        var root = Path.Combine(repoRoot, "runs", "github-reconciliation");
-        if (!Directory.Exists(root)) return null;
-        foreach (var runDir in Directory.EnumerateDirectories(root).Where(d => Path.GetFileName(d).Contains(token, StringComparison.OrdinalIgnoreCase)))
-        {
-            var path = Path.Combine(runDir, "plan", "applied", "operationalization-audit", "applied", "clarification-planning-input.json");
-            if (File.Exists(path)) return new ResolvedClarificationPlanningInput(path, Path.GetDirectoryName(path) ?? runDir);
-        }
-        return null;
-    }
-
     private string? ResolveL4AppliedDirectory(ProjectScope scope)
     {
         var token = scope.SourcePath ?? scope.BaselineId ?? "";
@@ -229,52 +99,6 @@ public sealed class JsonProjectStateViewRepository(string repoRoot) : IProjectSt
                 var completionApplied = Path.Combine(runDir, "completion", "applied");
                 if (File.Exists(Path.Combine(completionApplied, "canonical-requirements-baseline.json"))) return completionApplied;
             }
-        }
-        return null;
-    }
-
-    private string? ResolveIssuePlanAppliedDirectory(ProjectScope scope)
-    {
-        var token = scope.SourcePath ?? scope.BaselineId ?? "";
-        var full = ResolvePath(token);
-        if (Directory.Exists(full))
-        {
-            if (File.Exists(Path.Combine(full, "accepted-issue-plan.json"))) return full;
-            var applied = Path.Combine(full, "applied");
-            if (File.Exists(Path.Combine(applied, "accepted-issue-plan.json"))) return applied;
-            var planApplied = Path.Combine(full, "plan", "applied");
-            if (File.Exists(Path.Combine(planApplied, "accepted-issue-plan.json"))) return planApplied;
-        }
-
-        var root = Path.Combine(repoRoot, "runs", "l4-issuplanning");
-        if (!Directory.Exists(root)) return null;
-        foreach (var runDir in Directory.EnumerateDirectories(root).Where(d => Path.GetFileName(d).Contains(token, StringComparison.OrdinalIgnoreCase)))
-        {
-            var planApplied = Path.Combine(runDir, "plan", "applied");
-            if (File.Exists(Path.Combine(planApplied, "accepted-issue-plan.json"))) return planApplied;
-        }
-        return null;
-    }
-
-    private string? ResolveClarificationPlanAppliedDirectory(ProjectScope scope)
-    {
-        var token = scope.SourcePath ?? scope.BaselineId ?? "";
-        var full = ResolvePath(token);
-        if (Directory.Exists(full))
-        {
-            if (File.Exists(Path.Combine(full, "accepted-clarification-plan.json"))) return full;
-            var applied = Path.Combine(full, "applied");
-            if (File.Exists(Path.Combine(applied, "accepted-clarification-plan.json"))) return applied;
-            var planApplied = Path.Combine(full, "plan", "applied");
-            if (File.Exists(Path.Combine(planApplied, "accepted-clarification-plan.json"))) return planApplied;
-        }
-
-        var root = Path.Combine(repoRoot, "runs", "clarification-agent");
-        if (!Directory.Exists(root)) return null;
-        foreach (var runDir in Directory.EnumerateDirectories(root).Where(d => Path.GetFileName(d).Contains(token, StringComparison.OrdinalIgnoreCase)))
-        {
-            var planApplied = Path.Combine(runDir, "plan", "applied");
-            if (File.Exists(Path.Combine(planApplied, "accepted-clarification-plan.json"))) return planApplied;
         }
         return null;
     }
@@ -304,5 +128,4 @@ public sealed class JsonProjectStateViewRepository(string repoRoot) : IProjectSt
     }
 
     private sealed record ResolvedIssuePlanningInput(string IssuePlanningInputPath, string SourceDirectory);
-    private sealed record ResolvedClarificationPlanningInput(string ClarificationPlanningInputPath, string SourceDirectory);
 }

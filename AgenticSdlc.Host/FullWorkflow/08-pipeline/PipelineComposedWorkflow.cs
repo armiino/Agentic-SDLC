@@ -26,7 +26,7 @@ internal sealed class IngestComposedApplyExecutor(RunContext run, string repoRoo
     {
         var plan = JsonSerializer.Deserialize<StateChangePlanDocument>(await File.ReadAllTextAsync(Path.Combine(ingestOutDir, "plan.json"), ct).ConfigureAwait(false), Json)!;
         var accepted = resp.AcceptedIncomingIds.ToHashSet(StringComparer.Ordinal);
-        var report = await IngestionApplyExec.ExecuteAsync(ingestOutDir, plan, accepted, repoRoot, ct).ConfigureAwait(false);
+        var report = await IngestionApplyExec.ExecuteAsync(ingestOutDir, plan, accepted, repoRoot, run.RunId, ct).ConfigureAwait(false);
         run.AppendEvent(new { type = "PIPELINE_INGEST_APPLIED", runId = run.RunId, applied = report.Applied.Count, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(report).ConfigureAwait(false);
     }

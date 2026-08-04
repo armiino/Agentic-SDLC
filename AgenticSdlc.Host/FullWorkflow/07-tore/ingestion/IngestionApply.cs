@@ -15,13 +15,17 @@ public sealed record IngestionApplyReport(
 
 // Deterministischer Upsert-by-Identity der vom Menschen akzeptierten Operationen in den Core (kein LLM).
 // Der Core ist die ID-Autoritaet: neue Entitaeten bekommen HIER eine stabile Core-ID (REQ-<max+1>).
+// R-31/I7: jede INHALTS-Mutation traegt den AUSLOESER-Lauf (ingestRunId) als sourceRunId am Item; der
+// Delta-Lauf des Incomings bleibt via Metadatum `ingestedFromRun` auffindbar. Reine Provenienz-Merges
+// (RESTATE/ALREADY_DECIDED) lassen die Provenance unberuehrt — dieselbe Regel wie beim PbiUpdate-Apply.
 public static class IngestionApply
 {
     public static (ProjectStateDocument UpdatedCore, IngestionApplyReport Report, IReadOnlySet<string> AffectedIds) Apply(
         ProjectStateDocument core,
         ProjectStateDocument meetingDelta,
         StateChangePlanDocument plan,
-        ISet<string> acceptedIncomingIds)
+        ISet<string> acceptedIncomingIds,
+        string ingestRunId)
     {
         var order = core.Items.Select(i => i.ItemId).ToList();
         var byId = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
@@ -61,12 +65,14 @@ public static class IngestionApply
                 {
                     if (!byId.TryGetValue(op.TargetEntityId ?? "", out var t)) { skipped.Add($"{op.IncomingItemId}: REFINE-Ziel unbekannt"); break; }
                     var history = (t.History ?? []).Append(new ProjectStateItemVersion(
-                        t.Version, t.Text, t.Status, t.Origin, t.SourceRunId, t.SourceClaimIds, DateTime.UtcNow, "REFINE (ingestion)")).ToList();
+                        t.Version, t.Text, t.Status, t.Origin, t.SourceRunId, t.SourceClaimIds, DateTime.UtcNow,
+                        $"REFINE (ingestion {ingestRunId}, via {op.IncomingItemId})")).ToList();
                     byId[t.ItemId] = t with
                     {
                         Text = statement,
                         Version = t.Version + 1,
                         IdentityKey = IdentityKey.From(statement),
+                        SourceRunId = ingestRunId,
                         SourceClaimIds = claimIds,
                         History = history
                     };
@@ -78,14 +84,14 @@ public static class IngestionApply
                 case StateChangeKind.NewRelated:
                 {
                     var id = $"REQ-{nextReq++:D2}";
-                    var meta = new Dictionary<string, string>(StringComparer.Ordinal) { ["ingestedFrom"] = op.IncomingItemId };
+                    var meta = IngestMeta(op.IncomingItemId, incoming);
                     // R-36 v2: featureKey ist ein reines HINWEIS-Metadatum fuer die Placement-Stufe — hier entsteht
                     // KEINE part_of_feature-Relation mehr. Die REQ→Feature-Kante wird deterministisch im
                     // pbi-update-Apply aus der bestaetigten Deckung abgeleitet (Seed-Regel, CoreBacklogSeeder).
                     // (Der alte Direkt-Write hier schrieb Agent-Freitext als Relationsziel = die 12 Defekte des Audits.)
                     if (op.Kind == StateChangeKind.NewRelated && !string.IsNullOrWhiteSpace(op.FeatureKey))
                         meta["featureKey"] = op.FeatureKey!;
-                    AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds, meta));
+                    AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds, meta, ingestRunId));
                     applied.Add(new AppliedOperation(op.IncomingItemId, op.Kind, id, "added"));
                     affected.Add(id); added++;
                     break;
@@ -94,10 +100,9 @@ public static class IngestionApply
                 {
                     if (!byId.TryGetValue(op.TargetEntityId ?? "", out var t)) { skipped.Add($"{op.IncomingItemId}: SUPERSEDE-Ziel unbekannt"); break; }
                     // §5-S3: Status über die zentrale Naht (Alt-String + neue Felder synchron) + History-Notiz (schließt E-10-Lücke).
-                    byId[t.ItemId] = t.WithStatus(CoreStatus.From("superseded"), $"superseded via Ingestion-SUPERSEDE ({op.IncomingItemId})");
+                    byId[t.ItemId] = t.WithStatus(CoreStatus.From("superseded"), $"superseded via Ingestion-SUPERSEDE ({op.IncomingItemId}, {ingestRunId})");
                     var id = $"REQ-{nextReq++:D2}";
-                    AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds,
-                        new Dictionary<string, string>(StringComparer.Ordinal) { ["ingestedFrom"] = op.IncomingItemId }));
+                    AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds, IngestMeta(op.IncomingItemId, incoming), ingestRunId));
                     relations.Add(new ProjectStateRelation(id, t.ItemId, "supersedes", "ingestion", new Dictionary<string, string>()));
                     applied.Add(new AppliedOperation(op.IncomingItemId, op.Kind, id, "superseded"));
                     affected.Add(id); affected.Add(t.ItemId); superseded++;
@@ -107,14 +112,11 @@ public static class IngestionApply
                 {
                     if (!byId.TryGetValue(op.TargetEntityId ?? "", out var t)) { skipped.Add($"{op.IncomingItemId}: CONTRADICT-Ziel unbekannt"); break; }
                     var id = $"DEC-{nextDec++:D3}";
-                    var meta = new Dictionary<string, string>(StringComparer.Ordinal)
-                    {
-                        ["targetEntityId"] = t.ItemId,
-                        ["ingestedFrom"] = op.IncomingItemId
-                    };
+                    var meta = IngestMeta(op.IncomingItemId, incoming);
+                    meta["targetEntityId"] = t.ItemId;
                     AddItem(order, byId, new ProjectStateItem(
                         ItemId: id, ItemType: "decision", Text: $"Widerspruch zu {t.ItemId}: {statement}",
-                        Origin: "INGESTION_CONTRADICTION", Stage: null, Version: 1, SourceRunId: incoming.SourceRunId,
+                        Origin: "INGESTION_CONTRADICTION", Stage: null, Version: 1, SourceRunId: ingestRunId,
                         SourceArtifactId: null, SourceArtifactType: null, SourceDecisionId: null, SourceCandidateId: null,
                         SourceClaimIds: claimIds, SourceArtifactItemIds: [], Metadata: meta,
                         IdentityKey: IdentityKey.From(statement), History: []).WithStatus(CoreStatus.From("open_decision")));   // §5-S7: Status→Achsen
@@ -151,13 +153,23 @@ public static class IngestionApply
         return (updated, report, affected);
     }
 
-    private static ProjectStateItem NewRequirement(string id, string text, ProjectStateItem incoming, IReadOnlyList<string> claimIds, Dictionary<string, string> meta)
+    // R-31/I7: sourceRunId = Ausloeser-Lauf (Ingest); Herkunft des Incomings steckt in Metadata (IngestMeta).
+    private static ProjectStateItem NewRequirement(string id, string text, ProjectStateItem incoming, IReadOnlyList<string> claimIds, Dictionary<string, string> meta, string ingestRunId)
         => new ProjectStateItem(
             ItemId: id, ItemType: "requirement", Text: text, Origin: incoming.Origin,
-            Stage: incoming.Stage, Version: 1, SourceRunId: incoming.SourceRunId, SourceArtifactId: incoming.SourceArtifactId,
+            Stage: incoming.Stage, Version: 1, SourceRunId: ingestRunId, SourceArtifactId: incoming.SourceArtifactId,
             SourceArtifactType: incoming.SourceArtifactType, SourceDecisionId: null, SourceCandidateId: null,
             SourceClaimIds: claimIds, SourceArtifactItemIds: incoming.SourceArtifactItemIds, Metadata: meta,
             IdentityKey: IdentityKey.From(text), History: []).WithStatus(CoreStatus.From("accepted"));   // §5-S7: Status→Achsen
+
+    // ingestedFrom = Incoming-ID im MeetingDelta; ingestedFromRun = der Lauf, der das Delta produzierte
+    // (R-31: BEIDE Herkuenfte am Item auffindbar, ohne den sourceRunId-Platz des Ausloeser-Laufs zu belegen).
+    private static Dictionary<string, string> IngestMeta(string incomingItemId, ProjectStateItem incoming)
+    {
+        var meta = new Dictionary<string, string>(StringComparer.Ordinal) { ["ingestedFrom"] = incomingItemId };
+        if (!string.IsNullOrWhiteSpace(incoming.SourceRunId)) meta["ingestedFromRun"] = incoming.SourceRunId!;
+        return meta;
+    }
 
     private static void AddItem(List<string> order, Dictionary<string, ProjectStateItem> byId, ProjectStateItem item)
     {

@@ -94,7 +94,7 @@ internal sealed class IngestionApplyExecutor(RunContext run, string repoRoot, st
         var accepted = resp.AcceptedIncomingIds.ToHashSet(StringComparer.Ordinal);
 
         run.AppendEvent(new { type = "REQ_INGEST_APPLY_START", runId = run.RunId, accepted = accepted.Count, reviewer = resp.Reviewer, timestampUtc = DateTime.UtcNow });
-        var report = await IngestionApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot, ct).ConfigureAwait(false);
+        var report = await IngestionApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot, run.RunId, ct).ConfigureAwait(false);
         run.AppendEvent(new { type = "REQ_INGEST_DONE", runId = run.RunId, applied = true, appliedOps = report.Applied.Count, skipped = report.Skipped.Count, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(report, ct).ConfigureAwait(false);
     }

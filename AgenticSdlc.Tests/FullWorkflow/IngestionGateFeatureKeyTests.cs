@@ -76,7 +76,7 @@ public sealed class IngestionGateFeatureKeyTests
         var core = Doc(Feature("FC-01", "Zugang und Rechte"), Req("REQ-1", "bestehend"));
         var delta = Doc(Req("REQ-9", "neue Anforderung"));
         var (updated, report, _) = IngestionApply.Apply(core, delta, Plan(NewRelated("REQ-9", "no-go")),
-            new HashSet<string>(StringComparer.Ordinal) { "REQ-9" });
+            new HashSet<string>(StringComparer.Ordinal) { "REQ-9" }, "ingest-run");
 
         var added = Assert.Single(report.Applied);
         Assert.Equal("added", added.Outcome);

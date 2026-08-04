@@ -18,8 +18,9 @@ public static class IngestionApplyExec
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     // accepted = Menge der IncomingItemIds mit decision=apply. MeetingDelta wird aus plan.SourceMeetingDeltaPath geladen.
+    // ingestRunId = der AUSLOESER-Lauf (R-31/I7) — landet als sourceRunId an jeder Inhalts-Mutation.
     public static async Task<IngestionApplyReport> ExecuteAsync(
-        string planDir, StateChangePlanDocument plan, ISet<string> accepted, string repoRoot, CancellationToken ct = default)
+        string planDir, StateChangePlanDocument plan, ISet<string> accepted, string repoRoot, string ingestRunId, CancellationToken ct = default)
     {
         var appliedDir = Path.Combine(planDir, "applied");
         var markerPath = Path.Combine(appliedDir, "applied.marker");
@@ -47,7 +48,7 @@ public static class IngestionApplyExec
         Directory.CreateDirectory(appliedDir);
         await File.WriteAllTextAsync(Path.Combine(appliedDir, "core-before.json"), JsonSerializer.Serialize(core, Json), ct).ConfigureAwait(false);
 
-        var (updatedCore, report, affectedIds) = IngestionApply.Apply(core, meetingDelta, plan, accepted);
+        var (updatedCore, report, affectedIds) = IngestionApply.Apply(core, meetingDelta, plan, accepted, ingestRunId);
         var affectedView = CoreViews.AffectedItems(updatedCore, affectedIds);
 
         // R-35: menschliche Skips (mit P2a-Begruendung) als ingest_rejection-Proposals mitheben — Wiedervorlage-
@@ -79,6 +80,15 @@ public static class IngestionApplyExec
         await File.WriteAllTextAsync(Path.Combine(appliedDir, "affected-view.json"), JsonSerializer.Serialize(affectedView, Json), ct).ConfigureAwait(false);
         await File.WriteAllTextAsync(markerPath, JsonSerializer.Serialize(new IngestionAppliedMarker(plan.PlanId, DateTime.UtcNow), Json), ct).ConfigureAwait(false);
         return report;
+    }
+
+    // CLI-Konvention: planDir = runs/ingestion/<runId>/plan ODER der Run-Ordner selbst (ResolvePlanDir).
+    public static string RunIdFromPlanDir(string planDir)
+    {
+        var name = Path.GetFileName(Path.TrimEndingDirectorySeparator(planDir));
+        return string.Equals(name, "plan", StringComparison.OrdinalIgnoreCase)
+            ? Path.GetFileName(Path.GetDirectoryName(Path.TrimEndingDirectorySeparator(planDir)) ?? planDir)
+            : name;
     }
 
     // accepted = IncomingItemIds mit decision=apply (explizit, wie der bisherige ingest-apply).

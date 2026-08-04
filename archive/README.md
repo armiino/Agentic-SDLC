@@ -16,6 +16,7 @@ Notes sind lokale Arbeitsdokumente (gitignored) auf dem Rechner des Autors.
 | `phase2b/` | `AgenticSdlc.Host/Phases/Phase2/Phase2B/` | S-3 · `v-s3-evaluator-review` | `phase2notes/phase02B-iteration-notes.md` | `runs/phase2B` (24) |
 | `evaluation/` | `AgenticSdlc.Host/Phases/Phase2/Evaluation/` (nur der CODE: root, `PerItem/`-Rest, `Review/`, `ReviewAgent/`) | S-3/S-4-Umfeld · `v-s3-evaluator-review` | `Evaluation/NextStep/roter-faden-review.md`, `ReviewWorkflow-Evidence.md`, `ZUSATZ-entscheidungsnotiz-ledger-review.md` | `runs/{phase2B,reviewpilot}`, `thesis-evidence/*` |
 | `evaluation-tests/` | `AgenticSdlc.Tests/Review/` (alle 28 Testdateien) | S-3/S-4 | testeten die Evaluation-/Spike-Fläche | — |
+| `phase2-l4-dormant/` | `AgenticSdlc.Host/FullWorkflow/06-backlog/{baseline,consolidation,quality,readiness,completion,clarification,openrequirements,operationalization-audit,requirementsdoc}` + 4 Prompt-Ordner + 4 Testdateien + 2 verwaiste contracts | Alt-L4-Backlog-Kette · Rückbau 04.08.2026 | `docs/aktiv/backlog-genealogie.md` (LEBEND) + eigenes `README.md` im Ordner | `runsArchive/` (l4-Läufe) |
 
 **Was NICHT hier liegt (bewusst):**
 - Der **Ledger-L1/L2-Kern** (5 Dateien, früher `Evaluation/PerItem/`) ist **Produkt** und lebt in
