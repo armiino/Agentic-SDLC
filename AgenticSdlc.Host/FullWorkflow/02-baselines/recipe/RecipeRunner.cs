@@ -46,20 +46,34 @@ public static class RecipeRunner
         catch (JsonException ex) { Console.Error.WriteLine($"[recipe] JSON ungültig: {ex.Message}"); return 2; }
         if (recipe?.Baseline is null) { Console.Error.WriteLine("[recipe] 'baseline' fehlt."); return 2; }
 
+        return (await ExecuteAsync(recipe, recipePath, modelArg, dryRun, settings, repoRoot).ConfigureAwait(false)).Exit;
+    }
+
+    /// <summary>Schritt 5 ① (05.08.): das TYPISIERTE Ergebnis des Rezept-Kerns — der Sub-<see cref="RunContext"/>
+    /// wird ZURÜCKGEGEBEN statt (wie früher im Ein-Graph) per Ordner-Diff rekonstruiert. Run ist null, wenn die
+    /// Validierung vor dem Lauf-Start scheitert.</summary>
+    internal sealed record RecipeExecution(int Exit, RunContext? Run);
+
+    /// <summary>Der faktorierte Rezept-Kern: Validierung → eigener Sub-Run (runs/recipe/&lt;id&gt;, eigenes otel —
+    /// der Metrics-Vertrag `recipeRun`-Pointer bleibt unverändert) → Workflow-Montage → Lauf → Summary.
+    /// Aufrufer: CLI-<see cref="RunAsync"/> UND die Baseline-Stufe des Ein-Graphen (direkt, ohne Ordner-Diff).</summary>
+    internal static async Task<RecipeExecution> ExecuteAsync(
+        Recipe recipe, string recipePath, string? modelArg, bool dryRun, HostSettings settings, string repoRoot)
+    {
         var mode = (recipe.Baseline.Mode ?? "build").Trim().ToLowerInvariant();
-        if (mode is not ("build" or "load")) { Console.Error.WriteLine($"[recipe] baseline.mode '{mode}' ungültig (build|load)."); return 2; }
+        if (mode is not ("build" or "load")) { Console.Error.WriteLine($"[recipe] baseline.mode '{mode}' ungültig (build|load)."); return new RecipeExecution(2, null); }
         var loadMode = mode == "load";
 
         var baselineArtifacts = (recipe.Baseline.Artifacts ?? [])
             .Select(a => a.Trim().ToLowerInvariant()).Where(a => a.Length > 0).Distinct().ToList();
-        if (baselineArtifacts.Count == 0) { Console.Error.WriteLine("[recipe] baseline.artifacts leer."); return 2; }
+        if (baselineArtifacts.Count == 0) { Console.Error.WriteLine("[recipe] baseline.artifacts leer."); return new RecipeExecution(2, null); }
 
         // Ableitungen auflösen (Registry).
         var specs = new List<DerivationSpec>();
         foreach (var d in recipe.Derivations ?? [])
         {
             if (!DerivationRegistry.TryGet(d.Spec, out var spec))
-            { Console.Error.WriteLine($"[recipe] unbekannte derivation spec '{d.Spec}' (verfügbar: {string.Join(", ", DerivationRegistry.Specs.Keys)})."); return 2; }
+            { Console.Error.WriteLine($"[recipe] unbekannte derivation spec '{d.Spec}' (verfügbar: {string.Join(", ", DerivationRegistry.Specs.Keys)})."); return new RecipeExecution(2, null); }
             specs.Add(spec);
         }
 
@@ -68,33 +82,33 @@ public static class RecipeRunner
         {
             var missing = spec.SourceArtifactTypes.Where(t => !baselineArtifacts.Contains(t)).ToList();
             if (missing.Count > 0)
-            { Console.Error.WriteLine($"[recipe] spec '{spec.Id}': Quelle(n) [{string.Join(",", missing)}] nicht in baseline.artifacts [{string.Join(",", baselineArtifacts)}]."); return 2; }
+            { Console.Error.WriteLine($"[recipe] spec '{spec.Id}': Quelle(n) [{string.Join(",", missing)}] nicht in baseline.artifacts [{string.Join(",", baselineArtifacts)}]."); return new RecipeExecution(2, null); }
         }
         var dupTargets = specs.GroupBy(s => s.TargetArtifactType, StringComparer.OrdinalIgnoreCase)
             .Where(g => g.Count() > 1).Select(g => g.Key).ToList();
         if (dupTargets.Count > 0)
-        { Console.Error.WriteLine($"[recipe] mehrere Ableitungen mit gleichem Ziel: [{string.Join(", ", dupTargets)}] → derived.json-Kollision. Distinkte Ziele je Rezept."); return 2; }
+        { Console.Error.WriteLine($"[recipe] mehrere Ableitungen mit gleichem Ziel: [{string.Join(", ", dupTargets)}] → derived.json-Kollision. Distinkte Ziele je Rezept."); return new RecipeExecution(2, null); }
 
         // Modus-Vorbedingungen.
         string? sourceDir = null, consPath = null;
         ConsumableLedger? ledger = null;
         if (loadMode)
         {
-            if (string.IsNullOrWhiteSpace(recipe.Baseline.FromRun)) { Console.Error.WriteLine("[recipe] mode:load braucht baseline.fromRun."); return 2; }
+            if (string.IsNullOrWhiteSpace(recipe.Baseline.FromRun)) { Console.Error.WriteLine("[recipe] mode:load braucht baseline.fromRun."); return new RecipeExecution(2, null); }
             sourceDir = ResolveExistingDir(repoRoot, recipe.Baseline.FromRun!) ?? ResolveRunDir(repoRoot, recipe.Baseline.FromRun!);
-            if (sourceDir is null) { Console.Error.WriteLine($"[recipe] fromRun '{recipe.Baseline.FromRun}' nicht gefunden (Pfad oder runId unter runs/)."); return 2; }
+            if (sourceDir is null) { Console.Error.WriteLine($"[recipe] fromRun '{recipe.Baseline.FromRun}' nicht gefunden (Pfad oder runId unter runs/)."); return new RecipeExecution(2, null); }
             var miss = baselineArtifacts.Where(t => !Chain.EvidenceChainRunner.BaselineExists(sourceDir, t)).ToList();
-            if (miss.Count > 0) { Console.Error.WriteLine($"[recipe] fromRun: fehlende Baseline(s) in '{Path.GetRelativePath(repoRoot, sourceDir)}': {string.Join(", ", miss.Select(t => $"baselines/{t}/artifact.json"))}."); return 2; }
+            if (miss.Count > 0) { Console.Error.WriteLine($"[recipe] fromRun: fehlende Baseline(s) in '{Path.GetRelativePath(repoRoot, sourceDir)}': {string.Join(", ", miss.Select(t => $"baselines/{t}/artifact.json"))}."); return new RecipeExecution(2, null); }
         }
         else
         {
             var unknown = baselineArtifacts.Where(t => !BaselineFanOutRunner.ArtifactMap.ContainsKey(t)).ToList();
-            if (unknown.Count > 0) { Console.Error.WriteLine($"[recipe] kein Evidence-Agent für Quelltyp(en): {string.Join(", ", unknown)} (verfügbar: {string.Join(", ", BaselineFanOutRunner.ArtifactMap.Keys)})."); return 2; }
-            if (!string.Equals(settings.EvidenceSource, "ledger", StringComparison.OrdinalIgnoreCase)) { Console.Error.WriteLine("[recipe] Arm B: setze evidenceAgent.source=ledger in run-config.json."); return 4; }
+            if (unknown.Count > 0) { Console.Error.WriteLine($"[recipe] kein Evidence-Agent für Quelltyp(en): {string.Join(", ", unknown)} (verfügbar: {string.Join(", ", BaselineFanOutRunner.ArtifactMap.Keys)})."); return new RecipeExecution(2, null); }
+            if (!string.Equals(settings.EvidenceSource, "ledger", StringComparison.OrdinalIgnoreCase)) { Console.Error.WriteLine("[recipe] Arm B: setze evidenceAgent.source=ledger in run-config.json."); return new RecipeExecution(4, null); }
             consPath = Resolve(repoRoot, settings.EvidenceLedgerRun);
-            if (consPath is null || !File.Exists(consPath)) { Console.Error.WriteLine($"[recipe] consumable.json fehlt: '{settings.EvidenceLedgerRun}'."); return 2; }
+            if (consPath is null || !File.Exists(consPath)) { Console.Error.WriteLine($"[recipe] consumable.json fehlt: '{settings.EvidenceLedgerRun}'."); return new RecipeExecution(2, null); }
             ledger = JsonSerializer.Deserialize<ConsumableLedger>(await File.ReadAllTextAsync(consPath).ConfigureAwait(false), Json);
-            if (ledger is null || ledger.Claims.Count == 0) { Console.Error.WriteLine("[recipe] consumable leer."); return 2; }
+            if (ledger is null || ledger.Claims.Count == 0) { Console.Error.WriteLine("[recipe] consumable leer."); return new RecipeExecution(2, null); }
         }
 
         var genSettings = modelArg is not null ? settings with { ModelId = modelArg } : settings;
@@ -168,7 +182,7 @@ public static class RecipeRunner
         {
             Console.WriteLine($"[recipe] --dry-run: Rezept Build()-bar (mode:{mode}, Baseline [{string.Join(",", baselineArtifacts)}] → {derivations.Count} Ableitung(en) [{string.Join(",", specs.Select(s => s.Id))}]). Kein LLM.");
             Console.WriteLine($"[recipe] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
-            return 0;
+            return new RecipeExecution(0, run);
         }
 
         Console.WriteLine($"[recipe] running recipe (mode:{mode})...");
@@ -185,7 +199,7 @@ public static class RecipeRunner
         {
             Console.Error.WriteLine($"[recipe] Ausführung fehlgeschlagen: {ex.Message}");
             run.AppendEvent(new { type = "RUN_FAILED", runId = run.RunId, reason = ex.Message, timestampUtc = DateTime.UtcNow });
-            return 4;
+            return new RecipeExecution(4, run);
         }
 
         // Wahrheit von Disk: baselines/{type}/artifact.json + je Ableitung derivations/{spec}/derived.json.
@@ -194,7 +208,7 @@ public static class RecipeRunner
         foreach (var spec in specs)
             Console.WriteLine($"[recipe]   {spec.Id}: derivations/{spec.Id}/derived.json = {Count(Path.Combine(run.RunDir, "derivations", spec.Id, "derived.json"))} items");
         Console.WriteLine($"[recipe] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
-        return 0;
+        return new RecipeExecution(0, run);
     }
 
     private static int Count(string path)

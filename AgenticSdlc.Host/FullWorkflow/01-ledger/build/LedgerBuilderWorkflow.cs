@@ -89,6 +89,11 @@ public static class LedgerBuilderWorkflow
         builder.AddEdge(canonicalization, coverageRepair);
         builder.AddEdge(coverageRepair, facetValidation);
 
+        // Schritt 5 ② (05.08.): der Summary-Yield der FacetValidation ist der deklarierte Workflow-Output —
+        // als GEBUNDENE Kapsel im Ein-Graph wird genau dieser Yield zur Nachricht an den LedgerSummaryExecutor.
+        // (Die CLI-Bahn liest weiterhin die Step-Outputs von Platte; der Output ist dort nur ein Event.)
+        builder.WithOutputFrom(facetValidation);
+
         return builder.Build();
     }
 }

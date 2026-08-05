@@ -53,7 +53,7 @@ public static class ArtifactBranchWorkflow
         var checkerRepair = CheckerRepairWorkflow.Build(checker, repairExec, finalize);
 
         // 2) Subworkflow als EIN Knoten binden (Zyklus versteckt).
-        var checkerRepairNode = checkerRepair.BindAsExecutor($"CheckerRepair-{artifactType}");
+        var checkerRepairNode = checkerRepair.BindGateFree($"CheckerRepair-{artifactType}");
 
         // 3) Zweig-Stufen davor/danach.
         var maker = new ArtifactBranchMakerExecutor(agent, run, artifactType, scope);

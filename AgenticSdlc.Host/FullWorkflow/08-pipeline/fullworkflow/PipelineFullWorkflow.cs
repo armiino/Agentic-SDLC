@@ -10,7 +10,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 // U2: Knoten-Gruppen, damit Assemble lesbar bleibt (je Gruppe eine Zeile im Aufrufer).
 internal sealed record FrontNodes(
     PipelineEntryExecutor Entry,
-    LedgerWrapperExecutor Ledger,
+    LedgerIntakeExecutor LedgerIntake, ExecutorBinding LedgerCapsule, LedgerSummaryExecutor LedgerSummary, // Schritt 5 ②: sichtbare Kapsel statt Wrapper
     AdjudicationGateRequestExecutor AdjudicationRequest, RequestPort AdjudicationPort, AdjudicationApplyExecutor AdjudicationApply, // H2: echter RequestPort
     BaselineStageExecutor Baselines,
     ProjectStateBuildExecutor Delta, BranchDetectorExecutor Branch);
@@ -61,11 +61,18 @@ internal static class PipelineFullWorkflow
                            + "-> Snapshot -> Forward+Gate -> Dry-Run/Apply.");
 
         // Eingangs-Vertrag: Transkript -> Front | fertiges Delta -> direkt Branch (beide Bahnen via Detector).
-        b.AddEdge(front.Entry, front.Ledger);
+        b.AddEdge(front.Entry, front.LedgerIntake);
         b.AddEdge(front.Entry, front.Branch);
 
+        // Schritt 5 ② (05.08.): die Ledger-Stufe ist eine SICHTBARE gebundene Kapsel (BindGateFree) statt des
+        // Wrapper-Executors mit innerem Zweitmotor — ihre 8 Schritte sind Bürger des Ein-Graphen (Checkpoints,
+        // Events). Intake adaptiert TranscriptInput -> Transkript-String; der Summary-Knoten führt die geteilte
+        // Auswertung (Quality-Gate/Trace) und speist die Adjudikation wie zuvor.
+        b.AddEdge(front.LedgerIntake, front.LedgerCapsule);
+        b.AddEdge(front.LedgerCapsule, front.LedgerSummary);
+
         // Front (geteilt) — H2: Adjudikation als Request -> [adjudication-gate] -> Apply
-        b.AddEdge(front.Ledger, front.AdjudicationRequest);
+        b.AddEdge(front.LedgerSummary, front.AdjudicationRequest);
         b.AddEdge(front.AdjudicationRequest, front.AdjudicationPort);
         b.AddEdge(front.AdjudicationPort, front.AdjudicationApply);
         b.AddEdge(front.AdjudicationApply, front.Baselines);
@@ -108,6 +115,7 @@ internal static class PipelineFullWorkflow
         b.AddEdge(fwd.Snapshot, fwd.Seed);
         GithubForwardHitlWorkflow.AddTo(b, fwd.Seed, fwd.Maker, fwd.Gate, fwd.Repair, fwd.Finalize, fwd.HumanGate, fwd.Apply);
 
+        b.WithOutputFrom(front.LedgerSummary);     // Fehler-String (Gate/Step-Outputs) — Schritt 5 ②; v1-Wrapper hatte den Yield nie deklariert
         b.WithOutputFrom(boot.CoreBootstrap);      // Fehler-String (Core existiert) + Info-Output
         b.WithOutputFrom(boot.Seed);               // BacklogSeedOutput = Bootstrap-Mitte fertig
         b.WithOutputFrom(op.IngestBridge);         // Fehler-String (Core fehlt bei erzwungenem operational)

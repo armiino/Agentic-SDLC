@@ -3,6 +3,7 @@ using AgenticSdlc.Host.Configuration;
 using AgenticSdlc.Host.FullWorkflow.Backlog;
 using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.FullWorkflow.Delta;
+using AgenticSdlc.Host.FullWorkflow.Ledger;
 using AgenticSdlc.Host.FullWorkflow.PbiUpdate;
 using AgenticSdlc.Host.FullWorkflow.Tore.Github;
 using AgenticSdlc.Host.Llm;
@@ -140,7 +141,8 @@ public static class PipelineFullRunner
 
         // H1: der Graph-Bau ist eine eigene Funktion — run UND resume bauen den IDENTISCHEN Graph
         // (Voraussetzung für RestoreCheckpointAsync).
-        var (workflow, ledgerModel, baselineModel, adjudicationPolicy) = BuildGraph(run, settings, fw, repoRoot);
+        var (workflow, ledgerModel, baselineModel, adjudicationPolicy) = BuildGraph(
+            run, settings, fw, repoRoot, transcriptText, transcriptPath is null ? "" : Path.GetFileName(transcriptPath));
 
         run.WriteConfig(new
         {
@@ -202,8 +204,10 @@ public static class PipelineFullRunner
     }
 
     // U2/H1: der EINE Graph-Bau — von run UND resume genutzt (identischer Graph ist Restore-Voraussetzung).
+    // Schritt 5 ②: transcriptText ist Konstruktions-Input der Ledger-Kapsel (FacetValidation braucht das
+    // Transkript im Konstruktor); beim Delta-Einstieg leer (die Kapsel wird nie angesprochen).
     private static (Workflow Workflow, string LedgerModel, string? BaselineModel, GatePolicy AdjudicationPolicy) BuildGraph(
-        RunContext run, HostSettings settings, FullWorkflowSettings fw, string repoRoot)
+        RunContext run, HostSettings settings, FullWorkflowSettings fw, string repoRoot, string transcriptText, string transcriptSourceName)
     {
         // Stufen-Modell: fullworkflow.models["01-ledger"] > jury.judgeModel > default.
         var ledgerModel = fw.Models.TryGetValue("01-ledger", out var m) && !string.IsNullOrWhiteSpace(m) ? m
@@ -242,10 +246,22 @@ public static class PipelineFullRunner
             fwdClient.AsAIAgent(instructions: fwdPrompt, name: "GithubForwardAgent", tools: [.. tools])
                 .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
 
+        // Schritt 5 ② — die Ledger-Kapsel: Sub-Run H1-fest verankert (01-ledger/ledger-run.json), Workflow aus
+        // der geteilten Montage-Naht, Bindung über den lauten Gate-frei-Wächter (Spike-Befund: Ports deadlocken
+        // still in Kapseln). Intake/Summary sind die sichtbaren Stufen-Ränder im Ein-Graph.
+        // Delta-Einstieg (leeres Transkript): die Kapsel wird nie angesprochen — KEIN Anker, KEIN Ordner
+        // (sonst hinterließe jeder --from-delta-Lauf einen leeren runs/ledger-Beleg; Fund am Smoke 05.08.).
+        var ledgerRun = transcriptText.Length > 0
+            ? LedgerStageRun.GetOrCreate(run)
+            : new RunContext(RunId.New(), "ledger");
+        var ledgerCapsule = LedgerBuildUnitsRunner
+            .CreateWorkflow(transcriptText, transcriptSourceName, settings, judgeSettings, ledgerRun)
+            .BindGateFree("LedgerCapsule");
+
         var workflow = PipelineFullWorkflow.Assemble(
             new FrontNodes(
                 new PipelineEntryExecutor(run),
-                new LedgerWrapperExecutor(settings, judgeSettings, run),
+                new LedgerIntakeExecutor(run, ledgerRun, transcriptText), ledgerCapsule, new LedgerSummaryExecutor(run, ledgerRun),
                 new AdjudicationGateRequestExecutor(run),
                 RequestPort.Create<AdjudicationReviewRequest, AdjudicationReviewResponse>("adjudication-gate"),
                 new AdjudicationApplyExecutor(run),
@@ -875,7 +891,11 @@ public static class PipelineFullRunner
             Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
             settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
 
-        var (workflow, _, _, _) = BuildGraph(run, settings, fw, repoRoot);
+        // Schritt 5 ② / H1: das Konstruktions-Transkript der Ledger-Kapsel aus der Lauf-config rekonstruieren
+        // (identischer Graph!). Delta-Läufe haben keins (Kapsel bleibt unangesprochen). Der Intake-Guard
+        // (LEDGER_TRANSCRIPT_MISMATCH) fängt eine zwischenzeitlich editierte Transkript-Datei laut ab.
+        var (resumeTranscriptText, resumeTranscriptName) = await LoadRunTranscriptAsync(run, repoRoot).ConfigureAwait(false);
+        var (workflow, _, _, _) = BuildGraph(run, settings, fw, repoRoot, resumeTranscriptText, resumeTranscriptName);
         var answers = new ResumeAnswers(acceptAll,
             string.IsNullOrWhiteSpace(acceptList) ? [] : acceptList.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList());
 
@@ -914,5 +934,22 @@ public static class PipelineFullRunner
         await MetricsFinalizer.WriteAsync(run, repoRoot, fw, settings, coreAfter, cts.Token).ConfigureAwait(false);
         Console.WriteLine($"[{Cmd}] Faden: runs/fullworkflow/{runId}/  exit={exit}");
         return exit;
+    }
+
+    // Schritt 5 ② / H1: Transkript-Recovery fürs Resume — liest den `transcript`-Pfad aus der config.json des
+    // Laufs (seit ③ geschrieben) und lädt den Text neu. Delta-Läufe (transcript=null) liefern leer.
+    private static async Task<(string Text, string SourceName)> LoadRunTranscriptAsync(RunContext run, string repoRoot)
+    {
+        if (!File.Exists(run.ConfigPath)) return ("", "");
+        using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(run.ConfigPath).ConfigureAwait(false));
+        if (!doc.RootElement.TryGetProperty("transcript", out var t) || t.ValueKind != JsonValueKind.String) return ("", "");
+        var rel = t.GetString()!;
+        var path = Path.IsPathRooted(rel) ? rel : Path.Combine(repoRoot, rel);
+        if (!File.Exists(path))
+        {
+            Console.Error.WriteLine($"[{Cmd}] WARNUNG: Transkript des Laufs nicht mehr auffindbar: {path} (Kapsel-Konstruktion mit leerem Transkript — Intake-Guard greift, falls die Front noch läuft).");
+            return ("", Path.GetFileName(path));
+        }
+        return (await File.ReadAllTextAsync(path).ConfigureAwait(false), Path.GetFileName(path));
     }
 }

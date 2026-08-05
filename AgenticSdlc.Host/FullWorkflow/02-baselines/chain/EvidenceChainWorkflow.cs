@@ -69,9 +69,9 @@ public static class EvidenceChainWorkflow
         IReadOnlyList<string> sourceArtifactTypes,
         RunContext run)
     {
-        var fanOutNode = fanOut.BindAsExecutor("BaselineFanOut");
+        var fanOutNode = fanOut.BindGateFree("BaselineFanOut");
         var select = new SelectBaselineExecutor(sourceArtifactTypes, run);
-        var derivationNode = derivation.BindAsExecutor("Derivation");
+        var derivationNode = derivation.BindGateFree("Derivation");
 
         var builder = new WorkflowBuilder(fanOutNode)
             .WithName(WorkflowName)
@@ -95,7 +95,7 @@ public static class EvidenceChainWorkflow
         RunContext run)
     {
         var select = new SelectBaselineExecutor(sourceArtifactTypes, run);
-        var derivationNode = derivation.BindAsExecutor("Derivation");
+        var derivationNode = derivation.BindGateFree("Derivation");
 
         var builder = new WorkflowBuilder(load)
             .WithName($"{WorkflowName}-Load")

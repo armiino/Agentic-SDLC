@@ -32,7 +32,7 @@ public static class RecipeWorkflow
         Microsoft.Agents.AI.Workflows.Workflow fanOut,
         IReadOnlyList<(DerivationSpec Spec, Microsoft.Agents.AI.Workflows.Workflow Derivation)> derivations,
         RunContext run)
-        => Assemble(fanOut.BindAsExecutor(BaselineFanOutWorkflow.WorkflowName), derivations, run, "build");
+        => Assemble(fanOut.BindGateFree(BaselineFanOutWorkflow.WorkflowName), derivations, run, "build");
 
     /// <summary>Baseline via Load (mode:load) — der LoadBaselineExecutor ist die Quelle.</summary>
     internal static Microsoft.Agents.AI.Workflows.Workflow BuildFromLoad(
@@ -64,7 +64,7 @@ public static class RecipeWorkflow
         foreach (var (spec, deriv) in derivations)
         {
             ExecutorBinding select = new SelectBaselineExecutor(spec.SourceArtifactTypes, run, spec.Id);
-            ExecutorBinding derivationNode = deriv.BindAsExecutor($"Derivation-{spec.Id}");
+            ExecutorBinding derivationNode = deriv.BindGateFree($"Derivation-{spec.Id}");
             builder.AddEdge(select, derivationNode);   // Teilmenge → Ableitung
             selects.Add(select);
             outputs.Add(derivationNode);

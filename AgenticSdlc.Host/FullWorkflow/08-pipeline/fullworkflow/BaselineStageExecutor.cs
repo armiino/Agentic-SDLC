@@ -18,8 +18,9 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 /// die manuelle CLI-Übergabe ersetzt. <b>Bestellzettel (9g):</b> requirements (Pflicht) + open-questions
 /// (Fragen-Spur; Konsument = Frage→DEC an Tor 1). architecture folgt mit R-11 (erst Konsument, dann Bestellung —
 /// „nur bestellte Spuren tragen weiter"). Der Recipe läuft in seinem eigenen <c>runs/recipe/&lt;id&gt;/</c> (wie der
-/// Ledger); in den Faden-Ordner kommt eine Referenz (<c>02-baselines/baseline-stage.json</c>). Reuse des
-/// erprobten RecipeRunner statt Neubau; ein sauberer factored Core ist ein späteres Refactor.
+/// Ledger); in den Faden-Ordner kommt eine Referenz (<c>02-baselines/baseline-stage.json</c>). Seit Schritt 5 ①
+/// (05.08.) ruft die Stufe den faktorierten Kern `RecipeRunner.ExecuteAsync` TYPISIERT (RunContext als
+/// Rückgabewert — der frühere Ordner-Diff-Hack ist gelöscht).
 /// </remarks>
 [SendsMessage(typeof(ProjectStateBuildRequest))]
 internal sealed class BaselineStageExecutor(HostSettings settings, string? baselineModel, RunContext parentRun, string repoRoot)
@@ -40,16 +41,19 @@ internal sealed class BaselineStageExecutor(HostSettings settings, string? basel
 
         var outDir = parentRun.OutputDir("02-baselines");
         var recipeJsonPath = Path.Combine(outDir, "recipe.json");
-        await File.WriteAllTextAsync(recipeJsonPath,
-            JsonSerializer.Serialize(new { baseline = new { mode = "build", artifacts = OrderedArtifacts } }, Json), ct).ConfigureAwait(false);
 
-        var before = ExistingRecipeRuns(repoRoot);
-        string[] recipeArgs = !string.IsNullOrWhiteSpace(baselineModel)
-            ? ["recipe", recipeJsonPath, baselineModel]
-            : ["recipe", recipeJsonPath];
-        var exit = await RecipeRunner.RunAsync(recipeArgs, recipeSettings, repoRoot).ConfigureAwait(false);
+        // Schritt 5 ① (05.08.): das Rezept TYPISIERT bauen und den faktorierten Kern direkt rufen — der
+        // Sub-RunContext kommt als RÜCKGABEWERT (frueher: CLI-Aufruf + Ordner-Diff `ExistingRecipeRuns`/
+        // `NewRecipeRun`, fragil bei parallelen Recipe-Läufen). recipe.json bleibt als Faden-Audit erhalten.
+        var recipe = new Recipe(new RecipeBaseline("build", OrderedArtifacts), Derivations: []);
+        await File.WriteAllTextAsync(recipeJsonPath, JsonSerializer.Serialize(recipe, Json), ct).ConfigureAwait(false);
 
-        var recipeRunDir = NewRecipeRun(repoRoot, before);
+        var result = await RecipeRunner.ExecuteAsync(
+            recipe, recipeJsonPath, string.IsNullOrWhiteSpace(baselineModel) ? null : baselineModel,
+            dryRun: false, recipeSettings, repoRoot).ConfigureAwait(false);
+        var exit = result.Exit;
+
+        var recipeRunDir = result.Run?.RunDir;
         var (artifactPaths, missingOptional) = CollectArtifacts(recipeRunDir);
         if (exit != 0 || artifactPaths.Count == 0)
         {
@@ -108,18 +112,4 @@ internal sealed class BaselineStageExecutor(HostSettings settings, string? basel
         return (paths, missingOptional);
     }
 
-    private static HashSet<string> ExistingRecipeRuns(string repoRoot)
-    {
-        var dir = Path.Combine(repoRoot, "runs", "recipe");
-        return Directory.Exists(dir)
-            ? Directory.GetDirectories(dir).ToHashSet(StringComparer.Ordinal)
-            : new HashSet<string>(StringComparer.Ordinal);
-    }
-
-    private static string? NewRecipeRun(string repoRoot, HashSet<string> before)
-    {
-        var dir = Path.Combine(repoRoot, "runs", "recipe");
-        if (!Directory.Exists(dir)) return null;
-        return Directory.GetDirectories(dir).Where(d => !before.Contains(d)).OrderByDescending(d => d, StringComparer.Ordinal).FirstOrDefault();
-    }
 }

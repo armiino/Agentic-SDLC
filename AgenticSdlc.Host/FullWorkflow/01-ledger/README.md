@@ -25,6 +25,16 @@ ohne Freigabe-Weg.
 EIN MAF-Workflow (WorkflowBuilder-Graph); jeder Step schreibt `runs/ledger/<runId>/step-*/output.json`.
 Modellwahl: `jury.judgeModel` aus run-config (Vorrang vor `agentModel`!), Override als 2. CLI-Argument.
 
+**Zwei Bahnen, EIN Kern (seit Schritt 5 ②, 05.08.):** Montage (`LedgerBuildUnitsRunner.CreateWorkflow`,
+Clients+Graph) und Auswertung (`EvaluateAsync`, Gate/Trace/Diagnose) sind die geteilten Nähte.
+**CLI-Bahn** = `ledger-build-units` (eigener otel-Scope, eigene Ausführung, wie hier beschrieben).
+**Graph-Bahn** = pipeline-full bindet DENSELBEN Workflow als sichtbare Kapsel in den Ein-Graph
+(`Intake → [LedgerCapsule, BindGateFree] → Summary`): die 8 Steps sind dort Eltern-Supersteps mit
+eigenen Checkpoints (Absturz kostet einen Step, nicht die Stufe); Sub-Run-Anker `01-ledger/ledger-run.json`
+im Faden hält `runs/ledger/<id>` über Resume konstant; die Ledger-Token laufen dort in den Faden-otel
+(metrics.json des Pipeline-Laufs) statt in den Sub-Run. Beleg: Run `20260805_144056_dc711f`
+(Kapsel-Sub-Run `_c939cd`, 13 Checkpoints bis zur Adjudikations-Pause).
+
 | Step (Ordner im Run) | Knoten | LLM? | Was passiert |
 |---|---|---|---|
 | `step-00-atomic-units` | AtomicUnitSegmentationExecutor | ja | Transkript → nummerierte Atomic Units (AU-nnnn) als bounded Coverage-Anker |

@@ -91,22 +91,14 @@ public static class LedgerBuildUnitsRunner
     }
 
     /// <summary>
-    /// W1e' — der wiederverwendbare Ledger-Kern (Schritte 2-7 aus <see cref="RunAsync"/>): baut die Node-Clients,
-    /// führt den LedgerBuilderUnitCoverage-Workflow in-process aus, liest die Step-Outputs, bewertet das
-    /// Quality-Gate und liefert ein <see cref="LedgerBuildResult"/>. EINE Quelle für CLI-Runner UND
-    /// pipeline-full-Wrapper (LedgerWrapperExecutor) — keine Kopie. Schreibt Diagnose/Gate/Trace in <paramref name="run"/>.
+    /// Schritt 5 ② (05.08.) — die MONTAGE-Naht des Ledger-Kerns: baut die 6 Node-Clients + den
+    /// LedgerBuilderUnitCoverage-Workflow (Input: Transkript-String, Output: Summary-Yield der
+    /// FacetValidation). EINE Quelle für die CLI-Bahn (<see cref="BuildAsync"/>, eigene Ausführung)
+    /// UND die Graph-Bahn (pipeline-full bindet den Rückgabewert als sichtbare Kapsel, BindGateFree).
     /// </summary>
-    public static async Task<LedgerBuildResult> BuildAsync(
-        string transcript, string transcriptSourceName, HostSettings settings, HostSettings judgeSettings,
-        RunContext run, CancellationToken ct)
+    internal static Microsoft.Agents.AI.Workflows.Workflow CreateWorkflow(
+        string transcript, string transcriptSourceName, HostSettings settings, HostSettings judgeSettings, RunContext run)
     {
-        using var otel = OtelRunExporters.TryCreate(
-            enabled: settings.OtelEnabled,
-            sourceName: SourceName,
-            tracesPath: Path.Combine(run.LogsDir, "otel-traces.jsonl"),
-            metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
-            rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
-
         var baseClient = ChatClientFactory.Create(judgeSettings);
         var extractionClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, UnitAwareCandidateExtractionExecutor.ExecutorName, SourceName);
         var unusedTriageClient = AgentChatPipelineBuilder.Build(baseClient, settings, run, UnusedUnitTriageExecutor.ExecutorName, SourceName);
@@ -122,7 +114,7 @@ public static class LedgerBuildUnitsRunner
         var coverageRepairer = new CanonicalCoverageRepairer(coverageRepairClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
         var facetValidator = new FacetValidator(facetClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
 
-        var workflow = LedgerBuilderWorkflow.BuildUnitCoverage(
+        return LedgerBuilderWorkflow.BuildUnitCoverage(
             extractor,
             unusedUnitTriageReviewer,
             unusedUnitLedgerComparer,
@@ -132,6 +124,26 @@ public static class LedgerBuildUnitsRunner
             transcript,
             transcriptSourceName,
             run);
+    }
+
+    /// <summary>
+    /// W1e' — der wiederverwendbare Ledger-Kern für die CLI-Bahn: eigener otel-Scope, eigene in-process
+    /// Ausführung, dann die geteilte Auswertung (<see cref="EvaluateAsync"/>). Die Graph-Bahn (pipeline-full)
+    /// führt den Workflow stattdessen als GEBUNDENE Kapsel im Ein-Graph aus (Schritt 5 ②) und ruft nur
+    /// noch <see cref="EvaluateAsync"/> — Montage und Auswertung sind die geteilten Nähte, keine Kopie.
+    /// </summary>
+    public static async Task<LedgerBuildResult> BuildAsync(
+        string transcript, string transcriptSourceName, HostSettings settings, HostSettings judgeSettings,
+        RunContext run, CancellationToken ct)
+    {
+        using var otel = OtelRunExporters.TryCreate(
+            enabled: settings.OtelEnabled,
+            sourceName: SourceName,
+            tracesPath: Path.Combine(run.LogsDir, "otel-traces.jsonl"),
+            metricsPath: Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
+            rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+
+        var workflow = CreateWorkflow(transcript, transcriptSourceName, settings, judgeSettings, run);
 
         Console.WriteLine("[ledger-build-units] running workflow (units -> extraction -> unit-gate -> unused-triage -> unused-compare -> canonicalization -> coverage-repair -> facet-validation)...");
         var workflowRun = await InProcessExecution.Default
@@ -151,8 +163,6 @@ public static class LedgerBuildUnitsRunner
             timestampUtc = DateTime.UtcNow
         });
 
-        var validatedPath = Path.Combine(run.RunDir, "step-03-facet-validation", "output.json");
-
         if (hasWorkflowFailure)
         {
             WriteDiagnosis(run, new
@@ -163,8 +173,22 @@ public static class LedgerBuildUnitsRunner
                 rootCause = new { code = "LEDGER_UNIT_WORKFLOW_EXECUTOR_FAILED" },
                 timestampUtc = DateTime.UtcNow
             });
-            return new LedgerBuildResult(false, false, false, validatedPath, 0, 0, 0, 0, 0, 0, "LEDGER_UNIT_WORKFLOW_EXECUTOR_FAILED");
+            var failedPath = Path.Combine(run.RunDir, "step-03-facet-validation", "output.json");
+            return new LedgerBuildResult(false, false, false, failedPath, 0, 0, 0, 0, 0, 0, "LEDGER_UNIT_WORKFLOW_EXECUTOR_FAILED");
         }
+
+        return await EvaluateAsync(run).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Schritt 5 ② — die AUSWERTUNGS-Naht des Ledger-Kerns (deterministisch, disk-basiert, kein LLM):
+    /// liest die Step-Outputs des Laufs, bewertet Quality-Gate + Unit-Trace, schreibt gate/ + Diagnose und
+    /// liefert das <see cref="LedgerBuildResult"/>. Geteilt von CLI-Bahn (<see cref="BuildAsync"/>) und
+    /// Graph-Bahn (LedgerSummaryExecutor hinter der Kapsel).
+    /// </summary>
+    internal static async Task<LedgerBuildResult> EvaluateAsync(RunContext run)
+    {
+        var validatedPath = Path.Combine(run.RunDir, "step-03-facet-validation", "output.json");
 
         var unitsFixture = LedgerRunArtifacts.ReadStepOutput<AtomicUnitFixture>(run, "step-00-atomic-units");
         var unitGate = LedgerRunArtifacts.ReadStepOutput<UnitCoverageGateResult>(run, "step-01b-unit-coverage");

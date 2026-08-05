@@ -39,7 +39,7 @@ public static class BaselineFanOutWorkflow
 
         // Jeden E-c-Zweig als EINEN Knoten binden (Node-ID nach Artefakttyp → distinkt).
         var branchNodes = branches
-            .Select(b => b.Branch.BindAsExecutor($"Branch-{b.ArtifactType}"))
+            .Select(b => b.Branch.BindGateFree($"Branch-{b.ArtifactType}"))
             .ToList();
 
         var builder = new WorkflowBuilder(dispatch)
