@@ -45,6 +45,9 @@ public sealed class FacetAssigner
           { "applicability": required | context | not_applicable,
             "representationMode": normative | constraint | risk_reference | question | assumption | consciously_omitted }
           disposition steuert, für WELCHES Artefakt der Claim relevant ist.
+          VERGABE-REGEL open-questions (Mess-Befund 05.08.): required NUR fuer echte OFFENE Punkte
+          (modality=must_clarify/must_consider ODER woertlich belegte Offenheit); eine festgelegte Sache
+          (must/must_not) bekommt open-questions=not_applicable — sie ist Anforderung, keine Frage.
 
         KONSERVATIV: Wenn die Evidence einen starken Wert nicht klar trägt, wähle den schwächeren
         (open statt decided, desired/must_note statt must, mvp_or_later_unclear statt mvp). NIE verstärken.

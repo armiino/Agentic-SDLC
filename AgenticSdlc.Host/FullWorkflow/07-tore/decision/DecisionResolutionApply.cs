@@ -33,18 +33,23 @@ public static class DecisionResolutionApply
         {
             if (!byId.TryGetValue(op.DecisionId, out var dec) || !dec.ReadStatus().IsOpenDecision)
             { skipped.Add($"{op.DecisionId}: nicht (mehr) offen"); continue; }
-            if (!byId.TryGetValue(op.TargetRequirementId, out var target))
+            // 9g: zielloses Frage-DEC — nur KEEP ("geklaert") ist hier legal (Derivation guardet das schon; hier
+            // defensiv erneut). target bleibt null; Schritt 1 (Ziel-Mutation) und Schritt 2 (contradicts-Flip) entfallen.
+            ProjectStateItem? target = null;
+            if (op.TargetRequirementId is not null && !byId.TryGetValue(op.TargetRequirementId, out target))
             { skipped.Add($"{op.DecisionId}: Ziel-Requirement fehlt"); continue; }
+            if (target is null && !string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
+            { skipped.Add($"{op.DecisionId}: '{op.Outcome}' braucht ein Ziel-Requirement"); continue; }
 
             var unblockStatus = string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal)
                 ? PbiStatus.Active : PbiStatus.NeedsClarify;
             string? newReqId = null;
 
             // 1) Outcome-Downstream am Ziel-Requirement.
-            switch (op.Outcome)
+            switch (target is null ? DecisionOutcome.KeepOriginal : op.Outcome)
             {
                 case DecisionOutcome.Refine:
-                    byId[target.ItemId] = target with
+                    byId[target!.ItemId] = target with
                     {
                         Text = op.NewStatement!,
                         Version = target.Version + 1,
@@ -53,7 +58,7 @@ public static class DecisionResolutionApply
                     };
                     refined.Add(target.ItemId);
                     break;
-                case DecisionOutcome.AdoptNew:
+                case DecisionOutcome.AdoptNew when target is not null:
                     // §5-S3: zentrale Status-Naht (setzt neue Felder + Alt-String synchron; History-Notiz inklusive).
                     byId[target.ItemId] = target.WithStatus(CoreStatus.From("superseded"), $"superseded via {op.DecisionId} (ADOPT_NEW)");
                     newReqId = $"REQ-{nextReq++:D2}";
@@ -67,7 +72,7 @@ public static class DecisionResolutionApply
             }
 
             // 2) Widerspruch auflösen — contradicts -> contradicts_resolved (Rev 2: nicht hart löschen).
-            var ci = relations.FindIndex(r => string.Equals(r.RelationType, DecisionRelations.Contradicts, StringComparison.Ordinal)
+            var ci = target is null ? -1 : relations.FindIndex(r => string.Equals(r.RelationType, DecisionRelations.Contradicts, StringComparison.Ordinal)
                 && string.Equals(r.FromId, op.DecisionId, StringComparison.Ordinal) && string.Equals(r.ToId, target.ItemId, StringComparison.Ordinal));
             if (ci >= 0)
             {
@@ -85,7 +90,7 @@ public static class DecisionResolutionApply
             {
                 Version = dec.Version + 1,
                 Metadata = decMeta,
-                History = Hist(dec, $"resolved={op.Outcome}; war contradicts {target.ItemId}")
+                History = Hist(dec, target is null ? $"resolved={op.Outcome}; freistehende Frage geklaert" : $"resolved={op.Outcome}; war contradicts {target.ItemId}")
             };
             resolved.Add(op.DecisionId);
 
@@ -98,7 +103,7 @@ public static class DecisionResolutionApply
                 var reasons = new List<string>();
                 var changed = false;
 
-                if (string.Equals(op.Outcome, DecisionOutcome.AdoptNew, StringComparison.Ordinal) && links.Contains(target.ItemId))
+                if (target is not null && string.Equals(op.Outcome, DecisionOutcome.AdoptNew, StringComparison.Ordinal) && links.Contains(target.ItemId))
                 {
                     RequirementSwap.SwapCoverage(pbiId, target.ItemId, newReqId, links, relations, "decision-tor2");
                     reasons.Add($"coverage-swap {target.ItemId}->{newReqId}");

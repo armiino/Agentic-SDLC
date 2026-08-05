@@ -51,6 +51,17 @@ public sealed class SemanticLedgerExtractor
             NICHT fuer team-internes "wir muessen X" -> das ist status=open|decided + modality=must.
           - Ein Wunsch ist KEIN status; "gewuenscht/optional" -> status=open + modality=desired|optional.
         modality (Verbindlichkeit): must | must_clarify | must_consider | must_note | must_not | desired | optional
+
+        DISPOSITIONS-VERGABE (verbindlich — die Disposition ist die Weiche, WOHIN ein Claim spaeter reist):
+        - open-questions=required NUR fuer echte OFFENE Punkte: modality=must_clarify/must_consider ODER die
+          Evidenz benennt die Offenheit woertlich ("noch offen", "klaeren wir mit ...", "weiss nicht genau").
+        - Eine im Meeting FESTGELEGTE Sache (modality=must/must_not, zugesagt/beschlossen) bekommt
+          open-questions=not_applicable — sie ist Anforderung, keine Frage. Doppel-Natur NUR, wenn ein explizit
+          OFFENER Rest woertlich belegt ist (dann requirements=required UND open-questions=required, und notes
+          benennt den offenen Rest).
+        - representationMode der open-questions-Spur: question (bzw. open_decision, wenn die Quelle eine
+          anstehende Entscheidung benennt).
+        - Keine Dispositions-Verstaerkung: nicht mehr Spuren als die Quelle belegt.
         Keine Verstaerkung: offen darf nicht decided/required werden, gewuenscht nicht must, spaeter nicht mvp.
 
         Antworte ausschliesslich mit JSON:

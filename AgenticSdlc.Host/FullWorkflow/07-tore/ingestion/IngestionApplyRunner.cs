@@ -54,7 +54,7 @@ public static class IngestionApplyRunner
         var appliedDir = Path.Combine(planDir, "applied");
         var d = report.Delta;
         Console.WriteLine($"[ingest-apply] accepted={accepted.Count}/{plan.Operations.Count} applied={report.Applied.Count} skipped={report.Skipped.Count}");
-        Console.WriteLine($"[ingest-apply] delta: added={d.Added} refined={d.Refined} reaffirmed={d.Reaffirmed} superseded={d.Superseded} contradicted={d.Contradicted} alreadyDecided={d.AlreadyDecided}");
+        Console.WriteLine($"[ingest-apply] delta: added={d.Added} refined={d.Refined} reaffirmed={d.Reaffirmed} superseded={d.Superseded} contradicted={d.Contradicted} alreadyDecided={d.AlreadyDecided} questions={d.Questions}");
         Console.WriteLine($"[ingest-apply] -> {Path.GetRelativePath(repoRoot, appliedDir)}");
         foreach (var s in report.Skipped) Console.WriteLine($"[ingest-apply]   skip {s}");
         return 0;

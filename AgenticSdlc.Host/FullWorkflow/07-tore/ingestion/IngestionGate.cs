@@ -11,10 +11,19 @@ public static class IngestionGate
         var errors = new List<IngestionGateIssue>();
         var warnings = new List<IngestionGateIssue>();
 
-        var incomingIds = meetingDelta.Items
+        var incomingReqIds = meetingDelta.Items
             .Where(i => IsRequirement(i))
             .Select(i => i.ItemId)
             .ToHashSet(StringComparer.Ordinal);
+
+        // 9g: die Fragen-Spur — eingehende open_question-Items sind vollwertige Coverage-Buerger
+        // (jede Frage braucht genau eine Operation), aber mit eigenem, kleinerem Op-Vokabular.
+        var incomingQuestionIds = meetingDelta.Items
+            .Where(i => string.Equals(i.ItemType, "open_question", StringComparison.OrdinalIgnoreCase))
+            .Select(i => i.ItemId)
+            .ToHashSet(StringComparer.Ordinal);
+
+        var incomingIds = incomingReqIds.Concat(incomingQuestionIds).ToHashSet(StringComparer.Ordinal);
 
         var coreReqIds = core.Items
             .Where(i => IsRequirement(i))
@@ -38,6 +47,16 @@ public static class IngestionGate
 
             if (!StateChangeKind.All.Contains(op.Kind))
                 errors.Add(Issue("UNKNOWN_KIND", "error", $"Unbekannte Operation '{op.Kind}' fuer '{op.IncomingItemId}'.", op.IncomingItemId, null));
+
+            // 9g: Kategorien-Wache Frage<->Anforderung (beide Richtungen): OPEN_QUESTION nur fuer eingehende
+            // Fragen; eingehende Fragen nur mit dem Frage-Vokabular (OPEN_QUESTION/ALREADY_DECIDED).
+            if (string.Equals(op.Kind, StateChangeKind.OpenQuestion, StringComparison.Ordinal)
+                && !incomingQuestionIds.Contains(op.IncomingItemId))
+                errors.Add(Issue("QUESTION_KIND_MISMATCH", "error", $"'{op.Kind}' ist nur fuer eingehende offene Fragen erlaubt ('{op.IncomingItemId}' ist keine).", op.IncomingItemId, null));
+            if (incomingQuestionIds.Contains(op.IncomingItemId)
+                && StateChangeKind.All.Contains(op.Kind)
+                && !StateChangeKind.ForQuestions.Contains(op.Kind))
+                errors.Add(Issue("QUESTION_KIND_MISMATCH", "error", $"Eingehende Frage '{op.IncomingItemId}' erlaubt nur OPEN_QUESTION/ALREADY_DECIDED, nicht '{op.Kind}'.", op.IncomingItemId, null));
 
             var requiresReqTarget = StateChangeKind.RequireTarget.Contains(op.Kind);
             var requiresDecisionTarget = StateChangeKind.RequireDecisionTarget.Contains(op.Kind);
@@ -81,7 +100,7 @@ public static class IngestionGate
             errors.Add(Issue("DUPLICATE_OP", "error", $"incoming Item '{id}' hat {count} Operationen (genau eine erlaubt).", id, null));
 
         foreach (var id in incomingIds.Where(id => !opsByIncoming.ContainsKey(id)))
-            errors.Add(Issue("UNPLACED_INCOMING", "error", $"incoming Requirement '{id}' hat keine Operation.", id, null));
+            errors.Add(Issue("UNPLACED_INCOMING", "error", $"incoming Item '{id}' hat keine Operation.", id, null));
 
         // Mehrere Operationen auf dasselbe Ziel -> Warnung (nicht zwingend falsch, aber pruefenswert).
         foreach (var g in plan.Operations
@@ -111,6 +130,7 @@ public static class IngestionGate
         ["UNKNOWN_INCOMING"] = Core.Repairability.Repairable,
         ["UNKNOWN_FEATURE"] = Core.Repairability.Repairable,
         ["UNKNOWN_REJECTION_REF"] = Core.Repairability.Repairable,
+        ["QUESTION_KIND_MISMATCH"] = Core.Repairability.Repairable,
         ["UNKNOWN_KIND"] = Core.Repairability.NeedsHuman,
     };
 

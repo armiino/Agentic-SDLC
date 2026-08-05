@@ -125,14 +125,14 @@ public static class BaselineFanOutRunner
         var judgeBase = ChatClientFactory.Create(judgeSettings);
 
         // Einen Zweig je Artefakttyp bauen (reiner Reuse: Evidence-Agent + CheckerRepair + ID-Gate).
-        var branches = new List<(string ArtifactType, Microsoft.Agents.AI.Workflows.Workflow Branch)>();
+        var branches = new List<(string ArtifactType, string DispositionKey, Microsoft.Agents.AI.Workflows.Workflow Branch)>();
         foreach (var type in types)
         {
             var (agentName, dispositionKey) = ArtifactMap[type];
             var branch = BuildBranch(
                 type, agentName, dispositionKey, ledger, k, minVotes, maxIter,
                 settings, judgeSettings, makerBase, judgeBase, run, repoRoot);
-            branches.Add((type, branch));
+            branches.Add((type, dispositionKey, branch));
         }
 
         var workflow = BaselineFanOutWorkflow.Build(branches, run);
@@ -144,15 +144,12 @@ public static class BaselineFanOutRunner
             return 0;
         }
 
-        var sourceBlock = "EVIDENCE-LEDGER (freigegebene Claims):\n\n" + EvidenceLedgerProjection.Project(ledger.Claims, "requirements");
-        // Hinweis: die Projektion ist disposition-annotiert; jeder Zweig-Prompt liest die für ihn relevante Disposition.
-        // (Für Fan-out reicht EINE Projektion; die Zweige unterscheiden sich über Prompt + Checker-dispositionKey.)
-
         Console.WriteLine("[baseline-fanout] running fan-out (dispatch -> [branches] -> barrier -> collector)...");
         Microsoft.Agents.AI.Workflows.Run wfRun;
         try
         {
-            wfRun = await InProcessExecution.Default.RunAsync(workflow, sourceBlock, run.RunId, CancellationToken.None).ConfigureAwait(false);
+            // R-37 (MAF-native Form): der Workflow-Input IST das Consumable — der Dispatch projiziert je Spur.
+            wfRun = await InProcessExecution.Default.RunAsync(workflow, ledger, run.RunId, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

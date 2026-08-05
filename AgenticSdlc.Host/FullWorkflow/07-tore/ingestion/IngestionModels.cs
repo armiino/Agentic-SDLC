@@ -52,9 +52,10 @@ public static class StateChangeKind
     public const string Supersede = "SUPERSEDE";    // ersetzt eine alte Anforderung
     public const string Contradict = "CONTRADICT";  // widerspricht bestehender Wahrheit -> Open Decision
     public const string AlreadyDecided = "ALREADY_DECIDED"; // schon als Open Decision erfasst -> No-Op (P2a)
+    public const string OpenQuestion = "OPEN_QUESTION"; // 9g: im Meeting gestellte Frage -> Open Decision (ohne Ziel)
 
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.Ordinal) { Restate, Refine, New, NewRelated, Supersede, Contradict, AlreadyDecided };
+        new HashSet<string>(StringComparer.Ordinal) { Restate, Refine, New, NewRelated, Supersede, Contradict, AlreadyDecided, OpenQuestion };
 
     // Operationen, die eine bestehende Entitaet referenzieren MUESSEN (Requirement-Ziel).
     public static readonly IReadOnlySet<string> RequireTarget =
@@ -66,5 +67,10 @@ public static class StateChangeKind
 
     // Operationen, die KEINE bestehende Entitaet referenzieren duerfen.
     public static readonly IReadOnlySet<string> ForbidTarget =
-        new HashSet<string>(StringComparer.Ordinal) { New, NewRelated };
+        new HashSet<string>(StringComparer.Ordinal) { New, NewRelated, OpenQuestion };
+
+    // 9g: erlaubte Operationen fuer eingehende open_question-Items (Frage neu -> OPEN_QUESTION;
+    // Frage schon als DEC offen -> ALREADY_DECIDED = Provenienz-Merge). Requirement-Ops sind dort Kategorienfehler.
+    public static readonly IReadOnlySet<string> ForQuestions =
+        new HashSet<string>(StringComparer.Ordinal) { OpenQuestion, AlreadyDecided };
 }

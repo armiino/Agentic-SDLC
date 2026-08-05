@@ -20,20 +20,29 @@ public sealed record VerifiedBaselineSet(
     [property: JsonPropertyName("artifacts")] IReadOnlyList<BaselineEntry> Artifacts);
 
 /// <summary>
-/// Start-/Fan-out-Stufe: nimmt die Ledger-Projektion (Workflow-Input <see cref="string"/>) und reicht sie über die
-/// <c>AddFanOutEdge</c> an ALLE Artefakt-Zweige weiter (die laufen dann parallel, jeder liest UNABHÄNGIG dieselbe
-/// geschlossene Quelle — „Variante C richtig").
+/// Start-Stufe (R-37, MAF-native Form): nimmt den <see cref="Ledger.ConsumableLedger"/> als Workflow-Input,
+/// projiziert je Spur MIT DEREN Dispositions-Schluessel (inkl. not_applicable-Filter der Projektion) und sendet
+/// je Zweig eine TYPISIERTE <see cref="Branch.BranchSource"/> — Kanten-Praedikate routen sie an genau ihren Zweig.
+/// (Frueher: EIN requirements-gekeyter String-Broadcast fuer alle Zweige — kein Zweig sah seine eigene Weiche.)
 /// </summary>
-[SendsMessage(typeof(string))]
-internal sealed class BaselineFanOutDispatchExecutor : Executor<string>
+[SendsMessage(typeof(Branch.BranchSource))]
+internal sealed class BaselineFanOutDispatchExecutor : Executor<Ledger.ConsumableLedger>
 {
     public const string ExecutorName = "BaselineFanOutDispatch";
 
-    public BaselineFanOutDispatchExecutor() : base(ExecutorName) { }
+    private readonly IReadOnlyList<(string ArtifactType, string DispositionKey)> _lanes;
+
+    public BaselineFanOutDispatchExecutor(IReadOnlyList<(string ArtifactType, string DispositionKey)> lanes)
+        : base(ExecutorName) => _lanes = lanes;
 
     public override async ValueTask HandleAsync(
-        string source, IWorkflowContext context, CancellationToken cancellationToken = default)
-        => await context.SendMessageAsync(source).ConfigureAwait(false);
+        Ledger.ConsumableLedger ledger, IWorkflowContext context, CancellationToken cancellationToken = default)
+    {
+        foreach (var (artifactType, dispositionKey) in _lanes)
+            await context.SendMessageAsync(new Branch.BranchSource(artifactType,
+                "EVIDENCE-LEDGER (freigegebene Claims):\n\n" + EvidenceLedgerProjection.Project(ledger.Claims, dispositionKey)))
+                .ConfigureAwait(false);
+    }
 }
 
 /// <summary>

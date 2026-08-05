@@ -66,6 +66,7 @@ public static class IngestionReviewAdapter
                 new ReviewGlossaryEntry("Widerspruch (CONTRADICT)", "Die Meldung widerspricht dem Core. WIRKT: legt eine offene Entscheidung (DEC) an — blockiert, bis ein Mensch entscheidet.", GKinds),
                 new ReviewGlossaryEntry("Wiederholung (RESTATE)", "Schon bekannt/identisch. Nur ein Beleg (Provenance) an der bestehenden Anforderung — KEINE Wahrheitsänderung.", GKinds),
                 new ReviewGlossaryEntry("Bereits entschieden (ALREADY_DECIDED)", "Schon als offene Entscheidung erfasst. No-op — nur Provenance-Vermerk, KEINE Wahrheitsänderung.", GKinds),
+                new ReviewGlossaryEntry("Offene Frage (OPEN_QUESTION)", "Im Meeting wurde eine Frage GESTELLT (9g). WIRKT: wird zur offenen Entscheidung (DEC) — sichtbar im Parkplatz, Wiedervorlage am decision-gate, blockiert nichts. Ablehnung wird erinnert (Wiedervorlage-Wissen).", GKinds),
                 new ReviewGlossaryEntry("superseded", "Der Status einer abgelösten Anforderung: nicht mehr gültig, bleibt aber als Historie erhalten.", GTerms),
                 new ReviewGlossaryEntry("offene Entscheidung (DEC)", "Ein ungelöster Widerspruch/Klärungspunkt, der eine menschliche Entscheidung braucht (Tor 2).", GTerms)
             ],
@@ -164,6 +165,8 @@ public static class IngestionReviewAdapter
         if (blast is not null) notes.Add(blast);
         var rejection = RejectionNote(op, rejections);
         if (rejection is not null) notes.Add(rejection);
+        var known = KnownQuestionNote(op, coreById);
+        if (known is not null) notes.Add(known);
 
         var item = new ReviewItem
         {
@@ -256,6 +259,7 @@ public static class IngestionReviewAdapter
         StateChangeKind.Supersede => "Ersetzen",
         StateChangeKind.Contradict => "Widerspruch",
         StateChangeKind.AlreadyDecided => "Bereits entschieden",
+        StateChangeKind.OpenQuestion => "Offene Frage",
         _ => kind
     };
 
@@ -268,6 +272,7 @@ public static class IngestionReviewAdapter
         StateChangeKind.Contradict => "Legt eine offene Entscheidung (DEC) an — blockiert, bis ein Mensch entscheidet.",
         StateChangeKind.Restate => "Nur Beleg/Provenance an der bestehenden Anforderung — keine Wahrheitsänderung.",
         StateChangeKind.AlreadyDecided => "No-op — nur ein Provenance-Vermerk, keine Wahrheitsänderung.",
+        StateChangeKind.OpenQuestion => "Wird zur offenen Entscheidung (DEC): sichtbar im Parkplatz, beim nächsten Lauf am decision-gate zur Klärung vorgelegt. Blockiert NICHTS.",
         _ => "—"
     };
 
@@ -279,6 +284,7 @@ public static class IngestionReviewAdapter
         StateChangeKind.Contradict => [new("apply", "✓ Als Widerspruch erfassen"), new("skip", "Nicht übernehmen (Begründung Pflicht)")],
         StateChangeKind.Restate => [new("apply", "✓ Beleg übernehmen"), new("skip", "Nicht übernehmen (Begründung Pflicht)")],
         StateChangeKind.AlreadyDecided => [new("apply", "✓ Vermerk übernehmen"), new("skip", "Nicht übernehmen (Begründung Pflicht)")],
+        StateChangeKind.OpenQuestion => [new("apply", "✓ Als offene Frage aufnehmen"), new("skip", "Nicht übernehmen (Begründung Pflicht)")],
         _ => BaseDecisionOptions
     };
 
@@ -296,8 +302,32 @@ public static class IngestionReviewAdapter
             StateChangeKind.Supersede => $"Ersetzen: {Tgt()} → {Truncate(inc, 90)}",
             StateChangeKind.Contradict => $"Widerspruch zu {Tgt()}: {Truncate(inc, 80)}",
             StateChangeKind.AlreadyDecided => $"Bereits entschieden: {Tgt()}",
+            StateChangeKind.OpenQuestion => $"Offene Frage: {Truncate(inc, 100)}",
             _ => $"{op.Kind}: {Truncate(inc, 80)}"
         };
+    }
+
+    // 9g „Schon einmal geklärt?": deterministischer IdentityKey-Abgleich einer eingehenden Frage gegen ALLE
+    // DECs (R-35-Muster auf den DEC-Topf angewandt, LLM-frei, fail-open). Aufgeloest -> Warnung mit damaligem
+    // Ergebnis (nicht nochmal fragen, ohne es zu wissen); noch offen -> Hinweis auf ALREADY_DECIDED. KEIN Auto-Skip.
+    private static ReviewNote? KnownQuestionNote(StateChangeOperation op, IReadOnlyDictionary<string, ProjectStateItem> coreById)
+    {
+        if (!string.Equals(op.Kind, StateChangeKind.OpenQuestion, StringComparison.Ordinal)) return null;
+        var key = IdentityKey.From(op.Statement);
+        var dec = coreById.Values.FirstOrDefault(i =>
+            string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase)
+            && string.Equals(i.IdentityKey, key, StringComparison.Ordinal));
+        if (dec is null) return null;
+
+        if (dec.ReadStatus().IsOpenDecision)
+            return new ReviewNote(ReviewNoteKind.Warning, "Bereits als offene Frage erfasst",
+                $"Wortgleiche Frage ist schon offen ({dec.ItemId}) — besser ablehnen oder als ALREADY_DECIDED anheften, statt ein Duplikat zu prägen.");
+
+        var outcome = dec.Metadata.GetValueOrDefault("resolutionOutcome");
+        var when = dec.Metadata.GetValueOrDefault("resolvedUtc");
+        return new ReviewNote(ReviewNoteKind.Warning, "Schon einmal geklärt",
+            $"Wortgleiche Frage wurde bereits aufgelöst ({dec.ItemId}{(string.IsNullOrWhiteSpace(when) ? "" : $", {when[..10]}")}"
+            + $"{(string.IsNullOrWhiteSpace(outcome) ? "" : $", Ergebnis: {outcome}")}) — du entscheidest neu; kein automatisches Überspringen.");
     }
 
     // Lesbarer Eingehend↔Core-Kontext (statt rohem Operation-JSON). renderContextCards: Zeile mit „:" = Überschrift,

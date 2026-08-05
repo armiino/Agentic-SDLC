@@ -10,22 +10,37 @@ public static class CoreParkplatz
     public sealed record Report(
         IReadOnlyList<string> OpenDecisions,
         IReadOnlyList<string> NeedsClarifyPbis,
-        IReadOnlyList<string> BlockedPbis)
+        IReadOnlyList<string> BlockedPbis,
+        IReadOnlyDictionary<string, int>? OpenDecisionsByOrigin = null)
     {
         public bool Empty => OpenDecisions.Count == 0 && NeedsClarifyPbis.Count == 0 && BlockedPbis.Count == 0;
     }
 
+    // Klartext je DEC-Herkunft (Autor-Wunsch 05.08.: Herkunft AUF EINEN BLICK — in der Anzeige, nie in der ID).
+    private static string OriginLabel(string origin) => origin switch
+    {
+        "INGESTION_CONTRADICTION" => "Widerspruch",
+        Decision.DecisionRequestMint.Origin => "vom pbi-Gate",
+        Decision.MeetingQuestionMint.Origin => "Meeting-Frage",
+        _ => origin,
+    };
+
     public static Report Count(ProjectStateDocument core)
     {
-        var openDecs = core.Items
+        var openDecItems = core.Items
             .Where(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase) && i.ReadStatus().IsOpenDecision)
-            .Select(i => i.ItemId).OrderBy(x => x, StringComparer.Ordinal).ToList();
+            .OrderBy(i => i.ItemId, StringComparer.Ordinal).ToList();
+        var openDecs = openDecItems.Select(i => i.ItemId).ToList();
+        var byOrigin = openDecItems
+            .GroupBy(i => OriginLabel(i.Origin), StringComparer.Ordinal)
+            .OrderBy(g => g.Key, StringComparer.Ordinal)
+            .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
         var pbis = core.Items.Where(i => string.Equals(i.ItemType, "pbi", StringComparison.OrdinalIgnoreCase)).ToList();
         var needsClarify = pbis.Where(p => p.ReadStatus().Blocker == Blocker.NeedsClarify)
             .Select(p => p.ItemId).OrderBy(x => x, StringComparer.Ordinal).ToList();
         var blocked = pbis.Where(p => p.ReadStatus().Blocker == Blocker.BlockedByDecision)
             .Select(p => p.ItemId).OrderBy(x => x, StringComparer.Ordinal).ToList();
-        return new Report(openDecs, needsClarify, blocked);
+        return new Report(openDecs, needsClarify, blocked, byOrigin);
     }
 
     private const int MaxIds = 6;
@@ -37,7 +52,10 @@ public static class CoreParkplatz
 
         var lines = new List<string>
         {
-            $"  Parkplatz:  {parkplatz.OpenDecisions.Count} offene Entscheidung(en){Ids(parkplatz.OpenDecisions)} · "
+            $"  Parkplatz:  {parkplatz.OpenDecisions.Count} offene Entscheidung(en){Ids(parkplatz.OpenDecisions)}"
+                + (parkplatz.OpenDecisionsByOrigin is { Count: > 0 } o
+                    ? $" [{string.Join(" · ", o.Select(kv => $"{kv.Value} {kv.Key}"))}]" : "")
+                + " · "
                 + $"{parkplatz.NeedsClarifyPbis.Count} Klärung(en) (needs_clarify){Ids(parkplatz.NeedsClarifyPbis)} · "
                 + $"{parkplatz.BlockedPbis.Count} blockiert{Ids(parkplatz.BlockedPbis)}",
             $"  Integrität: Kangal {integrity.Errors.Count} Fehler · {integrity.Warnings.Count} Warnung(en)"

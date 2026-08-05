@@ -24,9 +24,14 @@ internal static class IngestionResolveTask
                                2b. search_rejections: Wurde etwas inhaltlich Gleiches frueher ABGELEHNT? Wenn ja,
                                    relatedRejectionId (REJ-*) auf der Operation setzen — die Operation trotzdem
                                    normal vorschlagen, die Entscheidung trifft der Mensch am Gate.
-                               3. Je eingehendem Requirement GENAU EINE Operation: RESTATE/REFINE/SUPERSEDE/CONTRADICT
+                               3. Je eingehendem Item GENAU EINE Operation.
+                                  Fuer Requirements (itemType=requirement): RESTATE/REFINE/SUPERSEDE/CONTRADICT
                                   (mit targetEntityId) · NEW/NEW_RELATED (ohne targetEntityId) · ALREADY_DECIDED (DEC-*).
                                   Vor CONTRADICT: list_open_decisions pruefen (sonst ALREADY_DECIDED).
+                               3b. Fuer offene Fragen (itemType=open_question) NUR: OPEN_QUESTION (neue Frage, ohne
+                                   targetEntityId — wird zur offenen Entscheidung) ODER ALREADY_DECIDED (dieselbe Frage
+                                   ist bereits als DEC-* erfasst; vorher list_open_decisions pruefen). Formuliere das
+                                   statement als die Frage selbst; NIE eine Frage als Anforderung umdeuten.
                                4. check_state_change_plan (muss pass sein), dann save_state_change_plan (genau einmal).
                                Beleg-Pflicht: claimIds je Operation; im Zweifel NEW_RELATED/NEW statt raten.
                                """;

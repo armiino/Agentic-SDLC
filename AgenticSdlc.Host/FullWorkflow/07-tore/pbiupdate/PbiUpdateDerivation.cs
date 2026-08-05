@@ -63,6 +63,11 @@ public static class PbiUpdateDerivation
                         unplaced.Add(new(d.EntityId, featureOf.GetValueOrDefault(d.EntityId),
                             byId.TryGetValue(d.EntityId, out var it) ? it.Text : ""));
                     break;
+
+                case StateChangeKind.OpenQuestion:
+                    // 9g BEWUSST: eine Meeting-Frage (DEC ohne Ziel) hat KEINE Platzierungs-Wirkung — sie blockt
+                    // nichts und erzeugt keine PBI-Ops; ihr Kreislauf ist Parkplatz + decision-gate.
+                    break;
             }
         }
 

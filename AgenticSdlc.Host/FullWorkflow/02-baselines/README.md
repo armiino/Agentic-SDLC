@@ -12,6 +12,9 @@ EIN MAF-Workflow nach Rezept (Beispiele unter `recipe/examples/`):
 
 ```jsonc
 { "baseline": { "mode": "build" | "load", "artifacts": ["requirements", …], "fromRun": "<runId bei load>" },
+<!-- 9g (05.08.): der Ein-Graph bestellt ["requirements","open-questions"] (BaselineStageExecutor.OrderedArtifacts) —
+     die Fragen-Spur speist via Delta→Tor 1 den DEC-Topf (Frage→DEC, MeetingQuestionMint). architecture folgt mit
+     R-11 (erst Konsument, dann Bestellung). CLI-Läufe: open-questions bei Bedarf explizit mitbestellen. -->
   "derivations": [ { "spec": "derived-risks-multi" }, … ] }
 ```
 

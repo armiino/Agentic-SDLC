@@ -1,0 +1,158 @@
+{
+  "projectId": "default",
+  "schemaVersion": 4,
+  "createdUtc": "2026-08-05T08:57:54.199027Z",
+  "sources": [
+    {
+      "sourceId": "artifact:REQ:20260805_sandbox_delta",
+      "sourceType": "artifact",
+      "path": "runs/_ui-sandbox/ingest-question/requirements.artifact.json",
+      "runId": "20260805_sandbox_delta",
+      "description": "requirements/evidence_baseline"
+    },
+    {
+      "sourceId": "artifact:OQ:20260805_sandbox_delta",
+      "sourceType": "artifact",
+      "path": "runs/_ui-sandbox/ingest-question/open-questions.artifact.json",
+      "runId": "20260805_sandbox_delta",
+      "description": "open-questions/evidence_baseline"
+    }
+  ],
+  "items": [
+    {
+      "itemId": "OQ-01",
+      "itemType": "open_question",
+      "text": "D\u00FCrfen Angeh\u00F6rige selbst Inhalte eintragen, oder erhalten sie nur Leserechte?",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260805_sandbox_delta",
+      "sourceArtifactId": "OQ",
+      "sourceArtifactType": "open-questions",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "claim-oq-1"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "artifactVersion": "1",
+        "producerModel": "sandbox"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "REQ-01",
+      "itemType": "requirement",
+      "text": "Die Medikamenten-Erinnerung muss auch offline funktionieren.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260805_sandbox_delta",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "claim-req-1"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "artifactVersion": "1",
+        "producerModel": "sandbox"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    }
+  ],
+  "relations": [
+    {
+      "fromId": "REQ-01",
+      "toId": "claim-req-1",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "OQ-01",
+      "toId": "claim-oq-1",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    }
+  ],
+  "provenance": [
+    {
+      "itemId": "OQ-01",
+      "links": [
+        {
+          "targetType": "run",
+          "targetId": "20260805_sandbox_delta",
+          "relation": "produced_by",
+          "source": "artifact:OQ:20260805_sandbox_delta",
+          "metadata": {}
+        },
+        {
+          "targetType": "artifact",
+          "targetId": "OQ",
+          "relation": "contained_in",
+          "source": "artifact:OQ:20260805_sandbox_delta",
+          "metadata": {
+            "artifactType": "open-questions",
+            "stage": "evidence_baseline"
+          }
+        },
+        {
+          "targetType": "ledger_claim",
+          "targetId": "claim-oq-1",
+          "relation": "evidenced_by",
+          "source": "artifact:OQ:20260805_sandbox_delta",
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "itemId": "REQ-01",
+      "links": [
+        {
+          "targetType": "run",
+          "targetId": "20260805_sandbox_delta",
+          "relation": "produced_by",
+          "source": "artifact:REQ:20260805_sandbox_delta",
+          "metadata": {}
+        },
+        {
+          "targetType": "artifact",
+          "targetId": "REQ",
+          "relation": "contained_in",
+          "source": "artifact:REQ:20260805_sandbox_delta",
+          "metadata": {
+            "artifactType": "requirements",
+            "stage": "evidence_baseline"
+          }
+        },
+        {
+          "targetType": "ledger_claim",
+          "targetId": "claim-req-1",
+          "relation": "evidenced_by",
+          "source": "artifact:REQ:20260805_sandbox_delta",
+          "metadata": {}
+        }
+      ]
+    }
+  ],
+  "proposals": []
+}

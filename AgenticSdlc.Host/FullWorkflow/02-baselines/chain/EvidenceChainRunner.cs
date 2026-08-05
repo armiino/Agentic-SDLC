@@ -183,14 +183,14 @@ public static class EvidenceChainRunner
         else
         {
             var makerBase = ChatClientFactory.Create(settings);
-            var branches = new List<(string ArtifactType, Microsoft.Agents.AI.Workflows.Workflow Branch)>();
+            var branches = new List<(string ArtifactType, string DispositionKey, Microsoft.Agents.AI.Workflows.Workflow Branch)>();
             foreach (var t in sourceTypes)
             {
                 var (agentName, disposition) = BaselineFanOutRunner.ArtifactMap[t];
                 var branch = BaselineFanOutRunner.BuildBranch(
                     t, agentName, disposition, ledger!, k, minVotes, maxIter,
                     settings, judgeSettings, makerBase, judgeBase, run, repoRoot);
-                branches.Add((t, branch));
+                branches.Add((t, disposition, branch));
             }
             var fanOut = BaselineFanOutWorkflow.Build(branches, run);
             chain = EvidenceChainWorkflow.Build(fanOut, derivation, sourceTypes, run);
@@ -205,17 +205,17 @@ public static class EvidenceChainRunner
             return 0;
         }
 
-        // Fan-out reicht EINE disposition-annotierte Projektion an ALLE Zweige; jeder Zweig-Prompt liest seine Disposition.
-        // Load-Modus braucht keinen Ledger-Input → trivialer Trigger.
-        var runInput = loadMode
-            ? "LOAD"
-            : "EVIDENCE-LEDGER (freigegebene Claims):\n\n" + EvidenceLedgerProjection.Project(ledger!.Claims, spec.PrimarySourceArtifactType);
         Console.WriteLine(loadMode
             ? "[chain] running chain (load -> select -> derivation)..."
             : "[chain] running full chain (ledger -> fan-out -> select -> derivation)...");
         try
         {
-            await InProcessExecution.Default.RunAsync(chain, runInput, run.RunId, CancellationToken.None).ConfigureAwait(false);
+            // R-37 (MAF-native Form): build-Input IST das Consumable (Fan-out-Dispatch projiziert je Spur);
+            // Load-Modus braucht keinen Ledger-Input -> trivialer String-Trigger.
+            if (loadMode)
+                await InProcessExecution.Default.RunAsync(chain, "LOAD", run.RunId, CancellationToken.None).ConfigureAwait(false);
+            else
+                await InProcessExecution.Default.RunAsync(chain, ledger!, run.RunId, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

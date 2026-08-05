@@ -1,10 +1,11 @@
+using AgenticSdlc.Host.FullWorkflow.Decision;
 using AgenticSdlc.Host.FullWorkflow.Delta;
 
 namespace AgenticSdlc.Host.FullWorkflow.Core;
 
 public sealed record AppliedOperation(string IncomingItemId, string Kind, string? EntityId, string Outcome);
 
-public sealed record IngestionDeltaSummary(int Added, int Refined, int Reaffirmed, int Superseded, int Contradicted, int AlreadyDecided, int Skipped);
+public sealed record IngestionDeltaSummary(int Added, int Refined, int Reaffirmed, int Superseded, int Contradicted, int AlreadyDecided, int Skipped, int Questions = 0);
 
 public sealed record IngestionApplyReport(
     IReadOnlyList<AppliedOperation> Applied,
@@ -38,7 +39,7 @@ public static class IngestionApply
         var applied = new List<AppliedOperation>();
         var skipped = new List<string>();
         var affected = new HashSet<string>(StringComparer.Ordinal);
-        int added = 0, refined = 0, reaffirmed = 0, superseded = 0, contradicted = 0, alreadyDecided = 0;
+        int added = 0, refined = 0, reaffirmed = 0, superseded = 0, contradicted = 0, alreadyDecided = 0, questions = 0;
 
         foreach (var op in plan.Operations.Where(o => acceptedIncomingIds.Contains(o.IncomingItemId)))
         {
@@ -125,6 +126,16 @@ public static class IngestionApply
                     affected.Add(id); affected.Add(t.ItemId); contradicted++;
                     break;
                 }
+                case StateChangeKind.OpenQuestion:
+                {
+                    // 9g: die im Meeting gestellte Frage wird zur offenen Entscheidung — geteilter Mint
+                    // (dieselbe Semantik nutzt der Bootstrap), KEINE Relation, kein Block, DEC-Muenze wie CONTRADICT.
+                    var id = $"DEC-{nextDec++:D3}";
+                    AddItem(order, byId, MeetingQuestionMint.NewDecision(id, statement, incoming, claimIds, ingestRunId));
+                    applied.Add(new AppliedOperation(op.IncomingItemId, op.Kind, id, "question_opened"));
+                    affected.Add(id); questions++;
+                    break;
+                }
                 case StateChangeKind.AlreadyDecided:
                 {
                     // incoming ist bereits als Open Decision erfasst -> nur Provenienz/Claims an die DEC anheften (No-Op).
@@ -149,7 +160,7 @@ public static class IngestionApply
             Relations = relations
         };
         var report = new IngestionApplyReport(applied, skipped,
-            new IngestionDeltaSummary(added, refined, reaffirmed, superseded, contradicted, alreadyDecided, skipped.Count));
+            new IngestionDeltaSummary(added, refined, reaffirmed, superseded, contradicted, alreadyDecided, skipped.Count, questions));
         return (updated, report, affected);
     }
 

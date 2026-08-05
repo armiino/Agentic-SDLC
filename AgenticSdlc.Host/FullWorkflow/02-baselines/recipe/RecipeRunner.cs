@@ -152,11 +152,11 @@ public static class RecipeRunner
         else
         {
             var makerBase = ChatClientFactory.Create(settings);
-            var branches = new List<(string ArtifactType, Microsoft.Agents.AI.Workflows.Workflow Branch)>();
+            var branches = new List<(string ArtifactType, string DispositionKey, Microsoft.Agents.AI.Workflows.Workflow Branch)>();
             foreach (var t in baselineArtifacts)
             {
                 var (agentName, disposition) = BaselineFanOutRunner.ArtifactMap[t];
-                branches.Add((t, BaselineFanOutRunner.BuildBranch(
+                branches.Add((t, disposition, BaselineFanOutRunner.BuildBranch(
                     t, agentName, disposition, ledger!, k, minVotes, maxIter,
                     settings, judgeSettings, makerBase, judgeBase, run, repoRoot)));
             }
@@ -171,13 +171,15 @@ public static class RecipeRunner
             return 0;
         }
 
-        var runInput = loadMode
-            ? "LOAD"
-            : "EVIDENCE-LEDGER (freigegebene Claims):\n\n" + EvidenceLedgerProjection.Project(ledger!.Claims, baselineArtifacts[0]);
         Console.WriteLine($"[recipe] running recipe (mode:{mode})...");
         try
         {
-            await InProcessExecution.Default.RunAsync(workflow, runInput, run.RunId, CancellationToken.None).ConfigureAwait(false);
+            // R-37 (MAF-native Form): build-Input IST das Consumable (der Fan-out-Dispatch projiziert je Spur);
+            // load bleibt der schlanke String-Trigger des LoadBaselineExecutor.
+            if (loadMode)
+                await InProcessExecution.Default.RunAsync(workflow, "LOAD", run.RunId, CancellationToken.None).ConfigureAwait(false);
+            else
+                await InProcessExecution.Default.RunAsync(workflow, ledger!, run.RunId, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception ex)
         {

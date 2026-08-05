@@ -7,8 +7,8 @@ using Microsoft.Extensions.AI;
 namespace AgenticSdlc.Host.FullWorkflow.Branch;
 
 /// <summary>
-/// Start-Stufe eines Artefakt-Zweigs (E-c): der Evidence-Baseline-Agent erzeugt das Artefakt aus der übergebenen
-/// Ledger-Projektion (Workflow-Input = <see cref="string"/>) und schickt es als
+/// Start-Stufe eines Artefakt-Zweigs (E-c): der Evidence-Baseline-Agent erzeugt das Artefakt aus der ZWEIG-EIGENEN
+/// Ledger-Projektion (Workflow-Input = <see cref="BranchSource"/>, R-37 MAF-nativ) und schickt es als
 /// <see cref="CheckArtifactMessage"/> (Iteration 1) an die nachgelagerte, gebundene CheckerRepair-Stufe.
 /// </summary>
 /// <remarks>
@@ -18,8 +18,13 @@ namespace AgenticSdlc.Host.FullWorkflow.Branch;
 /// MAF-nativ (der gebundene Subworkflow akzeptiert genau den Input-Typ seines Start-Executors). Der Node-Name trägt
 /// den Artefakttyp, damit im späteren Fan-out (E-d) mehrere Zweige distinkte IDs haben.
 /// </remarks>
+/// <summary>R-37 (MAF-native Form): die zweig-eigene, dispositions-gekeyte Ledger-Projektion als TYPISIERTE
+/// Nachricht. Der Fan-out-Dispatch praegt je Spur eine <see cref="BranchSource"/>; Kanten-Praedikate routen sie
+/// an genau ihren Zweig — die Quelle IST der Nachrichtenfluss (kein Broadcast-Sentinel, kein Override).</summary>
+public sealed record BranchSource(string ArtifactType, string SourceBlock);
+
 [SendsMessage(typeof(CheckArtifactMessage))]
-internal sealed class ArtifactBranchMakerExecutor : Executor<string>
+internal sealed class ArtifactBranchMakerExecutor : Executor<BranchSource>
 {
     private readonly AIAgent _agent;
     private readonly RunContext _run;
@@ -36,10 +41,14 @@ internal sealed class ArtifactBranchMakerExecutor : Executor<string>
     }
 
     public override async ValueTask HandleAsync(
-        string source, IWorkflowContext context, CancellationToken cancellationToken = default)
+        BranchSource source, IWorkflowContext context, CancellationToken cancellationToken = default)
     {
+        // R-18-Stil: eine fremde Quelle ist ein Verdrahtungsfehler — LAUT scheitern statt still falsch arbeiten.
+        if (!string.Equals(source.ArtifactType, _artifactType, StringComparison.Ordinal))
+            throw new InvalidOperationException($"BRANCH_SOURCE_MISMATCH: Zweig '{_artifactType}' erhielt Quelle fuer '{source.ArtifactType}'.");
+
         var response = await _agent
-            .RunAsync([new ChatMessage(ChatRole.User, source)], cancellationToken: cancellationToken)
+            .RunAsync([new ChatMessage(ChatRole.User, source.SourceBlock)], cancellationToken: cancellationToken)
             .ConfigureAwait(false);
         var markdown = response.Text ?? string.Empty;
 

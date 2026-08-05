@@ -28,7 +28,7 @@ public sealed record DecisionResolutionPlanDocument(
 public sealed record DecisionResolutionOp(
     [property: JsonPropertyName("decisionId")] string DecisionId,
     [property: JsonPropertyName("outcome")] string Outcome,
-    [property: JsonPropertyName("targetRequirementId")] string TargetRequirementId,
+    [property: JsonPropertyName("targetRequirementId")] string? TargetRequirementId,   // 9g: null = zielloses Frage-DEC (nur KEEP/defer)
     [property: JsonPropertyName("newStatement")] string? NewStatement,
     [property: JsonPropertyName("affectedPbis")] IReadOnlyList<string> AffectedPbis,
     [property: JsonPropertyName("rationale")] string Rationale);

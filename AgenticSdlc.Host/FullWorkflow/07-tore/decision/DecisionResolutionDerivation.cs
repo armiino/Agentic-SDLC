@@ -26,12 +26,15 @@ public static class DecisionResolutionDerivation
                 .FirstOrDefault(rel => string.Equals(rel.RelationType, DecisionRelations.Contradicts, StringComparison.Ordinal)
                     && string.Equals(rel.FromId, r.DecisionId, StringComparison.Ordinal))?.ToId
                 ?? dec.Metadata.GetValueOrDefault("targetEntityId");
-            if (targetReq is null || !byId.ContainsKey(targetReq))
-            { problems.Add($"{r.DecisionId}: kein Ziel-Requirement (contradicts/targetEntityId)"); continue; }
+            // 9g: ziellose DECs (Meeting-Fragen) sind mit KEEP aufloesbar ("geklaert/erledigt", keine Mutation);
+            // ADOPT/REFINE brauchen weiterhin zwingend ein Ziel — ohne Ziel gibt es nichts abzuloesen/verfeinern.
+            if (targetReq is not null && !byId.ContainsKey(targetReq)) targetReq = null;
+            if (targetReq is null && !string.Equals(r.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
+            { problems.Add($"{r.DecisionId}: kein Ziel-Requirement — nur 'geklaert' (KEEP) oder Vertagen moeglich"); continue; }
 
             var blocked = PbisBlockedBy(core, r.DecisionId);
             var affected = new HashSet<string>(blocked, StringComparer.Ordinal);
-            if (!string.Equals(r.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
+            if (targetReq is not null && !string.Equals(r.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
                 foreach (var p in PbisCovering(core, targetReq)) affected.Add(p);
 
             ops.Add(new DecisionResolutionOp(

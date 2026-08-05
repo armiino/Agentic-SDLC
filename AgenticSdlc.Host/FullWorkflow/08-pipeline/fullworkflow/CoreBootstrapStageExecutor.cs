@@ -21,13 +21,13 @@ public static class CoreBootstrapStage
 {
     /// <summary>Der testbare Kern: Seed → Save → Baseline-Triplet nach <paramref name="outDir"/>.</summary>
     public static async Task<CoreBootstrapOutput> ExecuteAsync(
-        string repoRoot, string outDir, ProjectStateDocument source, CancellationToken ct = default)
+        string repoRoot, string outDir, ProjectStateDocument source, string sourceRun = "core-bootstrap", CancellationToken ct = default)
     {
         var repo = new JsonCoreRepository(repoRoot);
         if (await repo.ExistsAsync().ConfigureAwait(false))
             throw new InvalidOperationException("BOOTSTRAP_ABORTED_CORE_EXISTS: Core existiert bereits — Bootstrap überschreibt keine Wahrheit.");
 
-        var (core, report) = CoreSeeder.Seed(source);
+        var (core, report) = CoreSeeder.Seed(source, sourceRun);
         await repo.SaveAsync(core).ConfigureAwait(false);
 
         var coreSourceRel = Path.GetRelativePath(repoRoot, CorePaths.CoreFile(repoRoot));
@@ -56,7 +56,7 @@ internal sealed class CoreBootstrapStageExecutor(RunContext run, string repoRoot
         CoreBootstrapOutput output;
         try
         {
-            output = await CoreBootstrapStage.ExecuteAsync(repoRoot, run.OutputDir("05-core"), source, ct).ConfigureAwait(false);
+            output = await CoreBootstrapStage.ExecuteAsync(repoRoot, run.OutputDir("05-core"), source, run.RunId, ct).ConfigureAwait(false);
         }
         catch (InvalidOperationException ex)
         {

@@ -48,6 +48,7 @@ public static class PipelineDecisionReviewAdapter
                 new ReviewGlossaryEntry("Verfeinern", "Dieselbe Anforderung, nur SCHÄRFER gesagt — die Bedeutung bleibt (z. B. „14 Tage“ → „14 Tage, DSGVO-konform“). WIRKT: neue VERSION derselben ID (alte Fassung in der Historie), PBIs werden zur Angleichung markiert.", GOut),
                 new ReviewGlossaryEntry("Vertagen", "Jetzt nicht entscheidbar (z. B. Stakeholder nötig). WIRKT: nichts — die Entscheidung bleibt offen und sichtbar geparkt, der Block hält, beim nächsten Lauf wird sie wieder vorgelegt.", GOut),
                 new ReviewGlossaryEntry("offene Entscheidung (DEC)", "Ein erfasster Widerspruch zwischen Meeting und Projektwahrheit, der eine menschliche Entscheidung braucht.", GTerms),
+                new ReviewGlossaryEntry("offene Frage (ohne Ziel)", "Eine im Meeting GESTELLTE Frage (9g) — kein Widerspruch, kein Ziel-Requirement. Auflösen = „Original behalten“ mit Pflicht-Begründung (was gilt jetzt / welche Anforderung beantwortet sie); Übernehmen/Verfeinern sind hier nicht möglich.", GTerms),
                 new ReviewGlossaryEntry("blockiertes PBI", "Arbeit, die auf der umstrittenen Anforderung baut — wird bis zur Auflösung nicht nach GitHub gebracht (kein Leak).", GTerms),
                 new ReviewGlossaryEntry("superseded", "Status einer abgelösten Anforderung: nicht mehr gültig, bleibt als Historie erhalten.", GTerms)
             ],
@@ -87,6 +88,17 @@ public static class PipelineDecisionReviewAdapter
     {
         var choice = FieldOf(item, FieldDecision);
         if (!Choices.Contains(choice)) return false;
+
+        // 9g: die ITEM-Optionen sind die eine Quelle der Palette (FieldOptions, wie am ingest-Gate).
+        // Generische Regel: eine Wahl ausserhalb der Item-Palette ist ungueltig. Ziellose Frage-DECs
+        // (Palette ohne „Übernehmen") verlangen bei „geklärt" die Antwort als Pflicht-Begründung (P2a).
+        if (item.FieldOptions.TryGetValue(FieldDecision, out var allowed) && allowed.Count > 0)
+        {
+            if (!allowed.Any(o => string.Equals(o.Value, choice, StringComparison.OrdinalIgnoreCase))) return false;
+            var questionPalette = !allowed.Any(o => string.Equals(o.Value, ChoiceAdopt, StringComparison.OrdinalIgnoreCase));
+            if (questionPalette && string.Equals(choice, ChoiceKeep, StringComparison.OrdinalIgnoreCase))
+                return FieldOf(item, FieldReason) is { Length: > 0 };
+        }
         return !NeedsStatement.Contains(choice) || FieldOf(item, FieldStatement) is { Length: > 0 };
     }
 
@@ -127,18 +139,28 @@ public static class PipelineDecisionReviewAdapter
     {
         // E0-Muster: die Gegenüberstellung als Noten-PAAR (Vorher = Core, Dagegen = Meeting) — der Kern des Konflikts
         // steht direkt untereinander, bevor irgendetwas entschieden wird.
-        var notes = new List<ReviewNote>
-        {
-            new(ReviewNoteKind.Info, "Bestehende Wahrheit (Core)",
-                v.TargetRequirementId is { Length: > 0 }
-                    ? $"{v.TargetRequirementId}: {v.TargetRequirementText}"
-                    : "(kein Ziel-Requirement auflösbar — nur Vertagen sinnvoll)"),
-            new(ReviewNoteKind.Suggestion, "Meeting sagt dagegen", v.ProposedStatement),
-            new(ReviewNoteKind.Warning, "Ändert die Projektwahrheit",
-                "Übernehmen/Verfeinern mutiert Anforderungen (Ablösung bzw. neue Version) — die Inhalts-Angleichung der PBIs folgt im selben Lauf am nächsten Gate (pbi-update).")
-        };
+        // 9g: ziellose DECs (Meeting-Fragen) haben eine KLEINERE Options-Palette — kein Ziel, nichts abzuloesen.
+        // Umsetzung ueber ReviewItem.FieldOptions (per-Item-Optionen, dasselbe Muster wie die Op-Arten am
+        // ingest-Gate) — die Palette selbst ist die eine Quelle; Resolved() leitet die Regeln daraus ab.
+        var targetless = v.TargetRequirementId is not { Length: > 0 };
+        var notes = targetless
+            ? new List<ReviewNote>
+            {
+                new(ReviewNoteKind.Suggestion, "Die offene Frage", v.DecisionText),
+                new(ReviewNoteKind.Info, "So löst du sie auf",
+                    "„Original behalten“ bedeutet hier: Frage ist GEKLÄRT/ERLEDIGT — die Begründung ist Pflicht und nennt, " +
+                    "WAS jetzt gilt bzw. WELCHE Anforderung die Antwort trägt (z. B. „beantwortet durch REQ-81“). " +
+                    "„Übernehmen“/„Verfeinern“ sind hier nicht möglich (kein Ziel). Vertagen hält sie sichtbar geparkt.")
+            }
+            : new List<ReviewNote>
+            {
+                new(ReviewNoteKind.Info, "Bestehende Wahrheit (Core)", $"{v.TargetRequirementId}: {v.TargetRequirementText}"),
+                new(ReviewNoteKind.Suggestion, "Meeting sagt dagegen", v.ProposedStatement),
+                new(ReviewNoteKind.Warning, "Ändert die Projektwahrheit",
+                    "Übernehmen/Verfeinern mutiert Anforderungen (Ablösung bzw. neue Version) — die Inhalts-Angleichung der PBIs folgt im selben Lauf am nächsten Gate (pbi-update).")
+            };
         if (v.Origin is { Length: > 0 })
-            notes.Add(new ReviewNote(ReviewNoteKind.Info, "Woher stammt dieser Widerspruch?", v.Origin));
+            notes.Add(new ReviewNote(ReviewNoteKind.Info, targetless ? "Woher stammt diese offene Frage?" : "Woher stammt dieser Widerspruch?", v.Origin));
         if (v.BlockedPbis.Count > 0)
             notes.Add(new ReviewNote(ReviewNoteKind.Info, "Blockierte PBIs (bis zur Auflösung geschützt)", string.Join(", ", v.BlockedPbis)));
 
@@ -153,10 +175,23 @@ public static class PipelineDecisionReviewAdapter
         {
             ItemId = v.DecisionId,
             Summary = $"{v.DecisionId}: {v.DecisionText}",
-            Badge = "Widerspruch",
+            Badge = targetless ? "Offene Frage" : "Widerspruch",
             Notes = notes,
             ContextBlocks = context,
             // Default bewusst LEER — jede Auflösung ist eine aktive Entscheidung (E0-Politik, keine Durchwink-Falle).
+            // 9g (saubere Form): ziellose DECs bekommen PER-ITEM-Optionen (ReviewItem.FieldOptions —
+            // dasselbe Muster wie die Op-Arten am ingest-Gate). Übernehmen/Verfeinern EXISTIEREN hier gar nicht
+            // als Wahl; die Optionen selbst sind die einzige Quelle der Item-Palette (kein Marker-Feld).
+            FieldOptions = targetless
+                ? new Dictionary<string, IReadOnlyList<ReviewOption>>
+                {
+                    [FieldDecision] =
+                    [
+                        new(ChoiceKeep, "Geklärt/erledigt — Begründung nennt die Antwort bzw. die beantwortende Anforderung (Pflicht)"),
+                        new(ChoiceDefer, "Vertagen — bleibt offen und sichtbar geparkt")
+                    ]
+                }
+                : new Dictionary<string, IReadOnlyList<ReviewOption>>(),
             FieldValues =
             [
                 new ReviewFieldValue(FieldDecision, ""),

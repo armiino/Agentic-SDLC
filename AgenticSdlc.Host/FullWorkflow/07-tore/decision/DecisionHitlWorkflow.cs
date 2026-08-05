@@ -41,7 +41,7 @@ internal sealed class DecisionHitlFinalizeExecutor(RunContext run) : Executor<De
 
         if (v.Decision == GateDecision.Pass)
         {
-            var views = v.Plan.Operations.Select((o, i) => new DecisionReviewOpView($"op-{i}", o.Outcome, o.DecisionId, o.TargetRequirementId, o.AffectedPbis, o.Rationale)).ToList();
+            var views = v.Plan.Operations.Select((o, i) => new DecisionReviewOpView($"op-{i}", o.Outcome, o.DecisionId, o.TargetRequirementId ?? "", o.AffectedPbis, o.Rationale)).ToList();
             run.AppendEvent(new { type = "DECISION_HUMAN_GATE", runId = run.RunId, operations = v.Plan.Operations.Count, timestampUtc = DateTime.UtcNow });
             await context.SendMessageAsync(new DecisionReviewRequest(run.RunId, views)).ConfigureAwait(false);
         }

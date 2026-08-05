@@ -19,14 +19,23 @@ public static class EvidenceLedgerProjection
     public static string Project(IReadOnlyList<SemanticLedgerEntry> claims, string dispositionKey)
     {
         var sb = new StringBuilder();
+        // R-37 (Mess-Lauf 20260805_110317): not_applicable-Claims erreichen die Spur GAR NICHT mehr — der
+        // Agent hat das Prompt-Verbot („überspringe not_applicable") bei plausiblem Inhalt nachweislich
+        // gebrochen. Deterministischer Filter statt Prompt-Hoffnung; Claims OHNE Dispositions-Eintrag für
+        // diese Spur bleiben sichtbar (fail-open für Alt-Daten). Gilt einheitlich für alle Spuren (die
+        // Semantik von not_applicable IST „nicht deine Spur").
         foreach (var c in claims)
         {
             var disp = c.Disposition is not null && c.Disposition.TryGetValue(dispositionKey, out var d)
                 ? d.Applicability : "?";
+            if (string.Equals(disp, "not_applicable", StringComparison.OrdinalIgnoreCase)) continue;
             sb.Append("- [").Append(c.Id).Append("] ")
               .Append("kind=").Append(c.Kind)
               .Append(" status=").Append(c.Status)
               .Append(" modality=").Append(c.Modality)
+              // R-8-Scope-Fix (04.08.): scope fiel als EINZIGE Facette an dieser Grenze weg — adjudiziert, aber nie
+              // einem Konsumenten gezeigt. Jetzt reist sie wie die anderen als Kontext zu den Baseline-Makern.
+              .Append(" scope=").Append(c.Scope)
               .Append(" timeScope=").Append(c.TimeScope ?? "?")
               .Append(' ').Append(dispositionKey).Append('=').Append(disp).AppendLine();
             sb.Append("  proposition: ").AppendLine(c.Proposition);

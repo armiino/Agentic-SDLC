@@ -151,7 +151,7 @@ public static class PbiUpdateApply
                 {
                     // R-31: bei inhaltlicher Angleichung traegt die neue Fassung den ausloesenden Lauf als Ursprung
                     // (statt den alten Baseline-Lauf zu erben); reine Struktur-Ops lassen die Provenance unberuehrt.
-                    Text = title,
+                    Text = title ?? pbi.Text,   // Kleinkram-Altlast (aufgefallen §3): PBI ohne Titel behaelt seinen Text statt null
                     Version = pbi.Version + 1,
                     SourceRunId = aligned ? sourceRun : pbi.SourceRunId,
                     Pbi = pbi.Pbi with { Title = title, Goal = goal, AcceptanceCriteria = acceptance, LinkedRequirementIds = links, OpenDecisionRefs = decRefs }

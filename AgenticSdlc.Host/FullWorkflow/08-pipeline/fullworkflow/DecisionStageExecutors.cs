@@ -57,14 +57,15 @@ public static class DecisionStage
             .ToList();
     }
 
-    // Klartext-Herkunft: WOHER stammt der Widerspruch? Heute gibt es genau EINE Quelle (Ingest-CONTRADICT,
-    // am Ingest-Gate vom Menschen bestaetigt); kuenftig kommt der manuelle „→ Entscheidung"-Knopf dazu (D2).
+    // Klartext-Herkunft: WOHER stammt diese Entscheidung? Drei Zufluesse in den EINEN DEC-Topf:
+    // Ingest-CONTRADICT (Widerspruch), D2-Knopf (Klaerungs-Antrag), 9g Meeting-Frage (zielloses DEC).
     private static string OriginOf(ProjectStateItem dec)
     {
         var origin = dec.Origin switch
         {
             "INGESTION_CONTRADICTION" => "Meeting-Widerspruch — am Ingest-Gate von dir als echter Konflikt bestätigt",
             Decision.DecisionRequestMint.Origin => "Klärungs-Antrag — am pbi-Gate von dir als Stakeholder-Frage beantragt",
+            Decision.MeetingQuestionMint.Origin => "Offene Frage — im Meeting gestellt, am Ingest-Gate von dir aufgenommen",
             _ => dec.Origin,
         };
         var run = dec.SourceRunId is { Length: > 0 } r ? $" · Lauf {r}" : "";
@@ -100,6 +101,7 @@ public static class DecisionStage
         var synthetic = new List<AppliedOperation>();
         foreach (var op in plan.Operations)
         {
+            if (op.TargetRequirementId is null) continue;   // 9g: zielloses Frage-DEC hat nie synthetische Deltas
             if (string.Equals(op.Outcome, DecisionOutcome.Refine, StringComparison.Ordinal)
                 && applied.RefinedRequirements.Contains(op.TargetRequirementId))
                 synthetic.Add(new AppliedOperation(op.DecisionId, StateChangeKind.Refine, op.TargetRequirementId, "refined"));

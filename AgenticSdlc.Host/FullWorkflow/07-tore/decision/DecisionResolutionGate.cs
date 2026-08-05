@@ -23,7 +23,13 @@ public static class DecisionResolutionGate
             else if (!dec.ReadStatus().IsOpenDecision)   // §5-S4 (Alt-String im Text bleibt bis S7 gepflegt)
                 errors.Add(Issue("DECISION_NOT_OPEN", "error", $"'{op.DecisionId}' ist nicht offen (status={dec.Status}).", op.DecisionId));
 
-            if (!byId.ContainsKey(op.TargetRequirementId))
+            // 9g: zielloses Frage-DEC (TargetRequirementId=null) ist legal, aber NUR mit KEEP ("geklaert").
+            if (op.TargetRequirementId is null)
+            {
+                if (!string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
+                    errors.Add(Issue("TARGET_REQUIRED", "error", $"'{op.Outcome}' braucht ein Ziel-Requirement ('{op.DecisionId}' ist eine freistehende Frage).", op.DecisionId));
+            }
+            else if (!byId.ContainsKey(op.TargetRequirementId))
                 errors.Add(Issue("UNKNOWN_TARGET", "error", $"Ziel-Requirement '{op.TargetRequirementId}' existiert nicht.", op.DecisionId));
 
             if (DecisionOutcome.RequireNewStatement.Contains(op.Outcome) && string.IsNullOrWhiteSpace(op.NewStatement))

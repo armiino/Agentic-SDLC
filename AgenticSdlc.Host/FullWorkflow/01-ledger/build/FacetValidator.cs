@@ -36,7 +36,9 @@ public sealed class FacetValidator
           (Achte auf Verstärkung: "offen" darf nicht "decided" sein, "gewünscht" nicht "must",
            "später/nicht MVP" nicht "mvp".)
         - evidence: stützen die Zitate den Eintrag?
-        - disposition: sinnvoll fürs jeweilige Zielartefakt?
+        - disposition: sinnvoll fürs jeweilige Zielartefakt? Speziell open-questions=required: NUR bei echten
+          offenen Punkten (modality=must_clarify/must_consider oder wörtlich belegte Offenheit) — eine
+          festgelegte Sache (must/must_not) als offene Frage zu dispositionieren ist ein Befund.
 
         verdict (genau einer):
         - grounded:    Proposition und Facetten sind vom Transcript gedeckt.

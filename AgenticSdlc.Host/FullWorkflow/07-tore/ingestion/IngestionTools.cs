@@ -43,13 +43,17 @@ internal sealed class IngestionTools(
             "Speichert die finalen Operationen (genau eine je eingehendem Requirement). Genau einmal am Ende aufrufen."),
     ];
 
+    // 9g: Anforderungen UND offene Fragen sind Coverage-Buerger — der Agent sieht beide (itemType = die Weiche).
     private IReadOnlyList<ProjectStateItem> Incoming() =>
-        meetingDelta.Items.Where(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase)).ToList();
+        meetingDelta.Items
+            .Where(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase)
+                        || string.Equals(i.ItemType, "open_question", StringComparison.OrdinalIgnoreCase))
+            .ToList();
 
     private string GetIncomingItems()
     {
         var rows = Incoming()
-            .Select(i => new { incomingItemId = i.ItemId, text = Truncate(i.Text, 500), origin = i.Origin, sourceClaimIds = i.SourceClaimIds })
+            .Select(i => new { incomingItemId = i.ItemId, itemType = i.ItemType, text = Truncate(i.Text, 500), origin = i.Origin, sourceClaimIds = i.SourceClaimIds })
             .ToArray();
         run.AppendEvent(new { type = "INGEST_TOOL_INCOMING", runId = run.RunId, returned = rows.Length, timestampUtc = DateTime.UtcNow });
         return JsonSerializer.Serialize(rows, Json);

@@ -151,7 +151,7 @@ public static class ArtifactBranchRunner
         Microsoft.Agents.AI.Workflows.Run branchRun;
         try
         {
-            branchRun = await InProcessExecution.Default.RunAsync(branch, sourceBlock, run.RunId, CancellationToken.None).ConfigureAwait(false);
+            branchRun = await InProcessExecution.Default.RunAsync(branch, new BranchSource(artifact, sourceBlock), run.RunId, CancellationToken.None).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
