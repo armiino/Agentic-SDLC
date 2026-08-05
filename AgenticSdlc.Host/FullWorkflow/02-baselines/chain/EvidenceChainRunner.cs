@@ -177,7 +177,7 @@ public static class EvidenceChainRunner
         Microsoft.Agents.AI.Workflows.Workflow chain;
         if (loadMode)
         {
-            var load = new LoadBaselineExecutor(sourceTypes, sourceDir!, run);
+            var load = new LoadBaselineExecutor(run);
             chain = EvidenceChainWorkflow.BuildFromLoad(load, derivation, sourceTypes, run);
         }
         else
@@ -210,10 +210,10 @@ public static class EvidenceChainRunner
             : "[chain] running full chain (ledger -> fan-out -> select -> derivation)...");
         try
         {
-            // R-37 (MAF-native Form): build-Input IST das Consumable (Fan-out-Dispatch projiziert je Spur);
-            // Load-Modus braucht keinen Ledger-Input -> trivialer String-Trigger.
+            // R-37/⑤ (MAF-native Form): der Workflow-Input IST die Daten — build: das Consumable (Fan-out-Dispatch
+            // projiziert je Spur); load: die typisierte Bestellung (LoadBaselineRequest statt "LOAD"-Sentinel).
             if (loadMode)
-                await InProcessExecution.Default.RunAsync(chain, "LOAD", run.RunId, CancellationToken.None).ConfigureAwait(false);
+                await InProcessExecution.Default.RunAsync(chain, new LoadBaselineRequest(sourceTypes, sourceDir!), run.RunId, CancellationToken.None).ConfigureAwait(false);
             else
                 await InProcessExecution.Default.RunAsync(chain, ledger!, run.RunId, CancellationToken.None).ConfigureAwait(false);
         }

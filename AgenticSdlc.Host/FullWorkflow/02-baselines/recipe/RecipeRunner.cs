@@ -160,7 +160,7 @@ public static class RecipeRunner
         Microsoft.Agents.AI.Workflows.Workflow workflow;
         if (loadMode)
         {
-            var load = new LoadBaselineExecutor(baselineArtifacts, sourceDir!, run);
+            var load = new LoadBaselineExecutor(run);
             workflow = RecipeWorkflow.BuildFromLoad(load, derivations, run);
         }
         else
@@ -188,10 +188,10 @@ public static class RecipeRunner
         Console.WriteLine($"[recipe] running recipe (mode:{mode})...");
         try
         {
-            // R-37 (MAF-native Form): build-Input IST das Consumable (der Fan-out-Dispatch projiziert je Spur);
-            // load bleibt der schlanke String-Trigger des LoadBaselineExecutor.
+            // R-37/⑤ (MAF-native Form): der Workflow-Input IST die Daten — build: das Consumable (Fan-out-Dispatch
+            // projiziert je Spur); load: die typisierte Bestellung (LoadBaselineRequest statt "LOAD"-Sentinel).
             if (loadMode)
-                await InProcessExecution.Default.RunAsync(workflow, "LOAD", run.RunId, CancellationToken.None).ConfigureAwait(false);
+                await InProcessExecution.Default.RunAsync(workflow, new LoadBaselineRequest(baselineArtifacts, sourceDir!), run.RunId, CancellationToken.None).ConfigureAwait(false);
             else
                 await InProcessExecution.Default.RunAsync(workflow, ledger!, run.RunId, CancellationToken.None).ConfigureAwait(false);
         }
