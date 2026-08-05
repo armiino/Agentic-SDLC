@@ -5,11 +5,22 @@ using Microsoft.Extensions.AI;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
+/// <summary>Schritt 5 ④ — die Austausch-/Fake-Naht des Coverage-Repairs (LLM-freie Loop-Graph-Tests
+/// stecken hier einen deterministischen Fake ein; Produktiv-Implementierung: <see cref="CanonicalCoverageRepairer"/>).</summary>
+public interface ICanonicalCoverageRepairer
+{
+    Task<IReadOnlyList<SemanticLedgerEntry>> RepairAsync(
+        IReadOnlyList<SemanticLedgerEntry> candidates,
+        IReadOnlyList<SemanticLedgerEntry> canonicalDraft,
+        IReadOnlyList<string> missingCandidateIds,
+        CancellationToken ct);
+}
+
 /// <summary>
 /// Repariert ausschliesslich Coverage-Luecken der Canonicalization: fehlende Candidate-IDs muessen in den
 /// kanonischen Ledger integriert oder als standalone Claims uebernommen werden.
 /// </summary>
-public sealed class CanonicalCoverageRepairer
+public sealed class CanonicalCoverageRepairer : ICanonicalCoverageRepairer
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 

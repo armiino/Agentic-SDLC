@@ -1,6 +1,7 @@
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI.Workflows;
+using GateDecision = AgenticSdlc.Host.FullWorkflow.Core.GateDecision;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger;
 
@@ -35,17 +36,18 @@ public static class LedgerBuilderWorkflow
 
         var extraction = new CandidateExtractionExecutor(extractor, run);
         var canonicalization = new CanonicalizationExecutor(canonicalizer, run);
+        var canonicalCheck = new CanonicalCheckExecutor(run);
         var coverageRepair = new CanonicalCoverageRepairExecutor(coverageRepairer, run);
         var facetValidation = new FacetValidationExecutor(facetValidator, transcript, run, withAdjudication);
 
         var builder = new WorkflowBuilder(extraction)
             .WithName("LedgerBuilder")
-            .WithDescription("Transcript → Candidate → CanonicalDraft → CoverageRepair → FacetValidation (evidence-first Ledger-Bau, L4)"
+            .WithDescription("Transcript → Candidate → CanonicalDraft → [CanonicalCheck ⇄ CoverageRepair] → FacetValidation (evidence-first Ledger-Bau, L4)"
                 + (withAdjudication ? " → HumanAdjudication." : "."));
 
         builder.AddEdge(extraction, canonicalization);
-        builder.AddEdge(canonicalization, coverageRepair);
-        builder.AddEdge(coverageRepair, facetValidation);
+        // Schritt 5 ④: Maker-Checker-Repair-Loop (R-33-Form) — Verdict-typisierte Kanten-Prädikate.
+        AddCanonicalLoop(builder, canonicalization, canonicalCheck, coverageRepair, facetValidation);
 
         if (withAdjudication)
         {
@@ -73,21 +75,26 @@ public static class LedgerBuilderWorkflow
         var unitCoverage = new UnitCoverageGateExecutor(run);
         var unusedTriage = new UnusedUnitTriageExecutor(unusedUnitTriageReviewer, run);
         var unusedCompare = new UnusedUnitLedgerCompareExecutor(unusedUnitLedgerComparer, run);
+        var unusedCompareRepair = new UnusedCompareReferenceRepairExecutor(unusedUnitLedgerComparer, run);
         var canonicalization = new CanonicalizationExecutor(canonicalizer, run);
+        var canonicalCheck = new CanonicalCheckExecutor(run);
         var coverageRepair = new CanonicalCoverageRepairExecutor(coverageRepairer, run);
         var facetValidation = new FacetValidationExecutor(facetValidator, transcript, run);
 
         var builder = new WorkflowBuilder(segmentation)
             .WithName("LedgerBuilderUnitCoverage")
-            .WithDescription("Transcript -> AtomicUnits -> UnitAwareCandidate -> UnitCoverageGate -> UnusedUnitTriage -> UnusedUnitLedgerCompare -> CanonicalDraft -> CoverageRepair -> FacetValidation.");
+            .WithDescription("Transcript -> AtomicUnits -> UnitAwareCandidate -> UnitCoverageGate -> UnusedUnitTriage -> "
+                + "UnusedUnitLedgerCompare -> UnusedCompareReferenceRepair -> CanonicalDraft -> [CanonicalCheck ⇄ CoverageRepair] -> FacetValidation.");
 
         builder.AddEdge(segmentation, extraction);
         builder.AddEdge(extraction, unitCoverage);
         builder.AddEdge(unitCoverage, unusedTriage);
         builder.AddEdge(unusedTriage, unusedCompare);
-        builder.AddEdge(unusedCompare, canonicalization);
-        builder.AddEdge(canonicalization, coverageRepair);
-        builder.AddEdge(coverageRepair, facetValidation);
+        // Schritt 5 ④ / R-3: der Referenz-Repair ist ein SICHTBARER Knoten (vorher in der Comparer-Komponente versteckt).
+        builder.AddEdge(unusedCompare, unusedCompareRepair);
+        builder.AddEdge(unusedCompareRepair, canonicalization);
+        // Schritt 5 ④: Maker-Checker-Repair-Loop (R-33-Form) — Verdict-typisierte Kanten-Prädikate.
+        AddCanonicalLoop(builder, canonicalization, canonicalCheck, coverageRepair, facetValidation);
 
         // Schritt 5 ② (05.08.): der Summary-Yield der FacetValidation ist der deklarierte Workflow-Output —
         // als GEBUNDENE Kapsel im Ein-Graph wird genau dieser Yield zur Nachricht an den LedgerSummaryExecutor.
@@ -95,5 +102,22 @@ public static class LedgerBuilderWorkflow
         builder.WithOutputFrom(facetValidation);
 
         return builder.Build();
+    }
+
+    /// <summary>Schritt 5 ④ — die EINE Kanten-Quelle des Kanonisierungs-Loops (beide Builder-Varianten,
+    /// R-33-Blaupause): Draft → Check · Repair-Verdict → Repair (Prädikat) · Repair → Check (Loop-back) ·
+    /// Pass (CanonicalLedgerMessage) → FacetValidation · Terminal-Yield des Checkers als Workflow-Output.</summary>
+    private static void AddCanonicalLoop(
+        WorkflowBuilder builder,
+        CanonicalizationExecutor canonicalization,
+        CanonicalCheckExecutor canonicalCheck,
+        CanonicalCoverageRepairExecutor coverageRepair,
+        FacetValidationExecutor facetValidation)
+    {
+        builder.AddEdge(canonicalization, canonicalCheck);
+        builder.AddEdge<CanonicalGateVerdict>(canonicalCheck, coverageRepair, m => m is not null && m.Decision == GateDecision.Repair);
+        builder.AddEdge(coverageRepair, canonicalCheck);
+        builder.AddEdge(canonicalCheck, facetValidation);
+        builder.WithOutputFrom(canonicalCheck);
     }
 }

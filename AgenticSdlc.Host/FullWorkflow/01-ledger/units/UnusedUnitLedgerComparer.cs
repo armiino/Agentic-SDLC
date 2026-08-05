@@ -117,6 +117,9 @@ internal sealed class UnusedUnitLedgerComparer
             "Vergleich potenziell relevanter unused Units gegen Candidate Ledger.");
     }
 
+    // Schritt 5 ④ / R-3 (05.08.): CompareAsync liefert das ROHE Batch-Ergebnis — der Referenz-Repair-Pass
+    // ist KEIN verstecktes Anhängsel mehr, sondern läuft als eigener, sichtbarer Graph-Knoten
+    // (UnusedCompareReferenceRepairExecutor ruft RepairCoverageReferencesAsync). Fachlogik unverändert.
     public async Task<IReadOnlyList<UnusedUnitLedgerCompareItem>> CompareAsync(
         IReadOnlyList<AtomicUnit> relevantUnits,
         IReadOnlyList<SemanticLedgerEntry> candidates,
@@ -125,14 +128,14 @@ internal sealed class UnusedUnitLedgerComparer
         var all = new List<UnusedUnitLedgerCompareItem>();
         foreach (var batch in relevantUnits.Chunk(BatchSize))
             all.AddRange(await CompareBatchAsync(batch, candidates, ct).ConfigureAwait(false));
-        return await RepairCoverageReferencesAsync(all, relevantUnits, candidates, ct).ConfigureAwait(false);
+        return all;
     }
 
     // R-1 (2026-07-23): Deckungs-Urteile ohne gueltige Referenz -> EIN gezielter Nachfrage-Pass nur fuer die
     // Verstoss-Units; was danach immer noch referenzlos ist, wird deterministisch zu needs_human umgestuft
     // (landet via Miss-Signal in der Adjudikations-Queue) statt den ganzen Lauf am Trace-Check scheitern zu lassen.
-    private async Task<IReadOnlyList<UnusedUnitLedgerCompareItem>> RepairCoverageReferencesAsync(
-        List<UnusedUnitLedgerCompareItem> items,
+    internal async Task<IReadOnlyList<UnusedUnitLedgerCompareItem>> RepairCoverageReferencesAsync(
+        IReadOnlyList<UnusedUnitLedgerCompareItem> items,
         IReadOnlyList<AtomicUnit> relevantUnits,
         IReadOnlyList<SemanticLedgerEntry> candidates,
         CancellationToken ct)

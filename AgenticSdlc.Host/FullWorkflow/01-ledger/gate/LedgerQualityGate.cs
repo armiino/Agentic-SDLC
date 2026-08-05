@@ -25,6 +25,9 @@ public sealed record GateResult(
 /// Kernprinzip (smallVersion.md §LedgerQualityGate): Pipeline-Vollständigkeit ist deterministisch beweisbar
 /// (auch wenn open-world-Transkript-Vollständigkeit es nicht ist). Das Gate erzeugt KEINE neue Semantik.
 /// Trennung error (hart, lässt den Run scheitern) vs warning (gemeldet, nicht fatal).
+/// Seit Schritt 5 ④ (05.08.) in ZWEI Schnitten aus EINER Prüf-Quelle: <see cref="EvaluateCanonicalStage"/>
+/// (candidates+canonical) läuft IM Graphen als Checker des Maker-Checker-Repair-Loops;
+/// <see cref="Evaluate"/> (voll, inkl. validated) bleibt das End-Audit in EvaluateAsync (Defense in Depth).
 /// </remarks>
 public static class LedgerQualityGate
 {
@@ -57,6 +60,33 @@ public static class LedgerQualityGate
         "question", "open_question", "consciously_omitted"
     ];
 
+    /// <summary>Schritt 5 ④ (05.08.) — die KANONISIERUNGS-STUFEN-Teilmenge des Gates (nur candidates+canonical,
+    /// KEINE validated-Checks): läuft IM Graphen als deterministischer Checker des Maker-Checker-Repair-Loops
+    /// (CanonicalCheckExecutor). Dieselbe Prüf-Quelle wie <see cref="Evaluate"/> — keine Kopie.</summary>
+    public static GateResult EvaluateCanonicalStage(
+        IReadOnlyList<SemanticLedgerEntry> candidates,
+        IReadOnlyList<SemanticLedgerEntry> canonical)
+    {
+        var v = new List<GateViolation>();
+        var stats = AddCanonicalStageViolations(v, candidates, canonical);
+
+        var errors = v.Count(x => x.Severity == "error");
+        var warnings = v.Count(x => x.Severity == "warning");
+        var checks = new Dictionary<string, object>
+        {
+            ["candidates"] = candidates.Count,
+            ["canonical"] = canonical.Count,
+            ["candidatesReferenced"] = stats.ReferencedCount,
+            ["candidatesOrphan"] = stats.OrphanCount,
+            ["unknownCandidateReferences"] = stats.UnknownRefCount,
+            ["duplicateCandidateReferences"] = stats.DuplicateRefCount,
+            ["canonicalWithEvidence"] = canonical.Count(c => c.Evidence.Count > 0)
+        };
+        return new GateResult(errors == 0, errors, warnings, checks, v);
+    }
+
+    private sealed record CanonicalStats(int ReferencedCount, int OrphanCount, int UnknownRefCount, int DuplicateRefCount);
+
     public static GateResult Evaluate(
         IReadOnlyList<SemanticLedgerEntry> candidates,
         IReadOnlyList<SemanticLedgerEntry> canonical,
@@ -64,10 +94,88 @@ public static class LedgerQualityGate
     {
         var v = new List<GateViolation>();
 
+        // Kanonisierungs-Stufe (I0/I1/I2/I2b/I3/I5b/I5c + Dispositionen) — geteilte Quelle mit dem In-Graph-Checker.
+        var stats = AddCanonicalStageViolations(v, candidates, canonical);
+
+        // --- I0 (ERROR, validated-Teil): Validated-IDs muessen eindeutig sein. ---
+        AddDuplicateIdViolation(v, "DUPLICATE_VALIDATED_ID", "Validated-IDs sind nicht eindeutig.", validated.Select(x => x.Entry.Id));
+
+        // --- I4 (ERROR): validated deckt canonical exakt (id-Menge identisch). ---
+        var canonIds = canonical.Select(c => c.Id).ToHashSet(StringComparer.Ordinal);
+        var valIds = validated.Select(x => x.Entry.Id).ToHashSet(StringComparer.Ordinal);
+        var notValidated = canonIds.Where(id => !valIds.Contains(id)).ToList();
+        if (notValidated.Count > 0)
+            v.Add(new("error", "CANONICAL_NOT_VALIDATED", "Kanonische Einträge ohne Facet-Validation-Verdict.", notValidated));
+        var extraValidated = valIds.Where(id => !canonIds.Contains(id)).ToList();
+        if (extraValidated.Count > 0)
+            v.Add(new("error", "VALIDATION_WITHOUT_CANONICAL",
+                "Facet-Validation enthält IDs, die im kanonischen Ledger nicht existieren.", extraValidated));
+
+        // --- I4b (ERROR): Validated Entry und Validation-Objekt muessen dieselbe id tragen. ---
+        var validationIdMismatch = validated
+            .Where(x => !string.Equals(x.Entry.Id, x.Validation.Id, StringComparison.Ordinal))
+            .Select(x => x.Entry.Id)
+            .ToList();
+        if (validationIdMismatch.Count > 0)
+            v.Add(new("error", "VALIDATION_ID_MISMATCH",
+                "Validated entry id und validation.id stimmen nicht überein.", validationIdMismatch));
+
+        // --- I5 (ERROR): Enum-Gültigkeit verdict + claimStatus. ---
+        var badVerdict = validated.Where(x => !ValidVerdicts.Contains(x.Validation.Verdict)).Select(x => x.Entry.Id).ToList();
+        if (badVerdict.Count > 0)
+            v.Add(new("error", "INVALID_VERDICT", $"verdict ausserhalb {{{string.Join("|", ValidVerdicts)}}}.", badVerdict));
+        var badStatus = validated.Where(x => !ValidClaimStatus.Contains(x.ClaimStatus)).Select(x => x.Entry.Id).ToList();
+        if (badStatus.Count > 0)
+            v.Add(new("error", "INVALID_CLAIM_STATUS", $"claimStatus ausserhalb {{{string.Join("|", ValidClaimStatus)}}}.", badStatus));
+
+        // --- I5d (ERROR): Validator-Repair taxonomie-konform (#4): suggested nur offizielle Werte je Facette. ---
+        var badSuggested = validated
+            .Where(x => x.Validation.FacetIssues.Any(i =>
+                i.Suggested is not null
+                && SuggestableFacetValues.TryGetValue(i.Facet, out var allowed)
+                && !allowed.Contains(i.Suggested)))
+            .Select(x => x.Entry.Id)
+            .ToList();
+        if (badSuggested.Count > 0)
+            v.Add(new("error", "INVALID_SUGGESTED_VALUE",
+                "FacetIssue.suggested liegt für eine geschlossene Facette ausserhalb der offiziellen Taxonomie.", badSuggested));
+
+        // --- I6 (WARNING): jedes FacetIssue mit suggested==observed ist folgenlos (kein echter Repair). ---
+        var emptyRepair = validated.Where(x => x.Validation.FacetIssues.Any(i =>
+            i.Suggested is not null && string.Equals(i.Suggested, i.Observed, StringComparison.OrdinalIgnoreCase)))
+            .Select(x => x.Entry.Id).ToList();
+        if (emptyRepair.Count > 0)
+            v.Add(new("warning", "REPAIR_EQUALS_OBSERVED", "FacetIssue mit suggested == observed (kein wirksamer Repair).", emptyRepair));
+
+        var errors = v.Count(x => x.Severity == "error");
+        var warnings = v.Count(x => x.Severity == "warning");
+        var checks = new Dictionary<string, object>
+        {
+            ["candidates"] = candidates.Count,
+            ["canonical"] = canonical.Count,
+            ["validated"] = validated.Count,
+            ["candidatesReferenced"] = stats.ReferencedCount,
+            ["candidatesOrphan"] = stats.OrphanCount,
+            ["unknownCandidateReferences"] = stats.UnknownRefCount,
+            ["duplicateCandidateReferences"] = stats.DuplicateRefCount,
+            ["canonicalWithEvidence"] = canonical.Count(c => c.Evidence.Count > 0),
+            ["approved"] = validated.Count(x => x.ClaimStatus == "approved"),
+            ["reviewRequired"] = validated.Count(x => x.ClaimStatus == "review_required")
+        };
+
+        return new GateResult(errors == 0, errors, warnings, checks, v);
+    }
+
+    // Die geteilte Prüf-Quelle der Kanonisierungs-Stufe — von EvaluateCanonicalStage (In-Graph-Checker)
+    // UND Evaluate (End-Audit) identisch durchlaufen. Checks wörtlich unverändert (Schritt 5 ④, nur umsortiert).
+    private static CanonicalStats AddCanonicalStageViolations(
+        List<GateViolation> v,
+        IReadOnlyList<SemanticLedgerEntry> candidates,
+        IReadOnlyList<SemanticLedgerEntry> canonical)
+    {
         // --- I0 (ERROR): Ledger-IDs muessen eindeutig sein. ---
         AddDuplicateIdViolation(v, "DUPLICATE_CANDIDATE_ID", "Candidate-IDs sind nicht eindeutig.", candidates.Select(c => c.Id));
         AddDuplicateIdViolation(v, "DUPLICATE_CANONICAL_ID", "Kanonische IDs sind nicht eindeutig.", canonical.Select(c => c.Id));
-        AddDuplicateIdViolation(v, "DUPLICATE_VALIDATED_ID", "Validated-IDs sind nicht eindeutig.", validated.Select(x => x.Entry.Id));
 
         // --- I1 (ERROR): kein Candidate verschwindet still — jeder Candidate in genau einem canonical.candidateIds. ---
         var candidateIds = candidates.Select(c => c.Id).Where(s => !string.IsNullOrWhiteSpace(s)).ToHashSet(StringComparer.Ordinal);
@@ -130,34 +238,6 @@ public static class LedgerQualityGate
         if (noEvidence.Count > 0)
             v.Add(new("error", "CANONICAL_WITHOUT_EVIDENCE", "Kanonische Einträge ohne Evidence.", noEvidence));
 
-        // --- I4 (ERROR): validated deckt canonical exakt (id-Menge identisch). ---
-        var canonIds = canonical.Select(c => c.Id).ToHashSet(StringComparer.Ordinal);
-        var valIds = validated.Select(x => x.Entry.Id).ToHashSet(StringComparer.Ordinal);
-        var notValidated = canonIds.Where(id => !valIds.Contains(id)).ToList();
-        if (notValidated.Count > 0)
-            v.Add(new("error", "CANONICAL_NOT_VALIDATED", "Kanonische Einträge ohne Facet-Validation-Verdict.", notValidated));
-        var extraValidated = valIds.Where(id => !canonIds.Contains(id)).ToList();
-        if (extraValidated.Count > 0)
-            v.Add(new("error", "VALIDATION_WITHOUT_CANONICAL",
-                "Facet-Validation enthält IDs, die im kanonischen Ledger nicht existieren.", extraValidated));
-
-        // --- I4b (ERROR): Validated Entry und Validation-Objekt muessen dieselbe id tragen. ---
-        var validationIdMismatch = validated
-            .Where(x => !string.Equals(x.Entry.Id, x.Validation.Id, StringComparison.Ordinal))
-            .Select(x => x.Entry.Id)
-            .ToList();
-        if (validationIdMismatch.Count > 0)
-            v.Add(new("error", "VALIDATION_ID_MISMATCH",
-                "Validated entry id und validation.id stimmen nicht überein.", validationIdMismatch));
-
-        // --- I5 (ERROR): Enum-Gültigkeit verdict + claimStatus. ---
-        var badVerdict = validated.Where(x => !ValidVerdicts.Contains(x.Validation.Verdict)).Select(x => x.Entry.Id).ToList();
-        if (badVerdict.Count > 0)
-            v.Add(new("error", "INVALID_VERDICT", $"verdict ausserhalb {{{string.Join("|", ValidVerdicts)}}}.", badVerdict));
-        var badStatus = validated.Where(x => !ValidClaimStatus.Contains(x.ClaimStatus)).Select(x => x.Entry.Id).ToList();
-        if (badStatus.Count > 0)
-            v.Add(new("error", "INVALID_CLAIM_STATUS", $"claimStatus ausserhalb {{{string.Join("|", ValidClaimStatus)}}}.", badStatus));
-
         // --- I5b (ERROR): kontrollierte Ledger-Taxonomie. ---
         AddEnumViolation(v, "INVALID_KIND", $"kind ausserhalb {{{string.Join("|", ValidKinds)}}}.", canonical, e => e.Kind, ValidKinds);
         AddEnumViolation(v, "INVALID_TIME_SCOPE", $"timeScope ausserhalb {{{string.Join("|", ValidTimeScopes)}}}.", canonical, e => e.TimeScope, ValidTimeScopes, allowNull: true);
@@ -175,18 +255,6 @@ public static class LedgerQualityGate
         if (inconsistentRequired.Count > 0)
             v.Add(new("error", "INCONSISTENT_REQUIRED_MODALITY",
                 "status=required (externe Pflicht) verlangt modality=must|must_not.", inconsistentRequired));
-
-        // --- I5d (ERROR): Validator-Repair taxonomie-konform (#4): suggested nur offizielle Werte je Facette. ---
-        var badSuggested = validated
-            .Where(x => x.Validation.FacetIssues.Any(i =>
-                i.Suggested is not null
-                && SuggestableFacetValues.TryGetValue(i.Facet, out var allowed)
-                && !allowed.Contains(i.Suggested)))
-            .Select(x => x.Entry.Id)
-            .ToList();
-        if (badSuggested.Count > 0)
-            v.Add(new("error", "INVALID_SUGGESTED_VALUE",
-                "FacetIssue.suggested liegt für eine geschlossene Facette ausserhalb der offiziellen Taxonomie.", badSuggested));
 
         var missingDispositionArtifacts = canonical
             .Where(e => RequiredArtifacts.Any(a => !e.Disposition.ContainsKey(a)))
@@ -212,30 +280,11 @@ public static class LedgerQualityGate
             v.Add(new("error", "INVALID_DISPOSITION_REPRESENTATION_MODE",
                 $"disposition.*.representationMode ausserhalb {{{string.Join("|", ValidRepresentationModes)}}}.", invalidDispositionMode));
 
-        // --- I6 (WARNING): jedes FacetIssue mit suggested==observed ist folgenlos (kein echter Repair). ---
-        var emptyRepair = validated.Where(x => x.Validation.FacetIssues.Any(i =>
-            i.Suggested is not null && string.Equals(i.Suggested, i.Observed, StringComparison.OrdinalIgnoreCase)))
-            .Select(x => x.Entry.Id).ToList();
-        if (emptyRepair.Count > 0)
-            v.Add(new("warning", "REPAIR_EQUALS_OBSERVED", "FacetIssue mit suggested == observed (kein wirksamer Repair).", emptyRepair));
-
-        var errors = v.Count(x => x.Severity == "error");
-        var warnings = v.Count(x => x.Severity == "warning");
-        var checks = new Dictionary<string, object>
-        {
-            ["candidates"] = candidates.Count,
-            ["canonical"] = canonical.Count,
-            ["validated"] = validated.Count,
-            ["candidatesReferenced"] = candidateIds.Count(id => referenced.Contains(id)),
-            ["candidatesOrphan"] = orphanCandidates.Count,
-            ["unknownCandidateReferences"] = unknownCandidateRefs.Count,
-            ["duplicateCandidateReferences"] = duplicateCandidateRefs.Count,
-            ["canonicalWithEvidence"] = canonical.Count(c => c.Evidence.Count > 0),
-            ["approved"] = validated.Count(x => x.ClaimStatus == "approved"),
-            ["reviewRequired"] = validated.Count(x => x.ClaimStatus == "review_required")
-        };
-
-        return new GateResult(errors == 0, errors, warnings, checks, v);
+        return new CanonicalStats(
+            ReferencedCount: candidateIds.Count(id => referenced.Contains(id)),
+            OrphanCount: orphanCandidates.Count,
+            UnknownRefCount: unknownCandidateRefs.Count,
+            DuplicateRefCount: duplicateCandidateRefs.Count);
     }
 
     private static void AddDuplicateIdViolation(List<GateViolation> violations, string code, string message, IEnumerable<string?> ids)

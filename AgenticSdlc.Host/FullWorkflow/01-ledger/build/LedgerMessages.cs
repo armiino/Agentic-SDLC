@@ -1,3 +1,4 @@
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
 
 namespace AgenticSdlc.Host.FullWorkflow.Ledger;
@@ -30,10 +31,35 @@ public sealed record UnusedUnitTriageResultMessage(
     UnitCoverageGateResult Coverage,
     IReadOnlyList<UnusedUnitTriageItem> Triage);
 
-/// <summary>Transportiert den Candidate-Ledger und den Canonical-Draft in die Coverage-Reparatur.</summary>
+/// <summary>Transportiert den Candidate-Ledger und den Canonical-Draft in den Kanonisierungs-Check.
+/// Schritt 5 ④: Attempt/Source/History reisen IN der Message (R-33-Muster — der Graph bleibt stateless);
+/// die Canonicalization sendet mit den Defaults (Attempt 1, maker), der Repair mit Attempt+1/repair.</summary>
 public sealed record CandidateAndCanonicalLedgerMessage(
     IReadOnlyList<SemanticLedgerEntry> Candidates,
-    IReadOnlyList<SemanticLedgerEntry> CanonicalDraft);
+    IReadOnlyList<SemanticLedgerEntry> CanonicalDraft,
+    int Attempt = 1,
+    string Source = "maker",
+    IReadOnlyList<GateAttempt>? History = null);
+
+/// <summary>Schritt 5 ④ — das typisierte Verdict des Kanonisierungs-Checks (Kanten-Prädikate routen darauf:
+/// Repair → Repair-Knoten; Pass/Terminal entscheidet der Checker selbst).</summary>
+public sealed record CanonicalGateVerdict(
+    IReadOnlyList<SemanticLedgerEntry> Candidates,
+    IReadOnlyList<SemanticLedgerEntry> CanonicalDraft,
+    GateResult Report,
+    GateDecision Decision,
+    int Attempt,
+    IReadOnlyList<GateAttempt> History);
+
+/// <summary>Schritt 5 ④ / R-3 — Compare-Ergebnis (sanitisiert + vervollständigt) auf dem Weg zum SICHTBAREN
+/// Referenz-Repair-Knoten; trägt die Compare-Stufen-Zähler für die unveränderte step-01d-Metrik durch.</summary>
+public sealed record UnusedCompareDraftMessage(
+    IReadOnlyList<AtomicUnit> RelevantUnits,
+    IReadOnlyList<SemanticLedgerEntry> Candidates,
+    IReadOnlyList<UnusedUnitLedgerCompareItem> Items,
+    int ComparedByModel,
+    int AutoCompletedNeedsHuman,
+    IReadOnlyList<string> RemovedRelatedCandidateIds);
 
 /// <summary>Kanonischer Ledger (Stufe 2 → Stufe 3), inkl. Cluster-Trace an den Einträgen.</summary>
 public sealed record CanonicalLedgerMessage(IReadOnlyList<SemanticLedgerEntry> Entries);

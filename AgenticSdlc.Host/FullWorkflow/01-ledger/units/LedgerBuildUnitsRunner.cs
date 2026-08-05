@@ -190,6 +190,34 @@ public static class LedgerBuildUnitsRunner
     {
         var validatedPath = Path.Combine(run.RunDir, "step-03-facet-validation", "output.json");
 
+        // Schritt 5 ④: endete der In-Graph-Kanonisierungs-Loop terminal (MaxAttempts/HumanReview), liegt der
+        // ehrliche Befund in gate/canonical-gate.json — VOR dem generischen Step-Output-Check melden (sonst
+        // würde ein irreführendes STEP_OUTPUT_MISSING die echte Ursache verdecken).
+        var canonicalGatePath = Path.Combine(run.RunDir, "gate", "canonical-gate.json");
+        if (File.Exists(canonicalGatePath))
+        {
+            using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(canonicalGatePath).ConfigureAwait(false));
+            if (doc.RootElement.TryGetProperty("pass", out var passProp) && !passProp.GetBoolean())
+            {
+                var decision = doc.RootElement.TryGetProperty("decision", out var d) ? d.GetString() : null;
+                var attempts = doc.RootElement.TryGetProperty("attempts", out var a) ? a.GetArrayLength() : 0;
+                WriteDiagnosis(run, new
+                {
+                    runId = run.RunId,
+                    workflow = "LedgerBuilderUnitCoverage",
+                    status = "GATE_FAILED",
+                    rootCause = new { code = "LEDGER_CANONICAL_GATE_FAILED", decision, attempts, detail = "gate/canonical-gate.json" },
+                    timestampUtc = DateTime.UtcNow
+                });
+                var units = LedgerRunArtifacts.ReadStepOutput<AtomicUnitFixture>(run, "step-00-atomic-units");
+                var cand = LedgerRunArtifacts.ReadStepOutput<SemanticLedgerFixture>(run, "step-01-candidate");
+                var canon = LedgerRunArtifacts.ReadStepOutput<SemanticLedgerFixture>(run, "step-02-canonical");
+                return new LedgerBuildResult(true, false, false, validatedPath,
+                    units?.Units.Count ?? 0, cand?.Entries.Count ?? 0, canon?.Entries.Count ?? 0, 0, 0, 0,
+                    "LEDGER_CANONICAL_GATE_FAILED");
+            }
+        }
+
         var unitsFixture = LedgerRunArtifacts.ReadStepOutput<AtomicUnitFixture>(run, "step-00-atomic-units");
         var unitGate = LedgerRunArtifacts.ReadStepOutput<UnitCoverageGateResult>(run, "step-01b-unit-coverage");
         var unusedTriage = LedgerRunArtifacts.ReadStepOutput<UnusedUnitTriageFixture>(run, "step-01c-unused-unit-triage");
