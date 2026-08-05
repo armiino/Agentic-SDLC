@@ -10,6 +10,10 @@ ohne Freigabe-Weg.
 | Ordner | Inhalt |
 |---|---|
 | `core/` | Basismodelle (`SemanticLedgerEntry` + Evidence/Disposition), deterministischer `TranscriptSegmenter`, Extraktor/Canonicalizer, `SemanticLedgerRecallMatcher` (Messwerkzeug) |
+<!-- 05.08. (9g-Mess-Befund): DISPOSITIONS-VERGABE ist jetzt ANGELEITET (vorher nur Schema-Pflichtfeld) — Regel in
+     beiden Extraktoren + FacetAssigner + FacetValidator-Prüfregel: open-questions=required NUR bei echter Offenheit
+     (must_clarify/must_consider bzw. wörtlich belegte Offenheit); Festgelegtes (must) = not_applicable.
+     Wirkung verifiziert (Lauf 20260805_105454: Rauschen 5/5 weg, Gold 4/4). Details: R-Log R-37-Umfeld + aufgefallen 9g. -->
 | `build/` | die beiden Build-Runner + `FacetValidationModels` (EntryValidation/ValidatedLedgerEntry) |
 | `units/` | High-Coverage-Pfad: Atomic Units, Unused-Pipeline (Triage/Compare/Repair), Traces |
 | `gate/` | `LedgerQualityGate` — deterministische Pipeline-Invarianten I0–I6 (kein LLM) |

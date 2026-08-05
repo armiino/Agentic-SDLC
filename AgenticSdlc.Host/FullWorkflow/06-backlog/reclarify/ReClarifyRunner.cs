@@ -25,7 +25,7 @@ public static class ReClarifyRunner
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
     // pipeline-full (B3): dieselben Maker/Review-Agents wie RunClusterAsync, fuer die Graph-Komposition
-    // gehoben (Muster: PipelineComposedRunner.AgentFactory). Eine Quelle, keine Kopie.
+    // gehoben (Muster: PipelineAgents.Factory). Eine Quelle, keine Kopie.
     internal static (Func<IReadOnlyList<AITool>, AIAgent> Maker, Func<IReadOnlyList<AITool>, AIAgent> Review)
         BuildClusterAgentFactories(string repoRoot, HostSettings settings, HostSettings genSettings, RunContext run)
     {

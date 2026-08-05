@@ -17,6 +17,7 @@ Notes sind lokale Arbeitsdokumente (gitignored) auf dem Rechner des Autors.
 | `evaluation/` | `AgenticSdlc.Host/Phases/Phase2/Evaluation/` (nur der CODE: root, `PerItem/`-Rest, `Review/`, `ReviewAgent/`) | S-3/S-4-Umfeld · `v-s3-evaluator-review` | `Evaluation/NextStep/roter-faden-review.md`, `ReviewWorkflow-Evidence.md`, `ZUSATZ-entscheidungsnotiz-ledger-review.md` | `runs/{phase2B,reviewpilot}`, `thesis-evidence/*` |
 | `evaluation-tests/` | `AgenticSdlc.Tests/Review/` (alle 28 Testdateien) | S-3/S-4 | testeten die Evaluation-/Spike-Fläche | — |
 | `phase2-l4-dormant/` | `AgenticSdlc.Host/FullWorkflow/06-backlog/{baseline,consolidation,quality,readiness,completion,clarification,openrequirements,operationalization-audit,requirementsdoc}` + 4 Prompt-Ordner + 4 Testdateien + 2 verwaiste contracts | Alt-L4-Backlog-Kette · Rückbau 04.08.2026 | `docs/aktiv/backlog-genealogie.md` (LEBEND) + eigenes `README.md` im Ordner | `runsArchive/` (l4-Läufe) |
+| `pipeline-hitl/` | `AgenticSdlc.Host/FullWorkflow/08-pipeline/PipelineComposedRunner.cs` | Erster durabler Kompositions-Beweis (2–3 Gates) · abgelöst 05.08.2026 durch `pipeline-full run --from-delta` | eigenes `README.md` + `thesis-story/2026-08-05/iteration-notes-eingangsvertrag.md` | `runs/pipeline/` |
 
 **Was NICHT hier liegt (bewusst):**
 - Der **Ledger-L1/L2-Kern** (5 Dateien, früher `Evaluation/PerItem/`) ist **Produkt** und lebt in

@@ -21,7 +21,7 @@ EIN MAF-Workflow nach Rezept (Beispiele unter `recipe/examples/`):
 | Schritt | Knoten/Baustein | LLM? | Was passiert |
 |---|---|---|---|
 | Projektion | `EvidenceLedgerProjection` | nein | Claims → Prompt-Text: je Claim `status/modality/timeScope` + Disposition des Zieltyps + Evidenz-Zitate. Byte-identisch für Chat-Runner und MAF-Executor |
-| Baseline-Maker (je Typ, Fan-out) | `BaselineFanOutWorkflow` / Maker | ja | erzeugt das Artefakt (z. B. requirements) NUR aus den Claims; `sourceClaimIds` je Item |
+| Baseline-Maker (je Typ, Fan-out) | `BaselineFanOutWorkflow` / Maker | ja | erzeugt das Artefakt (z. B. requirements) NUR aus den Claims; `sourceClaimIds` je Item. **R-37 (05.08., MAF-native Endform):** der Dispatch prägt je Spur eine TYPISIERTE `BranchSource` mit der spur-eigenen, dispositions-gekeyten Projektion (inkl. deterministischem not_applicable-Filter in `EvidenceLedgerProjection`); Kanten-Prädikate routen — vorher sahen ALLE Zweige die requirements-gekeyte Projektion (R-Log R-37) |
 | Checker (MC0/C3/C7) | `makerchecker/ContractChecker` | ja+det. | Fidelity-Vertrag: Zitat-Deckung, **C3 = harte Sprache trotz weicher Facette verboten** (hart↔weich-Grenze der Adjudikation!), Halluzinations-Checks |
 | Critic/Repair | `ContractCritic`/`ContractRepair` | ja | bestätigt Heuristik-Kandidaten, repariert reparable Verstöße (max. Iterationen) |
 | Finalize | `CheckerRepair`-Workflow | nein | **Endzustand ist IMMER `decision=HumanReview, pass=false`** — der Checker zertifiziert nie selbst; die Autorisierung ist die Weiterverwendung durch den Autor (A4). `BRANCH_IDS_ASSIGNED` vergibt stabile Item-IDs (REQ-…, ARCH-…) |

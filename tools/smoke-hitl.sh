@@ -77,15 +77,16 @@ CLEANUP+=("runs/github-forward/$rid")
 o=$(r github-forward-hitl resume "$rid" --accept-all)
 grepq "$o" "DRY-RUN" && ok "github-forward resume -> dry-run Apply" || bad "github-forward resume"
 
-# --- Super-Workflow: pipeline (2 Gates) ---
-echo "== [5/5] pipeline-hitl (2 Human-Gates) =="
-o=$(r pipeline-hitl start "$EMPTY_DELTA"); rid=$(ridof "$o")
-grepq "$o" "PAUSIERT an Gate 1" && ok "pipeline start -> Gate 1 ($rid)" || bad "pipeline start"
-CLEANUP+=("runs/pipeline/$rid")
-o=$(r pipeline-hitl resume "$rid" --accept-all)
-grepq "$o" "naechsten Gate" && ok "pipeline resume 1 -> Gate 2" || bad "pipeline resume 1"
-o=$(r pipeline-hitl resume "$rid" --accept-all)
-grepq "$o" "PIPELINE FERTIG" && ok "pipeline resume 2 -> fertig" || bad "pipeline resume 2"
+# --- Super-Workflow: pipeline-full --from-delta (Schritt 5 ③, 05.08.: ersetzt pipeline-hitl) ---
+# Prueft den EIN-Graph Delta-Einstieg + den ECHTEN Checkpoint->Resume-Zyklus (echte Factories!).
+# Leer-Delta: Pause am ingest-gate; pbi-/forward-Gates ueberspringen bei 0 Items (einzeln gedeckt in [2]-[4]).
+echo "== [5/5] pipeline-full --from-delta (Ein-Graph, Pause->Resume) =="
+o=$(r pipeline-full run --from-delta "$EMPTY_DELTA" --policy interactive); rid=$(ridof "$o")
+grepq "$o" "Einstieg: DELTA" && ok "pipeline-full Delta-Einstieg (Front uebersprungen)" || bad "pipeline-full Delta-Einstieg"
+grepq "$o" "PAUSIERT am Gate 'ingest-gate'" && ok "pipeline-full run -> Pause ingest-gate ($rid)" || bad "pipeline-full run/Pause"
+CLEANUP+=("runs/fullworkflow/$rid")
+o=$(r pipeline-full resume "$rid" --accept-all)
+grepq "$o" "PIPELINE FERTIG" && ok "pipeline-full resume -> FERTIG (Placement+Forward-DryRun)" || bad "pipeline-full resume"
 
 # --- Core-Integritaet + Cleanup ---
 echo "== Core-Integritaet =="

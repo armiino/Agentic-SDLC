@@ -96,9 +96,9 @@ public static class PipelineComposedRunner
         var checkpointDir = run.OutputDir("checkpoints");
 
         var workflow = BuildWorkflow(run, repoRoot, ingestOutDir, pbiOutDir, maxAttempts,
-            AgentFactory(repoRoot, settings, genSettings, run, "RequirementIngestionAgent", "RequirementIngestionAgent1"),
-            AgentFactory(repoRoot, settings, genSettings, run, "PbiPlacementAgent", "PbiPlacementAgent1"),
-            AgentFactory(repoRoot, settings, genSettings, run, "PbiAlignmentAgent", "PbiAlignmentAgent1")); // R-26-C
+            PipelineAgents.Factory(repoRoot, settings, genSettings, run, "RequirementIngestionAgent", "RequirementIngestionAgent1"),
+            PipelineAgents.Factory(repoRoot, settings, genSettings, run, "PbiPlacementAgent", "PbiPlacementAgent1"),
+            PipelineAgents.Factory(repoRoot, settings, genSettings, run, "PbiAlignmentAgent", "PbiAlignmentAgent1")); // R-26-C
 
         Console.WriteLine($"[{Cmd}] start runId={run.RunId} model={genSettings.ModelId} maxAttempts={maxAttempts} (Ingest -> [Gate1] -> Apply -> Bridge -> PbiUpdate -> [Gate2] -> Apply)");
         return await HitlShell.StartAsync(Cmd, workflow, new IngestionResolveInput(delta, core, deltaRel, maxAttempts), run, checkpointDir,
@@ -215,12 +215,6 @@ public static class PipelineComposedRunner
         return 4;
     }
 
-    internal static Func<IReadOnlyList<AITool>, AIAgent> AgentFactory(string repoRoot, HostSettings settings, HostSettings genSettings, RunContext run, string agentName, string promptName)
-    {
-        var prompt = PromptProvider.Load(repoRoot, Phase, agentName, promptName, new Dictionary<string, string> { ["runId"] = run.RunId });
-        var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, agentName, SourceName);
-        return tools => client.AsAIAgent(instructions: prompt, name: agentName, tools: [.. tools]).AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
-    }
 
     private static Task WritePointer(string checkpointDir, string runId, CheckpointInfo cp)
         => HitlShell.WritePointerAsync(checkpointDir, new HitlPointer(runId, cp.SessionId, cp.CheckpointId, null, null, null, DateTime.UtcNow));

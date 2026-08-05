@@ -9,6 +9,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 
 // U2: Knoten-Gruppen, damit Assemble lesbar bleibt (je Gruppe eine Zeile im Aufrufer).
 internal sealed record FrontNodes(
+    PipelineEntryExecutor Entry,
     LedgerWrapperExecutor Ledger,
     AdjudicationGateRequestExecutor AdjudicationRequest, RequestPort AdjudicationPort, AdjudicationApplyExecutor AdjudicationApply, // H2: echter RequestPort
     BaselineStageExecutor Baselines,
@@ -51,11 +52,17 @@ internal static class PipelineFullWorkflow
 {
     public static Workflow Assemble(FrontNodes front, BootstrapNodes boot, OperationalNodes op, ForwardNodes fwd)
     {
-        var b = new WorkflowBuilder(front.Ledger)
+        // Schritt 5 ③ (05.08.): der Start ist ein TYPISIERTER Eingangs-Dispatcher (Transkript | Delta) —
+        // MAF-nativ per Input-Typ-Routing; der Delta-Einstieg dockt am existierenden BranchDetector an.
+        var b = new WorkflowBuilder(front.Entry)
             .WithName("pipeline-full")
-            .WithDescription("Transkript -> Ledger -> Adjudikation -> Baselines -> Delta -> [Branch] -> "
+            .WithDescription("(Transkript | Delta) -> Entry -> [Ledger -> Adjudikation -> Baselines -> Delta ->] [Branch] -> "
                            + "Bootstrap (core-bootstrap -> Cluster+Gate -> PBIs+Gate -> Seed) | Betrieb (Ingest+Gate -> Pbi+Gate) "
                            + "-> Snapshot -> Forward+Gate -> Dry-Run/Apply.");
+
+        // Eingangs-Vertrag: Transkript -> Front | fertiges Delta -> direkt Branch (beide Bahnen via Detector).
+        b.AddEdge(front.Entry, front.Ledger);
+        b.AddEdge(front.Entry, front.Branch);
 
         // Front (geteilt) — H2: Adjudikation als Request -> [adjudication-gate] -> Apply
         b.AddEdge(front.Ledger, front.AdjudicationRequest);

@@ -69,6 +69,8 @@ public static class PipelineFullRunner
         Console.Error.WriteLine("Usage:");
         Console.Error.WriteLine("  pipeline-full start [<transcript.txt>]   (Faden + Skeleton-Plan, kein LLM)");
         Console.Error.WriteLine("  pipeline-full run   [<transcript.txt>]   (EIN Graph: front->branch->bootstrap|betrieb->forward)");
+        Console.Error.WriteLine("  pipeline-full run --from-delta <meeting-delta.json>  (Einstieg an der Hinterhälfte; Branch entscheidet Bootstrap|Betrieb)");
+        Console.Error.WriteLine("  pipeline-full run ... --policy <interactive|accept-all>  (Gate-Politik NUR für diesen Lauf; ersetzt auch explizite Gate-Einträge)");
         Console.Error.WriteLine("  pipeline-full run --dry-run              (Assemble/Build()-Validierung, kein LLM)");
         Console.Error.WriteLine("  pipeline-full resume <runId> [--accept-all | --accept id1,id2] [--open-ui]  (pausiertes Gate beantworten, weiterfahren)");
         Console.Error.WriteLine("  pipeline-full status [<runId>]           (WO steht was: pausierte Läufe + Gate + Weiter-Kommando)");
@@ -82,19 +84,43 @@ public static class PipelineFullRunner
         var config = RunConfig.Load(repoRoot);
         var fw = FullWorkflowSettings.FromConfig(config.FullWorkflow);
 
-        var transcriptArg = args.Length > 2 && !args[2].StartsWith("--", StringComparison.Ordinal) ? args[2] : fw.Transcript;
-        if (string.IsNullOrWhiteSpace(transcriptArg))
+        // Schritt 5 ③: --policy <interactive|accept-all|replay:...> überschreibt das Profil DIESES Laufs
+        // (Smoke/Experimente config-unabhängig; explizite Gate-Einträge der run-config gelten weiter vorrangig).
+        for (var i = 2; i < args.Length; i++)
+            if (string.Equals(args[i], "--policy", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length)
+                fw = fw with { PolicyProfile = GatePolicy.Parse(args[i + 1]), Gates = new Dictionary<string, GatePolicy>(StringComparer.OrdinalIgnoreCase) };
+
+        // Schritt 5 ③: Eingangs-Vertrag — Transkript (volle Front) ODER --from-delta <meeting-delta.json>
+        // (Hinterhälfte; der BranchDetector entscheidet Bootstrap|Betrieb wie immer). Ersetzt pipeline-hitl.
+        string? deltaArg = null;
+        for (var i = 2; i < args.Length; i++)
+            if (string.Equals(args[i], "--from-delta", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) deltaArg = args[i + 1];
+
+        ProjectStateDocument? entryDelta = null;
+        string? transcriptPath = null;
+        var transcriptText = string.Empty;
+        if (deltaArg is not null)
         {
-            Console.Error.WriteLine($"[{Cmd}] Transkript fehlt (Arg oder run-config.fullworkflow.transcript).");
-            return 2;
+            var deltaPath = Path.IsPathRooted(deltaArg) ? deltaArg : Path.Combine(repoRoot, deltaArg);
+            if (!File.Exists(deltaPath)) { Console.Error.WriteLine($"[{Cmd}] MeetingDelta nicht gefunden: {deltaPath}"); return 2; }
+            entryDelta = (await JsonProjectStateRepository.LoadAsync(deltaPath).ConfigureAwait(false)).Document;
         }
-        var transcriptPath = Path.IsPathRooted(transcriptArg) ? transcriptArg : Path.Combine(repoRoot, transcriptArg);
-        if (!File.Exists(transcriptPath))
+        else
         {
-            Console.Error.WriteLine($"[{Cmd}] Transkript nicht gefunden: {transcriptPath}");
-            return 2;
+            var transcriptArg = args.Length > 2 && !args[2].StartsWith("--", StringComparison.Ordinal) ? args[2] : fw.Transcript;
+            if (string.IsNullOrWhiteSpace(transcriptArg))
+            {
+                Console.Error.WriteLine($"[{Cmd}] Transkript fehlt (Arg oder run-config.fullworkflow.transcript) — oder --from-delta <datei> nutzen.");
+                return 2;
+            }
+            transcriptPath = Path.IsPathRooted(transcriptArg) ? transcriptArg : Path.Combine(repoRoot, transcriptArg);
+            if (!File.Exists(transcriptPath))
+            {
+                Console.Error.WriteLine($"[{Cmd}] Transkript nicht gefunden: {transcriptPath}");
+                return 2;
+            }
+            transcriptText = await File.ReadAllTextAsync(transcriptPath).ConfigureAwait(false);
         }
-        var transcriptText = await File.ReadAllTextAsync(transcriptPath).ConfigureAwait(false);
 
         var run = new RunContext(RunId.New(), "fullworkflow");
         run.EnsureFolders();
@@ -123,7 +149,9 @@ public static class PipelineFullRunner
             pipelineMode = fw.Mode.ToString(),
             slice = "ledger-v0",
             runId = run.RunId,
-            transcript = Path.GetRelativePath(repoRoot, transcriptPath),
+            entryPoint = entryDelta is null ? "transcript" : "delta",
+            transcript = transcriptPath is null ? null : Path.GetRelativePath(repoRoot, transcriptPath),
+            fromDelta = deltaArg,
             execute = fw.Execute,
             policyProfile = fw.PolicyProfile.Kind.ToString(),
             ledgerModel,
@@ -144,8 +172,11 @@ public static class PipelineFullRunner
         var manager = CheckpointManager.CreateJson(store, HitlShell.Json);
         using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(fw.TimeoutMinutes));
 
-        var exit = await RunWorkflowStreamingAsync<TranscriptInput>(
-            workflow, new TranscriptInput(transcriptPath, transcriptText), run.RunId, run, fw, manager, cts.Token,
+        var entry = entryDelta is not null
+            ? new PipelineFullEntry(null, entryDelta)
+            : new PipelineFullEntry(new TranscriptInput(transcriptPath!, transcriptText), null);
+        var exit = await RunWorkflowStreamingAsync<PipelineFullEntry>(
+            workflow, entry, run.RunId, run, fw, manager, cts.Token,
             openUi: args.Contains("--open-ui")).ConfigureAwait(false);
 
         // H1: PAUSIERT (Exit 6) ist ein ERFOLGS-Ende dieses Prozesses — Zustand liegt im Checkpoint,
@@ -195,9 +226,9 @@ public static class PipelineFullRunner
         var githubOutDir = run.OutputDir("07-github");
         const int maxAttempts = 2;
 
-        var ingestFactory = PipelineComposedRunner.AgentFactory(repoRoot, settings, judgeSettings, run, "RequirementIngestionAgent", "RequirementIngestionAgent1");
-        var pbiFactory = PipelineComposedRunner.AgentFactory(repoRoot, settings, judgeSettings, run, "PbiPlacementAgent", "PbiPlacementAgent1");
-        var pbiAlignFactory = PipelineComposedRunner.AgentFactory(repoRoot, settings, judgeSettings, run, "PbiAlignmentAgent", "PbiAlignmentAgent1"); // R-26-C
+        var ingestFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "RequirementIngestionAgent", "RequirementIngestionAgent1");
+        var pbiFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "PbiPlacementAgent", "PbiPlacementAgent1");
+        var pbiAlignFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "PbiAlignmentAgent", "PbiAlignmentAgent1"); // R-26-C
         ICandidateRetriever retriever = new ShowAllRequirementRetriever();
 
         // Forward ist der anspruchsvollste Agent (jeden Delta-PBI adressieren) → eigenes Modell:
@@ -213,6 +244,7 @@ public static class PipelineFullRunner
 
         var workflow = PipelineFullWorkflow.Assemble(
             new FrontNodes(
+                new PipelineEntryExecutor(run),
                 new LedgerWrapperExecutor(settings, judgeSettings, run),
                 new AdjudicationGateRequestExecutor(run),
                 RequestPort.Create<AdjudicationReviewRequest, AdjudicationReviewResponse>("adjudication-gate"),

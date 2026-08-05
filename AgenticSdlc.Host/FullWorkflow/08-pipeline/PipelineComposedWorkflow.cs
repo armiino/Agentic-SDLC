@@ -47,29 +47,8 @@ internal sealed class IngestPbiBridgeExecutor(RunContext run, string repoRoot, s
 
 internal static class PipelineComposedWorkflow
 {
-    public static Workflow Build(
-        // Ingest-Knoten
-        IngestionHitlResolveExecutor ingestResolve, IngestionGateExecutor ingestGate, IngestionRepairExecutor ingestRepair,
-        IngestionHitlFinalizeExecutor ingestFinalize, RequestPort ingestPort, IngestComposedApplyExecutor ingestApply,
-        // R-14 G1: Tor 2 (Scan -> [decision-gate] -> Apply) zwischen Ingest-Apply und Bruecke
-        DecisionScanExecutor decisionScan, RequestPort decisionPort, DecisionComposedApplyExecutor decisionApply,
-        // Bruecke
-        IngestPbiBridgeExecutor bridge,
-        // Pbi-Knoten
-        PbiUpdateDeriveExecutor pbiDerive, PbiUpdateMakerExecutor pbiMaker, PbiUpdateGateExecutor pbiGate, PbiUpdateRepairExecutor pbiRepair,
-        PbiAlignExecutor pbiAlign, PbiUpdateHitlFinalizeExecutor pbiFinalize, RequestPort pbiPort, PbiUpdateApplyExecutor pbiApply)
-    {
-        var b = new WorkflowBuilder(ingestResolve)
-            .WithName("Pipeline-Ingest-PbiUpdate-HITL")
-            .WithDescription("Ingest -> [Human] -> Apply -> Decision (Tor 2, bei offenen DECs) -> Bridge -> PbiUpdate -> [Human] -> Apply.");
-        AddTo(b, ingestResolve, ingestGate, ingestRepair, ingestFinalize, ingestPort, ingestApply,
-            decisionScan, decisionPort, decisionApply,
-            bridge, pbiDerive, pbiMaker, pbiGate, pbiRepair, pbiAlign, pbiFinalize, pbiPort, pbiApply);
-        return b.Build();
-    }
-
-    // U2 (Ein-Graph): DIESELBE Kanten-Verdrahtung fuer den Standalone-Graph (pipeline-hitl) UND den
-    // Ein-Graph von pipeline-full — eine Quelle, keine Kopie.
+    // U2 (Ein-Graph): die EINE Kanten-Quelle der Betriebs-Hinterhaelfte. Seit Schritt 5 ③ (05.08.) NUR noch vom
+    // Ein-Graph (PipelineFullWorkflow.Assemble) genutzt — der Standalone-Build ging mit pipeline-hitl ins Archiv.
     public static void AddTo(WorkflowBuilder b,
         IngestionHitlResolveExecutor ingestResolve, IngestionGateExecutor ingestGate, IngestionRepairExecutor ingestRepair,
         IngestionHitlFinalizeExecutor ingestFinalize, RequestPort ingestPort, IngestComposedApplyExecutor ingestApply,
