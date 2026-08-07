@@ -24,6 +24,10 @@ internal static class IngestionResolveTask
                                2b. search_rejections: Wurde etwas inhaltlich Gleiches frueher ABGELEHNT? Wenn ja,
                                    relatedRejectionId (REJ-*) auf der Operation setzen — die Operation trotzdem
                                    normal vorschlagen, die Entscheidung trifft der Mensch am Gate.
+                               2c. QUER-SICHT (nur lesen): list_core_architecture zeigt die Wahrheit des ANDEREN
+                                   Aspekts. Widerspricht eine eingehende Aussage einer AKTIVEN Architektur-Wahrheit,
+                                   nutze CONTRADICT mit deren entityId — NIE stilles NEW daneben. RESTATE/REFINE/
+                                   SUPERSEDE bleiben strikt requirement-intern.
                                3. Je eingehendem Item GENAU EINE Operation.
                                   Fuer Requirements (itemType=requirement): RESTATE/REFINE/SUPERSEDE/CONTRADICT
                                   (mit targetEntityId) · NEW/NEW_RELATED (ohne targetEntityId) · ALREADY_DECIDED (DEC-*).
@@ -38,62 +42,65 @@ internal static class IngestionResolveTask
 }
 
 [SendsMessage(typeof(IngestionDraft))]
-internal sealed class IngestionResolveExecutor(Func<IReadOnlyList<AITool>, AIAgent> agentFactory, ICandidateRetriever retriever, RunContext run)
-    : Executor<IngestionResolveInput>("RequirementIngestionResolveAgent")
+internal sealed class IngestionResolveExecutor(Func<IReadOnlyList<AITool>, AIAgent> agentFactory, ICandidateRetriever retriever, RunContext run, AspectIngestionProfile profile)
+    : Executor<IngestionResolveInput>(profile.ExecutorIdPrefix + "ResolveAgent")
 {
     public override async ValueTask HandleAsync(IngestionResolveInput input, IWorkflowContext context, CancellationToken ct = default)
     {
-        var tools = new IngestionTools(input.MeetingDelta, input.Core, retriever, run);
+        var tools = new IngestionTools(input.MeetingDelta, input.Core, retriever, run, profile);
         var agent = agentFactory(tools.Build());
-        await agent.RunAsync([new ChatMessage(ChatRole.User, IngestionResolveTask.Text)], cancellationToken: ct).ConfigureAwait(false);
+        await agent.RunAsync([new ChatMessage(ChatRole.User, profile.ResolverTaskText)], cancellationToken: ct).ConfigureAwait(false);
         var ops = tools.SavedOperations ?? [];
-        run.AppendEvent(new { type = "REQ_INGEST_RESOLVE_DONE", runId = run.RunId, saved = tools.Saved, operations = ops.Count, checkRounds = tools.CheckRounds, timestampUtc = DateTime.UtcNow });
+        run.AppendEvent(new { type = profile.EventPrefix + "_RESOLVE_DONE", runId = run.RunId, saved = tools.Saved, operations = ops.Count, checkRounds = tools.CheckRounds, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(new IngestionDraft(input.MeetingDelta, input.Core, input.SourceMeetingDeltaPath, ops, tools.Saved, tools.CheckRounds, Attempt: 1, Source: "maker", input.MaxAttempts, History: [])).ConfigureAwait(false);
     }
 }
 
 [SendsMessage(typeof(IngestionVerdict))]
-internal sealed class IngestionGateExecutor(RunContext run) : Executor<IngestionDraft>("RequirementIngestionGate")
+internal sealed class IngestionGateExecutor(RunContext run, AspectIngestionProfile? profile = null)
+    : Executor<IngestionDraft>((profile ?? AspectIngestionProfile.Requirement).ExecutorIdPrefix + "Gate")
 {
     public override async ValueTask HandleAsync(IngestionDraft draft, IWorkflowContext context, CancellationToken ct = default)
     {
         var plan = new StateChangePlanDocument(StateChangePlanDocument.CurrentSchemaVersion, "gate", DateTime.UtcNow, draft.SourcePath, draft.Operations);
-        var report = IngestionGate.Check(draft.MeetingDelta, draft.Core, plan);
+        var report = IngestionGate.Check(draft.MeetingDelta, draft.Core, plan, profile);
         var decision = IngestionGate.Decide(report, draft.Attempt, draft.MaxAttempts);
         var attempt = new GateAttempt(draft.Attempt, draft.Source, report.Pass, decision.ToString(),
             report.Errors.Select(e => $"{e.Code}({e.Repairability}){(e.IncomingItemId is null ? "" : " " + e.IncomingItemId)}").ToList(), DateTime.UtcNow);
-        run.AppendEvent(new { type = "REQ_INGEST_GATE", runId = run.RunId, attempt = draft.Attempt, source = draft.Source, pass = report.Pass, decision = decision.ToString(), errors = report.Errors.Count, timestampUtc = DateTime.UtcNow });
+        run.AppendEvent(new { type = (profile ?? AspectIngestionProfile.Requirement).EventPrefix + "_GATE", runId = run.RunId, attempt = draft.Attempt, source = draft.Source, pass = report.Pass, decision = decision.ToString(), errors = report.Errors.Count, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(new IngestionVerdict(draft.MeetingDelta, draft.Core, draft.SourcePath, draft.Operations, report, decision, draft.Saved, draft.CheckRounds, draft.Attempt, draft.MaxAttempts, draft.History.Append(attempt).ToList())).ConfigureAwait(false);
     }
 }
 
 [SendsMessage(typeof(IngestionDraft))]
-internal sealed class IngestionRepairExecutor(Func<IReadOnlyList<AITool>, AIAgent> agentFactory, ICandidateRetriever retriever, RunContext run)
-    : Executor<IngestionVerdict>("RequirementIngestionRepair")
+internal sealed class IngestionRepairExecutor(Func<IReadOnlyList<AITool>, AIAgent> agentFactory, ICandidateRetriever retriever, RunContext run, AspectIngestionProfile profile)
+    : Executor<IngestionVerdict>(profile.ExecutorIdPrefix + "Repair")
 {
     public override async ValueTask HandleAsync(IngestionVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {
         var errors = string.Join("\n", v.Report.Errors.Select(e => $"- {e.Code}: {e.Message}"));
         var task = $"""
-                    {IngestionResolveTask.Text}
+                    {profile.ResolverTaskText}
 
                     Dein vorheriger Plan hat das Gate NICHT bestanden. Fehler:
                     {errors}
                     Korrigiere gezielt und speichere erneut (save_state_change_plan genau einmal).
                     """;
-        var tools = new IngestionTools(v.MeetingDelta, v.Core, retriever, run);
+        var tools = new IngestionTools(v.MeetingDelta, v.Core, retriever, run, profile);
         var agent = agentFactory(tools.Build());
         await agent.RunAsync([new ChatMessage(ChatRole.User, task)], cancellationToken: ct).ConfigureAwait(false);
         var ops = tools.SavedOperations ?? [];
-        run.AppendEvent(new { type = "REQ_INGEST_REPAIR", runId = run.RunId, fromAttempt = v.Attempt, operations = ops.Count, timestampUtc = DateTime.UtcNow });
+        run.AppendEvent(new { type = profile.EventPrefix + "_REPAIR", runId = run.RunId, fromAttempt = v.Attempt, operations = ops.Count, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(new IngestionDraft(v.MeetingDelta, v.Core, v.SourcePath, ops, tools.Saved, tools.CheckRounds, Attempt: v.Attempt + 1, Source: "repair", v.MaxAttempts, History: v.History)).ConfigureAwait(false);
     }
 }
 
 [YieldsOutput(typeof(IngestionResult))]
-internal sealed class IngestionFinalizeExecutor(RunContext run, string outDir) : Executor<IngestionVerdict>("RequirementIngestionFinalize")
+internal sealed class IngestionFinalizeExecutor(RunContext run, string outDir, AspectIngestionProfile? profileOrNull = null)
+    : Executor<IngestionVerdict>((profileOrNull ?? AspectIngestionProfile.Requirement).ExecutorIdPrefix + "Finalize")
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
+    private readonly AspectIngestionProfile profile = profileOrNull ?? AspectIngestionProfile.Requirement;
 
     public override async ValueTask HandleAsync(IngestionVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -111,7 +118,7 @@ internal sealed class IngestionFinalizeExecutor(RunContext run, string outDir) :
             byKind, timestampUtc = DateTime.UtcNow
         }, Json), ct).ConfigureAwait(false);
 
-        run.AppendEvent(new { type = "REQ_INGEST_DONE", runId = run.RunId, gatePass = v.Report.Pass, finalDecision = v.Decision.ToString(), attempts = v.Attempt, operations = v.Operations.Count, timestampUtc = DateTime.UtcNow });
+        run.AppendEvent(new { type = profile.EventPrefix + "_DONE", runId = run.RunId, gatePass = v.Report.Pass, finalDecision = v.Decision.ToString(), attempts = v.Attempt, operations = v.Operations.Count, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(new IngestionResult(plan, v.Report, v.Decision)).ConfigureAwait(false);
     }
 }

@@ -16,7 +16,9 @@ public static class ReviewUiFlow
         bool openBrowser,
         // B1: optionaler Referenz-Katalog-Resolver (rechte Kontext-Leiste, z. B. die Feature-Landkarte). null =
         // keine Referenz-Details (Stufen ohne rechte Leiste bleiben unberührt).
-        Func<string, Task<ReviewReferenceDetails?>>? resolveReference = null)
+        Func<string, Task<ReviewReferenceDetails?>>? resolveReference = null,
+        // U2v2: lazy Kontext-Blöcke IM Referenz-Detail-Panel (z. B. AKs/REQs/ARCHs eines PBI).
+        Func<string, string, Task<string>>? resolveReferenceContext = null)
     {
         foreach (var it in session.Items) it.Resolved = resolved(it);
         async Task Persist() => await JsonFiles.SaveAsync(decisionsPath, apply(session)).ConfigureAwait(false);
@@ -26,6 +28,7 @@ public static class ReviewUiFlow
             RecomputeResolved = resolved,
             ResolveContext = resolveContext,
             ResolveReference = resolveReference,
+            ResolveReferenceContext = resolveReferenceContext,
             OnItemSaved = async _ => await Persist().ConfigureAwait(false),
             OpenBrowser = openBrowser
         }).ConfigureAwait(false);

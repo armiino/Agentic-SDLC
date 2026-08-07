@@ -66,6 +66,19 @@ public static class ReasoningSchema
         => mode == ReasoningCapture.Off ? "" : "\"reasoning\": \"<kurze deutsche Begründung, ZUERST>\",";
 
     /// <summary>
+    /// W1a-Erweiterung (06.08., Autor): Prompt-ANHANG für TOOL-Agenten (Classify/ADR/Placement/Ingest) —
+    /// die haben KEIN Structured-Output-Schema, dafür einen sichtbaren Denk-Faden je Runde: gpt-5.x gibt in
+    /// Tool-Runden sonst keinen Assistant-Text aus (response-text.md „0 chars"). Log-only, abschaltbar für
+    /// Mess-Baselines (M-1) über DENSELBEN Schalter. Leer bei Off.
+    /// </summary>
+    public static string ToolAgentPromptAppendix(ReasoningCapture mode)
+        => mode == ReasoningCapture.Off
+            ? ""
+            : "\n\nZUSATZ (nur Protokoll, KEINE Fachaenderung): Schreibe VOR jedem Tool-Aufruf 1-2 kurze "
+              + "deutsche Saetze sichtbaren Text: was du als Naechstes tust und warum. Wird ausschliesslich "
+              + "geloggt, nie weiterverarbeitet.";
+
+    /// <summary>
     /// Prompt-ANHANG (ans Ende des System-Prompts), damit heterogene Prompts NICHT chirurgisch editiert
     /// werden müssen — der Rollout-Standard. Leer bei Off. SPRACHE (Pflicht): Deutsch.
     /// </summary>

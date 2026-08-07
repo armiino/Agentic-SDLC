@@ -19,9 +19,11 @@ public static class IngestionApplyExec
 
     // accepted = Menge der IncomingItemIds mit decision=apply. MeetingDelta wird aus plan.SourceMeetingDeltaPath geladen.
     // ingestRunId = der AUSLOESER-Lauf (R-31/I7) — landet als sourceRunId an jeder Inhalts-Mutation.
+    // A1a: profile = Aspekt-Naht (Default Requirement — Alt-Aufrufer unverändert; Graph reicht explizit).
     public static async Task<IngestionApplyReport> ExecuteAsync(
-        string planDir, StateChangePlanDocument plan, ISet<string> accepted, string repoRoot, string ingestRunId, CancellationToken ct = default)
+        string planDir, StateChangePlanDocument plan, ISet<string> accepted, string repoRoot, string ingestRunId, CancellationToken ct = default, AspectIngestionProfile? profile = null)
     {
+        profile ??= AspectIngestionProfile.Requirement;
         var appliedDir = Path.Combine(planDir, "applied");
         var markerPath = Path.Combine(appliedDir, "applied.marker");
         var reportPath = Path.Combine(appliedDir, "delta.json");
@@ -48,7 +50,7 @@ public static class IngestionApplyExec
         Directory.CreateDirectory(appliedDir);
         await File.WriteAllTextAsync(Path.Combine(appliedDir, "core-before.json"), JsonSerializer.Serialize(core, Json), ct).ConfigureAwait(false);
 
-        var (updatedCore, report, affectedIds) = IngestionApply.Apply(core, meetingDelta, plan, accepted, ingestRunId);
+        var (updatedCore, report, affectedIds) = IngestionApply.Apply(core, meetingDelta, plan, accepted, ingestRunId, profile);
         var affectedView = CoreViews.AffectedItems(updatedCore, affectedIds);
 
         // R-35: menschliche Skips (mit P2a-Begruendung) als ingest_rejection-Proposals mitheben — Wiedervorlage-

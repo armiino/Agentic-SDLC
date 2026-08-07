@@ -35,7 +35,10 @@ public static class DecisionResolutionDerivation
             var blocked = PbisBlockedBy(core, r.DecisionId);
             var affected = new HashSet<string>(blocked, StringComparer.Ordinal);
             if (targetReq is not null && !string.Equals(r.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
+            {
                 foreach (var p in PbisCovering(core, targetReq)) affected.Add(p);
+                foreach (var p in PbisConstrainedBy(core, targetReq)) affected.Add(p);   // ② E-R4: arch-Ziele wirken ueber constrained_by
+            }
 
             ops.Add(new DecisionResolutionOp(
                 DecisionId: r.DecisionId,
@@ -54,6 +57,12 @@ public static class DecisionResolutionDerivation
             .Where(i => string.Equals(i.ItemType, "pbi", StringComparison.OrdinalIgnoreCase)
                         && (i.Pbi?.OpenDecisionRefs.Contains(decisionId) ?? false))
             .Select(i => i.ItemId).ToList();
+
+    private static IReadOnlyList<string> PbisConstrainedBy(ProjectStateDocument core, string archId)
+        => core.Relations
+            .Where(rel => string.Equals(rel.RelationType, "constrained_by", StringComparison.Ordinal)
+                        && string.Equals(rel.ToId, archId, StringComparison.Ordinal))
+            .Select(rel => rel.FromId).Distinct(StringComparer.Ordinal).ToList();
 
     private static IReadOnlyList<string> PbisCovering(ProjectStateDocument core, string requirementId)
         => core.Relations

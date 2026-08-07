@@ -106,6 +106,21 @@ public static class GithubIssueBodySections
             foreach (var c in e.AcceptanceCriteria) sb.Append("- ").Append(c).Append('\n');
             sb.Append('\n');
         }
+        // ③ A3 (06.08.): die WIRKUNG der constraint-Rolle — der Entwickler sieht die Rahmen im Issue,
+        // ohne den Core zu kennen (Endpunkt der ①-Relation constrained_by).
+        if (e.Constraints is { Count: > 0 })
+        {
+            sb.Append("Technische Rahmenbedingungen:\n");
+            foreach (var c in e.Constraints) sb.Append("- ").Append(c).Append('\n');
+            sb.Append('\n');
+        }
+        // A4/E-R2: die work-Herkunft des PBIs - umgesetzte Architektur-Arbeit als eigene Zeile.
+        if (e.CoveredArchitecture is { Count: > 0 })
+        {
+            sb.Append("Umgesetzte Architektur-Arbeit:\n");
+            foreach (var a in e.CoveredArchitecture) sb.Append("- ").Append(a).Append('\n');
+            sb.Append('\n');
+        }
         var reqs = e.CoveredRequirementIds.Count == 0 ? "-" : string.Join(", ", e.CoveredRequirementIds);
         sb.Append("Abgedeckte Requirements: ").Append(reqs).Append("\n\n");
         var readiness = string.IsNullOrWhiteSpace(e.Readiness) ? "-" : e.Readiness;

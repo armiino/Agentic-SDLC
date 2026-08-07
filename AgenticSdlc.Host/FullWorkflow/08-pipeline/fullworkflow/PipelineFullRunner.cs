@@ -45,6 +45,9 @@ public static class PipelineFullRunner
         if (s.L3Enabled) stages.Add(new("03-gap", "03-gap", null));     // v1: per Default aus
         stages.Add(new("04-delta",      "04-delta",      null));        // det. Executor (Spike 1)
         stages.Add(new("07-ingest",     "07-ingest",     "ingest-gate"));
+        stages.Add(new("07-arch-ingest", "07-arch-ingest", "arch-ingest-gate")); // R-11 A1d: arch-Strip (Leer-Skip bei 0 arch-Items)
+        stages.Add(new("07-arch-classify", "07-arch-classify", "arch-classify-gate")); // R-11 A2: Rollen (Leer-Skip wenn alles klassifiziert)
+        stages.Add(new("07-adr", "07-adr", "adr-gate")); // R-11 A5: ADR-Projektion (Leer-Skip ohne pending design-Items)
         stages.Add(new("07-decision",   "07-decision",   "decision-gate")); // R-14 G1: Tor 2 (nur bei offenen DECs)
         stages.Add(new("07-pbi-update", "07-pbi-update", "pbi-gate"));
         stages.Add(new("snapshot",      "07-github",     null));        // Pflicht VOR Forward (R-16)
@@ -230,7 +233,11 @@ public static class PipelineFullRunner
         var githubOutDir = run.OutputDir("07-github");
         const int maxAttempts = 2;
 
-        var ingestFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "RequirementIngestionAgent", "RequirementIngestionAgent1");
+        var ingestFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, AspectIngestionProfile.Requirement.AgentName, AspectIngestionProfile.Requirement.PromptName);
+        // R-11 A1d: der arch-Strip — zweite Instanz des geteilten Kerns (Architecture-Profil, eigener Port).
+        var archFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, AspectIngestionProfile.Architecture.AgentName, AspectIngestionProfile.Architecture.PromptName);
+        var archOutDir = run.OutputDir("07-arch-ingest");
+        ICandidateRetriever archRetriever = new ShowAllRequirementRetriever("architecture");
         var pbiFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "PbiPlacementAgent", "PbiPlacementAgent1");
         var pbiAlignFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "PbiAlignmentAgent", "PbiAlignmentAgent1"); // R-26-C
         ICandidateRetriever retriever = new ShowAllRequirementRetriever();
@@ -257,6 +264,32 @@ public static class PipelineFullRunner
         var ledgerCapsule = LedgerBuildUnitsRunner
             .CreateWorkflow(transcriptText, transcriptSourceName, settings, judgeSettings, ledgerRun)
             .BindGateFree("LedgerCapsule");
+
+        // R-11 A2-2: Klassifikations-Strip (ein Strip, zwei Bahnen; 9. Gate arch-classify-gate).
+        var classifyFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "ArchClassifyAgent", "ArchClassifyAgent1");
+        var classifyOutDir = run.OutputDir("07-arch-classify");
+        var classifyNodes = new ArchClassifyNodes(
+            new AgenticSdlc.Host.FullWorkflow.ArchClassify.OperationalClassifyBridgeExecutor(run, repoRoot, classifyOutDir, maxAttempts),
+            new AgenticSdlc.Host.FullWorkflow.ArchClassify.BootstrapClassifyBridgeExecutor(run, repoRoot, classifyOutDir, maxAttempts),
+            new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyMakerExecutor(classifyFactory, run),
+            new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyGateExecutor(run),
+            new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyRepairExecutor(classifyFactory, run),
+            new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyFinalizeExecutor(run, classifyOutDir),
+            RequestPort.Create<AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewRequest, AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewResponse>("arch-classify-gate"),
+            new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyApplyExecutor(run, repoRoot, classifyOutDir));
+
+        // R-11 A5: ADR-Strip (10. Gate adr-gate; Betrieb arch-aktiv-gescoped, Bootstrap-Spiegel).
+        var adrFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "AdrAuthorAgent", "AdrAuthorAgent1");
+        var adrOutDir = run.OutputDir("07-adr");
+        var adrNodes = new AdrNodes(
+            new AgenticSdlc.Host.FullWorkflow.Adr.AdrOperationalBridgeExecutor(run, repoRoot, adrOutDir, maxAttempts),
+            new AgenticSdlc.Host.FullWorkflow.Adr.AdrBootstrapBridgeExecutor(run, repoRoot, adrOutDir, maxAttempts),
+            new AgenticSdlc.Host.FullWorkflow.Adr.AdrMakerExecutor(adrFactory, run),
+            new AgenticSdlc.Host.FullWorkflow.Adr.AdrGateExecutor(run),
+            new AgenticSdlc.Host.FullWorkflow.Adr.AdrRepairExecutor(adrFactory, run),
+            new AgenticSdlc.Host.FullWorkflow.Adr.AdrFinalizeExecutor(run, adrOutDir),
+            RequestPort.Create<AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewRequest, AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewResponse>("adr-gate"),
+            new AgenticSdlc.Host.FullWorkflow.Adr.AdrApplyExecutor(run, repoRoot, adrOutDir, "docs/adr"));
 
         var workflow = PipelineFullWorkflow.Assemble(
             new FrontNodes(
@@ -290,11 +323,19 @@ public static class PipelineFullRunner
                 new CoreSeedBacklogExecutor(run, repoRoot)),
             new OperationalNodes(
                 new IngestBridgeExecutor(run, repoRoot, maxAttempts),
-                new IngestionHitlResolveExecutor(ingestFactory, retriever, run), new IngestionGateExecutor(run),
-                new IngestionRepairExecutor(ingestFactory, retriever, run),
+                new AspectIngestionRouterExecutor(run, [AspectIngestionProfile.Requirement, AspectIngestionProfile.Architecture]),
+                new IngestionHitlResolveExecutor(ingestFactory, retriever, run, AspectIngestionProfile.Requirement), new IngestionGateExecutor(run, AspectIngestionProfile.Requirement),
+                new IngestionRepairExecutor(ingestFactory, retriever, run, AspectIngestionProfile.Requirement),
                 new IngestionHitlFinalizeExecutor(run, ingestOutDir),
                 RequestPort.Create<IngestionReviewRequest, IngestionReviewResponse>("ingest-gate"),
                 new IngestComposedApplyExecutor(run, repoRoot, ingestOutDir),
+                new ArchIngestBridgeExecutor(run, repoRoot, maxAttempts),
+                new IngestionHitlResolveExecutor(archFactory, archRetriever, run, AspectIngestionProfile.Architecture),
+                new IngestionGateExecutor(run, AspectIngestionProfile.Architecture),
+                new IngestionRepairExecutor(archFactory, archRetriever, run, AspectIngestionProfile.Architecture),
+                new IngestionHitlFinalizeExecutor(run, archOutDir, AspectIngestionProfile.Architecture),
+                RequestPort.Create<IngestionReviewRequest, IngestionReviewResponse>("arch-ingest-gate"),
+                new ArchComposedApplyExecutor(run, repoRoot, archOutDir, ingestOutDir),
                 new DecisionScanExecutor(run, repoRoot, run.OutputDir("07-decision")),
                 RequestPort.Create<PipelineDecisionReviewRequest, PipelineDecisionReviewResponse>("decision-gate"),
                 new DecisionComposedApplyExecutor(run, repoRoot, ingestOutDir, run.OutputDir("07-decision")),
@@ -303,6 +344,8 @@ public static class PipelineFullRunner
                 new PbiUpdateRepairExecutor(pbiFactory, run), new PbiAlignExecutor(pbiAlignFactory, run), new PbiUpdateHitlFinalizeExecutor(run),
                 RequestPort.Create<PbiUpdateReviewRequest, PbiUpdateReviewResponse>("pbi-gate"),
                 new PbiUpdateApplyExecutor(run, repoRoot, pbiOutDir)),
+            classifyNodes,
+            adrNodes,
             new ForwardNodes(
                 new BootstrapForwardBridgeExecutor(run, repoRoot),
                 new OperationalForwardBridgeExecutor(run, pbiOutDir),
@@ -389,7 +432,29 @@ public static class PipelineFullRunner
                             answered = true;
                         }
                     }
-                    else if (portId == "ingest-gate" && req.Request.TryGetDataAs<IngestionReviewRequest>(out var ir) && ir is not null)
+                    else if (portId == "arch-classify-gate" && req.Request.TryGetDataAs<AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewRequest>(out var cq) && cq is not null)
+                    {
+                        // accept-all/replay: Agent-Vorschlag 1:1 uebernehmen (U2-Korrektur ist der interactive Weg).
+                        if (gatePolicy.Kind is GatePolicyKind.AcceptAll or GatePolicyKind.Replay)
+                        {
+                            var accepted = cq.Items.Select(i => new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyProposal(i.ItemId, i.ProposedRoles, i.Rationale, i.ProposedTargets?.Select(t => t.Id).ToList())).ToList();
+                            await handle.SendResponseAsync(req.Request.CreateResponse(new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewResponse(accepted, $"author (pipeline-full/{gatePolicy.Kind})"))).ConfigureAwait(false);
+                            run.AppendEvent(new { type = "GATE_ANSWERED", gate = portId, policy = gatePolicy.Kind.ToString(), accepted = accepted.Count, timestampUtc = DateTime.UtcNow });
+                            answered = true;
+                        }
+                    }
+                    else if (portId == "adr-gate" && req.Request.TryGetDataAs<AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewRequest>(out var aq) && aq is not null)
+                    {
+                        // accept-all/replay: Agent-Entwuerfe 1:1 uebernehmen (U5-Edit ist der interactive Weg).
+                        if (gatePolicy.Kind is GatePolicyKind.AcceptAll or GatePolicyKind.Replay)
+                        {
+                            var acceptedDrafts = aq.Items.Select(i => i.Draft).ToList();
+                            await handle.SendResponseAsync(req.Request.CreateResponse(new AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewResponse(acceptedDrafts, $"author (pipeline-full/{gatePolicy.Kind})"))).ConfigureAwait(false);
+                            run.AppendEvent(new { type = "GATE_ANSWERED", gate = portId, policy = gatePolicy.Kind.ToString(), accepted = acceptedDrafts.Count, timestampUtc = DateTime.UtcNow });
+                            answered = true;
+                        }
+                    }
+                    else if (portId is "ingest-gate" or "arch-ingest-gate" && req.Request.TryGetDataAs<IngestionReviewRequest>(out var ir) && ir is not null)
                     {
                         var r = GateResponder.Resolve(gatePolicy, ir.Ops.Select(o => new GateItem(o.IncomingItemId)).ToList());
                         if (r.Outcome == GateOutcome.Resolved)
@@ -547,6 +612,15 @@ public static class PipelineFullRunner
         "decision-gate" =>
             [$"  Review-UI: decision-gate-review runs/fullworkflow/{run.RunId}/07-decision  → decision-gate-decisions.json (Ausgang je Widerspruch, vertagen erlaubt)",
              "  Flags/accept-all koennen hier NICHT aufloesen (Wahrheits-Konflikt) — sie vertagen alles (laut)."],
+        "adr-gate" =>
+            [$"  Review-UI: adr-review {run.RunId}  (Entwuerfe editieren/freigeben → adr-decisions.json, vertagen erlaubt)",
+             "  oder beim Resume: --accept-all (Agent-Entwuerfe 1:1 uebernehmen)"],
+        "arch-classify-gate" =>
+            [$"  Review-UI: arch-classify-review {run.RunId}  (drei Rollen je Item bestätigen/korrigieren → classify-decisions.json)",
+             "  oder beim Resume: --accept-all (Agent-Vorschlag 1:1 uebernehmen)"],
+        "arch-ingest-gate" =>
+            [$"  arch-Plan: runs/fullworkflow/{run.RunId}/07-arch-ingest/plan.json (Operationen je Architektur-Aussage)",
+             "  Entscheid beim Resume: --accept-all | --accept incomingId1,incomingId2"],
         "github-forward-gate" =>
             [$"  Entscheide: runs/fullworkflow/{run.RunId}/07-github/github-forward-decisions.json (opId/decision apply|skip)",
              "  oder beim Resume: --accept-all | --accept opId1,opId2"],
@@ -604,7 +678,41 @@ public static class PipelineFullRunner
                 return await AnswerAsync(new BacklogReviewResponse(decisions, "author (interactive)"),
                     new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", decisions = decisions.Count, pbis = b.PbiIds.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
             }
-            case "ingest-gate" when req.Request.TryGetDataAs<IngestionReviewRequest>(out var ir) && ir is not null:
+            case "arch-classify-gate" when req.Request.TryGetDataAs<AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewRequest>(out var cq) && cq is not null:
+            {
+                // interactive: 1) classify-decisions.json (U2-Edit-UI, A2-3) · 2) --accept-all (Vorschlag 1:1) · sonst Pause.
+                var decisionsPath = Path.Combine(run.RunDir, "07-arch-classify", "classify-decisions.json");
+                if (File.Exists(decisionsPath))
+                {
+                    var file = JsonSerializer.Deserialize<AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyDecisionsFile>(
+                        await File.ReadAllTextAsync(decisionsPath).ConfigureAwait(false), HitlShell.Json);
+                    if (file is not null)
+                        return await AnswerAsync(AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewAdapter.ToResponse(file, "human (review-ui)"),
+                            new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", source = "classify-decisions", accepted = file.Decisions.Count, deferred = cq.Items.Count - file.Decisions.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+                }
+                if (answers?.TakeAcceptAll() != true) return false;
+                var acc = cq.Items.Select(i => new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyProposal(i.ItemId, i.ProposedRoles, i.Rationale, i.ProposedTargets?.Select(t => t.Id).ToList())).ToList();
+                return await AnswerAsync(new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewResponse(acc, "author (interactive)"),
+                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = acc.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+            }
+            case "adr-gate" when req.Request.TryGetDataAs<AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewRequest>(out var aq) && aq is not null:
+            {
+                // interactive: 1) adr-decisions.json (U5-Abnahme-UI) · 2) --accept-all (Entwuerfe 1:1) · sonst Pause.
+                var adrDecisionsPath = Path.Combine(run.RunDir, "07-adr", "adr-decisions.json");
+                if (File.Exists(adrDecisionsPath))
+                {
+                    var file = JsonSerializer.Deserialize<AgenticSdlc.Host.FullWorkflow.Adr.AdrDecisionsFile>(
+                        await File.ReadAllTextAsync(adrDecisionsPath).ConfigureAwait(false), HitlShell.Json);
+                    if (file is not null)
+                        return await AnswerAsync(AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewAdapter.ToResponse(file, "human (review-ui)"),
+                            new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", source = "adr-decisions", accepted = file.Decisions.Count, deferred = aq.Items.Count - file.Decisions.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+                }
+                if (answers?.TakeAcceptAll() != true) return false;
+                var accAdr = aq.Items.Select(i => i.Draft).ToList();
+                return await AnswerAsync(new AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewResponse(accAdr, "author (interactive)"),
+                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = accAdr.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+            }
+            case "ingest-gate" or "arch-ingest-gate" when req.Request.TryGetDataAs<IngestionReviewRequest>(out var ir) && ir is not null:
             {
                 var accepted = Flags(ir.Ops.Select(o => o.IncomingItemId));
                 if (accepted is null) return false;

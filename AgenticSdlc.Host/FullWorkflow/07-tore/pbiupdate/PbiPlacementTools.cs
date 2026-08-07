@@ -37,7 +37,9 @@ internal sealed class PbiPlacementTools(
 
     private string GetUnplaced()
     {
-        var rows = unplaced.Select(u => new { requirementId = u.RequirementId, text = Truncate(u.Text, 300), featureHint = u.FeatureHint }).ToArray();
+        var rows = unplaced.Select(u => new { requirementId = u.RequirementId, text = Truncate(u.Text, 300), featureHint = u.FeatureHint,
+            // A4: aspekt=architecture -> TECHNISCHE Arbeit aus einer work-Rolle (Platzierung wie fachliche Arbeit).
+            aspekt = u.Aspect }).ToArray();
         run.AppendEvent(new { type = "PBI_PLACE_UNPLACED", runId = run.RunId, returned = rows.Length, timestampUtc = DateTime.UtcNow });
         return JsonSerializer.Serialize(rows, Json);
     }

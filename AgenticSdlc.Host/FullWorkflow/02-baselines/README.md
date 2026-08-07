@@ -8,13 +8,16 @@ Evidenzschicht** (Beweis der Ablösung von Arm A: 59/59 vs. 0/114).
 
 ## Der Lauf: `recipe <recipe.json> [model] [--dry-run]`
 
-EIN MAF-Workflow nach Rezept (Beispiele unter `recipe/examples/`):
+EIN MAF-Workflow nach Rezept (Beispiele unter `recipe/examples/`). **Zwei Bahnen, EIN Kern (Schritt 5 ①/⑤,
+05.08.):** die CLI ruft denselben faktorierten Kern (`RecipeRunner.ExecuteAsync`, typisierte Rückgabe) wie die
+pipeline-full-Stufe (`BaselineStageExecutor` baut das Rezept typisiert und ruft direkt — keine Kopie); der
+load-Modus startet mit der typisierten Bestellung `LoadBaselineRequest` als Workflow-Input (kein String-Sentinel).
 
 ```jsonc
 { "baseline": { "mode": "build" | "load", "artifacts": ["requirements", …], "fromRun": "<runId bei load>" },
 <!-- 9g (05.08.): der Ein-Graph bestellt ["requirements","open-questions"] (BaselineStageExecutor.OrderedArtifacts) —
-     die Fragen-Spur speist via Delta→Tor 1 den DEC-Topf (Frage→DEC, MeetingQuestionMint). architecture folgt mit
-     R-11 (erst Konsument, dann Bestellung). CLI-Läufe: open-questions bei Bedarf explizit mitbestellen. -->
+     die Fragen-Spur speist via Delta→Tor 1 den DEC-Topf (Frage→DEC, MeetingQuestionMint). architecture wird seit R-11/A1c (05.08.)
+     MITBESTELLT (OrderedArtifacts; Konsument = arch-Strip A1d). CLI-Läufe: Zusatz-Artefakte bei Bedarf explizit mitbestellen. -->
   "derivations": [ { "spec": "derived-risks-multi" }, … ] }
 ```
 

@@ -6,13 +6,15 @@ namespace AgenticSdlc.Host.FullWorkflow.Core;
 // kein Halluzinations-Match. Prueft die Operationen gegen MeetingDelta (Coverage) und Core (Ziele).
 public static class IngestionGate
 {
-    public static IngestionGateReport Check(ProjectStateDocument meetingDelta, ProjectStateDocument core, StateChangePlanDocument plan)
+    // A1a: profile = Aspekt-Naht (Default Requirement — Alt-Aufrufer/Tests unverändert; Graph reicht explizit).
+    public static IngestionGateReport Check(ProjectStateDocument meetingDelta, ProjectStateDocument core, StateChangePlanDocument plan, AspectIngestionProfile? profile = null)
     {
+        profile ??= AspectIngestionProfile.Requirement;
         var errors = new List<IngestionGateIssue>();
         var warnings = new List<IngestionGateIssue>();
 
         var incomingReqIds = meetingDelta.Items
-            .Where(i => IsRequirement(i))
+            .Where(i => IsAspect(i, profile))
             .Select(i => i.ItemId)
             .ToHashSet(StringComparer.Ordinal);
 
@@ -26,7 +28,7 @@ public static class IngestionGate
         var incomingIds = incomingReqIds.Concat(incomingQuestionIds).ToHashSet(StringComparer.Ordinal);
 
         var coreReqIds = core.Items
-            .Where(i => IsRequirement(i))
+            .Where(i => IsAspect(i, profile))
             .Select(i => i.ItemId)
             .ToHashSet(StringComparer.Ordinal);
 
@@ -34,6 +36,13 @@ public static class IngestionGate
             .Where(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase))
             .Select(i => i.ItemId)
             .ToHashSet(StringComparer.Ordinal);
+
+        // ② E-R4 (06.08.): die WAHRHEITS-Items (requirement|architecture) — nur sie duerfen widersprochen
+        // werden, und CONTRADICT darf als EINZIGE Operation den Aspekt queren.
+        var truthById = core.Items
+            .Where(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase)
+                     || string.Equals(i.ItemType, "architecture", StringComparison.OrdinalIgnoreCase))
+            .ToDictionary(i => i.ItemId, i => i, StringComparer.Ordinal);
 
         var coreFeatureIds = core.Items
             .Where(i => string.Equals(i.ItemType, "feature", StringComparison.OrdinalIgnoreCase))
@@ -69,8 +78,18 @@ public static class IngestionGate
                 errors.Add(Issue("TARGET_FORBIDDEN", "error", $"'{op.Kind}' darf kein targetEntityId haben ('{op.IncomingItemId}').", op.IncomingItemId, op.TargetEntityId));
             if (hasTarget && requiresDecisionTarget && !coreDecisionIds.Contains(op.TargetEntityId!))
                 errors.Add(Issue("UNKNOWN_TARGET", "error", $"targetEntityId '{op.TargetEntityId}' ist keine bestehende Open Decision.", op.IncomingItemId, op.TargetEntityId));
+            else if (hasTarget && !requiresDecisionTarget && string.Equals(op.Kind, StateChangeKind.Contradict, StringComparison.Ordinal))
+            {
+                // ② E-R4: CONTRADICT darf QUEREN — Ziel muss ein AKTIVES Wahrheits-Item sein (eigen- ODER quer-aspektig).
+                if (!truthById.TryGetValue(op.TargetEntityId!, out var truth))
+                    errors.Add(Issue("UNKNOWN_TARGET", "error", $"targetEntityId '{op.TargetEntityId}' ist kein Wahrheits-Item (requirement|architecture) im Core.", op.IncomingItemId, op.TargetEntityId));
+                else if (truth.ReadStatus().Validity != Validity.Active)
+                    errors.Add(Issue("CONTRADICT_TARGET_INACTIVE", "error", $"CONTRADICT-Ziel '{op.TargetEntityId}' ist nicht aktiv (status={truth.Status}) — widersprich der AKTIVEN Wahrheit oder nutze ALREADY_DECIDED.", op.IncomingItemId, op.TargetEntityId));
+            }
             else if (hasTarget && !requiresDecisionTarget && !coreReqIds.Contains(op.TargetEntityId!))
-                errors.Add(Issue("UNKNOWN_TARGET", "error", $"targetEntityId '{op.TargetEntityId}' existiert nicht im Core.", op.IncomingItemId, op.TargetEntityId));
+                errors.Add(truthById.ContainsKey(op.TargetEntityId!)
+                    ? Issue("CROSS_ASPECT_FORBIDDEN", "error", $"'{op.Kind}' ist strikt eigen-aspektig ({profile.Aspect}) — '{op.TargetEntityId}' gehoert zum anderen Wahrheits-Aspekt; nur CONTRADICT darf queren.", op.IncomingItemId, op.TargetEntityId)
+                    : Issue("UNKNOWN_TARGET", "error", $"targetEntityId '{op.TargetEntityId}' existiert nicht im Core.", op.IncomingItemId, op.TargetEntityId));
 
             // R-36 v2: featureKey ist nur noch ein HINWEIS fuer die Placement-Stufe (IngestionApply schreibt keine
             // part_of_feature-Relation mehr; die Kante entsteht deterministisch im pbi-update-Apply). Ein nicht
@@ -113,7 +132,7 @@ public static class IngestionGate
         return new IngestionGateReport(pass, pass ? "accept" : "block", errors, warnings);
     }
 
-    private static bool IsRequirement(ProjectStateItem i) => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase);
+    private static bool IsAspect(ProjectStateItem i, AspectIngestionProfile profile) => profile.Matches(i);
 
     private static IngestionGateIssue Issue(string code, string severity, string message, string? incoming, string? target)
         => new(code, severity, message, incoming, target, RepairabilityOf(code));
@@ -125,6 +144,8 @@ public static class IngestionGate
         ["DUPLICATE_OP"] = Core.Repairability.Repairable,
         ["MULTIPLE_OPS_SAME_TARGET"] = Core.Repairability.Repairable,
         ["UNKNOWN_TARGET"] = Core.Repairability.Repairable,
+        ["CONTRADICT_TARGET_INACTIVE"] = Core.Repairability.Repairable,
+        ["CROSS_ASPECT_FORBIDDEN"] = Core.Repairability.Repairable,
         ["TARGET_REQUIRED"] = Core.Repairability.Repairable,
         ["TARGET_FORBIDDEN"] = Core.Repairability.Repairable,
         ["UNKNOWN_INCOMING"] = Core.Repairability.Repairable,

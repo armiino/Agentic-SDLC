@@ -162,7 +162,10 @@ internal sealed class DecisionComposedApplyExecutor(RunContext run, string repoR
 
     public override async ValueTask HandleAsync(PipelineDecisionReviewResponse resp, IWorkflowContext context, CancellationToken ct = default)
     {
-        var reportPath = Path.Combine(ingestOutDir, "applied", "delta.json");
+        // R-40 (Endform): der EINE Lauf-Report-Vertrag (req-Apply initial, arch-Apply fortgeschrieben) —
+        // keine Vorrang-Magie. Fallback delta.json NUR fuer Alt-Laeufe vor R-40 (Resume-Kompatibilitaet).
+        var runReportPath = Path.Combine(ingestOutDir, "applied", "run-report.json");
+        var reportPath = File.Exists(runReportPath) ? runReportPath : Path.Combine(ingestOutDir, "applied", "delta.json");
         var original = JsonSerializer.Deserialize<IngestionApplyReport>(await File.ReadAllTextAsync(reportPath, ct).ConfigureAwait(false), Json)
                        ?? throw new InvalidOperationException($"Ingest-Report nicht lesbar: {reportPath}");
 

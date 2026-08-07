@@ -1,0 +1,124 @@
+# Architektur-Übersicht
+
+> Projektion aus dem Core (Stand = letzter Apply). Rollen: constraint = Rahmen (wirkt in Issues) · work = Arbeit (wird PBI) · design = Entscheidung (wird ADR).
+
+## Entscheidungen (design)
+
+- **ARCH-01** — Die Lösung bleibt eine digitale App zur Förderung der Kommunikation und wird als reine Mobile-App ohne Web-Client konkretisiert.
+  - ADR: ADR-0001 (accepted)
+- **ARCH-02** — Die Unterstützung soll vorrangig darauf ausgerichtet sein, dass Betreuer oder andere Personen Bewohner besser verstehen können.
+  - ADR: ADR-0002 (accepted)
+- **ARCH-03** — Als Kernansatz soll die App Wissen über Profil und Kommunikationsweise einer Person bereitstellen, damit Nutzer bei Verständnisschwierigkeit…
+  - ADR: ADR-0003 (accepted)
+- **ARCH-04** — Ein System, das individuell zwischen Bewohner und Betreuer in beide Richtungen übersetzt, ist als Lösungsansatz ausgeschlossen.
+  - ADR: ADR-0004 (accepted)
+- **ARCH-07** — Die App darf keine Selbstregistrierung erlauben; Zugang erfolgt nur per Login mit intern vergebenen Accounts.
+  - ADR: ADR-0005 (accepted)
+- **ARCH-08** — Es muss mindestens die Rollen Admin und User geben; Admins verwalten Accounts und Rechte, User können Inhalte hinzufügen, aber nichts lösche…
+  - ADR: ADR-0006 (accepted)
+- **ARCH-12** — Die konkrete Ausgestaltung der Rechteverwaltung ist noch nicht festgelegt und muss später entschieden werden.
+  - ADR: ADR-0007 (accepted)
+- **ARCH-13** — Für die Rechte- und Accountverwaltung soll ein separater Admin-Bildschirm erwogen werden, auf dem nur Admins Accounts anlegen und Rollen ver…
+  - ADR: ADR-0008 (accepted)
+- **ARCH-24** — Auf Kommunikationsseiten soll eine Suchfunktion vorhanden sein; dafür muss ein standardisiertes Beschreibungsmuster für Kommunikationseinträ…
+  - ADR: ADR-0009 (accepted)
+- **ARCH-36** — Die App soll plattformübergreifend auf iPhone und Android laufen.
+  - ADR: ADR-0010 (accepted)
+- **ARCH-37** — Für die Entwicklung soll Flutter mit Dart verwendet werden, um die plattformübergreifende Umsetzung zu unterstützen.
+  - ADR: ADR-0011 (accepted)
+- **ARCH-38** — Das Paket GetX soll als technische Option berücksichtigt und in der Umsetzung erprobt werden.
+  - ADR: ADR-0012 (accepted)
+- **ARCH-39** — Firebase Firestore ist als Datenbanklösung vorläufig vorgesehen, jedoch noch nicht endgültig festgelegt.
+  - ADR: ADR-0013 (accepted)
+- **ARCH-40** — Es muss geklärt werden, ob und wie Cloud-Daten lokal auf dem Gerät gespeichert oder gecacht werden sollen. [canon-lokaler-cache-klären]
+  - ADR: ADR-0014 (accepted)
+- **ARCH-45** — Das Produktziel ist zusätzlich dadurch gerahmt, dass Kommunikation im Alltag zentral ist und das Projekt als Weiterentwicklungsmöglichkeit g…
+  - ADR: ADR-0015 (accepted)
+
+## Rahmen (constraint)
+
+- **ARCH-01** — Die Lösung bleibt eine digitale App zur Förderung der Kommunikation und wird als reine Mobile-App ohne Web-Client konkretisiert.
+  - bindet: PBI-001 (Produktziel und Lösungsrahmen für unterstützte Kom…)
+- **ARCH-02** — Die Unterstützung soll vorrangig darauf ausgerichtet sein, dass Betreuer oder andere Personen Bewohner besser verstehen können.
+  - bindet: PBI-001 (Produktziel und Lösungsrahmen für unterstützte Kom…)
+- **ARCH-03** — Als Kernansatz soll die App Wissen über Profil und Kommunikationsweise einer Person bereitstellen, damit Nutzer bei Verständnisschwierigkeit…
+  - bindet: PBI-001 (Produktziel und Lösungsrahmen für unterstützte Kom…)
+- **ARCH-04** — Ein System, das individuell zwischen Bewohner und Betreuer in beide Richtungen übersetzt, ist als Lösungsansatz ausgeschlossen.
+  - bindet: PBI-001 (Produktziel und Lösungsrahmen für unterstützte Kom…)
+- **ARCH-05** — Bestehende klassische Akten und Dokumentationen zu Bewohnern sind als Bestandssituation zu berücksichtigen.
+  - bindet: PBI-027 (Umfang der Dokumentationsintegration und Datenüber…)
+- **ARCH-06** — Es muss berücksichtigt werden, dass vorhandene Akten im Arbeitsalltag schwer nutzbar sein können, weil sie umfangreich sind und gesuchte Inf…
+  - bindet: PBI-027 (Umfang der Dokumentationsintegration und Datenüber…)
+- **ARCH-07** — Die App darf keine Selbstregistrierung erlauben; Zugang erfolgt nur per Login mit intern vergebenen Accounts.
+  - bindet: PBI-002 (Interne Accounts mit Basisrollen und ohne Selbstre…)
+- **ARCH-08** — Es muss mindestens die Rollen Admin und User geben; Admins verwalten Accounts und Rechte, User können Inhalte hinzufügen, aber nichts lösche…
+  - bindet: PBI-002 (Interne Accounts mit Basisrollen und ohne Selbstre…)
+- **ARCH-09** — Neben Mitarbeitern sollen auch Angehörige Zugriff auf die App erhalten und Inhalte beziehungsweise Wissen beitragen können; unterschiedliche…
+  - bindet: PBI-003 (Rechtemodell für Angehörige und Einrichtungssicht …)
+- **ARCH-10** — Zusätzlich soll es einen Bewohner-Account geben, der nur das eigene Profil sehen darf und nur eingeschränkte Funktionen nutzen kann, insbeso…
+  - bindet: PBI-003 (Rechtemodell für Angehörige und Einrichtungssicht …)
+- **ARCH-11** — Mitarbeiter dürfen nicht einrichtungsübergreifend auf alle Profile zugreifen, sondern nur auf Profile der Einrichtung, in der sie tätig sind…
+  - bindet: PBI-003 (Rechtemodell für Angehörige und Einrichtungssicht …)
+- **ARCH-14** — Vor Nutzung von Bildern in der App müssen Datenschutzfragen und Einwilligungen der Angehörigen beziehungsweise Berechtigten geklärt werden, …
+  - bindet: PBI-015 (Einwilligungen und Datenschutz für Bilder im About…)
+- **ARCH-15** — Nach dem Login soll eine Profilübersicht mit anklickbarer Liste der sichtbaren Bewohnerprofile angezeigt werden.
+  - bindet: PBI-009 (Profilübersicht mit Suche und öffnbaren Profilkart…)
+- **ARCH-16** — Auf der Profilübersicht soll eine Suchleiste vorhanden sein, um Profile schnell nach Namen zu finden.
+  - bindet: PBI-009 (Profilübersicht mit Suche und öffnbaren Profilkart…)
+- **ARCH-17** — Profile sollen in der Übersicht mit Vorschaubild, Name und Kurzbeschreibung dargestellt werden; ob dies als Liste oder Kacheln erfolgt, ist …
+  - bindet: PBI-009 (Profilübersicht mit Suche und öffnbaren Profilkart…)
+- **ARCH-18** — Die Detailansicht eines Profils soll das Profilbild größer zeigen und die Hauptbereiche der App als interaktive Buttons anbieten; der genaue…
+  - bindet: PBI-012 (Profil-Detailansicht mit großem Profilbild, Schnel…)
+- **ARCH-19** — Die App soll je Bewohner eine About-Me-Seite mit persönlicher Kurzinfo, Bildern und beschreibenden Informationen für den ersten Eindruck ber…
+  - bindet: PBI-013 (About-Me-Seite mit persönlichen Kurzinfos anzeigen)
+- **ARCH-20** — Die About-Me-Ansicht soll eine dynamisch erweiterbare Foto-Timeline mit Beschreibungen bereitstellen, bei der neue Einträge per Plus-Button …
+  - bindet: PBI-014 (About-Me-Foto-Timeline mit Upload und neuester Anz…)
+- **ARCH-21** — Die App soll eine Kommunikationsansicht mit klarer Unterteilung in verbale und nonverbale Kommunikation bereitstellen.
+  - bindet: PBI-018 (Kommunikationsansicht mit klarer Trennung von verb…)
+- **ARCH-22** — Einträge zu Kommunikationsweisen müssen dynamisch erweiterbar sein und sollen nicht nur als Text, sondern auch mit Bildern und weiteren Dars…
+  - bindet: PBI-019 (Kommunikationsweisen mit Text und Bildern erfassen…)
+- **ARCH-23** — Videos von Kommunikationssituationen sollen mit Beschreibungen erfasst werden können und als Teil der Kommunikationsseiten statt als separat…
+  - bindet: PBI-021 (Kommunikationsvideos integriert in der Kommunikati…)
+- **ARCH-24** — Auf Kommunikationsseiten soll eine Suchfunktion vorhanden sein; dafür muss ein standardisiertes Beschreibungsmuster für Kommunikationseinträ…
+  - bindet: PBI-020 (Beschreibungsmuster und Suchlogik für Kommunikatio…)
+- **ARCH-25** — Die App soll eine No-Go-Seite mit dynamisch erweiterbarer Liste bereitstellen, auf der kritische Dinge festgehalten werden, die in Gegenwart…
+  - bindet: PBI-023 (No-Go-Seite mit kompakter, erweiterbarer Liste ber…)
+- **ARCH-26** — Eine Kalenderfunktion soll erwogen werden; zusätzlich ist zu prüfen, ob auch Medikamentengaben integriert werden sollen, wobei die Vertrauli…
+  - bindet: PBI-028 (Kalender- und Medikationsfunktionen als späteren A…)
+- **ARCH-27** — Es soll erwogen werden, in der Profilübersicht das Anlegen neuer Profile per Plus-Symbol und Dialog für Bild, Name und Beschreibung zu ermög…
+  - bindet: PBI-010 (Neue Bewohnerprofile mit Basisdaten und Dublettenp…)
+- **ARCH-28** — Eine Ausweitung der App auf weitere Dokumentationsfunktionen soll geprüft werden, jedoch nur in begrenztem Umfang und ohne den Fokus auf unt…
+  - bindet: PBI-027 (Umfang der Dokumentationsintegration und Datenüber…)
+- **ARCH-29** — Nach dem Login soll auf jeder Seite eine konsistente Appbar vorhanden sein.
+  - bindet: PBI-007 (Konsistente Appbar mit Basisnavigation nach dem Lo…)
+- **ARCH-30** — Die Appbar soll Rücknavigation sowie schnellen Zugriff auf Seitentitel, Einstellungen und Logout unterstützen.
+  - bindet: PBI-007 (Konsistente Appbar mit Basisnavigation nach dem Lo…)
+- **ARCH-31** — Bei der Gestaltung soll auf Barrierefreiheit geachtet werden, insbesondere große Schrift, ausreichender Kontrast und zurückhaltender Farbein…
+  - bindet: PBI-025 (Plattformübergreifende mobile Nutzung mit visuelle…)
+- **ARCH-32** — Alternative Eingabemethoden wie Sprachbefehle sollen als mögliche Accessibility-Erweiterung berücksichtigt werden.
+  - bindet: PBI-026 (Tablet-Nutzung und alternative Eingabemethoden bew…)
+- **ARCH-34** — Eine Hilfe-Funktion oder ein Tutorial soll vorgesehen werden, idealerweise als kurze Tour beim ersten Login und als später erneut aufrufbare…
+  - bindet: PBI-008 (Erstlogin-Hilfe und erneut aufrufbaren Hilfebereic…)
+- **ARCH-35** — Animationen sollen nicht im Fokus stehen; falls sie verwendet werden, dürfen sie nicht ablenkend sein.
+  - bindet: PBI-025 (Plattformübergreifende mobile Nutzung mit visuelle…)
+- **ARCH-36** — Die App soll plattformübergreifend auf iPhone und Android laufen.
+  - bindet: PBI-025 (Plattformübergreifende mobile Nutzung mit visuelle…)
+- **ARCH-37** — Für die Entwicklung soll Flutter mit Dart verwendet werden, um die plattformübergreifende Umsetzung zu unterstützen.
+  - bindet: PBI-030 (Technologiestack für App, State-Management und Dat…)
+- **ARCH-38** — Das Paket GetX soll als technische Option berücksichtigt und in der Umsetzung erprobt werden.
+  - bindet: PBI-030 (Technologiestack für App, State-Management und Dat…)
+- **ARCH-39** — Firebase Firestore ist als Datenbanklösung vorläufig vorgesehen, jedoch noch nicht endgültig festgelegt.
+  - bindet: PBI-030 (Technologiestack für App, State-Management und Dat…)
+- **ARCH-41** — Es soll evaluiert werden, ob die App zusätzlich auf Tablets nutzbar sein kann.
+  - bindet: PBI-026 (Tablet-Nutzung und alternative Eingabemethoden bew…)
+- **ARCH-42** — Wenn im About-Me-Bereich neue Inhalte hochgeladen werden, sollen verbundene Nutzer derselben Einrichtung per Popup benachrichtigt werden.
+  - bindet: PBI-016 (About-Me-Neu-Markierungen und Einrichtungs-Benachr…)
+- **ARCH-43** — Die genauen Bedürfnisse und Funktionen des Systems müssen durch Anforderungsanalyse mit mehreren Beteiligten und künftigen Nutzern erarbeite…
+  - bindet: PBI-029 (Anforderungsanalyse, Vor-Ort-Forschung und Pilot-E…)
+- **ARCH-44** — Zur Nutzerforschung sollen Vor-Ort-Termine in Einrichtungen durchgeführt werden, um reale Kommunikationssituationen und Bedürfnisse besser z…
+  - bindet: PBI-029 (Anforderungsanalyse, Vor-Ort-Forschung und Pilot-E…)
+
+## Arbeit (work)
+
+- **ARCH-33** — Der Login-Screen soll ein zentriertes, gut sichtbares Logo im oberen Drittel enthalten; ein passendes Kommunikations-Logo ist noch zu erstel…
+  - noch nicht als PBI platziert

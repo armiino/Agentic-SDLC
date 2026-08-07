@@ -18,7 +18,7 @@ public static class IngestionRequirementsRunner
 {
     private const string SourceName = "AgenticSdlc.Host";
     private const string Phase = "phase2_evidence";
-    private const string AgentName = "RequirementIngestionAgent";
+    private static readonly string AgentName = AspectIngestionProfile.Requirement.AgentName;
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
@@ -87,7 +87,7 @@ public static class IngestionRequirementsRunner
             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
 
         var vars = new Dictionary<string, string> { ["runId"] = run.RunId };
-        var prompt = PromptProvider.Load(repoRoot, Phase, AgentName, "RequirementIngestionAgent1", vars);
+        var prompt = PromptProvider.Load(repoRoot, Phase, AgentName, AspectIngestionProfile.Requirement.PromptName, vars);
         var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, AgentName, SourceName);
         Func<IReadOnlyList<AITool>, AIAgent> factory = tools =>
             client.AsAIAgent(instructions: prompt, name: AgentName, tools: [.. tools])
@@ -95,13 +95,13 @@ public static class IngestionRequirementsRunner
         ICandidateRetriever retriever = new ShowAllRequirementRetriever();
 
         var workflow = RequirementIngestionWorkflow.Build(
-            new IngestionResolveExecutor(factory, retriever, run),
+            new IngestionResolveExecutor(factory, retriever, run, AspectIngestionProfile.Requirement),
             new IngestionGateExecutor(run),
-            new IngestionRepairExecutor(factory, retriever, run),
+            new IngestionRepairExecutor(factory, retriever, run, AspectIngestionProfile.Requirement),
             new IngestionFinalizeExecutor(run, outDir));
 
-        var incomingReq = delta.Items.Count(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase));
-        var coreReq = core.Items.Count(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase));
+        var incomingReq = delta.Items.Count(AspectIngestionProfile.Requirement.Matches);
+        var coreReq = core.Items.Count(AspectIngestionProfile.Requirement.Matches);
 
         if (dryRun)
         {

@@ -54,6 +54,8 @@ public sealed record ProjectStateItem(
     // Feld ist gesetzt (feature -> feature, pbi -> pbi); requirements nutzen die flachen Felder.
     [property: JsonPropertyName("feature")] FeaturePayload? Feature = null,
     [property: JsonPropertyName("pbi")] PbiPayload? Pbi = null,
+    // R-11 A2: arch-Konsum-Rollen (WhenWritingNull: der Bestand ändert sich erst, wenn klassifiziert wird).
+    [property: JsonPropertyName("architecture"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ArchitecturePayload? Architecture = null,
     // Core-Erweiterung (SchemaVersion 4, §5 Statusmodell-Refactor): der Item-Lifecycle-Status als getrennte, typisierte
     // Achsen (siehe CoreStatus.cs), die das eine rohe `status`-Feld ABGELÖST haben (S7/Option A). Diese Achsen SIND die
     // Quelle; `Status` ist eine berechnete Projektion daraus (get-only). Nullable nur zur Deserialisierungs-Toleranz — ein

@@ -46,6 +46,10 @@ public static class PbiUpdateApply
         void EnsureReqFeature(string? reqId, string? featureId)
         {
             if (string.IsNullOrWhiteSpace(reqId) || string.IsNullOrWhiteSpace(featureId) || !byId.ContainsKey(featureId!)) return;
+            // A4/E-R2 (06.08.): die Seed-Regel ist REQ-Semantik - ein arch-Wahrheits-Item gehoert NIE in ein
+            // Feature (Rahmen wirken quer; das WORK-PBI selbst bekommt part_of_feature, sein covers-Ziel nicht).
+            if (!byId.TryGetValue(reqId!, out var truth)
+                || !string.Equals(truth.ItemType, "requirement", StringComparison.OrdinalIgnoreCase)) return;
             if (relations.Any(r => string.Equals(r.RelationType, "part_of_feature", StringComparison.Ordinal)
                                    && string.Equals(r.FromId, reqId, StringComparison.Ordinal)
                                    && string.Equals(r.ToId, featureId, StringComparison.Ordinal))) return;
@@ -78,6 +82,11 @@ public static class PbiUpdateApply
                 OpenDecisionRefs: [], PriorityRank: null, Readiness: readiness, Mvp: null, Trace: null);
             var meta = new Dictionary<string, string>(StringComparer.Ordinal)
             { ["sourceRunId"] = sourceRun, ["createdFromRequirement"] = op.RequirementId, ["featureId"] = op.FeatureId };
+            // A4: technische Arbeit traegt ihre Wahrheits-Herkunft sichtbar (Issue-/Review-Herkunft; Origin
+            // bleibt bewusst der PROZESS "pbi-update" - die Herkunft ist Metadatum + covers-Relation).
+            if (byId.TryGetValue(op.RequirementId, out var truthItem)
+                && string.Equals(truthItem.ItemType, "architecture", StringComparison.OrdinalIgnoreCase))
+                meta["fromAspect"] = "architecture";
             AddItem(order, byId, new ProjectStateItem(
                 ItemId: id, ItemType: "pbi", Text: title, Origin: "pbi-update", Stage: null, Version: 1,
                 SourceRunId: sourceRun, SourceArtifactId: null, SourceArtifactType: null, SourceDecisionId: null, SourceCandidateId: null,
@@ -118,10 +127,22 @@ public static class PbiUpdateApply
                         break;
                     case PbiUpdateKind.SupersedePbi:
                         // Geteilter Wahrheitsuebergang (T2.0) — identisch fuer pbi-update und Tor 2 ADOPT_NEW.
-                        var (swAdded, swRemoved) = RequirementSwap.SwapCoverage(
-                            pbi.ItemId, op.RequirementId, op.ReplacementRequirementId, links, relations, "pbi-update");
-                        relAdded += swAdded; relRemoved += swRemoved;
-                        EnsureReqFeature(op.ReplacementRequirementId, FeatureOf(pbi));   // R-36 v2: Ersatz-REQ erbt das Feature
+                        // ③ E-8: bei einem RAHMEN-Ziel (arch) ist der Übergang der ConstraintSwap (constrained_by-
+                        // Umzug, alte Kante = Historie) — Coverage/Feature sind req-Semantik und bleiben unberührt.
+                        if (relations.Any(r => string.Equals(r.RelationType, ConstraintSwap.Relation, StringComparison.Ordinal)
+                                && string.Equals(r.FromId, pbi.ItemId, StringComparison.Ordinal)
+                                && string.Equals(r.ToId, op.RequirementId, StringComparison.Ordinal)))
+                        {
+                            if (ConstraintSwap.Swap(pbi.ItemId, op.RequirementId, op.ReplacementRequirementId, relations, "pbi-update"))
+                                relAdded++;
+                        }
+                        else
+                        {
+                            var (swAdded, swRemoved) = RequirementSwap.SwapCoverage(
+                                pbi.ItemId, op.RequirementId, op.ReplacementRequirementId, links, relations, "pbi-update");
+                            relAdded += swAdded; relRemoved += swRemoved;
+                            EnsureReqFeature(op.ReplacementRequirementId, FeatureOf(pbi));   // R-36 v2: Ersatz-REQ erbt das Feature
+                        }
                         status = status.Escalate(Blocker.NeedsClarify);
                         break;
                 }

@@ -25,14 +25,38 @@ internal sealed record BootstrapNodes(
     BacklogComposedApplyExecutor BacklogApply, CoreSeedBacklogExecutor Seed);
 
 internal sealed record OperationalNodes(
-    IngestBridgeExecutor IngestBridge,
+    IngestBridgeExecutor IngestBridge, AspectIngestionRouterExecutor AspectRouter, // R-11 A1b: Registry-Router (laut-parkend)
     IngestionHitlResolveExecutor IngestResolve, IngestionGateExecutor IngestGate, IngestionRepairExecutor IngestRepair,
     IngestionHitlFinalizeExecutor IngestFinalize, RequestPort IngestPort, IngestComposedApplyExecutor IngestApply,
+    ArchIngestBridgeExecutor ArchBridge, IngestionHitlResolveExecutor ArchResolve, IngestionGateExecutor ArchGate, // R-11 A1d: arch-Strip
+    IngestionRepairExecutor ArchRepair, IngestionHitlFinalizeExecutor ArchFinalize, RequestPort ArchPort, ArchComposedApplyExecutor ArchApply,
     DecisionScanExecutor DecisionScan, RequestPort DecisionPort, DecisionComposedApplyExecutor DecisionApply,
     IngestPbiBridgeExecutor Bridge,
     PbiUpdateDeriveExecutor PbiDerive, PbiUpdateMakerExecutor PbiMaker, PbiUpdateGateExecutor PbiGate,
     PbiUpdateRepairExecutor PbiRepair, PbiAlignExecutor PbiAlign, PbiUpdateHitlFinalizeExecutor PbiFinalize, RequestPort PbiPort,
     PbiUpdateApplyExecutor PbiApply);
+
+// R-11 A2-2: der Klassifikations-Strip (EIN geteilter Strip, ZWEI Bahnen-Bridges — T2.22).
+internal sealed record ArchClassifyNodes(
+    AgenticSdlc.Host.FullWorkflow.ArchClassify.OperationalClassifyBridgeExecutor OpBridge,
+    AgenticSdlc.Host.FullWorkflow.ArchClassify.BootstrapClassifyBridgeExecutor BootBridge,
+    AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyMakerExecutor Maker,
+    AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyGateExecutor Gate,
+    AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyRepairExecutor Repair,
+    AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyFinalizeExecutor Finalize,
+    RequestPort Port,
+    AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyApplyExecutor Apply);
+
+// R-11 A5 (06.08.): der ADR-Strip (EIN geteilter Strip, ZWEI Bahnen-Bridges — 10. Gate adr-gate).
+internal sealed record AdrNodes(
+    AgenticSdlc.Host.FullWorkflow.Adr.AdrOperationalBridgeExecutor OpBridge,
+    AgenticSdlc.Host.FullWorkflow.Adr.AdrBootstrapBridgeExecutor BootBridge,
+    AgenticSdlc.Host.FullWorkflow.Adr.AdrMakerExecutor Maker,
+    AgenticSdlc.Host.FullWorkflow.Adr.AdrGateExecutor Gate,
+    AgenticSdlc.Host.FullWorkflow.Adr.AdrRepairExecutor Repair,
+    AgenticSdlc.Host.FullWorkflow.Adr.AdrFinalizeExecutor Finalize,
+    RequestPort Port,
+    AgenticSdlc.Host.FullWorkflow.Adr.AdrApplyExecutor Apply);
 
 internal sealed record ForwardNodes(
     BootstrapForwardBridgeExecutor BootstrapBridge, OperationalForwardBridgeExecutor OperationalBridge,
@@ -50,7 +74,7 @@ internal sealed record ForwardNodes(
 /// </summary>
 internal static class PipelineFullWorkflow
 {
-    public static Workflow Assemble(FrontNodes front, BootstrapNodes boot, OperationalNodes op, ForwardNodes fwd)
+    public static Workflow Assemble(FrontNodes front, BootstrapNodes boot, OperationalNodes op, ArchClassifyNodes classify, AdrNodes adr, ForwardNodes fwd)
     {
         // Schritt 5 ③ (05.08.): der Start ist ein TYPISIERTER Eingangs-Dispatcher (Transkript | Delta) —
         // MAF-nativ per Input-Typ-Routing; der Delta-Einstieg dockt am existierenden BranchDetector an.
@@ -83,8 +107,10 @@ internal static class PipelineFullWorkflow
         b.AddEdge(front.Branch, boot.CoreBootstrap);
         b.AddEdge(front.Branch, op.IngestBridge);
 
-        // Bootstrap-Zweig: core-bootstrap -> Cluster (+Gate) -> Clarify (+Gate) -> Seed
-        b.AddEdge(boot.CoreBootstrap, boot.ClusterBridge);
+        // Bootstrap-Zweig: core-bootstrap -> [A2: Klassifikation der geseedeten arch-Items] -> Cluster (+Gate) -> ...
+        b.AddEdge(boot.CoreBootstrap, classify.BootBridge);
+        b.AddEdge(classify.BootBridge, adr.BootBridge);            // Typ CoreBootstrapOutput (Leer-Skip -> ADR-Strip)
+        b.AddEdge(classify.BootBridge, classify.Maker);            // Typ ArchClassifyWork
         b.AddEdge(boot.ClusterBridge, boot.ClusterAgent);
         // R-33 S2: Loop-Kanten aus der EINEN Quelle (ReClarifyClusterWorkflow.AddTo) — CLI und Ein-Graph identisch.
         ReClarifyClusterWorkflow.AddTo(b, boot.ClusterAgent, boot.ClusterGate, boot.ClusterRepair, boot.ClusterReview, boot.ClusterFinalize);
@@ -101,11 +127,33 @@ internal static class PipelineFullWorkflow
         b.AddEdge(boot.BacklogApply, boot.Seed);
 
         // Betriebs-Zweig: Ingest -> [Gate] -> Apply -> Bridge -> PbiUpdate -> [Gate] -> Apply (eine Quelle: AddTo)
-        b.AddEdge(op.IngestBridge, op.IngestResolve);
+        // R-11 A1b: der Aspekt-Router sitzt VOR dem Kern — req läuft durch, Unregistriertes wird LAUT geparkt.
+        b.AddEdge(op.IngestBridge, op.AspectRouter);
+        b.AddEdge(op.AspectRouter, op.IngestResolve);
         PipelineComposedWorkflow.AddTo(b, op.IngestResolve, op.IngestGate, op.IngestRepair, op.IngestFinalize,
-            op.IngestPort, op.IngestApply, op.DecisionScan, op.DecisionPort, op.DecisionApply,
+            op.IngestPort, op.IngestApply,
+            op.ArchBridge, op.ArchResolve, op.ArchGate, op.ArchRepair, op.ArchFinalize, op.ArchPort, op.ArchApply,
+            op.DecisionScan, op.DecisionPort, op.DecisionApply,
             op.Bridge, op.PbiDerive, op.PbiMaker, op.PbiGate, op.PbiRepair,
             op.PbiAlign, op.PbiFinalize, op.PbiPort, op.PbiApply);
+
+        // R-11 A2-2 — der geteilte Klassifikations-Strip (Loop-Kanten aus der EINEN Quelle) + Betriebs-Anker:
+        // archApply -> OpBridge -> (Report-Skip -> DecisionScan | Work -> Maker); Apply re-emittiert den
+        // Bahnen-Passagier TYP-GENAU (Report -> DecisionScan · CoreBootstrapOutput -> ClusterBridge).
+        b.AddEdge(op.ArchApply, classify.OpBridge);
+        b.AddEdge(classify.OpBridge, adr.OpBridge);                // Typ IngestionApplyReport (Leer-Skip -> ADR-Strip)
+        b.AddEdge(classify.OpBridge, classify.Maker);              // Typ ArchClassifyWork
+        AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyWorkflow.AddTo(b, classify.Maker, classify.Gate, classify.Repair, classify.Finalize, classify.Port, classify.Apply);
+        b.AddEdge(classify.Apply, adr.OpBridge);                   // Typ IngestionApplyReport
+        b.AddEdge(classify.Apply, adr.BootBridge);                 // Typ CoreBootstrapOutput
+        // A5: der ADR-Strip — hinter der Klassifikation (frisch bestätigte design-Rollen), vor DecisionScan/Cluster.
+        b.AddEdge(adr.OpBridge, op.DecisionScan);                  // Typ IngestionApplyReport (Leer-Skip)
+        b.AddEdge(adr.OpBridge, adr.Maker);                        // Typ AdrWork
+        b.AddEdge(adr.BootBridge, boot.ClusterBridge);             // Typ CoreBootstrapOutput (Leer-Skip)
+        b.AddEdge(adr.BootBridge, adr.Maker);                      // Typ AdrWork
+        AgenticSdlc.Host.FullWorkflow.Adr.AdrWorkflow.AddTo(b, adr.Maker, adr.Gate, adr.Repair, adr.Finalize, adr.Port, adr.Apply);
+        b.AddEdge(adr.Apply, op.DecisionScan);                     // Typ IngestionApplyReport
+        b.AddEdge(adr.Apply, boot.ClusterBridge);                  // Typ CoreBootstrapOutput
 
         // Gemeinsames Ende: beide Zweige -> Forward-Prep -> Snapshot -> Forward (+Gate) -> Apply (Dry-Run-Default)
         b.AddEdge(boot.Seed, fwd.BootstrapBridge);

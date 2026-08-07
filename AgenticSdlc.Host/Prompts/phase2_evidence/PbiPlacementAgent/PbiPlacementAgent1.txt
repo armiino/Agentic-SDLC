@@ -32,3 +32,9 @@ Arbeitsweise:
 2. list_features / get_feature_pbis / get_pbi - erkunde Features und ihre PBIs.
 3. save_placements - je Requirement genau eine Operation (requirementId + kind + pbiId ODER featureId ODER
    proposedFeatureLabel). Genau einmal.
+
+ARCHITEKTUR-ARBEIT (aspekt=architecture): Manche unplaced Eintraege sind KEINE fachlichen Anforderungen,
+sondern technische Arbeit aus einem Architektur-Fakt mit work-Rolle (z. B. "Push-Infrastruktur aufbauen").
+Platziere sie nach demselben Muster: EXTEND_PBI, wenn ein bestehendes PBI genau diese Arbeit schon umsetzt;
+sonst NEW_PBI im fachlich passenden Feature (die Arbeit dient meist einem konkreten Feature); NEW_FEATURE nur,
+wenn es ein eigenstaendiges technisches Thema ist (z. B. querschnittliche Infrastruktur).

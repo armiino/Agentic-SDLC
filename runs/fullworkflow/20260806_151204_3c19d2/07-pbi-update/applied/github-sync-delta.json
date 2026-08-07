@@ -1,0 +1,206 @@
+{
+  "newPbis": [],
+  "updatedPbis": [
+    "PBI-001",
+    "PBI-025",
+    "PBI-030",
+    "PBI-003",
+    "PBI-020",
+    "PBI-005",
+    "PBI-029"
+  ],
+  "entries": [
+    {
+      "pbiId": "PBI-001",
+      "title": "Produktziel und L\u00F6sungsrahmen f\u00FCr unterst\u00FCtzte Kommunikation festlegen",
+      "status": "needs_clarify",
+      "readiness": "blocked_by_decision",
+      "coveredRequirementIds": [
+        "REQ-01",
+        "REQ-02",
+        "REQ-03",
+        "REQ-04",
+        "REQ-52"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#1",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Es liegt eine freigegebene Zielbeschreibung vor, die den prim\u00E4ren Nutzen \u0027Betreuer und andere Personen verstehen Bewohner besser\u0027 explizit benennt.",
+        "Es liegt eine dokumentierte Abgrenzung vor, dass keine individuelle bidirektionale \u00DCbersetzungsfunktion Teil des L\u00F6sungsansatzes ist.",
+        "Es sind mindestens die Kernanwendungsf\u00E4lle \u0027Profilwissen nachsehen bei Verst\u00E4ndnisschwierigkeiten\u0027 und \u0027Kommunikationswissen bereitstellen\u0027 fachlich beschrieben.",
+        "Alle nachfolgenden Delivery-PBIs k\u00F6nnen sich auf diese Zielbeschreibung beziehen, ohne dem Ausschluss aus REQ-04 zu widersprechen."
+      ],
+      "statement": "Als Product Owner will ich das konkrete Produktziel und den zul\u00E4ssigen L\u00F6sungsrahmen der App festlegen, damit sp\u00E4tere Features die unterst\u00FCtzte Kommunikation verbessern, ohne in eine beidseitige \u00DCbersetzungsl\u00F6sung abzugleiten.",
+      "constraints": [
+        "ARCH-01 \u2014 Die Loesung bleibt eine digitale App zur Foerderung der Kommunikation zwischen betreuten Menschen und anderen Personen; zusaetzlich wird konkretisiert, dass sie als reine Mobile-App ohne Web-Client umgesetzt wird.",
+        "ARCH-02 \u2014 Die Unterst\u00FCtzung soll vorrangig darauf ausgerichtet sein, dass Betreuer oder andere Personen Bewohner besser verstehen k\u00F6nnen.",
+        "ARCH-03 \u2014 Als Kernansatz soll die App Wissen \u00FCber Profil und Kommunikationsweise einer Person bereitstellen, damit Nutzer bei Verst\u00E4ndnisschwierigkeiten nachsehen k\u00F6nnen; die konkrete Auspr\u00E4gung dieses Ansatzes ist noch weiter auszuarbeiten.",
+        "ARCH-04 \u2014 Ein System, das individuell zwischen Bewohner und Betreuer in beide Richtungen \u00FCbersetzt, ist als L\u00F6sungsansatz ausgeschlossen."
+      ],
+      "coveredArchitecture": null
+    },
+    {
+      "pbiId": "PBI-003",
+      "title": "Rechtemodell f\u00FCr Angeh\u00F6rige und Einrichtungssicht festlegen",
+      "status": "needs_clarify",
+      "readiness": "blocked_by_decision",
+      "coveredRequirementIds": [
+        "REQ-08",
+        "REQ-09",
+        "REQ-10"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#3",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Es liegt eine Rollen-/Rechtematrix f\u00FCr mindestens Admin, User, Bewohner und Angeh\u00F6rige vor.",
+        "Es ist dokumentiert, welche Profil- und Inhaltsbereiche Angeh\u00F6rige lesen, hinzuf\u00FCgen, bearbeiten oder nicht sehen d\u00FCrfen.",
+        "Es ist dokumentiert, nach welchem Fachprinzip Mitarbeiter nur Profile ihrer Einrichtung sehen d\u00FCrfen.",
+        "Offene Punkte zur technischen Umsetzung der Einrichtungstrennung sind f\u00FCr die Umsetzung separat benannt."
+      ],
+      "statement": "Als Product Owner will ich das Rechtemodell f\u00FCr Angeh\u00F6rige und die Begrenzung auf Einrichtungsprofile festlegen, damit Zugriffe fachlich korrekt und datenschutzgerecht abgegrenzt werden.",
+      "constraints": [
+        "ARCH-08 \u2014 Es muss mindestens die Rollen Admin und User geben; Admins verwalten Accounts und Rechte, User k\u00F6nnen Inhalte hinzuf\u00FCgen, aber nichts l\u00F6schen.",
+        "ARCH-09 \u2014 Neben Mitarbeitern sollen auch Angeh\u00F6rige Zugriff auf die App erhalten und Inhalte beziehungsweise Wissen beitragen k\u00F6nnen; unterschiedliche Rechte sind dabei vorgesehen, aber noch nicht konkret ausformuliert.",
+        "ARCH-10 \u2014 Zus\u00E4tzlich soll es einen Bewohner-Account geben, der nur das eigene Profil sehen darf und nur eingeschr\u00E4nkte Funktionen nutzen kann, insbesondere Zugriff auf About Me und gegebenenfalls das Hinzuf\u00FCgen eigener Bilder.",
+        "ARCH-11 \u2014 Mitarbeiter d\u00FCrfen nicht einrichtungs\u00FCbergreifend auf alle Profile zugreifen, sondern nur auf Profile der Einrichtung, in der sie t\u00E4tig sind; die technische Umsetzung dieser Beschr\u00E4nkung ist noch zu erarbeiten."
+      ],
+      "coveredArchitecture": [
+        "ARCH-11 \u2014 Mitarbeiter d\u00FCrfen nicht einrichtungs\u00FCbergreifend auf alle Profile zugreifen, sondern nur auf Profile der Einrichtung, in der sie t\u00E4tig sind; die technische Umsetzung dieser Beschr\u00E4nkung ist noch zu erarbeiten."
+      ]
+    },
+    {
+      "pbiId": "PBI-005",
+      "title": "Login-Screen mit sicherem Fehlerfeedback bereitstellen",
+      "status": "needs_clarify",
+      "readiness": "ready_with_nonblocking_questions",
+      "coveredRequirementIds": [
+        "L3-REQ-011",
+        "REQ-05",
+        "REQ-11",
+        "REQ-12"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#5",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Der Login-Screen enth\u00E4lt ein sichtbares Logo im oberen Drittel, ein E-Mail-Feld, ein Passwort-Feld und einen Login-Button.",
+        "Der Screen enth\u00E4lt keine Funktion zur Selbstregistrierung.",
+        "Bei ung\u00FCltigen Zugangsdaten zeigt die App eine verst\u00E4ndliche Fehlermeldung, ohne preiszugeben, ob ein bestimmter Account existiert.",
+        "Bei erfolgreicher Anmeldung wird der Nutzer in den gesch\u00FCtzten Bereich weitergeleitet."
+      ],
+      "statement": "Als Nutzer will ich mich \u00FCber einen klaren Login-Screen mit E-Mail und Passwort anmelden, damit ich sicher in die App einsteigen kann.",
+      "constraints": [
+        "ARCH-07 \u2014 Die App darf keine Selbstregistrierung erlauben; Zugang erfolgt nur per Login mit intern vergebenen Accounts.",
+        "ARCH-33 \u2014 Der Login-Screen soll ein zentriertes, gut sichtbares Logo im oberen Drittel enthalten; ein passendes Kommunikations-Logo ist noch zu erstellen."
+      ],
+      "coveredArchitecture": [
+        "ARCH-33 \u2014 Der Login-Screen soll ein zentriertes, gut sichtbares Logo im oberen Drittel enthalten; ein passendes Kommunikations-Logo ist noch zu erstellen."
+      ]
+    },
+    {
+      "pbiId": "PBI-020",
+      "title": "Beschreibungsmuster und Suchlogik f\u00FCr Kommunikationswissen festlegen",
+      "status": "needs_clarify",
+      "readiness": "blocked_by_decision",
+      "coveredRequirementIds": [
+        "REQ-28"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#20",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Es liegt ein dokumentiertes Beschreibungsmuster f\u00FCr Kommunikations-Eintr\u00E4ge vor.",
+        "Das Muster beschreibt mindestens, welche Angaben f\u00FCr sp\u00E4tere Suche oder Filterung relevant sind.",
+        "Es ist entschieden, welche Sucharten in einer sp\u00E4teren Umsetzung unterst\u00FCtzt werden sollen."
+      ],
+      "statement": "Als Product Owner will ich ein strukturiertes Beschreibungsmuster f\u00FCr Kommunikationsweisen und die darauf aufbauende Suchlogik festlegen, damit Kommunikationswissen sp\u00E4ter systematisch gefunden und gefiltert werden kann.",
+      "constraints": [
+        "ARCH-24 \u2014 Auf Kommunikationsseiten soll eine Suchfunktion vorhanden sein; daf\u00FCr muss ein standardisiertes Beschreibungsmuster f\u00FCr Kommunikationseintr\u00E4ge definiert werden, damit Suche und sp\u00E4tere Filterung funktionieren."
+      ],
+      "coveredArchitecture": [
+        "ARCH-24 \u2014 Auf Kommunikationsseiten soll eine Suchfunktion vorhanden sein; daf\u00FCr muss ein standardisiertes Beschreibungsmuster f\u00FCr Kommunikationseintr\u00E4ge definiert werden, damit Suche und sp\u00E4tere Filterung funktionieren."
+      ]
+    },
+    {
+      "pbiId": "PBI-025",
+      "title": "Plattform\u00FCbergreifende mobile Nutzung mit visueller Barrierefreiheit sicherstellen",
+      "status": "needs_clarify",
+      "readiness": "backlog_ready",
+      "coveredRequirementIds": [
+        "REQ-37",
+        "REQ-38",
+        "REQ-47"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#25",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Die App ist auf iPhone und Android lauff\u00E4hig.",
+        "Zentrale Oberfl\u00E4chen verwenden gut lesbare Schriftgr\u00F6\u00DFen und ausreichende Kontraste.",
+        "Farben werden zur\u00FCckhaltend eingesetzt, sodass Inhalte im Vordergrund stehen.",
+        "Falls Animationen verwendet werden, lenken sie die Bedienung nicht ab."
+      ],
+      "statement": "Als Nutzer will ich die App auf iPhone und Android in gut lesbarer, nicht ablenkender Form verwenden k\u00F6nnen, damit sie im Alltag zuverl\u00E4ssig und zug\u00E4nglich einsetzbar ist.",
+      "constraints": [
+        "ARCH-01 \u2014 Die Loesung bleibt eine digitale App zur Foerderung der Kommunikation zwischen betreuten Menschen und anderen Personen; zusaetzlich wird konkretisiert, dass sie als reine Mobile-App ohne Web-Client umgesetzt wird.",
+        "ARCH-31 \u2014 Bei der Gestaltung soll auf Barrierefreiheit geachtet werden, insbesondere gro\u00DFe Schrift, ausreichender Kontrast und zur\u00FCckhaltender Farbeinsatz.",
+        "ARCH-35 \u2014 Animationen sollen nicht im Fokus stehen; falls sie verwendet werden, d\u00FCrfen sie nicht ablenkend sein.",
+        "ARCH-36 \u2014 Die App soll plattform\u00FCbergreifend auf iPhone und Android laufen."
+      ],
+      "coveredArchitecture": null
+    },
+    {
+      "pbiId": "PBI-029",
+      "title": "Anforderungsanalyse, Vor-Ort-Forschung und Pilot-Erfolgskriterien durchf\u00FChren",
+      "status": "needs_clarify",
+      "readiness": "blocked_by_decision",
+      "coveredRequirementIds": [
+        "L3-REQ-015",
+        "REQ-50",
+        "REQ-51"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#29",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Es wurden Vor-Ort-Termine in Einrichtungen geplant und durchgef\u00FChrt oder verbindlich terminiert.",
+        "Erkenntnisse aus mehreren Beteiligten- und Nutzerperspektiven sind dokumentiert.",
+        "F\u00FCr den Pilot liegen messbare Erfolgskriterien vor, z. B. zur schnelleren Auffindbarkeit relevanter Informationen oder verbesserten Verst\u00E4ndigung in ausgew\u00E4hlten Situationen."
+      ],
+      "statement": "Als Product Owner will ich Anforderungen mit Beteiligten vor Ort erheben und messbare Pilot-Erfolgskriterien definieren, damit Produktentscheidungen auf realen Nutzungssituationen basieren.",
+      "constraints": null,
+      "coveredArchitecture": [
+        "ARCH-43 \u2014 Die genauen Bed\u00FCrfnisse und Funktionen des Systems m\u00FCssen durch Anforderungsanalyse mit mehreren Beteiligten und k\u00FCnftigen Nutzern erarbeitet werden.",
+        "ARCH-44 \u2014 Zur Nutzerforschung sollen Vor-Ort-Termine in Einrichtungen durchgef\u00FChrt werden, um reale Kommunikationssituationen und Bed\u00FCrfnisse besser zu verstehen."
+      ]
+    },
+    {
+      "pbiId": "PBI-030",
+      "title": "Technologiestack f\u00FCr App, State-Management und Datenbank festlegen",
+      "status": "needs_clarify",
+      "readiness": "blocked_by_decision",
+      "coveredRequirementIds": [
+        "REQ-53",
+        "REQ-54",
+        "REQ-70"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#30",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Es liegt eine dokumentierte Entscheidung vor, ob Flutter mit Dart als verbindliche Umsetzungsbasis verwendet wird.",
+        "Es ist entschieden, ob GetX eingesetzt, verworfen oder durch eine Alternative ersetzt wird.",
+        "Es ist entschieden, ob Firestore als Datenbank verbindlich verwendet wird oder welche Alternative stattdessen gilt."
+      ],
+      "statement": "Als Product Owner will ich die wesentlichen Technologie- und Architekturentscheidungen verbindlich festlegen, damit die Umsetzung auf einem freigegebenen technischen Rahmen startet.",
+      "constraints": [
+        "ARCH-01 \u2014 Die Loesung bleibt eine digitale App zur Foerderung der Kommunikation zwischen betreuten Menschen und anderen Personen; zusaetzlich wird konkretisiert, dass sie als reine Mobile-App ohne Web-Client umgesetzt wird.",
+        "ARCH-36 \u2014 Die App soll plattform\u00FCbergreifend auf iPhone und Android laufen.",
+        "ARCH-37 \u2014 F\u00FCr die Entwicklung soll Flutter mit Dart verwendet werden, um die plattform\u00FCbergreifende Umsetzung zu unterst\u00FCtzen."
+      ],
+      "coveredArchitecture": null
+    }
+  ]
+}

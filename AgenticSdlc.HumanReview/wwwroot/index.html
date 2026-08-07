@@ -59,6 +59,13 @@
   .claim-empty { color:var(--mut); padding:12px; font-size:12px; }
   .selected-target { margin-top:8px; color:var(--mut); font-size:12px; }
   .selected-target strong { color:var(--ok); font-weight:600; }
+  .ref-chips { display:flex; flex-wrap:wrap; gap:6px; padding:4px 0 2px; }
+  .ref-chip { display:inline-flex; align-items:center; gap:6px; background:#10141b; border:1px solid var(--edge);
+    border-radius:14px; padding:3px 8px 3px 10px; font-size:12px; cursor:pointer; overflow-wrap:anywhere; }
+  .ref-chip:hover { border-color:var(--accent); }
+  .chip-x { background:none; border:none; color:var(--mut); cursor:pointer; font-size:13px; padding:0 2px; line-height:1; }
+  .chip-x:hover { color:#ff6b6b; }
+  .ref-empty { color:var(--mut); font-size:12px; }
   .reference-detail { display:none; border-top:1px solid var(--edge); border-bottom:1px solid var(--edge);
                       padding:12px; background:#10141c; max-height:42vh; overflow:auto; }
   .reference-detail.show { display:block; }
@@ -119,6 +126,9 @@
   .ctxout.show { display:block; }
   .ctx-head { color:var(--mut); font-size:11px; text-transform:uppercase; letter-spacing:.04em; margin:9px 0 3px; }
   .ctx-head:first-child { margin-top:0; }
+  .md-doc { background:#0c0e12; border:1px solid var(--edge); border-radius:6px; padding:10px 12px; margin:4px 0;
+    color:var(--fg); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12px; white-space:pre-wrap;
+    overflow-x:auto; }
   .ctx-card { background:#0f1420; border:1px solid var(--edge); border-radius:6px; padding:6px 9px; margin:4px 0; color:var(--fg); }
   .ctx-card.focus { border-color:var(--accent); background:#111a26; }
   .ctx-card .ctx-meta { color:var(--accent); font-weight:600; margin-right:6px; }
@@ -268,6 +278,7 @@
 let session = null;
 let activeItemId = null;
 let ledgerOptions = [];
+let refSpec = null;      // {fieldKey, multi}: das Feld, das die rechte Referenz-Liste speist (U2v2 generisch)
 let glossary = [];
 let transcriptSearchIndex = -1;
 let transcriptSearchHits = [];
@@ -345,7 +356,14 @@ function updateHeaderHeight() {
 }
 
 function extractLedgerOptions() {
-  const spec = session.fieldSchema.find(f => f.fieldKey === 'referenceTarget');
+  // U2v2: mehrwertiges ReferenceList-Feld hat Vorrang; Alt-Konvention (einwertig) bleibt der Feld-Schlüssel 'referenceTarget'.
+  const spec = session.fieldSchema.find(f => (f.inputType || '').toLowerCase() === 'referencelist')
+            || session.fieldSchema.find(f => f.fieldKey === 'referenceTarget');
+  refSpec = spec ? { fieldKey: spec.fieldKey, multi: (spec.inputType || '').toLowerCase() === 'referencelist' } : null;
+  if (refSpec?.multi) {
+    document.querySelector('.ledger-head h2').textContent = spec.catalogTitle || 'Referenzen';
+    document.getElementById('ledgerSearch').placeholder = 'suchen…';
+  }
   return (spec?.options || []).map(o => {
     const parts = (o.label || '').split(' — ');
     return { id: o.value, proposition: parts.slice(1).join(' — ') || o.label || o.value, label: o.label || o.value };
@@ -478,7 +496,9 @@ function fieldVisible(item, spec) {
 function renderField(item, spec) {
   const cur = val(item, spec.fieldKey);
   const id = (spec.inputType || '').toLowerCase();
-  const lbl = `<label class="${spec.required ? 'req' : ''}" title="${esc(spec.help)}">${esc(spec.label)}</label>`;
+  // U2v2 (06.08.): Labels glossifizieren — Glossar-Begriffe im Feld-Label (z. B. „constraint?") bekommen
+  // denselben Hover-Tooltip wie im Badge/in den Notes.
+  const lbl = `<label class="${spec.required ? 'req' : ''}" title="${esc(spec.help)}">${glossify(spec.label)}</label>`;
   if (id === 'dropdown') {
     const perItem = item.fieldOptions && item.fieldOptions[spec.fieldKey];
     const choices = (perItem && perItem.length)
@@ -492,6 +512,15 @@ function renderField(item, spec) {
   }
   if (id === 'readonly') {
     return `${lbl}<input data-field="${esc(spec.fieldKey)}" type="text" value="${esc(cur)}" readonly>`;
+  }
+  if (id === 'referencelist') {
+    const ids = (cur || '').split(/[\n\r,;]+/).map(s => s.trim()).filter(Boolean);
+    const byId = {};
+    (spec.options || []).forEach(o => { byId[o.value] = o.label; });
+    const chips = ids.map(t => `<span class="ref-chip" title="Details rechts öffnen"
+        onclick="event.stopPropagation();selectItem('${esc(item.itemId)}', false);openReferenceDetails('${esc(t)}')">${esc(byId[t] || t)}
+        <button class="chip-x" title="entfernen" onclick="event.stopPropagation();removeReferenceTarget('${esc(item.itemId)}','${esc(t)}')">×</button></span>`).join('');
+    return `${lbl}<div class="ref-chips" data-field="${esc(spec.fieldKey)}">${chips || `<span class="ref-empty">${esc(spec.help || 'rechts aus der Liste hinzufügen')}</span>`}</div>`;
   }
   if (id === 'multiline') {
     return `${lbl}<textarea data-field="${esc(spec.fieldKey)}" placeholder="${esc(spec.help)}"
@@ -511,10 +540,10 @@ function renderField(item, spec) {
 function renderLedger() {
   const terms = document.getElementById('ledgerSearch').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
   const active = activeItem();
-  const selected = active ? val(active, 'referenceTarget') : '';
+  const selected = targetIds(active);
   const hits = filterLedger(terms);
   document.getElementById('ledgerList').innerHTML = hits.length ? hits.map(c => `
-    <div class="claim-card ${c.id === selected ? 'selected' : ''} ${c.id === openReferenceId ? 'focused' : ''}"
+    <div class="claim-card ${selected.includes(c.id) ? 'selected' : ''} ${c.id === openReferenceId ? 'focused' : ''}"
          data-claim-id="${esc(c.id)}" onclick="openReferenceDetails('${esc(c.id)}')">
       <span class="claim-id">${esc(c.id)}</span>
       <div class="claim-prop">${esc(c.proposition)}</div>
@@ -533,6 +562,11 @@ function selectItem(itemId, scrollLedger = true) {
   }
 }
 
+function targetIds(item) {
+  if (!refSpec || !item) return [];
+  return (val(item, refSpec.fieldKey) || '').split(/[\n\r,;]+/).map(s => s.trim()).filter(Boolean);
+}
+
 function activeItem() {
   return session?.items.find(i => i.itemId === activeItemId) || null;
 }
@@ -541,16 +575,35 @@ function updateSelectedTarget() {
   const el = document.getElementById('selectedTarget');
   const item = activeItem();
   if (!item) { el.textContent = 'Kein Review-Item aktiv.'; return; }
-  const target = val(item, 'referenceTarget');
-  el.innerHTML = target ? `Referenz-Ziel: <strong>${esc(target)}</strong>` : `Aktiv: ${esc(item.itemId)} · kein Referenz-Ziel gesetzt.`;
+  const ids = targetIds(item);
+  if (refSpec?.multi) {
+    el.innerHTML = ids.length ? `Ziele (${ids.length}): <strong>${ids.map(esc).join(', ')}</strong>`
+                              : `Aktiv: ${esc(item.itemId)} · keine Ziele gesetzt.`;
+    return;
+  }
+  el.innerHTML = ids[0] ? `Referenz-Ziel: <strong>${esc(ids[0])}</strong>` : `Aktiv: ${esc(item.itemId)} · kein Referenz-Ziel gesetzt.`;
 }
 
 async function setReferenceTarget(id) {
-  if (!activeItemId) { flash('Erst ein Review-Item auswählen.'); return; }
-  const input = document.querySelector(`.item[data-id="${cssEsc(activeItemId)}"] [data-field="referenceTarget"]`);
-  if (input) input.value = id;
-  await save(activeItemId, 'referenceTarget', id);
+  if (!activeItemId || !refSpec) { flash('Erst ein Review-Item auswählen.'); return; }
+  if (refSpec.multi) {
+    const ids = targetIds(activeItem());
+    const next = ids.includes(id) ? ids.filter(x => x !== id) : ids.concat(id);
+    await save(activeItemId, refSpec.fieldKey, next.join('\n'));
+    render();
+  } else {
+    const input = document.querySelector(`.item[data-id="${cssEsc(activeItemId)}"] [data-field="${cssEsc(refSpec.fieldKey)}"]`);
+    if (input) input.value = id;
+    await save(activeItemId, refSpec.fieldKey, id);
+  }
   focusClaim(id);
+}
+
+async function removeReferenceTarget(itemId, id) {
+  activeItemId = itemId;
+  const item = session.items.find(i => i.itemId === itemId);
+  await save(itemId, refSpec.fieldKey, targetIds(item).filter(x => x !== id).join('\n'));
+  render(); renderLedger();
 }
 
 async function openReferenceDetails(id) {
@@ -562,7 +615,7 @@ async function openReferenceDetails(id) {
   const res = await fetch(`/api/reference/${encodeURIComponent(id)}`);
   if (!res.ok) {
     panel.innerHTML = `<h3>${esc(id)}</h3><p class="reference-summary">Details nicht gefunden.</p>
-      <div class="reference-actions"><button class="primary" onclick="chooseReferenceTarget('${esc(id)}')">Als Referenz setzen</button>
+      <div class="reference-actions"><button class="primary" onclick="chooseReferenceTarget('${esc(id)}')">${refButtonLabel(id)}</button>
       <button class="ghost" onclick="closeReferenceDetails()">Schließen</button></div>`;
     return;
   }
@@ -575,15 +628,21 @@ async function openReferenceDetails(id) {
       ${(d.contextBlocks || []).map(cb =>
         `<button class="ctx" onclick="loadReferenceContext('${esc(id)}','${esc(cb.resolverKey)}',this)">${esc(cb.label)}</button>`
       ).join('')}
-      <button class="primary" onclick="chooseReferenceTarget('${esc(id)}')">Als Referenz setzen</button>
+      <button class="primary" onclick="chooseReferenceTarget('${esc(id)}')">${refButtonLabel(id)}</button>
       <button class="ghost" onclick="closeReferenceDetails()">Schließen</button>
     </div>
     <div class="reference-context"></div>`;
 }
 
+function refButtonLabel(id) {
+  if (!refSpec?.multi) return 'Als Referenz setzen';
+  return targetIds(activeItem()).includes(id) ? 'Ziel entfernen' : 'Als Ziel hinzufügen';
+}
+
 async function chooseReferenceTarget(id) {
   await setReferenceTarget(id);
-  closeReferenceDetails();
+  if (refSpec?.multi) openReferenceDetails(id);   // Panel offen lassen (mehrere Ziele nacheinander), Button-Label frischt auf
+  else closeReferenceDetails();
 }
 
 function closeReferenceDetails() {
@@ -599,7 +658,11 @@ async function loadReferenceContext(referenceId, blockKey, btn) {
   if (blockKey === 'transcript') { openTranscriptDrawer(text); return; }
   const out = btn.closest('.reference-detail').querySelector('.reference-context');
   if (out.classList.contains('show') && out.dataset.key === blockKey) { out.classList.remove('show'); return; }
-  out.innerHTML = renderContextCards(text);
+  // U5 (06.08.): Markdown-Dokument-Kontexte (z. B. die ADR-Datei-Vorschau) als DATEI-Ansicht rendern,
+  // nicht als Einzel-Karten — erkennbar am Markdown-Titel in der ersten Zeile.
+  out.innerHTML = text.startsWith('# ') || text.startsWith('> ')
+    ? `<pre class="md-doc">${esc(text)}</pre>`
+    : renderContextCards(text);
   out.classList.add('show');
   out.dataset.key = blockKey;
 }
@@ -701,7 +764,11 @@ async function loadContext(itemId, blockKey, btn) {
 
   const out = btn.closest('.item').querySelector('.ctxout');
   if (out.classList.contains('show') && out.dataset.key === blockKey) { out.classList.remove('show'); return; }
-  out.innerHTML = renderContextCards(text);
+  // U5 (06.08.): Markdown-Dokument-Kontexte (z. B. die ADR-Datei-Vorschau) als DATEI-Ansicht rendern,
+  // nicht als Einzel-Karten — erkennbar am Markdown-Titel in der ersten Zeile.
+  out.innerHTML = text.startsWith('# ') || text.startsWith('> ')
+    ? `<pre class="md-doc">${esc(text)}</pre>`
+    : renderContextCards(text);
   out.classList.add('show');
   out.dataset.key = blockKey;
 }

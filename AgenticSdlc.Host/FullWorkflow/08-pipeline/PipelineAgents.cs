@@ -21,7 +21,10 @@ public static class PipelineAgents
     public static Func<IReadOnlyList<AITool>, AIAgent> Factory(
         string repoRoot, HostSettings settings, HostSettings genSettings, RunContext run, string agentName, string promptName)
     {
-        var prompt = PromptProvider.Load(repoRoot, Phase, agentName, promptName, new Dictionary<string, string> { ["runId"] = run.RunId });
+        var prompt = PromptProvider.Load(repoRoot, Phase, agentName, promptName, new Dictionary<string, string> { ["runId"] = run.RunId })
+                     // W1a-Erweiterung: sichtbarer Denk-Faden je Tool-Runde — über den EINEN Schalter
+                     // observability.captureReasoning (Off = 0 Extra-Tokens, Baseline-sauber).
+                     + ReasoningSchema.ToolAgentPromptAppendix(settings.ReasoningCapture);
         var client = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(genSettings), settings, run, agentName, SourceName);
         return tools => client.AsAIAgent(instructions: prompt, name: agentName, tools: [.. tools]).AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
     }

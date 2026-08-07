@@ -27,6 +27,11 @@ internal sealed class IngestComposedApplyExecutor(RunContext run, string repoRoo
         var plan = JsonSerializer.Deserialize<StateChangePlanDocument>(await File.ReadAllTextAsync(Path.Combine(ingestOutDir, "plan.json"), ct).ConfigureAwait(false), Json)!;
         var accepted = resp.AcceptedIncomingIds.ToHashSet(StringComparer.Ordinal);
         var report = await IngestionApplyExec.ExecuteAsync(ingestOutDir, plan, accepted, repoRoot, run.RunId, ct).ConfigureAwait(false);
+        // R-40 (Endform): EIN Report-Vertrag je LAUF — req-Apply schreibt ihn initial, ein arch-Apply schreibt
+        // ihn FORT (vereinigt), jeder Port-Roundtrip-Leser (Decision) liest NUR diese eine Datei.
+        // delta.json bleibt das unveraenderte per-Aspekt-Beleg-Artefakt.
+        await File.WriteAllTextAsync(Path.Combine(ingestOutDir, "applied", "run-report.json"),
+            JsonSerializer.Serialize(report, Json), ct).ConfigureAwait(false);
         run.AppendEvent(new { type = "PIPELINE_INGEST_APPLIED", runId = run.RunId, applied = report.Applied.Count, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(report).ConfigureAwait(false);
     }
@@ -52,6 +57,8 @@ internal static class PipelineComposedWorkflow
     public static void AddTo(WorkflowBuilder b,
         IngestionHitlResolveExecutor ingestResolve, IngestionGateExecutor ingestGate, IngestionRepairExecutor ingestRepair,
         IngestionHitlFinalizeExecutor ingestFinalize, RequestPort ingestPort, IngestComposedApplyExecutor ingestApply,
+        ArchIngestBridgeExecutor archBridge, IngestionHitlResolveExecutor archResolve, IngestionGateExecutor archGate,
+        IngestionRepairExecutor archRepair, IngestionHitlFinalizeExecutor archFinalize, RequestPort archPort, ArchComposedApplyExecutor archApply,
         DecisionScanExecutor decisionScan, RequestPort decisionPort, DecisionComposedApplyExecutor decisionApply,
         IngestPbiBridgeExecutor bridge,
         PbiUpdateDeriveExecutor pbiDerive, PbiUpdateMakerExecutor pbiMaker, PbiUpdateGateExecutor pbiGate, PbiUpdateRepairExecutor pbiRepair,
@@ -65,9 +72,23 @@ internal static class PipelineComposedWorkflow
         b.AddEdge(ingestFinalize, ingestPort);
         b.AddEdge(ingestPort, ingestApply);
 
+        // R-11 A1d — der ARCH-Strip, SERIELL nach dem req-Apply und VOR dem decision-gate (derselbe Scan sieht
+        // req- UND arch-DECs): Bridge routet per TYP (0 arch-Items -> Report direkt zum Scan; sonst arch-Kern
+        // [zweite Instanz des geteilten Ingestion-Kerns, Architecture-Profil] -> [arch-ingest-gate] -> Apply).
+        b.AddEdge(ingestApply, archBridge);
+        b.AddEdge(archBridge, decisionScan);      // Typ IngestionApplyReport (Leer-Skip)
+        b.AddEdge(archBridge, archResolve);       // Typ IngestionResolveInput
+        b.AddEdge(archResolve, archGate);
+        b.AddEdge<IngestionVerdict>(archGate, archRepair, m => m is not null && m.Decision == GateDecision.Repair);
+        b.AddEdge<IngestionVerdict>(archGate, archFinalize, m => m is not null && m.Decision != GateDecision.Repair);
+        b.AddEdge(archRepair, archGate);
+        b.AddEdge(archFinalize, archPort);
+        b.AddEdge(archPort, archApply);
+        // R-11 A2-2: archApply -> DecisionScan laeuft seit A2 ueber den Klassifikations-Strip — die Kante
+        // setzt Assemble (Cross-Zweig-Stufe: derselbe Strip bedient auch den Bootstrap-Ast).
+
         // R-14 G1 — Tor 2 zwischen Ingest-Apply und Bruecke: Scan routet per MESSAGE-TYP (Muster BranchDetector):
         // 0 offene DECs -> IngestionApplyReport direkt zur Bruecke · sonst -> [decision-gate] -> Apply -> Bruecke.
-        b.AddEdge(ingestApply, decisionScan);
         b.AddEdge(decisionScan, bridge);          // Typ IngestionApplyReport (keine offenen DECs)
         b.AddEdge(decisionScan, decisionPort);    // Typ PipelineDecisionReviewRequest
         b.AddEdge(decisionPort, decisionApply);
@@ -88,6 +109,7 @@ internal static class PipelineComposedWorkflow
         b.AddEdge(pbiPort, pbiApply);
 
         b.WithOutputFrom(ingestFinalize);  // terminal, falls Ingest-Gate scheitert (Pipeline-Abbruch)
+        b.WithOutputFrom(archFinalize);    // terminal, falls das arch-Gate scheitert (A1d — gleiche Semantik)
         b.WithOutputFrom(decisionApply);   // terminal, falls der Aufloesungs-Plan mechanisch ungueltig ist (SP2-Muster)
         b.WithOutputFrom(pbiFinalize);     // terminal, falls Pbi-Gate scheitert
         b.WithOutputFrom(pbiApply);        // terminal bei Erfolg

@@ -10,7 +10,9 @@ namespace AgenticSdlc.Host.FullWorkflow.Core;
 //   Warnung (laut, blockt nie): I2 PBI ohne Feature · I3 aktives REQ ohne Deckung (feuert BEWUSST im
 //   Übergangszustand zwischen Ingest- und Pbi-Gate) · I4 covers→superseded (= R-34) · I6 contradicts-Lebenszyklus.
 // Endpunkt-Matrix am realen Core verifiziert (04.08.): part_of_feature pbi/req→feature · covers pbi→req ·
-// supersedes req→req · contradicts(_resolved) dec→Item · Extern-Ziele by design (Audit: 173 gewollte).
+// supersedes ASPEKT-GLEICH (req→req; seit R-11 A1d auch arch→arch — Spec-Erweiterung 05.08. nach Live-Fund:
+//   der arch-Strip superseded ARCH-Items; Regel = Quelle.itemType == Ziel.itemType, kein req-Hardcode) ·
+//   contradicts(_resolved) dec→Item · Extern-Ziele by design (Audit: 173 gewollte).
 public static class CoreKangal
 {
     public sealed record Issue(string Code, string Severity, string Message);
@@ -33,6 +35,8 @@ public static class CoreKangal
         var byId = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
 
         bool Is(string id, string type) => byId.TryGetValue(id, out var it) && string.Equals(it.ItemType, type, StringComparison.OrdinalIgnoreCase);
+        bool SameItemType(string a, string b) => byId.TryGetValue(a, out var ia) && byId.TryGetValue(b, out var ib)
+            && string.Equals(ia.ItemType, ib.ItemType, StringComparison.OrdinalIgnoreCase);
 
         // I1 — jede Struktur-Relation zeigt auf existierende Items korrekten Typs.
         foreach (var r in core.Relations)
@@ -53,12 +57,25 @@ public static class CoreKangal
                 case "covers":
                     if (!Is(r.FromId, "pbi"))
                         errors.Add(Error("I1_SOURCE_TYPE", $"covers von '{r.FromId}': Quelle ist kein PBI."));
-                    if (!Is(r.ToId, "requirement"))
-                        errors.Add(Error("I1_TARGET_INVALID", $"covers von '{r.FromId}': Ziel '{r.ToId}' ist kein Requirement."));
+                    // E-R2/A4 (06.08.): covers-Ziel ist ein WAHRHEITS-Item — requirement ODER architecture
+                    // (work-Rolle: das PBI setzt den Rahmen-Fakt als Arbeit um).
+                    if (!Is(r.ToId, "requirement") && !Is(r.ToId, "architecture"))
+                        errors.Add(Error("I1_TARGET_INVALID", $"covers von '{r.FromId}': Ziel '{r.ToId}' ist kein Wahrheits-Item (requirement|architecture)."));
+                    break;
+                case "constrained_by":
+            case "constrained_by_superseded":   // ② E-R4 (06.08.): Historie-Form nach ADOPT_NEW-Umzug — gleiche Endpunkte
+                    // R-11 ① (06.08., Spec core-relationen-konzept): Arbeit steht unter einem Architektur-Rahmen —
+                    // Quelle = PBI, Ziel = architecture. Entsteht NUR im arch-Wirkungs-Gate-Apply (human-bestätigt).
+                    if (!Is(r.FromId, "pbi"))
+                        errors.Add(Error("I1_SOURCE_TYPE", $"constrained_by von '{r.FromId}': Quelle ist kein PBI."));
+                    else if (!Is(r.ToId, "architecture"))
+                        errors.Add(Error("I1_TARGET_INVALID", $"constrained_by von '{r.FromId}': Ziel '{r.ToId}' ist kein architecture-Item."));
                     break;
                 case "supersedes":
-                    if (!Is(r.ToId, "requirement"))
-                        errors.Add(Error("I1_TARGET_INVALID", $"supersedes von '{r.FromId}': Ziel '{r.ToId}' ist kein Requirement."));
+                    // R-11 A1d (05.08., Spec core-relationen-konzept): Ablösung ist aspekt-GLEICH — Quelle und
+                    // Ziel tragen denselben itemType (req→req, arch→arch; künftige Aspekte automatisch mit).
+                    if (!SameItemType(r.FromId, r.ToId))
+                        errors.Add(Error("I1_TARGET_INVALID", $"supersedes von '{r.FromId}': Ziel '{r.ToId}' hat nicht denselben itemType (Ablösung ist aspekt-gleich)."));
                     break;
                 case "contradicts":
                 case "contradicts_resolved":

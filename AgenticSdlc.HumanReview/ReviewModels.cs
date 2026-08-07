@@ -26,7 +26,13 @@ public enum ReviewInputType
     Readonly,
     /// <summary>Nicht gerendertes Traeger-Feld: haelt einen Wert (z. B. Item-Art) NUR fuer <see cref="ReviewFieldSpec.VisibleWhen"/>,
     /// erscheint aber nirgends in der UI. Erlaubt zwei Item-Arten in EINER Session ueber bedingte Sichtbarkeit.</summary>
-    Hidden
+    Hidden,
+    /// <summary>Mehrwertiges Referenz-Feld (U2v2, 06.08.): Wert = Referenz-IDs, eine je Zeile. Die UI rendert
+    /// die IDs als Chips in der Card (Klick = Details, × = entfernen) und speist aus den
+    /// <see cref="ReviewFieldSpec.Options"/> die rechte Referenz-Liste (Suche + Detail-Panel via
+    /// <c>/api/reference</c> + „Als Ziel hinzufügen/entfernen") — die Verallgemeinerung des
+    /// Adjudikations-Musters (dort einwertig über den Feld-Schlüssel <c>referenceTarget</c>).</summary>
+    ReferenceList
 }
 
 /// <summary>Ein vorschlagbarer Wert für ein Feld (Dropdown-Option oder FreeText-Autocomplete via datalist).</summary>
@@ -46,7 +52,9 @@ public sealed record ReviewFieldSpec(
     bool Required,
     string? Help = null,
     IReadOnlyList<ReviewOption>? Options = null,
-    ReviewFieldVisibility? VisibleWhen = null);
+    ReviewFieldVisibility? VisibleWhen = null,
+    // U2v2: Titel der rechten Referenz-Liste, wenn dieses Feld sie speist (ReferenceList). null = Default.
+    string? CatalogTitle = null);
 
 /// <summary>Konkreter Wert eines Feldes fuer ein Item (mutabel: der Server aktualisiert ihn bei jedem Save).</summary>
 public sealed record ReviewFieldValue(string FieldKey, string? Value);

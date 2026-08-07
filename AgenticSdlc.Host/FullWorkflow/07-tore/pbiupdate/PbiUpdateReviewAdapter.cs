@@ -74,7 +74,16 @@ public static class PbiUpdateReviewAdapter
         // damit Struktur + Inhaltsangleichung im selben Item stehen. (Angleichungen entstehen nur fuer diese
         // Op-Arten; ein PBI mit mehreren Ops zeigt die Angleichung genau einmal, am ersten Op.)
         var opAlign = MapAlignmentsToOps(plan);
-        var items = plan.Operations.Select((op, i) => BuildItem($"op-{i}", i, op, byId, opAlign.GetValueOrDefault(i))).ToList();
+        // ③ A3 (06.08., PBI-Weckruf): die Rahmen je PBI (constrained_by) — die Card zeigt BEIDE Wahrheits-Seiten.
+        var rahmenByPbi = core.Relations
+            .Where(r => string.Equals(r.RelationType, "constrained_by", StringComparison.Ordinal))
+            .GroupBy(r => r.FromId, StringComparer.Ordinal)
+            .ToDictionary(g => g.Key,
+                g => (IReadOnlyList<string>)g.Select(r => $"{r.ToId} — {Truncate(byId.TryGetValue(r.ToId, out var a) ? a.Text : "(unbekannt)", 110)}")
+                      .OrderBy(x => x, StringComparer.Ordinal).ToList(),
+                StringComparer.Ordinal);
+        var items = plan.Operations.Select((op, i) => BuildItem($"op-{i}", i, op, byId, opAlign.GetValueOrDefault(i),
+            op.PbiId is not null ? rahmenByPbi.GetValueOrDefault(op.PbiId) : null)).ToList();
 
         // B1/B2: die bestehenden Features + die im Plan vorgeschlagenen NEUEN Features als Katalog. Speist die rechte
         // Feature-Landkarte (über den referenceTarget-Feldschlüssel) UND das editierbare Feature-Dropdown je NEW_PBI.
@@ -264,7 +273,7 @@ public static class PbiUpdateReviewAdapter
             && idx >= 0 && idx < plan.Operations.Count)
             return DescribeOp(plan.Operations[idx], byId);
         if (key.StartsWith("pbi:", StringComparison.Ordinal))
-            return byId.TryGetValue(key["pbi:".Length..], out var p) ? DescribePbi(p) : "(PBI nicht im Core gefunden)";
+            return byId.TryGetValue(key["pbi:".Length..], out var p) ? DescribePbi(p, core) : "(PBI nicht im Core gefunden)";
         if (key.StartsWith("requirement:", StringComparison.Ordinal))
             return byId.TryGetValue(key["requirement:".Length..], out var r) ? DescribeRequirement(r) : "(Anforderung nicht im Core gefunden)";
         return $"(Unbekannter Kontext: {key})";
@@ -438,31 +447,44 @@ public static class PbiUpdateReviewAdapter
     };
 
     private static ReviewItem BuildItem(string opId, int idx, PbiStateChangeOperation op,
-        IReadOnlyDictionary<string, ProjectStateItem> byId, PbiAlignment? align)
+        IReadOnlyDictionary<string, ProjectStateItem> byId, PbiAlignment? align, IReadOnlyList<string>? rahmen = null)
     {
         var pbi = op.PbiId is not null ? byId.GetValueOrDefault(op.PbiId) : null;
         var req = byId.GetValueOrDefault(op.RequirementId);
         var reqShort = Truncate(req?.Text ?? op.RequirementId, 90);
+        // ③ E-8: der Auslöser kann jetzt auch ein RAHMEN sein (arch) — die Card sagt es ehrlich.
+        var archTrigger = string.Equals(req?.ItemType, "architecture", StringComparison.OrdinalIgnoreCase);
 
         // E0.3f: Summary mit Text statt nackter IDs.
         var summary = op.Kind switch
         {
             PbiUpdateKind.NewPbi => $"NEU: Backlog-Item fuer „{reqShort}“",
             PbiUpdateKind.ExtendPbi => $"{PbiTitle(pbi, op.PbiId)}: deckt zusaetzlich „{reqShort}“ ab",
-            PbiUpdateKind.MarkChanged => $"{PbiTitle(pbi, op.PbiId)}: Anforderung wurde verfeinert",
+            PbiUpdateKind.MarkChanged => $"{PbiTitle(pbi, op.PbiId)}: {(archTrigger ? "technischer Rahmen wurde geändert" : "Anforderung wurde verfeinert")}",
             PbiUpdateKind.BlockPbi => $"{PbiTitle(pbi, op.PbiId)}: blockiert durch offene Entscheidung",
-            PbiUpdateKind.SupersedePbi => $"{PbiTitle(pbi, op.PbiId)}: Anforderung wird ersetzt",
+            PbiUpdateKind.SupersedePbi => $"{PbiTitle(pbi, op.PbiId)}: {(archTrigger ? "technischer Rahmen wird ersetzt" : "Anforderung wird ersetzt")}",
             PbiUpdateKind.NewFeature => $"NEU: Feature + Backlog-Item für „{reqShort}“",
             _ => $"{KindBadge(op.Kind)} {op.PbiId}"
         };
 
         var notes = new List<ReviewNote> { new(ReviewNoteKind.Info, "Wirkung", KindEffect(op.Kind)) };
 
+        // A4/U4 (E0.8-Herkunfts-Muster): technische Arbeit aus einem Architektur-Fakt sagt es dem Menschen.
+        if (archTrigger && op.Kind is PbiUpdateKind.NewPbi or PbiUpdateKind.ExtendPbi or PbiUpdateKind.NewFeature)
+            notes.Add(new(ReviewNoteKind.Info, "Herkunft",
+                $"Technische Arbeit aus Architektur-Item {op.RequirementId} (work-Rolle) - kein fachliches Requirement."));
+
         // Betroffenes PBI (aktueller Inhalt) — bei allen ausser NEW_PBI.
         if (pbi is not null)
             notes.Add(new ReviewNote(ReviewNoteKind.Info, $"Betroffenes PBI ({pbi.ItemId}, {StatusLabel(pbi.Status)})",
                 $"{pbi.Pbi?.Title ?? pbi.Text}"
                 + (string.IsNullOrWhiteSpace(pbi.Pbi?.Goal) ? "" : $"\n{pbi.Pbi!.Goal}")));
+
+        // ③ A3 (PBI-Weckruf): die Rahmen-Seite der Wahrheit IMMER sichtbar, wenn das PBI welche hat —
+        // wer ein PBI ändert/freigibt, sieht, wogegen es nicht verstoßen darf.
+        if (rahmen is { Count: > 0 })
+            notes.Add(new ReviewNote(ReviewNoteKind.Info, "Technische Rahmen dieses PBIs (constrained_by)",
+                string.Join("\n", rahmen)));
 
         // Die Anforderung(en) im Klartext, mit Vorher/Nachher wo es das Kind hergibt.
         switch (op.Kind)
@@ -615,7 +637,7 @@ public static class PbiUpdateReviewAdapter
         return sb.ToString();
     }
 
-    private static string DescribePbi(ProjectStateItem p)
+    private static string DescribePbi(ProjectStateItem p, ProjectStateDocument? core = null)
     {
         var sb = new System.Text.StringBuilder();
         sb.AppendLine($"{p.ItemId} — {p.Pbi?.Title ?? p.Text}  ({StatusLabel(p.Status)})");
@@ -624,6 +646,21 @@ public static class PbiUpdateReviewAdapter
         {
             sb.AppendLine().AppendLine("Akzeptanzkriterien:");
             foreach (var c in ac) sb.AppendLine($"- {c}");
+        }
+        // ③ A3: die Rahmen-Seite im Drilldown (beide Wahrheits-Seiten des PBIs).
+        if (core is not null)
+        {
+            var textById = core.Items.ToDictionary(i => i.ItemId, i => i.Text, StringComparer.Ordinal);
+            var rahmen = core.Relations
+                .Where(r => string.Equals(r.RelationType, "constrained_by", StringComparison.Ordinal)
+                         && string.Equals(r.FromId, p.ItemId, StringComparison.Ordinal))
+                .Select(r => $"- {r.ToId} — {textById.GetValueOrDefault(r.ToId, "(unbekannt)")}")
+                .OrderBy(x => x, StringComparer.Ordinal).ToList();
+            if (rahmen.Count > 0)
+            {
+                sb.AppendLine().AppendLine("Technische Rahmenbedingungen:");
+                foreach (var r in rahmen) sb.AppendLine(r);
+            }
         }
         return sb.ToString();
     }

@@ -34,7 +34,10 @@ internal sealed class PbiUpdateMakerExecutor(Func<IReadOnlyList<AITool>, AIAgent
     : Executor<PbiUpdateSeeded>("PbiUpdateMaker")
 {
     private const string Task = """
-                                Ordne jedes NEUE Requirement (get_unplaced_requirements) GENAU EINER Platzierung zu:
+                                Ordne jedes NEUE Item aus get_unplaced_requirements GENAU EINER Platzierung zu.
+                                Eintraege mit aspekt=architecture sind TECHNISCHE Arbeit aus einem Architektur-Fakt
+                                (work-Rolle): platziere sie wie fachliche Arbeit (bestehendes PBI erweitern, wenn es
+                                dieselbe Aufgabe umsetzt, sonst eigenes technisches PBI im passenden Feature).
                                 - EXTEND_PBI (mit pbiId), wenn ein bestehendes PBI dieselbe fachliche Aufgabe abdeckt.
                                 - NEW_PBI (mit featureId), wenn es ein eigenes PBI in einem BESTEHENDEN Feature braucht.
                                 - NEW_FEATURE (mit proposedFeatureLabel), wenn das Requirement ein fachlich

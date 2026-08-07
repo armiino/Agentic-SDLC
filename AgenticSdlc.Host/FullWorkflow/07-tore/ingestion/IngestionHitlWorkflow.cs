@@ -20,24 +20,24 @@ public sealed record IngestionReviewResponse(IReadOnlyList<string> AcceptedIncom
 // RESOLVE (HITL): wie IngestionResolveExecutor, ABER Skip des Agenten bei 0 eingehenden Requirements (leeres Meeting
 // -> leerer Plan, kein LLM). Sonst identischer Resolver-Lauf.
 [SendsMessage(typeof(IngestionDraft))]
-internal sealed class IngestionHitlResolveExecutor(Func<IReadOnlyList<AITool>, AIAgent> agentFactory, ICandidateRetriever retriever, RunContext run)
-    : Executor<IngestionResolveInput>("RequirementIngestionResolveAgent")
+internal sealed class IngestionHitlResolveExecutor(Func<IReadOnlyList<AITool>, AIAgent> agentFactory, ICandidateRetriever retriever, RunContext run, AspectIngestionProfile profile)
+    : Executor<IngestionResolveInput>(profile.ExecutorIdPrefix + "ResolveAgent")
 {
     public override async ValueTask HandleAsync(IngestionResolveInput input, IWorkflowContext context, CancellationToken ct = default)
     {
-        var incoming = input.MeetingDelta.Items.Count(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase));
+        var incoming = input.MeetingDelta.Items.Count(profile.Matches);
         if (incoming == 0)
         {
-            run.AppendEvent(new { type = "REQ_INGEST_RESOLVE_DONE", runId = run.RunId, saved = true, operations = 0, checkRounds = 0, skipped = "no-incoming", timestampUtc = DateTime.UtcNow });
+            run.AppendEvent(new { type = profile.EventPrefix + "_RESOLVE_DONE", runId = run.RunId, saved = true, operations = 0, checkRounds = 0, skipped = "no-incoming", timestampUtc = DateTime.UtcNow });
             await context.SendMessageAsync(new IngestionDraft(input.MeetingDelta, input.Core, input.SourceMeetingDeltaPath, [], Saved: true, CheckRounds: 0, Attempt: 1, Source: "maker", input.MaxAttempts, History: [])).ConfigureAwait(false);
             return;
         }
 
-        var tools = new IngestionTools(input.MeetingDelta, input.Core, retriever, run);
+        var tools = new IngestionTools(input.MeetingDelta, input.Core, retriever, run, profile);
         var agent = agentFactory(tools.Build());
-        await agent.RunAsync([new ChatMessage(ChatRole.User, IngestionResolveTask.Text)], cancellationToken: ct).ConfigureAwait(false);
+        await agent.RunAsync([new ChatMessage(ChatRole.User, profile.ResolverTaskText)], cancellationToken: ct).ConfigureAwait(false);
         var ops = tools.SavedOperations ?? [];
-        run.AppendEvent(new { type = "REQ_INGEST_RESOLVE_DONE", runId = run.RunId, saved = tools.Saved, operations = ops.Count, checkRounds = tools.CheckRounds, timestampUtc = DateTime.UtcNow });
+        run.AppendEvent(new { type = profile.EventPrefix + "_RESOLVE_DONE", runId = run.RunId, saved = tools.Saved, operations = ops.Count, checkRounds = tools.CheckRounds, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(new IngestionDraft(input.MeetingDelta, input.Core, input.SourceMeetingDeltaPath, ops, tools.Saved, tools.CheckRounds, Attempt: 1, Source: "maker", input.MaxAttempts, History: [])).ConfigureAwait(false);
     }
 }
@@ -46,9 +46,11 @@ internal sealed class IngestionHitlResolveExecutor(Func<IReadOnlyList<AITool>, A
 //   Decision==Pass -> IngestionReviewRequest an den Port. Sonst -> terminaler "needs manual"-Output.
 [SendsMessage(typeof(IngestionReviewRequest))]
 [YieldsOutput(typeof(IngestionResult))]
-internal sealed class IngestionHitlFinalizeExecutor(RunContext run, string outDir) : Executor<IngestionVerdict>("RequirementIngestionHitlFinalize")
+internal sealed class IngestionHitlFinalizeExecutor(RunContext run, string outDir, AspectIngestionProfile? profile = null)
+    : Executor<IngestionVerdict>((profile ?? AspectIngestionProfile.Requirement).ExecutorIdPrefix + "HitlFinalize")
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
+    private readonly AspectIngestionProfile _p = profile ?? AspectIngestionProfile.Requirement;
 
     public override async ValueTask HandleAsync(IngestionVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -69,12 +71,12 @@ internal sealed class IngestionHitlFinalizeExecutor(RunContext run, string outDi
         if (v.Decision == GateDecision.Pass)
         {
             var views = v.Operations.Select(o => new IngestionReviewOpView(o.IncomingItemId, o.Kind, o.TargetEntityId, o.Statement, o.Rationale)).ToList();
-            run.AppendEvent(new { type = "REQ_INGEST_HUMAN_GATE", runId = run.RunId, operations = v.Operations.Count, timestampUtc = DateTime.UtcNow });
+            run.AppendEvent(new { type = _p.EventPrefix + "_HUMAN_GATE", runId = run.RunId, operations = v.Operations.Count, timestampUtc = DateTime.UtcNow });
             await context.SendMessageAsync(new IngestionReviewRequest(run.RunId, views)).ConfigureAwait(false);
         }
         else
         {
-            run.AppendEvent(new { type = "REQ_INGEST_DONE", runId = run.RunId, gatePass = v.Report.Pass, finalDecision = v.Decision.ToString(), attempts = v.Attempt, applied = false, timestampUtc = DateTime.UtcNow });
+            run.AppendEvent(new { type = _p.EventPrefix + "_DONE", runId = run.RunId, gatePass = v.Report.Pass, finalDecision = v.Decision.ToString(), attempts = v.Attempt, applied = false, timestampUtc = DateTime.UtcNow });
             await context.YieldOutputAsync(new IngestionResult(plan, v.Report, v.Decision)).ConfigureAwait(false);
         }
     }
@@ -82,9 +84,11 @@ internal sealed class IngestionHitlFinalizeExecutor(RunContext run, string outDi
 
 // APPLY (HITL): konsumiert die menschliche Response. Laedt Plan+Core+MeetingDelta FRISCH (in IngestionApplyExec).
 [YieldsOutput(typeof(IngestionApplyReport))]
-internal sealed class IngestionApplyExecutor(RunContext run, string repoRoot, string outDir) : Executor<IngestionReviewResponse>("RequirementIngestionApply")
+internal sealed class IngestionApplyExecutor(RunContext run, string repoRoot, string outDir, AspectIngestionProfile? profile = null)
+    : Executor<IngestionReviewResponse>((profile ?? AspectIngestionProfile.Requirement).ExecutorIdPrefix + "Apply")
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
+    private readonly AspectIngestionProfile _p = profile ?? AspectIngestionProfile.Requirement;
 
     public override async ValueTask HandleAsync(IngestionReviewResponse resp, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -93,9 +97,9 @@ internal sealed class IngestionApplyExecutor(RunContext run, string repoRoot, st
                    ?? throw new InvalidOperationException($"Plan nicht lesbar: {planPath}");
         var accepted = resp.AcceptedIncomingIds.ToHashSet(StringComparer.Ordinal);
 
-        run.AppendEvent(new { type = "REQ_INGEST_APPLY_START", runId = run.RunId, accepted = accepted.Count, reviewer = resp.Reviewer, timestampUtc = DateTime.UtcNow });
-        var report = await IngestionApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot, run.RunId, ct).ConfigureAwait(false);
-        run.AppendEvent(new { type = "REQ_INGEST_DONE", runId = run.RunId, applied = true, appliedOps = report.Applied.Count, skipped = report.Skipped.Count, timestampUtc = DateTime.UtcNow });
+        run.AppendEvent(new { type = _p.EventPrefix + "_APPLY_START", runId = run.RunId, accepted = accepted.Count, reviewer = resp.Reviewer, timestampUtc = DateTime.UtcNow });
+        var report = await IngestionApplyExec.ExecuteAsync(outDir, plan, accepted, repoRoot, run.RunId, ct, profile).ConfigureAwait(false);
+        run.AppendEvent(new { type = _p.EventPrefix + "_DONE", runId = run.RunId, applied = true, appliedOps = report.Applied.Count, skipped = report.Skipped.Count, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(report, ct).ConfigureAwait(false);
     }
 }
@@ -104,10 +108,12 @@ internal static class IngestionHitlWorkflow
 {
     public static Workflow Build(
         IngestionHitlResolveExecutor resolve, IngestionGateExecutor gate, IngestionRepairExecutor repair,
-        IngestionHitlFinalizeExecutor finalize, RequestPort humanGate, IngestionApplyExecutor apply)
+        IngestionHitlFinalizeExecutor finalize, RequestPort humanGate, IngestionApplyExecutor apply,
+        AspectIngestionProfile? profile = null)
     {
+        // Name aus dem Profil (req ergibt WÖRTLICH den bisherigen Namen "Requirement-Ingestion-HITL").
         var b = new WorkflowBuilder(resolve)
-            .WithName("Requirement-Ingestion-HITL")
+            .WithName($"{(profile ?? AspectIngestionProfile.Requirement).ItemLabel}-Ingestion-HITL")
             .WithDescription("MeetingDelta -> Resolve -> Gate -> [Repair] -> Finalize -> [RequestPort Human] -> Apply.");
         b.AddEdge(resolve, gate);
         b.AddEdge<IngestionVerdict>(gate, repair, m => m is not null && m.Decision == GateDecision.Repair);

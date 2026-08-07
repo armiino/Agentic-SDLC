@@ -49,15 +49,18 @@ public sealed class OpenQuestionsDeltaBuildTests : IDisposable
     [Fact]
     public void CollectArtifacts_nimmt_beide_Spuren_wenn_vorhanden()
     {
+        // R-11 A1c: dritte Bestellzettel-Spur architecture (Zusatz, laut-tolerant wie open-questions).
         WriteArtifact("requirements", "REQ", ("REQ-01", "text", "c1"));
         WriteArtifact("open-questions", "OQ", ("OQ-01", "frage?", "c2"));
+        WriteArtifact("architecture", "ARCH", ("ARCH-01", "arch", "c3"));
 
         var (paths, missing) = BaselineStageExecutor.CollectArtifacts(_dir);
 
-        Assert.Equal(2, paths.Count);
+        Assert.Equal(3, paths.Count);
         Assert.Empty(missing);
         Assert.EndsWith(Path.Combine("requirements", "artifact.json"), paths[0]);   // Pflicht-Spur zuerst (Bestell-Reihenfolge)
         Assert.EndsWith(Path.Combine("open-questions", "artifact.json"), paths[1]);
+        Assert.EndsWith(Path.Combine("architecture", "artifact.json"), paths[2]);
     }
 
     [Fact]
@@ -68,7 +71,7 @@ public sealed class OpenQuestionsDeltaBuildTests : IDisposable
         var (paths, missing) = BaselineStageExecutor.CollectArtifacts(_dir);
 
         Assert.Single(paths);                                                  // Kern-Kette laeuft weiter
-        Assert.Equal(["open-questions"], missing);                             // aber LAUT benannt (Warn-Event beim Aufrufer)
+        Assert.Equal(["open-questions", "architecture"], missing);             // aber LAUT benannt (Warn-Event beim Aufrufer; A1c: +architecture)
     }
 
     [Fact]

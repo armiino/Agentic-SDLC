@@ -1,0 +1,409 @@
+{
+  "lane": "operational",
+  "drafts": [
+    {
+      "itemId": "ARCH-01",
+      "title": "Reine Mobile-App ohne Web-Client",
+      "context": "Die Loesung zur Foerderung der Kommunikation wurde als digitale App konkretisiert. Dabei wurde festgelegt, dass die Umsetzung ausschliesslich als Mobile-App erfolgt und kein Web-Client Teil der Loesung ist. Diese Festlegung bindet die betroffene Umsetzungsarbeit auf mobile Plattformen.",
+      "decision": "Wir nutzen eine reine Mobile-App zur Foerderung der Kommunikation und setzen keinen Web-Client um.",
+      "consequences": "Die Loesung ist klar auf mobile Nutzung ausgerichtet und kann gezielt fuer mobile Endgeraete gestaltet werden. Gleichzeitig entfaellt die Bereitstellung eines Browser-Zugangs. Umsetzungsarbeit fuer Nutzungsszenarien im Web ist damit ausgeschlossen und der technische Fokus bleibt auf mobilen Clients.",
+      "relatedIds": [
+        "REQ-01",
+        "REQ-37"
+      ],
+      "alternatives": "Ein Web-Client wird nicht Teil der Loesung."
+    },
+    {
+      "itemId": "ARCH-03",
+      "title": "Profil- und Kommunikationswissen als Kernansatz",
+      "context": "Als Kernansatz der App wurde festgelegt, Wissen ueber das Profil und die Kommunikationsweise einer Person bereitzustellen. Nutzer sollen bei Verstaendnisschwierigkeiten nachsehen koennen, was gemeint sein koennte. Die konkrete Auspraegung dieses Ansatzes ist laut Material noch weiter auszuarbeiten.",
+      "decision": "Wir stellen in der App Wissen ueber Profil und Kommunikationsweise einer Person zum Nachschlagen bereit, damit Nutzer bei Verstaendnisschwierigkeiten darauf zugreifen koennen.",
+      "consequences": "Die Kernfunktionen der App orientieren sich an der Bereitstellung und Strukturierung von personenbezogenem Profil- und Kommunikationswissen. Das unterstuetzt den vorgesehenen Anwendungsfall des Nachschlagens. Gleichzeitig bleibt die konkrete inhaltliche und funktionale Auspraegung dieses Kernansatzes noch offen und muss weiter ausgearbeitet werden.",
+      "relatedIds": [
+        "REQ-03",
+        "REQ-02"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-07",
+      "title": "Login mit intern vergebenen Accounts",
+      "context": "Fuer den Zugang zur App wurde festgelegt, dass keine Selbstregistrierung erlaubt ist. Stattdessen erfolgt der Zugang ausschliesslich per Login mit intern vergebenen Accounts. Diese Festlegung betrifft die Konto- und Login-Umsetzung sowie den Sicherheitsrahmen des Zugangs.",
+      "decision": "Wir erlauben keine Selbstregistrierung und gewaehren Zugang zur App nur ueber intern vergebene Accounts mit Login.",
+      "consequences": "Der Zugang zur App bleibt kontrolliert und an interne Vergabeprozesse gebunden. Das unterstuetzt eine gesteuerte Benutzerverwaltung. Gleichzeitig muss die Organisation Accounts aktiv anlegen und verwalten, und ein oeffentlicher Registrierungsprozess wird nicht umgesetzt.",
+      "relatedIds": [
+        "REQ-05",
+        "REQ-12"
+      ],
+      "alternatives": "Eine Selbstregistrierung wird nicht angeboten."
+    },
+    {
+      "itemId": "ARCH-08",
+      "title": "Mindestrollen Admin und User",
+      "context": "Fuer das Zugriffsmodell wurde festgelegt, dass es mindestens die Rollen Admin und User geben muss. Admins verwalten Accounts und Rechte, waehrend User Inhalte hinzufuegen koennen, aber nichts loeschen duerfen. Diese Festlegung strukturiert das Rechtemodell grundlegend.",
+      "decision": "Wir setzen mindestens die Rollen Admin und User um. Admins verwalten Accounts und Rechte, User duerfen Inhalte hinzufuegen, aber nichts loeschen.",
+      "consequences": "Das Rechtemodell erhaelt eine klare Mindeststruktur fuer Verwaltung und fachliche Nutzung. Verantwortlichkeiten fuer Account- und Rechteverwaltung sind den Admins zugeordnet. Gleichzeitig wird die Umsetzung der Inhaltsbearbeitung an die Einschraenkung gebunden, dass User keine Loeschungen ausfuehren duerfen.",
+      "relatedIds": [
+        "REQ-06",
+        "REQ-10"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-09",
+      "title": "Zugriff und Beitragsmoeglichkeit fuer Angehoerige",
+      "context": "Neben Mitarbeitern sollen auch Angehoerige Zugriff auf die App erhalten und Inhalte beziehungsweise Wissen beitragen koennen. Im Material ist zugleich festgehalten, dass fuer diese Nutzergruppe unterschiedliche Rechte vorgesehen sind, die jedoch noch nicht konkret ausformuliert wurden.",
+      "decision": "Wir beruecksichtigen Angehoerige als eigene Nutzergruppe mit Zugriff auf die App und der Moeglichkeit, Inhalte beziehungsweise Wissen beizutragen.",
+      "consequences": "Das Nutzer- und Rechtemodell wird ueber Mitarbeiter hinaus erweitert und unterstuetzt die Einbindung von Angehoerigen als Wissensquelle. Gleichzeitig muessen abweichende Rechte fuer Angehoerige spaeter noch konkretisiert werden; die genaue Ausgestaltung bleibt daher vorerst offen.",
+      "relatedIds": [
+        "REQ-08"
+      ],
+      "alternatives": "Ob Angehoerige Inhalte eintragen duerfen oder nur Leserechte erhalten, ist noch nicht geklaert."
+    },
+    {
+      "itemId": "ARCH-10",
+      "title": "Bewohner-Account mit eingeschraenkten Rechten",
+      "context": "Zusaetzlich zu anderen Accounts wurde ein Bewohner-Account vorgesehen. Dieser soll nur das eigene Profil sehen duerfen und nur eingeschraenkte Funktionen nutzen koennen, insbesondere den Zugriff auf About Me und gegebenenfalls das Hinzufuegen eigener Bilder. Diese Festlegung praegt das Rechtemodell fuer Bewohner.",
+      "decision": "Wir setzen einen Bewohner-Account mit stark eingeschraenkten Rechten um, der nur das eigene Profil sehen darf und insbesondere Zugriff auf About Me sowie gegebenenfalls das Hinzufuegen eigener Bilder erhaelt.",
+      "consequences": "Bewohner erhalten einen klar begrenzten Zugang zu eigenen Inhalten. Das unterstuetzt eine nutzerbezogene Einsicht ohne breiten Datenzugriff. Gleichzeitig muss das Rechtemodell technische Beschraenkungen fuer Sichtbarkeit und Funktionen umsetzen, und der Funktionsumfang dieses Account-Typs bleibt bewusst eng.",
+      "relatedIds": [
+        "REQ-07"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-11",
+      "title": "Einrichtungsgebundener Profilzugriff",
+      "context": "Fuer Mitarbeiter wurde festgelegt, dass sie nicht einrichtungsuebergreifend auf alle Profile zugreifen duerfen. Stattdessen ist der Zugriff auf die Profile der Einrichtung beschraenkt, in der sie taetig sind. Laut Material ist die technische Umsetzung dieser Beschraenkung noch zu erarbeiten.",
+      "decision": "Wir beschraenken den Zugriff von Mitarbeitern auf die Profile ihrer eigenen Einrichtung und erlauben keinen einrichtungsuebergreifenden Vollzugriff.",
+      "consequences": "Die Sichtbarkeit von Bewohnerprofilen wird entlang von Einrichtungen begrenzt und folgt damit einem klaren Mandanten- beziehungsweise Berechtigungsprinzip. Das reduziert unnoetigen Datenzugriff. Gleichzeitig muss die technische Umsetzung dieser Beschraenkung noch ausgearbeitet werden und bindet das spaetere Rechtemodell sowie Datenzugriffe.",
+      "relatedIds": [
+        "REQ-09"
+      ],
+      "alternatives": "Ein einrichtungsuebergreifender Zugriff auf alle Profile wird ausgeschlossen."
+    },
+    {
+      "itemId": "ARCH-12",
+      "title": "Offene Ausgestaltung der Rechteverwaltung",
+      "context": "Im Material ist festgehalten, dass die konkrete Ausgestaltung der Rechteverwaltung noch nicht festgelegt ist und spaeter entschieden werden muss. Dokumentiert ist damit eine bestehende Architektur-Offenheit im Rechtemodell, obwohl grundlegende Rollen und einzelne Zugriffsregeln bereits benannt sind.",
+      "decision": "Wir halten die konkrete Ausgestaltung der Rechteverwaltung zum jetzigen Stand offen und treffen dazu in diesem Schritt keine weitergehende Festlegung.",
+      "consequences": "Bereits bekannte Mindestfestlegungen zu Rollen und einzelnen Zugriffsbeschraenkungen koennen dokumentiert werden, ohne das Rechtemodell weiter zu verengen. Gleichzeitig bleibt Detailarbeit zur Rechteverwaltung ausstehend und muss spaeter separat entschieden werden.",
+      "relatedIds": [
+        "REQ-10",
+        "ARCH-08",
+        "ARCH-09",
+        "ARCH-10",
+        "ARCH-11"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-13",
+      "title": "Separater Admin-Bildschirm fuer Rechte- und Accountverwaltung",
+      "context": "Fuer die Rechte- und Accountverwaltung soll laut Material ein separater Admin-Bildschirm erwogen werden. Auf diesem sollen nur Admins Accounts anlegen und Rollen vergeben koennen. Die Formulierung beschreibt einen zu dokumentierenden Loesungsansatz, noch keine abschliessend verfestigte Detailauspraegung.",
+      "decision": "Wir sehen fuer die Rechte- und Accountverwaltung einen separaten Admin-Bildschirm als vorgesehenen Loesungsansatz vor, auf dem nur Admins Accounts anlegen und Rollen vergeben koennen.",
+      "consequences": "Die Verwaltungsfunktionen koennen in einem eigenen Bereich gebuendelt und klar von der normalen Nutzung getrennt werden. Das unterstuetzt die Rollentrennung. Gleichzeitig bleibt dieser Bildschirm als erwogener Ansatz dokumentiert und seine konkrete Ausgestaltung ist noch nicht weiter spezifiziert.",
+      "relatedIds": [
+        "REQ-41",
+        "REQ-06"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-15",
+      "title": "Profiluebersicht als Einstieg nach dem Login",
+      "context": "Nach erfolgreichem Login soll laut Festlegung eine Profiluebersicht angezeigt werden. Diese Uebersicht dient als Einstieg in die sichtbaren Bewohnerprofile und bindet die Ausgestaltung des Startpunkts nach der Authentifizierung.",
+      "decision": "Wir zeigen nach dem Login eine Profiluebersicht als Einstieg in die App an.",
+      "consequences": "Der Navigationsfluss nach der Anmeldung ist klar festgelegt und fuehrt Nutzer direkt zu den verfuegbaren Bewohnerprofilen. Gleichzeitig richtet sich die Gestaltung des App-Einstiegs an dieser Uebersicht aus und alternative direkte Einstiegsziele nach dem Login werden nicht priorisiert.",
+      "relatedIds": [
+        "REQ-13",
+        "REQ-16"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-16",
+      "title": "Namenssuche in der Profiluebersicht",
+      "context": "Fuer die Profiluebersicht wurde festgelegt, dass eine Suchleiste vorhanden sein soll, damit Profile schnell nach Namen gefunden werden koennen. Diese Vorgabe konkretisiert die funktionale Ausgestaltung der Uebersicht.",
+      "decision": "Wir statten die Profiluebersicht mit einer Suchleiste aus, ueber die Profile schnell nach Namen gefunden werden koennen.",
+      "consequences": "Die Auffindbarkeit von Profilen in der Uebersicht wird verbessert und der Zugang zu gesuchten Bewohnerprofilen wird beschleunigt. Gleichzeitig muss die Profiluebersicht die Suchfunktion verbindlich unterstuetzen.",
+      "relatedIds": [
+        "REQ-17",
+        "L3-REQ-006"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-17",
+      "title": "Profilkarten mit Vorschaubild, Name und Kurzbeschreibung",
+      "context": "Fuer die Darstellung von Profilen in der Uebersicht wurde festgelegt, dass Vorschaubild, Name und Kurzbeschreibung gezeigt werden sollen. Im Material ist zugleich offen gelassen, ob diese Darstellung als Liste oder als Kacheln erfolgt.",
+      "decision": "Wir stellen Profile in der Uebersicht mit Vorschaubild, Name und Kurzbeschreibung dar.",
+      "consequences": "Die Profiluebersicht zeigt auf einen Blick die wichtigsten Erkennungsmerkmale eines Profils und unterstuetzt damit die schnelle Orientierung. Gleichzeitig bleibt die konkrete Layoutform offen; ob die Darstellung als Liste oder als Kacheln erfolgt, ist noch nicht entschieden.",
+      "relatedIds": [
+        "REQ-18",
+        "REQ-16"
+      ],
+      "alternatives": "Die Darstellung als Liste oder als Kacheln ist noch offen."
+    },
+    {
+      "itemId": "ARCH-18",
+      "title": "Profil-Detailansicht mit Hauptbereichsbuttons",
+      "context": "Fuer die Detailansicht eines Profils wurde festgelegt, dass das Profilbild groesser angezeigt werden soll und die Hauptbereiche der App als interaktive Buttons angeboten werden. Laut Material ist der genaue Zuschnitt dieser Hauptbereiche noch nicht stabil.",
+      "decision": "Wir gestalten die Detailansicht eines Profils mit groesserem Profilbild und interaktiven Buttons zu den Hauptbereichen der App.",
+      "consequences": "Der Einstieg in profilbezogene Inhalte wird strukturiert und ueber klar erkennbare Bereichszugaenge gefuehrt. Das erleichtert die Orientierung innerhalb eines Profils. Gleichzeitig bleibt die genaue Abgrenzung und Zahl der Hauptbereiche noch offen und muss spaeter konkretisiert werden.",
+      "relatedIds": [
+        "REQ-19"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-19",
+      "title": "About-Me-Seite je Bewohner",
+      "context": "Fuer jeden Bewohner soll die App eine About-Me-Seite bereitstellen. Diese Seite dient dem ersten Eindruck und soll persoenliche Kurzinfos, Bilder und beschreibende Informationen enthalten. Damit ist ein eigener inhaltlicher Hauptbereich festgelegt.",
+      "decision": "Wir stellen fuer jeden Bewohner eine About-Me-Seite mit persoenlicher Kurzinfo, Bildern und beschreibenden Informationen fuer den ersten Eindruck bereit.",
+      "consequences": "Ein eigener Bereich fuer schnell erfassbare persoenliche Informationen wird verbindlich Teil der App. Das unterstuetzt den vorgesehenen Erstzugang zu einer Person. Gleichzeitig muss die Struktur dieses Bereichs die genannten Inhaltsarten abbilden.",
+      "relatedIds": [
+        "REQ-20",
+        "REQ-66"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-20",
+      "title": "Dynamische Foto-Timeline in About Me",
+      "context": "Fuer die About-Me-Ansicht wurde festgelegt, dass sie eine dynamisch erweiterbare Foto-Timeline mit Beschreibungen bereitstellt. Neue Eintraege sollen per Plus-Button hinzugefuegt werden koennen und die neuesten Eintraege oben erscheinen. Diese Vorgaben konkretisieren die Bedien- und Inhaltsstruktur des Bereichs.",
+      "decision": "Wir setzen die About-Me-Ansicht als dynamisch erweiterbare Foto-Timeline mit Beschreibungen um; neue Eintraege werden per Plus-Button hinzugefuegt und neueste Eintraege oben angezeigt.",
+      "consequences": "About Me unterstuetzt fortlaufend erweiterbare bildgestuetzte Informationen in einer klaren zeitlich geordneten Darstellung. Das vereinfacht das Hinzufuegen neuer Inhalte und macht aktuelle Eintraege schnell sichtbar. Gleichzeitig ist die Umsetzung an diese Interaktions- und Sortierlogik gebunden.",
+      "relatedIds": [
+        "REQ-21",
+        "REQ-22",
+        "REQ-23"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-21",
+      "title": "Kommunikationsansicht mit Trennung nach verbal und nonverbal",
+      "context": "Fuer den Kommunikationsbereich wurde festgelegt, dass die App eine Kommunikationsansicht mit klarer Unterteilung in verbale und nonverbale Kommunikation bereitstellt. Diese Festlegung strukturiert den Bereich fachlich und visuell.",
+      "decision": "Wir stellen eine Kommunikationsansicht bereit, die klar in verbale und nonverbale Kommunikation unterteilt ist.",
+      "consequences": "Der Kommunikationsbereich folgt einer eindeutigen Grundstruktur und kann Informationen entlang dieser Unterscheidung organisieren. Das unterstuetzt die Orientierung bei der Nutzung. Gleichzeitig muss die Umsetzung diese Trennung sichtbar und konsistent abbilden.",
+      "relatedIds": [
+        "REQ-24",
+        "REQ-25"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-22",
+      "title": "Dynamisch erweiterbare multimodale Kommunikationseintraege",
+      "context": "Fuer Eintraege zu Kommunikationsweisen wurde festgelegt, dass sie dynamisch erweiterbar sein muessen. Zudem sollen sie nicht nur als Text, sondern auch mit Bildern und weiteren Darstellungsformen erfasst und angezeigt werden koennen. Damit ist die inhaltliche und mediale Breite dieses Bereichs vorgegeben.",
+      "decision": "Wir erfassen und zeigen Kommunikationseintraege dynamisch erweiterbar und multimodal an, nicht nur als Text, sondern auch mit Bildern und weiteren Darstellungsformen.",
+      "consequences": "Neue Erfahrungen zu Kommunikationsweisen koennen fortlaufend ergaenzt werden und der Bereich ist nicht auf reine Textinformation beschraenkt. Das unterstuetzt reichhaltigere Dokumentation und Verstaendnishilfen. Gleichzeitig muss die Umsetzung mehrere Darstellungs- und Eingabeformen unterstuetzen.",
+      "relatedIds": [
+        "REQ-26",
+        "REQ-27"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-23",
+      "title": "Integrierte Videos in Kommunikationsseiten",
+      "context": "Fuer Videos von Kommunikationssituationen wurde festgelegt, dass sie mit Beschreibungen erfasst werden koennen. Zugleich sollen sie als Teil der Kommunikationsseiten integriert sein und nicht als separater Screen umgesetzt werden. Diese Festlegung betrifft Struktur und Navigation des Kommunikationsbereichs.",
+      "decision": "Wir integrieren Videos von Kommunikationssituationen mit Beschreibungen direkt in die Kommunikationsseiten und setzen dafuer keinen separaten Screen um.",
+      "consequences": "Video-Inhalte bleiben fachlich nah bei den zugehoerigen Kommunikationsinformationen und fuegen sich in den bestehenden Bereich ein. Das vermeidet einen zusaetzlichen isolierten Navigationspfad. Gleichzeitig ist die Umsetzung daran gebunden, Videoerfassung und -anzeige innerhalb der Kommunikationsseiten zu loesen.",
+      "relatedIds": [
+        "REQ-29",
+        "REQ-30",
+        "REQ-31"
+      ],
+      "alternatives": "Ein separater Screen fuer Videos wird nicht umgesetzt."
+    },
+    {
+      "itemId": "ARCH-24",
+      "title": "Suche und Beschreibungsmuster fuer Kommunikationsseiten",
+      "context": "Fuer Kommunikationsseiten wurde eine Suchfunktion festgelegt. Damit Suche und spaetere Filterung funktionieren, muss laut Material ein standardisiertes Beschreibungsmuster fuer Kommunikationseintraege definiert werden. Die Entscheidung betrifft damit sowohl Nutzung als auch Struktur der erfassten Inhalte.",
+      "decision": "Wir stellen auf Kommunikationsseiten eine Suchfunktion bereit und legen dafuer ein standardisiertes Beschreibungsmuster fuer Kommunikationseintraege zugrunde.",
+      "consequences": "Kommunikationswissen kann gezielter durchsucht und spaeter auch besser gefiltert werden. Gleichzeitig bindet die Entscheidung die Erfassung von Kommunikationseintraegen an ein systematisches Beschreibungsmuster, das definiert und konsequent genutzt werden muss.",
+      "relatedIds": [
+        "REQ-28"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-25",
+      "title": "No-Go-Seite mit dynamischer Liste",
+      "context": "Fuer kritische bewohnerbezogene Hinweise wurde festgelegt, dass die App eine No-Go-Seite mit dynamisch erweiterbarer Liste bereitstellt. Dort sollen Dinge festgehalten werden, die in Gegenwart des Bewohners vermieden werden muessen. Diese Festlegung schafft einen eigenen strukturierten Bereich fuer solche Informationen.",
+      "decision": "Wir stellen pro Bewohner eine No-Go-Seite mit dynamisch erweiterbarer Liste fuer kritische zu vermeidende Dinge bereit.",
+      "consequences": "Kritische Hinweise erhalten einen eigenen, klar abgegrenzten Bereich und koennen fortlaufend ergaenzt werden. Das unterstuetzt die schnelle Verfuegbarkeit solcher Informationen im Bewohnerkontext. Gleichzeitig muss die App diesen Bereich als eigenstaendige Struktur mit erweiterbarer Liste umsetzen.",
+      "relatedIds": [
+        "REQ-32",
+        "REQ-33",
+        "REQ-34"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-26",
+      "title": "Pruefung von Kalender- und Medikationsfunktion",
+      "context": "Im Material ist festgehalten, dass eine Kalenderfunktion erwogen werden soll. Zusaetzlich ist zu pruefen, ob auch Medikamentengaben integriert werden sollen. Fuer diesen moeglichen Ausbau ist zugleich vorgegeben, dass die Vertraulichkeit solcher Daten besonders zu beruecksichtigen ist.",
+      "decision": "Wir dokumentieren Kalenderfunktion und moegliche Integration von Medikamentengaben als zu pruefenden Ausbau, wobei die Vertraulichkeit von Medikationsdaten besonders zu beruecksichtigen ist.",
+      "consequences": "Ein moeglicher funktionaler Ausbau ist benannt und kann spaeter gezielt bewertet werden. Gleichzeitig wird keine verbindliche Umsetzung dieser Funktionen festgelegt. Falls Medikationsdaten einbezogen werden, setzt dies einen besonders sorgfaeltigen Umgang mit vertraulichen Daten voraus.",
+      "relatedIds": [
+        "REQ-42"
+      ],
+      "alternatives": "Es ist noch zu pruefen, ob neben einer Kalenderfunktion auch Medikamentengaben integriert werden sollen."
+    },
+    {
+      "itemId": "ARCH-27",
+      "title": "Profilanlage ueber Plus-Symbol und Dialog",
+      "context": "Fuer die Profiluebersicht soll erwogen werden, das Anlegen neuer Profile per Plus-Symbol und Dialog zu ermoeglichen. Der Dialog soll Bild, Name und Beschreibung erfassen. Im Material ist diese Loesung als zu dokumentierender Ansatz beschrieben, nicht als endgueltig ausgearbeitete Vorgabe.",
+      "decision": "Wir sehen fuer das Anlegen neuer Profile in der Profiluebersicht einen Ansatz ueber Plus-Symbol und Dialog fuer Bild, Name und Beschreibung vor.",
+      "consequences": "Die moegliche Profilanlage ist als direkter Bestandteil der Profiluebersicht verortet und beschreibt einen naheliegenden Bedienpfad. Gleichzeitig bleibt dies ein erwogener Ansatz; seine endgueltige Verbindlichkeit und genaue Ausgestaltung sind noch nicht weiter festgelegt.",
+      "relatedIds": [
+        "REQ-45",
+        "L3-REQ-008"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-29",
+      "title": "Konsistente Appbar nach dem Login",
+      "context": "Fuer die Navigation wurde festgelegt, dass nach dem Login auf jeder Seite eine konsistente Appbar vorhanden sein soll. Diese Vorgabe betrifft die UI-Architektur aller betroffenen Seiten nach der Anmeldung.",
+      "decision": "Wir verwenden nach dem Login auf jeder Seite eine konsistente Appbar.",
+      "consequences": "Die Navigation und Wiedererkennbarkeit der Bedienoberflaeche werden vereinheitlicht. Nutzer finden sich seitenuebergreifend leichter zurecht. Gleichzeitig bindet die Entscheidung die Gestaltung aller betroffenen Seiten an ein gemeinsames Navigationsmuster.",
+      "relatedIds": [
+        "REQ-14",
+        "REQ-15"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-30",
+      "title": "Appbar mit Ruecknavigation, Seitentitel, Einstellungen und Logout",
+      "context": "Die Appbar wurde in ihrer Grundfunktion weiter konkretisiert. Sie soll Ruecknavigation sowie schnellen Zugriff auf Seitentitel, Einstellungen und Logout unterstuetzen. Damit liegen konkrete Vorgaben fuer die Basisnavigation der App vor.",
+      "decision": "Wir gestalten die Appbar so, dass sie Ruecknavigation, Seitentitel, Einstellungen und Logout direkt unterstuetzt.",
+      "consequences": "Wesentliche Navigations- und Sitzungsfunktionen sind ueber ein einheitliches Bedienelement schnell erreichbar. Das schafft Orientierung und reduziert Suchaufwand in der Oberflaeche. Gleichzeitig muessen diese Elemente konsistent in die Appbar aller relevanten Seiten integriert werden.",
+      "relatedIds": [
+        "REQ-15",
+        "ARCH-29"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-32",
+      "title": "Beruecksichtigung alternativer Eingabemethoden",
+      "context": "Alternative Eingabemethoden wie Sprachbefehle werden im Material als moegliche Accessibility-Erweiterung genannt. Sie sollen beruecksichtigt werden, sind aber als spaetere Erweiterung und nicht als bereits voll ausgearbeitete Kernfunktion beschrieben.",
+      "decision": "Wir beruecksichtigen alternative Eingabemethoden wie Sprachbefehle als moegliche spaetere Accessibility-Erweiterung.",
+      "consequences": "Der Architekturrahmen bleibt offen fuer zusaetzliche barriereunterstuetzende Eingabeformen. Das erleichtert spaetere Erweiterungen in Richtung Accessibility. Gleichzeitig ist keine sofortige verbindliche Umsetzung dieser Eingabemethoden festgelegt.",
+      "relatedIds": [
+        "REQ-43",
+        "ARCH-31"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-33",
+      "title": "Logo-Platzierung im Login-Screen",
+      "context": "Fuer den Login-Screen wurde festgelegt, dass im oberen Drittel ein zentriertes, gut sichtbares Logo enthalten sein soll. Zugleich ist dokumentiert, dass ein passendes Kommunikations-Logo noch zu erstellen ist. Die Entscheidung betrifft damit sowohl die UI-Gestaltung als auch einen noch ausstehenden Artefaktbedarf.",
+      "decision": "Wir platzieren im Login-Screen ein zentriertes, gut sichtbares Logo im oberen Drittel.",
+      "consequences": "Der Login-Screen erhaelt ein klar definiertes visuelles Erkennungsmerkmal. Gleichzeitig entsteht Abhaengigkeit von der Erstellung eines passenden Kommunikations-Logos, das fuer die Umsetzung noch bereitgestellt werden muss.",
+      "relatedIds": [
+        "REQ-11"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-34",
+      "title": "Hilfe-Tour beim Erstlogin und aufrufbarer Hilfebereich",
+      "context": "Fuer die Unterstuetzung der Nutzer wurde festgelegt, dass eine Hilfe-Funktion oder ein Tutorial vorgesehen werden soll. Als bevorzugte Auspraegung nennt das Material eine kurze Tour beim ersten Login sowie einen spaeter erneut aufrufbaren Hilfebereich.",
+      "decision": "Wir sehen eine Hilfe-Funktion vor, idealerweise als kurze Tour beim ersten Login und zusaetzlich als spaeter erneut aufrufbaren Hilfebereich.",
+      "consequences": "Nutzer erhalten einen gefuehrten Einstieg und koennen Hilfe bei Bedarf spaeter erneut abrufen. Das unterstuetzt Einarbeitung und Nachschlagen innerhalb der App. Gleichzeitig muss die Interaktionsgestaltung einen Erstlogin-Ablauf sowie einen dauerhaften Zugang zur Hilfe vorsehen.",
+      "relatedIds": [
+        "REQ-46"
+      ],
+      "alternatives": "Die Hilfe kann als Tutorial beziehungsweise Hilfebereich umgesetzt werden; bevorzugt ist eine kurze Tour beim ersten Login plus spaeterer erneuter Aufruf."
+    },
+    {
+      "itemId": "ARCH-36",
+      "title": "Plattformuebergreifende Mobile-Unterstuetzung fuer iPhone und Android",
+      "context": "Die Zielarchitektur der App wurde so festgelegt, dass sie plattformuebergreifend auf iPhone und Android laufen soll. Diese Vorgabe bestimmt den technischen Zielrahmen der mobilen Umsetzung.",
+      "decision": "Wir entwickeln die App plattformuebergreifend fuer iPhone und Android.",
+      "consequences": "Die Loesung ist fuer die beiden vorgesehenen mobilen Plattformen nutzbar und kann in beiden Oekosystemen eingesetzt werden. Gleichzeitig muss die technische Umsetzung plattformuebergreifende Anforderungen beruecksichtigen und ist nicht auf nur eine mobile Plattform beschraenkt.",
+      "relatedIds": [
+        "REQ-37",
+        "REQ-53"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-37",
+      "title": "Flutter mit Dart als Entwicklungsstack",
+      "context": "Zur Unterstuetzung der plattformuebergreifenden Umsetzung wurde festgelegt, dass fuer die Entwicklung Flutter mit Dart verwendet werden soll. Diese Entscheidung konkretisiert den Technologiestack verbindlich.",
+      "decision": "Wir verwenden Flutter mit Dart als Entwicklungsstack fuer die App.",
+      "consequences": "Die technologische Basis fuer die plattformuebergreifende Mobile-Entwicklung ist klar festgelegt. Das erleichtert eine einheitliche Umsetzung fuer iPhone und Android. Gleichzeitig bindet die Entscheidung die Entwicklung an Flutter und Dart und schliesst andere Entwicklungsstacks aus.",
+      "relatedIds": [
+        "REQ-53",
+        "ARCH-36"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-38",
+      "title": "GetX als technische Option zur Erprobung",
+      "context": "Im Material wird das Paket GetX als technische Option genannt, die beruecksichtigt und in der Umsetzung erprobt werden soll. Es ist damit als technischer Ansatz dokumentiert, ohne bereits als abschliessend festgelegter Baustein beschrieben zu sein.",
+      "decision": "Wir beruecksichtigen GetX als technische Option und erproben seinen Einsatz in der Umsetzung.",
+      "consequences": "Die Architektur bleibt offen fuer den Einsatz von GetX und kann den Ansatz praktisch bewerten. Gleichzeitig ist GetX damit noch nicht als unveraenderlich festgeschriebener Standardbaustein festgelegt und seine Eignung muss sich in der Erprobung zeigen.",
+      "relatedIds": [
+        "REQ-54"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-39",
+      "title": "Vorlaeufige Datenbankrichtung mit Firebase Firestore",
+      "context": "Als Datenbankloesung ist Firebase Firestore im Material vorlaeufig vorgesehen, jedoch noch nicht endgueltig festgelegt. Damit liegt bereits eine technische Richtungsentscheidung vor, die den weiteren Stack rahmt, aber noch als vorlaeufig beschrieben ist.",
+      "decision": "Wir richten die Datenbankloesung vorlaeufig auf Firebase Firestore aus.",
+      "consequences": "Die technische Planung erhaelt eine konkrete Datenbankrichtung und kann sich an Firestore orientieren. Gleichzeitig bleibt die Festlegung im vorliegenden Material noch vorlaeufig und damit als noch nicht abschliessend bestaetigt dokumentiert.",
+      "relatedIds": [
+        "REQ-55",
+        "REQ-70"
+      ],
+      "alternatives": "Firebase Firestore ist vorgesehen, aber im zugrunde liegenden Material noch nicht endgueltig festgelegt."
+    },
+    {
+      "itemId": "ARCH-40",
+      "title": "Offene Klaerung zum lokalen Cloud-Daten-Cache",
+      "context": "Im Material ist festgehalten, dass geklaert werden muss, ob und wie Cloud-Daten lokal auf dem Geraet gespeichert oder gecacht werden sollen. Dokumentiert ist damit eine offene Architekturfrage zur lokalen Datenhaltung.",
+      "decision": "Wir halten die Frage offen, ob und wie Cloud-Daten lokal auf dem Geraet gespeichert oder gecacht werden.",
+      "consequences": "Es wird keine vorschnelle Festlegung zur lokalen Datenhaltung getroffen. Gleichzeitig bleibt eine architektonisch relevante Frage fuer Offline-Verhalten, Datenzugriff und Geraetespeicherung noch offen und muss spaeter entschieden werden.",
+      "relatedIds": [
+        "REQ-36"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-41",
+      "title": "Evaluationsoption fuer Tablet-Nutzung",
+      "context": "Zusaetzlich zur Nutzung auf iPhone und Android-Handys soll laut Material evaluiert werden, ob die App auch auf Tablets nutzbar sein kann. Die Aussage beschreibt einen zu pruefenden Erweiterungsrahmen, keine bereits verbindlich festgelegte Zielplattform.",
+      "decision": "Wir dokumentieren die zusaetzliche Nutzbarkeit auf Tablets als zu evaluierende Erweiterungsoption.",
+      "consequences": "Eine moegliche spaetere Ausweitung auf Tablets bleibt im Architekturrahmen sichtbar und kann gezielt bewertet werden. Gleichzeitig ist daraus noch keine verbindliche Umsetzungsverpflichtung fuer Tablet-spezifische Optimierung abgeleitet.",
+      "relatedIds": [
+        "REQ-39",
+        "ARCH-36"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-42",
+      "title": "Popup-Benachrichtigungen bei About-Me-Aktualisierungen",
+      "context": "Fuer neue Inhalte im About-Me-Bereich wurde festgelegt, dass verbundene Nutzer derselben Einrichtung per Popup benachrichtigt werden sollen. Damit ist eine konkrete Benachrichtigungslogik fuer Aktualisierungen in diesem Bereich beschrieben.",
+      "decision": "Wir benachrichtigen verbundene Nutzer derselben Einrichtung per Popup, wenn im About-Me-Bereich neue Inhalte hochgeladen werden.",
+      "consequences": "Aktualisierungen in About Me werden fuer relevante Nutzergruppen sichtbar und koennen schneller wahrgenommen werden. Gleichzeitig muss die Umsetzung eine einrichtungsbezogene Zuordnung der Benachrichtigungen sowie die Ausloesung bei neuen Uploads unterstuetzen.",
+      "relatedIds": [
+        "REQ-40",
+        "L3-REQ-013"
+      ],
+      "alternatives": null
+    }
+  ]
+}

@@ -11,8 +11,11 @@ internal sealed class IngestionTools(
     ProjectStateDocument meetingDelta,
     ProjectStateDocument core,
     ICandidateRetriever retriever,
-    RunContext run)
+    RunContext run,
+    AspectIngestionProfile? profileOrNull = null)
 {
+    // A1a: Aspekt-Naht (Default Requirement — Alt-Aufrufer/Tests unverändert; Graph-Executoren reichen explizit).
+    private readonly AspectIngestionProfile profile = profileOrNull ?? AspectIngestionProfile.Requirement;
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
     private readonly Dictionary<string, ProjectStateItem> _coreById = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
     private IReadOnlyList<StateChangeOperation>? _saved;
@@ -25,28 +28,32 @@ internal sealed class IngestionTools(
     public IReadOnlyList<AITool> Build() =>
     [
         AIFunctionFactory.Create(GetIncomingItems, "get_incoming_items",
-            "Listet die eingehenden Requirement-Items dieses Meetings (incomingItemId, text, sourceClaimIds), die aufgeloest werden muessen."),
-        AIFunctionFactory.Create(ListCoreRequirements, "list_core_requirements",
-            "Listet die bestehenden Requirement-Entitaeten des Core als Kandidaten (entityId, identityKey, status, text)."),
+            $"Listet die eingehenden {profile.ItemLabel}-Items dieses Meetings (incomingItemId, text, sourceClaimIds), die aufgeloest werden muessen."),
+        AIFunctionFactory.Create(ListCoreRequirements, profile.ListCoreToolName,
+            $"Listet die bestehenden {profile.ItemLabel}-Entitaeten des Core als Kandidaten (entityId, identityKey, status, text)."),
+        // ② E-R4 (06.08.): Quer-LESE-Sicht — dieselbe Listenform wie die eigene Kandidaten-Liste, aber der
+        // ANDERE Wahrheits-Aspekt. NUR fuer die CONTRADICT-Pruefung; MATCHEN bleibt strikt eigen-aspektig (Gate wacht).
+        AIFunctionFactory.Create(ListCrossTruth, profile.TruthPartner.ListCoreToolName,
+            $"QUER-SICHT (nur lesen): die bestehenden {profile.TruthPartner.ItemLabel}-Entitaeten des Core (entityId, identityKey, status, text). NUR zum Pruefen auf Widersprueche (CONTRADICT) - RESTATE/REFINE/SUPERSEDE bleiben {profile.ItemLabel}-intern."),
         AIFunctionFactory.Create(GetCoreEntity, "get_core_entity",
             "Liest eine Core-Entitaet vollstaendig (Text, Status, Herkunft, Historie)."),
         AIFunctionFactory.Create(ListOpenDecisions, "list_open_decisions",
             "Listet offene Entscheidungen (DEC-*, status=open_decision) mit dem widersprochenen Ziel. Pruefen, BEVOR du CONTRADICT vorschlaegst - ist der Widerspruch schon erfasst, nutze ALREADY_DECIDED."),
         AIFunctionFactory.Create(SearchCore, "search_core",
-            "Sucht in den Core-Requirements nach Stichworten (entityId/text)."),
+            $"Sucht in den Core-{profile.ItemLabel}s nach Stichworten (entityId/text)."),
         AIFunctionFactory.Create(SearchRejections, "search_rejections",
             "Sucht in frueher ABGELEHNTEN Vorschlaegen (Wiedervorlage-Wissen, REJ-*). Ohne query: alle. "
-            + "Ist ein eingehendes Requirement inhaltlich gleich, relatedRejectionId auf der Operation setzen — trotzdem normal vorschlagen, der Mensch entscheidet."),
+            + $"Ist ein eingehendes {profile.ItemLabel} inhaltlich gleich, relatedRejectionId auf der Operation setzen — trotzdem normal vorschlagen, der Mensch entscheidet."),
         AIFunctionFactory.Create(CheckPlan, "check_state_change_plan",
             "Prueft die Operationen deterministisch (Coverage/Ziele/Belege). Vor dem Speichern nutzen."),
         AIFunctionFactory.Create(SavePlan, "save_state_change_plan",
-            "Speichert die finalen Operationen (genau eine je eingehendem Requirement). Genau einmal am Ende aufrufen."),
+            $"Speichert die finalen Operationen (genau eine je eingehendem {profile.ItemLabel}). Genau einmal am Ende aufrufen."),
     ];
 
     // 9g: Anforderungen UND offene Fragen sind Coverage-Buerger — der Agent sieht beide (itemType = die Weiche).
     private IReadOnlyList<ProjectStateItem> Incoming() =>
         meetingDelta.Items
-            .Where(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase)
+            .Where(i => profile.Matches(i)
                         || string.Equals(i.ItemType, "open_question", StringComparison.OrdinalIgnoreCase))
             .ToList();
 
@@ -66,6 +73,19 @@ internal sealed class IngestionTools(
             .Select(i => new { entityId = i.ItemId, identityKey = i.IdentityKey, i.Status, text = Truncate(i.Text, 300) })
             .ToArray();
         run.AppendEvent(new { type = "INGEST_TOOL_LIST", runId = run.RunId, returned = rows.Length, timestampUtc = DateTime.UtcNow });
+        return JsonSerializer.Serialize(rows, Json);
+    }
+
+    private string ListCrossTruth(int limit = 300)
+    {
+        var cross = profile.TruthPartner;
+        var rows = core.Items
+            .Where(cross.Matches)
+            .OrderBy(i => i.ItemId, StringComparer.Ordinal)
+            .Take(Math.Clamp(limit, 1, 500))
+            .Select(i => new { entityId = i.ItemId, identityKey = i.IdentityKey, i.Status, text = Truncate(i.Text, 300) })
+            .ToArray();
+        run.AppendEvent(new { type = "INGEST_TOOL_CROSS_LIST", runId = run.RunId, aspect = cross.Aspect, returned = rows.Length, timestampUtc = DateTime.UtcNow });
         return JsonSerializer.Serialize(rows, Json);
     }
 
@@ -126,7 +146,7 @@ internal sealed class IngestionTools(
         var terms = (query ?? string.Empty).Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         if (terms.Length == 0) return "[]";
         var rows = core.Items
-            .Where(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase))
+            .Where(i => profile.Matches(i))
             .Select(i => new { i, score = terms.Count(t => i.ItemId.Contains(t, StringComparison.OrdinalIgnoreCase) || i.Text.Contains(t, StringComparison.OrdinalIgnoreCase)) })
             .Where(x => x.score > 0)
             .OrderByDescending(x => x.score).ThenBy(x => x.i.ItemId, StringComparer.Ordinal)
@@ -141,7 +161,7 @@ internal sealed class IngestionTools(
     {
         var round = Interlocked.Increment(ref _checkRounds);
         var plan = new StateChangePlanDocument(StateChangePlanDocument.CurrentSchemaVersion, "check", DateTime.UtcNow, string.Empty, (operations ?? []).ToList());
-        var report = IngestionGate.Check(meetingDelta, core, plan);
+        var report = IngestionGate.Check(meetingDelta, core, plan, profile);
         run.AppendEvent(new { type = "INGEST_TOOL_CHECK", runId = run.RunId, round, operations = operations?.Length ?? 0, pass = report.Pass, errors = report.Errors.Count, warnings = report.Warnings.Count, timestampUtc = DateTime.UtcNow });
         return JsonSerializer.Serialize(report, Json);
     }

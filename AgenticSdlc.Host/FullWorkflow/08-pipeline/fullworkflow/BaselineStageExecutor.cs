@@ -31,7 +31,9 @@ internal sealed class BaselineStageExecutor(HostSettings settings, string? basel
     // 9g: der Bestellzettel der geteilten Front (Bootstrap- UND Betriebs-Zweig laufen durch diese Stufe).
     // requirements = Pflicht-Spur (ohne sie keine Kette); open-questions = Fragen-Spur (Konsument: Frage->DEC an
     // Tor 1) — fehlt sie, laeuft die Kern-Kette LAUT weiter (Zusatz-Spur darf die Kette nicht toeten).
-    internal static readonly string[] OrderedArtifacts = ["requirements", "open-questions"];
+    // R-11 A1c (05.08.): architecture bestellt — der Konsument (arch-Strip, A1d) steht im SELBEN Slice
+    // („nur bestellte Spuren tragen weiter"). Zusatz-Spur wie open-questions: fehlt sie, laeuft die Kette LAUT weiter.
+    internal static readonly string[] OrderedArtifacts = ["requirements", "open-questions", "architecture"];
     internal const string RequiredArtifact = "requirements";
 
     public override async ValueTask HandleAsync(ConsumableLedgerOutput input, IWorkflowContext context, CancellationToken ct = default)

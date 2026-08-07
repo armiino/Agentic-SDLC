@@ -14,6 +14,11 @@ public static class IngestionCommands
         // S4 (Worklist 20.07): ingestion (Tor 1) als EIN MAF-Lauf mit MAF-nativem Human-Gate (RequestPort) + Checkpoint + UI.
         // Additiv/parallel zum klassischen ingest-requirements / ingest-review / ingest-apply (die bleiben unveraendert).
         map["ingest-requirements-hitl"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Core.IngestionHitlRunner.RunAsync(args, settings, repoRoot);
+        // R-11 A1d: dieselbe HITL-Mechanik mit dem Architecture-Profil (geteilte Naht, eigener runs/arch-ingestion-Ordner).
+        map["arch-classify-review"] = (args, _, repoRoot) => AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewRunner.RunAsync(args, repoRoot);
+        map["adr-review"] = (args, _, repoRoot) => AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewRunner.RunAsync(args, repoRoot);
+        map["ingest-architecture-hitl"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Core.IngestionHitlRunner.RunAsync(
+            args, settings, repoRoot, AgenticSdlc.Host.FullWorkflow.Core.AspectIngestionProfile.Architecture, "ingest-architecture-hitl", "arch-ingestion");
 
         map["ingest-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Core.IngestionReviewRunner.RunAsync(args, settings, repoRoot);
 

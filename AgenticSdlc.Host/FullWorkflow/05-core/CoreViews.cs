@@ -28,7 +28,13 @@ public sealed record GithubSyncEntry(
     // E0.1c/R-23: Akzeptanzkriterien + Statement (Story-Form) aus dem Core-Payload — landen im
     // deterministischen Issue-Body.
     IReadOnlyList<string>? AcceptanceCriteria = null,
-    string? Statement = null);
+    string? Statement = null,
+    // ③ A3 (06.08.): die bestätigten Rahmen des PBIs ("ARCH-x — Text", via constrained_by) — werden im
+    // Issue-Body als Sektion "Technische Rahmenbedingungen" sichtbar. Optional: Alt-Snapshots bleiben lesbar.
+    IReadOnlyList<string>? Constraints = null,
+    // A4/E-R2 (06.08.): umgesetzte Architektur-Arbeit ("ARCH-x - Text", via covers->architecture) -
+    // die work-Rolle des PBIs, im Body als eigene Zeile (CoveredRequirementIds bleibt REIN req).
+    IReadOnlyList<string>? CoveredArchitecture = null);
 
 public sealed record GithubSyncView(IReadOnlyList<GithubSyncEntry> Entries);
 
@@ -42,7 +48,10 @@ public sealed record AffectedItemsView(
     IReadOnlyList<ProjectStateItem> Features,
     IReadOnlyList<ProjectStateItem> Pbis,
     IReadOnlyList<ProjectStateItem> OpenDecisions,
-    IReadOnlyList<ProjectStateRelation> Relations);
+    IReadOnlyList<ProjectStateRelation> Relations,
+    // ③ A3 (06.08., byAspect): die Rahmen-Seite der Betroffenheit — arch-Items im Radius (inkl. 2. Hop
+    // PBI→constrained_by→ARCH, damit „welche Rahmen berührt diese Änderung?" direkt ablesbar ist).
+    IReadOnlyList<ProjectStateItem>? Architecture = null);
 
 public static class CoreViews
 {
@@ -72,6 +81,17 @@ public static class CoreViews
             .GroupBy(r => r.FromId, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.Select(r => r.ToId).ToList(), StringComparer.Ordinal);
 
+        // ③ A3: die Rahmen je PBI (lebende constrained_by-Kanten; Text aus dem Core — Beleg, kein freier Text).
+        var textById = core.Items.ToDictionary(i => i.ItemId, i => i.Text, StringComparer.Ordinal);
+        var archIds = core.Items.Where(i => Is(i, "architecture")).Select(i => i.ItemId).ToHashSet(StringComparer.Ordinal);
+        var constraintsByPbi = core.Relations
+            .Where(r => string.Equals(r.RelationType, ConstraintSwap.Relation, StringComparison.Ordinal))
+            .GroupBy(r => r.FromId, StringComparer.Ordinal)
+            .ToDictionary(g => g.Key,
+                g => g.Select(r => $"{r.ToId} — {textById.GetValueOrDefault(r.ToId, "(unbekannt)")}")
+                      .OrderBy(x => x, StringComparer.Ordinal).ToList(),
+                StringComparer.Ordinal);
+
         // T3.1: das PBI<->Issue-Mapping kommt jetzt aus der Core-Relation implemented_by_issue (persistent),
         // nicht mehr nur aus einem Run-Artefakt. Fallback auf die alte metadata["githubIssue"] bleibt.
         var mappingByPbi = CoreGithubMapping.ByPbi(core);
@@ -81,7 +101,13 @@ public static class CoreViews
             .OrderBy(i => i.ItemId, StringComparer.Ordinal)
             .Select(p =>
             {
-                var covered = coversByPbi.TryGetValue(p.ItemId, out var c) ? c : [];
+                // A4/E-R2: covers kann jetzt auch arch-Ziele tragen - die Requirements-Zeile bleibt REIN req,
+                // die Architektur-Arbeit wird eigene Sicht (kein ARCH-Id-Rauschen in req-Konsumenten).
+                var coveredAll = coversByPbi.TryGetValue(p.ItemId, out var c) ? c : [];
+                var covered = coveredAll.Where(id => !archIds.Contains(id)).ToList();
+                var coveredArch = coveredAll.Where(archIds.Contains)
+                    .Select(id => $"{id} — {textById.GetValueOrDefault(id, "(unbekannt)")}")
+                    .OrderBy(x => x, StringComparer.Ordinal).ToList();
                 var blocked = covered.Any(contradictedReqs.Contains);
                 var mapping = mappingByPbi.GetValueOrDefault(p.ItemId);
                 return new GithubSyncEntry(
@@ -94,7 +120,9 @@ public static class CoreViews
                     GithubIssue: mapping is not null ? CoreGithubMapping.IssueRef(mapping.IssueNumber) : p.Metadata.GetValueOrDefault("githubIssue"),
                     GithubIssueStatus: mapping?.OperationalStatus,
                     AcceptanceCriteria: p.Pbi?.AcceptanceCriteria ?? [],
-                    Statement: p.Pbi?.Goal);
+                    Statement: p.Pbi?.Goal,
+                    Constraints: constraintsByPbi.GetValueOrDefault(p.ItemId),
+                    CoveredArchitecture: coveredArch.Count == 0 ? null : coveredArch);
             })
             .ToList();
         return new GithubSyncView(entries);
@@ -112,6 +140,11 @@ public static class CoreViews
             if (seedIds.Contains(r.ToId) && byId.ContainsKey(r.FromId)) affected.Add(r.FromId);
         }
 
+        // ③ A3 (2. Hop, NUR Rahmen-Kanten): von jedem betroffenen PBI zu seinen constrained_by-ARCHs —
+        // die Rahmen-Seite der Betroffenheit, ohne den Radius allgemein aufzublasen.
+        foreach (var r in core.Relations.Where(r => string.Equals(r.RelationType, ConstraintSwap.Relation, StringComparison.Ordinal)))
+            if (affected.Contains(r.FromId) && byId.ContainsKey(r.ToId)) affected.Add(r.ToId);
+
         var items = affected.Select(id => byId[id]).ToList();
         var relations = core.Relations
             .Where(r => affected.Contains(r.FromId) || affected.Contains(r.ToId))
@@ -124,7 +157,8 @@ public static class CoreViews
             Features: items.Where(i => Is(i, "feature")).ToList(),
             Pbis: items.Where(i => Is(i, "pbi")).ToList(),
             OpenDecisions: items.Where(i => Is(i, "decision")).ToList(),
-            Relations: relations);
+            Relations: relations,
+            Architecture: items.Where(i => Is(i, "architecture")).ToList());
     }
 
     // §5-S4: über die zentrale Lese-Naht (typisierte Achsen; retired entfällt — war tot). Verhalten gleich.

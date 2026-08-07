@@ -21,19 +21,22 @@ public sealed record IngestionApplyReport(
 // (RESTATE/ALREADY_DECIDED) lassen die Provenance unberuehrt — dieselbe Regel wie beim PbiUpdate-Apply.
 public static class IngestionApply
 {
+    // A1a: profile = Aspekt-Naht (Default Requirement — Alt-Aufrufer/Tests unverändert; Graph reicht explizit).
     public static (ProjectStateDocument UpdatedCore, IngestionApplyReport Report, IReadOnlySet<string> AffectedIds) Apply(
         ProjectStateDocument core,
         ProjectStateDocument meetingDelta,
         StateChangePlanDocument plan,
         ISet<string> acceptedIncomingIds,
-        string ingestRunId)
+        string ingestRunId,
+        AspectIngestionProfile? profile = null)
     {
+        profile ??= AspectIngestionProfile.Requirement;
         var order = core.Items.Select(i => i.ItemId).ToList();
         var byId = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
         var relations = core.Relations.ToList();
         var incomingById = meetingDelta.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
 
-        var nextReq = MaxSuffix(order, "REQ") + 1;
+        var nextReq = MaxSuffix(order, profile.IdPrefix) + 1;
         var nextDec = MaxSuffix(order, "DEC") + 1;
 
         var applied = new List<AppliedOperation>();
@@ -84,7 +87,7 @@ public static class IngestionApply
                 case StateChangeKind.New:
                 case StateChangeKind.NewRelated:
                 {
-                    var id = $"REQ-{nextReq++:D2}";
+                    var id = $"{profile.IdPrefix}-{nextReq++:D2}";
                     var meta = IngestMeta(op.IncomingItemId, incoming);
                     // R-36 v2: featureKey ist ein reines HINWEIS-Metadatum fuer die Placement-Stufe — hier entsteht
                     // KEINE part_of_feature-Relation mehr. Die REQ→Feature-Kante wird deterministisch im
@@ -92,7 +95,7 @@ public static class IngestionApply
                     // (Der alte Direkt-Write hier schrieb Agent-Freitext als Relationsziel = die 12 Defekte des Audits.)
                     if (op.Kind == StateChangeKind.NewRelated && !string.IsNullOrWhiteSpace(op.FeatureKey))
                         meta["featureKey"] = op.FeatureKey!;
-                    AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds, meta, ingestRunId));
+                    AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds, meta, ingestRunId, profile));
                     applied.Add(new AppliedOperation(op.IncomingItemId, op.Kind, id, "added"));
                     affected.Add(id); added++;
                     break;
@@ -102,8 +105,8 @@ public static class IngestionApply
                     if (!byId.TryGetValue(op.TargetEntityId ?? "", out var t)) { skipped.Add($"{op.IncomingItemId}: SUPERSEDE-Ziel unbekannt"); break; }
                     // §5-S3: Status über die zentrale Naht (Alt-String + neue Felder synchron) + History-Notiz (schließt E-10-Lücke).
                     byId[t.ItemId] = t.WithStatus(CoreStatus.From("superseded"), $"superseded via Ingestion-SUPERSEDE ({op.IncomingItemId}, {ingestRunId})");
-                    var id = $"REQ-{nextReq++:D2}";
-                    AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds, IngestMeta(op.IncomingItemId, incoming), ingestRunId));
+                    var id = $"{profile.IdPrefix}-{nextReq++:D2}";
+                    AddItem(order, byId, NewRequirement(id, statement, incoming, claimIds, IngestMeta(op.IncomingItemId, incoming), ingestRunId, profile));
                     relations.Add(new ProjectStateRelation(id, t.ItemId, "supersedes", "ingestion", new Dictionary<string, string>()));
                     applied.Add(new AppliedOperation(op.IncomingItemId, op.Kind, id, "superseded"));
                     affected.Add(id); affected.Add(t.ItemId); superseded++;
@@ -165,9 +168,9 @@ public static class IngestionApply
     }
 
     // R-31/I7: sourceRunId = Ausloeser-Lauf (Ingest); Herkunft des Incomings steckt in Metadata (IngestMeta).
-    private static ProjectStateItem NewRequirement(string id, string text, ProjectStateItem incoming, IReadOnlyList<string> claimIds, Dictionary<string, string> meta, string ingestRunId)
+    private static ProjectStateItem NewRequirement(string id, string text, ProjectStateItem incoming, IReadOnlyList<string> claimIds, Dictionary<string, string> meta, string ingestRunId, AspectIngestionProfile profile)
         => new ProjectStateItem(
-            ItemId: id, ItemType: "requirement", Text: text, Origin: incoming.Origin,
+            ItemId: id, ItemType: profile.Aspect, Text: text, Origin: incoming.Origin,
             Stage: incoming.Stage, Version: 1, SourceRunId: ingestRunId, SourceArtifactId: incoming.SourceArtifactId,
             SourceArtifactType: incoming.SourceArtifactType, SourceDecisionId: null, SourceCandidateId: null,
             SourceClaimIds: claimIds, SourceArtifactItemIds: incoming.SourceArtifactItemIds, Metadata: meta,
