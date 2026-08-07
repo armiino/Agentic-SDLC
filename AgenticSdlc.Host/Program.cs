@@ -68,6 +68,7 @@ AgenticSdlc.Host.FullWorkflow.PbiUpdate.PbiUpdateCommands.Register(commands);
 AgenticSdlc.Host.FullWorkflow.Decision.DecisionCommands.Register(commands);
 AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubCommands.Register(commands);
 AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineCommands.Register(commands);
+AgenticSdlc.Host.Steward.StewardCommands.Register(commands);   // C1b: die Steward-Schicht (steward [--session] [--once])
 AgenticSdlc.Host.FullWorkflow.HitlSpike.SpikeCommands.Register(commands);
 // research/ 2026-07-23 nach archive/ (Typ-Schnitt erledigt) — Kommandos deregistriert.
 if (args.Length > 0 && commands.TryGetValue(args[0], out var commandHandler))

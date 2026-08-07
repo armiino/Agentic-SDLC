@@ -81,6 +81,7 @@ public static class GithubForwardHitlRunner
         var mappingByPbi = CoreGithubMapping.ByPbi(core);
 
         var snapshotPath = ResolveSnapshotPath(repoRoot, issuesArg);
+        GithubSnapshotGuard.Verify(snapshotPath, repoArg);   // B1/R-16: fremde/ungestempelte Snapshots LAUT ablehnen
         IReadOnlyList<GithubIssueSnapshot> issues = [];
         if (snapshotPath is not null) issues = await GithubReadSource.LoadAsync(snapshotPath).ConfigureAwait(false);
         else Console.WriteLine("[github-forward-hitl] WARN: kein Issue-Snapshot - unmapped PBIs koennen nur CREATE.");

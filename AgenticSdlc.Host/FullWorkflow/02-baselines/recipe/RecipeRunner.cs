@@ -203,10 +203,28 @@ public static class RecipeRunner
         }
 
         // Wahrheit von Disk: baselines/{type}/artifact.json + je Ableitung derivations/{spec}/derived.json.
-        var baseParts = baselineArtifacts.Select(t => $"{t}={Count(Path.Combine(run.RunDir, "baselines", t, "artifact.json"))}");
+        // B2/R-10-Härtung (07.08.): "-1" (Datei fehlt/unlesbar = Fan-out lief nicht durch) ist ein FEHLER,
+        // keine Konsolen-Notiz — der historische Race-Fall endete sonst STILL erfolgreich (silent-cap-Verstoß).
+        var fehlend = new List<string>();
+        var baseParts = baselineArtifacts.Select(t =>
+        {
+            var n = Count(Path.Combine(run.RunDir, "baselines", t, "artifact.json"));
+            if (n < 0) fehlend.Add($"baselines/{t}");
+            return $"{t}={n}";
+        }).ToList();
         Console.WriteLine($"[recipe] fertig: Baselines [{string.Join(", ", baseParts)}]");
         foreach (var spec in specs)
-            Console.WriteLine($"[recipe]   {spec.Id}: derivations/{spec.Id}/derived.json = {Count(Path.Combine(run.RunDir, "derivations", spec.Id, "derived.json"))} items");
+        {
+            var n = Count(Path.Combine(run.RunDir, "derivations", spec.Id, "derived.json"));
+            if (n < 0) fehlend.Add($"derivations/{spec.Id}");
+            Console.WriteLine($"[recipe]   {spec.Id}: derivations/{spec.Id}/derived.json = {n} items");
+        }
+        if (fehlend.Count > 0)
+        {
+            Console.Error.WriteLine($"[recipe] FEHLER (R-10): {fehlend.Count} Artefakt(e) fehlen/unlesbar — {string.Join(", ", fehlend)} (Fan-out nicht durchgelaufen?).");
+            run.AppendEvent(new { type = "RECIPE_ARTIFACTS_MISSING", runId = run.RunId, fehlend, timestampUtc = DateTime.UtcNow });
+            return new RecipeExecution(5, run);
+        }
         Console.WriteLine($"[recipe] run -> {Path.GetRelativePath(repoRoot, run.RunDir)}");
         return new RecipeExecution(0, run);
     }

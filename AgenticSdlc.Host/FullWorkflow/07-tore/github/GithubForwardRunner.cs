@@ -59,6 +59,7 @@ public static class GithubForwardRunner
 
         // 3) Issue-Snapshot (T3.2): explizit oder juengster github-snapshot; sonst leer.
         var snapshotPath = ResolveSnapshotPath(repoRoot, issuesArg);
+        GithubSnapshotGuard.Verify(snapshotPath, repoArg);   // B1/R-16: fremde/ungestempelte Snapshots LAUT ablehnen
         IReadOnlyList<GithubIssueSnapshot> issues = [];
         if (snapshotPath is not null) issues = await GithubReadSource.LoadAsync(snapshotPath).ConfigureAwait(false);
         else Console.WriteLine("[github-forward] WARN: kein Issue-Snapshot - unmapped PBIs koennen nur CREATE (keine LINK-Kandidaten).");

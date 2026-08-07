@@ -55,10 +55,6 @@ public static class GithubReverseRunner
     {
         if (!string.IsNullOrWhiteSpace(issuesArg))
             return Path.IsPathRooted(issuesArg) ? issuesArg : Path.Combine(repoRoot, issuesArg);
-        var root = Path.Combine(repoRoot, "runs", "github-snapshot");
-        if (!Directory.Exists(root)) return null;
-        return Directory.EnumerateFiles(root, "github-issues-snapshot.json", SearchOption.AllDirectories)
-            .OrderByDescending(File.GetLastWriteTimeUtc)
-            .FirstOrDefault();
+        return GithubSnapshotLocator.FindLatest(repoRoot);
     }
 }

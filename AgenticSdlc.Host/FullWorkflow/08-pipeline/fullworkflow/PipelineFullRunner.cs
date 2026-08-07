@@ -56,12 +56,18 @@ public static class PipelineFullRunner
     }
 
     public static Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
+        => RunAsync(args, settings, repoRoot, onRunId: null);
+
+    /// <summary>C1c (07.08.): dieselbe Bahn mit runId-Rückgabe-Naht — der Steward startet in-process
+    /// im Hintergrund und braucht die runId SOFORT (K2: start-async + get_run_status). Die CLI nutzt
+    /// den parameterlosen Weg; Verhalten dort unverändert.</summary>
+    public static Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot, Action<string>? onRunId)
     {
         var sub = args.Length > 1 ? args[1].ToLowerInvariant() : "";
         return sub switch
         {
             "start" => StartAsync(args, repoRoot),
-            "run" => RunGraphAsync(args, settings, repoRoot),
+            "run" => RunGraphAsync(args, settings, repoRoot, onRunId),
             "resume" => ResumeAsync(args, settings, repoRoot),
             "status" => StatusAsync(args, repoRoot),
             _ => Task.FromResult(Usage()),
@@ -83,7 +89,7 @@ public static class PipelineFullRunner
 
     // W1e' Schritt 4 — echter Graph-Lauf (Slice v0: 01-ledger). Beweist, dass pipeline-full einen ECHTEN
     // MAF-Graphen ausführt (nicht mehr Skeleton). Weitere Stufen werden iterativ an Assemble angehängt.
-    private static async Task<int> RunGraphAsync(string[] args, HostSettings settings, string repoRoot)
+    private static async Task<int> RunGraphAsync(string[] args, HostSettings settings, string repoRoot, Action<string>? onRunId = null)
     {
         var config = RunConfig.Load(repoRoot);
         var fw = FullWorkflowSettings.FromConfig(config.FullWorkflow);
@@ -127,6 +133,7 @@ public static class PipelineFullRunner
         }
 
         var run = new RunContext(RunId.New(), "fullworkflow");
+        onRunId?.Invoke(run.RunId);   // C1c: runId sofort an den Starter melden (Steward), bevor der Lauf arbeitet
         run.EnsureFolders();
         run.OutputDir("01-ledger");
         run.OutputDir("checkpoints");
@@ -600,32 +607,10 @@ public static class PipelineFullRunner
     }
 
     // H1: Gate-spezifische Review-Anleitung für die Pause (bestehende UIs zeigen auf die Faden-Ordner).
-    private static IReadOnlyList<string> ReviewHints(string gate, RunContext run) => gate switch
-    {
-        "adjudication-gate" =>
-            [$"  Review-UI: ledger-adjudicate-ui runs/fullworkflow/{run.RunId}/01-ledger/queue.json  (Aktionen setzen, Autosave)",
-             "  oder beim Resume: --accept-all (System-Vorschlag-Heuristik, EXPERIMENT)"],
-        "cluster-review-gate" =>
-            [$"  Review-UI: l4-re-clarify-review runs/fullworkflow/{run.RunId}/06-backlog/clusters  → human-decisions.json"],
-        "backlog-review-gate" =>
-            [$"  Review-UI: l4-re-clarify-backlog-review runs/fullworkflow/{run.RunId}/06-backlog/backlog  → human-decisions.json"],
-        "decision-gate" =>
-            [$"  Review-UI: decision-gate-review runs/fullworkflow/{run.RunId}/07-decision  → decision-gate-decisions.json (Ausgang je Widerspruch, vertagen erlaubt)",
-             "  Flags/accept-all koennen hier NICHT aufloesen (Wahrheits-Konflikt) — sie vertagen alles (laut)."],
-        "adr-gate" =>
-            [$"  Review-UI: adr-review {run.RunId}  (Entwuerfe editieren/freigeben → adr-decisions.json, vertagen erlaubt)",
-             "  oder beim Resume: --accept-all (Agent-Entwuerfe 1:1 uebernehmen)"],
-        "arch-classify-gate" =>
-            [$"  Review-UI: arch-classify-review {run.RunId}  (drei Rollen je Item bestätigen/korrigieren → classify-decisions.json)",
-             "  oder beim Resume: --accept-all (Agent-Vorschlag 1:1 uebernehmen)"],
-        "arch-ingest-gate" =>
-            [$"  arch-Plan: runs/fullworkflow/{run.RunId}/07-arch-ingest/plan.json (Operationen je Architektur-Aussage)",
-             "  Entscheid beim Resume: --accept-all | --accept incomingId1,incomingId2"],
-        "github-forward-gate" =>
-            [$"  Entscheide: runs/fullworkflow/{run.RunId}/07-github/github-forward-decisions.json (opId/decision apply|skip)",
-             "  oder beim Resume: --accept-all | --accept opId1,opId2"],
-        _ => ["  Entscheid beim Resume: --accept-all | --accept id1,id2"],
-    };
+    // A3 (07.08.): die Gate→Anleitung-Quelle wohnt jetzt im geteilten Status-Kern (PipelineRunStatusReader)
+    // — Pause-Meldung, status-CLI und Steward-Tools sprechen damit IDENTISCH. Hier nur Delegation.
+    private static IReadOnlyList<string> ReviewHints(string gate, RunContext run)
+        => PipelineRunStatusReader.NextRequiredAction(gate, run.RunId);
 
     // H1: interactive-Antwortquellen je Gate — 1) human-decisions.json (aus den bestehenden Review-UIs, im
     // Faden-Ordner des Gates), 2) Resume-CLI-Flags. Liefert false => Pause. Semantik je Gate = exakt die
@@ -848,29 +833,23 @@ public static class PipelineFullRunner
             ? new[] { Path.IsPathRooted(runToken) ? runToken : Path.Combine(root, runToken) }
             : Directory.Exists(root) ? Directory.GetDirectories(root).OrderBy(d => d, StringComparer.Ordinal).ToArray() : [];
 
+        // A3 (07.08.): status ist nur noch RENDERER über dem geteilten Kern (PipelineRunStatusReader) —
+        // dieselbe typisierte Wahrheit, die auch die Steward-Tools (get_run_status) bekommen.
         var paused = 0;
         foreach (var dir in dirs)
         {
-            if (!Directory.Exists(dir)) { Console.Error.WriteLine($"[{Cmd}] Lauf nicht gefunden: {dir}"); return 2; }
-            var runId = Path.GetFileName(dir.TrimEnd('/', '\\'));
-            var pointerPath = Path.Combine(dir, "checkpoints", "pointer.json");
-            if (File.Exists(pointerPath))
+            var st = await PipelineRunStatusReader.ReadAsync(repoRoot, dir).ConfigureAwait(false);
+            if (st is null) { Console.Error.WriteLine($"[{Cmd}] Lauf nicht gefunden: {dir}"); return 2; }
+            if (st.State == PipelineRunState.Paused)
             {
-                var p = await HitlShell.LoadAsync<HitlPointer>(pointerPath).ConfigureAwait(false);
                 paused++;
-                Console.WriteLine($"[{Cmd}] PAUSIERT  {runId}  gate={p.Mode ?? "?"}  seit={p.SavedUtc:u}  checkpointId={p.CheckpointId}");
-                foreach (var line in ReviewHints(p.Mode ?? "?", new RunContext(runId, "fullworkflow"))) Console.WriteLine(line);
-                Console.WriteLine($"  Weiter: pipeline-full resume {runId}   (oder … --accept-all)");
+                Console.WriteLine($"[{Cmd}] PAUSIERT  {st.RunId}  gate={st.PausedGate}  seit={st.PausedSinceUtc:u}  checkpointId={st.CheckpointId}");
+                foreach (var line in st.NextRequiredAction) Console.WriteLine(line);
             }
             else if (runToken is not null)
             {
-                // Einzelabfrage ohne Pointer: letzten Lauf-Stand aus den Events zeigen.
-                var eventsPath = Path.Combine(dir, "logs", "events.jsonl");
-                var last = File.Exists(eventsPath)
-                    ? File.ReadLines(eventsPath).LastOrDefault(l => l.Contains("\"PIPELINE_", StringComparison.Ordinal))
-                    : null;
-                Console.WriteLine($"[{Cmd}] {runId}: kein pointer.json — NICHT pausiert. Letztes Pipeline-Event:");
-                Console.WriteLine($"  {last ?? "(keine events.jsonl)"}");
+                Console.WriteLine($"[{Cmd}] {st.RunId}: kein pointer.json — {(st.State == PipelineRunState.Finished ? "FERTIG (metrics.json vorhanden)" : "NICHT pausiert")}. Letztes Pipeline-Event:");
+                Console.WriteLine($"  {st.LastPipelineEvent ?? "(keine events.jsonl)"}");
             }
         }
         if (runToken is null)
