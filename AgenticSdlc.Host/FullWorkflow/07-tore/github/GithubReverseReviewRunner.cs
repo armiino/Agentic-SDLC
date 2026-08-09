@@ -55,7 +55,7 @@ public static class GithubReverseReviewRunner
         if (outcome != AgenticSdlc.HumanReview.ReviewOutcome.Finished)
         { Console.WriteLine($"[github-reverse-review] nicht abgeschlossen ({outcome}) — kein Auto-Apply."); return 0; }
         Console.WriteLine("[github-reverse-review] R-43: Apply läuft automatisch an …");
-        return await GithubReverseApplyRunner.RunAsync(["github-reverse-apply", args[1]], repoRoot).ConfigureAwait(false);
+        return await GithubReverseApplyRunner.ApplyFromPlanDirAsync(ResolvePlanDir(repoRoot, args[1])!, repoRoot).ConfigureAwait(false);   // K13-1: typisierte Naht
     }
 
     internal static string? ResolvePlanDir(string repoRoot, string token)

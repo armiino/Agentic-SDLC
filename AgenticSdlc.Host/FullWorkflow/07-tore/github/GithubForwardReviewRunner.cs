@@ -57,7 +57,7 @@ public static class GithubForwardReviewRunner
         if (outcome != AgenticSdlc.HumanReview.ReviewOutcome.Finished)
         { Console.WriteLine($"[github-forward-review] nicht abgeschlossen ({outcome}) — kein Auto-Apply."); return 0; }
         Console.WriteLine("[github-forward-review] R-43: Apply-VORSCHAU läuft automatisch an …");
-        var rc = await GithubForwardApplyRunner.RunAsync(["github-forward-apply", args[1]], repoRoot).ConfigureAwait(false);
+        var rc = await GithubForwardApplyRunner.ApplyFromPlanDirAsync(ResolvePlanDir(repoRoot, args[1])!, repoRoot).ConfigureAwait(false);   // K13-1: typisierte Naht (Vorschau)
         Console.WriteLine($"[github-forward-review] echter GitHub-Write bewusst separat: github-forward-apply {args[1]} --execute");
         return rc;
     }

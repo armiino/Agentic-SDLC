@@ -27,21 +27,27 @@ public sealed class StewardRunToolsTests
     }
 
     [Fact]
-    public async Task Aux_Seile_bauen_die_richtigen_Bahn_Args_und_melden_Fehler_LAUT()
+    public async Task K13_2_Seile_rufen_TYPISIERTE_Naehte_und_melden_Fehler_LAUT()
     {
-        string[]? seen = null;
-        var tools = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0), auxRunner: a => { seen = a; return Task.FromResult(0); });
+        string? repo = null; bool? draft = null; var reverse = 0; string? review = null;
+        var tools = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0),
+            pullSnapshot: r => { repo = r; return Task.FromResult(0); },
+            runInbound: d => { draft = d; return Task.FromResult(0); },
+            runReverse: () => { reverse++; return Task.FromResult(0); },
+            openReview: id => { review = id; return Task.FromResult(0); });
 
         var snap = await InvokeAsync(tools, "pull_github_snapshot", new Dictionary<string, object?> { ["repo"] = "owner/name" });
         Assert.True(snap.GetProperty("ok").GetBoolean());
-        Assert.Equal(["github-snapshot", "issues", "--repo", "owner/name"], seen!);
+        Assert.Equal("owner/name", repo);                                     // typisiert — keine CLI-Args mehr
 
         await InvokeAsync(tools, "run_github_inbound", new Dictionary<string, object?> { ["draft"] = true });
-        Assert.Equal(["github-inbound", "--draft"], seen!);
+        Assert.True(draft);
         await InvokeAsync(tools, "run_github_reverse", new Dictionary<string, object?>());
-        Assert.Equal(["github-reverse"], seen!);
+        Assert.Equal(1, reverse);
+        await InvokeAsync(tools, "open_review_ui", new Dictionary<string, object?> { ["proposalId"] = "PEND-x" });
+        Assert.Equal("PEND-x", review);
 
-        var failing = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0), auxRunner: _ => Task.FromResult(2));
+        var failing = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0), runInbound: _ => Task.FromResult(2));
         var err = await InvokeAsync(failing, "run_github_inbound", new Dictionary<string, object?>());
         Assert.Equal("AUX_RUN_FAILED", err.GetProperty("error").GetString());
     }
@@ -51,7 +57,7 @@ public sealed class StewardRunToolsTests
     {
         var repo = Directory.CreateTempSubdirectory("c4c-").FullName;
         string[]? seen = null;
-        var tools = new StewardRunTools(repo, S(), (a, cb) => Task.FromResult(0), auxRunner: a => { seen = a; return Task.FromResult(0); });
+        var tools = new StewardRunTools(repo, S(), (a, cb) => Task.FromResult(0), runSweep: p => { seen = ["clarify-sweep", "run", "--answers", p]; return Task.FromResult(0); });
 
         var bad = await InvokeAsync(tools, "save_sweep_answers", new Dictionary<string, object?>
         { ["answers"] = new[] { new AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepAnswer("PBI-1", "") } });

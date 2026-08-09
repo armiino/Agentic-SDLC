@@ -10,6 +10,11 @@ public static class PbiUpdateReviewRunner
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
+    /// <summary>K13-2: typisierte Façade für den Steward — interaktiver UI-EINGANG bleibt bewusst der
+    /// Runner (die Args-Form ist SEIN CLI-Vertrag, nicht der des Aufrufers).</summary>
+    public static Task<int> RunPendingAsync(string proposalId, HostSettings settings, string repoRoot)
+        => RunAsync(["pbi-update-review", "--pending", proposalId], settings, repoRoot);
+
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
         if (args.Length < 2) { Console.Error.WriteLine("Usage: pbi-update-review <pbi-update-run|dir> | --pending <proposalId>  [--interactive|--file] [--no-browser]"); return 2; }
@@ -84,7 +89,7 @@ public static class PbiUpdateReviewRunner
             return 0;
         }
         Console.WriteLine("[pbi-update-review] R-43: Apply läuft automatisch an …");
-        return await PbiUpdateApplyRunner.RunAsync(["pbi-update-apply", planDir], repoRoot).ConfigureAwait(false);
+        return await PbiUpdateApplyRunner.ApplyFromPlanDirAsync(planDir, repoRoot).ConfigureAwait(false);   // K13-1: typisierte Naht
     }
 
     internal static string? ResolvePlanDir(string repoRoot, string token)

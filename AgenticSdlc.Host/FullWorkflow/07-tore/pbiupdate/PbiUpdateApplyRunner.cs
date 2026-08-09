@@ -9,12 +9,20 @@ public static class PbiUpdateApplyRunner
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
+    // CLI-Haut (K13: Eingang, nie Integrationsschicht) — parst, löst auf, delegiert an den typisierten Kern.
     public static async Task<int> RunAsync(string[] args, string repoRoot)
     {
         if (args.Length < 2) { Console.Error.WriteLine("Usage: pbi-update-apply <pbi-update-run|dir>"); return 2; }
 
         var planDir = PbiUpdateReviewRunner.ResolvePlanDir(repoRoot, args[1]);
         if (planDir is null) { Console.Error.WriteLine($"[pbi-update-apply] Lauf '{args[1]}' nicht gefunden."); return 2; }
+        return await ApplyFromPlanDirAsync(planDir, repoRoot).ConfigureAwait(false);
+    }
+
+    /// <summary>K13-1 (09.08.): der typisierte Apply-Kern — DIE Naht für R-43-Kettung und Steward-Chat-Gate
+    /// (kein String-Args-Umweg). Führt aufgezeichnete Gate-Entscheide deterministisch aus + schließt Pendings.</summary>
+    public static async Task<int> ApplyFromPlanDirAsync(string planDir, string repoRoot)
+    {
         var planPath = Path.Combine(planDir, "pbi-change-plan.json");
         var decisionsPath = Path.Combine(planDir, "human-decisions.json");
         if (!File.Exists(planPath)) { Console.Error.WriteLine("[pbi-update-apply] pbi-change-plan.json fehlt."); return 2; }

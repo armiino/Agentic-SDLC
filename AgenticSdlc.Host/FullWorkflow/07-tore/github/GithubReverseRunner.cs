@@ -16,7 +16,12 @@ public static class GithubReverseRunner
         string? issuesArg = null;
         for (var i = 1; i < args.Length; i++)
             if (string.Equals(args[i], "--issues", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) issuesArg = args[++i];
+        return await RunReverseAsync(repoRoot, issuesArg).ConfigureAwait(false);
+    }
 
+    /// <summary>K13-2: typisierte Naht (Steward + künftige Konsumenten) — Zustands-Reverse ohne CLI-Args.</summary>
+    public static async Task<int> RunReverseAsync(string repoRoot, string? issuesArg = null)
+    {
         var coreRepo = new JsonCoreRepository(repoRoot);
         if (!await coreRepo.ExistsAsync().ConfigureAwait(false)) { Console.Error.WriteLine("[github-reverse] Core fehlt."); return 2; }
         var core = await coreRepo.LoadAsync().ConfigureAwait(false);

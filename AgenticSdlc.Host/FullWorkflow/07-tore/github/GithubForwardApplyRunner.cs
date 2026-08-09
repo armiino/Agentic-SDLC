@@ -34,6 +34,13 @@ public static class GithubForwardApplyRunner
 
         var planDir = GithubForwardReviewRunner.ResolvePlanDir(repoRoot, token);
         if (planDir is null) { Console.Error.WriteLine($"[github-forward-apply] Lauf '{token}' nicht gefunden."); return 2; }
+        return await ApplyFromPlanDirAsync(planDir, repoRoot, execute, repoArg, tokenEnv).ConfigureAwait(false);
+    }
+
+    /// <summary>K13-1: typisierter Apply-Kern (safe-by-default: execute=false ⇒ Vorschau, kein GitHub-Write).</summary>
+    public static async Task<int> ApplyFromPlanDirAsync(string planDir, string repoRoot,
+        bool execute = false, string? repoArg = null, string? tokenEnv = null)
+    {
         var planPath = Path.Combine(planDir, "github-forward-plan.json");
         var decisionsPath = Path.Combine(planDir, "human-decisions.json");
         if (!File.Exists(planPath)) { Console.Error.WriteLine("[github-forward-apply] github-forward-plan.json fehlt."); return 2; }

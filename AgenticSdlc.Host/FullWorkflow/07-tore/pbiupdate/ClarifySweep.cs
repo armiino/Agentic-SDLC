@@ -144,6 +144,12 @@ public static class ClarifySweepAnswersRunner
         for (var i = 2; i < args.Length; i++)
             if (string.Equals(args[i], "--answers", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) answersArg = args[++i];
         if (answersArg is null) { Console.Error.WriteLine("[clarify-sweep] --answers <sweep-answers.json> fehlt."); return 2; }
+        return await RunFromAnswersAsync(answersArg, settings, repoRoot).ConfigureAwait(false);
+    }
+
+    /// <summary>K13-2: typisierte Naht — Sweep aus einer Antworten-Datei, ohne CLI-Args (Steward + CLI-Haut).</summary>
+    public static async Task<int> RunFromAnswersAsync(string answersArg, Configuration.HostSettings settings, string repoRoot)
+    {
         var answersPath = Path.IsPathRooted(answersArg) ? answersArg : Path.Combine(repoRoot, answersArg);
         if (!File.Exists(answersPath)) { Console.Error.WriteLine($"[clarify-sweep] Antworten nicht gefunden: {answersPath}"); return 2; }
 

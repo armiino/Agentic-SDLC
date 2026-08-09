@@ -140,6 +140,16 @@ public static class GithubIssueSnapshotRunner
             return 2;
         }
 
+        return await RunIssuesCoreAsync(options, repoRoot).ConfigureAwait(false);
+    }
+
+    /// <summary>K13-2 (09.08.): typisierte Naht für den Steward — frischer Issue-Snapshot via GitHub-API,
+    /// ohne CLI-String-Args (dieselbe Kern-Logik wie `github-snapshot issues`).</summary>
+    public static Task<int> PullIssuesAsync(string repository, string repoRoot, int limit = 200)
+        => RunIssuesCoreAsync(new GithubSnapshotCliOptions(repository, null, null, "api", limit, null), repoRoot);
+
+    private static async Task<int> RunIssuesCoreAsync(GithubSnapshotCliOptions options, string repoRoot)
+    {
         IReadOnlyList<GithubIssueSnapshot> issues;
         string provider;
         try

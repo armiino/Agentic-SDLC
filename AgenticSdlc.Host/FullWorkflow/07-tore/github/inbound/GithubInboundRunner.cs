@@ -16,7 +16,12 @@ public static class GithubInboundRunner
             if (string.Equals(args[i], "--issues", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) issuesArg = args[++i];
             else if (string.Equals(args[i], "--draft", StringComparison.OrdinalIgnoreCase)) draft = true;
         }
+        return await RunHarvestAsync(settings, repoRoot, issuesArg, draft).ConfigureAwait(false);
+    }
 
+    /// <summary>K13-2: typisierte Naht — Ernte-Lauf ohne CLI-Args (Steward + CLI-Haut; Kern = GithubInboundHarvest).</summary>
+    public static async Task<int> RunHarvestAsync(HostSettings settings, string repoRoot, string? issuesArg, bool draft)
+    {
         var run = new RunContext(RunId.New(), "github-inbound");
         run.EnsureFolders();
         var outDir = run.OutputDir("plan");

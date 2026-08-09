@@ -18,7 +18,11 @@ namespace AgenticSdlc.Host.Steward;
 /// </summary>
 public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     Func<string[], Action<string>?, Task<int>>? runner = null,
-    Func<string[], Task<int>>? auxRunner = null)
+    Func<string, Task<int>>? pullSnapshot = null,
+    Func<bool, Task<int>>? runInbound = null,
+    Func<Task<int>>? runReverse = null,
+    Func<string, Task<int>>? runSweep = null,
+    Func<string, Task<int>>? openReview = null)
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
 
@@ -26,16 +30,18 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     private readonly Func<string[], Action<string>?, Task<int>> _runner =
         runner ?? ((args, onRunId) => PipelineFullRunner.RunAsync(args, settings, repoRoot, onRunId));
 
-    // C2c: zweite Naht für die kurzen GitHub-Bahnen (synchron, exitCode zurück; Test-injizierbar).
-    private readonly Func<string[], Task<int>> _aux = auxRunner ?? (args => args[0] switch
-    {
-        "github-snapshot" => FullWorkflow.Tore.Github.GithubIssueSnapshotRunner.RunAsync(args, repoRoot),
-        "github-inbound" => FullWorkflow.Tore.Github.Inbound.GithubInboundRunner.RunAsync(args, settings, repoRoot),
-        "github-reverse" => FullWorkflow.Tore.Github.GithubReverseRunner.RunAsync(args, repoRoot),
-        "clarify-sweep" => FullWorkflow.PbiUpdate.ClarifySweepRunner.RunAsync(args, settings, repoRoot),
-        "pbi-update-review" => FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.RunAsync(args, settings, repoRoot),
-        _ => throw new InvalidOperationException($"Unbekannte Aux-Bahn '{args[0]}'."),
-    });
+    // K13-2 (09.08.): TYPISIERTE Nähte statt CLI-String-Args (K13: CLI ist Eingang, nie Integrationsschicht).
+    // Je Bahn ein Delegate auf den gehobenen Kern — Test-injizierbar, kompilierfest.
+    private readonly Func<string, Task<int>> _pullSnapshot =
+        pullSnapshot ?? (repo => FullWorkflow.Tore.Github.GithubIssueSnapshotRunner.PullIssuesAsync(repo, repoRoot));
+    private readonly Func<bool, Task<int>> _runInbound =
+        runInbound ?? (draft => FullWorkflow.Tore.Github.Inbound.GithubInboundRunner.RunHarvestAsync(settings, repoRoot, null, draft));
+    private readonly Func<Task<int>> _runReverse =
+        runReverse ?? (() => FullWorkflow.Tore.Github.GithubReverseRunner.RunReverseAsync(repoRoot));
+    private readonly Func<string, Task<int>> _runSweep =
+        runSweep ?? (answersPath => FullWorkflow.PbiUpdate.ClarifySweepAnswersRunner.RunFromAnswersAsync(answersPath, settings, repoRoot));
+    private readonly Func<string, Task<int>> _openReview =
+        openReview ?? (proposalId => FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.RunPendingAsync(proposalId, settings, repoRoot));
 
     private readonly ConcurrentDictionary<string, Task<int>> _started = new(StringComparer.Ordinal);
     private volatile string? _activeRunId;
@@ -77,13 +83,13 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     ];
 
     private async Task<string> PullGithubSnapshotAsync(string repo)
-        => AuxResult(await _aux(["github-snapshot", "issues", "--repo", repo]).ConfigureAwait(false), "github-snapshot");
+        => AuxResult(await _pullSnapshot(repo).ConfigureAwait(false), "github-snapshot");
 
     private async Task<string> RunGithubInboundAsync(bool draft = false)
-        => AuxResult(await _aux(draft ? ["github-inbound", "--draft"] : ["github-inbound"]).ConfigureAwait(false), "github-inbound");
+        => AuxResult(await _runInbound(draft).ConfigureAwait(false), "github-inbound");
 
     private async Task<string> RunGithubReverseAsync()
-        => AuxResult(await _aux(["github-reverse"]).ConfigureAwait(false), "github-reverse");
+        => AuxResult(await _runReverse().ConfigureAwait(false), "github-reverse");
 
     private static string AuxResult(int exitCode, string bahn)
         => JsonSerializer.Serialize(exitCode == 0
@@ -105,10 +111,10 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     }
 
     private async Task<string> OpenReviewUiAsync(string proposalId)
-        => AuxResult(await _aux(["pbi-update-review", "--pending", proposalId]).ConfigureAwait(false), "pbi-update-review");
+        => AuxResult(await _openReview(proposalId).ConfigureAwait(false), "pbi-update-review");
 
     private async Task<string> RunClarifySweepAsync(string answersPath)
-        => AuxResult(await _aux(["clarify-sweep", "run", "--answers", answersPath]).ConfigureAwait(false), "clarify-sweep");
+        => AuxResult(await _runSweep(answersPath).ConfigureAwait(false), "clarify-sweep");
 
     private Task<string> RunPipelineFullAsync(string deltaPath)
         => StartPipelineAsync(["pipeline-full", "run", "--from-delta", deltaPath], deltaPath);

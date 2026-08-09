@@ -17,12 +17,13 @@ namespace AgenticSdlc.Host.Steward;
 /// Diktat, MAF-Approval = typisierter Bestätigungs-Akt — der Steward bestätigt NIE selbst (9k(d)-Regel 3).
 /// P2a wird IM Tool erzwungen: Nicht-apply ohne Begründung ⇒ Validierungsfehler zurück an den Agenten.
 /// </summary>
-public sealed class StewardGateTools(string repoRoot, Func<string[], Task<int>>? applyRunner = null)
+public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? applyFromPlanDir = null)
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
 
-    private readonly Func<string[], Task<int>> _apply =
-        applyRunner ?? (args => PbiUpdateApplyRunner.RunAsync(args, repoRoot));
+    // K13-1: typisierte Apply-Naht (planDir) statt CLI-String-Args; Test-injizierbar.
+    private readonly Func<string, Task<int>> _apply =
+        applyFromPlanDir ?? (planDir => PbiUpdateApplyRunner.ApplyFromPlanDirAsync(planDir, repoRoot));
 
     public IReadOnlyList<AITool> Build() =>
     [
@@ -103,7 +104,7 @@ public sealed class StewardGateTools(string repoRoot, Func<string[], Task<int>>?
         await File.WriteAllTextAsync(Path.Combine(planDir, "human-decisions.json"),
             JsonSerializer.Serialize(file, Json)).ConfigureAwait(false);
 
-        var exit = await _apply(["pbi-update-apply", planDir]).ConfigureAwait(false);
+        var exit = await _apply(planDir).ConfigureAwait(false);
         return JsonSerializer.Serialize(exit == 0
             ? new { applied = true, proposalId, planDir = Path.GetRelativePath(repoRoot, planDir), hint = "Registry geschlossen; get_core_overview zeigt den neuen Stand." }
             : (object)new { error = "APPLY_FAILED", exitCode = exit, planDir = Path.GetRelativePath(repoRoot, planDir) }, Json);

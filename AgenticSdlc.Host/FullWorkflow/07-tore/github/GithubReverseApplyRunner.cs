@@ -16,6 +16,12 @@ public static class GithubReverseApplyRunner
 
         var planDir = GithubReverseReviewRunner.ResolvePlanDir(repoRoot, args[1]);
         if (planDir is null) { Console.Error.WriteLine($"[github-reverse-apply] Lauf '{args[1]}' nicht gefunden."); return 2; }
+        return await ApplyFromPlanDirAsync(planDir, repoRoot).ConfigureAwait(false);
+    }
+
+    /// <summary>K13-1: typisierter Apply-Kern (Core-Write der freigegebenen Reverse-Ops, E4-Invariante).</summary>
+    public static async Task<int> ApplyFromPlanDirAsync(string planDir, string repoRoot)
+    {
         var planPath = Path.Combine(planDir, "github-reverse-plan.json");
         var decisionsPath = Path.Combine(planDir, "human-decisions.json");
         if (!File.Exists(planPath)) { Console.Error.WriteLine("[github-reverse-apply] github-reverse-plan.json fehlt."); return 2; }
