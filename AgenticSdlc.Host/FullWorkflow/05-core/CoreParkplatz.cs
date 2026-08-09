@@ -11,7 +11,9 @@ public static class CoreParkplatz
         IReadOnlyList<string> OpenDecisions,
         IReadOnlyList<string> NeedsClarifyPbis,
         IReadOnlyList<string> BlockedPbis,
-        IReadOnlyDictionary<string, int>? OpenDecisionsByOrigin = null)
+        IReadOnlyDictionary<string, int>? OpenDecisionsByOrigin = null,
+        // C4d (K12): wartende Gate-Vorschläge aus der Pending-Registry — Läufe/Status ZEIGEN sie nur.
+        IReadOnlyList<string>? PendingReviews = null)
     {
         public bool Empty => OpenDecisions.Count == 0 && NeedsClarifyPbis.Count == 0 && BlockedPbis.Count == 0;
     }
@@ -40,7 +42,10 @@ public static class CoreParkplatz
             .Select(p => p.ItemId).OrderBy(x => x, StringComparer.Ordinal).ToList();
         var blocked = pbis.Where(p => p.ReadStatus().Blocker == Blocker.BlockedByDecision)
             .Select(p => p.ItemId).OrderBy(x => x, StringComparer.Ordinal).ToList();
-        return new Report(openDecs, needsClarify, blocked, byOrigin);
+        var pending = PendingReviewRegistry.ListOpen(core)
+            .Select(e => $"{e.ProposalId} [{e.Bahn}]{(e.Ueberholt ? $" ÜBERHOLT: {e.UeberholtGrund}" : "")} → {e.GateCommand}")
+            .ToList();
+        return new Report(openDecs, needsClarify, blocked, byOrigin, pending);
     }
 
     private const int MaxIds = 6;
@@ -57,7 +62,8 @@ public static class CoreParkplatz
                     ? $" [{string.Join(" · ", o.Select(kv => $"{kv.Value} {kv.Key}"))}]" : "")
                 + " · "
                 + $"{parkplatz.NeedsClarifyPbis.Count} Klärung(en) (needs_clarify){Ids(parkplatz.NeedsClarifyPbis)} · "
-                + $"{parkplatz.BlockedPbis.Count} blockiert{Ids(parkplatz.BlockedPbis)}",
+                + $"{parkplatz.BlockedPbis.Count} blockiert{Ids(parkplatz.BlockedPbis)}"
+                + (parkplatz.PendingReviews is { Count: > 0 } pr ? $" · {pr.Count} wartende(s) Review(s)" : ""),
             $"  Integrität: Kangal {integrity.Errors.Count} Fehler · {integrity.Warnings.Count} Warnung(en)"
                 + (integrity.Warnings.Count > 0 ? $" — {string.Join("; ", integrity.Warnings.Take(3).Select(w => w.Code))}" : ""),
         };

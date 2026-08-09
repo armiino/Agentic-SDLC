@@ -32,6 +32,8 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         "github-snapshot" => FullWorkflow.Tore.Github.GithubIssueSnapshotRunner.RunAsync(args, repoRoot),
         "github-inbound" => FullWorkflow.Tore.Github.Inbound.GithubInboundRunner.RunAsync(args, settings, repoRoot),
         "github-reverse" => FullWorkflow.Tore.Github.GithubReverseRunner.RunAsync(args, repoRoot),
+        "clarify-sweep" => FullWorkflow.PbiUpdate.ClarifySweepRunner.RunAsync(args, settings, repoRoot),
+        "pbi-update-review" => FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.RunAsync(args, settings, repoRoot),
         _ => throw new InvalidOperationException($"Unbekannte Aux-Bahn '{args[0]}'."),
     });
 
@@ -58,6 +60,17 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunGithubInboundAsync, "run_github_inbound",
             "Fuehrt die GitHub-ERNTE-ERKENNUNG aus (deterministisch, LLM-frei; draft=true ergaenzt den "
             + "InboundAgent-Draft + Delta = LLM-Kosten). Ergebnis: harvest-report unter runs/github-inbound/. Braucht Autor-Zustimmung.")),
+        AIFunctionFactory.Create(SaveSweepAnswers, "save_sweep_answers",
+            "C4-Zielschleife Schritt 2: schreibt die vom Autor DIKTIERTEN Klaerungs-Antworten als "
+            + "sweep-answers.json (kein Wahrheits-Write; Quelle = author via steward-chat). "
+            + "answers: [{pbiId, antwort}]. Gibt den Pfad fuer run_clarify_sweep zurueck."),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunClarifySweepAsync, "run_clarify_sweep",
+            "C4-Zielschleife Schritt 3 (LLM-Kosten): faehrt den Klaerungs-Sweep mit der Antworten-Datei — "
+            + "Angleichungs-Vorschlaege entstehen, danach entscheidet der Autor am pbi-update-review-Gate. "
+            + "Braucht Autor-Zustimmung.")),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(OpenReviewUiAsync, "open_review_ui",
+            "Oeffnet auf Autor-Ja das REVIEW zu einem wartenden Registry-Eintrag (proposalId aus "
+            + "get_core_overview.openDecisions.pendingReviews) — der Autor entscheidet am Gate, nie du. Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunGithubReverseAsync, "run_github_reverse",
             "Fuehrt die ZUSTANDS-Reverse-Bahn aus (deterministisch: Issue geschlossen/wieder offen → Vorschlaege; "
             + "danach github-reverse-review als Gate). Braucht Autor-Zustimmung.")),
@@ -78,6 +91,24 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             : (object)new { error = "AUX_RUN_FAILED", bahn, exitCode }, Json);
 
     private Task<string> RunPipelineFromGithubAsync() => StartPipelineAsync(["pipeline-full", "run", "--from-github"], "github-ernte");
+
+    private string SaveSweepAnswers(IReadOnlyList<FullWorkflow.PbiUpdate.ClarifySweepAnswer> answers, string? sessionName = null)
+    {
+        if (answers.Count == 0 || answers.Any(a => string.IsNullOrWhiteSpace(a.PbiId) || string.IsNullOrWhiteSpace(a.Antwort)))
+            return JsonSerializer.Serialize(new { error = "ANSWERS_INVALID", hint = "jede Antwort braucht pbiId + antwort" }, Json);
+        var stamped = answers.Select(a => a with { Quelle = "author via steward-chat", SessionName = a.SessionName ?? sessionName ?? "steward" }).ToList();
+        var dir = Path.Combine(repoRoot, "state", "steward", "sweep-answers");
+        Directory.CreateDirectory(dir);
+        var path = Path.Combine(dir, $"{DateTime.UtcNow:yyyyMMdd_HHmmss}.json");
+        File.WriteAllText(path, JsonSerializer.Serialize(stamped, Json));
+        return JsonSerializer.Serialize(new { saved = true, answers = stamped.Count, answersPath = Path.GetRelativePath(repoRoot, path) }, Json);
+    }
+
+    private async Task<string> OpenReviewUiAsync(string proposalId)
+        => AuxResult(await _aux(["pbi-update-review", "--pending", proposalId]).ConfigureAwait(false), "pbi-update-review");
+
+    private async Task<string> RunClarifySweepAsync(string answersPath)
+        => AuxResult(await _aux(["clarify-sweep", "run", "--answers", answersPath]).ConfigureAwait(false), "clarify-sweep");
 
     private Task<string> RunPipelineFullAsync(string deltaPath)
         => StartPipelineAsync(["pipeline-full", "run", "--from-delta", deltaPath], deltaPath);

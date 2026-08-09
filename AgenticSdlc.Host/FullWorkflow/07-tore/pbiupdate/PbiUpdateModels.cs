@@ -57,7 +57,11 @@ public sealed record PbiStateChangeOperation(
     [property: JsonPropertyName("replacementRequirementId")] string? ReplacementRequirementId, // SUPERSEDE_PBI
     [property: JsonPropertyName("openDecisionRef")] string? OpenDecisionRef, // BLOCK_PBI
     [property: JsonPropertyName("rationale")] string Rationale,
-    [property: JsonPropertyName("proposedFeatureLabel")] string? ProposedFeatureLabel = null); // O4: NEW_FEATURE
+    [property: JsonPropertyName("proposedFeatureLabel")] string? ProposedFeatureLabel = null, // O4: NEW_FEATURE
+    // C4b (09.08., c4-plan §8): Autor-Antwort als EIGENE Herkunft — NIE als Fake-Requirement verkleidet.
+    // Gesetzt nur vom Klärungs-Sweep: Ref `chat:<session>#<n>` + der wörtliche Antwort-Text (Review-Note).
+    [property: JsonPropertyName("authorAnswerRef")] string? AuthorAnswerRef = null,
+    [property: JsonPropertyName("authorAnswerText")] string? AuthorAnswerText = null);
 
 public sealed record PbiUpdateGateReport(
     [property: JsonPropertyName("pass")] bool Pass,

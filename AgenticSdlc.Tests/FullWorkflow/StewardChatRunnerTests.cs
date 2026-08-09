@@ -36,7 +36,7 @@ public sealed class StewardChatRunnerTests
         var path = Path.Combine(Directory.CreateTempSubdirectory("steward-sess-").FullName, "s.json");
         var session = await StewardChatRunner.LoadOrCreateSessionAsync(agent, path);
         var first = await agent.RunAsync("Hallo.", session);
-        Assert.Contains("12 Tools", first.Text);                             // C1a/C3-Lesen + C1c-Start + C2c-GitHub-Seile
+        Assert.Contains("16 Tools", first.Text);                             // Lesen (4) + Core (3) + GitHub-Snap (1) + Start/Seile (7)
 
         await StewardChatRunner.SaveSessionAsync(agent, session, path);
         Assert.True(File.Exists(path));

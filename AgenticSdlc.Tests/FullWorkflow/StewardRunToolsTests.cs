@@ -23,7 +23,7 @@ public sealed class StewardRunToolsTests
     public void Alle_Start_Tools_sind_ApprovalRequired_gewrappt()
     {
         var tools = new StewardRunTools(".", S(), (args, cb) => Task.FromResult(0)).Build();
-        Assert.Equal(6, tools.OfType<ApprovalRequiredAIFunction>().Count());   // K3: kein Start ohne Zustimmung (C2c: +4 GitHub-Seile)
+        Assert.Equal(8, tools.OfType<ApprovalRequiredAIFunction>().Count());   // K3: kein Start ohne Zustimmung (C2c +4, C4c +1, C4d +1)
     }
 
     [Fact]
@@ -44,6 +44,29 @@ public sealed class StewardRunToolsTests
         var failing = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0), auxRunner: _ => Task.FromResult(2));
         var err = await InvokeAsync(failing, "run_github_inbound", new Dictionary<string, object?>());
         Assert.Equal("AUX_RUN_FAILED", err.GetProperty("error").GetString());
+    }
+
+    [Fact]
+    public async Task C4c_save_sweep_answers_stempelt_Quelle_und_run_clarify_sweep_faehrt_die_Bahn()
+    {
+        var repo = Directory.CreateTempSubdirectory("c4c-").FullName;
+        string[]? seen = null;
+        var tools = new StewardRunTools(repo, S(), (a, cb) => Task.FromResult(0), auxRunner: a => { seen = a; return Task.FromResult(0); });
+
+        var bad = await InvokeAsync(tools, "save_sweep_answers", new Dictionary<string, object?>
+        { ["answers"] = new[] { new AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepAnswer("PBI-1", "") } });
+        Assert.Equal("ANSWERS_INVALID", bad.GetProperty("error").GetString());       // leer = LAUT
+
+        var ok = await InvokeAsync(tools, "save_sweep_answers", new Dictionary<string, object?>
+        { ["answers"] = new[] { new AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepAnswer("PBI-1", "Flutter+SQLite") }, ["sessionName"] = "probe" });
+        var path = ok.GetProperty("answersPath").GetString()!;
+        var saved = System.Text.Json.JsonSerializer.Deserialize<List<AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepAnswer>>(
+            File.ReadAllText(Path.Combine(repo, path)), AgenticSdlc.Host.FullWorkflow.JsonFiles.Json)!;
+        Assert.Equal("author via steward-chat", saved.Single().Quelle);              // §8-Herkunft gestempelt
+        Assert.Equal("probe", saved.Single().SessionName);
+
+        await InvokeAsync(tools, "run_clarify_sweep", new Dictionary<string, object?> { ["answersPath"] = path });
+        Assert.Equal(["clarify-sweep", "run", "--answers", path], seen!);            // Seil -> Betriebs-Bahn
     }
 
     [Fact]

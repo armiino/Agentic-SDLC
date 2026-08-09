@@ -15,6 +15,9 @@ public static class PbiUpdateCommands
         // Additiv/parallel zum klassischen pbi-update / -review / -apply (die bleiben unveraendert).
         map["pbi-update-hitl"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.PbiUpdate.PbiUpdateHitlRunner.RunAsync(args, settings, repoRoot);
 
+        // C4a (09.08.): Klärungs-Sweep-Katalog (deterministisch; run/Seil = C4b/C4c).
+        map["clarify-sweep"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepRunner.RunAsync(args, settings, repoRoot);
+
         map["pbi-update-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.RunAsync(args, settings, repoRoot);
 
         map["pbi-update-apply"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.PbiUpdate.PbiUpdateApplyRunner.RunAsync(args, repoRoot);

@@ -491,6 +491,15 @@ public static class PbiUpdateReviewAdapter
         {
             case PbiUpdateKind.MarkChanged:
             {
+                // C4b (§8-Leitplanke): Autor-Antwort ist eine EIGENE Herkunft mit eigener Note — kein Fake-REQ.
+                if (op.AuthorAnswerRef is not null)
+                {
+                    notes.Add(new ReviewNote(ReviewNoteKind.Suggestion,
+                        $"Autor-Antwort via steward-chat ({op.AuthorAnswerRef})",
+                        Truncate(op.AuthorAnswerText ?? "(Antwort-Text fehlt)", TextPreviewChars)));
+                    if (align is null) notes.Add(NeedsClarifyNote(op.AuthorAnswerRef));
+                    break;
+                }
                 var prev = PreviousText(req);
                 notes.Add(prev is null
                     ? new ReviewNote(ReviewNoteKind.Suggestion, $"Anforderung {op.RequirementId} (neue Fassung)", ReqBody(req))

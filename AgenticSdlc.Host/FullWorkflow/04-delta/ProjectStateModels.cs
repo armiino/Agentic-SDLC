@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace AgenticSdlc.Host.FullWorkflow.Delta;
@@ -110,7 +111,10 @@ public sealed record ProjectStateProposal(
     [property: JsonPropertyName("status")] string Status,
     [property: JsonPropertyName("sourceRunId")] string? SourceRunId,
     [property: JsonPropertyName("payloadPath")] string? PayloadPath,
-    [property: JsonPropertyName("metadata")] IReadOnlyDictionary<string, string> Metadata);
+    [property: JsonPropertyName("metadata")] IReadOnlyDictionary<string, string> Metadata,
+    // C4d (09.08., §11 c4-plan): VOLLE Nutzlast menschen-entscheidbarer Vorschläge — „Core = System,
+    // runs = Chronik". Additiv/schema-tolerant; nur kleine Payloads (Größen-Regel §11.④).
+    [property: JsonPropertyName("payload"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] JsonElement? Payload = null);
 
 public sealed record ProjectStateItemQuery(
     IReadOnlySet<string>? ItemTypes = null,

@@ -12,7 +12,30 @@ public static class PbiUpdateReviewRunner
 
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
-        if (args.Length < 2) { Console.Error.WriteLine("Usage: pbi-update-review <pbi-update-run|dir> [--interactive|--file] [--no-browser]"); return 2; }
+        if (args.Length < 2) { Console.Error.WriteLine("Usage: pbi-update-review <pbi-update-run|dir> | --pending <proposalId>  [--interactive|--file] [--no-browser]"); return 2; }
+
+        // C4d (§11): Gate liest aus der PENDING-REGISTRY — die Nutzlast wird in einen frischen Review-Run
+        // MATERIALISIERT (dessen eigene Episode/Beleg-Kopie); pending-ref.json koppelt den Apply ans Schließen.
+        if (string.Equals(args[1], "--pending", StringComparison.OrdinalIgnoreCase))
+        {
+            if (args.Length < 3) { Console.Error.WriteLine("[pbi-update-review] --pending <proposalId> fehlt."); return 2; }
+            var pendRepo = new JsonCoreRepository(repoRoot);
+            if (!await pendRepo.ExistsAsync().ConfigureAwait(false)) { Console.Error.WriteLine("[pbi-update-review] Core fehlt."); return 2; }
+            var pendCore = await pendRepo.LoadAsync().ConfigureAwait(false);
+            var entry = PendingReviewRegistry.ListOpen(pendCore).FirstOrDefault(e => string.Equals(e.ProposalId, args[2], StringComparison.OrdinalIgnoreCase));
+            var proposal = pendCore.Proposals.FirstOrDefault(pr => string.Equals(pr.ProposalId, args[2], StringComparison.OrdinalIgnoreCase) && pr.Status == PendingReviewRegistry.StatusOpen);
+            if (entry is null || proposal?.Payload is null)
+            { Console.Error.WriteLine($"[pbi-update-review] Kein offener pending_review '{args[2]}' (mit Nutzlast) in der Registry."); return 2; }
+            if (entry.Ueberholt)
+                Console.WriteLine($"[pbi-update-review] ⚠ ÜBERHOLT: {entry.UeberholtGrund} — Vorschlag prüfen/ablehnen statt blind anwenden.");
+            var pendRun = new AgenticSdlc.Host.Run.RunContext(AgenticSdlc.Host.Run.RunId.New(), "pbi-update");
+            pendRun.EnsureFolders();
+            var pendDir = pendRun.OutputDir("plan");
+            await File.WriteAllTextAsync(Path.Combine(pendDir, "pbi-change-plan.json"), proposal.Payload.Value.GetRawText()).ConfigureAwait(false);
+            await File.WriteAllTextAsync(Path.Combine(pendDir, "pending-ref.json"),
+                JsonSerializer.Serialize(new { proposalId = proposal.ProposalId }, Json)).ConfigureAwait(false);
+            args = [.. args.Take(1), pendDir, .. args.Skip(3)];
+        }
 
         var planDir = ResolvePlanDir(repoRoot, args[1]);
         if (planDir is null) { Console.Error.WriteLine($"[pbi-update-review] Lauf '{args[1]}' nicht gefunden."); return 2; }
@@ -49,7 +72,24 @@ public static class PbiUpdateReviewRunner
             openBrowser: settings.L3ReviewOpenBrowser && !noBrowser,
             resolveReference: reference => Task.FromResult(PbiUpdateReviewAdapter.ResolveReference(reference, core, plan))).ConfigureAwait(false); // B1/B2: Feature-Landkarte
         Console.WriteLine($"[pbi-update-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
-        return 0;
+
+        // R-43-ENDFORM (09.08.): „Fertig" KETTET den Apply automatisch — das menschliche Urteil fiel AM GATE,
+        // der Apply ist deterministische Ausführung (Entscheidungs-Datei wurde ZUERST geschrieben = Replay/W2
+        // unberührt). --no-apply = bewusster Inspektions-Opt-out. Vorher: manueller Zweitbefehl = 2× live
+        // vergessen (stiller Nicht-Effekt trotz Gate-Ja).
+        if (args.Contains("--no-apply", StringComparer.OrdinalIgnoreCase))
+        {
+            Console.WriteLine($"[pbi-update-review] --no-apply: NÄCHSTER SCHRITT: pbi-update-apply {Path.GetRelativePath(repoRoot, planDir)}");
+            return 0;
+        }
+        if (outcome != AgenticSdlc.HumanReview.ReviewOutcome.Finished)
+        {
+            // „Abbrechen/Später" = KEIN Fertig — nichts anwenden, Stand bleibt (Registry hält den Eintrag offen).
+            Console.WriteLine($"[pbi-update-review] Review nicht abgeschlossen ({outcome}) — kein Auto-Apply; später: pbi-update-apply {Path.GetRelativePath(repoRoot, planDir)}");
+            return 0;
+        }
+        Console.WriteLine("[pbi-update-review] R-43: Apply läuft automatisch an …");
+        return await PbiUpdateApplyRunner.RunAsync(["pbi-update-apply", planDir], repoRoot).ConfigureAwait(false);
     }
 
     internal static string? ResolvePlanDir(string repoRoot, string token)

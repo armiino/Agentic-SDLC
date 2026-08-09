@@ -23,7 +23,20 @@ public sealed class StewardReadTools(string repoRoot)
             "Liest den typisierten Zustand EINES pipeline-full-Laufs (A3-Vertrag): state (paused|finished|notPausedNotFinished), pausedGate, checkpointId, nextRequiredAction (was der Autor als Naechstes tun kann), Artefakt-Pfade."),
         AIFunctionFactory.Create(ListPausedRunsAsync, "list_paused_runs",
             "Listet ALLE pausierten pipeline-full-Laeufe (wo wartet ein Human-Gate?) mit Gate, Checkpoint und naechster Aktion."),
+        AIFunctionFactory.Create(CollectClarifyKatalogAsync, "collect_clarify_katalog",
+            "C4-Zielschleife Schritt 1: die offenen Klaerungen (needs_clarify-PBIs) mit LUECKEN-DIAGNOSE "
+            + "(STATEMENT_FEHLT/AK_LEER/HISTORIE) + REQ-Kontext — read-only, LLM-frei. Lies dem Autor je PBI "
+            + "die Luecke vor und sammle seine Antwort ein."),
     ];
+
+    private async Task<string> CollectClarifyKatalogAsync()
+    {
+        var repo = new FullWorkflow.Core.JsonCoreRepository(repoRoot);
+        if (!await repo.ExistsAsync().ConfigureAwait(false))
+            return JsonSerializer.Serialize(new { error = "CORE_NOT_FOUND" }, Json);
+        return JsonSerializer.Serialize(
+            FullWorkflow.PbiUpdate.ClarifySweepCollector.Collect(await repo.LoadAsync().ConfigureAwait(false)), Json);
+    }
 
     private async Task<string> GetRunStatusAsync(string runId)
     {

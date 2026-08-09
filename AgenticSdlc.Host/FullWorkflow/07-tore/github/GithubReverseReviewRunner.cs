@@ -48,7 +48,14 @@ public static class GithubReverseReviewRunner
             apply: s => GithubReverseReviewAdapter.Apply(runId, s),
             openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
         Console.WriteLine($"[github-reverse-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
-        return 0;
+
+        // R-43-Endform (09.08.): „Fertig" kettet den Apply automatisch (Core-Write, gate-autorisiert wie
+        // pbi-update; Entscheidungs-Datei wurde zuerst geschrieben). --no-apply = Inspektions-Opt-out.
+        if (args.Contains("--no-apply", StringComparer.OrdinalIgnoreCase)) return 0;
+        if (outcome != AgenticSdlc.HumanReview.ReviewOutcome.Finished)
+        { Console.WriteLine($"[github-reverse-review] nicht abgeschlossen ({outcome}) — kein Auto-Apply."); return 0; }
+        Console.WriteLine("[github-reverse-review] R-43: Apply läuft automatisch an …");
+        return await GithubReverseApplyRunner.RunAsync(["github-reverse-apply", args[1]], repoRoot).ConfigureAwait(false);
     }
 
     internal static string? ResolvePlanDir(string repoRoot, string token)

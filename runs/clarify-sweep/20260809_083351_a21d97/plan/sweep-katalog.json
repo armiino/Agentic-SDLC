@@ -1,0 +1,504 @@
+{
+  "offeneKlaerungen": 21,
+  "eintraege": [
+    {
+      "pbiId": "PBI-002",
+      "titel": "Interne Accounts mit Basisrollen und ohne Selbstregistrierung bereitstellen",
+      "origin": "re-clarify",
+      "luecken": [
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022EXTEND_PBI: Die Einschr\u00E4nkung, dass nur Admins das Zugriffsprotokoll sehen d\u00FCrfen, ist prim\u00E4r eine Rechte- und Rollenvorgabe. Daher passt sie besser als Erweiterung zum bestehenden PBI f\u00FCr interne Accounts und Basisrollen als zu einem neuen eigenst\u00E4ndigen PBI.\u0022"
+      ],
+      "statement": "Als Admin will ich interne Accounts mit Basisrollen verwalten, damit nur berechtigte Personen ohne Selbstregistrierung auf die App zugreifen k\u00F6nnen.",
+      "akzeptanzkriterien": [
+        "Die App bietet keine Selbstregistrierung an; neue Zug\u00E4nge k\u00F6nnen nur durch Admins angelegt werden.",
+        "Ein Admin kann einen Account mit der Rolle Admin, User oder Bewohner anlegen und speichern.",
+        "Ein User kann sich mit vergebenem Account anmelden, aber keine Administrationsfunktionen aufrufen.",
+        "Ein Bewohner-Account ist als eigener Rollentyp vorhanden und kann f\u00FCr eingeschr\u00E4nkte Nutzung freigeschaltet werden.",
+        "Nach konfigurierbarer Inaktivit\u00E4t wird eine erneute Authentifizierung verlangt.",
+        "Ein Admin kann f\u00FCr einen bestehenden Account einen Passwort-Reset-Prozess ansto\u00DFen."
+      ],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "L3-REQ-009",
+          "text": "Die App sollte nach einer konfigurierbaren Zeit ohne Aktivit\u00E4t automatisch eine erneute Authentifizierung verlangen, insbesondere auf gemeinsam genutzten Ger\u00E4ten."
+        },
+        {
+          "requirementId": "L3-REQ-010",
+          "text": "Passw\u00F6rter sollten \u00FCber einen geregelten Prozess durch Admins zur\u00FCckgesetzt werden k\u00F6nnen; optional sollte ein sicherer Selbsthilfeprozess gepr\u00FCft werden, falls organisatorisch gew\u00FCnscht."
+        },
+        {
+          "requirementId": "REQ-05",
+          "text": "Die App darf keine Selbstregistrierung erlauben; der Zugang erfolgt ausschlie\u00DFlich per Login mit intern vergebenen Accounts."
+        },
+        {
+          "requirementId": "REQ-06",
+          "text": "Es muss mindestens die Rollen Admin und User geben. Admins m\u00FCssen Accounts anlegen und Rechte verwalten k\u00F6nnen; User k\u00F6nnen Inhalte hinzuf\u00FCgen, aber nichts l\u00F6schen."
+        },
+        {
+          "requirementId": "REQ-07",
+          "text": "Zus\u00E4tzlich soll es einen Bewohner-Account geben. Dieser darf nur das eigene Profil in der Profil\u00FCbersicht sehen und nur eingeschr\u00E4nkte Funktionen nutzen, insbesondere Zugriff auf den About-Me-Bereich und gegebenenfalls das Hinzuf\u00FCgen eigener Bilder."
+        },
+        {
+          "requirementId": "REQ-41",
+          "text": "F\u00FCr die Rechte- und Accountverwaltung soll ein separater Admin-Bildschirm erwogen werden, auf dem nur Admins Accounts anlegen und Rollen vergeben k\u00F6nnen."
+        },
+        {
+          "requirementId": "REQ-65",
+          "text": "Das Zugriffsprotokoll d\u00FCrfen nur Admins einsehen; normale Nutzer d\u00FCrfen dieses Protokoll nicht einsehen."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-003",
+      "titel": "Rechtemodell f\u00FCr Angeh\u00F6rige und Einrichtungssicht festlegen",
+      "origin": "re-clarify",
+      "luecken": [
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022MARK_CHANGED: Requirement REQ-08 verfeinert\u0022"
+      ],
+      "statement": "Als Product Owner will ich das Rechtemodell f\u00FCr Angeh\u00F6rige und die Begrenzung auf Einrichtungsprofile festlegen, damit Zugriffe fachlich korrekt und datenschutzgerecht abgegrenzt werden.",
+      "akzeptanzkriterien": [
+        "Es liegt eine Rollen-/Rechtematrix f\u00FCr mindestens Admin, User, Bewohner und Angeh\u00F6rige vor.",
+        "Es ist dokumentiert, welche Profil- und Inhaltsbereiche Angeh\u00F6rige lesen, hinzuf\u00FCgen, bearbeiten oder nicht sehen d\u00FCrfen.",
+        "Es ist dokumentiert, nach welchem Fachprinzip Mitarbeiter nur Profile ihrer Einrichtung sehen d\u00FCrfen.",
+        "Offene Punkte zur technischen Umsetzung der Einrichtungstrennung sind f\u00FCr die Umsetzung separat benannt."
+      ],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-08",
+          "text": "Ob Angeh\u00F6rige selbst Inhalte eintragen d\u00FCrfen oder nur Leserechte erhalten, muss noch gekl\u00E4rt werden; die Rechtefrage bleibt bis dahin offen."
+        },
+        {
+          "requirementId": "REQ-09",
+          "text": "Mitarbeiter d\u00FCrfen nicht einrichtungs\u00FCbergreifend auf alle Profile zugreifen, sondern nur auf die Profile der Einrichtung, in der sie t\u00E4tig sind; die technische Umsetzung dieser Beschr\u00E4nkung ist noch zu erarbeiten."
+        },
+        {
+          "requirementId": "REQ-10",
+          "text": "Die konkrete Ausgestaltung der Rechteverwaltung muss sp\u00E4ter entschieden werden."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-010",
+      "titel": "Neue Bewohnerprofile mit Basisdaten und Dublettenpr\u00FCfung anlegen",
+      "origin": "re-clarify",
+      "luecken": [
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022EXTEND_PBI: Die Pflicht, beim Anlegen eines Bewohners mindestens einen Sofortinfo-Eintrag zu erfassen, betrifft direkt den Profil-Anlegeprozess. Daher passt das Requirement fachlich zum bestehenden PBI f\u00FCr das Anlegen neuer Bewohnerprofile.\u0022"
+      ],
+      "statement": "Als berechtigter Nutzer will ich ein neues Bewohnerprofil mit Bild, Name und Beschreibung anlegen k\u00F6nnen, damit neues Profilwissen strukturiert erfasst wird.",
+      "akzeptanzkriterien": [
+        "Berechtigte Nutzer k\u00F6nnen aus der Profil\u00FCbersicht einen Anlegefluss f\u00FCr neue Profile starten.",
+        "Der Anlegefluss erfasst mindestens Name, kurze Beschreibung und optional ein Bild.",
+        "Vor dem Speichern pr\u00FCft die App, ob Profile mit gleichem oder sehr \u00E4hnlichem Namen bereits existieren.",
+        "Bei m\u00F6glicher Dublette wird der Nutzer vor dem endg\u00FCltigen Anlegen darauf hingewiesen."
+      ],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "L3-REQ-008",
+          "text": "Beim Anlegen eines neuen Bewohnerprofils sollte gepr\u00FCft werden, ob ein Profil mit gleichem oder sehr \u00E4hnlichem Namen bereits existiert, um Dubletten zu vermeiden."
+        },
+        {
+          "requirementId": "REQ-45",
+          "text": "In der Profil\u00FCbersicht soll erwogen werden, das Anlegen neuer Profile per Plus-Symbol und Dialog f\u00FCr Bild, Name und Beschreibung zu erm\u00F6glichen."
+        },
+        {
+          "requirementId": "REQ-59",
+          "text": "Beim Anlegen eines Bewohners muss mindestens ein Sofortinfo-Eintrag verpflichtend sein."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-012",
+      "titel": "Profil-Detailansicht mit gro\u00DFem Profilbild, Schnellinfos und Bereichseinstiegen bereitstellen",
+      "origin": "re-clarify",
+      "luecken": [
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022MARK_CHANGED: Requirement REQ-32 verfeinert | MARK_CHANGED: Requirement L3-REQ-002 verfeinert\u0022"
+      ],
+      "statement": "Als Nutzer will ich auf einer Profil-Detailseite einen schnellen \u00DCberblick und direkte Einstiege in die wichtigsten Profilbereiche erhalten, damit ich in Verst\u00E4ndnissituationen sofort relevantes Wissen finde.",
+      "akzeptanzkriterien": [
+        "Die Detailansicht zeigt das ausgew\u00E4hlte Profilbild gr\u00F6\u00DFer als in der \u00DCbersicht an.",
+        "Die Detailansicht bietet interaktive Einstiege zu den Bereichen About-Me, Kommunikation und No-Go.",
+        "Ein kompakter Bereich zeigt besonders wichtige Sofortinformationen wie kritische No-Gos und zentrale Kommunikationshinweise.",
+        "Von der Detailansicht aus k\u00F6nnen Nutzer die jeweiligen Unterseiten mit einem Schritt \u00F6ffnen."
+      ],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "L3-REQ-002",
+          "text": "Der Sofortinfo-Bereich in der Profil-Detailansicht muss auf maximal f\u00FCnf Eintr\u00E4ge begrenzt werden."
+        },
+        {
+          "requirementId": "REQ-19",
+          "text": "Die Detailansicht eines Profils soll das gew\u00E4hlte Profilbild gr\u00F6\u00DFer anzeigen und die Hauptbereiche der App als interaktive Buttons anbieten; der genaue Zuschnitt beziehungsweise die genaue Zahl der Hauptbereiche ist noch nicht stabil."
+        },
+        {
+          "requirementId": "REQ-20",
+          "text": "Die App muss f\u00FCr jeden Bewohner eine About-Me-Seite bereitstellen, die f\u00FCr den ersten Eindruck der Person dient und pers\u00F6nliche Kurzinfos enth\u00E4lt, einschlie\u00DFlich Bildern sowie beschreibender Informationen wie Name, Alter und Hobbys."
+        },
+        {
+          "requirementId": "REQ-24",
+          "text": "Die App muss eine Kommunikationsansicht bereitstellen, die klar in verbale und nonverbale Kommunikation unterteilt ist."
+        },
+        {
+          "requirementId": "REQ-32",
+          "text": "No-Go-Eintr\u00E4ge m\u00FCssen bewohnerbezogen gef\u00FChrt werden und d\u00FCrfen nicht global f\u00FCr alle Bewohner gelten."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-023",
+      "titel": "No-Go-Seite mit kompakter, erweiterbarer Liste bereitstellen",
+      "origin": "re-clarify",
+      "luecken": [
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022MARK_CHANGED: Requirement REQ-32 verfeinert | EXTEND_PBI: Das rote Stopp-Symbol ist eine konkrete Darstellungs- und Warnsignal-Erweiterung der bestehenden No-Go-Seite. Es geh\u00F6rt fachlich direkt zur Anzeige kritischer No-Go-Eintr\u00E4ge und erweitert daher das bestehende PBI zur No-Go-Seite statt ein eigenes PBI zu ben\u00F6tigen. | EXTEND_PBI: Bearbeiten und L\u00F6schen von No-Go-Eintr\u00E4gen erweitert dieselbe fachliche Aufgabe wie das bestehende Anlegen und Anzeigen von No-Gos. Da PBI-023 bereits die No-Go-Seite und das Hinzuf\u00FCgen von Eintr\u00E4gen umfasst, ist dies eine passende funktionale Erg\u00E4nzung desselben Zuschnitts. | EXTEND_PBI: Eine optionale Vorlagen-Liste unterst\u00FCtzt die Erfassung von No-Go-Eintr\u00E4gen und ist damit fachlich Teil des No-Go-Erfassungsflows. Sie ist keine eigenst\u00E4ndige Dom\u00E4neneinheit, sondern eine Erg\u00E4nzung des bestehenden No-Go-PBIs.\u0022"
+      ],
+      "statement": "Als Nutzer will ich kritische No-Gos kompakt sehen und erg\u00E4nzen k\u00F6nnen, damit ich in Gegenwart des Bewohners problematische Themen oder Handlungen vermeide.",
+      "akzeptanzkriterien": [
+        "F\u00FCr einen Bewohner ist eine No-Go-Seite aufrufbar.",
+        "Die No-Go-Seite zeigt eine kompakte Liste mit den wichtigsten Informationen pro Eintrag.",
+        "Berechtigte Nutzer k\u00F6nnen neue No-Go-Eintr\u00E4ge \u00FCber einen Plus-Button hinzuf\u00FCgen.",
+        "Die Liste ist so aufgebaut, dass Eintr\u00E4ge schnell \u00FCberflogen werden k\u00F6nnen."
+      ],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-32",
+          "text": "No-Go-Eintr\u00E4ge m\u00FCssen bewohnerbezogen gef\u00FChrt werden und d\u00FCrfen nicht global f\u00FCr alle Bewohner gelten."
+        },
+        {
+          "requirementId": "REQ-33",
+          "text": "Die No-Go-Seite muss eine dynamisch erweiterbare Liste bieten, in die neue No-Gos per Plus-Button hinzugef\u00FCgt werden k\u00F6nnen."
+        },
+        {
+          "requirementId": "REQ-34",
+          "text": "Die No-Go-Eintr\u00E4ge sollen einfach zu durchforsten sein und nur die wichtigsten Informationen enthalten."
+        },
+        {
+          "requirementId": "REQ-56",
+          "text": "F\u00FCr die No-Go-Seite soll ein rotes Stopp-Symbol als deutliches Warnsignal erg\u00E4nzt werden, damit kritische Inhalte sofort erkennbar sind."
+        },
+        {
+          "requirementId": "REQ-57",
+          "text": "No-Go-Eintr\u00E4ge m\u00FCssen nachtr\u00E4glich bearbeitet und gel\u00F6scht werden k\u00F6nnen."
+        },
+        {
+          "requirementId": "REQ-58",
+          "text": "F\u00FCr die Anlage von No-Gos kann optional eine Vorlagen-Liste mit h\u00E4ufigen No-Gos angeboten werden; daraus darf jedoch nichts automatisch global gelten."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-024",
+      "titel": "Lokalen Cache, Offline-Erfassung und Synchronisationsverhalten festlegen",
+      "origin": "re-clarify",
+      "luecken": [
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022MARK_CHANGED: Requirement L3-REQ-004 verfeinert\u0022"
+      ],
+      "statement": "Als Product Owner will ich entscheiden, ob und wie Inhalte lokal gespeichert, offline erfasst und sp\u00E4ter synchronisiert werden, damit Datenschutz, Nutzbarkeit und Konfliktbehandlung vor der Umsetzung klar sind.",
+      "akzeptanzkriterien": [
+        "Es liegt eine dokumentierte Entscheidung vor, ob lokaler Cache verwendet wird und f\u00FCr welche Datentypen.",
+        "Es ist entschieden, ob Nutzer Inhalte offline erfassen d\u00FCrfen.",
+        "Falls Offline-Erfassung zul\u00E4ssig ist, sind Regeln f\u00FCr die Kennzeichnung ausstehender Synchronisationen dokumentiert.",
+        "Falls Konflikte auftreten k\u00F6nnen, ist deren sichtbare Behandlung fachlich beschrieben."
+      ],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "L3-REQ-004",
+          "text": "Bei offline bearbeiteten Konfliktf\u00E4llen muss eine klare Konfliktanzeige erfolgen; nichts darf stillschweigend \u00FCberschrieben werden, und der Nutzer entscheidet, welche Version gilt."
+        },
+        {
+          "requirementId": "REQ-36",
+          "text": "Es muss gekl\u00E4rt werden, ob und wie Cloud-Daten lokal auf dem Ger\u00E4t gespeichert oder gecacht werden sollen. [canon-lokaler-cache-kl\u00E4ren]"
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-027",
+      "titel": "Umfang der Dokumentationsintegration und Daten\u00FCbernahme festlegen",
+      "origin": "re-clarify",
+      "luecken": [
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022EXTEND_PBI: Die Verlinkbarkeit von \u00DCbergabe-Notizen auf Bewohnerprofile betrifft eine neue Erweiterungsfunktion im Umfeld organisatorischer Zusatzfunktionen und Verkn\u00FCpfung mit bestehenden Profilen. Unter den vorhandenen PBIs liegt dies am ehesten im Erweiterungsbereich von Dokumentationsintegration und Erweiterungen; deshalb Erweiterung von PBI-027 statt Zuordnung zu einem fachlich unpassenden Profil- oder No-Go-PBI.\u0022"
+      ],
+      "statement": "Als Product Owner will ich festlegen, wie stark die App vorhandene Dokumentation integriert oder Daten daraus \u00FCbernimmt, damit der Fokus auf unterst\u00FCtzender Kommunikation erhalten bleibt und Doppeldokumentation begrenzt wird.",
+      "akzeptanzkriterien": [
+        "Es liegt eine dokumentierte Abgrenzung vor, welche Dokumentationsaufgaben die App \u00FCbernehmen soll und welche nicht.",
+        "Es ist bewertet, ob Informationen aus vorhandenen Akten teilweise strukturiert \u00FCbernommen werden sollen.",
+        "Die Annahme, dass bestehende Akten schwer nutzbar sind, ist als validierte oder nicht validierte Hypothese dokumentiert."
+      ],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "L3-REQ-014",
+          "text": "Es sollte gepr\u00FCft werden, ob bestehende Informationen aus vorhandenen Akten teilweise strukturiert in die App \u00FCbernommen werden k\u00F6nnen, um Doppeldokumentation zu reduzieren."
+        },
+        {
+          "requirementId": "REQ-44",
+          "text": "Eine Ausweitung der App auf weitere Dokumentationsfunktionen soll gepr\u00FCft werden, jedoch nur in begrenztem Umfang und ohne den Fokus auf unterst\u00FCtzende Kommunikation zu verlieren."
+        },
+        {
+          "requirementId": "REQ-48",
+          "text": "Zu den Bewohnern existieren bereits klassische Akten und Dokumentationen, in denen Informationen, Erfahrungen und neues Wissen nach einem bestimmten Plan schriftlich festgehalten werden."
+        },
+        {
+          "requirementId": "REQ-49",
+          "text": "Es muss ber\u00FCcksichtigt werden, dass vorhandene Akten im Arbeitsalltag schwer nutzbar sein k\u00F6nnen, weil sie umfangreich sind und gesuchte Informationen nicht schnell gefunden werden; dies wurde jedoch nur als pers\u00F6nliche Einsch\u00E4tzung ge\u00E4u\u00DFert."
+        },
+        {
+          "requirementId": "REQ-62",
+          "text": "\u00DCbergabe-Notizen sollen bewohnerbezogen verlinkbar sein, sodass direkt auf das Profil eines Bewohners verwiesen werden kann."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-030",
+      "titel": "Technologiestack f\u00FCr App, State-Management und Datenbank festlegen",
+      "origin": "re-clarify",
+      "luecken": [
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022SUPERSEDE_PBI: Requirement REQ-55 ersetzt durch REQ-70\u0022"
+      ],
+      "statement": "Als Product Owner will ich die wesentlichen Technologie- und Architekturentscheidungen verbindlich festlegen, damit die Umsetzung auf einem freigegebenen technischen Rahmen startet.",
+      "akzeptanzkriterien": [
+        "Es liegt eine dokumentierte Entscheidung vor, ob Flutter mit Dart als verbindliche Umsetzungsbasis verwendet wird.",
+        "Es ist entschieden, ob GetX eingesetzt, verworfen oder durch eine Alternative ersetzt wird.",
+        "Es ist entschieden, ob Firestore als Datenbank verbindlich verwendet wird oder welche Alternative stattdessen gilt."
+      ],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-53",
+          "text": "F\u00FCr die Entwicklung soll Flutter mit Dart verwendet werden, um die plattform\u00FCbergreifende Umsetzung zu unterst\u00FCtzen."
+        },
+        {
+          "requirementId": "REQ-54",
+          "text": "Das Paket GetX soll als technische Option ber\u00FCcksichtigt und in der Umsetzung erprobt werden."
+        },
+        {
+          "requirementId": "REQ-70",
+          "text": "Firebase Firestore ist als Persistenztechnologie festgelegt; Alternativen werden nicht weiter diskutiert."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-031",
+      "titel": "Es muss eine Suche nach Stichworten \u00FCber alle Bewohnerprofile hinweg geben.",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-60",
+          "text": "Es muss eine Suche nach Stichworten \u00FCber alle Bewohnerprofile hinweg geben."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-032",
+      "titel": "Es soll eine \u00DCbergabe-Notiz pro Schicht geben, die der n\u00E4chsten Schicht beim \u00D6ffnen der Ap...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden.",
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022EXTEND_PBI: Das neue Requirement betrifft dieselbe fachliche Einheit wie PBI-032: \u00DCbergabe-Notizen. Der bestehende Zuschnitt umfasst das Erstellen/Bereitstellen einer \u00DCbergabe-Notiz pro Schicht; der w\u00F6chentliche PDF-Export ist eine zus\u00E4tzliche Ausgabefunktion auf genau diesem Artefakt und keine eigenst\u00E4ndige neue Fachdom\u00E4ne. Daher ist es fachlich passender, das bestehende PBI zu erweitern, statt ein separates PBI anzulegen.\u0022"
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-61",
+          "text": "Es soll eine \u00DCbergabe-Notiz pro Schicht geben, die der n\u00E4chsten Schicht beim \u00D6ffnen der App prominent angezeigt wird."
+        },
+        {
+          "requirementId": "REQ-77",
+          "text": "Die Leitung soll w\u00F6chentlich einen PDF-Export aller \u00DCbergabe-Notizen der Woche erstellen k\u00F6nnen, um sie f\u00FCr Tr\u00E4ger-Berichte abzulegen."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-033",
+      "titel": "\u00DCbergabe-Notizen sollen nach sieben Tagen automatisch archiviert werden; archivierte Notiz...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden.",
+        "HISTORIE: letzte \u00C4nderungs-Notiz \u0022SUPERSEDE_PBI: Requirement REQ-63 ersetzt durch REQ-76\u0022"
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-76",
+          "text": "\u00DCbergabe-Notizen sollen nach vierzehn Tagen automatisch archiviert werden; archivierte Notizen m\u00FCssen weiterhin auffindbar bleiben."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-034",
+      "titel": "Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschlie\u00DFl...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-64",
+          "text": "Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschlie\u00DFlich wer wann welches Profil angesehen hat."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-035",
+      "titel": "Die About-Me-Seite darf im MVP in ihrer aktuellen Form nicht ver\u00E4ndert werden.",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-66",
+          "text": "Die About-Me-Seite darf im MVP in ihrer aktuellen Form nicht ver\u00E4ndert werden."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-036",
+      "titel": "F\u00FCr die Planung soll aktuell von einer Mindestunterst\u00FCtzung ab Android 10 ausgegangen werd...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-67",
+          "text": "F\u00FCr die Planung soll aktuell von einer Mindestunterst\u00FCtzung ab Android 10 ausgegangen werden; die finale Festlegung muss noch mit dem Tr\u00E4ger gekl\u00E4rt werden."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-037",
+      "titel": "Falls im Haus Ger\u00E4te unter Android 10 vorhanden sind, besteht ein Risiko durch n\u00F6tigen Ger...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-68",
+          "text": "Falls im Haus Ger\u00E4te unter Android 10 vorhanden sind, besteht ein Risiko durch n\u00F6tigen Ger\u00E4teaustausch; dies ist vom Ger\u00E4tebestand und der Abstimmung mit dem Tr\u00E4ger abh\u00E4ngig."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-038",
+      "titel": "Zum Thema Piktogramme besteht ein noch nicht ausreichend konkretisierter \u00C4nderungswunsch; ...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-69",
+          "text": "Zum Thema Piktogramme besteht ein noch nicht ausreichend konkretisierter \u00C4nderungswunsch; vor einer Umsetzung muss pr\u00E4zisiert werden, was mit \u201Egr\u00F6\u00DFer denken\u201C gemeint ist."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-039",
+      "titel": "Es ist unklar, ob aus dem Hinweis auf die anstehende \u00DCbergabe eine eigenst\u00E4ndige fachliche...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-71",
+          "text": "Es ist unklar, ob aus dem Hinweis auf die anstehende \u00DCbergabe eine eigenst\u00E4ndige fachliche Anforderung zur Unterst\u00FCtzung schneller \u00DCbergabeprozesse abgeleitet werden soll."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-040",
+      "titel": "Es ist unklar, welcher zuvor genannte Punkt aus Sicht der Angeh\u00F6rigen besonders wichtig is...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-72",
+          "text": "Es ist unklar, welcher zuvor genannte Punkt aus Sicht der Angeh\u00F6rigen besonders wichtig ist und ob daraus ein eigener Claim folgt."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-041",
+      "titel": "Es ist zu kl\u00E4ren, ob Aufgabenverfolgung oder Terminplanung als eigene organisatorische Anf...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-73",
+          "text": "Es ist zu kl\u00E4ren, ob Aufgabenverfolgung oder Terminplanung als eigene organisatorische Anforderungen an das Projekt festgehalten werden sollen."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-042",
+      "titel": "Ein Dunkelmodus ist ein Wunsch, insbesondere f\u00FCr den Nachtdienst, mit niedriger Priorit\u00E4t ...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-74",
+          "text": "Ein Dunkelmodus ist ein Wunsch, insbesondere f\u00FCr den Nachtdienst, mit niedriger Priorit\u00E4t und eher sp\u00E4terer Umsetzung."
+        }
+      ]
+    },
+    {
+      "pbiId": "PBI-043",
+      "titel": "Eine einstellbare Schriftgr\u00F6\u00DFe ist ein Wunsch zur Unterst\u00FCtzung \u00E4lterer Kolleginnen, mit n...",
+      "origin": "pbi-update",
+      "luecken": [
+        "STATEMENT_FEHLT: kein Story-Statement (Ziel/Warum) vorhanden.",
+        "AK_LEER: keine Akzeptanzkriterien vorhanden."
+      ],
+      "statement": null,
+      "akzeptanzkriterien": [],
+      "verlinkteRequirements": [
+        {
+          "requirementId": "REQ-75",
+          "text": "Eine einstellbare Schriftgr\u00F6\u00DFe ist ein Wunsch zur Unterst\u00FCtzung \u00E4lterer Kolleginnen, mit niedriger Priorit\u00E4t und eher sp\u00E4terer Umsetzung."
+        }
+      ]
+    }
+  ]
+}

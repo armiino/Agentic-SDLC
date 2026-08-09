@@ -39,6 +39,19 @@ public static class PbiUpdateApplyRunner
             return 2;
         }
 
+        // C4d (K12): der GATED Apply schließt den Registry-Eintrag (applied|rejected) — nie jemand anderes.
+        var pendingRefPath = Path.Combine(planDir, "pending-ref.json");
+        if (File.Exists(pendingRefPath))
+        {
+            using var refDoc = JsonDocument.Parse(await File.ReadAllTextAsync(pendingRefPath).ConfigureAwait(false));
+            var proposalId = refDoc.RootElement.GetProperty("proposalId").GetString()!;
+            var closeRepo = new AgenticSdlc.Host.FullWorkflow.Core.JsonCoreRepository(repoRoot);
+            var closed = AgenticSdlc.Host.FullWorkflow.Core.PendingReviewRegistry.Close(
+                await closeRepo.LoadAsync().ConfigureAwait(false), proposalId, accepted.Count > 0 ? "applied" : "rejected");
+            await closeRepo.SaveAsync(closed).ConfigureAwait(false);
+            Console.WriteLine($"[pbi-update-apply] pending_review {proposalId} geschlossen ({(accepted.Count > 0 ? "applied" : "rejected")}).");
+        }
+
         var appliedDir = Path.Combine(planDir, "applied");
         Console.WriteLine($"[pbi-update-apply] accepted={accepted.Count}/{plan.Operations.Count} newPbis={report.NewPbis.Count} updatedPbis={report.UpdatedPbis.Count} relations(+{report.RelationsAdded}/-{report.RelationsRemoved}) skipped={report.Skipped.Count}");
         Console.WriteLine($"[pbi-update-apply] finalStatus: {string.Join(", ", report.FinalStatus.Select(kv => $"{kv.Key}={kv.Value}"))}");

@@ -49,7 +49,17 @@ public static class GithubForwardReviewRunner
             apply: s => GithubForwardReviewAdapter.Apply(runId, s),
             openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
         Console.WriteLine($"[github-forward-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} -> human-decisions.json");
-        return 0;
+
+        // R-43-Endform (09.08.): „Fertig" kettet den Apply — hier als VORSCHAU (safe-by-default): der echte
+        // GitHub-Write bleibt bewusst ein eigener Akt (--execute = irreversible Außen-Grenze, R-16-Frische
+        // zählt am Write-Zeitpunkt). --no-apply = Inspektions-Opt-out.
+        if (args.Contains("--no-apply", StringComparer.OrdinalIgnoreCase)) return 0;
+        if (outcome != AgenticSdlc.HumanReview.ReviewOutcome.Finished)
+        { Console.WriteLine($"[github-forward-review] nicht abgeschlossen ({outcome}) — kein Auto-Apply."); return 0; }
+        Console.WriteLine("[github-forward-review] R-43: Apply-VORSCHAU läuft automatisch an …");
+        var rc = await GithubForwardApplyRunner.RunAsync(["github-forward-apply", args[1]], repoRoot).ConfigureAwait(false);
+        Console.WriteLine($"[github-forward-review] echter GitHub-Write bewusst separat: github-forward-apply {args[1]} --execute");
+        return rc;
     }
 
     internal static string? ResolvePlanDir(string repoRoot, string token)
