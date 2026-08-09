@@ -108,7 +108,9 @@ public static class GithubForwardApply
                         if (!execute) { reportOps.Add(Op(opId, op, null, null, "would-create", null)); created++; break; }
                         var r = await client!.CreateIssueAsync(repository!, op.Title!, op.Body!, op.Labels ?? [], ct).ConfigureAwait(false);
                         reportOps.Add(Op(opId, op, r.IssueNumber, r.IssueUrl, "created", null));
-                        mappingOps.Add(new GithubMappingOp(op.PbiId, r.IssueNumber, r.IssueUrl, repository, GithubMappingKind.Link, "CREATE"));
+                        // C2a-2: Schreib-Stempel = Hash des GESENDETEN Titels/Bodys (Drift-Anker, §7 c2-inbound-plan).
+                        mappingOps.Add(new GithubMappingOp(op.PbiId, r.IssueNumber, r.IssueUrl, repository, GithubMappingKind.Link, "CREATE",
+                            ProjectedTitleHash: GithubProjectionHash.Compute(op.Title), ProjectedBodyHash: GithubProjectionHash.Compute(op.Body)));
                         created++;
                         break;
                     }
@@ -119,7 +121,9 @@ public static class GithubForwardApply
                         // R-30: op.Labels null ⇒ Labels nicht anfassen (?? [] haette sie auf GitHub GELEERT).
                         var r = await client!.UpdateIssueAsync(repository!, op.TargetIssueNumber.Value, op.Title ?? "", op.Body ?? "", op.Labels, ct).ConfigureAwait(false);
                         reportOps.Add(Op(opId, op, r.IssueNumber, r.IssueUrl, "updated", null));
-                        mappingOps.Add(new GithubMappingOp(op.PbiId, op.TargetIssueNumber.Value, r.IssueUrl, repository, GithubMappingKind.Link, "UPDATE"));
+                        // C2a-2: Schreib-Stempel exakt über dem, was gesendet wurde (op.Title/Body wie im Call).
+                        mappingOps.Add(new GithubMappingOp(op.PbiId, op.TargetIssueNumber.Value, r.IssueUrl, repository, GithubMappingKind.Link, "UPDATE",
+                            ProjectedTitleHash: GithubProjectionHash.Compute(op.Title ?? ""), ProjectedBodyHash: GithubProjectionHash.Compute(op.Body ?? "")));
                         updated++;
                         break;
                     }

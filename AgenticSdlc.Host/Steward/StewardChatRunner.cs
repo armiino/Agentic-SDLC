@@ -24,8 +24,10 @@ public static class StewardChatRunner
     public const string Phase = "steward";
     private const string SourceName = "AgenticSdlc.Host";
 
-    /// <summary>Die EINE Bau-Naht des Steward-Agenten — Client injizierbar (Tests: ScriptedChatClient).</summary>
-    public static AIAgent BuildAgent(IChatClient baseClient, HostSettings settings, RunContext run, string repoRoot)
+    /// <summary>Die EINE Bau-Naht des Steward-Agenten — Client injizierbar (Tests: ScriptedChatClient).
+    /// <paramref name="memory"/> = M1-Modus (⚖ K6): null (voller Verlauf) · "count[:N]" (Schiebefenster) ·
+    /// "summarize" (LLM-Verdichtung, opt-in) — konfiguriert den OFFIZIELLEN Reducer-Slot der Session-History.</summary>
+    public static AIAgent BuildAgent(IChatClient baseClient, HostSettings settings, RunContext run, string repoRoot, string? memory = null)
     {
         var prompt = PromptProvider.Load(repoRoot, Phase, "StewardAgent", "StewardAgent1",
             new Dictionary<string, string> { ["runId"] = run.RunId });
@@ -40,9 +42,34 @@ public static class StewardChatRunner
             .. new GithubSnapshotQueryTools(repoRoot).Build(),
             .. new StewardRunTools(repoRoot, settings).Build(),
         ];
-        return client.AsAIAgent(instructions: prompt, name: "StewardAgent", tools: [.. tools])
-            .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
+        var reducer = CreateReducer(memory, client);
+        return client.AsAIAgent(new ChatClientAgentOptions
+        {
+            Name = "StewardAgent",
+            ChatOptions = new ChatOptions { Instructions = prompt, Tools = [.. tools] },
+            ChatHistoryProvider = reducer is null ? null
+                : new InMemoryChatHistoryProvider(new InMemoryChatHistoryProviderOptions { ChatReducer = reducer }),
+        }).AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
     }
+
+    // M1 (⚖ K6): der Reducer je Modus. MEAI001 bewusst: die gelieferten Implementierungen sind in M.E.AI 10.6
+    // EXPERIMENTELL markiert (Spike-Fund #1) — Slot stabil, Implementierung gepinnt, Spike-Tests = Stolperdraht.
+    // summarize nutzt den PIPELINE-Client (Verdichtungs-Calls laufen durch dieselbe Logging-/otel-Schicht).
+#pragma warning disable MEAI001
+    public static IChatReducer? CreateReducer(string? memory, IChatClient client) => memory switch
+    {
+        null => null,
+        "summarize" => new SummarizingChatReducer(client, SummarizeKeepMessages, SummarizeThreshold),
+        _ when memory.StartsWith("count", StringComparison.OrdinalIgnoreCase) =>
+            new MessageCountingChatReducer(
+                memory.Split(':') is [_, var n] ? int.Parse(n) : DefaultWindowMessages),
+        _ => throw new ArgumentException($"Unbekannter memory-Modus '{memory}' (erlaubt: count[:N] | summarize)."),
+    };
+#pragma warning restore MEAI001
+
+    private const int DefaultWindowMessages = 40;
+    private const int SummarizeKeepMessages = 20;
+    private const int SummarizeThreshold = 10;
 
     // ToolCallContent ist die Basis (nur CallId) — der konkrete Aufruf ist FunctionCallContent (Name/Args).
     private static string ToolName(ToolApprovalRequestContent r)
@@ -84,21 +111,39 @@ public static class StewardChatRunner
         await File.WriteAllTextAsync(path, json.GetRawText()).ConfigureAwait(false);
     }
 
+    /// <summary>M1 `--fresh`: leer starten, Bestand NICHT still löschen — rotiert nach &lt;name&gt;.prev.json.</summary>
+    public static string? RotateForFresh(string path)
+    {
+        if (!File.Exists(path)) return null;
+        var prev = Path.ChangeExtension(path, ".prev.json");
+        File.Move(path, prev, overwrite: true);
+        return prev;
+    }
+
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
-        string sessionName = "default"; string? once = null;
+        string sessionName = "default"; string? once = null; string? memory = null; var fresh = false;
         for (var i = 1; i < args.Length; i++)
         {
             if (string.Equals(args[i], "--session", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) sessionName = args[++i];
             else if (string.Equals(args[i], "--once", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) once = args[++i];
+            else if (string.Equals(args[i], "--memory", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) memory = args[++i];
+            else if (string.Equals(args[i], "--fresh", StringComparison.OrdinalIgnoreCase)) fresh = true;
         }
 
         var run = new RunContext(RunId.New(), "steward");
         run.EnsureFolders();
-        var agent = BuildAgent(ChatClientFactory.Create(settings), settings, run, repoRoot);
+        AIAgent agent;
+        try { agent = BuildAgent(ChatClientFactory.Create(settings), settings, run, repoRoot, memory); }
+        catch (ArgumentException ex) { Console.Error.WriteLine($"[steward] {ex.Message}"); return 2; }   // memory-Modus LAUT
+
         var path = SessionPath(repoRoot, sessionName);
+        var rotated = fresh ? RotateForFresh(path) : null;
         var session = await LoadOrCreateSessionAsync(agent, path).ConfigureAwait(false);
-        Console.WriteLine($"[steward] Sitzung '{sessionName}' ({(File.Exists(path) ? "fortgesetzt" : "neu")}){SessionSizeNote(path)} · Logs: {Path.GetRelativePath(repoRoot, run.RunDir)} · /exit beendet");
+        var memoryNote = memory is null ? "" : memory.StartsWith("summarize", StringComparison.OrdinalIgnoreCase)
+            ? $" · memory={memory} (LLM-Verdichtung aktiv — kostet Tokens)" : $" · memory={memory}";
+        var freshNote = rotated is null ? "" : $" · Vorgänger-Stand → {Path.GetFileName(rotated)}";
+        Console.WriteLine($"[steward] Sitzung '{sessionName}' ({(File.Exists(path) ? "fortgesetzt" : "neu")}){SessionSizeNote(path)}{memoryNote}{freshNote} · Logs: {Path.GetRelativePath(repoRoot, run.RunDir)} · /exit beendet");
 
         async Task TurnAsync(string input)
         {

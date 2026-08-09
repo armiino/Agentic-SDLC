@@ -6,7 +6,8 @@ namespace AgenticSdlc.Host.FullWorkflow.Core;
 // EINE Naht: Check läuft in JsonCoreRepository.SaveAsync VOR Snapshot+Write — damit ist es egal, welcher der
 // 9 Schreiber (oder ein künftiger Steward-Pfad) schreibt: kaputte Wahrheit wird nie persistiert.
 // Invarianten-Spec: docs/aktiv/core-relationen-konzept.md §3 + §5.3 (Härtegrade).
-//   Fehler (Save bricht ab): I1 Struktur-Relation auf fehlendes/typfalsches Item · I5 >1 Issue-Mapping je PBI.
+//   Fehler (Save bricht ab): I1 Struktur-Relation auf fehlendes/typfalsches Item · I5 >1 Issue-Mapping je PBI
+//   · I5b Issue von >1 PBI gemappt (Spiegel-Invariante 1↔1, C2a-3).
 //   Warnung (laut, blockt nie): I2 PBI ohne Feature · I3 aktives REQ ohne Deckung (feuert BEWUSST im
 //   Übergangszustand zwischen Ingest- und Pbi-Gate) · I4 covers→superseded (= R-34) · I6 contradicts-Lebenszyklus.
 // Endpunkt-Matrix am realen Core verifiziert (04.08.): part_of_feature pbi/req→feature · covers pbi→req ·
@@ -96,6 +97,15 @@ public static class CoreKangal
                      .GroupBy(r => r.FromId, StringComparer.Ordinal)
                      .Where(g => g.Count() > 1))
             errors.Add(Error("I5_MULTIPLE_ISSUE_MAPPINGS", $"PBI '{g.Key}' hat {g.Count()} implemented_by_issue-Relationen (max. 1)."));
+
+        // I5b (C2a-3, Spiegel-Invariante §15 c2-inbound-plan) — die GEGENRICHTUNG des 1:1: ein Issue darf nur
+        // EIN PBI spiegeln. Zwei PBIs auf gh#n hieße: der Forward-Render beider PBIs kämpft um denselben Body.
+        foreach (var g in core.Relations
+                     .Where(r => string.Equals(r.RelationType, "implemented_by_issue", StringComparison.Ordinal))
+                     .GroupBy(r => r.ToId, StringComparer.Ordinal)
+                     .Where(g => g.Select(r => r.FromId).Distinct(StringComparer.Ordinal).Count() > 1))
+            errors.Add(Error("I5B_ISSUE_MAPPED_TWICE",
+                $"Issue '{g.Key}' ist von mehreren PBIs gemappt ({string.Join(", ", g.Select(r => r.FromId).Distinct(StringComparer.Ordinal))}) — Spiegel-Invariante 1↔1 verletzt."));
 
         // I2 — jedes PBI gehört zu einem Feature.
         var pbiWithFeature = core.Relations

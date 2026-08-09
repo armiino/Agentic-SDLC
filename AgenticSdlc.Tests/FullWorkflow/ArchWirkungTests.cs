@@ -108,12 +108,12 @@ public sealed class ArchWirkungTests
         var entry = view.Entries.Single(e => e.PbiId == "PBI-1");
         Assert.Equal("ARCH-01 — Firestore ist gesetzt", Assert.Single(entry.Constraints!));
 
-        var body = GithubIssueBodySections.Build(entry, "test");
+        var body = GithubIssueTemplate.Render(entry, "test");
         Assert.Contains("Technische Rahmenbedingungen:\n- ARCH-01 — Firestore ist gesetzt", body);
         Assert.Contains("Abgedeckte Requirements: REQ-1", body);          // bestehende Sektionen unverändert
 
         Assert.DoesNotContain("Technische Rahmenbedingungen",
-            GithubIssueBodySections.Build(entry with { Constraints = null }, "test"));
+            GithubIssueTemplate.Render(entry with { Constraints = null }, "test"));
     }
 
     // ---- PBI-Weckruf: die Review-Card zeigt beide Wahrheits-Seiten ----
@@ -195,7 +195,7 @@ public sealed class ArchWirkungTests
         Assert.Equal(["REQ-1"], entry.CoveredRequirementIds);                                 // REIN req
         Assert.Equal("ARCH-10 — Push-Infrastruktur aufbauen", Assert.Single(entry.CoveredArchitecture!));
 
-        var body = GithubIssueBodySections.Build(entry, "test");
+        var body = GithubIssueTemplate.Render(entry, "test");
         Assert.Contains("Umgesetzte Architektur-Arbeit:\n- ARCH-10", body);
         Assert.Contains("Abgedeckte Requirements: REQ-1", body);
     }

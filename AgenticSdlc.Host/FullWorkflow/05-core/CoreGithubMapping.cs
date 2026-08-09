@@ -67,13 +67,15 @@ public static class CoreGithubMapping
                     }
                     else if (IssueNumberOf(existing) == op.IssueNumber)
                     {
-                        // Idempotent: gleiches Issue erneut verlinkt -> Metadata auffrischen (url/repo/status=open).
-                        relations[idx] = MakeRelation(op, "open", now, linkedUtc: LinkedUtcOf(existing));
+                        // Idempotent: gleiches Issue erneut verlinkt -> Metadata auffrischen (url/repo/status=open);
+                        // C2a-2: bestehender Schreib-Stempel bleibt erhalten, wenn die Op keinen neuen trägt.
+                        relations[idx] = MakeRelation(op, "open", now, linkedUtc: LinkedUtcOf(existing), previous: existing);
                         unchanged.Add($"{op.PbiId} -> {IssueRef(op.IssueNumber)}");
                     }
                     else
                     {
                         // Umverdrahtung auf ein anderes Issue -> alte Relation ersetzen (kein Duplikat).
+                        // C2a-2: BEWUSST ohne previous — der alte Stempel gehört zum ALTEN Issue.
                         var old = IssueNumberOf(existing);
                         relations[idx] = MakeRelation(op, "open", now, linkedUtc: now);
                         remapped.Add($"{op.PbiId}: gh#{old} -> {IssueRef(op.IssueNumber)}");
@@ -125,7 +127,9 @@ public static class CoreGithubMapping
                 IssueNumber: IssueNumberOf(r),
                 IssueUrl: r.Metadata.GetValueOrDefault("issueUrl"),
                 Repository: r.Metadata.GetValueOrDefault("repository"),
-                OperationalStatus: r.Metadata.GetValueOrDefault("operationalStatus") ?? "open"))
+                OperationalStatus: r.Metadata.GetValueOrDefault("operationalStatus") ?? "open",
+                ProjectedTitleHash: r.Metadata.GetValueOrDefault("projectedTitleHash"),
+                ProjectedBodyHash: r.Metadata.GetValueOrDefault("projectedBodyHash")))
             .OrderBy(m => m.PbiId, StringComparer.Ordinal)
             .ToList();
 
@@ -135,7 +139,8 @@ public static class CoreGithubMapping
             .GroupBy(m => m.PbiId, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
 
-    private static ProjectStateRelation MakeRelation(GithubMappingOp op, string operationalStatus, DateTime now, DateTime linkedUtc)
+    private static ProjectStateRelation MakeRelation(GithubMappingOp op, string operationalStatus, DateTime now, DateTime linkedUtc,
+        ProjectStateRelation? previous = null)
     {
         var meta = new Dictionary<string, string>(StringComparer.Ordinal)
         {
@@ -147,6 +152,14 @@ public static class CoreGithubMapping
         if (!string.IsNullOrWhiteSpace(op.IssueUrl)) meta["issueUrl"] = op.IssueUrl!;
         if (!string.IsNullOrWhiteSpace(op.Repository)) meta["repository"] = op.Repository!;
         if (!string.IsNullOrWhiteSpace(op.Origin)) meta["origin"] = op.Origin!;
+        // C2a-2: Schreib-Stempel — neuer Hash vom Schreib-Zweig gewinnt; sonst bleibt der bestehende Stempel
+        // erhalten (Link-Ops ohne Schreib-Akt dürfen den Drift-Anker nicht löschen).
+        var titleHash = op.ProjectedTitleHash ?? previous?.Metadata.GetValueOrDefault("projectedTitleHash");
+        var bodyHash = op.ProjectedBodyHash ?? previous?.Metadata.GetValueOrDefault("projectedBodyHash");
+        if (titleHash is not null) meta["projectedTitleHash"] = titleHash;
+        if (bodyHash is not null) meta["projectedBodyHash"] = bodyHash;
+        if (op.ProjectedBodyHash is not null) meta["projectedUtc"] = now.ToString("O", CultureInfo.InvariantCulture);
+        else if (previous?.Metadata.GetValueOrDefault("projectedUtc") is { } prevUtc) meta["projectedUtc"] = prevUtc;
         return new ProjectStateRelation(op.PbiId, IssueRef(op.IssueNumber), RelationType, RelationSource, meta);
     }
 
@@ -184,14 +197,22 @@ public sealed record GithubMappingOp(
     string? IssueUrl = null,
     string? Repository = null,
     GithubMappingKind Kind = GithubMappingKind.Link,
-    string? Origin = null);
+    string? Origin = null,
+    // C2a-2 (Drift-Wächter §7): Hash des GESCHRIEBENEN Titels/Bodys — gesetzt NUR von den echten
+    // Schreib-Zweigen des gated Forward-Apply (CREATE/UPDATE); Link-Ops ohne Schreib-Akt (COMMENT/LINK)
+    // lassen sie null und der bestehende Stempel bleibt erhalten (Preserve in MakeRelation).
+    string? ProjectedTitleHash = null,
+    string? ProjectedBodyHash = null);
 
 public sealed record GithubMappingRecord(
     string PbiId,
     int IssueNumber,
     string? IssueUrl,
     string? Repository,
-    string OperationalStatus);
+    string OperationalStatus,
+    // C2a-2: der letzte Schreib-Stempel (null = Alt-Mapping vor C2a-2 → GithubDrift.Unknown).
+    string? ProjectedTitleHash = null,
+    string? ProjectedBodyHash = null);
 
 public sealed record GithubMappingReport(
     IReadOnlyList<string> Linked,

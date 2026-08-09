@@ -80,6 +80,7 @@ public static class PipelineFullRunner
         Console.Error.WriteLine("  pipeline-full start [<transcript.txt>]   (Faden + Skeleton-Plan, kein LLM)");
         Console.Error.WriteLine("  pipeline-full run   [<transcript.txt>]   (EIN Graph: front->branch->bootstrap|betrieb->forward)");
         Console.Error.WriteLine("  pipeline-full run --from-delta <meeting-delta.json>  (Einstieg an der Hinterhälfte; Branch entscheidet Bootstrap|Betrieb)");
+        Console.Error.WriteLine("  pipeline-full run --from-github [--issues <snapshot.json>]  (C2: GitHub-Ernte als Front — Detect -> InboundAgent -> Delta -> Tore)");
         Console.Error.WriteLine("  pipeline-full run ... --policy <interactive|accept-all>  (Gate-Politik NUR für diesen Lauf; ersetzt auch explizite Gate-Einträge)");
         Console.Error.WriteLine("  pipeline-full run --dry-run              (Assemble/Build()-Validierung, kein LLM)");
         Console.Error.WriteLine("  pipeline-full resume <runId> [--accept-all | --accept id1,id2] [--open-ui]  (pausiertes Gate beantworten, weiterfahren)");
@@ -102,9 +103,13 @@ public static class PipelineFullRunner
 
         // Schritt 5 ③: Eingangs-Vertrag — Transkript (volle Front) ODER --from-delta <meeting-delta.json>
         // (Hinterhälfte; der BranchDetector entscheidet Bootstrap|Betrieb wie immer). Ersetzt pipeline-hitl.
-        string? deltaArg = null;
+        string? deltaArg = null; string? issuesArg = null; var fromGithub = false;
         for (var i = 2; i < args.Length; i++)
+        {
             if (string.Equals(args[i], "--from-delta", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) deltaArg = args[i + 1];
+            else if (string.Equals(args[i], "--from-github", StringComparison.OrdinalIgnoreCase)) fromGithub = true;
+            else if (string.Equals(args[i], "--issues", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) issuesArg = args[i + 1];
+        }
 
         ProjectStateDocument? entryDelta = null;
         string? transcriptPath = null;
@@ -114,6 +119,11 @@ public static class PipelineFullRunner
             var deltaPath = Path.IsPathRooted(deltaArg) ? deltaArg : Path.Combine(repoRoot, deltaArg);
             if (!File.Exists(deltaPath)) { Console.Error.WriteLine($"[{Cmd}] MeetingDelta nicht gefunden: {deltaPath}"); return 2; }
             entryDelta = (await JsonProjectStateRepository.LoadAsync(deltaPath).ConfigureAwait(false)).Document;
+        }
+        else if (fromGithub)
+        {
+            // C2c (§13): die GitHub-Ernte als ZWEITE FRONT — geerntet wird NACH der Run-Erzeugung
+            // (Agent-Logs/otel gehören zum Lauf); das Delta entsteht dann wie bei --from-delta.
         }
         else
         {
@@ -149,6 +159,22 @@ public static class PipelineFullRunner
             Path.Combine(run.LogsDir, "otel-metrics.jsonl"),
             settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
 
+        // C2c (§13): GitHub-Front — Ernte über die GETEILTE Naht (dieselbe wie die Zwischenbahn `github-inbound`);
+        // der Faden-Exporter oben hört bereits zu (createOtel: false gegen Doppel-Spans). Ergebnis = entryDelta.
+        if (fromGithub)
+        {
+            var (hExit, harvest) = await Tore.Github.Inbound.GithubInboundHarvest.RunAsync(
+                settings, repoRoot, run, issuesArg, draft: true, run.OutputDir("00-github-inbound"), createOtel: false)
+                .ConfigureAwait(false);
+            if (hExit != 0) return hExit;
+            if (harvest!.Delta is not { Items.Count: > 0 })
+            {
+                Console.WriteLine($"[{Cmd}] GitHub-Ernte ohne Tor-faehige Funde — nichts zu fahren (Report: 00-github-inbound/).");
+                return 0;
+            }
+            entryDelta = harvest.Delta;
+        }
+
         // H1: der Graph-Bau ist eine eigene Funktion — run UND resume bauen den IDENTISCHEN Graph
         // (Voraussetzung für RestoreCheckpointAsync).
         var (workflow, ledgerModel, baselineModel, adjudicationPolicy) = BuildGraph(
@@ -161,7 +187,7 @@ public static class PipelineFullRunner
             pipelineMode = fw.Mode.ToString(),
             slice = "ledger-v0",
             runId = run.RunId,
-            entryPoint = entryDelta is null ? "transcript" : "delta",
+            entryPoint = fromGithub ? "github" : entryDelta is null ? "transcript" : "delta",
             transcript = transcriptPath is null ? null : Path.GetRelativePath(repoRoot, transcriptPath),
             fromDelta = deltaArg,
             execute = fw.Execute,
@@ -169,6 +195,16 @@ public static class PipelineFullRunner
             ledgerModel,
             timestampUtc = DateTime.UtcNow
         });
+
+        // R-42 (08.08.): vergessene Experiment-Policies aus run-config sind eine teure Falle — ein Lauf
+        // schrieb ungewollt in den Core. Deshalb LAUT am Start, wenn irgendein Gate nicht interactive ist.
+        var experimentGates = fw.Gates
+            .Where(g => g.Value.Kind != GatePolicyKind.Interactive)
+            .Select(g => $"{g.Key}={g.Value.Kind}").OrderBy(x => x, StringComparer.Ordinal).ToList();
+        if (fw.PolicyProfile.Kind != GatePolicyKind.Interactive || experimentGates.Count > 0)
+            Console.WriteLine($"[{Cmd}] ⚠ EXPERIMENT-MODUS AKTIV — Gates antworten OHNE Menschen: "
+                + (experimentGates.Count > 0 ? string.Join(", ", experimentGates) : $"profil={fw.PolicyProfile.Kind}")
+                + " (Quelle: run-config.json/--policy; Wahrheits-Writes erfolgen automatisch!)");
 
         // U1/U2: LLM-freie Validierung des GANZEN Assemble (Build() lief soeben — Kanten/Typen geprüft).
         if (args.Contains("--dry-run"))

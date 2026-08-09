@@ -71,63 +71,40 @@ public static class GithubForwardSeed
                     GithubForwardKind.FlagDrift, e.PbiId, mapping.IssueNumber, null, null, null, null, null, anchor,
                     $"Issue #{mapping.IssueNumber} ist geschlossen, PBI aber '{e.Status}' — Drift, manuell pruefen.", "deterministic"));
             }
+            else if (GithubDriftCheck.Check(mapping, issue) == GithubDrift.HumanEdited)
+            {
+                // C2a-3 (§7 c2-inbound-plan): DRIFT-SPERRE — ein Mensch hat Titel/Body seit unserem letzten
+                // Write editiert. Der Edit darf NICHT still überschrieben werden: erst ernten (github-inbound)
+                // oder am Gate bewusst auflösen. Konvergenz: nach Ernte→Tor→Apply stempelt der Write neu.
+                deterministic.Add(new GithubForwardOp(
+                    GithubForwardKind.FlagDrift, e.PbiId, mapping.IssueNumber, null, null, null, null, null, anchor,
+                    $"DRIFT-SPERRE: Issue #{mapping.IssueNumber} wurde seit dem letzten eigenen Write MANUELL editiert — "
+                    + "kein Update-Vorschlag, der menschliche Edit ginge verloren. Erst ernten (github-inbound) oder bewusst aufloesen.",
+                    "deterministic"));
+            }
             else
             {
                 // R-30: KEINE Labels am UPDATE — GitHubs PATCH ersetzt die komplette Label-Liste; null heisst
                 // hier ausdruecklich "Labels nicht anfassen" (Requirement-IDs stehen im Body, nicht als Labels).
+                // C2a-3: Drift 'Unknown' (Alt-Mapping ohne Stempel) blockt NICHT, wird aber benannt — der
+                // naechste ausgefuehrte Write stempelt und macht Drift ab dann pruefbar (§7: erster Zyklus heilt).
+                var unknownNote = GithubDriftCheck.Check(mapping, issue) == GithubDrift.Unknown
+                    ? " · Hinweis: noch kein Drift-Stempel (Alt-Issue) — manueller Edit waere aktuell nicht erkennbar; dieser Write stempelt."
+                    : "";
                 deterministic.Add(new GithubForwardOp(
                     GithubForwardKind.UpdateIssue, e.PbiId, mapping.IssueNumber, e.Title, ProposedBody(e), null,
                     null, null, anchor,
-                    "PBI hat sich geaendert — vorgeschlagener Patch/Kommentar (kein Auto-Overwrite).", "deterministic"));
+                    "PBI hat sich geaendert — vorgeschlagener Patch/Kommentar (kein Auto-Overwrite)." + unknownNote, "deterministic"));
             }
         }
 
         return new GithubForwardSeedResult(deterministic, unmapped);
     }
 
-    // Vorgeschlagener Issue-Body aus dem Core-Zustand (Beleg, kein freier Text).
+    // Vorgeschlagener Issue-Body aus dem Core-Zustand (Beleg, kein freier Text) — C2a-1: geteilte
+    // Struktur-Naht GithubIssueTemplate (Render+Parse als Paar, §12 c2-inbound-plan).
     private static string ProposedBody(GithubSyncEntry e)
-        => GithubIssueBodySections.Build(e, "Forward-Update aus Core-PBI (deterministisch)");
-}
-
-// E0.1c/E0.2 (koppelt R-23): der EINE deterministische Issue-Body fuer CREATE (Initial-Sync) und
-// UPDATE-Vorschlag (Forward). Aufbau nach Autor-Direktive „sauberer Output": erst der INHALT
-// (Statement = das WARUM, Akzeptanzkriterien, Requirements), interne Projekt-Zustaende erst als
-// deklarierte Sync-Metadaten-Fusszeile — statt als kryptische Kopfzeile.
-public static class GithubIssueBodySections
-{
-    public static string Build(GithubSyncEntry e, string quelle)
-    {
-        var sb = new System.Text.StringBuilder();
-        if (!string.IsNullOrWhiteSpace(e.Statement)) sb.Append(e.Statement).Append("\n\n");
-        if (e.AcceptanceCriteria is { Count: > 0 })
-        {
-            sb.Append("Akzeptanzkriterien:\n");
-            foreach (var c in e.AcceptanceCriteria) sb.Append("- ").Append(c).Append('\n');
-            sb.Append('\n');
-        }
-        // ③ A3 (06.08.): die WIRKUNG der constraint-Rolle — der Entwickler sieht die Rahmen im Issue,
-        // ohne den Core zu kennen (Endpunkt der ①-Relation constrained_by).
-        if (e.Constraints is { Count: > 0 })
-        {
-            sb.Append("Technische Rahmenbedingungen:\n");
-            foreach (var c in e.Constraints) sb.Append("- ").Append(c).Append('\n');
-            sb.Append('\n');
-        }
-        // A4/E-R2: die work-Herkunft des PBIs - umgesetzte Architektur-Arbeit als eigene Zeile.
-        if (e.CoveredArchitecture is { Count: > 0 })
-        {
-            sb.Append("Umgesetzte Architektur-Arbeit:\n");
-            foreach (var a in e.CoveredArchitecture) sb.Append("- ").Append(a).Append('\n');
-            sb.Append('\n');
-        }
-        var reqs = e.CoveredRequirementIds.Count == 0 ? "-" : string.Join(", ", e.CoveredRequirementIds);
-        sb.Append("Abgedeckte Requirements: ").Append(reqs).Append("\n\n");
-        var readiness = string.IsNullOrWhiteSpace(e.Readiness) ? "-" : e.Readiness;
-        sb.Append("---\n")
-          .Append($"Sync-Metadaten: PBI {e.PbiId} · Status {e.Status} · Readiness {readiness} · Quelle: {quelle}");
-        return sb.ToString();
-    }
+        => GithubIssueTemplate.Render(e, "Forward-Update aus Core-PBI (deterministisch)");
 }
 
 public sealed record GithubForwardSeedResult(

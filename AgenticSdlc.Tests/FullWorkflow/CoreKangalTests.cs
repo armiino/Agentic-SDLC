@@ -72,6 +72,19 @@ public sealed class CoreKangalTests
     }
 
     [Fact]
+    public void I5b_ein_Issue_von_zwei_PBIs_gemappt_ist_Fehler()
+    {
+        // C2a-3 (Spiegel-Invariante §15): die Gegenrichtung des 1:1 — zwei PBIs kämpfen sonst um denselben Body.
+        var core = Core(
+            [Rel("PBI-1", "FC-01", "part_of_feature"), Rel("PBI-2", "FC-01", "part_of_feature"),
+             Rel("PBI-1", "REQ-1", "covers"), Rel("REQ-1", "FC-01", "part_of_feature"),
+             Rel("PBI-1", "gh#7", "implemented_by_issue"), Rel("PBI-2", "gh#7", "implemented_by_issue")],
+            Item("FC-01", "feature"), Item("PBI-1", "pbi"), Item("PBI-2", "pbi"), Item("REQ-1", "requirement", "accepted"));
+        var report = CoreKangal.Check(core);
+        Assert.Contains(report.Errors, e => e.Code == "I5B_ISSUE_MAPPED_TWICE" && e.Message.Contains("gh#7"));
+    }
+
+    [Fact]
     public void I2_und_I3_sind_Warnungen_kein_Block()
     {
         // PBI ohne Feature + neues aktives REQ ohne Deckung (der Übergangszustand nach einem Ingest-Apply).

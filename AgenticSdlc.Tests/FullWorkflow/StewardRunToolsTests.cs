@@ -20,10 +20,40 @@ public sealed class StewardRunToolsTests
     }
 
     [Fact]
-    public void Beide_Start_Tools_sind_ApprovalRequired_gewrappt()
+    public void Alle_Start_Tools_sind_ApprovalRequired_gewrappt()
     {
         var tools = new StewardRunTools(".", S(), (args, cb) => Task.FromResult(0)).Build();
-        Assert.Equal(2, tools.OfType<ApprovalRequiredAIFunction>().Count());   // K3: kein Start ohne Zustimmung
+        Assert.Equal(6, tools.OfType<ApprovalRequiredAIFunction>().Count());   // K3: kein Start ohne Zustimmung (C2c: +4 GitHub-Seile)
+    }
+
+    [Fact]
+    public async Task Aux_Seile_bauen_die_richtigen_Bahn_Args_und_melden_Fehler_LAUT()
+    {
+        string[]? seen = null;
+        var tools = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0), auxRunner: a => { seen = a; return Task.FromResult(0); });
+
+        var snap = await InvokeAsync(tools, "pull_github_snapshot", new Dictionary<string, object?> { ["repo"] = "owner/name" });
+        Assert.True(snap.GetProperty("ok").GetBoolean());
+        Assert.Equal(["github-snapshot", "issues", "--repo", "owner/name"], seen!);
+
+        await InvokeAsync(tools, "run_github_inbound", new Dictionary<string, object?> { ["draft"] = true });
+        Assert.Equal(["github-inbound", "--draft"], seen!);
+        await InvokeAsync(tools, "run_github_reverse", new Dictionary<string, object?>());
+        Assert.Equal(["github-reverse"], seen!);
+
+        var failing = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0), auxRunner: _ => Task.FromResult(2));
+        var err = await InvokeAsync(failing, "run_github_inbound", new Dictionary<string, object?>());
+        Assert.Equal("AUX_RUN_FAILED", err.GetProperty("error").GetString());
+    }
+
+    [Fact]
+    public async Task run_pipeline_from_github_nutzt_die_Ein_Graph_Front()
+    {
+        string[]? seen = null;
+        var tools = new StewardRunTools(".", S(), (args, onRunId) => { seen = args; onRunId?.Invoke("run-7"); return Task.FromResult(0); });
+        var started = await InvokeAsync(tools, "run_pipeline_from_github", new Dictionary<string, object?>());
+        Assert.True(started.GetProperty("started").GetBoolean());
+        Assert.Equal(["pipeline-full", "run", "--from-github"], seen!);        // §13: Seil zeigt auf den Ein-Graph-Eingang
     }
 
     [Fact]

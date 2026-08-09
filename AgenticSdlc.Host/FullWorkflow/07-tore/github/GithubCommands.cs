@@ -31,6 +31,9 @@ public static class GithubCommands
 
         // Tor 3 / T3.5: Reverse GitHub-Feedback-Ingestion (E4). GitHub-Zustand wird NIE auto-Wahrheit — geschlossenes Issue
         // erzeugt einen gepruefsten StateChange-Vorschlag; `done` entsteht NUR nach menschlicher Verifikation. Maker/Review/Apply.
+        // C2a-4 (08.08.): deterministische Inbound-Ernte-Erkennung (Zwischenbahn; Ein-Graph-Eingang = C2c).
+        map["github-inbound"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Tore.Github.Inbound.GithubInboundRunner.RunAsync(args, settings, repoRoot);
+
         map["github-reverse"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubReverseRunner.RunAsync(args, repoRoot);
 
         map["github-reverse-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubReverseReviewRunner.RunAsync(args, settings, repoRoot);

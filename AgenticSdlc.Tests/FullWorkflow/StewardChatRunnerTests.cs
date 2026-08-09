@@ -36,7 +36,7 @@ public sealed class StewardChatRunnerTests
         var path = Path.Combine(Directory.CreateTempSubdirectory("steward-sess-").FullName, "s.json");
         var session = await StewardChatRunner.LoadOrCreateSessionAsync(agent, path);
         var first = await agent.RunAsync("Hallo.", session);
-        Assert.Contains("8 Tools", first.Text);                              // C1a-Pipeline + C3-Core/GitHub + C1c-Start
+        Assert.Contains("12 Tools", first.Text);                             // C1a/C3-Lesen + C1c-Start + C2c-GitHub-Seile
 
         await StewardChatRunner.SaveSessionAsync(agent, session, path);
         Assert.True(File.Exists(path));
@@ -45,6 +45,39 @@ public sealed class StewardChatRunnerTests
         var second = await agent.RunAsync("Weiter.", resumed);
         var n = int.Parse(second.Text.Split('(')[1].Split(' ')[0]);
         Assert.True(n >= 3, $"Verlauf nicht restauriert (nur {n} Nachrichten).");   // K1-Beweis am echten Bau
+    }
+
+    [Fact]
+    public async Task M1_memory_count_wirkt_als_Schiebefenster_an_der_ECHTEN_Huelle()
+    {
+        var repoRoot = Directory.GetCurrentDirectory();
+        while (!Directory.Exists(Path.Combine(repoRoot, "AgenticSdlc.Host", "Prompts")))
+            repoRoot = Path.GetDirectoryName(repoRoot) ?? throw new InvalidOperationException("Repo-Wurzel nicht gefunden");
+        var settings = HostSettings.FromRuntimeConfig(new RunConfig(), repoRoot);
+        var run = new RunContext(RunId.New(), "test-steward"); run.EnsureFolders();
+        var agent = StewardChatRunner.BuildAgent(new EchoCountClient(), settings, run, repoRoot, memory: "count:3");
+
+        var session = await agent.CreateSessionAsync();
+        var text = "";
+        for (var i = 1; i <= 6; i++) text = (await agent.RunAsync($"Zug {i}.", session)).Text;
+        var n = int.Parse(text.Split('(')[1].Split(' ')[0]);
+        Assert.True(n <= 4, $"Fenster count:3 wirkt nicht an der Hülle ({n} Nachrichten beim Modell).");
+    }
+
+    [Fact]
+    public void M1_fresh_rotiert_statt_zu_loeschen_und_unbekannter_Modus_ist_LAUT()
+    {
+        var dir = Directory.CreateTempSubdirectory("m1-fresh-").FullName;
+        var path = Path.Combine(dir, "s.json");
+        Assert.Null(StewardChatRunner.RotateForFresh(path));                    // nichts da = nichts zu rotieren
+
+        File.WriteAllText(path, "{}");
+        var prev = StewardChatRunner.RotateForFresh(path);
+        Assert.False(File.Exists(path));                                        // frisch: alter Stand ist weg ...
+        Assert.True(File.Exists(prev));                                         // ... aber NICHT gelöscht (rotiert)
+
+        var ex = Assert.Throws<ArgumentException>(() => StewardChatRunner.CreateReducer("vergiss-alles", new EchoCountClient()));
+        Assert.Contains("count[:N] | summarize", ex.Message);
     }
 
     [Fact]
