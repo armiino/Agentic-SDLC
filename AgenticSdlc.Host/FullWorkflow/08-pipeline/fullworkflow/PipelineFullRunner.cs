@@ -735,10 +735,14 @@ public static class PipelineFullRunner
             }
             case "ingest-gate" or "arch-ingest-gate" when req.Request.TryGetDataAs<IngestionReviewRequest>(out var ir) && ir is not null:
             {
-                var accepted = Flags(ir.Ops.Select(o => o.IncomingItemId));
+                // R-44 (09.08.): Datei-Vertrag zuerst (UI/Steward-Chat schreiben ingest-gate-decisions.json) —
+                // vorher war Tor 1 beim resume NUR per accept-all beantwortbar (kein per-Item-Entscheid).
+                var stageDir = string.Equals(portId, "arch-ingest-gate", StringComparison.Ordinal) ? "07-arch-ingest" : "07-ingest";
+                var fileDecision = Ingestion.IngestGateDecisions.TryLoadAny(Path.Combine(run.RunDir, stageDir));   // 3b-2: Chat-Vertrag ODER UI-Datei
+                var accepted = fileDecision?.Accepted ?? Flags(ir.Ops.Select(o => o.IncomingItemId));
                 if (accepted is null) return false;
-                return await AnswerAsync(new IngestionReviewResponse(accepted, "author (interactive)"),
-                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = accepted.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+                return await AnswerAsync(new IngestionReviewResponse(accepted, fileDecision?.Reviewer ?? "author (interactive)"),
+                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = accepted.Count, source = fileDecision is null ? "flags" : "decisions-file", timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
             }
             case "decision-gate" when req.Request.TryGetDataAs<PipelineDecisionReviewRequest>(out var dq) && dq is not null:
             {
@@ -765,9 +769,23 @@ public static class PipelineFullRunner
             }
             case "pbi-gate" when req.Request.TryGetDataAs<PbiUpdateReviewRequest>(out var pr) && pr is not null:
             {
-                var accepted = Flags(pr.Ops.Select(o => o.OpId));
+                // R-44b (09.08.): Datei-Vertrag zuerst — die pbi-update-Review-UI kann auf 07-pbi-update zeigen
+                // (pbi-change-plan.json liegt dort) und schreibt human-decisions.json; vorher nur Flags.
+                IReadOnlyList<string>? accepted = null; var reviewer = "author (interactive)";
+                var pbiStage = Path.Combine(run.RunDir, "07-pbi-update");
+                var pbiDecisionsPath = Path.Combine(pbiStage, "human-decisions.json");
+                if (File.Exists(pbiDecisionsPath) && File.Exists(Path.Combine(pbiStage, "pbi-change-plan.json")))
+                {
+                    var stagePlan = JsonSerializer.Deserialize<PbiUpdate.PbiStateChangePlanDocument>(
+                        await File.ReadAllTextAsync(Path.Combine(pbiStage, "pbi-change-plan.json")).ConfigureAwait(false), JsonFiles.Json)!;
+                    var df = JsonSerializer.Deserialize<PbiUpdate.PbiUpdateDecisionsFile>(
+                        await File.ReadAllTextAsync(pbiDecisionsPath).ConfigureAwait(false), JsonFiles.Json)!;
+                    accepted = PbiUpdate.PbiUpdateApplyExec.AcceptedFromDecisions(stagePlan, df.Decisions).Select(i => $"op-{i}").ToList();
+                    reviewer = df.Reviewer;
+                }
+                accepted ??= Flags(pr.Ops.Select(o => o.OpId));
                 if (accepted is null) return false;
-                return await AnswerAsync(new PbiUpdateReviewResponse(accepted, "author (interactive)"),
+                return await AnswerAsync(new PbiUpdateReviewResponse(accepted, reviewer),
                     new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = accepted.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
             }
             case "github-forward-gate" when req.Request.TryGetDataAs<ForwardReviewRequest>(out var f) && f is not null:

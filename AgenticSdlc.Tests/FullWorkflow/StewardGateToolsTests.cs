@@ -50,7 +50,7 @@ public sealed class StewardGateToolsTests
         var notes = v.GetProperty("items")[0].GetProperty("notes").EnumerateArray().ToList();
         Assert.Contains(notes, n => n.GetProperty("label").GetString()!.Contains("Autor-Antwort via steward-chat"));
         Assert.Equal("Neuer Titel", v.GetProperty("alignments")[0].GetProperty("proposedTitle").GetString());
-        Assert.Equal(2, tools_count(tools: new StewardGateTools(repo)));      // beide Submits ApprovalRequired (C5a+C5b)
+        Assert.Equal(4, tools_count(tools: new StewardGateTools(repo)));      // alle Submits ApprovalRequired (C5a+C5b+Schritt2)
         static int tools_count(StewardGateTools tools) => tools.Build().OfType<ApprovalRequiredAIFunction>().Count();
     }
 
@@ -92,6 +92,102 @@ public sealed class StewardGateToolsTests
     }
 }
 
+// C5-Schritt2 — ingest- und decision-gate im Chat: Vorlage aus den persistierten Artefakten, Submits mit
+// P2a/Vollständigkeit, Dateien = exakt die Verträge des resume-Responders (ingest = der NEUE R-44-Vertrag).
+public sealed class StewardChatGateStep2Tests
+{
+    private static string Repo(string gate, string stageDir, string artifactName, string artifactJson, out string runId)
+    {
+        var repo = Directory.CreateTempSubdirectory("c5s2-").FullName;
+        runId = "20260809_000001_test";
+        var dir = Path.Combine(repo, "runs", "fullworkflow", runId);
+        Directory.CreateDirectory(Path.Combine(dir, "checkpoints"));
+        File.WriteAllText(Path.Combine(dir, "checkpoints", "pointer.json"),
+            $"{{\"runId\":\"{runId}\",\"sessionId\":\"s\",\"checkpointId\":\"cp-1\",\"mode\":\"{gate}\",\"savedUtc\":\"2026-08-09T09:00:00Z\"}}");
+        Directory.CreateDirectory(Path.Combine(dir, stageDir));
+        File.WriteAllText(Path.Combine(dir, stageDir, artifactName), artifactJson);
+        return repo;
+    }
+
+    private static async Task<System.Text.Json.JsonElement> InvokeAsync(StewardGateTools tools, string name, IDictionary<string, object?> args)
+    {
+        var fn = tools.Build().OfType<AIFunction>().Single(f => f.Name == name);
+        var raw = await fn.InvokeAsync(new AIFunctionArguments(args));
+        return System.Text.Json.JsonDocument.Parse(System.Text.Json.JsonSerializer.Deserialize<string>(System.Text.Json.JsonSerializer.Serialize(raw))!).RootElement;
+    }
+
+    [Fact]
+    public async Task Ingest_Gate_Vorlage_P2a_und_R44_Datei_Vertrag()
+    {
+        var repo = Repo("ingest-gate", "07-ingest", "plan.json",
+            """{"operations":[{"incomingItemId":"GH-900","kind":"NEW_RELATED","statement":"PDF-Export","featureKey":"med","rationale":"neu"},{"incomingItemId":"REQ-N2","kind":"UPDATE","statement":"X","rationale":"y"}]}""", out var runId);
+        var tools = new StewardGateTools(repo);
+
+        var v = await InvokeAsync(tools, "get_paused_gate", new Dictionary<string, object?> { ["runId"] = runId });
+        Assert.Equal(2, v.GetProperty("items").GetArrayLength());
+        Assert.Equal("GH-900", v.GetProperty("items")[0].GetProperty("incomingItemId").GetString());
+
+        var p2a = await InvokeAsync(tools, "submit_ingest_gate_decisions", new Dictionary<string, object?>
+        { ["runId"] = runId, ["decisions"] = new[]
+            { new AgenticSdlc.Host.FullWorkflow.Ingestion.IngestGateDecision("GH-900", "apply"),
+              new AgenticSdlc.Host.FullWorkflow.Ingestion.IngestGateDecision("REQ-N2", "reject") } });
+        Assert.Contains("P2a", p2a.GetProperty("details")[0].GetString());
+
+        var ok = await InvokeAsync(tools, "submit_ingest_gate_decisions", new Dictionary<string, object?>
+        { ["runId"] = runId, ["decisions"] = new[]
+            { new AgenticSdlc.Host.FullWorkflow.Ingestion.IngestGateDecision("GH-900", "apply"),
+              new AgenticSdlc.Host.FullWorkflow.Ingestion.IngestGateDecision("REQ-N2", "reject", "Duplikat von REQ-05") } });
+        Assert.True(ok.GetProperty("saved").GetBoolean());
+
+        // 3b-2-Brücke: TryLoadAny akzeptiert AUCH die human-decisions.json der bestehenden ingest-UI.
+        var stage = Path.Combine(repo, "runs", "fullworkflow", runId, "07-ingest");
+        File.Move(Path.Combine(stage, "ingest-gate-decisions.json"), Path.Combine(stage, "human-decisions.json"));
+        var bridged = AgenticSdlc.Host.FullWorkflow.Ingestion.IngestGateDecisions.TryLoadAny(stage)!.Value;
+        Assert.Equal(["GH-900"], bridged.Accepted);
+        File.Move(Path.Combine(stage, "human-decisions.json"), Path.Combine(stage, "ingest-gate-decisions.json"));
+
+        // R-44: der Responder-Loader liest EXAKT diese Datei — apply-Set + Chat-Reviewer.
+        var loaded = AgenticSdlc.Host.FullWorkflow.Ingestion.IngestGateDecisions.TryLoad(
+            Path.Combine(repo, "runs", "fullworkflow", runId, "07-ingest", "ingest-gate-decisions.json"))!.Value;
+        Assert.Equal(["GH-900"], loaded.Accepted);
+        Assert.Equal("author via steward-chat", loaded.Reviewer);
+    }
+
+    [Fact]
+    public async Task Decision_Gate_Vorlage_Vokabular_und_Responder_kompatible_Datei()
+    {
+        var repo = Repo("decision-gate", "07-decision", "decision-gate-request.json",
+            """{"runId":"r","decisions":[{"decisionId":"DEC-7","decisionText":"Widerspruch X?","targetRequirementText":"Alt","proposedStatement":"Neu","blockedPbis":["PBI-1"]}]}""", out var runId);
+        var tools = new StewardGateTools(repo);
+
+        var v = await InvokeAsync(tools, "get_paused_gate", new Dictionary<string, object?> { ["runId"] = runId });
+        Assert.Equal("DEC-7", v.GetProperty("decisions")[0].GetProperty("decisionId").GetString());
+        Assert.Equal("Alt", v.GetProperty("decisions")[0].GetProperty("bestehendeWahrheit").GetString());
+
+        var bad = await InvokeAsync(tools, "submit_decision_gate_resolutions", new Dictionary<string, object?>
+        { ["runId"] = runId, ["resolutions"] = new[]
+            { new AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineDecisionResolution("DEC-7", "resolve", "REFINE", null, null) } });
+        Assert.Contains("REFINE OHNE newStatement", bad.GetProperty("details")[0].GetString());
+
+        var adopt = await InvokeAsync(tools, "submit_decision_gate_resolutions", new Dictionary<string, object?>
+        { ["runId"] = runId, ["resolutions"] = new[]
+            { new AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineDecisionResolution("DEC-7", "resolve", "ADOPT_NEW", null, null) } });
+        Assert.Contains("ADOPT_NEW OHNE newStatement", adopt.GetProperty("details")[0].GetString());
+
+        var ok = await InvokeAsync(tools, "submit_decision_gate_resolutions", new Dictionary<string, object?>
+        { ["runId"] = runId, ["resolutions"] = new[]
+            { new AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineDecisionResolution("DEC-7", "defer", null, null, "erst Team fragen") } });
+        Assert.Equal(1, ok.GetProperty("deferred").GetInt32());
+
+        // Responder-Kompatibilität: Datei deserialisiert als PipelineDecisionDecisionsFile (der resume-Vertrag).
+        var file = System.Text.Json.JsonSerializer.Deserialize<AgenticSdlc.Host.FullWorkflow.Decision.PipelineDecisionDecisionsFile>(
+            File.ReadAllText(Path.Combine(repo, "runs", "fullworkflow", runId, "07-decision", "decision-gate-decisions.json")),
+            AgenticSdlc.Host.FullWorkflow.JsonFiles.Json)!;
+        Assert.Equal("author via steward-chat", file.Reviewer);
+        Assert.Equal("defer", file.Resolutions.Single().Action);
+    }
+}
+
 // C5b-1 — das pausierte forward-Gate im Chat: treue Op-Vorlage aus dem persistierten Plan, Submit mit
 // Vollständigkeits-/Vokabular-Zwang, Datei = exakt der Vertrag, den der resume-Responder liest.
 public sealed class StewardGraphGateTests
@@ -118,6 +214,15 @@ public sealed class StewardGraphGateTests
         var fn = tools.Build().OfType<AIFunction>().Single(f => f.Name == name);
         var raw = await fn.InvokeAsync(new AIFunctionArguments(args));
         return System.Text.Json.JsonDocument.Parse(System.Text.Json.JsonSerializer.Deserialize<string>(System.Text.Json.JsonSerializer.Serialize(raw))!).RootElement;
+    }
+
+    [Fact]
+    public void Pipeline_Stufen_Erkennung_verhindert_Doppel_Apply()
+    {
+        Assert.Equal("20260809_1_x", AgenticSdlc.Host.FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.TryGetPipelineRunId(
+            Path.Combine("runs", "fullworkflow", "20260809_1_x", "07-pbi-update")));
+        Assert.Null(AgenticSdlc.Host.FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.TryGetPipelineRunId(
+            Path.Combine("runs", "pbi-update", "20260809_1_x", "plan")));       // Standalone bleibt Standalone-Apply
     }
 
     [Fact]

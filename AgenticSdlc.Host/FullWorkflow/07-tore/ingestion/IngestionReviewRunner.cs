@@ -11,6 +11,10 @@ public static class IngestionReviewRunner
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
+    /// <summary>K13-Façade (3b-2): UI auf die PIPELINE-Stufe des pausierten Laufs (ingest|arch-ingest).</summary>
+    public static Task<int> RunForPipelineRunAsync(string runId, string stage, HostSettings settings, string repoRoot)
+        => RunAsync(["ingest-review", Path.Combine("runs", "fullworkflow", runId, stage)], settings, repoRoot);
+
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
         if (args.Length < 2) { Usage(); return 2; }
@@ -80,6 +84,16 @@ public static class IngestionReviewRunner
             apply: s => IngestionReviewAdapter.Apply(runId, s),
             openBrowser: settings.L3ReviewOpenBrowser && !noBrowser).ConfigureAwait(false);
         Console.WriteLine($"[ingest-review] {outcome} - {session.ResolvedCount()}/{session.Items.Count} entschieden -> human-decisions.json");
+
+        // 3b-2 (Autor 09.08.): Pipeline-Stufe? Dann kettet „Fertig" den resume (Responder liest die eben
+        // geschriebene Datei via TryLoadAny; Folgestufen inkl. LLM ⇒ LAUT). --no-resume = Opt-out.
+        if (PbiUpdate.PbiUpdateReviewRunner.TryGetPipelineRunId(planDir) is { } pipeRunId
+            && !args.Contains("--no-resume", StringComparer.OrdinalIgnoreCase)
+            && outcome == AgenticSdlc.HumanReview.ReviewOutcome.Finished)
+        {
+            Console.WriteLine($"[ingest-review] R-43: resume {pipeRunId} laeuft automatisch an (Folgestufen inkl. LLM) …");
+            return await Pipeline.PipelineFullRunner.RunAsync(["pipeline-full", "resume", pipeRunId], settings, repoRoot, null).ConfigureAwait(false);
+        }
         return 0;
     }
 

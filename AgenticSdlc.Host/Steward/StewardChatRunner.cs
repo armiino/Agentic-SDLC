@@ -68,6 +68,12 @@ public static class StewardChatRunner
     };
 #pragma warning restore MEAI001
 
+    /// <summary>M1b-Präzedenz (testbar): CLI-Flag überstimmt run-config-Default.</summary>
+    internal static (string? Memory, bool FromConfig) ResolveMemory(string? cliValue, HostSettings settings)
+        => cliValue is not null ? (cliValue, false)
+         : settings.StewardMemoryMode is not null ? (settings.StewardMemoryMode, true)
+         : (null, false);
+
     private const int DefaultWindowMessages = 40;
     private const int SummarizeKeepMessages = 20;
     private const int SummarizeThreshold = 10;
@@ -132,6 +138,9 @@ public static class StewardChatRunner
             else if (string.Equals(args[i], "--fresh", StringComparison.OrdinalIgnoreCase)) fresh = true;
         }
 
+        // M1b: run-config-Default (steward.memory) — das CLI-Flag überstimmt (K6-Modi, gleiche Validierung).
+        (memory, var memoryFromConfig) = ResolveMemory(memory, settings);
+
         var run = new RunContext(RunId.New(), "steward");
         run.EnsureFolders();
         AIAgent agent;
@@ -143,6 +152,7 @@ public static class StewardChatRunner
         var session = await LoadOrCreateSessionAsync(agent, path).ConfigureAwait(false);
         var memoryNote = memory is null ? "" : memory.StartsWith("summarize", StringComparison.OrdinalIgnoreCase)
             ? $" · memory={memory} (LLM-Verdichtung aktiv — kostet Tokens)" : $" · memory={memory}";
+        if (memoryFromConfig) memoryNote += " (run-config)";
         var freshNote = rotated is null ? "" : $" · Vorgänger-Stand → {Path.GetFileName(rotated)}";
         Console.WriteLine($"[steward] Sitzung '{sessionName}' ({(File.Exists(path) ? "fortgesetzt" : "neu")}){SessionSizeNote(path)}{memoryNote}{freshNote} · Logs: {Path.GetRelativePath(repoRoot, run.RunDir)} · /exit beendet");
 

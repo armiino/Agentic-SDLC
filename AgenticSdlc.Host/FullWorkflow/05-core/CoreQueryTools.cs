@@ -22,7 +22,7 @@ public sealed class CoreQueryTools(ICoreRepository repo)
         AIFunctionFactory.Create(GetCoreOverviewAsync, "get_core_overview",
             "Read-only-Ueberblick der Projektwahrheit: Item-Zaehlung je Typ, offene Entscheidungen (Parkplatz), Relations-Anzahl und die Kangal-Integritaetslage (Fehler/Warnungen)."),
         AIFunctionFactory.Create(ListCoreItemsAsync, "list_core_items",
-            "Listet Items der Projektwahrheit kompakt (id, typ, status, text gekuerzt). Filter: itemType (z. B. pbi|requirement|feature|decision|architecture), status = exakter Status-Wert (z. B. needs_clarify|active|accepted|open_decision|blocked_by_decision — fuer Status-Fragen DIESEN Filter nutzen statt Items einzeln zu oeffnen), query = genau EIN woertlicher Suchbegriff (Substring, case-insensitiv, Umlaut-tolerant; KEINE Operatoren wie OR — fuer Alternativen mehrfach aufrufen), includeSuperseded (Standard false = nur gueltige Wahrheit)."),
+            "Listet Items der Projektwahrheit kompakt (id, typ, status, text gekuerzt). Filter: itemType (z. B. pbi|requirement|feature|decision|architecture), sourceRunId = nur Items aus diesem Lauf (Wahrheits-seitige Lauf-Bilanz), status = exakter Status-Wert (z. B. needs_clarify|active|accepted|open_decision|blocked_by_decision — fuer Status-Fragen DIESEN Filter nutzen statt Items einzeln zu oeffnen), query = genau EIN woertlicher Suchbegriff (Substring, case-insensitiv, Umlaut-tolerant; KEINE Operatoren wie OR — fuer Alternativen mehrfach aufrufen), includeSuperseded (Standard false = nur gueltige Wahrheit)."),
         AIFunctionFactory.Create(GetCoreItemAsync, "get_core_item",
             "Liest EIN Item der Projektwahrheit VOLLSTAENDIG (Text, Status-Achsen, Payloads, Historie) inkl. aller Beziehungen (covers, part_of_feature, constrained_by, ...) mit den Texten der Gegenseite."),
     ];
@@ -46,7 +46,7 @@ public sealed class CoreQueryTools(ICoreRepository repo)
         }, Json);
     }
 
-    private async Task<string> ListCoreItemsAsync(string? itemType = null, string? status = null, string? query = null, bool includeSuperseded = false)
+    private async Task<string> ListCoreItemsAsync(string? itemType = null, string? status = null, string? query = null, bool includeSuperseded = false, string? sourceRunId = null)
     {
         if (await LoadAsync().ConfigureAwait(false) is not { } core)
             return NotFound();
@@ -54,6 +54,7 @@ public sealed class CoreQueryTools(ICoreRepository repo)
         var hits = core.Items
             .Where(i => itemType is null || string.Equals(i.ItemType, itemType, StringComparison.OrdinalIgnoreCase))
             .Where(i => status is null || string.Equals(i.Status, status, StringComparison.OrdinalIgnoreCase))
+            .Where(i => sourceRunId is null || string.Equals(i.SourceRunId, sourceRunId, StringComparison.OrdinalIgnoreCase))
             .Where(i => includeSuperseded || i.ReadStatus().Validity != Validity.Superseded)
             .Where(i => QueryText.Contains(i.Text, query) || (query is not null && i.ItemId.Contains(query, StringComparison.OrdinalIgnoreCase)))
             .OrderBy(i => i.ItemId, StringComparer.Ordinal)

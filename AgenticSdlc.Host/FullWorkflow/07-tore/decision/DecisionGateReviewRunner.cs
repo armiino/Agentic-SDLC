@@ -11,7 +11,11 @@ public static class DecisionGateReviewRunner
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
 
-    public static async Task<int> RunAsync(string[] args, string repoRoot)
+    /// <summary>K13-Façade (3b): typisierter UI-Start für den Steward — pausierter Lauf per runId.</summary>
+    public static Task<int> RunForRunAsync(string runId, Configuration.HostSettings settings, string repoRoot)
+        => RunAsync(["decision-gate-review", runId], settings, repoRoot);
+
+    public static async Task<int> RunAsync(string[] args, Configuration.HostSettings settings, string repoRoot)
     {
         if (args.Length < 2)
         {
@@ -57,8 +61,18 @@ public static class DecisionGateReviewRunner
 
         var resolved = file.Resolutions.Count(r => string.Equals(r.Action, DecisionStage.ActionResolve, StringComparison.OrdinalIgnoreCase));
         Console.WriteLine($"[decision-gate-review] {outcome}: {resolved} aufgeloest, {file.Resolutions.Count - resolved} vertagt -> {Path.GetRelativePath(repoRoot, decisionsPath)}");
-        Console.WriteLine($"[decision-gate-review] Weiter: pipeline-full resume {request.RunId}");
-        return 0;
+
+        // 3b-② (Autor 09.08.): „Fertig" kettet die deterministische Fortsetzung — der resume beantwortet den
+        // Port aus der eben geschriebenen Datei und faehrt die FOLGESTUFEN (inkl. LLM-Kosten, deshalb LAUT).
+        // --no-resume = Inspektions-Opt-out; Cancelled ⇒ Pause bleibt.
+        if (args.Contains("--no-resume", StringComparer.OrdinalIgnoreCase)
+            || outcome != AgenticSdlc.HumanReview.ReviewOutcome.Finished)
+        {
+            Console.WriteLine($"[decision-gate-review] Weiter: pipeline-full resume {request.RunId}");
+            return 0;
+        }
+        Console.WriteLine($"[decision-gate-review] R-43: resume {request.RunId} laeuft automatisch an (Folgestufen inkl. LLM) …");
+        return await Pipeline.PipelineFullRunner.RunAsync(["pipeline-full", "resume", request.RunId], settings, repoRoot, null).ConfigureAwait(false);
     }
 
     private static string? ResolveDir(string repoRoot, string token)

@@ -39,6 +39,9 @@ public sealed class RunConfig
         = new(StringComparer.Ordinal);
 
     public ObservabilityConfig Observability { get; set; } = new();
+
+    // M1b (09.08., Autor-Bestellung): Steward-Defaults je Projekt — CLI-Flags überstimmen.
+    public StewardConfig Steward { get; set; } = new();
     public LlmPreviewConfig LlmPreview { get; set; } = new();
     public JuryConfig Jury { get; set; } = new();
     public Phase2BStateConfig Phase2BState { get; set; } = new();
@@ -68,6 +71,12 @@ public sealed class RunConfig
 
         return JsonSerializer.Deserialize<RunConfig>(json, options) ?? new RunConfig();
     }
+}
+
+public sealed class StewardConfig
+{
+    /// <summary>Memory-Modus-Default (K6): null | "count[:N]" | "summarize". CLI --memory überstimmt.</summary>
+    public string? Memory { get; set; }
 }
 
 public sealed class ObservabilityConfig

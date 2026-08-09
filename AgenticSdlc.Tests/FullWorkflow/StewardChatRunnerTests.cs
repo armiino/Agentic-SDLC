@@ -36,7 +36,7 @@ public sealed class StewardChatRunnerTests
         var path = Path.Combine(Directory.CreateTempSubdirectory("steward-sess-").FullName, "s.json");
         var session = await StewardChatRunner.LoadOrCreateSessionAsync(agent, path);
         var first = await agent.RunAsync("Hallo.", session);
-        Assert.Contains("20 Tools", first.Text);                             // Lesen (4) + Core (3) + GitHub-Snap (1) + Start/Seile (7)
+        Assert.Contains("27 Tools", first.Text);                             // Lesen (4) + Core (3) + GitHub-Snap (1) + Start/Seile (7)
 
         await StewardChatRunner.SaveSessionAsync(agent, session, path);
         Assert.True(File.Exists(path));
@@ -78,6 +78,22 @@ public sealed class StewardChatRunnerTests
 
         var ex = Assert.Throws<ArgumentException>(() => StewardChatRunner.CreateReducer("vergiss-alles", new EchoCountClient()));
         Assert.Contains("count[:N] | summarize", ex.Message);
+    }
+
+    [Fact]
+    public void M1b_memory_Default_kommt_aus_run_config_und_mappt_in_die_Settings()
+    {
+        var cfg = new RunConfig { Steward = { Memory = "  count:12 " } };
+        var settings = HostSettings.FromRuntimeConfig(cfg, Directory.GetCurrentDirectory());
+        Assert.Equal("count:12", settings.StewardMemoryMode);                 // getrimmt gemappt
+
+        var leer = HostSettings.FromRuntimeConfig(new RunConfig(), Directory.GetCurrentDirectory());
+        Assert.Null(leer.StewardMemoryMode);                                  // kein Default = wie bisher
+
+        // Präzedenz gepinnt: CLI-Flag ÜBERSTIMMT den Config-Default (Kollegen-Nachzug 09.08.).
+        Assert.Equal(("count:5", false), StewardChatRunner.ResolveMemory("count:5", settings));
+        Assert.Equal(("count:12", true), StewardChatRunner.ResolveMemory(null, settings));
+        Assert.Equal((null, false), StewardChatRunner.ResolveMemory(null, leer));
     }
 
     [Fact]

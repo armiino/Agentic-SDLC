@@ -56,7 +56,9 @@ public sealed record HostSettings(
     string EvidenceArtifact,
     string? EvidenceTranscript,
     string? EvidenceLedgerRun,
-    int EvidenceRepetitions)
+    int EvidenceRepetitions,
+    // M1b: Steward-Memory-Default aus run-config (CLI --memory überstimmt; K6-Modi).
+    string? StewardMemoryMode = null)
 {
     /// <summary>
     /// Erstellt die Settings aus den aktuell gesetzten Umgebungsvariablen.
@@ -122,6 +124,8 @@ public sealed record HostSettings(
             L3LedgerRun: string.IsNullOrWhiteSpace(config.L3.LedgerRun) ? null : config.L3.LedgerRun.Trim(),
             // Evidenz-Agent (Kapitel B): Defaults source=transcript (Arm A), artifact=requirements (B-Minimal-Bar).
             EvidenceSource: evidenceSource,
+            // M1b: Steward-Memory-Default je Projekt (CLI --memory überstimmt).
+            StewardMemoryMode: string.IsNullOrWhiteSpace(config.Steward.Memory) ? null : config.Steward.Memory.Trim(),
             EvidenceArtifact: (string.IsNullOrWhiteSpace(config.EvidenceAgent.Artifact) ? "requirements" : config.EvidenceAgent.Artifact).Trim().ToLowerInvariant(),
             EvidenceTranscript: string.IsNullOrWhiteSpace(config.EvidenceAgent.Transcript) ? null : config.EvidenceAgent.Transcript.Trim(),
             EvidenceLedgerRun: string.IsNullOrWhiteSpace(config.EvidenceAgent.LedgerRun) ? null : config.EvidenceAgent.LedgerRun.Trim(),

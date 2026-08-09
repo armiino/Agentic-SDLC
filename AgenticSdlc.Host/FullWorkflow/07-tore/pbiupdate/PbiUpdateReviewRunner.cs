@@ -12,6 +12,10 @@ public static class PbiUpdateReviewRunner
 
     /// <summary>K13-2: typisierte Façade für den Steward — interaktiver UI-EINGANG bleibt bewusst der
     /// Runner (die Args-Form ist SEIN CLI-Vertrag, nicht der des Aufrufers).</summary>
+    /// <summary>K13-Façade (3b): UI auf die PIPELINE-Stufe des pausierten Laufs (R-44b-Datei-Vertrag).</summary>
+    public static Task<int> RunForPipelineRunAsync(string runId, HostSettings settings, string repoRoot)
+        => RunAsync(["pbi-update-review", Path.Combine("runs", "fullworkflow", runId, "07-pbi-update")], settings, repoRoot);
+
     public static Task<int> RunPendingAsync(string proposalId, HostSettings settings, string repoRoot)
         => RunAsync(["pbi-update-review", "--pending", proposalId], settings, repoRoot);
 
@@ -88,8 +92,24 @@ public static class PbiUpdateReviewRunner
             Console.WriteLine($"[pbi-update-review] Review nicht abgeschlossen ({outcome}) — kein Auto-Apply; später: pbi-update-apply {Path.GetRelativePath(repoRoot, planDir)}");
             return 0;
         }
+        // 3b-③/R-44b (09.08.): zeigt die UI auf eine PIPELINE-Stufe (07-pbi-update), gehört der Apply dem
+        // GRAPHEN — Standalone-Apply hier wäre ein DOPPEL-Apply. Stattdessen: resume beantwortet den Port
+        // aus der eben geschriebenen Datei und fährt die Folgestufen (LLM-Kosten ⇒ LAUT).
+        if (TryGetPipelineRunId(planDir) is { } pipelineRunId)
+        {
+            Console.WriteLine($"[pbi-update-review] R-43: resume {pipelineRunId} laeuft automatisch an (Graph-Apply; Folgestufen inkl. LLM) …");
+            return await FullWorkflow.Pipeline.PipelineFullRunner.RunAsync(["pipeline-full", "resume", pipelineRunId], settings, repoRoot, null).ConfigureAwait(false);
+        }
         Console.WriteLine("[pbi-update-review] R-43: Apply läuft automatisch an …");
         return await PbiUpdateApplyRunner.ApplyFromPlanDirAsync(planDir, repoRoot).ConfigureAwait(false);   // K13-1: typisierte Naht
+    }
+
+    /// <summary>runId, wenn der Plan-Ordner eine pipeline-full-STUFE ist (runs/fullworkflow/&lt;runId&gt;/…) — sonst null.</summary>
+    internal static string? TryGetPipelineRunId(string planDir)
+    {
+        var parts = Path.GetFullPath(planDir).Split(Path.DirectorySeparatorChar);
+        var i = Array.FindLastIndex(parts, p => string.Equals(p, "fullworkflow", StringComparison.Ordinal));
+        return i > 0 && i + 1 < parts.Length && string.Equals(parts[i - 1], "runs", StringComparison.Ordinal) ? parts[i + 1] : null;
     }
 
     internal static string? ResolvePlanDir(string repoRoot, string token)
