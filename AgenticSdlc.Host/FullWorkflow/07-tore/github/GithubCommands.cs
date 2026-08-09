@@ -34,6 +34,9 @@ public static class GithubCommands
         // C2a-4 (08.08.): deterministische Inbound-Ernte-Erkennung (Zwischenbahn; Ein-Graph-Eingang = C2c).
         map["github-inbound"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Tore.Github.Inbound.GithubInboundRunner.RunAsync(args, settings, repoRoot);
 
+        // C2d ① (09.08.): Kommentar-Destillat-Zwischenbahn — Diskussionsraum als Evidenz, Wahrheit nur via Gates.
+        map["github-comment-distill"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Tore.Github.Inbound.GithubCommentDistillRunner.RunAsync(args, settings, repoRoot);
+
         map["github-reverse"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubReverseRunner.RunAsync(args, repoRoot);
 
         map["github-reverse-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubReverseReviewRunner.RunAsync(args, settings, repoRoot);

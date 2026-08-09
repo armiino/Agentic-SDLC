@@ -76,6 +76,27 @@ public static class IngestionApplyExec
             Console.WriteLine("[ingest-apply] R-35: keine human-decisions.json im Plan-Ordner — Ablehnungen werden nicht aufgezeichnet (Experiment-Modus?).");
         }
 
+        // C2d §3-2 (Kommentar-Gedächtnis): Incoming-Items aus dem Kommentar-Destillat tragen den Anker
+        // (githubCommentAnchor). JEDES vom Plan abgedeckte Incoming gilt nach dem Gate als VERARBEITET —
+        // Annahme wie Ablehnung stempeln (§11-Prinzip), im SELBEN Save. Kein Anker-Ziel im Core (weder
+        // Mapping noch adoptierendes Item) ⇒ LAUT benannt, dokumentierte Grenze (GithubCommentMeta).
+        var planIncomingIds = plan.Operations.Select(o => o.IncomingItemId).ToHashSet(StringComparer.Ordinal);
+        foreach (var group in meetingDelta.Items
+                     .Where(i => planIncomingIds.Contains(i.ItemId)
+                                 && i.Metadata.ContainsKey(GithubCommentMeta.AnchorKey)
+                                 && GithubOriginMeta.IssueNumberOf(i) is not null)
+                     .GroupBy(i => GithubOriginMeta.IssueNumberOf(i)!.Value))
+        {
+            var anchor = group
+                .Select(i => long.TryParse(i.Metadata[GithubCommentMeta.AnchorKey], out var a) ? a : 0L)
+                .Max();
+            if (anchor <= 0) continue;
+            var (stampedCore, stamped) = GithubCommentMeta.Stamp(updatedCore, group.Key, anchor);
+            if (stamped) updatedCore = stampedCore;
+            else Console.WriteLine($"[ingest-apply] C2d: Kommentar-Anker fuer gh#{group.Key} hat KEIN Core-Ziel "
+                + "(weder Mapping noch adoptiertes Item) — Kommentare erscheinen beim naechsten Pull erneut, dann mit R-35-Note.");
+        }
+
         await coreRepo.SaveAsync(updatedCore).ConfigureAwait(false);
 
         await File.WriteAllTextAsync(reportPath, JsonSerializer.Serialize(report, Json), ct).ConfigureAwait(false);

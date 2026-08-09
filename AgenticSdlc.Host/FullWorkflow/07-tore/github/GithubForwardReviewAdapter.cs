@@ -163,6 +163,7 @@ public static class GithubForwardReviewAdapter
             GithubForwardKind.CreateIssue => $"Neues Issue für {op.PbiId}: {op.Title}",
             GithubForwardKind.UpdateIssue => $"Issue aktualisieren: {op.PbiId}{issueRef}",
             GithubForwardKind.Comment => $"Kommentar: {op.PbiId}{issueRef}",
+            GithubForwardKind.NoteComment => $"Abschluss-Vermerk (C2d): {op.PbiId}{issueRef}",
             GithubForwardKind.Link => $"Verknüpfen: {op.PbiId}{issueRef}",
             GithubForwardKind.FlagDrift => $"Drift-Hinweis: {op.PbiId}{issueRef}",
             GithubForwardKind.HoldBlocked => $"Zurückgehalten (blockiert): {op.PbiId}",

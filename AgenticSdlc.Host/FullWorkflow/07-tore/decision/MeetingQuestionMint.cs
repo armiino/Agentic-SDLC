@@ -20,6 +20,9 @@ public static class MeetingQuestionMint
     {
         var meta = new Dictionary<string, string>(StringComparer.Ordinal) { ["ingestedFrom"] = incoming.ItemId };
         if (!string.IsNullOrWhiteSpace(incoming.SourceRunId)) meta["ingestedFromRun"] = incoming.SourceRunId;
+        // 9i: kam die Frage aus einem GitHub-Issue, traegt die DEC die Herkunft (Ernte-Gedaechtnis; W4-Anker
+        // fuer „DEC aufgeloest -> Issue schliessen"). No-op fuer Meeting-/Autor-Fragen — geteilte Naht bleibt neutral.
+        GithubOriginMeta.CarryOver(incoming, meta);
 
         return new ProjectStateItem(
             ItemId: decId, ItemType: "decision", Text: questionText, Origin: Origin, Stage: null, Version: 1,

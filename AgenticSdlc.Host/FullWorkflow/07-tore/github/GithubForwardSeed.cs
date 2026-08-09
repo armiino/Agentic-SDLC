@@ -18,7 +18,10 @@ public static class GithubForwardSeed
         IReadOnlyList<GithubSyncEntry> deltaEntries,
         IReadOnlyDictionary<string, GithubMappingRecord> mappingByPbi,
         IReadOnlyList<GithubIssueSnapshot> issues,
-        bool holdUnclearNewPbis = false)
+        bool holdUnclearNewPbis = false,
+        // 9m: pbiId -> Ursprungs-Issue aus der Adoption (GithubOriginMeta.AdoptedIssueByPbi) — deterministischer
+        // LINK statt Such-Match/CREATE-Duplikat, wenn das PBI ein geerntetes Issue deckt.
+        IReadOnlyDictionary<string, int>? adoptedIssueByPbi = null)
     {
         var issueByNumber = issues.GroupBy(i => i.IssueNumber).ToDictionary(g => g.Key, g => g.Last());
         var deterministic = new List<GithubForwardOp>();
@@ -42,6 +45,18 @@ public static class GithubForwardSeed
 
             if (mapping is null)
             {
+                // 9m: das PBI deckt ein adoptiertes Issue (eindeutige Herkunft) → deterministischer LINK aufs
+                // Original — NIE ein CREATE-Duplikat, NIE dem Such-Match überlassen. Gated wie jede Op.
+                if (adoptedIssueByPbi?.TryGetValue(e.PbiId, out var adoptedIssue) == true)
+                {
+                    deterministic.Add(new GithubForwardOp(
+                        GithubForwardKind.Link, e.PbiId, adoptedIssue, null, null, null, null, null,
+                        Anchor: $"pbi {e.PbiId} -> {CoreGithubMapping.IssueRef(adoptedIssue)} (adoptiert)",
+                        Rationale: $"PBI deckt Wahrheit, die aus Issue #{adoptedIssue} adoptiert wurde — deterministischer Link aufs Ursprungs-Issue (9m).",
+                        Origin: "deterministic"));
+                    continue;
+                }
+
                 // R-26: neues, noch unklares PBI ohne Mapping + niemand da, der ein Issue autorisiert (accept-all) →
                 // PARKEN statt agentisch CREATE erzwingen. Deterministisch, sichtbar, keine Sackgasse. Gemappte
                 // needs_clarify bleiben unberuehrt (UPDATE, s. u.). Aufloesen = Folgeschritt (Option C / Parkplatz-Core).

@@ -14,7 +14,8 @@ public sealed class AspectIngestionProfileTests
     private static readonly AspectIngestionProfile Widget = new(
         Aspect: "widget", IdPrefix: "WID", ItemLabel: "Widget",
         AgentName: "WidgetAgent", PromptName: "WidgetAgent1",
-        ListCoreToolName: "list_core_widgets", ResolverTaskText: "widget-task", ExecutorIdPrefix: "WidgetIngestion", EventPrefix: "WIDGET_INGEST");
+        ListCoreToolName: "list_core_widgets", ResolverTaskText: "widget-task", ExecutorIdPrefix: "WidgetIngestion", EventPrefix: "WIDGET_INGEST",
+        CarriesQuestionLane: true);
 
     private static ProjectStateItem Item(string id, string type, string text = "t") => new ProjectStateItem(
         id, type, text, "MEETING", null, 1,
@@ -96,16 +97,23 @@ public sealed class AspectIngestionProfileTests
     }
 
     [Fact]
-    public void Fragen_Pfad_bleibt_Querschnitt_und_wird_NICHT_mitparametrisiert()
+    public void Fragen_Spur_folgt_dem_Profil_Flag()
     {
-        // D-2: open_question-Items sind Coverage-Bürger UNABHÄNGIG vom Profil (kind-basierter 9g-Pfad).
+        // 9i (löst D-2 bewusst ab): die 9g-Fragen-Spur gehört GENAU EINEM Strip (CarriesQuestionLane) —
+        // sonst müsste bei gemischten Deltas JEDER Strip die Fragen covern (Doppel-Coverage/Doppel-DEC).
+        // Spur-tragendes Profil: Fragen sind Coverage-Bürger (9g-Verhalten unverändert).
         var delta = Doc(Item("OQ-1", "open_question", "Ist X geklärt?"));
         var core = Doc();
 
         var missing = IngestionGate.Check(delta, core, Plan(), Widget);
-        Assert.Contains(missing.Errors, e => e.IncomingItemId == "OQ-1");   // Frage verlangt Op — auch im widget-Profil
+        Assert.Contains(missing.Errors, e => e.IncomingItemId == "OQ-1");   // Frage verlangt Op (Flag=true)
 
         var ok = IngestionGate.Check(delta, core, Plan(Op("OQ-1", StateChangeKind.OpenQuestion)), Widget);
         Assert.True(ok.Pass, string.Join("; ", ok.Errors.Select(e => e.Code)));
+
+        // Spur-loses Profil (arch, Flag=false): weder Coverage-Pflicht noch erlaubtes Op-Ziel —
+        // gepinnt in GithubQuestionOriginTests.Fragen_Spur_gehoert_nur_dem_Requirement_Strip.
+        Assert.False(AspectIngestionProfile.Architecture.CarriesQuestionLane);
+        Assert.True(AspectIngestionProfile.Requirement.CarriesQuestionLane);
     }
 }

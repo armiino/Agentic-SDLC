@@ -19,9 +19,157 @@ public static class GithubIssueSnapshotRunner
         return args[1].ToLowerInvariant() switch
         {
             "issues" => await RunIssuesAsync(args, repoRoot).ConfigureAwait(false),
+            "comments" => await RunCommentsAsync(args, repoRoot).ConfigureAwait(false),
             "close-open" => await RunCloseOpenAsync(args, repoRoot).ConfigureAwait(false),
             _ => UnknownMode(args[1])
         };
+    }
+
+    // ---- C2d ① (c2d-plan §3-1): eigener comments-snapshot — Kommentare = Evidenz aus dem Diskussionsraum ----
+
+    private static async Task<int> RunCommentsAsync(string[] args, string repoRoot)
+    {
+        var options = ParseOptions(args, startIndex: 2);
+        if (options.Error is not null)
+        {
+            Console.Error.WriteLine(options.Error);
+            Usage();
+            return 2;
+        }
+        return await RunCommentsCoreAsync(options, repoRoot).ConfigureAwait(false);
+    }
+
+    /// <summary>K13/C2d: typisierte Naht für Steward + Auto-Pull — frischer Kommentar-Snapshot via GitHub-API.
+    /// issuesPath = expliziter Issue-Snapshot als PR-Filter (Auto-Pull: der soeben gezogene; sonst der letzte).</summary>
+    public static Task<int> PullCommentsAsync(string repository, string repoRoot, int limit = 500, string? outDir = null, string? issuesPath = null)
+        => RunCommentsCoreAsync(new GithubSnapshotCliOptions(repository, issuesPath, outDir, "api", limit, null), repoRoot);
+
+    private static async Task<int> RunCommentsCoreAsync(GithubSnapshotCliOptions options, string repoRoot)
+    {
+        if (string.IsNullOrWhiteSpace(options.Repository))
+        {
+            Console.Error.WriteLine("[github-snapshot] --repo owner/name fehlt.");
+            return 2;
+        }
+
+        // Der Issue-Snapshot ist der FILTER: der repo-weite comments-Endpoint liefert auch PR-Kommentare
+        // (PRs sind API-seitig Issues) — wir behalten nur Kommentare zu Issues, die wir kennen. Deshalb
+        // braucht der Kommentar-Pull einen vorhandenen (im Auto-Pull: soeben gezogenen) Issue-Snapshot.
+        var issueSnapshotPath = !string.IsNullOrWhiteSpace(options.FilePath)
+            ? ResolvePath(repoRoot, options.FilePath)
+            : GithubSnapshotLocator.FindLatest(repoRoot);
+        if (issueSnapshotPath is null || !File.Exists(issueSnapshotPath))
+        {
+            Console.Error.WriteLine("[github-snapshot] comments braucht einen Issue-Snapshot als Filter (erst: github-snapshot issues --repo <owner/name>).");
+            return 2;
+        }
+        var knownIssues = (await LoadIssueFileAsync(issueSnapshotPath).ConfigureAwait(false))
+            .Select(i => i.IssueNumber).ToHashSet();
+
+        IReadOnlyList<GithubIssueCommentSnapshot> comments;
+        try
+        {
+            comments = await LoadCommentsWithGitHubApiAsync(options.Repository, options.Limit, knownIssues).ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[github-snapshot] Kommentar-Snapshot fehlgeschlagen: {ex.Message}");
+            return 2;
+        }
+
+        var run = new RunContext(RunId.New(), "github-snapshot");
+        run.EnsureFolders();
+        var outDir = options.Output is null ? run.OutputDir("comments") : ResolvePath(repoRoot, options.Output);
+        Directory.CreateDirectory(outDir);
+        var snapshotPath = Path.Combine(outDir, "issue-comments.json");
+        var summary = new
+        {
+            schemaVersion = 1,
+            repository = options.Repository,
+            issueSnapshot = Path.GetRelativePath(repoRoot, issueSnapshotPath),
+            comments = comments.Count,
+            issuesWithComments = comments.Select(c => c.IssueNumber).Distinct().Count(),
+            timestampUtc = DateTime.UtcNow
+        };
+        await File.WriteAllTextAsync(snapshotPath, JsonSerializer.Serialize(comments, Json)).ConfigureAwait(false);
+        await File.WriteAllTextAsync(Path.Combine(outDir, "issue-comments-summary.json"), JsonSerializer.Serialize(summary, Json)).ConfigureAwait(false);
+        run.WriteConfig(new
+        {
+            command = "github-snapshot comments",
+            repository = options.Repository,
+            limit = options.Limit,
+            outDir = Path.GetRelativePath(repoRoot, outDir),
+            timestampUtc = DateTime.UtcNow
+        });
+        run.AppendEvent(new { type = "GITHUB_COMMENT_SNAPSHOT_WRITTEN", runId = run.RunId, comments = comments.Count, timestampUtc = DateTime.UtcNow });
+
+        Console.WriteLine($"[github-snapshot] comments={comments.Count} issues={summary.issuesWithComments}");
+        Console.WriteLine($"[github-snapshot] -> {Path.GetRelativePath(repoRoot, snapshotPath)}");
+        return 0;
+    }
+
+    // Repo-weiter Endpoint (EIN paginierter Call statt N Einzel-Calls je Issue); aufsteigend nach created,
+    // damit der Anker („letzter verarbeiteter Kommentar", GithubCommentMeta) monoton bleibt.
+    internal static async Task<IReadOnlyList<GithubIssueCommentSnapshot>> LoadCommentsWithGitHubApiAsync(
+        string repository, int limit, IReadOnlySet<int> knownIssues, string? explicitToken = null)
+    {
+        if (repository.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Length != 2)
+            throw new InvalidOperationException("--repo muss die Form owner/name haben.");
+
+        using var client = new HttpClient();
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("AgenticSdlc/1.0");
+        client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
+        var token = explicitToken ?? Environment.GetEnvironmentVariable("GITHUB_TOKEN") ?? Environment.GetEnvironmentVariable("GH_TOKEN");
+        if (!string.IsNullOrWhiteSpace(token))
+            client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+        var comments = new List<GithubIssueCommentSnapshot>();
+        var page = 1;
+        while (comments.Count < limit)
+        {
+            var url = $"https://api.github.com/repos/{repository}/issues/comments?sort=created&direction=asc&per_page=100&page={page}";
+            using var response = await client.GetAsync(url).ConfigureAwait(false);
+            var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            if (!response.IsSuccessStatusCode)
+                throw new InvalidOperationException($"GitHub API fehlgeschlagen ({(int)response.StatusCode}): {body}");
+
+            using var document = JsonDocument.Parse(body);
+            if (document.RootElement.ValueKind != JsonValueKind.Array)
+                throw new InvalidOperationException("GitHub API lieferte kein Kommentar-Array.");
+
+            var pageCount = document.RootElement.GetArrayLength();
+            foreach (var item in document.RootElement.EnumerateArray())
+            {
+                if (ParseComment(item) is { } comment && knownIssues.Contains(comment.IssueNumber))
+                {
+                    comments.Add(comment);
+                    if (comments.Count >= limit) break;
+                }
+            }
+            if (pageCount < 100) break;
+            page++;
+        }
+        return comments;
+    }
+
+    // Kein stilles Verwerfen-Raten: ein Kommentar ohne id/issue_url ist API-seitig kaputt -> null (Filter),
+    // die Issue-Nummer kommt aus dem issue_url-Suffix (".../issues/<n>").
+    internal static GithubIssueCommentSnapshot? ParseComment(JsonElement item)
+    {
+        if (!item.TryGetProperty("id", out var idEl) || !idEl.TryGetInt64(out var id)) return null;
+        var issueUrl = ReadString(item, "issue_url") ?? ReadString(item, "issueUrl");
+        var tail = issueUrl?.Split('/').LastOrDefault();
+        if (!int.TryParse(tail, out var issueNumber))
+        {
+            if (ReadInt(item, "issueNumber") is { } explicitNumber) issueNumber = explicitNumber;
+            else return null;
+        }
+        var author = item.TryGetProperty("user", out var user) && user.ValueKind == JsonValueKind.Object
+            ? ReadString(user, "login") : ReadString(item, "author");
+        return new GithubIssueCommentSnapshot(
+            issueNumber, id, author,
+            ReadDateTime(item, "created_at") ?? ReadDateTime(item, "createdUtc"),
+            ReadString(item, "body") ?? "");
     }
 
     private static async Task<int> RunCloseOpenAsync(string[] args, string repoRoot)
@@ -144,9 +292,10 @@ public static class GithubIssueSnapshotRunner
     }
 
     /// <summary>K13-2 (09.08.): typisierte Naht für den Steward — frischer Issue-Snapshot via GitHub-API,
-    /// ohne CLI-String-Args (dieselbe Kern-Logik wie `github-snapshot issues`).</summary>
-    public static Task<int> PullIssuesAsync(string repository, string repoRoot, int limit = 200)
-        => RunIssuesCoreAsync(new GithubSnapshotCliOptions(repository, null, null, "api", limit, null), repoRoot);
+    /// ohne CLI-String-Args (dieselbe Kern-Logik wie `github-snapshot issues`). outDir = explizites Ziel
+    /// (C2d Auto-Pull: der Snapshot wird Run-Artefakt des pipeline-full-Laufs).</summary>
+    public static Task<int> PullIssuesAsync(string repository, string repoRoot, int limit = 200, string? outDir = null)
+        => RunIssuesCoreAsync(new GithubSnapshotCliOptions(repository, null, outDir, "api", limit, null), repoRoot);
 
     private static async Task<int> RunIssuesCoreAsync(GithubSnapshotCliOptions options, string repoRoot)
     {
@@ -512,6 +661,7 @@ public static class GithubIssueSnapshotRunner
     {
         Console.Error.WriteLine("Usage: github-snapshot issues <owner/name|--repo owner/name> [--provider api|gh] [--limit 100] [--out <dir>]");
         Console.Error.WriteLine("       github-snapshot issues --file <issues.json> [--repo owner/name] [--out <dir>]");
+        Console.Error.WriteLine("       github-snapshot comments <owner/name|--repo owner/name> [--limit 500] [--out <dir>]  (Filter = letzter Issue-Snapshot)");
         Console.Error.WriteLine("       github-snapshot close-open <owner/name|--repo owner/name> --confirm-close [--token-env GITHUB_TEST_TOKEN] [--limit 100] [--out <dir>]");
     }
 

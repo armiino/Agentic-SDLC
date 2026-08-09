@@ -137,6 +137,17 @@ public static class GithubForwardApply
                         commented++;
                         break;
                     }
+                    case GithubForwardKind.NoteComment:
+                    {
+                        // C2d §3-5: Abschluss-Vermerk am Ursprungs-Issue — NUR der Kommentar, BEWUSST kein
+                        // Mapping-Write (im Gegensatz zu COMMENT): der Betreff ist ein Wahrheits-Item, kein PBI.
+                        if (op.TargetIssueNumber is null) { reportOps.Add(Op(opId, op, null, null, "failed", "NOTE_COMMENT ohne targetIssueNumber")); failed++; break; }
+                        if (!execute) { reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "would-comment", null)); commented++; break; }
+                        var note = await client!.CreateCommentAsync(repository!, op.TargetIssueNumber.Value, op.Body ?? op.Rationale, ct).ConfigureAwait(false);
+                        reportOps.Add(Op(opId, op, op.TargetIssueNumber, note.IssueUrl, "commented", null));
+                        commented++;
+                        break;
+                    }
                     case GithubForwardKind.Link:
                     {
                         // Kein GitHub-Write — nur das (menschlich bestaetigte) Mapping in den Core.

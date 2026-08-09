@@ -21,7 +21,11 @@ public sealed record AspectIngestionProfile(
     string ListCoreToolName,  // Tool-Name der Kandidaten-Liste (Vertrag mit dem Prompt!)
     string ResolverTaskText,  // die User-Task des Resolvers (Maker + wörtlich im Repair)
     string ExecutorIdPrefix,  // A1d: eindeutige Executor-IDs je Strip (req-IDs bleiben WÖRTLICH die heutigen!)
-    string EventPrefix)       // Audit-Ehrlichkeit: Event-Typen je Strip (req WÖRTLICH "REQ_INGEST", arch "ARCH_INGEST")
+    string EventPrefix,       // Audit-Ehrlichkeit: Event-Typen je Strip (req WÖRTLICH "REQ_INGEST", arch "ARCH_INGEST")
+    // 9i (09.08.): die 9g-Fragen-Spur gehört GENAU EINEM Strip (E-R3 „arch ohne Fragen-Block" als Daten) —
+    // sonst müsste bei gemischten Deltas (req+arch+Fragen) JEDER Strip die Fragen covern und der
+    // identitäts-freie OpenQuestion-Apply würde doppelt prägen (Doppel-DEC).
+    bool CarriesQuestionLane)
 {
     /// <summary>Das heutige Verhalten 1:1 als Daten (Golden-Referenz).</summary>
     public static readonly AspectIngestionProfile Requirement = new(
@@ -33,7 +37,8 @@ public sealed record AspectIngestionProfile(
         ListCoreToolName: "list_core_requirements",
         ResolverTaskText: IngestionResolveTask.Text,
         ExecutorIdPrefix: "RequirementIngestion",
-        EventPrefix: "REQ_INGEST");
+        EventPrefix: "REQ_INGEST",
+        CarriesQuestionLane: true);
 
     /// <summary>R-11 A1d (05.08.) — der zweite Aspekt: Architektur als vollwertiger Tor-1-Bürger.
     /// Vokabular bewusst OHNE NEW_RELATED (featureKey = req-Semantik) und OHNE Fragen-Block (E-R3);
@@ -63,7 +68,8 @@ public sealed record AspectIngestionProfile(
                           Beleg-Pflicht: claimIds je Operation; im Zweifel NEW statt raten.
                           """,
         ExecutorIdPrefix: "ArchitectureIngestion",
-        EventPrefix: "ARCH_INGEST");
+        EventPrefix: "ARCH_INGEST",
+        CarriesQuestionLane: false);
 
     /// <summary>② E-R4 (06.08.): der jeweils ANDERE Wahrheits-Aspekt — speist die Quer-LESE-Sicht des
     /// Resolvers (Cross-CONTRADICT). Bewusst als Paar req↔arch; ein dritter Wahrheits-Aspekt bräuchte

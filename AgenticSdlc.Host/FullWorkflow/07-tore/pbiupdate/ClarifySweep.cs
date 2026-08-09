@@ -92,7 +92,9 @@ public sealed record ClarifySweepAnswer(
     [property: System.Text.Json.Serialization.JsonPropertyName("pbiId")] string PbiId,
     [property: System.Text.Json.Serialization.JsonPropertyName("antwort")] string Antwort,
     [property: System.Text.Json.Serialization.JsonPropertyName("quelle")] string Quelle = "author via steward-chat",
-    [property: System.Text.Json.Serialization.JsonPropertyName("sessionName")] string? SessionName = null);
+    [property: System.Text.Json.Serialization.JsonPropertyName("sessionName")] string? SessionName = null,
+    // C2d §3-4: expliziter Herkunfts-Ref-Override (z. B. `gh-comment:<issue>#<commentId>`) — null = Chat-Form.
+    [property: System.Text.Json.Serialization.JsonPropertyName("answerRef")] string? AnswerRef = null);
 
 /// <summary>
 /// C4b — deterministischer Plan-Bau aus Antworten: MARK_CHANGED-Ops mit der EIGENEN Herkunfts-Naht
@@ -120,7 +122,7 @@ public static class ClarifySweepPlanBuilder
             if (pbi.ReadStatus().Blocker != Delta.Blocker.NeedsClarify)
             { skipped.Add($"{a.PbiId}: nicht (mehr) needs_clarify — evtl. zwischenzeitlich geklärt (Meeting-Koexistenz §4)"); continue; }
 
-            var answerRef = $"chat:{a.SessionName ?? "steward"}#{n}";
+            var answerRef = a.AnswerRef ?? $"chat:{a.SessionName ?? "steward"}#{n}";
             ops.Add(new PbiStateChangeOperation(PbiUpdateKind.MarkChanged, RequirementId: "", PbiId: a.PbiId,
                 FeatureId: null, ReplacementRequirementId: null, OpenDecisionRef: null,
                 Rationale: $"Klärungs-Sweep: {a.Quelle}", AuthorAnswerRef: answerRef, AuthorAnswerText: a.Antwort.Trim()));

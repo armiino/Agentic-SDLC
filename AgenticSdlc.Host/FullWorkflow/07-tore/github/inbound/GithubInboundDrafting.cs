@@ -1,3 +1,4 @@
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Agents.AI;
@@ -18,7 +19,10 @@ public sealed record GithubInboundDraft(
     [property: JsonPropertyName("issueNumber")] int IssueNumber,
     [property: JsonPropertyName("disposition")] string Disposition,
     [property: JsonPropertyName("draftText")] string DraftText,
-    [property: JsonPropertyName("rationale")] string Rationale);
+    [property: JsonPropertyName("rationale")] string Rationale,
+    // C2d §3-2: stammt der Draft aus Kommentaren, traegt er den hoechsten tragenden Kommentar als Anker —
+    // der gated Apply stempelt damit das Kommentar-Gedaechtnis (GithubCommentMeta). null = Body-/Issue-Draft.
+    [property: JsonPropertyName("commentAnchor"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] long? CommentAnchor = null);
 
 public static class GithubInboundDisposition
 {
@@ -42,7 +46,8 @@ internal sealed class GithubInboundDraftTools(IReadOnlyList<GithubInboundFind> f
     public IReadOnlyList<AITool> Build() =>
     [
         AIFunctionFactory.Create(GetFinds, "get_inbound_finds",
-            "Die Ernte-Funde: issueNumber, kategorie (F1=Edit an gemapptem Issue [pbiId gesetzt], F2=Neu-Issue), "
+            "Die Ernte-Funde: issueNumber, kategorie (F1=Edit an gemapptem Issue [pbiId gesetzt], F2=Neu-Issue, "
+            + "F7=Edit an bereits adoptiertem Issue [adoptedItemId gesetzt]), "
             + "titel, details (deterministischer Diff), statement/akzeptanzkriterien/freitext aus dem geparsten Body."),
         AIFunctionFactory.Create(SaveDrafts, "save_inbound_drafts",
             "Speichert je Fund GENAU EINEN Draft: issueNumber, disposition (requirement|architecture|open_question|noise), "
@@ -56,6 +61,7 @@ internal sealed class GithubInboundDraftTools(IReadOnlyList<GithubInboundFind> f
             kategorie = f.Category,
             titel = f.Title,
             pbiId = f.PbiId,
+            adoptedItemId = f.AdoptedItemId,
             details = f.Details,
             statement = f.Parsed?.Statement,
             akzeptanzkriterien = f.Parsed?.AcceptanceCriteria,
@@ -107,10 +113,11 @@ public static class GithubInboundDraftAgent
 
 /// <summary>
 /// Deterministischer Bau des Delta-Vertrags (§2: DERSELBE Vertrag wie die Meeting-Kette — die Tore bleiben
-/// unverändert). requirement/architecture-Drafts werden Delta-Items im Aspekt-Profil-Format; die Evidenz
-/// (Issue-Nr/URL/harvestedHashes für den §11-Stempel am Apply) reist in Item-Metadata + sources/provenance.
-/// open_question-Drafts gehen NICHT ins Delta (die 9g-Fragen-Schiene ist ein eigener Anschluss = C2c/9i) —
-/// sie bleiben SICHTBAR in Drafts/Report (kein stiller Verlust). noise → nur Report.
+/// unverändert). requirement/architecture/open_question-Drafts werden Delta-Items (die Disposition IST der
+/// itemType — Fragen fahren seit 9i auf der 9g-Schiene zum DEC-Topf, F3); die Evidenz (Issue-Nr/URL/
+/// harvestedHashes) reist als <see cref="GithubOriginMeta"/> in Item-Metadata + sources/provenance und wird
+/// beim gated Apply ins Core-Item übernommen (Ernte-Gedächtnis + deterministischer Forward-Link, 9m).
+/// noise → nur Report.
 /// </summary>
 public static class GithubInboundDeltaBuilder
 {
@@ -127,32 +134,43 @@ public static class GithubInboundDeltaBuilder
         var sources = new List<ProjectStateSource>();
         var provenance = new List<ProjectStateProvenance>();
 
-        foreach (var d in drafts.Where(d => d.Disposition is GithubInboundDisposition.Requirement or GithubInboundDisposition.Architecture)
+        var perIssueCount = new Dictionary<int, int>();
+        foreach (var d in drafts.Where(d => d.Disposition is GithubInboundDisposition.Requirement
+                         or GithubInboundDisposition.Architecture or GithubInboundDisposition.OpenQuestion)
                      .OrderBy(d => d.IssueNumber))
         {
             if (!issueByNumber.TryGetValue(d.IssueNumber, out var issue)) continue;   // Draft ohne Issue = unmöglich (Save validiert)
             var find = findByIssue.GetValueOrDefault(d.IssueNumber);
-            var itemId = $"GH-{d.IssueNumber}";
+            // C2d: eine Diskussion kann MEHRERE Aussagen tragen — eindeutige IDs per Suffix (GH-20, GH-20-2, …).
+            var nth = perIssueCount[d.IssueNumber] = perIssueCount.GetValueOrDefault(d.IssueNumber) + 1;
+            var itemId = nth == 1 ? $"GH-{d.IssueNumber}" : $"GH-{d.IssueNumber}-{nth}";
             var sourceId = $"github-issue:{d.IssueNumber}";
+
+            var meta = new Dictionary<string, string>
+            {
+                // §9/§11 + 9i/9m: der gated Apply übernimmt GENAU diese Herkunfts-Felder (GithubOriginMeta.CarryOver)
+                // ins Core-Item — Ernte-Gedächtnis + deterministische Forward-Link-Quelle.
+                [GithubOriginMeta.IssueNumber] = d.IssueNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                [GithubOriginMeta.IssueUrl] = issue.Url ?? "",
+                [GithubOriginMeta.HarvestedTitleHash] = GithubProjectionHash.Compute(issue.Title),
+                [GithubOriginMeta.HarvestedBodyHash] = GithubProjectionHash.Compute(issue.Body),
+                ["inboundCategory"] = find?.Category ?? "",
+                ["mappedPbiId"] = find?.PbiId ?? "",
+                ["rationale"] = d.Rationale,
+            };
+            // C2d §3-2: Kommentar-Anker reist mit — der gated Apply stempelt daraus das Gedächtnis.
+            if (d.CommentAnchor is { } anchor)
+                meta[GithubCommentMeta.AnchorKey] = anchor.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
             // §5-Statusmodell: die typisierten Achsen sind Pflicht (der laute ReadStatus-Guard wirft sonst
             // beim Serialisieren) — Delta-Items tragen wie in der Meeting-Kette den Status "baseline".
             items.Add(new ProjectStateItem(
                 itemId, d.Disposition, d.DraftText.Trim(), "GithubInbound", "github_inbound", 1,
                 runId, sourceId, "github-issue", null, null, [], [],
-                new Dictionary<string, string>
-                {
-                    // §9-Adoption + §11-Verarbeitungs-Gedächtnis: der Apply prägt Mapping/Stempel aus GENAU diesen Feldern.
-                    ["githubIssueNumber"] = d.IssueNumber.ToString(System.Globalization.CultureInfo.InvariantCulture),
-                    ["githubIssueUrl"] = issue.Url ?? "",
-                    ["harvestedTitleHash"] = GithubProjectionHash.Compute(issue.Title),
-                    ["harvestedBodyHash"] = GithubProjectionHash.Compute(issue.Body),
-                    ["inboundCategory"] = find?.Category ?? "",
-                    ["mappedPbiId"] = find?.PbiId ?? "",
-                    ["rationale"] = d.Rationale,
-                }).WithStatus(CoreStatus.From("baseline")));
-            sources.Add(new ProjectStateSource(sourceId, "github-issue", issue.Url ?? $"gh#{d.IssueNumber}", runId,
-                $"GitHub-Issue #{d.IssueNumber}: {issue.Title}"));
+                meta).WithStatus(CoreStatus.From("baseline")));
+            if (nth == 1)   // C2d: mehrere Drafts je Issue teilen sich EINE Quelle (kein Duplikat-Source).
+                sources.Add(new ProjectStateSource(sourceId, "github-issue", issue.Url ?? $"gh#{d.IssueNumber}", runId,
+                    $"GitHub-Issue #{d.IssueNumber}: {issue.Title}"));
             provenance.Add(new ProjectStateProvenance(itemId,
                 [new ProjectStateProvenanceLink("github-issue", $"gh#{d.IssueNumber}", "harvested_from", sourceId,
                     new Dictionary<string, string>())]));

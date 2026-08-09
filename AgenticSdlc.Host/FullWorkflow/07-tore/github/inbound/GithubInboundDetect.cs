@@ -21,6 +21,8 @@ public static class GithubInboundDetect
     {
         var mappingByIssue = CoreGithubMapping.CurrentMappings(core)
             .GroupBy(m => m.IssueNumber).ToDictionary(g => g.Key, g => g.Last());
+        // 9i/9m: Adoptions-Gedächtnis — Items, die ein Issue als Herkunft tragen (kein eigener Stempel-Store).
+        var adoptedByIssue = GithubOriginMeta.ClaimsByIssue(core);
         var syncByPbi = CoreViews.GithubSync(core).Entries
             .GroupBy(e => e.PbiId, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.Last(), StringComparer.Ordinal);
 
@@ -42,6 +44,30 @@ public static class GithubInboundDetect
             var mapping = mappingByIssue.GetValueOrDefault(issue.IssueNumber);
             if (mapping is null)
             {
+                // 9i/9m: Ernte-Gedächtnis aus der Wahrheit selbst — ein Core-Item (REQ/ARCH/DEC) hat dieses
+                // Issue bereits adoptiert. Unverändert seit der Ernte ⇒ überspringen (kein wiederkehrendes
+                // Rauschen vor dem Gate); editiert ⇒ eigener Fund F7 (der Agent deutet den neuen Stand).
+                if (adoptedByIssue.TryGetValue(issue.IssueNumber, out var claimant))
+                {
+                    // §3-7-Grenze: Herkunft ohne Hash-Anker (Diktat ohne Snapshot-Treffer) — Drift ist nicht
+                    // prüfbar; SICHTBAR benennen statt Dauer-F7 (analog UnknownStamp, nur ohne Fund-Rauschen).
+                    if (!claimant.Metadata.ContainsKey(GithubOriginMeta.HarvestedTitleHash)
+                        && !claimant.Metadata.ContainsKey(GithubOriginMeta.HarvestedBodyHash))
+                    {
+                        skipped.Add($"#{issue.IssueNumber} '{Trunc(issue.Title)}': von '{claimant.ItemId}' adoptiert, aber ohne Hash-Anker — Drift nicht prüfbar.");
+                        continue;
+                    }
+                    var titleUnchanged = string.Equals(claimant.Metadata.GetValueOrDefault(GithubOriginMeta.HarvestedTitleHash),
+                        GithubProjectionHash.Compute(issue.Title), StringComparison.Ordinal);
+                    var bodyUnchanged = string.Equals(claimant.Metadata.GetValueOrDefault(GithubOriginMeta.HarvestedBodyHash),
+                        GithubProjectionHash.Compute(issue.Body), StringComparison.Ordinal);
+                    if (titleUnchanged && bodyUnchanged) { unchanged++; continue; }
+                    finds.Add(new GithubInboundFind(GithubInboundCategory.AdoptedDrift, issue.IssueNumber, issue.Title, null,
+                        [$"Issue wurde bereits als '{claimant.ItemId}' in die Wahrheit adoptiert und seither MANUELL editiert — den neuen Stand deuten (Vorschlag an Tor 1, kein Auto-Update)."],
+                        GithubIssueTemplate.Parse(issue.Body), AdoptedItemId: claimant.ItemId));
+                    continue;
+                }
+
                 if (issue.State.Equals("closed", StringComparison.OrdinalIgnoreCase))
                 { skipped.Add($"#{issue.IssueNumber} '{Trunc(issue.Title)}': ungemappt UND geschlossen — keine Ernte."); continue; }
                 finds.Add(new GithubInboundFind(GithubInboundCategory.UnmappedNew, issue.IssueNumber, issue.Title, null,
@@ -101,6 +127,10 @@ public static class GithubInboundCategory
     public const string MappedDrift = "F1_MAPPED_DRIFT";
     public const string UnmappedNew = "F2_UNMAPPED_NEW";
     public const string NicOptOut = "F6_NIC_OPTOUT";
+    // 9i/9m: adoptiertes (ungemapptes) Issue wurde NACH der Ernte erneut editiert — F7, erntbar wie F1/F2.
+    public const string AdoptedDrift = "F7_ADOPTED_DRIFT";
+    // C2d: synthetischer Fund-Typ des Kommentar-Destillats (Delta-Metadata inboundCategory).
+    public const string CommentDistill = "C2D_COMMENT";
     public const string UnknownStamp = "UNKNOWN_STAMP";
 }
 
@@ -110,7 +140,9 @@ public sealed record GithubInboundFind(
     [property: JsonPropertyName("title")] string Title,
     [property: JsonPropertyName("pbiId")] string? PbiId,
     [property: JsonPropertyName("details")] IReadOnlyList<string> Details,
-    [property: JsonPropertyName("parsed"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ParsedIssueBody? Parsed = null);
+    [property: JsonPropertyName("parsed"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] ParsedIssueBody? Parsed = null,
+    // 9i/9m (F7): das Core-Item, das dieses Issue adoptiert hat — Kontext fuer Agent + Report.
+    [property: JsonPropertyName("adoptedItemId"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? AdoptedItemId = null);
 
 public sealed record GithubInboundReport(
     [property: JsonPropertyName("totalIssues")] int TotalIssues,

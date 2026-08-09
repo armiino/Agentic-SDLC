@@ -54,13 +54,17 @@ public static class GithubForwardGate
             // Belegpflicht: jede Zuordnung nennt ihren Anker.
             if ((string.Equals(op.Kind, GithubForwardKind.Link, StringComparison.Ordinal)
                  || string.Equals(op.Kind, GithubForwardKind.UpdateIssue, StringComparison.Ordinal)
-                 || string.Equals(op.Kind, GithubForwardKind.Comment, StringComparison.Ordinal))
+                 || string.Equals(op.Kind, GithubForwardKind.Comment, StringComparison.Ordinal)
+                 || string.Equals(op.Kind, GithubForwardKind.NoteComment, StringComparison.Ordinal))
                 && string.IsNullOrWhiteSpace(op.Anchor))
                 warnings.Add(Issue("MISSING_ANCHOR", "warning", $"'{op.Kind}' ohne Anker-Beleg.", op.PbiId));
         }
 
-        // Coverage: jedes Delta-PBI genau ein Op.
-        var opsByPbi = plan.Operations.GroupBy(o => o.PbiId, StringComparer.Ordinal)
+        // Coverage: jedes Delta-PBI genau ein Op. NOTE_COMMENT-Vermerke (C2d §3-5) sind ZUSÄTZLICH zur
+        // Projektion — ihr Betreff ist ein Wahrheits-Item, kein Delta-PBI; sie zählen nicht in die Coverage.
+        var opsByPbi = plan.Operations
+            .Where(o => !string.Equals(o.Kind, GithubForwardKind.NoteComment, StringComparison.Ordinal))
+            .GroupBy(o => o.PbiId, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
         foreach (var e in deltaEntries)
         {

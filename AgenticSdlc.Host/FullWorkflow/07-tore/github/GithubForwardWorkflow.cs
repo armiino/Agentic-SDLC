@@ -49,9 +49,14 @@ internal sealed class GithubForwardSeedExecutor(RunContext run) : Executor<Githu
 {
     public override async ValueTask HandleAsync(GithubForwardWfContext ctx, IWorkflowContext context, CancellationToken ct = default)
     {
-        var seed = GithubForwardSeed.Seed(ctx.Entries, ctx.MappingByPbi, ctx.Issues, ctx.HoldUnclearNewPbis);
-        run.AppendEvent(new { type = "GITHUB_FWD_SEED", runId = run.RunId, deterministic = seed.DeterministicOps.Count, unmapped = seed.UnmappedPbis.Count, timestampUtc = DateTime.UtcNow });
-        await context.SendMessageAsync(new GithubForwardSeeded(ctx, seed.DeterministicOps, seed.UnmappedPbis)).ConfigureAwait(false);
+        var seed = GithubForwardSeed.Seed(ctx.Entries, ctx.MappingByPbi, ctx.Issues, ctx.HoldUnclearNewPbis,
+            GithubOriginMeta.AdoptedIssueByPbi(ctx.Core));   // 9m: Adoption-Herkunft schlägt Such-Match
+        // C2d §3-5: Abschluss-Vermerke aus dem Lauf-Report (nur im Ein-Graph-Faden vorhanden; Standalone-
+        // Forward = leer, dokumentierte Grenze) — NOTE_COMMENT-Ops, gated + execute wie alles.
+        var vermerke = GithubCommentVermerk.TryDeriveFromRun(run.RunDir, run.RunId);
+        var deterministic = vermerke.Count == 0 ? seed.DeterministicOps : [.. seed.DeterministicOps, .. vermerke];
+        run.AppendEvent(new { type = "GITHUB_FWD_SEED", runId = run.RunId, deterministic = deterministic.Count, vermerke = vermerke.Count, unmapped = seed.UnmappedPbis.Count, timestampUtc = DateTime.UtcNow });
+        await context.SendMessageAsync(new GithubForwardSeeded(ctx, deterministic, seed.UnmappedPbis)).ConfigureAwait(false);
     }
 }
 

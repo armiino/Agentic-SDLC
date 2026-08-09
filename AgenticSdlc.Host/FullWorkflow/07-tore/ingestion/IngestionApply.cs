@@ -178,10 +178,13 @@ public static class IngestionApply
 
     // ingestedFrom = Incoming-ID im MeetingDelta; ingestedFromRun = der Lauf, der das Delta produzierte
     // (R-31: BEIDE Herkuenfte am Item auffindbar, ohne den sourceRunId-Platz des Ausloeser-Laufs zu belegen).
+    // 9i/9m: GitHub-Herkunft (Issue-Nr/Hashes) reist MIT ins Core-Item — die Wahrheit selbst ist das
+    // Ernte-Gedaechtnis und die deterministische Forward-Link-Quelle (no-op fuer Meeting-/Autor-Incomings).
     private static Dictionary<string, string> IngestMeta(string incomingItemId, ProjectStateItem incoming)
     {
         var meta = new Dictionary<string, string>(StringComparer.Ordinal) { ["ingestedFrom"] = incomingItemId };
         if (!string.IsNullOrWhiteSpace(incoming.SourceRunId)) meta["ingestedFromRun"] = incoming.SourceRunId!;
+        GithubOriginMeta.CarryOver(incoming, meta);
         return meta;
     }
 

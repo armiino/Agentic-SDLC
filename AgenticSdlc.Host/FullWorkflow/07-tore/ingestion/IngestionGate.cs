@@ -20,8 +20,11 @@ public static class IngestionGate
 
         // 9g: die Fragen-Spur — eingehende open_question-Items sind vollwertige Coverage-Buerger
         // (jede Frage braucht genau eine Operation), aber mit eigenem, kleinerem Op-Vokabular.
+        // 9i: NUR im Frage-tragenden Strip (profile.CarriesQuestionLane) — im anderen Strip sind Fragen
+        // weder Coverage-Pflicht noch erlaubtes Op-Ziel (QUESTION_KIND_MISMATCH wacht).
         var incomingQuestionIds = meetingDelta.Items
-            .Where(i => string.Equals(i.ItemType, "open_question", StringComparison.OrdinalIgnoreCase))
+            .Where(i => profile.CarriesQuestionLane
+                        && string.Equals(i.ItemType, "open_question", StringComparison.OrdinalIgnoreCase))
             .Select(i => i.ItemId)
             .ToHashSet(StringComparer.Ordinal);
 

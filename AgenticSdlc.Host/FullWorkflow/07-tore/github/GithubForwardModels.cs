@@ -77,12 +77,18 @@ public static class GithubForwardKind
     // Aufloesen (needs_clarify->active) ist Folgeschritt (Option C / Parkplatz-Mechanismus im Core, s. design-note §9).
     public const string HoldClarify = "HOLD_CLARIFY";
 
+    // C2d §3-5: ABSCHLUSS-VERMERK am Ursprungs-Issue („✔ eingepflegt …"/„✕ nicht übernommen …") — schreibt
+    // NUR einen Kommentar, prägt im Gegensatz zu COMMENT NIE ein Mapping (das Ursprungs-Issue einer Adoption
+    // gehört nicht zwingend dem kommentierten Gegenstand; ein Comment-Link würde remappen). Zusätzlich zur
+    // Projektion, daher von der Coverage-Regel ausgenommen (Gate).
+    public const string NoteComment = "NOTE_COMMENT";
+
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
-        { CreateIssue, UpdateIssue, Comment, Link, NoChange, FlagDrift, HoldBlocked, HoldClarify };
+        { CreateIssue, UpdateIssue, Comment, NoteComment, Link, NoChange, FlagDrift, HoldBlocked, HoldClarify };
 
     // Ops, die auf ein bestehendes Issue zeigen muessen.
     public static readonly IReadOnlySet<string> RequireIssueTarget = new HashSet<string>(StringComparer.Ordinal)
-        { UpdateIssue, Comment, Link, FlagDrift };
+        { UpdateIssue, Comment, NoteComment, Link, FlagDrift };
 
     // Die zwei agentischen Ausgaenge des unmapped-Falls (Suche → LINK oder CREATE).
     public static readonly IReadOnlySet<string> Agentic = new HashSet<string>(StringComparer.Ordinal)

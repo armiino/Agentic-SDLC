@@ -51,10 +51,11 @@ internal sealed class IngestionTools(
     ];
 
     // 9g: Anforderungen UND offene Fragen sind Coverage-Buerger — der Agent sieht beide (itemType = die Weiche).
+    // 9i: die Fragen-Spur gehoert GENAU EINEM Strip (profile.CarriesQuestionLane) — sonst Doppel-Coverage/-DEC.
     private IReadOnlyList<ProjectStateItem> Incoming() =>
         meetingDelta.Items
             .Where(i => profile.Matches(i)
-                        || string.Equals(i.ItemType, "open_question", StringComparison.OrdinalIgnoreCase))
+                        || (profile.CarriesQuestionLane && string.Equals(i.ItemType, "open_question", StringComparison.OrdinalIgnoreCase)))
             .ToList();
 
     private string GetIncomingItems()

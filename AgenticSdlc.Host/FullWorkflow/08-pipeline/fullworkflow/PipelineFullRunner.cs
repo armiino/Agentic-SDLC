@@ -80,7 +80,8 @@ public static class PipelineFullRunner
         Console.Error.WriteLine("  pipeline-full start [<transcript.txt>]   (Faden + Skeleton-Plan, kein LLM)");
         Console.Error.WriteLine("  pipeline-full run   [<transcript.txt>]   (EIN Graph: front->branch->bootstrap|betrieb->forward)");
         Console.Error.WriteLine("  pipeline-full run --from-delta <meeting-delta.json>  (Einstieg an der Hinterhälfte; Branch entscheidet Bootstrap|Betrieb)");
-        Console.Error.WriteLine("  pipeline-full run --from-github [--issues <snapshot.json>]  (C2: GitHub-Ernte als Front — Detect -> InboundAgent -> Delta -> Tore)");
+        Console.Error.WriteLine("  pipeline-full run --from-github [--repo owner/name] [--issues <snapshot.json> [--comments <issue-comments.json>]]");
+        Console.Error.WriteLine("      (C2/C2d: GitHub-Front — AUTO-PULL Issues+Kommentare -> Detect+Destillat -> Delta -> Tore; --issues = Replay-Weg)");
         Console.Error.WriteLine("  pipeline-full run ... --policy <interactive|accept-all>  (Gate-Politik NUR für diesen Lauf; ersetzt auch explizite Gate-Einträge)");
         Console.Error.WriteLine("  pipeline-full run --dry-run              (Assemble/Build()-Validierung, kein LLM)");
         Console.Error.WriteLine("  pipeline-full resume <runId> [--accept-all | --accept id1,id2] [--open-ui]  (pausiertes Gate beantworten, weiterfahren)");
@@ -103,12 +104,14 @@ public static class PipelineFullRunner
 
         // Schritt 5 ③: Eingangs-Vertrag — Transkript (volle Front) ODER --from-delta <meeting-delta.json>
         // (Hinterhälfte; der BranchDetector entscheidet Bootstrap|Betrieb wie immer). Ersetzt pipeline-hitl.
-        string? deltaArg = null; string? issuesArg = null; var fromGithub = false;
+        string? deltaArg = null; string? issuesArg = null; string? commentsArg = null; string? repoArg = null; var fromGithub = false;
         for (var i = 2; i < args.Length; i++)
         {
             if (string.Equals(args[i], "--from-delta", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) deltaArg = args[i + 1];
             else if (string.Equals(args[i], "--from-github", StringComparison.OrdinalIgnoreCase)) fromGithub = true;
             else if (string.Equals(args[i], "--issues", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) issuesArg = args[i + 1];
+            else if (string.Equals(args[i], "--comments", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) commentsArg = args[i + 1];
+            else if (string.Equals(args[i], "--repo", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) repoArg = args[i + 1];
         }
 
         ProjectStateDocument? entryDelta = null;
@@ -163,8 +166,31 @@ public static class PipelineFullRunner
         // der Faden-Exporter oben hört bereits zu (createOtel: false gegen Doppel-Spans). Ergebnis = entryDelta.
         if (fromGithub)
         {
+            // C2d §3-1 AUTO-PULL: der Lauf zieht Issues + Kommentare SELBST frisch — das ⚿-Ja zum Lauf deckt
+            // den deterministischen Read mit ab; der Snapshot wird Run-Artefakt (Beweis-Basis dieses Laufs).
+            // `--issues [--comments]` bleibt der Replay-/Test-Weg (archivierter Stand statt Live-Pull).
+            if (issuesArg is null)
+            {
+                var repo = repoArg ?? fw.Repo;
+                if (string.IsNullOrWhiteSpace(repo))
+                {
+                    Console.Error.WriteLine($"[{Cmd}] --from-github braucht ein Repo für den Auto-Pull "
+                        + "(--repo owner/name oder run-config.fullworkflow.repo) — ODER --issues <snapshot.json> als Replay-Weg.");
+                    return 2;
+                }
+                var snapDir = Path.Combine(run.OutputDir("00-github-inbound"), "snapshot");
+                if (await Tore.Github.GithubIssueSnapshotRunner.PullIssuesAsync(repo, repoRoot, outDir: snapDir).ConfigureAwait(false) != 0)
+                    return 2;
+                var pulledIssues = Path.Combine(snapDir, Tore.Github.GithubSnapshotLocator.FileName);
+                if (await Tore.Github.GithubIssueSnapshotRunner.PullCommentsAsync(repo, repoRoot, outDir: snapDir, issuesPath: pulledIssues).ConfigureAwait(false) != 0)
+                    return 2;
+                issuesArg = pulledIssues;
+                commentsArg = Path.Combine(snapDir, Tore.Github.GithubSnapshotLocator.CommentsFileName);
+            }
+
             var (hExit, harvest) = await Tore.Github.Inbound.GithubInboundHarvest.RunAsync(
-                settings, repoRoot, run, issuesArg, draft: true, run.OutputDir("00-github-inbound"), createOtel: false)
+                settings, repoRoot, run, issuesArg, draft: true, run.OutputDir("00-github-inbound"), createOtel: false,
+                commentsArg: commentsArg)
                 .ConfigureAwait(false);
             if (hExit != 0) return hExit;
             if (harvest!.Delta is not { Items.Count: > 0 })

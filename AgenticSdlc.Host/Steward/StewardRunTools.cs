@@ -22,7 +22,9 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     Func<bool, Task<int>>? runInbound = null,
     Func<Task<int>>? runReverse = null,
     Func<string, Task<int>>? runSweep = null,
-    Func<string, Task<int>>? openReview = null)
+    Func<string, Task<int>>? openReview = null,
+    Func<string, Task<int>>? pullComments = null,
+    Func<bool, Task<int>>? runDistill = null)
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
 
@@ -36,6 +38,10 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         pullSnapshot ?? (repo => FullWorkflow.Tore.Github.GithubIssueSnapshotRunner.PullIssuesAsync(repo, repoRoot));
     private readonly Func<bool, Task<int>> _runInbound =
         runInbound ?? (draft => FullWorkflow.Tore.Github.Inbound.GithubInboundRunner.RunHarvestAsync(settings, repoRoot, null, draft));
+    private readonly Func<string, Task<int>> _pullComments =
+        pullComments ?? (repo => FullWorkflow.Tore.Github.GithubIssueSnapshotRunner.PullCommentsAsync(repo, repoRoot));
+    private readonly Func<bool, Task<int>> _runDistill =
+        runDistill ?? (draft => FullWorkflow.Tore.Github.Inbound.GithubCommentDistillRunner.RunDistillAsync(settings, repoRoot, null, draft));
     private readonly Func<Task<int>> _runReverse =
         runReverse ?? (() => FullWorkflow.Tore.Github.GithubReverseRunner.RunReverseAsync(repoRoot));
     private readonly Func<string, Task<int>> _runSweep =
@@ -63,14 +69,24 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(PullGithubSnapshotAsync, "pull_github_snapshot",
             "Zieht einen FRISCHEN GitHub-Issue-Snapshot (externer API-Read; repo = owner/name, z. B. "
             + "armiino/Agentic-GitHub-refactor). Braucht Autor-Zustimmung.")),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(PullIssueCommentsAsync, "pull_issue_comments",
+            "C2d: zieht einen FRISCHEN Kommentar-Snapshot (externer API-Read; Filter = letzter Issue-Snapshot; "
+            + "Kommentare sind Diskussionsraum/Evidenz, nie Wahrheit). Braucht Autor-Zustimmung.")),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunCommentDistillAsync, "run_comment_distill",
+            "C2d: destilliert NEUE Kommentare seit den Ankern zu Vorschlaegen (draft=true = LLM-Kosten; "
+            + "deterministischer Collector zuerst). Wahrheits-Drafts -> comment-delta.json (dann run_pipeline_full), "
+            + "Klaerungs-Antworten -> sweep-answers.json (dann run_clarify_sweep). Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunGithubInboundAsync, "run_github_inbound",
             "Fuehrt die GitHub-ERNTE-ERKENNUNG aus (deterministisch, LLM-frei; draft=true ergaenzt den "
             + "InboundAgent-Draft + Delta = LLM-Kosten). Ergebnis: harvest-report unter runs/github-inbound/. Braucht Autor-Zustimmung.")),
         AIFunctionFactory.Create(SaveAuthorStatements, "save_author_statements",
             "3c AUTOR-FRONT Schritt 1: schreibt die vom Autor DIKTIERTEN Wahrheits-Kandidaten (statements: "
-            + "[{text, disposition requirement|architecture, rationale?}]) WOERTLICH als Delta im Meeting-"
-            + "Ketten-Vertrag (kein Wahrheits-Write — die Kette prägt erst nach den Gates). Gibt deltaPath "
-            + "fuer run_pipeline_full zurueck."),
+            + "[{text, disposition requirement|architecture|question, rationale?, githubIssueNumber?}]; "
+            + "question = offene Frage, wird via 9g-Schiene zur offenen Entscheidung im DEC-Topf; "
+            + "githubIssueNumber IMMER setzen, wenn der Anstoß aus einem Issue kam — z. B. reject am Gate + "
+            + "Neu-Diktat — damit Forward-Link/Vermerk/Ernte-Gedächtnis intakt bleiben) WOERTLICH als Delta im "
+            + "Meeting-Ketten-Vertrag (kein Wahrheits-Write — die Kette prägt erst nach den Gates). "
+            + "Gibt deltaPath fuer run_pipeline_full zurueck."),
         AIFunctionFactory.Create(SaveSweepAnswers, "save_sweep_answers",
             "C4-Zielschleife Schritt 2: schreibt die vom Autor DIKTIERTEN Klaerungs-Antworten als "
             + "sweep-answers.json (kein Wahrheits-Write; Quelle = author via steward-chat). "
@@ -97,6 +113,33 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     private async Task<string> RunGithubInboundAsync(bool draft = false)
         => AuxResult(await _runInbound(draft).ConfigureAwait(false), "github-inbound");
 
+    private async Task<string> PullIssueCommentsAsync(string repo)
+        => AuxResult(await _pullComments(repo).ConfigureAwait(false), "github-snapshot comments");
+
+    // §3-7: Herkunfts-Auflösung fürs Autor-Diktat — Url + Titel/Body-Hashes aus dem letzten Issue-Snapshot
+    // (Stand-beim-Diktat als Drift-Anker). Issue unbekannt/kein Snapshot ⇒ null (nur die Nummer reist).
+    private IReadOnlyDictionary<string, string>? ResolveGithubOrigin(int issueNumber)
+    {
+        var path = FullWorkflow.Tore.Github.GithubSnapshotLocator.FindLatest(repoRoot);
+        if (path is null) return null;
+        try
+        {
+            var issues = JsonSerializer.Deserialize<List<FullWorkflow.Tore.Github.GithubIssueSnapshot>>(File.ReadAllText(path), Json) ?? [];
+            var issue = issues.LastOrDefault(i => i.IssueNumber == issueNumber);
+            if (issue is null) return null;
+            return new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                [FullWorkflow.Core.GithubOriginMeta.IssueUrl] = issue.Url ?? "",
+                [FullWorkflow.Core.GithubOriginMeta.HarvestedTitleHash] = FullWorkflow.Tore.Github.GithubProjectionHash.Compute(issue.Title),
+                [FullWorkflow.Core.GithubOriginMeta.HarvestedBodyHash] = FullWorkflow.Tore.Github.GithubProjectionHash.Compute(issue.Body),
+            };
+        }
+        catch { return null; }   // kaputter Snapshot kostet nur die Anreicherung, nie das Diktat
+    }
+
+    private async Task<string> RunCommentDistillAsync(bool draft = false)
+        => AuxResult(await _runDistill(draft).ConfigureAwait(false), "github-comment-distill");
+
     private async Task<string> RunGithubReverseAsync()
         => AuxResult(await _runReverse().ConfigureAwait(false), "github-reverse");
 
@@ -110,7 +153,9 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     private string SaveAuthorStatements(IReadOnlyList<FullWorkflow.Delta.AuthorStatement> statements, string? sessionName = null)
     {
         var session = sessionName ?? "steward";
-        var (delta, errors) = FullWorkflow.Delta.AuthorFrontDeltaBuilder.Build(statements, session);
+        // §3-7: Issue-Herkunft aus dem letzten Snapshot auflösen (Url + Hashes = Stand-beim-Diktat) —
+        // die Delta-Schicht bleibt github-frei, die Naht liefert der Steward.
+        var (delta, errors) = FullWorkflow.Delta.AuthorFrontDeltaBuilder.Build(statements, session, ResolveGithubOrigin);
         if (errors.Count > 0) return JsonSerializer.Serialize(new { error = "STATEMENTS_INVALID", details = errors }, Json);
         var dir = Path.Combine(repoRoot, "state", "steward", "author-front");
         Directory.CreateDirectory(dir);

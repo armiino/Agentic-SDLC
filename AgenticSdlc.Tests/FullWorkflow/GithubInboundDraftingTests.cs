@@ -1,3 +1,4 @@
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.FullWorkflow.Tore.Github;
 using AgenticSdlc.Host.FullWorkflow.Tore.Github.Inbound;
 using Microsoft.Extensions.AI;
@@ -62,7 +63,10 @@ public sealed class GithubInboundDraftingTests
 
         var delta = GithubInboundDeltaBuilder.Build(drafts, finds, [Issue(20), Issue(12), Issue(21)], "run-1");
 
-        Assert.Equal(2, delta.Items.Count);                                        // open_question NICHT im Delta (C2c/9i)
+        Assert.Equal(3, delta.Items.Count);                                        // 9i: open_question fährt MIT (9g-Schiene)
+        var question = delta.Items.Single(i => i.ItemId == "GH-21");
+        Assert.Equal("open_question", question.ItemType);
+        Assert.Equal("21", question.Metadata[GithubOriginMeta.IssueNumber]);       // Herkunft auch an der Frage
         var req = delta.Items.Single(i => i.ItemId == "GH-20");
         Assert.Equal("requirement", req.ItemType);
         Assert.Equal("Das System muss PDF exportieren.", req.Text);
@@ -74,7 +78,7 @@ public sealed class GithubInboundDraftingTests
         Assert.Equal("architecture", arch.ItemType);
         Assert.Equal("PBI-1", arch.Metadata["mappedPbiId"]);                       // F1: betroffenes PBI reist mit
 
-        Assert.Equal(2, delta.Sources.Count);                                      // je Issue eine Quelle
+        Assert.Equal(3, delta.Sources.Count);                                      // je Issue eine Quelle
         Assert.All(delta.Provenance, p => Assert.Equal("harvested_from", p.Links.Single().Relation));
     }
 }
