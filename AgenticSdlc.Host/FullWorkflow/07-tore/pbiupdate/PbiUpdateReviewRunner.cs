@@ -28,12 +28,7 @@ public static class PbiUpdateReviewRunner
             { Console.Error.WriteLine($"[pbi-update-review] Kein offener pending_review '{args[2]}' (mit Nutzlast) in der Registry."); return 2; }
             if (entry.Ueberholt)
                 Console.WriteLine($"[pbi-update-review] ⚠ ÜBERHOLT: {entry.UeberholtGrund} — Vorschlag prüfen/ablehnen statt blind anwenden.");
-            var pendRun = new AgenticSdlc.Host.Run.RunContext(AgenticSdlc.Host.Run.RunId.New(), "pbi-update");
-            pendRun.EnsureFolders();
-            var pendDir = pendRun.OutputDir("plan");
-            await File.WriteAllTextAsync(Path.Combine(pendDir, "pbi-change-plan.json"), proposal.Payload.Value.GetRawText()).ConfigureAwait(false);
-            await File.WriteAllTextAsync(Path.Combine(pendDir, "pending-ref.json"),
-                JsonSerializer.Serialize(new { proposalId = proposal.ProposalId }, Json)).ConfigureAwait(false);
+            var pendDir = await PendingReviewMaterializer.MaterializeAsync(proposal).ConfigureAwait(false);
             args = [.. args.Take(1), pendDir, .. args.Skip(3)];
         }
 

@@ -40,6 +40,7 @@ public static class StewardChatRunner
             .. new StewardReadTools(repoRoot).Build(),
             .. new CoreQueryTools(new JsonCoreRepository(repoRoot)).Build(),
             .. new GithubSnapshotQueryTools(repoRoot).Build(),
+            .. new StewardGateTools(repoRoot).Build(),
             .. new StewardRunTools(repoRoot, settings).Build(),
         ];
         var reducer = CreateReducer(memory, client);
