@@ -23,7 +23,7 @@ public sealed class StewardRunToolsTests
     public void Alle_Start_Tools_sind_ApprovalRequired_gewrappt()
     {
         var tools = new StewardRunTools(".", S(), (args, cb) => Task.FromResult(0)).Build();
-        Assert.Equal(11, tools.OfType<ApprovalRequiredAIFunction>().Count());   // K3 (C2c +4, C4c +1, C4d +1, 3b +1, C2d +2)
+        Assert.Equal(12, tools.OfType<ApprovalRequiredAIFunction>().Count());   // K3 (C2c +4, C4c +1, C4d +1, 3b +1, C2d +3)
     }
 
     [Fact]

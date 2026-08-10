@@ -77,6 +77,10 @@ public sealed class StewardConfig
 {
     /// <summary>Memory-Modus-Default (K6): null | "count[:N]" | "summarize". CLI --memory überstimmt.</summary>
     public string? Memory { get; set; }
+
+    /// <summary>C2d ②: Live-GitHub-Lese-Tools via offiziellem MCP-Server (readonly, toolset issues).
+    /// null/true = an (fail-soft ohne Token/Netz) · false = Kill-Switch.</summary>
+    public bool? GithubLive { get; set; }
 }
 
 public sealed class ObservabilityConfig

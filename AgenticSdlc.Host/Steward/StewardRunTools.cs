@@ -24,7 +24,8 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     Func<string, Task<int>>? runSweep = null,
     Func<string, Task<int>>? openReview = null,
     Func<string, Task<int>>? pullComments = null,
-    Func<bool, Task<int>>? runDistill = null)
+    Func<bool, Task<int>>? runDistill = null,
+    Func<string, int, string, Task<string>>? postComment = null)
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
 
@@ -42,6 +43,16 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         pullComments ?? (repo => FullWorkflow.Tore.Github.GithubIssueSnapshotRunner.PullCommentsAsync(repo, repoRoot));
     private readonly Func<bool, Task<int>> _runDistill =
         runDistill ?? (draft => FullWorkflow.Tore.Github.Inbound.GithubCommentDistillRunner.RunDistillAsync(settings, repoRoot, null, draft));
+    private readonly Func<string, int, string, Task<string>> _postComment =
+        postComment ?? (async (repo, issueNumber, text) =>
+        {
+            var token = Mcp.GithubMcp.ResolveToken();
+            if (string.IsNullOrWhiteSpace(token)) throw new InvalidOperationException("Kein GitHub-Token (GITHUB_AGENTIC_REFACTOR_TOKEN/GITHUB_TEST_TOKEN).");
+            using var http = new HttpClient();
+            var result = await new FullWorkflow.Tore.Github.GithubRestIssueClient(http, token!, "Agentic-SDLC")
+                .CreateCommentAsync(repo, issueNumber, text, CancellationToken.None).ConfigureAwait(false);
+            return result.IssueUrl ?? $"gh#{issueNumber}";
+        });
     private readonly Func<Task<int>> _runReverse =
         runReverse ?? (() => FullWorkflow.Tore.Github.GithubReverseRunner.RunReverseAsync(repoRoot));
     private readonly Func<string, Task<int>> _runSweep =
@@ -72,6 +83,10 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(PullIssueCommentsAsync, "pull_issue_comments",
             "C2d: zieht einen FRISCHEN Kommentar-Snapshot (externer API-Read; Filter = letzter Issue-Snapshot; "
             + "Kommentare sind Diskussionsraum/Evidenz, nie Wahrheit). Braucht Autor-Zustimmung.")),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(PostIssueCommentAsync, "post_issue_comment",
+            "C2d-③ RUECKFRAGE: postet einen Diskussions-Kommentar an ein Issue (z. B. eine Rueckfrage fuer die "
+            + "naechste Team-Runde). Kommentare sind Diskussionsraum, NIE Wahrheit — trotzdem Aussenwirkung: "
+            + "den WOERTLICHEN Text VORHER dem Autor vorlesen, erst nach seinem OK aufrufen. Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunCommentDistillAsync, "run_comment_distill",
             "C2d: destilliert NEUE Kommentare seit den Ankern zu Vorschlaegen (draft=true = LLM-Kosten; "
             + "deterministischer Collector zuerst). Wahrheits-Drafts -> comment-delta.json (dann run_pipeline_full), "
@@ -139,6 +154,19 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
 
     private async Task<string> RunCommentDistillAsync(bool draft = false)
         => AuxResult(await _runDistill(draft).ConfigureAwait(false), "github-comment-distill");
+
+    private async Task<string> PostIssueCommentAsync(string repo, int issueNumber, string text)
+    {
+        try
+        {
+            var url = await _postComment(repo, issueNumber, text).ConfigureAwait(false);
+            return JsonSerializer.Serialize(new { posted = true, issueNumber, url }, Json);
+        }
+        catch (Exception ex)
+        {
+            return JsonSerializer.Serialize(new { error = "COMMENT_POST_FAILED", message = ex.Message }, Json);
+        }
+    }
 
     private async Task<string> RunGithubReverseAsync()
         => AuxResult(await _runReverse().ConfigureAwait(false), "github-reverse");

@@ -58,7 +58,8 @@ public sealed record HostSettings(
     string? EvidenceLedgerRun,
     int EvidenceRepetitions,
     // M1b: Steward-Memory-Default aus run-config (CLI --memory überstimmt; K6-Modi).
-    string? StewardMemoryMode = null)
+    string? StewardMemoryMode = null,
+    bool StewardGithubLive = true)
 {
     /// <summary>
     /// Erstellt die Settings aus den aktuell gesetzten Umgebungsvariablen.
@@ -126,6 +127,7 @@ public sealed record HostSettings(
             EvidenceSource: evidenceSource,
             // M1b: Steward-Memory-Default je Projekt (CLI --memory überstimmt).
             StewardMemoryMode: string.IsNullOrWhiteSpace(config.Steward.Memory) ? null : config.Steward.Memory.Trim(),
+            StewardGithubLive: config.Steward.GithubLive ?? true,
             EvidenceArtifact: (string.IsNullOrWhiteSpace(config.EvidenceAgent.Artifact) ? "requirements" : config.EvidenceAgent.Artifact).Trim().ToLowerInvariant(),
             EvidenceTranscript: string.IsNullOrWhiteSpace(config.EvidenceAgent.Transcript) ? null : config.EvidenceAgent.Transcript.Trim(),
             EvidenceLedgerRun: string.IsNullOrWhiteSpace(config.EvidenceAgent.LedgerRun) ? null : config.EvidenceAgent.LedgerRun.Trim(),

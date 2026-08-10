@@ -27,7 +27,9 @@ public static class StewardChatRunner
     /// <summary>Die EINE Bau-Naht des Steward-Agenten — Client injizierbar (Tests: ScriptedChatClient).
     /// <paramref name="memory"/> = M1-Modus (⚖ K6): null (voller Verlauf) · "count[:N]" (Schiebefenster) ·
     /// "summarize" (LLM-Verdichtung, opt-in) — konfiguriert den OFFIZIELLEN Reducer-Slot der Session-History.</summary>
-    public static AIAgent BuildAgent(IChatClient baseClient, HostSettings settings, RunContext run, string repoRoot, string? memory = null)
+    public static AIAgent BuildAgent(IChatClient baseClient, HostSettings settings, RunContext run, string repoRoot, string? memory = null,
+        // C2d ②: Live-GitHub-Lese-Tools (McpClientTool ERBT von AIFunction — direkt unsere Tool-Sorte).
+        IReadOnlyList<AITool>? liveTools = null)
     {
         var prompt = PromptProvider.Load(repoRoot, Phase, "StewardAgent", "StewardAgent1",
             new Dictionary<string, string> { ["runId"] = run.RunId });
@@ -42,6 +44,7 @@ public static class StewardChatRunner
             .. new GithubSnapshotQueryTools(repoRoot).Build(),
             .. new StewardGateTools(repoRoot).Build(),
             .. new StewardRunTools(repoRoot, settings).Build(),
+            .. liveTools ?? [],
         ];
         var reducer = CreateReducer(memory, client);
         return client.AsAIAgent(new ChatClientAgentOptions
@@ -143,8 +146,32 @@ public static class StewardChatRunner
 
         var run = new RunContext(RunId.New(), "steward");
         run.EnsureFolders();
+
+        // C2d ②: Live-GitHub-Lesen via offiziellem MCP-Server (readonly/x/issues — Governance SERVER-seitig).
+        // FAIL-SOFT: ohne Token/Netz läuft der Steward einfach ohne Live-Blick (laut benannt, nie blockierend).
+        ModelContextProtocol.Client.McpClient? mcp = null;
+        IReadOnlyList<AITool>? liveTools = null;
+        string liveNote = "";
+        if (settings.StewardGithubLive && Mcp.GithubMcp.ResolveToken() is { } mcpToken)
+        {
+            try
+            {
+                mcp = await Mcp.GithubMcp.ConnectRemoteReadonlyIssuesAsync(mcpToken).ConfigureAwait(false);
+                var mcpTools = await mcp.ListToolsAsync().ConfigureAwait(false);
+                liveTools = [.. mcpTools];
+                liveNote = $" · github-live={mcpTools.Count} Lese-Tools (MCP readonly)";
+            }
+            catch (Exception ex)
+            {
+                liveNote = " · github-live=aus (MCP nicht erreichbar)";
+                Console.Error.WriteLine($"[steward] github-live nicht verfuegbar (weiter ohne): {ex.Message}");
+            }
+        }
+        else if (settings.StewardGithubLive) liveNote = " · github-live=aus (kein Token)";
+
+        await using var _mcp = mcp;
         AIAgent agent;
-        try { agent = BuildAgent(ChatClientFactory.Create(settings), settings, run, repoRoot, memory); }
+        try { agent = BuildAgent(ChatClientFactory.Create(settings), settings, run, repoRoot, memory, liveTools); }
         catch (ArgumentException ex) { Console.Error.WriteLine($"[steward] {ex.Message}"); return 2; }   // memory-Modus LAUT
 
         var path = SessionPath(repoRoot, sessionName);
@@ -154,7 +181,7 @@ public static class StewardChatRunner
             ? $" · memory={memory} (LLM-Verdichtung aktiv — kostet Tokens)" : $" · memory={memory}";
         if (memoryFromConfig) memoryNote += " (run-config)";
         var freshNote = rotated is null ? "" : $" · Vorgänger-Stand → {Path.GetFileName(rotated)}";
-        Console.WriteLine($"[steward] Sitzung '{sessionName}' ({(File.Exists(path) ? "fortgesetzt" : "neu")}){SessionSizeNote(path)}{memoryNote}{freshNote} · Logs: {Path.GetRelativePath(repoRoot, run.RunDir)} · /exit beendet");
+        Console.WriteLine($"[steward] Sitzung '{sessionName}' ({(File.Exists(path) ? "fortgesetzt" : "neu")}){SessionSizeNote(path)}{memoryNote}{freshNote}{liveNote} · Logs: {Path.GetRelativePath(repoRoot, run.RunDir)} · /exit beendet");
 
         async Task TurnAsync(string input)
         {
