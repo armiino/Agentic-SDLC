@@ -175,19 +175,68 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
         var planPath = Path.Combine(RunDir(runId), "07-github", "github-forward-plan.json");
         if (!File.Exists(planPath))
             return JsonSerializer.Serialize(new { error = "PLAN_MISSING", planPath }, Json);
-        using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(planPath).ConfigureAwait(false));
-        var ops = doc.RootElement.GetProperty("operations").EnumerateArray().Select((op, i) => new
+
+        // Warn-Note „ungeerntete GitHub-Arbeit" (13.08.): vom SnapshotExecutor geschrieben, wenn die Detect-Engine
+        // erntbare Funde sah — der Autor entscheidet informiert („erst ernten?"), bevor er den Write freigibt.
+        string? warnung = null;
+        var notePath = Path.Combine(RunDir(runId), "07-github", "unharvested-note.json");
+        if (File.Exists(notePath))
         {
-            opId = $"op-{i}",
-            kind = op.GetProperty("kind").GetString(),
-            pbiId = op.GetProperty("pbiId").GetString(),
-            targetIssueNumber = op.TryGetProperty("targetIssueNumber", out var t) && t.ValueKind == JsonValueKind.Number ? t.GetInt32() : (int?)null,
-            title = op.TryGetProperty("title", out var ti) ? ti.GetString() : null,
-            rationale = op.TryGetProperty("rationale", out var r) ? r.GetString() : null,
+            using var nDoc = JsonDocument.Parse(await File.ReadAllTextAsync(notePath).ConfigureAwait(false));
+            warnung = nDoc.RootElement.TryGetProperty("text", out var nt) ? nt.GetString() : null;
+        }
+
+        // Steward-UX-Fund 11.08. („warum sehe ich die aenderung nicht?"): der VOLLE Inhalt, der ans Issue ginge —
+        // aus dem sync-delta der pbi-update-Stufe (Statement/AK/Rahmen je PBI), damit der Autor SIEHT, was sich aendert.
+        var syncByPbi = await LoadSyncDeltaByPbiAsync(runId).ConfigureAwait(false);
+        using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(planPath).ConfigureAwait(false));
+        var ops = doc.RootElement.GetProperty("operations").EnumerateArray().Select((op, i) =>
+        {
+            var pbiId = op.GetProperty("pbiId").GetString();
+            JsonElement? entry = pbiId is not null && syncByPbi.TryGetValue(pbiId, out var e) ? e : null;
+            return new
+            {
+                opId = $"op-{i}",
+                kind = op.GetProperty("kind").GetString(),
+                pbiId,
+                targetIssueNumber = op.TryGetProperty("targetIssueNumber", out var t) && t.ValueKind == JsonValueKind.Number ? t.GetInt32() : (int?)null,
+                title = op.TryGetProperty("title", out var ti) ? ti.GetString() : null,
+                // Der Inhalt, der bei apply ans Issue geschrieben wuerde (Vorher-Stand = aktuelles Issue, s. UI):
+                inhalt = entry is null ? null : new
+                {
+                    statement = GetStr(entry.Value, "statement"),
+                    akzeptanzkriterien = GetStrList(entry.Value, "acceptanceCriteria"),
+                    rahmen = GetStrList(entry.Value, "constraints"),
+                },
+                rationale = op.TryGetProperty("rationale", out var r) ? r.GetString() : null,
+            };
         }).ToList();
-        return JsonSerializer.Serialize(new { runId, gate = SupportedGraphGate, ops,
-            hinweis = "Nur apply|skip je Op; GitHub-WRITE passiert erst beim resume und NUR mit execute-Policy." }, Json);
+        return JsonSerializer.Serialize(new { runId, gate = SupportedGraphGate, warnung, ops,
+            hinweis = "Je Op steht unter `inhalt` der VOLLE Inhalt (Titel + Statement + Akzeptanzkriterien + Rahmen), der ans Issue geschrieben wuerde — "
+                    + "lies ihn dem Autor vor. Vorher/Nachher gegen den aktuellen Issue-Stand: open_gate_ui. Nur apply|skip je Op; GitHub-WRITE erst beim resume + NUR mit execute-Policy."
+                    + (warnung is null ? "" : " ⚠ `warnung` DEM AUTOR VORLESEN: drueben liegt ungeerntete Arbeit — Sequenz anbieten: betroffene Ops skippen -> Ernte (run_pipeline_from_github) -> Rest via run_reproject.") }, Json);
     }
+
+    // Steward-UX (11.08.): der bei Apply an die Issues zu schreibende Inhalt je PBI — aus dem sync-delta der pbi-update-Stufe.
+    private async Task<Dictionary<string, JsonElement>> LoadSyncDeltaByPbiAsync(string runId)
+    {
+        var path = Path.Combine(RunDir(runId), "07-pbi-update", "applied", "github-sync-delta.json");
+        var map = new Dictionary<string, JsonElement>(StringComparer.Ordinal);
+        if (!File.Exists(path)) return map;
+        using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(path).ConfigureAwait(false));
+        if (doc.RootElement.TryGetProperty("entries", out var entries) && entries.ValueKind == JsonValueKind.Array)
+            foreach (var e in entries.EnumerateArray())
+                if (e.TryGetProperty("pbiId", out var p) && p.GetString() is { } pid)
+                    map[pid] = e.Clone();
+        return map;
+    }
+
+    private static string? GetStr(JsonElement e, string name)
+        => e.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.String ? v.GetString() : null;
+
+    private static IReadOnlyList<string> GetStrList(JsonElement e, string name)
+        => e.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.Array
+            ? v.EnumerateArray().Select(x => x.GetString() ?? "").Where(s => s.Length > 0).ToList() : [];
 
     private async Task<string> SubmitPausedGateDecisionsAsync(string runId, IReadOnlyList<GithubForwardDecision> decisions)
     {

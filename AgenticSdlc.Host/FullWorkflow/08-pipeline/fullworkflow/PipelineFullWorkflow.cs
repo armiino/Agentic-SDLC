@@ -10,6 +10,8 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 // U2: Knoten-Gruppen, damit Assemble lesbar bleibt (je Gruppe eine Zeile im Aufrufer).
 internal sealed record FrontNodes(
     PipelineEntryExecutor Entry,
+    ClarifyEntryExecutor ClarifyEntry, // A′ Schritt 2: dritter typisierter Eingang (clarify-Batch → pbiFinalize)
+    ReprojectEntryExecutor ReprojectEntry, // ONLY-STEWARD: vierter Eingang (Recovery) — Core→Delta → Forward-Schwanz
     LedgerIntakeExecutor LedgerIntake, ExecutorBinding LedgerCapsule, LedgerSummaryExecutor LedgerSummary, // Schritt 5 ②: sichtbare Kapsel statt Wrapper
     AdjudicationGateRequestExecutor AdjudicationRequest, RequestPort AdjudicationPort, AdjudicationApplyExecutor AdjudicationApply, // H2: echter RequestPort
     BaselineStageExecutor Baselines,
@@ -84,9 +86,18 @@ internal static class PipelineFullWorkflow
                            + "Bootstrap (core-bootstrap -> Cluster+Gate -> PBIs+Gate -> Seed) | Betrieb (Ingest+Gate -> Pbi+Gate) "
                            + "-> Snapshot -> Forward+Gate -> Dry-Run/Apply.");
 
-        // Eingangs-Vertrag: Transkript -> Front | fertiges Delta -> direkt Branch (beide Bahnen via Detector).
+        // Eingangs-Vertrag: Transkript -> Front | fertiges Delta -> direkt Branch (beide Bahnen via Detector) |
+        // clarify-Batch -> ClarifyEntry (A′ Schritt 2). Typ-Routing: der Entry sendet je nach gesetztem Feld genau EINEN Typ.
         b.AddEdge(front.Entry, front.LedgerIntake);
         b.AddEdge(front.Entry, front.Branch);
+        b.AddEdge(front.Entry, front.ClarifyEntry);
+        b.AddEdge(front.Entry, front.ReprojectEntry);
+        // A′ Schritt 2: ClarifyEntry erzeugt+validiert den PBI-Plan und speist bei Pass den VORHANDENEN Schwanz ab
+        // pbiFinalize (-> pbiPort HUMAN -> pbiApply -> Forward). Kein neues Gate/Apply/Forward. Non-Pass = terminaler Output.
+        b.AddEdge(front.ClarifyEntry, op.PbiFinalize);
+        // ONLY-STEWARD Recovery: ReprojectEntry leitet das Sync-Delta AUS DEM CORE ab und emittiert dieselbe ForwardPrep
+        // wie die beiden Bridges → speist den VORHANDENEN Forward-Schwanz (Snapshot -> Maker -> forward-gate -> Apply).
+        b.AddEdge(front.ReprojectEntry, fwd.Snapshot);
 
         // Schritt 5 ② (05.08.): die Ledger-Stufe ist eine SICHTBARE gebundene Kapsel (BindGateFree) statt des
         // Wrapper-Executors mit innerem Zweitmotor — ihre 8 Schritte sind Bürger des Ein-Graphen (Checkpoints,
@@ -163,6 +174,8 @@ internal static class PipelineFullWorkflow
         b.AddEdge(fwd.Snapshot, fwd.Seed);
         GithubForwardHitlWorkflow.AddTo(b, fwd.Seed, fwd.Maker, fwd.Gate, fwd.Repair, fwd.Finalize, fwd.HumanGate, fwd.Apply);
 
+        b.WithOutputFrom(front.ClarifyEntry);      // A′ Schritt 2: Non-Pass = terminaler Klartext-Output (bewusst gestoppt)
+        b.WithOutputFrom(front.ReprojectEntry);    // ONLY-STEWARD: „keine gemappten PBIs" = terminaler Klartext-Output
         b.WithOutputFrom(front.LedgerSummary);     // Fehler-String (Gate/Step-Outputs) — Schritt 5 ②; v1-Wrapper hatte den Yield nie deklariert
         b.WithOutputFrom(boot.CoreBootstrap);      // Fehler-String (Core existiert) + Info-Output
         b.WithOutputFrom(boot.Seed);               // BacklogSeedOutput = Bootstrap-Mitte fertig

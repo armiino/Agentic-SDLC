@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace AgenticSdlc.Host.Steward;
 
 /// <summary>
-/// C1c (07.08.2026) — die STARTENDEN Tools des Stewards (Vorlauf-Move C1c): `run_pipeline_full` und
+/// C1c (07.08.2026) — die STARTENDEN Tools des Stewards (Vorlauf-Move C1c): `run_pipeline_from_delta` und
 /// `resume_run`. Beide sind in <see cref="ApprovalRequiredAIFunction"/> gewrappt (K3: Kosten/Läufe nur mit
 /// expliziter Autor-Zustimmung — der MAF-native Approval-Loop, I-1-bewiesen) und folgen K2: in-process
 /// **start-async** — das Tool kehrt SOFORT mit der runId zurück (runId-Naht am Runner), der Lauf arbeitet
@@ -19,12 +19,8 @@ namespace AgenticSdlc.Host.Steward;
 public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     Func<string[], Action<string>?, Task<int>>? runner = null,
     Func<string, Task<int>>? pullSnapshot = null,
-    Func<bool, Task<int>>? runInbound = null,
-    Func<Task<int>>? runReverse = null,
-    Func<string, Task<int>>? runSweep = null,
     Func<string, Task<int>>? openReview = null,
     Func<string, Task<int>>? pullComments = null,
-    Func<bool, Task<int>>? runDistill = null,
     Func<string, int, string, Task<string>>? postComment = null)
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
@@ -35,14 +31,14 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
 
     // K13-2 (09.08.): TYPISIERTE Nähte statt CLI-String-Args (K13: CLI ist Eingang, nie Integrationsschicht).
     // Je Bahn ein Delegate auf den gehobenen Kern — Test-injizierbar, kompilierfest.
+    // Klasse-Regel (⚖ 13.08., system-inventar §3): die vier blinden Werkbank-Seile (run_clarify_sweep,
+    // run_github_inbound, run_comment_distill, run_github_reverse) sind ENTFERNT — ihre Ergebnisse waren im
+    // Chat nicht lesbar (nur runs/-Ordner); die Bahnen bleiben als CLI-Werkbank. Betriebswege: Ernte =
+    // run_pipeline_from_github (pullt+destilliert selbst, stoppt leer) · Klärung = run_clarify_via_graph.
     private readonly Func<string, Task<int>> _pullSnapshot =
         pullSnapshot ?? (repo => FullWorkflow.Tore.Github.GithubIssueSnapshotRunner.PullIssuesAsync(repo, repoRoot));
-    private readonly Func<bool, Task<int>> _runInbound =
-        runInbound ?? (draft => FullWorkflow.Tore.Github.Inbound.GithubInboundRunner.RunHarvestAsync(settings, repoRoot, null, draft));
     private readonly Func<string, Task<int>> _pullComments =
         pullComments ?? (repo => FullWorkflow.Tore.Github.GithubIssueSnapshotRunner.PullCommentsAsync(repo, repoRoot));
-    private readonly Func<bool, Task<int>> _runDistill =
-        runDistill ?? (draft => FullWorkflow.Tore.Github.Inbound.GithubCommentDistillRunner.RunDistillAsync(settings, repoRoot, null, draft));
     private readonly Func<string, int, string, Task<string>> _postComment =
         postComment ?? (async (repo, issueNumber, text) =>
         {
@@ -53,10 +49,6 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
                 .CreateCommentAsync(repo, issueNumber, text, CancellationToken.None).ConfigureAwait(false);
             return result.IssueUrl ?? $"gh#{issueNumber}";
         });
-    private readonly Func<Task<int>> _runReverse =
-        runReverse ?? (() => FullWorkflow.Tore.Github.GithubReverseRunner.RunReverseAsync(repoRoot));
-    private readonly Func<string, Task<int>> _runSweep =
-        runSweep ?? (answersPath => FullWorkflow.PbiUpdate.ClarifySweepAnswersRunner.RunFromAnswersAsync(answersPath, settings, repoRoot));
     private readonly Func<string, Task<int>> _openReview =
         openReview ?? (proposalId => FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.RunPendingAsync(proposalId, settings, repoRoot));
 
@@ -68,12 +60,23 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
 
     public IReadOnlyList<AITool> Build() =>
     [
-        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunPipelineFullAsync, "run_pipeline_full",
-            "STARTET einen pipeline-full-Lauf (kostenpflichtig, LLM!) — von einem Delta (deltaPath) aus. "
-            + "Kehrt SOFORT mit der runId zurueck; Fortschritt danach ueber get_run_status. Braucht Autor-Zustimmung.")),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunPipelineFromDeltaAsync, "run_pipeline_from_delta",
+            "STARTET die Kette AUS EINEM BESTEHENDEN DELTA (deltaPath — z. B. Autor-Diktat oder Kommentar-Destillat); "
+            + "kostenpflichtig, LLM. NICHT von vorne (kein Ledger/Transkript — dafuer gibt es keinen Steward-Start; "
+            + "GitHub-Front = run_pipeline_from_github). Kehrt SOFORT mit der runId zurueck; Fortschritt ueber get_run_status. Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunPipelineFromGithubAsync, "run_pipeline_from_github",
-            "STARTET einen pipeline-full-Lauf mit der GITHUB-ERNTE als Front (kostenpflichtig, LLM!): Snapshot → "
-            + "Detect → InboundAgent-Drafts → Delta → Tore. Kehrt sofort mit runId zurueck. Braucht Autor-Zustimmung.")),
+            "DIE GitHub-Ernte (auch als CHECK 'was ist neu auf GitHub?'): startet einen pipeline-full-Lauf mit der "
+            + "Ernte als Front — pullt SELBST frisch (Issues + Kommentare), erkennt deterministisch Neues/Geaendertes, "
+            + "STOPPT SAUBER wenn nichts Tor-faehiges da ist (dann 0 LLM-Kosten); bei Funden: Drafts → Delta → Tore "
+            + "(LLM). Kehrt sofort mit runId zurueck; Ernte-Ergebnis danach: read_run_report (harvest). Braucht Autor-Zustimmung.")),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunReprojectAsync, "run_reproject",
+            "ONLY-STEWARD RECOVERY: aufrufen, wenn GitHub hinter dem Core haengt — ENTWEDER ein Forward scheiterte "
+            + "(success=false / 403 / 404) ODER der Autor bittet AUSDRUECKLICH um den Core->GitHub-Abgleich ('gleich ab', "
+            + "'run_reproject', 'GitHub haengt hinterher'). Bei ausdruecklicher Bitte NICHT erst pull_github_snapshot vorschalten "
+            + "und NICHT nach einem pausierten Lauf suchen: run_reproject STARTET SELBST einen frischen durablen Lauf und zieht "
+            + "den Snapshot selbst. Es gleicht die gemappten PBIs des Cores gegen den frischen Snapshot ab (Delta AUS DEM CORE, "
+            + "kein Run-Ordner; deterministisch, LLM-frei) und pausiert am forward-gate — DER PLAN DORT IST der Drift-Check "
+            + "(nichts wird ohne Freigabe geschrieben). Nur nicht als unaufgeforderter Routine-Schritt. Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(ResumeRunAsync, "resume_run",
             "SETZT einen pausierten Lauf fort (runId; acceptAll=true uebernimmt Vorschlaege 1:1 = Experiment-Modus). "
             + "Kehrt sofort zurueck; Fortschritt ueber get_run_status. Braucht Autor-Zustimmung.")),
@@ -87,13 +90,6 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             "C2d-③ RUECKFRAGE: postet einen Diskussions-Kommentar an ein Issue (z. B. eine Rueckfrage fuer die "
             + "naechste Team-Runde). Kommentare sind Diskussionsraum, NIE Wahrheit — trotzdem Aussenwirkung: "
             + "den WOERTLICHEN Text VORHER dem Autor vorlesen, erst nach seinem OK aufrufen. Braucht Autor-Zustimmung.")),
-        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunCommentDistillAsync, "run_comment_distill",
-            "C2d: destilliert NEUE Kommentare seit den Ankern zu Vorschlaegen (draft=true = LLM-Kosten; "
-            + "deterministischer Collector zuerst). Wahrheits-Drafts -> comment-delta.json (dann run_pipeline_full), "
-            + "Klaerungs-Antworten -> sweep-answers.json (dann run_clarify_sweep). Braucht Autor-Zustimmung.")),
-        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunGithubInboundAsync, "run_github_inbound",
-            "Fuehrt die GitHub-ERNTE-ERKENNUNG aus (deterministisch, LLM-frei; draft=true ergaenzt den "
-            + "InboundAgent-Draft + Delta = LLM-Kosten). Ergebnis: harvest-report unter runs/github-inbound/. Braucht Autor-Zustimmung.")),
         AIFunctionFactory.Create(SaveAuthorStatements, "save_author_statements",
             "3c AUTOR-FRONT Schritt 1: schreibt die vom Autor DIKTIERTEN Wahrheits-Kandidaten (statements: "
             + "[{text, disposition requirement|architecture|question, rationale?, githubIssueNumber?}]; "
@@ -101,15 +97,15 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             + "githubIssueNumber IMMER setzen, wenn der Anstoß aus einem Issue kam — z. B. reject am Gate + "
             + "Neu-Diktat — damit Forward-Link/Vermerk/Ernte-Gedächtnis intakt bleiben) WOERTLICH als Delta im "
             + "Meeting-Ketten-Vertrag (kein Wahrheits-Write — die Kette prägt erst nach den Gates). "
-            + "Gibt deltaPath fuer run_pipeline_full zurueck."),
+            + "Gibt deltaPath fuer run_pipeline_from_delta zurueck."),
         AIFunctionFactory.Create(SaveSweepAnswers, "save_sweep_answers",
             "C4-Zielschleife Schritt 2: schreibt die vom Autor DIKTIERTEN Klaerungs-Antworten als "
             + "sweep-answers.json (kein Wahrheits-Write; Quelle = author via steward-chat). "
-            + "answers: [{pbiId, antwort}]. Gibt den Pfad fuer run_clarify_sweep zurueck."),
-        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunClarifySweepAsync, "run_clarify_sweep",
-            "C4-Zielschleife Schritt 3 (LLM-Kosten): faehrt den Klaerungs-Sweep mit der Antworten-Datei — "
-            + "Angleichungs-Vorschlaege entstehen, danach entscheidet der Autor am pbi-update-review-Gate. "
-            + "Braucht Autor-Zustimmung.")),
+            + "answers: [{pbiId, antwort}]. Gibt den Pfad zurueck — BETRIEBSPFAD danach: run_clarify_via_graph."),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunClarifyViaGraphAsync, "run_clarify_via_graph",
+            "C4-BETRIEBSPFAD (LLM-Kosten): STARTET aus der Antworten-Datei einen DURABLEN pipeline-full-Lauf, der "
+            + "Angleichung → pbi-Gate → Apply → Forward DURCHFAEHRT (Steward = Orchestrator EINES Workflows). Kehrt "
+            + "SOFORT mit runId zurueck; pausiert an den Human-Gates (get_run_status / resume_run). Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(OpenGateUiAsync, "open_gate_ui",
             "3b: oeffnet auf Autor-Ja die REVIEW-UI zum PAUSIERTEN Graph-Gate eines Laufs (decision-gate | "
             + "pbi-gate | ingest-/arch-ingest-gate). 'Fertig' in der UI kettet automatisch den resume "
@@ -117,16 +113,10 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(OpenReviewUiAsync, "open_review_ui",
             "Oeffnet auf Autor-Ja das REVIEW zu einem wartenden Registry-Eintrag (proposalId aus "
             + "get_core_overview.openDecisions.pendingReviews) — der Autor entscheidet am Gate, nie du. Braucht Autor-Zustimmung.")),
-        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunGithubReverseAsync, "run_github_reverse",
-            "Fuehrt die ZUSTANDS-Reverse-Bahn aus (deterministisch: Issue geschlossen/wieder offen → Vorschlaege; "
-            + "danach github-reverse-review als Gate). Braucht Autor-Zustimmung.")),
     ];
 
     private async Task<string> PullGithubSnapshotAsync(string repo)
         => AuxResult(await _pullSnapshot(repo).ConfigureAwait(false), "github-snapshot");
-
-    private async Task<string> RunGithubInboundAsync(bool draft = false)
-        => AuxResult(await _runInbound(draft).ConfigureAwait(false), "github-inbound");
 
     private async Task<string> PullIssueCommentsAsync(string repo)
         => AuxResult(await _pullComments(repo).ConfigureAwait(false), "github-snapshot comments");
@@ -152,9 +142,6 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         catch { return null; }   // kaputter Snapshot kostet nur die Anreicherung, nie das Diktat
     }
 
-    private async Task<string> RunCommentDistillAsync(bool draft = false)
-        => AuxResult(await _runDistill(draft).ConfigureAwait(false), "github-comment-distill");
-
     private async Task<string> PostIssueCommentAsync(string repo, int issueNumber, string text)
     {
         try
@@ -168,15 +155,17 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         }
     }
 
-    private async Task<string> RunGithubReverseAsync()
-        => AuxResult(await _runReverse().ConfigureAwait(false), "github-reverse");
-
     private static string AuxResult(int exitCode, string bahn)
         => JsonSerializer.Serialize(exitCode == 0
             ? new { ok = true, bahn, hint = "Details stehen im juengsten runs/-Ordner der Bahn." }
             : (object)new { error = "AUX_RUN_FAILED", bahn, exitCode }, Json);
 
     private Task<string> RunPipelineFromGithubAsync() => StartPipelineAsync(["pipeline-full", "run", "--from-github"], "github-ernte");
+
+    // ONLY-STEWARD Recovery (steward/reprojektion-only-steward.md): re-projiziert die Wahrheit nach GitHub, wenn ein
+    // Forward am externen Rand scheiterte. Delta AUS DEM CORE (truth-first), durch den durablen Graphen, pausiert am
+    // forward-gate. Gleiche Start-async-Naht wie die anderen Läufe (runId sofort, Pause/Resume).
+    private Task<string> RunReprojectAsync() => StartPipelineAsync(["pipeline-full", "run", "--reproject"], "reproject");
 
     private string SaveAuthorStatements(IReadOnlyList<FullWorkflow.Delta.AuthorStatement> statements, string? sessionName = null)
     {
@@ -191,7 +180,7 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         File.WriteAllText(path, JsonSerializer.Serialize(delta, FullWorkflow.Delta.ProjectStateJson.Options));
         return JsonSerializer.Serialize(new { saved = true, items = delta!.Items.Count,
             deltaPath = Path.GetRelativePath(repoRoot, path),
-            hint = "naechster Schritt (zustimmungspflichtig): run_pipeline_full(deltaPath) — Tor 1 pausiert dann im Chat." }, Json);
+            hint = "naechster Schritt (zustimmungspflichtig): run_pipeline_from_delta(deltaPath) — Tor 1 pausiert dann im Chat." }, Json);
     }
 
     private string SaveSweepAnswers(IReadOnlyList<FullWorkflow.PbiUpdate.ClarifySweepAnswer> answers, string? sessionName = null)
@@ -223,11 +212,13 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     private async Task<string> OpenReviewUiAsync(string proposalId)
         => AuxResult(await _openReview(proposalId).ConfigureAwait(false), "pbi-update-review");
 
-    private async Task<string> RunClarifySweepAsync(string answersPath)
-        => AuxResult(await _runSweep(answersPath).ConfigureAwait(false), "clarify-sweep");
-
-    private Task<string> RunPipelineFullAsync(string deltaPath)
+    private Task<string> RunPipelineFromDeltaAsync(string deltaPath)
         => StartPipelineAsync(["pipeline-full", "run", "--from-delta", deltaPath], deltaPath);
+
+    // A′ Schritt 3a — der BETRIEBSPFAD der Klärung: startet einen DURABLEN pipeline-full-Lauf aus der Antworten-Datei
+    // (clarify → pbi-Gate → Apply → Forward). Gleiche Start-async-Naht wie die anderen Läufe (runId sofort, Pause/Resume).
+    private Task<string> RunClarifyViaGraphAsync(string answersPath)
+        => StartPipelineAsync(["pipeline-full", "run", "--from-clarify", answersPath], answersPath);
 
     private async Task<string> StartPipelineAsync(string[] args, string what)
     {

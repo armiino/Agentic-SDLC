@@ -32,6 +32,20 @@ public static class PipelineFullRunner
 {
     private const string Cmd = "pipeline-full";
 
+    // A′ Schritt 3a — DÜNN + testbar: liest die Sweep-Antworten-Datei und baut den typisierten Eingangs-Vertrag.
+    // KEINE Fachlogik hier (Plan/Alignment/Checker/Injektion liegen im ClarifyEntryExecutor).
+    internal static ClarifySweepInput ReadClarifyInput(string path)
+        => new(JsonSerializer.Deserialize<List<ClarifySweepAnswer>>(File.ReadAllText(path), JsonFiles.Json) ?? []);
+
+    // R-26-C-Fix (11.08.-E2E-Fund): die pbi-gate-Antwort aus der Review-UI-Datei trägt Ops UND die akzeptierten
+    // ANGLEICHUNGEN. Der frühere pipeline-full-Resume ließ die Angleichungen fallen (alignments=0 am Apply) →
+    // needs_clarify fiel im Graphen NIE. Geteilte Umwandlung wie im Standalone-Apply → CLI/Graph-Parität.
+    internal static (IReadOnlyList<string> AcceptedOpIds, IReadOnlyList<PbiAlignment>? AcceptedAlignments, string Reviewer)
+        ResolvePbiGateDecisions(PbiStateChangePlanDocument plan, PbiUpdateDecisionsFile df)
+        => (PbiUpdateApplyExec.AcceptedFromDecisions(plan, df.Decisions).Select(i => $"op-{i}").ToList(),
+            PbiUpdateApplyExec.AcceptedAlignments(plan, df.AlignmentDecisions),
+            df.Reviewer);
+
     private sealed record StagePlan(string Id, string Folder, string? Gate);
 
     private static IReadOnlyList<StagePlan> Plan(FullWorkflowSettings s)
@@ -80,6 +94,8 @@ public static class PipelineFullRunner
         Console.Error.WriteLine("  pipeline-full start [<transcript.txt>]   (Faden + Skeleton-Plan, kein LLM)");
         Console.Error.WriteLine("  pipeline-full run   [<transcript.txt>]   (EIN Graph: front->branch->bootstrap|betrieb->forward)");
         Console.Error.WriteLine("  pipeline-full run --from-delta <meeting-delta.json>  (Einstieg an der Hinterhälfte; Branch entscheidet Bootstrap|Betrieb)");
+        Console.Error.WriteLine("  pipeline-full run --from-clarify <sweep-answers.json>  (A′: Klärungs-Antworten → PBI-Update → Forward, alles im durablen Graphen)");
+        Console.Error.WriteLine("  pipeline-full run --reproject                         (ONLY-STEWARD Recovery: Wahrheit→GitHub neu abgleichen, wenn ein Forward scheiterte; Delta aus dem Core)");
         Console.Error.WriteLine("  pipeline-full run --from-github [--repo owner/name] [--issues <snapshot.json> [--comments <issue-comments.json>]]");
         Console.Error.WriteLine("      (C2/C2d: GitHub-Front — AUTO-PULL Issues+Kommentare -> Detect+Destillat -> Delta -> Tore; --issues = Replay-Weg)");
         Console.Error.WriteLine("  pipeline-full run ... --policy <interactive|accept-all>  (Gate-Politik NUR für diesen Lauf; ersetzt auch explizite Gate-Einträge)");
@@ -105,9 +121,13 @@ public static class PipelineFullRunner
         // Schritt 5 ③: Eingangs-Vertrag — Transkript (volle Front) ODER --from-delta <meeting-delta.json>
         // (Hinterhälfte; der BranchDetector entscheidet Bootstrap|Betrieb wie immer). Ersetzt pipeline-hitl.
         string? deltaArg = null; string? issuesArg = null; string? commentsArg = null; string? repoArg = null; var fromGithub = false;
+        string? clarifyArg = null;   // A′ Schritt 3a: --from-clarify <sweep-answers.json>
+        var reproject = false;       // ONLY-STEWARD: --reproject (parameterlos, Recovery aus dem Core)
         for (var i = 2; i < args.Length; i++)
         {
             if (string.Equals(args[i], "--from-delta", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) deltaArg = args[i + 1];
+            else if (string.Equals(args[i], "--from-clarify", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) clarifyArg = args[i + 1];
+            else if (string.Equals(args[i], "--reproject", StringComparison.OrdinalIgnoreCase)) reproject = true;
             else if (string.Equals(args[i], "--from-github", StringComparison.OrdinalIgnoreCase)) fromGithub = true;
             else if (string.Equals(args[i], "--issues", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) issuesArg = args[i + 1];
             else if (string.Equals(args[i], "--comments", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) commentsArg = args[i + 1];
@@ -115,6 +135,7 @@ public static class PipelineFullRunner
         }
 
         ProjectStateDocument? entryDelta = null;
+        PbiUpdate.ClarifySweepInput? entryClarify = null;   // A′ Schritt 3a
         string? transcriptPath = null;
         var transcriptText = string.Empty;
         if (deltaArg is not null)
@@ -123,10 +144,23 @@ public static class PipelineFullRunner
             if (!File.Exists(deltaPath)) { Console.Error.WriteLine($"[{Cmd}] MeetingDelta nicht gefunden: {deltaPath}"); return 2; }
             entryDelta = (await JsonProjectStateRepository.LoadAsync(deltaPath).ConfigureAwait(false)).Document;
         }
+        else if (clarifyArg is not null)
+        {
+            // A′ Schritt 3a — DÜNN: nur Datei lesen/deserialisieren → Eingangs-Vertrag. Die Fachlogik
+            // (Plan/Alignment/Checker/Injektion) liegt im ClarifyEntryExecutor, NICHT hier.
+            var clarifyPath = Path.IsPathRooted(clarifyArg) ? clarifyArg : Path.Combine(repoRoot, clarifyArg);
+            if (!File.Exists(clarifyPath)) { Console.Error.WriteLine($"[{Cmd}] Sweep-Antworten nicht gefunden: {clarifyPath}"); return 2; }
+            entryClarify = ReadClarifyInput(clarifyPath);
+        }
         else if (fromGithub)
         {
             // C2c (§13): die GitHub-Ernte als ZWEITE FRONT — geerntet wird NACH der Run-Erzeugung
             // (Agent-Logs/otel gehören zum Lauf); das Delta entsteht dann wie bei --from-delta.
+        }
+        else if (reproject)
+        {
+            // ONLY-STEWARD Recovery: kein Eingangs-Artefakt — der ReprojectEntryExecutor leitet das Sync-Delta
+            // AUS DEM CORE ab (truth-first). Kein Transkript, kein Delta, keine Datei.
         }
         else
         {
@@ -213,8 +247,9 @@ public static class PipelineFullRunner
             pipelineMode = fw.Mode.ToString(),
             slice = "ledger-v0",
             runId = run.RunId,
-            entryPoint = fromGithub ? "github" : entryDelta is null ? "transcript" : "delta",
+            entryPoint = fromGithub ? "github" : reproject ? "reproject" : entryClarify is not null ? "clarify" : entryDelta is null ? "transcript" : "delta",
             transcript = transcriptPath is null ? null : Path.GetRelativePath(repoRoot, transcriptPath),
+            fromClarify = clarifyArg,
             fromDelta = deltaArg,
             execute = fw.Execute,
             policyProfile = fw.PolicyProfile.Kind.ToString(),
@@ -246,9 +281,13 @@ public static class PipelineFullRunner
         var manager = CheckpointManager.CreateJson(store, HitlShell.Json);
         using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(fw.TimeoutMinutes));
 
-        var entry = entryDelta is not null
-            ? new PipelineFullEntry(null, entryDelta)
-            : new PipelineFullEntry(new TranscriptInput(transcriptPath!, transcriptText), null);
+        var entry = reproject
+            ? new PipelineFullEntry(null, null, null, new ReprojectRequest())        // ONLY-STEWARD: Recovery aus dem Core
+            : entryClarify is not null
+                ? new PipelineFullEntry(null, null, entryClarify)                    // A′ Schritt 3a: clarify-Batch
+                : entryDelta is not null
+                    ? new PipelineFullEntry(null, entryDelta)
+                    : new PipelineFullEntry(new TranscriptInput(transcriptPath!, transcriptText), null);
         var exit = await RunWorkflowStreamingAsync<PipelineFullEntry>(
             workflow, entry, run.RunId, run, fw, manager, cts.Token,
             openUi: args.Contains("--open-ui")).ConfigureAwait(false);
@@ -363,6 +402,11 @@ public static class PipelineFullRunner
         var workflow = PipelineFullWorkflow.Assemble(
             new FrontNodes(
                 new PipelineEntryExecutor(run),
+                // A′ Schritt 2: der clarify-Graph-Eingang mit der GETEILTEN LLM-Alignment-Naht (PbiAnswerAlignment).
+                new AgenticSdlc.Host.FullWorkflow.Pipeline.ClarifyEntryExecutor(run, repoRoot, pbiOutDir,
+                    AgenticSdlc.Host.FullWorkflow.PbiUpdate.PbiAnswerAlignment.Llm(settings, repoRoot, run)),
+                // ONLY-STEWARD: der Recovery-Eingang (Core→Delta, gemappt-only, truth-first).
+                new AgenticSdlc.Host.FullWorkflow.Pipeline.ReprojectEntryExecutor(run, repoRoot),
                 new LedgerIntakeExecutor(run, ledgerRun, transcriptText), ledgerCapsule, new LedgerSummaryExecutor(run, ledgerRun),
                 new AdjudicationGateRequestExecutor(run),
                 RequestPort.Create<AdjudicationReviewRequest, AdjudicationReviewResponse>("adjudication-gate"),
@@ -423,7 +467,9 @@ public static class PipelineFullRunner
                 new GithubForwardGateExecutor(run), new GithubForwardRepairExecutor(fwdFactory, run),
                 new GithubForwardHitlFinalizeExecutor(run),
                 RequestPort.Create<ForwardReviewRequest, ForwardReviewResponse>("github-forward-gate"),
-                new GithubForwardApplyExecutor(run, repoRoot, githubOutDir, null, null)));
+                // R-47: repository + tokenEnv aus fw durchreichen — sonst fällt ResolveToken(null) auf GITHUB_TEST_TOKEN
+                // zurück (falscher Token → 403/404 beim echten Write, obwohl der Snapshot mit fw.TokenEnv liest).
+                new GithubForwardApplyExecutor(run, repoRoot, githubOutDir, fw.Repo, fw.TokenEnv)));
 
         return (workflow, ledgerModel, baselineModel, adjudicationPolicy);
     }
@@ -798,6 +844,7 @@ public static class PipelineFullRunner
                 // R-44b (09.08.): Datei-Vertrag zuerst — die pbi-update-Review-UI kann auf 07-pbi-update zeigen
                 // (pbi-change-plan.json liegt dort) und schreibt human-decisions.json; vorher nur Flags.
                 IReadOnlyList<string>? accepted = null; var reviewer = "author (interactive)";
+                IReadOnlyList<PbiAlignment>? aligns = null;   // R-26-C-Fix: akzeptierte Angleichungen MITFÜHREN (sonst fällt needs_clarify im Graphen nie)
                 var pbiStage = Path.Combine(run.RunDir, "07-pbi-update");
                 var pbiDecisionsPath = Path.Combine(pbiStage, "human-decisions.json");
                 if (File.Exists(pbiDecisionsPath) && File.Exists(Path.Combine(pbiStage, "pbi-change-plan.json")))
@@ -806,13 +853,12 @@ public static class PipelineFullRunner
                         await File.ReadAllTextAsync(Path.Combine(pbiStage, "pbi-change-plan.json")).ConfigureAwait(false), JsonFiles.Json)!;
                     var df = JsonSerializer.Deserialize<PbiUpdate.PbiUpdateDecisionsFile>(
                         await File.ReadAllTextAsync(pbiDecisionsPath).ConfigureAwait(false), JsonFiles.Json)!;
-                    accepted = PbiUpdate.PbiUpdateApplyExec.AcceptedFromDecisions(stagePlan, df.Decisions).Select(i => $"op-{i}").ToList();
-                    reviewer = df.Reviewer;
+                    (accepted, aligns, reviewer) = ResolvePbiGateDecisions(stagePlan, df);
                 }
                 accepted ??= Flags(pr.Ops.Select(o => o.OpId));
                 if (accepted is null) return false;
-                return await AnswerAsync(new PbiUpdateReviewResponse(accepted, reviewer),
-                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = accepted.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+                return await AnswerAsync(new PbiUpdateReviewResponse(accepted, reviewer, aligns),
+                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = accepted.Count, alignments = aligns?.Count ?? 0, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
             }
             case "github-forward-gate" when req.Request.TryGetDataAs<ForwardReviewRequest>(out var f) && f is not null:
             {

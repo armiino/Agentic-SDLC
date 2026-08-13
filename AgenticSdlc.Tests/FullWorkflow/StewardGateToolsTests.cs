@@ -226,6 +226,26 @@ public sealed class StewardGraphGateTests
     }
 
     [Fact]
+    public async Task Forward_Gate_zeigt_den_VOLLEN_Inhalt_aus_dem_sync_delta()
+    {
+        // Steward-UX-Fund 11.08. („warum sehe ich die aenderung nicht?"): das forward-Gate zeigt jetzt je Op den
+        // vollen Inhalt (Statement/AK/Rahmen), der ans Issue geschrieben wuerde — aus dem sync-delta der pbi-update-Stufe.
+        var repo = RepoWithPausedForward(out var runId);
+        var syncDir = Path.Combine(repo, "runs", "fullworkflow", runId, "07-pbi-update", "applied");
+        Directory.CreateDirectory(syncDir);
+        File.WriteAllText(Path.Combine(syncDir, "github-sync-delta.json"), """
+            {"newPbis":[],"updatedPbis":["PBI-1"],"entries":[
+              {"pbiId":"PBI-1","title":"T","statement":"Als Admin sehe ich das Protokoll.","acceptanceCriteria":["Nur Admin-Rolle hat Zugriff","Protokoll ist read-only"],"constraints":["ARCH-1 — DSGVO"]}]}
+            """);
+
+        var v = await InvokeAsync(new StewardGateTools(repo), "get_paused_gate", new Dictionary<string, object?> { ["runId"] = runId });
+        var inhalt = v.GetProperty("ops")[0].GetProperty("inhalt");
+        Assert.Equal("Als Admin sehe ich das Protokoll.", inhalt.GetProperty("statement").GetString());
+        Assert.Equal(2, inhalt.GetProperty("akzeptanzkriterien").GetArrayLength());   // voller Inhalt sichtbar
+        Assert.Equal("ARCH-1 — DSGVO", inhalt.GetProperty("rahmen")[0].GetString());
+    }
+
+    [Fact]
     public async Task Vorlage_Submit_und_Datei_Vertrag_fuer_den_resume_Responder()
     {
         var repo = RepoWithPausedForward(out var runId);

@@ -63,7 +63,8 @@ public sealed class AuthorFrontTests
         var read = new StewardReadTools(repo).Build().OfType<AIFunction>().Single(f => f.Name == "read_run_report");
         var rep = JsonDocument.Parse(JsonSerializer.Deserialize<string>(JsonSerializer.Serialize(
             await read.InvokeAsync(new AIFunctionArguments(new Dictionary<string, object?> { ["runId"] = "r-af" }))))!).RootElement;
-        Assert.Equal("REQ-90", rep.GetProperty("report").GetProperty("applied")[0].GetProperty("entityId").GetString());
+        // read_run_report ist jetzt general (stages.<stufe>): der Ingest-Report liegt unter stages.ingest.
+        Assert.Equal("REQ-90", rep.GetProperty("stages").GetProperty("ingest").GetProperty("applied")[0].GetProperty("entityId").GetString());
 
         var core = new ProjectStateDocument("p", 4, DateTime.UnixEpoch, [],
             [loaded.Items.Single() with { ItemId = "REQ-90", SourceRunId = "r-af" },

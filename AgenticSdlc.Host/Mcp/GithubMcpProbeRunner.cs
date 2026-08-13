@@ -15,7 +15,15 @@ public static class GithubMcpProbeRunner
 
     private static async Task<int> RunAsync(string[] args)
     {
-        var local = args.Any(a => string.Equals(a, "--local", StringComparison.OrdinalIgnoreCase));
+        // Explizites Arg-Parsing statt stillem Ignorieren (Code-Hygiene 10.08.): optionaler Provider-Token
+        // `github` (einziger unterstützter — offizielle Doku-Konvention) + `--local`; Unbekanntes = LAUT.
+        var local = false;
+        for (var i = 1; i < args.Length; i++)
+        {
+            if (string.Equals(args[i], "--local", StringComparison.OrdinalIgnoreCase)) local = true;
+            else if (string.Equals(args[i], "github", StringComparison.OrdinalIgnoreCase)) { /* Provider explizit ok */ }
+            else { Console.Error.WriteLine($"[mcp-probe] unbekanntes Argument: '{args[i]}'. Usage: mcp-probe [github] [--local]"); return 2; }
+        }
         var token = GithubMcp.ResolveToken();
         if (string.IsNullOrWhiteSpace(token))
         { Console.Error.WriteLine("[mcp-probe] kein Token (GITHUB_AGENTIC_REFACTOR_TOKEN/GITHUB_TEST_TOKEN/GITHUB_TOKEN)."); return 2; }

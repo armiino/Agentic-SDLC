@@ -22,42 +22,44 @@ public sealed class StewardRunToolsTests
     [Fact]
     public void Alle_Start_Tools_sind_ApprovalRequired_gewrappt()
     {
+        // ⚖ 13.08. Klasse-Regel: die 4 blinden Werkbank-Seile (clarify_sweep/inbound/distill/reverse) sind ENTFERNT
+        // (system-inventar §3) — bleiben 10 zustimmungspflichtige Tools (Graph-Starter, Pulls, UIs, post_comment).
         var tools = new StewardRunTools(".", S(), (args, cb) => Task.FromResult(0)).Build();
-        Assert.Equal(12, tools.OfType<ApprovalRequiredAIFunction>().Count());   // K3 (C2c +4, C4c +1, C4d +1, 3b +1, C2d +3)
+        Assert.Equal(10, tools.OfType<ApprovalRequiredAIFunction>().Count());
+        // Wächter: keines der entfernten Seile darf zurückkommen, ohne dass sein Ergebnis im Chat lesbar ist.
+        var names = tools.OfType<AIFunction>().Select(f => f.Name).ToHashSet(StringComparer.Ordinal);
+        foreach (var gone in new[] { "run_clarify_sweep", "run_github_inbound", "run_comment_distill", "run_github_reverse" })
+            Assert.DoesNotContain(gone, names);
     }
 
     [Fact]
     public async Task K13_2_Seile_rufen_TYPISIERTE_Naehte_und_melden_Fehler_LAUT()
     {
-        string? repo = null; bool? draft = null; var reverse = 0; string? review = null;
+        string? repo = null; string? comments = null; string? review = null;
         var tools = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0),
             pullSnapshot: r => { repo = r; return Task.FromResult(0); },
-            runInbound: d => { draft = d; return Task.FromResult(0); },
-            runReverse: () => { reverse++; return Task.FromResult(0); },
+            pullComments: r => { comments = r; return Task.FromResult(0); },
             openReview: id => { review = id; return Task.FromResult(0); });
 
         var snap = await InvokeAsync(tools, "pull_github_snapshot", new Dictionary<string, object?> { ["repo"] = "owner/name" });
         Assert.True(snap.GetProperty("ok").GetBoolean());
         Assert.Equal("owner/name", repo);                                     // typisiert — keine CLI-Args mehr
 
-        await InvokeAsync(tools, "run_github_inbound", new Dictionary<string, object?> { ["draft"] = true });
-        Assert.True(draft);
-        await InvokeAsync(tools, "run_github_reverse", new Dictionary<string, object?>());
-        Assert.Equal(1, reverse);
+        await InvokeAsync(tools, "pull_issue_comments", new Dictionary<string, object?> { ["repo"] = "owner/name" });
+        Assert.Equal("owner/name", comments);
         await InvokeAsync(tools, "open_review_ui", new Dictionary<string, object?> { ["proposalId"] = "PEND-x" });
         Assert.Equal("PEND-x", review);
 
-        var failing = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0), runInbound: _ => Task.FromResult(2));
-        var err = await InvokeAsync(failing, "run_github_inbound", new Dictionary<string, object?>());
+        var failing = new StewardRunTools(".", S(), (a, cb) => Task.FromResult(0), pullSnapshot: _ => Task.FromResult(2));
+        var err = await InvokeAsync(failing, "pull_github_snapshot", new Dictionary<string, object?> { ["repo"] = "o/n" });
         Assert.Equal("AUX_RUN_FAILED", err.GetProperty("error").GetString());
     }
 
     [Fact]
-    public async Task C4c_save_sweep_answers_stempelt_Quelle_und_run_clarify_sweep_faehrt_die_Bahn()
+    public async Task C4c_save_sweep_answers_stempelt_Quelle()
     {
         var repo = Directory.CreateTempSubdirectory("c4c-").FullName;
-        string[]? seen = null;
-        var tools = new StewardRunTools(repo, S(), (a, cb) => Task.FromResult(0), runSweep: p => { seen = ["clarify-sweep", "run", "--answers", p]; return Task.FromResult(0); });
+        var tools = new StewardRunTools(repo, S(), (a, cb) => Task.FromResult(0));
 
         var bad = await InvokeAsync(tools, "save_sweep_answers", new Dictionary<string, object?>
         { ["answers"] = new[] { new AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepAnswer("PBI-1", "") } });
@@ -70,9 +72,7 @@ public sealed class StewardRunToolsTests
             File.ReadAllText(Path.Combine(repo, path)), AgenticSdlc.Host.FullWorkflow.JsonFiles.Json)!;
         Assert.Equal("author via steward-chat", saved.Single().Quelle);              // §8-Herkunft gestempelt
         Assert.Equal("probe", saved.Single().SessionName);
-
-        await InvokeAsync(tools, "run_clarify_sweep", new Dictionary<string, object?> { ["answersPath"] = path });
-        Assert.Equal(["clarify-sweep", "run", "--answers", path], seen!);            // Seil -> Betriebs-Bahn
+        // Betriebspfad danach: run_clarify_via_graph (eigener Test unten) — das Werkbank-Seil run_clarify_sweep ist entfernt.
     }
 
     [Fact]
@@ -85,22 +85,43 @@ public sealed class StewardRunToolsTests
         Assert.Equal(["pipeline-full", "run", "--from-github"], seen!);        // §13: Seil zeigt auf den Ein-Graph-Eingang
     }
 
+    // ONLY-STEWARD Recovery: run_reproject startet den durablen Re-Projektions-Modus des Ein-Graphen.
+    [Fact]
+    public async Task run_reproject_startet_die_only_steward_re_projektion()
+    {
+        string[]? seen = null;
+        var tools = new StewardRunTools(".", S(), (args, onRunId) => { seen = args; onRunId?.Invoke("run-rp"); return Task.FromResult(0); });
+        var started = await InvokeAsync(tools, "run_reproject", new Dictionary<string, object?>());
+        Assert.True(started.GetProperty("started").GetBoolean());
+        Assert.Equal(["pipeline-full", "run", "--reproject"], seen!);          // Seil zeigt auf den Recovery-Eingang (Delta aus dem Core)
+    }
+
+    [Fact]
+    public async Task run_clarify_via_graph_startet_den_durablen_Betriebspfad()
+    {
+        string[]? seen = null;
+        var tools = new StewardRunTools(".", S(), (args, onRunId) => { seen = args; onRunId?.Invoke("run-9"); return Task.FromResult(0); });
+        var started = await InvokeAsync(tools, "run_clarify_via_graph", new Dictionary<string, object?> { ["answersPath"] = "sweep.json" });
+        Assert.True(started.GetProperty("started").GetBoolean());
+        Assert.Equal(["pipeline-full", "run", "--from-clarify", "sweep.json"], seen!);   // A′-3a: Betriebspfad durch den durablen Graphen
+    }
+
     [Fact]
     public async Task Start_liefert_runId_SOFORT_und_BUSY_schuetzt_vor_Parallel_Start()
     {
         var release = new TaskCompletionSource<int>();
         var tools = new StewardRunTools(".", S(), (args, onRunId) => { onRunId?.Invoke("run-42"); return release.Task; });
 
-        var started = await InvokeAsync(tools, "run_pipeline_full", new Dictionary<string, object?> { ["deltaPath"] = "x.json" });
+        var started = await InvokeAsync(tools, "run_pipeline_from_delta", new Dictionary<string, object?> { ["deltaPath"] = "x.json" });
         Assert.True(started.GetProperty("started").GetBoolean());
         Assert.Equal("run-42", started.GetProperty("runId").GetString());      // runId kam VOR Lauf-Ende (start-async)
 
-        var busy = await InvokeAsync(tools, "run_pipeline_full", new Dictionary<string, object?> { ["deltaPath"] = "y.json" });
+        var busy = await InvokeAsync(tools, "run_pipeline_from_delta", new Dictionary<string, object?> { ["deltaPath"] = "y.json" });
         Assert.Equal("STEWARD_BUSY", busy.GetProperty("error").GetString());   // K2: ein aktiver Lauf je Sitzung
 
         release.SetResult(0);
         await tools.Started["run-42"];
-        var again = await InvokeAsync(tools, "run_pipeline_full", new Dictionary<string, object?> { ["deltaPath"] = "z.json" });
+        var again = await InvokeAsync(tools, "run_pipeline_from_delta", new Dictionary<string, object?> { ["deltaPath"] = "z.json" });
         Assert.True(again.GetProperty("started").GetBoolean());               // nach Ende wieder frei
     }
 
@@ -110,7 +131,7 @@ public sealed class StewardRunToolsTests
         string[]? seen = null;
         var tools = new StewardRunTools(".", S(), (args, onRunId) => { seen = args; return Task.FromResult(2); });
 
-        var fail = await InvokeAsync(tools, "run_pipeline_full", new Dictionary<string, object?> { ["deltaPath"] = "fehlt.json" });
+        var fail = await InvokeAsync(tools, "run_pipeline_from_delta", new Dictionary<string, object?> { ["deltaPath"] = "fehlt.json" });
         Assert.Equal("RUN_START_FAILED", fail.GetProperty("error").GetString());
         Assert.Equal(2, fail.GetProperty("exitCode").GetInt32());              // Runner-Exit sichtbar, nichts still
 

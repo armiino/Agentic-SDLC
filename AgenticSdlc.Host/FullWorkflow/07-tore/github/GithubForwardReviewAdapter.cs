@@ -15,16 +15,19 @@ public static class GithubForwardReviewAdapter
     private const int BodyPreviewChars = 700;
 
     public static ReviewSession BuildSession(string runId, GithubForwardPlanDocument plan,
-        IReadOnlyDictionary<int, GithubIssueSnapshot>? issuesByNumber = null)
+        IReadOnlyDictionary<int, GithubIssueSnapshot>? issuesByNumber = null,
+        // 13.08.: Warn-Note „ungeerntete GitHub-Arbeit" (unharvested-note.json des Laufs) — im Untertitel sichtbar.
+        string? unharvestedWarnung = null)
     {
         var items = plan.Operations.Select((op, i) => BuildItem($"op-{i}", i, op, issuesByNumber)).ToList();
         return new ReviewSession
         {
             SessionId = $"github-forward-{runId}",
             Title = "PBIs nach GitHub spiegeln",
-            Subtitle = plan.Operations.Count == 0
+            Subtitle = (plan.Operations.Count == 0
                 ? "Keine Operationen."
-                : $"{plan.Operations.Count} Operationen — je Op: ausführen oder überspringen. Nach GitHub geschrieben wird erst im gesicherten Apply-Schritt.",
+                : $"{plan.Operations.Count} Operationen — je Op: ausführen oder überspringen. Nach GitHub geschrieben wird erst im gesicherten Apply-Schritt.")
+                + (unharvestedWarnung is null ? "" : $" ⚠ {unharvestedWarnung}"),
             Help = BuildHelp(),
             Notes = SessionNotes(),
             Glossary = Glossary(),

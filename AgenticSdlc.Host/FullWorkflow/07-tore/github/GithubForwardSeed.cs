@@ -99,15 +99,32 @@ public static class GithubForwardSeed
             }
             else
             {
+                // In-Sync-Erkennung (Autor-Fund 13.08. nach dem Voll-Stempel-Lauf): OHNE Inhalts-Vergleich schlug
+                // jeder Forward fuer JEDE gemappte PBI ewig UPDATE vor — der Plan war kein Drift-Report, und
+                // idempotente Re-Writes churnten die Issues. Der Render ist deterministisch und der Apply stempelt
+                // EXAKT den gesendeten Render (Compute(op.Title/Body)) — also gilt: Drift==None (Stempel==Snapshot,
+                // kein Mensch-Edit) UND Render-Hash==Stempel (Core unveraendert) ⇔ vollstaendig in Sync ⇒ NoChange.
+                // Drift 'Unknown' (Alt-Mapping ohne Stempel) bleibt bewusst UPDATE — der Write heilt/stempelt (C2a-3).
+                var drift = GithubDriftCheck.Check(mapping, issue);
+                var body = ProposedBody(e);
+                if (drift == GithubDrift.None
+                    && GithubProjectionHash.Compute(e.Title) == mapping.ProjectedTitleHash
+                    && GithubProjectionHash.Compute(body) == mapping.ProjectedBodyHash)
+                {
+                    deterministic.Add(new GithubForwardOp(
+                        GithubForwardKind.NoChange, e.PbiId, mapping.IssueNumber, null, null, null, null, null, anchor,
+                        $"In Sync: Issue #{mapping.IssueNumber} entspricht exakt der aktuellen Core-Projektion — nichts zu schreiben.",
+                        "deterministic"));
+                    continue;
+                }
+
                 // R-30: KEINE Labels am UPDATE — GitHubs PATCH ersetzt die komplette Label-Liste; null heisst
                 // hier ausdruecklich "Labels nicht anfassen" (Requirement-IDs stehen im Body, nicht als Labels).
-                // C2a-3: Drift 'Unknown' (Alt-Mapping ohne Stempel) blockt NICHT, wird aber benannt — der
-                // naechste ausgefuehrte Write stempelt und macht Drift ab dann pruefbar (§7: erster Zyklus heilt).
-                var unknownNote = GithubDriftCheck.Check(mapping, issue) == GithubDrift.Unknown
+                var unknownNote = drift == GithubDrift.Unknown
                     ? " · Hinweis: noch kein Drift-Stempel (Alt-Issue) — manueller Edit waere aktuell nicht erkennbar; dieser Write stempelt."
                     : "";
                 deterministic.Add(new GithubForwardOp(
-                    GithubForwardKind.UpdateIssue, e.PbiId, mapping.IssueNumber, e.Title, ProposedBody(e), null,
+                    GithubForwardKind.UpdateIssue, e.PbiId, mapping.IssueNumber, e.Title, body, null,
                     null, null, anchor,
                     "PBI hat sich geaendert — vorgeschlagener Patch/Kommentar (kein Auto-Overwrite)." + unknownNote, "deterministic"));
             }

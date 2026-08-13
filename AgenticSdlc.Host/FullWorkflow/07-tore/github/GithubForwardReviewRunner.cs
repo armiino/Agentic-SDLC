@@ -30,7 +30,13 @@ public static class GithubForwardReviewRunner
         if (issuesByNumber is null)
             Console.WriteLine("[github-forward-review] HINWEIS: Issue-Snapshot nicht ladbar — UPDATE-Items ohne Vorher-Ansicht.");
 
-        var session = GithubForwardReviewAdapter.BuildSession(runId, plan, issuesByNumber);
+        // Warn-Note „ungeerntete GitHub-Arbeit" (13.08.): liegt best-effort neben dem Plan (SnapshotExecutor) —
+        // im Review-Untertitel sichtbar, damit der Autor VOR der Freigabe „erst ernten?" entscheiden kann.
+        var notePath = Path.Combine(planDir, "unharvested-note.json");
+        var unharvested = File.Exists(notePath)
+            ? (await LoadAsync<GithubUnharvestedNote>(notePath).ConfigureAwait(false)).Text : null;
+
+        var session = GithubForwardReviewAdapter.BuildSession(runId, plan, issuesByNumber, unharvested);
         if (session.Items.Count == 0) { Console.WriteLine("[github-forward-review] keine Operationen."); return 0; }
 
         var existing = File.Exists(decisionsPath) ? await LoadAsync<GithubForwardDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;

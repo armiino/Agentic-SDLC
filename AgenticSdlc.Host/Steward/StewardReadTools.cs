@@ -24,9 +24,10 @@ public sealed class StewardReadTools(string repoRoot)
         AIFunctionFactory.Create(ListPausedRunsAsync, "list_paused_runs",
             "Listet ALLE pausierten pipeline-full-Laeufe (wo wartet ein Human-Gate?) mit Gate, Checkpoint und naechster Aktion."),
         AIFunctionFactory.Create(ReadRunReportAsync, "read_run_report",
-            "3c: liest den LAUF-REPORT (R-40-Vertrag) eines fullworkflow-Laufs — was wurde GELIEFERT "
-            + "(applied je Item inkl. neuer entityId, skipped, delta-Zaehler). Nutze ihn nach einem Lauf, "
-            + "um dem Autor in EINEM Satz zu berichten, was entstanden ist."),
+            "3c: liest die APPLY-/ERGEBNIS-REPORTS eines fullworkflow-Laufs — was wurde GELIEFERT, je vorhandener "
+            + "Stufe (stages: ingest | pbiUpdate | forward | harvest). Funktioniert fuer JEDEN Lauf-Typ (auch clarify "
+            + "ohne Ingest; harvest = Ernte-Funde eines --from-github-Laufs, auch wenn er leer stoppte). "
+            + "Nutze ihn nach einem Lauf, um dem Autor in EINEM Satz zu berichten, was entstanden ist."),
         AIFunctionFactory.Create(SearchRejectionsAsync, "search_rejections",
             "3c-Vorpruefung: sucht im ABLEHNUNGS-GEDAECHTNIS (R-35, Tor-1-Ablehnungen mit Begruendung) nach "
             + "einem Suchbegriff — VOR dem Einspeisen neuer Themen pruefen: wurde so etwas schon einmal "
@@ -41,15 +42,34 @@ public sealed class StewardReadTools(string repoRoot)
             + "die Luecke vor und sammle seine Antwort ein."),
     ];
 
+    // K12-③: Rückblick/Beleg = Chronik-Read. GENERAL (nicht nur Ingest — Fund 11.08.): ein Lauf hat je nach
+    // Einstieg unterschiedliche Apply-Stufen (ein clarify-Graph-Lauf z. B. KEINEN Ingest, aber pbi-update-/forward-
+    // Apply-Reports). Wir sammeln die VORHANDENEN Apply-Reports aller Stufen — so berichtet der Steward das
+    // Gelieferte für JEDEN Lauf-Typ, nicht nur für Ingest-Läufe. Geliefertes steht zusätzlich als Wahrheit im Core.
+    private static readonly (string Stage, string Rel)[] ReportCandidates =
+    [
+        ("ingest",    Path.Combine("07-ingest", "applied", "run-report.json")),          // R-40-Vertrag (inkl. decision-Augment)
+        ("pbiUpdate", Path.Combine("07-pbi-update", "applied", "pbi-update-apply-report.json")),
+        ("forward",   Path.Combine("07-github", "applied", "github-forward-apply-report.json")),
+        // ⚖ 13.08. (ersetzt „Slice 1"): das Ernte-Ergebnis eines --from-github-Laufs LESBAR machen — die Engine
+        // schreibt den Report ohnehin; damit beantwortet der Steward „was fand die Ernte?" (auch: nichts → 0 LLM).
+        ("harvest",   Path.Combine("00-github-inbound", "harvest-report.json")),
+    ];
+
     private async Task<string> ReadRunReportAsync(string runId)
     {
-        // K12-③: Rückblick/Beleg = Chronik-Read (R-40-Vertrag; Geliefertes steht zusätzlich als Wahrheit im
-        // Core — sourceRunId-Filter an list_core_items ist die Wahrheits-seitige Antwort).
-        var path = Path.Combine(repoRoot, "runs", "fullworkflow", runId, "07-ingest", "applied", "run-report.json");
-        if (!File.Exists(path))
-            return JsonSerializer.Serialize(new { error = "REPORT_NOT_FOUND", runId, hint = "Lauf noch nicht bis zum Ingest-Apply gekommen? get_run_status pruefen." }, Json);
-        using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(path).ConfigureAwait(false));
-        return JsonSerializer.Serialize(new { runId, report = doc.RootElement.Clone() }, Json);
+        var runDir = Path.Combine(repoRoot, "runs", "fullworkflow", runId);
+        var stages = new Dictionary<string, JsonElement>(StringComparer.Ordinal);
+        foreach (var (stage, rel) in ReportCandidates)
+        {
+            var p = Path.Combine(runDir, rel);
+            if (!File.Exists(p)) continue;
+            using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(p).ConfigureAwait(false));
+            stages[stage] = doc.RootElement.Clone();
+        }
+        if (stages.Count == 0)
+            return JsonSerializer.Serialize(new { error = "REPORT_NOT_FOUND", runId, hint = "Lauf noch nicht bis zu einem Apply gekommen? get_run_status pruefen." }, Json);
+        return JsonSerializer.Serialize(new { runId, stages }, Json);
     }
 
     private async Task<string> SearchRejectionsAsync(string query)

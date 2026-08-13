@@ -1,8 +1,6 @@
 using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
-using Microsoft.Agents.AI;
-using Microsoft.Extensions.AI;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -170,26 +168,18 @@ public static class ClarifySweepAnswersRunner
         var run = new RunContext(RunId.New(), "clarify-sweep");
         run.EnsureFolders();
         var outDir = run.OutputDir("plan");
-        var (plan, targets, skipped) = ClarifySweepPlanBuilder.Build(core, answers, run.RunId);
+
+        // A′ Schritt 1 (steward/graph-entry-vs-werkbank.md §9): Plan-Erzeugung + Alignment laufen über den GETEILTEN
+        // Kern (ClarifyEntryPlan) mit der GETEILTEN LLM-Naht (PbiAnswerAlignment) — dieselbe Naht nutzt ab Schritt 2
+        // der durable Graph-Eingang (Zwei-Bahnen-Regel; keine Kopie). Werkbank-Verhalten unverändert (gleiche Ops/Targets).
+        var (final, _, skipped) = await ClarifyEntryPlan.AssembleAsync(
+            core, answers, run.RunId, PbiAnswerAlignment.Llm(settings, repoRoot, run)).ConfigureAwait(false);
         foreach (var sk in skipped) Console.WriteLine($"[clarify-sweep] SKIP {sk}");
-        if (plan.Operations.Count == 0)
+        if (final.Operations.Count == 0)
         { Console.Error.WriteLine("[clarify-sweep] keine gueltigen Antworten — nichts zu fahren."); return skipped.Count > 0 ? 3 : 2; }
+        if (final.Alignments is null or { Count: 0 })
+            Console.WriteLine("[clarify-sweep] ⚠ Agent lieferte keine Alignments — Gate zeigt die Antworten trotzdem (needs_clarify bleibt bis edit).");
 
-        // Alignment-Drafting über die BESTEHENDE Naht (gleicher Prompt/AgentName wie R-26-C im pbi-update).
-        var prompt = Prompts.PromptProvider.Load(repoRoot, "phase2_evidence", "PbiAlignmentAgent", "PbiAlignmentAgent1",
-            new Dictionary<string, string> { ["runId"] = run.RunId });
-        var client = Observability.AgentChatPipelineBuilder.Build(Llm.ChatClientFactory.Create(settings), settings, run, "PbiAlignmentAgent", "AgenticSdlc.Host");
-        var tools = new PbiAlignTools(targets, run);
-        var agent = client.AsAIAgent(instructions: prompt, name: "PbiAlignmentAgent", tools: [.. tools.Build()])
-            .AsBuilder().Use(new Observability.ToolCallLoggerMiddleware(run).InvokeAsync).Build();
-        await agent.RunAsync(
-            "Gleiche die PBIs an die AUTOR-ANTWORTEN an (Trigger = Antwort-Text, keine Requirement-Aenderung): "
-            + "get_alignment_targets -> je PBI EIN vollstaendiger Vorschlag (Titel/Statement/Akzeptanzkriterien aus der Antwort, belegtreu). save_alignments GENAU EINMAL.")
-            .ConfigureAwait(false);
-        var alignments = tools.SavedAlignments ?? [];
-        if (alignments.Count == 0) Console.WriteLine("[clarify-sweep] ⚠ Agent lieferte keine Alignments — Gate zeigt die Antworten trotzdem (needs_clarify bleibt bis edit).");
-
-        var final = plan with { Alignments = alignments };
         await File.WriteAllTextAsync(Path.Combine(outDir, "pbi-change-plan.json"),
             JsonSerializer.Serialize(final, JsonFiles.Json)).ConfigureAwait(false);
         await File.WriteAllTextAsync(Path.Combine(outDir, "sweep-answers-used.json"),
@@ -203,7 +193,7 @@ public static class ClarifySweepAnswersRunner
             final.Operations.Where(o => o.PbiId is not null).Select(o => o.PbiId!).ToList(), run.RunId);
         await repo.SaveAsync(registered).ConfigureAwait(false);
 
-        Console.WriteLine($"[clarify-sweep] ops={final.Operations.Count} alignments={alignments.Count} skips={skipped.Count} · registriert: {proposalId}");
+        Console.WriteLine($"[clarify-sweep] ops={final.Operations.Count} alignments={final.Alignments?.Count ?? 0} skips={skipped.Count} · registriert: {proposalId}");
         Console.WriteLine($"[clarify-sweep] -> {Path.GetRelativePath(repoRoot, outDir)} (Beleg-Kopie)");
         Console.WriteLine($"[clarify-sweep] naechster Schritt (Gate): pbi-update-review --pending {proposalId}");
         return 0;

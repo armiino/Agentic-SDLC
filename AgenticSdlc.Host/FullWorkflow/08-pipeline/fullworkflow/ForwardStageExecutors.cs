@@ -106,6 +106,18 @@ internal sealed class SnapshotExecutor(RunContext run, string repoRoot, FullWork
                 snapshotRel = Path.GetRelativePath(repoRoot, snapshotPath);
                 run.AppendEvent(new { type = "STAGE_SNAPSHOT_DONE", repository = fw.Repo, issues = issues.Count, timestampUtc = DateTime.UtcNow });
                 Console.WriteLine($"[pipeline-full] Snapshot (R-16): {issues.Count} Issues von {fw.Repo} geholt (read-only, kein Write).");
+
+                // Warn-Note „ungeerntete GitHub-Arbeit" (13.08.): der Snapshot liegt eh in der Hand — die geteilte
+                // Detect-Engine sagt deterministisch (0 LLM), ob drüben erntbare Arbeit wartet. Als Datei-Artefakt
+                // (CLI-/UI-/Chat-sichtbar) ans forward-gate — der Autor entscheidet informiert („erst ernten?").
+                var note = GithubUnharvested.Compute(core, issues);
+                if (note is not null)
+                {
+                    await File.WriteAllTextAsync(Path.Combine(outDir, "unharvested-note.json"),
+                        JsonSerializer.Serialize(note, HitlShell.Json), ct).ConfigureAwait(false);
+                    run.AppendEvent(new { type = "UNHARVESTED_NOTE", neu = note.Neu, geaendert = note.Geaendert, timestampUtc = DateTime.UtcNow });
+                    Console.WriteLine($"[pipeline-full] ⚠ {note.Text}");
+                }
             }
             catch (Exception ex)
             {

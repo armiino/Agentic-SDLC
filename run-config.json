@@ -62,16 +62,15 @@
     "chars": 1200
   },
   "fullworkflow": {
-    // B6-Beweislauf (27.07.): empty->GitHub-Dry-Run, unbeaufsichtigt. execute=false = KEIN GitHub-Write.
+    // Real-Write-Beweis ✅ 13.08. (Block R: gh#12 + Voll-Stempel 39/39, Runs 104957/…). Default false; für G6/L8 per R-42 bewusst scharf schalten.
     "execute": false,
     "policyProfile": "interactive",           // Fallback bewusst interactive: unbekanntes Gate => lauter Exit 5
     "transcript": "input/transcripts/Interview-Einrichtung.txt",
     "mode": "auto",                           // leerer Core (geparkt) => Bootstrap-Zweig
     "timeoutMinutes": 90,                     // 5 LLM-Stufen; 20-min-Default reicht nicht
-    // repo/tokenEnv fuer B6 AUS: leerer Snapshot => Forward plant reine CREATEs (Vergleich mit 23.07.).
-    // Fuer operative Laeufe wieder aktivieren:
-    // "repo": "armiino/Agentic-GitHub-refactor",
-    // "tokenEnv": "GITHUB_AGENTIC_REFACTOR_TOKEN",
+    // ⚠️ REAL-WRITE-Test (11.08.): repo/token AN + execute:true unten → der Forward schreibt WIRKLICH an das Issue.
+    "repo": "armiino/Agentic-GitHub-refactor",
+    "tokenEnv": "GITHUB_AGENTIC_REFACTOR_TOKEN",
     // Standard-Zuschnitt (5.4, unbeaufsichtigt). H1/H2-Live-Beweis 27.07. lief mit mini + 2x interactive
     // (Runs 074919 + 080638 — Pause/Resume/zweite Pause real bewiesen, s. Reibungs-Log R-29).
     "models": { "01-ledger": "openai/gpt-5.4", "02-baselines": "openai/gpt-5.4" },
@@ -85,7 +84,7 @@
       "pbi-gate": { "policy": "accept-all" },
       "cluster-review-gate": { "policy": "accept-all" },
       "backlog-review-gate": { "policy": "accept-all" },
-      "github-forward-gate": { "policy": "accept-all" }
+      "github-forward-gate": { "policy": "interactive" }
     }
   },
   "jury": {
@@ -145,6 +144,12 @@
   },
 
   // Kapitel B (Evidenz-Agent): nur wirksam, wenn oben "agentPhase": "phase2_evidence".
+  // *** NUR für die STANDALONE-Evidenz-/recipe-/derive-Werkzeuge (evidence-agent, recipe, derive,
+  //     baseline-fanout, evidence-chain, checker-repair) — die Arm-A/B-Treue-Messung. ***
+  // pipeline-full (Ein-Graph) LIEST DIESEN BLOCK NICHT (code-verifiziert 10.08.): die 02-baselines-Stufe
+  // überschreibt source+ledgerRun in-memory mit dem im SELBEN Lauf erzeugten consumable
+  // (BaselineStageExecutor:42) und bestellt die Artefakte fest über OrderedArtifacts — nicht über artifact.
+  // Für einen frischen pipeline-full-Lauf ist dieser Block also totes Config (ignorierbar).
   // Vergleicht Artefakt-Generierung aus dem Ledger (Arm B) vs. Rohtranskript (Arm A) auf Treue.
   // Runs landen unter runs/phase2evidenz-agent/<source>/<runId>. Plan: Phases/Phase2/Evidenz-Agent/ReusePlan.md
   //   source     = transcript (Arm A, Baseline) | ledger (Arm B)

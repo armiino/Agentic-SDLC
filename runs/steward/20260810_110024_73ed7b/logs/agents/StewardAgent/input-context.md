@@ -1,0 +1,286 @@
+# Input Context — StewardAgent
+
+- **Run:** `20260810_110024_73ed7b`
+
+## Fakten
+
+> Diese Werte stammen direkt aus den ChatMessage-Objekten (Reflection auf
+> FunctionCallContent, FunctionResultContent, ChatMessage.Role / .Name).
+> Kein Regex, kein Text-Matching.
+
+- **Input Messages:** 1
+- **Roles:** `user=1`
+- **Agent-Namen im Kontext:** keine
+
+### Nachrichten
+
+| # | Role | Von Agent | Tool-Call | Tool-Result | Text-Länge |
+|---|------|-----------|-----------|-------------|------------|
+| 0 | user | - | - | - | 36 |
+
+## Abgeleitete Signale
+
+> Aus den Fakten strukturell abgeleitet — kein Regex.
+> Einschränkung: 'Read im Kontext' bedeutet der FunctionCallContent ist sichtbar.
+> Ob der fs_read erfolgreich war und das Ergebnis korrekt ist → tool-calls.jsonl prüfen.
+
+- **Transkript-Read im Kontext:** — NEIN
+- **Context.md-Read im Kontext:** — NEIN
+
+## Was diese Analyse nicht beweist
+
+- **Nicht beweisbar:** Ob das Modell sichtbare Inhalte intern verarbeitet oder gewichtet hat.
+  Das ist die fundamentale LLM-Black-Box-Grenze.
+- **Nicht beweisbar:** Ob ein Tool-Result den erwarteten Inhalt enthält.
+  Für Tool-Erfolgsverifikation: `tool-calls.jsonl` dieses Agenten prüfen.
+
+---
+
+## Chat Iteration 2 — StewardAgent
+
+- **Run:** `20260810_110024_73ed7b`
+
+## Fakten
+
+> Diese Werte stammen direkt aus den ChatMessage-Objekten (Reflection auf
+> FunctionCallContent, FunctionResultContent, ChatMessage.Role / .Name).
+> Kein Regex, kein Text-Matching.
+
+- **Input Messages:** 7
+- **Roles:** `assistant=3`, `tool=2`, `user=2`
+- **Agent-Namen im Kontext (ChatMessage.Name):** `StewardAgent`
+
+### Nachrichten
+
+| # | Role | Von Agent | Tool-Call | Tool-Result | Text-Länge |
+|---|------|-----------|-----------|-------------|------------|
+| 0 | user | - | - | - | 36 |
+| 1 | assistant | StewardAgent | ja | - | 0 |
+| 2 | tool | StewardAgent | - | ja | 698 |
+| 3 | assistant | StewardAgent | ja | - | 0 |
+| 4 | tool | StewardAgent | - | ja | 36 |
+| 5 | assistant | StewardAgent | - | - | 1998 |
+| 6 | user | - | - | - | 40 |
+
+### Tool-Calls im Kontext (FunctionCallContent)
+
+| Msg # | Von Agent | Tool | Pfad |
+|-------|-----------|------|------|
+| #1 | StewardAgent | `get_core_overview` | - |
+| #3 | StewardAgent | `list_paused_runs` | - |
+
+### Tool-Results im Kontext (FunctionResultContent)
+
+| Msg # | Von Agent | Länge |
+|-------|-----------|-------|
+| #2 | StewardAgent | 698 Zeichen |
+| #4 | StewardAgent | 36 Zeichen |
+
+## Abgeleitete Signale
+
+> Aus den Fakten strukturell abgeleitet — kein Regex.
+> Einschränkung: 'Read im Kontext' bedeutet der FunctionCallContent ist sichtbar.
+> Ob der fs_read erfolgreich war und das Ergebnis korrekt ist → tool-calls.jsonl prüfen.
+
+- **Transkript-Read im Kontext:** — NEIN
+- **Context.md-Read im Kontext:** — NEIN
+
+## Was diese Analyse nicht beweist
+
+- **Nicht beweisbar:** Ob das Modell sichtbare Inhalte intern verarbeitet oder gewichtet hat.
+  Das ist die fundamentale LLM-Black-Box-Grenze.
+- **Nicht beweisbar:** Ob ein Tool-Result den erwarteten Inhalt enthält.
+  Für Tool-Erfolgsverifikation: `tool-calls.jsonl` dieses Agenten prüfen.
+
+---
+
+## Chat Iteration 3 — StewardAgent
+
+- **Run:** `20260810_110024_73ed7b`
+
+## Fakten
+
+> Diese Werte stammen direkt aus den ChatMessage-Objekten (Reflection auf
+> FunctionCallContent, FunctionResultContent, ChatMessage.Role / .Name).
+> Kein Regex, kein Text-Matching.
+
+- **Input Messages:** 9
+- **Roles:** `assistant=4`, `tool=2`, `user=3`
+- **Agent-Namen im Kontext (ChatMessage.Name):** `StewardAgent`
+
+### Nachrichten
+
+| # | Role | Von Agent | Tool-Call | Tool-Result | Text-Länge |
+|---|------|-----------|-----------|-------------|------------|
+| 0 | user | - | - | - | 36 |
+| 1 | assistant | StewardAgent | ja | - | 0 |
+| 2 | tool | StewardAgent | - | ja | 698 |
+| 3 | assistant | StewardAgent | ja | - | 0 |
+| 4 | tool | StewardAgent | - | ja | 36 |
+| 5 | assistant | StewardAgent | - | - | 1998 |
+| 6 | user | - | - | - | 40 |
+| 7 | assistant | StewardAgent | - | - | 12740 |
+| 8 | user | - | - | - | 144 |
+
+### Tool-Calls im Kontext (FunctionCallContent)
+
+| Msg # | Von Agent | Tool | Pfad |
+|-------|-----------|------|------|
+| #1 | StewardAgent | `get_core_overview` | - |
+| #3 | StewardAgent | `list_paused_runs` | - |
+
+### Tool-Results im Kontext (FunctionResultContent)
+
+| Msg # | Von Agent | Länge |
+|-------|-----------|-------|
+| #2 | StewardAgent | 698 Zeichen |
+| #4 | StewardAgent | 36 Zeichen |
+
+## Abgeleitete Signale
+
+> Aus den Fakten strukturell abgeleitet — kein Regex.
+> Einschränkung: 'Read im Kontext' bedeutet der FunctionCallContent ist sichtbar.
+> Ob der fs_read erfolgreich war und das Ergebnis korrekt ist → tool-calls.jsonl prüfen.
+
+- **Transkript-Read im Kontext:** — NEIN
+- **Context.md-Read im Kontext:** — NEIN
+
+## Was diese Analyse nicht beweist
+
+- **Nicht beweisbar:** Ob das Modell sichtbare Inhalte intern verarbeitet oder gewichtet hat.
+  Das ist die fundamentale LLM-Black-Box-Grenze.
+- **Nicht beweisbar:** Ob ein Tool-Result den erwarteten Inhalt enthält.
+  Für Tool-Erfolgsverifikation: `tool-calls.jsonl` dieses Agenten prüfen.
+
+---
+
+## Chat Iteration 4 — StewardAgent
+
+- **Run:** `20260810_110024_73ed7b`
+
+## Fakten
+
+> Diese Werte stammen direkt aus den ChatMessage-Objekten (Reflection auf
+> FunctionCallContent, FunctionResultContent, ChatMessage.Role / .Name).
+> Kein Regex, kein Text-Matching.
+
+- **Input Messages:** 11
+- **Roles:** `assistant=5`, `tool=2`, `user=4`
+- **Agent-Namen im Kontext (ChatMessage.Name):** `StewardAgent`
+
+### Nachrichten
+
+| # | Role | Von Agent | Tool-Call | Tool-Result | Text-Länge |
+|---|------|-----------|-----------|-------------|------------|
+| 0 | user | - | - | - | 36 |
+| 1 | assistant | StewardAgent | ja | - | 0 |
+| 2 | tool | StewardAgent | - | ja | 698 |
+| 3 | assistant | StewardAgent | ja | - | 0 |
+| 4 | tool | StewardAgent | - | ja | 36 |
+| 5 | assistant | StewardAgent | - | - | 1998 |
+| 6 | user | - | - | - | 40 |
+| 7 | assistant | StewardAgent | - | - | 12740 |
+| 8 | user | - | - | - | 144 |
+| 9 | assistant | StewardAgent | - | - | 756 |
+| 10 | user | - | - | - | 118 |
+
+### Tool-Calls im Kontext (FunctionCallContent)
+
+| Msg # | Von Agent | Tool | Pfad |
+|-------|-----------|------|------|
+| #1 | StewardAgent | `get_core_overview` | - |
+| #3 | StewardAgent | `list_paused_runs` | - |
+
+### Tool-Results im Kontext (FunctionResultContent)
+
+| Msg # | Von Agent | Länge |
+|-------|-----------|-------|
+| #2 | StewardAgent | 698 Zeichen |
+| #4 | StewardAgent | 36 Zeichen |
+
+## Abgeleitete Signale
+
+> Aus den Fakten strukturell abgeleitet — kein Regex.
+> Einschränkung: 'Read im Kontext' bedeutet der FunctionCallContent ist sichtbar.
+> Ob der fs_read erfolgreich war und das Ergebnis korrekt ist → tool-calls.jsonl prüfen.
+
+- **Transkript-Read im Kontext:** — NEIN
+- **Context.md-Read im Kontext:** — NEIN
+
+## Was diese Analyse nicht beweist
+
+- **Nicht beweisbar:** Ob das Modell sichtbare Inhalte intern verarbeitet oder gewichtet hat.
+  Das ist die fundamentale LLM-Black-Box-Grenze.
+- **Nicht beweisbar:** Ob ein Tool-Result den erwarteten Inhalt enthält.
+  Für Tool-Erfolgsverifikation: `tool-calls.jsonl` dieses Agenten prüfen.
+
+---
+
+## Chat Iteration 5 — StewardAgent
+
+- **Run:** `20260810_110024_73ed7b`
+
+## Fakten
+
+> Diese Werte stammen direkt aus den ChatMessage-Objekten (Reflection auf
+> FunctionCallContent, FunctionResultContent, ChatMessage.Role / .Name).
+> Kein Regex, kein Text-Matching.
+
+- **Input Messages:** 15
+- **Roles:** `assistant=7`, `tool=3`, `user=5`
+- **Agent-Namen im Kontext (ChatMessage.Name):** `StewardAgent`
+
+### Nachrichten
+
+| # | Role | Von Agent | Tool-Call | Tool-Result | Text-Länge |
+|---|------|-----------|-----------|-------------|------------|
+| 0 | user | - | - | - | 36 |
+| 1 | assistant | StewardAgent | ja | - | 0 |
+| 2 | tool | StewardAgent | - | ja | 698 |
+| 3 | assistant | StewardAgent | ja | - | 0 |
+| 4 | tool | StewardAgent | - | ja | 36 |
+| 5 | assistant | StewardAgent | - | - | 1998 |
+| 6 | user | - | - | - | 40 |
+| 7 | assistant | StewardAgent | - | - | 12740 |
+| 8 | user | - | - | - | 144 |
+| 9 | assistant | StewardAgent | - | - | 756 |
+| 10 | user | - | - | - | 118 |
+| 11 | assistant | StewardAgent | ja | - | 0 |
+| 12 | tool | StewardAgent | - | ja | 3977 |
+| 13 | assistant | StewardAgent | - | - | 3774 |
+| 14 | user | - | - | - | 36 |
+
+### Tool-Calls im Kontext (FunctionCallContent)
+
+| Msg # | Von Agent | Tool | Pfad |
+|-------|-----------|------|------|
+| #1 | StewardAgent | `get_core_overview` | - |
+| #3 | StewardAgent | `list_paused_runs` | - |
+| #11 | StewardAgent | `list_core_items` | - |
+
+### Tool-Results im Kontext (FunctionResultContent)
+
+| Msg # | Von Agent | Länge |
+|-------|-----------|-------|
+| #2 | StewardAgent | 698 Zeichen |
+| #4 | StewardAgent | 36 Zeichen |
+| #12 | StewardAgent | 3977 Zeichen |
+
+## Abgeleitete Signale
+
+> Aus den Fakten strukturell abgeleitet — kein Regex.
+> Einschränkung: 'Read im Kontext' bedeutet der FunctionCallContent ist sichtbar.
+> Ob der fs_read erfolgreich war und das Ergebnis korrekt ist → tool-calls.jsonl prüfen.
+
+- **Transkript-Read im Kontext:** — NEIN
+- **Context.md-Read im Kontext:** — NEIN
+
+## Was diese Analyse nicht beweist
+
+- **Nicht beweisbar:** Ob das Modell sichtbare Inhalte intern verarbeitet oder gewichtet hat.
+  Das ist die fundamentale LLM-Black-Box-Grenze.
+- **Nicht beweisbar:** Ob ein Tool-Result den erwarteten Inhalt enthält.
+  Für Tool-Erfolgsverifikation: `tool-calls.jsonl` dieses Agenten prüfen.
+
+---
+

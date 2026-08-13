@@ -36,13 +36,13 @@ public sealed class StewardChatRunnerTests
         var path = Path.Combine(Directory.CreateTempSubdirectory("steward-sess-").FullName, "s.json");
         var session = await StewardChatRunner.LoadOrCreateSessionAsync(agent, path);
         var first = await agent.RunAsync("Hallo.", session);
-        Assert.Contains("30 Tools", first.Text);                             // 27 + C2d-Seile (pull/distill/post_issue_comment)
+        Assert.Contains("28 Tools", first.Text);                             // 32 − 4 Werkbank-Seile (⚖ 13.08. Klasse-Regel, system-inventar §3)
 
         // C2d ②: Live-Tools (MCP) werden ADDITIV gemountet — hier per Dummy-AIFunction, LLM-/netz-frei.
         var live = Microsoft.Extensions.AI.AIFunctionFactory.Create(() => "live", "issue_read_dummy", "Dummy-Live-Tool");
         var withLive = StewardChatRunner.BuildAgent(new EchoCountClient(), settings, run, repoRoot, liveTools: [live]);
         var liveResp = await withLive.RunAsync("Hallo.", await withLive.CreateSessionAsync());
-        Assert.Contains("31 Tools", liveResp.Text);                          // 30 + 1 Live-Tool
+        Assert.Contains("29 Tools", liveResp.Text);                          // 28 + 1 Live-Tool
 
         await StewardChatRunner.SaveSessionAsync(agent, session, path);
         Assert.True(File.Exists(path));
