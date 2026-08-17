@@ -45,21 +45,19 @@ CLEANUP+=("runs/pbi-update/_smoke-fwdsrc")
 # decision --input (leere resolutions)
 DEC_IN="$FIX/dec-input.json"; echo '{ "resolutions":[] }' > "$DEC_IN"
 
-# --- Stufe: ingestion ---
+# --- Stufe: ingestion (R-50: leeres Gate wird LAUT übersprungen — kein Pause/Resume mehr nötig) ---
 echo "== [1/5] ingest-requirements-hitl =="
 o=$(r ingest-requirements-hitl start "$EMPTY_DELTA"); rid=$(ridof "$o")
-grepq "$o" "PAUSIERT" && ok "ingestion start -> Pause ($rid)" || bad "ingestion start"
+grepq "$o" "Human-Gate übersprungen" && ok "ingestion leeres Gate -> R-50-Skip (laut) ($rid)" || bad "ingestion R-50-Skip"
 CLEANUP+=("runs/ingestion/$rid")
-o=$(r ingest-requirements-hitl resume "$rid" --accept-all)
-grepq "$o" "APPLIED" && ok "ingestion resume -> Apply" || bad "ingestion resume"
+grepq "$o" "APPLIED" && ok "ingestion Skip -> Apply im selben Lauf" || bad "ingestion Skip-Apply"
 
-# --- Stufe: pbi-update ---
+# --- Stufe: pbi-update (R-50: leeres Gate wird LAUT übersprungen — kein Pause/Resume mehr nötig) ---
 echo "== [2/5] pbi-update-hitl =="
 o=$(r pbi-update-hitl start _smoke-pbisrc); rid=$(ridof "$o")
-grepq "$o" "PAUSIERT" && ok "pbi-update start -> Pause ($rid)" || bad "pbi-update start"
+grepq "$o" "Human-Gate übersprungen" && ok "pbi-update leeres Gate -> R-50-Skip (laut) ($rid)" || bad "pbi-update R-50-Skip"
 CLEANUP+=("runs/pbi-update/$rid")
-o=$(r pbi-update-hitl resume "$rid" --accept-all)
-grepq "$o" "APPLIED" && ok "pbi-update resume -> Apply" || bad "pbi-update resume"
+grepq "$o" "APPLIED" && ok "pbi-update Skip -> Apply im selben Lauf" || bad "pbi-update Skip-Apply"
 
 # --- Stufe: decision ---
 echo "== [3/5] decision-resolve-hitl =="
@@ -69,24 +67,40 @@ CLEANUP+=("runs/decision/$rid")
 o=$(r decision-resolve-hitl resume "$rid" --accept-all)
 grepq "$o" "APPLIED" && ok "decision resume -> Apply" || bad "decision resume"
 
-# --- Stufe: github-forward (dry-run, kein Write) ---
+# --- Stufe: github-forward (R-50: leeres Gate wird LAUT übersprungen; dry-run, kein Write) ---
 echo "== [4/5] github-forward-hitl =="
 o=$(r github-forward-hitl start _smoke-fwdsrc); rid=$(ridof "$o")
-grepq "$o" "PAUSIERT" && ok "github-forward start -> Pause ($rid)" || bad "github-forward start"
+grepq "$o" "Human-Gate übersprungen" && ok "github-forward leeres Gate -> R-50-Skip (laut) ($rid)" || bad "github-forward R-50-Skip"
 CLEANUP+=("runs/github-forward/$rid")
-o=$(r github-forward-hitl resume "$rid" --accept-all)
-grepq "$o" "DRY-RUN" && ok "github-forward resume -> dry-run Apply" || bad "github-forward resume"
+grepq "$o" "DRY-RUN" && ok "github-forward Skip -> dry-run Apply im selben Lauf" || bad "github-forward Skip-Apply"
 
 # --- Super-Workflow: pipeline-full --from-delta (Schritt 5 ③, 05.08.: ersetzt pipeline-hitl) ---
 # Prueft den EIN-Graph Delta-Einstieg + den ECHTEN Checkpoint->Resume-Zyklus (echte Factories!).
-# Leer-Delta: Pause am ingest-gate; pbi-/forward-Gates ueberspringen bei 0 Items (einzeln gedeckt in [2]-[4]).
-echo "== [5/5] pipeline-full --from-delta (Ein-Graph, Pause->Resume) =="
+# R-50: LEERE Gates rufen nie mehr (Skips laut, [1]-[4]) — der deterministische Pause-Anker des Ein-Graph-Tests
+# ist deshalb eine FIXTURE-DEC (nach dem Core-Backup injiziert; das Restore am Ende räumt sie garantiert weg):
+# der Lauf skippt ingest/arch leer, pausiert am decision-gate, resume vertagt sie, skippt pbi/forward -> FERTIG.
+python3 - <<'PYEOF'
+import json
+p='state/core/project-state.json'
+c=json.load(open(p))
+c['items'].append({"itemId":"DEC-SMOKE","itemType":"decision","text":"Smoke-Fixture: deterministischer Pause-Anker (R-50).","origin":"MEETING_OPEN_QUESTION","version":1,"sourceRunId":"_smoke","metadata":{},"validity":"Active","blocker":"None"})
+json.dump(c,open(p,'w'),ensure_ascii=False)
+PYEOF
+echo "== [5/5] pipeline-full --from-delta (Ein-Graph, Pause->Resume via Fixture-DEC) =="
 o=$(r pipeline-full run --from-delta "$EMPTY_DELTA" --policy interactive); rid=$(ridof "$o")
 grepq "$o" "Einstieg: DELTA" && ok "pipeline-full Delta-Einstieg (Front uebersprungen)" || bad "pipeline-full Delta-Einstieg"
-grepq "$o" "PAUSIERT am Gate 'ingest-gate'" && ok "pipeline-full run -> Pause ingest-gate ($rid)" || bad "pipeline-full run/Pause"
+grepq "$o" "PAUSIERT am Gate 'decision-gate'" && ok "pipeline-full run -> Pause decision-gate ($rid)" || bad "pipeline-full run/Pause"
 CLEANUP+=("runs/fullworkflow/$rid")
 o=$(r pipeline-full resume "$rid" --accept-all)
-grepq "$o" "PIPELINE FERTIG" && ok "pipeline-full resume -> FERTIG (Placement+Forward-DryRun)" || bad "pipeline-full resume"
+grepq "$o" "Forward übersprungen" && ok "pipeline-full resume -> FERTIG (R-50: leere Gates übersprungen, Forward-Skip)" || bad "pipeline-full resume"
+# Fixture-DEC vor dem Zähl-Check entfernen (das Core-Restore am Ende räumt ohnehin — dies hält den Check ehrlich):
+python3 - <<'PYEOF'
+import json
+p='state/core/project-state.json'
+c=json.load(open(p))
+c['items']=[i for i in c['items'] if i['itemId']!='DEC-SMOKE']
+json.dump(c,open(p,'w'),ensure_ascii=False)
+PYEOF
 
 # --- Core-Integritaet + Cleanup ---
 echo "== Core-Integritaet =="

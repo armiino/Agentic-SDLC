@@ -54,6 +54,10 @@ public sealed class StewardReadTools(string repoRoot)
         // ⚖ 13.08. (ersetzt „Slice 1"): das Ernte-Ergebnis eines --from-github-Laufs LESBAR machen — die Engine
         // schreibt den Report ohnehin; damit beantwortet der Steward „was fand die Ernte?" (auch: nichts → 0 LLM).
         ("harvest",   Path.Combine("00-github-inbound", "harvest-report.json")),
+        // Fix A zu R-48 (13.08.): der Forward-PLAN-Ausgang (gatePass/finalDecision) — OHNE ihn war ein Forward,
+        // der am eigenen Checker scheiterte (MaxAttemptsReached, kein Apply), im Bericht UNSICHTBAR und der
+        // Steward meldete „fertig ✓" (Fund Block F, Lauf 20260813_131946).
+        ("forwardPlan", Path.Combine("07-github", "github-forward-summary.json")),
     ];
 
     private async Task<string> ReadRunReportAsync(string runId)

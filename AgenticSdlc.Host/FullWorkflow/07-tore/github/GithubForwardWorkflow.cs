@@ -180,7 +180,14 @@ internal static class GithubForwardAgentRunner
         // R-27: Erst-Sync deterministisch — auf einem frischen Repo gibt es nichts zu suchen; CREATE-Ops kommen
         // aus den Core-Payloads (R-17-Präzedenz). Läuft AUCH im Dry-Run (der Plan ist der Zweck des Dry-Runs).
         if (ctx.InitialSyncDeterministic) return GithubInitialSync.BuildCreateOps(unmapped);
-        if (ctx.DryRun) return [];
+        // R-48 (Fund Block F, 13.08.): frueher `return []` — der leere Plan riss das eigene Gate
+        // (PBI_NOT_ADDRESSED -> Repair -> leer -> MaxAttemptsReached): JEDER Dry-Lauf mit unmapped aktivem PBI
+        // endete zwangslaeufig in der Sackgasse. Regel: Dry-Run plant ALLES, uebersprungen wird NUR der Write —
+        // deshalb der deterministische CREATE-Vorschlag ueber die R-27-Naht (0 LLM, gate-konform, ehrlich
+        // beschriftet); die Agent-Dedup-Suche laeuft im Real-Lauf (execute:true).
+        if (ctx.DryRun) return GithubInitialSync.BuildCreateOps(unmapped,
+            searchEvidence: "Dry-Run (deterministisch): Agent-Duplikatsuche uebersprungen — CREATE-Vorschlag direkt aus dem Core-Payload; der Real-Lauf (execute:true) macht die Dedup-Suche.",
+            rationale: "Dry-Run-Vorschlag: unmapped PBI ohne Issue — deterministischer CREATE aus dem Core-Payload (R-48; ohne Agent-Dedup, kein Write).");
         var readTools = new GithubReadTools(ctx.Issues, ctx.Repository, run);
         var fwdTools = new GithubForwardTools(unmapped, ctx.Core, ctx.Issues, run);
         var agent = factory([.. readTools.Build(), .. fwdTools.Build()]);

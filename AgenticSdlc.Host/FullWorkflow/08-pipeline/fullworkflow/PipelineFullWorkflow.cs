@@ -13,7 +13,7 @@ internal sealed record FrontNodes(
     ClarifyEntryExecutor ClarifyEntry, // A′ Schritt 2: dritter typisierter Eingang (clarify-Batch → pbiFinalize)
     ReprojectEntryExecutor ReprojectEntry, // ONLY-STEWARD: vierter Eingang (Recovery) — Core→Delta → Forward-Schwanz
     LedgerIntakeExecutor LedgerIntake, ExecutorBinding LedgerCapsule, LedgerSummaryExecutor LedgerSummary, // Schritt 5 ②: sichtbare Kapsel statt Wrapper
-    AdjudicationGateRequestExecutor AdjudicationRequest, RequestPort AdjudicationPort, AdjudicationApplyExecutor AdjudicationApply, // H2: echter RequestPort
+    AdjudicationGateRequestExecutor AdjudicationRequest, RequestPort AdjudicationPort, AdjudicationApplyExecutor AdjudicationApply, AdjudicationEmptyGateResponder AdjudicationEmptyGate, // H2 + R-50
     BaselineStageExecutor Baselines,
     ProjectStateBuildExecutor Delta, BranchDetectorExecutor Branch);
 
@@ -21,7 +21,7 @@ internal sealed record BootstrapNodes(
     CoreBootstrapStageExecutor CoreBootstrap, ClusterBridgeExecutor ClusterBridge,
     ClusterAgentExecutor ClusterAgent, ClusterGateExecutor ClusterGate, ClusterRepairExecutor ClusterRepair, ClusterReviewExecutor ClusterReview,
     ClusterFinalizeExecutor ClusterFinalize, ClusterGateRequestExecutor ClusterGateRequest, RequestPort ClusterPort,
-    ClusterComposedApplyExecutor ClusterApply, BacklogBridgeExecutor BacklogBridge,
+    ClusterComposedApplyExecutor ClusterApply, ClusterEmptyGateResponder ClusterEmptyGate, BacklogBridgeExecutor BacklogBridge,
     ClarifyAgentExecutor ClarifyAgent, BacklogGateExecutor BacklogGate, BacklogRepairExecutor BacklogRepair, BacklogFinalizeExecutor BacklogFinalize,
     BacklogGateRequestExecutor BacklogGateRequest, RequestPort BacklogPort,
     BacklogComposedApplyExecutor BacklogApply, CoreSeedBacklogExecutor Seed);
@@ -36,7 +36,9 @@ internal sealed record OperationalNodes(
     IngestPbiBridgeExecutor Bridge,
     PbiUpdateDeriveExecutor PbiDerive, PbiUpdateMakerExecutor PbiMaker, PbiUpdateGateExecutor PbiGate,
     PbiUpdateRepairExecutor PbiRepair, PbiAlignExecutor PbiAlign, PbiUpdateHitlFinalizeExecutor PbiFinalize, RequestPort PbiPort,
-    PbiUpdateApplyExecutor PbiApply);
+    PbiUpdateApplyExecutor PbiApply,
+    PbiUpdateEmptyGateResponder PbiEmptyGate,   // R-50
+    IngestionEmptyGateResponder IngestEmptyGate, IngestionEmptyGateResponder ArchEmptyGate);   // R-50-Vervollständigung
 
 // R-11 A2-2: der Klassifikations-Strip (EIN geteilter Strip, ZWEI Bahnen-Bridges — T2.22).
 internal sealed record ArchClassifyNodes(
@@ -65,7 +67,8 @@ internal sealed record ForwardNodes(
     SnapshotExecutor Snapshot,
     GithubForwardSeedExecutor Seed, GithubForwardMakerExecutor Maker, GithubForwardGateExecutor Gate,
     GithubForwardRepairExecutor Repair, GithubForwardHitlFinalizeExecutor Finalize, RequestPort HumanGate,
-    GithubForwardApplyExecutor Apply);
+    GithubForwardApplyExecutor Apply,
+    GithubForwardEmptyGateResponder EmptyGate);   // R-50
 
 /// <summary>
 /// U2 — die EINE Bauzeit-Orchestrierungsstelle der GANZEN Kette (ein-graph-vereinheitlichung §7).
@@ -108,7 +111,9 @@ internal static class PipelineFullWorkflow
 
         // Front (geteilt) — H2: Adjudikation als Request -> [adjudication-gate] -> Apply
         b.AddEdge(front.LedgerSummary, front.AdjudicationRequest);
-        b.AddEdge(front.AdjudicationRequest, front.AdjudicationPort);
+        b.AddEdge(front.AdjudicationRequest, front.AdjudicationPort);       // Items > 0
+        b.AddEdge(front.AdjudicationRequest, front.AdjudicationEmptyGate);  // leere Queue -> LAUTER Skip (R-50)
+        b.AddEdge(front.AdjudicationEmptyGate, front.AdjudicationApply);
         b.AddEdge(front.AdjudicationPort, front.AdjudicationApply);
         b.AddEdge(front.AdjudicationApply, front.Baselines);
         b.AddEdge(front.Baselines, front.Delta);
@@ -126,7 +131,9 @@ internal static class PipelineFullWorkflow
         // R-33 S2: Loop-Kanten aus der EINEN Quelle (ReClarifyClusterWorkflow.AddTo) — CLI und Ein-Graph identisch.
         ReClarifyClusterWorkflow.AddTo(b, boot.ClusterAgent, boot.ClusterGate, boot.ClusterRepair, boot.ClusterReview, boot.ClusterFinalize);
         b.AddEdge(boot.ClusterFinalize, boot.ClusterGateRequest);
-        b.AddEdge(boot.ClusterGateRequest, boot.ClusterPort);
+        b.AddEdge(boot.ClusterGateRequest, boot.ClusterPort);      // Ops > 0
+        b.AddEdge(boot.ClusterGateRequest, boot.ClusterEmptyGate); // 0 Ops -> LAUTER Skip (R-50)
+        b.AddEdge(boot.ClusterEmptyGate, boot.ClusterApply);
         b.AddEdge(boot.ClusterPort, boot.ClusterApply);
         b.AddEdge(boot.ClusterApply, boot.BacklogBridge);
         b.AddEdge(boot.BacklogBridge, boot.ClarifyAgent);
@@ -146,7 +153,8 @@ internal static class PipelineFullWorkflow
             op.ArchBridge, op.ArchResolve, op.ArchGate, op.ArchRepair, op.ArchFinalize, op.ArchPort, op.ArchApply,
             op.DecisionScan, op.DecisionPort, op.DecisionApply,
             op.Bridge, op.PbiDerive, op.PbiMaker, op.PbiGate, op.PbiRepair,
-            op.PbiAlign, op.PbiFinalize, op.PbiPort, op.PbiApply);
+            op.PbiAlign, op.PbiFinalize, op.PbiPort, op.PbiApply, op.PbiEmptyGate,
+            op.IngestEmptyGate, op.ArchEmptyGate);
 
         // R-11 A2-2 — der geteilte Klassifikations-Strip (Loop-Kanten aus der EINEN Quelle) + Betriebs-Anker:
         // archApply -> OpBridge -> (Report-Skip -> DecisionScan | Work -> Maker); Apply re-emittiert den
@@ -172,7 +180,7 @@ internal static class PipelineFullWorkflow
         b.AddEdge(fwd.BootstrapBridge, fwd.Snapshot);
         b.AddEdge(fwd.OperationalBridge, fwd.Snapshot);
         b.AddEdge(fwd.Snapshot, fwd.Seed);
-        GithubForwardHitlWorkflow.AddTo(b, fwd.Seed, fwd.Maker, fwd.Gate, fwd.Repair, fwd.Finalize, fwd.HumanGate, fwd.Apply);
+        GithubForwardHitlWorkflow.AddTo(b, fwd.Seed, fwd.Maker, fwd.Gate, fwd.Repair, fwd.Finalize, fwd.HumanGate, fwd.Apply, fwd.EmptyGate);
 
         b.WithOutputFrom(front.ClarifyEntry);      // A′ Schritt 2: Non-Pass = terminaler Klartext-Output (bewusst gestoppt)
         b.WithOutputFrom(front.ReprojectEntry);    // ONLY-STEWARD: „keine gemappten PBIs" = terminaler Klartext-Output

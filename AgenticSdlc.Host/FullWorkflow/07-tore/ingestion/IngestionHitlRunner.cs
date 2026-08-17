@@ -88,13 +88,20 @@ public static class IngestionHitlRunner
         var humanGate = RequestPort.Create<IngestionReviewRequest, IngestionReviewResponse>("ingestion-gate");
         var workflow = IngestionHitlWorkflow.Build(
             new IngestionHitlResolveExecutor(factory, retriever, run, profile), new IngestionGateExecutor(run, profile), new IngestionRepairExecutor(factory, retriever, run, profile),
-            new IngestionHitlFinalizeExecutor(run, outDir, profile), humanGate, new IngestionApplyExecutor(run, repoRoot, outDir, profile), profile);
+            new IngestionHitlFinalizeExecutor(run, outDir, profile), humanGate, new IngestionApplyExecutor(run, repoRoot, outDir, profile),
+            new IngestionEmptyGateResponder(run, profile.GateName), profile);
 
         var incoming = delta.Items.Count(profile.Matches);
         Console.WriteLine($"[{cmd}] start runId={run.RunId} model={genSettings.ModelId} incoming-req={incoming} maxAttempts={maxAttempts}");
         return await HitlShell.StartAsync(cmd, workflow, new IngestionResolveInput(delta, core, deltaRel, maxAttempts), run, checkpointDir,
             onManualOutput: data =>
             {
+                // R-50: leeres Gate wird LAUT übersprungen — der Lauf endet dann schon im Start mit dem Apply-Report.
+                if (data is IngestionApplyReport report)
+                {
+                    Console.WriteLine($"[{cmd}] APPLIED (leeres Gate, R-50-Skip) applied={report.Applied.Count} skipped={report.Skipped.Count}");
+                    return 0;
+                }
                 if (data is not IngestionResult manual) return null;
                 Console.WriteLine($"[{cmd}] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
                 return 1;
@@ -150,7 +157,8 @@ public static class IngestionHitlRunner
         var humanGate = RequestPort.Create<IngestionReviewRequest, IngestionReviewResponse>("ingestion-gate");
         var workflow = IngestionHitlWorkflow.Build(
             new IngestionHitlResolveExecutor(noAgent, retriever, run, profile), new IngestionGateExecutor(run, profile), new IngestionRepairExecutor(noAgent, retriever, run, profile),
-            new IngestionHitlFinalizeExecutor(run, outDir, profile), humanGate, new IngestionApplyExecutor(run, repoRoot, outDir, profile), profile);
+            new IngestionHitlFinalizeExecutor(run, outDir, profile), humanGate, new IngestionApplyExecutor(run, repoRoot, outDir, profile),
+            new IngestionEmptyGateResponder(run, profile.GateName), profile);
 
         Console.WriteLine($"[{cmd}] resume runId={runId} mode={(uiMode ? "ui" : "cli")}");
         return await HitlShell.ResumeAsync(cmd, workflow, runId, checkpointDir, pointer, uiMode,

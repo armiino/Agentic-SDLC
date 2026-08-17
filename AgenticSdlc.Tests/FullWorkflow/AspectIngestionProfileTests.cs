@@ -15,6 +15,7 @@ public sealed class AspectIngestionProfileTests
         Aspect: "widget", IdPrefix: "WID", ItemLabel: "Widget",
         AgentName: "WidgetAgent", PromptName: "WidgetAgent1",
         ListCoreToolName: "list_core_widgets", ResolverTaskText: "widget-task", ExecutorIdPrefix: "WidgetIngestion", EventPrefix: "WIDGET_INGEST",
+        GateName: "widget-ingest-gate",
         CarriesQuestionLane: true);
 
     private static ProjectStateItem Item(string id, string type, string text = "t") => new ProjectStateItem(

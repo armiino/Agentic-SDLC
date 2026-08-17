@@ -32,7 +32,13 @@ public static class StewardChatRunner
         IReadOnlyList<AITool>? liveTools = null)
     {
         var prompt = PromptProvider.Load(repoRoot, Phase, "StewardAgent", "StewardAgent1",
-            new Dictionary<string, string> { ["runId"] = run.RunId });
+            new Dictionary<string, string>
+            {
+                ["runId"] = run.RunId,
+                // Block-H-Fund 17.08.: der Steward kennt sein Projekt-Repo (Quelle: run-config fullworkflow.repo)
+                // und fragt den Autor nicht danach. Leer = kein Repo konfiguriert (Prompt behandelt den Fall).
+                ["projektRepo"] = settings.GithubRepo ?? "",
+            });
         var client = AgentChatPipelineBuilder.Build(baseClient, settings, run, "StewardAgent", SourceName);
         // Die Steward-ROLLEN-Teilmenge des Werkzeugkastens (⚖ K7): C1a-Pipeline-Lesen + C3-Core-Lesen
         // (geteilter Kasten um die ICoreRepository-Naht) + C3-GitHub-Snapshot-Lesen + C1c-Start-Tools

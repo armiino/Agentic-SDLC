@@ -41,10 +41,13 @@ public static class GithubIssueSnapshotRunner
 
     /// <summary>K13/C2d: typisierte Naht für Steward + Auto-Pull — frischer Kommentar-Snapshot via GitHub-API.
     /// issuesPath = expliziter Issue-Snapshot als PR-Filter (Auto-Pull: der soeben gezogene; sonst der letzte).</summary>
-    public static Task<int> PullCommentsAsync(string repository, string repoRoot, int limit = 500, string? outDir = null, string? issuesPath = null)
-        => RunCommentsCoreAsync(new GithubSnapshotCliOptions(repository, issuesPath, outDir, "api", limit, null), repoRoot);
+    public static Task<int> PullCommentsAsync(string repository, string repoRoot, int limit = 500, string? outDir = null, string? issuesPath = null,
+        // R-49/⚖: die Konfig-Naht (z. B. fullworkflow.tokenEnv) — explizit gewinnt vor dem Projekt-Token-Default.
+        string? tokenEnv = null)
+        => RunCommentsCoreAsync(new GithubSnapshotCliOptions(repository, issuesPath, outDir, "api", limit, null), repoRoot,
+            string.IsNullOrWhiteSpace(tokenEnv) ? null : Environment.GetEnvironmentVariable(tokenEnv));
 
-    private static async Task<int> RunCommentsCoreAsync(GithubSnapshotCliOptions options, string repoRoot)
+    private static async Task<int> RunCommentsCoreAsync(GithubSnapshotCliOptions options, string repoRoot, string? explicitToken = null)
     {
         if (string.IsNullOrWhiteSpace(options.Repository))
         {
@@ -69,7 +72,7 @@ public static class GithubIssueSnapshotRunner
         IReadOnlyList<GithubIssueCommentSnapshot> comments;
         try
         {
-            comments = await LoadCommentsWithGitHubApiAsync(options.Repository, options.Limit, knownIssues).ConfigureAwait(false);
+            comments = await LoadCommentsWithGitHubApiAsync(options.Repository, options.Limit, knownIssues, explicitToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -119,7 +122,7 @@ public static class GithubIssueSnapshotRunner
         using var client = new HttpClient();
         client.DefaultRequestHeaders.UserAgent.ParseAdd("AgenticSdlc/1.0");
         client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
-        var token = explicitToken ?? Environment.GetEnvironmentVariable("GITHUB_TOKEN") ?? Environment.GetEnvironmentVariable("GH_TOKEN");
+        var token = ResolveReadToken(explicitToken);
         if (!string.IsNullOrWhiteSpace(token))
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 
@@ -294,10 +297,13 @@ public static class GithubIssueSnapshotRunner
     /// <summary>K13-2 (09.08.): typisierte Naht für den Steward — frischer Issue-Snapshot via GitHub-API,
     /// ohne CLI-String-Args (dieselbe Kern-Logik wie `github-snapshot issues`). outDir = explizites Ziel
     /// (C2d Auto-Pull: der Snapshot wird Run-Artefakt des pipeline-full-Laufs).</summary>
-    public static Task<int> PullIssuesAsync(string repository, string repoRoot, int limit = 200, string? outDir = null)
-        => RunIssuesCoreAsync(new GithubSnapshotCliOptions(repository, null, outDir, "api", limit, null), repoRoot);
+    public static Task<int> PullIssuesAsync(string repository, string repoRoot, int limit = 200, string? outDir = null,
+        // R-49/⚖: die Konfig-Naht (z. B. fullworkflow.tokenEnv) — explizit gewinnt vor dem Projekt-Token-Default.
+        string? tokenEnv = null)
+        => RunIssuesCoreAsync(new GithubSnapshotCliOptions(repository, null, outDir, "api", limit, null), repoRoot,
+            string.IsNullOrWhiteSpace(tokenEnv) ? null : Environment.GetEnvironmentVariable(tokenEnv));
 
-    private static async Task<int> RunIssuesCoreAsync(GithubSnapshotCliOptions options, string repoRoot)
+    private static async Task<int> RunIssuesCoreAsync(GithubSnapshotCliOptions options, string repoRoot, string? explicitToken = null)
     {
         IReadOnlyList<GithubIssueSnapshot> issues;
         string provider;
@@ -319,7 +325,7 @@ public static class GithubIssueSnapshotRunner
                 provider = options.Provider;
                 issues = provider.Equals("gh", StringComparison.OrdinalIgnoreCase)
                     ? await LoadWithGhAsync(options.Repository, options.Limit).ConfigureAwait(false)
-                    : await LoadWithGitHubApiAsync(options.Repository, options.Limit).ConfigureAwait(false);
+                    : await LoadWithGitHubApiAsync(options.Repository, options.Limit, explicitToken).ConfigureAwait(false);
             }
         }
         catch (Exception ex)
@@ -417,6 +423,22 @@ public static class GithubIssueSnapshotRunner
         return issues;
     }
 
+    /// <summary>
+    /// R-49 (17.08.): die Lese-Token-Auflösung der Pull-Bahnen — NIE anonym raten. Vorher fiel der Pull ohne
+    /// explicitToken auf GITHUB_TOKEN/GH_TOKEN zurück (beide ungesetzt) ⇒ ANONYMER Request ⇒ seit dem
+    /// Privat-Schalten des Repos (11.08.) 404 für from-github-Auto-Pull, pull_github_snapshot und die CLI.
+    /// ⚖ Autor 17.08.: KEINE Fallback-Kette durch Alt-Tokens — es zählt NUR der aktuell genutzte Projekt-Token:
+    /// explizit (Konfig-Naht, z. B. fullworkflow.tokenEnv) oder `GITHUB_AGENTIC_REFACTOR_TOKEN`. Sonst null
+    /// (der Aufrufer scheitert LAUT statt mit falschem/keinem Token zu raten).
+    /// </summary>
+    internal static string? ResolveReadToken(string? explicitToken, Func<string, string?>? env = null)
+    {
+        if (!string.IsNullOrWhiteSpace(explicitToken)) return explicitToken;
+        env ??= Environment.GetEnvironmentVariable;
+        var v = env("GITHUB_AGENTIC_REFACTOR_TOKEN");
+        return string.IsNullOrWhiteSpace(v) ? null : v;
+    }
+
     internal static async Task<IReadOnlyList<GithubIssueSnapshot>> LoadWithGitHubApiAsync(string repository, int limit, string? explicitToken = null)
     {
         if (repository.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Length != 2)
@@ -425,9 +447,7 @@ public static class GithubIssueSnapshotRunner
         using var client = new HttpClient();
         client.DefaultRequestHeaders.UserAgent.ParseAdd("AgenticSdlc/1.0");
         client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
-        var token = explicitToken ?? Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-        if (string.IsNullOrWhiteSpace(token))
-            token = Environment.GetEnvironmentVariable("GH_TOKEN");
+        var token = ResolveReadToken(explicitToken);
         if (!string.IsNullOrWhiteSpace(token))
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
 

@@ -24,6 +24,7 @@ public sealed record ForwardReviewResponse(IReadOnlyList<string> AcceptedOpIds, 
 // FINALIZE (HITL): schreibt Plan/Gate/Attempts/Summary (Evidenz, wie der klassische Finalize) und verzweigt dann:
 //   Decision==Pass -> ForwardReviewRequest an den Port (Human-Gate).  Sonst -> terminaler "needs manual"-Output.
 [SendsMessage(typeof(ForwardReviewRequest))]
+[SendsMessage(typeof(GithubForwardGateEmpty))]
 [YieldsOutput(typeof(GithubForwardWfResult))]
 internal sealed class GithubForwardHitlFinalizeExecutor(RunContext run) : Executor<GithubForwardVerdict>("GithubForwardHitlFinalize")
 {
@@ -62,8 +63,15 @@ internal sealed class GithubForwardHitlFinalizeExecutor(RunContext run) : Execut
         if (v.Decision == GateDecision.Pass)
         {
             var views = ops.Select((o, i) => new ForwardReviewOpView($"op-{i}", o.Kind, o.PbiId, o.TargetIssueNumber, o.Title, o.Anchor, o.Rationale)).ToList();
+            var request = new ForwardReviewRequest(run.RunId, ctx.SourcePbiUpdateRun, views);
+            // R-50: TYP-Routing — 0 Ops ⇒ Marker statt Request (s. Pbi-Strip; Prädikat auf Port-Kanten wird ignoriert).
+            if (views.Count == 0)
+            {
+                await context.SendMessageAsync(new GithubForwardGateEmpty(request)).ConfigureAwait(false);
+                return;
+            }
             run.AppendEvent(new { type = "GITHUB_FWD_HUMAN_GATE", runId = run.RunId, operations = ops.Count, timestampUtc = DateTime.UtcNow });
-            await context.SendMessageAsync(new ForwardReviewRequest(run.RunId, ctx.SourcePbiUpdateRun, views)).ConfigureAwait(false);
+            await context.SendMessageAsync(request).ConfigureAwait(false);
         }
         else
         {
@@ -104,12 +112,13 @@ internal static class GithubForwardHitlWorkflow
     public static Workflow Build(
         GithubForwardSeedExecutor seed, GithubForwardMakerExecutor maker, GithubForwardGateExecutor gate,
         GithubForwardRepairExecutor repair, GithubForwardHitlFinalizeExecutor finalize,
-        RequestPort humanGate, GithubForwardApplyExecutor apply)
+        RequestPort humanGate, GithubForwardApplyExecutor apply,
+        GithubForwardEmptyGateResponder emptyGate)
     {
         var b = new WorkflowBuilder(seed)
             .WithName(WorkflowName)
             .WithDescription("Delta -> Seed -> Maker -> Gate -> [Repair] -> Finalize -> [RequestPort Human] -> Apply.");
-        AddTo(b, seed, maker, gate, repair, finalize, humanGate, apply);
+        AddTo(b, seed, maker, gate, repair, finalize, humanGate, apply, emptyGate);
         return b.Build();
     }
 
@@ -117,14 +126,19 @@ internal static class GithubForwardHitlWorkflow
     public static void AddTo(WorkflowBuilder b,
         GithubForwardSeedExecutor seed, GithubForwardMakerExecutor maker, GithubForwardGateExecutor gate,
         GithubForwardRepairExecutor repair, GithubForwardHitlFinalizeExecutor finalize,
-        RequestPort humanGate, GithubForwardApplyExecutor apply)
+        RequestPort humanGate, GithubForwardApplyExecutor apply,
+        // R-50: der Leer-Gate-Durchleiter — Ops==0 wird per conditional edge hierher geroutet (LAUT), nie zum Port.
+        GithubForwardEmptyGateResponder emptyGate)
     {
         b.AddEdge(seed, maker);
         b.AddEdge(maker, gate);
         b.AddEdge<GithubForwardVerdict>(gate, repair, m => m is not null && m.Decision == GateDecision.Repair);
         b.AddEdge<GithubForwardVerdict>(gate, finalize, m => m is not null && m.Decision != GateDecision.Repair);
         b.AddEdge(repair, gate);
-        b.AddEdge(finalize, humanGate);   // ForwardReviewRequest (nur bei Decision==Pass tatsaechlich gesendet)
+        // R-50: TYP-Routing statt Port-Pause bei 0 Ops (s. Pbi-Strip / shared/EmptyGateAutoResponder).
+        b.AddEdge(finalize, humanGate);   // ForwardReviewRequest (Ops > 0)
+        b.AddEdge(finalize, emptyGate);   // GithubForwardGateEmpty (Ops == 0) -> LAUTER Skip
+        b.AddEdge(emptyGate, apply);      // leere Antwort -> NORMALER Apply-Pfad (bewährt, accepted=0)
         b.AddEdge(humanGate, apply);      // ForwardReviewResponse
         b.WithOutputFrom(finalize);       // terminaler "needs manual"-Output
         b.WithOutputFrom(apply);          // terminaler Apply-Report

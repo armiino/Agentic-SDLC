@@ -62,14 +62,18 @@ internal static class PipelineComposedWorkflow
         DecisionScanExecutor decisionScan, RequestPort decisionPort, DecisionComposedApplyExecutor decisionApply,
         IngestPbiBridgeExecutor bridge,
         PbiUpdateDeriveExecutor pbiDerive, PbiUpdateMakerExecutor pbiMaker, PbiUpdateGateExecutor pbiGate, PbiUpdateRepairExecutor pbiRepair,
-        PbiAlignExecutor pbiAlign, PbiUpdateHitlFinalizeExecutor pbiFinalize, RequestPort pbiPort, PbiUpdateApplyExecutor pbiApply)
+        PbiAlignExecutor pbiAlign, PbiUpdateHitlFinalizeExecutor pbiFinalize, RequestPort pbiPort, PbiUpdateApplyExecutor pbiApply,
+        PbiUpdateEmptyGateResponder pbiEmptyGate,   // R-50: Leer-Gate-Durchleiter (Typ-Routing statt Pause bei 0 Ops)
+        IngestionEmptyGateResponder ingestEmptyGate, IngestionEmptyGateResponder archEmptyGate)   // R-50-Vervollständigung
     {
         // Stufe 1: Ingest
         b.AddEdge(ingestResolve, ingestGate);
         b.AddEdge<IngestionVerdict>(ingestGate, ingestRepair, m => m is not null && m.Decision == GateDecision.Repair);
         b.AddEdge<IngestionVerdict>(ingestGate, ingestFinalize, m => m is not null && m.Decision != GateDecision.Repair);
         b.AddEdge(ingestRepair, ingestGate);
-        b.AddEdge(ingestFinalize, ingestPort);
+        b.AddEdge(ingestFinalize, ingestPort);          // IngestionReviewRequest (Ops > 0)
+        b.AddEdge(ingestFinalize, ingestEmptyGate);     // IngestionGateEmpty (Ops == 0) -> LAUTER Skip (R-50)
+        b.AddEdge(ingestEmptyGate, ingestApply);
         b.AddEdge(ingestPort, ingestApply);
 
         // R-11 A1d — der ARCH-Strip, SERIELL nach dem req-Apply und VOR dem decision-gate (derselbe Scan sieht
@@ -82,7 +86,9 @@ internal static class PipelineComposedWorkflow
         b.AddEdge<IngestionVerdict>(archGate, archRepair, m => m is not null && m.Decision == GateDecision.Repair);
         b.AddEdge<IngestionVerdict>(archGate, archFinalize, m => m is not null && m.Decision != GateDecision.Repair);
         b.AddEdge(archRepair, archGate);
-        b.AddEdge(archFinalize, archPort);
+        b.AddEdge(archFinalize, archPort);              // (Ops > 0)
+        b.AddEdge(archFinalize, archEmptyGate);         // (Ops == 0) -> LAUTER Skip (R-50)
+        b.AddEdge(archEmptyGate, archApply);
         b.AddEdge(archPort, archApply);
         // R-11 A2-2: archApply -> DecisionScan laeuft seit A2 ueber den Klassifikations-Strip — die Kante
         // setzt Assemble (Cross-Zweig-Stufe: derselbe Strip bedient auch den Bootstrap-Ast).
@@ -105,7 +111,10 @@ internal static class PipelineComposedWorkflow
         b.AddEdge(pbiAlign, pbiFinalize);
         b.AddEdge<PbiUpdateVerdict>(pbiGate, pbiFinalize, m => m is not null && m.Decision is not GateDecision.Pass and not GateDecision.Repair);
         b.AddEdge(pbiRepair, pbiGate);
-        b.AddEdge(pbiFinalize, pbiPort);
+        // R-50: TYP-Routing statt Port-Pause bei 0 Ops (Finalize sendet Marker; s. shared/EmptyGateAutoResponder).
+        b.AddEdge(pbiFinalize, pbiPort);        // PbiUpdateReviewRequest (Ops > 0)
+        b.AddEdge(pbiFinalize, pbiEmptyGate);   // PbiUpdateGateEmpty (Ops == 0) -> LAUTER Skip
+        b.AddEdge(pbiEmptyGate, pbiApply);
         b.AddEdge(pbiPort, pbiApply);
 
         b.WithOutputFrom(ingestFinalize);  // terminal, falls Ingest-Gate scheitert (Pipeline-Abbruch)

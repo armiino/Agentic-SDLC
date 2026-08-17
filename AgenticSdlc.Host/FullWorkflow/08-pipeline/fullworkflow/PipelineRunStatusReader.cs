@@ -27,7 +27,10 @@ public enum PipelineRunState
     Finished,
     /// <summary>weder Pointer noch metrics — läuft gerade ODER wurde abgebrochen (die Artefakte
     /// können das nicht unterscheiden; die Events sagen, wie weit er kam).</summary>
-    NotPausedNotFinished
+    NotPausedNotFinished,
+    /// <summary>R-49: das letzte Pipeline-Event ist PIPELINE_ABORTED — der Lauf hat sich selbst LAUT
+    /// beendet (z. B. Pull-Fehler VOR dem Graphen). Kein Raten mehr zwischen „aktiv" und „tot".</summary>
+    Aborted
 }
 
 /// <summary>Die Artefakt-Pfade des Laufs (relativ zum Repo) — der Steward verlinkt/liest sie, statt raten.</summary>
@@ -66,6 +69,25 @@ public static class PipelineRunStatusReader
             var actions = NextRequiredAction(gate, runId)
                 .Append($"  Weiter: pipeline-full resume {runId}   (oder … --accept-all)").ToList();
             return new PipelineRunStatus(runId, PipelineRunState.Paused, gate, p.CheckpointId, p.SavedUtc, lastEvent, actions, artifacts);
+        }
+
+        // R-49: ein PIPELINE_ABORTED als letztes Event = der Lauf hat sich LAUT selbst beendet (Frühausstieg,
+        // z. B. Pull-404 vor dem Graphen). Vorher war das von „läuft noch" nicht unterscheidbar — der Steward
+        // vertröstete den Autor über einen toten Task.
+        if (lastEvent is not null && lastEvent.Contains("\"PIPELINE_ABORTED\"", StringComparison.Ordinal))
+        {
+            string reason = "(Grund siehe events.jsonl)";
+            try
+            {
+                using var doc = System.Text.Json.JsonDocument.Parse(lastEvent);
+                if (doc.RootElement.TryGetProperty("reason", out var r) && r.GetString() is { } rs) reason = rs;
+            }
+            catch { /* Event unlesbar → generischer Hinweis reicht */ }
+            return new PipelineRunStatus(runId, PipelineRunState.Aborted,
+                PausedGate: null, CheckpointId: null, PausedSinceUtc: null,
+                LastPipelineEvent: lastEvent,
+                NextRequiredAction: [$"  ABGEBROCHEN: {reason}", "  Ursache beheben, dann den Lauf NEU starten (kein resume — es gibt keinen Checkpoint)."],
+                artifacts);
         }
 
         var finished = File.Exists(metricsPath);

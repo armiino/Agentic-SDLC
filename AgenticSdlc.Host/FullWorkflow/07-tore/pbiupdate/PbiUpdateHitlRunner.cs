@@ -92,13 +92,20 @@ public static class PbiUpdateHitlRunner
         var workflow = PbiUpdateHitlWorkflow.Build(
             new PbiUpdateDeriveExecutor(run), new PbiUpdateMakerExecutor(factory, run), new PbiUpdateGateExecutor(run),
             new PbiUpdateRepairExecutor(factory, run), new PbiAlignExecutor(alignFactory, run), new PbiUpdateHitlFinalizeExecutor(run),
-            humanGate, new PbiUpdateApplyExecutor(run, repoRoot, outDir));
+            humanGate, new PbiUpdateApplyExecutor(run, repoRoot, outDir),
+            new PbiUpdateEmptyGateResponder(run));
 
         var ctx = new PbiUpdateWfContext(core, delta.Applied, sourceIngestionRun, outDir, dryRun, maxAttempts);
         Console.WriteLine($"[{Cmd}] start runId={run.RunId} model={genSettings.ModelId} dryRun={dryRun} maxAttempts={maxAttempts}");
         return await HitlShell.StartAsync(Cmd, workflow, ctx, run, checkpointDir,
             onManualOutput: data =>
             {
+                // R-50: leeres Gate wird LAUT übersprungen — der Lauf endet dann schon im Start mit dem Apply-Report.
+                if (data is PbiUpdateApplyReport report)
+                {
+                    Console.WriteLine($"[{Cmd}] APPLIED (leeres Gate, R-50-Skip) newPbis={report.NewPbis.Count} updatedPbis={report.UpdatedPbis.Count}");
+                    return 0;
+                }
                 if (data is not PbiUpdateWfResult manual) return null;
                 Console.WriteLine($"[{Cmd}] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
                 return 1;
@@ -156,7 +163,8 @@ public static class PbiUpdateHitlRunner
         var workflow = PbiUpdateHitlWorkflow.Build(
             new PbiUpdateDeriveExecutor(run), new PbiUpdateMakerExecutor(noAgent, run), new PbiUpdateGateExecutor(run),
             new PbiUpdateRepairExecutor(noAgent, run), new PbiAlignExecutor(noAgent, run), new PbiUpdateHitlFinalizeExecutor(run),
-            humanGate, new PbiUpdateApplyExecutor(run, repoRoot, outDir));
+            humanGate, new PbiUpdateApplyExecutor(run, repoRoot, outDir),
+            new PbiUpdateEmptyGateResponder(run));
 
         Console.WriteLine($"[{Cmd}] resume runId={runId} mode={(uiMode ? "ui" : "cli")}");
         return await HitlShell.ResumeAsync(Cmd, workflow, runId, checkpointDir, pointer, uiMode,

@@ -93,4 +93,21 @@ public sealed class StewardReadToolsTests
         Assert.Equal(39, harvest.GetProperty("unchanged").GetInt32());        // „nichts zu ernten" ist BERICHTBAR, kein NOT_FOUND
         Assert.Equal(0, harvest.GetProperty("finds").GetArrayLength());
     }
+
+    // Fix A zu R-48 (13.08.): ein Forward, der am eigenen Checker scheitert (MaxAttemptsReached, KEIN Apply),
+    // war im Bericht unsichtbar — der Steward meldete „fertig ✓". Jetzt ist der Plan-Ausgang lesbar.
+    [Fact]
+    public async Task read_run_report_zeigt_den_Forward_Plan_Ausgang_auch_ohne_Apply()
+    {
+        var repo = Directory.CreateTempSubdirectory("c1a-fwdplan-").FullName;
+        var runDir = Path.Combine(repo, "runs", "fullworkflow", "20260813_f");
+        Directory.CreateDirectory(Path.Combine(runDir, "07-github"));
+        File.WriteAllText(Path.Combine(runDir, "07-github", "github-forward-summary.json"),
+            """{"runId":"20260813_f","gatePass":false,"gateErrors":1,"attempts":2,"finalDecision":"MaxAttemptsReached"}""");
+
+        var rep = await InvokeAsync(repo, "read_run_report", new Dictionary<string, object?> { ["runId"] = "20260813_f" });
+        var fwd = rep.GetProperty("stages").GetProperty("forwardPlan");
+        Assert.False(fwd.GetProperty("gatePass").GetBoolean());              // der Fehlschlag ist SICHTBAR
+        Assert.Equal("MaxAttemptsReached", fwd.GetProperty("finalDecision").GetString());
+    }
 }

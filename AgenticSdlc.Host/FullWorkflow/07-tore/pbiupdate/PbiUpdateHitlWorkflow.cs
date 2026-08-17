@@ -33,6 +33,7 @@ public sealed record PbiUpdateReviewResponse(IReadOnlyList<string> AcceptedOpIds
 //   Decision==Pass -> PbiUpdateReviewRequest an den Port. Sonst -> terminaler "needs manual"-Output.
 [SendsMessage(typeof(PbiUpdateReviewRequest))]
 [YieldsOutput(typeof(PbiUpdateWfResult))]
+[SendsMessage(typeof(PbiUpdateGateEmpty))]
 internal sealed class PbiUpdateHitlFinalizeExecutor(RunContext run) : Executor<PbiUpdateVerdict>("PbiUpdateHitlFinalize")
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
@@ -60,8 +61,16 @@ internal sealed class PbiUpdateHitlFinalizeExecutor(RunContext run) : Executor<P
         if (v.Decision == GateDecision.Pass)
         {
             var views = ops.Select((o, i) => new PbiUpdateReviewOpView($"op-{i}", o.Kind, o.PbiId, o.RequirementId, o.Rationale)).ToList();
+            var request = new PbiUpdateReviewRequest(run.RunId, ctx.SourceIngestionRun, views);
+            // R-50: TYP-Routing — 0 Ops heisst „nichts zu entscheiden": Marker statt Request, die Kante bringt
+            // ihn zum EmptyGateAutoResponder (LAUT) statt zum Port. (Prädikat auf Port-Kanten wird ignoriert.)
+            if (views.Count == 0)
+            {
+                await context.SendMessageAsync(new PbiUpdateGateEmpty(request)).ConfigureAwait(false);
+                return;
+            }
             run.AppendEvent(new { type = "PBI_UPDATE_HUMAN_GATE", runId = run.RunId, operations = ops.Count, timestampUtc = DateTime.UtcNow });
-            await context.SendMessageAsync(new PbiUpdateReviewRequest(run.RunId, ctx.SourceIngestionRun, views)).ConfigureAwait(false);
+            await context.SendMessageAsync(request).ConfigureAwait(false);
         }
         else
         {
@@ -107,7 +116,9 @@ internal static class PbiUpdateHitlWorkflow
     public static Workflow Build(
         PbiUpdateDeriveExecutor derive, PbiUpdateMakerExecutor maker, PbiUpdateGateExecutor gate,
         PbiUpdateRepairExecutor repair, PbiAlignExecutor align, PbiUpdateHitlFinalizeExecutor finalize,
-        RequestPort humanGate, PbiUpdateApplyExecutor apply)
+        RequestPort humanGate, PbiUpdateApplyExecutor apply,
+        // R-50: der Leer-Gate-Durchleiter — Ops==0 wird per conditional edge hierher geroutet (LAUT), nie zum Port.
+        PbiUpdateEmptyGateResponder emptyGate)
     {
         var b = new WorkflowBuilder(derive)
             .WithName(WorkflowName)
@@ -122,7 +133,11 @@ internal static class PbiUpdateHitlWorkflow
         b.AddEdge(align, finalize);
         b.AddEdge<PbiUpdateVerdict>(gate, finalize, m => m is not null && m.Decision is not GateDecision.Pass and not GateDecision.Repair);
         b.AddEdge(repair, gate);
-        b.AddEdge(finalize, humanGate);   // PbiUpdateReviewRequest (nur bei Decision==Pass gesendet)
+        // R-50: ein Human-Gate ruft nur, wenn es etwas zu entscheiden gibt — TYP-Routing (Entry-/Branch-Muster):
+        // der Finalize sendet bei 0 Ops den Marker PbiUpdateGateEmpty statt des Requests; die Kanten routen typgenau.
+        b.AddEdge(finalize, humanGate);   // PbiUpdateReviewRequest (Ops > 0)
+        b.AddEdge(finalize, emptyGate);   // PbiUpdateGateEmpty (Ops == 0) -> LAUTER Skip
+        b.AddEdge(emptyGate, apply);      // leere Antwort -> NORMALER Apply-Pfad (bewährt, accepted=0)
         b.AddEdge(humanGate, apply);      // PbiUpdateReviewResponse
         b.WithOutputFrom(finalize);       // terminaler "needs manual"-Output
         b.WithOutputFrom(apply);          // terminaler Apply-Report

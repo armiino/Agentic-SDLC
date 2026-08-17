@@ -37,6 +37,14 @@ public sealed class StewardChatRunnerTests
         var session = await StewardChatRunner.LoadOrCreateSessionAsync(agent, path);
         var first = await agent.RunAsync("Hallo.", session);
         Assert.Contains("28 Tools", first.Text);                             // 32 − 4 Werkbank-Seile (⚖ 13.08. Klasse-Regel, system-inventar §3)
+        // Block-H-Fund 17.08.: der Steward kennt sein Projekt-Repo aus der EINEN Config-Quelle (fullworkflow.repo)
+        // — Mapping-Wächter (Prompt-Injektion via {{projektRepo}} nutzt dieses Feld).
+        var cfg = new AgenticSdlc.Host.Configuration.RunConfig();
+        cfg.FullWorkflow.Repo = " armiino/Agentic-GitHub-refactor ";
+        Assert.Equal("armiino/Agentic-GitHub-refactor",
+            AgenticSdlc.Host.Configuration.HostSettings.FromRuntimeConfig(cfg, ".").GithubRepo);   // getrimmt
+        Assert.Null(AgenticSdlc.Host.Configuration.HostSettings.FromRuntimeConfig(
+            new AgenticSdlc.Host.Configuration.RunConfig(), ".").GithubRepo);                      // leer = null (Prompt fragt dann)
 
         // C2d ②: Live-Tools (MCP) werden ADDITIV gemountet — hier per Dummy-AIFunction, LLM-/netz-frei.
         var live = Microsoft.Extensions.AI.AIFunctionFactory.Create(() => "live", "issue_read_dummy", "Dummy-Live-Tool");

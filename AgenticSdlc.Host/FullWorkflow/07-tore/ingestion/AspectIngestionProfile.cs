@@ -22,6 +22,7 @@ public sealed record AspectIngestionProfile(
     string ResolverTaskText,  // die User-Task des Resolvers (Maker + wörtlich im Repair)
     string ExecutorIdPrefix,  // A1d: eindeutige Executor-IDs je Strip (req-IDs bleiben WÖRTLICH die heutigen!)
     string EventPrefix,       // Audit-Ehrlichkeit: Event-Typen je Strip (req WÖRTLICH "REQ_INGEST", arch "ARCH_INGEST")
+    string GateName,          // R-50: das Human-Gate dieses Strips ("ingest-gate"/"arch-ingest-gate") — Leer-Skip-Event/Id
     // 9i (09.08.): die 9g-Fragen-Spur gehört GENAU EINEM Strip (E-R3 „arch ohne Fragen-Block" als Daten) —
     // sonst müsste bei gemischten Deltas (req+arch+Fragen) JEDER Strip die Fragen covern und der
     // identitäts-freie OpenQuestion-Apply würde doppelt prägen (Doppel-DEC).
@@ -38,6 +39,7 @@ public sealed record AspectIngestionProfile(
         ResolverTaskText: IngestionResolveTask.Text,
         ExecutorIdPrefix: "RequirementIngestion",
         EventPrefix: "REQ_INGEST",
+        GateName: "ingest-gate",
         CarriesQuestionLane: true);
 
     /// <summary>R-11 A1d (05.08.) — der zweite Aspekt: Architektur als vollwertiger Tor-1-Bürger.
@@ -69,6 +71,7 @@ public sealed record AspectIngestionProfile(
                           """,
         ExecutorIdPrefix: "ArchitectureIngestion",
         EventPrefix: "ARCH_INGEST",
+        GateName: "arch-ingest-gate",
         CarriesQuestionLane: false);
 
     /// <summary>② E-R4 (06.08.): der jeweils ANDERE Wahrheits-Aspekt — speist die Quer-LESE-Sicht des

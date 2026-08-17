@@ -77,6 +77,15 @@ internal sealed class OperationalForwardBridgeExecutor(RunContext run, string pb
             return;
         }
         var delta = await HitlShell.LoadAsync<GithubSyncDeltaDocument>(deltaPath).ConfigureAwait(false);
+        // R-50: das Skip-Prädikat ist SEMANTISCH (Einträge > 0), nicht „Datei existiert" — der pbi-Apply schreibt
+        // auch bei 0 Änderungen eine leere Delta-Datei; vorher lief dann Snapshot-Pull + Leer-Gate für nichts.
+        if (delta.Entries.Count == 0)
+        {
+            run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE_SKIPPED", reason = "leeres sync-delta", timestampUtc = DateTime.UtcNow });
+            Console.WriteLine("[pipeline-full] Forward übersprungen (R-50): leeres github-sync-delta (0 Einträge) — Lauf endet ohne GitHub-Stufe.");
+            await context.SendMessageAsync(new ForwardSkipped("Leeres github-sync-delta (0 Einträge) — Forward übersprungen (R-50).")).ConfigureAwait(false);
+            return;
+        }
         run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE", deltaPbis = delta.Entries.Count, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(new ForwardPrep(delta, InitialSync: false)).ConfigureAwait(false);
     }

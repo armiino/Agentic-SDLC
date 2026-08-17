@@ -45,6 +45,7 @@ internal sealed class IngestionHitlResolveExecutor(Func<IReadOnlyList<AITool>, A
 // FINALIZE (HITL): schreibt Plan/Gate/Attempts/Summary (wie IngestionFinalize) und verzweigt:
 //   Decision==Pass -> IngestionReviewRequest an den Port. Sonst -> terminaler "needs manual"-Output.
 [SendsMessage(typeof(IngestionReviewRequest))]
+[SendsMessage(typeof(IngestionGateEmpty))]
 [YieldsOutput(typeof(IngestionResult))]
 internal sealed class IngestionHitlFinalizeExecutor(RunContext run, string outDir, AspectIngestionProfile? profile = null)
     : Executor<IngestionVerdict>((profile ?? AspectIngestionProfile.Requirement).ExecutorIdPrefix + "HitlFinalize")
@@ -71,8 +72,15 @@ internal sealed class IngestionHitlFinalizeExecutor(RunContext run, string outDi
         if (v.Decision == GateDecision.Pass)
         {
             var views = v.Operations.Select(o => new IngestionReviewOpView(o.IncomingItemId, o.Kind, o.TargetEntityId, o.Statement, o.Rationale)).ToList();
+            var request = new IngestionReviewRequest(run.RunId, views);
+            // R-50: TYP-Routing — 0 Ops ⇒ Marker statt Request (leeres Gate ruft nie; s. shared/EmptyGateAutoResponder).
+            if (views.Count == 0)
+            {
+                await context.SendMessageAsync(new IngestionGateEmpty(request, _p.GateName)).ConfigureAwait(false);
+                return;
+            }
             run.AppendEvent(new { type = _p.EventPrefix + "_HUMAN_GATE", runId = run.RunId, operations = v.Operations.Count, timestampUtc = DateTime.UtcNow });
-            await context.SendMessageAsync(new IngestionReviewRequest(run.RunId, views)).ConfigureAwait(false);
+            await context.SendMessageAsync(request).ConfigureAwait(false);
         }
         else
         {
@@ -109,6 +117,8 @@ internal static class IngestionHitlWorkflow
     public static Workflow Build(
         IngestionHitlResolveExecutor resolve, IngestionGateExecutor gate, IngestionRepairExecutor repair,
         IngestionHitlFinalizeExecutor finalize, RequestPort humanGate, IngestionApplyExecutor apply,
+        // R-50: der Leer-Gate-Durchleiter (Typ-Routing; s. shared/EmptyGateAutoResponder).
+        IngestionEmptyGateResponder emptyGate,
         AspectIngestionProfile? profile = null)
     {
         // Name aus dem Profil (req ergibt WÖRTLICH den bisherigen Namen "Requirement-Ingestion-HITL").
@@ -119,7 +129,9 @@ internal static class IngestionHitlWorkflow
         b.AddEdge<IngestionVerdict>(gate, repair, m => m is not null && m.Decision == GateDecision.Repair);
         b.AddEdge<IngestionVerdict>(gate, finalize, m => m is not null && m.Decision != GateDecision.Repair);
         b.AddEdge(repair, gate);
-        b.AddEdge(finalize, humanGate);   // IngestionReviewRequest (nur bei Decision==Pass gesendet)
+        b.AddEdge(finalize, humanGate);   // IngestionReviewRequest (Ops > 0)
+        b.AddEdge(finalize, emptyGate);   // IngestionGateEmpty (Ops == 0) -> LAUTER Skip (R-50)
+        b.AddEdge(emptyGate, apply);      // leere Antwort -> NORMALER Apply-Pfad
         b.AddEdge(humanGate, apply);      // IngestionReviewResponse
         b.WithOutputFrom(finalize);       // terminaler "needs manual"-Output
         b.WithOutputFrom(apply);          // terminaler Apply-Report

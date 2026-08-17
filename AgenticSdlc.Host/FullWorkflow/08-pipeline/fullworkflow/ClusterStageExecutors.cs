@@ -54,6 +54,7 @@ internal sealed class ClusterBridgeExecutor(RunContext run, string repoRoot, int
 
 // GATE-REQUEST: hebt das Cluster-Ergebnis als RequestPort-Anfrage (der zentrale Gate-Responder antwortet).
 [SendsMessage(typeof(ClusterReviewRequest))]
+[SendsMessage(typeof(ClusterGateEmpty))]
 internal sealed class ClusterGateRequestExecutor(RunContext run) : Executor<ClusterResult>("PipelineClusterGateRequest")
 {
     public override async ValueTask HandleAsync(ClusterResult result, IWorkflowContext context, CancellationToken ct = default)
@@ -66,7 +67,14 @@ internal sealed class ClusterGateRequestExecutor(RunContext run) : Executor<Clus
             reviewVerdict = result.Review.Verdict,
             timestampUtc = DateTime.UtcNow
         });
-        await context.SendMessageAsync(new ClusterReviewRequest(result.Review.Operations, result.Report.Pass, result.Review.Verdict)).ConfigureAwait(false);
+        var request = new ClusterReviewRequest(result.Review.Operations, result.Report.Pass, result.Review.Verdict);
+        // R-50: TYP-Routing — 0 Korrektur-Ops ⇒ Marker statt Request (leeres Gate ruft nie).
+        if (result.Review.Operations.Count == 0)
+        {
+            await context.SendMessageAsync(new ClusterGateEmpty(request)).ConfigureAwait(false);
+            return;
+        }
+        await context.SendMessageAsync(request).ConfigureAwait(false);
     }
 }
 

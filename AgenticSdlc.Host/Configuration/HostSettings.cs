@@ -59,7 +59,10 @@ public sealed record HostSettings(
     int EvidenceRepetitions,
     // M1b: Steward-Memory-Default aus run-config (CLI --memory überstimmt; K6-Modi).
     string? StewardMemoryMode = null,
-    bool StewardGithubLive = true)
+    bool StewardGithubLive = true,
+    // Block-H-Fund 17.08.: das Projekt-Repo (run-config fullworkflow.repo = die EINE Quelle) — damit der
+    // Steward sein Repo KENNT (Prompt-Variable {{projektRepo}}) statt den Autor danach zu fragen.
+    string? GithubRepo = null)
 {
     /// <summary>
     /// Erstellt die Settings aus den aktuell gesetzten Umgebungsvariablen.
@@ -128,6 +131,7 @@ public sealed record HostSettings(
             // M1b: Steward-Memory-Default je Projekt (CLI --memory überstimmt).
             StewardMemoryMode: string.IsNullOrWhiteSpace(config.Steward.Memory) ? null : config.Steward.Memory.Trim(),
             StewardGithubLive: config.Steward.GithubLive ?? true,
+            GithubRepo: string.IsNullOrWhiteSpace(config.FullWorkflow.Repo) ? null : config.FullWorkflow.Repo.Trim(),
             EvidenceArtifact: (string.IsNullOrWhiteSpace(config.EvidenceAgent.Artifact) ? "requirements" : config.EvidenceAgent.Artifact).Trim().ToLowerInvariant(),
             EvidenceTranscript: string.IsNullOrWhiteSpace(config.EvidenceAgent.Transcript) ? null : config.EvidenceAgent.Transcript.Trim(),
             EvidenceLedgerRun: string.IsNullOrWhiteSpace(config.EvidenceAgent.LedgerRun) ? null : config.EvidenceAgent.LedgerRun.Trim(),

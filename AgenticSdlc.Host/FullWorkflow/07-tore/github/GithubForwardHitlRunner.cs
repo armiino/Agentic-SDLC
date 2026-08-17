@@ -103,13 +103,20 @@ public static class GithubForwardHitlRunner
         var workflow = GithubForwardHitlWorkflow.Build(
             new GithubForwardSeedExecutor(run), new GithubForwardMakerExecutor(factory, run), new GithubForwardGateExecutor(run),
             new GithubForwardRepairExecutor(factory, run), new GithubForwardHitlFinalizeExecutor(run),
-            humanGate, new GithubForwardApplyExecutor(run, repoRoot, outDir, repoArg, tokenEnv));
+            humanGate, new GithubForwardApplyExecutor(run, repoRoot, outDir, repoArg, tokenEnv),
+            new GithubForwardEmptyGateResponder(run));
 
         var ctx = new GithubForwardWfContext(core, delta.Entries, mappingByPbi, issues, repoArg, sourcePbiUpdateRun, outDir, snapshotRel, dryRun, maxAttempts);
         Console.WriteLine($"[{Cmd}] start runId={run.RunId} deltaPbis={delta.Entries.Count} model={genSettings.ModelId} dryRun={dryRun} maxAttempts={maxAttempts}");
         return await HitlShell.StartAsync(Cmd, workflow, ctx, run, checkpointDir,
             onManualOutput: data =>
             {
+                // R-50: leeres Gate wird LAUT übersprungen — der Lauf endet dann schon im Start mit dem Apply-Report.
+                if (data is GithubForwardApplyReport report)
+                {
+                    Console.WriteLine($"[{Cmd}] {(report.DryRun ? "DRY-RUN" : "EXECUTED")} (leeres Gate, R-50-Skip) accepted={report.Summary.Accepted}");
+                    return 0;
+                }
                 if (data is not GithubForwardWfResult manual) return null;
                 Console.WriteLine($"[{Cmd}] Gate NICHT bestanden ({manual.FinalDecision}) - kein Apply, kein Checkpoint noetig. Plan: {Path.GetRelativePath(repoRoot, outDir)}");
                 return 1;
@@ -174,7 +181,8 @@ public static class GithubForwardHitlRunner
         var workflow = GithubForwardHitlWorkflow.Build(
             new GithubForwardSeedExecutor(run), new GithubForwardMakerExecutor(noAgent, run), new GithubForwardGateExecutor(run),
             new GithubForwardRepairExecutor(noAgent, run), new GithubForwardHitlFinalizeExecutor(run),
-            humanGate, new GithubForwardApplyExecutor(run, repoRoot, outDir, repoArg ?? pointer.Repository, tokenEnv ?? pointer.TokenEnv));
+            humanGate, new GithubForwardApplyExecutor(run, repoRoot, outDir, repoArg ?? pointer.Repository, tokenEnv ?? pointer.TokenEnv),
+            new GithubForwardEmptyGateResponder(run));
 
         Console.WriteLine($"[{Cmd}] resume runId={runId} mode={(uiMode ? "ui" : "cli")} execute={execute}");
         return await HitlShell.ResumeAsync(Cmd, workflow, runId, checkpointDir, pointer, uiMode,

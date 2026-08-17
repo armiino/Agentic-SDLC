@@ -203,21 +203,27 @@ public static class PipelineFullRunner
             // C2d §3-1 AUTO-PULL: der Lauf zieht Issues + Kommentare SELBST frisch — das ⚿-Ja zum Lauf deckt
             // den deterministischen Read mit ab; der Snapshot wird Run-Artefakt (Beweis-Basis dieses Laufs).
             // `--issues [--comments]` bleibt der Replay-/Test-Weg (archivierter Stand statt Live-Pull).
+            // R-49: Frühausstiege dieses Blocks passieren NACH der runId-Meldung an den Aufrufer (Steward!) —
+            // ohne Event wirkte der tote Task im Chat wie „läuft noch". Jeder Abbruch wird als PIPELINE_ABORTED
+            // mit Grund verewigt; der StatusReader macht daraus ein ehrliches ABGEBROCHEN.
+            int Abort(string reason)
+            {
+                Console.Error.WriteLine($"[{Cmd}] ABGEBROCHEN: {reason}");
+                run.AppendEvent(new { type = "PIPELINE_ABORTED", runId = run.RunId, reason, timestampUtc = DateTime.UtcNow });
+                return 2;
+            }
+
             if (issuesArg is null)
             {
                 var repo = repoArg ?? fw.Repo;
                 if (string.IsNullOrWhiteSpace(repo))
-                {
-                    Console.Error.WriteLine($"[{Cmd}] --from-github braucht ein Repo für den Auto-Pull "
-                        + "(--repo owner/name oder run-config.fullworkflow.repo) — ODER --issues <snapshot.json> als Replay-Weg.");
-                    return 2;
-                }
+                    return Abort("--from-github braucht ein Repo für den Auto-Pull (--repo owner/name oder run-config.fullworkflow.repo) — ODER --issues <snapshot.json> als Replay-Weg.");
                 var snapDir = Path.Combine(run.OutputDir("00-github-inbound"), "snapshot");
-                if (await Tore.Github.GithubIssueSnapshotRunner.PullIssuesAsync(repo, repoRoot, outDir: snapDir).ConfigureAwait(false) != 0)
-                    return 2;
+                if (await Tore.Github.GithubIssueSnapshotRunner.PullIssuesAsync(repo, repoRoot, outDir: snapDir, tokenEnv: fw.TokenEnv).ConfigureAwait(false) != 0)
+                    return Abort($"Issue-Pull von {repo} fehlgeschlagen (Token/Netz/Repo prüfen — Details oben).");
                 var pulledIssues = Path.Combine(snapDir, Tore.Github.GithubSnapshotLocator.FileName);
-                if (await Tore.Github.GithubIssueSnapshotRunner.PullCommentsAsync(repo, repoRoot, outDir: snapDir, issuesPath: pulledIssues).ConfigureAwait(false) != 0)
-                    return 2;
+                if (await Tore.Github.GithubIssueSnapshotRunner.PullCommentsAsync(repo, repoRoot, outDir: snapDir, issuesPath: pulledIssues, tokenEnv: fw.TokenEnv).ConfigureAwait(false) != 0)
+                    return Abort($"Kommentar-Pull von {repo} fehlgeschlagen (Details oben).");
                 issuesArg = pulledIssues;
                 commentsArg = Path.Combine(snapDir, Tore.Github.GithubSnapshotLocator.CommentsFileName);
             }
@@ -226,7 +232,7 @@ public static class PipelineFullRunner
                 settings, repoRoot, run, issuesArg, draft: true, run.OutputDir("00-github-inbound"), createOtel: false,
                 commentsArg: commentsArg)
                 .ConfigureAwait(false);
-            if (hExit != 0) return hExit;
+            if (hExit != 0) return Abort($"GitHub-Ernte fehlgeschlagen (exit {hExit} — Details oben).");
             if (harvest!.Delta is not { Items.Count: > 0 })
             {
                 Console.WriteLine($"[{Cmd}] GitHub-Ernte ohne Tor-faehige Funde — nichts zu fahren (Report: 00-github-inbound/).");
@@ -411,6 +417,7 @@ public static class PipelineFullRunner
                 new AdjudicationGateRequestExecutor(run),
                 RequestPort.Create<AdjudicationReviewRequest, AdjudicationReviewResponse>("adjudication-gate"),
                 new AdjudicationApplyExecutor(run),
+                new AdjudicationEmptyGateResponder(run),
                 new BaselineStageExecutor(settings, baselineModel, run, repoRoot),
                 new ProjectStateBuildExecutor(run, repoRoot),
                 new BranchDetectorExecutor(run, repoRoot, fw.Mode)),
@@ -425,6 +432,7 @@ public static class PipelineFullRunner
                 new ClusterGateRequestExecutor(run),
                 RequestPort.Create<ClusterReviewRequest, ClusterReviewResponse>("cluster-review-gate"),
                 new ClusterComposedApplyExecutor(run, repoRoot, clustersDir),
+                new ClusterEmptyGateResponder(run),
                 new BacklogBridgeExecutor(run, repoRoot, maxAttempts),
                 new ClarifyAgentExecutor(clarifyFactory, run),
                 new BacklogGateExecutor(run),
@@ -456,7 +464,10 @@ public static class PipelineFullRunner
                 new PbiUpdateDeriveExecutor(run), new PbiUpdateMakerExecutor(pbiFactory, run), new PbiUpdateGateExecutor(run),
                 new PbiUpdateRepairExecutor(pbiFactory, run), new PbiAlignExecutor(pbiAlignFactory, run), new PbiUpdateHitlFinalizeExecutor(run),
                 RequestPort.Create<PbiUpdateReviewRequest, PbiUpdateReviewResponse>("pbi-gate"),
-                new PbiUpdateApplyExecutor(run, repoRoot, pbiOutDir)),
+                new PbiUpdateApplyExecutor(run, repoRoot, pbiOutDir),
+                new PbiUpdateEmptyGateResponder(run),
+                new IngestionEmptyGateResponder(run, AspectIngestionProfile.Requirement.GateName),
+                new IngestionEmptyGateResponder(run, AspectIngestionProfile.Architecture.GateName)),
             classifyNodes,
             adrNodes,
             new ForwardNodes(
@@ -469,7 +480,8 @@ public static class PipelineFullRunner
                 RequestPort.Create<ForwardReviewRequest, ForwardReviewResponse>("github-forward-gate"),
                 // R-47: repository + tokenEnv aus fw durchreichen — sonst fällt ResolveToken(null) auf GITHUB_TEST_TOKEN
                 // zurück (falscher Token → 403/404 beim echten Write, obwohl der Snapshot mit fw.TokenEnv liest).
-                new GithubForwardApplyExecutor(run, repoRoot, githubOutDir, fw.Repo, fw.TokenEnv)));
+                new GithubForwardApplyExecutor(run, repoRoot, githubOutDir, fw.Repo, fw.TokenEnv),
+                new GithubForwardEmptyGateResponder(run)));
 
         return (workflow, ledgerModel, baselineModel, adjudicationPolicy);
     }
@@ -677,7 +689,8 @@ public static class PipelineFullRunner
                     Console.WriteLine($"[{Cmd}] BOOTSTRAP FERTIG (Backlog im Core): features+={bs.FeaturesAdded} pbis+={bs.PbisAdded} relations+={bs.RelationsAdded} core {bs.CoreItemsBefore}->{bs.CoreItemsAfter}");
                     break;
                 case WorkflowOutputEvent { Data: ForwardSkipped fs }:
-                    Console.WriteLine($"[{Cmd}] {fs.Reason}");
+                    // R-50: der Skip ist ein LEGITIMES Lauf-Ende — als FERTIG benennen (Smoke/Autor-Lesbarkeit).
+                    Console.WriteLine($"[{Cmd}] PIPELINE FERTIG (Forward übersprungen): {fs.Reason}");
                     break;
                 case WorkflowOutputEvent { Data: string s }:
                     Console.Error.WriteLine($"[{Cmd}] {s}");

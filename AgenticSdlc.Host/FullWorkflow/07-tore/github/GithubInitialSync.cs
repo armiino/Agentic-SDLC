@@ -27,16 +27,19 @@ public static class GithubInitialSync
     /// needs_clarify-Holds mehr dabei) ein gate-konformer CREATE (Title+Body aus dem Core-Zustand,
     /// ehrliche Such-Evidenz: leerer Snapshot ⇒ Duplikatsuche gegenstandslos). R-17-Präzedenz vom 23.07.
     /// </summary>
-    public static List<GithubForwardOp> BuildCreateOps(IReadOnlyList<GithubSyncEntry> unmapped)
+    // R-48: searchEvidence/rationale parametrisierbar — der Dry-Run-Konsument (GithubForwardAgentRunner) nutzt
+    // DIESELBE Naht mit ehrlichen Dry-Run-Texten (Snapshot ist dort NICHT leer; Agent-Dedup laeuft erst im Real-Lauf).
+    public static List<GithubForwardOp> BuildCreateOps(IReadOnlyList<GithubSyncEntry> unmapped,
+        string? searchEvidence = null, string? rationale = null)
         => unmapped.Select(e => new GithubForwardOp(
             GithubForwardKind.CreateIssue, e.PbiId, null,
             Title: e.Title,
             Body: InitialSyncBody(e),
             Labels: ["initial-sync"],
             SearchedQueries: [e.Title],
-            SearchEvidence: "Initial-Sync (deterministisch): frisches Repo / leerer Issue-Snapshot — keine plausiblen Treffer möglich, Duplikatsuche gegenstandslos.",
+            SearchEvidence: searchEvidence ?? "Initial-Sync (deterministisch): frisches Repo / leerer Issue-Snapshot — keine plausiblen Treffer möglich, Duplikatsuche gegenstandslos.",
             Anchor: e.CoveredRequirementIds.Count == 0 ? $"pbi {e.PbiId}" : $"pbi {e.PbiId} <- {string.Join(", ", e.CoveredRequirementIds)}",
-            Rationale: "Erst-Sync eines frischen Repos: unmapped PBI ohne Issue — CREATE deterministisch aus dem Core-Payload (R-15/R-17).",
+            Rationale: rationale ?? "Erst-Sync eines frischen Repos: unmapped PBI ohne Issue — CREATE deterministisch aus dem Core-Payload (R-15/R-17).",
             Origin: "deterministic")).ToList();
 
     // Issue-Body aus dem Core-Zustand (Beleg, kein freier Text) — geteilte Struktur-Naht GithubIssueTemplate.

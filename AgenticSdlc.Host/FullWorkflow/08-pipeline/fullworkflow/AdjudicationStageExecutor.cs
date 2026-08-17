@@ -67,6 +67,7 @@ internal static class AdjudicationIo
 
 // REQUEST: Queue deterministisch bauen, als queue.json materialisieren (UI-fähig!) und ans Gate heben.
 [SendsMessage(typeof(AdjudicationReviewRequest))]
+[SendsMessage(typeof(AdjudicationGateEmpty))]
 internal sealed class AdjudicationGateRequestExecutor(RunContext parentRun) : Executor<LedgerStageOutput>("PipelineAdjudicationRequest")
 {
     public override async ValueTask HandleAsync(LedgerStageOutput input, IWorkflowContext context, CancellationToken ct = default)
@@ -80,8 +81,15 @@ internal sealed class AdjudicationGateRequestExecutor(RunContext parentRun) : Ex
         await File.WriteAllTextAsync(AdjudicationIo.ContextPath(parentRun),
             JsonSerializer.Serialize(new AdjudicationIo.AdjudicationContext(input.ValidatedPath), AdjudicationIo.Json), ct).ConfigureAwait(false);
 
+        var request = new AdjudicationReviewRequest(queue.Items, art.LedgerRunId, queuePath, input.ValidatedPath);
+        // R-50: TYP-Routing — leere Queue (perfekter Ledger) ⇒ Marker statt Request (leeres Gate ruft nie).
+        if (queue.Items.Count == 0)
+        {
+            await context.SendMessageAsync(new AdjudicationGateEmpty(request)).ConfigureAwait(false);
+            return;
+        }
         parentRun.AppendEvent(new { type = "ADJUDICATION_GATE_REQUEST", items = queue.Items.Count, timestampUtc = DateTime.UtcNow });
-        await context.SendMessageAsync(new AdjudicationReviewRequest(queue.Items, art.LedgerRunId, queuePath, input.ValidatedPath)).ConfigureAwait(false);
+        await context.SendMessageAsync(request).ConfigureAwait(false);
     }
 }
 
