@@ -52,7 +52,9 @@ public static class LedgerAdjudicateUiRunner
         // Anreicherung für die UI: Claim-Katalog (id -> proposition) aus dem validated Ledger + Atomic-Unit-
         // Texte aus step-00. Damit: (a) Referenz-Ziel als Autocomplete, (b) unit_signal-Evidenz zeigt echten
         // Transkript-Text statt nackter Claim-IDs. Beides ist optional/best-effort (fehlt eine Datei -> Fallback).
-        var runDir = Path.GetDirectoryName(Path.GetDirectoryName(queuePath));
+        // R-54: im Ein-Graph liegt die queue unter 01-ledger/ — die Step-Artefakte leben im Kapsel-SUB-RUN,
+        // der H1-Anker (ledger-run.json) neben der queue zeigt dorthin; Standalone-Layout bleibt der Standard.
+        var runDir = ResolveEnrichmentRunDir(queuePath, repoRoot);
         string? Step(string s) => runDir is null ? null : Path.Combine(runDir, s, "output.json");
 
         // Referenz-KATALOG (für merge/mark) = nur FINALE (validated) Claims — dorthin darf gemerged werden.
@@ -356,5 +358,39 @@ public static class LedgerAdjudicateUiRunner
         IReadOnlyList<string> SourceUnitIds);
 
     private static string Resolve(string repoRoot, string p) => Path.IsPathRooted(p) ? p : Path.Combine(repoRoot, p);
+
+    /// <summary>
+    /// R-54 (18.08., Block-L-Fund): Quell-Ordner der UI-Anreicherung (step-00-Units, Claim-Katalog).
+    /// Standard = Ordner ÜBER der queue (Standalone-Ledger-Layout). Fehlt dort step-00 UND liegt der
+    /// H1-Anker `ledger-run.json` NEBEN der queue (Ein-Graph: 01-ledger/), wird auf den Kapsel-Sub-Run
+    /// `runs/ledger/&lt;ledgerRunId&gt;` umgelenkt — vorher blieben Transkript-Kontext und Autocomplete leer
+    /// („0 Units"). Best-effort wie die übrige Anreicherung: kaputter/fehlender Anker ⇒ Standard-Pfad.
+    /// </summary>
+    internal static string? ResolveEnrichmentRunDir(string queuePath, string repoRoot)
+    {
+        var runDir = Path.GetDirectoryName(Path.GetDirectoryName(queuePath));
+        var queueDir = Path.GetDirectoryName(queuePath);
+        if (runDir is null || queueDir is null) return runDir;
+        if (Directory.Exists(Path.Combine(runDir, "step-00-atomic-units"))) return runDir;
+
+        var anchor = Path.Combine(queueDir, "ledger-run.json");
+        if (!File.Exists(anchor)) return runDir;
+        try
+        {
+            using var doc = JsonDocument.Parse(File.ReadAllText(anchor));
+            if (doc.RootElement.TryGetProperty("ledgerRunId", out var lid) && lid.ValueKind == JsonValueKind.String
+                && !string.IsNullOrWhiteSpace(lid.GetString()))
+            {
+                var sub = Path.Combine(repoRoot, "runs", "ledger", lid.GetString()!);
+                if (Directory.Exists(sub))
+                {
+                    Console.WriteLine($"[adjudicate-ui] Kapsel-Layout erkannt (R-54): Anreicherung aus {Path.GetRelativePath(repoRoot, sub)}");
+                    return sub;
+                }
+            }
+        }
+        catch { /* best-effort */ }
+        return runDir;
+    }
     private static string Rel(string repoRoot, string p) => Path.GetRelativePath(repoRoot, p);
 }

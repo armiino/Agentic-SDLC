@@ -140,4 +140,46 @@ public sealed class StewardRunToolsTests
         await tools.Started["r-1"];
         Assert.Equal(["pipeline-full", "resume", "r-1", "--accept-all"], seen!);
     }
+
+    // R-51-Wache (17.08., Block E): der MAF-Checkpoint-Store ist prozess-exklusiv — solange der gestartete Lauf
+    // in DIESEM Prozess arbeitet, liefe ein zweiter Resume in den Store-Konflikt. Ehrliche Sofort-Ablehnung.
+    [Fact]
+    public async Task R51_resume_auf_noch_aktiven_Lauf_wird_ehrlich_abgelehnt_statt_Store_Konflikt()
+    {
+        var release = new TaskCompletionSource<int>();
+        var tools = new StewardRunTools(".", S(), (args, onRunId) => { onRunId?.Invoke("run-51"); return release.Task; });
+
+        await InvokeAsync(tools, "run_pipeline_from_delta", new Dictionary<string, object?> { ["deltaPath"] = "x.json" });
+        var res = await InvokeAsync(tools, "resume_run", new Dictionary<string, object?> { ["runId"] = "run-51" });
+        Assert.Equal("RUN_STILL_ACTIVE", res.GetProperty("error").GetString());
+
+        release.SetResult(6);                                                  // Lauf pausiert (Exit 6) → Store frei
+        await tools.Started["run-51"];
+        var again = await InvokeAsync(tools, "resume_run", new Dictionary<string, object?> { ["runId"] = "run-51" });
+        Assert.True(again.GetProperty("resuming").GetBoolean());               // danach ist der Resume wieder legitim
+    }
+
+    // R-51b (17.08., Block E): ein sterbender Lauf-Task wurde spurlos verschluckt („resuming true", dann Stille).
+    // Wächter: Fault → LAUTE stderr-Meldung + Task endet mit −1 (nie faulted — await wirft nicht).
+    [Fact]
+    public async Task R51b_sterbender_Lauf_Task_ist_LAUT_und_nie_still_verschluckt()
+    {
+        var tools = new StewardRunTools(".", S(),
+            (args, onRunId) => throw new InvalidOperationException("The store is already in use by another process"));
+
+        var prev = Console.Error;
+        var stderr = new StringWriter();
+        Console.SetError(stderr);
+        try
+        {
+            var res = await InvokeAsync(tools, "resume_run", new Dictionary<string, object?> { ["runId"] = "r-dead" });
+            Assert.True(res.GetProperty("resuming").GetBoolean());             // start-async: Rückgabe kommt sofort
+
+            var exit = await tools.Started["r-dead"];                          // NIE faulted — der await wirft nicht
+            Assert.Equal(-1, exit);
+            Assert.Contains("LAUF-TASK GESTORBEN", stderr.ToString());         // LAUT statt Spurlosigkeit
+            Assert.Contains("already in use", stderr.ToString());
+        }
+        finally { Console.SetError(prev); }
+    }
 }

@@ -490,7 +490,7 @@ public static class PipelineFullRunner
     // R-29: Die Flags gelten für GENAU EIN Gate (das pausierte) — danach verbraucht, damit weitere
     // interactive-Gates wieder sauber pausieren (pipeline-hitl: „responded"-Semantik). Entscheid-DATEIEN
     // (human-decisions.json/queue.json) sind davon unberührt und wirken an jedem Gate.
-    private sealed class ResumeAnswers(bool acceptAll, IReadOnlyList<string> acceptIds)
+    internal sealed class ResumeAnswers(bool acceptAll, IReadOnlyList<string> acceptIds)
     {
         private bool _consumed;
         public List<string>? TakeFor(IEnumerable<string> allIds)
@@ -510,7 +510,8 @@ public static class PipelineFullRunner
 
     // Gemeinsamer Streaming-Treiber: EIN Stream (run) bzw. Restore (resume, H1) + zentraler Gate-Responder +
     // Output-Ernte + Pause-Mechanik (HitlShell-Muster: Checkpoint mit offenem Gate sichern -> pointer.json -> Exit 6).
-    private static async Task<int> RunWorkflowStreamingAsync<TInput>(
+    // internal für den R-52-Wächter-Test (Resume ohne Antwort muss TERMINIEREN, nie hängen).
+    internal static async Task<int> RunWorkflowStreamingAsync<TInput>(
         Workflow workflow, TInput input, string streamRunId, RunContext run, FullWorkflowSettings fw,
         CheckpointManager manager, CancellationToken ct,
         CheckpointInfo? restoreFrom = null, ResumeAnswers? answers = null, bool openUi = false, Action<object>? onOutput = null) where TInput : notnull
@@ -519,6 +520,7 @@ public static class PipelineFullRunner
         string? pausedGate = null;
         CheckpointInfo? pendingCp = null;
         var pauseReady = false;
+        var stillPaused = false;   // R-52: Resume traf ein unbeantwortetes Gate — die BESTEHENDE Pause gilt fort
 
         await using var handle = restoreFrom is null
             ? await InProcessExecution.RunStreamingAsync(workflow, input, manager, streamRunId).ConfigureAwait(false)
@@ -660,7 +662,20 @@ public static class PipelineFullRunner
                         if (!answered)
                         {
                             pausedGate = portId;
-                            Console.WriteLine($"[{Cmd}] Gate '{portId}' — pausiere (Checkpoint mit offenem Gate wird gesichert)…");
+                            // R-52 (Block-E-Live-Fund, 2× Hänger): beim Resume schreitet ohne Antwort KEIN
+                            // Superstep voran — es entsteht nie ein neuer Checkpoint, auf den die Pause-
+                            // Materialisierung warten könnte. Der RESTAURIERTE Checkpoint IST der Pause-
+                            // Zustand: sofort sauber erneut pausieren statt ewig auf den Stream zu warten.
+                            if (restoreFrom is not null && pendingCp is null)
+                            {
+                                pendingCp = restoreFrom;
+                                stillPaused = true;
+                                pauseReady = true;
+                            }
+                            else
+                            {
+                                Console.WriteLine($"[{Cmd}] Gate '{portId}' — pausiere (Checkpoint mit offenem Gate wird gesichert)…");
+                            }
                         }
                     }
                     if (!answered && pausedGate is null)
@@ -705,6 +720,7 @@ public static class PipelineFullRunner
                     exit = 3;
                     break;
             }
+            if (pauseReady) break;   // R-52: sofortiger Ausstieg — beim Resume kommt kein weiteres Stream-Event
         }
 
         // H1: PAUSE materialisieren — pointer.json (HitlShell-Format, Mode = Gate) + klare Weiter-Anleitung.
@@ -718,8 +734,10 @@ public static class PipelineFullRunner
             var checkpointDir = run.OutputDir("checkpoints");
             await HitlShell.WritePointerAsync(checkpointDir,
                 new HitlPointer(run.RunId, pendingCp.SessionId, pendingCp.CheckpointId, pausedGate, null, null, DateTime.UtcNow)).ConfigureAwait(false);
-            run.AppendEvent(new { type = "PIPELINE_PAUSED", gate = pausedGate, checkpointId = pendingCp.CheckpointId, timestampUtc = DateTime.UtcNow });
-            Console.WriteLine($"[{Cmd}] PAUSIERT am Gate '{pausedGate}'. checkpointId={pendingCp.CheckpointId}");
+            run.AppendEvent(new { type = stillPaused ? "PIPELINE_STILL_PAUSED" : "PIPELINE_PAUSED", gate = pausedGate, checkpointId = pendingCp.CheckpointId, timestampUtc = DateTime.UtcNow });
+            Console.WriteLine(stillPaused
+                ? $"[{Cmd}] UNVERÄNDERT PAUSIERT am Gate '{pausedGate}' — kein Entscheid gefunden (R-52); Checkpoint bleibt gültig. checkpointId={pendingCp.CheckpointId}"
+                : $"[{Cmd}] PAUSIERT am Gate '{pausedGate}'. checkpointId={pendingCp.CheckpointId}");
             foreach (var line in ReviewHints(pausedGate, run)) Console.WriteLine(line);
             Console.WriteLine($"[{Cmd}] Fortsetzen: pipeline-full resume {run.RunId}   (oder: … resume {run.RunId} --accept-all)");
             return 6;
@@ -847,10 +865,15 @@ public static class PipelineFullRunner
                             new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", resolved = resolvedCount, deferred = response.Resolutions.Count - resolvedCount, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
                     }
                 }
-                if (answers is null) return false;   // warten: UI nutzen (decision-gate-review) und erneut pruefen
-                Console.WriteLine($"[{Cmd}] decision-gate: {dq.Decisions.Count} offene Entscheidung(en) — Flags koennen nicht aufloesen, alle VERTAGT (UI: decision-gate-review).");
+                // R-55 (18.08., Block-L-Live-Fund): Defer-all ist ein EXPERIMENT-Akt und feuert NUR noch bei
+                // explizitem --accept-all. Vorher genügte das bloße Antwort-Objekt (beim Resume IMMER da) —
+                // das „warten auf die UI" darunter war totes Recht, Tor 2 wurde stumm vertagt, BEVOR der
+                // Autor die decision-gate-UI je sah (seine Entscheide lagen unangewendet in der Datei).
+                // Jetzt: ohne Datei + ohne Flag ⇒ unbeantwortet ⇒ R-52-Mechanik re-pausiert sauber.
+                if (answers?.TakeAcceptAll() != true) return false;   // warten: UI nutzen (decision-gate-review), resume liest die Datei
+                Console.WriteLine($"[{Cmd}] decision-gate: {dq.Decisions.Count} offene Entscheidung(en) — per --accept-all alle VERTAGT (Experiment-Akt; interaktiv: decision-gate-review).");
                 return await AnswerAsync(DecisionStage.DeferAll(dq, "author (resume/defer-all)"),
-                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", deferred = dq.Decisions.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", source = "accept-all-flag", deferred = dq.Decisions.Count, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
             }
             case "pbi-gate" when req.Request.TryGetDataAs<PbiUpdateReviewRequest>(out var pr) && pr is not null:
             {
@@ -875,7 +898,10 @@ public static class PipelineFullRunner
             }
             case "github-forward-gate" when req.Request.TryGetDataAs<ForwardReviewRequest>(out var f) && f is not null:
             {
+                // Zwei-Bahnen (17.08., E8-Live-Fund): Steward-decide_gate schreibt github-forward-decisions.json,
+                // die Review-UI (github-forward-review) human-decisions.json — beide gelten (Schema identisch).
                 var accepted = LoadForwardDecisions(Path.Combine(run.RunDir, "07-github", "github-forward-decisions.json"))
+                               ?? LoadForwardDecisions(Path.Combine(run.RunDir, "07-github", "human-decisions.json"))
                                ?? Flags(f.Ops.Select(o => o.OpId));
                 if (accepted is null) return false;
                 // Execute-Flag bleibt Policy-gebunden (fw.Execute) — auch interactive kein Write ohne execute=true.

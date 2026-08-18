@@ -232,6 +232,13 @@ internal sealed class AdrRepairExecutor(Func<IReadOnlyList<AITool>, AIAgent> age
 [YieldsOutput(typeof(string))]
 internal sealed class AdrFinalizeExecutor(RunContext run, string outDir) : Executor<AdrVerdict>("AdrFinalize")
 {
+    /// <summary>R-56: Vorschau-Titel trägt bewusst KEINE Nummer (Vergabe erst per Freigabe-Reihenfolge).</summary>
+    internal const string PreviewAdrId = "ADR-XXXX";
+
+    /// <summary>R-56: ehrliche Kopfzeile — nennt die echte nächste freie Nummer statt einer Positions-Prognose.</summary>
+    internal static string PreviewHeader(int nextNo)
+        => $"> Vorschau auf Basis des System-Vorschlags — Datei und Nummer entstehen erst mit deiner Freigabe (fortlaufend ab {AdrProjection.AdrIdFor(nextNo)}).\n\n";
+
     public override async ValueTask HandleAsync(AdrVerdict v, IWorkflowContext context, CancellationToken ct = default)
     {
         Directory.CreateDirectory(outDir);
@@ -243,13 +250,15 @@ internal sealed class AdrFinalizeExecutor(RunContext run, string outDir) : Execu
         if (v.Decision == GateDecision.Pass)
         {
             var textById = v.Pending.ToDictionary(i => i.ItemId, i => i.Text, StringComparer.Ordinal);
-            // Vorschau = die KORREKTE Datei (Autor 06.08.): prospektive Nummer (Vergabe-Reihenfolge des Apply)
-            // + Vermerk-Kopf; die endgueltige Datei entsteht erst mit der Freigabe.
+            // R-56 (18.08., Block-L-Fund): die Vorschau versprach konkrete Nummern nach LISTEN-Position
+            // (nextNo + i) — der Apply vergibt aber nach FREIGABE-Reihenfolge; bei Teil-Freigabe log die
+            // Vorschau zwingend (0018 → Datei 0001). Eine konkrete Nummer ist vorab nicht versprechbar:
+            // Platzhalter im Titel + ehrliche Kopfzeile mit der echten nächsten freien Nummer (aus dem Core).
             var nextNo = AdrProjection.NextAdrNumber(v.Core);
-            var views = v.Drafts.Select((d, i) => new AdrItemView(d,
+            var views = v.Drafts.Select(d => new AdrItemView(d,
                 textById.GetValueOrDefault(d.ItemId, ""),
-                "> Vorschau auf Basis des System-Vorschlags — Datei und Nummer entstehen erst mit deiner Freigabe.\n\n"
-                + AdrProjection.Render(d, AdrProjection.AdrIdFor(nextNo + i), AdrStatus.Accepted, v.Core))).ToList();
+                PreviewHeader(nextNo)
+                + AdrProjection.Render(d, PreviewAdrId, AdrStatus.Accepted, v.Core))).ToList();
             var truth = v.Core.Items
                 .Where(i => string.Equals(i.ItemType, "requirement", StringComparison.OrdinalIgnoreCase)
                          || string.Equals(i.ItemType, "architecture", StringComparison.OrdinalIgnoreCase))

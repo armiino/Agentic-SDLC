@@ -79,10 +79,13 @@ public sealed class AdrLoopTests
 
         var req = Assert.Single(hits);
         Assert.Equal(2, req.Items.Count);                                  // Pass beim 2. Versuch
-        // U5-Feinschliff: Vorschau = die KORREKTE Datei (prospektive Nummer, Status accepted) + Vermerk-Kopf.
+        // R-56 (18.08., löst den U5-Feinschliff „prospektive Nummer" ab): die Vorschau verspricht KEINE
+        // konkrete Nummer mehr (Positions-Prognose log bei Teil-Freigabe: Block-L 0018 → Datei 0001) —
+        // Platzhalter im Titel + ehrliche Kopfzeile mit der echten nächsten freien Nummer aus dem Core.
         var preview = req.Items.Single(i => i.Draft.ItemId == "ARCH-1").Preview;
         Assert.StartsWith("> Vorschau auf Basis des System-Vorschlags", preview);
-        Assert.Contains("# ADR-0001: Titel ARCH-1", preview);
+        Assert.Contains("fortlaufend ab ADR-0001", preview);               // echte nächste freie (Core-Quelle)
+        Assert.Contains("# ADR-XXXX: Titel ARCH-1", preview);              // kein Nummern-Versprechen je Item
         Assert.Contains("Status: accepted", preview);
         Assert.Equal(2, req.Truth!.Count);                                 // Wahrheits-Katalog (ReferenceList-Futter)
         var events = await File.ReadAllTextAsync(run.EventsPath);

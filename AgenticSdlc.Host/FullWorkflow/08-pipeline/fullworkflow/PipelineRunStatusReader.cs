@@ -137,7 +137,8 @@ public static class PipelineRunStatusReader
             [$"  arch-Plan: runs/fullworkflow/{runId}/07-arch-ingest/plan.json (Operationen je Architektur-Aussage)",
              "  Entscheid beim Resume: --accept-all | --accept incomingId1,incomingId2"],
         "github-forward-gate" =>
-            [$"  Entscheide: runs/fullworkflow/{runId}/07-github/github-forward-decisions.json (opId/decision apply|skip)",
+            [$"  Review-UI: github-forward-review runs/fullworkflow/{runId}/07-github  (→ human-decisions.json)",
+             $"  oder Steward decide_gate (→ github-forward-decisions.json) — beide liest der resume",
              "  oder beim Resume: --accept-all | --accept opId1,opId2"],
         _ => ["  Entscheid beim Resume: --accept-all | --accept id1,id2"],
     };

@@ -226,7 +226,7 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             return JsonSerializer.Serialize(new { error = "STEWARD_BUSY", activeRunId = busy, hint = "get_run_status abwarten" }, Json);
 
         var tcs = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var task = Task.Run(() => _runner(args, id => tcs.TrySetResult(id)));
+        var task = LoudOnFault(string.Join(' ', args), () => _runner(args, id => tcs.TrySetResult(id)));
         var completed = await Task.WhenAny(tcs.Task, task).ConfigureAwait(false);
         if (completed == task && !tcs.Task.IsCompleted)   // Runner endete VOR der runId-Meldung = Startfehler (z. B. Datei fehlt)
             return JsonSerializer.Serialize(new { error = "RUN_START_FAILED", exitCode = await task.ConfigureAwait(false), what }, Json);
@@ -240,13 +240,31 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     {
         if (ActiveRun() is { } busy && busy != runId)
             return Task.FromResult(JsonSerializer.Serialize(new { error = "STEWARD_BUSY", activeRunId = busy }, Json));
+        // R-51-Wache (17.08., Block E): arbeitet der Lauf NOCH in diesem Prozess, hält er den MAF-Checkpoint-
+        // Store (prozess-exklusiv) — ein zweiter Resume liefe in den Store-Konflikt. Ehrliche Sofort-Antwort.
+        if (_started.TryGetValue(runId, out var running) && !running.IsCompleted)
+            return Task.FromResult(JsonSerializer.Serialize(new { error = "RUN_STILL_ACTIVE", runId,
+                hint = "Der Lauf arbeitet noch in diesem Prozess — get_run_status abwarten, dann erneut." }, Json));
 
         string[] args = acceptAll ? ["pipeline-full", "resume", runId, "--accept-all"] : ["pipeline-full", "resume", runId];
-        var task = Task.Run(() => _runner(args, null));
+        var task = LoudOnFault($"resume {runId}", () => _runner(args, null));
         _started[runId] = task; _activeRunId = runId;
         return Task.FromResult(JsonSerializer.Serialize(new { resuming = true, runId, acceptAll,
             hint = $"get_run_status(\"{runId}\") fuer Fortschritt/naechstes Gate" }, Json));
     }
+
+    // R-51b (17.08., Block E): Lauf-Tasks laufen NIE unbeobachtet — ein sterbender Runner (z. B. Checkpoint-
+    // Store-Konflikt beim Resume) wurde vorher spurlos verschluckt („resuming true", dann Stille; ActiveRun
+    // räumte still auf). Jetzt: Fault → laute Konsolen-Meldung + Exit −1 (Task bleibt auswertbar, nie faulted).
+    private static Task<int> LoudOnFault(string what, Func<Task<int>> body) => Task.Run(async () =>
+    {
+        try { return await body().ConfigureAwait(false); }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"[steward] LAUF-TASK GESTORBEN ({what}): {ex.GetBaseException().Message}");
+            return -1;
+        }
+    });
 
     private string? ActiveRun()
     {
