@@ -114,28 +114,17 @@ internal sealed class IngestionTools(
     // Agent/Gate/UI bleiben unberuehrt — Muster ICoreRepository).
     private string SearchRejections(string? query = null, int limit = 30)
     {
-        var terms = (query ?? string.Empty).Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-        var rows = IngestionRejections.Of(core)
-            .Select(p => new
-            {
-                p,
-                statement = p.Metadata.GetValueOrDefault("statement") ?? "",
-                reason = p.Metadata.GetValueOrDefault("reason") ?? "",
-            })
-            .Where(x => terms.Length == 0 || terms.Any(t =>
-                x.p.ProposalId.Contains(t, StringComparison.OrdinalIgnoreCase)
-                || x.statement.Contains(t, StringComparison.OrdinalIgnoreCase)
-                || x.reason.Contains(t, StringComparison.OrdinalIgnoreCase)))
-            .OrderBy(x => x.p.ProposalId, StringComparer.Ordinal)
-            .Take(Math.Clamp(limit, 1, 80))
+        // R-58: die EINE Rejections-Suche (Kern-Naht) — vorher hatte dieses Tool eine EIGENE Token-Suche
+        // ohne Umlaut-Faltung/Bindestrich-Split; jetzt identische Semantik wie das Steward-Tool.
+        var rows = IngestionRejections.Search(core, query, Math.Clamp(limit, 1, 80))
             .Select(x => new
             {
-                rejectionId = x.p.ProposalId,
-                statement = Truncate(x.statement, 300),
-                reason = Truncate(x.reason, 200),
-                date = x.p.Metadata.GetValueOrDefault("date"),
-                kind = x.p.Metadata.GetValueOrDefault("kind"),
-                targetEntityId = x.p.Metadata.GetValueOrDefault("targetEntityId"),
+                rejectionId = x.Proposal.ProposalId,
+                statement = Truncate(x.Proposal.Metadata.GetValueOrDefault("statement") ?? "", 300),
+                reason = Truncate(x.Proposal.Metadata.GetValueOrDefault("reason") ?? "", 200),
+                date = x.Proposal.Metadata.GetValueOrDefault("date"),
+                kind = x.Proposal.Metadata.GetValueOrDefault("kind"),
+                targetEntityId = x.Proposal.Metadata.GetValueOrDefault("targetEntityId"),
             })
             .ToArray();
         run.AppendEvent(new { type = "INGEST_TOOL_REJECTIONS", runId = run.RunId, query, returned = rows.Length, timestampUtc = DateTime.UtcNow });

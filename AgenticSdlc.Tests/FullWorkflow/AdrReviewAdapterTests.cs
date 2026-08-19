@@ -41,6 +41,12 @@ public sealed class AdrReviewAdapterTests
         Assert.Equal("Core-Items", related.CatalogTitle);
         Assert.Equal(2, related.Options!.Count);
         Assert.Equal("vorschau:ARCH-39", a.ContextBlocks.Single().ResolverKey);
+
+        // 1c-② (18.08./19.08., Rückstau-Fund + Akt-8-Fund „Knopf blieb gesperrt"): Teil-Abnahme ist eine
+        // DEKLARIERTE Session-Eigenschaft — EINE Quelle für Server-Erlaubnis UND Fertig-Knopf; fehlend =
+        // vertagt (Datei-Semantik unten gepinnt). „Alle vertagen"-Bulk wäre identisch mit Fertig — bewusst keiner.
+        Assert.True(s.AllowPartialFinish);
+        Assert.Contains("Teil-Abnahme", s.Subtitle);
     }
 
     [Fact]

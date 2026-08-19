@@ -21,9 +21,14 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     Func<string, Task<int>>? pullSnapshot = null,
     Func<string, Task<int>>? openReview = null,
     Func<string, Task<int>>? pullComments = null,
-    Func<string, int, string, Task<string>>? postComment = null)
+    Func<string, int, string, Task<string>>? postComment = null,
+    string? sessionName = null)
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
+
+    // Abnahme-4.0-Feil ②: der Session-Name ist ein HARNESS-Fakt (--session), kein Modell-Parameter —
+    // das Modell erfand vorher „steward-chat" und der Herkunfts-Stempel log (ingestedFromSession).
+    private readonly string _session = sessionName ?? "steward";
 
     // Test-Naht: der echte Runner ist der Default; Tests injizieren einen Fake (keine LLM-Läufe im Test).
     private readonly Func<string[], Action<string>?, Task<int>> _runner =
@@ -167,12 +172,11 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     // forward-gate. Gleiche Start-async-Naht wie die anderen Läufe (runId sofort, Pause/Resume).
     private Task<string> RunReprojectAsync() => StartPipelineAsync(["pipeline-full", "run", "--reproject"], "reproject");
 
-    private string SaveAuthorStatements(IReadOnlyList<FullWorkflow.Delta.AuthorStatement> statements, string? sessionName = null)
+    private string SaveAuthorStatements(IReadOnlyList<FullWorkflow.Delta.AuthorStatement> statements)
     {
-        var session = sessionName ?? "steward";
         // §3-7: Issue-Herkunft aus dem letzten Snapshot auflösen (Url + Hashes = Stand-beim-Diktat) —
         // die Delta-Schicht bleibt github-frei, die Naht liefert der Steward.
-        var (delta, errors) = FullWorkflow.Delta.AuthorFrontDeltaBuilder.Build(statements, session, ResolveGithubOrigin);
+        var (delta, errors) = FullWorkflow.Delta.AuthorFrontDeltaBuilder.Build(statements, _session, ResolveGithubOrigin);
         if (errors.Count > 0) return JsonSerializer.Serialize(new { error = "STATEMENTS_INVALID", details = errors }, Json);
         var dir = Path.Combine(repoRoot, "state", "steward", "author-front");
         Directory.CreateDirectory(dir);
@@ -183,11 +187,11 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             hint = "naechster Schritt (zustimmungspflichtig): run_pipeline_from_delta(deltaPath) — Tor 1 pausiert dann im Chat." }, Json);
     }
 
-    private string SaveSweepAnswers(IReadOnlyList<FullWorkflow.PbiUpdate.ClarifySweepAnswer> answers, string? sessionName = null)
+    private string SaveSweepAnswers(IReadOnlyList<FullWorkflow.PbiUpdate.ClarifySweepAnswer> answers)
     {
         if (answers.Count == 0 || answers.Any(a => string.IsNullOrWhiteSpace(a.PbiId) || string.IsNullOrWhiteSpace(a.Antwort)))
             return JsonSerializer.Serialize(new { error = "ANSWERS_INVALID", hint = "jede Antwort braucht pbiId + antwort" }, Json);
-        var stamped = answers.Select(a => a with { Quelle = "author via steward-chat", SessionName = a.SessionName ?? sessionName ?? "steward" }).ToList();
+        var stamped = answers.Select(a => a with { Quelle = "author via steward-chat", SessionName = a.SessionName ?? _session }).ToList();
         var dir = Path.Combine(repoRoot, "state", "steward", "sweep-answers");
         Directory.CreateDirectory(dir);
         var path = Path.Combine(dir, $"{DateTime.UtcNow:yyyyMMdd_HHmmss}.json");
@@ -195,22 +199,96 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         return JsonSerializer.Serialize(new { saved = true, answers = stamped.Count, answersPath = Path.GetRelativePath(repoRoot, path) }, Json);
     }
 
+    /// <summary>1b-Rest (18.08., Block-E-Fund „Fehlangebot"): EINE Fähigkeits-Quelle — angeboten wird nur, was geht.</summary>
+    internal static readonly string[] SupportedUiGates = ["decision-gate", "pbi-gate", "ingest-gate", "arch-ingest-gate"];
+
+    /// <summary>Für UI-only-Checkpoints ohne open_gate_ui: der korrekte Standalone-Befehl je Gate.</summary>
+    internal static string? UiCommandFor(string? gate) => gate switch
+    {
+        "arch-classify-gate" => "arch-classify-review <runId>",
+        "adr-gate" => "adr-review <runId>",
+        "adjudication-gate" => "ledger-adjudicate-ui runs/fullworkflow/<runId>/01-ledger/queue.json",
+        "cluster-review-gate" => "l4-re-clarify-review <dir>",
+        "backlog-review-gate" => "l4-re-clarify-backlog-review <dir>",
+        _ => null,
+    };
+
     private async Task<string> OpenGateUiAsync(string runId)
     {
         var status = await FullWorkflow.Pipeline.PipelineRunStatusReader.ReadAsync(repoRoot, runId).ConfigureAwait(false);
-        return status?.PausedGate switch
+        if (status?.State == FullWorkflow.Pipeline.PipelineRunState.NotPausedNotFinished)
+            return JsonSerializer.Serialize(new { error = "RUN_ACTIVE", runId,
+                hint = "Der Lauf arbeitet gerade — gleich erneut get_run_status, dann die UI öffnen." }, Json);
+        (string Bahn, Func<Task<int>> Body)? ui = status?.PausedGate switch
         {
-            "decision-gate" => AuxResult(await FullWorkflow.Decision.DecisionGateReviewRunner.RunForRunAsync(runId, settings, repoRoot).ConfigureAwait(false), "decision-gate-review"),
-            "pbi-gate" => AuxResult(await FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.RunForPipelineRunAsync(runId, settings, repoRoot).ConfigureAwait(false), "pbi-update-review"),
-            "ingest-gate" => AuxResult(await FullWorkflow.Core.IngestionReviewRunner.RunForPipelineRunAsync(runId, "07-ingest", settings, repoRoot).ConfigureAwait(false), "ingest-review"),
-            "arch-ingest-gate" => AuxResult(await FullWorkflow.Core.IngestionReviewRunner.RunForPipelineRunAsync(runId, "07-arch-ingest", settings, repoRoot).ConfigureAwait(false), "ingest-review"),
-            var g => JsonSerializer.Serialize(new { error = "GATE_UI_NOT_SUPPORTED", pausedGate = g,
-                hint = "UI-Start: decision-gate|pbi-gate (ingest = 3b-2); Chat-Weg: get_paused_gate." }, Json),
+            "decision-gate" => ("decision-gate-review", () => FullWorkflow.Decision.DecisionGateReviewRunner.RunForRunAsync(runId, settings, repoRoot)),
+            "pbi-gate" => ("pbi-update-review", () => FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.RunForPipelineRunAsync(runId, settings, repoRoot)),
+            "ingest-gate" => ("ingest-review", () => FullWorkflow.Core.IngestionReviewRunner.RunForPipelineRunAsync(runId, "07-ingest", settings, repoRoot)),
+            "arch-ingest-gate" => ("ingest-review", (Func<Task<int>>)(() => FullWorkflow.Core.IngestionReviewRunner.RunForPipelineRunAsync(runId, "07-arch-ingest", settings, repoRoot))),
+            _ => null,
         };
+        if (ui is null)
+            return JsonSerializer.Serialize(new { error = "GATE_UI_NOT_SUPPORTED", pausedGate = status?.PausedGate,
+                supported = SupportedUiGates,
+                hint = UiCommandFor(status?.PausedGate) is { } cmd
+                    ? $"Dieser Checkpoint hat eine EIGENE Review-UI — Befehl: {cmd}"
+                    : "Kein Gate pausiert bzw. kein UI-Weg — Lage via get_run_status." }, Json);
+
+        // UI-Weg-Stille (18.08., letzte 1b-Lücke): der Runner (inkl. seines eingebetteten R-43-Resume mit
+        // allen Folgestufen) läuft unter der Konsolen-Weiche — Roh-Log in die Lauf-Datei; NUR der deklarierte
+        // [review-ui]-Nutzer-Kanal (URL, Browser-Warnung) erreicht den Chat. Danach dieselbe ⏸/✔-Endzeile
+        // wie am Start-/Resume-Weg (EINE Quelle: EndLine).
+        var exit = await RunUiUnderSwitchAsync(ConsoleLogPath(runId),
+            $"[steward] UI fuer '{status!.PausedGate}' — Roh-Protokoll: runs/fullworkflow/{runId}/logs/console.log",
+            ui.Value.Body).ConfigureAwait(false);
+        Console.WriteLine(EndLine(repoRoot, runId, exit));
+        return await UiRoundResultAsync(repoRoot, runId, ui.Value.Bahn, exit).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Abnahme-4.0-Feil ③: das Werkzeug BLOCKIERT durch die ganze UI-Runde inkl. automatischer Fortsetzung —
+    /// sein Ergebnis muss das SAGEN (Selbstbeschreibungs-Prinzip). Vorher kam ein generisches ok+hint zurück,
+    /// der Agent glaubte „die UI ist jetzt offen" und bat den Autor um eine „fertig"-Meldung, die nie nötig war.
+    /// </summary>
+    internal static async Task<string> UiRoundResultAsync(string repoRoot, string runId, string bahn, int exit)
+    {
+        if (exit != 0)
+            return JsonSerializer.Serialize(new { error = "AUX_RUN_FAILED", bahn, exitCode = exit }, Json);
+        var after = await FullWorkflow.Pipeline.PipelineRunStatusReader.ReadAsync(repoRoot, runId).ConfigureAwait(false);
+        return JsonSerializer.Serialize(new
+        {
+            uiRundeAbgeschlossen = true, bahn, runId,
+            state = after?.State.ToString(), pausedGate = after?.PausedGate,
+            hint = "Die UI-Runde ist FERTIG (Autor hat in der UI entschieden; die Fortsetzung lief automatisch mit). "
+                 + "Lege SOFORT den neuen Stand vor (Kompass; naechstes Gate bzw. Bilanz) — warte NICHT auf eine Autor-Meldung.",
+        }, Json);
     }
 
     private async Task<string> OpenReviewUiAsync(string proposalId)
-        => AuxResult(await _openReview(proposalId).ConfigureAwait(false), "pbi-update-review");
+    {
+        // UI-Weg-Stille auch auf der Pending-Bahn (kein Pipeline-Lauf, eigenes Beleg-Log im Steward-Staat).
+        var rel = Path.Combine("state", "steward", "logs", $"ui-{proposalId}.log");
+        var exit = await RunUiUnderSwitchAsync(Path.Combine(repoRoot, rel),
+            $"[steward] UI fuer Pending-Review '{proposalId}' — Roh-Protokoll: {rel}",
+            () => _openReview(proposalId)).ConfigureAwait(false);
+        // Feil ③ auch hier: das Tool blockiert durch UI + R-43-Apply — das Ergebnis sagt es.
+        return JsonSerializer.Serialize(exit == 0
+            ? new { uiRundeAbgeschlossen = true, proposalId,
+                hint = "UI-Runde FERTIG (inkl. Apply) — get_core_overview zeigt den neuen Stand; SOFORT berichten, nicht auf eine Autor-Meldung warten." }
+            : (object)new { error = "AUX_RUN_FAILED", bahn = "pbi-update-review", exitCode = exit }, Json);
+    }
+
+    private static async Task<int> RunUiUnderSwitchAsync(string logPath, string announce, Func<Task<int>> body)
+    {
+        var log = new StewardRunConsole.RunLogWriter();
+        log.SetTarget(logPath);
+        Console.WriteLine(announce);
+        using (StewardRunConsole.Redirect(log))
+        {
+            try { return await body().ConfigureAwait(false); }
+            finally { log.Dispose(); }
+        }
+    }
 
     private Task<string> RunPipelineFromDeltaAsync(string deltaPath)
         => StartPipelineAsync(["pipeline-full", "run", "--from-delta", deltaPath], deltaPath);
@@ -225,18 +303,36 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         if (ActiveRun() is { } busy)
             return JsonSerializer.Serialize(new { error = "STEWARD_BUSY", activeRunId = busy, hint = "get_run_status abwarten" }, Json);
 
+        // Politur 1b: die Lauf-Konsole gehoert in die Protokoll-Datei des Laufs, nicht ins Chat-Prompt —
+        // Redirect-Scope NUR um den Lauf-Task (AsyncLocal); Chat/⚿/UIs bleiben unberuehrt. Zeilen vor der
+        // runId-Meldung puffert der Writer und traegt sie beim SetTarget nach.
+        var log = new StewardRunConsole.RunLogWriter();
         var tcs = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var task = LoudOnFault(string.Join(' ', args), () => _runner(args, id => tcs.TrySetResult(id)));
+        var task = LoudOnFault(string.Join(' ', args), async () =>
+        {
+            using var _ = StewardRunConsole.Redirect(log);
+            try { return await _runner(args, id => { tcs.TrySetResult(id); log.SetTarget(ConsoleLogPath(id)); }).ConfigureAwait(false); }
+            finally { log.Dispose(); }
+        });
         var completed = await Task.WhenAny(tcs.Task, task).ConfigureAwait(false);
         if (completed == task && !tcs.Task.IsCompleted)   // Runner endete VOR der runId-Meldung = Startfehler (z. B. Datei fehlt)
+        {
+            var buffered = log.DrainBuffered();            // stdout-Vorlauf des Fehlstarts NICHT verschlucken
+            if (!string.IsNullOrWhiteSpace(buffered)) Console.WriteLine(buffered.TrimEnd());
             return JsonSerializer.Serialize(new { error = "RUN_START_FAILED", exitCode = await task.ConfigureAwait(false), what }, Json);
+        }
 
         var runId = await tcs.Task.ConfigureAwait(false);
         _started[runId] = task; _activeRunId = runId;
-        return JsonSerializer.Serialize(new { started = true, runId, hint = $"get_run_status(\"{runId}\") fuer Fortschritt/Pause" }, Json);
+        NotifyEnd(runId, task);
+        Console.WriteLine($"[steward] Lauf {runId} gestartet — Roh-Protokoll: runs/fullworkflow/{runId}/logs/console.log (Chat bleibt still; `steward --debug` zeigt Rohzeilen).");
+        return JsonSerializer.Serialize(new { started = true, runId, consoleLog = $"runs/fullworkflow/{runId}/logs/console.log", hint = $"get_run_status(\"{runId}\") fuer Fortschritt/Pause" }, Json);
     }
 
-    private Task<string> ResumeRunAsync(string runId, bool acceptAll = false)
+    private Task<string> ResumeRunAsync(string runId, bool acceptAll = false) => ChainResumeAsync(runId, acceptAll);
+
+    /// <summary>1c: dieselbe Resume-Naht fuer das ⚿-Tool UND die Submit-Kette der Gate-Tools (R-43-Chat-Bahn).</summary>
+    internal Task<string> ChainResumeAsync(string runId, bool acceptAll = false)
     {
         if (ActiveRun() is { } busy && busy != runId)
             return Task.FromResult(JsonSerializer.Serialize(new { error = "STEWARD_BUSY", activeRunId = busy }, Json));
@@ -247,10 +343,50 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
                 hint = "Der Lauf arbeitet noch in diesem Prozess — get_run_status abwarten, dann erneut." }, Json));
 
         string[] args = acceptAll ? ["pipeline-full", "resume", runId, "--accept-all"] : ["pipeline-full", "resume", runId];
-        var task = LoudOnFault($"resume {runId}", () => _runner(args, null));
+        var log = new StewardRunConsole.RunLogWriter();
+        log.SetTarget(ConsoleLogPath(runId));              // Politur 1b: runId ist bekannt — direkt in die Datei
+        var task = LoudOnFault($"resume {runId}", async () =>
+        {
+            using var _ = StewardRunConsole.Redirect(log);
+            try { return await _runner(args, null).ConfigureAwait(false); }
+            finally { log.Dispose(); }
+        });
         _started[runId] = task; _activeRunId = runId;
+        NotifyEnd(runId, task);
         return Task.FromResult(JsonSerializer.Serialize(new { resuming = true, runId, acceptAll,
             hint = $"get_run_status(\"{runId}\") fuer Fortschritt/naechstes Gate" }, Json));
+    }
+
+    private string ConsoleLogPath(string runId)
+        => Path.Combine(repoRoot, "runs", "fullworkflow", runId, "logs", "console.log");
+
+    // Politur 1b: GENAU EINE wohlgeformte Steward-Zeile am Task-Ende (statt Roh-Log-Gewitter) — Pause,
+    // FERTIG oder Fehler; die Kompass-Erklaerung liefert der Agent auf die naechste Autor-Frage.
+    // Kosmetik-Feil (Abnahme 4.0): via WriteLifecycle — klebt nicht mehr am wartenden du>-Prompt.
+    private void NotifyEnd(string runId, Task<int> task)
+        => _ = task.ContinueWith(t => StewardRunConsole.WriteLifecycle(EndLine(repoRoot, runId,
+                t.IsCompletedSuccessfully ? t.Result : -1)), TaskScheduler.Default);
+
+    internal static string EndLine(string repoRoot, string runId, int exit)
+    {
+        var pointer = Path.Combine(repoRoot, "runs", "fullworkflow", runId, "checkpoints", "pointer.json");
+        if (File.Exists(pointer))
+        {
+            try
+            {
+                using var doc = JsonDocument.Parse(File.ReadAllText(pointer));
+                var mode = doc.RootElement.TryGetProperty("mode", out var m) ? m.GetString() : null;
+                if (!string.IsNullOrWhiteSpace(mode))
+                    return $"[steward] ⏸ Lauf {runId} haelt am Checkpoint '{mode}' — sag mir, ob ich vorlegen soll.";
+            }
+            catch { /* best-effort — die generische Zeile unten bleibt wahr */ }
+            return $"[steward] ⏸ Lauf {runId} pausiert an einem Checkpoint — frag mich, ich lege vor.";
+        }
+        // Feil 18.08.: keine „frag mich"-Aufforderung — kettet der Submit, liefert der Agent die Bilanz
+        // ohnehin sofort im selben Zug; die Code-Zeile bleibt neutrales Signal.
+        return exit == 0
+            ? $"[steward] ✔ Lauf {runId} ist FERTIG."
+            : $"[steward] ✖ Lauf {runId} endete mit Fehler (exit {exit}).";
     }
 
     // R-51b (17.08., Block E): Lauf-Tasks laufen NIE unbeobachtet — ein sterbender Runner (z. B. Checkpoint-

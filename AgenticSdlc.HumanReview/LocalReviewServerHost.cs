@@ -52,6 +52,13 @@ public sealed class ReviewServerOptions
 
     /// <summary>Browser automatisch oeffnen (macOS: <c>open</c>). Default true.</summary>
     public bool OpenBrowser { get; init; } = true;
+
+    /// <summary>
+    /// 1f-② (19.08., Zombie-Fund: 13 Sandbox-UIs vom 03.08. liefen noch und hielten Binary-Locks): ohne
+    /// „Fertig/Abbrechen" lebt der Server sonst EWIG. Keine HTTP-Aktivität für diese Dauer ⇒ er beendet
+    /// sich LAUT selbst (wie „Abbrechen": der Autosave-Stand bleibt, einfach neu oeffnen). null = aus.
+    /// </summary>
+    public TimeSpan? IdleTimeout { get; init; } = TimeSpan.FromHours(2);
 }
 
 /// <summary>
@@ -61,6 +68,14 @@ public sealed class ReviewServerOptions
 /// </summary>
 public static class LocalReviewServerHost
 {
+    /// <summary>
+    /// UI-Weg-Stille (18.08.): der deklarierte NUTZER-KANAL dieses Hosts — jede Konsolen-Zeile, die den
+    /// Menschen erreichen MUSS (Server-Start, URL, Browser-Warnung), beginnt mit diesem Präfix. Die
+    /// Steward-Konsolen-Weiche reicht solche Zeilen auch im Umleitungs-Scope an den Chat durch; alles
+    /// andere gilt als Roh-Protokoll. Neue Nutzer-Zeilen hier IMMER mit diesem Präfix schreiben.
+    /// </summary>
+    public const string UserChannelPrefix = "[review-ui]";
+
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web)
     {
         Converters = { new JsonStringEnumConverter(JsonNamingPolicy.CamelCase) }
@@ -71,14 +86,18 @@ public static class LocalReviewServerHost
         var session = options.Session;
         var done = new TaskCompletionSource<ReviewOutcome>(TaskCreationOptions.RunContinuationsAsynchronously);
 
-        bool IsComplete() => (options.IsComplete ?? (s => s.AllResolved()))(session);
+        bool IsComplete() => (options.IsComplete ?? (s => s.AllowPartialFinish || s.AllResolved()))(session);
         bool Recompute(ReviewItem it) => (options.RecomputeResolved ?? (i => DefaultResolved(i, session)))(it);
 
-        Console.WriteLine("[review-ui] starte lokalen Review-Server...");
+        Console.WriteLine($"{UserChannelPrefix} starte lokalen Review-Server...");
         var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseUrls("http://127.0.0.1:0"); // OS waehlt freien Port
         builder.Logging.ClearProviders();               // ruhige Konsole
         var app = builder.Build();
+
+        // 1f-② Leerlauf-Wache: jede HTTP-Anfrage stempelt Aktivität; der Wächter unten beendet bei Stille.
+        var lastActivityTicks = DateTime.UtcNow.Ticks;
+        app.Use(async (httpCtx, next) => { Volatile.Write(ref lastActivityTicks, DateTime.UtcNow.Ticks); await next(httpCtx); });
 
         app.MapGet("/", () => Results.Content(IndexHtml(), "text/html; charset=utf-8"));
 
@@ -128,11 +147,28 @@ public static class LocalReviewServerHost
 
         app.MapPost("/api/cancel", () => SetAndOk(done, ReviewOutcome.Cancelled));
 
-        Console.WriteLine("[review-ui] binde lokalen Port...");
+        Console.WriteLine($"{UserChannelPrefix} binde lokalen Port...");
         await app.StartAsync(ct);
         var url = app.Urls.First();
-        Console.WriteLine($"[review-ui] {session.Items.Count} Items — offen unter: {url}");
+        Console.WriteLine($"{UserChannelPrefix} {session.Items.Count} Items — offen unter: {url}");
         if (options.OpenBrowser) OpenBrowser(url);
+
+        // 1f-② Leerlauf-Wächter: prüft minütlich; bei Stille > IdleTimeout endet die Sitzung wie „Abbrechen"
+        // (LAUT; Autosave-Stand bleibt) — kein Review-Server läuft mehr tagelang als Zombie weiter.
+        if (options.IdleTimeout is { } idle)
+            _ = Task.Run(async () =>
+            {
+                while (!done.Task.IsCompleted)
+                {
+                    await Task.WhenAny(done.Task, Task.Delay(TimeSpan.FromMinutes(1))).ConfigureAwait(false);
+                    if (done.Task.IsCompleted) return;
+                    if (IdleExceeded(new DateTime(Volatile.Read(ref lastActivityTicks), DateTimeKind.Utc), DateTime.UtcNow, idle))
+                    {
+                        Console.WriteLine($"{UserChannelPrefix} {idle.TotalMinutes:0} Minuten ohne Aktivität — Server beendet sich selbst (Stand ist gespeichert; Review einfach neu oeffnen).");
+                        done.TrySetResult(ReviewOutcome.Cancelled);
+                    }
+                }
+            });
 
         ReviewOutcome outcome;
         await using (ct.Register(() => done.TrySetResult(ReviewOutcome.Cancelled)))
@@ -141,6 +177,11 @@ public static class LocalReviewServerHost
         await app.StopAsync(CancellationToken.None);
         return new ReviewServerResult(outcome, session);
     }
+
+    /// <summary>1f-②: die eine testbare Wächter-Regel — Stille länger als das Timeout? (public: die
+    /// HumanReview-Assembly hat kein InternalsVisibleTo; die Regel ist ohnehin ein ehrlicher Vertrag.)</summary>
+    public static bool IdleExceeded(DateTime lastActivityUtc, DateTime nowUtc, TimeSpan idleTimeout)
+        => nowUtc - lastActivityUtc > idleTimeout;
 
     private static IResult SetAndOk(TaskCompletionSource<ReviewOutcome> tcs, ReviewOutcome o)
     {
@@ -176,7 +217,11 @@ public static class LocalReviewServerHost
             else if (OperatingSystem.IsWindows()) Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             else Process.Start("xdg-open", url);
         }
-        catch { /* Browser-Oeffnen ist Komfort, kein harter Fehler — URL steht in der Konsole. */ }
+        catch (Exception ex)
+        {
+            // Feil 18.08.: NIE still schlucken — der Autor sass vor einem Browser, der nicht kam.
+            Console.WriteLine($"{UserChannelPrefix} Browser-Start fehlgeschlagen ({ex.Message}) — bitte manuell oeffnen: {url}");
+        }
     }
 
     private sealed record ItemUpdate(string FieldKey, string? Value);

@@ -64,10 +64,22 @@ public static class PipelineRunStatusReader
 
         if (File.Exists(pointerPath))
         {
+            // Politur 1b′ (Stale-Pointer — 3 Live-Vorfälle Session 2, Spitze: durchlaufenes Gate erneut
+            // vorgelegt): liegt in events.jsonl NACH der letzten Pause ein RESUME ohne NEUERE Pause, ist
+            // der Zeiger VERALTET — der Lauf arbeitet gerade (oder starb laut, R-51b). Die alte Pause wird
+            // dann NIE als Lage verkauft; Datei-Reihenfolge = Append-Wahrheit, kein Timestamp-Raten.
+            if (File.Exists(eventsPath) && PointerIsStale(eventsPath))
+                return new PipelineRunStatus(runId, PipelineRunState.NotPausedNotFinished,
+                    PausedGate: null, CheckpointId: null, PausedSinceUtc: null, lastEvent,
+                    ["  Lauf ARBEITET GERADE (Resume nach der letzten Pause — Zeiger veraltet). Gleich erneut prüfen; events.jsonl ist die Wahrheit."],
+                    artifacts);
+
             var p = await HitlShell.LoadAsync<HitlPointer>(pointerPath).ConfigureAwait(false);
             var gate = p.Mode ?? "?";
-            var actions = NextRequiredAction(gate, runId)
-                .Append($"  Weiter: pipeline-full resume {runId}   (oder … --accept-all)").ToList();
+            var actions = new List<string>();
+            if (RouteLine(gate) is { } route) actions.Add(route);   // 1b-Rest: „Checkpoint n von m" (Ortsgefühl)
+            actions.AddRange(NextRequiredAction(gate, runId));
+            actions.Add($"  Weiter: pipeline-full resume {runId}   (oder … --accept-all)");
             return new PipelineRunStatus(runId, PipelineRunState.Paused, gate, p.CheckpointId, p.SavedUtc, lastEvent, actions, artifacts);
         }
 
@@ -97,6 +109,39 @@ public static class PipelineRunStatusReader
             LastPipelineEvent: lastEvent,
             NextRequiredAction: finished ? [] : ["  (kein Pointer, keine metrics — Lauf aktiv oder abgebrochen; events.jsonl prüfen)"],
             artifacts);
+    }
+
+    /// <summary>1b-Rest (Fortschritts-Vertrag, UX-TODO „Ortsgefühl"): die kanonische Strecken-Ordnung je
+    /// Zweig — Checkpoints können per R-50 leer übersprungen werden, daher ehrlich „von max. m".</summary>
+    internal static readonly string[] OperationalRoute =
+        ["adjudication-gate", "ingest-gate", "arch-ingest-gate", "arch-classify-gate", "adr-gate",
+         "decision-gate", "pbi-gate", "github-forward-gate"];
+    internal static readonly string[] BootstrapRoute =
+        ["adjudication-gate", "cluster-review-gate", "backlog-review-gate", "arch-classify-gate",
+         "adr-gate", "github-forward-gate"];
+
+    internal static string? RouteLine(string gate)
+    {
+        var bootstrap = gate is "cluster-review-gate" or "backlog-review-gate";
+        var route = bootstrap ? BootstrapRoute : OperationalRoute;
+        var i = Array.IndexOf(route, gate);
+        if (i < 0) return null;
+        var danach = route.Skip(i + 1).ToList();
+        return $"  » Checkpoint {i + 1} von max. {route.Length} ({(bootstrap ? "Bootstrap" : "Betrieb")}): '{gate}'"
+             + (danach.Count == 0 ? " · letzter Halt" : $" · danach: {string.Join(" → ", danach)}");
+    }
+
+    /// <summary>1b′: Zeiger veraltet? = das LETZTE Pause/Resume-Event in Datei-Reihenfolge ist ein RESUME.</summary>
+    internal static bool PointerIsStale(string eventsPath)
+    {
+        var lastIsResume = false;
+        foreach (var l in File.ReadLines(eventsPath))
+        {
+            if (l.Contains("\"PIPELINE_PAUSED\"", StringComparison.Ordinal)
+                || l.Contains("\"PIPELINE_STILL_PAUSED\"", StringComparison.Ordinal)) lastIsResume = false;
+            else if (l.Contains("\"PIPELINE_RESUME\"", StringComparison.Ordinal)) lastIsResume = true;
+        }
+        return lastIsResume;
     }
 
     /// <summary>Alle pausierten Läufe (die „wo hakt es?"-Sicht des Stewards und des status-Kommandos).</summary>

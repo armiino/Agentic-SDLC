@@ -26,6 +26,15 @@ public static class PipelineDecisionReviewAdapter
     public const string ChoiceRefine = "refine";
     public const string ChoiceDefer = "defer";
 
+    // Selbstbeschreibende Gates (18.08.): EINE Options-Quelle für Review-UI UND Steward-Chat-Vorlage.
+    internal static readonly IReadOnlyList<ReviewOption> ResolutionOptions =
+    [
+        new(ChoiceKeep, "Original behalten — Widerspruch abweisen"),
+        new(ChoiceAdopt, "Neues übernehmen — alte Anforderung wird abgelöst"),
+        new(ChoiceRefine, "Verfeinern — geklärte Fassung formulieren"),
+        new(ChoiceDefer, "Vertagen — bleibt offen und geparkt")
+    ];
+
     private static readonly HashSet<string> Choices = new(StringComparer.OrdinalIgnoreCase) { ChoiceKeep, ChoiceAdopt, ChoiceRefine, ChoiceDefer };
     private static readonly HashSet<string> NeedsStatement = new(StringComparer.OrdinalIgnoreCase) { ChoiceAdopt, ChoiceRefine };
 
@@ -65,13 +74,7 @@ public static class PipelineDecisionReviewAdapter
                 new ReviewFieldSpec(FieldDecision, "Entscheidung", ReviewInputType.Dropdown,
                     [ChoiceKeep, ChoiceAdopt, ChoiceRefine, ChoiceDefer], Required: true,
                     Help: "Wie wird der Widerspruch aufgelöst? Vertagen ist erlaubt — dann bleibt alles geschützt geparkt.",
-                    Options:
-                    [
-                        new(ChoiceKeep, "Original behalten — Widerspruch abweisen"),
-                        new(ChoiceAdopt, "Neues übernehmen — alte Anforderung wird abgelöst"),
-                        new(ChoiceRefine, "Verfeinern — geklärte Fassung formulieren"),
-                        new(ChoiceDefer, "Vertagen — bleibt offen und geparkt")
-                    ]),
+                    Options: ResolutionOptions),
                 new ReviewFieldSpec(FieldStatement, "Neuer Anforderungs-Text (Pflicht bei Übernehmen/Verfeinern)", ReviewInputType.MultiLine, [], Required: false,
                     Help: "Vorbefüllt mit der Meeting-Aussage — editiere sie zur endgültigen Formulierung.",
                     VisibleWhen: new ReviewFieldVisibility(FieldDecision, [ChoiceAdopt, ChoiceRefine])),

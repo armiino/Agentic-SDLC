@@ -24,6 +24,8 @@ public static class CoreParkplatz
         "INGESTION_CONTRADICTION" => "Widerspruch",
         Decision.DecisionRequestMint.Origin => "vom pbi-Gate",
         Decision.MeetingQuestionMint.Origin => "Meeting-Frage",
+        Decision.MeetingQuestionMint.OriginAuthor => "Autor-Frage",
+        Decision.MeetingQuestionMint.OriginGithub => "GitHub-Frage",
         _ => origin,
     };
 

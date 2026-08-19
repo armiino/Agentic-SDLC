@@ -82,16 +82,16 @@ public sealed class StewardReadTools(string repoRoot)
         if (!await repo.ExistsAsync().ConfigureAwait(false))
             return JsonSerializer.Serialize(new { error = "CORE_NOT_FOUND" }, Json);
         var core = await repo.LoadAsync().ConfigureAwait(false);
-        var hits = FullWorkflow.Core.IngestionRejections.Of(core)
-            .Where(p => FullWorkflow.QueryText.Contains(p.Metadata.GetValueOrDefault("statement"), query)
-                     || FullWorkflow.QueryText.Contains(p.Metadata.GetValueOrDefault("reason"), query))
-            .Take(10)
-            .Select(p => new
+        // R-58: die EINE Stichwort-Suche (Token-ODER + Umlaut-Faltung + Ranking) statt Phrasen-Match —
+        // vorher fand „Besuchs-Erinnerung Angehoerige bestaetigt" die passenden REJ-Eintraege NICHT.
+        var hits = FullWorkflow.Core.IngestionRejections.Search(core, query)
+            .Select(x => new
             {
-                statement = p.Metadata.GetValueOrDefault("statement"),
-                reason = p.Metadata.GetValueOrDefault("reason"),
-                date = p.Metadata.GetValueOrDefault("date"),
-                sourceRunId = p.SourceRunId,
+                rejectionId = x.Proposal.ProposalId,
+                statement = x.Proposal.Metadata.GetValueOrDefault("statement"),
+                reason = x.Proposal.Metadata.GetValueOrDefault("reason"),
+                date = x.Proposal.Metadata.GetValueOrDefault("date"),
+                sourceRunId = x.Proposal.SourceRunId,
             }).ToList();
         return JsonSerializer.Serialize(new { query, treffer = hits.Count, hits }, Json);
     }

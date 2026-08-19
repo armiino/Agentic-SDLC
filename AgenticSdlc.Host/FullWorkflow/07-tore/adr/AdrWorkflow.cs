@@ -116,7 +116,8 @@ public sealed record AdrReviewResponse(IReadOnlyList<AdrDraft> Accepted, string 
 
 [SendsMessage(typeof(IngestionApplyReport))]
 [SendsMessage(typeof(AdrWork))]
-internal sealed class AdrOperationalBridgeExecutor(RunContext run, string repoRoot, string outDir, int maxAttempts)
+internal sealed class AdrOperationalBridgeExecutor(RunContext run, string repoRoot, string outDir, int maxAttempts,
+    bool archCatchup = false)
     : Executor<IngestionApplyReport>("AdrBridgeOperational")
 {
     public override async ValueTask HandleAsync(IngestionApplyReport passenger, IWorkflowContext context, CancellationToken ct = default)
@@ -133,7 +134,14 @@ internal sealed class AdrOperationalBridgeExecutor(RunContext run, string repoRo
             return;
         }
         var core = await new JsonCoreRepository(repoRoot).LoadAsync(ct).ConfigureAwait(false);
-        var pending = AdrProjection.PendingAdrItems(core);
+        // 1d Catch-up-Schalter (19.08.): nur die design-Items DIESES Laufs entwerfen; Bestands-Rückstau
+        // laut zurückstellen (StatusFollowUps bleiben ungescoped — deterministisch, kein LLM/Review-Berg).
+        var (pending, deferred) = RunScopedBacklog.Scope(AdrProjection.PendingAdrItems(core), run.RunId, archCatchup);
+        if (deferred > 0)
+        {
+            Console.WriteLine(RunScopedBacklog.DeferredLine("adr", deferred));
+            run.AppendEvent(new { type = "ADR_BACKLOG_DEFERRED", runId = run.RunId, deferred, timestampUtc = DateTime.UtcNow });
+        }
         if (pending.Count == 0 && AdrProjection.StatusFollowUps(core).Count == 0)
         {
             run.AppendEvent(new { type = "ADR_SKIPPED", runId = run.RunId, lane = AdrLanes.Operational, timestampUtc = DateTime.UtcNow });

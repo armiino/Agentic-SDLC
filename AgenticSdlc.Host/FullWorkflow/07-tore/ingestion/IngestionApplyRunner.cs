@@ -22,20 +22,21 @@ public static class IngestionApplyRunner
         }
 
         var planPath = Path.Combine(planDir, "plan.json");
-        var decisionsPath = Path.Combine(planDir, "human-decisions.json");
         if (!File.Exists(planPath))
         {
             Console.Error.WriteLine("[ingest-apply] plan.json fehlt.");
             return 2;
         }
-        if (!File.Exists(decisionsPath))
+        // 1d (18.08., N3-Fund): die Werkbank liest ueber DIESELBE Naht wie Responder+Rekorder —
+        // Chat-entschiedene Laeufe (ingest-gate-decisions.json) sind gleichberechtigt.
+        var decisions = Ingestion.IngestGateDecisions.TryLoadAnyFile(planDir);
+        if (decisions is null)
         {
-            Console.Error.WriteLine("[ingest-apply] human-decisions.json fehlt - erst ingest-review fahren.");
+            Console.Error.WriteLine("[ingest-apply] keine Entscheid-Datei (weder ingest-gate-decisions.json [Chat] noch human-decisions.json [UI]) — erst entscheiden (ingest-review ODER Chat-Gate).");
             return 2;
         }
 
         var plan = await LoadAsync<StateChangePlanDocument>(planPath).ConfigureAwait(false);
-        var decisions = await LoadAsync<IngestionHumanDecisionsFile>(decisionsPath).ConfigureAwait(false);
 
         // Geteilte Ausfuehrung (identisch zum MAF-HITL-Pfad, S4) inkl. Idempotenz-Marker.
         var accepted = IngestionApplyExec.AcceptedFromDecisions(decisions.Decisions);

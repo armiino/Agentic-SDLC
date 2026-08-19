@@ -1,3 +1,4 @@
+using AgenticSdlc.Host.FullWorkflow.Core;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -24,21 +25,30 @@ public static class IngestGateDecisions
 {
     public const string FileName = "ingest-gate-decisions.json";
 
-    /// <summary>3b-2-Brücke: liest den Pipeline-Vertrag ODER die human-decisions.json der BESTEHENDEN
-    /// ingest-Review-UI (schema-gleich: incomingItemId + apply|skip/reject + reason) aus dem Stufen-Ordner.</summary>
+    /// <summary>
+    /// 1d/R-57 (18.08.): DIE EINE Lese-Stelle für Tor-1-Entscheide — Chat-Vertrag (ingest-gate-decisions.json)
+    /// ODER UI-Vertrag (human-decisions.json), schema-gleich, deshalb EIN Zieltyp. Vorher lasen der
+    /// R-35-Ablehnungs-Rekorder und der Standalone-Runner am Vertrag vorbei nur die UI-Datei —
+    /// Chat-Ablehnungen fehlten im Projekt-Gedächtnis (R-57) und die Werkbank wies Chat-Läufe ab (N3-Fund).
+    /// </summary>
+    public static IngestionHumanDecisionsFile? TryLoadAnyFile(string stageDir)
+        => LoadFile(Path.Combine(stageDir, FileName))
+           ?? LoadFile(Path.Combine(stageDir, "human-decisions.json"));
+
+    private static IngestionHumanDecisionsFile? LoadFile(string path)
+        => File.Exists(path)
+            ? JsonSerializer.Deserialize<IngestionHumanDecisionsFile>(File.ReadAllText(path), FullWorkflow.JsonFiles.Json)
+            : null;
+
+    /// <summary>3b-2-Brücke (Responder-Sicht): akzeptierte Ids + Reviewer aus BEIDEN Verträgen.</summary>
     public static (IReadOnlyList<string> Accepted, string Reviewer)? TryLoadAny(string stageDir)
-        => TryLoad(Path.Combine(stageDir, FileName))
-           ?? TryLoad(Path.Combine(stageDir, "human-decisions.json"));
+        => TryLoadAnyFile(stageDir) is { } f ? (Accepted(f.Decisions), f.Reviewer) : null;
 
     /// <summary>null = keine Datei (Responder fällt auf Flags/Pause zurück).</summary>
     public static (IReadOnlyList<string> Accepted, string Reviewer)? TryLoad(string path)
-    {
-        if (!File.Exists(path)) return null;
-        var file = JsonSerializer.Deserialize<IngestGateDecisionsFile>(File.ReadAllText(path), FullWorkflow.JsonFiles.Json);
-        if (file is null) return null;
-        var accepted = file.Decisions
-            .Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase))
-            .Select(d => d.IncomingItemId).ToList();
-        return (accepted, file.Reviewer);
-    }
+        => LoadFile(path) is { } f ? (Accepted(f.Decisions), f.Reviewer) : null;
+
+    private static IReadOnlyList<string> Accepted(IReadOnlyList<IngestionHumanDecision> decisions)
+        => decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase))
+                    .Select(d => d.IncomingItemId).ToList();
 }

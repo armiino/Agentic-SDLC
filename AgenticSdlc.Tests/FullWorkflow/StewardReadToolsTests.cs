@@ -35,7 +35,9 @@ public sealed class StewardReadToolsTests
         var st = await InvokeAsync(repo, "get_run_status", new Dictionary<string, object?> { ["runId"] = "20260807_111111_aaaaaa" });
         Assert.Equal("paused", st.GetProperty("state").GetString(), ignoreCase: true);
         Assert.Equal("arch-classify-gate", st.GetProperty("pausedGate").GetString());
-        Assert.Contains("arch-classify-review", st.GetProperty("nextRequiredAction")[0].GetString());
+        // 1b-Rest (18.08.): Zeile 0 ist jetzt der Checkpoint-Kompass — der Review-Befehl folgt danach.
+        Assert.Contains("Checkpoint", st.GetProperty("nextRequiredAction")[0].GetString());
+        Assert.Contains("arch-classify-review", st.GetProperty("nextRequiredAction")[1].GetString());
 
         var miss = await InvokeAsync(repo, "get_run_status", new Dictionary<string, object?> { ["runId"] = "fehlt" });
         Assert.Equal("RUN_NOT_FOUND", miss.GetProperty("error").GetString());

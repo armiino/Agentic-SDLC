@@ -1,6 +1,7 @@
 using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.FullWorkflow.PbiUpdate;
+using AgenticSdlc.Host.FullWorkflow.Tore.Github;
 using AgenticSdlc.Host.Steward;
 using Microsoft.Extensions.AI;
 using System.Text.Json;
@@ -153,16 +154,76 @@ public sealed class StewardChatGateStep2Tests
         Assert.Equal("author via steward-chat", loaded.Reviewer);
     }
 
+    // 1c-③ (18.08., „nie gesichtet"-Fund): die Wiedervorlage-Warnungen der UI-Karten („Schon einmal
+    // abgelehnt/geklärt") erreichen jetzt auch die CHAT-Vorlage — dieselbe Adapter-Quelle
+    // (WiedervorlageNotes), fail-open ohne Core (voriger Test läuft core-los und bleibt grün).
+    [Fact]
+    public async Task Ingest_Chat_Vorlage_traegt_die_Wiedervorlage_Warnungen_der_UI()
+    {
+        var frage = "Dürfen Angehörige Besuche eintragen?";
+        var abgelehnt = "Angehörige erhalten eine Push-Erinnerung am Vortag.";
+        var repo = Repo("ingest-gate", "07-ingest", "plan.json", JsonSerializer.Serialize(new StateChangePlanDocument(
+            StateChangePlanDocument.CurrentSchemaVersion, "plan-w", DateTime.UnixEpoch, "delta",
+            [new StateChangeOperation("AF-1", StateChangeKind.OpenQuestion, frage, null, null, [], "aus dem Meeting"),
+             new StateChangeOperation("AF-2", StateChangeKind.New, abgelehnt, null, null, [], "neu"),
+             new StateChangeOperation("AF-3", StateChangeKind.New, "Unbelastetes Neues.", null, null, [], "neu"),
+             new StateChangeOperation("AF-4", StateChangeKind.Refine, "Bemerkungen werden versioniert.", "REQ-42", null, [], "verfeinert")]),
+            AgenticSdlc.Host.FullWorkflow.JsonFiles.Json), out var runId);
+
+        // Core mit (a) bereits GEKLÄRTER wortgleicher Frage und (b) frueherer Ablehnung des Push-Vorschlags:
+        var geklaert = new ProjectStateItem("DEC-001", "decision", frage, "MEETING", null, 1, "run-alt",
+            null, null, null, null, [], [], new Dictionary<string, string>
+            { ["resolutionOutcome"] = "KEEP_ORIGINAL", ["resolvedUtc"] = "2026-08-01T10:00:00Z" })
+            .WithStatus(CoreStatus.From("resolved")) with { IdentityKey = IdentityKey.From(frage) };
+        var bestand = new ProjectStateItem("REQ-42", "requirement", "Bemerkung optional, max. 200 Zeichen.",
+            "MEETING", null, 1, "run-alt", null, null, null, null, [], [], new Dictionary<string, string>())
+            .WithStatus(CoreStatus.From("accepted"));
+        var core = new ProjectStateDocument("p", 4, DateTime.UnixEpoch, [], [geklaert, bestand], [], [], []);
+        (core, _) = IngestionRejections.Record(core,
+            new StateChangePlanDocument(1, "plan-alt", DateTime.UnixEpoch, "delta",
+                [new StateChangeOperation("ALT-1", StateChangeKind.New, abgelehnt, null, null, [], "alt")]),
+            [new IngestionHumanDecision("ALT-1", "reject", "Erinnerungen erst nach dem Pilotbetrieb.")], "plan.json");
+        Directory.CreateDirectory(Path.Combine(repo, "state", "core"));
+        File.WriteAllText(Path.Combine(repo, "state", "core", "project-state.json"),
+            JsonSerializer.Serialize(core, AgenticSdlc.Host.FullWorkflow.JsonFiles.Json));
+
+        var v = await InvokeAsync(new StewardGateTools(repo), "get_paused_gate", new Dictionary<string, object?> { ["runId"] = runId });
+        var items = v.GetProperty("items");
+
+        var w1 = Assert.Single(items[0].GetProperty("warnungen").EnumerateArray().ToList());
+        Assert.Equal("Schon einmal geklärt", w1.GetProperty("label").GetString());
+        Assert.Contains("KEEP_ORIGINAL", w1.GetProperty("text").GetString());     // damaliges Ergebnis reist mit
+
+        var w2 = Assert.Single(items[1].GetProperty("warnungen").EnumerateArray().ToList());
+        Assert.Equal("Schon einmal abgelehnt", w2.GetProperty("label").GetString());
+        Assert.Contains("Pilotbetrieb", w2.GetProperty("text").GetString());      // wörtliche P2a-Begründung
+
+        Assert.Empty(items[2].GetProperty("warnungen").EnumerateArray());         // Unbelastetes bleibt still
+
+        // 1c-①: der Ziel-Diff reist auch im Chat — beide vollen Texte aus derselben Adapter-Quelle.
+        var diff = items[3].GetProperty("zielDiff");
+        Assert.Equal("Bemerkung optional, max. 200 Zeichen.", diff.GetProperty("giltHeute").GetString());
+        Assert.Equal("Bemerkungen werden versioniert.", diff.GetProperty("stuendeDanach").GetString());
+        Assert.Equal(System.Text.Json.JsonValueKind.Null, items[2].GetProperty("zielDiff").ValueKind);
+    }
+
     [Fact]
     public async Task Decision_Gate_Vorlage_Vokabular_und_Responder_kompatible_Datei()
     {
         var repo = Repo("decision-gate", "07-decision", "decision-gate-request.json",
-            """{"runId":"r","decisions":[{"decisionId":"DEC-7","decisionText":"Widerspruch X?","targetRequirementText":"Alt","proposedStatement":"Neu","blockedPbis":["PBI-1"]}]}""", out var runId);
+            """{"runId":"r","decisions":[{"decisionId":"DEC-7","decisionText":"Widerspruch X?","targetRequirementText":"Alt","proposedStatement":"Neu","blockedPbis":["PBI-1"],"origin":"Meeting-Widerspruch — am Ingest-Gate bestätigt"},{"decisionId":"DEC-8","decisionText":"Offene Frage Y?","targetRequirementId":null,"targetRequirementText":"","proposedStatement":"Offene Frage Y?","blockedPbis":[],"origin":"Offene Frage — von dir diktiert (Autor-Front)"}]}""", out var runId);
         var tools = new StewardGateTools(repo);
 
         var v = await InvokeAsync(tools, "get_paused_gate", new Dictionary<string, object?> { ["runId"] = runId });
         Assert.Equal("DEC-7", v.GetProperty("decisions")[0].GetProperty("decisionId").GetString());
         Assert.Equal("Alt", v.GetProperty("decisions")[0].GetProperty("bestehendeWahrheit").GetString());
+
+        // Abnahme-4.0-Feil ①: die HERKUNFT erreicht die Chat-Bahn (der DEC-Origin-Fix war vorher UI-only) —
+        // und ziellose Frage-DECs tragen KEINE Null-Felder (der Agent las leere Anführungszeichen vor).
+        Assert.Contains("Autor-Front", v.GetProperty("decisions")[1].GetProperty("herkunft").GetString());
+        Assert.False(v.GetProperty("decisions")[1].TryGetProperty("bestehendeWahrheit", out _));
+        Assert.False(v.GetProperty("decisions")[1].TryGetProperty("meetingVorschlag", out _));
+        Assert.Contains("herkunft", v.GetProperty("hinweis").GetString());
 
         var bad = await InvokeAsync(tools, "submit_decision_gate_resolutions", new Dictionary<string, object?>
         { ["runId"] = runId, ["resolutions"] = new[]
@@ -176,15 +237,16 @@ public sealed class StewardChatGateStep2Tests
 
         var ok = await InvokeAsync(tools, "submit_decision_gate_resolutions", new Dictionary<string, object?>
         { ["runId"] = runId, ["resolutions"] = new[]
-            { new AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineDecisionResolution("DEC-7", "defer", null, null, "erst Team fragen") } });
-        Assert.Equal(1, ok.GetProperty("deferred").GetInt32());
+            { new AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineDecisionResolution("DEC-7", "defer", null, null, "erst Team fragen"),
+              new AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineDecisionResolution("DEC-8", "defer", null, null, null) } });
+        Assert.Equal(2, ok.GetProperty("deferred").GetInt32());
 
         // Responder-Kompatibilität: Datei deserialisiert als PipelineDecisionDecisionsFile (der resume-Vertrag).
         var file = System.Text.Json.JsonSerializer.Deserialize<AgenticSdlc.Host.FullWorkflow.Decision.PipelineDecisionDecisionsFile>(
             File.ReadAllText(Path.Combine(repo, "runs", "fullworkflow", runId, "07-decision", "decision-gate-decisions.json")),
             AgenticSdlc.Host.FullWorkflow.JsonFiles.Json)!;
         Assert.Equal("author via steward-chat", file.Reviewer);
-        Assert.Equal("defer", file.Resolutions.Single().Action);
+        Assert.All(file.Resolutions, r => Assert.Equal("defer", r.Action));
     }
 }
 
@@ -270,12 +332,49 @@ public sealed class StewardGraphGateTests
             { new AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubForwardDecision("op-0", "apply", null),
               new AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubForwardDecision("op-1", "skip", "Drift erst ernten") } });
         Assert.True(ok.GetProperty("saved").GetBoolean());
-        Assert.Contains("resume_run", ok.GetProperty("hint").GetString());
+        // 1c (18.08., Vertragswechsel — löst den C5b-Hinweis „danach resume_run" ab): der Submit kettet die
+        // Fortsetzung automatisch (R-43 auf der Chat-Bahn); ohne verdrahteten Chain-Delegat wird nur gespeichert.
+        Assert.Contains("Fortsetzung kettet automatisch", ok.GetProperty("hint").GetString());
 
         var file = System.Text.Json.JsonSerializer.Deserialize<AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubForwardDecisionsFile>(
             File.ReadAllText(Path.Combine(repo, "runs", "fullworkflow", runId, "07-github", "github-forward-decisions.json")),
             AgenticSdlc.Host.FullWorkflow.JsonFiles.Json)!;
         Assert.Equal("author via steward-chat", file.Reviewer);               // gleicher Vertrag, neuer Kanal
         Assert.Equal(2, file.Decisions.Count);
+    }
+
+    // Politur 1c (18.08., R-43 auf die Chat-Bahn): der Submit kettet die Fortsetzung automatisch über den
+    // injizierten Delegat (= StewardRunTools.ChainResumeAsync in der Hülle); chainResume=false = nur speichern.
+    private static string RepoWithForwardPause(string runId)
+    {
+        var repo = Directory.CreateTempSubdirectory("p1c-").FullName;
+        var run = Path.Combine(repo, "runs", "fullworkflow", runId);
+        Directory.CreateDirectory(Path.Combine(run, "checkpoints"));
+        Directory.CreateDirectory(Path.Combine(run, "07-github"));
+        File.WriteAllText(Path.Combine(run, "checkpoints", "pointer.json"),
+            $$"""{ "runId":"{{runId}}", "sessionId":"s", "checkpointId":"c1", "mode":"github-forward-gate", "savedUtc":"2026-08-18T10:00:00Z" }""");
+        File.WriteAllText(Path.Combine(run, "07-github", "github-forward-plan.json"),
+            """{ "operations": [ { "kind": "UPDATE_ISSUE", "pbiId": "PBI-1" } ] }""");
+        return repo;
+    }
+
+    [Fact]
+    public async Task P1c_Submit_kettet_die_Fortsetzung_automatisch_und_Optout_speichert_nur()
+    {
+        var runId = "run-1c";
+        var repo = RepoWithForwardPause(runId);
+        var chained = new List<string>();
+        var tools = new StewardGateTools(repo,
+            chainResume: id => { chained.Add(id); return Task.FromResult("""{ "resuming": true }"""); });
+
+        var res = await InvokeAsync(tools, "submit_paused_gate_decisions", new Dictionary<string, object?>
+        { ["runId"] = runId, ["decisions"] = new[] { new GithubForwardDecision("op-0", "apply", null) } });
+        Assert.Equal(runId, Assert.Single(chained));                       // EIN Urteil → Fortsetzung kettet
+        Assert.True(res.GetProperty("resumed").GetProperty("resuming").GetBoolean());
+
+        var res2 = await InvokeAsync(tools, "submit_paused_gate_decisions", new Dictionary<string, object?>
+        { ["runId"] = runId, ["decisions"] = new[] { new GithubForwardDecision("op-0", "apply", null) }, ["chainResume"] = false });
+        Assert.Single(chained);                                            // Opt-out: NICHT erneut gekettet
+        Assert.False(res2.TryGetProperty("resumed", out _));
     }
 }

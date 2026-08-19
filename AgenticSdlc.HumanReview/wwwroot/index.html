@@ -834,7 +834,9 @@ function updateProgress() {
 function applyProgress(done, total, allResolved) {
   document.getElementById('progress').style.width = total ? `${100 * done / total}%` : '0';
   document.getElementById('count').textContent = `${done}/${total} entschieden`;
-  document.getElementById('finishBtn').disabled = !allResolved;
+  // Teil-Abnahme (deklarierte Session-Eigenschaft, z. B. adr): Fertig ist auch ohne Voll-Entscheidung
+  // erlaubt — dieselbe Quelle, die der Server prüft (weggelassen = vertagt).
+  document.getElementById('finishBtn').disabled = !(allResolved || session.allowPartialFinish);
 }
 
 let flashTimer;

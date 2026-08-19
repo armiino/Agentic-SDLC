@@ -97,6 +97,7 @@ public static class PipelineFullRunner
         Console.Error.WriteLine("  pipeline-full run --from-clarify <sweep-answers.json>  (A′: Klärungs-Antworten → PBI-Update → Forward, alles im durablen Graphen)");
         Console.Error.WriteLine("  pipeline-full run --reproject                         (ONLY-STEWARD Recovery: Wahrheit→GitHub neu abgleichen, wenn ein Forward scheiterte; Delta aus dem Core)");
         Console.Error.WriteLine("  pipeline-full run --from-github [--repo owner/name] [--issues <snapshot.json> [--comments <issue-comments.json>]]");
+        Console.Error.WriteLine("  (jede run-Form: --arch-catchup = Bestands-Rueckstau an classify/adr BEWUSST mitnehmen; Default: nur Items dieses Laufs)");
         Console.Error.WriteLine("      (C2/C2d: GitHub-Front — AUTO-PULL Issues+Kommentare -> Detect+Destillat -> Delta -> Tore; --issues = Replay-Weg)");
         Console.Error.WriteLine("  pipeline-full run ... --policy <interactive|accept-all>  (Gate-Politik NUR für diesen Lauf; ersetzt auch explizite Gate-Einträge)");
         Console.Error.WriteLine("  pipeline-full run --dry-run              (Assemble/Build()-Validierung, kein LLM)");
@@ -123,10 +124,12 @@ public static class PipelineFullRunner
         string? deltaArg = null; string? issuesArg = null; string? commentsArg = null; string? repoArg = null; var fromGithub = false;
         string? clarifyArg = null;   // A′ Schritt 3a: --from-clarify <sweep-answers.json>
         var reproject = false;       // ONLY-STEWARD: --reproject (parameterlos, Recovery aus dem Core)
+        var archCatchup = false;     // 1d (19.08.): Bestands-Rückstau (classify/adr) als BEWUSSTER Akt
         for (var i = 2; i < args.Length; i++)
         {
             if (string.Equals(args[i], "--from-delta", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) deltaArg = args[i + 1];
             else if (string.Equals(args[i], "--from-clarify", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) clarifyArg = args[i + 1];
+            else if (string.Equals(args[i], "--arch-catchup", StringComparison.OrdinalIgnoreCase)) archCatchup = true;
             else if (string.Equals(args[i], "--reproject", StringComparison.OrdinalIgnoreCase)) reproject = true;
             else if (string.Equals(args[i], "--from-github", StringComparison.OrdinalIgnoreCase)) fromGithub = true;
             else if (string.Equals(args[i], "--issues", StringComparison.OrdinalIgnoreCase) && i + 1 < args.Length) issuesArg = args[i + 1];
@@ -236,6 +239,11 @@ public static class PipelineFullRunner
             if (harvest!.Delta is not { Items.Count: > 0 })
             {
                 Console.WriteLine($"[{Cmd}] GitHub-Ernte ohne Tor-faehige Funde — nichts zu fahren (Report: 00-github-inbound/).");
+                // 1d (18.08., Session-2-Notiz): auch der Früh-Stopp ist ein LAUF-ENDE — dasselbe Abschluss-
+                // Event wie der Normal-Weg (Status-Leser können sonst „fertig" nicht von „gestorben"
+                // unterscheiden); `reason` macht den Leer-Stopp im Faden benennbar.
+                run.AppendEvent(new { type = "PIPELINE_RUN_DONE", runId = run.RunId, exit = 0,
+                    reason = "EMPTY_HARVEST", timestampUtc = DateTime.UtcNow });
                 return 0;
             }
             entryDelta = harvest.Delta;
@@ -244,7 +252,7 @@ public static class PipelineFullRunner
         // H1: der Graph-Bau ist eine eigene Funktion — run UND resume bauen den IDENTISCHEN Graph
         // (Voraussetzung für RestoreCheckpointAsync).
         var (workflow, ledgerModel, baselineModel, adjudicationPolicy) = BuildGraph(
-            run, settings, fw, repoRoot, transcriptText, transcriptPath is null ? "" : Path.GetFileName(transcriptPath));
+            run, settings, fw, repoRoot, transcriptText, transcriptPath is null ? "" : Path.GetFileName(transcriptPath), archCatchup);
 
         run.WriteConfig(new
         {
@@ -260,6 +268,7 @@ public static class PipelineFullRunner
             execute = fw.Execute,
             policyProfile = fw.PolicyProfile.Kind.ToString(),
             ledgerModel,
+            archCatchup,   // 1d: Resume rebaut den Graph mit DEMSELBEN Scope (Lauf-Fakt, kein CLI-Gedächtnis)
             timestampUtc = DateTime.UtcNow
         });
 
@@ -324,7 +333,8 @@ public static class PipelineFullRunner
     // Schritt 5 ②: transcriptText ist Konstruktions-Input der Ledger-Kapsel (FacetValidation braucht das
     // Transkript im Konstruktor); beim Delta-Einstieg leer (die Kapsel wird nie angesprochen).
     private static (Workflow Workflow, string LedgerModel, string? BaselineModel, GatePolicy AdjudicationPolicy) BuildGraph(
-        RunContext run, HostSettings settings, FullWorkflowSettings fw, string repoRoot, string transcriptText, string transcriptSourceName)
+        RunContext run, HostSettings settings, FullWorkflowSettings fw, string repoRoot, string transcriptText, string transcriptSourceName,
+        bool archCatchup = false)
     {
         // Stufen-Modell: fullworkflow.models["01-ledger"] > jury.judgeModel > default.
         var ledgerModel = fw.Models.TryGetValue("01-ledger", out var m) && !string.IsNullOrWhiteSpace(m) ? m
@@ -383,7 +393,7 @@ public static class PipelineFullRunner
         var classifyFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "ArchClassifyAgent", "ArchClassifyAgent1");
         var classifyOutDir = run.OutputDir("07-arch-classify");
         var classifyNodes = new ArchClassifyNodes(
-            new AgenticSdlc.Host.FullWorkflow.ArchClassify.OperationalClassifyBridgeExecutor(run, repoRoot, classifyOutDir, maxAttempts),
+            new AgenticSdlc.Host.FullWorkflow.ArchClassify.OperationalClassifyBridgeExecutor(run, repoRoot, classifyOutDir, maxAttempts, archCatchup),
             new AgenticSdlc.Host.FullWorkflow.ArchClassify.BootstrapClassifyBridgeExecutor(run, repoRoot, classifyOutDir, maxAttempts),
             new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyMakerExecutor(classifyFactory, run),
             new AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyGateExecutor(run),
@@ -396,7 +406,7 @@ public static class PipelineFullRunner
         var adrFactory = PipelineAgents.Factory(repoRoot, settings, judgeSettings, run, "AdrAuthorAgent", "AdrAuthorAgent1");
         var adrOutDir = run.OutputDir("07-adr");
         var adrNodes = new AdrNodes(
-            new AgenticSdlc.Host.FullWorkflow.Adr.AdrOperationalBridgeExecutor(run, repoRoot, adrOutDir, maxAttempts),
+            new AgenticSdlc.Host.FullWorkflow.Adr.AdrOperationalBridgeExecutor(run, repoRoot, adrOutDir, maxAttempts, archCatchup),
             new AgenticSdlc.Host.FullWorkflow.Adr.AdrBootstrapBridgeExecutor(run, repoRoot, adrOutDir, maxAttempts),
             new AgenticSdlc.Host.FullWorkflow.Adr.AdrMakerExecutor(adrFactory, run),
             new AgenticSdlc.Host.FullWorkflow.Adr.AdrGateExecutor(run),
@@ -1147,7 +1157,8 @@ public static class PipelineFullRunner
         // (identischer Graph!). Delta-Läufe haben keins (Kapsel bleibt unangesprochen). Der Intake-Guard
         // (LEDGER_TRANSCRIPT_MISMATCH) fängt eine zwischenzeitlich editierte Transkript-Datei laut ab.
         var (resumeTranscriptText, resumeTranscriptName) = await LoadRunTranscriptAsync(run, repoRoot).ConfigureAwait(false);
-        var (workflow, _, _, _) = BuildGraph(run, settings, fw, repoRoot, resumeTranscriptText, resumeTranscriptName);
+        var (workflow, _, _, _) = BuildGraph(run, settings, fw, repoRoot, resumeTranscriptText, resumeTranscriptName,
+            archCatchup: await LoadRunArchCatchupAsync(run).ConfigureAwait(false));
         var answers = new ResumeAnswers(acceptAll,
             string.IsNullOrWhiteSpace(acceptList) ? [] : acceptList.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList());
 
@@ -1203,5 +1214,14 @@ public static class PipelineFullRunner
             return ("", Path.GetFileName(path));
         }
         return (await File.ReadAllTextAsync(path).ConfigureAwait(false), Path.GetFileName(path));
+    }
+
+    // 1d Catch-up-Schalter: der Scope ist ein LAUF-Fakt (config.json des Laufs) — Resume rebaut den Graph
+    // mit demselben Scope wie der Start, egal welche CLI-Flags der Resume-Aufruf trägt.
+    private static async Task<bool> LoadRunArchCatchupAsync(RunContext run)
+    {
+        if (!File.Exists(run.ConfigPath)) return false;
+        using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(run.ConfigPath).ConfigureAwait(false));
+        return doc.RootElement.TryGetProperty("archCatchup", out var c) && c.ValueKind == JsonValueKind.True;
     }
 }

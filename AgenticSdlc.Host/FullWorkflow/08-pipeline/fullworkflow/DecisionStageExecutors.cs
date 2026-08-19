@@ -66,6 +66,8 @@ public static class DecisionStage
             "INGESTION_CONTRADICTION" => "Meeting-Widerspruch — am Ingest-Gate von dir als echter Konflikt bestätigt",
             Decision.DecisionRequestMint.Origin => "Klärungs-Antrag — am pbi-Gate von dir als Stakeholder-Frage beantragt",
             Decision.MeetingQuestionMint.Origin => "Offene Frage — im Meeting gestellt, am Ingest-Gate von dir aufgenommen",
+            Decision.MeetingQuestionMint.OriginAuthor => "Offene Frage — von dir diktiert (Autor-Front), am Ingest-Gate aufgenommen",
+            Decision.MeetingQuestionMint.OriginGithub => "Offene Frage — aus der GitHub-Ernte, am Ingest-Gate aufgenommen",
             _ => dec.Origin,
         };
         var run = dec.SourceRunId is { Length: > 0 } r ? $" · Lauf {r}" : "";

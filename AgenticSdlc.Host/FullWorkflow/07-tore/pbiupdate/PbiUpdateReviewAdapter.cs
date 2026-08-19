@@ -61,6 +61,20 @@ public static class PbiUpdateReviewAdapter
     // noch nicht im Core → kein echter featureId). Wert = "proposed:<Label>". Feature-IDs sind "FC-nn" → kollisionsfrei.
     public const string ProposedPrefix = "proposed:";
     private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase) { "apply", "skip", "to_decision" };   // R-14 D2: dritter Weg
+
+    // Selbstbeschreibende Gates (18.08.): EINE Options-Quelle für Review-UI UND Steward-Chat-Vorlage.
+    internal static readonly IReadOnlyList<ReviewOption> OpDecisionOptions =
+    [
+        new("apply", "Uebernehmen — aendert die Projektwahrheit (Core)"),
+        new("skip", "Ueberspringen — Aenderung verwerfen (Begruendung Pflicht)"),
+        new("to_decision", "→ Entscheidung noetig (Stakeholder) — praegt offene Entscheidung, PBI wird geblockt (Begruendung Pflicht = die Frage)")
+    ];
+    internal static readonly IReadOnlyList<ReviewOption> AlignmentOptions =
+    [
+        new("accept", "Uebernehmen — Vorschlag wird PBI-Inhalt, PBI wird geklaert (active)"),
+        new("edit", "Anpassen — deine Fassung wird uebernommen"),
+        new("skip", "Nicht angleichen — PBI bleibt ungeklaert (needs_clarify), Begruendung Pflicht")
+    ];
     private static readonly HashSet<string> AlignDecisions = new(StringComparer.OrdinalIgnoreCase) { "accept", "edit", "skip" };
     private static readonly ReviewFieldVisibility OnlyHasAlign = new(FieldHasAlign, ["yes"]);
     private static readonly ReviewFieldVisibility OnlyAlignEdit = new(FieldAlignDecision, ["edit"]);
@@ -127,20 +141,10 @@ public static class PbiUpdateReviewAdapter
                 new ReviewFieldSpec(FieldDecision, "Struktur-Entscheidung", ReviewInputType.Dropdown, ["apply", "skip", "to_decision"], Required: true,
                     Help: "Ob dieses PBI von der Aenderung betroffen ist — Details im Banner 'Was bewirkt dein Entscheid?'. "
                         + "'→ Entscheidung' = das ist NICHT deine Entscheidung (Stakeholder noetig): praegt eine offene Entscheidung, das PBI wird geschuetzt geblockt, das decision-gate legt sie beim naechsten Lauf vor.",
-                    Options:
-                    [
-                        new ReviewOption("apply", "Uebernehmen — aendert die Projektwahrheit (Core)"),
-                        new ReviewOption("skip", "Ueberspringen — Aenderung verwerfen (Begruendung Pflicht)"),
-                        new ReviewOption("to_decision", "→ Entscheidung noetig (Stakeholder) — praegt offene Entscheidung, PBI wird geblockt (Begruendung Pflicht = die Frage)")
-                    ]),
+                    Options: OpDecisionOptions),
                 new ReviewFieldSpec(FieldAlignDecision, "Inhaltliche Angleichung", ReviewInputType.Dropdown, ["accept", "edit", "skip"], Required: true,
                     Help: "Wie der angepasste PBI-Inhalt in die Wahrheit uebernommen wird (eigene Entscheidung, unabhaengig von der Struktur).",
-                    Options:
-                    [
-                        new ReviewOption("accept", "Uebernehmen — Vorschlag wird PBI-Inhalt, PBI wird geklaert (active)"),
-                        new ReviewOption("edit", "Anpassen — deine Fassung wird uebernommen"),
-                        new ReviewOption("skip", "Nicht angleichen — PBI bleibt ungeklaert (needs_clarify), Begruendung Pflicht")
-                    ],
+                    Options: AlignmentOptions,
                     VisibleWhen: OnlyHasAlign),
                 new ReviewFieldSpec(FieldAlignTitle, "Titel (angeglichen)", ReviewInputType.FreeText, [], Required: false,
                     Help: "Angepasster PBI-Titel. Leer = Vorschlag behalten.", VisibleWhen: OnlyAlignEdit),

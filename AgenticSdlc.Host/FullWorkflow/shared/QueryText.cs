@@ -11,9 +11,20 @@ public static class QueryText
     public static bool Contains(string? haystack, string? needle)
         => needle is null || (haystack is not null && Fold(haystack).Contains(Fold(needle), StringComparison.OrdinalIgnoreCase));
 
-    private static string Fold(string s) => s
+    public static string Fold(string s) => s
         .Replace("ä", "ae").Replace("Ä", "Ae")
         .Replace("ö", "oe").Replace("Ö", "Oe")
         .Replace("ü", "ue").Replace("Ü", "Ue")
         .Replace("ß", "ss");
+
+    /// <summary>R-58: Stichwort-Zerlegung für Recall-first-Suchen — faltet Umlaute, trennt an ALLEM
+    /// Nicht-Buchstabigen (auch Bindestrich: „Besuchs-Erinnerung" → besuchs, erinnerung) und wirft
+    /// Kurz-Tokens (&lt;4) ab. Bewusst NUR für kleine Warn-Bestände (Rejections) — die große Wahrheits-Suche
+    /// (list_core_items) bleibt UND-strikt (R-41: kein OR-Raten im 200+-Item-Store).</summary>
+    public static IReadOnlyList<string> Tokens(string? query)
+        => string.IsNullOrWhiteSpace(query) ? []
+           : Fold(query).ToLowerInvariant()
+               .Split([' ', '-', '\u2011', ',', '.', ';', ':', '?', '!', '\'', '"', '„', '"', '(', ')', '/', '…'],
+                      StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+               .Where(t => t.Length >= 4).Distinct().ToList();
 }

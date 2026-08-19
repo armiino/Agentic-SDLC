@@ -32,8 +32,11 @@ public sealed class PipelineRunStatusReaderTests
         Assert.Contains(st.NextRequiredAction, l => l.Contains("pipeline-full resume"));
         Assert.NotNull(st.Artifacts.PointerPath);
         // Vertrags-Identität: dieselben Zeilen wie die EINE Gate→Anleitung-Quelle (Runner delegiert dorthin).
+        // 1b-Rest (18.08., Vertragserweiterung): Zeile 0 = „Checkpoint n von max. m"-Kompass; danach
+        // unverändert die ReviewHints + Weiter-Zeile (eine Gate→Anleitung-Quelle bleibt).
+        Assert.Contains("Checkpoint 5 von max. 8 (Betrieb)", st.NextRequiredAction[0]);
         Assert.Equal(PipelineRunStatusReader.NextRequiredAction("adr-gate", st.RunId),
-                     st.NextRequiredAction.Take(st.NextRequiredAction.Count - 1));
+                     st.NextRequiredAction.Skip(1).Take(st.NextRequiredAction.Count - 2));
     }
 
     [Fact]

@@ -22,7 +22,7 @@ public sealed class ArchClassifyReviewAdapterTests
     }
 
     [Fact]
-    public void Session_ist_mit_dem_Agent_Vorschlag_vorbelegt_und_sofort_resolved()
+    public void Session_ist_vorbelegt_aber_uebernehmen_ist_ein_expliziter_Akt()
     {
         var s = ArchClassifyReviewAdapter.BuildSession("run-1", Request());
 
@@ -30,7 +30,14 @@ public sealed class ArchClassifyReviewAdapterTests
         Assert.Equal("ja", a1.FieldValues.Single(f => f.FieldKey == ArchClassifyReviewAdapter.FieldConstraint).Value);
         Assert.Equal("nein", a1.FieldValues.Single(f => f.FieldKey == ArchClassifyReviewAdapter.FieldWork).Value);
         Assert.Equal("ja", a1.FieldValues.Single(f => f.FieldKey == ArchClassifyReviewAdapter.FieldDesign).Value);
-        Assert.True(a1.Resolved);                                          // Korrektur-Modus: vorbelegt = entscheidbar
+        // 1f-① (Vertragswechsel, Block-E-Fund „Durchwink-Falle"): die Vorbelegung ist nur der VORSCHLAG —
+        // resolved wird ein Item erst durch den expliziten Übernehmen-Akt (leerer Default; E0).
+        Assert.False(a1.Resolved);
+        Assert.Equal("", a1.FieldValues.Single(f => f.FieldKey == ArchClassifyReviewAdapter.FieldUebernehmen).Value);
+        Set(a1, ArchClassifyReviewAdapter.FieldUebernehmen, ArchClassifyReviewAdapter.Ja);
+        Assert.True(ArchClassifyReviewAdapter.Resolved(a1));
+        // Der EINE deklarierte Bulk bestätigt (setzt NUR uebernehmen) — die Rollen kommen je Item aus der Vorbelegung.
+        Assert.Equal(ArchClassifyReviewAdapter.FieldUebernehmen, s.BulkAction!.Set.Single().FieldKey);
         Assert.Equal("design+constraint", a1.Badge);
         // U2v2 Ziel-Kette: Chips-Feld vorbelegt mit den Vorschlags-IDs; KEINE Extra-Note bei constraint
         // (die Chips zeigen es) und KEIN Kontext-Button mehr (rechts ist die PBI-Liste).
@@ -62,7 +69,9 @@ public sealed class ArchClassifyReviewAdapterTests
         var s = ArchClassifyReviewAdapter.BuildSession("run-1", Request());
         Set(s.Items[0], ArchClassifyReviewAdapter.FieldWork, "ja");        // Mensch ergänzt work
         Set(s.Items[0], ArchClassifyReviewAdapter.FieldTargets, "PBI-3\nPBI-4");   // Mensch ergänzt ein Ziel
+        Set(s.Items[0], ArchClassifyReviewAdapter.FieldUebernehmen, "ja"); // 1f-①: der explizite Akt
         Set(s.Items[1], ArchClassifyReviewAdapter.FieldWork, "nein");      // Mensch vertagt ARCH-2 (alle nein)
+        Set(s.Items[1], ArchClassifyReviewAdapter.FieldUebernehmen, "ja"); // bestätigt + alle-nein = trotzdem vertagt
 
         var file = ArchClassifyReviewAdapter.Apply("run-1", s);
 
@@ -90,6 +99,9 @@ public sealed class ArchClassifyReviewAdapterTests
         Assert.Equal("ja", a2.FieldValues.Single(f => f.FieldKey == ArchClassifyReviewAdapter.FieldDesign).Value);
         Assert.Equal("doch design", a2.FieldValues.Single(f => f.FieldKey == ArchClassifyReviewAdapter.FieldRationale).Value);
         Assert.Equal("PBI-4", a2.FieldValues.Single(f => f.FieldKey == ArchClassifyReviewAdapter.FieldTargets).Value);
+        // 1f-①: ein Datei-Eintrag IST eine frühere Übernahme (Apply schreibt nur Bestätigtes) → resolved.
+        Assert.True(a2.Resolved);
+        Assert.False(s.Items.Single(i => i.ItemId == "ARCH-1").Resolved);   // unentschieden bleibt unentschieden
     }
 
     [Fact]

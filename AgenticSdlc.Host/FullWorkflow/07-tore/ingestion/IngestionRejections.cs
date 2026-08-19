@@ -27,7 +27,9 @@ public static class IngestionRejections
         var proposals = core.Proposals.ToList();
         var recorded = new List<string>();
 
-        foreach (var d in decisions.Where(d => string.Equals(d.Decision, "skip", StringComparison.OrdinalIgnoreCase)))
+        // 1d/R-57 (18.08.): UI sagt "skip", Chat sagt "reject" — beides ist eine begruendete NICHT-Uebernahme
+        // (P2a). Der Filter ist deshalb "alles ausser apply", nicht ein Vokabel-Exakt-Match.
+        foreach (var d in decisions.Where(d => !string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)))
         {
             if (!opsByIncoming.TryGetValue(d.IncomingItemId, out var op)) continue;
             if (already.Contains((plan.PlanId, d.IncomingItemId))) continue;
@@ -52,6 +54,36 @@ public static class IngestionRejections
         }
 
         return recorded.Count == 0 ? (core, recorded) : (core with { Proposals = proposals }, recorded);
+    }
+
+    /// <summary>
+    /// R-58 (18.08., Abnahme-3.0-Fund): DIE EINE Rejections-Suche — Stichwort-Recall statt Phrasen-Match.
+    /// Der Steward suchte „Besuchs-Erinnerung Angehoerige bestaetigt …" als GANZE Phrase → 0 Treffer,
+    /// obwohl REJ-007/008 exakt das Thema trugen; parallel hatte das Tor-1-Tool eine EIGENE (bessere)
+    /// Token-Suche ohne Umlaut-Faltung — zwei Implementierungen, beide unvollstaendig. Jetzt: EIN Kern —
+    /// Token-ODER (QueryText.Tokens: Bindestrich-Split + Faltung), Ranking nach Treffer-Zahl. Recall-first
+    /// ist hier RICHTIG (kleiner Warn-Bestand, Zweck = Wiedervorlage-Warnung); die grosse Wahrheits-Suche
+    /// bleibt bewusst UND-strikt (R-41).
+    /// </summary>
+    public static IReadOnlyList<(ProjectStateProposal Proposal, int Score)> Search(
+        ProjectStateDocument core, string? query, int limit = 10)
+    {
+        var tokens = FullWorkflow.QueryText.Tokens(query);
+        var all = Of(core);
+        if (tokens.Count == 0)
+            return all.OrderBy(p => p.ProposalId, StringComparer.Ordinal).Take(limit).Select(p => (p, 0)).ToList();
+
+        return all
+            .Select(p =>
+            {
+                var hay = FullWorkflow.QueryText.Fold(
+                    $"{p.ProposalId} {p.Metadata.GetValueOrDefault("statement")} {p.Metadata.GetValueOrDefault("reason")} {p.Metadata.GetValueOrDefault("identityKey")}")
+                    .ToLowerInvariant();
+                return (Proposal: p, Score: tokens.Count(t => hay.Contains(t, StringComparison.Ordinal)));
+            })
+            .Where(x => x.Score > 0)
+            .OrderByDescending(x => x.Score).ThenBy(x => x.Proposal.ProposalId, StringComparer.Ordinal)
+            .Take(limit).ToList();
     }
 
     public static IReadOnlyList<ProjectStateProposal> Of(ProjectStateDocument core)

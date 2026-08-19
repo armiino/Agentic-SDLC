@@ -153,6 +153,13 @@ public sealed class ReviewSession
     public IReadOnlyList<ReviewGlossaryEntry> Glossary { get; init; } = [];
     /// <summary>Optionale bestaetigungspflichtige Sammel-Aktion fuer alle noch unentschiedenen Items.</summary>
     public ReviewBulkAction? BulkAction { get; init; }
+    /// <summary>
+    /// Teil-Abnahme (19.08., Abnahme-4-Akt-8-Fund): „Fertig" ist auch mit unentschiedenen Items erlaubt —
+    /// NUR fuer Stufen, deren Datei-Semantik das sicher traegt (weggelassen = vertagt, nichts mutiert; z. B.
+    /// adr). EINE deklarierte Quelle fuer Server-Erlaubnis UND Frontend-Knopf (vorher erlaubte nur der
+    /// Server, der Knopf blieb clientseitig gesperrt).
+    /// </summary>
+    public bool AllowPartialFinish { get; init; }
     public IReadOnlyList<ReviewFieldSpec> FieldSchema { get; init; } = [];
     public required IReadOnlyList<ReviewItem> Items { get; init; }
 

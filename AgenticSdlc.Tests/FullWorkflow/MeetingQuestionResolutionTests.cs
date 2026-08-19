@@ -112,6 +112,38 @@ public sealed class MeetingQuestionResolutionTests
         Assert.Contains(lines, l => l.Contains("1 Meeting-Frage"));
     }
 
+    // 1d DEC-Origin (18.08., Block-E-Fund ①): die Frage-DEC trägt die ECHTE Herkunfts-Bahn — DEC-002 kam aus
+    // dem Autor-Diktat und log vorher als „Meeting-Frage". Herkunfts-Achse = W2-Messmaterial; zudem ist der
+    // Diktat-SourceRunId ein SESSION-Slug, keine RunId → ehrlich als ingestedFromSession gestempelt.
+    [Fact]
+    public void Frage_DEC_traegt_die_echte_Herkunfts_Bahn_statt_hart_Meeting()
+    {
+        var vomAutor = Item("AF-1", "open_question", "Wie lange aufbewahren?", status: "baseline")
+            with { Origin = "AuthorFront", SourceRunId = "steward-session" };
+        var vonGithub = Item("GH-900-q", "open_question", "Wer pflegt die Labels?", status: "baseline")
+            with { Origin = "GithubInbound", SourceRunId = "20260818_000001_gh" };
+        var ausMeeting = Item("OQ-01", "open_question", "Dürfen Angehörige eintragen?", status: "baseline");
+
+        var autor = MeetingQuestionMint.NewDecision("DEC-101", vomAutor.Text, vomAutor, [], "run-x");
+        Assert.Equal(MeetingQuestionMint.OriginAuthor, autor.Origin);
+        Assert.Equal("steward-session", autor.Metadata["ingestedFromSession"]);   // Slug ehrlich benannt
+        Assert.False(autor.Metadata.ContainsKey("ingestedFromRun"));
+
+        var github = MeetingQuestionMint.NewDecision("DEC-102", vonGithub.Text, vonGithub, [], "run-x");
+        Assert.Equal(MeetingQuestionMint.OriginGithub, github.Origin);
+        Assert.Equal("20260818_000001_gh", github.Metadata["ingestedFromRun"]);   // echte RunId bleibt Lauf
+
+        var meeting = MeetingQuestionMint.NewDecision("DEC-103", ausMeeting.Text, ausMeeting, [], "run-x");
+        Assert.Equal(MeetingQuestionMint.Origin, meeting.Origin);                 // Default unverändert
+
+        // Parkplatz schlüsselt die neuen Herkünfte auf (Anzeige-Konsument zieht mit):
+        var core = Doc(Item("REQ-1", "requirement", "bestehend"), autor, github, meeting);
+        var p = CoreParkplatz.Count(core);
+        Assert.Equal(1, p.OpenDecisionsByOrigin!["Autor-Frage"]);
+        Assert.Equal(1, p.OpenDecisionsByOrigin["GitHub-Frage"]);
+        Assert.Equal(1, p.OpenDecisionsByOrigin["Meeting-Frage"]);
+    }
+
     [Fact]
     public void Ingest_Note_warnt_bei_wortgleicher_bereits_geklaerter_Frage()
     {

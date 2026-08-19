@@ -119,7 +119,8 @@ public sealed record ArchClassifyReviewResponse(IReadOnlyList<ArchClassifyPropos
 
 [SendsMessage(typeof(IngestionApplyReport))]
 [SendsMessage(typeof(ArchClassifyWork))]
-internal sealed class OperationalClassifyBridgeExecutor(RunContext run, string repoRoot, string outDir, int maxAttempts)
+internal sealed class OperationalClassifyBridgeExecutor(RunContext run, string repoRoot, string outDir, int maxAttempts,
+    bool archCatchup = false)
     : Executor<IngestionApplyReport>("ArchClassifyBridgeOperational")
 {
     public override async ValueTask HandleAsync(IngestionApplyReport passenger, IWorkflowContext context, CancellationToken ct = default)
@@ -139,7 +140,14 @@ internal sealed class OperationalClassifyBridgeExecutor(RunContext run, string r
         }
 
         var core = await new JsonCoreRepository(repoRoot).LoadAsync(ct).ConfigureAwait(false);
-        var unclassified = ArchClassifyGate.Unclassified(core);
+        // 1d Catch-up-Schalter (19.08.): Normal-Lauf klassifiziert NUR die eigenen arch-Items; der
+        // Bestands-Rückstau bleibt LAUT liegen, bis der Autor ihn bewusst bestellt (--arch-catchup).
+        var (unclassified, deferred) = RunScopedBacklog.Scope(ArchClassifyGate.Unclassified(core), run.RunId, archCatchup);
+        if (deferred > 0)
+        {
+            Console.WriteLine(RunScopedBacklog.DeferredLine("arch-classify", deferred));
+            run.AppendEvent(new { type = "ARCH_CLASSIFY_BACKLOG_DEFERRED", runId = run.RunId, deferred, timestampUtc = DateTime.UtcNow });
+        }
         if (unclassified.Count == 0)
         {
             run.AppendEvent(new { type = "ARCH_CLASSIFY_SKIPPED", runId = run.RunId, lane = ArchClassifyLanes.Operational, timestampUtc = DateTime.UtcNow });

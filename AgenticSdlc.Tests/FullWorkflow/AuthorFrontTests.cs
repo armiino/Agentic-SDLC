@@ -40,12 +40,13 @@ public sealed class AuthorFrontTests
     {
         var repo = Directory.CreateTempSubdirectory("af-").FullName;
         var settings = AgenticSdlc.Host.Configuration.HostSettings.FromRuntimeConfig(new AgenticSdlc.Host.Configuration.RunConfig(), repo);
-        var tools = new StewardRunTools(repo, settings, (a, cb) => Task.FromResult(0));
+        // Feil ② (Abnahme 4.0, Vertragswechsel): sessionName ist ein Harness-Fakt (ctor), kein Tool-Parameter
+        // mehr — das Modell erfand vorher eigene Werte und der Herkunfts-Stempel log.
+        var tools = new StewardRunTools(repo, settings, (a, cb) => Task.FromResult(0), sessionName: "af-probe");
         var save = tools.Build().OfType<AIFunction>().Single(f => f.Name == "save_author_statements");
         var raw = await save.InvokeAsync(new AIFunctionArguments(new Dictionary<string, object?>
         {
             ["statements"] = new[] { new AuthorStatement("PDF-Export für Berichte.", "requirement") },
-            ["sessionName"] = "af-probe",
         }));
         var res = JsonDocument.Parse(JsonSerializer.Deserialize<string>(JsonSerializer.Serialize(raw))!).RootElement;
         Assert.True(res.GetProperty("saved").GetBoolean());

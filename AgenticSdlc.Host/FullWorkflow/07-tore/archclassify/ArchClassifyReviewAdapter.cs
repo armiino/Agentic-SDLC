@@ -31,6 +31,10 @@ public static class ArchClassifyReviewAdapter
     public const string FieldDesign = "rolle_design";
     public const string FieldRationale = "begruendung";
     public const string FieldTargets = "ziel_pbis";
+    // 1f-① (19.08., Block-E-Nebenfund „Durchwink-Falle"): die Rollen-Vorbelegung (Korrektur-Modus) machte
+    // jedes Item SOFORT resolved — „Fertig" ging ohne einen einzigen Klick. E0-Endform nach decision-gate-
+    // Präzedenz: ÜBERNEHMEN ist ein expliziter Akt (leeres Pflichtfeld) + deklarierter Bulk mit Bestätigung.
+    public const string FieldUebernehmen = "uebernehmen";
     public const string Ja = "ja";
     public const string Nein = "nein";
 
@@ -40,7 +44,13 @@ public static class ArchClassifyReviewAdapter
         {
             SessionId = $"arch-classify-{runId}",
             Title = "Architektur — Konsum-Rollen bestätigen/korrigieren",
-            Subtitle = $"{request.Items.Count} Architektur-Item(s). Der Agent hat Rollen + Ziel-PBIs vorgeschlagen (vorbelegt) — du korrigierst je Rolle; Ziele über die PBI-Liste rechts. Alle Rollen 'nein' = vertagen (bleibt unklassifiziert, kommt wieder).",
+            Subtitle = $"{request.Items.Count} Architektur-Item(s). Der Agent hat Rollen + Ziel-PBIs vorgeschlagen (vorbelegt) — du korrigierst je Rolle und ÜBERNIMMST je Item (oder alle per Sammel-Knopf). Nicht Übernommenes = vertagt (kommt wieder); alle Rollen 'nein' = ebenfalls vertagt.",
+            // 1f-①: der EINZIG mögliche Bulk — Rollen variieren je Item (kommen aus der Vorbelegung), der
+            // Bulk bestätigt sie nur. E0-Muster: deklariert + bestätigungspflichtig (wie decision-gate).
+            BulkAction = new ReviewBulkAction(
+                "✓ Alle wie vorgeschlagen übernehmen",
+                [new ReviewFieldValue(FieldUebernehmen, Ja)],
+                "{n} Items mit den VORGESCHLAGENEN (bzw. von dir korrigierten) Rollen übernehmen? Der Apply schreibt die Rollen in die Wahrheit; bereits übernommene Items bleiben unberührt."),
             // U2v2: der Wirkungs-Banner (E0-Muster) trägt die Wirkung — eine Zeile je Rolle (Autor 06.08.);
             // die Rollen-Begriffe bekommen darin (und auf den Feld-Labels) den Glossar-Tooltip.
             Notes =
@@ -77,7 +87,12 @@ public static class ArchClassifyReviewAdapter
                     Options: (request.ActivePbis ?? []).Select(p => new ReviewOption(p.Id, $"{p.Id} — {p.Title}")).ToList(),
                     VisibleWhen: new ReviewFieldVisibility(FieldConstraint, [Ja]),
                     CatalogTitle: "Aktive PBIs"),
-                new ReviewFieldSpec(FieldRationale, "Begründung (Audit; vorbelegt vom Agenten)", ReviewInputType.MultiLine, [], Required: false)
+                new ReviewFieldSpec(FieldRationale, "Begründung (Audit; vorbelegt vom Agenten)", ReviewInputType.MultiLine, [], Required: false),
+                // 1f-①: der Entscheid selbst — startet LEER (E0: keine Durchwink-Falle); die Rollen oben
+                // sind nur der korrigierbare Vorschlag.
+                new ReviewFieldSpec(FieldUebernehmen, "übernehmen?", ReviewInputType.Dropdown, [Ja], Required: true,
+                    Help: "Der bewusste Akt: Rollen (wie vorgeschlagen oder korrigiert) in die Wahrheit übernehmen. Leer lassen = vertagen (kommt wieder).",
+                    Options: [new(Ja, "✓ übernehmen — Rollen werden Wahrheit (Apply)")])
             ],
             Items = request.Items.Select(BuildItem).ToList()
         };
@@ -112,7 +127,8 @@ public static class ArchClassifyReviewAdapter
                 new ReviewFieldValue(FieldWork, v.ProposedRoles.Contains(ArchRoles.Work, StringComparer.Ordinal) ? Ja : Nein),
                 new ReviewFieldValue(FieldDesign, v.ProposedRoles.Contains(ArchRoles.Design, StringComparer.Ordinal) ? Ja : Nein),
                 new ReviewFieldValue(FieldTargets, string.Join(Environment.NewLine, Targets(v).Select(t => t.Id))),
-                new ReviewFieldValue(FieldRationale, v.Rationale)
+                new ReviewFieldValue(FieldRationale, v.Rationale),
+                new ReviewFieldValue(FieldUebernehmen, "")   // 1f-①: der Entscheid startet LEER
             ]
         };
         item.Resolved = Resolved(item);
@@ -128,17 +144,20 @@ public static class ArchClassifyReviewAdapter
             : raw.Split(['\n', '\r', ',', ';'], StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
                  .Distinct(StringComparer.Ordinal).ToList();
 
-    /// <summary>Aufgelöst = alle drei Rollen-Felder beantwortet (vorbelegt ⇒ sofort resolved; Korrektur-Modus).</summary>
+    /// <summary>1f-①: aufgelöst = Rollen beantwortet UND explizit übernommen — die Vorbelegung allein
+    /// entscheidet NICHTS mehr (E0: kein Durchwinken; Übernehmen ist der eine bewusste Akt je Item).</summary>
     public static bool Resolved(ReviewItem item)
         => Field(item, FieldConstraint) is Ja or Nein
         && Field(item, FieldWork) is Ja or Nein
-        && Field(item, FieldDesign) is Ja or Nein;
+        && Field(item, FieldDesign) is Ja or Nein
+        && Field(item, FieldUebernehmen) == Ja;
 
     public static ArchClassifyDecisionsFile Apply(string runId, ReviewSession session)
     {
         var decisions = new List<ArchClassifyItemDecision>();
         foreach (var item in session.Items)
         {
+            if (Field(item, FieldUebernehmen) != Ja) continue;            // 1f-①: unbestätigt = vertagt
             var roles = new List<string>();
             if (Field(item, FieldConstraint) == Ja) roles.Add(ArchRoles.Constraint);
             if (Field(item, FieldWork) == Ja) roles.Add(ArchRoles.Work);
@@ -164,6 +183,8 @@ public static class ArchClassifyReviewAdapter
             // ① Targets: null = Alt-Datei ohne Ziel-Wissen -> Vorbelegung NICHT löschen; eine (auch leere)
             // Liste ist ein echter Human-Stand (Apply schreibt immer eine Liste) und gewinnt.
             if (d.TargetPbiIds is not null) Set(item, FieldTargets, string.Join(Environment.NewLine, d.TargetPbiIds));
+            // 1f-①: ein Eintrag in der Entscheid-Datei IST eine frühere Übernahme (Apply schreibt nur Bestätigtes).
+            Set(item, FieldUebernehmen, Ja);
             item.Resolved = Resolved(item);
         }
     }

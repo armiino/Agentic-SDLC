@@ -59,20 +59,62 @@ public sealed class StewardRunToolsTests
     public async Task C4c_save_sweep_answers_stempelt_Quelle()
     {
         var repo = Directory.CreateTempSubdirectory("c4c-").FullName;
-        var tools = new StewardRunTools(repo, S(), (a, cb) => Task.FromResult(0));
+        // Feil ② (Abnahme 4.0, Vertragswechsel): der Session-Name kommt als HARNESS-Fakt aus dem ctor
+        // (--session) — das Modell erfand vorher eigene Werte („steward-chat") und der Stempel log.
+        var tools = new StewardRunTools(repo, S(), (a, cb) => Task.FromResult(0), sessionName: "probe");
 
         var bad = await InvokeAsync(tools, "save_sweep_answers", new Dictionary<string, object?>
         { ["answers"] = new[] { new AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepAnswer("PBI-1", "") } });
         Assert.Equal("ANSWERS_INVALID", bad.GetProperty("error").GetString());       // leer = LAUT
 
         var ok = await InvokeAsync(tools, "save_sweep_answers", new Dictionary<string, object?>
-        { ["answers"] = new[] { new AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepAnswer("PBI-1", "Flutter+SQLite") }, ["sessionName"] = "probe" });
+        { ["answers"] = new[] { new AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepAnswer("PBI-1", "Flutter+SQLite") } });
         var path = ok.GetProperty("answersPath").GetString()!;
         var saved = System.Text.Json.JsonSerializer.Deserialize<List<AgenticSdlc.Host.FullWorkflow.PbiUpdate.ClarifySweepAnswer>>(
             File.ReadAllText(Path.Combine(repo, path)), AgenticSdlc.Host.FullWorkflow.JsonFiles.Json)!;
         Assert.Equal("author via steward-chat", saved.Single().Quelle);              // §8-Herkunft gestempelt
         Assert.Equal("probe", saved.Single().SessionName);
         // Betriebspfad danach: run_clarify_via_graph (eigener Test unten) — das Werkbank-Seil run_clarify_sweep ist entfernt.
+    }
+
+    // Feil ② (Abnahme 4.0): das Autor-Front-Delta trägt den ECHTEN --session-Namen als Herkunft — daraus
+    // stempelt der Frage-DEC-Mint später `ingestedFromSession` (live log der Wert „steward-chat").
+    [Fact]
+    public async Task save_author_statements_stempelt_den_Harness_Session_Namen()
+    {
+        var repo = Directory.CreateTempSubdirectory("af-sess-").FullName;
+        var tools = new StewardRunTools(repo, S(), (a, cb) => Task.FromResult(0), sessionName: "abnahme4");
+
+        var ok = await InvokeAsync(tools, "save_author_statements", new Dictionary<string, object?>
+        { ["statements"] = new[] { new AgenticSdlc.Host.FullWorkflow.Delta.AuthorStatement("Neue Anforderung X.", "requirement", null, null) } });
+
+        var delta = System.Text.Json.JsonSerializer.Deserialize<AgenticSdlc.Host.FullWorkflow.Delta.ProjectStateDocument>(
+            File.ReadAllText(Path.Combine(repo, ok.GetProperty("deltaPath").GetString()!)),
+            AgenticSdlc.Host.FullWorkflow.Delta.ProjectStateJson.Options)!;
+        Assert.Equal("abnahme4", delta.Items.Single().SourceRunId);
+    }
+
+    // Feil ③ (Abnahme 4.0): open_gate_ui BLOCKIERT durch UI + automatische Fortsetzung — das Ergebnis muss
+    // das SAGEN, sonst bittet der Agent den Autor um eine „fertig"-Meldung, die nie nötig war (Session-Beleg).
+    [Fact]
+    public async Task UiRoundResult_meldet_Abschluss_und_neuen_Stand()
+    {
+        var repo = Directory.CreateTempSubdirectory("uiround-").FullName;
+        var runId = "20260819_000001_test";
+        var dir = Path.Combine(repo, "runs", "fullworkflow", runId, "checkpoints");
+        Directory.CreateDirectory(dir);
+        File.WriteAllText(Path.Combine(dir, "pointer.json"),
+            $"{{\"runId\":\"{runId}\",\"sessionId\":\"s\",\"checkpointId\":\"cp\",\"mode\":\"github-forward-gate\",\"savedUtc\":\"2026-08-19T09:00:00Z\"}}");
+
+        var ok = System.Text.Json.JsonDocument.Parse(
+            await StewardRunTools.UiRoundResultAsync(repo, runId, "pbi-update-review", 0)).RootElement;
+        Assert.True(ok.GetProperty("uiRundeAbgeschlossen").GetBoolean());
+        Assert.Equal("github-forward-gate", ok.GetProperty("pausedGate").GetString());  // der NEUE Stand reist mit
+        Assert.Contains("warte NICHT", ok.GetProperty("hint").GetString());
+
+        var err = System.Text.Json.JsonDocument.Parse(
+            await StewardRunTools.UiRoundResultAsync(repo, runId, "pbi-update-review", 5)).RootElement;
+        Assert.Equal("AUX_RUN_FAILED", err.GetProperty("error").GetString());
     }
 
     [Fact]

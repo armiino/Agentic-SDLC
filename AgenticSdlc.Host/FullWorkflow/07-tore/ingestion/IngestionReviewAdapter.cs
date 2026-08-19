@@ -158,15 +158,21 @@ public static class IngestionReviewAdapter
             new(ReviewNoteKind.Info, "Wirkung", KindEffect(op.Kind)),
             new(ReviewNoteKind.Reason, "Warum vorgeschlagen", string.IsNullOrWhiteSpace(op.Rationale) ? "(keine)" : op.Rationale)
         };
+        // 1c-① Ziel-Diff (18.08., Block-L-Kernfall + ⚖ „Ersetzen bleibt"): bei REFINE/SUPERSEDE bringt die
+        // KARTE das Wissen mit — voller Ist-Text UND voller Vorschlag untereinander (E0-Noten-PAAR wie am
+        // decision-gate). Ohne das war Text-Verlust nur mit Reviewer-Gedächtnis erkennbar (REQ-42-Beleg).
+        if (ZielDiff(op, coreById) is { } diff)
+        {
+            notes.Add(new ReviewNote(ReviewNoteKind.Info, $"Das gilt heute ({op.TargetEntityId})", diff.GiltHeute));
+            notes.Add(new ReviewNote(ReviewNoteKind.Warning, "Das stünde danach — ersetzt den heutigen Text VOLLSTÄNDIG",
+                diff.StuendeDanach + "\n(Details des heutigen Textes, die hier fehlen, fallen aus der gültigen Wahrheit — alte Fassung bleibt nur Historie.)"));
+        }
         if (IsTruthChanging(op.Kind))
             notes.Add(new ReviewNote(ReviewNoteKind.Warning, "Ändert die Projektwahrheit",
                 "Übernehmen mutiert den Core — nur bestätigen, wenn die Änderung stimmt."));
         var blast = BlastRadiusNote(op, coreById, pbisByReq);
         if (blast is not null) notes.Add(blast);
-        var rejection = RejectionNote(op, rejections);
-        if (rejection is not null) notes.Add(rejection);
-        var known = KnownQuestionNote(op, coreById);
-        if (known is not null) notes.Add(known);
+        notes.AddRange(WiedervorlageNotes(op, coreById, rejections));
 
         var item = new ReviewItem
         {
@@ -181,6 +187,29 @@ public static class IngestionReviewAdapter
         };
         item.Resolved = Resolved(item);
         return item;
+    }
+
+    // 1c-① (18.08.): EINE Ziel-Diff-Quelle für BEIDE Bahnen — volle Texte, NIE gekürzt (der Diff ist der
+    // Verlust-Wächter; Kürzung würde genau das Weggelassene verstecken). Fail-open ohne Ziel im Core.
+    internal static (string GiltHeute, string StuendeDanach)? ZielDiff(StateChangeOperation op,
+        IReadOnlyDictionary<string, ProjectStateItem> coreById)
+    {
+        if (op.Kind is not (StateChangeKind.Refine or StateChangeKind.Supersede)) return null;
+        return op.TargetEntityId is { Length: > 0 } id && coreById.TryGetValue(id, out var tgt)
+            ? (tgt.Text, op.Statement)
+            : null;
+    }
+
+    // 1c-③ (18.08., „nie gesichtet"-Fund): EINE Wiedervorlage-Quelle für BEIDE Bahnen — UI-Karte (BuildItem)
+    // UND Chat-Vorlage (get_paused_gate) zeigen dieselben Warnungen. Vorher waren die Notes UI-only; auf der
+    // Haupt-Bahn des Autors (Chat) kamen „Schon einmal abgelehnt/geklärt" NIE an.
+    internal static IReadOnlyList<ReviewNote> WiedervorlageNotes(StateChangeOperation op,
+        IReadOnlyDictionary<string, ProjectStateItem> coreById, IReadOnlyList<ProjectStateProposal> rejections)
+    {
+        var notes = new List<ReviewNote>();
+        if (RejectionNote(op, rejections) is { } rejection) notes.Add(rejection);
+        if (KnownQuestionNote(op, coreById) is { } known) notes.Add(known);
+        return notes;
     }
 
     // R-35 Wiedervorlage-Note: „schon einmal abgelehnt" — zwei Erkennungswege, beide fail-open (keine Note ist
@@ -276,7 +305,9 @@ public static class IngestionReviewAdapter
         _ => "—"
     };
 
-    private static IReadOnlyList<ReviewOption> DecisionOptions(string kind) => kind switch
+    // Selbstbeschreibende Gates (18.08.): EINE Options-Quelle für Review-UI UND Steward-Chat-Vorlage
+    // (StewardGateVocabulary projiziert nur den Bahn-Code, die Labels kommen von HIER).
+    internal static IReadOnlyList<ReviewOption> DecisionOptions(string kind) => kind switch
     {
         StateChangeKind.New or StateChangeKind.NewRelated => [new("apply", "✓ Neu anlegen"), new("skip", "Nicht übernehmen (Begründung Pflicht)")],
         StateChangeKind.Refine => [new("apply", "✓ Verfeinerung übernehmen"), new("skip", "Nicht übernehmen (Begründung Pflicht)")],

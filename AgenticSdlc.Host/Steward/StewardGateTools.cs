@@ -17,9 +17,24 @@ namespace AgenticSdlc.Host.Steward;
 /// Diktat, MAF-Approval = typisierter Bestätigungs-Akt — der Steward bestätigt NIE selbst (9k(d)-Regel 3).
 /// P2a wird IM Tool erzwungen: Nicht-apply ohne Begründung ⇒ Validierungsfehler zurück an den Agenten.
 /// </summary>
-public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? applyFromPlanDir = null)
+public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? applyFromPlanDir = null,
+    Func<string, Task<string>>? chainResume = null)
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
+
+    // Politur 1c (18.08., R-43 auf die CHAT-Bahn): der Submit ist DAS eine Autor-Urteil — die Fortsetzung
+    // kettet automatisch (wie „Fertig" in den Review-UIs, R-43-Endform 09.08.); chainResume=false = nur
+    // speichern (Inspektions-Opt-out, Analogie --no-apply). Delegat zeigt auf StewardRunTools.ChainResumeAsync
+    // (gleiche Wachen: BUSY/RUN_STILL_ACTIVE, Konsolen-Weiche, End-Zeile).
+    private async Task<string> SavedThenChainAsync(string runId, object saved, bool chainResume)
+    {
+        if (!chainResume || chainResumeDelegate is null)
+            return JsonSerializer.Serialize(saved, Json);
+        var resumeJson = await chainResumeDelegate(runId).ConfigureAwait(false);
+        using var doc = JsonDocument.Parse(resumeJson);
+        return JsonSerializer.Serialize(new { saved, resumed = doc.RootElement.Clone() }, Json);
+    }
+    private readonly Func<string, Task<string>>? chainResumeDelegate = chainResume;
 
     // K13-1: typisierte Apply-Naht (planDir) statt CLI-String-Args; Test-injizierbar.
     private readonly Func<string, Task<int>> _apply =
@@ -36,16 +51,16 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             + "Vorlage — je Op kind/pbiId/issue/rationale. Lies vor und sammle apply|skip je Op ein."),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(SubmitPausedGateDecisionsAsync, "submit_paused_gate_decisions",
             "C5b (Gate-Antwort fuer den PAUSIERTEN Lauf): schreibt die vom Autor diktierten forward-Entscheide "
-            + "(opId, decision apply|skip — ALLE Ops, Sammel-Akt) als github-forward-decisions.json; der resume "
-            + "beantwortet damit den Port. GitHub-Write NUR mit execute-Policy. Braucht Autor-Zustimmung.")),
+            + "(opId, decision apply|skip — ALLE Ops, Sammel-Akt) als github-forward-decisions.json; die Fortsetzung "
+            + "kettet AUTOMATISCH (R-43; chainResume=false = nur speichern). GitHub-Write NUR mit execute-Policy. Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(SubmitIngestGateDecisionsAsync, "submit_ingest_gate_decisions",
             "C5 (Tor 1 im Chat): schreibt die diktierten Ingest-Entscheide fuer den PAUSIERTEN Lauf — decisions je "
             + "Item (incomingItemId, decision apply|reject, reason PFLICHT bei reject; ALLE Items = Sammel-Akt). "
-            + "Der resume beantwortet damit das Gate. Braucht Autor-Zustimmung.")),
+            + "Der Submit ist das EINE Urteil: die Fortsetzung kettet AUTOMATISCH (R-43; chainResume=false = nur speichern). Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(SubmitDecisionGateResolutionsAsync, "submit_decision_gate_resolutions",
             "C5 (decision-gate im Chat): je offener Entscheidung action resolve (outcome KEEP_ORIGINAL|ADOPT_NEW|"
             + "REFINE; bei REFINE newStatement) oder defer (vertagen) — ALLE DECs. Schreibt "
-            + "decision-gate-decisions.json; resume beantwortet das Gate. Braucht Autor-Zustimmung.")),
+            + "decision-gate-decisions.json; die Fortsetzung kettet AUTOMATISCH (R-43; chainResume=false = nur speichern). Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(SubmitGateDecisionsAsync, "submit_gate_decisions",
             "C5 (WAHRHEITS-WIRKSAM, ein bewusster Sammel-Akt): reicht die vom Autor DIKTIERTEN Gate-Entscheidungen "
             + "ein — decisions je Op (opId, decision apply|skip, reason PFLICHT bei nicht-apply) + alignmentDecisions "
@@ -72,6 +87,9 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             }),
             alignments = (plan.Alignments ?? []).Select(a => new
             { a.PbiId, a.ProposedTitle, a.ProposedStatement, a.ProposedAcceptanceCriteria, a.Rationale }),
+            // Selbstbeschreibend: Optionen aus der Adapter-Quelle der UI (Label wörtlich vorlegen, Code in Klammern).
+            optionen = StewardGateVocabulary.ForPbiOps(),
+            angleichOptionen = StewardGateVocabulary.ForPbiAlignments(),
         }, Json);
     }
 
@@ -129,6 +147,11 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
     private async Task<string> GetPausedGateAsync(string runId)
     {
         var status = await FullWorkflow.Pipeline.PipelineRunStatusReader.ReadAsync(repoRoot, runId).ConfigureAwait(false);
+        // 1b′ (Stale-Pointer): arbeitet der Lauf gerade, verweigert die Vorlage EHRLICH — nie ein altes
+        // (womöglich durchlaufenes) Gate praesentieren; der Status-Kern erkennt das artefakt-basiert.
+        if (status?.State == FullWorkflow.Pipeline.PipelineRunState.NotPausedNotFinished)
+            return JsonSerializer.Serialize(new { error = "RUN_ACTIVE", runId,
+                hint = "Der Lauf arbeitet gerade (kein gueltiger Checkpoint-Zeiger) — gleich erneut get_run_status/get_paused_gate." }, Json);
         var gate = status?.PausedGate;
         if (gate is null || !ChatGates.Contains(gate, StringComparer.OrdinalIgnoreCase))
             return JsonSerializer.Serialize(new { error = "GATE_NOT_SUPPORTED", pausedGate = gate,
@@ -140,18 +163,35 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             var stage = gate == "arch-ingest-gate" ? "07-arch-ingest" : "07-ingest";
             var pPath = Path.Combine(RunDir(runId), stage, "plan.json");
             if (!File.Exists(pPath)) return JsonSerializer.Serialize(new { error = "PLAN_MISSING", pPath }, Json);
-            using var pDoc = JsonDocument.Parse(await File.ReadAllTextAsync(pPath).ConfigureAwait(false));
-            var items = pDoc.RootElement.GetProperty("operations").EnumerateArray().Select(op => new
+            var plan = JsonSerializer.Deserialize<StateChangePlanDocument>(
+                await File.ReadAllTextAsync(pPath).ConfigureAwait(false), Json)!;
+
+            // 1c-③ (18.08.): Wiedervorlage-Wissen auch auf der CHAT-Bahn — dieselbe Adapter-Quelle wie die
+            // UI-Karten („Schon einmal abgelehnt/geklärt"); fail-open ohne Core (z. B. Werkstatt-Fixtures).
+            var repo = new JsonCoreRepository(repoRoot);
+            var core = await repo.ExistsAsync().ConfigureAwait(false) ? await repo.LoadAsync().ConfigureAwait(false) : null;
+            var coreById = (core?.Items ?? []).ToDictionary(i => i.ItemId, StringComparer.Ordinal);
+            IReadOnlyList<ProjectStateProposal> rejections =
+                core is null ? [] : IngestionRejections.Of(core);
+
+            var items = plan.Operations.Select(op => new
             {
-                incomingItemId = op.GetProperty("incomingItemId").GetString(),
-                kind = op.GetProperty("kind").GetString(),
-                statement = op.GetProperty("statement").GetString(),
-                targetEntityId = op.TryGetProperty("targetEntityId", out var t) ? t.GetString() : null,
-                featureKey = op.TryGetProperty("featureKey", out var f) ? f.GetString() : null,
-                rationale = op.TryGetProperty("rationale", out var r) ? r.GetString() : null,
+                incomingItemId = op.IncomingItemId,
+                kind = op.Kind,
+                statement = op.Statement,
+                targetEntityId = op.TargetEntityId,
+                featureKey = op.FeatureKey,
+                rationale = op.Rationale,
+                // Selbstbeschreibend: Optionen je Op-Art aus der Adapter-Quelle der UI (Label wörtlich vorlegen).
+                optionen = StewardGateVocabulary.ForIngest(op.Kind),
+                warnungen = IngestionReviewAdapter.WiedervorlageNotes(op, coreById, rejections)
+                    .Select(n => new { label = n.Label, text = n.Text }).ToList(),
+                // 1c-① Ziel-Diff: bei REFINE/SUPERSEDE beide VOLLEN Texte (gleiche Quelle wie die UI-Karte).
+                zielDiff = IngestionReviewAdapter.ZielDiff(op, coreById) is { } d
+                    ? (object)new { giltHeute = d.GiltHeute, stuendeDanach = d.StuendeDanach } : null,
             }).ToList();
             return JsonSerializer.Serialize(new { runId, gate, items,
-                hinweis = "Je Item apply|reject (reject IMMER mit Begruendung — P2a); submit_ingest_gate_decisions, danach resume_run." }, Json);
+                hinweis = "Lege je Item die `optionen` mit GENAU diesen Labels vor (Code in Klammern); `warnungen` DEM AUTOR WOERTLICH vorlegen (Wiedervorlage-Wissen — kein Auto-Skip); bei `zielDiff` BEIDE Texte WOERTLICH vorlegen (gilt heute vs. stuende danach — der neue Text ersetzt VOLLSTAENDIG, Weggelassenes faellt aus der Wahrheit); reject IMMER mit Begruendung (P2a). submit_ingest_gate_decisions — die Fortsetzung kettet danach automatisch." }, Json);
         }
 
         // decision-gate — Vorlage aus dem persistierten decision-gate-request.json (Aufloesung ENTSTEHT am Gate).
@@ -160,16 +200,30 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             var rPath = Path.Combine(RunDir(runId), "07-decision", "decision-gate-request.json");
             if (!File.Exists(rPath)) return JsonSerializer.Serialize(new { error = "REQUEST_MISSING", rPath }, Json);
             using var rDoc = JsonDocument.Parse(await File.ReadAllTextAsync(rPath).ConfigureAwait(false));
-            var decs = rDoc.RootElement.GetProperty("decisions").EnumerateArray().Select(d => new
+            // Abnahme-4.0-Feil ①: die Vorlage trägt die HERKUNFT (der DEC-Origin-Fix muss die Chat-Bahn
+            // erreichen) und lässt bei ziellosen Frage-DECs die Null-Felder WEG (der Agent las vorher
+            // leere „Bestehende Wahrheit"-Anführungszeichen vor).
+            var decs = rDoc.RootElement.GetProperty("decisions").EnumerateArray().Select(d =>
             {
-                decisionId = d.GetProperty("decisionId").GetString(),
-                frage = d.GetProperty("decisionText").GetString(),
-                bestehendeWahrheit = d.TryGetProperty("targetRequirementText", out var tr) ? tr.GetString() : null,
-                meetingVorschlag = d.TryGetProperty("proposedStatement", out var ps) ? ps.GetString() : null,
-                blockiertePbis = d.TryGetProperty("blockedPbis", out var bp) ? bp.EnumerateArray().Select(x => x.GetString()).ToList() : [],
+                var map = new Dictionary<string, object?>(StringComparer.Ordinal)
+                {
+                    ["decisionId"] = d.GetProperty("decisionId").GetString(),
+                    ["frage"] = d.GetProperty("decisionText").GetString(),
+                };
+                if (d.TryGetProperty("origin", out var og) && og.GetString() is { Length: > 0 } herkunft)
+                    map["herkunft"] = herkunft;
+                if (d.TryGetProperty("targetRequirementText", out var tr) && tr.GetString() is { Length: > 0 } wahrheit)
+                {
+                    map["bestehendeWahrheit"] = wahrheit;
+                    map["meetingVorschlag"] = d.TryGetProperty("proposedStatement", out var ps) ? ps.GetString() : null;
+                }
+                map["blockiertePbis"] = d.TryGetProperty("blockedPbis", out var bp)
+                    ? bp.EnumerateArray().Select(x => x.GetString()).ToList() : [];
+                return map;
             }).ToList();
             return JsonSerializer.Serialize(new { runId, gate, decisions = decs,
-                hinweis = "Je DEC: resolve (outcome KEEP_ORIGINAL|ADOPT_NEW|REFINE, bei REFINE newStatement) ODER defer (vertagen = gueltiger Ausgang). submit_decision_gate_resolutions, danach resume_run." }, Json);
+                optionen = StewardGateVocabulary.ForDecision(),
+                hinweis = "Lege je DEC die `herkunft` und die `optionen` mit GENAU diesen Labels vor (Code in Klammern); fehlt `bestehendeWahrheit`, ist es eine ziellose Frage-DEC (reduzierte Palette, nichts abzuloesen — Felder NICHT als leer vorlesen); bei REFINE/ADOPT_NEW newStatement Pflicht; defer = gueltiger Ausgang. submit_decision_gate_resolutions — die Fortsetzung kettet danach automatisch." }, Json);
         }
 
         var planPath = Path.Combine(RunDir(runId), "07-github", "github-forward-plan.json");
@@ -212,8 +266,9 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             };
         }).ToList();
         return JsonSerializer.Serialize(new { runId, gate = SupportedGraphGate, warnung, ops,
+            optionen = StewardGateVocabulary.ForForward(),
             hinweis = "Je Op steht unter `inhalt` der VOLLE Inhalt (Titel + Statement + Akzeptanzkriterien + Rahmen), der ans Issue geschrieben wuerde — "
-                    + "lies ihn dem Autor vor. Vorher/Nachher gegen den aktuellen Issue-Stand: open_gate_ui. Nur apply|skip je Op; GitHub-WRITE erst beim resume + NUR mit execute-Policy."
+                    + "lies ihn dem Autor vor. Vorher/Nachher gegen den aktuellen Issue-Stand: open_gate_ui. Lege die `optionen` mit GENAU diesen Labels vor (Code in Klammern); GitHub-WRITE erst beim resume + NUR mit execute-Policy."
                     + (warnung is null ? "" : " ⚠ `warnung` DEM AUTOR VORLESEN: drueben liegt ungeerntete Arbeit — Sequenz anbieten: betroffene Ops skippen -> Ernte (run_pipeline_from_github) -> Rest via run_reproject.") }, Json);
     }
 
@@ -238,7 +293,7 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
         => e.TryGetProperty(name, out var v) && v.ValueKind == JsonValueKind.Array
             ? v.EnumerateArray().Select(x => x.GetString() ?? "").Where(s => s.Length > 0).ToList() : [];
 
-    private async Task<string> SubmitPausedGateDecisionsAsync(string runId, IReadOnlyList<GithubForwardDecision> decisions)
+    private async Task<string> SubmitPausedGateDecisionsAsync(string runId, IReadOnlyList<GithubForwardDecision> decisions, bool chainResume = true)
     {
         var status = await FullWorkflow.Pipeline.PipelineRunStatusReader.ReadAsync(repoRoot, runId).ConfigureAwait(false);
         if (status is null || !string.Equals(status.PausedGate, SupportedGraphGate, StringComparison.OrdinalIgnoreCase))
@@ -266,11 +321,11 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
         var file = new GithubForwardDecisionsFile(runId, "author via steward-chat", decisions);
         await File.WriteAllTextAsync(Path.Combine(dir, "github-forward-decisions.json"),
             JsonSerializer.Serialize(file, Json)).ConfigureAwait(false);
-        return JsonSerializer.Serialize(new { saved = true, runId,
-            hint = $"Entscheide gespeichert — naechster Schritt (zustimmungspflichtig): resume_run(\"{runId}\"); GitHub-Write nur mit execute-Policy." }, Json);
+        return await SavedThenChainAsync(runId, new { saved = true, runId,
+            hint = "Sammel-Akt gespeichert; die Fortsetzung kettet automatisch (1c). GitHub-Write nur mit execute-Policy." }, chainResume).ConfigureAwait(false);
     }
 
-    private async Task<string> SubmitIngestGateDecisionsAsync(string runId, IReadOnlyList<FullWorkflow.Ingestion.IngestGateDecision> decisions)
+    private async Task<string> SubmitIngestGateDecisionsAsync(string runId, IReadOnlyList<FullWorkflow.Ingestion.IngestGateDecision> decisions, bool chainResume = true)
     {
         var status = await FullWorkflow.Pipeline.PipelineRunStatusReader.ReadAsync(repoRoot, runId).ConfigureAwait(false);
         var gate = status?.PausedGate;
@@ -297,11 +352,11 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
         var file = new FullWorkflow.Ingestion.IngestGateDecisionsFile(runId, "author via steward-chat", decisions);
         await File.WriteAllTextAsync(Path.Combine(RunDir(runId), stage, FullWorkflow.Ingestion.IngestGateDecisions.FileName),
             JsonSerializer.Serialize(file, Json)).ConfigureAwait(false);
-        return JsonSerializer.Serialize(new { saved = true, runId, gate,
-            hint = $"Entscheide gespeichert — naechster Schritt (zustimmungspflichtig): resume_run(\"{runId}\")." }, Json);
+        return await SavedThenChainAsync(runId, new { saved = true, runId, gate,
+            hint = "Sammel-Akt gespeichert; die Fortsetzung kettet automatisch (1c)." }, chainResume).ConfigureAwait(false);
     }
 
-    private async Task<string> SubmitDecisionGateResolutionsAsync(string runId, IReadOnlyList<FullWorkflow.Pipeline.PipelineDecisionResolution> resolutions)
+    private async Task<string> SubmitDecisionGateResolutionsAsync(string runId, IReadOnlyList<FullWorkflow.Pipeline.PipelineDecisionResolution> resolutions, bool chainResume = true)
     {
         var status = await FullWorkflow.Pipeline.PipelineRunStatusReader.ReadAsync(repoRoot, runId).ConfigureAwait(false);
         if (status?.PausedGate != "decision-gate")
@@ -332,8 +387,8 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
         await File.WriteAllTextAsync(Path.Combine(RunDir(runId), "07-decision", "decision-gate-decisions.json"),
             JsonSerializer.Serialize(file, Json)).ConfigureAwait(false);
         var deferred = resolutions.Count(r => string.Equals(r.Action, "defer", StringComparison.OrdinalIgnoreCase));
-        return JsonSerializer.Serialize(new { saved = true, runId, resolved = resolutions.Count - deferred, deferred,
-            hint = $"naechster Schritt (zustimmungspflichtig): resume_run(\"{runId}\")." }, Json);
+        return await SavedThenChainAsync(runId, new { saved = true, runId, resolved = resolutions.Count - deferred, deferred,
+            hint = "Sammel-Akt gespeichert; die Fortsetzung kettet automatisch (1c)." }, chainResume).ConfigureAwait(false);
     }
 
     private async Task<(ProjectStateDocument? Core, ProjectStateProposal? Proposal, PendingReviewRegistry.PendingEntry? Entry, string? Error)>

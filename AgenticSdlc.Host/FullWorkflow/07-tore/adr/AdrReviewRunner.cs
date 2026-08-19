@@ -51,6 +51,8 @@ public static class AdrReviewRunner
                 : id => Task.FromResult(AdrReviewAdapter.BuildTruthReference(core, id)),
             resolveReferenceContext: core is null ? null
                 : (id, key) => Task.FromResult(AdrReviewAdapter.ResolveTruthReferenceContext(core, id, key))).ConfigureAwait(false);
+        // 1c-② Teil-Fertig: kommt DEKLARATIV aus der Session (AllowPartialFinish im Adapter) — EINE Quelle
+        // für Server-Erlaubnis UND Fertig-Knopf; ein „Alle vertagen"-Bulk wäre identisch mit Fertig-Klicken.
 
         Console.WriteLine($"[adr-review] {outcome}: {file.Decisions.Count} freigegeben, {request.Items.Count - file.Decisions.Count} vertagt -> {Path.GetRelativePath(repoRoot, decisionsPath)}");
         Console.WriteLine($"[adr-review] Weiter: pipeline-full resume {request.RunId}");

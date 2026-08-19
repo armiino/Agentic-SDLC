@@ -34,7 +34,11 @@ public static class AdrReviewAdapter
         {
             SessionId = $"adr-{runId}",
             Title = "ADR-Abnahme — Architektur-Entscheidungen dokumentieren",
-            Subtitle = $"{request.Items.Count} Entwurf/Entwürfe. Der Agent hat formuliert (vorbelegt) — du editierst oder nimmst an. 'freigeben=nein' = vertagen (kommt wieder).",
+            Subtitle = $"{request.Items.Count} Entwurf/Entwürfe. Der Agent hat formuliert (vorbelegt) — du editierst oder nimmst an. "
+                + "'freigeben=nein' = vertagen (kommt wieder). Fertig ist JEDERZEIT erlaubt — nicht entschiedene Entwürfe gelten als vertagt (Teil-Abnahme).",
+            // Teil-Abnahme als DEKLARIERTE Eigenschaft (Server-Erlaubnis + Fertig-Knopf aus EINER Quelle):
+            // die Datei-Semantik „weggelassen = vertagt" trägt das sicher; der Scan legt erneut vor.
+            AllowPartialFinish = true,
             Notes =
             [
                 new ReviewNote(ReviewNoteKind.Info, "Wirkung deiner Entscheide",

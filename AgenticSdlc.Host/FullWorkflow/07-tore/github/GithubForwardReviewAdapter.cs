@@ -14,6 +14,13 @@ public static class GithubForwardReviewAdapter
     private static readonly HashSet<string> Decisions = new(StringComparer.OrdinalIgnoreCase) { "apply", "skip" };
     private const int BodyPreviewChars = 700;
 
+    // Selbstbeschreibende Gates (18.08.): EINE Options-Quelle für Review-UI UND Steward-Chat-Vorlage.
+    internal static readonly IReadOnlyList<ReviewOption> OpOptions =
+    [
+        new("apply", "Ausfuehren — Op wird beim gated Apply gegen GitHub ausgefuehrt"),
+        new("skip", "Ueberspringen — Op wird nicht ausgefuehrt (Begruendung Pflicht)")
+    ];
+
     public static ReviewSession BuildSession(string runId, GithubForwardPlanDocument plan,
         IReadOnlyDictionary<int, GithubIssueSnapshot>? issuesByNumber = null,
         // 13.08.: Warn-Note „ungeerntete GitHub-Arbeit" (unharvested-note.json des Laufs) — im Untertitel sichtbar.
@@ -45,11 +52,7 @@ public static class GithubForwardReviewAdapter
             [
                 new ReviewFieldSpec(FieldDecision, "Entscheidung", ReviewInputType.Dropdown, ["apply", "skip"], Required: true,
                     Help: "Was mit dieser Operation passiert — Details im Banner 'Was bewirkt dein Entscheid?'.",
-                    Options:
-                    [
-                        new ReviewOption("apply", "Ausfuehren — Op wird beim gated Apply gegen GitHub ausgefuehrt"),
-                        new ReviewOption("skip", "Ueberspringen — Op wird nicht ausgefuehrt (Begruendung Pflicht)")
-                    ]),
+                    Options: OpOptions),
                 new ReviewFieldSpec(FieldReason, "Begruendung (Audit-Protokoll)", ReviewInputType.MultiLine, [], Required: false,
                     Help: "Pflicht beim Ueberspringen (warum weicht der Mensch vom Plan ab?). Landet als Beleg in "
                         + "human-decisions.json — keine Anweisung ans System.")
