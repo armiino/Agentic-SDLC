@@ -68,12 +68,12 @@ public sealed class GithubInitialSyncTests
         var create = Assert.Single(ops, o => o.Kind == GithubForwardKind.CreateIssue);
         Assert.Equal("PBI-001", create.PbiId);
         Assert.Equal("deterministic", create.Origin);
-        Assert.Contains("Initial-Sync", create.Body);
+        Assert.Contains("Automatisch angelegt aus dem Projekt-Backlog", create.Body);   // ⑥ Klartext-Quelle
         // E0.1c/R-23: Statement (das WARUM) + Akzeptanzkriterien aus dem Core-Payload stehen im
         // deterministischen Issue-Body.
         Assert.Contains("Als Kunde will ich mich sicher anmelden", create.Body);
-        Assert.Contains("Akzeptanzkriterien:", create.Body);
-        Assert.Contains("- Login klappt mit 2FA", create.Body);
+        Assert.Contains("### Akzeptanzkriterien", create.Body);
+        Assert.Contains("> - Login klappt mit 2FA", create.Body);
 
         var plan = new GithubForwardPlanDocument(GithubForwardPlanDocument.CurrentSchemaVersion,
             "plan-test", DateTime.UnixEpoch, "test", null, ops);

@@ -48,10 +48,12 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             + "Angleichungs-Vorschlaege. Lies daraus vor und sammle die Entscheidungen des Autors ein."),
         AIFunctionFactory.Create(GetPausedGateAsync, "get_paused_gate",
             "C5b: laedt das PAUSIERTE Ein-Graph-Gate eines Laufs (aktuell: github-forward-gate) als treue "
-            + "Vorlage — je Op kind/pbiId/issue/rationale. Lies vor und sammle apply|skip je Op ein."),
+            + "Vorlage — je Op kind/pbiId/issue/rationale. Lies vor und sammle je Op apply|skip ein; "
+            + "bei FLAG_DRIFT gibt es ZUSAETZLICH 'overwrite' (bewusstes Ueberschreiben des manuellen Edits "
+            + "mit der Core-Projektion — dem Autor als Option NENNEN, nie selbst waehlen)."),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(SubmitPausedGateDecisionsAsync, "submit_paused_gate_decisions",
             "C5b (Gate-Antwort fuer den PAUSIERTEN Lauf): schreibt die vom Autor diktierten forward-Entscheide "
-            + "(opId, decision apply|skip — ALLE Ops, Sammel-Akt) als github-forward-decisions.json; die Fortsetzung "
+            + "(opId, decision apply|skip|overwrite — overwrite NUR fuer FLAG_DRIFT-Ops: schreibt BEWUSST die Core-Projektion ueber den manuellen Edit, erst nach Ernte/Entscheid waehlen; ALLE Ops, Sammel-Akt) als github-forward-decisions.json; die Fortsetzung "
             + "kettet AUTOMATISCH (R-43; chainResume=false = nur speichern). GitHub-Write NUR mit execute-Policy. Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(SubmitIngestGateDecisionsAsync, "submit_ingest_gate_decisions",
             "C5 (Tor 1 im Chat): schreibt die diktierten Ingest-Entscheide fuer den PAUSIERTEN Lauf — decisions je "
@@ -300,16 +302,27 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             return JsonSerializer.Serialize(new { error = "GATE_NOT_SUPPORTED", pausedGate = status?.PausedGate }, Json);
         var dir = Path.Combine(repoRoot, "runs", "fullworkflow", runId, "07-github");
         using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(Path.Combine(dir, "github-forward-plan.json")).ConfigureAwait(false));
-        var validOpIds = Enumerable.Range(0, doc.RootElement.GetProperty("operations").GetArrayLength())
+        var ops = doc.RootElement.GetProperty("operations");
+        var validOpIds = Enumerable.Range(0, ops.GetArrayLength())
+            .Select(i => $"op-{i}").ToHashSet(StringComparer.Ordinal);
+        var flagDriftOpIds = Enumerable.Range(0, ops.GetArrayLength())
+            .Where(i => ops[i].TryGetProperty("kind", out var k) && k.GetString() == "FLAG_DRIFT")
             .Select(i => $"op-{i}").ToHashSet(StringComparer.Ordinal);
 
         var errors = new List<string>();
         foreach (var d in decisions)
         {
             if (!validOpIds.Contains(d.OpId)) errors.Add($"unbekannte opId '{d.OpId}'");
+            var isOverwrite = string.Equals(d.Decision, "overwrite", StringComparison.OrdinalIgnoreCase);
             if (!string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(d.Decision, "skip", StringComparison.OrdinalIgnoreCase))
-                errors.Add($"{d.OpId}: decision muss apply|skip sein.");
+                && !string.Equals(d.Decision, "skip", StringComparison.OrdinalIgnoreCase)
+                && !isOverwrite)
+                errors.Add($"{d.OpId}: decision muss apply|skip|overwrite sein.");
+            // R-60: overwrite ist der bewusste Drift-Ausloeser — NUR fuer FLAG_DRIFT-Ops und NUR mit Begruendung.
+            if (isOverwrite && !flagDriftOpIds.Contains(d.OpId))
+                errors.Add($"{d.OpId}: overwrite gilt NUR fuer FLAG_DRIFT-Ops.");
+            if (isOverwrite && string.IsNullOrWhiteSpace(d.Reason))
+                errors.Add($"{d.OpId}: overwrite OHNE Begruendung (P2a) — Autor nach dem Grund fragen.");
             // P2a auch am Graph-Gate: skip OHNE Begruendung waere ein Chat-Bypass der UI-Regel.
             if (string.Equals(d.Decision, "skip", StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(d.Reason))
                 errors.Add($"{d.OpId}: skip OHNE Begruendung (P2a) — Autor nach dem Grund fragen.");

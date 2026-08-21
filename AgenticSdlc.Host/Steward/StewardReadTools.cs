@@ -32,6 +32,12 @@ public sealed class StewardReadTools(string repoRoot)
             "3c-Vorpruefung: sucht im ABLEHNUNGS-GEDAECHTNIS (R-35, Tor-1-Ablehnungen mit Begruendung) nach "
             + "einem Suchbegriff — VOR dem Einspeisen neuer Themen pruefen: wurde so etwas schon einmal "
             + "bewusst abgelehnt? Treffer dem Autor MIT Begruendung nennen (kein Auto-Skip — er entscheidet)."),
+        AIFunctionFactory.Create(ReadAnalysisReport, "read_analysis_report",
+            "1g (Klasse-Regel): liest die FUNDE eines Core-Analyse-Laufs (runId optional — leer = juengster Lauf): "
+            + "insDelta (Statement+Herleitung+Kategorie — dem Autor WOERTLICH vorlegen), aussortiert (mit Kritiker-"
+            + "Grund) und bereitsBekannt (Dedup). Will der Autor einen AUSSORTIERTEN retten: als Diktat via "
+            + "save_author_statements (woertlich; die Adoption ist dann SEINE — Herkunft AuthorFront). "
+            + "Read-only; der Tor-Lauf ist ein separates ⚿."),
         AIFunctionFactory.Create(CollectArchKatalogAsync, "collect_arch_katalog",
             "ARCH-SWEEP Schritt 1 (9k(b)): die deterministisch messbaren Architektur-Luecken — arbeitOhneRahmen "
             + "(aktive PBIs ohne constrained_by), designOhneAdr, unklassifiziert. Lies je Luecke vor und sammle "
@@ -94,6 +100,22 @@ public sealed class StewardReadTools(string repoRoot)
                 sourceRunId = x.Proposal.SourceRunId,
             }).ToList();
         return JsonSerializer.Serialize(new { query, treffer = hits.Count, hits }, Json);
+    }
+
+    // 1g Klasse-Regel (Abnahme-Fund 20.08.): Analyse-Funde lesbar — geteilte Projektion (AnalystRunner.LiesFunde).
+    private string ReadAnalysisReport(string? runId = null)
+    {
+        if (string.IsNullOrWhiteSpace(runId))
+        {
+            var root = Path.Combine(repoRoot, "runs", "core-analysis");
+            runId = Directory.Exists(root)
+                ? Directory.EnumerateDirectories(root).Select(Path.GetFileName).OrderDescending(StringComparer.Ordinal).FirstOrDefault()
+                : null;
+            if (runId is null) return System.Text.Json.JsonSerializer.Serialize(
+                new { error = "NO_ANALYSIS_RUNS", hint = "noch keine Core-Analyse gelaufen (run_core_analysis)" }, FullWorkflow.JsonFiles.Json);
+        }
+        return System.Text.Json.JsonSerializer.Serialize(
+            FullWorkflow.Analyst.AnalystRunner.LiesFunde(repoRoot, runId!), FullWorkflow.JsonFiles.Json);
     }
 
     private async Task<string> CollectArchKatalogAsync()

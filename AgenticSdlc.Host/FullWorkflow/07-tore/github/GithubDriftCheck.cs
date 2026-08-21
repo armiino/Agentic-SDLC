@@ -44,7 +44,13 @@ public static class GithubProjectionHash
 {
     public static string Compute(string? text)
     {
-        var normalized = (text ?? "").Replace("\r\n", "\n").TrimEnd('\n', ' ', '\t');
+        // Normalisierung = nur Informationsloses (Autor-⚖ 20.08., R-60-Nachwehe): CRLF, Datei-Ende-Rest
+        // UND Trailing-Whitespace je Zeile — ein Leerzeichen am Zeilenende ist kein „menschlicher Edit"
+        // und darf keine Drift-Sperre auslösen. Eigene Render tragen nie Trailing-Whitespace, bestehende
+        // Stempel bleiben dadurch gültig. INHALTLICHE Abweichungen (auch Leerzeilen MITTEN im Text via
+        // Zeilenzahl) zählen weiter.
+        var normalized = string.Join('\n', (text ?? "").Replace("\r\n", "\n").Split('\n').Select(l => l.TrimEnd()))
+            .TrimEnd('\n');
         return Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(normalized)))[..16];
     }
 }

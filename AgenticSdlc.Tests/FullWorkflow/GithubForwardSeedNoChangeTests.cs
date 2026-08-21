@@ -10,7 +10,7 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // Re-Writes entfallen. Wächter: Unknown-Stempel heilt weiter per UPDATE, Mensch-Edits sperren weiter (FLAG_DRIFT).
 public sealed class GithubForwardSeedNoChangeTests
 {
-    private const string Quelle = "Forward-Update aus Core-PBI (deterministisch)";   // exakt der Seed-Render
+    private const string Quelle = "Automatisches Update aus dem Projekt-Backlog";   // exakt der Seed-Render (⑥ Klartext)
 
     private static GithubSyncEntry Entry(string ak = "Login klappt") => new(
         PbiId: "PBI-7", Title: "Profil-Detailansicht", Status: "active", Readiness: "backlog_ready",

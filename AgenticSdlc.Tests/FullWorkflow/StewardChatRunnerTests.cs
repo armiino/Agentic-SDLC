@@ -36,7 +36,7 @@ public sealed class StewardChatRunnerTests
         var path = Path.Combine(Directory.CreateTempSubdirectory("steward-sess-").FullName, "s.json");
         var session = await StewardChatRunner.LoadOrCreateSessionAsync(agent, path);
         var first = await agent.RunAsync("Hallo.", session);
-        Assert.Contains("28 Tools", first.Text);                             // 32 − 4 Werkbank-Seile (⚖ 13.08. Klasse-Regel, system-inventar §3)
+        Assert.Contains("32 Tools", first.Text);                             // 28 (⚖ 13.08.) + 1g: render_requirements_doc, run_core_analysis, read_analysis_report, curate_analysis_delta
         // Block-H-Fund 17.08.: der Steward kennt sein Projekt-Repo aus der EINEN Config-Quelle (fullworkflow.repo)
         // — Mapping-Wächter (Prompt-Injektion via {{projektRepo}} nutzt dieses Feld).
         var cfg = new AgenticSdlc.Host.Configuration.RunConfig();
@@ -50,7 +50,7 @@ public sealed class StewardChatRunnerTests
         var live = Microsoft.Extensions.AI.AIFunctionFactory.Create(() => "live", "issue_read_dummy", "Dummy-Live-Tool");
         var withLive = StewardChatRunner.BuildAgent(new EchoCountClient(), settings, run, repoRoot, liveTools: [live]);
         var liveResp = await withLive.RunAsync("Hallo.", await withLive.CreateSessionAsync());
-        Assert.Contains("29 Tools", liveResp.Text);                          // 28 + 1 Live-Tool
+        Assert.Contains("33 Tools", liveResp.Text);                          // 32 + 1 Live-Tool
 
         await StewardChatRunner.SaveSessionAsync(agent, session, path);
         Assert.True(File.Exists(path));

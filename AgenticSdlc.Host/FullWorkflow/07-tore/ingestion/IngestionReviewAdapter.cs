@@ -51,10 +51,19 @@ public static class IngestionReviewAdapter
         var rejections = IngestionRejections.Of(core);
         var items = plan.Operations.Select(op => BuildItem(op, incomingById, coreById, pbisByReq, rejections)).ToList();
 
+        // Projektions-Nachzug ⑤ (20.08.): Titel je ASPEKT statt statisch „Meeting" — die Quelle ist längst
+        // nicht immer ein Meeting (Analyst-Delta, GitHub-Ernte), und der arch-Strip nutzt dieselbe Naht.
+        // Sprech-Namen = die Checkpoint-Namen der Übersetzungs-Schicht (Autor-⚖ 20.08.).
+        var isArch = plan.Operations
+            .Select(op => incomingById.GetValueOrDefault(op.IncomingItemId))
+            .Any(i => i is not null && string.Equals(i.ItemType, "architecture", StringComparison.OrdinalIgnoreCase));
+
         return new ReviewSession
         {
             SessionId = $"ingestion-{runId}",
-            Title = "Neue Meeting-Anforderungen — Core aktualisieren",
+            Title = isArch
+                ? "Architektur-Freigabe — Core aktualisieren"
+                : "Requirements-OQ-Freigabe — Core aktualisieren",
             Subtitle = plan.Operations.Count == 0
                 ? "Keine Änderungen vorgeschlagen."
                 : $"{plan.Operations.Count} vorgeschlagene Änderungen an der Projektwahrheit. Du bestätigst, was in den Core übernommen wird.",

@@ -43,7 +43,7 @@ public static class ArchClassifyReviewAdapter
         return new ReviewSession
         {
             SessionId = $"arch-classify-{runId}",
-            Title = "Architektur — Konsum-Rollen bestätigen/korrigieren",
+            Title = "Architektur-Rollen-Einordnung — Konsum-Rollen bestätigen/korrigieren",
             Subtitle = $"{request.Items.Count} Architektur-Item(s). Der Agent hat Rollen + Ziel-PBIs vorgeschlagen (vorbelegt) — du korrigierst je Rolle und ÜBERNIMMST je Item (oder alle per Sammel-Knopf). Nicht Übernommenes = vertagt (kommt wieder); alle Rollen 'nein' = ebenfalls vertagt.",
             // 1f-①: der EINZIG mögliche Bulk — Rollen variieren je Item (kommen aus der Vorbelegung), der
             // Bulk bestätigt sie nur. E0-Muster: deklariert + bestätigungspflichtig (wie decision-gate).

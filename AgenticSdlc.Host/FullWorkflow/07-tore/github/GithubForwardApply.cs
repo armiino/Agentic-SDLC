@@ -16,16 +16,26 @@ public static class GithubForwardApply
     private const string UserAgent = "Agentic-SDLC";
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
+    // R-62b (20.08., Nachprobe): braucht der Plan einen echten GitHub-Client? NOTE_COMMENT fehlte in der
+    // Liste — Vermerke ritten bisher immer auf Updates mit (Client existierte zufaellig); der erste
+    // Vermerk-ONLY-Plan (reine Ablehnung, R-62) lief in eine NullReference. Testbare Naht.
+    internal static bool RequiresClient(GithubForwardPlanDocument plan, ISet<string> accepted, ISet<string> overwrite)
+    {
+        var writingKinds = new HashSet<string>(StringComparer.Ordinal)
+            { GithubForwardKind.CreateIssue, GithubForwardKind.UpdateIssue, GithubForwardKind.Comment, GithubForwardKind.NoteComment };
+        return plan.Operations.Where((_, i) => accepted.Contains($"op-{i}") || overwrite.Contains($"op-{i}"))
+            .Any(o => writingKinds.Contains(o.Kind) || o.Kind == GithubForwardKind.FlagDrift);
+    }
+
     // Fuehrt den Plan gegen die akzeptierten OpIds aus, schreibt applied/ + (bei execute) das Core-Mapping und
     // gibt den Report zurueck. planDir = das Verzeichnis mit github-forward-plan.json (dort entsteht applied/).
     public static async Task<GithubForwardApplyReport> ExecuteAsync(
         string planDir, GithubForwardPlanDocument plan, ISet<string> accepted,
-        bool execute, string repoRoot, string? repository, string? tokenEnv, CancellationToken ct = default)
+        bool execute, string repoRoot, string? repository, string? tokenEnv, CancellationToken ct = default,
+        IReadOnlyCollection<string>? overwriteOpIds = null)
     {
-        // Braucht ueberhaupt ein echter Write stattfinden?
-        var writingKinds = new HashSet<string>(StringComparer.Ordinal)
-            { GithubForwardKind.CreateIssue, GithubForwardKind.UpdateIssue, GithubForwardKind.Comment };
-        var hasWrite = plan.Operations.Where((_, i) => accepted.Contains($"op-{i}")).Any(o => writingKinds.Contains(o.Kind));
+        var overwrite = (overwriteOpIds ?? []).ToHashSet(StringComparer.Ordinal);
+        var hasWrite = RequiresClient(plan, accepted, overwrite);
 
         GithubRestIssueClient? client = null;
         HttpClient? http = null;
@@ -60,12 +70,16 @@ public static class GithubForwardApply
         // R-21 (E11-Fund 2026-07-23): UPDATE/COMMENT sind hier AUSGENOMMEN — bei ihnen ist das Mapping auf
         // dasselbe Issue die VORAUSSETZUNG des Ops, nicht der Beweis seiner Anwendung; der alte Kurzschluss
         // machte den gesamten Update-Pfad zu totem Code (EXECUTED … alreadyApplied=2, updated=0).
-        bool AlreadyApplied(GithubForwardOp o)
+        bool AlreadyApplied(GithubForwardOp o, string opId)
         {
             if (!execute || !mappingByPbi.TryGetValue(o.PbiId, out var m)) return false;
             if (string.Equals(o.Kind, GithubForwardKind.CreateIssue, StringComparison.Ordinal)) return true;
             if (string.Equals(o.Kind, GithubForwardKind.UpdateIssue, StringComparison.Ordinal)
                 || string.Equals(o.Kind, GithubForwardKind.Comment, StringComparison.Ordinal)) return false;
+            // R-60-Bugfix (20.08., Lauf 154940: alle 43 Ops „already-applied", 0 Writes): eine FLAG_DRIFT-Op
+            // mit explizitem overwrite-Entscheid ist ein BEWUSSTER Re-Write — der Idempotenz-Kurzschluss
+            // („Mapping existiert schon") darf sie nicht vor dem Überschreib-Zweig abfangen.
+            if (string.Equals(o.Kind, GithubForwardKind.FlagDrift, StringComparison.Ordinal) && overwrite.Contains(opId)) return false;
             return o.TargetIssueNumber is not null && m.IssueNumber == o.TargetIssueNumber.Value;
         }
 
@@ -78,7 +92,7 @@ public static class GithubForwardApply
         {
             var op = plan.Operations[i];
             var opId = $"op-{i}";
-            if (!accepted.Contains(opId))
+            if (!accepted.Contains(opId) && !overwrite.Contains(opId))
             {
                 reportOps.Add(Op(opId, op, null, null, "skipped", "nicht akzeptiert (skip/keine Entscheidung)"));
                 skipped++;
@@ -86,7 +100,7 @@ public static class GithubForwardApply
             }
 
             // S3: idempotenter Kurzschluss VOR jedem Write/Mapping — Re-Run/Resume-twice erzeugt kein Duplikat.
-            if (AlreadyApplied(op))
+            if (AlreadyApplied(op, opId))
             {
                 reportOps.Add(Op(opId, op, mappingByPbi[op.PbiId].IssueNumber, null, "already-applied", "idempotent: PBI bereits im Core gemappt — kein erneuter Write."));
                 alreadyApplied++;
@@ -158,7 +172,22 @@ public static class GithubForwardApply
                         break;
                     }
                     case GithubForwardKind.FlagDrift:
+                    {
+                        // R-60 „bewusst auflösen": NUR der explizite Gate-Entscheid 'overwrite' (nie apply/
+                        // accept-all) schreibt die mitgereiste Core-Projektion und stempelt neu — der einzige
+                        // Konvergenz-Weg, wenn ein Fremd-Edit geerntet+entschieden wurde (Sperre kennt kein REJ).
+                        if (overwrite.Contains(opId) && op.TargetIssueNumber is not null && op.Body is not null)
+                        {
+                            if (!execute) { reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "would-overwrite", null)); updated++; break; }
+                            var ow = await client!.UpdateIssueAsync(repository!, op.TargetIssueNumber.Value, op.Title ?? "", op.Body!, op.Labels, ct).ConfigureAwait(false);
+                            reportOps.Add(Op(opId, op, op.TargetIssueNumber, ow.IssueUrl, "overwritten", "Drift bewusst aufgeloest (Gate-Entscheid overwrite)."));
+                            mappingOps.Add(new GithubMappingOp(op.PbiId, op.TargetIssueNumber.Value, ow.IssueUrl, repository, GithubMappingKind.Link, "UPDATE",
+                                ProjectedTitleHash: GithubProjectionHash.Compute(op.Title ?? ""), ProjectedBodyHash: GithubProjectionHash.Compute(op.Body!)));
+                            updated++;
+                            break;
+                        }
                         reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "flagged", op.Rationale)); flagged++; break;
+                    }
                     case GithubForwardKind.HoldBlocked:
                     case GithubForwardKind.HoldClarify:
                         reportOps.Add(Op(opId, op, op.TargetIssueNumber, null, "held", op.Rationale)); held++; break;

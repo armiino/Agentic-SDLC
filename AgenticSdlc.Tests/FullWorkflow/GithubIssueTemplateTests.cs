@@ -51,15 +51,17 @@ public sealed class GithubIssueTemplateTests
     }
 
     [Fact]
-    public void Byte_Pinning_Render_ist_das_unveraenderte_R23_Format()
+    public void Byte_Pinning_Render_ist_das_Nachzug_Format()
     {
-        // Pinnt das EXAKTE Format des bisherigen GithubIssueBodySections.Build — C2a-1 ist verhaltensneutral;
-        // jede bewusste Format-Änderung MUSS diesen Test anfassen (und damit Render+Parse gemeinsam).
+        // Pinnt das EXAKTE Nachzug-Format (Autor-⚖ 20.08.): Markdown-Köpfe, PFLICHT-Sektionen
+        // (Rahmen erscheint auch LEER — leer = leer, kein Platzhalter), Requirements-Zeile fett.
+        // Jede bewusste Format-Änderung MUSS diesen Test anfassen (und damit Render+Parse gemeinsam).
         var e = Entry() with { Constraints = null, CoveredArchitecture = null };
         var expected =
             "Als Pflegekraft möchte ich Medikamente erfassen,\ndamit der Plan aktuell bleibt.\n\n"
-            + "Akzeptanzkriterien:\n- Eingabemaske vorhanden\n- Pflichtfelder validiert\n\n"
-            + "Abgedeckte Requirements: REQ-01, REQ-52\n\n"
+            + "### Akzeptanzkriterien\n\n> - Eingabemaske vorhanden\n> - Pflichtfelder validiert\n\n"
+            + "### Technische Rahmenbedingungen\n\n> &nbsp;\n\n"
+            + "### Abgedeckte Requirements\n\n> `REQ-01`, `REQ-52`\n\n"
             + "---\nSync-Metadaten: PBI PBI-007 · Status active · Readiness active · Quelle: test";
         Assert.Equal(expected, GithubIssueTemplate.Render(e, "test"));
     }
@@ -69,13 +71,32 @@ public sealed class GithubIssueTemplateTests
     {
         // §8/§12: alles außerhalb der Sektionen = Ernte-Fläche für den Agent-Fallback (C2a-4/C2b).
         var body = GithubIssueTemplate.Render(Entry(), "test")
-            .Replace("Abgedeckte Requirements:", "Bitte auch an Darkmode denken!\n\nAbgedeckte Requirements:");
+            .Replace("### Abgedeckte Requirements", "Bitte auch an Darkmode denken!\n\n### Abgedeckte Requirements");
         var p = GithubIssueTemplate.Parse(body);
 
         Assert.Contains("Bitte auch an Darkmode denken!", p.FreeText);
         Assert.Equal(2, p.AcceptanceCriteria.Count);                     // Sektionen bleiben trotzdem intakt
         Assert.Equal(["REQ-01", "REQ-52"], p.CoveredRequirementIds);
         Assert.Equal("PBI-007", p.PbiId);
+    }
+
+    // Legacy-Lesbarkeit (Ernte-Fund 20.08., Lauf 151033/#45): der Parser versteht Alt-Stil-Bodies
+    // (Vor-Nachzug-Köpfe) weiter — sonst mis-beschreibt die Ernte einen editierten Alt-Body.
+    [Fact]
+    public void Parse_versteht_den_Alt_Stil_der_Vor_Nachzug_Issues()
+    {
+        var alt = "Als Nutzer möchte ich X.\n\nAkzeptanzkriterien:\n- AK 1\n\n"
+                + "Technische Rahmenbedingungen:\n- Offline-Fähigkeit ist Pflicht\n\n"
+                + "Abgedeckte Requirements: REQ-01\n\n"
+                + "---\nSync-Metadaten: PBI PBI-1 · Status active · Readiness - · Quelle: alt";
+        var p = GithubIssueTemplate.Parse(alt);
+
+        Assert.Equal("Als Nutzer möchte ich X.", p.Statement);
+        Assert.Equal(["AK 1"], p.AcceptanceCriteria);
+        Assert.Equal(["Offline-Fähigkeit ist Pflicht"], p.Constraints);
+        Assert.Equal(["REQ-01"], p.CoveredRequirementIds);
+        Assert.Equal("PBI-1", p.PbiId);
+        Assert.Empty(p.FreeText);
     }
 
     [Fact]

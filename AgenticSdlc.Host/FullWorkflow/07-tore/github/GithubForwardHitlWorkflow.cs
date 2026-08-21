@@ -19,7 +19,10 @@ namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 // Request an den Menschen: Plan-Zusammenfassung zur Freigabe (Anzeige). Response: akzeptierte Ops + execute-Flag.
 public sealed record ForwardReviewRequest(string RunId, string SourcePbiUpdateRun, IReadOnlyList<ForwardReviewOpView> Ops);
 public sealed record ForwardReviewOpView(string OpId, string Kind, string PbiId, int? TargetIssueNumber, string? Title, string? Anchor, string Rationale);
-public sealed record ForwardReviewResponse(IReadOnlyList<string> AcceptedOpIds, bool Execute, string Reviewer);
+// R-60: OverwriteOpIds = die am Gate BEWUSST zum Überschreiben freigegebenen FLAG_DRIFT-Ops (leer im Normalfall;
+// accept-all/Policy-Modi setzen sie NIE — nur der explizite Autor-Entscheid 'overwrite').
+public sealed record ForwardReviewResponse(IReadOnlyList<string> AcceptedOpIds, bool Execute, string Reviewer,
+    IReadOnlyList<string>? OverwriteOpIds = null);
 
 // FINALIZE (HITL): schreibt Plan/Gate/Attempts/Summary (Evidenz, wie der klassische Finalize) und verzweigt dann:
 //   Decision==Pass -> ForwardReviewRequest an den Port (Human-Gate).  Sonst -> terminaler "needs manual"-Output.
@@ -99,7 +102,7 @@ internal sealed class GithubForwardApplyExecutor(RunContext run, string repoRoot
         var repo = repository ?? plan.Repository;
 
         run.AppendEvent(new { type = "GITHUB_FWD_APPLY_START", runId = run.RunId, accepted = accepted.Count, execute = resp.Execute, reviewer = resp.Reviewer, timestampUtc = DateTime.UtcNow });
-        var report = await GithubForwardApply.ExecuteAsync(outDir, plan, accepted, resp.Execute, repoRoot, repo, tokenEnv, ct).ConfigureAwait(false);
+        var report = await GithubForwardApply.ExecuteAsync(outDir, plan, accepted, resp.Execute, repoRoot, repo, tokenEnv, ct, resp.OverwriteOpIds).ConfigureAwait(false);
         run.AppendEvent(new { type = "GITHUB_FWD_DONE", runId = run.RunId, applied = true, executed = report.Executed, success = report.Success, accepted = report.Summary.Accepted, linked = report.Summary.Linked, created = report.Summary.Created, timestampUtc = DateTime.UtcNow });
         await context.YieldOutputAsync(report, ct).ConfigureAwait(false);
     }

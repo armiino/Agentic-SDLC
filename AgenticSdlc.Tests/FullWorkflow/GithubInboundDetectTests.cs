@@ -33,8 +33,8 @@ public sealed class GithubInboundDetectTests
     public void F1_manueller_Edit_wird_erkannt_mit_Sektions_Diff_und_Freitext()
     {
         var core = CoreWithMappedPbi(stampedBody: "alter geschriebener Body");
-        var edited = "Als Nutzer möchte ich X.\n\nAkzeptanzkriterien:\n- AK 1\n- AK 2 neu vom Menschen\n\n"
-                   + "Bitte auch Darkmode beachten!\n\nAbgedeckte Requirements: -\n\n---\nSync-Metadaten: PBI PBI-1 · Status active · Readiness active · Quelle: test";
+        var edited = "Als Nutzer möchte ich X.\n\n### Akzeptanzkriterien\n- AK 1\n- AK 2 neu vom Menschen\n\n"
+                   + "Bitte auch Darkmode beachten!\n\n**Abgedeckte Requirements:** -\n\n---\nSync-Metadaten: PBI PBI-1 · Status active · Readiness active · Quelle: test";
 
         var report = GithubInboundDetect.Detect(core, [Issue(12, "Titel", edited)]);
 
@@ -44,6 +44,42 @@ public sealed class GithubInboundDetectTests
         Assert.Contains(find.Details, d => d.Contains("AK NEU im Issue") && d.Contains("AK 2 neu vom Menschen"));
         Assert.Contains(find.Details, d => d.Contains("Freitext") && d.Contains("Darkmode"));
         Assert.NotNull(find.Parsed);                                    // Leit-Testfall a): nichts geht verloren
+    }
+
+    // Blockquote-Stil (Autor-⚖ 20.08. spät): ein Kollegen-Edit INNERHALB des "> "-Blocks wird genauso
+    // präzise erkannt wie früher die nackte Listen-Zeile; das nackte ">" (Leer-Marker) ist NIE ein Fund.
+    [Fact]
+    public void Blockquote_Edit_wird_praezise_erkannt_und_Leer_Marker_ist_kein_Fund()
+    {
+        var core = CoreWithMappedPbi(stampedBody: "alter geschriebener Body");
+        var edited = "Als Nutzer möchte ich X.\n\n### Akzeptanzkriterien\n\n> - AK 1\n> - AK 2 neu vom Menschen\n\n"
+                   + "### Technische Rahmenbedingungen\n\n>\n\n"
+                   + "### Abgedeckte Requirements\n\n> `REQ-01`\n\n"
+                   + "---\nSync-Metadaten: PBI PBI-1 · Status active · Readiness active · Quelle: test";
+
+        var report = GithubInboundDetect.Detect(core, [Issue(12, "Titel", edited)]);
+
+        var find = Assert.Single(report.Finds);
+        Assert.Contains(find.Details, d => d.Contains("AK NEU im Issue") && d.Contains("AK 2 neu vom Menschen"));
+        Assert.DoesNotContain(find.Details, d => d.Contains("Freitext"));       // Leer-Marker/Quotes = kein Rauschen
+        Assert.Equal(["REQ-01"], find.Parsed!.CoveredRequirementIds);
+    }
+
+    // 1g-D / 9k(a)-Rest (19.08., Arch-Parität): ein Edit in der RAHMEN-Sektion wird DETERMINISTISCH benannt
+    // (wie AK-Zeilen) — vorher fiel er in den generischen Agent-Fallback.
+    [Fact]
+    public void Rahmen_Sektions_Edit_wird_praezise_benannt()
+    {
+        var core = CoreWithMappedPbi(stampedBody: "alter geschriebener Body");
+        var edited = "Als Nutzer möchte ich X.\n\n### Akzeptanzkriterien\n- AK 1\n\n"
+                   + "### Technische Rahmenbedingungen\n- Offline-Fähigkeit ist Pflicht\n\n"
+                   + "---\nSync-Metadaten: PBI PBI-1 · Status active · Readiness active · Quelle: test";
+
+        var report = GithubInboundDetect.Detect(core, [Issue(12, "Titel", edited)]);
+
+        var find = Assert.Single(report.Finds);
+        Assert.Contains(find.Details, d => d.Contains("RAHMEN NEU im Issue") && d.Contains("Offline-Fähigkeit")
+                                        && d.Contains("Architektur-Kandidat"));
     }
 
     [Fact]

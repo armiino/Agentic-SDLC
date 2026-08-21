@@ -71,6 +71,12 @@ public static class IngestionApply
                     var history = (t.History ?? []).Append(new ProjectStateItemVersion(
                         t.Version, t.Text, t.Status, t.Origin, t.SourceRunId, t.SourceClaimIds, DateTime.UtcNow,
                         $"REFINE (ingestion {ingestRunId}, via {op.IncomingItemId})")).ToList();
+                    // Z4-Fix (20.08., Abnahme-Fund): auch REFINE merged die Herkunfts-Metadata des Incomings
+                    // (GitHub-Anker, Analyst-Kategorie/Herleitung) — vorher behielt die neue Version NUR die
+                    // Ziel-Metadata und analystKategorie starb still (NFR-Sektion wäre leer geblieben).
+                    var refineMeta = new Dictionary<string, string>(t.Metadata, StringComparer.Ordinal);
+                    GithubOriginMeta.CarryOver(incoming, refineMeta);
+                    AnalystOriginMeta.CarryOver(incoming, refineMeta);
                     byId[t.ItemId] = t with
                     {
                         Text = statement,
@@ -78,6 +84,7 @@ public static class IngestionApply
                         IdentityKey = IdentityKey.From(statement),
                         SourceRunId = ingestRunId,
                         SourceClaimIds = claimIds,
+                        Metadata = refineMeta,
                         History = history
                     };
                     applied.Add(new AppliedOperation(op.IncomingItemId, op.Kind, t.ItemId, "refined"));
@@ -185,6 +192,9 @@ public static class IngestionApply
         var meta = new Dictionary<string, string>(StringComparer.Ordinal) { ["ingestedFrom"] = incomingItemId };
         if (!string.IsNullOrWhiteSpace(incoming.SourceRunId)) meta["ingestedFromRun"] = incoming.SourceRunId!;
         GithubOriginMeta.CarryOver(incoming, meta);
+        // 1g: Analyst-Herkunft (Kategorie/Herleitung/Linse) reist MIT in die Wahrheit — Kategorie strukturiert
+        // das Anforderungsdokument, Herleitung+Linse sind der Beleg (no-op für andere Bahnen).
+        AnalystOriginMeta.CarryOver(incoming, meta);
         return meta;
     }
 

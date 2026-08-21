@@ -109,10 +109,12 @@ public sealed class ArchWirkungTests
         Assert.Equal("ARCH-01 — Firestore ist gesetzt", Assert.Single(entry.Constraints!));
 
         var body = GithubIssueTemplate.Render(entry, "test");
-        Assert.Contains("Technische Rahmenbedingungen:\n- ARCH-01 — Firestore ist gesetzt", body);
-        Assert.Contains("Abgedeckte Requirements: REQ-1", body);          // bestehende Sektionen unverändert
+        Assert.Contains("### Technische Rahmenbedingungen\n\n> - ARCH-01 — Firestore ist gesetzt", body);
+        Assert.Contains("### Abgedeckte Requirements\n\n> `REQ-1`", body);   // bestehende Sektionen unverändert
 
-        Assert.DoesNotContain("Technische Rahmenbedingungen",
+        // Nachzug ③ (20.08.): Rahmen ist PFLICHT-Sektion — ohne Constraints erscheint der Kopf LEER
+        // (leer = leer, Autor-Entscheid), nicht mehr gar nicht.
+        Assert.Contains("### Technische Rahmenbedingungen\n\n> &nbsp;\n",
             GithubIssueTemplate.Render(entry with { Constraints = null }, "test"));
     }
 
@@ -196,8 +198,8 @@ public sealed class ArchWirkungTests
         Assert.Equal("ARCH-10 — Push-Infrastruktur aufbauen", Assert.Single(entry.CoveredArchitecture!));
 
         var body = GithubIssueTemplate.Render(entry, "test");
-        Assert.Contains("Umgesetzte Architektur-Arbeit:\n- ARCH-10", body);
-        Assert.Contains("Abgedeckte Requirements: REQ-1", body);
+        Assert.Contains("### Umgesetzte Architektur-Arbeit\n\n> - ARCH-10", body);
+        Assert.Contains("### Abgedeckte Requirements\n\n> `REQ-1`", body);
     }
 
     [Fact]

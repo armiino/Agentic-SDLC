@@ -68,6 +68,7 @@ AgenticSdlc.Host.FullWorkflow.PbiUpdate.PbiUpdateCommands.Register(commands);
 AgenticSdlc.Host.FullWorkflow.Decision.DecisionCommands.Register(commands);
 AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubCommands.Register(commands);
 AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineCommands.Register(commands);
+AgenticSdlc.Host.FullWorkflow.Analyst.AnalystCommands.Register(commands);   // 1g-B: Core-Analyst (core-analysis run)
 AgenticSdlc.Host.Steward.StewardCommands.Register(commands);   // C1b: die Steward-Schicht (steward [--session] [--once])
 AgenticSdlc.Host.Mcp.GithubMcpProbeRunner.Register(commands);  // C2d ②: MCP-Spike-Probe (LLM-frei, readonly-Wache)
 AgenticSdlc.Host.FullWorkflow.HitlSpike.SpikeCommands.Register(commands);

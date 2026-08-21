@@ -79,11 +79,22 @@ internal sealed class OperationalForwardBridgeExecutor(RunContext run, string pb
         var delta = await HitlShell.LoadAsync<GithubSyncDeltaDocument>(deltaPath).ConfigureAwait(false);
         // R-50: das Skip-Prädikat ist SEMANTISCH (Einträge > 0), nicht „Datei existiert" — der pbi-Apply schreibt
         // auch bei 0 Änderungen eine leere Delta-Datei; vorher lief dann Snapshot-Pull + Leer-Gate für nichts.
+        // R-62 (20.08., Nachprobe K7): AUCH bei 0 PBI-Änderungen können VERMERKE anstehen — ein Lauf mit
+        // REINEN Ablehnungen erzeugte kein Delta, der Forward wurde geskippt und der ✕-Ablehnungs-Vermerk
+        // blieb STUMM (exakt die Lücke, die ② schließt). Der Skip fragt jetzt die Vermerk-Quelle mit.
         if (delta.Entries.Count == 0)
         {
-            run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE_SKIPPED", reason = "leeres sync-delta", timestampUtc = DateTime.UtcNow });
-            Console.WriteLine("[pipeline-full] Forward übersprungen (R-50): leeres github-sync-delta (0 Einträge) — Lauf endet ohne GitHub-Stufe.");
-            await context.SendMessageAsync(new ForwardSkipped("Leeres github-sync-delta (0 Einträge) — Forward übersprungen (R-50).")).ConfigureAwait(false);
+            var vermerke = FullWorkflow.Tore.Github.GithubCommentVermerk.TryDeriveFromRun(run.RunDir, run.RunId);
+            if (vermerke.Count == 0)
+            {
+                run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE_SKIPPED", reason = "leeres sync-delta", timestampUtc = DateTime.UtcNow });
+                Console.WriteLine("[pipeline-full] Forward übersprungen (R-50): leeres github-sync-delta (0 Einträge), keine Vermerke — Lauf endet ohne GitHub-Stufe.");
+                await context.SendMessageAsync(new ForwardSkipped("Leeres github-sync-delta (0 Einträge), keine Vermerke — Forward übersprungen (R-50).")).ConfigureAwait(false);
+                return;
+            }
+            run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE", deltaPbis = 0, vermerke = vermerke.Count, timestampUtc = DateTime.UtcNow });
+            Console.WriteLine($"[pipeline-full] Forward läuft trotz leerem sync-delta (R-62): {vermerke.Count} Vermerk(e) anstehend — Ablehnungen werden nie stumm.");
+            await context.SendMessageAsync(new ForwardPrep(delta, InitialSync: false)).ConfigureAwait(false);
             return;
         }
         run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE", deltaPbis = delta.Entries.Count, timestampUtc = DateTime.UtcNow });

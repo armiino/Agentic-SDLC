@@ -24,6 +24,88 @@ Entry (typisiert: Transkript|LoadBaselineRequest|Delta) → Front (LedgerIntake 
 adr · decision · pbi · github-forward. Zweig-Verdrahtung per `AddTo` aus den Stufen-Workflows (eine
 Kanten-Quelle für CLI UND Graph — keine Kopien).
 
+## Das Schienennetz — Karte, Routen, Referenzen (Autor-Sitzung 21.08.)
+
+**Lesehilfe:** TÜR = Einstieg (Entry-Fach, wo eine Fahrt beginnt) · `*name*` = Human-Gate (RequestPort:
+Zug steht, bis DU entscheidest) · WEICHE = Inhalts-Entscheid im Knoten, materialisiert als Nachrichten-TYP.
+Kein Lauf besucht alle Knoten — die Karte ist der Möglichkeitsraum, die Fahrt eine Route.
+
+```text
+TÜR 1 Transkript
+  |    LedgerIntake -> [Ledger-Kapsel] -> Summary
+  |    -> *adjudication-gate* -> Baselines -> Delta-Bau
+  v
+TÜR 2 Delta ------------------> WEICHE "Branch": Core leer?
+ (GitHub-Runde = Ernte-             |
+  Vorstufe im Runner:               +-- BOOTSTRAP-AST (Core leer)
+  Snapshot -> Destillat             |     CoreBootstrap -> Classify-/ADR-Spiegel
+  -> Drafts, dann Tür 2)            |     -> Cluster  *cluster-review-gate*
+                                    |     -> Backlog  *backlog-review-gate*
+                                    |     -> Seed  ................................ A
+                                    |
+                                    +-- BETRIEBS-AST (Core gefüllt)
+                                          Ingest-Resolver -> Checker
+                                          -> *ingest-gate* -> Apply
+                                          -> Arch-Strip -> *arch-ingest-gate* -> Apply
+                                          -> Classify   -> *arch-classify-gate*
+                                          -> ADR        -> *adr-gate*
+                                          -> DecisionScan -> *decision-gate*
+                                          -> PbiUpdate/Align -> *pbi-gate* ........ A
+
+TÜR 3 Clarify   -> ClarifyEntry (Plan+Validate) -> pbi-Schwanz *pbi-gate* ......... A
+TÜR 4 Reproject -> ReprojectEntry (Sync-Delta AUS dem Core) ....................... A
+
+A = gemeinsamer FORWARD-SCHWANZ:
+    Snapshot (R-16) -> Forward-Seed (+Vermerke) -> *github-forward-gate* -> Apply | Dry-Run
+```
+
+**Routen je Tür (mit Beleg-Läufen):**
+
+| Tür | Wer startet sie (Steward-Seil) | Typische Route | Beleg-Lauf |
+| --- | --- | --- | --- |
+| 1 Transkript | Meeting-Runde | Front → Weiche → Betriebs-Ast → Forward | Meeting-4-E2E `20260818_084712` |
+| 1 (Core leer) | Meeting-Runde | Front → Weiche → Bootstrap-Ast → Forward | B6-Beweisläufe (`state/core-b6-*`) |
+| 2 Delta | `run_pipeline_from_delta` | direkt Weiche → Betriebs-Ast | Analyst-Tor `20260820_095055` |
+| 2 via Ernte | `run_pipeline_from_github` | Ernte-Vorstufe → Weiche → Betriebs-Ast | Kommentar-Runde `20260820_171903`-Serie |
+| 3 Clarify | `run_clarify_via_graph` | nur pbi-Schwanz → Forward | A′-Beweis `131538` |
+| 4 Reproject | `run_reproject` | nur Forward-Schwanz | Stil-V2 `20260820_164939` |
+
+**Wo was ERKLÄRT ist (die Zeiger-Tabelle — bei Fragen ZUERST hier schauen):**
+
+| Thema | Datei |
+| --- | --- |
+| Die 4 Türen + Typ-Routing („genau EIN Fach") | `fullworkflow/PipelineEntryExecutor.cs` (Kopf-Kommentar + Code) |
+| ALLE Kanten (die eine Verdrahtungs-Stelle) | `fullworkflow/PipelineFullWorkflow.cs` → `Assemble` |
+| Start/Pause/Resume/Event-Pumpe/Gate-Responder | `fullworkflow/PipelineFullRunner.cs` + Abschnitt „Lebenslauf" unten |
+| Die Weiche | `fullworkflow`-BranchDetector (Typ-Wahl Bootstrap/Operational) |
+| Die Vier-Schritt-Halte-Figur (Maker→Checker→Halt→Apply) | `../07-tore/README.md` · kanonische Form: `docs/aktiv/done/2026-08-04/reclarify-checker-repair-plan.md` (R-33) |
+| Innenleben je Stufe | `../01-…`–`../09-…/README.md` |
+| Artefakt-Anatomie eines Laufs | `runs/README.md` · Route nachlesen: `runs/fullworkflow/<id>/logs/events.jsonl` |
+| MAF-Einordnung („ist das framework-gewollt?") + Belege | `docs/aktiv/maf-feature-matrix.md` |
+| Kapsel-Endbild (warum flach + eine Kapsel) | `docs/aktiv/aufgefallen.md` §9j · R-38 im E2E-RUNBOOK |
+
+## Lebenslauf eines Laufs — der Faden vom Befehl zum Knoten (Autor-Frage 21.08.)
+
+1. **Befehl:** Steward-Seil (`run_pipeline_from_delta`) und CLI sind HÄUTE über derselben Naht — beide rufen
+   `PipelineFullRunner.RunAsync(["pipeline-full","run","--from-delta",…])` (K13, kein Duplikat).
+2. **Bauzeit (je Lauf neu):** der Runner konstruiert die Executor-GRUPPEN (Front/Bootstrap/Operational/
+   Classify/Adr/Forward — je Gruppe eine Zeile) und übergibt sie an `PipelineFullWorkflow.Assemble`. Dort:
+   `new WorkflowBuilder(front.Entry)` — **der Start-Knoten wird im Builder-KONSTRUKTOR benannt** — dann alle
+   `AddEdge`-Zeilen. Ergebnis: EIN versiegeltes `Workflow`-Objekt. Es gibt keine zweite Verdrahtungs-Stelle.
+3. **Start ≠ Methodenaufruf:** die Runtime legt die EINGANGS-NACHRICHT (`PipelineFullEntry` mit GENAU EINEM
+   gesetzten Feld: Transkript | Delta | Clarify-Batch) in die Mailbox des Start-Executors. Der Entry-
+   Dispatcher sendet je nach Feld EINEN Nachrichten-Typ, und die TYPISIERTEN Kanten routen: Transkript →
+   LedgerIntake · Delta → BranchDetector (dein from-delta-Fall überspringt die Front) · Clarify → ClarifyEntry.
+   „Aufgerufen" wird ein Knoten also immer dadurch, dass eine Nachricht seines Typs bei ihm ankommt.
+4. **Laufzeit:** `InProcessExecution` + `FileSystemJsonCheckpointStore` (Checkpoint je Superstep in
+   `checkpoints/`). Der Runner pumpt den EVENT-Strom: Fehler-Events laut (R-18), `RequestInfoEvent` → der
+   zentrale Gate-Responder (PortId-Dispatch, Politik je Gate). Interactive ohne Entscheid-Datei ⇒
+   `pointer.json` schreiben + Prozess-ENDE — das ist die Pause.
+5. **Resume:** `pipeline-full resume <runId>` baut per DEMSELBEN Assemble den IDENTISCHEN Graph neu,
+   `RestoreCheckpointAsync` lädt den Zustand, die Entscheid-Dateien beantworten den offenen Port. Deshalb
+   sind Port-/Kanten-Namen eingefroren (Checkpoint-Kompatibilität) und Graph-Wiring nur per
+   In-Process-Run-Test beweisbar.
+
 ## Schlüssel-Mechaniken
 
 - **Zentraler Gate-Responder** (PortId-Dispatch): Politik je Gate aus run-config (accept-all | interactive |

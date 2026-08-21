@@ -248,10 +248,15 @@ public sealed class RouteAndUiCapabilityTests
     [Fact]
     public void UiCommandFor_liefert_die_korrekte_Alternative_je_UIonly_Checkpoint()
     {
-        Assert.Contains("arch-classify-review", StewardRunTools.UiCommandFor("arch-classify-gate"));
-        Assert.Contains("adr-review", StewardRunTools.UiCommandFor("adr-gate"));
+        // 1g-C / 9k(c)-Vertragswechsel (19.08.): classify + adr sind jetzt STEWARD-BEDIENBAR (open_gate_ui
+        // ruft die Standalone-UIs und kettet den Resume explizit) — kein Fremd-Terminal-Verweis mehr.
+        Assert.Contains("arch-classify-gate", StewardRunTools.SupportedUiGates);
+        Assert.Contains("adr-gate", StewardRunTools.SupportedUiGates);
+        Assert.Null(StewardRunTools.UiCommandFor("arch-classify-gate"));
+        Assert.Null(StewardRunTools.UiCommandFor("adr-gate"));
+
         Assert.Contains("ledger-adjudicate-ui", StewardRunTools.UiCommandFor("adjudication-gate"));
         Assert.Null(StewardRunTools.UiCommandFor("ingest-gate"));       // hat open_gate_ui, keine Alternative nötig
-        Assert.Equal(4, StewardRunTools.SupportedUiGates.Length);       // die EINE Fähigkeits-Quelle
+        Assert.Equal(6, StewardRunTools.SupportedUiGates.Length);       // die EINE Fähigkeits-Quelle
     }
 }

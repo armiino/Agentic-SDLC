@@ -71,8 +71,9 @@ public sealed class GithubForwardSeedClarifyTests
         Assert.Empty(seed.UnmappedPbis);
         var op = Assert.Single(seed.DeterministicOps);
         Assert.Equal(GithubForwardKind.UpdateIssue, op.Kind); // gemappt -> UPDATE, NICHT geparkt
-        // R-30: UPDATE traegt KEINE Labels (null = "nicht anfassen") — Requirement-IDs stehen im Body.
-        Assert.Null(op.Labels);
+        // Nachzug ④ (20.08., löst R-30 sauber): UPDATE trägt die VOLLE gemergte Label-Liste —
+        // System-Familie aus den Status-Achsen, Fremd-Labels bleiben (hier: keine).
+        Assert.Equal(["pbi", "needs-clarify"], op.Labels);
     }
 
     [Fact]

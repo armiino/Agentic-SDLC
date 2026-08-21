@@ -35,6 +35,47 @@ public sealed class GithubForwardDriftSperreTests
         Assert.Contains("DRIFT-SPERRE", op.Rationale);
         Assert.Contains("ernten", op.Rationale);                       // Weg raus wird am Op benannt
         Assert.DoesNotContain(ops, o => o.Kind == GithubForwardKind.UpdateIssue);
+        // R-60: die Op trägt die Core-Projektion MIT — der Gate-Entscheid 'overwrite' kann sie schreiben.
+        Assert.Contains("overwrite", op.Rationale);
+        Assert.False(string.IsNullOrWhiteSpace(op.Body));
+        Assert.Equal(["pbi"], op.Labels);
+    }
+
+    // R-60 „bewusst auflösen" (20.08.): NUR der explizite overwrite-Entscheid schreibt eine FLAG_DRIFT-Op —
+    // apply/accept-all bleiben harmlos (sonst würde ein Sammel-„alle ausführen" Drifts still überschreiben).
+    [Fact]
+    public async Task FlagDrift_schreibt_NUR_mit_explizitem_overwrite_Entscheid()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "drift-ow-" + Guid.NewGuid().ToString("N")[..8]);
+        Directory.CreateDirectory(dir);
+        try
+        {
+            var flag = new GithubForwardOp(GithubForwardKind.FlagDrift, "PBI-1", 12, "Titel", "Neuer Core-Body",
+                ["pbi"], null, null, "pbi PBI-1 -> gh#12", "DRIFT-SPERRE …", "deterministic");
+            var plan = new GithubForwardPlanDocument(GithubForwardPlanDocument.CurrentSchemaVersion,
+                "p1", DateTime.UnixEpoch, "test", "o/r", [flag]);
+
+            // apply (accept) OHNE overwrite: bleibt Hinweis, kein Write-Versuch.
+            var r1 = await GithubForwardApply.ExecuteAsync(dir, plan, new HashSet<string> { "op-0" },
+                execute: false, repoRoot: dir, repository: "o/r", tokenEnv: null);
+            Assert.Equal("flagged", Assert.Single(r1.Operations).Status);
+
+            // expliziter overwrite-Entscheid: Dry-Run meldet would-overwrite (Write-Absicht + Stempel-Pfad).
+            var r2 = await GithubForwardApply.ExecuteAsync(dir, plan, new HashSet<string>(),
+                execute: false, repoRoot: dir, repository: "o/r", tokenEnv: null, overwriteOpIds: ["op-0"]);
+            Assert.Equal("would-overwrite", Assert.Single(r2.Operations).Status);
+        }
+        finally { Directory.Delete(dir, true); }
+    }
+
+    // R-60-Nachwehe (20.08.): Trailing-Whitespace je Zeile ist informationslos — kein „menschlicher Edit",
+    // keine Sperre. (Der #45-Fall selbst war INHALT — vergessener Sektions-Kopf — und sperrt zu Recht.)
+    [Fact]
+    public void Trailing_Whitespace_je_Zeile_ist_kein_Drift()
+    {
+        var ops = Seed(Mapping(bodyOnGithub: "Body A\nZeile 2"), Issue("Body A  \nZeile 2\t\n\n"));
+
+        Assert.Equal(GithubForwardKind.UpdateIssue, Assert.Single(ops).Kind);   // kein FLAG_DRIFT
     }
 
     [Fact]

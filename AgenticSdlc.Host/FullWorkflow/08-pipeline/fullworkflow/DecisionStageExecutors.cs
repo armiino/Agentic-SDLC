@@ -68,6 +68,7 @@ public static class DecisionStage
             Decision.MeetingQuestionMint.Origin => "Offene Frage — im Meeting gestellt, am Ingest-Gate von dir aufgenommen",
             Decision.MeetingQuestionMint.OriginAuthor => "Offene Frage — von dir diktiert (Autor-Front), am Ingest-Gate aufgenommen",
             Decision.MeetingQuestionMint.OriginGithub => "Offene Frage — aus der GitHub-Ernte, am Ingest-Gate aufgenommen",
+            Decision.MeetingQuestionMint.OriginAnalyst => "Offene Frage — vom Core-Analysten ERSCHLOSSEN (nicht gesagt), am Ingest-Gate von dir aufgenommen",
             _ => dec.Origin,
         };
         var run = dec.SourceRunId is { Length: > 0 } r ? $" · Lauf {r}" : "";

@@ -63,6 +63,9 @@ public static class GithubCommentDistill
         var coreById = core.Items.ToDictionary(i => i.ItemId, StringComparer.Ordinal);
 
         return GithubCommentMeta.NewSince(core, comments, c => c.IssueNumber, c => c.CommentId)
+            // Echo-Schutz: die EIGENEN Vermerk-Kommentare des Systems sind NIE Ernte-Beute — sonst
+            // destilliert der Agent die dort zitierten Wahrheits-Sätze als „neue" Aussagen zurück.
+            .Where(c => !GithubCommentVermerk.IsSystemVermerk(c.Body))
             .GroupBy(c => c.IssueNumber)
             .Where(g => issueByNumber.TryGetValue(g.Key, out var issue) && !IsNic(issue))
             .OrderBy(g => g.Key)

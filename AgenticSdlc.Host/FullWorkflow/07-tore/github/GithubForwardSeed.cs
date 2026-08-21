@@ -91,10 +91,17 @@ public static class GithubForwardSeed
                 // C2a-3 (§7 c2-inbound-plan): DRIFT-SPERRE — ein Mensch hat Titel/Body seit unserem letzten
                 // Write editiert. Der Edit darf NICHT still überschrieben werden: erst ernten (github-inbound)
                 // oder am Gate bewusst auflösen. Konvergenz: nach Ernte→Tor→Apply stempelt der Write neu.
+                // R-60-Fix (20.08.): „bewusst auflösen" ist jetzt GEBAUT — die Op trägt die Core-Projektion
+                // (Title/Body/Labels) mit; NUR der explizite Gate-Entscheid `overwrite` (nie apply/accept-all)
+                // schreibt sie und stempelt neu. Nötig, weil weder Ernte noch Reject die Sperre lösen können
+                // (nur ein Write stempelt) — vorher war ein geernteter+abgelehnter Edit eine Ewig-Sackgasse.
                 deterministic.Add(new GithubForwardOp(
-                    GithubForwardKind.FlagDrift, e.PbiId, mapping.IssueNumber, null, null, null, null, null, anchor,
+                    GithubForwardKind.FlagDrift, e.PbiId, mapping.IssueNumber, e.Title, ProposedBody(e),
+                    GithubIssueLabels.For(e, issue.Labels), null, null, anchor,
                     $"DRIFT-SPERRE: Issue #{mapping.IssueNumber} wurde seit dem letzten eigenen Write MANUELL editiert — "
-                    + "kein Update-Vorschlag, der menschliche Edit ginge verloren. Erst ernten (github-inbound) oder bewusst aufloesen.",
+                    + "kein Update-Vorschlag, der menschliche Edit ginge verloren. Erst ernten (github-inbound) — "
+                    + "oder HIER bewusst aufloesen (Entscheid 'overwrite': schreibt die Core-Projektion und stempelt neu; "
+                    + "nur waehlen, wenn der Edit geerntet/entschieden ist).",
                     "deterministic"));
             }
             else
@@ -118,13 +125,16 @@ public static class GithubForwardSeed
                     continue;
                 }
 
-                // R-30: KEINE Labels am UPDATE — GitHubs PATCH ersetzt die komplette Label-Liste; null heisst
-                // hier ausdruecklich "Labels nicht anfassen" (Requirement-IDs stehen im Body, nicht als Labels).
+                // Projektions-Nachzug ④ (20.08., löst die R-30-Enge sauber): Labels werden am UPDATE
+                // bewusst als VOLLE Liste gesetzt — berechnet aus Status-Achsen + MERGE mit den
+                // Fremd-Labels des Snapshots (GithubIssueLabels). Vorher galt null = "nicht anfassen",
+                // wodurch die Juli-Labels (needs-clarify etc.) für immer einfroren und logen.
                 var unknownNote = drift == GithubDrift.Unknown
                     ? " · Hinweis: noch kein Drift-Stempel (Alt-Issue) — manueller Edit waere aktuell nicht erkennbar; dieser Write stempelt."
                     : "";
                 deterministic.Add(new GithubForwardOp(
-                    GithubForwardKind.UpdateIssue, e.PbiId, mapping.IssueNumber, e.Title, body, null,
+                    GithubForwardKind.UpdateIssue, e.PbiId, mapping.IssueNumber, e.Title, body,
+                    GithubIssueLabels.For(e, issue.Labels),
                     null, null, anchor,
                     "PBI hat sich geaendert — vorgeschlagener Patch/Kommentar (kein Auto-Overwrite)." + unknownNote, "deterministic"));
             }
@@ -135,8 +145,10 @@ public static class GithubForwardSeed
 
     // Vorgeschlagener Issue-Body aus dem Core-Zustand (Beleg, kein freier Text) — C2a-1: geteilte
     // Struktur-Naht GithubIssueTemplate (Render+Parse als Paar, §12 c2-inbound-plan).
+    // ⑥ Sync-Metadaten-Klartext (Autor-Fund 20.08., #45): interne Reibungs-Log-Codes gehören ins
+    // Runbook, nicht in ein nach außen sichtbares Issue.
     private static string ProposedBody(GithubSyncEntry e)
-        => GithubIssueTemplate.Render(e, "Forward-Update aus Core-PBI (deterministisch)");
+        => GithubIssueTemplate.Render(e, "Automatisches Update aus dem Projekt-Backlog");
 }
 
 public sealed record GithubForwardSeedResult(

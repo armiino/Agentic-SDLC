@@ -15,8 +15,8 @@ public static class IngestionCommands
         // Additiv/parallel zum klassischen ingest-requirements / ingest-review / ingest-apply (die bleiben unveraendert).
         map["ingest-requirements-hitl"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Core.IngestionHitlRunner.RunAsync(args, settings, repoRoot);
         // R-11 A1d: dieselbe HITL-Mechanik mit dem Architecture-Profil (geteilte Naht, eigener runs/arch-ingestion-Ordner).
-        map["arch-classify-review"] = (args, _, repoRoot) => AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewRunner.RunAsync(args, repoRoot);
-        map["adr-review"] = (args, _, repoRoot) => AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewRunner.RunAsync(args, repoRoot);
+        map["arch-classify-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.ArchClassify.ArchClassifyReviewRunner.RunAsync(args, settings, repoRoot);
+        map["adr-review"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Adr.AdrReviewRunner.RunAsync(args, settings, repoRoot);
         map["ingest-architecture-hitl"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Core.IngestionHitlRunner.RunAsync(
             args, settings, repoRoot, AgenticSdlc.Host.FullWorkflow.Core.AspectIngestionProfile.Architecture, "ingest-architecture-hitl", "arch-ingestion");
 
@@ -24,5 +24,14 @@ public static class IngestionCommands
 
         // Deterministischer Apply: akzeptierte Operationen in den Core (Upsert-by-Identity) + Delta + affected-view.
         map["ingest-apply"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Core.IngestionApplyRunner.RunAsync(args, repoRoot);
+
+        // 1g-A (19.08.): Anforderungsdokument = Core-Projektion (docs/anforderungen.md) — CLI-Haut über der
+        // geteilten RunAsync-Naht (K13; Steward-Tool nutzt DIESELBE).
+        map["requirements-doc"] = async (args, _, repoRoot) =>
+        {
+            var (path, version, items) = await RequirementsDocumentProjection.RunAsync(repoRoot).ConfigureAwait(false);
+            Console.WriteLine($"[requirements-doc] Version {version} geschrieben ({items} Core-Items): {Path.GetRelativePath(repoRoot, path)}");
+            return 0;
+        };
     }
 }

@@ -1,0 +1,636 @@
+{
+  "projectId": "agentic-sdlc",
+  "schemaVersion": 4,
+  "createdUtc": "2026-08-20T07:52:33.804812Z",
+  "sources": [
+    {
+      "sourceId": "core-analysis:20260820_075153_7878ac",
+      "sourceType": "analyst-finding",
+      "path": "runs/core-analysis/20260820_075153_7878ac",
+      "runId": "20260820_075153_7878ac",
+      "description": "L\u00FCcken-Hypothesen des Core-Analysten (erschlossen aus dem Bestand \u2014 Autor entscheidet an Tor 1)"
+    }
+  ],
+  "items": [
+    {
+      "itemId": "CA-1",
+      "itemType": "architecture",
+      "text": "F\u00FCr die Einrichtungsgrenze aus Rollenmodell, Selbstregistrierung und Profilzugriff muss ein verbindlicher Mandantenrahmen festgelegt werden: Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; die Zuordnung muss serverseitig erzwungen werden, und Einladungscodes f\u00FCr Angeh\u00F6rige m\u00FCssen diese Einrichtungszuordnung bei der Registrierung unver\u00E4nderlich mitgeben.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "arch",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus REQ-09, wonach Mitarbeiter nur Profile ihrer Einrichtung sehen d\u00FCrfen, sowie aus REQ-84 und PBI-002 zur Selbstregistrierung von Angeh\u00F6rigen per Einladungscode. Fachlich ist die Einrichtungsgrenze gesetzt, aber es fehlt der technische Rahmen, wie diese Grenze bei Login, Registrierung und Datenzugriff durchgesetzt wird. Ohne serverseitig erzwungene Mandantentrennung k\u00F6nnten Angeh\u00F6rige oder Mitarbeitende trotz Rollenmodell auf Daten au\u00DFerhalb ihrer Einrichtung zugreifen.",
+        "ankerIds": "REQ-09,REQ-84,PBI-002"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-2",
+      "itemType": "architecture",
+      "text": "F\u00FCr die revisionssichere Protokollierung von Einsichtnahmen muss ein unver\u00E4nderlicher Audit-Log-Rahmen festgelegt werden: Zugriffsereignisse werden serverseitig als append-only protokolliert, nachtr\u00E4gliche \u00C4nderungen oder L\u00F6schungen sind fachlich und technisch ausgeschlossen, und das Leserecht auf diese Protokolle bleibt strikt auf Admins beschr\u00E4nkt.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "arch",
+        "analystKategorie": "nfr:compliance",
+        "herleitung": "Abgeleitet aus REQ-64, das eine revisionssichere Protokollierung jeder Einsichtnahme verlangt, sowie aus REQ-65, das die Einsicht in das Protokoll auf Admins begrenzt. Der Core enth\u00E4lt die Pflicht zum Logging, aber keinen technischen Rahmen, der Revisionssicherheit tats\u00E4chlich herstellt. Ohne unver\u00E4nderliches, serverseitiges Audit-Logging w\u00E4re die Anforderung leicht durch lokale \u00C4nderungen, nachtr\u00E4gliche Manipulation oder unklare Schreibpfade unterlaufen.",
+        "ankerIds": "REQ-64,REQ-65,PBI-034"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-3",
+      "itemType": "architecture",
+      "text": "F\u00FCr Offline-first mit lokalem Cache muss ein einheitlicher Synchronisationsrahmen festgelegt werden, der die inhaltliche Konfliktregel konsistent macht: Entweder gilt ein automatischer Server-Priorit\u00E4tsmechanismus oder eine nutzerseitige Konfliktentscheidung; beide Modelle d\u00FCrfen nicht parallel f\u00FCr dieselben Datenarten verwendet werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "arch",
+        "analystKategorie": "nfr:maintainability",
+        "herleitung": "Abgeleitet aus PBI-024, dessen Akzeptanzkriterien zugleich \u0027Bei Konflikten gewinnt der zuletzt best\u00E4tigte Server-Stand\u0027 und \u0027Lokale \u00C4nderungen werden dem Nutzer zur erneuten Best\u00E4tigung angezeigt\u0027 nennen, sowie aus L3-REQ-004, das ausdr\u00FCcklich verlangt, dass bei Offline-Konflikten nichts stillschweigend \u00FCberschrieben wird und der Nutzer entscheidet. Damit ist die fachliche Richtung vorhanden, aber der technische Rahmen der Konfliktaufl\u00F6sung ist widerspr\u00FCchlich und nicht verbindlich festgelegt. Ohne einheitliches Sync-Modell entstehen inkonsistente Implementierungen je Datenart und hohes Risiko f\u00FCr Datenverlust oder Fehlbedienung.",
+        "ankerIds": "PBI-024,L3-REQ-004,REQ-36"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-4",
+      "itemType": "architecture",
+      "text": "F\u00FCr den datenschutzkonformen Schnellzugriff auf den zuletzt genutzten Kontext muss festgelegt werden, dass lokal gespeicherte Kontextdaten nur gesch\u00FCtzt abgelegt werden d\u00FCrfen, an die erneute Authentifizierung des aktiven Accounts gebunden sind und auf gemeinsam genutzten Ger\u00E4ten nach Inaktivit\u00E4t oder Logout sofort unzug\u00E4nglich werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "arch",
+        "analystKategorie": "nfr:privacy",
+        "herleitung": "Abgeleitet aus PBI-006 zum Schnellzugriff auf zuletzt genutzten Kontext, aus REQ-36 zur lokalen Speicherung beziehungsweise zum Cache sowie aus L3-REQ-009 zur erneuten Authentifizierung auf gemeinsam genutzten Ger\u00E4ten. Es gibt bereits die fachliche Erwartung eines schnellen Wiedereinstiegs, aber kein technischer Rahmen daf\u00FCr, wie der letzte Kontext lokal gesichert und gegen Einsicht durch den n\u00E4chsten Ger\u00E4tenutzer gesch\u00FCtzt wird. Gerade in Einrichtungen mit geteilten Ger\u00E4ten w\u00FCrde ohne diesen Rahmen der Schnellzugriff die Datenschutzabsicht unterlaufen.",
+        "ankerIds": "PBI-006,REQ-36,L3-REQ-009"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-5",
+      "itemType": "architecture",
+      "text": "F\u00FCr Besuchserinnerungen am Vortag um 18 Uhr muss ein serverseitiger Benachrichtigungsrahmen festgelegt werden: Die Erinnerung wird aus dem best\u00E4tigten Besuchsstatus heraus zentral geplant, bei Status\u00E4nderung oder Absage wieder zur\u00FCckgezogen und darf nicht von der lokalen Verf\u00FCgbarkeit oder den Hintergrundrestriktionen des Ger\u00E4ts der Angeh\u00F6rigen abh\u00E4ngen.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "arch",
+        "analystKategorie": "nfr:availability",
+        "herleitung": "Abgeleitet aus REQ-88 zur zeitgenauen Push-Erinnerung, aus REQ-87 zum best\u00E4tigten oder abgelehnten Besuchsstatus und aus ARCH-46, das FCM als Push-Technik festlegt. Fachlich ist klar, dass genau best\u00E4tigte Besuche zu einem festen Zeitpunkt erinnert werden sollen; es fehlt aber der technische Rahmen, wo diese Terminlogik lebt und wie nachtr\u00E4gliche Status\u00E4nderungen ber\u00FCcksichtigt werden. Ohne serverseitige Planung w\u00E4re die Erinnerung bei App-Schlie\u00DFung, Offline-Zustand oder OS-Hintergrundbeschr\u00E4nkungen unzuverl\u00E4ssig und w\u00FCrde der fachlichen Zusage nicht gen\u00FCgen.",
+        "ankerIds": "REQ-88,REQ-87,ARCH-46"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-6",
+      "itemType": "requirement",
+      "text": "Angeh\u00F6rige m\u00FCssen eine bereits angefragte oder best\u00E4tigte Besuchsank\u00FCndigung bis zum Termin absagen oder \u00E4ndern k\u00F6nnen; der Besuchsstatus ist dabei entsprechend zu aktualisieren, und best\u00E4tigte Erinnerungen d\u00FCrfen nach einer Absage nicht mehr versendet werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "funktional",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-82, REQ-87 und REQ-88: Es gibt einen Anlegefluss f\u00FCr Besuche, eine Best\u00E4tigung/Ablehnung durch Pflegende und eine Push-Erinnerung f\u00FCr best\u00E4tigte Besuche. Es fehlt jedoch der fachliche Lebenszyklus nach dem Anlegen: Ohne \u00C4nderungs- oder Absage-Regel bleiben Terminverschiebungen, Absagen und der Umgang mit bereits eingeplanten Erinnerungen unklar.",
+        "ankerIds": "REQ-82,REQ-87,REQ-88"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-7",
+      "itemType": "requirement",
+      "text": "Prominent angezeigte \u00DCbergabe-Notizen m\u00FCssen f\u00FCr die jeweilige Folgeschicht als gelesen oder erledigt markierbar sein, damit dieselbe Notiz nicht unbegrenzt bei jedem \u00D6ffnen der App erneut als aktuelle \u00DCbergabe erscheint.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "funktional",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-61 und REQ-85: Es ist geregelt, dass pro Schicht eine \u00DCbergabe-Notiz prominent angezeigt und nach drei\u00DFig Tagen archiviert wird. Es fehlt jedoch ein Zustands\u00FCbergang zwischen \u201Eneu angezeigt\u201C und \u201Efachlich abgearbeitet\u201C. Ohne eine Gelesen-/Erledigt-Regel bleibt unklar, wann die prominente Anzeige endet.",
+        "ankerIds": "REQ-61,REQ-85"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-8",
+      "itemType": "open_question",
+      "text": "Welche konkreten Schreibrechte soll der Bewohner-Account fachlich erhalten: Darf er nur eigene Bilder im About-Me-Bereich hinzuf\u00FCgen oder auch bestehende eigene Beitr\u00E4ge bearbeiten bzw. entfernen?",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "funktional",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-07 und REQ-21/REQ-22: Der Bewohner-Account soll eingeschr\u00E4nkte Funktionen haben und gegebenenfalls eigene Bilder hinzuf\u00FCgen k\u00F6nnen, w\u00E4hrend der About-Me-Bereich einen Upload-Fluss besitzt. Es bleibt offen, ob daraus nur ein einmaliges Hinzuf\u00FCgen folgt oder ein vollst\u00E4ndiger eigener Beitrags-Lebenszyklus mit Bearbeiten und Entfernen. Das ist eine konkrete Rollen-ohne-Rechte-Story-L\u00FCcke.",
+        "ankerIds": "REQ-07,REQ-21,REQ-22"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-9",
+      "itemType": "requirement",
+      "text": "Lokal auf dem Ger\u00E4t zwischengespeicherte Bewohnerdaten und Medien m\u00FCssen im Ruhezustand verschl\u00FCsselt gespeichert werden; nach Abmeldung oder Entzug der Berechtigung d\u00FCrfen lokal vorhandene Daten dieses Kontexts nicht mehr lesbar sein.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "nfr",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus PBI-024 mit Offline-first, lokalem Cache in SQLite und automatischer Synchronisation sowie aus REQ-64 zur revisionssicheren Protokollierung von Einsichtnahmen. Da in der App besonders sch\u00FCtzensame Bewohnerdaten, Kommunikationshinweise, Fotos und potenziell Medikationsdaten offline auf gemeinsam genutzten Mobilger\u00E4ten vorliegen k\u00F6nnen, fehlt eine konkrete Datenschutz- und Sicherheitsanforderung f\u00FCr die lokale Speicherung selbst.",
+        "ankerIds": "PBI-024,REQ-64,PBI-028"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-10",
+      "itemType": "requirement",
+      "text": "F\u00FCr Zugriffsprotokolle und \u00E4hnliche Nachweise muss eine verbindliche Aufbewahrungs- und L\u00F6schregel festgelegt werden, die Revisionsanforderungen erf\u00FCllt und zugleich eine datenschutzkonforme Begrenzung der Speicherdauer sicherstellt.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "nfr",
+        "analystKategorie": "nfr:compliance",
+        "herleitung": "Abgeleitet aus REQ-64, wonach jede Einsichtnahme revisionssicher protokolliert werden muss, und aus REQ-65, wonach nur Admins diese Protokolle einsehen d\u00FCrfen. Das Projekt regelt bereits Aufbewahrung f\u00FCr \u00DCbergabe-Notizen \u00FCber REQ-85, aber f\u00FCr die deutlich sensibleren Zugriffsprotokolle fehlt eine entsprechende Regelung zur Speicherbegrenzung und Nachweisf\u00FChrung.",
+        "ankerIds": "REQ-64,REQ-65,REQ-85"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-11",
+      "itemType": "requirement",
+      "text": "F\u00FCr zentrale Arbeitsabl\u00E4ufe muss ein minimales Leistungsniveau festgelegt werden, insbesondere f\u00FCr Login, \u00D6ffnen eines Bewohnerprofils, Profilsuche und Anzeige der letzten lokal verf\u00FCgbaren Informationen im Offline-Betrieb; dabei sind messbare Antwortzeitgrenzen auf typischen Einrichtungsger\u00E4ten zu definieren.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "nfr",
+        "analystKategorie": "nfr:performance",
+        "herleitung": "Abgeleitet aus ARCH-06 und REQ-49, wonach bestehende Akten im Alltag schwer nutzbar sind, weil Informationen nicht schnell gefunden werden, sowie aus PBI-024 zum Offline-first-Betrieb und PBI-036 zur Mindestunterst\u00FCtzung ab Android 10. Das Projekt adressiert die schnelle Auffindbarkeit fachlich, es fehlt aber ein messbarer Performance-Rahmen daf\u00FCr, wann die App im Pflegealltag tats\u00E4chlich als schnell genug gilt.",
+        "ankerIds": "ARCH-06,REQ-49,PBI-024,PBI-036"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-12",
+      "itemType": "open_question",
+      "text": "Welche Inhalte m\u00FCssen bei fehlender Netzverbindung zwingend weiterhin verf\u00FCgbar oder erfassbar sein, und welche Funktionen d\u00FCrfen im Offline-Betrieb nur lesend, eingeschr\u00E4nkt oder gar nicht nutzbar sein?",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "nfr",
+        "analystKategorie": "nfr:availability",
+        "herleitung": "Abgeleitet aus PBI-024 mit Offline-first, lokalem Cache und Synchronisationsverhalten sowie aus REQ-61/REQ-62 zu schichtrelevanten \u00DCbergabe-Notizen und aus den bewohnerbezogenen Kernansichten ARCH-19 bis ARCH-25. Zwar ist Offline-first gesetzt, aber es ist nicht festgelegt, welcher fachliche Mindestumfang im Ausfall- oder Funkloch-Szenario tats\u00E4chlich garantiert werden muss. Ohne diese Abgrenzung bleiben Verf\u00FCgbarkeit, UX und Datenrisiken unklar.",
+        "ankerIds": "PBI-024,REQ-61,REQ-62,ARCH-19"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-13",
+      "itemType": "open_question",
+      "text": "Wie wird das Missbrauchsrisiko von Einladungscodes f\u00FCr Angeh\u00F6rige begrenzt, insbesondere hinsichtlich Weitergabe, Mehrfachnutzung, Ablauf, falscher Zuordnung zur Einrichtung und nachtr\u00E4glicher Sperrung bereits damit erzeugter Zug\u00E4nge?",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "risiko",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus REQ-84: Angeh\u00F6rige k\u00F6nnen sich selbst mit einem Einladungscode der Einrichtung registrieren. Zugleich verlangen ARCH-09 und REQ-08 unterschiedliche Rechte f\u00FCr Angeh\u00F6rige, die noch nicht abschlie\u00DFend gekl\u00E4rt sind. Damit ist offen, wie verhindert wird, dass ein Code au\u00DFerhalb des vorgesehenen Personenkreises genutzt oder mehrfach geteilt wird und so unberechtigte Zug\u00E4nge zu Bewohnerbezug und Einrichtungsdaten entstehen.",
+        "ankerIds": "REQ-84,ARCH-09,REQ-08"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-14",
+      "itemType": "open_question",
+      "text": "Was ist der fachliche und technische Fallback, wenn Firebase Cloud Messaging Push-Erinnerungen oder Benachrichtigungen versp\u00E4tet, gar nicht oder in veraltetem Status zustellt, insbesondere bei best\u00E4tigten, verschobenen oder zwischenzeitlich abgelehnten Besuchen?",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_075153_7878ac",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "risiko",
+        "analystKategorie": "process",
+        "herleitung": "Abgeleitet aus REQ-88: Angeh\u00F6rige sollen am Vortag um 18 Uhr per Push an best\u00E4tigte Besuche erinnert werden. ARCH-46 legt Firebase Cloud Messaging als technische Umsetzung fest, w\u00E4hrend REQ-87 Besuchsstatus zwischen angefragt, best\u00E4tigt und abgelehnt kennt. Damit besteht ein Abh\u00E4ngigkeitsrisiko von einem externen Dienst sowie das Risiko fachlich falscher Erinnerungen, wenn sich der Besuchsstatus vor dem Versand oder vor der Zustellung \u00E4ndert und kein alternativer Kommunikations- oder Sichtbarkeitsweg definiert ist.",
+        "ankerIds": "REQ-88,ARCH-46,REQ-87"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    }
+  ],
+  "relations": [],
+  "provenance": [
+    {
+      "itemId": "CA-1",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-1",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "REQ-09,REQ-84,PBI-002"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-2",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-2",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "REQ-64,REQ-65,PBI-034"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-3",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-3",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "PBI-024,L3-REQ-004,REQ-36"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-4",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-4",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "PBI-006,REQ-36,L3-REQ-009"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-5",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-5",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "REQ-88,REQ-87,ARCH-46"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-6",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-6",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "REQ-82,REQ-87,REQ-88"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-7",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-7",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "REQ-61,REQ-85"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-8",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-8",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "REQ-07,REQ-21,REQ-22"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-9",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-9",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "PBI-024,REQ-64,PBI-028"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-10",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-10",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "REQ-64,REQ-65,REQ-85"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-11",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-11",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "ARCH-06,REQ-49,PBI-024,PBI-036"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-12",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-12",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "PBI-024,REQ-61,REQ-62,ARCH-19"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-13",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-13",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "REQ-84,ARCH-09,REQ-08"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-14",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-14",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260820_075153_7878ac",
+          "metadata": {
+            "ankerIds": "REQ-88,ARCH-46,REQ-87"
+          }
+        }
+      ]
+    }
+  ],
+  "proposals": []
+}

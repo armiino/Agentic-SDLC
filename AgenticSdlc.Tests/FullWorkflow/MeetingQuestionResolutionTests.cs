@@ -136,12 +136,24 @@ public sealed class MeetingQuestionResolutionTests
         var meeting = MeetingQuestionMint.NewDecision("DEC-103", ausMeeting.Text, ausMeeting, [], "run-x");
         Assert.Equal(MeetingQuestionMint.Origin, meeting.Origin);                 // Default unverändert
 
+        // 1g (Abnahme-Vorprüfungs-Fund): auch die ERSCHLOSSENE Bahn ist ehrlich — Analyst-Fragen lügen nie „Meeting".
+        var vomAnalyst = Item("CA-1", "open_question", "Risiko: Datenverlust offline — Umgang?", status: "baseline")
+            with { Origin = "CoreAnalyst", SourceRunId = "20260819_000003_ca",
+                   Metadata = new Dictionary<string, string> { ["linse"] = "risiko", ["analystKategorie"] = "process", ["herleitung"] = "aus PBI-024" } };
+        var analyst = MeetingQuestionMint.NewDecision("DEC-104", vomAnalyst.Text, vomAnalyst, [], "run-x");
+        Assert.Equal(MeetingQuestionMint.OriginAnalyst, analyst.Origin);
+        // 20.08.: die ASPEKT-FAERBUNG reist in die DEC (CarryOver) — „gehört die Frage zu arch/risiko?" ist
+        // damit am decision-gate beantwortbar; die Antwort-Bahn in die Wahrheit bleibt das Diktat.
+        Assert.Equal("risiko", analyst.Metadata["linse"]);
+        Assert.Equal("process", analyst.Metadata["analystKategorie"]);
+
         // Parkplatz schlüsselt die neuen Herkünfte auf (Anzeige-Konsument zieht mit):
-        var core = Doc(Item("REQ-1", "requirement", "bestehend"), autor, github, meeting);
+        var core = Doc(Item("REQ-1", "requirement", "bestehend"), autor, github, meeting, analyst);
         var p = CoreParkplatz.Count(core);
         Assert.Equal(1, p.OpenDecisionsByOrigin!["Autor-Frage"]);
         Assert.Equal(1, p.OpenDecisionsByOrigin["GitHub-Frage"]);
         Assert.Equal(1, p.OpenDecisionsByOrigin["Meeting-Frage"]);
+        Assert.Equal(1, p.OpenDecisionsByOrigin["Analyst-Frage"]);
     }
 
     [Fact]

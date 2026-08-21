@@ -26,6 +26,7 @@ public static class CoreParkplatz
         Decision.MeetingQuestionMint.Origin => "Meeting-Frage",
         Decision.MeetingQuestionMint.OriginAuthor => "Autor-Frage",
         Decision.MeetingQuestionMint.OriginGithub => "GitHub-Frage",
+        Decision.MeetingQuestionMint.OriginAnalyst => "Analyst-Frage",
         _ => origin,
     };
 

@@ -62,6 +62,28 @@ public sealed class IngestionApplyProvenanceTests
         Assert.Contains("IN-1", frozen.Note);
     }
 
+    // Z4-Pin (Abnahme-Fund 20.08.): REFINE uebernahm vorher NUR die Ziel-Metadata — analystKategorie des
+    // Incomings starb still am Apply und die NFR-Sektion des Anforderungsdokuments blieb leer.
+    [Fact]
+    public void Refine_merged_die_Analyst_Herkunft_des_Incomings_in_die_neue_Fassung()
+    {
+        var incoming = Incoming("IN-1", "praezisierte Fassung") with
+        {
+            Metadata = new Dictionary<string, string>(StringComparer.Ordinal)
+            {
+                [AnalystOriginMeta.Kategorie] = "nfr:security",
+                [AnalystOriginMeta.Herleitung] = "abgeleitet aus REQ-Bestand",
+                [AnalystOriginMeta.Linse] = "nfr"
+            }
+        };
+        var (updated, _) = Run(Doc(Item("REQ-1", "requirement", "alte Fassung")), Doc(incoming),
+            new StateChangeOperation("IN-1", StateChangeKind.Refine, "praezisierte Fassung", "REQ-1", null, [], "refine"));
+
+        var req = updated.Items.Single(i => i.ItemId == "REQ-1");
+        Assert.Equal("nfr:security", req.Metadata[AnalystOriginMeta.Kategorie]);   // Z4: NFR-Sektion lebt auch nach REFINE
+        Assert.Equal("nfr", req.Metadata[AnalystOriginMeta.Linse]);
+    }
+
     [Fact]
     public void Supersede_neue_REQ_und_Contradict_DEC_tragen_den_Ingest_Lauf()
     {

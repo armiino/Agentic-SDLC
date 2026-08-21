@@ -103,6 +103,22 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             + "Neu-Diktat — damit Forward-Link/Vermerk/Ernte-Gedächtnis intakt bleiben) WOERTLICH als Delta im "
             + "Meeting-Ketten-Vertrag (kein Wahrheits-Write — die Kette prägt erst nach den Gates). "
             + "Gibt deltaPath fuer run_pipeline_from_delta zurueck."),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(RunCoreAnalysisAsync, "run_core_analysis",
+            "1g-B: startet die LUECKEN-ANALYSE des Core-Analysten (4 Linsen: funktional/NFR/arch/risiko ueber "
+            + "den GANZEN aktiven Core; Kosten ~ eine Tor-1-Resolver-Runde). NUR LESEN — Ergebnis sind Report + "
+            + "Delta in runs/core-analysis/<id>/; die Wahrheits-Wirkung entscheidet der Autor DANACH separat "
+            + "(run_pipeline_from_delta mit dem gelieferten deltaPath). Braucht Autor-Zustimmung.")),
+        AIFunctionFactory.Create(CurateAnalysisDelta, "curate_analysis_delta",
+            "1g AUSWAHL (kein Edit!): schreibt aus GEWAEHLTEN Funden eines Analyse-Laufs (indices 1-basiert aus "
+            + "read_analysis_report) ein kuratiertes Teil-Delta (delta-auswahl.json; Statements WOERTLICH, Herkunft "
+            + "CoreAnalyst intakt, Voll-Delta bleibt Beleg). Nicht Gewaehltes ist NICHT abgelehnt — bleibt offen und "
+            + "kommt in der naechsten Analyse als WEITERHIN OFFEN wieder (R-35-Gedaechtnis entsteht NUR am Tor). "
+            + "Text aendern/ergaenzen = Diktat, nie hier. Danach: run_pipeline_from_delta mit dem Auswahl-Pfad (⚿)."),
+        AIFunctionFactory.Create(RenderRequirementsDocAsync, "render_requirements_doc",
+            "1g-A: erstellt das ANFORDERUNGSDOKUMENT als Core-Projektion (docs/anforderungen.md — Funktionale je "
+            + "Feature · NFRs je Qualitaetsmerkmal · Rahmenbedingungen · Offene Entscheidungen; Kopf: Version + "
+            + "Stand + Core-Fingerabdruck). ERSTELLT keinen Inhalt, rendert nur den autorisierten Stand — "
+            + "kein Wahrheits-Write, jederzeit regenerierbar."),
         AIFunctionFactory.Create(SaveSweepAnswers, "save_sweep_answers",
             "C4-Zielschleife Schritt 2: schreibt die vom Autor DIKTIERTEN Klaerungs-Antworten als "
             + "sweep-answers.json (kein Wahrheits-Write; Quelle = author via steward-chat). "
@@ -152,7 +168,26 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         try
         {
             var url = await _postComment(repo, issueNumber, text).ConfigureAwait(false);
-            return JsonSerializer.Serialize(new { posted = true, issueNumber, url }, Json);
+            // R-61-Nachwehe (20.08.): die EIGENE Rückfrage ist Ausgang, kein Eingang — der Anker wird
+            // sofort auf die gepostete Kommentar-Id gestempelt, sonst erntet das System seine eigene
+            // Frage in der nächsten Runde als „neuen" Kandidaten zurück (der #12-Boomerang). Team-
+            // ANTWORTEN (höhere Ids) bleiben normale Ernte-Beute. Kein Anker-Ziel ⇒ laut im Ergebnis.
+            var stamped = false;
+            var idPart = url.Split("issuecomment-").LastOrDefault();
+            if (long.TryParse(idPart, out var commentId) && commentId > 0)
+            {
+                var repoObj = new FullWorkflow.Core.JsonCoreRepository(repoRoot);
+                if (await repoObj.ExistsAsync().ConfigureAwait(false))
+                {
+                    var core = await repoObj.LoadAsync().ConfigureAwait(false);
+                    (core, stamped) = FullWorkflow.Core.GithubCommentMeta.Stamp(core, issueNumber, commentId);
+                    if (stamped) await repoObj.SaveAsync(core).ConfigureAwait(false);
+                }
+            }
+            return JsonSerializer.Serialize(new { posted = true, issueNumber, url,
+                ankerGestempelt = stamped,
+                hint = stamped ? "Eigene Rueckfrage wird NICHT rueckgeerntet; Team-Antworten darunter schon."
+                               : "KEIN Anker-Ziel (Issue ohne Mapping) — die Rueckfrage kann in der naechsten Ernte als Kandidat erscheinen." }, Json);
         }
         catch (Exception ex)
         {
@@ -171,6 +206,66 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     // Forward am externen Rand scheiterte. Delta AUS DEM CORE (truth-first), durch den durablen Graphen, pausiert am
     // forward-gate. Gleiche Start-async-Naht wie die anderen Läufe (runId sofort, Pause/Resume).
     private Task<string> RunReprojectAsync() => StartPipelineAsync(["pipeline-full", "run", "--reproject"], "reproject");
+
+    // 1g-B: Steward-Haut über der geteilten Analyse-Naht (K13 — CLI `core-analysis run` nutzt DIESELBE).
+    // Synchron wie open_gate_ui (das Tool-Ergebnis SAGT das Fertigsein — Selbstbeschreibungs-Prinzip);
+    // die Konsolen-Weiche hält die Roh-Logs des Laufs aus dem Chat.
+    private async Task<string> RunCoreAnalysisAsync()
+    {
+        if (ActiveRun() is { } busy)
+            return JsonSerializer.Serialize(new { error = "STEWARD_BUSY", activeRunId = busy, hint = "get_run_status abwarten" }, Json);
+        var log = new StewardRunConsole.RunLogWriter();
+        try
+        {
+            FullWorkflow.Analyst.AnalystRunner.Ergebnis ergebnis;
+            using (StewardRunConsole.Redirect(log))
+            {
+                ergebnis = await FullWorkflow.Analyst.AnalystRunner.RunCoreAnalysisAsync(settings, repoRoot).ConfigureAwait(false);
+                log.SetTarget(Path.Combine(repoRoot, "runs", "core-analysis", ergebnis.RunId, "logs", "console.log"));
+            }
+            StewardRunConsole.WriteLifecycle($"[steward] ✔ Analyse {ergebnis.RunId} ist FERTIG.");
+            // Klasse-Regel-Fix (Abnahme-Fund 20.08.): das ERGEBNIS reist im Tool-Resultat mit (Selbst-
+            // beschreibung) — vorher nannte es nur Pfade und der Steward konnte seine eigenen Funde nicht vorlegen.
+            return JsonSerializer.Serialize(new
+            {
+                analyseAbgeschlossen = true, ergebnis.RunId, ergebnis.InsDelta,
+                funde = FullWorkflow.Analyst.AnalystRunner.LiesFunde(repoRoot, ergebnis.RunId),
+                report = Path.GetRelativePath(repoRoot, ergebnis.ReportPath),
+                deltaPath = ergebnis.DeltaPath is null ? null : Path.GetRelativePath(repoRoot, ergebnis.DeltaPath),
+                hint = "Lege dem Autor die `funde` WOERTLICH vor (Statement + Herleitung + Kategorie je Fund; auch die "
+                     + "aussortierten MIT Grund nennen — kein stiller Cap). Danach BIETE den Tor-Lauf an "
+                     + "(run_pipeline_from_delta mit deltaPath, eigenes ⚿) — NIE ungefragt starten. "
+                     + "AUSSORTIERTE kann der Autor per Diktat retten (save_author_statements, woertlich). "
+                     + "deltaPath null = keine Funde; das ehrlich sagen.",
+            }, Json);
+        }
+        catch (Exception ex)
+        {
+            var buffered = log.DrainBuffered();
+            if (!string.IsNullOrWhiteSpace(buffered)) Console.WriteLine(buffered.TrimEnd());
+            return JsonSerializer.Serialize(new { error = "ANALYSIS_FAILED", message = ex.Message }, Json);
+        }
+        finally { log.Dispose(); }
+    }
+
+    // 1g AUSWAHL (Autor-⚖ 20.08.): Selektion ist deterministisch (Code wählt per Index) — kein Modell-Edit.
+    private string CurateAnalysisDelta(string runId, IReadOnlyList<int> indices)
+    {
+        var (path, count, fehler) = FullWorkflow.Analyst.AnalystRunner.CurateDelta(repoRoot, runId, indices);
+        return fehler.Count > 0
+            ? JsonSerializer.Serialize(new { error = "CURATE_INVALID", details = fehler }, Json)
+            : JsonSerializer.Serialize(new { curated = true, count, deltaPath = Path.GetRelativePath(repoRoot, path),
+                hint = "Auswahl gespeichert (Rest bleibt OFFEN, nicht abgelehnt). Naechster Schritt: run_pipeline_from_delta(deltaPath) — eigenes ⚿." }, Json);
+    }
+
+    // 1g-A: Steward-Haut über der geteilten Projektion-Naht (K13 — CLI `requirements-doc` nutzt DIESELBE).
+    private async Task<string> RenderRequirementsDocAsync()
+    {
+        var (path, version, items) = await FullWorkflow.Core.RequirementsDocumentProjection.RunAsync(repoRoot).ConfigureAwait(false);
+        return JsonSerializer.Serialize(new { written = true, version, coreItems = items,
+            path = Path.GetRelativePath(repoRoot, path),
+            hint = "Dem Autor Version + Pfad nennen; Inhalt = autorisierter Core-Stand (Projektion)." }, Json);
+    }
 
     private string SaveAuthorStatements(IReadOnlyList<FullWorkflow.Delta.AuthorStatement> statements)
     {
@@ -199,14 +294,15 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         return JsonSerializer.Serialize(new { saved = true, answers = stamped.Count, answersPath = Path.GetRelativePath(repoRoot, path) }, Json);
     }
 
-    /// <summary>1b-Rest (18.08., Block-E-Fund „Fehlangebot"): EINE Fähigkeits-Quelle — angeboten wird nur, was geht.</summary>
-    internal static readonly string[] SupportedUiGates = ["decision-gate", "pbi-gate", "ingest-gate", "arch-ingest-gate"];
+    /// <summary>1b-Rest (18.08., Block-E-Fund „Fehlangebot"): EINE Fähigkeits-Quelle — angeboten wird nur, was geht.
+    /// 1g-C (19.08., 9k(c)-Durchstich): classify + adr sind jetzt steward-bedienbar — kein Fremd-Terminal mehr.</summary>
+    internal static readonly string[] SupportedUiGates =
+        ["decision-gate", "pbi-gate", "ingest-gate", "arch-ingest-gate", "arch-classify-gate", "adr-gate"];
 
-    /// <summary>Für UI-only-Checkpoints ohne open_gate_ui: der korrekte Standalone-Befehl je Gate.</summary>
+    /// <summary>Für UI-only-Checkpoints ohne open_gate_ui: der korrekte Standalone-Befehl je Gate
+    /// (nur noch die Bootstrap-/Adjudikations-UIs — 9k(c) hob classify/adr in die Fähigkeitsliste).</summary>
     internal static string? UiCommandFor(string? gate) => gate switch
     {
-        "arch-classify-gate" => "arch-classify-review <runId>",
-        "adr-gate" => "adr-review <runId>",
         "adjudication-gate" => "ledger-adjudicate-ui runs/fullworkflow/<runId>/01-ledger/queue.json",
         "cluster-review-gate" => "l4-re-clarify-review <dir>",
         "backlog-review-gate" => "l4-re-clarify-backlog-review <dir>",
@@ -219,12 +315,16 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         if (status?.State == FullWorkflow.Pipeline.PipelineRunState.NotPausedNotFinished)
             return JsonSerializer.Serialize(new { error = "RUN_ACTIVE", runId,
                 hint = "Der Lauf arbeitet gerade — gleich erneut get_run_status, dann die UI öffnen." }, Json);
+        // 1g-C-Endform (9k(c)): ALLE sechs UI-Runner ketten den Resume SELBST (Haus-Muster 3b-②/R-43 —
+        // classify/adr nachgezogen, Zwei-Bahnen-Regel) — open_gate_ui ist wieder eine uniforme Haut.
         (string Bahn, Func<Task<int>> Body)? ui = status?.PausedGate switch
         {
             "decision-gate" => ("decision-gate-review", () => FullWorkflow.Decision.DecisionGateReviewRunner.RunForRunAsync(runId, settings, repoRoot)),
             "pbi-gate" => ("pbi-update-review", () => FullWorkflow.PbiUpdate.PbiUpdateReviewRunner.RunForPipelineRunAsync(runId, settings, repoRoot)),
             "ingest-gate" => ("ingest-review", () => FullWorkflow.Core.IngestionReviewRunner.RunForPipelineRunAsync(runId, "07-ingest", settings, repoRoot)),
-            "arch-ingest-gate" => ("ingest-review", (Func<Task<int>>)(() => FullWorkflow.Core.IngestionReviewRunner.RunForPipelineRunAsync(runId, "07-arch-ingest", settings, repoRoot))),
+            "arch-ingest-gate" => ("ingest-review", () => FullWorkflow.Core.IngestionReviewRunner.RunForPipelineRunAsync(runId, "07-arch-ingest", settings, repoRoot)),
+            "arch-classify-gate" => ("arch-classify-review", () => FullWorkflow.ArchClassify.ArchClassifyReviewRunner.RunAsync(["arch-classify-review", runId], settings, repoRoot)),
+            "adr-gate" => ("adr-review", (Func<Task<int>>)(() => FullWorkflow.Adr.AdrReviewRunner.RunAsync(["adr-review", runId], settings, repoRoot))),
             _ => null,
         };
         if (ui is null)

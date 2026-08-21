@@ -35,7 +35,7 @@ public static class GithubInitialSync
             GithubForwardKind.CreateIssue, e.PbiId, null,
             Title: e.Title,
             Body: InitialSyncBody(e),
-            Labels: ["initial-sync"],
+            Labels: GithubIssueLabels.For(e),   // ④: Familie statt Schöpfungs-Vermerk (initial-sync = Altlast)
             SearchedQueries: [e.Title],
             SearchEvidence: searchEvidence ?? "Initial-Sync (deterministisch): frisches Repo / leerer Issue-Snapshot — keine plausiblen Treffer möglich, Duplikatsuche gegenstandslos.",
             Anchor: e.CoveredRequirementIds.Count == 0 ? $"pbi {e.PbiId}" : $"pbi {e.PbiId} <- {string.Join(", ", e.CoveredRequirementIds)}",
@@ -43,6 +43,7 @@ public static class GithubInitialSync
             Origin: "deterministic")).ToList();
 
     // Issue-Body aus dem Core-Zustand (Beleg, kein freier Text) — geteilte Struktur-Naht GithubIssueTemplate.
+    // ⑥ Klartext ohne interne Codes (Autor-Fund 20.08., #45).
     private static string InitialSyncBody(GithubSyncEntry e)
-        => GithubIssueTemplate.Render(e, "Initial-Sync aus Core-PBI (deterministisch, R-15)");
+        => GithubIssueTemplate.Render(e, "Automatisch angelegt aus dem Projekt-Backlog");
 }

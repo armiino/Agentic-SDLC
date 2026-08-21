@@ -359,7 +359,7 @@ public static class GithubForwardReviewAdapter
         GithubForwardKind.Comment => "Schreibt EXTERN: fügt einen Kommentar am Issue hinzu.",
         GithubForwardKind.Link => "Nur im Core: verknüpft das PBI mit einem bestehenden Issue (kein GitHub-Schreiben).",
         GithubForwardKind.NoChange => "Kein Effekt — PBI und Issue sind synchron.",
-        GithubForwardKind.FlagDrift => "Nur Hinweis: Issue und PBI weichen ab — keine Aktion.",
+        GithubForwardKind.FlagDrift => "Hinweis: Issue und PBI weichen ab — Standard keine Aktion; Entscheid 'overwrite' schreibt BEWUSST die Core-Projektion (der manuelle Edit geht verloren — nur nach Ernte/Entscheid).",
         GithubForwardKind.HoldBlocked => "Nur Hinweis: PBI wartet auf eine blockierende Entscheidung — bewusst kein Issue.",
         GithubForwardKind.HoldClarify => "Nur Hinweis: neues/unklares PBI wird geparkt statt automatisch angelegt.",
         _ => "—"
@@ -372,7 +372,9 @@ public static class GithubForwardReviewAdapter
         GithubForwardKind.UpdateIssue => [new("apply", "✓ Issue aktualisieren"), .. SkipOption],
         GithubForwardKind.Comment => [new("apply", "✓ Kommentar schreiben"), .. SkipOption],
         GithubForwardKind.Link => [new("apply", "✓ Verknüpfen (nur Core)"), .. SkipOption],
-        GithubForwardKind.NoChange or GithubForwardKind.FlagDrift
+        GithubForwardKind.FlagDrift
+            => [new("apply", "✓ Als gesehen markieren"), new("overwrite", "⚠ Drift bewusst überschreiben (Core-Projektion schreibt; nur nach Ernte/Entscheid)"), .. SkipOption],
+        GithubForwardKind.NoChange
             or GithubForwardKind.HoldBlocked or GithubForwardKind.HoldClarify
             => [new("apply", "✓ Als gesehen markieren"), .. SkipOption],
         _ => [new("apply", "✓ Ausführen"), .. SkipOption]

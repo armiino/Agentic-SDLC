@@ -3332,11 +3332,11 @@
     {
       "itemId": "REQ-36",
       "itemType": "requirement",
-      "text": "Es muss gekl\u00E4rt werden, ob und wie Cloud-Daten lokal auf dem Ger\u00E4t gespeichert oder gecacht werden sollen. [canon-lokaler-cache-kl\u00E4ren]",
+      "text": "Lokal auf dem Ger\u00E4t zwischengespeicherte Bewohnerdaten und Medien m\u00FCssen im Ruhezustand verschl\u00FCsselt gespeichert werden; nach Abmeldung oder Entzug der Berechtigung d\u00FCrfen lokal vorhandene Daten dieses Kontexts nicht mehr lesbar sein.",
       "origin": "Extracted",
       "stage": "evidence_baseline",
-      "version": 1,
-      "sourceRunId": "20260723_113115_35335a",
+      "version": 2,
+      "sourceRunId": "20260820_095055_5c8547",
       "sourceArtifactId": "REQ",
       "sourceArtifactType": "requirements",
       "sourceDecisionId": null,
@@ -3345,10 +3345,24 @@
       "sourceArtifactItemIds": [],
       "metadata": {
         "artifactVersion": "1",
-        "producerModel": "openai/gpt-5.4"
+        "producerModel": "openai/gpt-5.4",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus PBI-024 mit Offline-first, lokalem Cache in SQLite und automatischer Synchronisation sowie aus REQ-64 zur revisionssicheren Protokollierung von Einsichtnahmen. Da in der App besonders sch\u00FCtzensame Bewohnerdaten, Kommunikationshinweise, Fotos und potenziell Medikationsdaten offline auf gemeinsam genutzten Mobilger\u00E4ten vorliegen k\u00F6nnen, fehlt eine konkrete Datenschutz- und Sicherheitsanforderung f\u00FCr die lokale Speicherung selbst.",
+        "linse": "nfr"
       },
-      "identityKey": "gekl\u00E4rt werden ob und wie cloud daten lokal auf dem ger\u00E4t gespeichert oder gecacht werden sollen canon lokaler cache kl\u00E4ren",
-      "history": [],
+      "identityKey": "lokal auf dem ger\u00E4t zwischengespeicherte bewohnerdaten und medien m\u00FCssen im ruhezustand verschl\u00FCsselt gespeichert werden nach abmeldung oder entzug der berechtigung d\u00FCrfen lokal vorhandene daten dieses kontexts nicht mehr lesbar sein",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Es muss gekl\u00E4rt werden, ob und wie Cloud-Daten lokal auf dem Ger\u00E4t gespeichert oder gecacht werden sollen. [canon-lokaler-cache-kl\u00E4ren]",
+          "status": "baseline",
+          "origin": "Extracted",
+          "sourceRunId": "20260723_113115_35335a",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-20T10:17:53.894206Z",
+          "note": "REFINE (ingestion 20260820_095055_5c8547, via CA-5)"
+        }
+      ],
       "feature": null,
       "pbi": null,
       "validity": "Active",
@@ -4032,11 +4046,11 @@
     {
       "itemId": "PBI-002",
       "itemType": "pbi",
-      "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode erm\u00F6glichen",
+      "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode mit fester Einrichtungszuordnung erm\u00F6glichen",
       "origin": "re-clarify",
       "stage": null,
-      "version": 6,
-      "sourceRunId": "20260818_112553_8203f5",
+      "version": 9,
+      "sourceRunId": "20260820_112233_5d7a52",
       "sourceArtifactId": null,
       "sourceArtifactType": null,
       "sourceDecisionId": null,
@@ -4130,16 +4144,61 @@
           ],
           "recordedUtc": "2026-08-18T11:36:47.295489Z",
           "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 erg\u00E4nzt den bisherigen Scope um eine Ausnahme von der bisherigen Regel \u0022keine Selbstregistrierung\u0022: Angeh\u00F6rige d\u00FCrfen sich mit Einladungscode selbst registrieren. Daher werden Titel, Statement und die Akzeptanzkriterien zur Kontenerstellung entsprechend erweitert; der \u00FCbrige Inhalt des PBIs bleibt unber\u00FChrt."
+        },
+        {
+          "versionId": 6,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode erm\u00F6glichen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T10:48:04.909872Z",
+          "note": "BLOCK_PBI: Open Decision DEC-008 widerspricht REQ-84"
+        },
+        {
+          "versionId": 7,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode erm\u00F6glichen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187353Z",
+          "note": "unblock DEC-008 | status blocked_by_decision-\u003Eneeds_clarify"
+        },
+        {
+          "versionId": 8,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode erm\u00F6glichen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T11:28:15.810655Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 wurde gegen\u00FCber der alten Fassung um die verpflichtende, serverseitig erzwungene Einrichtungszuordnung f\u00FCr Accounts und Bewohnerprofile erg\u00E4nzt. Deshalb werden Titel, Story und Akzeptanzkriterien um diese feste Zuordnung sowie die unver\u00E4nderliche Einrichtungszuordnung aus Einladungscodes erweitert; die bisherige Einschr\u00E4nkung der Selbstregistrierung bleibt inhaltlich bestehen."
         }
       ],
       "feature": null,
       "pbi": {
-        "goal": "Als Admin will ich interne Accounts mit Basisrollen verwalten und Angeh\u00F6rigen die Selbstregistrierung per Einladungscode der Einrichtung erm\u00F6glichen, damit f\u00FCr Admin, User und Bewohner der Zugang weiter nur \u00FCber intern vergebene Accounts erfolgt und Angeh\u00F6rige sich im vorgegebenen Rahmen selbst registrieren k\u00F6nnen.",
-        "title": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode erm\u00F6glichen",
+        "goal": "Als Admin will ich interne Accounts mit Basisrollen verwalten und Angeh\u00F6rigen die Selbstregistrierung per Einladungscode der Einrichtung mit unver\u00E4nderlicher Einrichtungszuordnung erm\u00F6glichen, damit f\u00FCr Admin, User und Bewohner der Zugang weiter nur \u00FCber intern vergebene Accounts erfolgt, Angeh\u00F6rige sich im vorgegebenen Rahmen selbst registrieren k\u00F6nnen und jeder Account sowie jedes Bewohnerprofil genau einer Einrichtung zugeordnet ist.",
+        "title": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode mit fester Einrichtungszuordnung erm\u00F6glichen",
         "acceptanceCriteria": [
-          "Die App bietet keine allgemeine Selbstregistrierung an; neue Zug\u00E4nge f\u00FCr Admin, User und Bewohner k\u00F6nnen nur durch Admins angelegt werden.",
-          "Angeh\u00F6rige k\u00F6nnen sich mit einem Einladungscode der Einrichtung in der App selbst registrieren.",
-          "F\u00FCr alle anderen Rollen bleibt der Zugang ausschlie\u00DFlich \u00FCber intern vergebene Accounts bestehen."
+          "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen.",
+          "Einladungscodes geben die Einrichtungszuordnung bei der Registrierung unver\u00E4nderlich mit.",
+          "Angeh\u00F6rige k\u00F6nnen sich mit einem Einladungscode der Einrichtung in der App selbst registrieren; die dabei mitgegebene Einrichtungszuordnung kann nicht ge\u00E4ndert werden."
         ],
         "linkedRequirementIds": [
           "L3-REQ-009",
@@ -4349,11 +4408,11 @@
     {
       "itemId": "PBI-005",
       "itemType": "pbi",
-      "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode bereitstellen",
+      "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode mit fester Einrichtungszuordnung bereitstellen",
       "origin": "re-clarify",
       "stage": null,
-      "version": 4,
-      "sourceRunId": "20260818_112553_8203f5",
+      "version": 7,
+      "sourceRunId": "20260820_112233_5d7a52",
       "sourceArtifactId": null,
       "sourceArtifactType": null,
       "sourceDecisionId": null,
@@ -4409,16 +4468,54 @@
           ],
           "recordedUtc": "2026-08-18T11:36:47.295835Z",
           "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 macht die bisherige Aussage \u0022keine Selbstregistrierung\u0022 im Login-Kontext teilweise obsolet: Es gibt nun eine gezielte Selbstregistrierung nur f\u00FCr Angeh\u00F6rige mit Einladungscode. Deshalb werden Titel, Statement und die betroffenen Akzeptanzkriterien pr\u00E4zisiert, ohne das bestehende Login- und Fehlerfeedback-Verhalten zu ver\u00E4ndern."
+        },
+        {
+          "versionId": 4,
+          "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-20T10:48:04.909875Z",
+          "note": "BLOCK_PBI: Open Decision DEC-008 widerspricht REQ-84"
+        },
+        {
+          "versionId": 5,
+          "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode bereitstellen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187355Z",
+          "note": "unblock DEC-008 | status blocked_by_decision-\u003Eneeds_clarify"
+        },
+        {
+          "versionId": 6,
+          "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-20T11:28:15.810666Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 pr\u00E4zisiert zus\u00E4tzlich zur bisherigen Regelung der Selbstregistrierung, dass Accounts und Bewohnerprofile genau einer Einrichtung zugeordnet sein m\u00FCssen und dass Einladungscodes diese Zuordnung unver\u00E4nderlich mitgeben. Daher wird der Login-/Registrierungskontext um diese belegten Vorgaben erg\u00E4nzt; unver\u00E4nderte bestehende Regeln m\u00FCssen nicht erneut angepasst werden."
         }
       ],
       "feature": null,
       "pbi": {
-        "goal": "Als Nutzer will ich mich \u00FCber einen klaren Login-Screen mit E-Mail und Passwort anmelden und als Angeh\u00F6riger bei Bedarf mit einem Einladungscode der Einrichtung selbst registrieren k\u00F6nnen, damit ich sicher in die App einsteigen kann und die Selbstregistrierung nur im vorgesehenen Fall m\u00F6glich ist.",
-        "title": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode bereitstellen",
+        "goal": "Als Nutzer will ich mich \u00FCber einen klaren Login-Screen mit E-Mail und Passwort anmelden und als Angeh\u00F6riger bei Bedarf mit einem Einladungscode der Einrichtung selbst registrieren k\u00F6nnen, wobei die Einrichtungszuordnung bei der Registrierung unver\u00E4nderlich mitgegeben wird, damit ich sicher in die App einsteigen kann, die Selbstregistrierung nur im vorgesehenen Fall m\u00F6glich ist und Accounts sowie Bewohnerprofile genau einer Einrichtung zugeordnet sind.",
+        "title": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode mit fester Einrichtungszuordnung bereitstellen",
         "acceptanceCriteria": [
-          "Der Screen enth\u00E4lt keine allgemeine Funktion zur Selbstregistrierung f\u00FCr alle Rollen.",
-          "Angeh\u00F6rige k\u00F6nnen sich mit einem Einladungscode der Einrichtung in der App selbst registrieren.",
-          "F\u00FCr alle anderen Rollen bleibt der Zugang ausschlie\u00DFlich \u00FCber intern vergebene Accounts bestehen."
+          "Angeh\u00F6rige k\u00F6nnen sich mit einem Einladungscode der Einrichtung in der App selbst registrieren; der Einladungscode gibt die Einrichtungszuordnung bei der Registrierung unver\u00E4nderlich mit.",
+          "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen."
         ],
         "linkedRequirementIds": [
           "L3-REQ-011",
@@ -5751,11 +5848,11 @@
     {
       "itemId": "PBI-024",
       "itemType": "pbi",
-      "text": "Offline-first, lokaler Cache und Synchronisationsverhalten festlegen",
+      "text": "Offline-first, lokaler Cache, Verschl\u00FCsselung und Synchronisationsverhalten festlegen",
       "origin": "re-clarify",
       "stage": null,
-      "version": 3,
-      "sourceRunId": "20260810_152712_d31d38",
+      "version": 4,
+      "sourceRunId": "20260820_095055_5c8547",
       "sourceArtifactId": null,
       "sourceArtifactType": null,
       "sourceDecisionId": null,
@@ -5789,19 +5886,26 @@
           "sourceClaimIds": [],
           "recordedUtc": "2026-08-10T16:11:32.371295Z",
           "note": "MARK_CHANGED: Kl\u00E4rungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort ersetzt die zuvor offene Entscheidungsfrage durch konkrete Festlegungen zu Architektur und Verhalten: offline-first, lokaler SQLite-Cache, automatische Synchronisation sowie eine definierte Konfliktregel mit erneuter Nutzerbest\u00E4tigung lokaler \u00C4nderungen. Daher werden alle PBI-Inhalte vollst\u00E4ndig auf die Antwort ausgerichtet."
+        },
+        {
+          "versionId": 3,
+          "text": "Offline-first, lokaler Cache und Synchronisationsverhalten festlegen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260810_152712_d31d38",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-20T10:48:04.909732Z",
+          "note": "MARK_CHANGED: Requirement REQ-36 verfeinert | ALIGN(R-26-C): REQ-36 wurde von einer offenen Kl\u00E4rungsfrage zur lokalen Speicherung zu einer konkreten Vorgabe verfeinert: lokal zwischengespeicherte Bewohnerdaten und Medien m\u00FCssen im Ruhezustand verschl\u00FCsselt sein und nach Abmeldung oder Berechtigungsentzug im jeweiligen Kontext nicht mehr lesbar sein. Daher werden Titel, Statement und Akzeptanzkriterien um diese Sicherheitsanforderungen erg\u00E4nzt; bestehende Aussagen zu Offline-first, SQLite, Synchronisation und Konfliktbehandlung bleiben unver\u00E4ndert erhalten."
         }
       ],
       "feature": null,
       "pbi": {
-        "goal": "Als Product Owner will ich das Offline-first-Verhalten mit lokalem Cache in SQLite sowie die automatische Synchronisation und Konfliktbehandlung festlegen, damit Erfassungen lokal gespeichert, bei bestehender Verbindung automatisch synchronisiert und Konflikte f\u00FCr Nutzer nachvollziehbar behandelt werden.",
-        "title": "Offline-first, lokaler Cache und Synchronisationsverhalten festlegen",
+        "goal": "Als Product Owner will ich das Offline-first-Verhalten mit lokalem Cache in SQLite, die Verschl\u00FCsselung lokal zwischengespeicherter Bewohnerdaten und Medien sowie das automatische Synchronisations- und Konfliktverhalten festlegen, damit Erfassungen lokal gespeichert, im Ruhezustand gesch\u00FCtzt, bei bestehender Verbindung automatisch synchronisiert und nach Abmeldung oder Berechtigungsentzug im jeweiligen Kontext lokal nicht mehr lesbar sind.",
+        "title": "Offline-first, lokaler Cache, Verschl\u00FCsselung und Synchronisationsverhalten festlegen",
         "acceptanceCriteria": [
-          "Die App arbeitet offline-first.",
-          "Es wird ein lokaler Cache in SQLite verwendet.",
-          "Erfassungen werden lokal gespeichert.",
-          "Bei bestehender Verbindung werden Erfassungen automatisch synchronisiert.",
-          "Bei Konflikten gewinnt der zuletzt best\u00E4tigte Server-Stand.",
-          "Lokale \u00C4nderungen werden dem Nutzer zur erneuten Best\u00E4tigung angezeigt."
+          "Lokal auf dem Ger\u00E4t zwischengespeicherte Bewohnerdaten und Medien werden im Ruhezustand verschl\u00FCsselt gespeichert.",
+          "Nach Abmeldung d\u00FCrfen lokal vorhandene Daten des betroffenen Kontexts nicht mehr lesbar sein.",
+          "Nach Entzug der Berechtigung d\u00FCrfen lokal vorhandene Daten des betroffenen Kontexts nicht mehr lesbar sein."
         ],
         "linkedRequirementIds": [
           "L3-REQ-004",
@@ -8807,11 +8911,11 @@
     {
       "itemId": "PBI-047",
       "itemType": "pbi",
-      "text": "\u00DCbersicht der angek\u00FCndigten Besuche f\u00FCr Pflegende bereitstellen",
+      "text": "\u00DCbersicht der angek\u00FCndigten Besuche der n\u00E4chsten 14 Tage f\u00FCr Pflegende mit Kennzeichnung erledigter oder inaktiver Besuche bereitstellen",
       "origin": "re-clarify",
       "stage": null,
-      "version": 1,
-      "sourceRunId": "20260818_084712_765eea",
+      "version": 3,
+      "sourceRunId": "20260820_173141_6e75fa",
       "sourceArtifactId": null,
       "sourceArtifactType": null,
       "sourceDecisionId": null,
@@ -8825,16 +8929,42 @@
         "featureId": "FC-15"
       },
       "identityKey": "ik-FC-15-2",
-      "history": [],
+      "history": [
+        {
+          "versionId": 1,
+          "text": "\u00DCbersicht der angek\u00FCndigten Besuche f\u00FCr Pflegende bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_084712_765eea",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-20T17:24:59.54825Z",
+          "note": "EXTEND_PBI: REQ-89 konkretisiert die bestehende fachliche Aufgabe der \u00DCbersicht angek\u00FCndigter Besuche: Nicht eine neue Funktion, sondern ein zus\u00E4tzlicher Darstellungsumfang derselben \u00DCbersicht wird festgelegt (Anzeige der Besuche der n\u00E4chsten 14 Tage). Das passt inhaltlich direkt zum bestehenden PBI \u0027\u00DCbersicht der angek\u00FCndigten Besuche f\u00FCr Pflegende bereitstellen\u0027 und sollte dessen Akzeptanzkriterien erg\u00E4nzen, statt ein eigenes PBI zu bilden. | ALIGN(R-26-C): Die Anforderung REQ-89 erg\u00E4nzt den bisher allgemeinen Umfang der Besuchs\u00FCbersicht um den konkretisierten Zeitraum von 14 Tagen. Deshalb werden Titel, Statement und Akzeptanzkriterien um diese zeitliche Eingrenzung erweitert, ohne den bestehenden Scope der \u00DCbersicht f\u00FCr Pflegende zu verlieren."
+        },
+        {
+          "versionId": 2,
+          "text": "\u00DCbersicht der angek\u00FCndigten Besuche der n\u00E4chsten 14 Tage f\u00FCr Pflegende bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260820_172043_802e63",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-20T17:34:53.769616Z",
+          "note": "EXTEND_PBI: REQ-90 erg\u00E4nzt die bestehende Besuchs\u00FCbersicht um eine zus\u00E4tzliche Darstellungsregel f\u00FCr bereits erledigte oder nicht mehr aktive angek\u00FCndigte Besuche. Das ist keine eigenst\u00E4ndige fachliche Einheit, sondern geh\u00F6rt unmittelbar zum Zuschnitt des bestehenden \u00DCbersichts-PBIs PBI-047, das die Anzeige angek\u00FCndigter Besuche in der \u00DCbersicht bereits umsetzt. | ALIGN(R-26-C): Die neue Anforderung REQ-90 erg\u00E4nzt das bestehende PBI um eine zus\u00E4tzliche Darstellungsregel: Bereits erledigte oder nicht mehr aktive angek\u00FCndigte Besuche sollen in der \u00DCbersicht visuell gekennzeichnet werden. Der bestehende Scope zur 14-Tage-\u00DCbersicht bleibt erhalten und wird um diese Kennzeichnung erweitert."
+        }
+      ],
       "feature": null,
       "pbi": {
-        "goal": "Als pflegende Person will ich eine \u00DCbersicht der angek\u00FCndigten Besuche sehen k\u00F6nnen, damit ich bevorstehende Besuche einsehen kann.",
-        "title": "\u00DCbersicht der angek\u00FCndigten Besuche f\u00FCr Pflegende bereitstellen",
+        "goal": "Als pflegende Person will ich eine \u00DCbersicht der angek\u00FCndigten Besuche der n\u00E4chsten 14 Tage sehen k\u00F6nnen, damit ich bevorstehende Besuche im relevanten Zeitraum einsehen und bereits erledigte oder nicht mehr aktive angek\u00FCndigte Besuche als solche erkennen kann.",
+        "title": "\u00DCbersicht der angek\u00FCndigten Besuche der n\u00E4chsten 14 Tage f\u00FCr Pflegende mit Kennzeichnung erledigter oder inaktiver Besuche bereitstellen",
         "acceptanceCriteria": [
-          "Pflegende der Einrichtung k\u00F6nnen eine \u00DCbersicht der angek\u00FCndigten Besuche sehen."
+          "Pflegende der Einrichtung k\u00F6nnen eine \u00DCbersicht der angek\u00FCndigten Besuche sehen.",
+          "Die \u00DCbersicht zeigt angek\u00FCndigte Besuche der n\u00E4chsten 14 Tage an.",
+          "Bereits erledigte angek\u00FCndigte Besuche werden in der \u00DCbersicht durchgestrichen und ausgegraut dargestellt.",
+          "Nicht mehr aktive angek\u00FCndigte Besuche werden in der \u00DCbersicht durchgestrichen und ausgegraut dargestellt."
         ],
         "linkedRequirementIds": [
-          "REQ-83"
+          "REQ-83",
+          "REQ-89",
+          "REQ-90"
         ],
         "openDecisionRefs": [],
         "priorityRank": null,
@@ -8893,10 +9023,10 @@
     {
       "itemId": "REQ-84",
       "itemType": "requirement",
-      "text": "Angeh\u00F6rige k\u00F6nnen sich selbst mit einem Einladungscode der Einrichtung in der App registrieren; f\u00FCr alle anderen Rollen bleibt der Zugang ausschlie\u00DFlich \u00FCber intern vergebene Accounts bestehen.",
+      "text": "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen. Einladungscodes geben die Einrichtungszuordnung bei der Registrierung unver\u00E4nderlich mit. Die Selbstregistrierung f\u00FCr Angeh\u00F6rige per Einladungscode bleibt bestehen; f\u00FCr alle anderen Rollen bleibt der Zugang ausschlie\u00DFlich \u00FCber intern vergebene Accounts m\u00F6glich.",
       "origin": "decision-tor2",
       "stage": "evidence_baseline",
-      "version": 1,
+      "version": 2,
       "sourceRunId": "20260818_112553_8203f5",
       "sourceArtifactId": null,
       "sourceArtifactType": null,
@@ -8907,8 +9037,19 @@
       "metadata": {
         "adoptedFromDecision": "DEC-005"
       },
-      "identityKey": "angeh\u00F6rige k\u00F6nnen sich selbst mit einem einladungscode der einrichtung in der app registrieren f\u00FCr alle anderen rollen bleibt der zugang ausschlie\u00DFlich \u00FCber intern vergebene accounts bestehen",
-      "history": [],
+      "identityKey": "jeder account und jedes bewohnerprofil ist genau einer einrichtung zugeordnet diese zuordnung wird serverseitig erzwungen einladungscodes geben die einrichtungszuordnung bei der registrierung unver\u00E4nderlich mit die selbstregistrierung f\u00FCr angeh\u00F6rige per einladungscode bleibt bestehen f\u00FCr alle anderen rollen bleibt der zugang ausschlie\u00DFlich \u00FCber intern vergebene accounts m\u00F6glich",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Angeh\u00F6rige k\u00F6nnen sich selbst mit einem Einladungscode der Einrichtung in der App registrieren; f\u00FCr alle anderen Rollen bleibt der Zugang ausschlie\u00DFlich \u00FCber intern vergebene Accounts bestehen.",
+          "status": "accepted",
+          "origin": "decision-tor2",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-20T11:24:34.187174Z",
+          "note": "REFINE via DEC-008"
+        }
+      ],
       "feature": null,
       "pbi": null,
       "validity": "Active",
@@ -9175,6 +9316,236 @@
       "confirmedBy": "Agent",
       "decision": "Open",
       "status": "open_decision"
+    },
+    {
+      "itemId": "DEC-007",
+      "itemType": "decision",
+      "text": "Wie wird das Missbrauchsrisiko von Einladungscodes f\u00FCr Angeh\u00F6rige begrenzt, insbesondere hinsichtlich Weitergabe, Mehrfachnutzung, Ablauf, falscher Zuordnung zur Einrichtung und nachtr\u00E4glicher Sperrung bereits damit erzeugter Zug\u00E4nge?",
+      "origin": "ANALYST_OPEN_QUESTION",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260820_095055_5c8547",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-6",
+        "ingestedFromRun": "20260820_075153_7878ac",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus REQ-84: Angeh\u00F6rige k\u00F6nnen sich selbst mit einem Einladungscode der Einrichtung registrieren. Zugleich verlangen ARCH-09 und REQ-08 unterschiedliche Rechte f\u00FCr Angeh\u00F6rige, die noch nicht abschlie\u00DFend gekl\u00E4rt sind. Damit ist offen, wie verhindert wird, dass ein Code au\u00DFerhalb des vorgesehenen Personenkreises genutzt oder mehrfach geteilt wird und so unberechtigte Zug\u00E4nge zu Bewohnerbezug und Einrichtungsdaten entstehen.",
+        "linse": "risiko"
+      },
+      "identityKey": "wie wird das missbrauchsrisiko von einladungscodes f\u00FCr angeh\u00F6rige begrenzt insbesondere hinsichtlich weitergabe mehrfachnutzung ablauf falscher zuordnung zur einrichtung und nachtr\u00E4glicher sperrung bereits damit erzeugter zug\u00E4nge",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Open",
+      "status": "open_decision"
+    },
+    {
+      "itemId": "DEC-008",
+      "itemType": "decision",
+      "text": "Widerspruch zu REQ-84: F\u00FCr die Einrichtungsgrenze aus Rollenmodell, Selbstregistrierung und Profilzugriff muss ein verbindlicher Mandantenrahmen festgelegt werden: Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; die Zuordnung muss serverseitig erzwungen werden, und Einladungscodes f\u00FCr Angeh\u00F6rige m\u00FCssen diese Einrichtungszuordnung bei der Registrierung unver\u00E4nderlich mitgeben.",
+      "origin": "INGESTION_CONTRADICTION",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260820_095055_5c8547",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-1"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-1",
+        "ingestedFromRun": "20260820_075153_7878ac",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus REQ-09, wonach Mitarbeiter nur Profile ihrer Einrichtung sehen d\u00FCrfen, sowie aus REQ-84 und PBI-002 zur Selbstregistrierung von Angeh\u00F6rigen per Einladungscode. Fachlich ist die Einrichtungsgrenze gesetzt, aber es fehlt der technische Rahmen, wie diese Grenze bei Login, Registrierung und Datenzugriff durchgesetzt wird. Ohne serverseitig erzwungene Mandantentrennung k\u00F6nnten Angeh\u00F6rige oder Mitarbeitende trotz Rollenmodell auf Daten au\u00DFerhalb ihrer Einrichtung zugreifen.",
+        "linse": "arch",
+        "targetEntityId": "REQ-84",
+        "resolutionOutcome": "REFINE",
+        "resolvedUtc": "2026-08-20T11:24:34.1873230Z"
+      },
+      "identityKey": "f\u00FCr die einrichtungsgrenze aus rollenmodell selbstregistrierung und profilzugriff muss ein verbindlicher mandantenrahmen festgelegt werden jeder account und jedes bewohnerprofil ist genau einer einrichtung zugeordnet die zuordnung muss serverseitig erzwungen werden und einladungscodes f\u00FCr angeh\u00F6rige m\u00FCssen diese einrichtungszuordnung bei der registrierung unver\u00E4nderlich mitgeben",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Widerspruch zu REQ-84: F\u00FCr die Einrichtungsgrenze aus Rollenmodell, Selbstregistrierung und Profilzugriff muss ein verbindlicher Mandantenrahmen festgelegt werden: Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; die Zuordnung muss serverseitig erzwungen werden, und Einladungscodes f\u00FCr Angeh\u00F6rige m\u00FCssen diese Einrichtungszuordnung bei der Registrierung unver\u00E4nderlich mitgeben.",
+          "status": "open_decision",
+          "origin": "INGESTION_CONTRADICTION",
+          "sourceRunId": "20260820_095055_5c8547",
+          "sourceClaimIds": [
+            "CA-1"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187342Z",
+          "note": "resolved=REFINE; war contradicts REQ-84"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Resolved",
+      "status": "resolved"
+    },
+    {
+      "itemId": "ARCH-47",
+      "itemType": "architecture",
+      "text": "F\u00FCr die revisionssichere Protokollierung von Einsichtnahmen muss ein unver\u00E4nderlicher Audit-Log-Rahmen festgelegt werden: Zugriffsereignisse werden serverseitig als append-only protokolliert, nachtr\u00E4gliche \u00C4nderungen oder L\u00F6schungen sind fachlich und technisch ausgeschlossen, und das Leserecht auf diese Protokolle bleibt strikt auf Admins beschr\u00E4nkt.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_095055_5c8547",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-2"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-2",
+        "ingestedFromRun": "20260820_075153_7878ac",
+        "analystKategorie": "nfr:compliance",
+        "herleitung": "Abgeleitet aus REQ-64, das eine revisionssichere Protokollierung jeder Einsichtnahme verlangt, sowie aus REQ-65, das die Einsicht in das Protokoll auf Admins begrenzt. Der Core enth\u00E4lt die Pflicht zum Logging, aber keinen technischen Rahmen, der Revisionssicherheit tats\u00E4chlich herstellt. Ohne unver\u00E4nderliches, serverseitiges Audit-Logging w\u00E4re die Anforderung leicht durch lokale \u00C4nderungen, nachtr\u00E4gliche Manipulation oder unklare Schreibpfade unterlaufen.",
+        "linse": "arch"
+      },
+      "identityKey": "f\u00FCr die revisionssichere protokollierung von einsichtnahmen muss ein unver\u00E4nderlicher audit log rahmen festgelegt werden zugriffsereignisse werden serverseitig als append only protokolliert nachtr\u00E4gliche \u00E4nderungen oder l\u00F6schungen sind fachlich und technisch ausgeschlossen und das leserecht auf diese protokolle bleibt strikt auf admins beschr\u00E4nkt",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "architecture": {
+        "roles": [
+          "constraint",
+          "design"
+        ],
+        "rationale": "Der Item legt einen konkreten unver\u00E4nderlichen Audit-Log-Rahmen fest und ist damit eine dokumentierbare Architekturentscheidung. Gleichzeitig schr\u00E4nkt er die Umsetzung der revisionssicheren Protokollierung fachlich und technisch direkt ein, insbesondere hinsichtlich serverseitigem Append-only-Logging, \u00C4nderungs-/L\u00F6schverbot und strikt begrenztem Leserecht f\u00FCr Protokolle; betroffen ist daher das PBI zur revisionssicheren Einsichtnahme-Protokollierung.",
+        "adrId": "ADR-0002",
+        "adrStatus": "accepted"
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    },
+    {
+      "itemId": "ARCH-48",
+      "itemType": "architecture",
+      "text": "F\u00FCr Besuchserinnerungen am Vortag um 18 Uhr muss ein serverseitiger Benachrichtigungsrahmen festgelegt werden: Die Erinnerung wird aus dem best\u00E4tigten Besuchsstatus heraus zentral geplant, bei Status\u00E4nderung oder Absage wieder zur\u00FCckgezogen und darf nicht von der lokalen Verf\u00FCgbarkeit oder den Hintergrundrestriktionen des Ger\u00E4ts der Angeh\u00F6rigen abh\u00E4ngen.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260820_095055_5c8547",
+      "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-4"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-4",
+        "ingestedFromRun": "20260820_075153_7878ac",
+        "analystKategorie": "nfr:availability",
+        "herleitung": "Abgeleitet aus REQ-88 zur zeitgenauen Push-Erinnerung, aus REQ-87 zum best\u00E4tigten oder abgelehnten Besuchsstatus und aus ARCH-46, das FCM als Push-Technik festlegt. Fachlich ist klar, dass genau best\u00E4tigte Besuche zu einem festen Zeitpunkt erinnert werden sollen; es fehlt aber der technische Rahmen, wo diese Terminlogik lebt und wie nachtr\u00E4gliche Status\u00E4nderungen ber\u00FCcksichtigt werden. Ohne serverseitige Planung w\u00E4re die Erinnerung bei App-Schlie\u00DFung, Offline-Zustand oder OS-Hintergrundbeschr\u00E4nkungen unzuverl\u00E4ssig und w\u00FCrde der fachlichen Zusage nicht gen\u00FCgen.",
+        "linse": "arch"
+      },
+      "identityKey": "f\u00FCr besuchserinnerungen am vortag um 18 uhr muss ein serverseitiger benachrichtigungsrahmen festgelegt werden die erinnerung wird aus dem best\u00E4tigten besuchsstatus heraus zentral geplant bei status\u00E4nderung oder absage wieder zur\u00FCckgezogen und darf nicht von der lokalen verf\u00FCgbarkeit oder den hintergrundrestriktionen des ger\u00E4ts der angeh\u00F6rigen abh\u00E4ngen",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "architecture": {
+        "roles": [
+          "constraint",
+          "design"
+        ],
+        "rationale": "Der Item legt den serverseitigen Benachrichtigungsrahmen f\u00FCr Besuchserinnerungen fest und ist damit eine Architekturentscheidung. Zugleich schr\u00E4nkt er die Umsetzung der Besuchserinnerung direkt ein, weil Planung zentral aus best\u00E4tigtem Status erfolgen, bei \u00C4nderungen zur\u00FCckgezogen werden und die Zustellung nicht von lokaler Ger\u00E4teverf\u00FCgbarkeit oder Hintergrundrestriktionen abh\u00E4ngen darf; fachlich betroffen ist damit das PBI zur Push-Erinnerung an best\u00E4tigte Besuche.",
+        "adrId": "ADR-0003",
+        "adrStatus": "accepted"
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    },
+    {
+      "itemId": "REQ-89",
+      "itemType": "requirement",
+      "text": "Die \u00DCbersicht der angek\u00FCndigten Besuche soll die Besuche der n\u00E4chsten 14 Tage anzeigen.",
+      "origin": "GithubInbound",
+      "stage": "github_inbound",
+      "version": 1,
+      "sourceRunId": "20260820_172043_802e63",
+      "sourceArtifactId": "github-issue:45",
+      "sourceArtifactType": "github-issue",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "GH-45"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "GH-45",
+        "ingestedFromRun": "20260820_172043_802e63",
+        "githubIssueNumber": "45",
+        "githubIssueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/45",
+        "harvestedTitleHash": "313589f447de688e",
+        "harvestedBodyHash": "3d6d35ba6bc11f82",
+        "featureKey": "visit-planning-announcement"
+      },
+      "identityKey": "die \u00FCbersicht der angek\u00FCndigten besuche soll die besuche der n\u00E4chsten 14 tage anzeigen",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    },
+    {
+      "itemId": "REQ-90",
+      "itemType": "requirement",
+      "text": "Bereits erledigte oder nicht mehr aktive angek\u00FCndigte Besuche sollen in der \u00DCbersicht durchgestrichen und ausgegraut dargestellt werden.",
+      "origin": "GithubInbound",
+      "stage": "github_inbound",
+      "version": 1,
+      "sourceRunId": "20260820_173141_6e75fa",
+      "sourceArtifactId": "github-issue:45",
+      "sourceArtifactType": "github-issue",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "GH-45"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "GH-45",
+        "ingestedFromRun": "20260820_173141_6e75fa",
+        "githubIssueNumber": "45",
+        "githubIssueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/45",
+        "harvestedTitleHash": "0a82ebc79c3d9da4",
+        "harvestedBodyHash": "e58b3f6d87961db7",
+        "featureKey": "visit-planning-announcement"
+      },
+      "identityKey": "bereits erledigte oder nicht mehr aktive angek\u00FCndigte besuche sollen in der \u00FCbersicht durchgestrichen und ausgegraut dargestellt werden",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
     }
   ],
   "relations": [
@@ -11756,13 +12127,13 @@
         "issueNumber": "1",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/1",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "52ff25558637cc27",
-        "projectedBodyHash": "8ba2ee65ab0f929e",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "ec519be05a36829e",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -11774,13 +12145,13 @@
         "issueNumber": "2",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/2",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
-        "projectedTitleHash": "c286f169c24b0ef3",
-        "projectedBodyHash": "700c09a0e54ff669",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedTitleHash": "d3c850fd005208bb",
+        "projectedBodyHash": "1d213a0247393aeb",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -11792,13 +12163,13 @@
         "issueNumber": "3",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/3",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "3e1d0097c263dc8f",
-        "projectedBodyHash": "8085219f74730d21",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "542b5e2dc333f810",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -11810,13 +12181,13 @@
         "issueNumber": "4",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/4",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "c11ab3b394d363c7",
-        "projectedBodyHash": "eab3fbcfe4e0a319",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "34577ec4f505193c",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -11828,13 +12199,13 @@
         "issueNumber": "5",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/5",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
-        "projectedTitleHash": "4815ac0322ead809",
-        "projectedBodyHash": "5cebc97aac8c5530",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedTitleHash": "52a29161b5630643",
+        "projectedBodyHash": "5496bde73cbdbdb9",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -11846,13 +12217,13 @@
         "issueNumber": "6",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/6",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "759d45139973b003",
-        "projectedBodyHash": "5f89d46f03715704",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "d3e2b889760b793e",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -11864,13 +12235,13 @@
         "issueNumber": "7",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/7",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "a9b18f6d81abced6",
-        "projectedBodyHash": "fca337af7572cf6c",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z",
+        "projectedBodyHash": "3b8bee7fa7954ae4",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z",
         "lastProcessedCommentId": "5314137992"
       }
     },
@@ -11883,13 +12254,13 @@
         "issueNumber": "8",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/8",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "38555ffcdef6057e",
-        "projectedBodyHash": "56d7f83e33a6af16",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "8af22417fd5a856f",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -11901,13 +12272,13 @@
         "issueNumber": "9",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/9",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "a09bf7f5c3c03dfe",
-        "projectedBodyHash": "2ea38bb1e1350ab9",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "706dacd1619b7999",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -11919,13 +12290,13 @@
         "issueNumber": "10",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/10",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "bd9329765be12aec",
-        "projectedBodyHash": "7153f409b084a9eb",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "d63fa55466286c54",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -11937,13 +12308,13 @@
         "issueNumber": "11",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-17T10:19:36.0694120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/11",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "e7abb8ffa3a7f368",
-        "projectedBodyHash": "c0741d7b19c1929c",
-        "projectedUtc": "2026-08-17T10:19:36.0694120Z"
+        "projectedBodyHash": "01c0ba8f5e4ada2e",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -11955,13 +12326,13 @@
         "issueNumber": "12",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/12",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "04648d2ae66ffa24",
-        "projectedBodyHash": "1af1a83e18992afa",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z",
+        "projectedBodyHash": "41d143ab28bad3ce",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z",
         "lastProcessedCommentId": "5313971856"
       }
     },
@@ -11974,13 +12345,13 @@
         "issueNumber": "13",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/13",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "d0ccfee6fc9224e7",
-        "projectedBodyHash": "8e017419237e9386",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "c299bc02336ec304",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -11992,13 +12363,13 @@
         "issueNumber": "14",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/14",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "2f77e4ae4ac783d5",
-        "projectedBodyHash": "4a1f652015b450e7",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "4aa9e0ac87c4a285",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12010,13 +12381,13 @@
         "issueNumber": "15",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/15",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "1e2b9d3c125f4fe9",
-        "projectedBodyHash": "596b3a9bd5336db0",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "aba99cda31f6aeb8",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12028,13 +12399,13 @@
         "issueNumber": "16",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/16",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "f7bea1921232424d",
-        "projectedBodyHash": "5ab37c1b4d336bf4",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "b458de0adcfbb1b9",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12046,13 +12417,13 @@
         "issueNumber": "17",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/17",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "1edcf6b966977389",
-        "projectedBodyHash": "aaf82f200b2a0190",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "ddda8ad5efe6fdd8",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12064,13 +12435,13 @@
         "issueNumber": "18",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/18",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "6828145fd413d12e",
-        "projectedBodyHash": "d3bbba0868bca74d",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "61121851a1352c9c",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12082,13 +12453,13 @@
         "issueNumber": "19",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/19",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "746d20364f069172",
-        "projectedBodyHash": "55013e8609ef36b5",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "da751d9bf6674841",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12100,13 +12471,13 @@
         "issueNumber": "20",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/20",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "6d159fb26aad92c1",
-        "projectedBodyHash": "78991ab801319ee1",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "d1c05edd2a62d8cf",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12118,13 +12489,13 @@
         "issueNumber": "21",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/21",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "08f390fdc2dfbf6d",
-        "projectedBodyHash": "811cc3a3eb55c863",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "eee5b609af38e63b",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12136,13 +12507,13 @@
         "issueNumber": "22",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/22",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "97f9e2c9e1b48364",
-        "projectedBodyHash": "00b6990d3be86821",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "57e7ab9320062a1b",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12154,13 +12525,13 @@
         "issueNumber": "23",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/23",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "1353445925a3a90d",
-        "projectedBodyHash": "3ab9cb0ba48bc4ec",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "d7241b61ba9020a1",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12172,13 +12543,13 @@
         "issueNumber": "24",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/24",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
-        "projectedTitleHash": "244df924bc180691",
-        "projectedBodyHash": "9f128b00a1e1bf7b",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedTitleHash": "21c07b8ebbd2c73f",
+        "projectedBodyHash": "041410e30fc53a71",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12190,13 +12561,13 @@
         "issueNumber": "25",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/25",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "95ca572a7b730780",
-        "projectedBodyHash": "02776b22b7226ec7",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "3f52fb2b29d90b09",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12208,13 +12579,13 @@
         "issueNumber": "26",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/26",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "0c7279e62ca2d104",
-        "projectedBodyHash": "0c9ae06cd4452693",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "3b6a62d6bda0ca3d",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12226,13 +12597,13 @@
         "issueNumber": "27",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/27",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "3ee7d8315c5c2fc9",
-        "projectedBodyHash": "291ee78bca5ae885",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "9c1f278800c0b35f",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12244,13 +12615,13 @@
         "issueNumber": "28",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-18T10:38:26.5530360Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/28",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
-        "projectedTitleHash": "d0adc6896cbf4c1b",
-        "projectedBodyHash": "4d2a5eafef1e3f51",
-        "projectedUtc": "2026-08-18T10:38:26.5530360Z"
+        "projectedTitleHash": "988887d12789e0d2",
+        "projectedBodyHash": "d151f29ef6946c7f",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12262,13 +12633,13 @@
         "issueNumber": "29",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/29",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "c1345f67603b1178",
-        "projectedBodyHash": "16750a77645a4f8c",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "8d30692b4c394c36",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12280,13 +12651,13 @@
         "issueNumber": "30",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/30",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "dc2e916cd917f66b",
-        "projectedBodyHash": "7d5d87e049c9db92",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "aee4698a23733194",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
       }
     },
     {
@@ -12298,13 +12669,13 @@
         "issueNumber": "31",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/31",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "8dd869ec4c8835f5",
-        "projectedBodyHash": "b1a7e82b6bbfef82",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "e3dafa1c441c4123",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12316,13 +12687,13 @@
         "issueNumber": "32",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/32",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "f4e09cedab8427d3",
-        "projectedBodyHash": "1ad087ba3d510b67",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "ebc73dacf2539f65",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12334,13 +12705,13 @@
         "issueNumber": "33",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/33",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
-        "projectedTitleHash": "596f5455e21c0c86",
-        "projectedBodyHash": "5843ae9ad25401c4",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedTitleHash": "585e438d8ddfa62c",
+        "projectedBodyHash": "9a10aba18443a672",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12352,13 +12723,13 @@
         "issueNumber": "34",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/34",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "fbde1085a592b4ce",
-        "projectedBodyHash": "000e862371762baa",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z",
+        "projectedBodyHash": "fa4f783407a90df6",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z",
         "lastProcessedCommentId": "5239868899"
       }
     },
@@ -12371,13 +12742,13 @@
         "issueNumber": "35",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/35",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "a56a36f7defe5f16",
-        "projectedBodyHash": "3f3e6fdc1c0e7fe4",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "206991686a2619d2",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12389,13 +12760,13 @@
         "issueNumber": "36",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/36",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "21d3bf1ffcd9de03",
-        "projectedBodyHash": "ed3b0f51e542336c",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "9f12d85bd6dee68e",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12407,13 +12778,13 @@
         "issueNumber": "37",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/37",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "74cd55a68fa814ca",
-        "projectedBodyHash": "c0e9aa0781bc6577",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "f7f56cb302f32526",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12425,13 +12796,13 @@
         "issueNumber": "38",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/38",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "77223f94fbe666a4",
-        "projectedBodyHash": "a7ed7c5d087a2d2f",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "ac9a508d00edd4c4",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12443,13 +12814,13 @@
         "issueNumber": "39",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/39",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "11769a580a129621",
-        "projectedBodyHash": "6d05dd9c2bb55c1c",
-        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+        "projectedBodyHash": "1008a44a20016de0",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -12620,13 +12991,13 @@
         "issueNumber": "40",
         "operationalStatus": "open",
         "linkedUtc": "2026-08-17T10:19:36.0694120Z",
-        "updatedUtc": "2026-08-18T10:38:26.5530360Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/40",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "346810af70ab63c3",
-        "projectedBodyHash": "d84e268042ee8227",
-        "projectedUtc": "2026-08-18T10:38:26.5530360Z"
+        "projectedBodyHash": "46e668b263decff4",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -13066,13 +13437,13 @@
         "issueNumber": "43",
         "operationalStatus": "open",
         "linkedUtc": "2026-08-18T10:38:26.5530360Z",
-        "updatedUtc": "2026-08-18T10:38:26.5530360Z",
+        "updatedUtc": "2026-08-20T19:04:58.9442800Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/43",
         "repository": "armiino/Agentic-GitHub-refactor",
-        "origin": "CREATE",
+        "origin": "UPDATE",
         "projectedTitleHash": "4b4cc74b2310d1ba",
-        "projectedBodyHash": "8277ab041f535181",
-        "projectedUtc": "2026-08-18T10:38:26.5530360Z"
+        "projectedBodyHash": "6ec1ad391867f26d",
+        "projectedUtc": "2026-08-20T19:04:58.9442800Z"
       }
     },
     {
@@ -13084,13 +13455,13 @@
         "issueNumber": "44",
         "operationalStatus": "open",
         "linkedUtc": "2026-08-18T10:38:26.5530360Z",
-        "updatedUtc": "2026-08-18T10:38:26.5530360Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/44",
         "repository": "armiino/Agentic-GitHub-refactor",
-        "origin": "CREATE",
+        "origin": "UPDATE",
         "projectedTitleHash": "1883387dd3959772",
-        "projectedBodyHash": "a529d3a4af7e1240",
-        "projectedUtc": "2026-08-18T10:38:26.5530360Z"
+        "projectedBodyHash": "66ea051d5b56e358",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
       }
     },
     {
@@ -13102,13 +13473,14 @@
         "issueNumber": "45",
         "operationalStatus": "open",
         "linkedUtc": "2026-08-18T10:38:26.5530360Z",
-        "updatedUtc": "2026-08-18T10:38:26.5530360Z",
+        "updatedUtc": "2026-08-20T17:35:59.8521950Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/45",
         "repository": "armiino/Agentic-GitHub-refactor",
-        "origin": "CREATE",
-        "projectedTitleHash": "313589f447de688e",
-        "projectedBodyHash": "e83d70f04b5ba47b",
-        "projectedUtc": "2026-08-18T10:38:26.5530360Z"
+        "origin": "UPDATE",
+        "projectedTitleHash": "b46e6859e6fe150e",
+        "projectedBodyHash": "39c47e56bf25f892",
+        "projectedUtc": "2026-08-20T17:35:59.8521950Z",
+        "lastProcessedCommentId": "5359441166"
       }
     },
     {
@@ -13204,6 +13576,59 @@
     },
     {
       "fromId": "REQ-88",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "DEC-008",
+      "toId": "REQ-84",
+      "relationType": "contradicts_resolved",
+      "source": "ingestion",
+      "metadata": {
+        "resolutionOutcome": "REFINE",
+        "resolvedUtc": "2026-08-20T11:24:34.1872410Z",
+        "decisionId": "DEC-008"
+      }
+    },
+    {
+      "fromId": "PBI-034",
+      "toId": "ARCH-47",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-049",
+      "toId": "ARCH-48",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-047",
+      "toId": "REQ-89",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-89",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-047",
+      "toId": "REQ-90",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-90",
       "toId": "FC-15",
       "relationType": "part_of_feature",
       "source": "pbi-update",
@@ -17397,6 +17822,188 @@
         "incomingItemId": "AF-2",
         "date": "2026-08-19",
         "targetEntityId": "REQ-88"
+      }
+    },
+    {
+      "proposalId": "REJ-011",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_101824",
+      "payloadPath": "runs/fullworkflow/20260820_095055_5c8547/07-arch-ingest/plan.json",
+      "metadata": {
+        "statement": "F\u00FCr Offline-first mit lokalem Cache muss ein einheitlicher Synchronisationsrahmen festgelegt werden, der die inhaltliche Konfliktregel konsistent macht: Entweder gilt ein automatischer Server-Priorit\u00E4tsmechanismus oder eine nutzerseitige Konfliktentscheidung; beide Modelle d\u00FCrfen nicht parallel f\u00FCr dieselben Datenarten verwendet werden.",
+        "reason": "leere Festlegung ohne Inhalt \u2014 geh\u00F6rt als konkrete Frage gekl\u00E4rt, nicht als Widerspruch \u00FCbernommen",
+        "kind": "CONTRADICT",
+        "identityKey": "f\u00FCr offline first mit lokalem cache muss ein einheitlicher synchronisationsrahmen festgelegt werden der die inhaltliche konfliktregel konsistent macht entweder gilt ein automatischer server priorit\u00E4tsmechanismus oder eine nutzerseitige konfliktentscheidung beide modelle d\u00FCrfen nicht parallel f\u00FCr dieselben datenarten verwendet werden",
+        "planId": "state-change-plan-20260820_101824",
+        "incomingItemId": "CA-3",
+        "date": "2026-08-20",
+        "targetEntityId": "L3-REQ-004"
+      }
+    },
+    {
+      "proposalId": "REJ-012",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_131529",
+      "payloadPath": "runs/fullworkflow/20260820_131504_04b2e7/07-arch-ingest/plan.json",
+      "metadata": {
+        "statement": "Push-Zustellungen m\u00FCssen innerhalb von 60 Sekunden nach Ausl\u00F6sung zugestellt werden.",
+        "reason": "Fehler des Kollegen.",
+        "kind": "NEW",
+        "identityKey": "push zustellungen m\u00FCssen innerhalb von 60 sekunden nach ausl\u00F6sung zugestellt werden",
+        "planId": "state-change-plan-20260820_131529",
+        "incomingItemId": "GH-45",
+        "date": "2026-08-20"
+      }
+    },
+    {
+      "proposalId": "REJ-013",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_133141",
+      "payloadPath": "runs/fullworkflow/20260820_133108_a075f2/07-arch-ingest/plan.json",
+      "metadata": {
+        "statement": "Push-Zustellungen m\u00FCssen innerhalb von 60 Sekunden nach Ausl\u00F6sung zugestellt werden.",
+        "reason": "Schon einmal abgelehnt.",
+        "kind": "NEW",
+        "identityKey": "push zustellungen m\u00FCssen innerhalb von 60 sekunden nach ausl\u00F6sung zugestellt werden",
+        "planId": "state-change-plan-20260820_133141",
+        "incomingItemId": "GH-45",
+        "date": "2026-08-20"
+      }
+    },
+    {
+      "proposalId": "REJ-014",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_165534",
+      "payloadPath": "runs/fullworkflow/20260820_165512_73b1dc/07-ingest/plan.json",
+      "metadata": {
+        "statement": "Zus\u00E4tzlich zur bestehenden Sortierung nach Datum soll die Liste auch nach Dringlichkeit sortierbar sein.",
+        "reason": "System-Echo: stammt aus unserem eigenen Verarbeitungs-Vermerk-Kommentar, keine neue Information.",
+        "kind": "RESTATE",
+        "identityKey": "zus\u00E4tzlich zur bestehenden sortierung nach datum soll die liste auch nach dringlichkeit sortierbar sein",
+        "planId": "state-change-plan-20260820_165534",
+        "incomingItemId": "GH-7",
+        "date": "2026-08-20",
+        "targetEntityId": "REQ-78"
+      }
+    },
+    {
+      "proposalId": "REJ-015",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_165534",
+      "payloadPath": "runs/fullworkflow/20260820_165512_73b1dc/07-ingest/plan.json",
+      "metadata": {
+        "statement": "Es ist zu kl\u00E4ren, ob Angeh\u00F6rige Push-Benachrichtigungen zur Wochen\u00FCbersicht erhalten sollen und, falls ja, welche Ereignisse benachrichtigt werden sowie ob die Benachrichtigungen pro Angeh\u00F6rigem ein- und ausschaltbar sein sollen.",
+        "reason": "System-Echo: dito, Frage ist als DEC-006 bereits erfasst.",
+        "kind": "ALREADY_DECIDED",
+        "identityKey": "es ist zu kl\u00E4ren ob angeh\u00F6rige push benachrichtigungen zur wochen\u00FCbersicht erhalten sollen und falls ja welche ereignisse benachrichtigt werden sowie ob die benachrichtigungen pro angeh\u00F6rigem ein und ausschaltbar sein sollen",
+        "planId": "state-change-plan-20260820_165534",
+        "incomingItemId": "GH-12",
+        "date": "2026-08-20",
+        "targetEntityId": "DEC-006"
+      }
+    },
+    {
+      "proposalId": "REJ-016",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_172125",
+      "payloadPath": "runs/fullworkflow/20260820_172043_802e63/07-ingest/plan.json",
+      "metadata": {
+        "statement": "Es besteht noch Kl\u00E4rungsbedarf zu PBI-034; die konkrete offene Frage wird in den neuen Kommentaren jedoch nicht benannt.",
+        "reason": "der Kommentar benennt keine konkrete Frage \u2014 der Kl\u00E4rungsbedarf ist an PBI-034 bereits als needs_clarify markiert, kein neuer Wahrheits-Gehalt.",
+        "kind": "OPEN_QUESTION",
+        "identityKey": "es besteht noch kl\u00E4rungsbedarf zu pbi 034 die konkrete offene frage wird in den neuen kommentaren jedoch nicht benannt",
+        "planId": "state-change-plan-20260820_172125",
+        "incomingItemId": "GH-34",
+        "date": "2026-08-20"
+      }
+    },
+    {
+      "proposalId": "REJ-017",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_172125",
+      "payloadPath": "runs/fullworkflow/20260820_172043_802e63/07-ingest/plan.json",
+      "metadata": {
+        "statement": "Die App soll am Besuchstag zus\u00E4tzlich das Wetter zum angek\u00FCndigten Besuch anzeigen.",
+        "reason": "Wetter liegt au\u00DFerhalb des Produktkerns \u2014 bewusst nicht \u00FCbernommen.",
+        "kind": "NEW_RELATED",
+        "identityKey": "am besuchstag zus\u00E4tzlich das wetter zum angek\u00FCndigten besuch anzeigen",
+        "planId": "state-change-plan-20260820_172125",
+        "incomingItemId": "GH-45-2",
+        "date": "2026-08-20",
+        "featureKey": "visit-planning-announcement"
+      }
+    },
+    {
+      "proposalId": "REJ-018",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_182644",
+      "payloadPath": "runs/fullworkflow/20260820_182614_a5f6b3/07-ingest/plan.json",
+      "metadata": {
+        "statement": "Die Tages-Zusammenfassung der dokumentierten Medikamenten-Gaben muss als PDF exportierbar sein.",
+        "reason": "Abnahme-Testzeile \u2014 kein echter Bedarf.",
+        "kind": "NEW",
+        "identityKey": "die tages zusammenfassung der dokumentierten medikamenten gaben muss als pdf exportierbar sein",
+        "planId": "state-change-plan-20260820_182644",
+        "incomingItemId": "GH-43",
+        "date": "2026-08-20"
+      }
+    },
+    {
+      "proposalId": "REJ-019",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_183922",
+      "payloadPath": "runs/fullworkflow/20260820_183855_b7747b/07-ingest/plan.json",
+      "metadata": {
+        "statement": "Die Tages-Zusammenfassung der von einer pflegenden Person dokumentierten Medikamenten-Gaben kann als PDF exportiert werden.",
+        "reason": "Abnahme-Testzeile \u2014 kein echter Bedarf (Wiederholung).",
+        "kind": "NEW_RELATED",
+        "identityKey": "die tages zusammenfassung der von einer pflegenden person dokumentierten medikamenten gaben kann als pdf exportiert werden",
+        "planId": "state-change-plan-20260820_183922",
+        "incomingItemId": "GH-43",
+        "date": "2026-08-20",
+        "featureKey": "GH-43"
+      }
+    },
+    {
+      "proposalId": "REJ-020",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_184827",
+      "payloadPath": "runs/fullworkflow/20260820_184802_423ac1/07-ingest/plan.json",
+      "metadata": {
+        "statement": "Die Tages-Zusammenfassung der dokumentierten Medikamenten-Gaben muss als PDF exportierbar sein.",
+        "reason": "Abnahme-Testzeile (dritter Durchlauf)",
+        "kind": "NEW_RELATED",
+        "identityKey": "die tages zusammenfassung der dokumentierten medikamenten gaben muss als pdf exportierbar sein",
+        "planId": "state-change-plan-20260820_184827",
+        "incomingItemId": "GH-43",
+        "date": "2026-08-20",
+        "featureKey": "GH-43"
+      }
+    },
+    {
+      "proposalId": "REJ-021",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260820_185505",
+      "payloadPath": "runs/fullworkflow/20260820_185438_c57d54/07-ingest/plan.json",
+      "metadata": {
+        "statement": "Die Tages-Zusammenfassung der dokumentierten Medikamenten-Gaben muss als PDF exportierbar sein.",
+        "reason": "Abnahme-Testzeile \u2014 bereits mehrfach abgelehnt, siehe Vermerk am Issue.",
+        "kind": "NEW_RELATED",
+        "identityKey": "die tages zusammenfassung der dokumentierten medikamenten gaben muss als pdf exportierbar sein",
+        "planId": "state-change-plan-20260820_185505",
+        "incomingItemId": "GH-43",
+        "date": "2026-08-20"
       }
     }
   ]

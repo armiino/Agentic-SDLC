@@ -10,7 +10,7 @@ public static class ArchClassifyReviewRunner
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
 
-    public static async Task<int> RunAsync(string[] args, string repoRoot)
+    public static async Task<int> RunAsync(string[] args, Configuration.HostSettings settings, string repoRoot)
     {
         if (args.Length < 2)
         {
@@ -53,8 +53,20 @@ public static class ArchClassifyReviewRunner
                 : (id, key) => Task.FromResult(ArchClassifyReviewAdapter.ResolvePbiReferenceContext(core, id, key))).ConfigureAwait(false);
 
         Console.WriteLine($"[arch-classify-review] {outcome}: {file.Decisions.Count} klassifiziert, {request.Items.Count - file.Decisions.Count} vertagt -> {Path.GetRelativePath(repoRoot, decisionsPath)}");
-        Console.WriteLine($"[arch-classify-review] Weiter: pipeline-full resume {request.RunId}");
-        return 0;
+        // 1g-C-Endform (19.08., Zwei-Bahnen-Regel — Autor-Fund „ketten den Resume nicht selbst?"):
+        // „Fertig" kettet die Fortsetzung IM RUNNER (Haus-Muster 3b-②/R-43) — damit verhalten sich CLI-
+        // und Steward-Bahn identisch. Wachen: --no-resume (Inspektions-Opt-out) · Cancelled ⇒ Pause bleibt ·
+        // KEIN Pause-Zeiger (z. B. Sandbox-Verzeichnis) ⇒ nichts zu ketten.
+        var pointer = Path.Combine(repoRoot, "runs", "fullworkflow", request.RunId, "checkpoints", "pointer.json");
+        if (args.Contains("--no-resume", StringComparer.OrdinalIgnoreCase)
+            || outcome != AgenticSdlc.HumanReview.ReviewOutcome.Finished
+            || !File.Exists(pointer))
+        {
+            Console.WriteLine($"[arch-classify-review] Weiter: pipeline-full resume {request.RunId}");
+            return 0;
+        }
+        Console.WriteLine($"[arch-classify-review] R-43: resume {request.RunId} laeuft automatisch an (Folgestufen inkl. LLM) …");
+        return await Pipeline.PipelineFullRunner.RunAsync(["pipeline-full", "resume", request.RunId], settings, repoRoot, null).ConfigureAwait(false);
     }
 
     private static string? ResolveDir(string repoRoot, string token)

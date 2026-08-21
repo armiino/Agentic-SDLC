@@ -142,13 +142,18 @@ public static class CoreGithubMapping
     private static ProjectStateRelation MakeRelation(GithubMappingOp op, string operationalStatus, DateTime now, DateTime linkedUtc,
         ProjectStateRelation? previous = null)
     {
-        var meta = new Dictionary<string, string>(StringComparer.Ordinal)
-        {
-            ["issueNumber"] = op.IssueNumber.ToString(CultureInfo.InvariantCulture),
-            ["operationalStatus"] = operationalStatus,
-            ["linkedUtc"] = linkedUtc.ToString("O", CultureInfo.InvariantCulture),
-            ["updatedUtc"] = now.ToString("O", CultureInfo.InvariantCulture)
-        };
+        // R-61 (20.08., „Geister-Kommentare"): der Refresh ERBT die komplette Vorgänger-Metadata und
+        // überschreibt nur die Systemfelder — vorher wurde die Map frisch gebaut und verlor dabei den
+        // KOMMENTAR-ANKER (GithubCommentMeta): jeder Reproject löschte die Anker aller Issues, und alle
+        // jemals verarbeiteten Kommentare kamen als „neu" zurück. previous ist beim Remap bewusst null
+        // (der Anker gehört zum ALTEN Issue).
+        var meta = previous is not null
+            ? new Dictionary<string, string>(previous.Metadata, StringComparer.Ordinal)
+            : new Dictionary<string, string>(StringComparer.Ordinal);
+        meta["issueNumber"] = op.IssueNumber.ToString(CultureInfo.InvariantCulture);
+        meta["operationalStatus"] = operationalStatus;
+        meta["linkedUtc"] = linkedUtc.ToString("O", CultureInfo.InvariantCulture);
+        meta["updatedUtc"] = now.ToString("O", CultureInfo.InvariantCulture);
         if (!string.IsNullOrWhiteSpace(op.IssueUrl)) meta["issueUrl"] = op.IssueUrl!;
         if (!string.IsNullOrWhiteSpace(op.Repository)) meta["repository"] = op.Repository!;
         if (!string.IsNullOrWhiteSpace(op.Origin)) meta["origin"] = op.Origin!;

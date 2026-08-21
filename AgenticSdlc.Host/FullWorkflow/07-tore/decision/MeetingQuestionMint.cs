@@ -17,11 +17,13 @@ public static class MeetingQuestionMint
     public const string Origin = "MEETING_OPEN_QUESTION";
     public const string OriginAuthor = "AUTHOR_OPEN_QUESTION";
     public const string OriginGithub = "GITHUB_OPEN_QUESTION";
+    public const string OriginAnalyst = "ANALYST_OPEN_QUESTION";   // 1g: erschlossene Frage (Risiko-Linse etc.)
 
     internal static string QuestionOrigin(ProjectStateItem incoming) => incoming.Origin switch
     {
         "AuthorFront" => OriginAuthor,      // AuthorFrontDelta-Bahn (Diktat)
         "GithubInbound" => OriginGithub,    // GithubInboundDrafting-Bahn (Ernte)
+        "CoreAnalyst" => OriginAnalyst,     // 1g AnalystDeltaBuilder-Bahn (erschlossen, nicht gesagt)
         _ => Origin,                        // Meeting-Kette (Default — die namensgebende Bahn)
     };
 
@@ -39,6 +41,10 @@ public static class MeetingQuestionMint
         // 9i: kam die Frage aus einem GitHub-Issue, traegt die DEC die Herkunft (Ernte-Gedaechtnis; W4-Anker
         // fuer „DEC aufgeloest -> Issue schliessen"). No-op fuer Meeting-/Autor-Fragen — geteilte Naht bleibt neutral.
         GithubOriginMeta.CarryOver(incoming, meta);
+        // 1g (20.08., Autor-Frage „gehoert die Frage dann zu arch?"): Analyst-Fragen behalten ihre
+        // ASPEKT-FAERBUNG (linse/kategorie) — sichtbar am decision-gate; die Antwort-Bahn in die Wahrheit
+        // bleibt das Diktat (arch-Tor-1 -> classify -> ADR), der Steward bietet sie beim Klaeren an.
+        AnalystOriginMeta.CarryOver(incoming, meta);
 
         return new ProjectStateItem(
             ItemId: decId, ItemType: "decision", Text: questionText, Origin: QuestionOrigin(incoming), Stage: null, Version: 1,

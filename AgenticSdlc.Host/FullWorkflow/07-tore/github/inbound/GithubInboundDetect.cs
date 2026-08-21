@@ -111,6 +111,13 @@ public static class GithubInboundDetect
                 details.Add($"AK NEU im Issue: '{Trunc(a)}'");
             foreach (var a in coreAk.Except(parsed.AcceptanceCriteria, StringComparer.Ordinal))
                 details.Add($"AK im Issue ENTFERNT: '{Trunc(a)}'");
+            // 1g-D / 9k(a)-Rest (19.08.): Änderungen in der RAHMEN-Sektion präzise benennen (Arch-Parität
+            // zur AK-Zeile) — vorher fiel ein Rahmen-Edit in den generischen Agent-Fallback.
+            var coreRahmen = entry.Constraints ?? [];
+            foreach (var c in parsed.Constraints.Except(coreRahmen, StringComparer.Ordinal))
+                details.Add($"RAHMEN NEU im Issue: '{Trunc(c)}' (Architektur-Kandidat)");
+            foreach (var c in coreRahmen.Except(parsed.Constraints, StringComparer.Ordinal))
+                details.Add($"RAHMEN im Issue ENTFERNT: '{Trunc(c)}'");
         }
         foreach (var line in parsed.FreeText)
             details.Add($"Freitext außerhalb der Sektionen: '{Trunc(line)}'");

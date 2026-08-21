@@ -28,6 +28,24 @@ public sealed class IngestionReviewAdapterTests
         it.FieldValues.Add(new ReviewFieldValue(key, value));
     }
 
+    // Projektions-Nachzug ⑤ (20.08.): Titel je ASPEKT statt statisch „Meeting" — dieselbe Naht dient
+    // Meeting-, Analyst-, GitHub-Quelle UND dem arch-Strip; die Sprech-Namen sind die Checkpoint-Namen.
+    [Fact]
+    public void Titel_folgt_dem_Aspekt_der_eingehenden_Items()
+    {
+        var reqDelta = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [],
+            [new ProjectStateItem("M1-REQ-001", "requirement", "X", "test", null, 1, "r", null, null, null, null, [], [],
+                new Dictionary<string, string>()).WithStatus(CoreStatus.From("baseline"))], [], [], []);
+        Assert.StartsWith("Requirements-OQ-Freigabe",
+            IngestionReviewAdapter.BuildSession("r1", Plan(Op()), reqDelta, Empty).Title);
+
+        var archDelta = new ProjectStateDocument("p", 3, DateTime.UnixEpoch, [],
+            [new ProjectStateItem("M1-REQ-001", "architecture", "X", "test", null, 1, "r", null, null, null, null, [], [],
+                new Dictionary<string, string>()).WithStatus(CoreStatus.From("baseline"))], [], [], []);
+        Assert.StartsWith("Architektur-Freigabe",
+            IngestionReviewAdapter.BuildSession("r1", Plan(Op()), archDelta, Empty).Title);
+    }
+
     [Fact]
     public void BuildSession_nutzt_IncomingItemId_als_ItemId()
     {

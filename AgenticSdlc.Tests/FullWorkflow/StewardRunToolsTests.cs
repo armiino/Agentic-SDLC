@@ -23,9 +23,10 @@ public sealed class StewardRunToolsTests
     public void Alle_Start_Tools_sind_ApprovalRequired_gewrappt()
     {
         // ⚖ 13.08. Klasse-Regel: die 4 blinden Werkbank-Seile (clarify_sweep/inbound/distill/reverse) sind ENTFERNT
-        // (system-inventar §3) — bleiben 10 zustimmungspflichtige Tools (Graph-Starter, Pulls, UIs, post_comment).
+        // (system-inventar §3) — 10 zustimmungspflichtige (Graph-Starter, Pulls, UIs, post_comment)
+        // + run_core_analysis (1g-B, 19.08.: bewusster LLM-Akt) = 11.
         var tools = new StewardRunTools(".", S(), (args, cb) => Task.FromResult(0)).Build();
-        Assert.Equal(10, tools.OfType<ApprovalRequiredAIFunction>().Count());
+        Assert.Equal(11, tools.OfType<ApprovalRequiredAIFunction>().Count());
         // Wächter: keines der entfernten Seile darf zurückkommen, ohne dass sein Ergebnis im Chat lesbar ist.
         var names = tools.OfType<AIFunction>().Select(f => f.Name).ToHashSet(StringComparer.Ordinal);
         foreach (var gone in new[] { "run_clarify_sweep", "run_github_inbound", "run_comment_distill", "run_github_reverse" })

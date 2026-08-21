@@ -114,7 +114,10 @@ public static class CoreViews
                     PbiId: p.ItemId,
                     Title: p.Pbi?.Title ?? p.Text,
                     Status: p.Status,
-                    Readiness: p.Pbi?.Readiness,
+                    // Autor-Fund 20.08. (#33: Footer log „needs_clarify", Achse sagt frei): p.Pbi.Readiness ist
+                    // ein UNGEPFLEGTES Relikt der alten Backlog-Bahn — Readiness wird jetzt aus der EINEN
+                    // Klärungs-Wahrheit abgeleitet (Blocker-Achse; dieselbe Quelle wie Parkplatz + Labels).
+                    Readiness: p.ReadStatus().Blocker == Delta.Blocker.NeedsClarify ? "needs_clarify" : "ready",
                     CoveredRequirementIds: covered,
                     BlockedByOpenDecision: blocked,
                     GithubIssue: mapping is not null ? CoreGithubMapping.IssueRef(mapping.IssueNumber) : p.Metadata.GetValueOrDefault("githubIssue"),

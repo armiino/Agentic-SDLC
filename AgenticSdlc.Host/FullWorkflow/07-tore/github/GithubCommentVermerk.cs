@@ -16,6 +16,18 @@ namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 /// </summary>
 public static class GithubCommentVermerk
 {
+    // Echo-Schutz (Autor-Fund 20.08. spät, Lauf 165512: das System destillierte seine EIGENEN
+    // Vermerk-Kommentare als Ernte-Beute — GH-7/GH-12 waren wörtliche Zitate aus „✔ Eingepflegt…").
+    // EINE Marker-Definition: der Vermerk-Body beginnt mit diesem Präfix, und der Kommentar-Collector
+    // schließt genau daran deterministisch aus. Legacy = Alt-Vermerke vom 13./17.08.
+    public const string BodyMarker = "**Verarbeitungs-Vermerk**";
+    public const string LegacyBodyMarker = "**Kommentar-Verarbeitung**";
+
+    public static bool IsSystemVermerk(string? commentBody)
+        => commentBody is not null
+           && (commentBody.StartsWith(BodyMarker, StringComparison.Ordinal)
+               || commentBody.StartsWith(LegacyBodyMarker, StringComparison.Ordinal));
+
     public static IReadOnlyList<GithubForwardOp> Derive(
         ProjectStateDocument meetingDelta,
         IngestionApplyReport report,
@@ -30,8 +42,12 @@ public static class GithubCommentVermerk
             .GroupBy(d => d.IncomingItemId, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.First().Reason ?? "", StringComparer.Ordinal);
 
+        // Projektions-Nachzug ② (Autor-⚖ 20.08.): der Vermerk gilt für JEDE GitHub-Herkunft — nicht
+        // mehr nur Kommentar-Destillate, auch geerntete Body-Edits (Beleg REJ-012/#45: die Ablehnung
+        // blieb für den Editierenden stumm). Kommentare überleben den Reproject (der schreibt nur
+        // den Body) — die Historie Vorschlag→Prüfung→Entscheid bleibt damit dauerhaft im Thread.
         return meetingDelta.Items
-            .Where(i => i.Metadata.ContainsKey(GithubCommentMeta.AnchorKey) && GithubOriginMeta.IssueNumberOf(i) is not null)
+            .Where(i => GithubOriginMeta.IssueNumberOf(i) is not null)
             .GroupBy(i => GithubOriginMeta.IssueNumberOf(i)!.Value)
             .OrderBy(g => g.Key)
             .Select(g =>
@@ -53,7 +69,7 @@ public static class GithubCommentVermerk
                     // KEIN Vermerk fuer dieses Item — GitHub bestaetigt nie Unbelegtes.
                 }
                 if (lines.Count == 0) return null;
-                var body = "**Kommentar-Verarbeitung** (Lauf `" + runId + "`):\n\n" + string.Join("\n", lines);
+                var body = BodyMarker + " (Lauf `" + runId + "`):\n\n" + string.Join("\n", lines);
                 return new GithubForwardOp(
                     GithubForwardKind.NoteComment, subject ?? $"gh#{g.Key}", g.Key, null, body, null, null, null,
                     Anchor: $"comment-distill {runId} -> gh#{g.Key}",
@@ -69,20 +85,34 @@ public static class GithubCommentVermerk
     /// sonst leer (Standalone-Forward-Bahn, dokumentierte Grenze).</summary>
     public static IReadOnlyList<GithubForwardOp> TryDeriveFromRun(string runDir, string runId)
     {
-        var json = FullWorkflow.JsonFiles.Json;
-        var reportPath = Path.Combine(runDir, "07-ingest", "applied", "run-report.json");
         var deltaPath = Path.Combine(runDir, "04-delta", "project-state.json");
-        if (!File.Exists(reportPath) || !File.Exists(deltaPath)) return [];
+        if (!File.Exists(deltaPath)) return [];
         try
         {
-            var report = JsonSerializer.Deserialize<IngestionApplyReport>(File.ReadAllText(reportPath), json);
             var delta = JsonSerializer.Deserialize<ProjectStateDocument>(File.ReadAllText(deltaPath), ProjectStateJson.Options);
-            if (report is null || delta is null) return [];
-            var decisionsPath = Path.Combine(runDir, "07-ingest", "human-decisions.json");
-            var decisions = File.Exists(decisionsPath)
-                ? JsonSerializer.Deserialize<IngestionHumanDecisionsFile>(File.ReadAllText(decisionsPath), json)?.Decisions ?? []
-                : [];
-            return Derive(delta, report, decisions, runId);
+            if (delta is null) return [];
+            // ② (20.08.): BEIDE Aspekt-Strips liefern Vermerk-Stoff — der arch-Strip (geerntete
+            // Rahmen-Edits!) war vorher unsichtbar; Reports und Entscheide werden gemerged.
+            var reports = new List<IngestionApplyReport>();
+            var decisions = new List<IngestionHumanDecision>();
+            foreach (var strip in new[] { "07-ingest", "07-arch-ingest" })
+            {
+                var report = ReadJson<IngestionApplyReport>(Path.Combine(runDir, strip, "applied", "run-report.json"));
+                if (report is null) continue;
+                reports.Add(report);
+                // Entscheide je Bahn: UI schreibt human-decisions.json, der Chat-Weg ingest-gate-decisions.json —
+                // beide tragen dieselbe Form (incomingItemId/decision/reason).
+                foreach (var file in new[] { "human-decisions.json", "ingest-gate-decisions.json" })
+                    if (ReadJson<IngestionHumanDecisionsFile>(Path.Combine(runDir, strip, file)) is { } f)
+                        decisions.AddRange(f.Decisions);
+            }
+            if (reports.Count == 0) return [];
+            var merged = reports[0] with
+            {
+                Applied = [.. reports.SelectMany(r => r.Applied)],
+                Skipped = [.. reports.SelectMany(r => r.Skipped)]
+            };
+            return Derive(delta, merged, decisions, runId);
         }
         catch (Exception ex)
         {
@@ -91,6 +121,9 @@ public static class GithubCommentVermerk
             return [];
         }
     }
+
+    private static T? ReadJson<T>(string path) where T : class
+        => File.Exists(path) ? JsonSerializer.Deserialize<T>(File.ReadAllText(path), FullWorkflow.JsonFiles.Json) : null;
 
     private static string Trunc(string s) => s.Length <= 100 ? s : s[..100] + "…";
 }

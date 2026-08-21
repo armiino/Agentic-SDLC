@@ -910,13 +910,14 @@ public static class PipelineFullRunner
             {
                 // Zwei-Bahnen (17.08., E8-Live-Fund): Steward-decide_gate schreibt github-forward-decisions.json,
                 // die Review-UI (github-forward-review) human-decisions.json — beide gelten (Schema identisch).
-                var accepted = LoadForwardDecisions(Path.Combine(run.RunDir, "07-github", "github-forward-decisions.json"))
-                               ?? LoadForwardDecisions(Path.Combine(run.RunDir, "07-github", "human-decisions.json"))
-                               ?? Flags(f.Ops.Select(o => o.OpId));
+                var sets = LoadForwardDecisions(Path.Combine(run.RunDir, "07-github", "github-forward-decisions.json"))
+                           ?? LoadForwardDecisions(Path.Combine(run.RunDir, "07-github", "human-decisions.json"));
+                var accepted = sets?.Accepted ?? Flags(f.Ops.Select(o => o.OpId));
                 if (accepted is null) return false;
                 // Execute-Flag bleibt Policy-gebunden (fw.Execute) — auch interactive kein Write ohne execute=true.
-                return await AnswerAsync(new ForwardReviewResponse(accepted, fw.Execute, "author (interactive)"),
-                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = accepted.Count, execute = fw.Execute, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
+                // R-60: overwrite kommt NUR aus expliziten Datei-Entscheiden — Flags/accept-all setzen es nie.
+                return await AnswerAsync(new ForwardReviewResponse(accepted, fw.Execute, "author (interactive)", sets?.Overwrite ?? []),
+                    new { type = "GATE_ANSWERED", gate = portId, policy = "Interactive", accepted = accepted.Count, overwrite = sets?.Overwrite.Count ?? 0, execute = fw.Execute, timestampUtc = DateTime.UtcNow }).ConfigureAwait(false);
             }
         }
         return false;
@@ -985,14 +986,17 @@ public static class PipelineFullRunner
         }
     }
 
-    // Entscheide der Forward-Review (bekanntes GithubForwardDecisionsFile-Format) → akzeptierte OpIds.
-    private static List<string>? LoadForwardDecisions(string path)
+    // Entscheide der Forward-Review (bekanntes GithubForwardDecisionsFile-Format) → akzeptierte OpIds
+    // + R-60: 'overwrite' = bewusstes Drift-Überschreiben (eigener Entscheid-Wert, NIE aus apply abgeleitet).
+    private sealed record ForwardDecisionSets(List<string> Accepted, List<string> Overwrite);
+    private static ForwardDecisionSets? LoadForwardDecisions(string path)
     {
         if (!File.Exists(path)) return null;
         var file = JsonSerializer.Deserialize<GithubForwardDecisionsFile>(File.ReadAllText(path), HitlShell.Json);
-        return file?.Decisions
-            .Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase))
-            .Select(d => d.OpId).ToList();
+        if (file is null) return null;
+        return new ForwardDecisionSets(
+            [.. file.Decisions.Where(d => string.Equals(d.Decision, "apply", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId)],
+            [.. file.Decisions.Where(d => string.Equals(d.Decision, "overwrite", StringComparison.OrdinalIgnoreCase)).Select(d => d.OpId)]);
     }
     // U2: Betriebs-Zweig (Ingest->Pbi) und Forward sind KEIN Runner-Code mehr — sie leben als Kanten in
     // PipelineFullWorkflow.Assemble (IngestBridge/ForwardBridges/SnapshotExecutor). Historie:

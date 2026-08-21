@@ -47,6 +47,75 @@ public sealed class GithubCommentVermerkTests
         Assert.False(string.IsNullOrWhiteSpace(op.Anchor));              // Beleg-Pflicht des Gates erfüllt
     }
 
+    // R-62b (20.08., Nachprobe): ein Vermerk-ONLY-Plan (reine Ablehnung) braucht den GitHub-Client —
+    // NOTE_COMMENT fehlte in der Schreib-Arten-Liste und der erste solche Plan starb an einer NullReference.
+    [Fact]
+    public void Vermerk_only_Plan_verlangt_den_GitHub_Client()
+    {
+        var note = new GithubForwardOp(GithubForwardKind.NoteComment, "gh#43", 43, null, "✕ …", null, null, null, "a", "r", "deterministic");
+        var plan = new GithubForwardPlanDocument(1, "p1", DateTime.UnixEpoch, "src", "o/r", [note]);
+        Assert.True(GithubForwardApply.RequiresClient(plan, new HashSet<string> { "op-0" }, new HashSet<string>()));
+        Assert.False(GithubForwardApply.RequiresClient(plan, new HashSet<string>(), new HashSet<string>()));   // geskippt = kein Client
+    }
+
+    // R-61 (20.08., „Geister-Kommentare"): der Reproject-Stempel schrieb die Mapping-Relation FRISCH und
+    // löschte dabei den Kommentar-Anker — alle jemals verarbeiteten Kommentare kamen als „neu" zurück.
+    [Fact]
+    public void Mapping_Refresh_erbt_den_Kommentar_Anker_statt_ihn_zu_loeschen()
+    {
+        var core = Doc(Item("PBI-1", "pbi", "P"));
+        // Erst-Link + Anker stempeln:
+        (core, _) = CoreGithubMapping.Apply(core, [new GithubMappingOp("PBI-1", 12, null, "o/r", GithubMappingKind.Link, "LINK")]);
+        (core, var stamped) = GithubCommentMeta.Stamp(core, 12, 5313971856);
+        Assert.True(stamped);
+        // Reproject-artiger Refresh (UPDATE mit neuen Hash-Stempeln, gleiches Issue):
+        (core, _) = CoreGithubMapping.Apply(core, [new GithubMappingOp("PBI-1", 12, null, "o/r", GithubMappingKind.Link, "UPDATE",
+            ProjectedTitleHash: "t2", ProjectedBodyHash: "b2")]);
+        Assert.Equal(5313971856, GithubCommentMeta.LastProcessedFor(core, 12));   // Anker lebt
+    }
+
+    // Echo-Schutz (Autor-Fund 20.08. spät, Lauf 165512): die EIGENEN Vermerk-Kommentare des Systems
+    // sind NIE Ernte-Beute — sonst destilliert der Agent die zitierten Wahrheits-Sätze als „neu" zurück
+    // (GH-7 RESTATE / GH-12 ALREADY_DECIDED waren wörtliche Echos aus „✔ Eingepflegt…").
+    [Fact]
+    public void Collector_ueberspringt_System_Vermerke_deterministisch()
+    {
+        Assert.True(GithubCommentVermerk.IsSystemVermerk("**Verarbeitungs-Vermerk** (Lauf `x`):\n\n✔ …"));
+        Assert.True(GithubCommentVermerk.IsSystemVermerk("**Kommentar-Verarbeitung** (Lauf `x`):\n\n✔ …"));
+        Assert.False(GithubCommentVermerk.IsSystemVermerk("Danke, schaue ich mir am Montag an 👍"));
+
+        var core = Doc(Item("PBI-1", "pbi", "P"));
+        var issues = new[] { new GithubIssueSnapshot(7, null, "T", "b", "open", [], null, null) };
+        var comments = new[]
+        {
+            new GithubIssueCommentSnapshot(7, 20, "armiino", null, "**Verarbeitungs-Vermerk** (Lauf `r`):\n\n✔ Eingepflegt: REQ-78 — „…“"),
+            new GithubIssueCommentSnapshot(7, 21, "armiino", null, "Echter menschlicher Kommentar.")
+        };
+        var finds = GithubCommentDistill.Collect(core, issues, comments);
+        var find = Assert.Single(finds);
+        var c = Assert.Single(find.Comments);                            // NUR der menschliche Kommentar
+        Assert.Equal(21, c.CommentId);
+    }
+
+    // Projektions-Nachzug ② (Autor-⚖ 20.08., Beleg REJ-012/#45): auch geerntete BODY-Edits (Ernte-Drafts
+    // OHNE Kommentar-Anker) bekommen nach dem Gate-Entscheid einen Vermerk — vorher blieb eine Ablehnung
+    // für den Editierenden stumm (Zeile verschwand erst beim Reproject, kommentarlos).
+    [Fact]
+    public void Abgelehnter_Body_Edit_ohne_Kommentar_Anker_bekommt_den_Ablehnungs_Vermerk()
+    {
+        var delta = Doc(
+            Item("GH-45", "architecture", "Push-Zustellungen binnen 60 Sekunden.", new Dictionary<string, string>
+            { [GithubOriginMeta.IssueNumber] = "45" }));   // KEIN GithubCommentMeta.AnchorKey — Body-Edit-Herkunft
+
+        var report = new IngestionApplyReport([], [], new IngestionDeltaSummary(0, 0, 0, 0, 0, 0, 0));
+        var decisions = new[] { new IngestionHumanDecision("GH-45", "reject", "Abnahme-Testzeile, kein echter Rahmen") };
+
+        var op = Assert.Single(GithubCommentVermerk.Derive(delta, report, decisions, "run-88"));
+        Assert.Equal(45, op.TargetIssueNumber);
+        Assert.Contains("✕ Bewusst nicht übernommen — Begründung: Abnahme-Testzeile", op.Body);
+        Assert.Contains("Verarbeitungs-Vermerk", op.Body);
+    }
+
     [Fact]
     public void Gate_nimmt_NOTE_COMMENT_ohne_Coverage_Pflicht_aber_mit_Ziel_Wache()
     {

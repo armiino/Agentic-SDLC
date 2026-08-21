@@ -13,7 +13,8 @@ ZWISCHEN den Stufen übergeben Datei-Artefakte mit Human-Gates (bewusst — jede
 | `05-core/` | **DIE WAHRHEIT** — der lebende ProjectState hinter dem `ICoreRepository`-Port. Versioniert heißt konkret: `schemaVersion` + `provenance` im Dokument, UND seit 2026-07-23 legt jeder inhaltsändernde `SaveAsync` den Vorzustand als Snapshot nach `state/core/history/` (lokal, gitignored — Restore = zurückkopieren) | `state/core/project-state.json` |
 | `06-backlog/` | kanonische Baseline → Readiness → PBI-Schnitt (re-clarify) → IssuePlanning/Clarification | `product-backlog.json`, `accepted-issue-plan.json` |
 | `07-tore/` | die kontrollierten Zugänge zur Wahrheit: `ingestion` (Tor 1) · `pbiupdate` (Placement) · `decision` (Tor 2) · `github` (Tor 3, Forward/Reverse) | `github-sync-delta.json`, GitHub Issues |
-| `08-pipeline/` | HITL-Super-Workflow über den Toren (RequestPort-Gates, durable Checkpoints) | Checkpoint/Resume |
+| `08-pipeline/` | HITL-Super-Workflow über den Toren (RequestPort-Gates, durable Checkpoints). **Dessen README = DIE Schienennetz-Karte: Türen/Routen/Halte + Zeiger-Tabelle „wo ist was erklärt"** | Checkpoint/Resume |
+| `09-analyst/` | **NEBEN der Kette** (1g-B, 19.08.): der Core-Analyst — bestellbare Lücken-Analyse über den Core-STAND („Agent für das Ungesagte"; 4 Linsen-Fan-out, Kritiker, kein Gate/kein Write — Wirkung nur via `--from-delta`-Tor-Lauf) | `runs/core-analysis/<id>/report.md` + `delta.json` |
 | `contracts/` | geteilte Datenverträge (quer zur Kette) | — |
 | `fixtures/` `hitlspike/` | Test-Fixtures, HITL-Spike (Doku: siehe /docs im Repo-Root) | — |
 
