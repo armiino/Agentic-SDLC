@@ -114,7 +114,10 @@ public static class PbiUpdateApplyExec
                 {
                     ProposedTitle = Override(d.EditedTitle, proposal.ProposedTitle),
                     ProposedStatement = Override(d.EditedStatement, proposal.ProposedStatement),
-                    ProposedAcceptanceCriteria = d.EditedAcceptanceCriteria is { Count: > 0 } ? d.EditedAcceptanceCriteria : proposal.ProposedAcceptanceCriteria
+                    ProposedAcceptanceCriteria = d.EditedAcceptanceCriteria is { Count: > 0 } ? d.EditedAcceptanceCriteria : proposal.ProposedAcceptanceCriteria,
+                    // Slice S Teil 2: die menschliche Fassung von Prio/Schätzung gilt (leer = Vorschlag behalten).
+                    ProposedPriority = Override(d.EditedPriority, proposal.ProposedPriority),
+                    ProposedEstimate = Override(d.EditedEstimate, proposal.ProposedEstimate)
                 });
             else if (string.Equals(d.Decision, "accept", StringComparison.OrdinalIgnoreCase))
                 result.Add(proposal);

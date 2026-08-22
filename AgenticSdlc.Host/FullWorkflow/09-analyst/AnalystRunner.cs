@@ -29,14 +29,18 @@ public static class AnalystRunner
         var run = new RunContext(RunId.New(), "core-analysis");
         run.EnsureFolders();
         var outDir = run.OutputDir("analysis");
-        Console.WriteLine($"[core-analysis] Lauf {run.RunId}: {AnalystLenses.All.Count} Linsen über {core.Items.Count} Core-Items (nur Lesen — Wahrheits-Wirkung erst im Tor-Lauf).");
+        // Slice S ①: freigegebene Personas (Autor-Artefakt) schalten die fünfte Linse „Persona-Abdeckung" zu.
+        var personas = AuthoredDocument.Read(repoRoot, "personas");
+        var linsen = AnalystLenses.For(personas);
+        Console.WriteLine($"[core-analysis] Lauf {run.RunId}: {linsen.Count} Linsen über {core.Items.Count} Core-Items"
+            + (personas is null ? "" : " (inkl. Persona-Abdeckung)") + " (nur Lesen — Wahrheits-Wirkung erst im Tor-Lauf).");
 
         // NEU vs. WEITERHIN OFFEN: IdentityKeys des jüngsten Vorgänger-Reports (leer beim ersten Lauf).
         var vorgaengerKeys = LadeVorgaengerKeys(repoRoot, run.RunId);
 
         var lensFactory = PipelineAgents.Factory(repoRoot, settings, settings, run, "CoreAnalystAgent", "CoreAnalystAgent1");
         var kritikerFactory = PipelineAgents.Factory(repoRoot, settings, settings, run, "CoreAnalystKritiker", "CoreAnalystKritiker1");
-        var workflow = AnalystWorkflow.Build(core, vorgaengerKeys, lensFactory, kritikerFactory, run, outDir);
+        var workflow = AnalystWorkflow.Build(core, vorgaengerKeys, lensFactory, kritikerFactory, run, outDir, personas);
 
         var wfRun = await InProcessExecution.Default
             .RunAsync(workflow, new AnalystWorkflow.Trigger(), run.RunId, CancellationToken.None).ConfigureAwait(false);

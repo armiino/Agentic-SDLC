@@ -82,7 +82,7 @@ public static class GithubForwardRunner
                 .AsBuilder().Use(new ToolCallLoggerMiddleware(run).InvokeAsync).Build();
 
         var workflow = GithubForwardWorkflow.Build(
-            new GithubForwardSeedExecutor(run),
+            new GithubForwardSeedExecutor(run, repoRoot),
             new GithubForwardMakerExecutor(factory, run),
             new GithubForwardGateExecutor(run),
             new GithubForwardRepairExecutor(factory, run),

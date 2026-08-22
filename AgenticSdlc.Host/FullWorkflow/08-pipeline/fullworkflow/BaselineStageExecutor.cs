@@ -33,7 +33,9 @@ internal sealed class BaselineStageExecutor(HostSettings settings, string? basel
     // Tor 1) — fehlt sie, laeuft die Kern-Kette LAUT weiter (Zusatz-Spur darf die Kette nicht toeten).
     // R-11 A1c (05.08.): architecture bestellt — der Konsument (arch-Strip, A1d) steht im SELBEN Slice
     // („nur bestellte Spuren tragen weiter"). Zusatz-Spur wie open-questions: fehlt sie, laeuft die Kette LAUT weiter.
-    internal static readonly string[] OrderedArtifacts = ["requirements", "open-questions", "architecture"];
+    // Slice S ④ (21.08.): risks BESTELLT — Konsument = Risiko→DEC über die QuestionLane an Tor 1
+    // („nur bestellte Spuren tragen weiter" — die tote risks-Extraktion bekommt ihren Besteller).
+    internal static readonly string[] OrderedArtifacts = ["requirements", "open-questions", "architecture", "risks"];
     internal const string RequiredArtifact = "requirements";
 
     public override async ValueTask HandleAsync(ConsumableLedgerOutput input, IWorkflowContext context, CancellationToken ct = default)

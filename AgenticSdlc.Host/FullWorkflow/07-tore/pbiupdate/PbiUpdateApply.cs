@@ -87,6 +87,10 @@ public static class PbiUpdateApply
             if (byId.TryGetValue(op.RequirementId, out var truthItem)
                 && string.Equals(truthItem.ItemType, "architecture", StringComparison.OrdinalIgnoreCase))
                 meta["fromAspect"] = "architecture";
+            // Slice S Teil 2: der vom Menschen freigegebene Draft bringt Prio/Schätzung mit — nur VALIDE Werte
+            // landen im Core (ungültiger Agent-Output wird verworfen, nie stiller Müll).
+            if (PbiFields.NormalizePriority(draft?.ProposedPriority) is { } prio) meta[PbiFields.MetaPriority] = prio;
+            if (PbiFields.NormalizeEstimate(draft?.ProposedEstimate) is { } est) meta[PbiFields.MetaEstimate] = est;
             AddItem(order, byId, new ProjectStateItem(
                 ItemId: id, ItemType: "pbi", Text: title, Origin: "pbi-update", Stage: null, Version: 1,
                 SourceRunId: sourceRun, SourceArtifactId: null, SourceArtifactType: null, SourceDecisionId: null, SourceCandidateId: null,
@@ -107,6 +111,8 @@ public static class PbiUpdateApply
             var decRefs = pbi.Pbi.OpenDecisionRefs.ToList();
             var status = pbi.ReadStatus();   // §5-S5: typisiert; Blocker-Eskalation via Escalate statt PbiStatus.Max
             var reasons = new List<string>();
+            // Slice S Teil 2: Feld-Setz-Ops schreiben NUR ins Metadatum (Kopie erst bei Bedarf) — kein Escalate.
+            Dictionary<string, string>? metaCopy = null;
 
             foreach (var op in g)
             {
@@ -120,6 +126,14 @@ public static class PbiUpdateApply
                         break;
                     case PbiUpdateKind.MarkChanged:
                         status = status.Escalate(Blocker.NeedsClarify);
+                        break;
+                    case PbiUpdateKind.SetPriority:
+                        (metaCopy ??= new Dictionary<string, string>(pbi.Metadata, StringComparer.Ordinal))
+                            [PbiFields.MetaPriority] = PbiFields.NormalizePriority(op.Value)!;   // Gate garantiert Validität
+                        break;
+                    case PbiUpdateKind.SetEstimate:
+                        (metaCopy ??= new Dictionary<string, string>(pbi.Metadata, StringComparer.Ordinal))
+                            [PbiFields.MetaEstimate] = PbiFields.NormalizeEstimate(op.Value)!;
                         break;
                     case PbiUpdateKind.BlockPbi:
                         if (op.OpenDecisionRef is not null && !decRefs.Contains(op.OpenDecisionRef)) decRefs.Add(op.OpenDecisionRef);
@@ -160,6 +174,12 @@ public static class PbiUpdateApply
                 if (!string.IsNullOrWhiteSpace(align.ProposedStatement)) goal = align.ProposedStatement!.Trim();
                 if (align.ProposedAcceptanceCriteria is { Count: > 0 } ac) acceptance = ac;
                 if (status.Blocker == Blocker.NeedsClarify) status = status with { Blocker = Blocker.None };   // R-26-C: needs_clarify -> active
+                // Slice S Teil 2: valide Prio/Schätzung aus der freigegebenen (ggf. edierten) Fassung wirken auch
+                // hier — EINE Regel für Draft-Felder, egal ob create oder align (leer = unangetastet).
+                if (PbiFields.NormalizePriority(align.ProposedPriority) is { } alignPrio)
+                    (metaCopy ??= new Dictionary<string, string>(pbi.Metadata, StringComparer.Ordinal))[PbiFields.MetaPriority] = alignPrio;
+                if (PbiFields.NormalizeEstimate(align.ProposedEstimate) is { } alignEst)
+                    (metaCopy ??= new Dictionary<string, string>(pbi.Metadata, StringComparer.Ordinal))[PbiFields.MetaEstimate] = alignEst;
                 reasons.Add($"ALIGN(R-26-C): {align.Rationale}");
                 aligned = true;
             }
@@ -175,6 +195,7 @@ public static class PbiUpdateApply
                     Text = title ?? pbi.Text,   // Kleinkram-Altlast (aufgefallen §3): PBI ohne Titel behaelt seinen Text statt null
                     Version = pbi.Version + 1,
                     SourceRunId = aligned ? sourceRun : pbi.SourceRunId,
+                    Metadata = metaCopy ?? pbi.Metadata,   // Slice S Teil 2: gesetzte Felder (sonst unverändert)
                     Pbi = pbi.Pbi with { Title = title, Goal = goal, AcceptanceCriteria = acceptance, LinkedRequirementIds = links, OpenDecisionRefs = decRefs }
                 };
             updated.Add(pbi.ItemId);

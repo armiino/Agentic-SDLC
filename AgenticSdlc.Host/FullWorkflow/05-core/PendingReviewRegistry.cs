@@ -61,15 +61,19 @@ public static class PendingReviewRegistry
                     .Split(',', StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => x.Split(':')).Where(x => x.Length == 2)
                     .Select(x => (Id: x[0], Version: int.TryParse(x[1], out var v) ? v : 0)).ToList();
+                // Slice S Teil 2: die Frische-Regel ist BAHN-Semantik — ein clarify-sweep-Pending hängt an der
+                // Klärungs-Lage (needs_clarify weg ⇒ überholt); ein Feld-Pending (pbi-fields) nur an Existenz+Version.
+                var bahn = p.Metadata.GetValueOrDefault("bahn") ?? "?";
+                var requiresClarify = string.Equals(bahn, "clarify-sweep", StringComparison.Ordinal);
                 string? grund = null;
                 foreach (var (id, version) in anchors)
                 {
                     if (!byId.TryGetValue(id, out var it)) { grund = $"{id} existiert nicht mehr"; break; }
-                    if (it.ReadStatus().Blocker != Blocker.NeedsClarify) { grund = $"{id} ist nicht mehr needs_clarify"; break; }
+                    if (requiresClarify && it.ReadStatus().Blocker != Blocker.NeedsClarify) { grund = $"{id} ist nicht mehr needs_clarify"; break; }
                     if (it.Version != version) { grund = $"{id} wurde zwischenzeitlich geändert (v{version}→v{it.Version})"; break; }
                 }
                 return new PendingEntry(p.ProposalId,
-                    p.Metadata.GetValueOrDefault("bahn") ?? "?",
+                    bahn,
                     p.Metadata.GetValueOrDefault("gateCommand") ?? "?",
                     p.Metadata.GetValueOrDefault("createdUtc") ?? "?",
                     anchors.Select(a => a.Id).ToList(), grund is not null, grund);

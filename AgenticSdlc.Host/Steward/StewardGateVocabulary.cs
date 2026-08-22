@@ -23,12 +23,15 @@ internal static class StewardGateVocabulary
         [.. IngestionReviewAdapter.DecisionOptions(kind)
             .Select(o => new ChatOption(o.Value == "skip" ? "reject" : o.Value, o.Label))];
 
-    internal static IReadOnlyList<ChatOption> ForDecision() =>
-        [.. PipelineDecisionReviewAdapter.ResolutionOptions.Select(o => new ChatOption(o.Value switch
+    // R-70 (22.08.): per-ITEM-Palette statt globaler Liste — die dritte Wahl (NO_TRUTH_NEEDED) existiert
+    // nur für aspekt-markierte ziellose DECs, und der Chat MUSS dieselbe Palette sehen wie die UI.
+    internal static IReadOnlyList<ChatOption> ForDecision(bool targetless = false, string? aspect = null) =>
+        [.. PipelineDecisionReviewAdapter.OptionsFor(targetless, aspect).Select(o => new ChatOption(o.Value switch
         {
             PipelineDecisionReviewAdapter.ChoiceKeep => "resolve/KEEP_ORIGINAL",
             PipelineDecisionReviewAdapter.ChoiceAdopt => "resolve/ADOPT_NEW",
             PipelineDecisionReviewAdapter.ChoiceRefine => "resolve/REFINE",
+            PipelineDecisionReviewAdapter.ChoiceNoTruth => "resolve/NO_TRUTH_NEEDED",
             _ => "defer",
         }, o.Label))];
 

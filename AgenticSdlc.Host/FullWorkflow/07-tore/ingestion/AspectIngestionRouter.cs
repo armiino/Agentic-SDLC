@@ -23,9 +23,10 @@ namespace AgenticSdlc.Host.FullWorkflow.Core;
 internal sealed class AspectIngestionRouterExecutor(RunContext run, IReadOnlyList<AspectIngestionProfile> registry)
     : Executor<IngestionResolveInput>("AspectIngestionRouter")
 {
-    /// <summary>Delta-Item-Typen, die bewusst KEIN Aspekt sind (eigene Bahnen/Querschnitte).</summary>
+    /// <summary>Delta-Item-Typen, die bewusst KEIN Aspekt sind (eigene Bahnen/Querschnitte) —
+    /// die Unklarheits-Spur (Fragen + Risiken, Slice S ④) kommt aus der EINEN QuestionLane-Quelle.</summary>
     private static readonly IReadOnlySet<string> CrossCutting =
-        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "open_question" };
+        new HashSet<string>(StringComparer.OrdinalIgnoreCase) { QuestionLane.Question, QuestionLane.Risk };
 
     public override async ValueTask HandleAsync(IngestionResolveInput input, IWorkflowContext context, CancellationToken ct = default)
     {

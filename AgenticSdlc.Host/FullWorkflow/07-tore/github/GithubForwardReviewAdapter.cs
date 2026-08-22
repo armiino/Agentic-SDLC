@@ -337,6 +337,7 @@ public static class GithubForwardReviewAdapter
         GithubForwardKind.UpdateIssue => "Issue aktualisieren",
         GithubForwardKind.Comment => "Kommentar",
         GithubForwardKind.Link => "Verknüpfen",
+        GithubForwardKind.UpsertFile => "Doc veröffentlichen",
         GithubForwardKind.NoChange => "Keine Änderung",
         GithubForwardKind.FlagDrift => "Drift-Hinweis",
         GithubForwardKind.HoldBlocked => "Zurückgehalten · blockiert",
@@ -358,6 +359,7 @@ public static class GithubForwardReviewAdapter
         GithubForwardKind.UpdateIssue => "Schreibt EXTERN: ändert Titel/Body des bestehenden Issues.",
         GithubForwardKind.Comment => "Schreibt EXTERN: fügt einen Kommentar am Issue hinzu.",
         GithubForwardKind.Link => "Nur im Core: verknüpft das PBI mit einem bestehenden Issue (kein GitHub-Schreiben).",
+        GithubForwardKind.UpsertFile => "Schreibt EXTERN: Datei im Team-Repo (One-way-Doc-Projektion, GENERIERT-Kopf).",
         GithubForwardKind.NoChange => "Kein Effekt — PBI und Issue sind synchron.",
         GithubForwardKind.FlagDrift => "Hinweis: Issue und PBI weichen ab — Standard keine Aktion; Entscheid 'overwrite' schreibt BEWUSST die Core-Projektion (der manuelle Edit geht verloren — nur nach Ernte/Entscheid).",
         GithubForwardKind.HoldBlocked => "Nur Hinweis: PBI wartet auf eine blockierende Entscheidung — bewusst kein Issue.",
@@ -372,6 +374,7 @@ public static class GithubForwardReviewAdapter
         GithubForwardKind.UpdateIssue => [new("apply", "✓ Issue aktualisieren"), .. SkipOption],
         GithubForwardKind.Comment => [new("apply", "✓ Kommentar schreiben"), .. SkipOption],
         GithubForwardKind.Link => [new("apply", "✓ Verknüpfen (nur Core)"), .. SkipOption],
+        GithubForwardKind.UpsertFile => [new("apply", "✓ Doc veröffentlichen/aktualisieren"), .. SkipOption],
         GithubForwardKind.FlagDrift
             => [new("apply", "✓ Als gesehen markieren"), new("overwrite", "⚠ Drift bewusst überschreiben (Core-Projektion schreibt; nur nach Ernte/Entscheid)"), .. SkipOption],
         GithubForwardKind.NoChange

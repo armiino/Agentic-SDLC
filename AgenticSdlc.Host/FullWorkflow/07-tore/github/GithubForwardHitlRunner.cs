@@ -101,7 +101,7 @@ public static class GithubForwardHitlRunner
 
         var humanGate = RequestPort.Create<ForwardReviewRequest, ForwardReviewResponse>("github-forward-gate");
         var workflow = GithubForwardHitlWorkflow.Build(
-            new GithubForwardSeedExecutor(run), new GithubForwardMakerExecutor(factory, run), new GithubForwardGateExecutor(run),
+            new GithubForwardSeedExecutor(run, repoRoot), new GithubForwardMakerExecutor(factory, run), new GithubForwardGateExecutor(run),
             new GithubForwardRepairExecutor(factory, run), new GithubForwardHitlFinalizeExecutor(run),
             humanGate, new GithubForwardApplyExecutor(run, repoRoot, outDir, repoArg, tokenEnv),
             new GithubForwardEmptyGateResponder(run));
@@ -179,7 +179,7 @@ public static class GithubForwardHitlRunner
         Func<IReadOnlyList<AITool>, AIAgent> noAgent = _ => throw new InvalidOperationException("Maker darf beim Resume nicht laufen.");
         var humanGate = RequestPort.Create<ForwardReviewRequest, ForwardReviewResponse>("github-forward-gate");
         var workflow = GithubForwardHitlWorkflow.Build(
-            new GithubForwardSeedExecutor(run), new GithubForwardMakerExecutor(noAgent, run), new GithubForwardGateExecutor(run),
+            new GithubForwardSeedExecutor(run, repoRoot), new GithubForwardMakerExecutor(noAgent, run), new GithubForwardGateExecutor(run),
             new GithubForwardRepairExecutor(noAgent, run), new GithubForwardHitlFinalizeExecutor(run),
             humanGate, new GithubForwardApplyExecutor(run, repoRoot, outDir, repoArg ?? pointer.Repository, tokenEnv ?? pointer.TokenEnv),
             new GithubForwardEmptyGateResponder(run));

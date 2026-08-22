@@ -15,8 +15,9 @@ public static class CoreSeeder
 
     public static (ProjectStateDocument Core, Report Report) Seed(ProjectStateDocument source, string sourceRun = "core-seed")
     {
-        var questions = source.Items.Where(i => Is(i, "open_question")).ToList();
-        var items = source.Items.Where(i => !Is(i, "open_question")).Select(SeedItem).ToList();
+        // Slice S ④: Risiken fahren dieselbe Unklarheits-Spur wie Fragen (QuestionLane) — auch im Bootstrap.
+        var questions = source.Items.Where(i => QuestionLane.Carries(i.ItemType)).ToList();
+        var items = source.Items.Where(i => !QuestionLane.Carries(i.ItemType)).Select(SeedItem).ToList();
         var core = source with
         {
             SchemaVersion = ProjectStateDocument.CurrentSchemaVersion,

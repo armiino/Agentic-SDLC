@@ -113,7 +113,8 @@ internal sealed class PbiAlignTools(IReadOnlyList<PbiAlignTarget> targets, RunCo
             "Speichert je Ziel GENAU EINEN Draft (proposedTitle, proposedStatement, proposedAcceptanceCriteria, "
             + "rationale, triggerRequirementIds). Bei bestehendem PBID: pbiId setzen. Bei einem NEUEN PBI "
             + "(zielRequirementId war gesetzt, pbiId war null): pbiId LEER lassen und stattdessen targetRequirementId "
-            + "(+ targetFeatureId) setzen. Genau einmal aufrufen."),
+            + "(+ targetFeatureId) setzen; dann AUCH proposedPriority (high|medium|low) + proposedEstimate (S|M|L). "
+            + "Genau einmal aufrufen."),
     ];
 
     private string GetTargets()

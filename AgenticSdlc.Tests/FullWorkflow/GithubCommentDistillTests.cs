@@ -47,7 +47,7 @@ public sealed class GithubCommentDistillTests
     }
 
     [Fact]
-    public void SaveZaum_erzwingt_Beleg_Coverage_und_clarify_answer_Ziel()
+    public async Task SaveZaum_erzwingt_Beleg_Coverage_und_clarify_answer_Ziel()
     {
         var tools = new GithubCommentDistillTools([
             new GithubCommentFind(12, "T", "PBI-1", "Text", true, [Comment(12, 20)]),
@@ -56,22 +56,22 @@ public sealed class GithubCommentDistillTests
         var save = tools.Build().OfType<Microsoft.Extensions.AI.AIFunction>().First(t => t.Name == "save_comment_drafts");
 
         // Fehlerfälle in EINEM Aufruf: fremde commentId, clarify_answer ohne Ziel, Fund 60 ohne Draft.
-        var bad = save.InvokeAsync(new Microsoft.Extensions.AI.AIFunctionArguments
+        var bad = (await save.InvokeAsync(new Microsoft.Extensions.AI.AIFunctionArguments
         {
             ["drafts"] = new[] { new GithubCommentDraft(12, [999], GithubCommentDisposition.ClarifyAnswer, "Antwort", "r") }
-        }).AsTask().Result!.ToString()!;
+        }))!.ToString()!;
         Assert.Contains("Beleg-Pflicht", bad);
         Assert.Contains("targetPbiId", bad);
         Assert.Contains("#60", bad);
 
-        var ok = save.InvokeAsync(new Microsoft.Extensions.AI.AIFunctionArguments
+        var ok = (await save.InvokeAsync(new Microsoft.Extensions.AI.AIFunctionArguments
         {
             ["drafts"] = new[]
             {
                 new GithubCommentDraft(12, [20], GithubCommentDisposition.ClarifyAnswer, "Nur Lese-Zugriff.", "beantwortet Klärung", "PBI-1"),
                 new GithubCommentDraft(60, [40], GithubCommentDisposition.Noise, "", "Geplauder"),
             }
-        }).AsTask().Result!.ToString()!;
+        }))!.ToString()!;
         Assert.StartsWith("OK", ok);
         Assert.True(tools.Saved);
     }

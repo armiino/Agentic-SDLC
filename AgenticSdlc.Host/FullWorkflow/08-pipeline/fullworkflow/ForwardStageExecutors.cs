@@ -66,7 +66,8 @@ internal sealed class BootstrapForwardBridgeExecutor(RunContext run, string repo
 // BRIDGE: Betrieb -> Forward. Nimmt das update-Delta aus dem Pbi-Apply (Datei), sonst sauberer Skip.
 [SendsMessage(typeof(ForwardPrep))]
 [SendsMessage(typeof(ForwardSkipped))]
-internal sealed class OperationalForwardBridgeExecutor(RunContext run, string pbiOutDir) : Executor<PbiUpdateApplyReport>("PipelineOperationalForwardBridge")
+internal sealed class OperationalForwardBridgeExecutor(RunContext run, string pbiOutDir, string repoRoot, string? repository)
+    : Executor<PbiUpdateApplyReport>("PipelineOperationalForwardBridge")
 {
     public override async ValueTask HandleAsync(PbiUpdateApplyReport report, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -82,23 +83,39 @@ internal sealed class OperationalForwardBridgeExecutor(RunContext run, string pb
         // R-62 (20.08., Nachprobe K7): AUCH bei 0 PBI-Änderungen können VERMERKE anstehen — ein Lauf mit
         // REINEN Ablehnungen erzeugte kein Delta, der Forward wurde geskippt und der ✕-Ablehnungs-Vermerk
         // blieb STUMM (exakt die Lücke, die ② schließt). Der Skip fragt jetzt die Vermerk-Quelle mit.
+        // R-66 (21.08., Rampen-Test): DRITTE Quelle derselben Familie — STALE DOCS (Doc-Publish). Ein Lauf
+        // ohne PBI-Änderungen (nur Fragen/Risiken→DECs) endete ohne Forward, obwohl frisch freigegebene
+        // Artefakte (glossar/c4) auf ihre Erst-Publikation warteten. Der Skip fragt jetzt ALLE drei Quellen.
         if (delta.Entries.Count == 0)
         {
             var vermerke = FullWorkflow.Tore.Github.GithubCommentVermerk.TryDeriveFromRun(run.RunDir, run.RunId);
-            if (vermerke.Count == 0)
+            var docs = await CountStaleDocsAsync().ConfigureAwait(false);
+            if (vermerke.Count == 0 && docs == 0)
             {
                 run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE_SKIPPED", reason = "leeres sync-delta", timestampUtc = DateTime.UtcNow });
-                Console.WriteLine("[pipeline-full] Forward übersprungen (R-50): leeres github-sync-delta (0 Einträge), keine Vermerke — Lauf endet ohne GitHub-Stufe.");
-                await context.SendMessageAsync(new ForwardSkipped("Leeres github-sync-delta (0 Einträge), keine Vermerke — Forward übersprungen (R-50).")).ConfigureAwait(false);
+                Console.WriteLine("[pipeline-full] Forward übersprungen (R-50): leeres github-sync-delta (0 Einträge), keine Vermerke, keine Doc-Änderungen — Lauf endet ohne GitHub-Stufe.");
+                await context.SendMessageAsync(new ForwardSkipped("Leeres github-sync-delta (0 Einträge), keine Vermerke, keine Doc-Änderungen — Forward übersprungen (R-50).")).ConfigureAwait(false);
                 return;
             }
-            run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE", deltaPbis = 0, vermerke = vermerke.Count, timestampUtc = DateTime.UtcNow });
-            Console.WriteLine($"[pipeline-full] Forward läuft trotz leerem sync-delta (R-62): {vermerke.Count} Vermerk(e) anstehend — Ablehnungen werden nie stumm.");
+            run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE", deltaPbis = 0, vermerke = vermerke.Count, staleDocs = docs, timestampUtc = DateTime.UtcNow });
+            Console.WriteLine($"[pipeline-full] Forward läuft trotz leerem sync-delta: {vermerke.Count} Vermerk(e) (R-62) + {docs} Doc-Änderung(en) (R-66) anstehend.");
             await context.SendMessageAsync(new ForwardPrep(delta, InitialSync: false)).ConfigureAwait(false);
             return;
         }
         run.AppendEvent(new { type = "PIPELINE_FORWARD_BRIDGE", deltaPbis = delta.Entries.Count, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(new ForwardPrep(delta, InitialSync: false)).ConfigureAwait(false);
+    }
+
+    // R-66: dieselbe semantische Vorbedingung wie der Seed (ohne Ziel-Repo keine Publikation) — zählt nach
+    // dem Frische-Render die Doc-Ops, die der Forward-Seed erzeugen WÜRDE (EINE Quelle: GithubDocPublish).
+    private async Task<int> CountStaleDocsAsync()
+    {
+        if (string.IsNullOrWhiteSpace(repository)) return 0;
+        var repo = new Core.JsonCoreRepository(repoRoot);
+        if (!await repo.ExistsAsync().ConfigureAwait(false)) return 0;
+        var core = await repo.LoadAsync().ConfigureAwait(false);
+        await FullWorkflow.Tore.Github.GithubDocPublish.RefreshDeterministicProjectionsAsync(repoRoot, core).ConfigureAwait(false);
+        return FullWorkflow.Tore.Github.GithubDocPublish.SeedOps(repoRoot, core).Count;
     }
 }
 

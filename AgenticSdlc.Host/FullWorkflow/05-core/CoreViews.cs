@@ -34,7 +34,11 @@ public sealed record GithubSyncEntry(
     IReadOnlyList<string>? Constraints = null,
     // A4/E-R2 (06.08.): umgesetzte Architektur-Arbeit ("ARCH-x - Text", via covers->architecture) -
     // die work-Rolle des PBIs, im Body als eigene Zeile (CoveredRequirementIds bleibt REIN req).
-    IReadOnlyList<string>? CoveredArchitecture = null);
+    IReadOnlyList<string>? CoveredArchitecture = null,
+    // Slice S Teil 2 (21.08.): Prio/Schätzung aus den PBI-Metadaten (Speicher-Form high|medium|low bzw. S|M|L) —
+    // Projektion: prio-Label-Familie + Footer (nur wenn gesetzt; kein Massen-Drift der Bestands-Issues).
+    string? Priority = null,
+    string? Estimate = null);
 
 public sealed record GithubSyncView(IReadOnlyList<GithubSyncEntry> Entries);
 
@@ -125,7 +129,9 @@ public static class CoreViews
                     AcceptanceCriteria: p.Pbi?.AcceptanceCriteria ?? [],
                     Statement: p.Pbi?.Goal,
                     Constraints: constraintsByPbi.GetValueOrDefault(p.ItemId),
-                    CoveredArchitecture: coveredArch.Count == 0 ? null : coveredArch);
+                    CoveredArchitecture: coveredArch.Count == 0 ? null : coveredArch,
+                    Priority: p.Metadata.GetValueOrDefault(PbiFields.MetaPriority),
+                    Estimate: p.Metadata.GetValueOrDefault(PbiFields.MetaEstimate));
             })
             .ToList();
         return new GithubSyncView(entries);

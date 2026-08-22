@@ -68,8 +68,17 @@ internal sealed class GithubForwardHitlFinalizeExecutor(RunContext run) : Execut
             var views = ops.Select((o, i) => new ForwardReviewOpView($"op-{i}", o.Kind, o.PbiId, o.TargetIssueNumber, o.Title, o.Anchor, o.Rationale)).ToList();
             var request = new ForwardReviewRequest(run.RunId, ctx.SourcePbiUpdateRun, views);
             // R-50: TYP-Routing — 0 Ops ⇒ Marker statt Request (s. Pbi-Strip; Prädikat auf Port-Kanten wird ignoriert).
-            if (views.Count == 0)
+            // R-67 (21.08., In-Sync-Zweitlauf der Slice-S-Abnahme): ein Plan aus NUR NO_CHANGE ist SEMANTISCH
+            // leer — nichts zu schreiben, nichts zu entscheiden. Den Menschen für 43× „alles in sync" anzuhalten
+            // ist Zeremonie ohne Entscheidung; derselbe laute Leer-Gate-Weg übernimmt (Responder akzeptiert die
+            // NO_CHANGE-Ids ⇒ Summary zählt ehrlich noChange, nicht skipped).
+            if (views.Count == 0 || views.All(v => string.Equals(v.Kind, GithubForwardKind.NoChange, StringComparison.Ordinal)))
             {
+                if (views.Count > 0)
+                {
+                    run.AppendEvent(new { type = "GITHUB_FWD_GATE_ALL_IN_SYNC", runId = run.RunId, noChangeOps = views.Count, timestampUtc = DateTime.UtcNow });
+                    Console.WriteLine($"[github-forward] Human-Gate übersprungen (R-67): alle {views.Count} Ops sind NO_CHANGE — alles in sync, nichts zu entscheiden.");
+                }
                 await context.SendMessageAsync(new GithubForwardGateEmpty(request)).ConfigureAwait(false);
                 return;
             }

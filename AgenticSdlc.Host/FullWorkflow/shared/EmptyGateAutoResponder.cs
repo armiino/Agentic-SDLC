@@ -41,7 +41,9 @@ public sealed class PbiUpdateEmptyGateResponder(RunContext run)
 [SendsMessage(typeof(Tore.Github.ForwardReviewResponse))]
 public sealed class GithubForwardEmptyGateResponder(RunContext run)
     : EmptyGateAutoResponder<GithubForwardGateEmpty, Tore.Github.ForwardReviewResponse>(
-        run, "github-forward-gate", _ => new([], Execute: false, "auto (leeres Gate — R-50)"));
+        // R-67: der All-in-Sync-Fall reicht die NO_CHANGE-Ids als akzeptiert durch — der Apply zählt sie
+        // ehrlich als noChange (nicht skipped); beim echten Leer-Gate ist die Liste ohnehin leer.
+        run, "github-forward-gate", m => new([.. m.Request.Ops.Select(o => o.OpId)], Execute: false, "auto (in sync / leeres Gate — R-50/R-67)"));
 
 // ---- R-50-Vervollständigung (17.08., Audit „sitzt der Knoten überall?"): die drei restlichen Sender ----
 

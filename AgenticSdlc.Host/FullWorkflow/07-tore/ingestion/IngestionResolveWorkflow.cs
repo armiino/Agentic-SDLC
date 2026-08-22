@@ -36,6 +36,15 @@ internal static class IngestionResolveTask
                                    targetEntityId — wird zur offenen Entscheidung) ODER ALREADY_DECIDED (dieselbe Frage
                                    ist bereits als DEC-* erfasst; vorher list_open_decisions pruefen). Formuliere das
                                    statement als die Frage selbst; NIE eine Frage als Anforderung umdeuten.
+                               3z. ANTWORT-ANKER (R-74, hat Vorrang vor allen anderen Regeln): traegt ein eingehendes
+                                   Item `answersDecision=DEC-x`, dann IST es die ANTWORT auf diese offene Entscheidung —
+                                   IMMER NEW oder NEW_RELATED (es wird Wahrheit, der Anker reist mit), NIEMALS
+                                   ALREADY_DECIDED oder RESTATE (das wuerde die Antwort in die Frage falten und sie
+                                   ginge verloren; die Entscheidung selbst schliesst der Autor separat am decision-gate).
+                               3c. Fuer Meeting-Risiken (itemType=risk) gilt DASSELBE Vokabular: OPEN_QUESTION (das
+                                   Risiko wird zur offenen Entscheidung — akzeptieren, mitigieren oder klaeren
+                                   entscheidet der Autor am decision-gate) ODER ALREADY_DECIDED. statement = das
+                                   Risiko woertlich; NIE ein Risiko als Anforderung umdeuten oder verwerfen.
                                4. check_state_change_plan (muss pass sein), dann save_state_change_plan (genau einmal).
                                Beleg-Pflicht: claimIds je Operation; im Zweifel NEW_RELATED/NEW statt raten.
                                """;

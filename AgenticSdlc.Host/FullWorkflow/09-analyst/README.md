@@ -53,5 +53,8 @@ R-35-Gedächtnis; der Analyst schlägt Abgelehntes nie wieder vor).
 ## Bewusste Grenzen (v1)
 
 Nur auf Zuruf (Bootstrap-Opt-in = Nach-W2-⚖) · Risiko-Linse liefert FRAGEN (9g-Rampe; Risk-Typ mit
-definiertem Auslöse-Trigger nach W2) · Linsen-Anzahl = Stellschraube · kein privates Agent-Memory
+definiertem Auslöse-Trigger nach W2) · Linsen-Anzahl = Stellschraube (Slice S ① 21.08.: fünfte Linse
+„Persona-Abdeckung" — läuft NUR, wenn `docs/personas.md` freigegeben existiert [AuthoredDocument];
+ihr Auftrag trägt die Personas als linsen-eigenen Kontext, Funde nur aus „Belegt"-Zonen) ·
+kein privates Agent-Memory
 (Gedächtnis = Blackboard: Core + REJ + DEC + Vorgänger-Report). Begründungen: Design-Beschluss §5–§8.

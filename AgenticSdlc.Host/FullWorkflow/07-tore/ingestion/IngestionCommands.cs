@@ -33,5 +33,14 @@ public static class IngestionCommands
             Console.WriteLine($"[requirements-doc] Version {version} geschrieben ({items} Core-Items): {Path.GetRelativePath(repoRoot, path)}");
             return 0;
         };
+
+        // Slice S (21.08.): Backlog-Tabelle = Core-Projektion (docs/backlog.md) — gleiche Naht-Symmetrie;
+        // publiziert wird sie über Doc-Publish, dies ist die lokale Vorschau-Haut.
+        map["backlog-doc"] = async (args, _, repoRoot) =>
+        {
+            var (path, version) = await BacklogDocumentProjection.RunAsync(repoRoot).ConfigureAwait(false);
+            Console.WriteLine($"[backlog-doc] Version {version} geschrieben: {Path.GetRelativePath(repoRoot, path)}");
+            return 0;
+        };
     }
 }

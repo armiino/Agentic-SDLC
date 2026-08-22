@@ -49,7 +49,8 @@ public static class StewardChatRunner
         IReadOnlyList<AITool> tools =
         [
             .. new StewardReadTools(repoRoot).Build(),
-            .. new CoreQueryTools(new JsonCoreRepository(repoRoot)).Build(),
+            .. new CoreQueryTools(new JsonCoreRepository(repoRoot),
+                core => FullWorkflow.Core.AuthoredDocDrafting.C4FrischeNotiz(repoRoot, core)).Build(),
             .. new GithubSnapshotQueryTools(repoRoot).Build(),
             .. new StewardGateTools(repoRoot, chainResume: id => runTools.ChainResumeAsync(id)).Build(),
             .. runTools.Build(),

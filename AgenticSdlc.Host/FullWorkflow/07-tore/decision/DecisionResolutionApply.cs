@@ -41,10 +41,11 @@ public static class DecisionResolutionApply
             ProjectStateItem? target = null;
             if (op.TargetRequirementId is not null && !byId.TryGetValue(op.TargetRequirementId, out target))
             { skipped.Add($"{op.DecisionId}: Ziel-Requirement fehlt"); continue; }
-            if (target is null && !string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
+            var noTruthNeeded = string.Equals(op.Outcome, DecisionOutcome.NoTruthNeeded, StringComparison.Ordinal);
+            if (target is null && !string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal) && !noTruthNeeded)
             { skipped.Add($"{op.DecisionId}: '{op.Outcome}' braucht ein Ziel-Requirement"); continue; }
 
-            var unblockStatus = string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal)
+            var unblockStatus = string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal) || noTruthNeeded
                 ? PbiStatus.Active : PbiStatus.NeedsClarify;
             string? newReqId = null;
             var archTarget = target is not null && string.Equals(target.ItemType, "architecture", StringComparison.OrdinalIgnoreCase);
@@ -89,6 +90,9 @@ public static class DecisionResolutionApply
             // 3) DEC resolved (History + resolutionOutcome).
             var decMeta = new Dictionary<string, string>(dec.Metadata, StringComparer.Ordinal)
             { ["resolutionOutcome"] = op.Outcome, ["resolvedUtc"] = DateTime.UtcNow.ToString("O") };
+            // C4-Kreislauf: der bewusste Verzicht wird gestempelt — die §3-Projektion schließt die Lücke
+            // dann SAUBER (statt ⚠ „geklärt ohne Nachweis").
+            if (noTruthNeeded) decMeta[Core.DecisionAnswerMeta.WaivedKey] = "true";
             // §5-S7 (Option A): Status ist Projektion — der Resolved-Zustand wird über die Decision-Achse gesetzt
             // (ToLegacyString prüft Decision zuerst → "resolved", bit-identisch). Governance/Rest-Achsen bleiben erhalten.
             byId[op.DecisionId] = dec.WithStatus(dec.ReadStatus() with { Decision = DecisionState.Resolved }) with

@@ -76,10 +76,12 @@ A = gemeinsamer FORWARD-SCHWANZ:
 | --- | --- |
 | Die 4 Türen + Typ-Routing („genau EIN Fach") | `fullworkflow/PipelineEntryExecutor.cs` (Kopf-Kommentar + Code) |
 | ALLE Kanten (die eine Verdrahtungs-Stelle) | `fullworkflow/PipelineFullWorkflow.cs` → `Assemble` |
-| Start/Pause/Resume/Event-Pumpe/Gate-Responder | `fullworkflow/PipelineFullRunner.cs` + Abschnitt „Lebenslauf" unten |
+| Start/Pause/Resume/Event-Pumpe/Gate-Responder | `fullworkflow/PipelineFullRunner.cs` (Kern) + `.EventPump.cs` / `.GateResponder.cs` / `.Cli.cs` (9e-light-Neuzuschnitt 21.08., EINE partial class) + Abschnitt „Lebenslauf" unten |
 | Die Weiche | `fullworkflow`-BranchDetector (Typ-Wahl Bootstrap/Operational) |
 | Die Vier-Schritt-Halte-Figur (Maker→Checker→Halt→Apply) | `../07-tore/README.md` · kanonische Form: `docs/aktiv/done/2026-08-04/reclarify-checker-repair-plan.md` (R-33) |
 | Innenleben je Stufe | `../01-…`–`../09-…/README.md` |
+| Der C4-Kreislauf (Architektur-Lücken mit Lebenslauf: §3-Projektion, Antwort-Anker, Drei-Stufen-Garantien) | `../05-core/README.md` §„Der C4-Kreislauf" |
+| Autor-Artefakte + Doc-Publish (vision/personas/glossar/c4 → Team-Repo, Drei-Klassen-Ordnung) | `docs/aktiv/team-sichtbarkeit-slice.md` (Bauplan + GitHub-Rückfluss-Landkarte) |
 | Artefakt-Anatomie eines Laufs | `runs/README.md` · Route nachlesen: `runs/fullworkflow/<id>/logs/events.jsonl` |
 | MAF-Einordnung („ist das framework-gewollt?") + Belege | `docs/aktiv/maf-feature-matrix.md` |
 | Kapsel-Endbild (warum flach + eine Kapsel) | `docs/aktiv/aufgefallen.md` §9j · R-38 im E2E-RUNBOOK |

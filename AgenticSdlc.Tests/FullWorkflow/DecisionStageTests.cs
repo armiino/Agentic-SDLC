@@ -12,6 +12,31 @@ namespace AgenticSdlc.Tests.FullWorkflow;
 // PbiUpdateDerivation (frischer Core: Flip => kein BLOCK; synthetische Ops => MARK_CHANGED/SUPERSEDE_PBI).
 public sealed class DecisionStageTests
 {
+    // Kanal-Ehrlichkeit (Autor-Fund 20./21.08.): CONTRADICT-DECs nennen ihren ECHTEN Kanal —
+    // Analyst-erschlossen bzw. GitHub-geerntet, nicht pauschal „Meeting".
+    [Fact]
+    public void OriginOf_nennt_den_echten_Kanal_bei_Analyst_und_Github_Contradicts()
+    {
+        ProjectStateItem Dec(Dictionary<string, string> meta) => new ProjectStateItem(
+            "DEC-9", "decision", "Widerspruch zu REQ-1: …", "INGESTION_CONTRADICTION", null, 1,
+            "run-1", null, null, null, null, [], [], meta).WithStatus(CoreStatus.From("open_decision"));
+
+        var analyst = DecisionStage.OriginOf(Dec(new(StringComparer.Ordinal)
+        { [AnalystOriginMeta.Linse] = "arch", ["ingestedFrom"] = "CA-1" }));
+        Assert.Contains("vom Core-Analysten ERSCHLOSSEN", analyst);
+        Assert.Contains("Analyst-Fund CA-1", analyst);
+        Assert.DoesNotContain("Meeting", analyst);
+
+        var github = DecisionStage.OriginOf(Dec(new(StringComparer.Ordinal)
+        { [GithubOriginMeta.IssueNumber] = "45", ["ingestedFrom"] = "GH-45" }));
+        Assert.Contains("aus der GitHub-Ernte", github);
+        Assert.Contains("GitHub-Item GH-45", github);
+
+        var meeting = DecisionStage.OriginOf(Dec(new(StringComparer.Ordinal) { ["ingestedFrom"] = "M1-REQ-1" }));
+        Assert.Contains("im Meeting", meeting);
+        Assert.Contains("Meeting-Item M1-REQ-1", meeting);
+    }
+
     private static readonly DateTime T = DateTime.UnixEpoch;
 
     private static ProjectStateItem Item(string id, string type, string status, string text = "") => new ProjectStateItem(

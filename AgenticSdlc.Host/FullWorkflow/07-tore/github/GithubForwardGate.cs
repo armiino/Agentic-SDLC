@@ -63,7 +63,8 @@ public static class GithubForwardGate
         // Coverage: jedes Delta-PBI genau ein Op. NOTE_COMMENT-Vermerke (C2d §3-5) sind ZUSÄTZLICH zur
         // Projektion — ihr Betreff ist ein Wahrheits-Item, kein Delta-PBI; sie zählen nicht in die Coverage.
         var opsByPbi = plan.Operations
-            .Where(o => !string.Equals(o.Kind, GithubForwardKind.NoteComment, StringComparison.Ordinal))
+            .Where(o => !string.Equals(o.Kind, GithubForwardKind.NoteComment, StringComparison.Ordinal)
+                        && !string.Equals(o.Kind, GithubForwardKind.UpsertFile, StringComparison.Ordinal))   // Slice S: Docs zählen nicht in die PBI-Coverage
             .GroupBy(o => o.PbiId, StringComparer.Ordinal)
             .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
         foreach (var e in deltaEntries)

@@ -38,4 +38,6 @@ public sealed record GithubForwardApplySummary(
     [property: JsonPropertyName("rejected")] int Rejected,
     [property: JsonPropertyName("failed")] int Failed,
     // S3 (Idempotenz): Ops, die uebersprungen wurden, weil das PBI im Core bereits gemappt war (kein erneuter Write).
-    [property: JsonPropertyName("alreadyApplied")] int AlreadyApplied = 0);
+    [property: JsonPropertyName("alreadyApplied")] int AlreadyApplied = 0,
+    // Slice S Teil 1 (21.08., additiv): publizierte Doc-Projektionen (UPSERT_FILE).
+    [property: JsonPropertyName("docUpserts")] int DocUpserts = 0);

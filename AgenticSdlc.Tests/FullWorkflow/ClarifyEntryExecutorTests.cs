@@ -101,7 +101,7 @@ public sealed class ClarifyEntryExecutorTests
         var wfRun = await InProcessExecution.Default.RunAsync(wf,
             new ClarifySweepInput([new ClarifySweepAnswer("PBI-UNBEKANNT", "egal")]), run.RunId, CancellationToken.None);
 
-        Assert.Empty(wfRun.OutgoingEvents.Where(e => e is ExecutorFailedEvent or WorkflowErrorEvent));
+        Assert.DoesNotContain(wfRun.OutgoingEvents, e => e is ExecutorFailedEvent or WorkflowErrorEvent);
         Assert.Empty(got);                                             // KEIN Inject in den PBI-Schwanz (nicht leer durchgereicht)
         Assert.False(called);                                          // kein LLM-Schritt bei leerem Plan
         var outputs = wfRun.OutgoingEvents.OfType<WorkflowOutputEvent>().Select(o => o.Data as string ?? "").ToList();

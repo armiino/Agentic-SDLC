@@ -27,10 +27,13 @@ public static class AnalystWorkflow
         ProjectStateDocument core, IReadOnlySet<string> vorgaengerKeys,
         Func<IReadOnlyList<AITool>, AIAgent> lensFactory,
         Func<IReadOnlyList<AITool>, AIAgent> kritikerFactory,
-        RunContext run, string outDir)
+        RunContext run, string outDir,
+        // Slice S ①: freigegebene Personas (Autor-Artefakt) — vorhanden ⇒ fünfte Linse „Persona-Abdeckung".
+        string? personasContent = null)
     {
-        var dispatch = new AnalystDispatchExecutor(core, run);
-        var lenses = AnalystLenses.All.Select(l => new AnalystLensExecutor(l, core, lensFactory, run)).ToList();
+        var lensDefs = AnalystLenses.For(personasContent);
+        var dispatch = new AnalystDispatchExecutor(core, run, lensDefs, personasContent ?? "");
+        var lenses = lensDefs.Select(l => new AnalystLensExecutor(l, core, lensFactory, run)).ToList();
         var merge = new AnalystMergeExecutor(core, vorgaengerKeys, run, lenses.Count);
         var kritiker = new AnalystKritikerExecutor(kritikerFactory, run);
         var persist = new AnalystPersistExecutor(run, outDir);
@@ -54,17 +57,20 @@ public static class AnalystWorkflow
 // ── Dispatch = die Collect-Stufe (§5.0 ①, LLM-frei): Digest + Kollektor-Funde, dann Fan-out ──
 
 [SendsMessage(typeof(AnalystWork))]
-internal sealed class AnalystDispatchExecutor(ProjectStateDocument core, RunContext run)
+internal sealed class AnalystDispatchExecutor(ProjectStateDocument core, RunContext run,
+    IReadOnlyList<AnalystLens> lenses, string personaKontext)
     : Executor<AnalystWorkflow.Trigger>("AnalystDispatch")
 {
     public override async ValueTask HandleAsync(AnalystWorkflow.Trigger _, IWorkflowContext context, CancellationToken ct = default)
     {
         var digest = AnalystCollect.Digest(core);
         var kollektor = AnalystCollect.KollektorFunde(core);
-        run.AppendEvent(new { type = "ANALYST_START", runId = run.RunId, linsen = AnalystLenses.All.Count,
+        run.AppendEvent(new { type = "ANALYST_START", runId = run.RunId, linsen = lenses.Count,
             digestZeilen = digest.Count(c => c == '\n'), timestampUtc = DateTime.UtcNow });
-        foreach (var lens in AnalystLenses.All)
-            await context.SendMessageAsync(new AnalystWork(lens, digest, kollektor)).ConfigureAwait(false);
+        foreach (var lens in lenses)
+            await context.SendMessageAsync(new AnalystWork(lens, digest, kollektor,
+                Kontext: string.Equals(lens.Key, AnalystLenses.Persona.Key, StringComparison.Ordinal) ? personaKontext : ""))
+                .ConfigureAwait(false);
     }
 }
 
@@ -81,9 +87,13 @@ internal sealed class AnalystLensExecutor(AnalystLens lens, ProjectStateDocument
     {
         var tools = new AnalystLensTools(work.Lens, core);
         var agent = agentFactory(tools.Build());
-        var auftrag = new StringBuilder()
+        var sb = new StringBuilder()
             .AppendLine($"DEINE LINSE: {work.Lens.Titel}")
-            .AppendLine($"CHECKLISTE: {work.Lens.Checkliste}")
+            .AppendLine($"CHECKLISTE: {work.Lens.Checkliste}");
+        // Slice S ①: linsen-eigenes Material (Persona-Abdeckung: die freigegebenen Personas).
+        if (work.Kontext.Length > 0)
+            sb.AppendLine().AppendLine("== FREIGEGEBENE PERSONAS (Abdeckungs-Grundlage — nur 'Belegt'-Zonen zaehlen) ==").AppendLine(work.Kontext);
+        var auftrag = sb
             .AppendLine().AppendLine("== BERECHNETE LUECKEN-KANDIDATEN (deterministisch) ==").AppendLine(work.KollektorFunde)
             .AppendLine("== AKTIVE WAHRHEIT (Digest — Details via get_core_item/search_core) ==").AppendLine(work.Digest)
             .ToString();

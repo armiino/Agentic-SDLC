@@ -22,13 +22,18 @@ public static class IngestionGate
         // (jede Frage braucht genau eine Operation), aber mit eigenem, kleinerem Op-Vokabular.
         // 9i: NUR im Frage-tragenden Strip (profile.CarriesQuestionLane) — im anderen Strip sind Fragen
         // weder Coverage-Pflicht noch erlaubtes Op-Ziel (QUESTION_KIND_MISMATCH wacht).
+        // Slice S ④: Meeting-Risiken fahren dieselbe Spur (QuestionLane = die EINE Definition).
         var incomingQuestionIds = meetingDelta.Items
-            .Where(i => profile.CarriesQuestionLane
-                        && string.Equals(i.ItemType, "open_question", StringComparison.OrdinalIgnoreCase))
+            .Where(i => profile.CarriesQuestionLane && Core.QuestionLane.Carries(i.ItemType))
             .Select(i => i.ItemId)
             .ToHashSet(StringComparer.Ordinal);
 
         var incomingIds = incomingReqIds.Concat(incomingQuestionIds).ToHashSet(StringComparer.Ordinal);
+
+        // R-74: eingehende ANTWORT-Diktate (answersDecision-Anker) — sie müssen Wahrheit werden.
+        var incomingAnswerRefs = meetingDelta.Items
+            .Where(i => !string.IsNullOrWhiteSpace(DecisionAnswerMeta.Of(i)))
+            .ToDictionary(i => i.ItemId, i => DecisionAnswerMeta.Of(i)!, StringComparer.Ordinal);
 
         var coreReqIds = core.Items
             .Where(i => IsAspect(i, profile))
@@ -69,6 +74,15 @@ public static class IngestionGate
                 && StateChangeKind.All.Contains(op.Kind)
                 && !StateChangeKind.ForQuestions.Contains(op.Kind))
                 errors.Add(Issue("QUESTION_KIND_MISMATCH", "error", $"Eingehende Frage '{op.IncomingItemId}' erlaubt nur OPEN_QUESTION/ALREADY_DECIDED, nicht '{op.Kind}'.", op.IncomingItemId, null));
+
+            // R-74 (22.08., Königsweg-Test live): ein Item MIT Antwort-Anker IST die Antwort auf eine offene
+            // Entscheidung — ALREADY_DECIDED/RESTATE würden sie in die Frage falten, der Anker ginge still
+            // verloren (genau so passiert). Repairable: der Repair-Loop korrigiert auf NEW/NEW_RELATED.
+            if (incomingAnswerRefs.TryGetValue(op.IncomingItemId, out var answeredDec)
+                && op.Kind is StateChangeKind.AlreadyDecided or StateChangeKind.Restate)
+                errors.Add(Issue("ANSWER_NEEDS_TRUTH", "error",
+                    $"'{op.IncomingItemId}' BEANTWORTET {answeredDec} (answersDecision) — '{op.Kind}' würde die Antwort verschlucken; NEW/NEW_RELATED nutzen.",
+                    op.IncomingItemId, null));
 
             var requiresReqTarget = StateChangeKind.RequireTarget.Contains(op.Kind);
             var requiresDecisionTarget = StateChangeKind.RequireDecisionTarget.Contains(op.Kind);
@@ -143,6 +157,7 @@ public static class IngestionGate
     // R7: reparierbar = Plan-Qualitaet des Resolvers (per GateFeedback fixbar); UNKNOWN_KIND = needs_human.
     private static readonly IReadOnlyDictionary<string, string> Classification = new Dictionary<string, string>(StringComparer.Ordinal)
     {
+        ["ANSWER_NEEDS_TRUTH"] = Core.Repairability.Repairable,   // R-74: Repair-Loop korrigiert auf NEW
         ["UNPLACED_INCOMING"] = Core.Repairability.Repairable,
         ["DUPLICATE_OP"] = Core.Repairability.Repairable,
         ["MULTIPLE_OPS_SAME_TARGET"] = Core.Repairability.Repairable,

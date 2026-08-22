@@ -28,7 +28,10 @@ public sealed record PbiAlignmentDecision(
     [property: JsonPropertyName("editedTitle")] string? EditedTitle,
     [property: JsonPropertyName("editedStatement")] string? EditedStatement,
     [property: JsonPropertyName("editedAcceptanceCriteria")] IReadOnlyList<string>? EditedAcceptanceCriteria,
-    [property: JsonPropertyName("reason")] string? Reason);
+    [property: JsonPropertyName("reason")] string? Reason,
+    // Slice S Teil 2: vom Menschen im Edit geänderte Prio/Schätzung (leer = Vorschlag behalten). Additiv.
+    [property: JsonPropertyName("editedPriority")] string? EditedPriority = null,
+    [property: JsonPropertyName("editedEstimate")] string? EditedEstimate = null);
 
 // Projiziert die PBI-Operationen in die generische HumanReview-UI: 1 Item je Operation (opId = op-<index>),
 // Entscheidung apply/skip. Der Mensch autorisiert die Backlog-Aenderungen (= Wahrheits-Mutation im Core).
@@ -51,6 +54,9 @@ public static class PbiUpdateReviewAdapter
     public const string FieldAlignTitle = "alignTitle";
     public const string FieldAlignStatement = "alignStatement";
     public const string FieldAlignAcceptance = "alignAcceptance";
+    // Slice S Teil 2: Prio/Schätzung des Drafts — im Edit änderbar (Werte = Speicher-Form aus PbiFields).
+    public const string FieldAlignPriority = "alignPriority";
+    public const string FieldAlignEstimate = "alignEstimate";
     // B1 (Fall-C-Bündelung, Lösungsweg B): editierbare Feature-Zuordnung eines NEW_PBI. BEWUSST der Feldschlüssel
     // "referenceTarget" — daran ist die generische Review-UI fest verdrahtet: die rechte Kontext-Leiste zeigt die
     // Optionen dieses Feldes als Katalog (hier die Feature-Landkarte), und ein Klick auf einen Eintrag setzt genau
@@ -76,6 +82,11 @@ public static class PbiUpdateReviewAdapter
         new("skip", "Nicht angleichen — PBI bleibt ungeklaert (needs_clarify), Begruendung Pflicht")
     ];
     private static readonly HashSet<string> AlignDecisions = new(StringComparer.OrdinalIgnoreCase) { "accept", "edit", "skip" };
+    // Slice S Teil 2: Auswahl-Kataloge der Feld-Werte (gespeichert englisch, angezeigt deutsch — PbiFields-Regel).
+    private static readonly IReadOnlyList<ReviewOption> PriorityOptions =
+        [new("", "(keine)"), new("high", "hoch"), new("medium", "mittel"), new("low", "niedrig")];
+    private static readonly IReadOnlyList<ReviewOption> EstimateOptions =
+        [new("", "(keine)"), new("S", "S (klein)"), new("M", "M (mittel)"), new("L", "L (groß)")];
     private static readonly ReviewFieldVisibility OnlyHasAlign = new(FieldHasAlign, ["yes"]);
     private static readonly ReviewFieldVisibility OnlyAlignEdit = new(FieldAlignDecision, ["edit"]);
     private static readonly ReviewFieldVisibility OnlyNewPbi = new(FieldKind, [PbiUpdateKind.NewPbi]);
@@ -152,6 +163,13 @@ public static class PbiUpdateReviewAdapter
                     Help: "Als <Rolle> will ich ... Leer = Vorschlag behalten.", VisibleWhen: OnlyAlignEdit),
                 new ReviewFieldSpec(FieldAlignAcceptance, "Akzeptanzkriterien (angeglichen)", ReviewInputType.MultiLine, [], Required: false,
                     Help: "Eine Zeile pro Kriterium. Leer = Vorschlag behalten.", VisibleWhen: OnlyAlignEdit),
+                // Slice S Teil 2: Prio/Schätzung sind Vorschlags-Felder des Drafts — hier korrigierbar.
+                new ReviewFieldSpec(FieldAlignPriority, "Priorität", ReviewInputType.Dropdown, ["", "high", "medium", "low"], Required: false,
+                    Help: "Priorität des PBIs (hoch/mittel/niedrig). Leer = Vorschlag behalten bzw. keine setzen.",
+                    Options: PriorityOptions, VisibleWhen: OnlyAlignEdit),
+                new ReviewFieldSpec(FieldAlignEstimate, "Schätzung", ReviewInputType.Dropdown, ["", "S", "M", "L"], Required: false,
+                    Help: "T-Shirt-Schätzung (S/M/L). Leer = Vorschlag behalten bzw. keine setzen.",
+                    Options: EstimateOptions, VisibleWhen: OnlyAlignEdit),
                 new ReviewFieldSpec(FieldReason, "Begruendung (Audit-Protokoll)", ReviewInputType.MultiLine, [], Required: false,
                     Help: "Pflicht beim Ueberspringen/Nicht-angleichen. Landet als Beleg in human-decisions.json — keine Anweisung ans System.")
             ],
@@ -194,7 +212,9 @@ public static class PbiUpdateReviewAdapter
                 NullIfEmpty(FieldOf(it, FieldAlignTitle)),
                 NullIfEmpty(FieldOf(it, FieldAlignStatement)),
                 SplitLines(FieldOf(it, FieldAlignAcceptance)),
-                NullIfEmpty(FieldOf(it, FieldReason))))
+                NullIfEmpty(FieldOf(it, FieldReason)),
+                EditedPriority: NullIfEmpty(FieldOf(it, FieldAlignPriority)),
+                EditedEstimate: NullIfEmpty(FieldOf(it, FieldAlignEstimate))))
             .ToList();
         return new(runId, "human (review-ui)", ops, aligns.Count > 0 ? aligns : null);
     }
@@ -231,6 +251,8 @@ public static class PbiUpdateReviewAdapter
             Set(item, FieldAlignTitle, ad.EditedTitle);
             Set(item, FieldAlignStatement, ad.EditedStatement);
             Set(item, FieldAlignAcceptance, ad.EditedAcceptanceCriteria is { Count: > 0 } c ? string.Join('\n', c) : null);
+            Set(item, FieldAlignPriority, ad.EditedPriority);
+            Set(item, FieldAlignEstimate, ad.EditedEstimate);
             if (!string.IsNullOrWhiteSpace(ad.Reason)) Set(item, FieldReason, ad.Reason);
             item.Resolved = Resolved(item);
         }
@@ -396,6 +418,7 @@ public static class PbiUpdateReviewAdapter
         new("Blockieren", "Setzt das PBI auf blockiert · Entscheidung — es wartet auf eine offene Entscheidung, es entsteht kein Issue.", GOps),
         new("Anforderung ersetzen", "Tauscht eine abgeloeste Anforderung gegen ihren Ersatz aus (und markiert das PBI als geaendert · ungeklaert).", GOps),
         new("Neues Feature", "Kein bestehendes Feature passt — legt ein neues Feature + erstes PBI an.", GOps),
+        new("Priorität/Schätzung setzen", "Reine Feld-Pflege am PBI (Prio hoch/mittel/niedrig · Schätzung S/M/L) — ändert KEINEN Status; sichtbar als prio-Label bzw. in der Issue-Fußzeile und der Backlog-Tabelle.", GOps),
         new("geändert · ungeklärt", "PBI-Zustand: geaendert, aber Titel/Kriterien noch nicht an die neue Anforderung angeglichen (intern: needs_clarify).", GStates),
         new("blockiert · Entscheidung", "PBI-Zustand: wartet auf eine Entscheidung — es entsteht (noch) kein GitHub-Issue (intern: blocked_by_decision).", GStates),
         new("verfeinert", "Die Anforderung wurde inhaltlich praezisiert — eine neue Fassung ersetzt die alte (Vorher/Nachher unten).", GMisc)
@@ -410,6 +433,8 @@ public static class PbiUpdateReviewAdapter
         PbiUpdateKind.BlockPbi => "Blockieren",
         PbiUpdateKind.SupersedePbi => "Anforderung ersetzen",
         PbiUpdateKind.NewFeature => "Neues Feature",
+        PbiUpdateKind.SetPriority => "Priorität setzen",
+        PbiUpdateKind.SetEstimate => "Schätzung setzen",
         _ => kind
     };
 
@@ -421,6 +446,8 @@ public static class PbiUpdateReviewAdapter
         PbiUpdateKind.BlockPbi => "Setzt das PBI auf blockiert (wartet auf eine offene Entscheidung) — es entsteht kein Issue.",
         PbiUpdateKind.SupersedePbi => "Tauscht die abgelöste Anforderung gegen ihren Ersatz (PBI wird geändert · ungeklärt).",
         PbiUpdateKind.NewFeature => "Legt ein NEUES Feature + erstes PBI im Core an.",
+        PbiUpdateKind.SetPriority => "Setzt NUR das Prioritäts-Feld des PBIs — kein Status-Wechsel; Projektion: prio-Label am Issue + Backlog-Tabelle.",
+        PbiUpdateKind.SetEstimate => "Setzt NUR das Schätzungs-Feld des PBIs — kein Status-Wechsel; Projektion: Issue-Fußzeile + Backlog-Tabelle.",
         _ => "—"
     };
 
@@ -447,6 +474,8 @@ public static class PbiUpdateReviewAdapter
         PbiUpdateKind.BlockPbi => [new("apply", "✓ Blockieren übernehmen"), .. SkipOption],
         PbiUpdateKind.SupersedePbi => [new("apply", "✓ Ersetzen übernehmen"), .. SkipOption],
         PbiUpdateKind.NewFeature => [new("apply", "✓ Feature + PBI anlegen"), .. SkipOption],
+        PbiUpdateKind.SetPriority => [new("apply", "✓ Priorität setzen"), .. SkipOption],
+        PbiUpdateKind.SetEstimate => [new("apply", "✓ Schätzung setzen"), .. SkipOption],
         _ => [new("apply", "✓ Übernehmen"), .. SkipOption]
     };
 
@@ -468,6 +497,9 @@ public static class PbiUpdateReviewAdapter
             PbiUpdateKind.BlockPbi => $"{PbiTitle(pbi, op.PbiId)}: blockiert durch offene Entscheidung",
             PbiUpdateKind.SupersedePbi => $"{PbiTitle(pbi, op.PbiId)}: {(archTrigger ? "technischer Rahmen wird ersetzt" : "Anforderung wird ersetzt")}",
             PbiUpdateKind.NewFeature => $"NEU: Feature + Backlog-Item für „{reqShort}“",
+            // Slice S Teil 2: Feld-Pflege — der Wert steht deutsch in der Summary (das ist die ganze Op).
+            PbiUpdateKind.SetPriority => $"{PbiTitle(pbi, op.PbiId)}: Priorität → {Core.PbiFields.PriorityDe(op.Value ?? "?")}",
+            PbiUpdateKind.SetEstimate => $"{PbiTitle(pbi, op.PbiId)}: Schätzung → {op.Value ?? "?"}",
             _ => $"{KindBadge(op.Kind)} {op.PbiId}"
         };
 
@@ -561,7 +593,8 @@ public static class PbiUpdateReviewAdapter
             notes.Add(new ReviewNote(ReviewNoteKind.Info, "PBI-Inhalt AKTUELL",
                 PbiContentBlock(pbi.Pbi?.Title ?? pbi.Text, pbi.Pbi?.Goal, pbi.Pbi?.AcceptanceCriteria)));
             notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, "PBI-Inhalt ANGEGLICHEN (Vorschlag)",
-                PbiContentBlock(align.ProposedTitle, align.ProposedStatement, align.ProposedAcceptanceCriteria)));
+                PbiContentBlock(align.ProposedTitle, align.ProposedStatement, align.ProposedAcceptanceCriteria,
+                    align.ProposedPriority, align.ProposedEstimate)));
         }
         // O3b create (NEW_PBI): es gibt noch KEIN aktuelles PBI — aber der vorgeschlagene Inhalt MUSS sichtbar sein.
         // Sonst uebernaehme der Mensch bei Default "accept" ungesehenen Inhalt in die Core-Wahrheit (Gate-Sinn).
@@ -570,7 +603,8 @@ public static class PbiUpdateReviewAdapter
             notes.Add(new ReviewNote(ReviewNoteKind.Reason, "Neues PBI — warum",
                 align.Rationale + $"\nAusgeloest durch: {(align.TriggerRequirementIds.Count == 0 ? "-" : string.Join(", ", align.TriggerRequirementIds))}"));
             notes.Add(new ReviewNote(ReviewNoteKind.Suggestion, "Neues PBI — so wuerde es entstehen (Vorschlag)",
-                PbiContentBlock(align.ProposedTitle, align.ProposedStatement, align.ProposedAcceptanceCriteria)));
+                PbiContentBlock(align.ProposedTitle, align.ProposedStatement, align.ProposedAcceptanceCriteria,
+                    align.ProposedPriority, align.ProposedEstimate)));
         }
 
         var context = new List<ContextBlock> { new(ContextBlockKind.Generic, "Operation im Detail", $"op:{idx}") };
@@ -597,6 +631,8 @@ public static class PbiUpdateReviewAdapter
             fields.Add(new ReviewFieldValue(FieldAlignTitle, align.ProposedTitle ?? ""));
             fields.Add(new ReviewFieldValue(FieldAlignStatement, align.ProposedStatement ?? ""));
             fields.Add(new ReviewFieldValue(FieldAlignAcceptance, align.ProposedAcceptanceCriteria is { Count: > 0 } c ? string.Join('\n', c) : ""));
+            fields.Add(new ReviewFieldValue(FieldAlignPriority, Core.PbiFields.NormalizePriority(align.ProposedPriority) ?? ""));
+            fields.Add(new ReviewFieldValue(FieldAlignEstimate, Core.PbiFields.NormalizeEstimate(align.ProposedEstimate) ?? ""));
         }
 
         var item = new ReviewItem
@@ -615,7 +651,8 @@ public static class PbiUpdateReviewAdapter
 
     // Zeigt die drei PBI-Module klar getrennt (Titel / Statement / Akzeptanzkriterien) — die UI hebt die
     // "Label:"-Zeilen hervor, sodass alt und neu Modul-fuer-Modul vergleichbar sind.
-    private static string PbiContentBlock(string? title, string? statement, IReadOnlyList<string>? acceptance)
+    private static string PbiContentBlock(string? title, string? statement, IReadOnlyList<string>? acceptance,
+        string? priority = null, string? estimate = null)
     {
         var sb = new System.Text.StringBuilder();
         sb.Append("Titel: ").Append(string.IsNullOrWhiteSpace(title) ? "(unveraendert)" : title);
@@ -625,6 +662,9 @@ public static class PbiUpdateReviewAdapter
             foreach (var c in ac) sb.Append("\n- ").Append(c);
         else
             sb.Append(" (unveraendert)");
+        // Slice S Teil 2: nur zeigen, was gesetzt ist (E0.9 — keine Leer-Zeilen-Deko).
+        if (Core.PbiFields.NormalizePriority(priority) is { } p) sb.Append("\nPriorität: ").Append(Core.PbiFields.PriorityDe(p));
+        if (Core.PbiFields.NormalizeEstimate(estimate) is { } e) sb.Append("\nSchätzung: ").Append(e);
         return sb.ToString();
     }
 

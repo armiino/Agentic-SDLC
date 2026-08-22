@@ -70,13 +70,26 @@ public static class AnalystLenses
         new("risiko", "Risiken",
             "Datenverlust-/Sync-Risiken · Missbrauchs-/Zugriffsrisiken · Abhängigkeits-Risiken (externe Dienste) · Adoptions-Risiken (Pflege-Alltag). Output IMMER als disposition question (Risiko ist kein Wahrheits-Typ — v1)."),
     ];
+
+    // Slice S ① (21.08., Autor-Kombo „Persona-getriebene Lücken-Findung"): die fünfte Linse — läuft NUR,
+    // wenn freigegebene Personas existieren (Autor-Artefakt); ihr Arbeitspaket trägt sie als Kontext mit.
+    public static readonly AnalystLens Persona = new("persona", "Persona-Abdeckung",
+        "Für jede FREIGEGEBENE Persona: welches ihrer BELEGTEN Bedürfnisse deckt kein Requirement/PBI? "
+        + "Welche Kernaufgabe ihres Alltags hat keine Story (Anlegen/Ändern/Einsehen)? Anker = die REQ-Belege "
+        + "aus der Persona + per search_core gefundene Items. NIE aus 'Angenommen'-Zonen ableiten — nur aus "
+        + "den belegten Bedürfnissen.");
+
+    /// <summary>Linsen dieses Laufs: die vier festen Blicke + Persona-Abdeckung, wenn Personas freigegeben sind.</summary>
+    public static IReadOnlyList<AnalystLens> For(string? personasContent)
+        => string.IsNullOrWhiteSpace(personasContent) ? All : [.. All, Persona];
 }
 
 // ── Workflow-Nachrichten (typisierte Kanten; Muster BaselineFanOut/ClassifyStrip). Core + Vorgänger-Keys
 // reisen NICHT als Nachricht, sondern per Konstruktor in den je Lauf gebauten Graphen (State-Isolation). ──
 
-/// <summary>Arbeitspaket EINER Linse (Fan-out; Kanten-Prädikat routet per Lens.Key).</summary>
-public sealed record AnalystWork(AnalystLens Lens, string Digest, string KollektorFunde);
+/// <summary>Arbeitspaket EINER Linse (Fan-out; Kanten-Prädikat routet per Lens.Key). Kontext = zusätzliches
+/// Material nur dieser Linse (Slice S ①: die freigegebenen Personas für die Abdeckungs-Linse).</summary>
+public sealed record AnalystWork(AnalystLens Lens, string Digest, string KollektorFunde, string Kontext = "");
 
 /// <summary>Ergebnis einer Linse (Fan-in-Barrier sammelt alle vier).</summary>
 public sealed record AnalystLensResult(string LensKey, IReadOnlyList<AnalystFinding> Findings);

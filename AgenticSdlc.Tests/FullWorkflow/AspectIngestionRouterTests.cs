@@ -56,14 +56,15 @@ public sealed class AspectIngestionRouterTests
     [Fact]
     public async Task Unregistrierter_Aspekt_wird_LAUT_geparkt_und_req_laeuft_trotzdem()
     {
-        // A1d: architecture ist REGISTRIERT (kein Unrouted mehr) — der unbekannte Aspekt ist jetzt z. B. "risk".
+        // A1d: architecture REGISTRIERT · Slice S ④: risk = Querschnitt (QuestionLane, kein Aspekt mehr) —
+        // der unbekannte Beispiel-Aspekt ist jetzt "compliance".
         var (hits, events, failures) = await RunAsync(Doc(
-            Item("R-1", "requirement"), Item("A-1", "architecture"), Item("K-1", "risk"), Item("K-2", "risk")));
+            Item("R-1", "requirement"), Item("A-1", "architecture"), Item("K-1", "compliance"), Item("K-2", "compliance")));
 
         Assert.Empty(failures);
         Assert.Single(hits);                                            // der req-Kern bekommt seinen Lauf
         Assert.Contains("ASPECT_UNROUTED", events);                     // D-8: nie wieder stilles Durchreisen
-        Assert.Contains("risk", events);
+        Assert.Contains("compliance", events);
         Assert.DoesNotContain("\"architecture\":", events);            // registriert => nicht geparkt
     }
 }

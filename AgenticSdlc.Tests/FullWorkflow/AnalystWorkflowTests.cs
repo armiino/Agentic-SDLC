@@ -93,7 +93,6 @@ public sealed class AnalystWorkflowTests
         // (Kritiker sortiert aus), arch/risiko ehrlich leer.
         Func<IReadOnlyList<AITool>, AIAgent> lensFactory = tools =>
         {
-            var lens = ((AnalystLensTools?)null); // Linse steckt im Tool-Satz — Skript wählt über Beschreibung? Nein:
             return new ScriptedAgent(tools, "save_findings", () =>
             {
                 // Der Auftrag ist linsen-spezifisch, aber der Fake sieht nur Tools — wir unterscheiden über
@@ -135,7 +134,7 @@ public sealed class AnalystWorkflowTests
         var aussortiert = Assert.Single(report.Eintraege, e => e.Status == AnalystStatus.KritikerAussortiert);
         Assert.Equal("generische Floskel ohne tragende Herleitung", aussortiert.Grund);   // kein stiller Cap
         Assert.Equal(9, report.Eintraege.Count(e => e.Status == AnalystStatus.DedupLinsen));
-        Assert.Empty(report.Eintraege.Where(e => e.Status == AnalystStatus.Neu));
+        Assert.DoesNotContain(report.Eintraege, e => e.Status == AnalystStatus.Neu);
 
         // Delta: NUR der eine tragende Fund, im Autor-Front-Vertrag mit ehrlicher Herkunft — und LADBAR
         // über dieselbe Naht wie --from-delta.
@@ -160,6 +159,50 @@ public sealed class AnalystWorkflowTests
         var md = await File.ReadAllTextAsync(Path.Combine(outDir, "report.md"));
         Assert.Contains("## WEITERHIN OFFEN", md);
         Assert.Contains("## Aussortiert (Kritiker", md);
+    }
+
+    // Slice S ① (21.08.): die Persona-Abdeckungs-Linse — läuft NUR mit freigegebenen Personas und bekommt
+    // sie als linsen-eigenen Kontext in den Auftrag (die anderen Linsen sehen sie NICHT).
+    private sealed class CapturingAgent(IReadOnlyList<AITool> tools, List<string> auftraege) : AIAgent
+    {
+        protected override async Task<AgentResponse> RunCoreAsync(IEnumerable<ChatMessage> messages,
+            AgentSession? session, AgentRunOptions? options, CancellationToken ct)
+        {
+            lock (auftraege) auftraege.Add(string.Join("\n", messages.Select(m => m.Text)));
+            var fn = tools.OfType<AIFunction>().First(f => f.Name == "save_findings");
+            await fn.InvokeAsync(new AIFunctionArguments { ["findings"] = Array.Empty<AnalystFinding>() }, ct).ConfigureAwait(false);
+            return new AgentResponse(new ChatMessage(ChatRole.Assistant, "ok"));
+        }
+        protected override IAsyncEnumerable<AgentResponseUpdate> RunCoreStreamingAsync(IEnumerable<ChatMessage> m, AgentSession? s, AgentRunOptions? o, CancellationToken c) => throw new NotSupportedException();
+        private sealed class S : AgentSession;
+        protected override ValueTask<AgentSession> CreateSessionCoreAsync(CancellationToken c) => ValueTask.FromResult<AgentSession>(new S());
+        protected override ValueTask<AgentSession> DeserializeSessionCoreAsync(JsonElement e, JsonSerializerOptions? j, CancellationToken c) => throw new NotSupportedException();
+        protected override ValueTask<JsonElement> SerializeSessionCoreAsync(AgentSession s, JsonSerializerOptions? j, CancellationToken c) => throw new NotSupportedException();
+    }
+
+    [Fact]
+    public async Task Persona_Linse_laeuft_nur_mit_Personas_und_nur_sie_sieht_deren_Inhalt()
+    {
+        Assert.Equal(4, AnalystLenses.For(null).Count);                        // ohne Personas: die vier Blicke
+        Assert.Equal(4, AnalystLenses.For("  ").Count);
+
+        var run = new RunContext(RunId.New(), "test-analyst-persona"); run.EnsureFolders();
+        var outDir = run.OutputDir("analysis");
+        var auftraege = new List<string>();
+        Func<IReadOnlyList<AITool>, AIAgent> lensFactory = tools => new CapturingAgent(tools, auftraege);
+        Func<IReadOnlyList<AITool>, AIAgent> kritikerFactory = tools =>
+            new ScriptedAgent(tools, "save_verdicts", () => Array.Empty<AnalystVerdict>());
+
+        var wf = AnalystWorkflow.Build(MiniCore(), new HashSet<string>(StringComparer.Ordinal),
+            lensFactory, kritikerFactory, run, outDir,
+            personasContent: "## Persona Anna (Angehörige)\nBelegt: REQ-88 — will an Besuche erinnert werden.");
+        var wfRun = await InProcessExecution.Default.RunAsync(wf, new AnalystWorkflow.Trigger(), run.RunId, CancellationToken.None);
+        Assert.DoesNotContain(wfRun.OutgoingEvents, e => e is ExecutorFailedEvent or WorkflowErrorEvent);
+
+        Assert.Equal(5, auftraege.Count);                                      // vier Blicke + Persona-Abdeckung
+        var personaAuftrag = Assert.Single(auftraege, a => a.Contains("FREIGEGEBENE PERSONAS"));
+        Assert.Contains("Persona-Abdeckung", personaAuftrag);
+        Assert.Contains("Persona Anna", personaAuftrag);                       // der Kontext kam wirklich an
     }
 
     [Fact]

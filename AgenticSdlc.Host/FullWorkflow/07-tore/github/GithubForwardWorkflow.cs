@@ -45,7 +45,7 @@ internal sealed record GithubForwardWfResult(GithubForwardPlanDocument Plan, Git
 
 // SEED: deterministischer Vorfilter.
 [SendsMessage(typeof(GithubForwardSeeded))]
-internal sealed class GithubForwardSeedExecutor(RunContext run) : Executor<GithubForwardWfContext>("GithubForwardSeed")
+internal sealed class GithubForwardSeedExecutor(RunContext run, string repoRoot) : Executor<GithubForwardWfContext>("GithubForwardSeed")
 {
     public override async ValueTask HandleAsync(GithubForwardWfContext ctx, IWorkflowContext context, CancellationToken ct = default)
     {
@@ -54,8 +54,19 @@ internal sealed class GithubForwardSeedExecutor(RunContext run) : Executor<Githu
         // C2d §3-5: Abschluss-Vermerke aus dem Lauf-Report (nur im Ein-Graph-Faden vorhanden; Standalone-
         // Forward = leer, dokumentierte Grenze) — NOTE_COMMENT-Ops, gated + execute wie alles.
         var vermerke = GithubCommentVermerk.TryDeriveFromRun(run.RunDir, run.RunId);
-        var deterministic = vermerke.Count == 0 ? seed.DeterministicOps : [.. seed.DeterministicOps, .. vermerke];
-        run.AppendEvent(new { type = "GITHUB_FWD_SEED", runId = run.RunId, deterministic = deterministic.Count, vermerke = vermerke.Count, unmapped = seed.UnmappedPbis.Count, timestampUtc = DateTime.UtcNow });
+        // Slice S Teil 1: Doc-Projektionen reiten in JEDEM Forward mit ZIEL-REPO mit (In-Sync ⇒ keine Op) —
+        // frische ADRs sind damit automatisch publiziert, „publiziere die Docs" = der normale Abgleich.
+        // OHNE Repository (z. B. Smoke-/Fixture-Bahnen) gibt es kein Publikations-Ziel ⇒ keine Doc-Ops
+        // (semantische Vorbedingung, kein Sonderfall).
+        IReadOnlyList<GithubForwardOp> docs = [];
+        if (!string.IsNullOrWhiteSpace(ctx.Repository))
+        {
+            // „Lebend"-Garantie: deterministische Projektionen frisch (nur bei Core-Änderung — Fingerprint-Wache).
+            await GithubDocPublish.RefreshDeterministicProjectionsAsync(repoRoot, ctx.Core).ConfigureAwait(false);
+            docs = GithubDocPublish.SeedOps(repoRoot, ctx.Core);
+        }
+        IReadOnlyList<GithubForwardOp> deterministic = [.. seed.DeterministicOps, .. vermerke, .. docs];
+        run.AppendEvent(new { type = "GITHUB_FWD_SEED", runId = run.RunId, deterministic = deterministic.Count, vermerke = vermerke.Count, docs = docs.Count, unmapped = seed.UnmappedPbis.Count, timestampUtc = DateTime.UtcNow });
         await context.SendMessageAsync(new GithubForwardSeeded(ctx, deterministic, seed.UnmappedPbis)).ConfigureAwait(false);
     }
 }

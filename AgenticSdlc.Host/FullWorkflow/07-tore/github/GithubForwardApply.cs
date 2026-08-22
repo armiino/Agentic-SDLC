@@ -22,7 +22,7 @@ public static class GithubForwardApply
     internal static bool RequiresClient(GithubForwardPlanDocument plan, ISet<string> accepted, ISet<string> overwrite)
     {
         var writingKinds = new HashSet<string>(StringComparer.Ordinal)
-            { GithubForwardKind.CreateIssue, GithubForwardKind.UpdateIssue, GithubForwardKind.Comment, GithubForwardKind.NoteComment };
+            { GithubForwardKind.CreateIssue, GithubForwardKind.UpdateIssue, GithubForwardKind.Comment, GithubForwardKind.NoteComment, GithubForwardKind.UpsertFile };
         return plan.Operations.Where((_, i) => accepted.Contains($"op-{i}") || overwrite.Contains($"op-{i}"))
             .Any(o => writingKinds.Contains(o.Kind) || o.Kind == GithubForwardKind.FlagDrift);
     }
@@ -86,7 +86,8 @@ public static class GithubForwardApply
         var started = DateTime.UtcNow;
         var reportOps = new List<GithubForwardApplyOp>();
         var mappingOps = new List<GithubMappingOp>();
-        int created = 0, updated = 0, commented = 0, linked = 0, flagged = 0, held = 0, noChange = 0, skipped = 0, rejected = 0, failed = 0, alreadyApplied = 0;
+        var docStamps = new List<(string Path, string ContentHash, string Sha)>();   // Slice S Teil 1
+        int created = 0, updated = 0, commented = 0, linked = 0, flagged = 0, held = 0, noChange = 0, skipped = 0, rejected = 0, failed = 0, alreadyApplied = 0, docUpserts = 0;
 
         for (var i = 0; i < plan.Operations.Count; i++)
         {
@@ -171,6 +172,29 @@ public static class GithubForwardApply
                         linked++;
                         break;
                     }
+                    case GithubForwardKind.UpsertFile:
+                    {
+                        // Slice S Teil 1: One-way-Doc-Projektion (Title=Pfad, Body=Inhalt). Fremd-Edit wird
+                        // LAUT benannt (remote-sha vs. Core-Stempel) und bewusst überschrieben — GENERIERT-Docs
+                        // sind deklarierte Projektionen, Diskussion gehört in Issues/Kommentare.
+                        var docPath = op.Title;
+                        if (string.IsNullOrWhiteSpace(docPath) || string.IsNullOrWhiteSpace(op.Body))
+                        { reportOps.Add(Op(opId, op, null, null, "rejected", "UPSERT_FILE ohne Pfad/Inhalt")); rejected++; break; }
+                        if (!execute) { reportOps.Add(Op(opId, op, null, null, "would-upsert-doc", docPath)); docUpserts++; break; }
+                        if (client is not IGithubFileClient fileClient)
+                        { reportOps.Add(Op(opId, op, null, null, "failed", "Client ohne Datei-Write-Fähigkeit")); failed++; break; }
+                        var remoteSha = await fileClient.GetFileShaAsync(repository!, docPath!, ct).ConfigureAwait(false);
+                        var stampedSha = core is not null ? GithubDocPublish.StampOf(core, docPath!)?.GetValueOrDefault("sha") : null;
+                        var fremd = remoteSha is not null && stampedSha is not null
+                                    && !string.Equals(remoteSha, stampedSha, StringComparison.Ordinal);
+                        var newSha = await fileClient.UpsertFileAsync(repository!, docPath!, op.Body!,
+                            $"docs: Projektion {docPath} (Plan {plan.PlanId})", remoteSha, ct).ConfigureAwait(false);
+                        docStamps.Add((docPath!, GithubProjectionHash.Compute(op.Body!), newSha));
+                        reportOps.Add(Op(opId, op, null, null, "doc-upserted",
+                            fremd ? "remote war von Hand geändert — bewusst überschrieben (One-way-Projektion)." : null));
+                        docUpserts++;
+                        break;
+                    }
                     case GithubForwardKind.FlagDrift:
                     {
                         // R-60 „bewusst auflösen": NUR der explizite Gate-Entscheid 'overwrite' (nie apply/
@@ -211,15 +235,22 @@ public static class GithubForwardApply
 
         // Mapping in den Core zurueckschreiben — nur bei echter Ausfuehrung, ueber den vorab geladenen Core (S3:
         // derselbe Core, gegen den die Idempotenz geprueft wurde -> kein Re-Read, keine Race).
-        if (execute && mappingOps.Count > 0)
+        if (execute && (mappingOps.Count > 0 || docStamps.Count > 0))
         {
-            if (core is null || coreRepo is null) { Console.Error.WriteLine("[github-forward-apply] Core fehlt - Mapping nicht persistiert."); }
+            if (core is null || coreRepo is null) { Console.Error.WriteLine("[github-forward-apply] Core fehlt - Mapping/Doc-Stempel nicht persistiert."); }
             else
             {
                 await File.WriteAllTextAsync(Path.Combine(appliedDir, "core-before.json"), JsonSerializer.Serialize(core, Json), ct).ConfigureAwait(false);
-                var (updatedCore, mapReport) = CoreGithubMapping.Apply(core, mappingOps);
+                var updatedCore = core;
+                if (mappingOps.Count > 0)
+                {
+                    var (mapped, mapReport) = CoreGithubMapping.Apply(updatedCore, mappingOps);
+                    updatedCore = mapped;
+                    await File.WriteAllTextAsync(Path.Combine(appliedDir, "mapping-apply-report.json"), JsonSerializer.Serialize(mapReport, Json), ct).ConfigureAwait(false);
+                }
+                // Slice S Teil 1: Doc-Stempel im SELBEN Save (Kangal-gedeckt, kein Zweitspeicher).
+                updatedCore = GithubDocPublish.ApplyStamps(updatedCore, docStamps, repository ?? "", plan.PlanId);
                 await coreRepo.SaveAsync(updatedCore).ConfigureAwait(false);
-                await File.WriteAllTextAsync(Path.Combine(appliedDir, "mapping-apply-report.json"), JsonSerializer.Serialize(mapReport, Json), ct).ConfigureAwait(false);
             }
         }
 
@@ -227,7 +258,7 @@ public static class GithubForwardApply
         var report = new GithubForwardApplyReport(
             DryRun: !execute, Executed: execute, Success: success, Repository: repository, SourcePlanId: plan.PlanId,
             StartedUtc: started, CompletedUtc: DateTime.UtcNow, Operations: reportOps,
-            Summary: new GithubForwardApplySummary(accepted.Count, created, updated, commented, linked, flagged, held, noChange, skipped, rejected, failed, alreadyApplied));
+            Summary: new GithubForwardApplySummary(accepted.Count, created, updated, commented, linked, flagged, held, noChange, skipped, rejected, failed, alreadyApplied, docUpserts));
         await File.WriteAllTextAsync(Path.Combine(appliedDir, "github-forward-apply-report.json"), JsonSerializer.Serialize(report, Json), ct).ConfigureAwait(false);
         return report;
     }

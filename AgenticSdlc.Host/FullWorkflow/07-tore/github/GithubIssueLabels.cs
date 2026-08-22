@@ -19,6 +19,9 @@ public static class GithubIssueLabels
 {
     public const string Pbi = "pbi";
     public const string NeedsClarify = "needs-clarify";
+    // Slice S Teil 2 (21.08.): Prio als gepflegtes Familien-Label (prio:high|medium|low aus dem PBI-Feld) —
+    // gleiche Mechanik wie needs-clarify: je Write neu berechnet, „geändert/entfernt ⇒ Label folgt" automatisch.
+    public const string PrioPrefix = "prio:";
     private const string LegacyInitialSync = "initial-sync";
     private static readonly Regex LegacyReqLabel = new(@"^REQ-\d+$", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
@@ -29,6 +32,8 @@ public static class GithubIssueLabels
         result.Add(Pbi);
         if (string.Equals(entry.Status, "needs_clarify", StringComparison.OrdinalIgnoreCase))
             result.Add(NeedsClarify);
+        if (PbiFields.NormalizePriority(entry.Priority) is { } prio)
+            result.Add(PrioPrefix + prio);
         return result.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
     }
 
@@ -36,5 +41,6 @@ public static class GithubIssueLabels
         => string.Equals(label, Pbi, StringComparison.OrdinalIgnoreCase)
            || string.Equals(label, NeedsClarify, StringComparison.OrdinalIgnoreCase)
            || string.Equals(label, LegacyInitialSync, StringComparison.OrdinalIgnoreCase)
+           || label.StartsWith(PrioPrefix, StringComparison.OrdinalIgnoreCase)
            || LegacyReqLabel.IsMatch(label);
 }

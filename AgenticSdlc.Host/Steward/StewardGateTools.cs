@@ -61,7 +61,8 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             + "Der Submit ist das EINE Urteil: die Fortsetzung kettet AUTOMATISCH (R-43; chainResume=false = nur speichern). Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(SubmitDecisionGateResolutionsAsync, "submit_decision_gate_resolutions",
             "C5 (decision-gate im Chat): je offener Entscheidung action resolve (outcome KEEP_ORIGINAL|ADOPT_NEW|"
-            + "REFINE; bei REFINE newStatement) oder defer (vertagen) — ALLE DECs. Schreibt "
+            + "REFINE|NO_TRUTH_NEEDED; bei REFINE/ADOPT_NEW newStatement; NO_TRUTH_NEEDED = bewusster Verzicht, "
+            + "NUR Architektur-Unklarheiten [Item-Palette zeigt es], reason PFLICHT) oder defer (vertagen) — ALLE DECs. Schreibt "
             + "decision-gate-decisions.json; die Fortsetzung kettet AUTOMATISCH (R-43; chainResume=false = nur speichern). Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(SubmitGateDecisionsAsync, "submit_gate_decisions",
             "C5 (WAHRHEITS-WIRKSAM, ein bewusster Sammel-Akt): reicht die vom Autor DIKTIERTEN Gate-Entscheidungen "
@@ -214,18 +215,22 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
                 };
                 if (d.TryGetProperty("origin", out var og) && og.GetString() is { Length: > 0 } herkunft)
                     map["herkunft"] = herkunft;
+                var targetless = true;
                 if (d.TryGetProperty("targetRequirementText", out var tr) && tr.GetString() is { Length: > 0 } wahrheit)
                 {
+                    targetless = false;
                     map["bestehendeWahrheit"] = wahrheit;
                     map["meetingVorschlag"] = d.TryGetProperty("proposedStatement", out var ps) ? ps.GetString() : null;
                 }
                 map["blockiertePbis"] = d.TryGetProperty("blockedPbis", out var bp)
                     ? bp.EnumerateArray().Select(x => x.GetString()).ToList() : [];
+                // R-70: die Palette ist PER ITEM (dritte Wahl nur bei Architektur-Färbung) — eine Quelle mit der UI.
+                var aspect = d.TryGetProperty("aspect", out var asp) ? asp.GetString() : null;
+                map["optionen"] = StewardGateVocabulary.ForDecision(targetless, aspect);
                 return map;
             }).ToList();
             return JsonSerializer.Serialize(new { runId, gate, decisions = decs,
-                optionen = StewardGateVocabulary.ForDecision(),
-                hinweis = "Lege je DEC die `herkunft` und die `optionen` mit GENAU diesen Labels vor (Code in Klammern); fehlt `bestehendeWahrheit`, ist es eine ziellose Frage-DEC (reduzierte Palette, nichts abzuloesen — Felder NICHT als leer vorlesen); bei REFINE/ADOPT_NEW newStatement Pflicht; defer = gueltiger Ausgang. submit_decision_gate_resolutions — die Fortsetzung kettet danach automatisch." }, Json);
+                hinweis = "Lege je DEC die `herkunft` und die ITEM-EIGENEN `optionen` mit GENAU diesen Labels vor (Code in Klammern); fehlt `bestehendeWahrheit`, ist es eine ziellose Frage-DEC (reduzierte Palette, nichts abzuloesen — Felder NICHT als leer vorlesen); bei REFINE/ADOPT_NEW newStatement Pflicht; NO_TRUTH_NEEDED = bewusster Verzicht (nur Architektur-Unklarheiten, Begruendung Pflicht); defer = gueltiger Ausgang. submit_decision_gate_resolutions — die Fortsetzung kettet danach automatisch." }, Json);
         }
 
         var planPath = Path.Combine(RunDir(runId), "07-github", "github-forward-plan.json");
@@ -385,8 +390,13 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             var resolve = string.Equals(r.Action, "resolve", StringComparison.OrdinalIgnoreCase);
             if (!resolve && !string.Equals(r.Action, "defer", StringComparison.OrdinalIgnoreCase))
                 errors.Add($"{r.DecisionId}: action muss resolve|defer sein.");
-            if (resolve && r.Outcome is not ("KEEP_ORIGINAL" or "ADOPT_NEW" or "REFINE"))
-                errors.Add($"{r.DecisionId}: resolve braucht outcome KEEP_ORIGINAL|ADOPT_NEW|REFINE.");
+            // R-70: EINE Outcome-Quelle statt harter Aufzählung — NO_TRUTH_NEEDED gehört seit dem
+            // C4-Kreislauf dazu (die tiefere Schicht wacht über ziellos+aspect; hier nur Vokabular).
+            if (resolve && (r.Outcome is null || !FullWorkflow.Decision.DecisionOutcome.All.Contains(r.Outcome)))
+                errors.Add($"{r.DecisionId}: resolve braucht outcome {string.Join("|", FullWorkflow.Decision.DecisionOutcome.All)}.");
+            if (resolve && string.Equals(r.Outcome, FullWorkflow.Decision.DecisionOutcome.NoTruthNeeded, StringComparison.Ordinal)
+                    && string.IsNullOrWhiteSpace(r.Reason))
+                errors.Add($"{r.DecisionId}: NO_TRUTH_NEEDED braucht eine Begruendung (reason).");
             // Kollegen-Glättung 09.08.: ADOPT_NEW braucht den Text ebenfalls explizit (die tiefere Schicht
             // blockt sonst später) — der Agent nimmt ihn wörtlich aus der Vorlage (meetingVorschlag).
             if (resolve && r.Outcome is "REFINE" or "ADOPT_NEW" && string.IsNullOrWhiteSpace(r.NewStatement))

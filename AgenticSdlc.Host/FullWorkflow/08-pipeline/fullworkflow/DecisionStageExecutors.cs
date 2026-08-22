@@ -18,7 +18,9 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
 /// Origin = Klartext-Herkunft (woher der Widerspruch stammt; optional, alte Artefakte bleiben lesbar).</summary>
 public sealed record PipelineDecisionItemView(
     string DecisionId, string DecisionText, string? TargetRequirementId, string TargetRequirementText,
-    IReadOnlyList<string> BlockedPbis, string ProposedStatement, string? Origin = null);
+    IReadOnlyList<string> BlockedPbis, string ProposedStatement, string? Origin = null,
+    // C4-Kreislauf (22.08., additiv): Aspekt-Färbung der DEC — steuert NUR die dritte Auflöse-Option.
+    string? Aspect = null);
 
 public sealed record PipelineDecisionReviewRequest(string RunId, IReadOnlyList<PipelineDecisionItemView> Decisions);
 
@@ -52,27 +54,42 @@ public static class DecisionStage
                     .Where(i => string.Equals(i.ItemType, "pbi", StringComparison.OrdinalIgnoreCase)
                                 && (i.Pbi?.OpenDecisionRefs.Contains(dec.ItemId) ?? false))
                     .Select(i => i.ItemId).OrderBy(x => x, StringComparer.Ordinal).ToList();
-                return new PipelineDecisionItemView(dec.ItemId, dec.Text, target, targetText, blocked, ProposedStatementOf(dec.Text), OriginOf(dec));
+                return new PipelineDecisionItemView(dec.ItemId, dec.Text, target, targetText, blocked, ProposedStatementOf(dec.Text), OriginOf(dec),
+                    Aspect: Core.DecisionAspectMeta.IsArchitecture(dec) ? Core.DecisionAspectMeta.Architecture : null);
             })
             .ToList();
     }
 
     // Klartext-Herkunft: WOHER stammt diese Entscheidung? Drei Zufluesse in den EINEN DEC-Topf:
     // Ingest-CONTRADICT (Widerspruch), D2-Knopf (Klaerungs-Antrag), 9g Meeting-Frage (zielloses DEC).
-    private static string OriginOf(ProjectStateItem dec)
+    // Kanal-Ehrlichkeit (Autor-Fund 20./21.08., 1g-Abnahme): CONTRADICT-DECs kommen NICHT nur aus
+    // Meetings — Analyst-erschlossene und GitHub-geerntete Widersprueche muessen ihren echten Kanal
+    // nennen (die Wahrheit traegt ihn laengst in der Metadata; nur der Wortlaut log).
+    internal static string OriginOf(ProjectStateItem dec)
     {
+        var kanal = dec.Metadata.ContainsKey(AnalystOriginMeta.Linse)
+            ? "vom Core-Analysten ERSCHLOSSEN (nicht gesagt)"
+            : GithubOriginMeta.IssueNumberOf(dec) is not null
+                ? "aus der GitHub-Ernte"
+                : "im Meeting";
         var origin = dec.Origin switch
         {
-            "INGESTION_CONTRADICTION" => "Meeting-Widerspruch — am Ingest-Gate von dir als echter Konflikt bestätigt",
+            "INGESTION_CONTRADICTION" => $"Widerspruch — {kanal}, am Ingest-Gate von dir als echter Konflikt bestätigt",
             Decision.DecisionRequestMint.Origin => "Klärungs-Antrag — am pbi-Gate von dir als Stakeholder-Frage beantragt",
             Decision.MeetingQuestionMint.Origin => "Offene Frage — im Meeting gestellt, am Ingest-Gate von dir aufgenommen",
             Decision.MeetingQuestionMint.OriginAuthor => "Offene Frage — von dir diktiert (Autor-Front), am Ingest-Gate aufgenommen",
             Decision.MeetingQuestionMint.OriginGithub => "Offene Frage — aus der GitHub-Ernte, am Ingest-Gate aufgenommen",
             Decision.MeetingQuestionMint.OriginAnalyst => "Offene Frage — vom Core-Analysten ERSCHLOSSEN (nicht gesagt), am Ingest-Gate von dir aufgenommen",
+            // Slice S ④: Risiken-Rampe — das Risiko IST die Entscheidung (akzeptieren / mitigieren→ADOPT / klären).
+            Decision.MeetingQuestionMint.OriginRisk => "RISIKO — im Meeting benannt, am Ingest-Gate von dir aufgenommen: akzeptieren, mitigieren (Übernahme als Anforderung) oder klären",
+            Decision.MeetingQuestionMint.OriginRiskAuthor => "RISIKO — von dir diktiert (Autor-Front): akzeptieren, mitigieren oder klären",
+            Decision.MeetingQuestionMint.OriginRiskGithub => "RISIKO — aus der GitHub-Ernte: akzeptieren, mitigieren oder klären",
             _ => dec.Origin,
         };
+        var itemLabel = dec.Metadata.ContainsKey(AnalystOriginMeta.Linse) ? "Analyst-Fund"
+            : GithubOriginMeta.IssueNumberOf(dec) is not null ? "GitHub-Item" : "Meeting-Item";
         var run = dec.SourceRunId is { Length: > 0 } r ? $" · Lauf {r}" : "";
-        var incoming = dec.Metadata.GetValueOrDefault("ingestedFrom") is { Length: > 0 } inc ? $" · Meeting-Item {inc}" : "";
+        var incoming = dec.Metadata.GetValueOrDefault("ingestedFrom") is { Length: > 0 } inc ? $" · {itemLabel} {inc}" : "";
         return $"{origin}{run}{incoming}";
     }
 

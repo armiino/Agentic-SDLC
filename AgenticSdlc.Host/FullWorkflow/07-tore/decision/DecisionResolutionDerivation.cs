@@ -29,7 +29,16 @@ public static class DecisionResolutionDerivation
             // 9g: ziellose DECs (Meeting-Fragen) sind mit KEEP aufloesbar ("geklaert/erledigt", keine Mutation);
             // ADOPT/REFINE brauchen weiterhin zwingend ein Ziel — ohne Ziel gibt es nichts abzuloesen/verfeinern.
             if (targetReq is not null && !byId.ContainsKey(targetReq)) targetReq = null;
-            if (targetReq is null && !string.Equals(r.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
+            // C4-Kreislauf: NO_TRUTH_NEEDED ist der bewusste Verzicht — NUR ziellos UND NUR für
+            // Architektur-Unklarheiten (aspect-markiert); alle anderen behalten exakt ihr altes Vokabular.
+            if (string.Equals(r.Outcome, DecisionOutcome.NoTruthNeeded, StringComparison.Ordinal))
+            {
+                if (targetReq is not null)
+                { problems.Add($"{r.DecisionId}: NO_TRUTH_NEEDED nur für freistehende Fragen — mit Ziel 'geklaert' (KEEP) nutzen"); continue; }
+                if (!Core.DecisionAspectMeta.IsArchitecture(dec))
+                { problems.Add($"{r.DecisionId}: NO_TRUTH_NEEDED nur für Architektur-Unklarheiten (aspect-markiert)"); continue; }
+            }
+            else if (targetReq is null && !string.Equals(r.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
             { problems.Add($"{r.DecisionId}: kein Ziel-Requirement — nur 'geklaert' (KEEP) oder Vertagen moeglich"); continue; }
 
             var blocked = PbisBlockedBy(core, r.DecisionId);

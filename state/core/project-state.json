@@ -413,25 +413,39 @@
     {
       "itemId": "ARCH-11",
       "itemType": "architecture",
-      "text": "Mitarbeiter d\u00FCrfen nicht einrichtungs\u00FCbergreifend auf alle Profile zugreifen, sondern nur auf Profile der Einrichtung, in der sie t\u00E4tig sind; die technische Umsetzung dieser Beschr\u00E4nkung ist noch zu erarbeiten.",
+      "text": "F\u00FCr die einrichtungsgebundene Stichwortsuche \u00FCber alle Bewohnerprofile muss ein serverseitiger Suchrahmen festgelegt werden: Suchindizes d\u00FCrfen nur Inhalte der jeweils zugeordneten Einrichtung enthalten oder nur innerhalb dieser Einrichtung abfragbar sein, damit Suchtreffer die Einrichtungsgrenze technisch nicht umgehen.",
       "origin": "Extracted",
       "stage": "evidence_baseline",
-      "version": 1,
-      "sourceRunId": "20260723_113115_35335a",
+      "version": 2,
+      "sourceRunId": "20260821_204808_042823",
       "sourceArtifactId": "ARCH",
       "sourceArtifactType": "architecture",
       "sourceDecisionId": null,
       "sourceCandidateId": null,
-      "sourceClaimIds": [
-        "canon-zugriff-nach-einrichtung-beschraenkt"
-      ],
+      "sourceClaimIds": [],
       "sourceArtifactItemIds": [],
       "metadata": {
         "artifactVersion": "1",
-        "producerModel": "openai/gpt-5.4"
+        "producerModel": "openai/gpt-5.4",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus REQ-60/PBI-031, die eine Stichwortsuche \u00FCber alle Bewohnerprofile verlangen, und aus REQ-84 sowie ARCH-11, die die serverseitig erzwungene Einrichtungsgrenze festlegen. F\u00FCr die Namenssuche auf Kommunikationsseiten gibt es mit ARCH-24 bereits einen Teilrahmen, f\u00FCr die einrichtungs\u00FCbergreifende Stichwortsuche \u00FCber Profile jedoch keinen technischen Rahmen, wie Indizierung und Mandantentrennung zusammen umgesetzt werden.",
+        "linse": "arch"
       },
-      "identityKey": "mitarbeiter d\u00FCrfen nicht einrichtungs\u00FCbergreifend auf alle profile zugreifen sondern nur auf profile der einrichtung in der sie t\u00E4tig sind die technische umsetzung dieser beschr\u00E4nkung ist noch zu erarbeiten",
-      "history": [],
+      "identityKey": "f\u00FCr die einrichtungsgebundene stichwortsuche \u00FCber alle bewohnerprofile muss ein serverseitiger suchrahmen festgelegt werden suchindizes d\u00FCrfen nur inhalte der jeweils zugeordneten einrichtung enthalten oder nur innerhalb dieser einrichtung abfragbar sein damit suchtreffer die einrichtungsgrenze technisch nicht umgehen",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Mitarbeiter d\u00FCrfen nicht einrichtungs\u00FCbergreifend auf alle Profile zugreifen, sondern nur auf Profile der Einrichtung, in der sie t\u00E4tig sind; die technische Umsetzung dieser Beschr\u00E4nkung ist noch zu erarbeiten.",
+          "status": "baseline",
+          "origin": "Extracted",
+          "sourceRunId": "20260723_113115_35335a",
+          "sourceClaimIds": [
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ],
+          "recordedUtc": "2026-08-21T20:50:24.016686Z",
+          "note": "REFINE (ingestion 20260821_204808_042823, via CA-1)"
+        }
+      ],
       "feature": null,
       "pbi": null,
       "architecture": {
@@ -440,8 +454,8 @@
           "design"
         ],
         "rationale": "Die Beschr\u00E4nkung auf Profile der eigenen Einrichtung ist eine wesentliche Mandanten- und Zugriffsentscheidung. Sie setzt klare Grenzen f\u00FCr Rechte- und Zugriffsumsetzung.",
-        "adrId": null,
-        "adrStatus": null
+        "adrId": "ADR-0004",
+        "adrStatus": "accepted"
       },
       "validity": "Active",
       "blocker": "None",
@@ -4249,11 +4263,11 @@
     {
       "itemId": "PBI-003",
       "itemType": "pbi",
-      "text": "Rechtemodell f\u00FCr Einrichtungs-Personal, Angeh\u00F6rige und Leitung festlegen",
+      "text": "Rechtemodell f\u00FCr Einrichtungs-Personal, Angeh\u00F6rige und Leitung sowie Einrichtungsgrenzen in der Suche festlegen",
       "origin": "re-clarify",
       "stage": null,
-      "version": 3,
-      "sourceRunId": "20260810_152712_d31d38",
+      "version": 4,
+      "sourceRunId": "20260821_204808_042823",
       "sourceArtifactId": null,
       "sourceArtifactType": null,
       "sourceDecisionId": null,
@@ -4299,20 +4313,30 @@
           ],
           "recordedUtc": "2026-08-10T16:11:32.370835Z",
           "note": "MARK_CHANGED: Kl\u00E4rungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort konkretisiert das zuvor offene Rechtemodell vollst\u00E4ndig: Rollen wurden auf drei festgelegt und die Sicht- und Bearbeitungsrechte je Rolle sowie die Einschr\u00E4nkung f\u00FCr Angeh\u00F6rige auf Kommunikations-Inhalte pr\u00E4zisiert. Daher werden Titel, Statement und Akzeptanzkriterien vollst\u00E4ndig auf diese belegten Festlegungen angepasst."
+        },
+        {
+          "versionId": 3,
+          "text": "Rechtemodell f\u00FCr Einrichtungs-Personal, Angeh\u00F6rige und Leitung festlegen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260810_152712_d31d38",
+          "sourceClaimIds": [
+            "canon-angehoerige-zugriff-und-beitrag",
+            "canon-rechteverwaltung-noch-offen",
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ],
+          "recordedUtc": "2026-08-21T20:57:34.934207Z",
+          "note": "MARK_CHANGED: Requirement ARCH-11 verfeinert | ALIGN(R-26-C): ARCH-11 wurde von einer allgemeinen Zugriffsbegrenzung f\u00FCr Mitarbeiter auf eine konkrete Anforderung an den serverseitigen Suchrahmen f\u00FCr die einrichtungsgebundene Stichwortsuche pr\u00E4zisiert. Deshalb erg\u00E4nze ich den PBI gezielt um die technische Absicherung der Einrichtungsgrenze in der Suche."
         }
       ],
       "feature": null,
       "pbi": {
-        "goal": "Als Product Owner will ich das Rechtemodell f\u00FCr Einrichtungs-Personal, Angeh\u00F6rige und Leitung festlegen, damit Zugriffe auf betreute Profile der eigenen Einrichtung fachlich korrekt und datenschutzgerecht abgegrenzt sind und Angeh\u00F6rige nur freigegebene Kommunikations-Inhalte ihres Familienmitglieds sehen.",
-        "title": "Rechtemodell f\u00FCr Einrichtungs-Personal, Angeh\u00F6rige und Leitung festlegen",
+        "goal": "Als Product Owner will ich das Rechtemodell f\u00FCr Einrichtungs-Personal, Angeh\u00F6rige und Leitung sowie einen serverseitigen Suchrahmen f\u00FCr die einrichtungsgebundene Stichwortsuche \u00FCber alle Bewohnerprofile festlegen, damit Zugriffe und Suchtreffer die Einrichtungsgrenze fachlich korrekt und technisch nicht umgehen.",
+        "title": "Rechtemodell f\u00FCr Einrichtungs-Personal, Angeh\u00F6rige und Leitung sowie Einrichtungsgrenzen in der Suche festlegen",
         "acceptanceCriteria": [
-          "Es sind genau drei Rollen festgelegt: Einrichtungs-Personal, Angeh\u00F6rige und Leitung.",
-          "Einrichtungs-Personal hat Vollzugriff auf betreute Profile der eigenen Einrichtung.",
-          "Angeh\u00F6rige haben nur Lese-Sicht auf das eigene Familienmitglied.",
-          "Angeh\u00F6rige werden durch die Einrichtung freigeschaltet.",
-          "Leitung hat einrichtungsweite Sicht und Rollenverwaltung.",
-          "Angeh\u00F6rige sehen keine Pflege-Dokumentation.",
-          "Angeh\u00F6rige sehen nur Kommunikations-Inhalte."
+          "F\u00FCr die einrichtungsgebundene Stichwortsuche \u00FCber alle Bewohnerprofile ist ein serverseitiger Suchrahmen festgelegt.",
+          "Suchindizes enthalten nur Inhalte der jeweils zugeordneten Einrichtung oder sind nur innerhalb dieser Einrichtung abfragbar.",
+          "Suchtreffer k\u00F6nnen die Einrichtungsgrenze technisch nicht umgehen."
         ],
         "linkedRequirementIds": [
           "REQ-08",
@@ -7677,11 +7701,11 @@
     {
       "itemId": "PBI-032",
       "itemType": "pbi",
-      "text": "Es soll eine \u00DCbergabe-Notiz pro Schicht geben, die der n\u00E4chsten Schicht beim \u00D6ffnen der Ap...",
+      "text": "Es soll eine \u00DCbergabe-Notiz pro Schicht geben, die bis zur Archivierung bearbeitet werden kann und deren letzte g\u00FCltige Fassung nachvollziehbar ist",
       "origin": "pbi-update",
       "stage": null,
-      "version": 2,
-      "sourceRunId": "20260723_135427_9260f1",
+      "version": 3,
+      "sourceRunId": "20260821_204808_042823",
       "sourceArtifactId": null,
       "sourceArtifactType": null,
       "sourceDecisionId": null,
@@ -7704,16 +7728,31 @@
           "sourceClaimIds": [],
           "recordedUtc": "2026-07-23T15:18:38.13091Z",
           "note": "EXTEND_PBI: Das neue Requirement betrifft dieselbe fachliche Einheit wie PBI-032: \u00DCbergabe-Notizen. Der bestehende Zuschnitt umfasst das Erstellen/Bereitstellen einer \u00DCbergabe-Notiz pro Schicht; der w\u00F6chentliche PDF-Export ist eine zus\u00E4tzliche Ausgabefunktion auf genau diesem Artefakt und keine eigenst\u00E4ndige neue Fachdom\u00E4ne. Daher ist es fachlich passender, das bestehende PBI zu erweitern, statt ein separates PBI anzulegen."
+        },
+        {
+          "versionId": 2,
+          "text": "Es soll eine \u00DCbergabe-Notiz pro Schicht geben, die der n\u00E4chsten Schicht beim \u00D6ffnen der Ap...",
+          "status": "needs_clarify",
+          "origin": "pbi-update",
+          "sourceRunId": "20260723_135427_9260f1",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-21T20:57:34.934759Z",
+          "note": "EXTEND_PBI: Das Requirement erweitert fachlich die Arbeit an \u00DCbergabe-Notizen selbst. PBI-032 etabliert die \u00DCbergabe-Notiz pro Schicht als Arbeitsobjekt; die neue Anforderung erg\u00E4nzt daf\u00FCr die Bearbeitbarkeit bis zur Archivierung sowie Nachvollziehbarkeit der zuletzt g\u00FCltigen Fassung mit Zeitstempel und bearbeitendem Account. Das ist enger mit dem Kernzuschnitt von PBI-032 verbunden als mit PBI-033, das nur die automatische Archivierung und Auffindbarkeit archivierter Notizen behandelt. | ALIGN(R-26-C): REQ-92 f\u00FCgt dem bestehenden PBI die Bearbeitbarkeit bis zur Archivierung sowie Nachvollziehbarkeit der zuletzt g\u00FCltigen Fassung hinzu. Da im aktuellen PBI noch kein ausgearbeitetes Statement und keine Akzeptanzkriterien vorliegen, schlage ich diese Inhalte gezielt f\u00FCr den neuen Umfang vor."
         }
       ],
       "feature": null,
       "pbi": {
-        "goal": null,
-        "title": "Es soll eine \u00DCbergabe-Notiz pro Schicht geben, die der n\u00E4chsten Schicht beim \u00D6ffnen der Ap...",
-        "acceptanceCriteria": [],
+        "goal": "Als Pflegekraft will ich eine \u00DCbergabe-Notiz pro Schicht bis zur Archivierung bearbeiten k\u00F6nnen, damit \u00C4nderungen vor der Archivierung m\u00F6glich sind und die zuletzt g\u00FCltige Fassung jeweils mit \u00C4nderungszeitpunkt und bearbeitendem Account nachvollziehbar bleibt.",
+        "title": "Es soll eine \u00DCbergabe-Notiz pro Schicht geben, die bis zur Archivierung bearbeitet werden kann und deren letzte g\u00FCltige Fassung nachvollziehbar ist",
+        "acceptanceCriteria": [
+          "\u00DCbergabe-Notizen k\u00F6nnen bis zur Archivierung bearbeitet werden.",
+          "Bei jeder Bearbeitung bleibt die zuletzt g\u00FCltige Fassung nachvollziehbar erhalten.",
+          "Zu jeder zuletzt g\u00FCltigen Fassung sind \u00C4nderungszeitpunkt und bearbeitender Account nachvollziehbar."
+        ],
         "linkedRequirementIds": [
           "REQ-61",
-          "REQ-77"
+          "REQ-77",
+          "REQ-92"
         ],
         "openDecisionRefs": [],
         "priorityRank": null,
@@ -7723,10 +7762,10 @@
       },
       "validity": "Active",
       "progress": "Open",
-      "blocker": "NeedsClarify",
+      "blocker": "None",
       "confirmedBy": "Unmarked",
       "confirmedInRun": "20260723_135427_9260f1",
-      "status": "needs_clarify"
+      "status": "active"
     },
     {
       "itemId": "PBI-033",
@@ -7734,7 +7773,7 @@
       "text": "\u00DCbergabe-Notizen sollen nach drei\u00DFig Tagen automatisch archiviert werden; archivierte Notizen bleiben weiterhin auffindbar",
       "origin": "pbi-update",
       "stage": null,
-      "version": 3,
+      "version": 4,
       "sourceRunId": "20260818_114850_eab853",
       "sourceArtifactId": null,
       "sourceArtifactType": null,
@@ -7768,6 +7807,16 @@
           "sourceClaimIds": [],
           "recordedUtc": "2026-08-18T12:20:20.609453Z",
           "note": "SUPERSEDE_PBI: Requirement REQ-76 ersetzt durch REQ-85 | ALIGN(R-26-C): Die Anforderung REQ-85 ersetzt die bisherige Vierzehn-Tage-Regel durch eine Archivierung nach drei\u00DFig Tagen. Die Auffindbarkeit archivierter Notizen bleibt unver\u00E4ndert, daher wird nur der Zeitraum im Titel nachgezogen."
+        },
+        {
+          "versionId": 3,
+          "text": "\u00DCbergabe-Notizen sollen nach drei\u00DFig Tagen automatisch archiviert werden; archivierte Notizen bleiben weiterhin auffindbar",
+          "status": "active",
+          "origin": "pbi-update",
+          "sourceRunId": "20260818_114850_eab853",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-21T09:42:13.563193Z",
+          "note": "MARK_CHANGED: Wahrheits-Hygiene (Autor-Fund 20.08., Abschluss-Liste): PBI-033 ist inhaltlich duenn (keine Story, keine Akzeptanzkriterien) aber traegt als EINZIGES der 12 duennen PBIs KEINEN Klaerungs-Marker. MARK_CHANGED setzt gated needs_clarify, damit es ehrlich im Klaerungs-Katalog erscheint (Drafting folgt ueber die normale Klaerungs-Runde)."
         }
       ],
       "feature": null,
@@ -7786,10 +7835,10 @@
       },
       "validity": "Active",
       "progress": "Open",
-      "blocker": "None",
+      "blocker": "NeedsClarify",
       "confirmedBy": "Unmarked",
       "confirmedInRun": "20260723_135427_9260f1",
-      "status": "active"
+      "status": "needs_clarify"
     },
     {
       "itemId": "PBI-034",
@@ -8545,7 +8594,8 @@
         "ingestedFromRun": "architektur-postgres-lokale-datenhaltung",
         "targetEntityId": "REQ-70",
         "resolutionOutcome": "KEEP_ORIGINAL",
-        "resolvedUtc": "2026-08-18T11:32:29.1876050Z"
+        "resolvedUtc": "2026-08-18T11:32:29.1876050Z",
+        "aspect": "architecture"
       },
       "identityKey": "f\u00FCr die lokale datenhaltung wird postgres eingesetzt",
       "history": [
@@ -8737,7 +8787,8 @@
         "ingestedFromRun": "20260818_085820_50b471",
         "targetEntityId": "REQ-05",
         "resolutionOutcome": "ADOPT_NEW",
-        "resolvedUtc": "2026-08-18T11:32:29.1887780Z"
+        "resolvedUtc": "2026-08-18T11:32:29.1887780Z",
+        "aspect": "architecture"
       },
       "identityKey": "gekl\u00E4rt werden ob angeh\u00F6rige sich k\u00FCnftig selbst mit einem einladungscode der einrichtung registrieren k\u00F6nnen und ob diese m\u00F6gliche neuregelung die bisherige festlegung ohne selbstregistrierung ersetzt",
       "history": [
@@ -8860,11 +8911,11 @@
     {
       "itemId": "PBI-046",
       "itemType": "pbi",
-      "text": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ank\u00FCndigen",
+      "text": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ank\u00FCndigen, \u00E4ndern und absagen",
       "origin": "re-clarify",
       "stage": null,
-      "version": 1,
-      "sourceRunId": "20260818_084712_765eea",
+      "version": 2,
+      "sourceRunId": "20260821_204808_042823",
       "sourceArtifactId": null,
       "sourceArtifactType": null,
       "sourceDecisionId": null,
@@ -8878,17 +8929,33 @@
         "featureId": "FC-15"
       },
       "identityKey": "ik-FC-15-1",
-      "history": [],
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ank\u00FCndigen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_084712_765eea",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-21T20:57:34.934744Z",
+          "note": "EXTEND_PBI: Das Requirement geh\u00F6rt fachlich direkt zur Erstellung und Verwaltung einer Besuchsank\u00FCndigung. PBI-046 deckt bereits das Ank\u00FCndigen eines Besuchs mit Datum und Uhrzeit ab; \u00C4ndern und Absagen vor Besuchsbeginn sind keine eigene fachliche Einheit, sondern typische Erweiterungen derselben Aufgabe. Die Folgen f\u00FCr Statusr\u00FCcksetzung auf \u201Eangefragt\u201C und das Unterdr\u00FCcken von Erinnerungen bei Absage konkretisieren den Lebenszyklus derselben Besuchsank\u00FCndigung, statt ein separates PBI zu rechtfertigen. | ALIGN(R-26-C): REQ-91 erg\u00E4nzt den bestehenden Besuchs-PBI um die Bearbeitung bereits angefragter oder best\u00E4tigter Besuchsank\u00FCndigungen. Daher erweitere ich Titel, Statement und Akzeptanzkriterien um \u00C4ndern, Absagen, die Frist bis Besuchsbeginn sowie die Folgen f\u00FCr Status und Erinnerungen."
+        }
+      ],
       "feature": null,
       "pbi": {
-        "goal": "Als Angeh\u00F6rige/r will ich Besuche bei meiner Bezugsperson vorab in der App mit Datum und Uhrzeit ank\u00FCndigen k\u00F6nnen, damit der Besuch vor dem Termin erfasst ist.",
-        "title": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ank\u00FCndigen",
+        "goal": "Als Angeh\u00F6rige/r will ich Besuche bei meiner Bezugsperson in der App vorab mit Datum und Uhrzeit ank\u00FCndigen sowie bereits angefragte oder best\u00E4tigte Besuchsank\u00FCndigungen bis zum Beginn des Besuchs \u00E4ndern oder absagen k\u00F6nnen, damit Besuchstermine vor dem Termin erfasst und bei \u00C4nderungen korrekt neu angefragt bzw. bei Absage ohne weitere Erinnerung behandelt werden.",
+        "title": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ank\u00FCndigen, \u00E4ndern und absagen",
         "acceptanceCriteria": [
           "Angeh\u00F6rige k\u00F6nnen einen Besuch bei ihrer Bezugsperson in der App vorab ank\u00FCndigen.",
-          "Bei der Besuchsank\u00FCndigung werden Datum und Uhrzeit erfasst."
+          "Bei der Besuchsank\u00FCndigung werden Datum und Uhrzeit erfasst.",
+          "Angeh\u00F6rige k\u00F6nnen eine bereits angefragte Besuchsank\u00FCndigung bis zum Beginn des Besuchs \u00E4ndern oder absagen.",
+          "Angeh\u00F6rige k\u00F6nnen eine bereits best\u00E4tigte Besuchsank\u00FCndigung bis zum Beginn des Besuchs \u00E4ndern oder absagen.",
+          "Nach einer \u00C4nderung erh\u00E4lt der Besuch erneut den Status \u201Eangefragt\u201C.",
+          "Nach einer Absage wird keine Erinnerung mehr versendet."
         ],
         "linkedRequirementIds": [
-          "REQ-82"
+          "REQ-82",
+          "REQ-91"
         ],
         "openDecisionRefs": [],
         "priorityRank": null,
@@ -9336,7 +9403,8 @@
         "ingestedFromRun": "20260820_075153_7878ac",
         "analystKategorie": "nfr:security",
         "herleitung": "Abgeleitet aus REQ-84: Angeh\u00F6rige k\u00F6nnen sich selbst mit einem Einladungscode der Einrichtung registrieren. Zugleich verlangen ARCH-09 und REQ-08 unterschiedliche Rechte f\u00FCr Angeh\u00F6rige, die noch nicht abschlie\u00DFend gekl\u00E4rt sind. Damit ist offen, wie verhindert wird, dass ein Code au\u00DFerhalb des vorgesehenen Personenkreises genutzt oder mehrfach geteilt wird und so unberechtigte Zug\u00E4nge zu Bewohnerbezug und Einrichtungsdaten entstehen.",
-        "linse": "risiko"
+        "linse": "risiko",
+        "aspect": "architecture"
       },
       "identityKey": "wie wird das missbrauchsrisiko von einladungscodes f\u00FCr angeh\u00F6rige begrenzt insbesondere hinsichtlich weitergabe mehrfachnutzung ablauf falscher zuordnung zur einrichtung und nachtr\u00E4glicher sperrung bereits damit erzeugter zug\u00E4nge",
       "history": [],
@@ -9372,7 +9440,8 @@
         "linse": "arch",
         "targetEntityId": "REQ-84",
         "resolutionOutcome": "REFINE",
-        "resolvedUtc": "2026-08-20T11:24:34.1873230Z"
+        "resolvedUtc": "2026-08-20T11:24:34.1873230Z",
+        "aspect": "architecture"
       },
       "identityKey": "f\u00FCr die einrichtungsgrenze aus rollenmodell selbstregistrierung und profilzugriff muss ein verbindlicher mandantenrahmen festgelegt werden jeder account und jedes bewohnerprofil ist genau einer einrichtung zugeordnet die zuordnung muss serverseitig erzwungen werden und einladungscodes f\u00FCr angeh\u00F6rige m\u00FCssen diese einrichtungszuordnung bei der registrierung unver\u00E4nderlich mitgeben",
       "history": [
@@ -9542,6 +9611,390 @@
       "history": [],
       "feature": null,
       "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    },
+    {
+      "itemId": "DEC-009",
+      "itemType": "decision",
+      "text": "Wie wird die Einrichtungsgrenze technisch und serverseitig durchgesetzt, sodass Mitarbeitende nur Profile ihrer eigenen Einrichtung sehen und bearbeiten k\u00F6nnen?",
+      "origin": "AUTHOR_OPEN_QUESTION",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260821_194944_90c445",
+      "sourceArtifactId": "author-chat:slice-s-test",
+      "sourceArtifactType": "author-statement",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "AF-1",
+        "ingestedFromSession": "slice-s-test",
+        "aspect": "architecture",
+        "resolutionOutcome": "KEEP_ORIGINAL",
+        "resolvedUtc": "2026-08-22T14:49:16.1223850Z"
+      },
+      "identityKey": "wie wird die einrichtungsgrenze technisch und serverseitig durchgesetzt sodass mitarbeitende nur profile ihrer eigenen einrichtung sehen und bearbeiten k\u00F6nnen",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Wie wird die Einrichtungsgrenze technisch und serverseitig durchgesetzt, sodass Mitarbeitende nur Profile ihrer eigenen Einrichtung sehen und bearbeiten k\u00F6nnen?",
+          "status": "open_decision",
+          "origin": "AUTHOR_OPEN_QUESTION",
+          "sourceRunId": "20260821_194944_90c445",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-22T14:49:16.12256Z",
+          "note": "resolved=KEEP_ORIGINAL; freistehende Frage geklaert"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Resolved",
+      "status": "resolved"
+    },
+    {
+      "itemId": "DEC-010",
+      "itemType": "decision",
+      "text": "Die PAT-Rotation nach der Thesis k\u00F6nnte vergessen werden.",
+      "origin": "AUTHOR_RISK",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260821_194944_90c445",
+      "sourceArtifactId": "author-chat:slice-s-test",
+      "sourceArtifactType": "author-statement",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "AF-2",
+        "ingestedFromSession": "slice-s-test"
+      },
+      "identityKey": "die pat rotation nach der thesis k\u00F6nnte vergessen werden",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Open",
+      "status": "open_decision"
+    },
+    {
+      "itemId": "DEC-011",
+      "itemType": "decision",
+      "text": "Wo und wie werden Bilder und Videos f\u00FCr About Me und Kommunikationsseiten technisch gespeichert und ausgeliefert?",
+      "origin": "AUTHOR_OPEN_QUESTION",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260821_202325_116031",
+      "sourceArtifactId": "author-chat:slice-s-test",
+      "sourceArtifactType": "author-statement",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "AF-1",
+        "ingestedFromSession": "slice-s-test",
+        "aspect": "architecture"
+      },
+      "identityKey": "wo und wie werden bilder und videos f\u00FCr about me und kommunikationsseiten technisch gespeichert und ausgeliefert",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Open",
+      "status": "open_decision"
+    },
+    {
+      "itemId": "DEC-012",
+      "itemType": "decision",
+      "text": "SQL Injection beim Login.",
+      "origin": "AUTHOR_RISK",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260821_202325_116031",
+      "sourceArtifactId": "author-chat:slice-s-test",
+      "sourceArtifactType": "author-statement",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "AF-2",
+        "ingestedFromSession": "slice-s-test"
+      },
+      "identityKey": "sql injection beim login",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Open",
+      "status": "open_decision"
+    },
+    {
+      "itemId": "REQ-91",
+      "itemType": "requirement",
+      "text": "Angeh\u00F6rige m\u00FCssen eine bereits angefragte oder best\u00E4tigte Besuchsank\u00FCndigung bis zum Beginn des Besuchs \u00E4ndern oder absagen k\u00F6nnen; nach einer \u00C4nderung muss der Besuch erneut den Status \u201Eangefragt\u201C erhalten, und nach einer Absage darf keine Erinnerung mehr versendet werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_204808_042823",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-2"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-2",
+        "ingestedFromRun": "20260821_203951_db6050",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-82 und REQ-87: Es gibt das Ank\u00FCndigen sowie die Pflege-Entscheidung mit den Status angefragt, best\u00E4tigt und abgelehnt, aber keine Regel f\u00FCr den h\u00E4ufigen Folgefall, dass Angeh\u00F6rige Datum/Uhrzeit nachtr\u00E4glich \u00E4ndern oder den Besuch absagen m\u00FCssen. Aus REQ-88 folgt zus\u00E4tzlich, dass ohne Absage-Regel falsche Erinnerungen an nicht mehr g\u00FCltige Besuche versendet w\u00FCrden.",
+        "linse": "funktional",
+        "featureKey": "besuchsankuendigung"
+      },
+      "identityKey": "angeh\u00F6rige m\u00FCssen eine bereits angefragte oder best\u00E4tigte besuchsank\u00FCndigung bis zum beginn des besuchs \u00E4ndern oder absagen k\u00F6nnen nach einer \u00E4nderung muss der besuch erneut den status angefragt erhalten und nach einer absage darf keine erinnerung mehr versendet werden",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    },
+    {
+      "itemId": "REQ-92",
+      "itemType": "requirement",
+      "text": "\u00DCbergabe-Notizen m\u00FCssen bis zur Archivierung bearbeitet werden k\u00F6nnen; bei jeder Bearbeitung ist die zuletzt g\u00FCltige Fassung mit \u00C4nderungszeitpunkt und bearbeitendem Account nachvollziehbar zu halten.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_204808_042823",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-3"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-3",
+        "ingestedFromRun": "20260821_203951_db6050",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-61 und REQ-85: Es gibt die fachliche Anlage und Anzeige einer \u00DCbergabe-Notiz pro Schicht sowie die automatische Archivierung nach drei\u00DFig Tagen, aber keine Regel f\u00FCr Korrekturen an fehlerhaften oder unvollst\u00E4ndigen Notizen im laufenden Schichtbetrieb. Gerade weil die n\u00E4chste Schicht die Notiz prominent sieht, fehlt ein geregelter Bearbeitungsfall im Lebenszyklus.",
+        "linse": "funktional",
+        "featureKey": "uebergabe_notizen"
+      },
+      "identityKey": "\u00FCbergabe notizen m\u00FCssen bis zur archivierung bearbeitet werden k\u00F6nnen bei jeder bearbeitung ist die zuletzt g\u00FCltige fassung mit \u00E4nderungszeitpunkt und bearbeitendem account nachvollziehbar zu halten",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    },
+    {
+      "itemId": "DEC-013",
+      "itemType": "decision",
+      "text": "Wie k\u00F6nnen Angeh\u00F6rige ihre bereits angek\u00FCndigten Besuche in der App selbst einsehen und den aktuellen Status eines Besuchs nachvollziehen, insbesondere ob er noch ausstehend, best\u00E4tigt, abgelehnt oder bereits erledigt ist?",
+      "origin": "ANALYST_OPEN_QUESTION",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260821_204808_042823",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-4"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-4",
+        "ingestedFromRun": "20260821_203951_db6050",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus den belegten Bed\u00FCrfnissen der Persona \u201EAngeh\u00F6rige / Bezugsperson\u201C: REQ-82 belegt das Ank\u00FCndigen von Besuchen, REQ-87 die R\u00FCckmeldung bei Best\u00E4tigung oder Ablehnung und REQ-88 die Erinnerung an best\u00E4tigte Besuche. F\u00FCr diese Persona gibt es jedoch kein gefundenes Requirement oder PBI, das eine eigene \u00DCbersicht oder Detailansicht der bereits angek\u00FCndigten Besuche f\u00FCr Angeh\u00F6rige beschreibt. Die vorhandenen \u00DCbersichts-Requirements REQ-83, REQ-89 und REQ-90 beziehen sich ausdr\u00FCcklich auf Pflegende.",
+        "linse": "persona"
+      },
+      "identityKey": "wie k\u00F6nnen angeh\u00F6rige ihre bereits angek\u00FCndigten besuche in der app selbst einsehen und den aktuellen status eines besuchs nachvollziehen insbesondere ob er noch ausstehend best\u00E4tigt abgelehnt oder bereits erledigt ist",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Open",
+      "status": "open_decision"
+    },
+    {
+      "itemId": "DEC-014",
+      "itemType": "decision",
+      "text": "Brauchen wir fuer interne Events einen Message-Broker?",
+      "origin": "AUTHOR_OPEN_QUESTION",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260822_105831_859ff4",
+      "sourceArtifactId": "author-chat:slice-s-test-analyse3",
+      "sourceArtifactType": "author-statement",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "AF-1",
+        "ingestedFromSession": "slice-s-test-analyse3",
+        "aspect": "architecture",
+        "resolutionOutcome": "KEEP_ORIGINAL",
+        "resolvedUtc": "2026-08-22T12:18:32.7378030Z"
+      },
+      "identityKey": "brauchen wir fuer interne events einen message broker",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Brauchen wir fuer interne Events einen Message-Broker?",
+          "status": "open_decision",
+          "origin": "AUTHOR_OPEN_QUESTION",
+          "sourceRunId": "20260822_105831_859ff4",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-22T12:18:32.738318Z",
+          "note": "resolved=KEEP_ORIGINAL; freistehende Frage geklaert"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Resolved",
+      "status": "resolved"
+    },
+    {
+      "itemId": "DEC-015",
+      "itemType": "decision",
+      "text": "Welches Logging-Framework nutzen wir serverseitig?",
+      "origin": "AUTHOR_OPEN_QUESTION",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260822_105831_859ff4",
+      "sourceArtifactId": "author-chat:slice-s-test-analyse3",
+      "sourceArtifactType": "author-statement",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "AF-2",
+        "ingestedFromSession": "slice-s-test-analyse3",
+        "aspect": "architecture",
+        "resolutionOutcome": "NO_TRUTH_NEEDED",
+        "resolvedUtc": "2026-08-22T14:09:57.0854600Z",
+        "resolvedWithoutTruthNeeded": "true"
+      },
+      "identityKey": "welches logging framework nutzen wir serverseitig",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Welches Logging-Framework nutzen wir serverseitig?",
+          "status": "open_decision",
+          "origin": "AUTHOR_OPEN_QUESTION",
+          "sourceRunId": "20260822_105831_859ff4",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-22T14:09:57.08593Z",
+          "note": "resolved=NO_TRUTH_NEEDED; freistehende Frage geklaert"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Resolved",
+      "status": "resolved"
+    },
+    {
+      "itemId": "ARCH-49",
+      "itemType": "architecture",
+      "text": "F\u00FCr interne Events wird bewusst kein separater Message-Broker eingesetzt. Events laufen direkt im Server-Backend. Ein externer Broker wird erst eingef\u00FChrt, wenn daf\u00FCr ein nachweisbarer Bedarf besteht, insbesondere bei Lastspitzen oder system\u00FCbergreifender Ereignisverarbeitung.",
+      "origin": "AuthorFront",
+      "stage": "author_front",
+      "version": 1,
+      "sourceRunId": "20260822_122635_a7d3ed",
+      "sourceArtifactId": "author-chat:slice-s-test-1",
+      "sourceArtifactType": "author-statement",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "AF-1",
+        "ingestedFromRun": "slice-s-test-1",
+        "answersDecision": "DEC-014"
+      },
+      "identityKey": "f\u00FCr interne events wird bewusst kein separater message broker eingesetzt events laufen direkt im server backend ein externer broker wird erst eingef\u00FChrt wenn daf\u00FCr ein nachweisbarer bedarf besteht insbesondere bei lastspitzen oder system\u00FCbergreifender ereignisverarbeitung",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "architecture": {
+        "roles": [
+          "design"
+        ],
+        "rationale": "Die Aussage ist eine bewusste Architekturentscheidung zur internen Event-Verarbeitung: kein separater Message-Broker im aktuellen Systemzuschnitt, sondern direkte Verarbeitung im Server-Backend. Das ist dokumentationsw\u00FCrdig als Designentscheidung. Eine constraint-Rolle ist hier nicht belastbar, weil kein konkretes aktives PBI fachlich direkt durch ein Broker-Verbot eingeschr\u00E4nkt wird.",
+        "adrId": "ADR-0005",
+        "adrStatus": "accepted"
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    },
+    {
+      "itemId": "ARCH-50",
+      "itemType": "architecture",
+      "text": "Erg\u00E4nzend zu ARCH-11 gilt f\u00FCr die allgemeine serverseitige Durchsetzung der Einrichtungsgrenze: Jede Collection tr\u00E4gt die Einrichtungs-ID, und jede Firestore Security Rule pr\u00FCft diese ID gegen die dem angemeldeten Benutzer zugeordnete Einrichtungs-ID.",
+      "origin": "AuthorFront",
+      "stage": "author_front",
+      "version": 1,
+      "sourceRunId": "20260822_160709_aa313a",
+      "sourceArtifactId": "author-chat:slice-s-test-6",
+      "sourceArtifactType": "author-statement",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "AF-1",
+        "ingestedFromRun": "slice-s-test-6",
+        "answersDecision": "DEC-009"
+      },
+      "identityKey": "erg\u00E4nzend zu arch 11 gilt f\u00FCr die allgemeine serverseitige durchsetzung der einrichtungsgrenze jede collection tr\u00E4gt die einrichtungs id und jede firestore security rule pr\u00FCft diese id gegen die dem angemeldeten benutzer zugeordnete einrichtungs id",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "architecture": {
+        "roles": [
+          "constraint",
+          "design"
+        ],
+        "rationale": "Der Fakt legt eine konkrete Architekturentscheidung zur mandantenf\u00E4higen serverseitigen Durchsetzung in Firestore fest (Einrichtungs-ID je Collection plus Pr\u00FCfung in jeder Security Rule) und ist damit design. Gleichzeitig schr\u00E4nkt er alle Arbeiten ein, die Benutzerzuordnung, Rollen/Rechte und Einrichtungsgrenzen fachlich umsetzen, daher constraint f\u00FCr die PBIs zur Account-Zuordnung und zum Rechtemodell.",
+        "adrId": "ADR-0006",
+        "adrStatus": "accepted"
+      },
       "validity": "Active",
       "blocker": "None",
       "confirmedBy": "Human",
@@ -12145,13 +12598,13 @@
         "issueNumber": "2",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
+        "updatedUtc": "2026-08-22T16:16:51.2838680Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/2",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "d3c850fd005208bb",
-        "projectedBodyHash": "1d213a0247393aeb",
-        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
+        "projectedBodyHash": "ba2a77ba056e62c4",
+        "projectedUtc": "2026-08-22T16:16:51.2838680Z"
       }
     },
     {
@@ -12163,13 +12616,13 @@
         "issueNumber": "3",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
+        "updatedUtc": "2026-08-22T16:16:51.2838680Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/3",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
-        "projectedTitleHash": "3e1d0097c263dc8f",
-        "projectedBodyHash": "542b5e2dc333f810",
-        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
+        "projectedTitleHash": "eab864b0f972d569",
+        "projectedBodyHash": "318a54fc33be588f",
+        "projectedUtc": "2026-08-22T16:16:51.2838680Z"
       }
     },
     {
@@ -12687,13 +13140,13 @@
         "issueNumber": "32",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "updatedUtc": "2026-08-21T21:04:56.8114490Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/32",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
-        "projectedTitleHash": "f4e09cedab8427d3",
-        "projectedBodyHash": "ebc73dacf2539f65",
-        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+        "projectedTitleHash": "cf35a34115d138b5",
+        "projectedBodyHash": "ba51985d334d1118",
+        "projectedUtc": "2026-08-21T21:04:56.8114490Z"
       }
     },
     {
@@ -12705,13 +13158,13 @@
         "issueNumber": "33",
         "operationalStatus": "open",
         "linkedUtc": "2026-07-23T14:58:33.7764290Z",
-        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "updatedUtc": "2026-08-21T17:32:06.9473600Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/33",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
         "projectedTitleHash": "585e438d8ddfa62c",
-        "projectedBodyHash": "9a10aba18443a672",
-        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+        "projectedBodyHash": "b8656f0a488366e0",
+        "projectedUtc": "2026-08-21T17:32:06.9473600Z"
       }
     },
     {
@@ -13455,13 +13908,13 @@
         "issueNumber": "44",
         "operationalStatus": "open",
         "linkedUtc": "2026-08-18T10:38:26.5530360Z",
-        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "updatedUtc": "2026-08-21T21:04:56.8114490Z",
         "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/44",
         "repository": "armiino/Agentic-GitHub-refactor",
         "origin": "UPDATE",
-        "projectedTitleHash": "1883387dd3959772",
-        "projectedBodyHash": "66ea051d5b56e358",
-        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+        "projectedTitleHash": "f96f88af6fcf099b",
+        "projectedBodyHash": "f89b7d7a09ec3729",
+        "projectedUtc": "2026-08-21T21:04:56.8114490Z"
       }
     },
     {
@@ -13632,6 +14085,48 @@
       "toId": "FC-15",
       "relationType": "part_of_feature",
       "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-046",
+      "toId": "REQ-91",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-91",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-032",
+      "toId": "REQ-92",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-92",
+      "toId": "FC-12",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-002",
+      "toId": "ARCH-50",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-003",
+      "toId": "ARCH-50",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
       "metadata": {}
     }
   ],
@@ -18004,6 +18499,192 @@
         "planId": "state-change-plan-20260820_185505",
         "incomingItemId": "GH-43",
         "date": "2026-08-20"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-vision",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260821_173550",
+      "payloadPath": "docs/vision.md",
+      "metadata": {
+        "contentHash": "5f1736adb08602e1",
+        "sha": "70de49e341b1b4b5615c09f49ea8e749075fd08e",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-21T17:36:27.3137870Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-anforderungen",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260822_161018",
+      "payloadPath": "docs/anforderungen.md",
+      "metadata": {
+        "contentHash": "0af1c89dfc30de33",
+        "sha": "abdd9c6365aea8ffa3a5fdc320db7bdaebffea07",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-22T16:10:40.2016370Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-backlog",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260822_140957",
+      "payloadPath": "docs/backlog.md",
+      "metadata": {
+        "contentHash": "e92201c34f86ab5a",
+        "sha": "ec9c5bfcc1f500d6c208b118ae882059f4af930e",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-22T14:11:16.6929470Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-architecture",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260822_161018",
+      "payloadPath": "docs/architecture.md",
+      "metadata": {
+        "contentHash": "09505e201ceca7d5",
+        "sha": "fff43ead7269266c3721460ca2b3f4f4d5e328be",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-22T16:10:40.2016410Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-adr-0001-firebase-cloud-messaging-fuer-push-benachrichtigungen",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260821_173550",
+      "payloadPath": "docs/adr/0001-firebase-cloud-messaging-fuer-push-benachrichtigungen.md",
+      "metadata": {
+        "contentHash": "9ea71757efc98510",
+        "sha": "dbaebc6aa4e47a5b399ab35ba0abfd2e80a8bd5f",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-21T17:36:27.3139540Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-adr-0002-unveraenderlicher-audit-log-rahmen-fuer-einsichtnahmen",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260821_173550",
+      "payloadPath": "docs/adr/0002-unveraenderlicher-audit-log-rahmen-fuer-einsichtnahmen.md",
+      "metadata": {
+        "contentHash": "36e73440e74909b8",
+        "sha": "f65626e09f876b5f7b152629b83377e05ada3572",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-21T17:36:27.3139560Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-adr-0003-serverseitiger-benachrichtigungsrahmen-fuer-besuchserinnerun",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260821_173550",
+      "payloadPath": "docs/adr/0003-serverseitiger-benachrichtigungsrahmen-fuer-besuchserinnerun.md",
+      "metadata": {
+        "contentHash": "5581bc287211a8be",
+        "sha": "e8d3c57848103c84497c4c642fdb779931716fd4",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-21T17:36:27.3139590Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-adr-README",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260822_161018",
+      "payloadPath": "docs/adr/README.md",
+      "metadata": {
+        "contentHash": "404f0a460d773699",
+        "sha": "477509c1eeb6e1a96fb3e538b4ea0d4c228ef502",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-22T16:10:40.2016470Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-personas",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260821_182305",
+      "payloadPath": "docs/personas.md",
+      "metadata": {
+        "contentHash": "8c732c164ccb9c3d",
+        "sha": "d0d9e44ed0f2c002c771457cf8e3fafce69fe6be",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-21T18:38:09.3032780Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-c4",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260822_161625",
+      "payloadPath": "docs/c4.md",
+      "metadata": {
+        "contentHash": "490b3eb2c40f15ef",
+        "sha": "b42eefdca8b363dd302c952f46edc3af4ebe6ce5",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-22T16:16:51.2878280Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-adr-0004-einrichtungsgebundener-serverseitiger-suchrahmen",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260821_205735",
+      "payloadPath": "docs/adr/0004-einrichtungsgebundener-serverseitiger-suchrahmen.md",
+      "metadata": {
+        "contentHash": "ea60f799d0ec591e",
+        "sha": "d004049205c109c714eca5f61f3f54dd0a004a69",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-21T21:04:56.8154640Z"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-adr-0005-verzicht-auf-separaten-message-broker-fuer-interne-events",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260822_123239",
+      "payloadPath": "docs/adr/0005-verzicht-auf-separaten-message-broker-fuer-interne-events.md",
+      "metadata": {
+        "contentHash": "14b98f0cdebd9c8c",
+        "sha": "52a3f1a311fb8692f17699e9564b2d7118b7f0cf",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-22T12:33:25.8503430Z"
+      }
+    },
+    {
+      "proposalId": "REJ-022",
+      "proposalType": "ingest_rejection",
+      "status": "rejected",
+      "sourceRunId": "state-change-plan-20260822_155721",
+      "payloadPath": "runs/fullworkflow/20260822_155707_dbfe90/07-arch-ingest/plan.json",
+      "metadata": {
+        "statement": "Die Einrichtungsgrenze wird serverseitig \u00FCber Firestore Security Rules durchgesetzt: Jede Collection tr\u00E4gt die Einrichtungs-ID, und jede Zugriffsregel pr\u00FCft diese ID gegen die dem angemeldeten Benutzer zugeordnete Einrichtungs-ID.",
+        "reason": "REFINE w\u00FCrde ARCH-11 vollst\u00E4ndig ersetzen und der Suchrahmen-Aspekt ginge verloren \u2014 die Antwort kommt als eigenst\u00E4ndige neue Festlegung.",
+        "kind": "REFINE",
+        "identityKey": "die einrichtungsgrenze wird serverseitig \u00FCber firestore security rules durchgesetzt jede collection tr\u00E4gt die einrichtungs id und jede zugriffsregel pr\u00FCft diese id gegen die dem angemeldeten benutzer zugeordnete einrichtungs id",
+        "planId": "state-change-plan-20260822_155721",
+        "incomingItemId": "AF-1",
+        "date": "2026-08-22",
+        "targetEntityId": "ARCH-11"
+      }
+    },
+    {
+      "proposalId": "DOC-docs-adr-0006-serverseitige-einrichtungsgrenze-in-firestore",
+      "proposalType": "github_doc_projection",
+      "status": "applied",
+      "sourceRunId": "github-forward-plan-20260822_161018",
+      "payloadPath": "docs/adr/0006-serverseitige-einrichtungsgrenze-in-firestore.md",
+      "metadata": {
+        "contentHash": "50994c90f87c9a14",
+        "sha": "c68394d13fc6636575ed3b8e8541a8814735fe1a",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "updatedUtc": "2026-08-22T16:10:40.2016440Z"
       }
     }
   ]

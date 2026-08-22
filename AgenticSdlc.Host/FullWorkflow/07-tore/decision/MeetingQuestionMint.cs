@@ -18,14 +18,23 @@ public static class MeetingQuestionMint
     public const string OriginAuthor = "AUTHOR_OPEN_QUESTION";
     public const string OriginGithub = "GITHUB_OPEN_QUESTION";
     public const string OriginAnalyst = "ANALYST_OPEN_QUESTION";   // 1g: erschlossene Frage (Risiko-Linse etc.)
+    // Slice S ④ (21.08.): Risiken fahren die QuestionLane, tragen aber ihre EIGENE Herkunfts-Prägung —
+    // am decision-gate und in der W2-Herkunfts-Achse bleibt „Risiko" von „Frage" unterscheidbar.
+    public const string OriginRisk = "MEETING_RISK";
+    public const string OriginRiskAuthor = "AUTHOR_RISK";
+    public const string OriginRiskGithub = "GITHUB_RISK";
 
-    internal static string QuestionOrigin(ProjectStateItem incoming) => incoming.Origin switch
+    internal static string QuestionOrigin(ProjectStateItem incoming)
     {
-        "AuthorFront" => OriginAuthor,      // AuthorFrontDelta-Bahn (Diktat)
-        "GithubInbound" => OriginGithub,    // GithubInboundDrafting-Bahn (Ernte)
-        "CoreAnalyst" => OriginAnalyst,     // 1g AnalystDeltaBuilder-Bahn (erschlossen, nicht gesagt)
-        _ => Origin,                        // Meeting-Kette (Default — die namensgebende Bahn)
-    };
+        var risk = Core.QuestionLane.IsRisk(incoming.ItemType);
+        return incoming.Origin switch
+        {
+            "AuthorFront" => risk ? OriginRiskAuthor : OriginAuthor,   // AuthorFrontDelta-Bahn (Diktat)
+            "GithubInbound" => risk ? OriginRiskGithub : OriginGithub, // GithubInboundDrafting-Bahn (Ernte)
+            "CoreAnalyst" => OriginAnalyst,                            // 1g: Analyst-Risiken kommen als question (Risiko-Linse)
+            _ => risk ? OriginRisk : Origin,                           // Meeting-Kette (Default — die namensgebende Bahn)
+        };
+    }
 
     /// <summary>Item-Fabrik: EIN DEC-Item aus einer offenen Frage (I7: sourceRunId = Ausloeser-Lauf;
     /// Delta-Herkunft via ingestedFrom/ingestedFromRun bzw. -Session; Beleg-Kette via claimIds).</summary>
@@ -41,6 +50,8 @@ public static class MeetingQuestionMint
         // 9i: kam die Frage aus einem GitHub-Issue, traegt die DEC die Herkunft (Ernte-Gedaechtnis; W4-Anker
         // fuer „DEC aufgeloest -> Issue schliessen"). No-op fuer Meeting-/Autor-Fragen — geteilte Naht bleibt neutral.
         GithubOriginMeta.CarryOver(incoming, meta);
+        // C4-Kreislauf (22.08.): die Aspekt-Färbung der Quelle reist an die DEC (no-op für ungefärbte Fragen).
+        Core.DecisionAspectMeta.CarryOver(incoming, meta);
         // 1g (20.08., Autor-Frage „gehoert die Frage dann zu arch?"): Analyst-Fragen behalten ihre
         // ASPEKT-FAERBUNG (linse/kategorie) — sichtbar am decision-gate; die Antwort-Bahn in die Wahrheit
         // bleibt das Diktat (arch-Tor-1 -> classify -> ADR), der Steward bietet sie beim Klaeren an.

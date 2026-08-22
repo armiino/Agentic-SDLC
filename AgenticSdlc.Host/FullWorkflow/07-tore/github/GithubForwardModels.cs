@@ -83,8 +83,13 @@ public static class GithubForwardKind
     // Projektion, daher von der Coverage-Regel ausgenommen (Gate).
     public const string NoteComment = "NOTE_COMMENT";
 
+    // Slice S Teil 1 (21.08., Bauplan team-sichtbarkeit-slice.md): DOC-PROJEKTION als Datei-Write ins
+    // Team-Repo (Title=Repo-Pfad, Body=publizierter Inhalt mit GENERIERT-Kopf). One-way — keine Doc-Ernte;
+    // wie NOTE_COMMENT von Coverage- und Issue-Ziel-Regeln ausgenommen.
+    public const string UpsertFile = "UPSERT_FILE";
+
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
-        { CreateIssue, UpdateIssue, Comment, NoteComment, Link, NoChange, FlagDrift, HoldBlocked, HoldClarify };
+        { CreateIssue, UpdateIssue, Comment, NoteComment, UpsertFile, Link, NoChange, FlagDrift, HoldBlocked, HoldClarify };
 
     // Ops, die auf ein bestehendes Issue zeigen muessen.
     public static readonly IReadOnlySet<string> RequireIssueTarget = new HashSet<string>(StringComparer.Ordinal)

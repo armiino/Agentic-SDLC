@@ -6,6 +6,16 @@ using System.Text.Json.Serialization;
 
 namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
+/// <summary>Slice S Teil 1 (21.08.): Datei-Writes (Contents-API) — EIGENES Interface, damit die
+/// bestehenden Issue-Fakes in Tests unberührt bleiben; der Apply prüft per `as`-Cast.</summary>
+internal interface IGithubFileClient
+{
+    /// <summary>sha der Datei im Repo — null, wenn sie (noch) nicht existiert.</summary>
+    Task<string?> GetFileShaAsync(string repository, string path, CancellationToken ct);
+    /// <summary>Legt an/überschreibt (PUT contents); sha = Vorgänger-sha (null bei Neuanlage). Liefert die neue sha.</summary>
+    Task<string> UpsertFileAsync(string repository, string path, string content, string message, string? sha, CancellationToken ct);
+}
+
 internal interface IGithubIssueClient
 {
     Task<GithubIssueWriteResult> CreateIssueAsync(
@@ -36,7 +46,7 @@ internal interface IGithubIssueClient
         CancellationToken ct);
 }
 
-internal sealed class GithubRestIssueClient(HttpClient http, string token, string userAgent) : IGithubIssueClient
+internal sealed class GithubRestIssueClient(HttpClient http, string token, string userAgent) : IGithubIssueClient, IGithubFileClient
 {
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
@@ -98,6 +108,44 @@ internal sealed class GithubRestIssueClient(HttpClient http, string token, strin
         // Antwort ist ein Comment-Objekt (html_url = Kommentar-Link); die Issue-Nummer kennen wir bereits.
         return new GithubIssueWriteResult(issueNumber, response.HtmlUrl, "", "");
     }
+
+    public async Task<string?> GetFileShaAsync(string repository, string path, CancellationToken ct)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(new Uri("https://api.github.com"), $"/repos/{repository}/contents/{path}"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+        request.Headers.UserAgent.ParseAdd(userAgent);
+        request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
+        using var response = await http.SendAsync(request, ct).ConfigureAwait(false);
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return null;
+        var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"GitHub API {(int)response.StatusCode} {response.ReasonPhrase}: {TryReadGithubError(body) ?? body}");
+        using var doc = JsonDocument.Parse(body);
+        return doc.RootElement.TryGetProperty("sha", out var sha) ? sha.GetString() : null;
+    }
+
+    public async Task<string> UpsertFileAsync(string repository, string path, string content, string message, string? sha, CancellationToken ct)
+    {
+        var payload = new GithubFilePutRequest(message, Convert.ToBase64String(Encoding.UTF8.GetBytes(content)), sha);
+        using var request = new HttpRequestMessage(HttpMethod.Put, new Uri(new Uri("https://api.github.com"), $"/repos/{repository}/contents/{path}"));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github+json"));
+        request.Headers.UserAgent.ParseAdd(userAgent);
+        request.Headers.Add("X-GitHub-Api-Version", "2022-11-28");
+        request.Content = new StringContent(JsonSerializer.Serialize(payload, Json), Encoding.UTF8, "application/json");
+        using var response = await http.SendAsync(request, ct).ConfigureAwait(false);
+        var body = await response.Content.ReadAsStringAsync(ct).ConfigureAwait(false);
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"GitHub API {(int)response.StatusCode} {response.ReasonPhrase}: {TryReadGithubError(body) ?? body}");
+        using var doc = JsonDocument.Parse(body);
+        return doc.RootElement.GetProperty("content").GetProperty("sha").GetString()!;
+    }
+
+    private sealed record GithubFilePutRequest(
+        [property: System.Text.Json.Serialization.JsonPropertyName("message")] string Message,
+        [property: System.Text.Json.Serialization.JsonPropertyName("content")] string Content,
+        [property: System.Text.Json.Serialization.JsonPropertyName("sha"), System.Text.Json.Serialization.JsonIgnore(Condition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull)] string? Sha);
 
     private async Task<GithubIssueResponse> SendAsync<T>(HttpMethod method, string path, T payload, CancellationToken ct)
     {

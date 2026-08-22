@@ -101,7 +101,7 @@ public sealed class EmptyGateAutoResponderTests
         File.WriteAllText(Path.Combine(pbiOut, "applied", "github-sync-delta.json"),
             """{"newPbis":[],"updatedPbis":[],"entries":[]}""");                          // Datei EXISTIERT, aber leer (der G7-Fall)
 
-        var bridge = new OperationalForwardBridgeExecutor(run, pbiOut);
+        var bridge = new OperationalForwardBridgeExecutor(run, pbiOut, Directory.CreateTempSubdirectory("r50-root-").FullName, null);   // ohne Ziel-Repo: keine Doc-Quelle (R-66)
         var preps = new ConcurrentBag<object>();
         var b = new WorkflowBuilder(bridge).WithName("R50Bridge");
         b.AddEdge(bridge, new PrepSink(preps));
@@ -113,6 +113,35 @@ public sealed class EmptyGateAutoResponderTests
         var events = File.ReadAllText(Path.Combine(run.LogsDir, "events.jsonl"));
         Assert.Contains("PIPELINE_FORWARD_BRIDGE_SKIPPED", events);                      // LAUT übersprungen (Event, nicht still)
         Assert.Contains("leeres sync-delta", events);
+    }
+
+    // R-66 (21.08., Rampen-Test live): dritte Skip-Quelle — ein Lauf OHNE PBI-Änderungen darf den Forward
+    // NICHT skippen, wenn Doc-Publish-Änderungen (frische Artefakte/Projektionen) anstehen.
+    [Fact]
+    public async Task Forward_Bridge_laeuft_bei_leerem_delta_wenn_Doc_Aenderungen_anstehen()
+    {
+        var run = new RunContext(RunId.New(), "r66-bridge"); run.EnsureFolders();
+        var pbiOut = Directory.CreateTempSubdirectory("r66-").FullName;
+        Directory.CreateDirectory(Path.Combine(pbiOut, "applied"));
+        File.WriteAllText(Path.Combine(pbiOut, "applied", "github-sync-delta.json"),
+            """{"newPbis":[],"updatedPbis":[],"entries":[]}""");
+
+        var root = Directory.CreateTempSubdirectory("r66-root-").FullName;
+        Directory.CreateDirectory(Path.Combine(root, "docs"));
+        File.WriteAllText(Path.Combine(root, "docs", "vision.md"), "# Produktvision\nInhalt.");
+        await new AgenticSdlc.Host.FullWorkflow.Core.JsonCoreRepository(root).SaveAsync(
+            new AgenticSdlc.Host.FullWorkflow.Delta.ProjectStateDocument("p", 4, DateTime.UnixEpoch, [], [], [], [], []));
+
+        var bridge = new OperationalForwardBridgeExecutor(run, pbiOut, root, "o/r");
+        var preps = new ConcurrentBag<object>();
+        var b = new WorkflowBuilder(bridge).WithName("R66Bridge");
+        b.AddEdge(bridge, new PrepSink(preps));
+        b.WithOutputFrom(bridge);
+        await InProcessExecution.Default.RunAsync(b.Build(),
+            new PbiUpdateApplyReport([], [], new Dictionary<string, string>(), 0, 0, []), run.RunId, CancellationToken.None);
+
+        Assert.Single(preps);                                                            // Forward LÄUFT (Docs warten)
+        Assert.Contains("staleDocs", File.ReadAllText(Path.Combine(run.LogsDir, "events.jsonl")));
     }
 
     private sealed class PrepSink(ConcurrentBag<object> hits) : Executor<ForwardPrep>("PrepSink")

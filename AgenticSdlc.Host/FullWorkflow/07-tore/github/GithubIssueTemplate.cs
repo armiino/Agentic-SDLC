@@ -61,7 +61,13 @@ public static class GithubIssueTemplate
             : [string.Join(", ", e.CoveredRequirementIds.Select(r => $"`{r}`"))]);
         var readiness = string.IsNullOrWhiteSpace(e.Readiness) ? "-" : e.Readiness;
         sb.Append(FooterDivider).Append('\n')
-          .Append($"{FooterPrefix}PBI {e.PbiId} · Status {e.Status} · Readiness {readiness} · Quelle: {quelle}");
+          .Append($"{FooterPrefix}PBI {e.PbiId} · Status {e.Status} · Readiness {readiness}");
+        // Slice S Teil 2: Prio/Schätzung NUR wenn gesetzt (kein Massen-Drift der Bestands-Issues). Prio steht
+        // deutsch im Klartext-Footer — UND als prio-Label; der Footer-Eintrag macht die Label-Pflege hash-sichtbar
+        // (Prio-Wechsel ⇒ Body-Diff ⇒ UPDATE-Op ⇒ Familie wird neu berechnet).
+        if (PbiFields.NormalizePriority(e.Priority) is { } prio) sb.Append($" · Prio {PbiFields.PriorityDe(prio)}");
+        if (PbiFields.NormalizeEstimate(e.Estimate) is { } est) sb.Append($" · Schätzung {est}");
+        sb.Append($" · Quelle: {quelle}");
         return sb.ToString();
     }
 
@@ -84,7 +90,7 @@ public static class GithubIssueTemplate
         var statement = new List<string>();
         var ak = new List<string>(); var constraints = new List<string>(); var arch = new List<string>();
         var reqs = new List<string>(); var freeText = new List<string>();
-        string? pbiId = null, status = null, readiness = null, quelle = null;
+        string? pbiId = null, status = null, readiness = null, quelle = null, prio = null, estimate = null;
 
         List<string>? section = null;      // aktive Listen-Sektion (AK/Rahmen/Arch)
         var inReqs = false;                // eigene Sektions-Art: Requirements-Block (backtick-IDs, kommasepariert)
@@ -112,6 +118,8 @@ public static class GithubIssueTemplate
                     if (part.StartsWith("PBI ", StringComparison.Ordinal)) pbiId = part[4..];
                     else if (part.StartsWith("Status ", StringComparison.Ordinal)) status = part[7..];
                     else if (part.StartsWith("Readiness ", StringComparison.Ordinal)) readiness = part[10..];
+                    else if (part.StartsWith("Prio ", StringComparison.Ordinal)) prio = part[5..];
+                    else if (part.StartsWith("Schätzung ", StringComparison.Ordinal)) estimate = part["Schätzung ".Length..];
                     else if (part.StartsWith("Quelle: ", StringComparison.Ordinal)) quelle = part[8..];
                 }
                 continue;
@@ -138,7 +146,7 @@ public static class GithubIssueTemplate
 
         var stmt = string.Join("\n", statement).Trim();
         return new ParsedIssueBody(stmt.Length == 0 ? null : stmt, ak, constraints, arch, reqs,
-            pbiId, status, readiness, quelle, freeText);
+            pbiId, status, readiness, quelle, freeText, prio, estimate);
     }
 }
 
@@ -153,4 +161,7 @@ public sealed record ParsedIssueBody(
     string? Status,
     string? Readiness,
     string? Quelle,
-    IReadOnlyList<string> FreeText);
+    IReadOnlyList<string> FreeText,
+    // Slice S Teil 2 (additiv): Prio (deutsche Anzeige-Form, wie gerendert) + Schätzung aus dem Footer — null wenn absent.
+    string? Prio = null,
+    string? Estimate = null);

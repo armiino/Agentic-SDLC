@@ -18,14 +18,7 @@ public static class AnalystDeltaBuilder
         var items = findings.Select((f, i) => new ProjectStateItem(
             $"CA-{i + 1}", ItemTypeOf(f.Disposition), f.Statement.Trim(), Origin, "core_analyst", 1,
             analysisRunId, sourceId, "analyst-finding", null, null, [], [],
-            new Dictionary<string, string>
-            {
-                ["quelle"] = "core-analyst (erschlossen, nicht gesagt)",
-                ["linse"] = f.Linse,
-                [Core.RequirementsDocumentProjection.KategorieKey] = f.Kategorie,
-                ["herleitung"] = f.Herleitung,
-                ["ankerIds"] = string.Join(",", f.AnkerIds),
-            }).WithStatus(CoreStatus.From("baseline"))).ToList();
+            BuildMeta(f)).WithStatus(CoreStatus.From("baseline"))).ToList();
 
         return new ProjectStateDocument("agentic-sdlc", ProjectStateDocument.CurrentSchemaVersion, DateTime.UtcNow,
             [new ProjectStateSource(sourceId, "analyst-finding", $"runs/core-analysis/{analysisRunId}", analysisRunId,
@@ -39,4 +32,22 @@ public static class AnalystDeltaBuilder
 
     private static string ItemTypeOf(string disposition)
         => string.Equals(disposition, "question", StringComparison.Ordinal) ? "open_question" : disposition;
+
+    private static Dictionary<string, string> BuildMeta(AnalystFinding f)
+    {
+        var meta = new Dictionary<string, string>
+        {
+            ["quelle"] = "core-analyst (erschlossen, nicht gesagt)",
+            ["linse"] = f.Linse,
+            [Core.RequirementsDocumentProjection.KategorieKey] = f.Kategorie,
+            ["herleitung"] = f.Herleitung,
+            ["ankerIds"] = string.Join(",", f.AnkerIds),
+        };
+        // C4-Kreislauf (22.08.): eine FRAGE der arch-Linse IST eine Architektur-Unklarheit — die Färbung
+        // bringt sie (als DEC) automatisch in die §3-Lücken-Projektion des C4, egal ob sie je ein ?-Kasten war.
+        if (string.Equals(f.Disposition, "question", StringComparison.Ordinal)
+            && string.Equals(f.Linse, "arch", StringComparison.Ordinal))
+            meta[Core.DecisionAspectMeta.Key] = Core.DecisionAspectMeta.Architecture;
+        return meta;
+    }
 }

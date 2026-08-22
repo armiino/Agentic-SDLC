@@ -31,9 +31,22 @@ public static class RequirementsDocumentProjection
         var previous = File.Exists(path) ? await File.ReadAllTextAsync(path).ConfigureAwait(false) : null;
         var version = NextVersion(previous);
         var markdown = Render(core, version, utcNow ?? DateTime.UtcNow);
+        // R-72 (22.08.): geschrieben wird NUR bei echter INHALTS-Änderung — der Fingerabdruck deckt den
+        // ganzen Wahrheits-Stand (auch DEC-Schließungen, die dieses Doc gar nicht rendern); ohne diese
+        // Wache entstünde ein Kopfzeilen-Push je fremder Wahrheits-Änderung (Version-Churn light).
+        if (previous is not null && SameBody(previous, markdown))
+            return (path, version - 1, core.Items.Count);
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         await File.WriteAllTextAsync(path, markdown).ConfigureAwait(false);
         return (path, version, core.Items.Count);
+    }
+
+    /// <summary>R-72: Inhalts-Vergleich ohne die volatile Stand-Zeile („&gt; Version: … Fingerabdruck: …").</summary>
+    internal static bool SameBody(string a, string b)
+    {
+        static string Strip(string s) => string.Join('\n',
+            s.Replace("\r\n", "\n").Split('\n').Where(l => !l.TrimStart().StartsWith("> Version:", StringComparison.Ordinal)));
+        return string.Equals(Strip(a), Strip(b), StringComparison.Ordinal);
     }
 
     /// <summary>Fortlaufende Version aus der Kopfzeile der Vorgänger-Datei (+1); ohne Vorgänger = 1.</summary>
@@ -120,7 +133,19 @@ public static class RequirementsDocumentProjection
     private static string? Kategorie(ProjectStateItem i) => i.Metadata.GetValueOrDefault(KategorieKey);
     private static bool IsNfr(ProjectStateItem i) => Kategorie(i)?.StartsWith("nfr:", StringComparison.Ordinal) == true;
 
-    /// <summary>Kurzer, deterministischer Wahrheits-Stand-Anker (SHA-256/16 über den serialisierten Core).</summary>
+    /// <summary>Kurzer, deterministischer Wahrheits-Stand-Anker (SHA-256/16). R-63 (21.08., Slice-S-Live-
+    /// Abnahme): NIE den ganzen Core hashen — die Apply-Buchhaltung (Doc-Publish-Stempel/Pendings in den
+    /// Proposals mit updatedUtc, Kommentar-Lesezeichen in Relations-Metadata) änderte den Abdruck bei JEDEM
+    /// Write ⇒ Doc-Publish-Dauer-Churn (anforderungen/backlog nie in-sync). Anker = NUR was die Projektionen
+    /// rendern: die Items + die Relations-TRIPEL (ohne Metadata — neue/entfernte Kanten zählen, Buchhaltung
+    /// an bestehenden Kanten nicht).</summary>
     public static string Fingerprint(ProjectStateDocument core)
-        => Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(core, JsonFiles.Json)))[..16].ToLowerInvariant();
+    {
+        var anchor = new
+        {
+            items = core.Items,
+            relations = core.Relations.Select(r => new { r.FromId, r.ToId, r.RelationType }),
+        };
+        return Convert.ToHexString(SHA256.HashData(JsonSerializer.SerializeToUtf8Bytes(anchor, JsonFiles.Json)))[..16].ToLowerInvariant();
+    }
 }

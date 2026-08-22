@@ -1,0 +1,16 @@
+{
+  "lane": "operational",
+  "drafts": [
+    {
+      "itemId": "ARCH-49",
+      "title": "Verzicht auf separaten Message-Broker f\u00FCr interne Events",
+      "context": "F\u00FCr die interne Event-Verarbeitung des aktuellen Systems stand die Festlegung an, ob ein separater externer Message-Broker eingesetzt werden soll oder ob Ereignisse direkt im Server-Backend verarbeitet werden. Laut Item-Text wurde diese Frage bewusst entschieden: Im aktuellen Systemzuschnitt besteht kein nachgewiesener Bedarf f\u00FCr einen separaten Broker. Als m\u00F6gliche Ausl\u00F6ser f\u00FCr eine sp\u00E4tere Einf\u00FChrung werden insbesondere Lastspitzen oder system\u00FCbergreifende Ereignisverarbeitung genannt.",
+      "decision": "Wir verarbeiten interne Events direkt im Server-Backend und setzen daf\u00FCr aktuell keinen separaten Message-Broker ein. Einen externen Broker f\u00FChren wir erst ein, wenn daf\u00FCr ein nachweisbarer Bedarf besteht, insbesondere bei Lastspitzen oder system\u00FCbergreifender Ereignisverarbeitung.",
+      "consequences": "Positiv ist, dass die Architektur im aktuellen Stand einfacher bleibt und keine zus\u00E4tzliche Broker-Infrastruktur betrieben, integriert und \u00FCberwacht werden muss. Die Event-Verarbeitung bleibt eng am Server-Backend und kann ohne zus\u00E4tzliche verteilte Infrastruktur umgesetzt werden. Einschr\u00E4nkend folgt daraus, dass die interne Event-Verarbeitung zun\u00E4chst an das Server-Backend gebunden ist und keine entkoppelte Broker-Schicht bereitsteht. Wenn Lastspitzen auftreten oder Ereignisse system\u00FCbergreifend verarbeitet werden sollen, muss die Architektur \u00FCberpr\u00FCft und gegebenenfalls um einen externen Broker erweitert werden.",
+      "relatedIds": [
+        "ARCH-49"
+      ],
+      "alternatives": "Als erkennbare Alternative stand der Einsatz eines separaten externen Message-Brokers f\u00FCr interne Events im Raum; diese Alternative wird aktuell bewusst nicht gew\u00E4hlt und erst bei nachweisbarem Bedarf erneut betrachtet."
+    }
+  ]
+}

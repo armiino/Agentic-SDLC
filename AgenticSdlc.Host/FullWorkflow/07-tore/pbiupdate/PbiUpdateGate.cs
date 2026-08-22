@@ -47,6 +47,18 @@ public static class PbiUpdateGate
                     errors.Add(Issue("BLOCK_NEEDS_DECISION", "error", "BLOCK_PBI braucht existierende openDecisionRef.", op.RequirementId, op.PbiId));
             }
 
+            // Slice S Teil 2: Feld-Setz-Ops brauchen einen gültigen Wert (Wertebereich = EINE Quelle, PbiFields).
+            if (PbiUpdateKind.FieldSet.Contains(op.Kind))
+            {
+                var valid = string.Equals(op.Kind, PbiUpdateKind.SetPriority, StringComparison.Ordinal)
+                    ? Core.PbiFields.NormalizePriority(op.Value) is not null
+                    : Core.PbiFields.NormalizeEstimate(op.Value) is not null;
+                if (!valid)
+                    errors.Add(Issue("FIELD_VALUE_INVALID", "error",
+                        $"'{op.Kind}' braucht einen gültigen Wert (Prio: high|medium|low · Schätzung: S|M|L), nicht '{op.Value}'.",
+                        null, op.PbiId));
+            }
+
             if (string.Equals(op.Kind, PbiUpdateKind.SupersedePbi, StringComparison.Ordinal))
             {
                 if (string.IsNullOrWhiteSpace(op.ReplacementRequirementId) || !reqIds.Contains(op.ReplacementRequirementId!))

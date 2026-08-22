@@ -77,6 +77,9 @@ public static class IngestionApply
                     var refineMeta = new Dictionary<string, string>(t.Metadata, StringComparer.Ordinal);
                     GithubOriginMeta.CarryOver(incoming, refineMeta);
                     AnalystOriginMeta.CarryOver(incoming, refineMeta);
+                    // R-74b: auch eine REFINE-Antwort trägt ihren Anker — verfeinert ein Antwort-Diktat
+                    // bestehende Wahrheit, ist DIE das answering-Item (sonst stürbe der Nachweis hier still).
+                    DecisionAnswerMeta.CarryOver(incoming, refineMeta);
                     byId[t.ItemId] = t with
                     {
                         Text = statement,
@@ -195,6 +198,9 @@ public static class IngestionApply
         // 1g: Analyst-Herkunft (Kategorie/Herleitung/Linse) reist MIT in die Wahrheit — Kategorie strukturiert
         // das Anforderungsdokument, Herleitung+Linse sind der Beleg (no-op für andere Bahnen).
         AnalystOriginMeta.CarryOver(incoming, meta);
+        // C4-Kreislauf (22.08.): der Antwort-Anker („dieses Item beantwortet DEC-x") reist in die Wahrheit —
+        // damit ist die Schließung einer Architektur-Unklarheit deterministisch nachweisbar (§3-Projektion).
+        DecisionAnswerMeta.CarryOver(incoming, meta);
         return meta;
     }
 

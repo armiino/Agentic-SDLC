@@ -15,9 +15,11 @@ load-Modus startet mit der typisierten Bestellung `LoadBaselineRequest` als Work
 
 ```jsonc
 { "baseline": { "mode": "build" | "load", "artifacts": ["requirements", …], "fromRun": "<runId bei load>" },
-<!-- 9g (05.08.): der Ein-Graph bestellt ["requirements","open-questions"] (BaselineStageExecutor.OrderedArtifacts) —
-     die Fragen-Spur speist via Delta→Tor 1 den DEC-Topf (Frage→DEC, MeetingQuestionMint). architecture wird seit R-11/A1c (05.08.)
-     MITBESTELLT (OrderedArtifacts; Konsument = arch-Strip A1d). CLI-Läufe: Zusatz-Artefakte bei Bedarf explizit mitbestellen. -->
+<!-- 9g (05.08.): der Ein-Graph bestellt ["requirements","open-questions","architecture","risks"]
+     (BaselineStageExecutor.OrderedArtifacts) — die Fragen-Spur speist via Delta→Tor 1 den DEC-Topf (Frage→DEC,
+     MeetingQuestionMint). architecture seit R-11/A1c (Konsument = arch-Strip A1d); risks seit Slice S ④ (21.08.,
+     Konsument = QuestionLane: Risiko→DEC, eigene Herkunft MEETING_RISK — akzeptieren/mitigieren/klären am
+     decision-gate). CLI-Läufe: Zusatz-Artefakte bei Bedarf explizit mitbestellen. -->
   "derivations": [ { "spec": "derived-risks-multi" }, … ] }
 ```
 

@@ -29,6 +29,19 @@ if dotnet build "$HOST" --no-restore >/dev/null 2>&1; then ok "build gruen"; els
 [ -f "$CORE" ] || { echo "Core fehlt: $CORE"; exit 2; }
 cp "$CORE" "$BACKUP"; I0=$(items); echo "== Core-Baseline: $I0 items =="
 
+# R-66-Härtung (21.08.): Smoke ist OFFLINE und workspace-unabhängig — run-config wird wie der Core
+# gesichert und für die Smoke-Dauer entschärft (repo leer ⇒ kein Snapshot/kein Doc-Publish-Prädikat;
+# execute false ⇒ nie ein echter Write, egal was der Autor gerade scharf hat). Restore am Ende.
+RUNCFG="run-config.json"; RUNCFG_BAK="$FIX/run-config-backup.json"
+cp "$RUNCFG" "$RUNCFG_BAK"
+python3 - <<'PYEOF'
+import json,re
+raw=open('run-config.json').read()
+raw=re.sub(r'"repo"\s*:\s*"[^"]*"','"repo": ""',raw,count=1)
+raw=re.sub(r'"execute"\s*:\s*true','"execute": false',raw,count=1)
+open('run-config.json','w').write(raw)
+PYEOF
+
 # --- Fixtures (leer -> 0 Ops, kein LLM) ---
 EMPTY_DELTA="$FIX/empty-delta.json"
 echo '{ "projectId":"_smoke", "schemaVersion":3, "createdUtc":"2026-01-01T00:00:00Z", "sources":[], "items":[], "relations":[], "provenance":[], "proposals":[] }' > "$EMPTY_DELTA"
@@ -106,6 +119,7 @@ PYEOF
 echo "== Core-Integritaet =="
 IN=$(items); [ "$IN" = "$I0" ] && ok "Core-Item-Zahl unveraendert ($IN)" || bad "Core-Item-Zahl $I0 -> $IN"
 cp "$BACKUP" "$CORE"; ok "Core aus Backup restauriert"
+cp "$RUNCFG_BAK" "$RUNCFG"
 for d in "${CLEANUP[@]}"; do rm -rf "$d"; done
 rm -rf "$FIX"
 

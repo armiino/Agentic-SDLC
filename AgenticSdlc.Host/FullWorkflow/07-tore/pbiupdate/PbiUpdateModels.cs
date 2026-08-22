@@ -32,7 +32,11 @@ public sealed record PbiAlignment(
     // O3b (create/NEW_PBI, Variante 2): das Draft-Ziel, wenn noch KEIN PBI existiert. PbiId bleibt dann null;
     // das Draft wird ueber die Ziel-Requirement-ID an die NEW_PBI-Operation gebunden. KEIN Fake-PbiId.
     [property: JsonPropertyName("targetRequirementId")] string? TargetRequirementId = null,
-    [property: JsonPropertyName("targetFeatureId")] string? TargetFeatureId = null)
+    [property: JsonPropertyName("targetFeatureId")] string? TargetFeatureId = null,
+    // Slice S Teil 2 (⚖ Agent-Vorschlag beim Entstehen): Prio/Schätzung des Drafts (Speicher-Form high|medium|low
+    // bzw. S|M|L). Leer = kein Vorschlag; ungültige Werte werden im Apply verworfen (nie stiller Müll im Core).
+    [property: JsonPropertyName("proposedPriority")] string? ProposedPriority = null,
+    [property: JsonPropertyName("proposedEstimate")] string? ProposedEstimate = null)
 {
     // Einheitlicher Draft-Schluessel: bestehendes PBI (align/extend) ODER die NEW_PBI-Ziel-Requirement (create).
     [System.Text.Json.Serialization.JsonIgnore]
@@ -61,7 +65,10 @@ public sealed record PbiStateChangeOperation(
     // C4b (09.08., c4-plan §8): Autor-Antwort als EIGENE Herkunft — NIE als Fake-Requirement verkleidet.
     // Gesetzt nur vom Klärungs-Sweep: Ref `chat:<session>#<n>` + der wörtliche Antwort-Text (Review-Note).
     [property: JsonPropertyName("authorAnswerRef")] string? AuthorAnswerRef = null,
-    [property: JsonPropertyName("authorAnswerText")] string? AuthorAnswerText = null);
+    [property: JsonPropertyName("authorAnswerText")] string? AuthorAnswerText = null,
+    // Slice S Teil 2: der Wert einer SET_PRIORITY/SET_ESTIMATE-Op (Speicher-Form: high|medium|low bzw. S|M|L).
+    // Für Set-Ops ist requirementId leer — sie ändern kein Deckungs-Verhältnis, nur ein Feld.
+    [property: JsonPropertyName("value")] string? Value = null);
 
 public sealed record PbiUpdateGateReport(
     [property: JsonPropertyName("pass")] bool Pass,
@@ -88,13 +95,21 @@ public static class PbiUpdateKind
     // O4 (Fall C): neues Requirement passt in kein bestehendes Feature -> neues Feature + erstes PBI (atomar,
     // via CoreBacklogSeeder-Adapter im Apply). Der PBI-Inhalt kommt aus dem O3b-Create-Draft (TargetRequirementId).
     public const string NewFeature = "NEW_FEATURE";
+    // Slice S Teil 2 (⚖ 21.08.): reine FELD-Pflege an einem bestehenden PBI (priority/estimate) — gated wie
+    // jede Wahrheits-Mutation, aber OHNE Status-Wirkung (kein needs_clarify: Feld-Pflege ist keine Klärungs-Lage).
+    public const string SetPriority = "SET_PRIORITY";
+    public const string SetEstimate = "SET_ESTIMATE";
 
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.Ordinal) { NewPbi, ExtendPbi, MarkChanged, BlockPbi, SupersedePbi, NewFeature };
+        new HashSet<string>(StringComparer.Ordinal) { NewPbi, ExtendPbi, MarkChanged, BlockPbi, SupersedePbi, NewFeature, SetPriority, SetEstimate };
 
     // Operationen mit Ziel-PBI (bestehend).
     public static readonly IReadOnlySet<string> RequirePbi =
-        new HashSet<string>(StringComparer.Ordinal) { ExtendPbi, MarkChanged, BlockPbi, SupersedePbi };
+        new HashSet<string>(StringComparer.Ordinal) { ExtendPbi, MarkChanged, BlockPbi, SupersedePbi, SetPriority, SetEstimate };
+
+    // Slice S Teil 2: die Feld-Setz-Ops (Wert Pflicht + valide; Wertebereich = Core.PbiFields).
+    public static readonly IReadOnlySet<string> FieldSet =
+        new HashSet<string>(StringComparer.Ordinal) { SetPriority, SetEstimate };
 
     // Platzierung neuer Requirements (agentisch): EXTEND (bestehendes PBI) · NEW_PBI (bestehendes Feature) ·
     // NEW_FEATURE (kein passendes Feature).

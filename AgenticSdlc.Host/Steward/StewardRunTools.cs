@@ -97,8 +97,12 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             + "den WOERTLICHEN Text VORHER dem Autor vorlesen, erst nach seinem OK aufrufen. Braucht Autor-Zustimmung.")),
         AIFunctionFactory.Create(SaveAuthorStatements, "save_author_statements",
             "3c AUTOR-FRONT Schritt 1: schreibt die vom Autor DIKTIERTEN Wahrheits-Kandidaten (statements: "
-            + "[{text, disposition requirement|architecture|question, rationale?, githubIssueNumber?}]; "
-            + "question = offene Frage, wird via 9g-Schiene zur offenen Entscheidung im DEC-Topf; "
+            + "[{text, disposition requirement|architecture|question|risk, rationale?, githubIssueNumber?, "
+            + "aspect?, decisionRef?}]; question = offene Frage, risk = benanntes Risiko — beide werden via "
+            + "QuestionLane zur offenen Entscheidung im DEC-Topf (Risiko: akzeptieren/mitigieren/klaeren am "
+            + "decision-gate); aspect='architecture' = Architektur-Unklarheit (C4-Luecken-Einkipp — landet in "
+            + "der §3-Projektion des C4); decisionRef='DEC-nnn' = dieses Diktat BEANTWORTET die DEC (das "
+            + "entstehende Wahrheits-Item traegt den Anker, die C4-Luecke schliesst nachweisbar); "
             + "githubIssueNumber IMMER setzen, wenn der Anstoß aus einem Issue kam — z. B. reject am Gate + "
             + "Neu-Diktat — damit Forward-Link/Vermerk/Ernte-Gedächtnis intakt bleiben) WOERTLICH als Delta im "
             + "Meeting-Ketten-Vertrag (kein Wahrheits-Write — die Kette prägt erst nach den Gates). "
@@ -119,6 +123,29 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             + "Feature · NFRs je Qualitaetsmerkmal · Rahmenbedingungen · Offene Entscheidungen; Kopf: Version + "
             + "Stand + Core-Fingerabdruck). ERSTELLT keinen Inhalt, rendert nur den autorisierten Stand — "
             + "kein Wahrheits-Write, jederzeit regenerierbar."),
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(DraftAuthoredDocAsync, "draft_authored_doc",
+            "ENTWURF eines Autor-Artefakts (art: vision|personas|glossar|c4) durch den spezialisierten "
+            + "Drafting-Agenten (eigene Prompt-Rezepte je Art; LLM-Kosten ~ ein Agent-Aufruf, Beleg in "
+            + "runs/artifact-draft/). hinweise = verbindliche Autor-Vorgaben (auch fuer Iterationen: "
+            + "'kuerzer', 'Persona X raus'). Ergebnis WOERTLICH dem Autor vorlegen — speichern erst nach "
+            + "Freigabe via save_authored_doc. Braucht Autor-Zustimmung.")),
+        AIFunctionFactory.Create(ReadAuthoredDoc, "read_authored_doc",
+            "Liest den aktuellen Stand eines Autor-Artefakts (art: vision|personas|glossar|c4) — Grundlage "
+            + "fuer den Update-Zyklus: Stand lesen, neuen Entwurf aus dem Core bauen, dem Autor den "
+            + "UNTERSCHIED zeigen, erst nach Freigabe save_authored_doc. Existiert keins: sagt es ehrlich."),
+        // Autor-Frage 21.08. („ist das sauber?"): die Freigabe-Pflicht ist HART — der Save ist ⚿-gewrappt
+        // (MAF-ToolApproval), das Harness fragt den Autor vor JEDEM Schreiben; Prompt-Disziplin ist nur Komfort.
+        new ApprovalRequiredAIFunction(AIFunctionFactory.Create(SaveAuthoredDocAsync, "save_authored_doc",
+            "Sichert die vom Autor FREIGEGEBENE Fassung eines Autor-Artefakts (art: vision|personas|glossar|c4; "
+            + "Version/Stand-Kopf automatisch; jeder Save ersetzt den ganzen Text). Die Zustimmungs-Abfrage IST "
+            + "die Freigabe — vorher den vollstaendigen Text im Chat gezeigt haben. entwurf = 'Autor-Diktat' oder "
+            + "'Steward aus der Projektwahrheit (Core)'. Kein Wahrheits-Write; publiziert wird beim naechsten "
+            + "Forward/Abgleich ueber das gated Doc-Publish. Braucht Autor-Zustimmung.")),
+        AIFunctionFactory.Create(ProposePbiFieldsAsync, "propose_pbi_fields",
+            "Slice S Teil 2: Autor-Diktat 'setze Prio/Schaetzung von PBI-x' -> deterministischer SET-Plan, "
+            + "als WARTENDES Gate registriert (Pending-Registry) — es aendert sich NICHTS, bis der Autor am "
+            + "pbi-update-Review entscheidet (open_review_ui mit der proposalId). Werte: Prio hoch|mittel|niedrig "
+            + "(gespeichert high|medium|low), Schaetzung S|M|L. Kein LLM, keine Status-Wirkung."),
         AIFunctionFactory.Create(SaveSweepAnswers, "save_sweep_answers",
             "C4-Zielschleife Schritt 2: schreibt die vom Autor DIKTIERTEN Klaerungs-Antworten als "
             + "sweep-answers.json (kein Wahrheits-Write; Quelle = author via steward-chat). "
@@ -280,6 +307,62 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
         return JsonSerializer.Serialize(new { saved = true, items = delta!.Items.Count,
             deltaPath = Path.GetRelativePath(repoRoot, path),
             hint = "naechster Schritt (zustimmungspflichtig): run_pipeline_from_delta(deltaPath) — Tor 1 pausiert dann im Chat." }, Json);
+    }
+
+    // Autor-Artefakte (Drei-Klassen-Ordnung ⚖ 21.08., Endform am selben Tag): der ENTWURF kommt vom
+    // spezialisierten Drafting-Agenten (AuthoredDocDrafting — Rezepte als eigene Prompt-Dateien, geteilte
+    // Naht für den geparkten C4-Auto-Knoten); der Steward orchestriert nur. Der Chat ist das Review;
+    // gespeichert wird ausschließlich die Autor-Freigabe (AuthoredDocument-Naht, feste Whitelist).
+    private async Task<string> DraftAuthoredDocAsync(string art, string? hinweise = null)
+    {
+        if (FullWorkflow.Core.AuthoredDocument.Resolve(art) is null)
+            return JsonSerializer.Serialize(new { error = "ART_UNBEKANNT", erlaubt = FullWorkflow.Core.AuthoredDocument.Arten.Select(a => a.Key) }, Json);
+        var (draft, draftRunId) = await FullWorkflow.Core.AuthoredDocDrafting.DraftAsync(settings, repoRoot, art, hinweise).ConfigureAwait(false);
+        return JsonSerializer.Serialize(new
+        {
+            art, draft, draftRun = $"runs/artifact-draft/{draftRunId}",
+            hint = "Entwurf WOERTLICH vorlegen; Iteration = erneut draft_authored_doc mit hinweise; nach Autor-Freigabe save_authored_doc (⚿)."
+        }, Json);
+    }
+
+    private string ReadAuthoredDoc(string art)
+    {
+        if (FullWorkflow.Core.AuthoredDocument.Resolve(art) is null)
+            return JsonSerializer.Serialize(new { error = "ART_UNBEKANNT", erlaubt = FullWorkflow.Core.AuthoredDocument.Arten.Select(a => a.Key) }, Json);
+        var content = FullWorkflow.Core.AuthoredDocument.Read(repoRoot, art);
+        return content is not null
+            ? JsonSerializer.Serialize(new { exists = true, content }, Json)
+            : JsonSerializer.Serialize(new { exists = false, hint = "Noch nicht erstellt — Erst-Entwurf aus dem Core anbieten." }, Json);
+    }
+
+    private async Task<string> SaveAuthoredDocAsync(string art, string text, string? entwurf = null)
+    {
+        if (FullWorkflow.Core.AuthoredDocument.Resolve(art) is null)
+            return JsonSerializer.Serialize(new { error = "ART_UNBEKANNT", erlaubt = FullWorkflow.Core.AuthoredDocument.Arten.Select(a => a.Key) }, Json);
+        if (string.IsNullOrWhiteSpace(text))
+            return JsonSerializer.Serialize(new { error = "TEXT_LEER", hint = "die vom Autor freigegebene Fassung" }, Json);
+        var (path, version) = await FullWorkflow.Core.AuthoredDocument.SaveAsync(repoRoot, art, text, entwurf).ConfigureAwait(false);
+        return JsonSerializer.Serialize(new
+        {
+            saved = true, art, version, path = Path.GetRelativePath(repoRoot, path),
+            hint = "Publikation ins Team-Repo: naechster Forward/Abgleich (gated Doc-Publish)."
+        }, Json);
+    }
+
+    // Slice S Teil 2: das Feld-Setz-Seil — registriert NUR den wartenden Vorschlag (Kern: PbiFieldsPlan,
+    // geteilte Naht). Die Wahrheits-Mutation passiert erst im gated Apply des pbi-update-Reviews.
+    private async Task<string> ProposePbiFieldsAsync(IReadOnlyList<FullWorkflow.PbiUpdate.PbiFieldWish> wishes)
+    {
+        if (wishes is not { Count: > 0 })
+            return JsonSerializer.Serialize(new { error = "WISHES_EMPTY", hint = "je Wunsch pbiId + priority und/oder estimate" }, Json);
+        var (proposalId, ops, errors) = await FullWorkflow.PbiUpdate.PbiFieldsPlan.RegisterAsync(repoRoot, wishes).ConfigureAwait(false);
+        if (ops == 0)
+            return JsonSerializer.Serialize(new { error = "NO_VALID_WISHES", errors }, Json);
+        return JsonSerializer.Serialize(new
+        {
+            registered = true, proposalId, ops, errors,
+            hint = $"Autor entscheidet am Gate: open_review_ui(\"{proposalId}\") — bis dahin aendert sich nichts."
+        }, Json);
     }
 
     private string SaveSweepAnswers(IReadOnlyList<FullWorkflow.PbiUpdate.ClarifySweepAnswer> answers)

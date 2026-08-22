@@ -21,6 +21,9 @@ public sealed record PbiPayload(
     // Promotion der alten PBI-openDecisions zu echten decision-Items ist ein spaeterer Schritt.
     [property: JsonPropertyName("openDecisionRefs")] IReadOnlyList<string> OpenDecisionRefs,
     [property: JsonPropertyName("priorityRank")] int? PriorityRank,
+    // VESTIGIAL (21.08., Autor-Fund #33): ungepflegtes Alt-Bahn-Feld — die lebende Klärungs-Wahrheit
+    // ist die Blocker-Achse (Parkplatz/Labels/Footer lesen NUR sie, s. CoreViews). Feld bleibt als
+    // Daten-Kompatibilität für Alt-Cores; NICHTS darf es mehr konsumieren.
     [property: JsonPropertyName("readiness")] string? Readiness,
     [property: JsonPropertyName("mvp")] string? Mvp,
     [property: JsonPropertyName("trace")] PbiTrace? Trace);

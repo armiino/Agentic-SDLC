@@ -71,9 +71,14 @@ public static class DecisionOutcome
     public const string KeepOriginal = "KEEP_ORIGINAL";
     public const string AdoptNew = "ADOPT_NEW";
     public const string Refine = "REFINE";
+    // C4-Kreislauf (22.08.): das ehrliche „Verwerfen" einer ARCHITEKTUR-Unklarheit — geklärt, aber BEWUSST
+    // ohne Festlegung (Begründung Pflicht). Wirkt wie KEEP (schließen, keine Mutation) + stempelt den
+    // Verzicht als Metadatum an die DEC (§3-Projektion: saubere Schließung statt ⚠). NUR für
+    // aspect-markierte ziellose DECs erlaubt (Derivation/Gate wachen).
+    public const string NoTruthNeeded = "NO_TRUTH_NEEDED";
 
     public static readonly IReadOnlySet<string> All = new HashSet<string>(StringComparer.Ordinal)
-        { KeepOriginal, AdoptNew, Refine };
+        { KeepOriginal, AdoptNew, Refine, NoTruthNeeded };
 
     // Outcomes, die eine neue Aussage brauchen.
     public static readonly IReadOnlySet<string> RequireNewStatement = new HashSet<string>(StringComparer.Ordinal)

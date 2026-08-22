@@ -52,16 +52,24 @@ internal sealed class IngestionTools(
 
     // 9g: Anforderungen UND offene Fragen sind Coverage-Buerger — der Agent sieht beide (itemType = die Weiche).
     // 9i: die Fragen-Spur gehoert GENAU EINEM Strip (profile.CarriesQuestionLane) — sonst Doppel-Coverage/-DEC.
+    // Slice S ④: Risiken reiten dieselbe Spur (QuestionLane).
     private IReadOnlyList<ProjectStateItem> Incoming() =>
         meetingDelta.Items
             .Where(i => profile.Matches(i)
-                        || (profile.CarriesQuestionLane && string.Equals(i.ItemType, "open_question", StringComparison.OrdinalIgnoreCase)))
+                        || (profile.CarriesQuestionLane && Core.QuestionLane.Carries(i.ItemType)))
             .ToList();
 
     private string GetIncomingItems()
     {
         var rows = Incoming()
-            .Select(i => new { incomingItemId = i.ItemId, itemType = i.ItemType, text = Truncate(i.Text, 500), origin = i.Origin, sourceClaimIds = i.SourceClaimIds })
+            .Select(i => new
+            {
+                incomingItemId = i.ItemId, itemType = i.ItemType, text = Truncate(i.Text, 500),
+                origin = i.Origin, sourceClaimIds = i.SourceClaimIds,
+                // R-74: der Antwort-Anker MUSS für den Resolver sichtbar sein — ein Diktat, das eine offene
+                // Entscheidung BEANTWORTET, darf nie als deren Duplikat (ALREADY_DECIDED) gefaltet werden.
+                answersDecision = Core.DecisionAnswerMeta.Of(i),
+            })
             .ToArray();
         run.AppendEvent(new { type = "INGEST_TOOL_INCOMING", runId = run.RunId, returned = rows.Length, timestampUtc = DateTime.UtcNow });
         return JsonSerializer.Serialize(rows, Json);

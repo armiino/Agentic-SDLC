@@ -10,7 +10,10 @@ namespace AgenticSdlc.Host.FullWorkflow.Core;
 /// Jeder Agent bekommt seine ROLLEN-Teilmenge dieses Kastens (Steward: alle; GitHubInbound später: wenige) —
 /// Daten-Fragen laufen über Tools, nie über Agent-fragt-Agent (K7). Kein Tool hier schreibt.
 /// </summary>
-public sealed class CoreQueryTools(ICoreRepository repo)
+// Slice S (21.08.): optionale artefaktHinweis-Naht — der Aufrufer (Steward) injiziert eine deterministische
+// Frische-Prüfung der Autor-Artefakte (z. B. „C4 kennt ARCH-41 noch nicht"); die Tool-Klasse bleibt
+// medium-neutral (K5: kennt weiter NUR die Repository-Naht, nie Dateisystem-Pfade).
+public sealed class CoreQueryTools(ICoreRepository repo, Func<ProjectStateDocument, string?>? artefaktHinweis = null)
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json;
 
@@ -43,6 +46,8 @@ public sealed class CoreQueryTools(ICoreRepository repo)
             relations = core.Relations.Count,
             openDecisions = CoreParkplatz.Count(core),
             kangal = new { errors = kangal.Errors.Count, warnings = kangal.Warnings.Count },
+            // Slice S: Frische der Autor-Artefakte (null = nichts zu melden) — der Steward bietet Updates AKTIV an.
+            artefaktHinweis = artefaktHinweis?.Invoke(core),
         }, Json);
     }
 

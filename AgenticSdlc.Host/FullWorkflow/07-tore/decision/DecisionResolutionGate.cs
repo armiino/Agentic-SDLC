@@ -23,12 +23,18 @@ public static class DecisionResolutionGate
             else if (!dec.ReadStatus().IsOpenDecision)   // §5-S4 (Alt-String im Text bleibt bis S7 gepflegt)
                 errors.Add(Issue("DECISION_NOT_OPEN", "error", $"'{op.DecisionId}' ist nicht offen (status={dec.Status}).", op.DecisionId));
 
-            // 9g: zielloses Frage-DEC (TargetRequirementId=null) ist legal, aber NUR mit KEEP ("geklaert").
+            // 9g: zielloses Frage-DEC (TargetRequirementId=null) ist legal, aber NUR mit KEEP ("geklaert") —
+            // C4-Kreislauf: ODER NO_TRUTH_NEEDED (bewusster Verzicht), das zusätzlich die aspect-Markierung braucht.
             if (op.TargetRequirementId is null)
             {
-                if (!string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal))
+                var noTruth = string.Equals(op.Outcome, DecisionOutcome.NoTruthNeeded, StringComparison.Ordinal);
+                if (!string.Equals(op.Outcome, DecisionOutcome.KeepOriginal, StringComparison.Ordinal) && !noTruth)
                     errors.Add(Issue("TARGET_REQUIRED", "error", $"'{op.Outcome}' braucht ein Ziel-Requirement ('{op.DecisionId}' ist eine freistehende Frage).", op.DecisionId));
+                if (noTruth && byId.TryGetValue(op.DecisionId, out var d) && !Core.DecisionAspectMeta.IsArchitecture(d))
+                    errors.Add(Issue("ASPECT_REQUIRED", "error", $"NO_TRUTH_NEEDED nur für Architektur-Unklarheiten ('{op.DecisionId}' ist nicht aspect-markiert).", op.DecisionId));
             }
+            else if (string.Equals(op.Outcome, DecisionOutcome.NoTruthNeeded, StringComparison.Ordinal))
+                errors.Add(Issue("TARGET_FORBIDDEN", "error", $"NO_TRUTH_NEEDED nur für freistehende Fragen — mit Ziel 'KEEP_ORIGINAL' nutzen ('{op.DecisionId}').", op.DecisionId));
             else if (!byId.ContainsKey(op.TargetRequirementId))
                 errors.Add(Issue("UNKNOWN_TARGET", "error", $"Ziel-Requirement '{op.TargetRequirementId}' existiert nicht.", op.DecisionId));
 

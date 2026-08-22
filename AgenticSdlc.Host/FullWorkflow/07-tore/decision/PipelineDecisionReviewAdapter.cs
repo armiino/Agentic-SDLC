@@ -25,6 +25,8 @@ public static class PipelineDecisionReviewAdapter
     public const string ChoiceAdopt = "adopt";
     public const string ChoiceRefine = "refine";
     public const string ChoiceDefer = "defer";
+    // C4-Kreislauf (22.08.): bewusster Verzicht — nur in der Palette aspect-markierter zielloser DECs.
+    public const string ChoiceNoTruth = "keine_festlegung";
 
     // Selbstbeschreibende Gates (18.08.): EINE Options-Quelle für Review-UI UND Steward-Chat-Vorlage.
     internal static readonly IReadOnlyList<ReviewOption> ResolutionOptions =
@@ -35,7 +37,24 @@ public static class PipelineDecisionReviewAdapter
         new(ChoiceDefer, "Vertagen — bleibt offen und geparkt")
     ];
 
-    private static readonly HashSet<string> Choices = new(StringComparer.OrdinalIgnoreCase) { ChoiceKeep, ChoiceAdopt, ChoiceRefine, ChoiceDefer };
+    /// <summary>R-70 (22.08.): DIE per-Item-Palette — eine Quelle für UI-Item, Chat-Vorlage UND Vokabular.
+    /// Ziellos = kleine Palette; die dritte Wahl (bewusster Verzicht) NUR bei Architektur-Färbung.</summary>
+    internal static IReadOnlyList<ReviewOption> OptionsFor(bool targetless, string? aspect)
+        => !targetless ? ResolutionOptions
+            : string.Equals(aspect, Core.DecisionAspectMeta.Architecture, StringComparison.OrdinalIgnoreCase)
+                ?
+                [
+                    new(ChoiceKeep, "Geklärt/erledigt — Begründung nennt die Antwort bzw. die beantwortende Anforderung (Pflicht)"),
+                    new(ChoiceNoTruth, "Geklärt — KEINE Architektur-Festlegung nötig (Begründung Pflicht; die Lücke verschwindet sauber aus dem C4)"),
+                    new(ChoiceDefer, "Vertagen — bleibt offen und sichtbar geparkt")
+                ]
+                :
+                [
+                    new(ChoiceKeep, "Geklärt/erledigt — Begründung nennt die Antwort bzw. die beantwortende Anforderung (Pflicht)"),
+                    new(ChoiceDefer, "Vertagen — bleibt offen und sichtbar geparkt")
+                ];
+
+    private static readonly HashSet<string> Choices = new(StringComparer.OrdinalIgnoreCase) { ChoiceKeep, ChoiceAdopt, ChoiceRefine, ChoiceDefer, ChoiceNoTruth };
     private static readonly HashSet<string> NeedsStatement = new(StringComparer.OrdinalIgnoreCase) { ChoiceAdopt, ChoiceRefine };
 
     private const string GOut = "Ausgänge — was deine Wahl bewirkt";
@@ -99,7 +118,10 @@ public static class PipelineDecisionReviewAdapter
         {
             if (!allowed.Any(o => string.Equals(o.Value, choice, StringComparison.OrdinalIgnoreCase))) return false;
             var questionPalette = !allowed.Any(o => string.Equals(o.Value, ChoiceAdopt, StringComparison.OrdinalIgnoreCase));
-            if (questionPalette && string.Equals(choice, ChoiceKeep, StringComparison.OrdinalIgnoreCase))
+            // Begründungs-Pflicht bei „geklärt" UND beim bewussten Verzicht (C4-Kreislauf) — beides sind
+            // Schließungen, deren WARUM die einzige bleibende Antwort ist.
+            if (questionPalette && (string.Equals(choice, ChoiceKeep, StringComparison.OrdinalIgnoreCase)
+                                    || string.Equals(choice, ChoiceNoTruth, StringComparison.OrdinalIgnoreCase)))
                 return FieldOf(item, FieldReason) is { Length: > 0 };
         }
         return !NeedsStatement.Contains(choice) || FieldOf(item, FieldStatement) is { Length: > 0 };
@@ -112,6 +134,7 @@ public static class PipelineDecisionReviewAdapter
             return choice.ToLowerInvariant() switch
             {
                 ChoiceKeep => new PipelineDecisionResolution(it.ItemId, DecisionStage.ActionResolve, DecisionOutcome.KeepOriginal, null, ReasonOf(it)),
+                ChoiceNoTruth => new PipelineDecisionResolution(it.ItemId, DecisionStage.ActionResolve, DecisionOutcome.NoTruthNeeded, null, ReasonOf(it)),
                 ChoiceAdopt => new PipelineDecisionResolution(it.ItemId, DecisionStage.ActionResolve, DecisionOutcome.AdoptNew, FieldOf(it, FieldStatement), ReasonOf(it)),
                 ChoiceRefine => new PipelineDecisionResolution(it.ItemId, DecisionStage.ActionResolve, DecisionOutcome.Refine, FieldOf(it, FieldStatement), ReasonOf(it)),
                 _ => new PipelineDecisionResolution(it.ItemId, DecisionStage.ActionDefer, null, null, ReasonOf(it)),
@@ -185,15 +208,9 @@ public static class PipelineDecisionReviewAdapter
             // 9g (saubere Form): ziellose DECs bekommen PER-ITEM-Optionen (ReviewItem.FieldOptions —
             // dasselbe Muster wie die Op-Arten am ingest-Gate). Übernehmen/Verfeinern EXISTIEREN hier gar nicht
             // als Wahl; die Optionen selbst sind die einzige Quelle der Item-Palette (kein Marker-Feld).
+            // R-70: per-Item-Palette aus der EINEN Quelle (OptionsFor) — UI und Chat können nicht mehr driften.
             FieldOptions = targetless
-                ? new Dictionary<string, IReadOnlyList<ReviewOption>>
-                {
-                    [FieldDecision] =
-                    [
-                        new(ChoiceKeep, "Geklärt/erledigt — Begründung nennt die Antwort bzw. die beantwortende Anforderung (Pflicht)"),
-                        new(ChoiceDefer, "Vertagen — bleibt offen und sichtbar geparkt")
-                    ]
-                }
+                ? new Dictionary<string, IReadOnlyList<ReviewOption>> { [FieldDecision] = OptionsFor(true, v.Aspect) }
                 : new Dictionary<string, IReadOnlyList<ReviewOption>>(),
             FieldValues =
             [
@@ -302,6 +319,7 @@ public static class PipelineDecisionReviewAdapter
             ? r.Outcome switch
             {
                 DecisionOutcome.KeepOriginal => ChoiceKeep,
+                DecisionOutcome.NoTruthNeeded => ChoiceNoTruth,
                 DecisionOutcome.AdoptNew => ChoiceAdopt,
                 DecisionOutcome.Refine => ChoiceRefine,
                 _ => ChoiceDefer,
