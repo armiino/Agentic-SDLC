@@ -27,4 +27,4 @@ die geteilte `HumanReview`-Schicht (E0-Endstand; U2v2-ReferenceList; Hover-Gloss
 
 ## Spec-Referenz
 
-Relations-Semantik & Lebenszyklen: `docs/aktiv/core-relationen-konzept.md` (Spec zuerst, Kangal folgt).
+Relations-Semantik & Lebenszyklen: `Thesis-Docs/aktiv/core-relationen-konzept.md` (Spec zuerst, Kangal folgt).

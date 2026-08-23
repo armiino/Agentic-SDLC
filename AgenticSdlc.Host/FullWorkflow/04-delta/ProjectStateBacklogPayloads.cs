@@ -25,6 +25,9 @@ public sealed record PbiPayload(
     // ist die Blocker-Achse (Parkplatz/Labels/Footer lesen NUR sie, s. CoreViews). Feld bleibt als
     // Daten-Kompatibilität für Alt-Cores; NICHTS darf es mehr konsumieren.
     [property: JsonPropertyName("readiness")] string? Readiness,
+    // VESTIGIAL (22.08., Leitfaden-Diskussion): Alt-Bahn-Feld der ersetzten Re-Clarify-Kette — alle
+    // Bestands-PBIs leer, kein Konsument. Der MVP-Schnitt ist REDAKTION (storymap-Artefakt, Momentaufnahme),
+    // keine Backlog-Wahrheit; NICHTS darf dieses Feld konsumieren (s. leitfaden-abdeckung.md §3).
     [property: JsonPropertyName("mvp")] string? Mvp,
     [property: JsonPropertyName("trace")] PbiTrace? Trace);
 

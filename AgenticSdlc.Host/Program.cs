@@ -38,7 +38,7 @@ if (args.Length > 0)
 // [SUPPORT] L4 / Backlog (re-clarify = der lebende Backlog-Bau; issuplanning = LIVE/Bridge):
 //   l4-re-clarify(-review|-apply|-backlog-review|-backlog-apply|-issueplan|-backlog-doc),
 //   l4-issuplanning, l4-issuplanning-review, l4-issuplanning-apply
-//   (Alt-L4-Kette 04.08. archiviert -> archive/phase2-l4-dormant/ + docs/aktiv/backlog-genealogie.md)
+//   (Alt-L4-Kette 04.08. archiviert -> archive/phase2-l4-dormant/ + Thesis-Docs/aktiv/backlog-genealogie.md)
 //
 // [FRONT] Produkt-Front (Ledger-Pfad, intendierter Transkript->MeetingDelta-Weg — s. lokale PRODUCT-CAPABILITY-MAP):
 //   Ledger:           ledger-build, ledger-build-units, ledger-reference-template, ledger-adjudicate,

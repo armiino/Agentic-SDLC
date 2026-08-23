@@ -4,7 +4,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Backlog;
 /// CLI-Kommandos dieses Kettenglieds — registriert im Host-Dispatch (R1, 2026-07-22).
 /// Die Alt-L4-Kette (baseline/consolidation/quality/readiness/completion/clarification/openrequirements/
 /// operationalization-audit/requirements-doc) wurde am 04.08. archiviert — Genealogie + WARUM:
-/// docs/aktiv/backlog-genealogie.md · archive/phase2-l4-dormant/README.md.
+/// Thesis-Docs/aktiv/backlog-genealogie.md · archive/phase2-l4-dormant/README.md.
 /// </summary>
 public static class BacklogCommands
 {

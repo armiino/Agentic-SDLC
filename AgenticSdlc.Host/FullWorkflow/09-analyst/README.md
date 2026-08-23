@@ -1,6 +1,6 @@
 # 09-analyst — der Core-Analyst („Agent für das Ungesagte")
 
-> Status: LEBEND — bei Änderungen an diesem Ordner mitpflegen. Design-Beschluss: `docs/aktiv/core-analyst-design.md`.
+> Status: LEBEND — bei Änderungen an diesem Ordner mitpflegen. Design-Beschluss: `Thesis-Docs/aktiv/core-analyst-design.md`.
 
 **Was dieser Ordner ist:** KEIN Kettenglied (01–08 sind die Meeting-Kette) — sondern die **bestellbare
 Analyse-Fähigkeit** über den Core-STAND: „Was fehlt, das niemand gesagt hat?" Die unbesetzte RE-Rolle

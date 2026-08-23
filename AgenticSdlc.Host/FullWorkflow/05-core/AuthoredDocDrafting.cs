@@ -26,6 +26,7 @@ public static class AuthoredDocDrafting
         "personas" => "Personas1",
         "glossar" => "Glossar1",
         "c4" => "C41",
+        "storymap" => "StoryMap1",
         _ => throw new ArgumentException($"Unbekannte Artefakt-Art '{artKey}'.", nameof(artKey)),
     };
 
@@ -39,6 +40,11 @@ public static class AuthoredDocDrafting
         if (!await repo.ExistsAsync().ConfigureAwait(false))
             throw new InvalidOperationException("Core fehlt (state/core) — kein Entwurf ohne Projektwahrheit.");
         var core = await repo.LoadAsync().ConfigureAwait(false);
+        var storymap = string.Equals(art.Key, "storymap", StringComparison.Ordinal);
+        // S11: die Reise baut auf der Kernpersona — deterministische Vorbedingung, EIN klarer Satz.
+        if (storymap && AuthoredDocument.Read(repoRoot, "personas") is null)
+            throw new InvalidOperationException(
+                "Erst Personas erstellen und freigeben (draft_authored_doc('personas')) — die Story Map erzählt die Reise der Kernpersona.");
 
         var run = new RunContext(RunId.New(), "artifact-draft");
         run.EnsureFolders();
@@ -48,15 +54,84 @@ public static class AuthoredDocDrafting
 
         var factory = agentFactory ?? Pipeline.PipelineAgents.Factory(repoRoot, settings, settings, run, AgentName, PromptNameFor(art.Key));
         var agent = factory([]);   // Single-Shot-Maker ohne Tools: Input trägt alles, Beleg = input.md/draft.md
-        var response = await agent.RunAsync([new ChatMessage(ChatRole.User, input)], cancellationToken: ct).ConfigureAwait(false);
+        // Story Map (S13): die Zuordnung ist ein TYPISIERTER Vertrag — MAF-natives json_schema-Format
+        // statt Prosa-Rückparse (Typen-Lektion aus Schritt 5 ⑤); andere Arten bleiben freier Markdown.
+        var options = storymap
+            ? new ChatClientAgentRunOptions(new ChatOptions { ResponseFormat = StoryMapDraftFormat })
+            : null;
+        var response = await agent.RunAsync([new ChatMessage(ChatRole.User, input)], options: options, cancellationToken: ct).ConfigureAwait(false);
         var draft = response.Text?.Trim() ?? "";
         if (draft.Length == 0) throw new InvalidOperationException($"Drafting-Agent lieferte keinen Entwurf ({art.Key}).");
+        if (storymap) draft = ComposeStoryMapDraft(repoRoot, core, draft);
 
         await File.WriteAllTextAsync(Path.Combine(outDir, "draft.md"), draft, ct).ConfigureAwait(false);
         run.AppendEvent(new { type = "ARTIFACT_DRAFT", runId = run.RunId, art = art.Key,
             update = AuthoredDocument.Read(repoRoot, art.Key) is not null, hinweise = hinweise ?? "", timestampUtc = DateTime.UtcNow });
         return (draft, run.RunId);
     }
+
+    /// <summary>Der typisierte Story-Map-Vertrag (S13): Erzähl-Zone (Markdown) + Zuordnung als Daten —
+    /// json_schema erzwingt die Form am Modell, ComposeStoryMapDraft validiert die Inhalte (S2–S4).</summary>
+    private static readonly ChatResponseFormat StoryMapDraftFormat = ChatResponseFormat.ForJsonSchema(
+        System.Text.Json.JsonDocument.Parse("""
+        {
+          "type": "object",
+          "properties": {
+            "erzaehlung": { "type": "string", "description": "Erzähl-Zone als Markdown: Mermaid-Reiseband (flowchart LR), je Schritt eine Überschrift + 1 Erzähl-Satz, Sektion 'MVP-Vorschlag' mit Begründung je Kriterium (Nutzen, Risiko, Weglass-Test). KEINE Kärtchen-Tabellen — die Tafel rendert das System." },
+            "schritte": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "key": { "type": "string" },
+                  "titel": { "type": "string" },
+                  "pbiIds": { "type": "array", "items": { "type": "string" } }
+                },
+                "required": ["key", "titel", "pbiIds"],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": ["erzaehlung", "schritte"],
+          "additionalProperties": false
+        }
+        """).RootElement.Clone(),
+        "storymap_draft",
+        "User-Story-Map-Entwurf: Erzähl-Zone + typisierte Reise-Zuordnung (nur existierende PBI-Ids; nicht alle müssen zugeordnet sein).");
+
+    /// <summary>Typisierten Story-Map-Entwurf zum vollen Doc komponieren: Erzähl-Zone (Agent) +
+    /// deterministische Tafel (System) — die Zuordnung wird HIER laut validiert (Tool-Grenze, S13→S2–S4)
+    /// und mit der aktuellen Personas-Version gestempelt (S12).</summary>
+    internal static string ComposeStoryMapDraft(string repoRoot, ProjectStateDocument core, string draftJson)
+    {
+        StoryMapDraftPayload payload;
+        try
+        {
+            payload = System.Text.Json.JsonSerializer.Deserialize<StoryMapDraftPayload>(draftJson)
+                      ?? throw new System.Text.Json.JsonException("leer");
+        }
+        catch (System.Text.Json.JsonException ex)
+        {
+            throw new InvalidOperationException(
+                $"Story-Map-Entwurf entspricht nicht dem Zuordnungs-Vertrag (erzaehlung+schritte als JSON): {ex.Message}");
+        }
+        if (string.IsNullOrWhiteSpace(payload.Erzaehlung))
+            throw new InvalidOperationException("Story-Map-Entwurf ohne Erzähl-Zone.");
+        var zuordnung = new StoryMapSection.Zuordnung(
+            StoryMapSection.CurrentPersonasVersion(repoRoot),
+            payload.Schritte.Select(s => new StoryMapSection.Schritt(s.Key, s.Titel, s.PbiIds)).ToList());
+        StoryMapSection.Validate(zuordnung, core);
+        return payload.Erzaehlung.Trim() + "\n\n" + StoryMapSection.Render(core, zuordnung);
+    }
+
+    internal sealed record StoryMapDraftSchritt(
+        [property: System.Text.Json.Serialization.JsonPropertyName("key")] string Key,
+        [property: System.Text.Json.Serialization.JsonPropertyName("titel")] string Titel,
+        [property: System.Text.Json.Serialization.JsonPropertyName("pbiIds")] IReadOnlyList<string> PbiIds);
+
+    internal sealed record StoryMapDraftPayload(
+        [property: System.Text.Json.Serialization.JsonPropertyName("erzaehlung")] string Erzaehlung,
+        [property: System.Text.Json.Serialization.JsonPropertyName("schritte")] IReadOnlyList<StoryMapDraftSchritt> Schritte);
 
     /// <summary>Frische-Notiz (Autor-Frage 21.08. „vielleicht weiß ich nicht, dass ein neues ADR da ist"):
     /// deterministischer Abgleich Artefakt gegen Wahrheit — welche aktiven ARCH-Items/ADR-Dateien erwähnt
@@ -132,6 +207,30 @@ public static class AuthoredDocDrafting
                 foreach (var f in Directory.EnumerateFiles(adrDir, "*.md").OrderBy(x => x, StringComparer.Ordinal)
                              .Where(f => !Path.GetFileName(f).Equals("README.md", StringComparison.OrdinalIgnoreCase)))
                     sb.AppendLine().AppendLine($"--- ADR {Path.GetFileName(f)} ---").AppendLine(File.ReadAllText(f));
+        }
+
+        if (string.Equals(art.Key, "storymap", StringComparison.Ordinal))
+        {
+            // Reise-Grundlage: die freigegebenen Personas (S11 hat die Existenz schon geprüft) + alle
+            // aktiven Kärtchen-Kandidaten. NUR-BELEGT: der Agent darf ausschließlich diese Ids zuordnen.
+            sb.AppendLine().AppendLine("== PERSONAS (freigegeben — Reise der KERNPERSONA erzählen) ==");
+            sb.AppendLine(AuthoredDocument.Read(repoRoot, "personas") ?? "");
+            sb.AppendLine().AppendLine("== FEATURES (Lösungs-Cluster — Kontext, NICHT der Reise-Backbone) ==");
+            foreach (var f in core.Items.Where(i => string.Equals(i.ItemType, "feature", StringComparison.OrdinalIgnoreCase)
+                                                    && i.ReadStatus().Validity == Validity.Active))
+                sb.AppendLine($"{f.ItemId}: {f.Text}");
+            sb.AppendLine().AppendLine("== PBIs (die Kärtchen — NUR diese Ids zuordnen; nicht alle müssen einen Platz bekommen) ==");
+            foreach (var p in core.Items.Where(i => string.Equals(i.ItemType, "pbi", StringComparison.OrdinalIgnoreCase)
+                                                    && i.ReadStatus().Validity == Validity.Active))
+            {
+                var status = p.ReadStatus();
+                var marker = status.Progress == Progress.Done ? " [fertig]"
+                    : status.Blocker == Blocker.NeedsClarify ? " [in Klärung]" : "";
+                var prio = p.Metadata.GetValueOrDefault(PbiFields.MetaPriority);
+                sb.AppendLine($"{p.ItemId} (Feature {p.Metadata.GetValueOrDefault("featureId", "?")}"
+                              + (string.IsNullOrWhiteSpace(prio) ? "" : $", Prio {prio}") + $"){marker}: "
+                              + Trunc(p.Pbi?.Goal ?? p.Text, 160));
+            }
         }
 
         sb.AppendLine().AppendLine("== AKTIVE WAHRHEIT (Digest, eine Zeile je Item) ==").AppendLine(AnalystCollect.Digest(core));

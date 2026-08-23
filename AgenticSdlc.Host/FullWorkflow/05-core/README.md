@@ -19,7 +19,7 @@ schützt und projiziert.
   `constrained_by(+ _superseded)` pbi→arch · `supersedes` **aspekt-GLEICH** [R-39] · `contradicts(+_resolved)`
   dec→any · `implemented_by_issue` 1:1) + weitere Invarianten (I2–I8 lt. Spec). I1/I5 = Abbruch, Rest = laute
   Warnung; unbekannte Typen = `UNKNOWN_RELATION_TYPE`-Warnung. **Spec zuerst, Wächter folgt**
-  (`docs/aktiv/core-relationen-konzept.md`).
+  (`Thesis-Docs/aktiv/core-relationen-konzept.md`).
 - **`CoreViews`** — deterministische Projektionen: `GithubSync` (je PBI: covered-REQs REIN req ·
   `Constraints` [constrained_by] · `CoveredArchitecture` [work-Umsetzung] → Issue-Body-Sektionen) ·
   `AffectedItems` (Blast-Radius, 1 Hop + 2. Hop über Rahmen-Kanten, byAspect-Bucket `Architecture`).
@@ -88,5 +88,51 @@ Kein Risiko-Register (Risiken = DECs via QuestionLane) · Diagramm-Vollständigk
 (nur der Analyst ERSCHLIESST Fehlendes, gated) · DEC-Matching skaliert abfrage-förmig (ListCap 50, laut;
 Retriever-Naht vorbereitet) · L3/L4 erst, wenn der Core Komponenten-Wahrheit trägt.
 
-**Bau-Historie + Live-Abnahme-Belege:** `docs/aktiv/team-sichtbarkeit-slice.md` (⚖-Serie) ·
+**Bau-Historie + Live-Abnahme-Belege:** `Thesis-Docs/aktiv/team-sichtbarkeit-slice.md` (⚖-Serie) ·
 E2E-RUNBOOK R-63…R-74 (jeder Fund der Abnahme mit Fix).
+
+## Die Story-Map-Tafel — die Nutzer-Reise als lebendes Fortschritts-Bild (22.08.2026)
+
+Gleiche Bauform wie der C4-Kreislauf, auf das Backlog angewendet (`docs/storymap.md`, Endform +
+Szenario-Katalog S1–S14: `Thesis-Docs/aktiv/leitfaden-abdeckung.md §4/§4a`). Zwei Zonen:
+
+- **Erzähl-Zone (Redaktion, ⚿):** Reise-Backbone der Kernpersona (Schritte ≠ Features!), je Schritt ein
+  Satz, MVP-Vorschlag (Momentaufnahme der Scoping-Phase). Entwurf vom Drafting-Agenten — die Zuordnung
+  Schritt→PBI kommt als TYPISIERTER Vertrag (`ForJsonSchema` + `ChatClientAgentRunOptions`), nie als
+  Prosa-Rückparse.
+- **Tafel (deterministisch, `StoryMapSection`):** Kärtchen = PBI-Story (`goal`) · Prio · ✓ fertig
+  (Issue-Kreislauf!) · ⚠ in Klärung (keine erfundene Story für Unklares) — live aus dem Core bei jedem
+  Berühren (Save + Refresh-Naht). Uneingeordnete aktive PBIs landen sichtbar im Sammelbecken; die
+  Zuordnung lebt als Stempel-Kommentar im Doc (`ManagedDocSection` = die aus C4 extrahierte geteilte
+  Mechanik). Beleg-Wachen am Save: unbekannte Id/Doppel-Zuordnung/leere Reise = LAUT.
+
+Frische (Lage-Frage, pull): nur „N PBIs warten auf Einordnung" + „Personas neuer als die Reise" —
+kein PBI-Churn-Rauschen, denn Kärtchen-Inhalte ziehen von selbst nach. Pins: `StoryMapSectionTests`.
+
+## Die drei Sichten aufs Backlog — warum die Aufteilung so ist (⚖ Autor 23.08.2026)
+
+EIN PBI, DREI Sichten — jede mit einem anderen Job, alle aus derselben Quelle gerendert:
+
+| Sicht | Real-Welt-Äquivalent | Job | zeigt |
+| --- | --- | --- | --- |
+| `docs/backlog.md` | Board-/Listen-Ansicht (Jira/ADO) | **steuern** | Titel · Status · Klärung · Prio · Schätzung · Requirements · Issue-Nr |
+| GitHub-**Issue** | das geöffnete Work Item | **arbeiten** | die VOLL-Form: Story (`goal`) · AKs · Rahmen · Herkunft (Stil V2) |
+| `docs/storymap.md` | Story-Map-Wand (Miro) | **verstehen & schneiden** | Reise + Story-Sätze + ✓-Fortschritt + MVP-Vorschlag |
+
+Kein Tool der Branche zeigt AK-Texte in der Listen-Ansicht — die Trennung Liste ↔ Item-Detail ist
+Standard. **Der Unterschied zum Standard ist nicht die Aufteilung, sondern die Drift-Freiheit:** in
+realen Projekten laufen Board/Wiki/Map auseinander (die Map stirbt nach dem Workshop); hier KÖNNEN die
+Sichten nicht driften, weil alle aus dem Core gerendert werden — einzige Redaktion ist die Reise-
+Einordnung (versioniert, ⚿, Beleg-gewacht).
+
+**Sync-Garantien (belegt, nicht behauptet):** EIN Wahrheits-Schreibpunkt (`JsonCoreRepository.SaveAsync`
++ Kangal) → Refresh der Projektionen an der geteilten Naht (`RefreshDeterministicProjectionsAsync`,
+zusätzlich am Artefakt-Save) · Schein-Änderungs-Wachen (Fingerprint R-63 · SameBody R-72) · Publikation
+NUR gated (forward-gate, In-Sync-Stempel). Beweise: §3-Manipulations-Heilung (Lauf `20260822_162504`,
+GitHub war nie falsch → null Ops) · Leitfaden-Livetest (Lauf `20260822_220612`: exakt 1 Doc-Upsert +
+1 legitimes Issue-Update, 42× NO_CHANGE).
+
+**Deklarierte Schwächen (bewusst benannt):** `backlog.md` überlappt teilweise mit GitHubs eigener
+Issue-Liste (Mehrwert: Feature-Gruppierung, Requirements-Verweise, Schätzung, im Repo versioniert) ·
+drei Sichten = Lern-Moment „wo schaue ich wofür" (gemildert durch Quer-Verweise) · die Story Map trägt
+erst voll nach der Scoping-Runde (Prio/✓ leben dann).

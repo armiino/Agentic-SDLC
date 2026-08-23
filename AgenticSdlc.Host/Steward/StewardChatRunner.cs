@@ -50,7 +50,16 @@ public static class StewardChatRunner
         [
             .. new StewardReadTools(repoRoot).Build(),
             .. new CoreQueryTools(new JsonCoreRepository(repoRoot),
-                core => FullWorkflow.Core.AuthoredDocDrafting.C4FrischeNotiz(repoRoot, core)).Build(),
+                core =>
+                {
+                    // Artefakt-Frische = EINE Zeile je meldendem Artefakt (C4-Belege · Story-Map-Einordnung).
+                    var teile = new[]
+                    {
+                        FullWorkflow.Core.AuthoredDocDrafting.C4FrischeNotiz(repoRoot, core),
+                        FullWorkflow.Core.StoryMapSection.FrischeNotiz(repoRoot, core),
+                    }.Where(t => t is not null).ToList();
+                    return teile.Count == 0 ? null : string.Join("\n", teile);
+                }).Build(),
             .. new GithubSnapshotQueryTools(repoRoot).Build(),
             .. new StewardGateTools(repoRoot, chainResume: id => runTools.ChainResumeAsync(id)).Build(),
             .. runTools.Build(),

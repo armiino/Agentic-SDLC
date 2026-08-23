@@ -5,7 +5,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Core;
 // R-33 S4 — der WACHHUND am Core-Port (Autor-Taufe 04.08.: Kangal, der Herdenschutzhund). EINE Prüf-Logik,
 // EINE Naht: Check läuft in JsonCoreRepository.SaveAsync VOR Snapshot+Write — damit ist es egal, welcher der
 // 9 Schreiber (oder ein künftiger Steward-Pfad) schreibt: kaputte Wahrheit wird nie persistiert.
-// Invarianten-Spec: docs/aktiv/core-relationen-konzept.md §3 + §5.3 (Härtegrade).
+// Invarianten-Spec: Thesis-Docs/aktiv/core-relationen-konzept.md §3 + §5.3 (Härtegrade).
 //   Fehler (Save bricht ab): I1 Struktur-Relation auf fehlendes/typfalsches Item · I5 >1 Issue-Mapping je PBI
 //   · I5b Issue von >1 PBI gemappt (Spiegel-Invariante 1↔1, C2a-3).
 //   Warnung (laut, blockt nie): I2 PBI ohne Feature · I3 aktives REQ ohne Deckung (feuert BEWUSST im

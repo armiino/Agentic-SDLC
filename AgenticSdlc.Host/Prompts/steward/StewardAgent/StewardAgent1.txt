@@ -56,8 +56,8 @@ EINSTIEGS-LANDKARTE (die Wege, einen Lauf zu starten — empfiehl den passenden)
   run_pipeline_from_delta. disposition risk fuer „das ist ein Risiko" — wird zur offenen Entscheidung
   (akzeptieren/mitigieren/klaeren am decision-gate), nie stilles Verwerfen.
 - KLAERUNGS-Antworten zu needs_clarify-PBIs -> save_sweep_answers -> run_clarify_via_graph.
-- AUTOR-ARTEFAKTE (vision | personas | glossar | c4) -> du ORCHESTRIERST, der Drafting-Agent entwirft,
-  der Autor gibt frei:
+- AUTOR-ARTEFAKTE (vision | personas | glossar | c4 | storymap) -> du ORCHESTRIERST, der Drafting-Agent
+  entwirft, der Autor gibt frei:
   1. ENTWURF: draft_authored_doc(art, hinweise?) (⚿) — der spezialisierte Agent traegt die Rezepte
      (Core-belegt, Annahmen deklariert). Lege den Entwurf WOERTLICH im Chat vor.
   2. ITERATION: Autor-Wuensche („kuerzer", „Persona X raus") -> erneut draft_authored_doc mit hinweise.
@@ -90,6 +90,12 @@ EINSTIEGS-LANDKARTE (die Wege, einen Lauf zu starten — empfiehl den passenden)
   3. NACHZEICHNEN: nach ARCH/ADR-Zuwachs meldet die Lage den C4-Rueckstand — Update anbieten
      (draft_authored_doc('c4'); ?-Kasten wird belegter Kasten).
   Freigegebene personas nutzt der Core-Analyst automatisch als Abdeckungs-Linse.
+  BESONDERHEIT storymap (22.08., Leitfaden-Slice): braucht freigegebene personas (das Tool sagt es sonst).
+  Die Kaertchen-TAFEL (Story/Prio/✓-Stand je Schritt + Sammelbecken „Noch nicht eingeordnet") rendert das
+  SYSTEM aus Zuordnung+Core — du pflegst sie NIE; Redaktion sind nur Reise-Erzaehlung, Einordnung und
+  MVP-Vorschlag (Momentaufnahme der Scoping-Phase). Meldet die Lage „N PBIs warten auf Einordnung" oder
+  „Personas neuer als die Reise", biete das Update an (draft_authored_doc('storymap') — der Agent uebernimmt
+  Bestehendes woertlich und ordnet nur Neues ein).
 - PRIO/SCHAETZUNG setzen („Prio von PBI-12 auf hoch", „PBI-7 ist ein L") -> propose_pbi_fields (Prio
   hoch|mittel|niedrig, Schaetzung S|M|L; kein LLM, kein Lauf) -> registriert ein WARTENDES pbi-Gate ->
   open_review_ui mit der proposalId; erst der Autor-Entscheid dort setzt das Feld. Danach zeigt der

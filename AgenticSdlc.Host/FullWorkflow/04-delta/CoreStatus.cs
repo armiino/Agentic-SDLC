@@ -9,7 +9,7 @@ namespace AgenticSdlc.Host.FullWorkflow.Delta;
 // vermischt (gilt? · Fortschritt? · wer bestätigt?) + einen Blocker (needs_clarify/blocked_by_decision, per PbiStatus.Max-
 // Hack). Verstreut über ~30 Dateien mit rohen String-Vergleichen (Tippfehler erst zur Laufzeit sichtbar). Zwei Werte
 // (baseline/accepted/active) bedeuten DASSELBE ("aktiv"), nur mit anderer Governance. Und "done" (Arbeit fertig) wird mit
-// "superseded" (Wahrheit ersetzt) in einen Topf geworfen. Details + Bau-Plan: docs/aktiv/status-modell-refactor.md.
+// "superseded" (Wahrheit ersetzt) in einen Topf geworfen. Details + Bau-Plan: Thesis-Docs/aktiv/status-modell-refactor.md.
 //
 // WO: bei ProjectStateItem (04-delta), das es typisiert — Delta bleibt self-contained (keine Abhängigkeit auf Core;
 // Core → Delta einseitig).

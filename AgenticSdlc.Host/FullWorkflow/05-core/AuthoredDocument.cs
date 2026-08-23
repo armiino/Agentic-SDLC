@@ -19,6 +19,7 @@ public static class AuthoredDocument
         new("personas", "docs/personas.md", "Personas"),
         new("glossar", "docs/glossar.md", "Glossar"),
         new("c4", "docs/c4.md", "Architektur-Landkarte (C4)"),
+        new("storymap", "docs/storymap.md", "User Story Map"),
     ];
 
     public const string EntwurfAutor = "Autor-Diktat";
@@ -40,6 +41,15 @@ public static class AuthoredDocument
         var content = $"# {art.Titel}\n\n> Version: {version} · Stand: {DateTime.UtcNow:yyyy-MM-dd HH:mm} UTC\n"
                       + $"> Freigabe: Autor (Steward-Chat) · Entwurf: {herkunft}\n\n"
                       + StripStampedHeader(text, art.Titel).Trim() + "\n";
+        // Story-Map-Beleg-Wachen (S2–S4): eine ungültige Zuordnung verweigert den Save LAUT, BEVOR
+        // irgendetwas geschrieben ist (fehlende Zeile ist erlaubt — S6-Degradation beim Render).
+        if (string.Equals(art.Key, "storymap", StringComparison.Ordinal)
+            && StoryMapSection.ReadZuordnung(content) is { } zuordnung)
+        {
+            var coreRepo = new JsonCoreRepository(repoRoot);
+            if (await coreRepo.ExistsAsync().ConfigureAwait(false))
+                StoryMapSection.Validate(zuordnung, await coreRepo.LoadAsync().ConfigureAwait(false));
+        }
         await File.WriteAllTextAsync(target, content).ConfigureAwait(false);
         // C4-Kreislauf: die Lücken-Sektion ist Systemsache — direkt nach jedem Save deterministisch
         // anfügen/ersetzen (die freigegebene Fassung enthält sie nicht; ohne Core kein Abschnitt).
@@ -50,6 +60,14 @@ public static class AuthoredDocument
                 // R-71: der Autor-Save STEMPELT den Beleg-Stand (der Zeichner hatte den Bestand im Input) —
                 // die Frische-Meldung misst ab jetzt nur noch das Delta dazu.
                 C4GapSection.Ensure(repoRoot, await repo.LoadAsync().ConfigureAwait(false), stampBelegStand: true);
+        }
+        // Story-Map-Tafel ist Systemsache (S7): direkt nach dem Save deterministisch aus Zuordnung+Core
+        // regenerieren — was der Entwurf als Tafel enthielt, wird durch die Wahrheit ersetzt.
+        if (string.Equals(art.Key, "storymap", StringComparison.Ordinal))
+        {
+            var repo = new JsonCoreRepository(repoRoot);
+            if (await repo.ExistsAsync().ConfigureAwait(false))
+                StoryMapSection.Ensure(repoRoot, await repo.LoadAsync().ConfigureAwait(false));
         }
         return (target, version);
     }

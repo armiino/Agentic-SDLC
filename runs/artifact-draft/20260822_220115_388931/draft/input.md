@@ -1,0 +1,410 @@
+ARTEFAKT: User Story Map (art=storymap, Ziel-Datei docs/storymap.md)
+
+== AKTUELLER STAND == (noch keiner — Erst-Entwurf)
+
+== PERSONAS (freigegeben — Reise der KERNPERSONA erzählen) ==
+# Personas
+
+> Version: 2 · Stand: 2026-08-21 18:22 UTC
+> Freigabe: Autor (Steward-Chat) · Entwurf: Steward aus der Projektwahrheit (Core)
+
+# Personas
+
+> Version: 1 · Stand: 2026-08-21 17:43 UTC
+> Freigabe: Autor (Steward-Chat) · Entwurf: Steward aus der Projektwahrheit (Core)
+
+## Persona 1 — Pflegende / betreuende Mitarbeitende
+
+### **Belegt**
+- arbeitet mit Bewohnerprofilen der eigenen Einrichtung und darf nicht einrichtungsübergreifend auf alle Profile zugreifen (REQ-09, REQ-84)
+- will Bewohner im Alltag besser verstehen und bei Verständnisschwierigkeiten schnell nachsehen können (REQ-02, REQ-03)
+- nutzt nach dem Login eine Profilübersicht als Einstieg in die Arbeit (REQ-13, REQ-16)
+- will Bewohnerprofile schnell nach Namen und Stichworten finden können (REQ-17, REQ-60)
+- will Profile in der Übersicht mit Vorschaubild, Name und Kurzbeschreibung erfassen können (REQ-18)
+- braucht in der Profil-Detailansicht einen schnellen Zugriff auf Hauptbereiche und Sofortinfos (REQ-19, L3-REQ-002, REQ-59)
+- nutzt die About-Me-Seite für einen ersten persönlichen Eindruck eines Bewohners (REQ-20)
+- will die About-Me-Timeline um neue Einträge erweitern und neue Bilder oben sehen (REQ-21, REQ-22, REQ-23)
+- wird bei neuen About-Me-Inhalten derselben Einrichtung per Benachrichtigung informiert (REQ-40)
+- braucht eine klar getrennte Kommunikationsansicht für verbale und nonverbale Kommunikation (REQ-24, REQ-25)
+- will Kommunikationswissen laufend mit Text, Bildern und Videos ergänzen und durchsuchen können (REQ-26, REQ-27, REQ-28, REQ-29, REQ-30, REQ-31)
+- braucht bewohnerbezogene No-Go-Hinweise, die schnell erfassbar und pflegbar sind (REQ-32, REQ-33, REQ-34, REQ-56, REQ-57, REQ-58)
+- soll vorhandene Informationen aus klassischen Akten trotz deren schwerer Nutzbarkeit im Alltag besser verfügbar haben (REQ-48, REQ-49)
+- kann je Schicht eine Übergabe-Notiz erhalten, die beim Öffnen der App prominent erscheint und bewohnerbezogen verlinkt ist (REQ-61, REQ-62)
+- muss Medikamenten-Gaben dokumentieren und dabei optional kurze Bemerkungen erfassen können (REQ-42)
+- muss in der Medikamenten-Übersicht überfällige, noch nicht dokumentierte Gaben deutlich hervorgehoben sehen (REQ-86)
+- muss am Schichtende eine Tages-Zusammenfassung der selbst dokumentierten Medikamenten-Gaben prüfen können (REQ-81)
+- muss angekündigte Besuche der nächsten 14 Tage sehen können (REQ-83, REQ-89)
+- muss angekündigte Besuche bestätigen oder ablehnen können; bei Ablehnung mit Begründung (REQ-87)
+- soll erledigte oder inaktive Besuche in der Übersicht klar als solche erkennen (REQ-90)
+- braucht konsistente Navigation mit Rückweg, Seitentitel, Einstellungen und Logout (REQ-14, REQ-15)
+- profitiert von Hilfe beim ersten Login und einem später erneut aufrufbaren Hilfebereich (REQ-46)
+- braucht barrierearme Gestaltung mit großer Schrift, Kontrast und zurückhaltenden Farben; wünscht ggf. einstellbare Schriftgröße und späteren Dunkelmodus (REQ-38, REQ-75, REQ-74)
+- nutzt die App auf iPhone oder Android; Tablet-Nutzung und alternative Eingaben sind relevant zu prüfen (REQ-37, REQ-39, REQ-43)
+
+### **Angenommen**
+- **Name:** Sandra
+- **Alter-/Alltags-Rahmen:** Mitte 40, arbeitet im Schichtdienst in einer Wohneinrichtung
+- **Kontext-Erzählung:** Sandra wechselt zwischen direkter Betreuung, Übergaben und kurzer Dokumentation. Sie hat wenig Zeit, braucht rasch verständliche Infos zu Bewohnern und nutzt die App unterwegs auf dem Diensthandy.
+
+---
+
+## Persona 2 — Angehörige / Bezugsperson
+
+### **Belegt**
+- erhält als Angehörige Zugriff auf die App und ist einer Einrichtung fest zugeordnet (ARCH-09, REQ-84)
+- ihre Rechte zum Eintragen eigener Inhalte sind noch nicht abschließend festgelegt (REQ-08)
+- kann zu Einträgen eigene Fotos hochladen, begrenzt auf maximal fünf Fotos pro Eintrag und nur als JPG oder PNG (REQ-79)
+- muss vor Nutzung von Bildern auf geklärte Datenschutzfragen und Einwilligungen vertrauen können (REQ-35)
+- kann Besuche bei der Bezugsperson vorab mit Datum und Uhrzeit ankündigen (REQ-82)
+- will eine Rückmeldung erhalten, wenn ein Besuch bestätigt oder abgelehnt wird; bei Ablehnung mit Begründung (REQ-87)
+- will am Vortag um 18 Uhr per Push an bestätigte Besuche erinnert werden (REQ-88)
+- kann für freigegebene Bereiche eine Monatsübersicht der letzten dreißig Tage zu Medikamenten-Einnahmen einsehen (REQ-80)
+- profitiert von einer mobilen, barrierearmen Nutzung auf iPhone oder Android (REQ-37, REQ-38)
+
+### **Angenommen**
+- **Name:** Markus
+- **Alter-/Alltags-Rahmen:** Anfang 50, berufstätig, besucht seine Schwester regelmäßig
+- **Kontext-Erzählung:** Markus möchte Besuche verlässlich abstimmen und gelegentlich Beiträge aus dem Familienalltag teilen. Er nutzt die App meist abends auf dem privaten Smartphone und erwartet klare, einfache Abläufe.
+
+---
+
+## Persona 3 — Bewohner / betreuter Mensch mit eigenem Account
+
+### **Belegt**
+- kann einen eigenen Bewohner-Account haben (REQ-07)
+- darf nur das eigene Profil in der Profilübersicht sehen (REQ-07)
+- darf nur eingeschränkte Funktionen nutzen, insbesondere Zugriff auf About Me und Kommunikation (REQ-07)
+- nutzt eine App, die Kommunikation zwischen betreuten Menschen mit Beeinträchtigungen und anderen Personen fördern soll (REQ-01)
+- profitiert davon, dass Wissen über das eigene Profil und die eigene Kommunikationsweise bereitsteht (REQ-03)
+- profitiert von barrierearmer Gestaltung mit großer Schrift, Kontrast und zurückhaltenden Farben (REQ-38)
+- könnte künftig von alternativen Eingabemethoden wie Sprachbefehlen profitieren (REQ-43)
+
+### **Angenommen**
+- **Name:** Timo
+- **Alter-/Alltags-Rahmen:** junger Erwachsener, lebt in einer betreuten Wohnform
+- **Kontext-Erzählung:** Timo schaut mit Unterstützung oder selbst in sein Profil, um Bilder, persönliche Informationen und bekannte Kommunikationsweisen wiederzufinden. Eine einfache, ruhige Oberfläche hilft ihm bei der Orientierung.
+
+---
+
+## Persona 4 — Admin / Leitung mit Verwaltungsaufgaben
+
+### **Belegt**
+- verwaltet Accounts und Rechte als Admin (REQ-06)
+- kann auf einem separaten Admin-Bildschirm Accounts anlegen und Rollen vergeben, sofern dieser umgesetzt wird (REQ-41)
+- darf Zugriffsprotokolle einsehen; normale Nutzer dürfen das nicht (REQ-65)
+- braucht revisionssichere Protokollierung aller Einsichtnahmen in Bewohnerdaten (REQ-64)
+- arbeitet mit einrichtungsgebundenen Accounts und Profilen (REQ-84)
+- kann Passwörter über einen geregelten Admin-Prozess zurücksetzen (L3-REQ-010)
+- kann wöchentlich einen PDF-Export aller Übergabe-Notizen für Träger-Berichte erstellen (REQ-77)
+- bewegt sich in einem noch nicht abschließend festgelegten Rechtemodell (REQ-10)
+
+### **Angenommen**
+- **Name:** Herr Keller
+- **Alter-/Alltags-Rahmen:** Ende 50, Einrichtungsleitung mit organisatorischen Zusatzaufgaben
+- **Kontext-Erzählung:** Herr Keller nutzt die App seltener für Detailarbeit mit Bewohnerprofilen, aber regelmäßig für Rechtevergabe, Nachvollziehbarkeit und Berichte. Er braucht klare Verwaltungsfunktionen und verlässliche Protokolle.
+
+
+== FEATURES (Lösungs-Cluster — Kontext, NICHT der Reise-Backbone) ==
+FC-01: Produktziel und Lösungsrahmen
+FC-02: Zugang und Rechteverwaltung
+FC-03: Login und Einstieg
+FC-04: Globale Navigation und Hilfe
+FC-05: Profilübersicht und Profilanlage
+FC-06: Profil-Detail und Schnellzugriff
+FC-07: About-Me-Profilbereich
+FC-08: Kommunikationswissen
+FC-09: No-Go-Wissen
+FC-10: Medien, Datenschutz und Datenhaltung
+FC-11: Plattform und Barrierefreiheit
+FC-12: Dokumentationsintegration und Erweiterungen
+FC-13A: Forschung, Anforderungsanalyse und Pilotbewertung
+FC-13B: Technologie- und Architekturentscheidungen
+FC-14: Wochenübersicht und Angehörigenbeiträge
+FC-15: Besuchsankündigung und Besuchskoordination
+
+== PBIs (die Kärtchen — NUR diese Ids zuordnen; nicht alle müssen einen Platz bekommen) ==
+PBI-001 (Feature FC-01): Als Product Owner will ich das konkrete Produktziel und den zulässigen Lösungsrahmen der App festlegen, damit spätere Features die unterstützte Kommunikation ve…
+PBI-002 (Feature FC-02): Als Admin will ich interne Accounts mit Basisrollen verwalten und Angehörigen die Selbstregistrierung per Einladungscode der Einrichtung mit unveränderlicher Ei…
+PBI-003 (Feature FC-02): Als Product Owner will ich das Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung sowie einen serverseitigen Suchrahmen für die einrichtungsgebunden…
+PBI-004 (Feature FC-02): Als Nutzer will ich bei Inhaltsänderungen nachvollziehen können, wer einen Eintrag erstellt oder geändert hat und wann das passiert ist, damit Wissen vertrauens…
+PBI-005 (Feature FC-03): Als Nutzer will ich mich über einen klaren Login-Screen mit E-Mail und Passwort anmelden und als Angehöriger bei Bedarf mit einem Einladungscode der Einrichtung…
+PBI-006 (Feature FC-03): Als Nutzer will ich nach dem Login meinen zuletzt genutzten Bewohner oder meine zuletzt geöffnete Einrichtung schneller wiederfinden, damit wiederkehrende Arbei…
+PBI-007 (Feature FC-04): Als eingeloggter Nutzer will ich auf jeder Seite eine konsistente Appbar mit Orientierung und Grundaktionen haben, damit ich mich sicher durch die App bewegen k…
+PBI-008 (Feature FC-04): Als neuer Nutzer will ich beim ersten Login eine kurze Einführung und später einen wiederaufrufbaren Hilfebereich nutzen, damit ich die App ohne lange Einarbeit…
+PBI-009 (Feature FC-05): Als Nutzer will ich in einer Profilübersicht berechtigte Bewohnerprofile sehen, nach Namen suchen und ein Profil öffnen, damit ich relevante Informationen schne…
+PBI-010 (Feature FC-05): Als berechtigter Nutzer will ich ein neues Bewohnerprofil mit Name, Geburtsdatum, Einrichtung und Zimmer anlegen können, damit neue Bewohner strukturiert erfass…
+PBI-011 (Feature FC-05): Als Nutzer will ich Profile sortieren, ihren Status erkennen und neue oder aktualisierte Inhalte sehen, damit ich in der Übersicht schneller priorisieren kann.
+PBI-012 (Feature FC-06): Als Nutzer will ich auf einer Profil-Detailseite ein oben mittig platziertes, mindestens doppelt so großes Profilbild, genau drei Sofortinfos und große Kacheln …
+PBI-013 (Feature FC-07): Als Nutzer will ich eine About-Me-Seite mit persönlichen Kurzinfos eines Bewohners sehen, damit ich schnell einen ersten Eindruck der Person bekomme.
+PBI-014 (Feature FC-07): Als berechtigter Nutzer will ich in der About-Me-Seite Bilder mit Beschreibung hinzufügen und in einer Timeline sehen, damit persönliche Eindrücke aktuell und n…
+PBI-015 (Feature FC-07): Als Product Owner will ich die Einwilligungs- und Datenschutzregeln für Bilder festlegen, damit Fotos im About-Me-Bereich rechtssicher genutzt werden können.
+PBI-016 (Feature FC-07): Als verbundener Nutzer will ich erkennen oder gemeldet bekommen, wenn im About-Me-Bereich neue Inhalte vorliegen, damit ich aktuelles Wissen schneller wahrnehme…
+PBI-017 (Feature FC-07): Als Product Owner will ich festlegen, ob Bilder und andere Medien im About-Me-Bereich mit Textzusammenfassungen oder ähnlichen Hilfen ergänzt werden, damit Inha…
+PBI-018 (Feature FC-08): Als Nutzer will ich Kommunikationswissen in klar getrennten verbalen und nonverbalen Bereichen sehen, damit ich Signale und Ausdrucksweisen schneller richtig ei…
+PBI-019 (Feature FC-08): Als berechtigter Nutzer will ich neue Kommunikationsweisen mit Text und Bildern hinzufügen können, damit wachsendes Erfahrungswissen zum Bewohner laufend dokume…
+PBI-020 (Feature FC-08): Als Product Owner will ich ein strukturiertes Beschreibungsmuster für Kommunikationsweisen und die darauf aufbauende Suchlogik festlegen, damit Kommunikationswi…
+PBI-021 (Feature FC-08): Als berechtigter Nutzer will ich Videos von Kommunikationssituationen direkt in der Kommunikationsansicht hinzufügen und sehen, damit wichtige Ausdrucksweisen r…
+PBI-022 (Feature FC-08): Als Product Owner will ich festlegen, welche zusätzlichen Beschreibungen Kommunikationsmedien erhalten sollen, damit Inhalte zugänglicher und besser auffindbar …
+PBI-023 (Feature FC-09) [in Klärung]: Als Nutzer will ich kritische No-Gos kompakt sehen und ergänzen können, damit ich in Gegenwart des Bewohners problematische Themen oder Handlungen vermeide.
+PBI-024 (Feature FC-10): Als Product Owner will ich das Offline-first-Verhalten mit lokalem Cache in SQLite, die Verschlüsselung lokal zwischengespeicherter Bewohnerdaten und Medien sow…
+PBI-025 (Feature FC-11): Als Nutzer will ich die App auf iPhone und Android in gut lesbarer, nicht ablenkender Form verwenden können, damit sie im Alltag zuverlässig und zugänglich eins…
+PBI-026 (Feature FC-11): Als Product Owner will ich bewerten, ob Tablet-Nutzung und alternative Eingabemethoden später unterstützt werden sollen, damit Erweiterungen an realen Bedarfen …
+PBI-027 (Feature FC-12) [in Klärung]: Als Product Owner will ich festlegen, wie stark die App vorhandene Dokumentation integriert oder Daten daraus übernimmt, damit der Fokus auf unterstützender Kom…
+PBI-028 (Feature FC-12): Als freigegebene/r Angehörige/r will ich für meine jeweilige Bezugsperson eine Monatsübersicht der Medikamenten-Einnahmen der letzten dreißig Tage einsehen, dam…
+PBI-029 (Feature FC-13A): Als Product Owner will ich Anforderungen mit Beteiligten vor Ort erheben und messbare Pilot-Erfolgskriterien definieren, damit Produktentscheidungen auf realen …
+PBI-030 (Feature FC-13B): Als Product Owner will ich Flutter für die App, Riverpod für das State-Management und SQLite als lokale Datenbank verbindlich festlegen, damit die Umsetzung die…
+PBI-031 (Feature FC-05): Die Suche ist serverseitig und einrichtungsgebunden gemäß ARCH-Suchrahmen aus ADR 0004. Sie durchsucht Name, About-Me und Kommunikationsseiten. Treffer werden n…
+PBI-032 (Feature FC-12): Als Pflegekraft will ich eine Übergabe-Notiz pro Schicht bis zur Archivierung bearbeiten können, damit Änderungen vor der Archivierung möglich sind und die zule…
+PBI-033 (Feature FC-12) [in Klärung]: Übergabe-Notizen sollen nach dreißig Tagen automatisch archiviert werden; archivierte Notizen bleiben weiterhin auffindbar
+PBI-034 (Feature FC-10) [in Klärung]: Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschließl...
+PBI-035 (Feature FC-07) [in Klärung]: Die About-Me-Seite darf im MVP in ihrer aktuellen Form nicht verändert werden.
+PBI-036 (Feature FC-11) [in Klärung]: Für die Planung soll aktuell von einer Mindestunterstützung ab Android 10 ausgegangen werd...
+PBI-037 (Feature FC-11) [in Klärung]: Falls im Haus Geräte unter Android 10 vorhanden sind, besteht ein Risiko durch nötigen Ger...
+PBI-038 (Feature FC-13A) [in Klärung]: Zum Thema Piktogramme besteht ein noch nicht ausreichend konkretisierter Änderungswunsch; ...
+PBI-039 (Feature FC-13A) [in Klärung]: Es ist unklar, ob aus dem Hinweis auf die anstehende Übergabe eine eigenständige fachliche...
+PBI-040 (Feature FC-13A) [in Klärung]: Es ist unklar, welcher zuvor genannte Punkt aus Sicht der Angehörigen besonders wichtig is...
+PBI-041 (Feature FC-12) [in Klärung]: Es ist zu klären, ob Aufgabenverfolgung oder Terminplanung als eigene organisatorische Anf...
+PBI-042 (Feature FC-11): Als Nutzer will ich den Dunkelmodus in den Einstellungen manuell ein- und ausschalten, damit ich die Darstellung bei Bedarf ohne Automatik anpassen kann.
+PBI-043 (Feature FC-11) [in Klärung]: Eine einstellbare Schriftgröße ist ein Wunsch zur Unterstützung älterer Kolleginnen, mit n...
+PBI-044 (Feature FC-14): Als Angehörige will ich zu Einträgen eigene Fotos hochladen können, damit diese den Einträgen zugeordnet werden; pro Eintrag sollen maximal fünf Fotos zulässig …
+PBI-045 (Feature FC-12): Als pflegende Person will ich am Ende meiner Schicht eine Tages-Zusammenfassung aller von mir dokumentierten Medikamenten-Gaben sehen können, damit ich vor der …
+PBI-046 (Feature FC-15): Als Angehörige/r will ich Besuche bei meiner Bezugsperson in der App vorab mit Datum und Uhrzeit ankündigen sowie bereits angefragte oder bestätigte Besuchsankü…
+PBI-047 (Feature FC-15): Als pflegende Person will ich eine Übersicht der angekündigten Besuche der nächsten 14 Tage sehen können, damit ich bevorstehende Besuche im relevanten Zeitraum…
+PBI-048 (Feature FC-15): Als pflegende Person der jeweiligen Einrichtung will ich angekündigte Besuche bestätigen oder ablehnen können, damit Angehörige zu ihrer Ankündigung einen einde…
+PBI-049 (Feature FC-15): Als Angehörige:r will ich einmal am Vortag um 18 Uhr per Push-Mitteilung an meinen bestätigten Besuch erinnert werden, damit ich den Besuch nicht vergesse.
+
+== AKTIVE WAHRHEIT (Digest, eine Zeile je Item) ==
+ARCH-01 [architecture, Rollen: design] Die Lösung ist als digitale App zur Verbesserung bzw. Förderung der Kommunikation zwischen betreuten Menschen mit Beeinträchtigungen und anderen Personen angest…
+ARCH-02 [architecture, Rollen: constraint] Die Unterstützung soll vorrangig darauf ausgerichtet sein, dass Betreuer oder andere Personen Bewohner besser verstehen können.
+ARCH-03 [architecture, Rollen: constraint+design] Als Kernansatz soll die App Wissen über Profil und Kommunikationsweise einer Person bereitstellen, damit Nutzer bei Verständnisschwierigkeiten nachsehen können;…
+ARCH-04 [architecture, Rollen: constraint] Ein System, das individuell zwischen Bewohner und Betreuer in beide Richtungen übersetzt, ist als Lösungsansatz ausgeschlossen.
+ARCH-05 [architecture, Rollen: constraint] Bestehende klassische Akten und Dokumentationen zu Bewohnern sind als Bestandssituation zu berücksichtigen.
+ARCH-06 [architecture, Rollen: design] Es muss berücksichtigt werden, dass vorhandene Akten im Arbeitsalltag schwer nutzbar sein können, weil sie umfangreich sind und gesuchte Informationen nicht sch…
+ARCH-07 [architecture, Rollen: constraint+design] Die App darf keine Selbstregistrierung erlauben; Zugang erfolgt nur per Login mit intern vergebenen Accounts.
+ARCH-08 [architecture, Rollen: constraint+design] Es muss mindestens die Rollen Admin und User geben; Admins verwalten Accounts und Rechte, User können Inhalte hinzufügen, aber nichts löschen.
+ARCH-09 [architecture, Rollen: constraint] Neben Mitarbeitern sollen auch Angehörige Zugriff auf die App erhalten und Inhalte beziehungsweise Wissen beitragen können; unterschiedliche Rechte sind dabei v…
+ARCH-10 [architecture, Rollen: constraint+design] Zusätzlich soll es einen Bewohner-Account geben, der nur das eigene Profil sehen darf und nur eingeschränkte Funktionen nutzen kann, insbesondere Zugriff auf Ab…
+ARCH-11 [architecture, Rollen: constraint+design] Für die einrichtungsgebundene Stichwortsuche über alle Bewohnerprofile muss ein serverseitiger Suchrahmen festgelegt werden: Suchindizes dürfen nur Inhalte der …
+ARCH-12 [architecture, Rollen: design] Die konkrete Ausgestaltung der Rechteverwaltung ist noch nicht festgelegt und muss später entschieden werden.
+ARCH-13 [architecture, Rollen: design] Für die Rechte- und Accountverwaltung soll ein separater Admin-Bildschirm erwogen werden, auf dem nur Admins Accounts anlegen und Rollen vergeben können.
+ARCH-14 [architecture, Rollen: constraint] Vor Nutzung von Bildern in der App müssen Datenschutzfragen und Einwilligungen der Angehörigen beziehungsweise Berechtigten geklärt werden, auch für Testbilder.
+ARCH-15 [architecture, Rollen: constraint] Nach dem Login soll eine Profilübersicht mit anklickbarer Liste der sichtbaren Bewohnerprofile angezeigt werden.
+ARCH-16 [architecture, Rollen: constraint] Auf der Profilübersicht soll eine Suchleiste vorhanden sein, um Profile schnell nach Namen zu finden.
+ARCH-17 [architecture, Rollen: constraint] Profile sollen in der Übersicht mit Vorschaubild, Name und Kurzbeschreibung dargestellt werden; ob dies als Liste oder Kacheln erfolgt, ist noch offen.
+ARCH-18 [architecture, Rollen: constraint] Die Detailansicht eines Profils soll das Profilbild größer zeigen und die Hauptbereiche der App als interaktive Buttons anbieten; der genaue Zuschnitt dieser Ha…
+ARCH-19 [architecture, Rollen: constraint] Die App soll je Bewohner eine About-Me-Seite mit persönlicher Kurzinfo, Bildern und beschreibenden Informationen für den ersten Eindruck bereitstellen.
+ARCH-20 [architecture, Rollen: constraint] Die About-Me-Ansicht soll eine dynamisch erweiterbare Foto-Timeline mit Beschreibungen bereitstellen, bei der neue Einträge per Plus-Button hinzugefügt werden u…
+ARCH-21 [architecture, Rollen: constraint] Die App soll eine Kommunikationsansicht mit klarer Unterteilung in verbale und nonverbale Kommunikation bereitstellen.
+ARCH-22 [architecture, Rollen: constraint] Einträge zu Kommunikationsweisen müssen dynamisch erweiterbar sein und sollen nicht nur als Text, sondern auch mit Bildern und weiteren Darstellungsformen erfas…
+ARCH-23 [architecture, Rollen: constraint] Videos von Kommunikationssituationen sollen mit Beschreibungen erfasst werden können und als Teil der Kommunikationsseiten statt als separater Screen integriert…
+ARCH-24 [architecture, Rollen: constraint+design] Auf Kommunikationsseiten soll eine Suchfunktion vorhanden sein; dafür muss ein standardisiertes Beschreibungsmuster für Kommunikationseinträge definiert werden,…
+ARCH-25 [architecture, Rollen: constraint] Die App soll eine No-Go-Seite mit dynamisch erweiterbarer Liste bereitstellen, auf der kritische Dinge festgehalten werden, die in Gegenwart des Bewohners vermi…
+ARCH-26 [architecture, Rollen: constraint] Eine Kalenderfunktion soll erwogen werden; zusätzlich ist zu prüfen, ob auch Medikamentengaben integriert werden sollen, wobei die Vertraulichkeit dieser Daten …
+ARCH-27 [architecture, Rollen: constraint] Es soll erwogen werden, in der Profilübersicht das Anlegen neuer Profile per Plus-Symbol und Dialog für Bild, Name und Beschreibung zu ermöglichen.
+ARCH-28 [architecture, Rollen: constraint] Eine Ausweitung der App auf weitere Dokumentationsfunktionen soll geprüft werden, jedoch nur in begrenztem Umfang und ohne den Fokus auf unterstützende Kommunik…
+ARCH-29 [architecture, Rollen: constraint] Nach dem Login soll auf jeder Seite eine konsistente Appbar vorhanden sein.
+ARCH-30 [architecture, Rollen: constraint] Die Appbar soll Rücknavigation sowie schnellen Zugriff auf Seitentitel, Einstellungen und Logout unterstützen.
+ARCH-31 [architecture, Rollen: constraint+design] Bei der Gestaltung soll auf Barrierefreiheit geachtet werden, insbesondere große Schrift, ausreichender Kontrast und zurückhaltender Farbeinsatz.
+ARCH-32 [architecture, Rollen: constraint] Alternative Eingabemethoden wie Sprachbefehle sollen als mögliche Accessibility-Erweiterung berücksichtigt werden.
+ARCH-33 [architecture, Rollen: work] Der Login-Screen soll ein zentriertes, gut sichtbares Logo im oberen Drittel enthalten; ein passendes Kommunikations-Logo ist noch zu erstellen.
+ARCH-34 [architecture, Rollen: constraint] Eine Hilfe-Funktion oder ein Tutorial soll vorgesehen werden, idealerweise als kurze Tour beim ersten Login und als später erneut aufrufbarer Hilfebereich.
+ARCH-35 [architecture, Rollen: constraint] Animationen sollen nicht im Fokus stehen; falls sie verwendet werden, dürfen sie nicht ablenkend sein.
+ARCH-36 [architecture, Rollen: constraint+design] Die App soll plattformübergreifend auf iPhone und Android laufen.
+ARCH-37 [architecture, Rollen: constraint+design] Für die Entwicklung soll Flutter mit Dart verwendet werden, um die plattformübergreifende Umsetzung zu unterstützen.
+ARCH-38 [architecture, Rollen: design] Das Paket GetX soll als technische Option berücksichtigt und in der Umsetzung erprobt werden.
+ARCH-39 [architecture, Rollen: design] Firebase Firestore ist als Datenbanklösung vorläufig vorgesehen, jedoch noch nicht endgültig festgelegt.
+ARCH-40 [architecture, Rollen: design] Es muss geklärt werden, ob und wie Cloud-Daten lokal auf dem Gerät gespeichert oder gecacht werden sollen. [canon-lokaler-cache-klären]
+ARCH-41 [architecture, Rollen: constraint] Es soll evaluiert werden, ob die App zusätzlich auf Tablets nutzbar sein kann.
+ARCH-42 [architecture, Rollen: constraint] Wenn im About-Me-Bereich neue Inhalte hochgeladen werden, sollen verbundene Nutzer derselben Einrichtung per Popup benachrichtigt werden.
+ARCH-43 [architecture, Rollen: constraint] Die genauen Bedürfnisse und Funktionen des Systems müssen durch Anforderungsanalyse mit mehreren Beteiligten und künftigen Nutzern erarbeitet werden.
+ARCH-44 [architecture, Rollen: constraint] Zur Nutzerforschung sollen Vor-Ort-Termine in Einrichtungen durchgeführt werden, um reale Kommunikationssituationen und Bedürfnisse besser zu verstehen.
+ARCH-45 [architecture, Rollen: design] Das Produktziel ist zusätzlich dadurch gerahmt, dass Kommunikation im Alltag zentral ist und das Projekt als Weiterentwicklungsmöglichkeit gesehen wird.
+ARCH-46 [architecture, Rollen: constraint+design] Für Push-Benachrichtigungen an Angehörige und Pflegende ist Firebase Cloud Messaging als technische Umsetzung festgelegt.
+ARCH-47 [architecture, Rollen: constraint+design] Für die revisionssichere Protokollierung von Einsichtnahmen muss ein unveränderlicher Audit-Log-Rahmen festgelegt werden: Zugriffsereignisse werden serverseitig…
+ARCH-48 [architecture, Rollen: constraint+design] Für Besuchserinnerungen am Vortag um 18 Uhr muss ein serverseitiger Benachrichtigungsrahmen festgelegt werden: Die Erinnerung wird aus dem bestätigten Besuchsst…
+ARCH-49 [architecture, Rollen: design] Für interne Events wird bewusst kein separater Message-Broker eingesetzt. Events laufen direkt im Server-Backend. Ein externer Broker wird erst eingeführt, wenn…
+ARCH-50 [architecture, Rollen: constraint+design] Ergänzend zu ARCH-11 gilt für die allgemeine serverseitige Durchsetzung der Einrichtungsgrenze: Jede Collection trägt die Einrichtungs-ID, und jede Firestore Se…
+DEC-001 [decision] Sollen Übergabe-Notizen, etwa als PDF, für die Pflegedokumentation exportierbar sein?
+DEC-002 [decision] Sollen Pfleger-Accounts zeitlich befristet sein?
+DEC-003 [decision] Widerspruch zu REQ-70: Für die lokale Datenhaltung wird Postgres eingesetzt.
+DEC-004 [decision] Wie lange sollen einnahmebezogene Bemerkungen bei der Medikamenten-Gabe aufbewahrt werden?
+DEC-005 [decision] Widerspruch zu REQ-05: Es muss geklärt werden, ob Angehörige sich künftig selbst mit einem Einladungscode der Einrichtung registrieren können und ob diese mögli…
+DEC-006 [decision] Es muss geklärt werden, ob Angehörige ihre Push-Erinnerungen selbst deaktivieren können sollen.
+DEC-007 [decision] Wie wird das Missbrauchsrisiko von Einladungscodes für Angehörige begrenzt, insbesondere hinsichtlich Weitergabe, Mehrfachnutzung, Ablauf, falscher Zuordnung zu…
+DEC-008 [decision] Widerspruch zu REQ-84: Für die Einrichtungsgrenze aus Rollenmodell, Selbstregistrierung und Profilzugriff muss ein verbindlicher Mandantenrahmen festgelegt werd…
+DEC-009 [decision] Wie wird die Einrichtungsgrenze technisch und serverseitig durchgesetzt, sodass Mitarbeitende nur Profile ihrer eigenen Einrichtung sehen und bearbeiten können?
+DEC-010 [decision] Die PAT-Rotation nach der Thesis könnte vergessen werden.
+DEC-011 [decision] Wo und wie werden Bilder und Videos für About Me und Kommunikationsseiten technisch gespeichert und ausgeliefert?
+DEC-012 [decision] SQL Injection beim Login.
+DEC-013 [decision] Wie können Angehörige ihre bereits angekündigten Besuche in der App selbst einsehen und den aktuellen Status eines Besuchs nachvollziehen, insbesondere ob er no…
+DEC-014 [decision] Brauchen wir fuer interne Events einen Message-Broker?
+DEC-015 [decision] Welches Logging-Framework nutzen wir serverseitig?
+FC-01 [feature] Produktziel und Lösungsrahmen
+FC-02 [feature] Zugang und Rechteverwaltung
+FC-03 [feature] Login und Einstieg
+FC-04 [feature] Globale Navigation und Hilfe
+FC-05 [feature] Profilübersicht und Profilanlage
+FC-06 [feature] Profil-Detail und Schnellzugriff
+FC-07 [feature] About-Me-Profilbereich
+FC-08 [feature] Kommunikationswissen
+FC-09 [feature] No-Go-Wissen
+FC-10 [feature] Medien, Datenschutz und Datenhaltung
+FC-11 [feature] Plattform und Barrierefreiheit
+FC-12 [feature] Dokumentationsintegration und Erweiterungen
+FC-13A [feature] Forschung, Anforderungsanalyse und Pilotbewertung
+FC-13B [feature] Technologie- und Architekturentscheidungen
+FC-14 [feature] Wochenübersicht und Angehörigenbeiträge
+FC-15 [feature] Besuchsankündigung und Besuchskoordination
+L3-REQ-001 [requirement, Zugang und Rechteverwaltung] Beim Hinzufügen oder Bearbeiten von Inhalten sollte die App erfassen, welcher Account den Eintrag erstellt oder geändert hat und wann dies geschehen ist.
+L3-REQ-002 [requirement, Profil-Detail und Schnellzugriff] Der Sofortinfo-Bereich in der Profil-Detailansicht muss auf maximal fünf Einträge begrenzt werden.
+L3-REQ-003 [requirement, About-Me-Profilbereich] Die App sollte Medienuploads vor dem Speichern automatisch komprimieren oder in geeignete Auflösungen umwandeln, um Speicherbedarf und Ladezeiten zu begrenzen.
+L3-REQ-004 [requirement, Medien, Datenschutz und Datenhaltung] Bei offline bearbeiteten Konfliktfällen muss eine klare Konfliktanzeige erfolgen; nichts darf stillschweigend überschrieben werden, und der Nutzer entscheidet, …
+L3-REQ-005 [requirement, Login und Einstieg] Nach dem Login sollte die App die zuletzt geöffnete Einrichtung oder den zuletzt betrachteten Bewohner optional schneller wieder zugänglich machen, sofern dies …
+L3-REQ-006 [requirement, Profilübersicht und Profilanlage] Die Profilübersicht sollte zusätzlich zur Namenssuche eine Sortierung nach Name und optional nach zuletzt aktualisiert unterstützen.
+L3-REQ-007 [requirement, Profilübersicht und Profilanlage] Für Bewohnerprofile sollte ein Status vorgesehen werden, der zwischen aktiv, archiviert und gegebenenfalls in Vorbereitung unterscheidet.
+L3-REQ-008 [requirement, Profilübersicht und Profilanlage] Beim Anlegen eines neuen Bewohnerprofils sollte geprüft werden, ob ein Profil mit gleichem oder sehr ähnlichem Namen bereits existiert, um Dubletten zu vermeide…
+L3-REQ-009 [requirement, Zugang und Rechteverwaltung] Die App sollte nach einer konfigurierbaren Zeit ohne Aktivität automatisch eine erneute Authentifizierung verlangen, insbesondere auf gemeinsam genutzten Geräte…
+L3-REQ-010 [requirement, Zugang und Rechteverwaltung] Passwörter sollten über einen geregelten Prozess durch Admins zurückgesetzt werden können; optional sollte ein sicherer Selbsthilfeprozess geprüft werden, falls…
+L3-REQ-011 [requirement, Login und Einstieg] Fehlermeldungen bei Login-Problemen sollten verständlich formuliert sein und keine unnötigen sicherheitskritischen Details über existierende Accounts preisgeben…
+L3-REQ-012 [requirement, About-Me-Profilbereich] Für Medieninhalte sollte geprüft werden, ob Untertitel, Transkripte oder kurze Textzusammenfassungen unterstützt werden können, um Zugänglichkeit und Suchbarkei…
+L3-REQ-013 [requirement, Profilübersicht und Profilanlage] Bei Benachrichtigungen und Übersichten sollte klar erkennbar sein, welche Inhalte seit dem letzten Besuch neu oder aktualisiert sind.
+L3-REQ-014 [requirement, Dokumentationsintegration und Erweiterungen] Es sollte geprüft werden, ob bestehende Informationen aus vorhandenen Akten teilweise strukturiert in die App übernommen werden können, um Doppeldokumentation z…
+L3-REQ-015 [requirement, Forschung, Anforderungsanalyse und Pilotbewertung] Für den Pilotbetrieb sollten messbare Erfolgskriterien definiert werden, etwa schnellere Auffindbarkeit relevanter Informationen oder verbesserte Verständigung …
+PBI-001 [pbi, Produktziel und Lösungsrahmen] Produktziel und Lösungsrahmen für unterstützte Kommunikation festlegen
+PBI-002 [pbi, Zugang und Rechteverwaltung] Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung ermöglichen
+PBI-003 [pbi, Zugang und Rechteverwaltung] Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung sowie Einrichtungsgrenzen in der Suche festlegen
+PBI-004 [pbi, Zugang und Rechteverwaltung] Ersteller- und Änderungsnachweis für Inhalte erfassen
+PBI-005 [pbi, Login und Einstieg] Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung bereitstellen
+PBI-006 [pbi, Login und Einstieg] Datenschutzkonformen Schnellzugriff auf zuletzt genutzten Kontext festlegen
+PBI-007 [pbi, Globale Navigation und Hilfe] Konsistente Appbar mit Basisnavigation nach dem Login bereitstellen
+PBI-008 [pbi, Globale Navigation und Hilfe] Erstlogin-Hilfe und erneut aufrufbaren Hilfebereich bereitstellen
+PBI-009 [pbi, Profilübersicht und Profilanlage] Profilübersicht mit Suche und öffnbaren Profilkarten bereitstellen
+PBI-010 [pbi, Profilübersicht und Profilanlage] Neue Bewohnerprofile mit Basisdaten und Dublettenprüfung über Nachname und Geburtsdatum anlegen
+PBI-011 [pbi, Profilübersicht und Profilanlage] Profilübersicht um Sortierung, Profilstatus, Neu-Markierungen und Dringlichkeitssortierung erweitern
+PBI-012 [pbi, Profil-Detail und Schnellzugriff] Profil-Detailansicht mit großem Profilbild, drei Sofortinfos und Bereichskacheln bereitstellen
+PBI-013 [pbi, About-Me-Profilbereich] About-Me-Seite mit persönlichen Kurzinfos anzeigen
+PBI-014 [pbi, About-Me-Profilbereich] About-Me-Foto-Timeline mit Upload und neuester Anzeige bereitstellen
+PBI-015 [pbi, About-Me-Profilbereich] Einwilligungen und Datenschutz für Bilder im About-Me-Bereich festlegen
+PBI-016 [pbi, About-Me-Profilbereich] About-Me-Neu-Markierungen und Einrichtungs-Benachrichtigungen später ausbauen
+PBI-017 [pbi, About-Me-Profilbereich] Barrierearme Medienbeschreibungen im About-Me-Bereich festlegen
+PBI-018 [pbi, Kommunikationswissen] Kommunikationsansicht mit klarer Trennung von verbal und nonverbal bereitstellen
+PBI-019 [pbi, Kommunikationswissen] Kommunikationsweisen mit Text und Bildern erfassen und erweitern
+PBI-020 [pbi, Kommunikationswissen] Beschreibungsmuster und Suchlogik für Kommunikationswissen festlegen
+PBI-021 [pbi, Kommunikationswissen] Kommunikationsvideos integriert in der Kommunikationsansicht verwalten
+PBI-022 [pbi, Kommunikationswissen] Untertitel, Transkripte oder Kurztexte für Kommunikationsmedien festlegen
+PBI-023 [pbi, No-Go-Wissen] No-Go-Seite mit kompakter, erweiterbarer Liste bereitstellen
+PBI-024 [pbi, Medien, Datenschutz und Datenhaltung] Offline-first, lokaler Cache, Verschlüsselung und Synchronisationsverhalten festlegen
+PBI-025 [pbi, Plattform und Barrierefreiheit] Plattformübergreifende mobile Nutzung mit visueller Barrierefreiheit sicherstellen
+PBI-026 [pbi, Plattform und Barrierefreiheit] Tablet-Nutzung und alternative Eingabemethoden bewerten
+PBI-027 [pbi, Dokumentationsintegration und Erweiterungen] Umfang der Dokumentationsintegration und Datenübernahme festlegen
+PBI-028 [pbi, Dokumentationsintegration und Erweiterungen] Übersicht der Medikamenten-Einnahmen für freigegebene Angehörige mit optionaler Bemerkungsanzeige als Monatsübersicht der letzten dreißig Tage bereitstellen; üb…
+PBI-029 [pbi, Forschung, Anforderungsanalyse und Pilotbewertung] Anforderungsanalyse, Vor-Ort-Forschung und Pilot-Erfolgskriterien durchführen
+PBI-030 [pbi, Technologie- und Architekturentscheidungen] Technologiestack für App, State-Management und lokale Datenbank festlegen
+PBI-031 [pbi, Profilübersicht und Profilanlage] Es muss eine serverseitige, einrichtungsgebundene Suche über Bewohnerprofile im eigenen Berechtigungsrahmen geben.
+PBI-032 [pbi, Dokumentationsintegration und Erweiterungen] Es soll eine Übergabe-Notiz pro Schicht geben, die bis zur Archivierung bearbeitet werden kann und deren letzte gültige Fassung nachvollziehbar ist
+PBI-033 [pbi, Dokumentationsintegration und Erweiterungen] Übergabe-Notizen sollen nach dreißig Tagen automatisch archiviert werden; archivierte Notizen bleiben weiterhin auffindbar
+PBI-034 [pbi, Medien, Datenschutz und Datenhaltung] Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschließl...
+PBI-035 [pbi, About-Me-Profilbereich] Die About-Me-Seite darf im MVP in ihrer aktuellen Form nicht verändert werden.
+PBI-036 [pbi, Plattform und Barrierefreiheit] Für die Planung soll aktuell von einer Mindestunterstützung ab Android 10 ausgegangen werd...
+PBI-037 [pbi, Plattform und Barrierefreiheit] Falls im Haus Geräte unter Android 10 vorhanden sind, besteht ein Risiko durch nötigen Ger...
+PBI-038 [pbi, Forschung, Anforderungsanalyse und Pilotbewertung] Zum Thema Piktogramme besteht ein noch nicht ausreichend konkretisierter Änderungswunsch; ...
+PBI-039 [pbi, Forschung, Anforderungsanalyse und Pilotbewertung] Es ist unklar, ob aus dem Hinweis auf die anstehende Übergabe eine eigenständige fachliche...
+PBI-040 [pbi, Forschung, Anforderungsanalyse und Pilotbewertung] Es ist unklar, welcher zuvor genannte Punkt aus Sicht der Angehörigen besonders wichtig is...
+PBI-041 [pbi, Dokumentationsintegration und Erweiterungen] Es ist zu klären, ob Aufgabenverfolgung oder Terminplanung als eigene organisatorische Anf...
+PBI-042 [pbi, Plattform und Barrierefreiheit] Dunkelmodus mit manuellem Schalter in den Einstellungen bereitstellen
+PBI-043 [pbi, Plattform und Barrierefreiheit] Eine einstellbare Schriftgröße ist ein Wunsch zur Unterstützung älterer Kolleginnen, mit n...
+PBI-044 [pbi, Wochenübersicht und Angehörigenbeiträge] Angehörige können eigene Fotos zu Einträgen hochladen
+PBI-045 [pbi, Dokumentationsintegration und Erweiterungen] Tages-Zusammenfassung dokumentierter Medikamenten-Gaben am Schichtende anzeigen
+PBI-046 [pbi, Besuchsankündigung und Besuchskoordination] Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen, ändern und absagen
+PBI-047 [pbi, Besuchsankündigung und Besuchskoordination] Übersicht der angekündigten Besuche der nächsten 14 Tage für Pflegende mit Kennzeichnung erledigter oder inaktiver Besuche bereitstellen
+PBI-048 [pbi, Besuchsankündigung und Besuchskoordination] Angekündigte Besuche bestätigen oder ablehnen
+PBI-049 [pbi, Besuchsankündigung und Besuchskoordination] Angehörige am Vortag per Push an bestätigte Besuche erinnern
+REQ-01 [requirement, Produktziel und Lösungsrahmen] Die angestrebte Lösung soll die Kommunikation zwischen betreuten Menschen mit Beeinträchtigungen und anderen Personen verbessern bzw. fördern; die genaue Ausges…
+REQ-02 [requirement, Produktziel und Lösungsrahmen] Die Unterstützung soll vorrangig darauf ausgerichtet sein, dass Betreuer oder andere Personen Bewohner besser verstehen können.
+REQ-03 [requirement, Produktziel und Lösungsrahmen] Als Kernansatz soll eine App Wissen über das Profil und die Kommunikationsweise einer Person bereitstellen, damit Nutzer bei Verständnisschwierigkeiten nachsehe…
+REQ-04 [requirement, Produktziel und Lösungsrahmen] Ein System, das individuell zwischen Bewohner und Betreuer in beide Richtungen übersetzt, darf nicht Teil des Lösungsansatzes sein.
+REQ-06 [requirement, Zugang und Rechteverwaltung] Es muss mindestens die Rollen Admin und User geben. Admins müssen Accounts anlegen und Rechte verwalten können; User können Inhalte hinzufügen, aber nichts lösc…
+REQ-07 [requirement, Zugang und Rechteverwaltung] Zusätzlich soll es einen Bewohner-Account geben. Dieser darf nur das eigene Profil in der Profilübersicht sehen und nur eingeschränkte Funktionen nutzen, insbes…
+REQ-08 [requirement, Zugang und Rechteverwaltung] Ob Angehörige selbst Inhalte eintragen dürfen oder nur Leserechte erhalten, muss noch geklärt werden; die Rechtefrage bleibt bis dahin offen.
+REQ-09 [requirement, Zugang und Rechteverwaltung] Mitarbeiter dürfen nicht einrichtungsübergreifend auf alle Profile zugreifen, sondern nur auf die Profile der Einrichtung, in der sie tätig sind; die technische…
+REQ-10 [requirement, Zugang und Rechteverwaltung] Die konkrete Ausgestaltung der Rechteverwaltung muss später entschieden werden.
+REQ-11 [requirement, Login und Einstieg] Der Login-Screen soll ein zentriertes, gut sichtbares Logo im oberen Drittel enthalten; ein passendes Kommunikations-Logo ist noch zu erstellen.
+REQ-12 [requirement, Login und Einstieg] Der Login-Screen soll E-Mail-Feld, Passwort-Feld und einen Login-Button enthalten; eine Registrierungsmöglichkeit darf dort nicht angeboten werden.
+REQ-13 [requirement, Profilübersicht und Profilanlage] Nach dem Login soll eine Profilübersicht angezeigt werden.
+REQ-14 [requirement, Globale Navigation und Hilfe] Nach dem Login soll auf jeder Seite eine konsistente Appbar vorhanden sein.
+REQ-15 [requirement, Globale Navigation und Hilfe] Die Appbar soll Rücknavigation sowie schnellen Zugriff auf Seitentitel, Einstellungen und Logout unterstützen; genannt sind ein nach links zeigender Pfeil links…
+REQ-16 [requirement, Profilübersicht und Profilanlage] Auf der Profilübersicht soll eine anklickbare Liste der sichtbaren Bewohnerprofile angezeigt werden; jedes Profil führt zu einer weiteren Seite mit den Daten de…
+REQ-17 [requirement, Profilübersicht und Profilanlage] Auf der Profilübersicht muss eine Suchleiste vorhanden sein, um Profile schnell nach Namen zu finden.
+REQ-18 [requirement, Profilübersicht und Profilanlage] Profile sollen in der Übersicht mit kleinem Vorschaubild, Name und kurzer Beschreibung dargestellt werden; ob dies als Liste oder als Kacheln erfolgt, muss noch…
+REQ-19 [requirement, Profil-Detail und Schnellzugriff] Die Detailansicht eines Profils soll das gewählte Profilbild größer anzeigen und die Hauptbereiche der App als interaktive Buttons anbieten; der genaue Zuschnit…
+REQ-20 [requirement, Profil-Detail und Schnellzugriff] Die App muss für jeden Bewohner eine About-Me-Seite bereitstellen, die für den ersten Eindruck der Person dient und persönliche Kurzinfos enthält, einschließlic…
+REQ-21 [requirement, About-Me-Profilbereich] Die About-Me-Ansicht muss eine Foto-Timeline mit Beschreibungen bereitstellen.
+REQ-22 [requirement, About-Me-Profilbereich] Die Foto-Timeline muss dynamisch erweiterbar sein; neue Einträge müssen über einen Plus-Button hinzugefügt werden können.
+REQ-23 [requirement, About-Me-Profilbereich] Neu hinzugefügte Bilder müssen in der About-Me-Timeline automatisch ganz oben als neueste Einträge angezeigt werden.
+REQ-24 [requirement, Profil-Detail und Schnellzugriff] Die App muss eine Kommunikationsansicht bereitstellen, die klar in verbale und nonverbale Kommunikation unterteilt ist.
+REQ-25 [requirement, Kommunikationswissen] Die Trennung zwischen verbaler und nonverbaler Kommunikation soll visuell klar erkennbar sein, unter anderem durch Kennzeichnung mit Symbolen.
+REQ-26 [requirement, Kommunikationswissen] Einträge zu Kommunikationsweisen müssen dynamisch erweiterbar sein; neue Erfahrungen müssen hinzugefügt werden können.
+REQ-27 [requirement, Kommunikationswissen] Kommunikationsweisen müssen nicht nur als Text, sondern auch mit Bildern und weiteren Darstellungsformen erfasst und angezeigt werden können.
+REQ-28 [requirement, Kommunikationswissen] Auf den Kommunikationsseiten soll eine Suchfunktion vorgesehen werden; dafür muss ein systematisches Beschreibungsmuster für die Eingabe von Kommunikationsweise…
+REQ-29 [requirement, Kommunikationswissen] Videos von Kommunikationssituationen müssen mit Beschreibungen erfasst werden können.
+REQ-30 [requirement, Kommunikationswissen] Die Videofunktionalität muss in die Kommunikationsseiten integriert sein und darf nicht als separater Screen umgesetzt werden.
+REQ-31 [requirement, Kommunikationswissen] Neue Videos sollen auf den Kommunikationsseiten per Plus-Button hinzugefügt werden können; neueste Videos sollen oben angezeigt werden.
+REQ-32 [requirement, Profil-Detail und Schnellzugriff] No-Go-Einträge müssen bewohnerbezogen geführt werden und dürfen nicht global für alle Bewohner gelten.
+REQ-33 [requirement, No-Go-Wissen] Die No-Go-Seite muss eine dynamisch erweiterbare Liste bieten, in die neue No-Gos per Plus-Button hinzugefügt werden können.
+REQ-34 [requirement, No-Go-Wissen] Die No-Go-Einträge sollen einfach zu durchforsten sein und nur die wichtigsten Informationen enthalten.
+REQ-35 [requirement, About-Me-Profilbereich] Vor der Nutzung von Bildern in der App müssen Datenschutzfragen und Einwilligungen der Angehörigen beziehungsweise Berechtigten geklärt werden; dies gilt auch f…
+REQ-36 [requirement, Medien, Datenschutz und Datenhaltung] Lokal auf dem Gerät zwischengespeicherte Bewohnerdaten und Medien müssen im Ruhezustand verschlüsselt gespeichert werden; nach Abmeldung oder Entzug der Berecht…
+REQ-37 [requirement, Plattform und Barrierefreiheit] Die App muss plattformübergreifend auf iPhone und Android laufen.
+REQ-38 [requirement, Globale Navigation und Hilfe] Bei der Gestaltung soll Barrierefreiheit berücksichtigt werden, insbesondere große Schrift, ausreichender Kontrast und zurückhaltender Farbeinsatz.
+REQ-39 [requirement, Plattform und Barrierefreiheit] Es soll evaluiert werden, ob die App zusätzlich auf Tablets nutzbar sein kann.
+REQ-40 [requirement, About-Me-Profilbereich] Wenn im About-Me-Bereich neue Inhalte hochgeladen werden, sollen verbundene Nutzer derselben Einrichtung per Popup benachrichtigt werden; dies ist als spätere m…
+REQ-41 [requirement, Zugang und Rechteverwaltung] Für die Rechte- und Accountverwaltung soll ein separater Admin-Bildschirm erwogen werden, auf dem nur Admins Accounts anlegen und Rollen vergeben können.
+REQ-42 [requirement, Dokumentationsintegration und Erweiterungen] Bei der Erfassung einer Medikamenten-Gabe sollen Pflegende optional eine kurze einnahmebezogene Bemerkung als Freitext mit maximal 200 Zeichen erfassen können. …
+REQ-43 [requirement, Plattform und Barrierefreiheit] Alternative Eingabemethoden wie Sprachbefehle sollen als mögliche spätere Accessibility-Erweiterung berücksichtigt werden.
+REQ-44 [requirement, Dokumentationsintegration und Erweiterungen] Eine Ausweitung der App auf weitere Dokumentationsfunktionen soll geprüft werden, jedoch nur in begrenztem Umfang und ohne den Fokus auf unterstützende Kommunik…
+REQ-45 [requirement, Profilübersicht und Profilanlage] In der Profilübersicht soll erwogen werden, das Anlegen neuer Profile per Plus-Symbol und Dialog für Bild, Name und Beschreibung zu ermöglichen.
+REQ-46 [requirement, Globale Navigation und Hilfe] Eine Hilfe-Funktion oder ein Tutorial soll vorgesehen werden, idealerweise als kurze Tour beim ersten Login und als später erneut aufrufbarer Hilfebereich.
+REQ-47 [requirement, Plattform und Barrierefreiheit] Animationen sollen nicht im Fokus stehen; falls sie verwendet werden, dürfen sie nicht ablenkend sein.
+REQ-48 [requirement, Dokumentationsintegration und Erweiterungen] Zu den Bewohnern existieren bereits klassische Akten und Dokumentationen, in denen Informationen, Erfahrungen und neues Wissen nach einem bestimmten Plan schrif…
+REQ-49 [requirement, Dokumentationsintegration und Erweiterungen] Es muss berücksichtigt werden, dass vorhandene Akten im Arbeitsalltag schwer nutzbar sein können, weil sie umfangreich sind und gesuchte Informationen nicht sch…
+REQ-50 [requirement, Forschung, Anforderungsanalyse und Pilotbewertung] Die genauen Bedürfnisse und Funktionen des Systems müssen durch Anforderungsanalyse mit mehreren Beteiligten und künftigen Nutzern erarbeitet werden.
+REQ-51 [requirement, Forschung, Anforderungsanalyse und Pilotbewertung] Zur Nutzerforschung müssen Vor-Ort-Termine in Einrichtungen durchgeführt werden, um reale Kommunikationssituationen und Bedürfnisse besser zu verstehen.
+REQ-52 [requirement, Produktziel und Lösungsrahmen] Kommunikation ist im Alltag zentral und das Projekt wird als Weiterentwicklungsmöglichkeit gesehen.
+REQ-53 [requirement, Technologie- und Architekturentscheidungen] Für die Entwicklung soll Flutter mit Dart verwendet werden, um die plattformübergreifende Umsetzung zu unterstützen.
+REQ-54 [requirement, Technologie- und Architekturentscheidungen] Das Paket GetX soll als technische Option berücksichtigt und in der Umsetzung erprobt werden.
+REQ-56 [requirement, No-Go-Wissen] Für die No-Go-Seite soll ein rotes Stopp-Symbol als deutliches Warnsignal ergänzt werden, damit kritische Inhalte sofort erkennbar sind.
+REQ-57 [requirement, No-Go-Wissen] No-Go-Einträge müssen nachträglich bearbeitet und gelöscht werden können.
+REQ-58 [requirement, No-Go-Wissen] Für die Anlage von No-Gos kann optional eine Vorlagen-Liste mit häufigen No-Gos angeboten werden; daraus darf jedoch nichts automatisch global gelten.
+REQ-59 [requirement, Profilübersicht und Profilanlage] Beim Anlegen eines Bewohners muss mindestens ein Sofortinfo-Eintrag verpflichtend sein.
+REQ-60 [requirement] Es muss eine Suche nach Stichworten über alle Bewohnerprofile hinweg geben.
+REQ-61 [requirement] Es soll eine Übergabe-Notiz pro Schicht geben, die der nächsten Schicht beim Öffnen der App prominent angezeigt wird.
+REQ-62 [requirement, Dokumentationsintegration und Erweiterungen] Übergabe-Notizen sollen bewohnerbezogen verlinkbar sein, sodass direkt auf das Profil eines Bewohners verwiesen werden kann.
+REQ-64 [requirement] Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschließlich wer wann welches Profil angesehen hat.
+REQ-65 [requirement, Zugang und Rechteverwaltung] Das Zugriffsprotokoll dürfen nur Admins einsehen; normale Nutzer dürfen dieses Protokoll nicht einsehen.
+REQ-66 [requirement, About-Me-Profilbereich] Die About-Me-Seite darf im MVP in ihrer aktuellen Form nicht verändert werden.
+REQ-67 [requirement, Plattform und Barrierefreiheit] Für die Planung soll aktuell von einer Mindestunterstützung ab Android 10 ausgegangen werden; die finale Festlegung muss noch mit dem Träger geklärt werden.
+REQ-68 [requirement, Plattform und Barrierefreiheit] Falls im Haus Geräte unter Android 10 vorhanden sind, besteht ein Risiko durch nötigen Geräteaustausch; dies ist vom Gerätebestand und der Abstimmung mit dem Tr…
+REQ-69 [requirement] Zum Thema Piktogramme besteht ein noch nicht ausreichend konkretisierter Änderungswunsch; vor einer Umsetzung muss präzisiert werden, was mit „größer denken“ ge…
+REQ-70 [requirement] Firebase Firestore ist als Persistenztechnologie festgelegt; Alternativen werden nicht weiter diskutiert.
+REQ-71 [requirement] Es ist unklar, ob aus dem Hinweis auf die anstehende Übergabe eine eigenständige fachliche Anforderung zur Unterstützung schneller Übergabeprozesse abgeleitet w…
+REQ-72 [requirement] Es ist unklar, welcher zuvor genannte Punkt aus Sicht der Angehörigen besonders wichtig ist und ob daraus ein eigener Claim folgt.
+REQ-73 [requirement] Es ist zu klären, ob Aufgabenverfolgung oder Terminplanung als eigene organisatorische Anforderungen an das Projekt festgehalten werden sollen.
+REQ-74 [requirement] Ein Dunkelmodus ist ein Wunsch, insbesondere für den Nachtdienst, mit niedriger Priorität und eher späterer Umsetzung.
+REQ-75 [requirement, Plattform und Barrierefreiheit] Eine einstellbare Schriftgröße ist ein Wunsch zur Unterstützung älterer Kolleginnen, mit niedriger Priorität und eher späterer Umsetzung.
+REQ-77 [requirement, Dokumentationsintegration und Erweiterungen] Die Leitung soll wöchentlich einen PDF-Export aller Übergabe-Notizen der Woche erstellen können, um sie für Träger-Berichte abzulegen.
+REQ-78 [requirement, Profilübersicht und Profilanlage] Zusätzlich zur bestehenden Sortierung nach Datum soll die Liste auch nach Dringlichkeit sortierbar sein.
+REQ-79 [requirement, Wochenübersicht und Angehörigenbeiträge] Angehörige sollen zu Einträgen eigene Fotos hochladen können; pro Eintrag sind maximal fünf Fotos zulässig, und es dürfen nur JPG- oder PNG-Formate akzeptiert w…
+REQ-80 [requirement, Dokumentationsintegration und Erweiterungen] Die Einnahmen-Übersicht für Angehörige muss als Monatsübersicht der letzten dreißig Tage bereitgestellt werden; die bisherige Wochenansicht mit sieben Tagen dar…
+REQ-81 [requirement, Dokumentationsintegration und Erweiterungen] Pflegende müssen am Ende ihrer Schicht eine Tages-Zusammenfassung aller von ihnen dokumentierten Medikamenten-Gaben sehen können, damit sie vor der Übergabe prü…
+REQ-82 [requirement, Besuchsankündigung und Besuchskoordination] Angehörige müssen Besuche bei ihrer Bezugsperson vorab in der App mit Datum und Uhrzeit ankündigen können.
+REQ-83 [requirement, Besuchsankündigung und Besuchskoordination] Pflegende der Einrichtung müssen eine Übersicht der angekündigten Besuche sehen können.
+REQ-84 [requirement] Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen. Einladungscodes geben die Einrichtun…
+REQ-85 [requirement, Dokumentationsintegration und Erweiterungen] Übergabe-Notizen werden nach dreißig Tagen automatisch archiviert; die bisherige Vierzehn-Tage-Regel gilt nicht mehr. Archivierte Notizen bleiben weiterhin auff…
+REQ-86 [requirement, Dokumentationsintegration und Erweiterungen] Pflegende müssen in der Übersicht der Medikamenten-Einnahmen überfällige, noch nicht dokumentierte Gaben deutlich rot hervorgehoben sehen.
+REQ-87 [requirement, Besuchsankündigung und Besuchskoordination] Pflegende der jeweiligen Einrichtung müssen angekündigte Besuche bestätigen oder ablehnen können; bei Ablehnung ist eine kurze Begründung Pflicht. Angehörige se…
+REQ-88 [requirement, Besuchsankündigung und Besuchskoordination] Angehörige sollen einmal am Vortag um 18 Uhr per Push-Mitteilung an ihren bestätigten Besuch erinnert werden, damit Besuche nicht vergessen werden.
+REQ-89 [requirement, Besuchsankündigung und Besuchskoordination] Die Übersicht der angekündigten Besuche soll die Besuche der nächsten 14 Tage anzeigen.
+REQ-90 [requirement, Besuchsankündigung und Besuchskoordination] Bereits erledigte oder nicht mehr aktive angekündigte Besuche sollen in der Übersicht durchgestrichen und ausgegraut dargestellt werden.
+REQ-91 [requirement, Besuchsankündigung und Besuchskoordination] Angehörige müssen eine bereits angefragte oder bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen können; nach einer Änderung muss der…
+REQ-92 [requirement, Dokumentationsintegration und Erweiterungen] Übergabe-Notizen müssen bis zur Archivierung bearbeitet werden können; bei jeder Bearbeitung ist die zuletzt gültige Fassung mit Änderungszeitpunkt und bearbeit…
+

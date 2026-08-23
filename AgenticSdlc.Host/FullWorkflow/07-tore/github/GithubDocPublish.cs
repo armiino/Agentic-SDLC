@@ -4,7 +4,7 @@ using AgenticSdlc.Host.FullWorkflow.Delta;
 namespace AgenticSdlc.Host.FullWorkflow.Tore.Github;
 
 /// <summary>
-/// Slice S Teil 1 (⚖ Autor 21.08., Bauplan `docs/aktiv/team-sichtbarkeit-slice.md`): DOC-PUBLISH —
+/// Slice S Teil 1 (⚖ Autor 21.08., Bauplan `Thesis-Docs/aktiv/team-sichtbarkeit-slice.md`): DOC-PUBLISH —
 /// die lokalen Doc-Projektionen (Anforderungsdokument, architecture.md, ADRs) als ONE-WAY-Projektion
 /// ins Team-Repo. Haus-Muster 1:1 wie Issues: deterministischer Seed (In-Sync ⇒ keine Op) →
 /// bestehendes github-forward-gate → Apply (Contents-API) → Stempel IM CORE (Kangal-gedeckt).
@@ -38,6 +38,8 @@ public static class GithubDocPublish
         // C4-Kreislauf: die Lücken-Sektion im c4 folgt dem DEC-Topf — idempotenter Section-Replace
         // (No-op ohne c4-Datei/ohne Änderung; die Diagramme bleiben unangetastet).
         C4GapSection.Ensure(repoRoot, core);
+        // Story-Map-Tafel: Kärtchen/✓-Stand/Sammelbecken folgen dem Core (gleiche Mechanik, S7/S9).
+        StoryMapSection.Ensure(repoRoot, core);
     }
 
     private static bool IsStale(string path, string fingerprint)

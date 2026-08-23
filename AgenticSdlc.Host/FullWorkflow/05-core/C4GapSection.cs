@@ -78,15 +78,9 @@ public static class C4GapSection
 
     /// <summary>Beleg-Stand aus einer c4.md lesen — null, wenn (noch) keiner gestempelt ist.</summary>
     public static IReadOnlyCollection<string>? ReadBelegStand(string content)
-    {
-        var idx = content.IndexOf(BelegStandPrefix, StringComparison.Ordinal);
-        if (idx < 0) return null;
-        var end = content.IndexOf(" -->", idx, StringComparison.Ordinal);
-        if (end < 0) return null;
-        return content[(idx + BelegStandPrefix.Length)..end]
+        => ManagedDocSection.ReadStamp(content, BelegStandPrefix)?
             .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .ToHashSet(StringComparer.Ordinal);
-    }
 
     /// <summary>Ersetzt/ergänzt die Sektion in docs/c4.md (idempotent; ohne c4-Datei ein No-op).
     /// stampBelegStand=true NUR beim Autor-Save (der Zeichner hatte den Bestand im Input — „gesehen");
@@ -97,10 +91,8 @@ public static class C4GapSection
         var path = Path.Combine(repoRoot, AuthoredDocument.Resolve("c4")!.RelPath);
         if (!File.Exists(path)) return;
         var content = File.ReadAllText(path);
-        var idx = content.IndexOf(Header, StringComparison.Ordinal);
-        var body = idx >= 0 ? content[..idx].TrimEnd() : content.TrimEnd();
         var beleg = stampBelegStand ? AktiveBelege(repoRoot, core) : ReadBelegStand(content);
-        var next = body + "\n\n" + Render(core, beleg);
+        var next = ManagedDocSection.Replace(content, Header, Render(core, beleg));
         if (!string.Equals(next, content, StringComparison.Ordinal)) File.WriteAllText(path, next);   // idempotent, kein mtime-Churn
     }
 }

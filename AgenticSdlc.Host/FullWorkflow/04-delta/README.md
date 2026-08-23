@@ -22,7 +22,7 @@ und (b) das **Zuhause der geteilten Datenmodelle**, die die ganze Kette spricht.
   · `FeaturePayload` · **`ArchitecturePayload`** (R-11: `Roles` constraint|work|design · `Rationale` ·
   `AdrId`/`AdrStatus` = A5-Projektion).
 - **Relationen** (`ProjectStateRelation`): typisierte Kanten — Endpunkt-Regeln wacht der Kangal (05-core);
-  die Semantik-Spec ist `docs/aktiv/core-relationen-konzept.md` (Spec-zuerst-Regel!).
+  die Semantik-Spec ist `Thesis-Docs/aktiv/core-relationen-konzept.md` (Spec-zuerst-Regel!).
 
 ## Verträge / Nähte
 

@@ -78,13 +78,14 @@ A = gemeinsamer FORWARD-SCHWANZ:
 | ALLE Kanten (die eine Verdrahtungs-Stelle) | `fullworkflow/PipelineFullWorkflow.cs` → `Assemble` |
 | Start/Pause/Resume/Event-Pumpe/Gate-Responder | `fullworkflow/PipelineFullRunner.cs` (Kern) + `.EventPump.cs` / `.GateResponder.cs` / `.Cli.cs` (9e-light-Neuzuschnitt 21.08., EINE partial class) + Abschnitt „Lebenslauf" unten |
 | Die Weiche | `fullworkflow`-BranchDetector (Typ-Wahl Bootstrap/Operational) |
-| Die Vier-Schritt-Halte-Figur (Maker→Checker→Halt→Apply) | `../07-tore/README.md` · kanonische Form: `docs/aktiv/done/2026-08-04/reclarify-checker-repair-plan.md` (R-33) |
+| Die Vier-Schritt-Halte-Figur (Maker→Checker→Halt→Apply) | `../07-tore/README.md` · kanonische Form: `Thesis-Docs/aktiv/done/2026-08-04/reclarify-checker-repair-plan.md` (R-33) |
 | Innenleben je Stufe | `../01-…`–`../09-…/README.md` |
 | Der C4-Kreislauf (Architektur-Lücken mit Lebenslauf: §3-Projektion, Antwort-Anker, Drei-Stufen-Garantien) | `../05-core/README.md` §„Der C4-Kreislauf" |
-| Autor-Artefakte + Doc-Publish (vision/personas/glossar/c4 → Team-Repo, Drei-Klassen-Ordnung) | `docs/aktiv/team-sichtbarkeit-slice.md` (Bauplan + GitHub-Rückfluss-Landkarte) |
+| Die drei Sichten aufs Backlog (backlog.md ↔ Issue ↔ Story Map: Jobs, Sync-Garantien, deklarierte Schwächen) + Story-Map-Tafel | `../05-core/README.md` §„Die drei Sichten" + §„Die Story-Map-Tafel" |
+| Autor-Artefakte + Doc-Publish (vision/personas/glossar/c4 → Team-Repo, Drei-Klassen-Ordnung) | `Thesis-Docs/aktiv/team-sichtbarkeit-slice.md` (Bauplan + GitHub-Rückfluss-Landkarte) |
 | Artefakt-Anatomie eines Laufs | `runs/README.md` · Route nachlesen: `runs/fullworkflow/<id>/logs/events.jsonl` |
-| MAF-Einordnung („ist das framework-gewollt?") + Belege | `docs/aktiv/maf-feature-matrix.md` |
-| Kapsel-Endbild (warum flach + eine Kapsel) | `docs/aktiv/aufgefallen.md` §9j · R-38 im E2E-RUNBOOK |
+| MAF-Einordnung („ist das framework-gewollt?") + Belege | `Thesis-Docs/aktiv/maf-feature-matrix.md` |
+| Kapsel-Endbild (warum flach + eine Kapsel) | `Thesis-Docs/aktiv/aufgefallen.md` §9j · R-38 im E2E-RUNBOOK |
 
 ## Lebenslauf eines Laufs — der Faden vom Befehl zum Knoten (Autor-Frage 21.08.)
 

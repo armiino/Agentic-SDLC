@@ -7,7 +7,7 @@
 Die Backlog-Stufe formt aus Kern-Anforderungen die ARBEITS-Struktur: **Cluster** (fachliche Gruppen →
 Features) und **PBIs** (mit Titel/Statement/AK + `RequirementIds`-Coverage). Sie ist die NACHFOLGERIN der
 alten L4-Kette (consolidation/completion/issuplanning — ersetzt 17.07., dormant archiviert; Klärung:
-`docs/aktiv/backlog-genealogie.md`). Live-State-Besonderheit: `runs/l4-re-clarify/` — der NEUESTE Run wird
+`Thesis-Docs/aktiv/backlog-genealogie.md`). Live-State-Besonderheit: `runs/l4-re-clarify/` — der NEUESTE Run wird
 als Input gelesen (nie „aufräumen").
 
 ## Form (R-33: kanonische GateLoop-Checker-Repair-Form)
