@@ -36,7 +36,7 @@ public static class C4GapSection
             .Select(r => r.FromId)
             .ToHashSet(StringComparer.Ordinal);
         bool IsTargeted(ProjectStateItem dec)
-            => targeted.Contains(dec.ItemId) || !string.IsNullOrWhiteSpace(dec.Metadata.GetValueOrDefault("targetEntityId"));
+            => targeted.Contains(dec.ItemId) || !string.IsNullOrWhiteSpace(dec.Metadata.GetValueOrDefault(DecisionTargetMeta.Key));
 
         var sb = new System.Text.StringBuilder();
         sb.AppendLine(Header).AppendLine();

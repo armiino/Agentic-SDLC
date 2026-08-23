@@ -1,3 +1,4 @@
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.FullWorkflow.Delta;
 using AgenticSdlc.Host.Run;
 using Microsoft.Extensions.AI;
@@ -66,5 +67,5 @@ internal sealed class DecisionResolverTools(ProjectStateDocument core, RunContex
     private string? TargetOf(ProjectStateItem dec)
         => core.Relations.FirstOrDefault(r => string.Equals(r.RelationType, DecisionRelations.Contradicts, StringComparison.Ordinal)
                && string.Equals(r.FromId, dec.ItemId, StringComparison.Ordinal))?.ToId
-           ?? dec.Metadata.GetValueOrDefault("targetEntityId");
+           ?? dec.Metadata.GetValueOrDefault(DecisionTargetMeta.Key);
 }

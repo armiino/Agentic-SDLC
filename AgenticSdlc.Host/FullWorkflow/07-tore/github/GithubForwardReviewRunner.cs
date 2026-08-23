@@ -9,6 +9,14 @@ public static class GithubForwardReviewRunner
 {
     private static readonly JsonSerializerOptions Json = JsonFiles.Json; // R3a: geteilte Optionen
 
+    /// <summary>Phase-1i ② (23.08.): das PAUSIERTE pipeline-full-Gate als Review-UI — gleiche Session/
+    /// Adapter wie die CLI-Bahn; die Entscheide landen als human-decisions.json in 07-github (die der
+    /// zentrale Gate-Responder liest, Zwei-Bahnen-Naht vom 17.08.), danach kettet der Runner den
+    /// pipeline-full-resume (R-43) — der Apply läuft IM Graph, execute bleibt Policy-gebunden.</summary>
+    public static Task<int> RunForPipelineRunAsync(string runId, HostSettings settings, string repoRoot)
+        => RunAsync(["github-forward-review", Path.Combine("runs", "fullworkflow", runId, "07-github"), "--interactive"],
+            settings, repoRoot);
+
     public static async Task<int> RunAsync(string[] args, HostSettings settings, string repoRoot)
     {
         if (args.Length < 2) { Console.Error.WriteLine("Usage: github-forward-review <github-forward-run|dir> [--interactive|--file] [--no-browser]"); return 2; }
@@ -36,8 +44,8 @@ public static class GithubForwardReviewRunner
         var unharvested = File.Exists(notePath)
             ? (await LoadAsync<GithubUnharvestedNote>(notePath).ConfigureAwait(false)).Text : null;
 
-        var session = GithubForwardReviewAdapter.BuildSession(runId, plan, issuesByNumber, unharvested);
-        if (session.Items.Count == 0) { Console.WriteLine("[github-forward-review] keine Operationen."); return 0; }
+        var session = GithubForwardReviewAdapter.BuildSession(runId, plan, issuesByNumber, unharvested, repoRoot);
+        if (session.Items.Count == 0) { Console.WriteLine($"[github-forward-review] {session.Subtitle}"); return 0; }
 
         var existing = File.Exists(decisionsPath) ? await LoadAsync<GithubForwardDecisionsFile>(decisionsPath).ConfigureAwait(false) : null;
         GithubForwardReviewAdapter.MergeExistingDecisions(session, existing);
@@ -62,6 +70,14 @@ public static class GithubForwardReviewRunner
         if (args.Contains("--no-apply", StringComparer.OrdinalIgnoreCase)) return 0;
         if (outcome != AgenticSdlc.HumanReview.ReviewOutcome.Finished)
         { Console.WriteLine($"[github-forward-review] nicht abgeschlossen ({outcome}) — kein Auto-Apply."); return 0; }
+        // Phase-1i ②: PIPELINE-Stufe? Dann kein Standalone-Apply (wäre Doppel-Apply am Graph vorbei) —
+        // stattdessen resume: der zentrale Responder liest human-decisions.json, der Apply läuft IM Graph
+        // mit Policy-gebundenem execute (Muster = PbiUpdateReviewRunner R-43).
+        if (PbiUpdate.PbiUpdateReviewRunner.TryGetPipelineRunId(planDir) is { } pipelineRunId)
+        {
+            Console.WriteLine($"[github-forward-review] R-43: resume {pipelineRunId} laeuft automatisch an (Graph-Apply; execute bleibt Policy-Sache) …");
+            return await FullWorkflow.Pipeline.PipelineFullRunner.RunAsync(["pipeline-full", "resume", pipelineRunId], settings, repoRoot, null).ConfigureAwait(false);
+        }
         Console.WriteLine("[github-forward-review] R-43: Apply-VORSCHAU läuft automatisch an …");
         var rc = await GithubForwardApplyRunner.ApplyFromPlanDirAsync(ResolvePlanDir(repoRoot, args[1])!, repoRoot).ConfigureAwait(false);   // K13-1: typisierte Naht (Vorschau)
         Console.WriteLine($"[github-forward-review] echter GitHub-Write bewusst separat: github-forward-apply {args[1]} --execute");

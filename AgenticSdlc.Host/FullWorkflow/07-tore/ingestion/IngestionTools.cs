@@ -111,7 +111,7 @@ internal sealed class IngestionTools(
         var rows = core.Items
             .Where(i => string.Equals(i.ItemType, "decision", StringComparison.OrdinalIgnoreCase)
                         && string.Equals(i.Status, "open_decision", StringComparison.OrdinalIgnoreCase))
-            .Select(i => new { entityId = i.ItemId, contradicts = i.Metadata.GetValueOrDefault("targetEntityId"), text = Truncate(i.Text, 240) })
+            .Select(i => new { entityId = i.ItemId, contradicts = i.Metadata.GetValueOrDefault(DecisionTargetMeta.Key), text = Truncate(i.Text, 240) })
             .ToArray();
         run.AppendEvent(new { type = "INGEST_TOOL_DECISIONS", runId = run.RunId, returned = rows.Length, timestampUtc = DateTime.UtcNow });
         return JsonSerializer.Serialize(rows, Json);
@@ -132,7 +132,7 @@ internal sealed class IngestionTools(
                 reason = Truncate(x.Proposal.Metadata.GetValueOrDefault("reason") ?? "", 200),
                 date = x.Proposal.Metadata.GetValueOrDefault("date"),
                 kind = x.Proposal.Metadata.GetValueOrDefault("kind"),
-                targetEntityId = x.Proposal.Metadata.GetValueOrDefault("targetEntityId"),
+                targetEntityId = x.Proposal.Metadata.GetValueOrDefault(DecisionTargetMeta.Key),
             })
             .ToArray();
         run.AppendEvent(new { type = "INGEST_TOOL_REJECTIONS", runId = run.RunId, query, returned = rows.Length, timestampUtc = DateTime.UtcNow });

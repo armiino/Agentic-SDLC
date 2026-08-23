@@ -257,6 +257,7 @@ public sealed class RouteAndUiCapabilityTests
 
         Assert.Contains("ledger-adjudicate-ui", StewardRunTools.UiCommandFor("adjudication-gate"));
         Assert.Null(StewardRunTools.UiCommandFor("ingest-gate"));       // hat open_gate_ui, keine Alternative nötig
-        Assert.Equal(6, StewardRunTools.SupportedUiGates.Length);       // die EINE Fähigkeits-Quelle
+        // Phase-1i ② (23.08., R-64-Ausbau): + github-forward-gate — Endbild „Chat ODER UI" an ALLEN Urteils-Gates.
+        Assert.Equal(7, StewardRunTools.SupportedUiGates.Length);       // die EINE Fähigkeits-Quelle
     }
 }

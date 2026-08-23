@@ -48,7 +48,7 @@ public static class DecisionStage
                 var target = core.Relations
                     .FirstOrDefault(r => string.Equals(r.RelationType, DecisionRelations.Contradicts, StringComparison.Ordinal)
                                          && string.Equals(r.FromId, dec.ItemId, StringComparison.Ordinal))?.ToId
-                    ?? dec.Metadata.GetValueOrDefault("targetEntityId");
+                    ?? dec.Metadata.GetValueOrDefault(DecisionTargetMeta.Key);
                 var targetText = target is not null && byId.TryGetValue(target, out var t) ? t.Text : "";
                 var blocked = core.Items
                     .Where(i => string.Equals(i.ItemType, "pbi", StringComparison.OrdinalIgnoreCase)

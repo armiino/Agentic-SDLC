@@ -37,7 +37,7 @@ public static class CoreToBaseline
             .Select(i => new CanonicalOpenDecision(
                 DecisionId: i.ItemId,
                 Text: i.Text,
-                SourceRequirementId: i.Metadata.GetValueOrDefault("targetEntityId"),
+                SourceRequirementId: i.Metadata.GetValueOrDefault(DecisionTargetMeta.Key),
                 SourceItemIds: [],
                 Reason: "ingestion contradiction"))
             .ToList();

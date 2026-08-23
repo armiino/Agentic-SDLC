@@ -35,7 +35,7 @@ public static class DecisionRequestMint
             var decId = $"DEC-{nextDec++:D3}";
             var meta = new Dictionary<string, string>(StringComparer.Ordinal)
             {
-                ["targetEntityId"] = r.RequirementId,
+                [DecisionTargetMeta.Key] = r.RequirementId,
                 ["requestReason"] = r.Question,
             };
             if (!string.IsNullOrWhiteSpace(r.PbiId)) meta["requestedFromPbi"] = r.PbiId!;

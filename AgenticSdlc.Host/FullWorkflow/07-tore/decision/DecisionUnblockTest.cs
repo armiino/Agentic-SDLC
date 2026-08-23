@@ -112,7 +112,7 @@ public static class DecisionUnblockTest
 
     private static ProjectStateItem Decision(string id, string text, string targetReq)
         => new ProjectStateItem(id, "decision", text, "test", null, 1, null, null, null, null, null, [], [],
-            new Dictionary<string, string>(StringComparer.Ordinal) { ["targetEntityId"] = targetReq }, null, [], null, null).WithStatus(CoreStatus.From(DecisionStatus.Open));
+            new Dictionary<string, string>(StringComparer.Ordinal) { [DecisionTargetMeta.Key] = targetReq }, null, [], null, null).WithStatus(CoreStatus.From(DecisionStatus.Open));
 
     private static ProjectStateItem Pbi(string id, string title, bool blocked, IReadOnlyList<string> reqs, IReadOnlyList<string> decRefs)
         => new ProjectStateItem(id, "pbi", title, "test", null, 1, null, null, null, null, null, [], [],

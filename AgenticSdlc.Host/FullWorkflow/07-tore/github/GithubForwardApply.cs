@@ -190,6 +190,8 @@ public static class GithubForwardApply
                         var newSha = await fileClient.UpsertFileAsync(repository!, docPath!, op.Body!,
                             $"docs: Projektion {docPath} (Plan {plan.PlanId})", remoteSha, ct).ConfigureAwait(false);
                         docStamps.Add((docPath!, GithubProjectionHash.Compute(op.Body!), newSha));
+                        // Doc-Diff-Quelle (Phase-1i ②): Spiegel des publizierten Inhalts im selben Akt wie der Stempel.
+                        GithubDocsMirror.Write(repoRoot, docPath!, op.Body!);
                         reportOps.Add(Op(opId, op, null, null, "doc-upserted",
                             fremd ? "remote war von Hand geändert — bewusst überschrieben (One-way-Projektion)." : null));
                         docUpserts++;

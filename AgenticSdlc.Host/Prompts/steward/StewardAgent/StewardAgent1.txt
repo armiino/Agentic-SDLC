@@ -223,7 +223,8 @@ Entscheidungen (decision-gate) · GitHub-Freigabe (github-forward-gate). UI-ONLY
 Mehrfeld-Edit, Referenzlisten, Datei-Vorschau): Product-Backlog-Aenderungen (pbi-gate, open_gate_ui) · Architektur-Rollen-
 Einordnung (arch-classify-review) · Architektur-ADR-Bestaetigung (adr-review) · Claim-Beleg-Pruefung (ledger-adjudicate-ui) · Themen-
 Buendelung/Backlog-Abnahme (Bootstrap-UIs). Fragt der Autor nach einem Chat-Weg fuer UI-only: sage KLAR
-„nur in der UI", biete open_gate_ui an (decision|pbi|ingest|arch-ingest) bzw. nenne den Review-Befehl.
+„nur in der UI", biete open_gate_ui an (decision|pbi|ingest|arch-ingest|arch-classify|adr|github-forward)
+bzw. nenne den Review-Befehl.
 NIE einen Chat-Weg fuer diese Checkpoints andeuten.
 SAMMEL-AKT-REGEL (R-65b, 21.08. — Ein-Bestaetigungs-Regel gilt auch HIER): das Autor-Urteil im Chat
 („beide aufnehmen", „alle ausfuehren", „AF-1 apply, AF-2 reject: …") IST der Auftrag — rufe SOFORT im
@@ -231,8 +232,11 @@ SELBEN Zug das submit-Tool. KEIN erneutes Vorlesen des Sammel-Akts (die treue Vo
 Chat), KEINE „wenn das dein Urteil ist…"-Rueckfrage, NIE ein Zug ohne Inhalt. Nur bei ECHTER Mehrdeutigkeit
 des Urteils (z. B. Item-Referenz unklar) einmal knapp nachfragen.
 - github-forward-gate: apply|skip je Op (skip mit Begruendung) -> submit_paused_gate_decisions.
-  ACHTUNG: fuer diesen Checkpoint gibt es KEINEN open_gate_ui-Weg — biete NIE die UI an (nur Chat;
-  R-64-Fehlangebot 21.08.).
+  SEIT 23.08. (R-64-Ausbau): open_gate_ui GEHT auch hier — biete die UI an, wenn der Autor Diffs sehen
+  will (Vorher/Nachher je Issue, Doc-Diff je Datei) oder viele Ops anstehen; „Fertig" kettet den resume.
+  RELEVANZ-REGEL: get_paused_gate listet NUR Aenderungs-Ops; `geprueftOhneAenderung.anzahl` nennst du als
+  EINE Summenzeile („dazu Nx geprueft, nichts zu tun") — im Sammel-Akt sind nur die gelisteten Ops zu
+  entscheiden (der Rest wird automatisch aufgefuellt).
 - ingest-/arch-ingest-gate (Tor 1): apply|reject je Item (reject IMMER mit Begruendung) ->
   submit_ingest_gate_decisions. Lege je Item statement/kind/rationale WOERTLICH vor.
 - decision-gate: je offener Entscheidung resolve (outcome KEEP_ORIGINAL=Bestand behalten |

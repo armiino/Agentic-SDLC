@@ -127,7 +127,7 @@ public static class IngestionApply
                     if (!byId.TryGetValue(op.TargetEntityId ?? "", out var t)) { skipped.Add($"{op.IncomingItemId}: CONTRADICT-Ziel unbekannt"); break; }
                     var id = $"DEC-{nextDec++:D3}";
                     var meta = IngestMeta(op.IncomingItemId, incoming);
-                    meta["targetEntityId"] = t.ItemId;
+                    meta[DecisionTargetMeta.Key] = t.ItemId;
                     AddItem(order, byId, new ProjectStateItem(
                         ItemId: id, ItemType: "decision", Text: $"Widerspruch zu {t.ItemId}: {statement}",
                         Origin: "INGESTION_CONTRADICTION", Stage: null, Version: 1, SourceRunId: ingestRunId,

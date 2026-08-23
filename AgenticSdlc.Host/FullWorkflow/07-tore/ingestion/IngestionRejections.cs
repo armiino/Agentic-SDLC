@@ -46,7 +46,7 @@ public static class IngestionRejections
                 ["incomingItemId"] = d.IncomingItemId,
                 ["date"] = DateTime.UtcNow.ToString("yyyy-MM-dd"),
             };
-            if (!string.IsNullOrWhiteSpace(op.TargetEntityId)) meta["targetEntityId"] = op.TargetEntityId!;
+            if (!string.IsNullOrWhiteSpace(op.TargetEntityId)) meta[DecisionTargetMeta.Key] = op.TargetEntityId!;
             if (!string.IsNullOrWhiteSpace(op.FeatureKey)) meta["featureKey"] = op.FeatureKey!;
 
             proposals.Add(new ProjectStateProposal(id, ProposalType, "rejected", SourceRunId: plan.PlanId, PayloadPath: planPath, Metadata: meta));

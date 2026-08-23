@@ -156,8 +156,9 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             + "SOFORT mit runId zurueck; pausiert an den Human-Gates (get_run_status / resume_run). Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(OpenGateUiAsync, "open_gate_ui",
             "3b: oeffnet auf Autor-Ja die REVIEW-UI zum PAUSIERTEN Graph-Gate eines Laufs (decision-gate | "
-            + "pbi-gate | ingest-/arch-ingest-gate). 'Fertig' in der UI kettet automatisch den resume "
-            + "(Folgestufen inkl. LLM). Braucht Autor-Zustimmung.")),
+            + "pbi-gate | ingest-/arch-ingest-gate | arch-classify-/adr-gate | github-forward-gate). "
+            + "'Fertig' in der UI kettet automatisch den resume (Folgestufen inkl. LLM; beim forward-gate "
+            + "bleibt der GitHub-Write execute-Policy-gebunden). Braucht Autor-Zustimmung.")),
         new ApprovalRequiredAIFunction(AIFunctionFactory.Create(OpenReviewUiAsync, "open_review_ui",
             "Oeffnet auf Autor-Ja das REVIEW zu einem wartenden Registry-Eintrag (proposalId aus "
             + "get_core_overview.openDecisions.pendingReviews) — der Autor entscheidet am Gate, nie du. Braucht Autor-Zustimmung.")),
@@ -380,7 +381,7 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
     /// <summary>1b-Rest (18.08., Block-E-Fund „Fehlangebot"): EINE Fähigkeits-Quelle — angeboten wird nur, was geht.
     /// 1g-C (19.08., 9k(c)-Durchstich): classify + adr sind jetzt steward-bedienbar — kein Fremd-Terminal mehr.</summary>
     internal static readonly string[] SupportedUiGates =
-        ["decision-gate", "pbi-gate", "ingest-gate", "arch-ingest-gate", "arch-classify-gate", "adr-gate"];
+        ["decision-gate", "pbi-gate", "ingest-gate", "arch-ingest-gate", "arch-classify-gate", "adr-gate", "github-forward-gate"];
 
     /// <summary>Für UI-only-Checkpoints ohne open_gate_ui: der korrekte Standalone-Befehl je Gate
     /// (nur noch die Bootstrap-/Adjudikations-UIs — 9k(c) hob classify/adr in die Fähigkeitsliste).</summary>
@@ -408,6 +409,9 @@ public sealed class StewardRunTools(string repoRoot, HostSettings settings,
             "arch-ingest-gate" => ("ingest-review", () => FullWorkflow.Core.IngestionReviewRunner.RunForPipelineRunAsync(runId, "07-arch-ingest", settings, repoRoot)),
             "arch-classify-gate" => ("arch-classify-review", () => FullWorkflow.ArchClassify.ArchClassifyReviewRunner.RunAsync(["arch-classify-review", runId], settings, repoRoot)),
             "adr-gate" => ("adr-review", (Func<Task<int>>)(() => FullWorkflow.Adr.AdrReviewRunner.RunAsync(["adr-review", runId], settings, repoRoot))),
+            // Phase-1i ② (23.08., R-64-Ausbau): das letzte Urteils-Gate bekommt die UI — Endbild „Chat ODER UI"
+            // an ALLEN Urteils-Gates; der Runner schreibt human-decisions.json (Responder-Naht) + kettet resume.
+            "github-forward-gate" => ("github-forward-review", () => FullWorkflow.Tore.Github.GithubForwardReviewRunner.RunForPipelineRunAsync(runId, settings, repoRoot)),
             _ => null,
         };
         if (ui is null)

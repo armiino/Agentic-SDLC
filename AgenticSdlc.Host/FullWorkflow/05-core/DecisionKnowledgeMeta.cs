@@ -50,3 +50,11 @@ public static class DecisionAnswerMeta
         => core.Items.Any(i => string.Equals(Of(i), decisionId, StringComparison.OrdinalIgnoreCase)
                                && i.ReadStatus().Validity == Validity.Active);
 }
+
+/// <summary>Ziel-Anker einer DEC (Widerspruchs-/Ziel-Semantik der Derivation): auf WELCHES Wahrheits-Item
+/// sich die Entscheidung bezieht. Kleinvieh-Hygiene 23.08.: vorher als Magic-String an ~10 Lese-/Schreib-
+/// Stellen — jetzt EINE Quelle (die JSON-Vertrags-Attribute in den Modellen bleiben bewusst Literale).</summary>
+public static class DecisionTargetMeta
+{
+    public const string Key = "targetEntityId";
+}

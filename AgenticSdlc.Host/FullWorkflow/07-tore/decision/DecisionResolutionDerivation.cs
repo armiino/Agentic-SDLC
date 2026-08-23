@@ -1,3 +1,4 @@
+using AgenticSdlc.Host.FullWorkflow.Core;
 using AgenticSdlc.Host.FullWorkflow.Delta;
 
 namespace AgenticSdlc.Host.FullWorkflow.Decision;
@@ -25,7 +26,7 @@ public static class DecisionResolutionDerivation
             var targetReq = core.Relations
                 .FirstOrDefault(rel => string.Equals(rel.RelationType, DecisionRelations.Contradicts, StringComparison.Ordinal)
                     && string.Equals(rel.FromId, r.DecisionId, StringComparison.Ordinal))?.ToId
-                ?? dec.Metadata.GetValueOrDefault("targetEntityId");
+                ?? dec.Metadata.GetValueOrDefault(DecisionTargetMeta.Key);
             // 9g: ziellose DECs (Meeting-Fragen) sind mit KEEP aufloesbar ("geklaert/erledigt", keine Mutation);
             // ADOPT/REFINE brauchen weiterhin zwingend ein Ziel — ohne Ziel gibt es nichts abzuloesen/verfeinern.
             if (targetReq is not null && !byId.ContainsKey(targetReq)) targetReq = null;

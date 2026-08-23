@@ -251,8 +251,17 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
         // aus dem sync-delta der pbi-update-Stufe (Statement/AK/Rahmen je PBI), damit der Autor SIEHT, was sich aendert.
         var syncByPbi = await LoadSyncDeltaByPbiAsync(runId).ConfigureAwait(false);
         using var doc = JsonDocument.Parse(await File.ReadAllTextAsync(planPath).ConfigureAwait(false));
-        var ops = doc.RootElement.GetProperty("operations").EnumerateArray().Select((op, i) =>
+        // Relevanz-Anzeige (Autor-Punkt 23.08., E0.9): NO_CHANGE = Prüf-Urteil ohne Handlung — als SUMME,
+        // nicht als 40 Listen-Zeilen; entschieden werden muss nur, was etwas TUT (Submit füllt den Rest auf).
+        var alle = doc.RootElement.GetProperty("operations").EnumerateArray().ToList();
+        var unveraendert = alle.Select((op, i) => (op, i))
+            .Where(x => x.op.TryGetProperty("kind", out var k) && k.GetString() == "NO_CHANGE")
+            .Select(x => $"op-{x.i}").ToList();
+        var ops = doc.RootElement.GetProperty("operations").EnumerateArray().Select((op, i) => (op, i))
+            .Where(x => !(x.op.TryGetProperty("kind", out var k) && k.GetString() == "NO_CHANGE"))
+            .Select(x =>
         {
+            var (op, i) = x;
             var pbiId = op.GetProperty("pbiId").GetString();
             JsonElement? entry = pbiId is not null && syncByPbi.TryGetValue(pbiId, out var e) ? e : null;
             return new
@@ -273,9 +282,12 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             };
         }).ToList();
         return JsonSerializer.Serialize(new { runId, gate = SupportedGraphGate, warnung, ops,
+            geprueftOhneAenderung = new { anzahl = unveraendert.Count,
+                hinweis = unveraendert.Count == 0 ? null : "in sync — dem Autor NUR als EINE Summenzeile nennen, nie einzeln listen; im Submit automatisch aufgefuellt" },
             optionen = StewardGateVocabulary.ForForward(),
-            hinweis = "Je Op steht unter `inhalt` der VOLLE Inhalt (Titel + Statement + Akzeptanzkriterien + Rahmen), der ans Issue geschrieben wuerde — "
-                    + "lies ihn dem Autor vor. Vorher/Nachher gegen den aktuellen Issue-Stand: open_gate_ui. Lege die `optionen` mit GENAU diesen Labels vor (Code in Klammern); GitHub-WRITE erst beim resume + NUR mit execute-Policy."
+            hinweis = "Gelistet sind NUR die AENDERUNGS-Ops (Relevanz-Regel E0.9) — `geprueftOhneAenderung.anzahl` als eine Summenzeile dazu. "
+                    + "Je Op steht unter `inhalt` der VOLLE Inhalt (Titel + Statement + Akzeptanzkriterien + Rahmen), der ans Issue geschrieben wuerde — "
+                    + "lies ihn dem Autor vor. Vorher/Nachher + Doc-Diff: open_gate_ui. Lege die `optionen` mit GENAU diesen Labels vor (Code in Klammern); im Sammel-Akt sind NUR die gelisteten Ops zu entscheiden. GitHub-WRITE erst beim resume + NUR mit execute-Policy."
                     + (warnung is null ? "" : " ⚠ `warnung` DEM AUTOR VORLESEN: drueben liegt ungeerntete Arbeit — Sequenz anbieten: betroffene Ops skippen -> Ernte (run_pipeline_from_github) -> Rest via run_reproject.") }, Json);
     }
 
@@ -313,6 +325,12 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
         var flagDriftOpIds = Enumerable.Range(0, ops.GetArrayLength())
             .Where(i => ops[i].TryGetProperty("kind", out var k) && k.GetString() == "FLAG_DRIFT")
             .Select(i => $"op-{i}").ToHashSet(StringComparer.Ordinal);
+        // Relevanz-Regel (23.08.): NO_CHANGE braucht kein Autor-Urteil — der Sammel-Akt gilt über die
+        // AENDERUNGS-Ops; fehlende NO_CHANGE-Entscheide werden deterministisch als apply aufgefuellt
+        // (Apply einer NO_CHANGE-Op schreibt nichts — R-67-Semantik).
+        var noChangeOpIds = Enumerable.Range(0, ops.GetArrayLength())
+            .Where(i => ops[i].TryGetProperty("kind", out var k) && k.GetString() == "NO_CHANGE")
+            .Select(i => $"op-{i}").ToHashSet(StringComparer.Ordinal);
 
         var errors = new List<string>();
         foreach (var d in decisions)
@@ -332,11 +350,15 @@ public sealed class StewardGateTools(string repoRoot, Func<string, Task<int>>? a
             if (string.Equals(d.Decision, "skip", StringComparison.OrdinalIgnoreCase) && string.IsNullOrWhiteSpace(d.Reason))
                 errors.Add($"{d.OpId}: skip OHNE Begruendung (P2a) — Autor nach dem Grund fragen.");
         }
-        foreach (var missing in validOpIds.Except(decisions.Select(d => d.OpId), StringComparer.Ordinal))
-            errors.Add($"{missing}: KEINE Entscheidung — vollstaendiger Sammel-Akt; Vertagen = nicht submitten (Lauf bleibt pausiert).");
+        foreach (var missing in validOpIds.Except(decisions.Select(d => d.OpId), StringComparer.Ordinal)
+                     .Where(id => !noChangeOpIds.Contains(id)))
+            errors.Add($"{missing}: KEINE Entscheidung — vollstaendiger Sammel-Akt ueber die AENDERUNGS-Ops; Vertagen = nicht submitten (Lauf bleibt pausiert).");
         if (errors.Count > 0) return JsonSerializer.Serialize(new { error = "DECISIONS_INVALID", details = errors }, Json);
 
-        var file = new GithubForwardDecisionsFile(runId, "author via steward-chat", decisions);
+        var aufgefuellt = noChangeOpIds.Except(decisions.Select(d => d.OpId), StringComparer.Ordinal)
+            .Select(id => new GithubForwardDecision(id, "apply", "NO_CHANGE — automatisch (kein Urteil noetig, Apply schreibt nichts)"))
+            .ToList();
+        var file = new GithubForwardDecisionsFile(runId, "author via steward-chat", [.. decisions, .. aufgefuellt]);
         await File.WriteAllTextAsync(Path.Combine(dir, "github-forward-decisions.json"),
             JsonSerializer.Serialize(file, Json)).ConfigureAwait(false);
         return await SavedThenChainAsync(runId, new { saved = true, runId,

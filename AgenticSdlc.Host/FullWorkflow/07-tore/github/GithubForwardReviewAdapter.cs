@@ -24,16 +24,24 @@ public static class GithubForwardReviewAdapter
     public static ReviewSession BuildSession(string runId, GithubForwardPlanDocument plan,
         IReadOnlyDictionary<int, GithubIssueSnapshot>? issuesByNumber = null,
         // 13.08.: Warn-Note „ungeerntete GitHub-Arbeit" (unharvested-note.json des Laufs) — im Untertitel sichtbar.
-        string? unharvestedWarnung = null)
+        string? unharvestedWarnung = null,
+        // Phase-1i ② (23.08.): repoRoot für den Doc-Diff (Spiegel des publizierten Stands) — optional, alte Aufrufer unverändert.
+        string? repoRoot = null)
     {
-        var items = plan.Operations.Select((op, i) => BuildItem($"op-{i}", i, op, issuesByNumber)).ToList();
+        // Relevanz-Anzeige (Autor-Punkt 23.08., E0.9): NO_CHANGE ist ein Prüf-Urteil, keine Handlung —
+        // gelistet werden nur Änderungs-Ops (op-Ids bleiben Plan-Indizes!), die Prüf-Bilanz steht als Summe.
+        var noChange = plan.Operations.Count(o => o.Kind == GithubForwardKind.NoChange);
+        var items = plan.Operations.Select((op, i) => (op, i))
+            .Where(x => x.op.Kind != GithubForwardKind.NoChange)
+            .Select(x => BuildItem($"op-{x.i}", x.i, x.op, issuesByNumber, repoRoot)).ToList();
         return new ReviewSession
         {
             SessionId = $"github-forward-{runId}",
             Title = "PBIs nach GitHub spiegeln",
-            Subtitle = (plan.Operations.Count == 0
-                ? "Keine Operationen."
-                : $"{plan.Operations.Count} Operationen — je Op: ausführen oder überspringen. Nach GitHub geschrieben wird erst im gesicherten Apply-Schritt.")
+            Subtitle = (items.Count == 0
+                ? (noChange == 0 ? "Keine Operationen." : $"Alles in sync — {noChange}× geprüft, keine Änderung nötig.")
+                : $"{items.Count} Änderungs-Operation(en) — je Op: ausführen oder überspringen. Nach GitHub geschrieben wird erst im gesicherten Apply-Schritt."
+                  + (noChange > 0 ? $" Dazu {noChange}× geprüft ohne Änderungsbedarf (nicht gelistet)." : ""))
                 + (unharvestedWarnung is null ? "" : $" ⚠ {unharvestedWarnung}"),
             Help = BuildHelp(),
             Notes = SessionNotes(),
@@ -156,7 +164,7 @@ public static class GithubForwardReviewAdapter
     ];
 
     private static ReviewItem BuildItem(string opId, int idx, GithubForwardOp op,
-        IReadOnlyDictionary<int, GithubIssueSnapshot>? issuesByNumber)
+        IReadOnlyDictionary<int, GithubIssueSnapshot>? issuesByNumber, string? repoRoot = null)
     {
         GithubIssueSnapshot? issue = null;
         if (op.TargetIssueNumber is int nr && issuesByNumber is not null) issuesByNumber.TryGetValue(nr, out issue);
@@ -183,6 +191,12 @@ public static class GithubForwardReviewAdapter
             new(ReviewNoteKind.Info, "Wirkung", KindEffect(op.Kind)),
             new(ReviewNoteKind.Reason, "Begründung", op.Rationale)
         };
+        // Phase-1i ② Doc-Diff (23.08.): bei UPSERT_FILE zählt die ÄNDERUNG — Versions-Sprung + Sektions-Diff
+        // gegen den lokalen Spiegel des zuletzt publizierten Stands (GithubDocsMirror); ohne Spiegel ehrlich gesagt.
+        if (op.Kind == GithubForwardKind.UpsertFile && op.Body is not null)
+            notes.Add(new ReviewNote(ReviewNoteKind.Info, "Doc-Diff (publiziert → neu)",
+                GithubDocsMirror.DiffSummary(
+                    repoRoot is null || op.Title is null ? null : GithubDocsMirror.Read(repoRoot, op.Title), op.Body)));
         // E0.2a: bei UPDATE zaehlt die AENDERUNG — Diff statt zweier Volltexte (Autor-Nachschärfung:
         // „ich sehe nicht, welche Aenderung greifen soll"). Volltexte bleiben in den Drilldowns.
         if (op.Kind == GithubForwardKind.UpdateIssue)
