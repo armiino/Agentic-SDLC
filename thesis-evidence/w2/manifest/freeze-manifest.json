@@ -1,10 +1,11 @@
 {
   "zweck": "Freeze-Manifest gemäß Schreibblaupause §7.2 — EINZIGE Quelle für Versions-/Mengenangaben in Kapitel 7",
-  "stand": "2026-09-06 — Status: VORLÄUFIG (Autor friert selbst ein; kein Commit durch Assistent)",
+  "stand": "2026-09-17 — Status: FINAL (technisches Einfrieren durch den Autor)",
   "repository": {
-    "commit": "c7e7fcd1bb22787232557be643a96510358e337c",
-    "tagBeschreibung": "v-s9-maf-native-hitl-56-gc7e7fcd1",
-    "hinweis": "Arbeitsstand NACH Commit enthält die W2-Mess-Infrastruktur (10-armf, ledger-capture, Eval-Skripte) — finalen Freeze-Commit/Tag setzt der Autor"
+    "commit": "2d2f48d5",
+    "tag": "v-s10-abgabe",
+    "branch": "main (Merge aus feature/steward, fast-forward)",
+    "hinweis": "Freeze-Commit umfasst Code, Tests, Belege (thesis-evidence vollständig), Gold-Labels und Doku. Dieses Manifest wurde als dokumentierter Folge-Commit finalisiert (siehe aenderungenNachFreeze)."
   },
   "umgebung": {
     "dotnetSdk": "10.0.103",
@@ -34,12 +35,13 @@
       "zweitannotation-fenster-meeting-2-extended.json": "590bd3f75f9d171a352f62e0a888bc465959153ea2803e9924839d850111d305"
     },
     "goldSha256": {
-      "Interview": "515abb47590cab1782eb95390fcc8db2ab87d736ac49bcb2e26b9119b46762f6",
-      "meeting2": "54d5333722f0b78b7ec0ecfb2ed0cc2f6db0a1eb88004d9d765b0791a7f46a3f"
+      "Interview": "665a84ac80244f6b234083613ffc1ba95d101d9ea3251e130b8b1311ff11429a",
+      "meeting2": "73c1c27b5753f6ef18d890e2f39019899dfcd4df3b20f5a7f6a9f98770e677bc",
+      "hinweis": "Stand nach den dokumentierten Gold-v2-Revisionen (bis 16.09.); Vorwerte vom 06.09. siehe Manifest-Historie/aenderungenNachFreeze. Übrige sechs Checksums unverändert gegen 06.09. verifiziert."
     }
   },
   "systemzahlen": {
-    "tests": "668 (dokumentierter Stand 23.08., am 06.09. nicht neu gezählt — vor Freeze einmal voll laufen lassen); W2-Beleg-Teilmenge: 21 Wächter-/Challenge-Tests grün am 06.09. (s. fehlerklassen-matrix.md)",
+    "tests": "701/701 grün (Freeze-Stand, am 17.09. mehrfach verifiziert; Smoke-Netz 14/14)",
     "coreItems": {
       "gesamt": 237,
       "architecture": 50,
@@ -51,7 +53,7 @@
     "relationen": 515,
     "humanGates": 10,
     "githubIssuesE2E": 39,
-    "coreSnapshots": 277
+    "coreSnapshots": "283 (lokal, Stand 17.09.; state/core/history ist nicht versioniert)"
   },
   "laufManifeste": {
     "kernvergleich": "runs/w2-official-manifest.txt",
@@ -70,5 +72,12 @@
   },
   "wiederholungsPolitik": "N=1 je Zelle vollständig adjudiziert (dokumentierte Protokollabweichung von N=3); F-Fehlläufe je 1× wiederholt; Pilot-N=3-Rohläufe vorhanden",
   "preisgrundlage": "OFFEN — €-Schätzung erst nach Autor-Angabe der OpenRouter-Preisbasis (Datum+Preistabelle); bis dahin nur Token-Zahlen",
-  "zulaessigeAenderungenNachFreeze": "nur dokumentierte Fehlerkorrekturen mit Manifest-Eintrag (Vorbild: Korrektur-Einträge im w2-official-manifest)"
+  "zulaessigeAenderungenNachFreeze": "nur dokumentierte Fehlerkorrekturen mit Manifest-Eintrag (Vorbild: Korrektur-Einträge im w2-official-manifest)",
+  "aenderungenNachFreeze": [
+    {
+      "datum": "2026-09-17",
+      "art": "Manifest-Finalisierung (Folge-Commit)",
+      "inhalt": "repository auf Freeze-Commit 2d2f48d5/Tag v-s10-abgabe gesetzt; tests 668→701 (voll gelaufen); coreSnapshots 277→283; goldSha256 auf den revidierten Gold-v2-Stand aktualisiert (2 von 8 Prüfsummen geändert, Revisionen in D.8/D.14 dokumentiert). Keine Code-/Beleg-Änderung."
+    }
+  ]
 }
