@@ -1,0 +1,52 @@
+[github-snapshot] provider=api issues=45 open=45 closed=0
+[github-snapshot] -> runs/fullworkflow/20260820_173141_6e75fa/00-github-inbound/snapshot/github-issues-snapshot.json
+[github-snapshot] Danach: github-reconciliation agent ... --issues <snapshot>
+[github-snapshot] comments=11 issues=4
+[github-snapshot] -> runs/fullworkflow/20260820_173141_6e75fa/00-github-inbound/snapshot/issue-comments.json
+[github-inbound] issues=45 unchanged=44 drift=0 neu=0 nic=1 unstamped=0 skipped=0
+[github-inbound] kommentare=11 neue-kommentar-funde=2 (Anker-gefiltert)
+[github-inbound] drafts=1 -> delta-items=1 · kommentar-destillate=2 · noise=1 (nur Report)
+[pipeline-full] run runId=20260820_173141_6e75fa slice=u2 (EIN Graph: front->branch->bootstrap|betrieb->forward) ledgerModel=openai/gpt-5.4 baselineModel=openai/gpt-5.4 adjudication=Interactive execute=True
+[pipeline-full] Einstieg: DELTA
+[pipeline-full] Verzweigung: mode=Auto coreExists=True -> Betriebs-Zweig
+[pipeline-full] Betriebs-Zweig: Ingest -> [ingest-gate] -> Apply -> Bridge -> PbiUpdate -> [pbi-gate] -> Apply (Core: 225 items)
+[pipeline-full] Gate 'ingest-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'ingest-gate'. checkpointId=523f2d186cbc40be9ff011579783dc86
+  Entscheid beim Resume: --accept-all | --accept id1,id2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260820_173141_6e75fa   (oder: … resume 20260820_173141_6e75fa --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260820_173141_6e75fa/  (PAUSIERT)
+[pipeline-full] resume runId=20260820_173141_6e75fa gate=ingest-gate checkpointId=523f2d186cbc40be9ff011579783dc86
+[pipeline-full] 5 offene Entscheidung(en) im Core -> decision-gate (Tor 2).
+[pipeline-full] Gate 'decision-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'decision-gate'. checkpointId=d2ead6afb5a04db39b11f2e0d094af26
+  Review-UI: decision-gate-review runs/fullworkflow/20260820_173141_6e75fa/07-decision  → decision-gate-decisions.json (Ausgang je Widerspruch, vertagen erlaubt)
+  Flags/accept-all koennen hier NICHT aufloesen (Wahrheits-Konflikt) — sie vertagen alles (laut).
+[pipeline-full] Fortsetzen: pipeline-full resume 20260820_173141_6e75fa   (oder: … resume 20260820_173141_6e75fa --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260820_173141_6e75fa/  (erneut PAUSIERT — nächstes Gate)
+[pipeline-full] resume runId=20260820_173141_6e75fa gate=decision-gate checkpointId=d2ead6afb5a04db39b11f2e0d094af26
+[pipeline-full] decision-gate: alle 5 Entscheidung(en) vertagt — DECs parken sichtbar weiter.
+[pipeline-full] Gate 'pbi-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'pbi-gate'. checkpointId=006561c003034882b3a88a0d94639ee0
+  Entscheid beim Resume: --accept-all | --accept id1,id2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260820_173141_6e75fa   (oder: … resume 20260820_173141_6e75fa --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260820_173141_6e75fa/  (erneut PAUSIERT — nächstes Gate)
+[review-ui] starte lokalen Review-Server...
+[review-ui] binde lokalen Port...
+[review-ui] 1 Items — offen unter: http://127.0.0.1:60391
+[pbi-update-review] Finished - 1/1 -> human-decisions.json
+[pbi-update-review] R-43: resume 20260820_173141_6e75fa laeuft automatisch an (Graph-Apply; Folgestufen inkl. LLM) …
+[pipeline-full] resume runId=20260820_173141_6e75fa gate=pbi-gate checkpointId=006561c003034882b3a88a0d94639ee0
+[pipeline-full] pbi-update applied newPbis=0 updatedPbis=1
+[pipeline-full] Snapshot (R-16): 45 Issues von armiino/Agentic-GitHub-refactor geholt (read-only, kein Write).
+[pipeline-full] Forward (DRY-RUN=False): 1 PBI-Ops -> GitHub-Plan (realer Write nur bei execute=true)
+[pipeline-full] Gate 'github-forward-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'github-forward-gate'. checkpointId=4526dcf1ac4846ff80df53ad91aa6b26
+  Review-UI: github-forward-review runs/fullworkflow/20260820_173141_6e75fa/07-github  (→ human-decisions.json)
+  oder Steward decide_gate (→ github-forward-decisions.json) — beide liest der resume
+  oder beim Resume: --accept-all | --accept opId1,opId2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260820_173141_6e75fa   (oder: … resume 20260820_173141_6e75fa --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260820_173141_6e75fa/  (erneut PAUSIERT — nächstes Gate)
+[pipeline-full] resume runId=20260820_173141_6e75fa gate=github-forward-gate checkpointId=4526dcf1ac4846ff80df53ad91aa6b26
+[pipeline-full] PIPELINE FERTIG (Forward): dryRun=False executed=True success=True.
+[pipeline-full] metrics.json geschrieben (6 Stufen).
+[pipeline-full] Faden: runs/fullworkflow/20260820_173141_6e75fa/  exit=0

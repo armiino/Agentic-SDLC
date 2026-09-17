@@ -1,0 +1,53 @@
+% M10, 11.09.2026: Leserführung, Kapiteltrennung und belegte Reichweite.
+% Resume: runs/fullworkflow/20260805_144056_dc711f; Ledger c939cd.
+% Pause d2860ea5bd56415698b6d3d951acef32: Checkpoint-Index Position 13, stepNumber 12.
+% Ereignisse STAGE_LEDGER_DONE -> PIPELINE_PAUSED -> PIPELINE_RESUME -> RUN_DONE; keine PIDs.
+% Core-Rücksetzung: iteration-notes-ledger-kapsel.md, 05.08.; narrativer Beleg.
+% Smoke tools/smoke-hitl.sh: je ein Resume in decision / pipeline-full, 14 Prüfungen.
+% F2/F5b aus 7.5 unverändert übernommen; keine neuen Versuche oder Messergebnisse.
+
+\section{Wiederaufnahme und agentische Bedienung}
+\label{sec:eval-resume}
+
+Die Anforderungen A9 (Durabilität) und A10 (kontrollierte agentische
+Bedienung) werden durch eine Wiederaufnahme-Demonstration, technische
+Prüfungen und zwei dokumentierte Steward-Aufgaben adressiert. Diese
+Belege untersuchen unterschiedliche Ausschnitte des Architekturanspruchs.
+
+\textbf{Wiederaufnahme.} Im dokumentierten Pipeline-Lauf war die
+Ledger-Stufe bereits abgeschlossen, als der Lauf am Adjudikations-Gate
+pausierte. Bis zu dieser Pause waren 13 Checkpoints des Elternlaufs
+gespeichert. Die Ereigniskette zeigt die Wiederaufnahme desselben
+Checkpoints, die Weiterverwendung der Zuordnung zum abgeschlossenen
+Ledger-Teillauf und den anschließenden regulären Abschluss. Eine erneute
+Ledger-Ausführung ist dabei nicht verzeichnet. Belegt ist damit dieser
+Fortsetzungsfall, nicht die Wiederaufnahme innerhalb einer noch laufenden
+Ledger-Verarbeitung. Die Ereignisse weisen keine Prozessidentitäten aus;
+der gesonderte technische Nachweis der Prozessgrenze folgt unten.
+Außenwirkungen waren in der Demonstration deaktiviert. Die
+Entwicklungsnotiz berichtet die anschließende bytegleiche
+Wiederherstellung des zuvor gesicherten Core. Diese Rücksetzung ist
+kein Vergleich mit dem Ergebnis einer ununterbrochenen
+Referenzausführung; ein solcher Vergleich wurde nicht durchgeführt.
+
+Der deterministische \emph{Prozessgrenzen-Smoke-Test} umfasst
+14 Prüfungen. Er startet unter anderem einen Entscheidungsworkflow
+und die Gesamtkette über den Delta-Eingang bis zu einer Gate-Pause
+und setzt beide jeweils einmal durch einen neuen CLI-Prozess fort.
+Die Rücksetzung des Testzustands ist eine davon getrennte
+Prüfhandlung, keine Leistung der Workflow-Checkpoints.
+Der Test sichert die bezeichnete Mechanik ab; er prüft weder die
+fachliche Ergebnisqualität noch die vollständige Transkriptverarbeitung.
+Stände und Belegzuordnung stehen in Anhang~\ref{anh:evaluation}.
+
+\textbf{Agentische Bedienung (Steward).} Zwei bereits in
+Abschnitt~\ref{sec:eval-fortschreibung} belegte Aufgaben zeigen den
+Steward über den regulären Gates und zählen nicht als zusätzliche
+unabhängige Versuche: In Fall F2 wurde ein frei diktierter
+Präzisierungswunsch als Eingangs-Delta gefasst, am Ingest-Gate
+vorgelegt und nach Freigabe als Fortschreibung wirksam. In Fall F5b
+führte ein Steward-Werkzeug externe GitHub-Kommentare in denselben
+Gate-Weg. In beiden Aufgaben wählte der Agent das vorgesehene
+Werkzeug; die betrachteten fachlichen Core-Änderungen erfolgten nach
+Freigabe über den regulären Anwendungspfad. Eine Usability- oder
+Produktivitätsstudie der Bedienschicht fand nicht statt.

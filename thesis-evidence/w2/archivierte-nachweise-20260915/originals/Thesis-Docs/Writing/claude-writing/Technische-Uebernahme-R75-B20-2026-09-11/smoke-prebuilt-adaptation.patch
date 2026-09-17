@@ -1,0 +1,17 @@
+--- tools/smoke-hitl.sh
++++ tools/smoke-hitl-prebuilt.sh
+@@ -24,7 +24,13 @@
+ 
+ mkdir -p "$FIX"
+ echo "== BUILD =="
+-if dotnet build "$HOST" --no-restore >/dev/null 2>&1; then ok "build gruen"; else bad "build"; echo "ABBRUCH"; exit 1; fi
++if python3 - <<'VERIFY_BUILD'
++from pathlib import Path
++import json, hashlib
++for name, expected in json.loads(Path('../built-binaries.json').read_text()).items():
++    assert hashlib.sha256(Path(name).read_bytes()).hexdigest()==expected, name
++VERIFY_BUILD
++then ok "vorheriger erfolgreicher Build: Binaerdateien hashgleich (kein Neubuild)"; else bad "Build-Stand"; exit 1; fi
+ 
+ [ -f "$CORE" ] || { echo "Core fehlt: $CORE"; exit 2; }
+ cp "$CORE" "$BACKUP"; I0=$(items); echo "== Core-Baseline: $I0 items =="

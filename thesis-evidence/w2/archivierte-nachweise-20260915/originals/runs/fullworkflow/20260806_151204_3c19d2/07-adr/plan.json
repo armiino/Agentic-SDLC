@@ -1,0 +1,215 @@
+{
+  "lane": "operational",
+  "drafts": [
+    {
+      "itemId": "ARCH-01",
+      "title": "Mobile-Only-App ohne Web-Client",
+      "context": "Die Loesung ist als digitale App zur Foerderung der Kommunikation zwischen betreuten Menschen und anderen Personen bestaetigt. Zusaetzlich wurde konkretisiert, dass die Umsetzung als reine Mobile-App erfolgen soll. Diese Festlegung grenzt die betroffenen Umsetzungen klar auf mobile Nutzung ein und schliesst einen Web-Client aus.",
+      "decision": "Wir nutzen fuer die Loesung eine reine Mobile-App und setzen keinen Web-Client um.",
+      "consequences": "Die Umsetzung bleibt auf mobile Endgeraete fokussiert, was den Plattformzuschnitt vereinfacht und Entscheidungen fuer mobile Interaktion klar ausrichtet. Gleichzeitig sind Nutzungsszenarien ueber einen Browser ausgeschlossen, und Funktionen, Bedienkonzepte sowie Bereitstellung muessen konsequent fuer mobile Clients ausgelegt werden.",
+      "relatedIds": [
+        "REQ-01",
+        "REQ-37"
+      ],
+      "alternatives": "Ein Web-Client wurde als Alternative nicht weiterverfolgt."
+    },
+    {
+      "itemId": "ARCH-03",
+      "title": "Profil- und Kommunikationswissen als Kernansatz",
+      "context": "Die Entscheidung stand an, weil die App Nutzern bei Verstaendnisschwierigkeiten helfen soll. Dazu wurde als Kernansatz festgelegt, Wissen ueber das Profil und die Kommunikationsweise einer Person bereitzustellen, damit bei Bedarf nachgesehen werden kann. Zugleich ist dokumentiert, dass die konkrete Auspraegung dieses Ansatzes noch weiter auszuarbeiten ist.",
+      "decision": "Wir richten den Kernansatz der App darauf aus, Profil- und Kommunikationswissen zu einer Person bereitzustellen, damit Nutzer bei Verstaendnisschwierigkeiten gezielt nachsehen koennen.",
+      "consequences": "Die Kernfunktionen der App muessen Informationen zum Profil und zu Kommunikationsweisen strukturiert verfuegbar machen und auf schnelle Nachschlagbarkeit ausgerichtet werden. Das staerkt den Fokus der Loesung, schraenkt aber fachliche Erweiterungen auf diesen Ansatz ein. Gleichzeitig bleibt die konkrete Ausgestaltung der Inhalte und Darstellung noch auszuarbeiten.",
+      "relatedIds": [
+        "REQ-03",
+        "REQ-02"
+      ],
+      "alternatives": "Ein individuell in beide Richtungen uebersetzendes System ist als anderer Loesungsansatz ausgeschlossen."
+    },
+    {
+      "itemId": "ARCH-07",
+      "title": "Interne Accountvergabe ohne Selbstregistrierung",
+      "context": "Fuer den Zugang zur App wurde festgelegt, dass keine Selbstregistrierung erlaubt ist. Stattdessen erfolgt der Zugang ausschliesslich per Login mit intern vergebenen Accounts. Diese Festlegung betrifft unmittelbar Accountverwaltung, Login-Prozess und Sicherheitszuschnitt.",
+      "decision": "Wir erlauben keine Selbstregistrierung und stellen den Zugang ausschliesslich ueber Login mit intern vergebenen Accounts bereit.",
+      "consequences": "Die Kontrolle ueber den Nutzerzugang bleibt bei der Organisation, was den geregelten Zugang und die Verwaltung von Berechtigungen unterstuetzt. Gleichzeitig entsteht organisatorischer Aufwand fuer Anlage und Pflege von Accounts, und nutzerseitige Registrierungsablaeufe werden bewusst nicht angeboten.",
+      "relatedIds": [
+        "REQ-05",
+        "REQ-12",
+        "REQ-10"
+      ],
+      "alternatives": "Eine offene Selbstregistrierung wurde nicht uebernommen."
+    },
+    {
+      "itemId": "ARCH-08",
+      "title": "Rollenmodell mit Admin und User",
+      "context": "Fuer die App wurde mindestens ein Rollenmodell mit Admin und User festgelegt. Admins sollen Accounts und Rechte verwalten koennen, waehrend User Inhalte hinzufuegen koennen, aber nichts loeschen duerfen. Diese Entscheidung schafft einen verbindlichen Grundzuschnitt fuer Rollen und Berechtigungen.",
+      "decision": "Wir nutzen mindestens die Rollen Admin und User. Admins verwalten Accounts und Rechte, User duerfen Inhalte hinzufuegen, aber nichts loeschen.",
+      "consequences": "Die Rechte- und Accountverwaltung erhaelt eine klare Grundstruktur, und zentrale Verwaltungsaufgaben sind an die Admin-Rolle gebunden. Zugleich muessen Funktionen konsequent an dieses Rollenmodell angepasst werden. Fuer User sind destructive Aktionen eingeschraenkt, und weitergehende Rollen- oder Detailrechte bleiben davon unberuehrt spaeter zu konkretisieren.",
+      "relatedIds": [
+        "REQ-06",
+        "REQ-10"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-10",
+      "title": "Bewohner-Account mit eingeschraenktem Selbstzugriff",
+      "context": "Zusaetzlich zu den bisherigen Rollen wurde ein Bewohner-Account vorgesehen. Dieser soll nur das eigene Profil sehen duerfen und nur eingeschraenkte Funktionen nutzen koennen, insbesondere den Zugriff auf About Me und gegebenenfalls das Hinzufuegen eigener Bilder. Die Entscheidung wirkt direkt auf Rollenmodell, Sichtbarkeit und erlaubte Interaktionen.",
+      "decision": "Wir fuehren einen Bewohner-Account mit stark eingeschraenkten Rechten ein. Dieser darf nur das eigene Profil sehen und nur begrenzte Funktionen nutzen, insbesondere den About-Me-Bereich und gegebenenfalls das Hinzufuegen eigener Bilder.",
+      "consequences": "Die App kann einen begrenzten Selbstzugang fuer Bewohner unterstuetzen und das Rollenmodell gezielt auf diese Nutzergruppe erweitern. Gleichzeitig muessen Sichtbarkeit, Navigation und Berechtigungen streng auf das eigene Profil begrenzt werden. Dadurch steigt die Komplexitaet des Rechtemodells und der Absicherung von Profilzugriffen.",
+      "relatedIds": [
+        "REQ-07",
+        "REQ-10"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-12",
+      "title": "Offene Detailausgestaltung der Rechteverwaltung",
+      "context": "Zum aktuellen Architekturstand ist festgehalten, dass die konkrete Ausgestaltung der Rechteverwaltung noch nicht entschieden ist und spaeter festgelegt werden muss. Dokumentiert ist damit kein ausformulierter Detailzuschnitt, sondern der derzeit offene Stand dieses Architekturthemas.",
+      "decision": "Wir halten fest, dass die konkrete Ausgestaltung der Rechteverwaltung noch offen ist und zu einem spaeteren Zeitpunkt entschieden werden muss.",
+      "consequences": "Das bestehende Rollen- und Berechtigungsmodell ist nur in Grundzuegen belastbar, und Detailentscheidungen zur Rechtevergabe koennen noch nicht als stabil vorausgesetzt werden. Das schafft Spielraum fuer spaetere Konkretisierung, bindet aber nachfolgende Ausarbeitung und Implementierung an eine noch ausstehende Entscheidung.",
+      "relatedIds": [
+        "REQ-10",
+        "ARCH-08",
+        "ARCH-10"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-13",
+      "title": "Separater Admin-Bildschirm fuer Account- und Rechteverwaltung",
+      "context": "Fuer die Rechte- und Accountverwaltung wurde als Loesungszuschnitt festgehalten, dass ein separater Admin-Bildschirm erwogen werden soll. Auf diesem sollen nur Admins Accounts anlegen und Rollen vergeben koennen. Die Aussage dokumentiert eine konkrete Designoption fuer die Abgrenzung administrativer Funktionen.",
+      "decision": "Wir beruecksichtigen fuer die Rechte- und Accountverwaltung einen separaten Admin-Bildschirm, auf dem nur Admins Accounts anlegen und Rollen vergeben koennen.",
+      "consequences": "Administrative Funktionen koennen klar von regulaeren Nutzungsablaeufen getrennt werden, was die Abgrenzung sensibler Verwaltungsaufgaben erleichtert. Gleichzeitig ist dieser Zuschnitt noch als zu pruefende Ausgestaltung markiert und bindet die weitere UI- und Rechtekonzeption an eine gesonderte Admin-Flaeche, falls er uebernommen wird.",
+      "relatedIds": [
+        "REQ-41",
+        "ARCH-08",
+        "REQ-06"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-26",
+      "title": "Pruefung von Kalender- und Medikationsfunktion",
+      "context": "Als moegliche Ausbaurichtung wurde festgehalten, eine Kalenderfunktion zu erw\u00E4gen und zusaetzlich zu pruefen, ob auch Medikamentengaben integriert werden sollen. Dabei ist besonders dokumentiert, dass die Vertraulichkeit solcher Daten zu beruecksichtigen ist. Die Aussage beschreibt eine potenzielle Erweiterung, noch keine vollstaendig festgelegte Auspraegung.",
+      "decision": "Wir beruecksichtigen eine Kalenderfunktion als zu pruefende Erweiterung und evaluieren zusaetzlich, ob Medikamentengaben integriert werden sollen, unter besonderer Beachtung der Vertraulichkeit dieser Daten.",
+      "consequences": "Der moegliche Funktionsumfang der App wird in Richtung Termin- und gegebenenfalls Medikationsinformationen erweitert. Gleichzeitig ist noch keine verbindliche Umsetzung festgelegt, und eine moegliche Integration wuerde zusaetzliche Anforderungen an Datenschutz, Vertraulichkeit und fachliche Abgrenzung ausloesen.",
+      "relatedIds": [
+        "REQ-42",
+        "REQ-44"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-27",
+      "title": "Profilanlage ueber Plus-Symbol in der Uebersicht",
+      "context": "Fuer die Profiluebersicht wurde als Designoption festgehalten, das Anlegen neuer Profile ueber ein Plus-Symbol und einen Dialog fuer Bild, Name und Beschreibung zu ermoeglichen. Die Aussage beschreibt einen konkreten Interaktionszuschnitt fuer die Profilanlage, ist aber noch als zu erw\u00E4gende Ausgestaltung markiert.",
+      "decision": "Wir beruecksichtigen fuer die Profiluebersicht die Option, neue Profile ueber ein Plus-Symbol und einen Dialog fuer Bild, Name und Beschreibung anzulegen.",
+      "consequences": "Die Profilanlage kann direkt an der Uebersicht verortet und fuer berechtigte Nutzer schnell erreichbar gemacht werden. Gleichzeitig ist dieser UI-Zuschnitt noch nicht endgueltig festgelegt und beeinflusst die weitere Gestaltung der Uebersicht sowie die Abgrenzung, wer solche Aktionen ausfuehren darf.",
+      "relatedIds": [
+        "REQ-45",
+        "REQ-16"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-28",
+      "title": "Begrenzte Erweiterung auf Dokumentationsfunktionen",
+      "context": "Es wurde festgehalten, dass eine Ausweitung der App auf weitere Dokumentationsfunktionen geprueft werden soll. Gleichzeitig ist diese Ausbaurichtung klar begrenzt: Der Fokus auf unterstuetzende Kommunikation darf dabei nicht verloren gehen. Die Entscheidung rahmt damit moegliche Erweiterungen fachlich ein.",
+      "decision": "Wir pruefen eine begrenzte Erweiterung der App um weitere Dokumentationsfunktionen und halten dabei den Fokus auf unterstuetzende Kommunikation verbindlich aufrecht.",
+      "consequences": "Die Loesung bleibt fuer spaetere fachliche Erweiterungen offen, ohne ihren Kernzweck aufzugeben. Gleichzeitig sind moegliche Zusatzfunktionen in Umfang und Ausrichtung eingeschraenkt und muessen sich am Kommunikationsfokus messen lassen. Das begrenzt eine unkontrollierte Ausweitung des Produkts.",
+      "relatedIds": [
+        "REQ-44",
+        "REQ-01",
+        "REQ-03"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-32",
+      "title": "Beruecksichtigung alternativer Eingabemethoden",
+      "context": "Im Bereich Barrierefreiheit wurde festgehalten, dass alternative Eingabemethoden wie Sprachbefehle als moegliche Erweiterung beruecksichtigt werden sollen. Die Aussage beschreibt eine Accessibility-Ausbaurichtung, ohne deren konkrete Umsetzung bereits festzulegen.",
+      "decision": "Wir beruecksichtigen alternative Eingabemethoden wie Sprachbefehle als moegliche spaetere Accessibility-Erweiterung.",
+      "consequences": "Die weitere Entwicklung bleibt fuer zugaenglichkeitsfoerdernde Eingabeformen offen und kann auf unterschiedliche Nutzungsbedarfe reagieren. Gleichzeitig ist daraus noch keine verbindliche Implementierung ableitbar, und die konkrete technische sowie fachliche Ausgestaltung bleibt spaeterer Bewertung vorbehalten.",
+      "relatedIds": [
+        "REQ-43",
+        "REQ-38"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-37",
+      "title": "Flutter-und-Dart-Stack",
+      "context": "Fuer die Entwicklung wurde festgelegt, Flutter mit Dart zu verwenden. Begruendet ist dies damit, die plattformuebergreifende Umsetzung zu unterstuetzen. Die Entscheidung betrifft den technischen Stack der App unmittelbar und schraenkt die technologische Umsetzung ein.",
+      "decision": "Wir entwickeln die App mit Flutter und Dart, um die plattformuebergreifende Umsetzung zu unterstuetzen.",
+      "consequences": "Die Umsetzung kann auf einen einheitlichen plattformuebergreifenden Technologie-Stack ausgerichtet werden, was die Entwicklung fuer iPhone und Android unterstuetzt. Gleichzeitig bindet die Entscheidung Architektur, Implementierung, Kompetenzen und technische Erweiterungen an Flutter und Dart.",
+      "relatedIds": [
+        "REQ-53",
+        "REQ-37",
+        "ARCH-36"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-38",
+      "title": "GetX als technische Evaluationsoption",
+      "context": "Fuer die technische Umsetzung wurde festgehalten, dass das Paket GetX als Option beruecksichtigt und in der Umsetzung erprobt werden soll. Die Aussage dokumentiert eine Technologieoption fuer den Stack, jedoch noch keine endgueltige Festlegung.",
+      "decision": "Wir beruecksichtigen GetX als technische Option und erproben das Paket in der Umsetzung.",
+      "consequences": "Die Entwicklung behaelt Spielraum, GetX praktisch auf Eignung zu pruefen, bevor eine endgueltige technische Verbindlichkeit entsteht. Gleichzeitig ist die Entscheidung bewusst vorlaeufig, sodass Architektur- und Implementierungsdetails von den Ergebnissen der Erprobung abhaengen koennen.",
+      "relatedIds": [
+        "REQ-54",
+        "ARCH-37"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-39",
+      "title": "Firebase Firestore als vorlaeufige Datenbankloesung",
+      "context": "Als Datenbankloesung wurde Firebase Firestore vorlaeufig vorgesehen, zugleich aber ausdruecklich noch nicht endgueltig festgelegt. Damit ist eine konkrete Technologiepraeferenz dokumentiert, ohne dass bereits eine unumkehrbare Festlegung behauptet wird.",
+      "decision": "Wir sehen Firebase Firestore vorlaeufig als Datenbankloesung vor, ohne die endgueltige Festlegung bereits abzuschliessen.",
+      "consequences": "Die technische Ausarbeitung kann sich zunaechst an Firestore orientieren und entsprechende Integrationsannahmen vorbereiten. Gleichzeitig bleibt die Entscheidung vorlaeufig, sodass weitere Architektur- und Implementierungsarbeit von einer spaeteren finalen Klaerung abhaengt und Anpassungen erforderlich werden koennen.",
+      "relatedIds": [
+        "REQ-55",
+        "REQ-70"
+      ],
+      "alternatives": "Andere Datenbankloesungen sind noch nicht endgueltig ausgeschlossen, weil Firestore nur vorlaeufig vorgesehen ist."
+    },
+    {
+      "itemId": "ARCH-40",
+      "title": "Offene Entscheidung zum lokalen Cloud-Daten-Cache",
+      "context": "Zum Umgang mit Cloud-Daten ist festgehalten, dass noch geklaert werden muss, ob und wie diese Daten lokal auf dem Geraet gespeichert oder gecacht werden sollen. Dokumentiert ist damit ein offener Architekturpunkt, der den Datenzugriff und die lokale Datenhaltung betrifft.",
+      "decision": "Wir halten fest, dass die Entscheidung zu lokaler Speicherung oder Caching von Cloud-Daten auf dem Geraet noch aussteht und separat geklaert werden muss.",
+      "consequences": "Fuer Datenzugriff, Offline-Verhalten und lokale Persistenz kann noch kein verbindlicher technischer Zuschnitt vorausgesetzt werden. Das erhaelt Entscheidungsspielraum, bedeutet aber auch, dass nachgelagerte Architektur- und Implementierungsarbeit von einer noch offenen Klaerung abhaengt.",
+      "relatedIds": [
+        "REQ-36",
+        "ARCH-39"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-41",
+      "title": "Evaluation der Tablet-Nutzbarkeit",
+      "context": "Zusaetzlich zur mobilen Nutzung wurde festgehalten, dass evaluiert werden soll, ob die App auch auf Tablets nutzbar sein kann. Die Aussage beschreibt eine zu pruefende Erweiterung des Nutzungskontexts, noch keine verbindliche Zielplattform.",
+      "decision": "Wir evaluieren, ob die App zusaetzlich auf Tablets nutzbar sein kann.",
+      "consequences": "Die Produkt- und UI-Gestaltung bleibt fuer einen erweiterten Formfaktor offen und kann bei positiver Bewertung auf Tablets ausgedehnt werden. Gleichzeitig ist die Nutzung auf Tablets noch nicht verbindlich festgelegt, sodass kein stabiler Umsetzungsanspruch fuer diesen Geraetetyp vorausgesetzt werden kann.",
+      "relatedIds": [
+        "REQ-39",
+        "REQ-37"
+      ],
+      "alternatives": null
+    },
+    {
+      "itemId": "ARCH-45",
+      "title": "Produktzielrahmen Kommunikation im Alltag",
+      "context": "Das Produktziel wird zusaetzlich dadurch gerahmt, dass Kommunikation im Alltag als zentral beschrieben wird und das Projekt als Weiterentwicklungsmoeglichkeit gesehen wird. Diese Aussage liefert Kontext und Zielausrichtung fuer die Loesung, ohne einen direkten technischen Zuschnitt vorzugeben.",
+      "decision": "Wir dokumentieren das Produktziel so, dass alltagsbezogene Kommunikation zentral ist und das Projekt zugleich als Grundlage fuer Weiterentwicklung betrachtet wird.",
+      "consequences": "Die weitere Ausarbeitung der Loesung bleibt klar auf alltagsrelevante Kommunikationsunterstuetzung ausgerichtet und kann kuenftige Erweiterungen in diesem Rahmen einordnen. Gleichzeitig ergibt sich daraus noch keine konkrete technische oder funktionale Festlegung, sondern vor allem ein verbindlicher Ziel- und Bewertungsrahmen.",
+      "relatedIds": [
+        "REQ-52",
+        "REQ-01",
+        "REQ-44"
+      ],
+      "alternatives": null
+    }
+  ]
+}

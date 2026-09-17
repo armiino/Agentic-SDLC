@@ -1,0 +1,303 @@
+--- Thesis-Docs/Writing/claude-writing/kapitel-7/tex-v2/chap7.2/chap7.2.tex
++++ Thesis-Docs/Writing/claude-writing/kapitel-7/tex-v2/chap7.2/chap7.2.tex
+@@ -181,6 +181,27 @@
+ Auslegungsalternativen stehen in
+ \hyperref[anh:ledger-wiederholungen]{Anhang~D.11}.
+ 
++Am 16.09. folgte eine weitere KI-gestützte Gegenprüfung der
++Bewertungen anhand archivierter Quellen und Ausgaben. Zwei zusätzlich
++vorgelegte Grenzfälle zur gemeinsamen Entwicklungsumgebung und zur
++gebündelten Rollenvergabe wurden vom Autor kommentiert. Er bestätigte
++anschließend die vollständige Durchsicht der bereitgestellten
++HTML-Prüfansicht und die darin vorgelegten Bewertungen. Die Oberfläche
++enthält Quellen, Ausgaben, Kriterien und sichtbare KI-Begründungen.
++Diese nicht verblindete Durchsicht ist dokumentiert; ein neuer
++kriteriumsweiser Antwortexport über sämtliche Einzelurteile liegt
++nicht vor. Sie wird daher nicht als unabhängige Zweitannotation oder
++vollständig protokollierte Quellenprüfung jedes Einzelurteils gezählt.
++
++Ein anschließender Abgleich des Bewertungsmaßstabs berichtigte zwei
++IDE-Aussagen: Sowohl im Ledger-Zusatzlauf als auch bei F wurde eine
++noch offene gemeinsame Toolwahl als bereits erfolgte Einigung
++dargestellt. Die gleiche Regel gilt für Abschwächungen und
++Verstärkungen des Planungsstands. Diese Korrekturen sind von der
++vorangehenden Autorenbestätigung getrennt; Rohdaten und Goldbestand
++blieben unverändert. Anhang~\ref{anh:bewertungskonsolidierung}
++dokumentiert die aktuelle Konsolidierung und ihre Zahlenwirkung.
++
+ \subsection{Metriken und Zählregeln}
+ \label{sec:eval-metriken}
+ 
+@@ -237,12 +258,15 @@
+ \emph{semantischen Stützung} erfasst. Auch ein inhaltlich korrekter
+ Claim kann durch seine angegebenen Units nur teilweise gestützt sein,
+ wenn nötiger Gesprächskontext außerhalb dieser Auswahl liegt.
+-Bei F bewertete die bestehende Auswertung genau
+-eine redaktionelle Zuordnung als nicht vollständig quellengetragen:
+-die Zuweisung der zweiten Versionsnummer zu Dart, während die Quelle
+-zweimal Flutter nennt. Daraus ergibt sich die Stützung von 0{,}991.
+-Die ergänzende Claim-Prüfung vom 15.09. beschränkte sich auf den
+-Ledger; die Stützungsurteile von F wurden dabei nicht erneut geprüft.
++Bei F galt zunächst die Zuordnung der zweiten Versionsnummer zu Dart
++als nicht vollständig quellengetragen, während die Quelle zweimal
++Flutter nennt. Der Abgleich vom 16.09. ergänzt C-086: Die Aussage
++berichtet eine Vereinbarung über Android Studio, obwohl die Quelle
++die gemeinsame Wahl offenlässt. Damit sind im F-Stressfall 115/117
++Claims vollständig durch ihre Referenzen gestützt (0{,}983).
++Die frühere Stützung von 0{,}991 bleibt als historischer Prüfstand
++erhalten. Die gezielte Berichtigung ist keine neue Systemausführung
++(\hyperref[anh:bewertungskonsolidierung]{Anhang~D.2}).
+ 
+ \emph{Messgrenze.} Alle Inhaltsmetriken werden je Fall berechnet,
+ ohne Aggregation über die Fälle. Läufe ohne gültiges Artefakt gelten
+@@ -313,10 +337,13 @@
+ keine Normkonformitätsprüfung oder validierte Gesamtskala.
+ Eine bearbeitbare Klärungsfrage muss ihre Antwort noch nicht enthalten.
+ 
+-Die Inhaltsurteile wurden durch Codex erstellt. Der Autor kommentierte
+-sechs ausgewählte Fälle anhand von Gegenüberstellungen und Erläuterungen;
+-diese teils vorsichtigen Einschätzungen sind keine vollständige
+-Kriterienprüfung. Die historischen Gate-Annahmen zählen ebenfalls
++Die Inhaltsurteile wurden durch Codex vorbereitet. In der ersten
++Runde kommentierte der Autor sechs ausgewählte Fälle anhand von
++Gegenüberstellungen und Erläuterungen. Diese teils vorsichtigen
++Einschätzungen sind von seiner später berichteten vollständigen
++Durchsicht der HTML-Unterlagen zu unterscheiden
++(Abschnitt~\ref{sec:eval-urteile}); ein neuer vollständiger Satz
++kriteriumsweiser Autorenurteile wurde dabei nicht erfasst. Die historischen Gate-Annahmen zählen ebenfalls
+ nicht als neue Qualitätsbewertung. Die Ausgaben waren bereits bekannt;
+ Verblindung und unabhängige Zweitannotation fehlen. Alle Einzelurteile,
+ Quellenstellen und Rückmeldungen sind im Belegpaket erhalten.
+--- Thesis-Docs/Writing/claude-writing/kapitel-7/tex-v2/chap7.3/chap7.3.tex
++++ Thesis-Docs/Writing/claude-writing/kapitel-7/tex-v2/chap7.3/chap7.3.tex
+@@ -52,7 +52,9 @@
+ (Abschnitt~\ref{sec:eval-armf}). Die Abdeckungswerte der Hauptläufe
+ entsprechen dem konsolidierten Stand vom 08.09.; die ergänzende
+ Ledger-Auswertung und die erneute Stützungsprüfung vom 15.09. sind
+-jeweils gekennzeichnet (Abschnitt~\ref{sec:eval-design}). Sämtliche
++jeweils gekennzeichnet (Abschnitt~\ref{sec:eval-design}). Die
++Maßstabskorrektur vom 16.09. ergänzt den aktuellen Prüfstand
++(\hyperref[anh:bewertungskonsolidierung]{Anhang~D.2}). Sämtliche
+ Bewertungen betreffen unveränderte historische Ausgaben. Ein externer Akzeptanzmaßstab für eine ausreichende Abdeckung wurde
+ nicht festgelegt; die Zahlen beschreiben den erreichten Stand.
+ 
+@@ -134,9 +136,11 @@
+ Auslagerung vertiefter Datenschutzplanung fehlt dagegen in den
+ Zusatzläufen.
+ Alle Quellenreferenzen sind technisch gültig; die Stützungsprüfung
+-ergibt für die Zusatzläufe 44/47 und 38/41 vollständig gestützte
+-Claims. Jeweils ein Claim schwächt zudem den Planungsstand der Quelle
+-ab. Die drei Ausgaben beschreiben diesen Quellenfall unter den
++ergibt nach dem Abgleich vom 16.09. für die Zusatzläufe 43/47 und
++38/41 vollständig gestützte Claims. Jeweils ein Claim schwächt den
++Planungsstand der Quelle ab; im ersten Zusatzlauf behauptet ein
++weiterer eine bereits erfolgte IDE-Einigung, die die Quelle noch
++offenlässt. Die drei Ausgaben beschreiben diesen Quellenfall unter den
+ protokollierten Bedingungen. Hinweise, menschliche Behebung und
+ allgemeine Zuverlässigkeit wurden damit nicht zusätzlich untersucht
+ (\hyperref[anh:ledger-wiederholungen]{Anhang~D.11}).
+@@ -305,11 +309,11 @@
+ F erreichte im Stressfall die höhere direkte Abdeckung
+ (0{,}633 strict / 0{,}844 touched) bei rund 78\,\% der Eingabe-
+ und 48\,\% der Ausgabe-Tokens des Ledger-Laufs. Die inhaltliche
+-Korrektheit beträgt 0{,}991; es gilt dieselbe Kennzahl wie in
++Korrektheit beträgt nach der Berichtigung vom 16.09. 0{,}983; es gilt dieselbe Kennzahl wie in
+ Tabelle~\ref{t:eval-kernzahlen-v2}. Ihre claimbezogenen Quoten sind
+ wegen der unterschiedlichen Granularität jedoch nur eingeschränkt
+ vergleichbar: 47 gebündelte Claims stehen 117 feingranularen Aussagen
+-gegenüber. Aus 1{,}0 gegenüber 0{,}991 folgt deshalb kein belastbarer
++gegenüber. Aus 1{,}0 gegenüber 0{,}983 folgt deshalb kein belastbarer
+ genereller Qualitätsvorsprung. Die 117 Aussagen sind eine
+ Bestandsgröße, keine Qualitätskennzahl.
+ 
+--- Thesis-Docs/Writing/claude-writing/kapitel-7/tex-v2/chap7.5/chap7.5.tex
++++ Thesis-Docs/Writing/claude-writing/kapitel-7/tex-v2/chap7.5/chap7.5.tex
+@@ -109,10 +109,11 @@
+ \textbf{Widerspruch (F3).} Der Konflikt betraf die Geltung von
+ No-Go-Einträgen, also Hinweisen auf zu vermeidende Themen oder
+ Handlungen. Die bestehende Anforderung REQ-32 verlangte eine
+-bewohnerbezogene Führung, die neue Aussage eine globale Geltung.
+-Die maschinelle Einordnung erfasste dies als offene Entscheidung.
+-Am interaktiven Entscheidungs-Gate übernahm der Mensch die neue
+-Festlegung und formulierte den endgültigen Text. Dieser steht
++bewohnerbezogene Führung. Die neue Aussage stellte diese Festlegung
++erneut zur Klärung und nannte eine globale Geltung als Alternative.
++Das System legte dafür eine offene Entscheidung an. Am interaktiven
++Entscheidungs-Gate entschied sich der Mensch für die globale Geltung
++und formulierte den endgültigen Text. Dieser steht
+ wortgleich in der neuen Anforderung REQ-78. Im nachfolgenden
+ Core-Zwischenstand ist REQ-32 als abgelöst erhalten, DEC-001
+ aufgelöst und die Deckungsbeziehung der PBIs PBI-012 und PBI-023
+--- Thesis-Docs/Writing/claude-writing/kapitel-7/tex-v2/chap7.8/chap7.8.tex
++++ Thesis-Docs/Writing/claude-writing/kapitel-7/tex-v2/chap7.8/chap7.8.tex
+@@ -76,7 +76,13 @@
+ Autorenrückmeldungen zur Analyst-/PBI-Auswertung ersetzen keine
+ vollständige oder unabhängige Annotation. Insbesondere sind allgemeine
+ Zustimmung zu einer Idee und Hinweise auf spätere Rückfragen keine
+-Bestätigung aller zugehörigen Inhaltsurteile.
++Bestätigung aller zugehörigen Inhaltsurteile. Die anschließend vom
++Autor bestätigte vollständige Durchsicht der HTML-Prüfunterlagen
++ergänzt diese punktuellen Rückmeldungen. Sie erfolgte mit sichtbaren
++KI-Urteilen; ein neuer vollständiger kriteriumsweiser Antwortsatz
++liegt nicht vor. Die spätere Korrektur zweier IDE-Aussagen zeigt
++zudem, dass Zustimmung den gleichmäßigen Maßstab nicht ersetzt
++(\hyperref[anh:bewertungskonsolidierung]{Anhang~D.2}).
+ 
+ \textbf{Queue und menschliche Bearbeitung.} Die
+ Adjudikations-Queue des Stresslaufs ist eine dokumentierte
+--- Thesis-Docs/Writing/claude-writing/chap8/chap8.2/chap8.2.tex
++++ Thesis-Docs/Writing/claude-writing/chap8/chap8.2/chap8.2.tex
+@@ -22,8 +22,10 @@
+ bleibt von der Stabilität der Modellausgaben zu unterscheiden. Die KI-gestützte Bildung und
+ Bewertung des Referenzbestands sowie die fehlende unabhängige
+ menschliche Zweitannotation lassen zudem Unsicherheit in den
+-Inhaltsurteilen bestehen. Deshalb sind
+-die beobachteten Unterschiede als Ergebnisse dieser Konfigurationen und
++Inhaltsurteilen bestehen. Die vom Autor bestätigte Durchsicht der
++bereitgestellten Bewertungsunterlagen ist ein zusätzlicher
++Prüfschritt; sie liefert keine davon unabhängige Vergleichsbewertung.
++Deshalb sind die beobachteten Unterschiede als Ergebnisse dieser Konfigurationen und
+ Fälle zu lesen; eine allgemeine Rangfolge der Ansätze folgt daraus nicht.
+ 
+ Für das Gesamtsystem ist zwischen nachgewiesener Realisierbarkeit und
+--- Thesis-Docs/Writing/claude-writing/anhang/anhang-evaluation.tex
++++ Thesis-Docs/Writing/claude-writing/anhang/anhang-evaluation.tex
+@@ -139,6 +139,50 @@
+   \label{t:anh-runden}
+ \end{table}
+ 
++% Konsolidierung 16.09.: eigene Runde, historische Angaben oben bleiben erhalten.
++\phantomsection
++\begingroup
++\makeatletter
++\edef\@currentlabel{\thechapter.2}
++\label{anh:bewertungskonsolidierung}
++\makeatother
++\endgroup
++\textbf{Ergänzende Gegenprüfung und Konsolidierung am 16.09.}
++Der KI-Assistent glich den aktuellen Hauptbestand erneut mit den
++archivierten Quellen und Ausgaben ab; der Bericht benennt den Umfang
++und die nicht erneut annotierten Teile. Der Autor bestätigte zwei
++zusätzliche Grenzauslegungen und erklärte anschließend, die
++bereitgestellte HTML-Prüfansicht vollständig durchgesehen und die
++Bewertungen bestätigt zu haben. Die Ansicht enthält 1859 Prüfkarten
++mit 2503 Feldern; dies beschreibt das bereitgestellte Material, keine
++gezählte Anzahl neuer menschlicher Einzelurteile. Ein vollständiger
++Antwortexport liegt nicht vor. Die Durchsicht war nicht verblindet
++und wird von einer unabhängigen Zweitannotation unterschieden.
++
++Die anschließende KI-gestützte Konsolidierung prüfte behauptete
++IDE-Einigungen symmetrisch: „festgelegt`` in Ledger-A41 und
++„vereinbart`` in F-C-086 gehen über die noch offene gemeinsame Wahl
++hinaus. Beide Claims werden nun als nicht vollständig quellentreu
++und nur teilweise gestützt bewertet. Die frühere Zustimmung zur
++gemeinsamen Orientierung bleibt als Autorenantwort erhalten, ersetzt
++aber nicht die Prüfung des behaupteten Einigungsstands. Zwei
++Claim-Fälle mit je zwei Bewertungsdimensionen wurden geändert;
++Abdeckungsurteile, Referenzbestand und Ausgaben blieben unverändert.
++Für Ledger A ergeben sich 45/47 quellentreue und 43/47 vollständig
++gestützte Claims, für F im Stressfall jeweils 115/117 (0{,}983).
++Die zuvor berichteten Werte bleiben in den historischen Dateien
++erhalten. Vorgeschlagene gemeinsame Nutzung ohne behaupteten
++Einigungsabschluss wird weiterhin davon unterschieden.
++
++Unter \path{thesis-evidence/w2/bewertungskonsolidierung-20260916/}
++liegen Prüfgrundlage, unveränderte Eingänge, Autorenprotokoll,
++Vergleichsfälle, Urteilskorrekturen und nachrechenbare Zählungen.
++Die Autorenangaben zur Durchsicht und die danach vorgenommenen
++Korrekturen sind zeitlich getrennt. Eine veraltete Einordnung von
++F-Meeting-Claim C-020 als \emph{gold escape} in der Prüfoberfläche
++wurde ebenfalls gekennzeichnet; der aktuelle Gold-v2-Abgleich war
++bereits korrekt und erfordert keine Kennzahländerung.
++
+ \section*{D.3 Quellenbindung und Zähler-Erhebungsstand}
+ \phantomsection
+ \label{anh:referenzpruefung}
+@@ -617,6 +661,10 @@
+ Diese gezielten Prüfungen durch den Autor und Entwickler sind keine
+ unabhängige menschliche Zweitannotation. Fragen, Antworten,
+ Ersturteile und sämtliche Änderungen bleiben im Belegpaket erhalten.
++Die spätere HTML-Durchsicht und die Maßstabskorrektur vom 16.09.
++sind separat in \hyperref[anh:bewertungskonsolidierung]{D.2}
++dokumentiert. Die folgende Tabelle enthält bereits die berichtigten
++Werte für A41; die Abdeckung ist unverändert.
+ 
+ \begin{table}[htbp]
+   \centering
+@@ -626,7 +674,7 @@
+     \textbf{Lauf} & \textbf{Claims} & \textbf{full / partial / none} & \textbf{Korrektheit} & \textbf{Stützung} \\
+     \hline
+     R, \texttt{8189ea} & 47 & 54 / 29 / 26 & 47/47 & 45/47 \\
+-    A, \texttt{2dde4d} & 47 & 57 / 32 / 20 & 46/47 & 44/47 \\
++    A, \texttt{2dde4d} & 47 & 57 / 32 / 20 & 45/47 & 43/47 \\
+     B, \texttt{1271bb} & 41 & 54 / 25 / 30 & 40/41 & 38/41 \\
+     \hline
+   \end{tabular}
+@@ -635,7 +683,7 @@
+     Abdeckung bezogen auf 109 Referenzaussagen; Korrektheit zählt
+     Claims ohne festgestellte Quellenverfälschung, Stützung die
+     vollständig direkt oder inferenziell gestützten Claims.
+-    Die übrigen zwei/drei/drei Claims sind teilweise gestützt;
++    Die übrigen zwei/vier/drei Claims sind teilweise gestützt;
+     keiner wurde als vollständig ungestützt beurteilt.}
+   \label{t:ledger-wiederholungen}
+ \end{table}
+@@ -677,8 +725,11 @@
+ den Umfangsnachtrag, Einzelurteile, Autorenantworten und Revisionslogs.
+ \path{recompute.py} berechnet aus den gespeicherten Urteilen die
+ Ergebnisse unter \path{results/} einschließlich der Sensitivitäten
+-neu. Prüfsummen, Urteilsübergänge und eine identische Neuberechnung
+-in einem zweiten Ausgabeverzeichnis wurden kontrolliert. Dies
++für den Stand vom 15.09. neu. Die anschließende Konsolidierung
++unter \path{bewertungskonsolidierung-20260916/} enthält die aktuelle
++Urteilskorrektur und deren eigene Nachrechnung. Prüfsummen,
++Urteilsübergänge und eine identische Neuberechnung des früheren
++Stands in einem zweiten Ausgabeverzeichnis wurden kontrolliert. Dies
+ reproduziert die Berechnung, nicht die semantischen Entscheidungen.
+ 
+ \section*{D.12 Inhaltliche Prüfung ausgewählter Core-Fortschreibungen}
+@@ -758,6 +809,9 @@
+ weder die Verbindlichkeit in N01 noch die Entstehung von N08;
+ für N06 blieb die Erinnerung an einen Testzweck vorsichtig.
+ Die Antworten begründen keine zusätzliche gesicherte Tatsachenfeststellung.
++Auch die spätere vollständige Durchsicht der HTML-Unterlagen durch
++den Autor (\hyperref[anh:bewertungskonsolidierung]{D.2}) liefert
++keine fehlenden historischen Entscheidungs- oder Herkunftsbelege.
+ \par
+ \end{samepage}
+ 
+@@ -960,8 +1014,11 @@
+ spätere GitHub-Kommentare. Die Antworten werden nicht als vollständige
+ Bestätigung der zugehörigen Kriterien gewertet. Eine tatsächliche
+ Behebung der hier beobachteten PBI-Grenzen durch diesen Rückweg wurde
+-nicht untersucht. Menschliche Vollprüfung und unabhängige Annotation
+-fehlen. Exakte historische Analyst-Konfiguration, Werkzeugrückgaben
++nicht untersucht. Anschließend bestätigte der Autor die vollständige
++Durchsicht der bereitgestellten HTML-Unterlagen
++(\hyperref[anh:bewertungskonsolidierung]{D.2}). Ein neuer vollständiger
++kriteriumsweiser Antwortsatz und eine unabhängige Annotation liegen
++nicht vor. Exakte historische Analyst-Konfiguration, Werkzeugrückgaben
+ und vollständiger Steward-Auftrag sind nicht gesichert. Die Auswertung
+ trägt fallbezogene Aussagen, keine allgemeine Stabilität, kausale
+ Komponentenwirkung oder praktische Zeitersparnis.
+--- thesis-evidence/README.md
++++ thesis-evidence/README.md
+@@ -14,7 +14,8 @@
+ | Inhaltliche Prüfung ausgewählter Einordnungsfälle, 7.5 / D.12 | [Ergebnisse und Belegketten](./w2/core-content-audit-20260915/evaluation/README.md), [gesicherte Auswahl](./w2/core-content-audit-20260915/README.md) | Acht regelgebunden ausgewählte zusätzliche Fälle und vier getrennte bekannte Kontrollen; positive, begrenzte und ungeklärte Ergebnisse. Keine repräsentative Erfolgsquote. |
+ | Tokenverbrauch der vier Hauptläufe | [Korrektur und Rechenregel](./w2/token-usage-correction-20260910.md), [Rechenskript](./w2/recompute-token-usage.py), [portable Ausführung](./w2/archivierte-nachweise-20260915/README.md#technische-nachrechnung) | Auswertung archivierter Zähler, geprüft gegen einzelne Chat-Spans; keine Rechnungskontrolle oder neue Modellmessung. |
+ | Ergänzende Prüfung agentischer Planungsarbeit und ganzer PBIs/Issues, vorbereitet am 16.09. | [Protokoll, Dossiers und Originale](./w2/agent-artifact-evaluation-20260916/README.md) | 17 historische Vorschläge und drei gekoppelte Arbeitspakete; Rubrik und Belegzugang vorbereitet, neue semantische Qualitätsurteile noch offen. |
+-| Agentenbeitrag und ganze PBIs/Issues: KI-Erstauswertung vom 16.09. | [Ergebnisbericht, Einzelurteile und Autorenprüfung](./w2/agent-artifact-evaluation-20260916/evaluation/README.md) | 17 Vorschläge, drei PBI-/Issue-Paare; nachrechenbare Zählungen und begründete Ersturteile. Drei punktuelle Autorenrückmeldungen, keine unabhängige Annotation. |
++| Agentenbeitrag und ganze PBIs/Issues: KI-Erstauswertung vom 16.09. | [Ergebnisbericht, Einzelurteile und Autorenprüfung](./w2/agent-artifact-evaluation-20260916/evaluation/README.md) | 17 Vorschläge, drei PBI-/Issue-Paare; nachrechenbare Zählungen und begründete Ersturteile. Sechs punktuelle Autorenrückmeldungen und spätere HTML-Durchsicht (siehe Bewertungsnachtrag), keine unabhängige Annotation. |
++| Aktueller Bewertungsnachtrag vom 16.09. | [Maßstabskorrekturen und Autorenprotokoll](./w2/bewertungskonsolidierung-20260916/README.md) | Zwei korrigierte IDE-Urteile (Ledger A41 und F C-086), neue Zählungen und vollständige HTML-Durchsicht laut Autor. Keine erfundene menschliche Einzelannotation; historische Stände bleiben erhalten. |
+ | Finaler Abgabestand | [Vorbereitete Abschlussfelder](./ABSCHLUSS-VORBEREITUNG.md) | Noch kein Freeze. Historische Prüfstände und der spätere finale Commit bleiben getrennt. |
+ 
+ ## Belege richtig lesen
+@@ -27,7 +28,7 @@
+ 
+ ## Integrität und Grenzen der Bereitstellung
+ 
+-[Aktualisiertes Gesamtdateiverzeichnis mit Prüfsummen](./file-manifest-20260916-integration-v1.json) und [lokale Integritätsprüfung](./verify-evidence.py) erlauben die Prüfung dieser bereitgestellten Auswahl ohne Zugriff auf die ursprünglichen Arbeitsordner. Aufruf aus dem Repository: `python3 thesis-evidence/verify-evidence.py --manifest file-manifest-20260916-integration-v1.json`. Die Prüfung verändert keine Belege. Nach späteren bewussten Paketänderungen muss das datierte Verzeichnis neu erstellt werden.
++[Aktualisiertes Gesamtdateiverzeichnis mit Prüfsummen](./file-manifest-20260916-konsolidierung-v1.json) und [lokale Integritätsprüfung](./verify-evidence.py) erlauben die Prüfung dieser bereitgestellten Auswahl ohne Zugriff auf die ursprünglichen Arbeitsordner. Aufruf aus dem Repository: `python3 thesis-evidence/verify-evidence.py --manifest file-manifest-20260916-konsolidierung-v1.json`. Die Prüfung verändert keine Belege. Nach späteren bewussten Paketänderungen muss das datierte Verzeichnis neu erstellt werden.
+ 
+ Die technische Wiederholung des Herkunftsaudits und der Tokenaggregation ist [protokolliert](./preparation-checks-20260915.json). Dabei wurden keine Modelle aufgerufen, kein produktiver Core verändert und keine neuen fachlichen Urteile erzeugt. Die Integritätsprüfung ersetzt weder eine semantische Neubewertung noch eine Ausführung des Gesamtsystems.
+ 

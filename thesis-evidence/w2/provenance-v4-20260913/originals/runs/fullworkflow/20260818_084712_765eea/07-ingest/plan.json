@@ -1,0 +1,152 @@
+{
+  "schemaVersion": 1,
+  "planId": "state-change-plan-20260818_085947",
+  "createdUtc": "2026-08-18T08:59:47.716309Z",
+  "sourceMeetingDeltaPath": "runs/fullworkflow/20260818_084712_765eea/04-delta/project-state.json",
+  "operations": [
+    {
+      "incomingItemId": "OQ-01",
+      "kind": "OPEN_QUESTION",
+      "statement": "Sollen Angeh\u00F6rige sich k\u00FCnftig selbst mit einem Einladungscode der Einrichtung registrieren k\u00F6nnen, und soll damit die bisherige Festlegung ohne Selbstregistrierung ersetzt werden?",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "self-registration-invite-code-open"
+      ],
+      "rationale": "Offene Frage aus dem Meeting; dazu existiert noch keine gleichlautende DEC-Entscheidung. Die bestehende Wahrheit ohne Selbstregistrierung bleibt separat bestehen.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "OQ-02",
+      "kind": "OPEN_QUESTION",
+      "statement": "Wie lange sollen einnahmebezogene Bemerkungen bei der Medikamenten-Gabe aufbewahrt werden?",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "remark-retention-open"
+      ],
+      "rationale": "Offene Frage zur Aufbewahrungsdauer; dazu existiert noch keine gleichlautende DEC-Entscheidung im Core.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-01",
+      "kind": "REFINE",
+      "statement": "Freigegebene Angeh\u00F6rige m\u00FCssen die \u00DCbersicht der Medikamenten-Einnahmen ihrer Bezugsperson sehen k\u00F6nnen.",
+      "targetEntityId": "REQ-42",
+      "featureKey": null,
+      "claimIds": [
+        "med-overview-relatives-visible"
+      ],
+      "rationale": "REQ-42 enth\u00E4lt bereits die \u00DCbersicht der Medikamenten-Einnahmen f\u00FCr freigegebene Angeh\u00F6rige; das eingehende Item macht den Sichtbarkeitsaspekt dieser bestehenden Anforderung explizit.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-02",
+      "kind": "NEW_RELATED",
+      "statement": "Die Einnahmen-\u00DCbersicht f\u00FCr Angeh\u00F6rige muss als Monats\u00FCbersicht der letzten drei\u00DFig Tage bereitgestellt werden; die bisherige Wochenansicht mit sieben Tagen darf daf\u00FCr nicht weiter gelten.",
+      "targetEntityId": null,
+      "featureKey": "medication-intake-overview-for-relatives",
+      "claimIds": [
+        "med-intake-overview-30-days"
+      ],
+      "rationale": "Im Core existiert mit REQ-42 bereits die Angeh\u00F6rigen-\u00DCbersicht zu Medikamenten-Einnahmen, aber keine Festlegung zum Zeitraum oder zur Abl\u00F6sung einer Wochenansicht. Fachlich neu im selben Feature.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-03",
+      "kind": "NEW",
+      "statement": "Pflegende m\u00FCssen am Ende ihrer Schicht eine Tages-Zusammenfassung aller von ihnen dokumentierten Medikamenten-Gaben sehen k\u00F6nnen, damit sie vor der \u00DCbergabe pr\u00FCfen k\u00F6nnen, ob alles erfasst ist.",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "shift-end-medication-summary"
+      ],
+      "rationale": "Keine bestehende Requirement-Entit\u00E4t deckt eine schichtbezogene Tageszusammenfassung dokumentierter Medikamenten-Gaben f\u00FCr Pflegende ab; \u00DCbergabe-Notizen sind ein anderes fachliches Objekt.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-04",
+      "kind": "NEW",
+      "statement": "Angeh\u00F6rige m\u00FCssen Besuche bei ihrer Bezugsperson vorab in der App mit Datum und Uhrzeit ank\u00FCndigen k\u00F6nnen.",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "visit-planning-announcement"
+      ],
+      "rationale": "F\u00FCr Besuchsank\u00FCndigungen existiert im Core keine passende Requirement-Entit\u00E4t.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-05",
+      "kind": "NEW_RELATED",
+      "statement": "Pflegende der Einrichtung m\u00FCssen eine \u00DCbersicht der angek\u00FCndigten Besuche sehen k\u00F6nnen.",
+      "targetEntityId": null,
+      "featureKey": "visit-planning-announcement",
+      "claimIds": [
+        "visit-planning-announcement"
+      ],
+      "rationale": "Anzeige der angek\u00FCndigten Besuche f\u00FCr Pflegende ist eine eigene neue Anforderung, aber im selben Feature wie die Besuchsank\u00FCndigung durch Angeh\u00F6rige.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-06",
+      "kind": "REFINE",
+      "statement": "Angeh\u00F6rige sollen zu Eintr\u00E4gen eigene Fotos hochladen k\u00F6nnen; pro Eintrag sind maximal f\u00FCnf Fotos zul\u00E4ssig, und es d\u00FCrfen nur JPG- oder PNG-Formate akzeptiert werden.",
+      "targetEntityId": "REQ-79",
+      "featureKey": null,
+      "claimIds": [
+        "weekly-entry-photo-limit-format"
+      ],
+      "rationale": "REQ-79 enth\u00E4lt bereits das Hochladen eigener Fotos durch Angeh\u00F6rige zu Eintr\u00E4gen der Wochen\u00FCbersicht; das neue Item konkretisiert dies durch Mengen- und Formatgrenzen.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-07",
+      "kind": "RESTATE",
+      "statement": "Eine Selbstregistrierung f\u00FCr Angeh\u00F6rige darf derzeit nicht angeboten werden; der Zugang f\u00FCr Angeh\u00F6rige muss ausschlie\u00DFlich \u00FCber intern vergebene Accounts erfolgen.",
+      "targetEntityId": "REQ-05",
+      "featureKey": null,
+      "claimIds": [
+        "no-self-registration-existing-decision"
+      ],
+      "rationale": "Inhaltlich gleich zu REQ-05: keine Selbstregistrierung, nur intern vergebene Accounts.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-08",
+      "kind": "CONTRADICT",
+      "statement": "Es muss gekl\u00E4rt werden, ob Angeh\u00F6rige sich k\u00FCnftig selbst mit einem Einladungscode der Einrichtung registrieren k\u00F6nnen und ob diese m\u00F6gliche Neuregelung die bisherige Festlegung ohne Selbstregistrierung ersetzt.",
+      "targetEntityId": "REQ-05",
+      "featureKey": null,
+      "claimIds": [
+        "self-registration-invite-code-open"
+      ],
+      "rationale": "Das Item stellt ausdr\u00FCcklich eine m\u00F6gliche Neuregelung in den Raum, die die bestehende Festlegung aus REQ-05 ersetzen w\u00FCrde; damit steht es im Widerspruch zur aktuellen Requirement-Wahrheit und muss als offene Entscheidung behandelt werden.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-09",
+      "kind": "NEW_RELATED",
+      "statement": "Die Aufbewahrungsdauer einnahmebezogener Bemerkungen bei der Medikamenten-Gabe soll mit dem Tr\u00E4ger gekl\u00E4rt werden, da dabei Datenschutz-Fragen zu ber\u00FCcksichtigen sind.",
+      "targetEntityId": null,
+      "featureKey": "medication-remark-retention",
+      "claimIds": [
+        "remark-retention-open"
+      ],
+      "rationale": "REQ-42 enth\u00E4lt die Erfassung und Anzeige der Bemerkungen, aber keine Regel zur Aufbewahrungsdauer. Daher fachlich neu, jedoch klar im selben Feature der Medikamenten-Bemerkungen.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-10",
+      "kind": "NEW",
+      "statement": "F\u00FCr Push-Benachrichtigungen an Angeh\u00F6rige ist Firebase Cloud Messaging als technische Ausrichtung festgelegt.",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "push-fcm-technology"
+      ],
+      "rationale": "Im Requirement-Core existiert noch keine Festlegung zu Push-Technologie oder FCM; auch kein belegter Widerspruch zu aktiver Architektur. Deshalb neues Requirement.",
+      "relatedRejectionId": null
+    }
+  ]
+}

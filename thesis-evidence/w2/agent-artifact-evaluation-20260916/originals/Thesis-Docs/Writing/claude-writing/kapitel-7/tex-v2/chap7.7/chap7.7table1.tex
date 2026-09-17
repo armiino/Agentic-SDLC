@@ -1,0 +1,45 @@
+% P10-Evaluationsfeinschliff, 16.09.2026: Aussagegrenzen und Anforderungsbilanz; keine neuen Messwerte.
+% P10-Core-Inhaltsprüfung, 15.09.2026: datierter Ergebnisanschluss; B-60 korrigiert.
+% Belege: thesis-evidence/w2/core-content-audit-20260915/evaluation/
+% B-59, 15.09.2026: datierte Ledger-Nachauswertung, Stützung und Reichweite.
+% Beleg: thesis-evidence/w2/ledger-repetitions-20260915/ (Originale unverändert).
+% P10-4a, 14.09.2026: Mechanismus, Quellenreichweite und v4-Nachweis angeglichen.
+% M19 (12.09.2026): Leserführung und präzise Ergebnisdarstellung;
+% Messwerte und historische Nachweisgrenzen bleiben erhalten.
+% ============================================================
+% Tabelle 7.7-1: Ergebnisprofil (schließt die Prüflandkarte) — v01
+% In Overleaf ablegen als: tables/Chap7-v02/chap7.7table1.tex
+% Aufruf im Fließtext: \input{tables/Chap7-v02/chap7.7table1}
+% Label: t:eval-ergebnisprofil
+% Stil: chap6.1-Konvention. P-Nummern = t:eval-pruefkarte (7.1).
+% HERKUNFT: Befunde = tex-v2 §§7.3–7.6 (Zahlen: Gold v2/Nenner 109;
+% Kanonik runs/w2-goldv2-eval-*.json, z1-stufenanalyse.md rev2,
+% fehlerklassen-matrix.md v2, z2-fallblaetter.md rev2,
+% traceability-audit.json, Lauf dc711f).
+% ============================================================
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.08\textwidth}>{\raggedright\arraybackslash}p{0.40\textwidth}>{\raggedright\arraybackslash}p{0.42\textwidth}}
+    \hline
+    \textbf{Bezug} & \textbf{Befund (Evidenzklasse)} & \textbf{Verbleibende Grenze} \\
+    \hline
+    A1/A2 & Ausgewählte Verarbeitungsschritte, Übergaben und Zustandswirkungen aus Laufartefakten rekonstruierbar; Nachrichten- und Prozessgrenzentests ergänzen diese Belege [D]+[VA] & Keine Vollprüfung aller Informations- und Protokollierungspfade; sichtbarer Kontext belegt keine Nutzung durch das Modell \\
+    \shortstack[l]{P1\\(A3)} & Hauptläufe: Full Coverage 0{,}839 / 0{,}495 (Treue/Stress); Korrektheit jeweils 1{,}0, Stützung 1{,}0 / 0{,}957. Drei Stressfall-Ausgaben: Full Coverage 0{,}495--0{,}523 [B] & Nur 43/109 Aussagen in allen drei Ausgaben full; bekannte Quelle, keine allgemeine Stabilitätsaussage. Im Hauptlauf entstanden zwei der 55 Lücken erst nach der Extraktion; teilweise unvollständiger Referenzkontext \\
+    \shortstack[l]{P2\\(A3)} & 37 der 55 Stressfall-Lücken mit zuordenbarem Hinweis (Silent-Miss 0{,}327); Treue-Fall 5/5 still [B] & Prüfpotenzial, keine gemessene Behebung; Hinweise verrauscht (18/48 relevant, 1 explizite Warnung); stille Klasse: Detailverlust in verwendeten Units \\
+    \shortstack[l]{P3\\(A4)} & 107/109 Klassen unverändert; 2 Verluste aus einer Zusammenführung; 6/7 Merges ohne Klassenverlust [B] & Übergangs-Check prüft Referenz, nicht Inhalt (belegte Kontrolllücke); Verifikation: 12 Paare, nicht verblindet \\
+    \shortstack[l]{P4\\(A4/A6)} & Freigabe-Governance am realen Apply-Pfad getestet (4/4); Challenge-Bilanz 6 getestet / 4 teilweise / 2 offen [VA] & Initialer Seed ohne Einzelautorisierung; G01 (nur Warnung) und G04 (Naht-Umgehung) ungetestet; Prüftiefe überwiegend In-Memory (28/36) \\
+    \shortstack[l]{P5\\(A5/A7)} & Fünf Falltypen und acht zusätzliche Inhaltsprüfungen: autorisierte Fortschreibung, passende PBI-/Feature-Verbindungen und Ablehnung einer unvollständigen Vorlage fallbezogen belegt [D] & Historische, nicht unabhängige Fälle; teilweise unvollständige Einordnung und Inhaltserhaltung, begrenzte Folgeangleichung; keine Qualitätsquote \\
+    \shortstack[l]{P6\\(A3/A5)} & v4: 104/104 Ledger-Ursprungskanten auflösbar; 234/237 Items mit direktem Bezug oder Beitragspfad; 64 aktuelle Einzelreferenzen bei 33 Items offen [VA] & Teilbeitrag ist keine vollständige Herkunft; getrennte Bezugsgrößen, keine semantische Vollprüfung; ein Snapshot \\
+    \shortstack[l]{P7\\(A8)} & Drei Issues real erzeugt; ausgewählter Anforderungsinhalt bis zur Projektion feldverglichen; externer Kommentar-Rückweg bis zum Issue-Update; Wiedererkennung abgelehnter Eingänge [D] & kein allgemeiner Drift-Monitor (G08 teilweise); ein Vermerk-Write zunächst fehlgeschlagen \\
+    \shortstack[l]{P8\\(A9/A10)} & Wiederaufnahme ohne erneute Ausführung der abgeschlossenen Ledger-Stufe [D]; separater Prozessgrenzen-Smoke mit 14 Prüfungen [VA]; 2 Steward-Aufgaben über reguläre Gates [D] & keine Fortsetzung \emph{innerhalb} laufender Verarbeitung gezeigt; kein Endzustandsvergleich; keine Usability-Aussage \\
+    \hline
+  \end{tabular}
+  \caption[Ergebnisprofil entlang der Prüffragen]{Ergebnisprofil entlang der Prüflandkarte aus
+    Tabelle~\ref{t:eval-pruefkarte} --- Befund, Evidenzklasse und
+    verbleibende Grenze je Prüffrage mit Bezug zu A1--A10; A1/A2
+    querschnittlich ergänzt. Keine pauschale Erfüllungswertung, kein
+    Gesamtwert und keine Bestehensschwelle.}
+  \label{t:eval-ergebnisprofil}
+\end{table}

@@ -1,0 +1,34 @@
+% P10-4b, 14.09.2026: Begriffs-/Beleganschlüsse und abgegrenzte Prüfaussagen präzisiert.
+% ============================================================
+% Tabelle 7.4-1: Vier Kontrolltests am realen Apply-Pfad — v01 (07.09.)
+% In Overleaf ablegen als: tables/eval-kontrolltests.tex
+% Aufruf im Fließtext: \input{\tabledir/eval-kontrolltests.tex}
+% Label: t:eval-kontrolltests
+% Stil: chap6.1-Konvention.
+% HERKUNFT: thesis-evidence/w2/t1-t4-kontrolltests.md; Testcode
+% AgenticSdlc.Tests/FullWorkflow/IngestionApplyGovernanceTests.cs;
+% Beleg-Lauf 07.09.2026 (Filter 4/4, volle Suite 688/688).
+% Soll-Spalte = wörtlich Umsetzungsplan §5.2 (prospektiv fixiert).
+% ============================================================
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}p{0.46\textwidth}}
+    \hline
+    \textbf{Fall} & \textbf{Soll (vorab)} & \textbf{Beobachtete Zustandswirkung} \\
+    \hline
+    G05: fehlende Freigabe & keine fachliche Übernahme ohne Freigabe; definierte Zurückstellung & Report ohne Anwendung; Item-Bestand identisch; keine Vermerke; kein Snapshot (inhaltsgleicher Save) \\
+    G06: abgelehnte Änderung & keine Übernahme; Ablehnung bleibt nachvollziehbar & Item-Bestand identisch; genau ein Ablehnungsvermerk mit wörtlicher Begründung und abgelehntem Statement \\
+    Replay: bereits angewendeter Plan & keine zweite fachliche Anwendung; keine zusätzlichen Objekte & zweiter Aufruf liefert den persistierten Erst-Report; Core-Datei byte-identisch; Snapshot-Zahl unverändert; kein Duplikat \\
+    Gültiger Kontrollfall & vorgesehene Änderung wird korrekt übernommen & neues Item mit erwartetem Text; Herkunft = Auslöser-Lauf; History-Snapshot des Alt-Stands; Anwendungs-Marker vorhanden \\
+    \hline
+  \end{tabular}
+  \caption[Kontrolltests am persistierenden Ingestion-Apply-Pfad]{Vier prospektiv spezifizierte Kontrolltests am
+    persistierenden Ingestion-Apply-Pfad (reales Repository in
+    Temporärverzeichnissen, keine Mocks; alle vier bestanden im
+    ersten Lauf). Nachweisgrenze: geprüft ist dieser bezeichnete
+    Pfad --- kein Umgehungstest außerhalb der Speichernaht (G04)
+    und keine Absturz-Doppel-Write-Prüfung.}
+  \label{t:eval-kontrolltests}
+\end{table}

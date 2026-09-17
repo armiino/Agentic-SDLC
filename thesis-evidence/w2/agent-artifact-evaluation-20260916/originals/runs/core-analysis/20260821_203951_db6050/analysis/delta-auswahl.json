@@ -1,0 +1,196 @@
+{
+  "projectId": "agentic-sdlc",
+  "schemaVersion": 4,
+  "createdUtc": "2026-08-21T20:47:53.265431Z",
+  "sources": [
+    {
+      "sourceId": "core-analysis:20260821_203951_db6050",
+      "sourceType": "analyst-finding",
+      "path": "runs/core-analysis/20260821_203951_db6050",
+      "runId": "20260821_203951_db6050",
+      "description": "L\u00FCcken-Hypothesen des Core-Analysten (erschlossen aus dem Bestand \u2014 Autor entscheidet an Tor 1)"
+    }
+  ],
+  "items": [
+    {
+      "itemId": "CA-1",
+      "itemType": "architecture",
+      "text": "F\u00FCr die einrichtungsgebundene Stichwortsuche \u00FCber alle Bewohnerprofile muss ein serverseitiger Suchrahmen festgelegt werden: Suchindizes d\u00FCrfen nur Inhalte der jeweils zugeordneten Einrichtung enthalten oder nur innerhalb dieser Einrichtung abfragbar sein, damit Suchtreffer die Einrichtungsgrenze technisch nicht umgehen.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "arch",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus REQ-60/PBI-031, die eine Stichwortsuche \u00FCber alle Bewohnerprofile verlangen, und aus REQ-84 sowie ARCH-11, die die serverseitig erzwungene Einrichtungsgrenze festlegen. F\u00FCr die Namenssuche auf Kommunikationsseiten gibt es mit ARCH-24 bereits einen Teilrahmen, f\u00FCr die einrichtungs\u00FCbergreifende Stichwortsuche \u00FCber Profile jedoch keinen technischen Rahmen, wie Indizierung und Mandantentrennung zusammen umgesetzt werden.",
+        "ankerIds": "REQ-60,REQ-84,ARCH-11,ARCH-24"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-2",
+      "itemType": "requirement",
+      "text": "Angeh\u00F6rige m\u00FCssen eine bereits angefragte oder best\u00E4tigte Besuchsank\u00FCndigung bis zum Beginn des Besuchs \u00E4ndern oder absagen k\u00F6nnen; nach einer \u00C4nderung muss der Besuch erneut den Status \u201Eangefragt\u201C erhalten, und nach einer Absage darf keine Erinnerung mehr versendet werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "funktional",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-82 und REQ-87: Es gibt das Ank\u00FCndigen sowie die Pflege-Entscheidung mit den Status angefragt, best\u00E4tigt und abgelehnt, aber keine Regel f\u00FCr den h\u00E4ufigen Folgefall, dass Angeh\u00F6rige Datum/Uhrzeit nachtr\u00E4glich \u00E4ndern oder den Besuch absagen m\u00FCssen. Aus REQ-88 folgt zus\u00E4tzlich, dass ohne Absage-Regel falsche Erinnerungen an nicht mehr g\u00FCltige Besuche versendet w\u00FCrden.",
+        "ankerIds": "REQ-82,REQ-87,REQ-88"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-3",
+      "itemType": "requirement",
+      "text": "\u00DCbergabe-Notizen m\u00FCssen bis zur Archivierung bearbeitet werden k\u00F6nnen; bei jeder Bearbeitung ist die zuletzt g\u00FCltige Fassung mit \u00C4nderungszeitpunkt und bearbeitendem Account nachvollziehbar zu halten.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "funktional",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-61 und REQ-85: Es gibt die fachliche Anlage und Anzeige einer \u00DCbergabe-Notiz pro Schicht sowie die automatische Archivierung nach drei\u00DFig Tagen, aber keine Regel f\u00FCr Korrekturen an fehlerhaften oder unvollst\u00E4ndigen Notizen im laufenden Schichtbetrieb. Gerade weil die n\u00E4chste Schicht die Notiz prominent sieht, fehlt ein geregelter Bearbeitungsfall im Lebenszyklus.",
+        "ankerIds": "REQ-61,REQ-85,L3-REQ-001"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-4",
+      "itemType": "open_question",
+      "text": "Wie k\u00F6nnen Angeh\u00F6rige ihre bereits angek\u00FCndigten Besuche in der App selbst einsehen und den aktuellen Status eines Besuchs nachvollziehen, insbesondere ob er noch ausstehend, best\u00E4tigt, abgelehnt oder bereits erledigt ist?",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "persona",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus den belegten Bed\u00FCrfnissen der Persona \u201EAngeh\u00F6rige / Bezugsperson\u201C: REQ-82 belegt das Ank\u00FCndigen von Besuchen, REQ-87 die R\u00FCckmeldung bei Best\u00E4tigung oder Ablehnung und REQ-88 die Erinnerung an best\u00E4tigte Besuche. F\u00FCr diese Persona gibt es jedoch kein gefundenes Requirement oder PBI, das eine eigene \u00DCbersicht oder Detailansicht der bereits angek\u00FCndigten Besuche f\u00FCr Angeh\u00F6rige beschreibt. Die vorhandenen \u00DCbersichts-Requirements REQ-83, REQ-89 und REQ-90 beziehen sich ausdr\u00FCcklich auf Pflegende.",
+        "ankerIds": "REQ-82,REQ-87,REQ-88"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    }
+  ],
+  "relations": [],
+  "provenance": [
+    {
+      "itemId": "CA-1",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-1",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-60,REQ-84,ARCH-11,ARCH-24"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-2",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-2",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-82,REQ-87,REQ-88"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-3",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-3",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-61,REQ-85,L3-REQ-001"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-4",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-4",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-82,REQ-87,REQ-88"
+          }
+        }
+      ]
+    }
+  ],
+  "proposals": []
+}

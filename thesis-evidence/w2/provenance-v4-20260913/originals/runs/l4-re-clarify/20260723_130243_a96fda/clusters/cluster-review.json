@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "cluster-review-20260723_130406",
+  "verdict": "revise",
+  "summary": "Die meisten Cluster sind fachlich tragf\u00E4hig. Es gibt jedoch zwei fachliche Fehler: (1) FC-10 f\u00FChrt mehrere klar querschnittliche Anforderungen f\u00E4lschlich als Core-Feature, obwohl diese als Cross-Cutting-Regeln an fachliche Inhalts-Features angeh\u00E4ngt werden sollten; (2) FC-13 vermischt Delivery-/Forschungsaktivit\u00E4ten mit technischen Architekturentscheidungen und ist damit f\u00FCr Backlog-Planung zu grob bzw. falsch zusammengezogen.",
+  "findings": [
+    {
+      "clusterId": "FC-10",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "FC-10 enth\u00E4lt mehrere Anforderungen, die keinen eigenst\u00E4ndigen fachlichen Endnutzer-Feature-Schnitt bilden, sondern querschnittliche Regeln darstellen: REQ-35 (Einwilligung/Bilddatenschutz), REQ-36 (lokaler Cache), L3-REQ-003 (Medienkompression), L3-REQ-004 (Offline-Synchronisationshinweise), L3-REQ-012 (Untertitel/Transkripte f\u00FCr Medien) und L3-REQ-001 (\u00C4nderungsnachverfolgung). Diese Regeln wirken \u00FCber mehrere Features hinweg und sind daher als crossCutting bei den betroffenen Feature-Clustern besser eingeordnet als als Core eines separaten Features."
+    },
+    {
+      "clusterId": "FC-13",
+      "kind": "wrong_merge",
+      "severity": "error",
+      "message": "FC-13 verschmilzt zwei unterschiedliche Themen: REQ-50, REQ-51 und L3-REQ-015 betreffen Forschung/Pilot/Evaluierung, w\u00E4hrend REQ-53, REQ-54 und REQ-55 konkrete Technologie- bzw. Architekturentscheidungen betreffen. Das sind unterschiedliche Planungsgegenst\u00E4nde und sollten nicht als ein gemeinsames Feature-Cluster behandelt werden."
+    }
+  ],
+  "operations": [
+    {
+      "opId": "op-01",
+      "kind": "move_core",
+      "rationale": "REQ-35 ist eine Datenschutz-/Einwilligungsregel f\u00FCr die Nutzung von Bildern im About-Me-Bereich und sollte dort als fachlich wirksamer Querschnitt verankert sein statt als Core eines separaten Features.",
+      "requirementId": "REQ-35",
+      "fromClusterId": "FC-10",
+      "toClusterId": "FC-07",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-02",
+      "kind": "move_core",
+      "rationale": "L3-REQ-003 regelt medienbezogene Upload-Verarbeitung und passt als querschnittliche Medienregel prim\u00E4r zum About-Me-Bereich, wo Bilder/Uploads fachlich ausdr\u00FCcklich vorkommen.",
+      "requirementId": "L3-REQ-003",
+      "fromClusterId": "FC-10",
+      "toClusterId": "FC-07",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-03",
+      "kind": "move_core",
+      "rationale": "L3-REQ-012 verbessert Zug\u00E4nglichkeit und Suchbarkeit von Medieninhalten quer \u00FCber mediennutzende Features; als erster fachlicher Anker geh\u00F6rt es nicht als eigenst\u00E4ndiger Core nach FC-10, sondern an das Medien/Profil-Feature, von dem es aus als Cross-Cutting weiterverwendet werden kann.",
+      "requirementId": "L3-REQ-012",
+      "fromClusterId": "FC-10",
+      "toClusterId": "FC-07",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-04",
+      "kind": "move_core",
+      "rationale": "L3-REQ-001 ist eine allgemeine Audit-/Nachvollziehbarkeitsregel beim Erstellen oder Bearbeiten von Inhalten und damit kein eigenst\u00E4ndiges Endnutzer-Feature. Als fachlicher Anker passt es eher zur Rechte-/Governance-Verwaltung, von wo aus es als Regel auf Inhaltsfeatures wirkt.",
+      "requirementId": "L3-REQ-001",
+      "fromClusterId": "FC-10",
+      "toClusterId": "FC-02",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-05",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-35 wirkt als Datenschutzregel direkt auf das Kommunikationswissen, sofern dort Medien/Videos verwendet werden.",
+      "requirementId": "REQ-35",
+      "fromClusterId": null,
+      "toClusterId": "FC-08",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-06",
+      "kind": "add_crosscutting",
+      "rationale": "L3-REQ-003 betrifft Medienuploads auch im Kommunikationswissen mit Bildern/Videos und sollte dort als Cross-Cutting-Regel referenziert werden.",
+      "requirementId": "L3-REQ-003",
+      "fromClusterId": null,
+      "toClusterId": "FC-08",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-07",
+      "kind": "add_crosscutting",
+      "rationale": "L3-REQ-012 betrifft Medieninhalte auch im Kommunikationswissen und sollte dort als querschnittliche Regel erg\u00E4nzt werden.",
+      "requirementId": "L3-REQ-012",
+      "fromClusterId": null,
+      "toClusterId": "FC-08",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-08",
+      "kind": "add_crosscutting",
+      "rationale": "L3-REQ-001 zur Erfassung von Ersteller/\u00C4nderungszeit betrifft auch About-Me-Inhalte als querschnittliche Governance-Regel.",
+      "requirementId": "L3-REQ-001",
+      "fromClusterId": null,
+      "toClusterId": "FC-07",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-09",
+      "kind": "add_crosscutting",
+      "rationale": "L3-REQ-001 betrifft auch \u00C4nderungen am Kommunikationswissen und sollte dort als Cross-Cutting-Regel erg\u00E4nzt werden.",
+      "requirementId": "L3-REQ-001",
+      "fromClusterId": null,
+      "toClusterId": "FC-08",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-10",
+      "kind": "new_cluster",
+      "rationale": "REQ-50, REQ-51 und L3-REQ-015 bilden gemeinsam ein koh\u00E4rentes Forschungs-/Pilot- und Evaluierungscluster, getrennt von technischen Implementierungsentscheidungen.",
+      "requirementId": null,
+      "fromClusterId": null,
+      "toClusterId": null,
+      "newClusterId": "FC-13A",
+      "label": "Forschung, Anforderungsanalyse und Pilotbewertung",
+      "identityKey": "forschung-anforderungsanalyse-und-pilotbewertung",
+      "coreRequirementIds": [
+        "REQ-50",
+        "REQ-51",
+        "L3-REQ-015"
+      ]
+    },
+    {
+      "opId": "op-11",
+      "kind": "new_cluster",
+      "rationale": "REQ-53, REQ-54 und REQ-55 bilden ein separates Technologie-/Architekturcluster und sollten nicht mit Forschungsaktivit\u00E4ten vermischt werden.",
+      "requirementId": null,
+      "fromClusterId": null,
+      "toClusterId": null,
+      "newClusterId": "FC-13B",
+      "label": "Technologie- und Architekturentscheidungen",
+      "identityKey": "technologie-und-architekturentscheidungen",
+      "coreRequirementIds": [
+        "REQ-53",
+        "REQ-54",
+        "REQ-55"
+      ]
+    }
+  ]
+}

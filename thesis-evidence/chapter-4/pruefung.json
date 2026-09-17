@@ -1,0 +1,392 @@
+{
+  "date": "2026-09-13",
+  "kind": "Lesende Bereitstellungs- und Ankerprüfung; keine neue Systemevaluation",
+  "checks": [
+    {
+      "eid": "E43-01",
+      "check": "Registriertes Schreibwerkzeug ohne protokollierten Aufruf",
+      "passed": true,
+      "detail": {
+        "calls": [
+          "fs_exists",
+          "fs_list",
+          "fs_read"
+        ],
+        "events": 13
+      }
+    },
+    {
+      "eid": "E43-01",
+      "check": "Leerer archivierter Zielbestand",
+      "passed": true,
+      "detail": "Nur .gitkeep; kein Beweis über nicht archivierte Arbeitsverzeichnisse."
+    },
+    {
+      "eid": "E43-02",
+      "check": "Genau ein dokumentierter Artefakt-Lesezugriff",
+      "passed": true,
+      "detail": [
+        "input/transcripts/T9999_chaos.txt",
+        "docs/requirements.md"
+      ]
+    },
+    {
+      "eid": "E43-02",
+      "check": "Selbstauskunft im Schreibaufruf",
+      "passed": true,
+      "detail": "TOOL_CALL_STARTED, toolStep 8; decision-log.jsonl Zeile 5."
+    },
+    {
+      "eid": "E43-03",
+      "check": "Erster und einziger Toolaufruf schreibt",
+      "passed": true,
+      "detail": {
+        "path": "docs/requirements.md",
+        "content": "<redacted len=6337>",
+        "intent": "initial_draft",
+        "reason": "Erstellung des Requirements-Dokuments für das Kundenportal‑MVP basierend auf Transkript und Kontext",
+        "evidence": "input/transcripts/T9999_chaos.txt, runs/phase2_1/20260526_155811_f151d2/state/context.md"
+      }
+    },
+    {
+      "eid": "E43-04",
+      "check": "Zwei gespeicherte Strategien",
+      "passed": true,
+      "detail": [
+        {
+          "runId": "20260528_130843_589104",
+          "phase2ContextStrategy": "message_passing",
+          "model": "openai/gpt-oss-120b:free",
+          "prompts": null
+        },
+        {
+          "runId": "20260613_155156_0e6849",
+          "phase2ContextStrategy": "artifact_state",
+          "model": "openai/gpt-4.1-mini",
+          "prompts": {
+            "phase2_1": {
+              "contextStrategy": "artifact_state",
+              "agents": {
+                "context": "ContextPrompt3",
+                "requirements": "RequirementsPromptB1",
+                "risks": "RisksPromptB1",
+                "architecture": "ArchitecturePromptB1",
+                "openQuestions": "OpenQuestionsPromptB1"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "eid": "E43-05",
+      "check": "Werkzeugfolge 20260528_130843_589104",
+      "passed": true,
+      "detail": [
+        "fs_write"
+      ]
+    },
+    {
+      "eid": "E43-05",
+      "check": "Werkzeugfolge 20260529_101357_d4d49c",
+      "passed": true,
+      "detail": [
+        "fs_read"
+      ]
+    },
+    {
+      "eid": "E43-05",
+      "check": "Requirements fehlen im zweiten Lauf",
+      "passed": true,
+      "detail": [
+        {
+          "Severity": "error",
+          "Code": "MISSING_FILE",
+          "Path": "docs/requirements.md",
+          "Message": "Required Phase 2.1 file is missing."
+        }
+      ]
+    },
+    {
+      "eid": "E44-04",
+      "check": "Gewichtete Architekturwerte",
+      "passed": true,
+      "detail": [
+        4,
+        14
+      ]
+    },
+    {
+      "eid": "E44-04",
+      "check": "Per-Item-Urteile identisch",
+      "passed": true,
+      "detail": {
+        "counts": [
+          51,
+          51,
+          51
+        ],
+        "reasons_identical": false
+      }
+    },
+    {
+      "eid": "E44-05",
+      "check": "Getrennte Referenzgrößen",
+      "passed": true,
+      "detail": "11 autorbestätigt laut R2; 99 modellgeneriert und in R3 zurückgezogen."
+    },
+    {
+      "eid": "E44-06",
+      "check": "Claim in Requirement und Unit-Bezug",
+      "passed": true,
+      "detail": {
+        "claim": "canon-profiluebersicht-nach-login",
+        "units": [
+          "AU-0045"
+        ],
+        "requirement": "REQ-13"
+      }
+    },
+    {
+      "eid": "E45-02",
+      "check": "Maker–Repair-Folge",
+      "passed": true,
+      "detail": [
+        {
+          "attempt": 1,
+          "source": "maker",
+          "pass_": false,
+          "errors": 70
+        },
+        {
+          "attempt": 2,
+          "source": "repair",
+          "pass_": true,
+          "errors": 0
+        }
+      ]
+    },
+    {
+      "eid": "E46-01",
+      "check": "12 Befunde und 12 Berichtaktionen",
+      "passed": true,
+      "detail": {
+        "broken": 12,
+        "retargeted": 11,
+        "removed": 1,
+        "unresolved": 0
+      }
+    },
+    {
+      "eid": "E47-01",
+      "check": "Pause und Resume 20260727_074919_b2c654",
+      "passed": true,
+      "detail": [
+        "PIPELINE_PAUSED",
+        "PIPELINE_RESUME",
+        "GATE_ANSWERED",
+        "GATE_ANSWERED",
+        "GATE_ANSWERED"
+      ]
+    },
+    {
+      "eid": "E47-01",
+      "check": "Pause und Resume 20260727_080638_9d4ae8",
+      "passed": true,
+      "detail": [
+        "PIPELINE_PAUSED",
+        "PIPELINE_RESUME",
+        "GATE_ANSWERED",
+        "PIPELINE_PAUSED"
+      ]
+    },
+    {
+      "eid": "E47-02",
+      "check": "Ablösungsbericht",
+      "passed": true,
+      "detail": {
+        "resolved": [
+          "DEC-001"
+        ],
+        "supersededRequirements": [
+          "REQ-32"
+        ],
+        "refinedRequirements": [],
+        "newRequirements": [
+          "REQ-78"
+        ],
+        "unblockedPbis": [],
+        "swappedPbis": [
+          "PBI-012",
+          "PBI-023"
+        ],
+        "skipped": []
+      }
+    },
+    {
+      "eid": "E48-01",
+      "check": "Ausführung runs/github-forward/_initial-sync-det",
+      "passed": true,
+      "detail": {
+        "accepted": 39,
+        "created": 39,
+        "updated": 0,
+        "commented": 0,
+        "linked": 0,
+        "flagged": 0,
+        "held": 0,
+        "noChange": 0,
+        "skipped": 4,
+        "rejected": 0,
+        "failed": 0,
+        "alreadyApplied": 0
+      }
+    },
+    {
+      "eid": "E48-01",
+      "check": "Ausführung runs/github-forward/20260723_152440_f1e0f6",
+      "passed": true,
+      "detail": {
+        "accepted": 2,
+        "created": 0,
+        "updated": 2,
+        "commented": 0,
+        "linked": 0,
+        "flagged": 0,
+        "held": 0,
+        "noChange": 0,
+        "skipped": 0,
+        "rejected": 0,
+        "failed": 0,
+        "alreadyApplied": 0
+      }
+    },
+    {
+      "eid": "E48-03",
+      "check": "Verarbeiteter Kommentar im Folgeabruf gefiltert",
+      "passed": true,
+      "detail": {
+        "first": [
+          5314137992,
+          5314138110,
+          5313971856,
+          5239868899
+        ],
+        "second": [
+          5314138110,
+          5314788421,
+          5239868899
+        ]
+      }
+    },
+    {
+      "eid": "E48-03",
+      "check": "NOTE_COMMENT ausgeführt",
+      "passed": true,
+      "detail": [
+        {
+          "opId": "op-2",
+          "kind": "NOTE_COMMENT",
+          "pbiId": "REQ-78",
+          "targetIssueNumber": 7,
+          "resultIssueNumber": 7,
+          "resultUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/7#issuecomment-5314788421",
+          "status": "commented",
+          "message": null
+        }
+      ]
+    },
+    {
+      "eid": "E44-06",
+      "check": "Zitate innerhalb der belegten Quelleinheit",
+      "passed": true,
+      "detail": {
+        "unit": "AU-0045",
+        "speaker": "Speaker 1",
+        "quotes": [
+          {
+            "source": "transcript",
+            "quote": "Speaker 1: Ich würde sagen, nach dem Login landet man auf einer Profilübersicht-Seite. Dort zeigen wir eine Liste aller Profile an. Jedes Profil ist anklickbar und führt zu einer weiteren Seite."
+          },
+          {
+            "source": "transcript",
+            "quote": "Speaker 1: Also speziell nur die weiteren Daten von dem gewählten Profil."
+          }
+        ],
+        "comparison": "Leerraum vereinheitlicht; gespeichertes Sprecherpräfix separat mit dem Unit-Sprecher verglichen. Kein ungeprüfter bytegleicher Vollzitat-Match."
+      }
+    },
+    {
+      "eid": "E44-06",
+      "check": "Quellbezug des aktuellen Core-Elements",
+      "passed": true,
+      "detail": {
+        "itemId": "REQ-13",
+        "sourceRunId": "20260723_113115_35335a",
+        "sourceClaimIds": [
+          "canon-profiluebersicht-nach-login"
+        ]
+      }
+    },
+    {
+      "eid": "E43-01",
+      "check": "Archivierte Eingabe stimmt mit gelesenem Inhalt überein",
+      "passed": true,
+      "detail": "Bytevergleich der archivierten Datei mit result.text aus TOOL_CALL_FINISHED(fs_read)."
+    },
+    {
+      "eid": "E45-03",
+      "check": "Historische Body-Zählregel",
+      "passed": true,
+      "detail": [
+        8,
+        6,
+        7
+      ]
+    },
+    {
+      "eid": "E48-03",
+      "check": "Geschriebener Vermerk im Folgesnapshot",
+      "passed": true,
+      "detail": "Kommentar 5314788421 aus Forward-Report steht im unmittelbar nachfolgenden Erntebestand."
+    },
+    {
+      "eid": "E45-02",
+      "date": "2026-09-14",
+      "check": "Historischer Reparaturauftrag enthält alle 70 konkreten Befunde",
+      "passed": true,
+      "detail": {
+        "trace_line": 181,
+        "literal_errors": 70
+      }
+    },
+    {
+      "eid": "E45-02",
+      "date": "2026-09-14",
+      "check": "Werkzeugprüfung und Rückmeldung vor Ergänzung vier Verbindungen",
+      "passed": true,
+      "detail": {
+        "check_line": 225,
+        "feedback_line": 227,
+        "save_line": 229,
+        "pbis": 19,
+        "added": {
+          "PBI-FC-01-01": [
+            "REQ-04"
+          ],
+          "PBI-FC-02-01": [
+            "L3-REQ-005"
+          ],
+          "PBI-FC-03-01": [
+            "L3-REQ-010"
+          ],
+          "PBI-FC-08-01": [
+            "REQ-40"
+          ]
+        },
+        "saved_items_equal_tool_arguments": true
+      }
+    }
+  ],
+  "updated_on": "2026-09-14"
+}

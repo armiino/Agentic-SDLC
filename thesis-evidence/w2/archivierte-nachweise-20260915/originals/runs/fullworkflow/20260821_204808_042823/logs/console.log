@@ -1,0 +1,64 @@
+[pipeline-full] run runId=20260821_204808_042823 slice=u2 (EIN Graph: front->branch->bootstrap|betrieb->forward) ledgerModel=openai/gpt-5.4 baselineModel=openai/gpt-5.4 adjudication=Interactive execute=True
+[pipeline-full] Einstieg: DELTA
+[pipeline-full] Verzweigung: mode=Auto coreExists=True -> Betriebs-Zweig
+[pipeline-full] Betriebs-Zweig: Ingest -> [ingest-gate] -> Apply -> Bridge -> PbiUpdate -> [pbi-gate] -> Apply (Core: 230 items)
+[pipeline-full] Gate 'ingest-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'ingest-gate'. checkpointId=291c50d43fdd43f8a8637c4e4ba8fa17
+  Entscheid beim Resume: --accept-all | --accept id1,id2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260821_204808_042823   (oder: … resume 20260821_204808_042823 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260821_204808_042823/  (PAUSIERT)
+[pipeline-full] resume runId=20260821_204808_042823 gate=ingest-gate checkpointId=291c50d43fdd43f8a8637c4e4ba8fa17
+[pipeline-full] Gate 'arch-ingest-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'arch-ingest-gate'. checkpointId=b3f5f7411c6745d29844ddda6042fbc1
+  arch-Plan: runs/fullworkflow/20260821_204808_042823/07-arch-ingest/plan.json (Operationen je Architektur-Aussage)
+  Entscheid beim Resume: --accept-all | --accept incomingId1,incomingId2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260821_204808_042823   (oder: … resume 20260821_204808_042823 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260821_204808_042823/  (erneut PAUSIERT — nächstes Gate)
+[pipeline-full] resume runId=20260821_204808_042823 gate=arch-ingest-gate checkpointId=b3f5f7411c6745d29844ddda6042fbc1
+[adr] 16 Bestands-Item(s) unklassifiziert/offen ZURÜCKGESTELLT — Rückstau-Abbau ist ein bewusster Akt: pipeline-full run --arch-catchup.
+[pipeline-full] Gate 'adr-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'adr-gate'. checkpointId=0598e6e4da83470cac972912075e8477
+  Review-UI: adr-review 20260821_204808_042823  (Entwuerfe editieren/freigeben → adr-decisions.json, vertagen erlaubt)
+  oder beim Resume: --accept-all (Agent-Entwuerfe 1:1 uebernehmen)
+[pipeline-full] Fortsetzen: pipeline-full resume 20260821_204808_042823   (oder: … resume 20260821_204808_042823 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260821_204808_042823/  (erneut PAUSIERT — nächstes Gate)
+[review-ui] starte lokalen Review-Server...
+[review-ui] binde lokalen Port...
+[review-ui] 1 Items — offen unter: http://127.0.0.1:59827
+[adr-review] Finished: 1 freigegeben, 0 vertagt -> runs/fullworkflow/20260821_204808_042823/07-adr/adr-decisions.json
+[adr-review] R-43: resume 20260821_204808_042823 laeuft automatisch an (Folgestufen inkl. LLM) …
+[pipeline-full] resume runId=20260821_204808_042823 gate=adr-gate checkpointId=0598e6e4da83470cac972912075e8477
+[pipeline-full] 10 offene Entscheidung(en) im Core -> decision-gate (Tor 2).
+[pipeline-full] Gate 'decision-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'decision-gate'. checkpointId=3e26383b50734a48b200a2dba801e1d1
+  Review-UI: decision-gate-review runs/fullworkflow/20260821_204808_042823/07-decision  → decision-gate-decisions.json (Ausgang je Widerspruch, vertagen erlaubt)
+  Flags/accept-all koennen hier NICHT aufloesen (Wahrheits-Konflikt) — sie vertagen alles (laut).
+[pipeline-full] Fortsetzen: pipeline-full resume 20260821_204808_042823   (oder: … resume 20260821_204808_042823 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260821_204808_042823/  (erneut PAUSIERT — nächstes Gate)
+[pipeline-full] resume runId=20260821_204808_042823 gate=decision-gate checkpointId=3e26383b50734a48b200a2dba801e1d1
+[pipeline-full] decision-gate: alle 10 Entscheidung(en) vertagt — DECs parken sichtbar weiter.
+[pipeline-full] Gate 'pbi-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'pbi-gate'. checkpointId=43fc3ed7531e487abd89426096cdef4f
+  Entscheid beim Resume: --accept-all | --accept id1,id2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260821_204808_042823   (oder: … resume 20260821_204808_042823 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260821_204808_042823/  (erneut PAUSIERT — nächstes Gate)
+[review-ui] starte lokalen Review-Server...
+[review-ui] binde lokalen Port...
+[review-ui] 3 Items — offen unter: http://127.0.0.1:59839
+[pbi-update-review] Finished - 3/3 -> human-decisions.json
+[pbi-update-review] R-43: resume 20260821_204808_042823 laeuft automatisch an (Graph-Apply; Folgestufen inkl. LLM) …
+[pipeline-full] resume runId=20260821_204808_042823 gate=pbi-gate checkpointId=43fc3ed7531e487abd89426096cdef4f
+[pipeline-full] pbi-update applied newPbis=0 updatedPbis=3
+[pipeline-full] Snapshot (R-16): 45 Issues von armiino/Agentic-GitHub-refactor geholt (read-only, kein Write).
+[pipeline-full] Forward (DRY-RUN=False): 3 PBI-Ops -> GitHub-Plan (realer Write nur bei execute=true)
+[pipeline-full] Gate 'github-forward-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'github-forward-gate'. checkpointId=dbf5c5a7a8084e9cb66b6914196bf194
+  Review-UI: github-forward-review runs/fullworkflow/20260821_204808_042823/07-github  (→ human-decisions.json)
+  oder Steward decide_gate (→ github-forward-decisions.json) — beide liest der resume
+  oder beim Resume: --accept-all | --accept opId1,opId2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260821_204808_042823   (oder: … resume 20260821_204808_042823 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260821_204808_042823/  (erneut PAUSIERT — nächstes Gate)
+[pipeline-full] resume runId=20260821_204808_042823 gate=github-forward-gate checkpointId=dbf5c5a7a8084e9cb66b6914196bf194
+[pipeline-full] PIPELINE FERTIG (Forward): dryRun=False executed=True success=True.
+[pipeline-full] metrics.json geschrieben (6 Stufen).
+[pipeline-full] Faden: runs/fullworkflow/20260821_204808_042823/  exit=0

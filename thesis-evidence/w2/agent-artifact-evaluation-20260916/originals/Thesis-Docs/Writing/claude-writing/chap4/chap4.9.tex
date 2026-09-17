@@ -1,0 +1,67 @@
+% M10, 11.09.2026: Leserführung, Kapiteltrennung und belegte Reichweite.
+% E47-01: Anhang A, Originale 20260727_074919_b2c654 / 20260727_080638_9d4ae8.
+% A9/A10 wortgleich erhalten; Herkunft technische bzw. betriebliche Konsequenz.
+
+\section{Durabilität und kontinuierliche Nutzung}
+\label{sec:durabilitaet-kontinuierliche-nutzung}
+
+Die letzten beiden Anforderungen betreffen den Betrieb des gewachsenen
+Systems. A9 folgt aus den menschlichen Entscheidungspunkten und den
+extern wirksamen Verarbeitungsschritten; A10 entstand aus der
+Bedienerfahrung während der Entwicklung.
+
+\emph{Technische Konsequenz.} Die zuvor eingeführten
+Autorisierungspunkte machen das Warten auf eine menschliche Entscheidung
+zu einem vorgesehenen Ablaufzustand. Diese Wartezeit kann die Lebensdauer
+des ausführenden Prozesses überschreiten. Deshalb muss über dessen
+Arbeitsspeicher hinaus festgehalten werden, wo ein Lauf steht und welche
+Antwort noch aussteht. Dieser Ausführungszustand beantwortet die
+Wiederaufnahmefrage; der Core hält dagegen fest, welche fachlichen
+Informationen im Projekt gelten
+(Abschnitte~\ref{sec:zustand-persistenz-projektwissen}
+und~\ref{sec:projektzustand-kontrollierte-mutation}).
+
+Die Gestaltung setzte dafür auf Sicherungspunkte und explizite
+Wiederaufnahme. Zwei dokumentierte Machbarkeitsfälle zeigen das Anhalten
+an einem menschlichen Entscheidungspunkt und die Fortsetzung nach
+Übergabe der Antwort: einmal bis zum Abschluss, einmal bis zum nächsten
+vorgesehenen Entscheidungspunkt (E47-01). Daraus folgt noch kein
+Nachweis des Schutzes vor Doppelwirkungen. Dieser ist eine zusätzliche
+technische Anforderung: Bereits angelegte externe Arbeitselemente sollen
+bei einer Wiederaufnahme nicht unkontrolliert erneut entstehen.
+
+\textbf{A9:} Langlaufende und an menschlichen Entscheidungspunkten
+unterbrochene Prozesse müssen pausierbar, wiederaufnehmbar und gegen
+unbeabsichtigte Doppelwirkung abgesichert sein.
+
+\emph{Betriebliche Konsequenz.} Mit mehreren Verarbeitungsabläufen,
+Eingangswegen und Autorisierungspunkten wurde die direkte Bedienung
+aufwendiger. Der Bediener musste den passenden Ablauf auswählen, wartende
+Läufe finden und ausstehende Entscheidungen zuordnen. Dies ist eine
+Beobachtung aus der Entwicklungs- und Stabilisierungsphase mit dem Autor
+als einzigem Bediener, keine Erkenntnis aus einer Nutzerstudie.
+
+Als Antwort wurde eine dialogorientierte Steuerungsschicht ergänzt:
+Sie interpretiert ein Nutzeranliegen, berücksichtigt den verfügbaren
+Systemzustand und wählt aus den bereitgestellten Werkzeugen eine passende
+Handlung. Darin liegt ihr agentischer Beitrag. Die aufgerufenen Abläufe
+führen weiterhin die fachliche Verarbeitung und ihre Kontrollen aus;
+die Bedienschicht implementiert diese Logik nicht erneut. Sie ergänzt
+die weiterhin direkt ausführbaren Workflows um einen dialogischen Zugang
+und wird in Abschnitt~\ref{sec:durable-ausfuehrung-agentische-bedienung}
+als \emph{Steward} konkretisiert. Für fachliche Änderungen nutzt sie die
+vorgesehenen Prüf-, Entscheidungs- und Speicheroperationen.
+
+\textbf{A10:} Die kontinuierliche Nutzung des entwickelten Systems soll
+durch eine agentische Bedien- und Orchestrierungsschicht unterstützt
+werden, die bestehende Governance nutzt, aber nicht ersetzt.
+
+\emph{Einordnung.} Die technische Realisierung folgt in
+Kapitel~\ref{chap:maf-realisierung}; die abgegrenzten Nachweise stehen
+in den Abschnitten~\ref{sec:eval-kontrollen} und~\ref{sec:eval-resume}.
+Sie untersuchen ausgewählte Wiederaufnahme- und Wiederholungsfälle,
+keine beliebige Ausfalltoleranz oder doppelte externe Schreibwirkungen
+nach einem Absturz. Die Steward-Aufgaben dienen der Demonstration;
+eine Usability- oder Produktivitätsbewertung liegt nicht vor. Der
+folgende Abschnitt konsolidiert die zehn Designanforderungen und
+übergibt sie an die Lösungskonzeption.

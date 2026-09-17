@@ -1,0 +1,368 @@
+{
+  "entries": [
+    {
+      "entry": {
+        "id": "canonical-wochenuebersicht-bewohneransicht-mit-filter",
+        "proposition": "Die Pflege-App soll eine Wochen\u00FCbersicht bereitstellen, in der Pflegende alle dokumentierten Ereignisse einer Woche pro Bewohner sehen k\u00F6nnen und die nach Bewohner gefiltert werden kann.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "wochen\u00FCbersicht",
+        "timeScope": null,
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "Pflegekraft: Gerne. Zur Wochen\u00FCbersicht: Wir brauchen eine Ansicht, in der Pflegende alle dokumentierten Ereignisse einer Woche pro Bewohner sehen k\u00F6nnen."
+          },
+          {
+            "source": "transcript",
+            "quote": "Leitung: Einverstanden, das nehmen wir auf. Die Wochen\u00FCbersicht soll nach Bewohner gefiltert werden k\u00F6nnen."
+          },
+          {
+            "source": "transcript",
+            "quote": "Leitung: Nehmen wir als offene Frage mit. Dann fassen wir zusammen: Wochen\u00FCbersicht mit Bewohner-Filter, Lesezugriff f\u00FCr Angeh\u00F6rige, monatlicher PDF-Export durch die Leitung."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "context",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "facet repair: Funktionskern und Filter als zusammengeh\u00F6rige Anforderung zusammengef\u00FChrt.",
+        "candidateIds": [
+          "REQ-wochenuebersicht-pro-bewohner",
+          "REQ-wochenuebersicht-bewohner-filter"
+        ],
+        "assumedRelation": "refines",
+        "sourceUnitIds": [
+          "AU-0002",
+          "AU-0003",
+          "AU-0011"
+        ]
+      },
+      "validation": {
+        "id": "canonical-wochenuebersicht-bewohneransicht-mit-filter",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Wochen\u00FCbersicht f\u00FCr Pflegende mit allen Ereignissen pro Bewohner und Bewohner-Filter ist klar belegt; Status und Modalit\u00E4t passen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "canonical-angehoerige-lesezugriff-ohne-aenderung",
+        "proposition": "Angeh\u00F6rige sollen die Wochen\u00FCbersicht ihrer Bezugsperson lesen k\u00F6nnen, d\u00FCrfen darin aber nichts \u00E4ndern.",
+        "kind": "constraint",
+        "status": "decided",
+        "modality": "must_not",
+        "scope": "wochen\u00FCbersicht / angeh\u00F6rigenzugriff",
+        "timeScope": null,
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "Angeh\u00F6rigenvertretung: Aus unserer Sicht wichtig: Angeh\u00F6rige sollen die Wochen\u00FCbersicht ihrer Bezugsperson lesen k\u00F6nnen, aber nichts darin \u00E4ndern."
+          },
+          {
+            "source": "transcript",
+            "quote": "Leitung: Ja, nur lesend f\u00FCr Angeh\u00F6rige. Zweites Thema: der Berichtsexport."
+          },
+          {
+            "source": "transcript",
+            "quote": "Leitung: Nehmen wir als offene Frage mit. Dann fassen wir zusammen: Wochen\u00FCbersicht mit Bewohner-Filter, Lesezugriff f\u00FCr Angeh\u00F6rige, monatlicher PDF-Export durch die Leitung."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: positive Leseberechtigung und negative \u00C4nderungsbeschr\u00E4nkung als ein Zugriffsclaim belassen.",
+        "candidateIds": [
+          "REQ-angehoerige-read-only-wochenuebersicht"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0004",
+          "AU-0005",
+          "AU-0011"
+        ]
+      },
+      "validation": {
+        "id": "canonical-angehoerige-lesezugriff-ohne-aenderung",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "modality",
+            "observed": "must_not",
+            "problem": "Die Quelle enth\u00E4lt sowohl erlaubtes Lesen als auch verbotenes \u00C4ndern; must_not bildet die Gesamtproposition nicht passend ab.",
+            "suggested": null
+          }
+        ],
+        "reason": "Lesen ist erlaubt und \u00C4ndern verboten, die Proposition ist gedeckt, aber die gew\u00E4hlte Modalit\u00E4t ist f\u00FCr die kombinierte Aussage zu eng."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "canonical-monatlicher-pdf-export-durch-leitung",
+        "proposition": "Die Einrichtung soll einen monatlichen PDF-Export mit allen dokumentierten Ereignissen erhalten, der von der Leitung angesto\u00DFen wird.",
+        "kind": "requirement",
+        "status": "decided",
+        "modality": "must",
+        "scope": "berichtsexport",
+        "timeScope": null,
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "Pflegekraft: Die Einrichtung braucht einen monatlichen Bericht als PDF-Export mit allen dokumentierten Ereignissen."
+          },
+          {
+            "source": "transcript",
+            "quote": "Leitung: Genau. Der Export soll von der Leitung angesto\u00DFen werden."
+          },
+          {
+            "source": "transcript",
+            "quote": "Leitung: Nehmen wir als offene Frage mit. Dann fassen wir zusammen: Wochen\u00FCbersicht mit Bewohner-Filter, Lesezugriff f\u00FCr Angeh\u00F6rige, monatlicher PDF-Export durch die Leitung."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "required",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: Exportfunktion und Rollenbeschr\u00E4nkung zusammengef\u00FChrt, Status bleibt entschieden.",
+        "candidateIds": [
+          "REQ-monatlicher-pdf-export",
+          "REQ-export-durch-leitung"
+        ],
+        "assumedRelation": "elaborates",
+        "sourceUnitIds": [
+          "AU-0006",
+          "AU-0007",
+          "AU-0011"
+        ]
+      },
+      "validation": {
+        "id": "canonical-monatlicher-pdf-export-durch-leitung",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Die Anforderung ist ausdr\u00FCcklich genannt; decided und must sind angemessen."
+      },
+      "claimStatus": "approved"
+    },
+    {
+      "entry": {
+        "id": "canonical-export-dateiname-bewohnerkuerzel-monat",
+        "proposition": "Der Dateiname des Exports soll das Bewohnerk\u00FCrzel und den Monat enthalten, damit die Ablage eindeutig bleibt.",
+        "kind": "open_requirement",
+        "status": "open",
+        "modality": "must",
+        "scope": "berichtsexport / dateibenennung",
+        "timeScope": null,
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "Pflegekraft: Noch ein Detail, das leicht untergeht: Der Dateiname des Exports soll das Bewohnerk\u00FCrzel und den Monat enthalten, damit die Ablage eindeutig bleibt."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "required",
+            "representationMode": "open_decision"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "constraint"
+          },
+          "risks": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "facet repair: offener Detailpunkt nicht zu entschiedener Anforderung verst\u00E4rkt.",
+        "candidateIds": [
+          "REQ-export-dateiname"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0008"
+        ]
+      },
+      "validation": {
+        "id": "canonical-export-dateiname-bewohnerkuerzel-monat",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "status",
+            "observed": "open",
+            "problem": "Die Quelle formuliert dies als Soll-Vorgabe, nicht als offenen Punkt.",
+            "suggested": "decided"
+          }
+        ],
+        "reason": "Der gew\u00FCnschte Dateiname ist direkt belegt, jedoch nicht als offene Frage oder offene Entscheidung ausgewiesen."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "canonical-dunkelmodus-nachtschicht-wochenuebersicht",
+        "proposition": "F\u00FCr die Wochen\u00FCbersicht ist ein ged\u00E4mpfter Dunkelmodus f\u00FCr die Nachtschicht gew\u00FCnscht, damit das Display im Bewohnerzimmer nicht blendet.",
+        "kind": "non_functional_requirement",
+        "status": "open",
+        "modality": "desired",
+        "scope": "wochen\u00FCbersicht / darstellung",
+        "timeScope": "later_possible",
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "Leitung: Gut. Und ganz am Rande, weil es vorhin im Flur aufkam: Die Nachtschicht w\u00FCnscht sich einen ged\u00E4mpften Dunkelmodus f\u00FCr die Wochen\u00FCbersicht, damit das Display im Bewohnerzimmer nicht blendet."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "optional",
+            "representationMode": "requirement"
+          },
+          "architecture": {
+            "applicability": "optional",
+            "representationMode": "requirement"
+          },
+          "risks": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          }
+        },
+        "riskLevel": "low",
+        "notes": "facet repair: Wunschcharakter erhalten; als sp\u00E4ter m\u00F6glich eingeordnet, nicht als MVP-Pflicht.",
+        "candidateIds": [
+          "NFR-dunkelmodus-wochenuebersicht"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0009"
+        ]
+      },
+      "validation": {
+        "id": "canonical-dunkelmodus-nachtschicht-wochenuebersicht",
+        "verdict": "partial",
+        "facetIssues": [
+          {
+            "facet": "timescope",
+            "observed": "later_possible",
+            "problem": "Die Quelle nennt keinen Hinweis, dass dies erst sp\u00E4ter und nicht im MVP relevant ist.",
+            "suggested": "mvp_or_later_unclear"
+          }
+        ],
+        "reason": "Gew\u00FCnschter Dunkelmodus ist als Wunsch der Nachtschicht belegt; nur die zeitliche Einordnung ist zu spezifisch."
+      },
+      "claimStatus": "review_required"
+    },
+    {
+      "entry": {
+        "id": "canonical-offene-frage-zustimmung-angehoerige-export",
+        "proposition": "Es ist zu kl\u00E4ren, ob Angeh\u00F6rige dem PDF-Export ihrer Bezugsperson vorab zustimmen m\u00FCssen.",
+        "kind": "open_question",
+        "status": "open",
+        "modality": "must_clarify",
+        "scope": "berichtsexport / datenschutz",
+        "timeScope": null,
+        "evidence": [
+          {
+            "source": "transcript",
+            "quote": "Angeh\u00F6rigenvertretung: Eine offene Frage h\u00E4tte ich noch: M\u00FCssen Angeh\u00F6rige dem PDF-Export ihrer Bezugsperson eigentlich vorher zustimmen? Das sollten wir mit dem Datenschutz kl\u00E4ren."
+          },
+          {
+            "source": "transcript",
+            "quote": "Leitung: Nehmen wir als offene Frage mit. Dann fassen wir zusammen: Wochen\u00FCbersicht mit Bewohner-Filter, Lesezugriff f\u00FCr Angeh\u00F6rige, monatlicher PDF-Export durch die Leitung."
+          }
+        ],
+        "disposition": {
+          "requirements": {
+            "applicability": "context",
+            "representationMode": "question"
+          },
+          "architecture": {
+            "applicability": "not_applicable",
+            "representationMode": "consciously_omitted"
+          },
+          "risks": {
+            "applicability": "context",
+            "representationMode": "risk_reference"
+          },
+          "open-questions": {
+            "applicability": "required",
+            "representationMode": "open_question"
+          }
+        },
+        "riskLevel": "medium",
+        "notes": "facet repair: offene Datenschutzkl\u00E4rung beibehalten, nicht in Compliance-Entscheidung umgewandelt.",
+        "candidateIds": [
+          "OQ-zustimmung-angehoerige-export"
+        ],
+        "assumedRelation": "standalone",
+        "sourceUnitIds": [
+          "AU-0010",
+          "AU-0011"
+        ]
+      },
+      "validation": {
+        "id": "canonical-offene-frage-zustimmung-angehoerige-export",
+        "verdict": "grounded",
+        "facetIssues": [],
+        "reason": "Es handelt sich klar um einen zu kl\u00E4renden Datenschutzpunkt; open und must_clarify sind passend."
+      },
+      "claimStatus": "approved"
+    }
+  ]
+}

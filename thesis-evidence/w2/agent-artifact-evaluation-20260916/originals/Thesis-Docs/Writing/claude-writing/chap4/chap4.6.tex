@@ -1,0 +1,82 @@
+% P10-HITL, 15.09.2026: Entscheidungszweck und belegte Zustandswirkung präzisiert.
+% P10-4b, 14.09.2026: Begriffs-/Beleganschlüsse und abgegrenzte Prüfaussagen präzisiert.
+% M08, 11.09.2026: Entwurfsbegründung konzentriert; Mechanismus in 5.6.
+% E46-01 und die Unterscheidung von Gestaltungsziel/Realisierung erhalten.
+\section{Persistenter Projektzustand und kontrollierte Mutation}
+\label{sec:projektzustand-kontrollierte-mutation}
+
+\emph{Erweitertes Nutzungsziel.} Die in
+Abschnitt~\ref{sec:iteratives-vorgehen-evidenz} beschriebene Erweiterung
+führte über die einmalige Artefakterzeugung hinaus: Weitere
+Projektkommunikation sollte mit dem bereits Erarbeiteten in Beziehung
+gesetzt werden. Bei einem zweiten Meeting ist etwa zu klären, ob eine
+Aussage neu ist, ein bestehendes Requirement verändert oder ihm
+widerspricht. Dafür muss nachvollziehbar sein, was aktuell gilt und
+worauf dieser Stand beruht. Diese Fragen ergeben sich aus dem
+angestrebten Kreislauf; sie werden hier nicht aus einem gescheiterten
+Lauf abgeleitet. Die Form der Zustandshaltung war damit noch offen.
+
+\emph{Entwurfsentscheidung.} Die frühen Dateien in einzelnen
+Laufverzeichnissen besaßen weder laufübergreifende fachliche
+Identitäten noch explizite Beziehungen oder eine gemeinsame
+Änderungshistorie. Für die fortlaufende Bearbeitung wurde deshalb ein
+fachlicher Projektzustand mit diesen Eigenschaften eingeführt.
+Er wird außerhalb einzelner Läufe geführt: Ein gespeicherter
+Workflowzustand ermöglicht die Wiederaufnahme der Ausführung,
+beantwortet aber nicht, welche fachlichen Inhalte aktuell gelten
+(Abschnitt~\ref{sec:zustand-persistenz-projektwissen}). Die Trennung
+von Identität und veränderlichem Inhalt knüpft an die Prinzipien des
+Requirements Managements in
+Abschnitt~\ref{subsec:requirements-management-evolution} an.
+Dokumente und operative Systeme stellen den Bestand dar; seine
+maßgebliche Repräsentation liegt im fachlichen Zustandsmodell.
+Daraus ergibt sich die fünfte Designanforderung:
+
+\textbf{A5:} Der autorisierte fachliche Projektzustand muss unabhängig
+von einzelnen Chatverläufen, Workflowläufen und Dokumenten persistent
+geführt werden.
+
+\emph{Abgeleitete Konsequenz.} Mit dem gemeinsamen Bestand entsteht
+eine weitere Gestaltungsaufgabe: Transkripte, Klärungsantworten und
+externe Rückmeldungen können Änderungen auslösen. Auch ein fachlich
+plausibler Vorschlag legt noch nicht fest, ob eine bisherige Anforderung
+weiter gelten oder durch eine neue ersetzt werden soll. Die menschliche
+Autorisierung soll diese verbindliche Festlegung ermöglichen und zugleich
+eine Prüfung der vorgeschlagenen Änderung erlauben. Getrennte
+Schreibwege würden die Durchsetzung von Autorisierungs- und
+Integritätsregeln verteilen und könnten auseinanderlaufen.
+Das Gestaltungsziel verbindet deshalb die menschliche Autorisierung
+aus Abschnitt~\ref{sec:governance-autorisierung-kontrollen} mit einer
+gemeinsamen Speicheroperation, der \emph{Speichernaht}. Vorschläge
+sollen pfadspezifisch geprüft und autorisiert werden; die
+Speicheroperation prüft vor der Persistenz strukturelle Invarianten,
+etwa zulässige Endpunkte einer Beziehung. Diese Prüfung ersetzt
+keine fachliche Entscheidung. Den Ablauf und die Einschränkung des
+initialen Schreibpfads beschreibt Abschnitt~\ref{sec:governance-mutation}.
+
+Dies ist eine abgeleitete Realisierungsanforderung, keine
+nachträgliche Begründung für den persistenten Zustand. Ein späterer
+Entwicklungsfall verdeutlichte das Risiko fehlerhafter Schreibregeln:
+Eine deterministische Zuordnung übernahm einen unbestätigten
+Herkunftshinweis als Beziehung und brachte dadurch fehlerhafte
+Relationen in den Bestand. Nach ihrer Erkennung durch eine
+Integritätsmessung wurde der Schreibweg entfernt, die Ableitung auf
+bereits bestätigte Zustandsinformationen begrenzt und der Bestand
+kontrolliert bereinigt (E46-01). Determinismus allein garantiert
+somit keine fachlich richtige Regel. Daraus ergibt sich die sechste
+Designanforderung:
+
+\textbf{A6:} Kein vorgesehener Eingang darf den maßgeblichen
+Projektzustand außerhalb eines gemeinsamen autorisierten und
+invariantengeschützten Mutationspfads verändern.
+
+\emph{Einordnung und Grenzen.} Zustandshaltung und Kontrollen
+erzeugen Schema-, Pflege- und Interaktionsaufwand. Der geführte
+Bestand ist zudem keine objektive Wahrheit: Autorisierte Inhalte
+können falsch sein, strukturell zulässige Beziehungen fachlich
+unzutreffend. Kapitel~\ref{chap:loesungsarchitektur} konkretisiert den
+Zustand als \emph{Core}; Kapitel~\ref{chap:maf-realisierung} zeigt die
+Realisierung. Abschnitt~\ref{sec:eval-kontrollen} untersucht ausgewählte
+Kontrollfälle. Noch zu klären ist, wie neue Informationen relativ
+zum bestehenden Bestand eingeordnet werden; dies behandelt der
+folgende Abschnitt.

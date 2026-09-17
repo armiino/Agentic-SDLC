@@ -1,0 +1,82 @@
+% ============================================================
+% Tabelle 6.1: Architekturmechanismus -> MAF-Grundlage -> eigene
+% Ergänzung -> Vertiefung — v01 (Claude, 03.09.)
+% In Overleaf ablegen als: tables/maf-zuordnung.tex
+% Quelle: probeschnitt-vertrag-6-1-6-2.md §2 (v02-Endform, FROZEN;
+% Zeilen 8+9 = Kollegen-Korrektur „Anknüpfungspunkte statt —").
+% v02 (03.09., 6.1-Kollegen-Runde, alle 3 Punkte gegengeprüft):
+% ① NEUE Zeile Evidenz-/Provenienzmodell (5.3→6.2) — 2.4.6 führt
+%   Provenienz als eine der ZWEI größten Framework-Lücken
+%   (chap2.4.6.tex:78–83; Tabelle 2.5 Zeile wörtlich übernommen aus
+%   chap2.4.6table.tex:75–78); fehlte in v01 (A3-Loch).
+% ② Steward-Zeile: Framework-/Eigenanteil sauber getrennt (V1-Fund:
+%   MAF = SerializeSession + IChatReducer; WIR = Ablage
+%   state/steward/sessions/ + Reducer-Wahl; StewardChatRunner.cs).
+% ③ „Lauf-Anker" gestrichen (undefinierter Begriff; Detail → 6.5).
+% Damit 10 Zeilen. Caption an die neue Prüf-Formulierung angeglichen.
+% v03 (03.09., Gesamtpass-Kollegen-Runde): Steward-Zeile
+% „governancegeschützten Abläufen" -> „kontrolliert bereitgestellten
+% Fähigkeiten" — Nachzug der 6.6-v02-Korrektur (Lese-Tools sind
+% nicht gate-geschützt); Tabelle war stale geblieben.
+% Zahlenfrei (V2-Regel: Nutzungszahlen erst am Freeze-Commit).
+% Abschnitts-Spalte Kap.-5-seitig als Klartext „5.x" (wie die
+% Kap.-4/5-Praxis; \ref-Pass = P2-Bündel).
+% ============================================================
+
+\begin{table}[!htb]
+  \centering
+  \small
+  \begin{tabular}{p{0.26\textwidth}p{0.27\textwidth}p{0.27\textwidth}p{0.08\textwidth}}
+    \hline
+    \textbf{Architekturmechanismus (Kap.~\ref{chap:loesungsarchitektur})} & \textbf{MAF-Grundlage} &
+    \textbf{eigene Ergänzung} & \textbf{Vert.} \\
+    \hline
+    Typisierte Workflow-Komposition (\ref{sec:logische-gesamtarchitektur}) &
+    typisierte Nachrichten, bedingte Kanten,
+    Verteilung und Zusammenführung &
+    wiederverwendete Stufen-Executors und pfadspezifische Komposition & \ref{sec:realisierung-agent-executor-workflow} \\
+    Verantwortungsverteilung agentisch/deterministisch (\ref{sec:logische-gesamtarchitektur}, konkretisiert \ref{sec:saeule-semantische-transformation}) &
+    Agent-Abstraktion, Chat-Pipeline, Structured Output &
+    Prompt- und Prüfdesign, formale Prüfregeln & \ref{sec:realisierung-agent-executor-workflow} \\
+    Prüf-Reparatur-Schleife (\ref{sec:saeule-semantische-transformation}) &
+    konditionale Kanten mit Rückführung &
+    gemeinsame Entscheidungsregel und Versuchshistorie & \ref{sec:realisierung-agent-executor-workflow} \\
+    Evidenz- und Provenienzmodell (\ref{sec:evidenzgebundene-verarbeitung}) &
+    Structured Outputs und typisierte Nachrichten; kein fachliches
+    Provenienzmodell &
+    quellstandsbezogene Unit- und lauflokale Claim-Kennungen,
+    Quellenbindung und Relationsregeln & \ref{sec:realisierung-agent-executor-workflow} \\
+    Menschliche Entscheidungspunkte (\ref{sec:governance-mutation}) &
+    Request Ports (Anfrage/Antwort) &
+    Antwortregeln je Gate und Betriebsart,
+    Review-Schicht und Einreichung & \ref{sec:realisierung-human-gates} \\
+    Durable Ausführung (\ref{sec:durable-ausfuehrung-agentische-bedienung}) &
+    Checkpoints, Wiederaufnahme, Sub-Workflow-Bindung &
+    portfreie Teilworkflows mit Strukturprüfung & \ref{sec:realisierung-durabilitaet} \\
+    Agentische Bedienebene (\ref{sec:durable-ausfuehrung-agentische-bedienung}) &
+    Agent, Werkzeugregistrierung und Freigabefunktion,
+    Sitzungsspeicherung und Verlaufsreduktion &
+    Werkzeugraum aus bestehenden kontrolliert bereitgestellten
+    Fähigkeiten, dateibasierte Sitzungsablage und gewählte
+    Reduktionsstrategien &
+    \ref{sec:realisierung-steward} \\
+    Fachliche Zustandshaltung (\ref{sec:core-projektfortschreibung}) &
+    Sitzungs-/Workflowzustand und Checkpoints; kein fachliches
+    Zustandsmodell &
+    Core-Repository, fachliches Zustandsmodell, Speichernaht,
+    Invarianten, Historie & \ref{sec:realisierung-persistenz-aussenkopplung} \\
+    Projektion und Rückweg (\ref{sec:projektionen-kontrollierte-aussenkopplung}) &
+    Werkzeug- und Integrationsmechanismen; kein fachlicher
+    Projektionsvertrag &
+    deterministische Projektion und Sammlung; bedingt
+    modellgestützte Aufbereitung im Rückweg; externe Freigabe & \ref{sec:realisierung-persistenz-aussenkopplung} \\
+    Beobachtbarkeit (\ref{sec:evidenzgebundene-verarbeitung}) &
+    Telemetrie-Anbindung der Chat-Pipeline &
+    dateibasierte Ablage je Lauf und Metrikaggregation & \ref{sec:realisierung-observability} \\
+    \hline
+  \end{tabular}
+  \caption[MAF-Grundlagen und projektspezifische Ergänzungen]{
+    Architekturmechanismen, MAF-Grundlagen und projektspezifische
+    Ergänzungen; die letzte Spalte nennt den Vertiefungsabschnitt.}
+  \label{t:maf-zuordnung}
+\end{table}

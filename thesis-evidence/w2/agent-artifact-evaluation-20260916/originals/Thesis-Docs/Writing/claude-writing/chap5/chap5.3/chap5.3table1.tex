@@ -1,0 +1,47 @@
+% ============================================================
+% Tabelle 5.3-1: Verarbeitungsschritte des Evidence Ledgers — v01 (09.09.)
+% Label: t:ledger-schritte
+% Stil: chap6.1-Konvention.
+% HERKUNFT: Reihenfolge = tatsächliche Graphverdrahtung
+% LedgerBuilderWorkflow.cs (Builder „LedgerBuilderUnitCoverage":
+% Segmentation → Extraction → UnitCoverageGate → UnusedTriage →
+% UnusedCompare → CompareRepair → Canonicalization → [Check ⇄ Repair]
+% → FacetValidation); Art je Schritt = F-1/F-2 des Umsetzungsplans
+% (FacetValidator = LLM-Call, det. Antwortprüfung + Statusableitung
+% grounded→approved; UnusedUnitCompareRepair = det. Referenzpflicht-
+% Abstufung); Queue-Filter = LedgerAdjudicationAdapter
+% (DecidableCompareVerdicts); Leer-Queue-Skip = R-50
+% (AdjudicationStageExecutor). Funktional gebündelt, kein
+% Executor-Inventar.
+% NACHZUG 09.09.: letzte Zeile = A10-Verfeinerung
+% (PipelineAdjudicationRefine, geteilte Naht AdjudicationRefine.cs) —
+% am 09.09. nach Abschluss der Messkampagne eingebunden
+% (Standabgrenzung in 5.6; Kap.-7-Läufe entstanden DAVOR).
+% ============================================================
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.235\textwidth}>{\raggedright\arraybackslash}p{0.135\textwidth}>{\raggedright\arraybackslash}p{0.51\textwidth}}
+    \hline
+    \textbf{Schritt (Eingabe $\rightarrow$ Ergebnis)} & \textbf{Art} & \textbf{Fortsetzung / menschliche Klärung} \\
+    \hline
+    Unit-Segmentierung (Transkript $\rightarrow$ adressierbare Units) & deterministisch & immer weiter \\
+    Kandidaten-Extraktion (Units $\rightarrow$ quellgebundene Claim-Kandidaten) & modellgestützt & weiter \\
+    Unit-Bilanz (verwendete / unverwendete Units) & deterministisch & weiter; Grundlage der Hinweisprüfung \\
+    Hinweisprüfung ungenutzter Units (Triage und Vergleich gegen die Kandidaten) & modellgestützt; anschließend deterministische Belegpflicht & Prüfergebnisse je Unit (fehlender Claim · menschlich zu klären · als Beleg anzuhängen · bereits mittelbar abgedeckt); ein Deckungsurteil ohne benannten Kandidaten wird deterministisch zu „menschlich zu klären`` abgestuft \\
+    Kanonisierung (Kandidaten $\rightarrow$ kanonischer Claim-Bestand, Bündelung möglich) & modellgestützt & deterministischer Übergangs-Check prüft die \emph{referenzielle} Deckung (jeder Kandidat referenziert?); bei Verstoß Reparaturschleife, sonst weiter \\
+    Facetten-Validierung (Facetten und Dispositionen je Claim) & Modell-Urteil; deterministische Antwortprüfung und Statusableitung & als gestützt beurteilte Claims werden freigegeben; alle übrigen werden zur menschlichen Nachprüfung markiert \\
+    Vorlagen-Aufbau (Adjudikations-Liste) & deterministisch & markierte Claims und Hinweise werden vorgelegt; „bereits mittelbar abgedeckt``-Hinweise werden nicht vorgelegt \\
+    Adjudikation und Anwendung & Mensch; deterministische Anwendung & Entscheidung je Position; Ergebnis ist die verwendbare Evidenzsicht --- eine leere Vorlagenliste überspringt den Entscheidungspunkt \\
+    Facetten-Vervollständigung neuer Claims & Modell-Urteil (nur bei ausstehenden Facetten) & vervollständigt Facetten und Dispositionen per Adjudikation neu aufgenommener Claims vor der fachlichen Ableitung; ohne ausstehende Facetten kein Modellaufruf (Durchreich-Schritt) \\
+    \hline
+  \end{tabular}
+  \caption[Verarbeitungsschritte des Evidence Ledgers]{Die tatsächlich realisierten Verarbeitungsschritte des
+    Evidence Ledgers in Ausführungsreihenfolge (funktional gebündelt).
+    „Modellgestützt`` bezeichnet ein semantisches Modellurteil;
+    deterministische Schritte prüfen Form, Referenzen oder leiten
+    Status ab. Die Hinweisprüfung arbeitet auf dem
+    \emph{Kandidaten}-Bestand vor der Kanonisierung.}
+  \label{t:ledger-schritte}
+\end{table}

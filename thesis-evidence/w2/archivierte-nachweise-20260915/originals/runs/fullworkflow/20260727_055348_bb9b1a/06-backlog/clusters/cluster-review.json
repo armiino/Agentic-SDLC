@@ -1,0 +1,64 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "cluster-review-20260727_060229",
+  "verdict": "revise",
+  "summary": "Die Cluster sind insgesamt tragf\u00E4hig, aber es gibt drei fachliche Probleme: ein k\u00FCnstlicher Split zwischen globaler Navigation und rollenabh\u00E4ngigem Einstellungsbereich, eine falsche Cross-Cutting-Einordnung von REQ-35 sowie ein separates Cluster f\u00FCr das querschnittliche Beitragsmuster REQ-14, das fachlich eher zu den betroffenen Inhaltsfeatures geh\u00F6rt als als eigenes Feature-Cluster zu stehen.",
+  "findings": [
+    {
+      "clusterId": "CL-11",
+      "kind": "wrong_split",
+      "severity": "error",
+      "message": "Das Feature rund um Einstellungen/Sitzungsaktionen ist k\u00FCnstlich auf CL-11 und CL-03 verteilt. REQ-35 beschreibt leicht zug\u00E4ngliche Datenschutzeinstellungen und schnellen Logout, REQ-39 beschreibt einen Einstellungsbereich mit rollenabh\u00E4ngigen Funktionen. Beides geh\u00F6rt fachlich in denselben Settings-/Session-Kontext statt in getrennte Feature-Cluster."
+    },
+    {
+      "clusterId": "CL-03",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-35 ist in CL-03 nur als crossCutting referenziert, obwohl der Text ein konkretes Kernverhalten des globalen Einstellungs-/Sitzungsfeatures beschreibt (\u0027Datenschutzeinstellungen\u0027 und \u0027Logout-Funktion jederzeit schnell erreichbar\u0027). Es ist kein allgemeines Rollen-/Mandanten-Querschnittsrequirement."
+    },
+    {
+      "clusterId": "CL-08",
+      "kind": "granularity",
+      "severity": "error",
+      "message": "CL-08 ist als eigenes Cluster zu fein geschnitten. REQ-14 beschreibt ein querschnittliches Bearbeitungs-/Erg\u00E4nzungsmuster f\u00FCr bestehende Inhaltsfeatures (\u0027Bilder, Kommunikationsweisen und neue Erfahrungen ... fortlaufend erg\u00E4nzt werden k\u00F6nnen\u0027) und tr\u00E4gt allein kein ausreichend eigenst\u00E4ndiges backlogf\u00E4higes Feature. Fachlich geh\u00F6rt es als Kernanforderung in die betroffenen Inhaltscluster statt als Single-Requirement-Cluster."
+    }
+  ],
+  "operations": [
+    {
+      "opId": "OP-01",
+      "kind": "merge_clusters",
+      "rationale": "REQ-35 und REQ-39 beschreiben gemeinsam den Einstellungs-/Session-Bereich nach dem Login. Die Trennung in globale Navigation versus rollenabh\u00E4ngige Einstellungen erschwert die fachliche Planung unn\u00F6tig; ein gemeinsamer Cluster bildet das tats\u00E4chliche Feature besser ab.",
+      "requirementId": null,
+      "fromClusterId": "CL-03",
+      "toClusterId": "CL-11",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "OP-02",
+      "kind": "move_core",
+      "rationale": "REQ-35 beschreibt konkretes Kernverhalten des Settings-/Session-Features und sollte deshalb als core in den zusammengef\u00FChrten Zielcluster verschoben werden, nicht als blo\u00DFer Querschnitt im Rollencluster verbleiben.",
+      "requirementId": "REQ-35",
+      "fromClusterId": "CL-03",
+      "toClusterId": "CL-11",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "OP-03",
+      "kind": "move_core",
+      "rationale": "REQ-14 ist kein eigenst\u00E4ndiges Produktfeature, sondern das Bearbeitungs-/Erg\u00E4nzungsmuster f\u00FCr profilbezogene Inhalte wie Bilder und Erfahrungen. Als Mindestkorrektur sollte es dem bestehenden Inhaltsfeature \u0027About-Me \u0026 Foto-Timeline\u0027 als Kernanforderung zugeordnet werden statt allein in CL-08 zu stehen.",
+      "requirementId": "REQ-14",
+      "fromClusterId": "CL-08",
+      "toClusterId": "CL-05",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    }
+  ]
+}

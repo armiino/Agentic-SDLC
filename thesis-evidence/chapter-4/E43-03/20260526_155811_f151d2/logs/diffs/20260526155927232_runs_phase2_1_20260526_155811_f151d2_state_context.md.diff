@@ -1,0 +1,79 @@
+﻿--- before/runs/phase2_1/20260526_155811_f151d2/state/context.md
++++ after/runs/phase2_1/20260526_155811_f151d2/state/context.md
+- 
++ # Projektkontext – Kundenportal (MVP)
++ 
++ ## Projektziel (aus Stakeholder‑Statements)
++ - Schnellere Angebotserstellung für den Vertrieb (Conversion Rate & Time‑to‑Offer) + Kunden sollen Bestellungen und Rechnungen im Portal einsehen und herunterladen können. Das Portal ist das Mittel zum Zweck, kein Endziel.
++ 
++ ## Haupt‑Stakeholder & Rollen
++ - **Anna (Product Owner / Sales)** – fokussiert auf schnelle Time‑to‑Market, definiert MVP‑Features und Prioritäten.
++ - **Ben (Technical Lead / Architektur)** – verantwortet Backend, API‑Layer, Integration zu SAP, Security‑ und Performance‑Aspekte.
++ - **Clara (Compliance / Datenschutz)** – stellt DSGVO‑Konformität, Auditing, Logging, Lösch‑ und Rollen‑Konzept sicher.
++ - **David (Customer Support)** – weist auf Support‑Prozesse, Ticket‑Handling und Kunden‑Kommunikation hin.
++ - **Eva (Finance)** – definiert Freigabe‑Workflow für Rabatte, Finanz‑Risiken, PDF‑Templates und rechtliche Vorgaben.
++ - **Farid (IT Operations)** – kümmert sich um Hosting‑Anforderungen (EU‑only, Managed Services), Monitoring und Infrastruktur‑Risiken.
++ - **Weitere (z. B. **[Name]**) – geben ergänzende fachliche Details (Währungen, Internationalisierung).
++ 
++ ## Fachliche Themen (aus den Dialogen)
++ | Thema | Relevante Punkte | Offene Fragen / Unsicherheiten |
++ |-------|------------------|--------------------------------|
++ | Kundenportal | Web‑first UI, später mobile (Responsive), Login (E‑Mail/Passwort, optional SSO), Rollen (Admin, Sales, Kunde, Manager, Support) | Umfang Mobile‑Support im MVP? |
++ | Angebotserstellung | SAP‑Lesezugriff für Produkt‑/Preis‑/Rabatt‑Daten, Draft‑Workflow, PDF‑Export, Freigabe bei Rabatt > 15 % (geplant für Phase 2) | Wie wird Freigabe konkret umgesetzt? |
++ | Rechnungsdownload | Anzeige und Download von Rechnungen, EU‑konforme Datenhaltung | Keine spezifischen Unsicherheiten |
++ | Integration SAP | Nur Leserechte im MVP, Cache‑Risiko, Verfügbarkeit kritische Abhängigkeit | Schreibrechte bzw. Auftragsintegration noch offen |
++ | DSGVO / Compliance | Double‑Opt‑In, Lösch‑ und Auftragsverarbeitungsvertrag, Audit‑Log, keine personenbezogenen Daten in technischen Logs, Datenminimierung | Detail‑Konzept für Löschanfragen und Retention‑Regeln fehlt |
++ | Security & Review | TLS, minimaler Audit‑Trail, Backup & Disaster Recovery, Secrets‑Management, Rate‑Limiting, Monitoring ohne personenbezogene Daten | Security Review dauert ≥ 6 Wochen – Wie wird im 8‑Wochen‑MVP berücksichtigt? |
++ | Infrastruktur | EU‑only Managed Service, kein neuer DB‑Server, API‑Gateway (6‑Wochen‑Warteliste) | Wie wird API‑Gateway abgebildet? (z. B. kurzfristig eigen‑hosted) |
++ | Analytics / KPIs | Conversion Rate, Time‑to‑Offer, später Tracking/Events | Tracking erst nach MVP geplant |
++ | Internationalisierung | DACH‑Start, später EU & ggf. USA, Mehrsprachigkeit (DE/EN), Mehrwährung (EUR, CHF, später USD) | Schweiz‑Pilot‑Kunde unklar → Einfluss auf Währung/Hosting |
++ | Support | Kontaktformular ohne Ticket‑System, Risiko der manuellen Excel‑Listen | Bewusste Einschränkung – später Ticket‑System planbar |
++ | Dokumentation & Prozesse | Minimaler Architektur‑ und Sicherheits‑Review, Dokumentation zwingend für Compliance | Umfang der Dokumentation im MVP? |
++ | Testing & Umgebung | Dev/Test/Prod, synthetische Testdaten, Pseudonymisierung, CI/CD, Secrets‑Management | Nutzung von SAP‑Testsystem mit echten Kundendaten problematisch |
++ 
++ ## Konflikte & bewusste Einschränkungen (MVP‑Scope)
++ - **Zeit vs. Umfang** – 8 Wochen‑MVP muss stark geschnitten werden. Folgende Themen werden bewusst *ausgeschlossen* bzw. nur minimal umgesetzt:
++   - Mobile‑App (nur responsive Web im MVP)
++   - Vollständiger SSO‑Support (nur ggf. Azure AD/Google als optionales Feature, aber nicht im MVP‑Release)
++   - Vollständiger Freigabe‑Workflow für Sonderrabatte (> 15 %); stattdessen nur Standard‑Rabatte zulässig.
++   - Ticket‑System für Support – nur ein einfaches Kontaktformular, Daten per E‑Mail verarbeitet (Risiko, aber bewusst gewählt).
++   - Vollständiger API‑Gateway – kurzfristig eigen‑hosted Proxy, Vollintegration nach MVP.
++   - Mehrsprachigkeit – nur Deutsch und Englisch als UI‑Strings, weitere Lokalisierung später.
++   - Mehrwährung – MVP nur EUR (CHF ggf. als Pilot‑Option, aber nicht verpflichtend).
++   - Umfangreiches Monitoring/Logging – technisches Logging ohne personenbezogene Daten, Audit‑Log minimal (erfasst Angebot‑Status‑Änderungen).
++ - **Technische Abhängigkeiten** – SAP‑Verfügbarkeit ist kritische Abhängigkeit; bei Ausfall muss das Front‑End den Nutzer informieren (Fallback‑Hinweis).
++ - **Compliance** – DSGVO‑Konformität wird nur im Kern umgesetzt (Double‑Opt‑In, TLS, minimaler Audit‑Log, EU‑Hosting). Vollständige Daten‑Retention‑ und Lösch‑Regeln werden nach MVP definiert.
++ 
++ ## Risiken (mit Hinweis, ob sie im MVP adressiert werden)
++ | Risiko | Bewertung | MVP‑Maßnahme |
++ |--------|-----------|--------------|
++ | SAP‑Ausfall | Hoch – keine Angebotserstellung möglich | Hinweis‑Message im UI, später Cache/Fallback planen |
++ | Security Review (6 Wochen) | Mittel – könnte MVP‑Zeitplan gefährden | Minimal‑Security (TLS, Audit‑Log) einführen, Review auf Sprint‑Ende verschieben |
++ | Hosting‑Kosten EU‑Only | Mittel – teurer als Standard | Managed Service mit EU‑Rechenzentrum wählen, Kosten grob schätzen für Vorstand |
++ | Support‑Prozess | Hoch – manuelle E‑Mail kann zu Fehlern führen | Bewusste Einschränkung, später Ticket‑System planen |
++ | Rabatt‑Freigabe | Mittel – finanzielle Gefahr bei Sonderrabatten | Sonderrabatte im MVP verboten, Freigabe‑Logik erst Phase 2 |
++ | Daten‑Retention vs. Löschanfrage | Mittel – Konflikt rechtliche Aufbewahrung vs. Recht auf Vergessenwerden | Minimal‑Retention‑Plan (z. B. 2 Jahre) dokumentieren, Detail‑Klärung später |
++ | API‑Gateway‑Warteliste | Hoch – verhindert standardisierten Zugang | Kurzfristig eigen‑hosted API‑Proxy, später Migration zum Gateway |
++ | Testdaten‑Qualität | Mittel – SAP‑Testsystem enthält reale Kundendaten | Verwendung synthetischer Daten, Pseudonymisierung für Integrationstests |
++ | Mehrsprachigkeit / Mehrwährung | Niedrig – späterer Markt‑Expand 
++ | – | – |
++ 
++ ## Offene Fragen (zu klären nach MVP‑Definition)
++ - Welche konkrete Kundengruppe (Deutschland vs. Schweiz) wird im MVP als Pilot‑Kunde eingesetzt?
++ - Wie hoch ist das Budget für EU‑only Managed Services und eventuell zusätzliche Cloud‑Provider?
++ - Wer übernimmt das Architecture‑Review und Security‑Review (Ressourcen, Zeitplan)?
++ - Wie wird der Freigabe‑Workflow für Rabatte technisch umgesetzt (Status‑Field, Rollen‑Matrix)?
++ - Welche konkreten SLA für SAP‑Verfügbarkeit werden vertraglich vereinbart?
++ - Wie wird das Backup‑/Disaster‑Recovery‑Konzept (RPO/RTO) im MVP definiert?
++ - Welche konkreten Datenklassen und Retention‑Rules gelten für Angebote, Rechnungen und Support‑Mails?
++ 
++ ## Quellenhinweise (Belege aus Transkript)
++ - **Anna**: MVP‑Zeitplan 8 Wochen, Kern‑Features (Login, Angebote, Rechnungen) → Zeilen 1‑4, 24‑30, 115‑122
++ - **Ben**: API‑Layer, SAP‑Integration, Security‑Review, OAuth vs. API‑Keys, Backup → Zeilen 6‑9, 71‑78, 140‑148
++ - **Clara**: DSGVO‑Anforderungen, Logging, Audit, Lösch‑/Auftragsverarbeitung, EU‑Hosting → Zeilen 12‑15, 46‑52, 84‑88, 166‑172
++ - **David**: Support‑Problematik, Kontaktformular vs. Ticket‑System → Zeilen 122‑128, 150‑156
++ - **Eva**: Rabatt‑Freigabe, PDF‑Templates, Finanz‑Risiken → Zeilen 134‑142, 194‑202, 210‑218
++ - **Farid**: Hosting‑Policy, EU‑only, Managed Services, Monitoring‑Daten, Secrets‑Management → Zeilen 222‑230, 242‑250
++ 
++ ---
++ *Dieses Dokument ist ein neutraler, aus den Transkripten ableitbarer Kontext. Es dient als Grundlage für die weitere Anforderungs‑ und Architektur‑Erarbeitung.*

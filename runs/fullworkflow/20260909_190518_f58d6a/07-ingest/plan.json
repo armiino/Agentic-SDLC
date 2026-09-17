@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "planId": "state-change-plan-20260909_190710",
+  "createdUtc": "2026-09-09T19:07:10.518203Z",
+  "sourceMeetingDeltaPath": "runs/fullworkflow/20260909_190518_f58d6a/04-delta/project-state.json",
+  "operations": [
+    {
+      "incomingItemId": "OQ-01",
+      "kind": "OPEN_QUESTION",
+      "statement": "M\u00FCssen Angeh\u00F6rige dem PDF-Export ihrer Bezugsperson vorher zustimmen?",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "canonical-offene-frage-zustimmung-angehoerige-export"
+      ],
+      "rationale": "Eingehendes Item ist eine offene Frage und im Core gibt es keine inhaltlich gleiche offene Entscheidung; verwandte Datenschutz-/Angeh\u00F6rigen-Themen beantworten diese konkrete Export-Zustimmungsfrage nicht.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-01",
+      "kind": "NEW",
+      "statement": "Die Pflege-App muss eine Wochen\u00FCbersicht bereitstellen, in der Pflegende alle dokumentierten Ereignisse einer Woche pro Bewohner sehen k\u00F6nnen.",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "canonical-wochenuebersicht-ereignisse-pro-woche"
+      ],
+      "rationale": "Im Requirement-Core gibt es keine bestehende Anforderung zu einer Wochen\u00FCbersicht dokumentierter Ereignisse pro Bewohner. Das ist fachlich neu; kein belastbarer Match f\u00FCr RESTATE/REFINE.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-02",
+      "kind": "NEW_RELATED",
+      "statement": "Die Wochen\u00FCbersicht muss nach Bewohner filterbar sein.",
+      "targetEntityId": null,
+      "featureKey": "wochenuebersicht-ereignisse",
+      "claimIds": [
+        "canonical-wochenuebersicht-bewohner-filter"
+      ],
+      "rationale": "Die Filterbarkeit betrifft dasselbe Feature wie die neue Wochen\u00FCbersicht aus REQ-01, ist aber eine eigene Anforderung und keine Verfeinerung einer bestehenden Core-Entit\u00E4t.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-03",
+      "kind": "NEW",
+      "statement": "Es muss einen monatlichen PDF-Export mit allen dokumentierten Ereignissen geben, der von der Leitung angesto\u00DFen wird.",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "canonical-monatlicher-pdf-export-durch-leitung"
+      ],
+      "rationale": "REQ-77 betrifft w\u00F6chentlichen PDF-Export von \u00DCbergabe-Notizen; der neue Bedarf betrifft monatlichen Export aller dokumentierten Ereignisse. Anderer Gegenstand und Umfang, daher fachlich neu.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-04",
+      "kind": "REFINE",
+      "statement": "Angeh\u00F6rige m\u00FCssen die Wochen\u00FCbersicht ihrer Bezugsperson lesen k\u00F6nnen, d\u00FCrfen sie aber nicht \u00E4ndern.",
+      "targetEntityId": "REQ-08",
+      "featureKey": null,
+      "claimIds": [
+        "canonical-angehoerige-lesezugriff-ohne-aenderung"
+      ],
+      "rationale": "REQ-08 h\u00E4lt die Rechtefrage f\u00FCr Angeh\u00F6rige noch offen. Der neue Text konkretisiert genau diesen Punkt f\u00FCr die Wochen\u00FCbersicht zu Leserechten ohne \u00C4nderungsrecht und ersetzt damit die bisherige Offenheit. Verlusthinweis: Die allgemein offene Formulierung aus REQ-08 zu m\u00F6glichen weitergehenden Rechten f\u00FCr andere Inhalte w\u00FCrde im Zieltext nicht mehr enthalten sein.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-05",
+      "kind": "NEW_RELATED",
+      "statement": "Der Dateiname des PDF-Exports muss das Bewohnerk\u00FCrzel und den Monat enthalten, damit die Ablage eindeutig bleibt.",
+      "targetEntityId": null,
+      "featureKey": "pdf-export-ereignisse",
+      "claimIds": [
+        "canonical-export-dateiname-bewohnerkuerzel-monat"
+      ],
+      "rationale": "Das ist eine zus\u00E4tzliche konkrete Anforderung im selben Featurekontext wie der neue PDF-Export aus REQ-03. Im Core gibt es keinen bestehenden Export-Dateinamensstandard daf\u00FCr.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-06",
+      "kind": "NEW",
+      "statement": "Mit dem Datenschutz muss gekl\u00E4rt werden, ob Angeh\u00F6rige dem PDF-Export ihrer Bezugsperson vorab zustimmen m\u00FCssen.",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "canonical-offene-frage-zustimmung-angehoerige-export"
+      ],
+      "rationale": "Das Item ist formal als Requirement eingegangen und darf deshalb nicht als OPEN_QUESTION gespeichert werden. Im Requirement-Core gibt es keine bestehende identische oder verfeinerbare Anforderung; inhaltlich ist es zwar ein Kl\u00E4rungsauftrag, aber regelkonform bleibt hier nur eine neue, eigenst\u00E4ndige Aussage.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "REQ-07",
+      "kind": "RESTATE",
+      "statement": "Gew\u00FCnscht ist ein ged\u00E4mpfter Dunkelmodus f\u00FCr die Wochen\u00FCbersicht f\u00FCr die Nachtschicht, damit das Display im Bewohnerzimmer nicht blendet; die Umsetzung ist zeitlich noch unklar und kann MVP oder sp\u00E4ter betreffen.",
+      "targetEntityId": "REQ-74",
+      "featureKey": null,
+      "claimIds": [
+        "canonical-dunkelmodus-wochenuebersicht"
+      ],
+      "rationale": "REQ-74 enth\u00E4lt bereits dieselbe fachliche Aussage: Dunkelmodus als Wunsch f\u00FCr den Nachtdienst mit niedriger Priorit\u00E4t und eher sp\u00E4terer Umsetzung. Die zus\u00E4tzliche Begr\u00FCndung und UI-Nennung \u00E4ndern die fachliche Identit\u00E4t nicht.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "RISK-01",
+      "kind": "OPEN_QUESTION",
+      "statement": "Ungekl\u00E4rt ist, ob Angeh\u00F6rige dem PDF-Export ihrer Bezugsperson vorab zustimmen m\u00FCssen; dieser Punkt soll mit dem Datenschutz gekl\u00E4rt werden.",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "canonical-offene-frage-zustimmung-angehoerige-export"
+      ],
+      "rationale": "Meeting-Risiken werden als offene Entscheidung erfasst. F\u00FCr diese konkrete Datenschutz-/Zustimmungsfrage gibt es noch keine gleichlautende offene Entscheidung im Core.",
+      "relatedRejectionId": null
+    }
+  ]
+}

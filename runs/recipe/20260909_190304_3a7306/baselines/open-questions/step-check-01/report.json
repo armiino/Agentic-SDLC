@@ -1,0 +1,117 @@
+{
+  "iteration": 1,
+  "decision": "HumanReview",
+  "mc0": {
+    "pass": false,
+    "iteration": 1,
+    "decision": "HumanReview",
+    "violations": [
+      {
+        "code": "FACET_OVERSTATED",
+        "severity": "Warning",
+        "repairable": false,
+        "message": "Heuristik-Kandidat: harte Formulierung trotz weicher Facette. Best\u00E4tigung durch Critic (MC3) n\u00F6tig.",
+        "lineNumber": 5,
+        "artifactQuote": "- M\u00FCssen Angeh\u00F6rige dem PDF-Export ihrer Bezugsperson vorher zustimmen? [canonical-offene-frage-zustimmung-angehoerige-export]",
+        "claimIds": [
+          "canonical-offene-frage-zustimmung-angehoerige-export"
+        ],
+        "ledgerFacets": {
+          "candidates": "canonical-offene-frage-zustimmung-angehoerige-export: status=open,modality=must_clarify,timeScope=?"
+        },
+        "suggestedAction": "Formulierung an die Facette angleichen, falls Critic den Versto\u00DF best\u00E4tigt."
+      },
+      {
+        "code": "REQUIRED_CLAIM_UNUSED",
+        "severity": "Error",
+        "repairable": false,
+        "message": "required-Claim \u0027canonical-export-dateiname-bewohnerkuerzel-monat\u0027 wird von keiner Zeile zitiert.",
+        "lineNumber": null,
+        "artifactQuote": null,
+        "claimIds": [
+          "canonical-export-dateiname-bewohnerkuerzel-monat"
+        ],
+        "ledgerFacets": {
+          "status": "decided",
+          "modality": "must",
+          "timeScope": "?",
+          "open-questions": "required"
+        },
+        "suggestedAction": "Artefaktzeile f\u00FCr diesen Claim erg\u00E4nzen (mit Source-ID)."
+      }
+    ],
+    "repairItems": [
+      {
+        "id": "repair-canonical-export-dateiname-bewohnerkuerzel-monat",
+        "violationCode": "REQUIRED_CLAIM_UNUSED",
+        "lineNumber": null,
+        "currentText": "",
+        "claimIds": [
+          "canonical-export-dateiname-bewohnerkuerzel-monat"
+        ],
+        "instruction": "Erg\u00E4nze eine Artefaktzeile f\u00FCr diesen Claim mit Source-ID; respektiere die Facetten (nicht verst\u00E4rken).",
+        "allowedFacetBounds": {
+          "status": "decided",
+          "modality": "must",
+          "timeScope": "?",
+          "open-questions": "required"
+        },
+        "evidenceQuotes": [
+          "Pflegekraft: Noch ein Detail, das leicht untergeht: Der Dateiname des Exports soll das Bewohnerk\u00FCrzel und den Monat enthalten, damit die Ablage eindeutig bleibt."
+        ]
+      }
+    ],
+    "checks": {
+      "requirementLines": 1,
+      "citation": {
+        "lines": 1,
+        "cited": 1,
+        "missing": 0
+      },
+      "knownId": {
+        "citedDistinct": 1,
+        "unknown": 0
+      },
+      "disposition": {
+        "notApplicableCited": 0
+      },
+      "requiredCoverage": {
+        "required": 2,
+        "unused": 1
+      },
+      "facetHeuristic": {
+        "candidates": 1,
+        "note": "Warning-only; Best\u00E4tigung durch Critic (MC3)"
+      }
+    }
+  },
+  "c7": {
+    "pass": true,
+    "k": 3,
+    "minViolationVotes": 2,
+    "requirementLines": 1,
+    "citedCandidates": 1,
+    "skippedByPrefilter": 1,
+    "llmCheckedPerRun": 0,
+    "totalLlmCalls": 0,
+    "votes": [
+      {
+        "lineNumber": 5,
+        "line": "- M\u00FCssen Angeh\u00F6rige dem PDF-Export ihrer Bezugsperson vorher zustimmen? [canonical-offene-frage-zustimmung-angehoerige-export]",
+        "claimIds": [
+          "canonical-offene-frage-zustimmung-angehoerige-export"
+        ],
+        "aggregatedVerdict": "Supported",
+        "byLlm": false,
+        "votes": {
+          "Supported": 3
+        },
+        "violationVotes": 0,
+        "k": 3,
+        "rationale": null,
+        "unsupportedSpan": null
+      }
+    ],
+    "violations": []
+  }
+}

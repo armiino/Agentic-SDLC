@@ -1,0 +1,128 @@
+% B-58, 15.09.2026: konkrete Nachweisanschlüsse; technische Prüftiefe bleibt begrenzt.
+% P10-4c, 14.09.2026: Ledger-Herleitung und Nachweisanschlüsse präzisiert.
+% M11, 11.09.2026: A3 selektive Adjudikation; A6 Autorisierung
+% der Fortschreibung von gemeinsamer Speicherprüfung getrennt.
+% M03 / B-17, 10.09.2026: ursprüngliches und erweitertes Nutzungsziel
+% unterschieden; keine neue Datierung des Betreuerimpulses.
+% ============================================================
+% Tabelle A zu §4.10 — Ziel gemäß aktueller Einbindung in chap4.10.tex:
+%   tables/chap4/chap4.10table-a.tex
+% Aufruf: \input{tables/chap4/chap4.10table-a}
+% Label: t:designanforderungen-a1-a10
+% v03 (01.09., Abschluss-Runde — Kollegen-Punkte geprüft): A2-Antwort
+% + „deklarierte Informationsgrundlagen" (4.3-A2 vollständig) · A4-
+% Antwort + „getrennte deterministische Anwendung" (Zustandsmutation
+% fehlte — wichtig) · A7 „Schutz vor unbeabsichtigten Doppelwirkungen"
+% statt „Grenzen für wiederholbare Schritte" · A8 „unter Nutzung der
+% bestehenden Governance" (statt „über" — konsistent mit 4.2-Tabelle
+% und A8-Wortlaut „nutzt, aber nicht ersetzt"; Kollegen-Variante
+% „unter den Grenzen" bewusst nicht genommen: Nutzung ist die
+% A8-Semantik).
+% v02 (01.09., Kollegen-Review): A1-Antwort = getrennte Erfassung
+% Modellausgabe/Werkzeuganforderung/Ausführung; A7-Antwort framework-
+% neutral („persistierbarer Ausführungszustand" statt „Checkpoints");
+% Absicherungs-Spalten A2/A3/A4 konkretisiert (Nachrichten-/Ausführungs-
+% pfade · Quellentreue+Abdeckung · Variantenvergleich).
+% Inhalt = Kap-4-Blaupause §13 (verbindliche Matrix), zwei bewusste
+% Abweichungen (im chap4.8-Kopf begründet): A8-Antwort funktional
+% („agentische Bedien- und Steuerungsschicht" statt „Steward") und
+% A3-Zeile ohne Systemnamen — Namen fallen erst in Kapitel 5.
+% ============================================================
+
+\begin{table}[tbp]
+\centering
+\caption[Konsolidierte Designanforderungen A1--A10]{Konsolidierte
+Designanforderungen mit Herkunft, Architekturantwort und späterer
+Absicherung. Eigene Zusammenstellung; Herkunftstypen nach
+Abschnitt~\ref{sec:iteratives-vorgehen-evidenz}.}
+\label{t:designanforderungen-a1-a10}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{
+    >{\raggedright\arraybackslash}p{0.045\textwidth}
+    >{\raggedright\arraybackslash}p{0.21\textwidth}
+    >{\raggedright\arraybackslash}p{0.17\textwidth}
+    >{\raggedright\arraybackslash}X
+    >{\raggedright\arraybackslash}p{0.17\textwidth}
+}
+\toprule
+\textbf{ID} & \textbf{Designanforderung} & \textbf{Herkunft} &
+\textbf{Architekturantwort} & \textbf{Spätere Absicherung} \\
+\midrule
+A1 & beobachtbare agentische Aktionen & formative Beobachtung
+(Abschnitt~\ref{sec:beobachtbare-ausfuehrung-informationsfuehrung}) &
+Instrumentierung und getrennte Erfassung von Modellausgabe,
+Werkzeuganforderung und technischer Ausführung &
+Ausführungsbelege und technische Verifikation
+(Abschnitte~\ref{sec:realisierung-observability}
+und~\ref{sec:realisierung-reproduzierbarkeit-grenzen}) \\
+\addlinespace[0.3em]
+A2 & explizite Informationsflüsse & formative Beobachtung
+(Abschnitt~\ref{sec:beobachtbare-ausfuehrung-informationsfuehrung}) &
+typisierte Übergaben, deklarierte Informationsgrundlagen und explizite
+Workflowpfade &
+Tests ausgewählter Nachrichten- und Ausführungspfade
+(Abschnitt~\ref{sec:realisierung-reproduzierbarkeit-grenzen});
+Wiederaufnahme (Abschnitt~\ref{sec:eval-resume}) \\
+\addlinespace[0.3em]
+A3 & evidenzgebundene Artefakterzeugung & formative Beobachtung
+(Abschnitt~\ref{sec:evidenzgebundene-wissensgewinnung}) &
+quellengebundene Evidenz mit quellstands- bzw. laufbezogenen Kennungen, Quellenankern und
+selektiver Adjudikation &
+Quellentreue, Abdeckung und Stufenanalyse
+(Abschnitt~\ref{sec:eval-ledgerqualitaet}); Herkunftspfade
+(Abschnitt~\ref{sec:eval-provenienz}) \\
+\addlinespace[0.3em]
+A4 & getrennte Verantwortlichkeiten & formative Beobachtung und
+Designrationale
+(Abschnitt~\ref{sec:kontrollierte-semantische-transformation}) &
+Maker--Checker--Repair, Human Gates und getrennte deterministische
+Anwendung &
+Begrenzte Stufenanalyse und definierte Kontrolltests
+(Abschnitte~\ref{sec:eval-stufen} und~\ref{sec:eval-kontrollen}) \\
+\addlinespace[0.3em]
+A5 & persistenter fachlicher Projektzustand & erweitertes Nutzungsziel
+(Abschnitt~\ref{sec:projektzustand-kontrollierte-mutation}) &
+Zustand mit Identitäten, Relationen und Historie &
+Historische Fortschreibungsfälle, Persistenztests und Provenienzaudit
+(Abschnitte~\ref{sec:eval-kontrollen} und~\ref{sec:eval-fortschreibung}) \\
+\addlinespace[0.3em]
+A6 & kontrollierte Mutation & abgeleitete Realisierungsanforderung
+(Abschnitt~\ref{sec:projektzustand-kontrollierte-mutation}) &
+pfadspezifische Autorisierung der Fortschreibung und gemeinsame
+Speicheroperation mit Invariantenprüfung &
+Governance-Prüffälle
+(Abschnitt~\ref{sec:eval-kontrollen}) \\
+\addlinespace[0.3em]
+A7 & einordnende Fortschreibung & erweitertes Nutzungsziel und formative
+Verfeinerung (Abschnitt~\ref{sec:einordnende-fortschreibung}) &
+typisierte Einordnung gegen den Bestand; Widerspruch und Klärungsbedarf
+als eigene Entscheidungs-Elemente &
+Historische Einordnungs- und Fortschreibungsfälle
+(Abschnitt~\ref{sec:eval-fortschreibung}) \\
+\addlinespace[0.3em]
+A8 & Projektion und Außenkopplung & Zielkonkretisierung und formative
+Verfeinerung (Abschnitt~\ref{sec:projektionen-aussenkopplung}) &
+eindeutige Projektionsbindungen, deterministische Verträge für
+maschinell gepflegte Inhalte, Schnappschuss-Zugehörigkeitsprüfung und
+Drift-Erkennung; Rückmeldungen als kontrollierte Eingänge &
+Ausgewählte Projektions- und Rückwegfälle sowie
+Zugehörigkeitsprüfung (Abschnitte~\ref{sec:eval-kontrollen}
+und~\ref{sec:eval-fortschreibung}) \\
+\addlinespace[0.3em]
+A9 & Durabilität & technische Qualitätsanforderung
+(Abschnitt~\ref{sec:durabilitaet-kontinuierliche-nutzung}) &
+persistierbarer Ausführungszustand, Wiederaufnahme und Schutz vor
+unbeabsichtigten Doppelwirkungen &
+Resume-Demonstration, Prozessgrenzen- und Plan-Replay-Test
+(Abschnitte~\ref{sec:eval-kontrollen} und~\ref{sec:eval-resume}) \\
+\addlinespace[0.3em]
+A10 & kontrollierte agentische Bedienung & betriebliche Anforderung
+(Abschnitt~\ref{sec:durabilitaet-kontinuierliche-nutzung}) &
+agentische Bedien- und Steuerungsschicht unter Nutzung der bestehenden
+Governance &
+Zwei dokumentierte Steward-Aufgaben (Abschnitt~\ref{sec:eval-resume}) \\
+\bottomrule
+\end{tabularx}
+\end{table}

@@ -1,0 +1,167 @@
+% P10-4b, 14.09.2026: Begriffs-/Beleganschlüsse und abgegrenzte Prüfaussagen präzisiert.
+% M09, 11.09.2026: Leserführung und MCR konzentriert; neue
+% HERKUNFT-M09-Kommentare unten sind die aktuelle Schreibgrundlage.
+% Die folgende Versionshistorie beschreibt frühere Fassungen.
+% ============================================================
+% §5.4 Kontrollierte semantische Transformation — v05 (Claude, 04.09.)
+% v05 (04.09., v23-Lesungs-Runde, P2): Analyst-Absatz VOR den
+%   abschließenden Verdikt-/Aussagegrenzen-Block gezogen
+%   (Dramaturgie: Muster -> Fall -> Analyst -> gemeinsame
+%   Aussagegrenze -> Übergang; kein inhaltlicher Umbau).
+% v04 (04.09., ANALYST-EINBAU + Schlussrunde): Core-Analyst-Absatz
+%   am Abschnittsende (disk-analyst.md §4-①; Scope-Kipp per
+%   Autor-Entscheid); Schlussrunden-Fixes „dieser
+%   Verantwortungsverteilung" + „Analysefunde/konditionale
+%   Autorisierung". Danach wieder SEMANTISCH FROZEN.
+% v03 (Abschluss-Punkt): „Abdeckungsverstöße" → „Verstöße gegen eine
+% strukturelle Zuordnungsregel zwischen Themenclustern und
+% vorgeschlagenen Arbeitspaketen" — Kollisions-Schutz zum Ledger-
+% Coverage-Begriff (5.3/Kap. 7); deckt sich mit der Kap.-4-Abgrenzung
+% von E45-02 („struktureller Abdeckungs-Check, keine
+% Quellvollständigkeit"). Kollegen-Urteil danach: §5.4 FROZEN
+% (Titel-Doppelung 4.5/5.4 bewusst OK: Herleitung vs. Architektur);
+% Freeze-Entscheid = Autor. Weiter mit 5.5 (Kollegen-Votum: KEIN
+% Governance-Probeschnitt-Einschub).
+% v02 (Kollegen-Review, alle vier Punkte übernommen): ① MCR EXPLIZIT
+% benannt („im Folgenden als Maker--Checker--Repair (MCR) bezeichnete
+% Quermuster") — der Abschnitt ETABLIERT den Begriff fürs EINMAL-
+% Prinzip (5.6 verweist zurück!); „lebt" entfernt ② „Bestehendes
+% angeglichen" → „anhand von Prüfbefunden überarbeitet" (klang nach
+% 5.5-Fortschreibung) ③ Repariert wird der VORSCHLAG, nicht der
+% Befund; „Das Modell darf Bedeutung erzeugen" → „Modellgestützte
+% Komponenten übernehmen die semantische Erzeugung" (nüchtern, nicht
+% anthropomorph) ④ E45-02-Grammatik („korrekt WAR oder … wirksam
+% ist", eigener Satz) + „Gesamtqualität". E45-02-Referenzform: E-IDs
+% sind als Belegschlüssel in Kap. 4 + Anhang-Ankertabelle formal
+% eingeführt (Erklärsatz dort) — Arbeitsmarker bleibt korrekt.
+% Kollegen-Urteil: danach einfrieren („Freeze-Stand 95 %") —
+% Freeze-Entscheid = Autor.
+% Grundlage: schema-mcr-schreibvertrag-5-4.md v02 (Wahrheitsliste
+% #1–#10 + Verifikations-Protokoll §1b, code-geprüft 02.09.) ·
+% Kollegen-Schreibauftrag 02.09. (vier Absätze, ~0,7–0,8 S.) ·
+% finale Abbildung abb54musterformtransformation (gegen v02-Spec
+% geprüft: Loop→Prüfung, H=Eskalation, Schranke=eigener Terminal-
+% Marker, Triage NICHT in der Grafik).
+%
+% SELBSTKONTROLLE (5 Fragen des Auftrags, alle „nein"):
+%   (a) keine Kap.-4-Genese (kein freier Prüfer/E45-03) (b) Muster
+%   statt Instanzen (c) „bestanden" ≠ fachlich korrekt (Absatz 4)
+%   (d) Repair-Zweig nur wo reparierbare Verdikte definiert (Absatz 3)
+%   (e) Human Review und Versuchsschranke getrennt (Absatz 2).
+% KEINE Klassen-/Enum-/Feld-/Promptnamen im Fließtext (GateLoop,
+% GateDecision, Repairability etc. NUR hier in Kommentaren).
+% Titel-Hinweis: Abschnittstitel ist identisch mit 4.5 (dort die
+% HERLEITUNG von A4, hier die Säulen-Musterform) — Labels sind
+% getrennt; falls der Autor Verwechslung fürchtet, wäre „Musterform
+% der kontrollierten semantischen Transformation" die Alternative.
+% Budget ~0,7–0,8 S. — 5.4 bleibt bewusst KLEINER als 5.3.
+% ============================================================
+
+\section{Kontrollierte semantische Transformation}
+\label{sec:saeule-semantische-transformation}
+
+Das \emph{Maker--Checker--Repair}-Muster (MCR) trennt die Erzeugung
+eines fachlichen Vorschlags von seiner Prüfung und Überarbeitung.
+Es setzt den entsprechenden Teil von A4 aus
+Abschnitt~\ref{sec:kontrollierte-semantische-transformation} um und
+wird innerhalb mehrerer Verarbeitungspfade wiederverwendet
+(Abschnitt~\ref{sec:logische-gesamtarchitektur}). Es ist somit kein
+zusätzlicher Schritt der Gesamtprozesskette. Menschliche
+Autorisierung und Zustandsanwendung bleiben getrennte Aufgaben
+(Abschnitt~\ref{sec:governance-mutation}).
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/05/Abbildung5.4.pdf}
+  \caption{Musterform der kontrollierten semantischen Transformation
+    (eigene Darstellung).}
+  \label{fig:musterform-transformation}
+\end{figure}
+
+Der \emph{Maker} erhält einen fachlichen Auftrag mit den für die
+Aufgabe festgelegten Anforderungen und erzeugt einen Vorschlag.
+Ein beendeter Modell- oder Agentenaufruf belegt noch nicht, dass
+dieser Vorschlag die Abschlusskriterien der Stufe erfüllt.
+Der \emph{Checker} prüft ihn deshalb anhand ausdrücklicher Kriterien:
+deterministisch bei formal beschreibbaren Regeln, modellgestützt
+bei inhaltlichen Urteilen. Das strukturierte Prüfergebnis -- in
+Abbildung~\ref{fig:musterform-transformation} als \emph{Verdikt}
+bezeichnet -- steuert den weiteren Workflow. Besteht der Vorschlag
+die Prüfung, wird er weitergegeben. Liegt ein als reparierbar
+eingestufter Befund vor und ist die Versuchszahl noch nicht
+ausgeschöpft, erhält der modellgestützte \emph{Repair}-Schritt den
+wörtlichen Prüfbefund als konkreten Überarbeitungsauftrag. Seine
+neue Fassung durchläuft erneut dieselbe Prüfung. Die Rückmeldung
+stammt somit aus einer gesonderten Prüfung; die Wiederholung allein
+belegt noch keine Qualitätsverbesserung. Die Einstufung als
+reparierbar erlaubt einen weiteren Versuch, garantiert aber nicht
+dessen Erfolg.
+
+Bei weiter bestehenden Fehlern endet die Schleife spätestens an
+der festgelegten Versuchsschranke. Ohne einen reparierbaren Befund
+wird keine weitere Modellüberarbeitung ausgelöst. Die betroffene
+Stufe gibt dann einen dokumentierten Klärungs- oder Fehlerzustand
+aus. Das Symbol H markiert den Bedarf an menschlicher Klärung;
+ob dafür unmittelbar eine Anfrage entsteht oder die Stufe mit
+einem Hinweis endet, legt der jeweilige Verarbeitungspfad fest.
+Diese Klärung ist von der Freigabe eines bereits geprüften
+Änderungsvorschlags zu unterscheiden. Jeder Prüfversuch der
+Schleife wird protokolliert.
+% HERKUNFT M09: GateLoop.Decide (Pass vor Schranke vor Repair),
+% CanonicalCheckExecutor und IngestionHitlFinalizeExecutor:
+% HumanReview/MaxAttemptsReached bedeuten dort terminale Ausgabe,
+% keinen RequestPort-Aufruf. HumanReview ist kein Freigabeereignis.
+
+Die gemeinsame Entscheidungsform wird unter anderem bei der
+Themenbündelung, dem Zuschnitt von Arbeitspaketen und der
+Kanonisierung des Ledgers verwendet. Ein Reparaturzweig ist nur
+dort wirksam, wo die jeweilige Prüfung reparierbare Befunde
+definiert. Ein konkreter Backlog-Fall zeigt das Zusammenspiel
+(E45-02). Jede als Kern eines Themenclusters markierte Anforderung
+sollte mindestens einem Arbeitspaket zugeordnet sein. Der Agent
+konnte Entwürfe über ein Prüfwerkzeug kontrollieren und erhielt
+dessen Befunde unmittelbar als Rückmeldung. Nach Ende seiner
+Bearbeitung prüfte zusätzlich der Workflow das eingereichte Ergebnis.
+
+Im ersten Versuch endete der Agentenaufruf, ohne einen Gesamtentwurf
+zu speichern. Am Workflow-Prüfpunkt fehlten damit alle siebzig
+geforderten Zuordnungen. Diese Befunde wurden dem erneut aufgerufenen
+Agenten als Reparaturauftrag übergeben. Innerhalb dieses zweiten Versuchs prüfte der Agent einen Entwurf
+mit 19 Arbeitspaketen. Das Werkzeug meldete darin noch vier
+fehlende Verbindungen. Die anschließend gespeicherte Fassung
+enthielt dieselben 19 Arbeitspakete mit den vier ergänzten
+Verbindungen und bestand die erneute Workflow-Prüfung.
+Die erhaltenen Werkzeugargumente zeigen zwischen diesen beiden
+Fassungen unveränderte Titel, Ziele, Umfangsbeschreibungen und
+Akzeptanzkriterien. Belegt sind damit die Rückkopplung, die
+Ergänzung der Verbindungen und die Erfüllung der Strukturregel.
+Ob die neuen Zuordnungen fachlich richtig sind, wurde nicht
+semantisch geprüft; ebenso wenig ist dadurch die Vollständigkeit
+gegenüber der ursprünglichen Quelle nachgewiesen.
+% HERKUNFT M09: Lauf 20260804_074419_acab74,
+% backlog-attempts.json: 70 UNCOVERED_CORE -> Repair -> Pass.
+% ReClarifyBacklogGate.Check definiert die Zuordnungsregel.
+% P10-4b: logs/otel-traces.jsonl Z.181 enthält den historischen
+% Reparaturauftrag mit 70 wörtlichen Fehlermeldungen; Z.225/229
+% enthalten den 19-PBI-Entwurf vor/nach vier ergänzten Verbindungen.
+% Die frühere Annahme eines nicht archivierten Auftrags ist korrigiert.
+
+Die Trennung von Interpretation und fachlicher Geltung lässt auch
+offenere Analysen zu. Der Core-Analyst untersucht den Projektzustand
+aus mehreren Perspektiven auf mögliche Lücken und Widersprüche.
+Seine Funde werden mit Herkunft und Herleitung als strukturierter
+Eingang für die reguläre Fortschreibung bereitgestellt. Erst dort
+werden sie gegen den Bestand eingeordnet und gegebenenfalls zur
+Autorisierung einer Änderung vorgelegt. Der Analyseworkflow selbst
+mutiert den Core nicht; er ist keine weitere Instanz der hier
+gezeigten Reparaturschleife.
+% HERKUNFT M09: AnalystWorkflow/AnalystDeltaBuilder; eigener
+% Fan-out/Fan-in-Graph mit Kritiker, kein GateLoop-Reparaturzweig.
+
+Ein bestandenes Prüfergebnis belegt nur die Erfüllung der
+festgelegten Kriterien. Kapitel~\ref{chap:evaluation} trennt daher
+Kontrollnachweise, tatsächlich ausgelöste Reparaturschritte und
+inhaltliche Bewertung. Die technische Komposition zeigt
+Abschnitt~\ref{sec:realisierung-agent-executor-workflow}; der
+folgende Abschnitt erklärt den Projektzustand, auf den sich die
+fachlichen Vorschläge beziehen.

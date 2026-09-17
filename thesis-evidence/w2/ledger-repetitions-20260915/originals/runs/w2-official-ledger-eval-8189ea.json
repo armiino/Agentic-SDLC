@@ -1,0 +1,577 @@
+{
+  "lauf": {
+    "runId": "20260905_164650_8189ea",
+    "transcript": "Interview-Einrichtung.txt",
+    "arm": "Ledger (LCR, Pre-Gate)",
+    "modell": "openai/gpt-5.4",
+    "claims": 47,
+    "missSignale": 48,
+    "auswahlregel": "chronologisch ERSTER Pilot-Ledger-Lauf je Transkript (vorab deklariert)"
+  },
+  "verfahren": "KI-adjudiziert (Claude, 06.09.), Regeln = w2-matchregeln.md v1.2 + Urteils-Verfahren v3.1; Detection = Signal-AU ∩ Gold-Quell-AUs (deterministisch) + 1 dokumentierte semantische Zuordnung (G-028←AU-0124); menschliche Verifikation ausstehend",
+  "blockA": {
+    "fullCoverage": 0.519,
+    "touchedCoverage": 0.778,
+    "strictPrecision": 1.0,
+    "semanticSupport": 1.0,
+    "praezisionsBefund": "kein unquellentreuer Claim gefunden (47 Propositionen gegen Evidenz geprüft; insbes. KEIN Dart-3.1.5-Fehler — CAN-037 lässt die Versionsnummern weg statt sie falsch zuzuordnen); Stichproben-Verifikation ausstehend"
+  },
+  "blockB": {
+    "missesGesamt": 52,
+    "davonNone": 24,
+    "davonPartial": 28,
+    "detectionRecall_strikt": 0.692,
+    "silentMissRate_strikt": 0.308,
+    "addressableCoverage_strikt": 0.852,
+    "detektierteMisses": [
+      "G-006",
+      "G-008",
+      "G-009",
+      "G-014",
+      "G-015",
+      "G-017",
+      "G-028",
+      "G-030",
+      "G-031",
+      "G-032",
+      "G-035",
+      "G-041",
+      "G-048",
+      "G-049",
+      "G-054",
+      "G-061",
+      "G-063",
+      "G-072",
+      "G-073",
+      "G-074",
+      "G-075",
+      "G-076",
+      "G-077",
+      "G-078",
+      "G-081",
+      "G-082",
+      "G-083",
+      "G-088",
+      "G-089",
+      "G-090",
+      "G-091",
+      "G-092",
+      "G-093",
+      "G-094",
+      "G-095",
+      "G-108"
+    ],
+    "stilleMisses": [
+      "G-011",
+      "G-020",
+      "G-021",
+      "G-023",
+      "G-025",
+      "G-037",
+      "G-038",
+      "G-043",
+      "G-066",
+      "G-069",
+      "G-079",
+      "G-080",
+      "G-086",
+      "G-087",
+      "G-099",
+      "G-105"
+    ],
+    "stilleMissesBefund": "Alle 16 stillen Lücken sind Detailverluste INNERHALB verwendeter Units (u.a. AU-0043/0060 Account-Details, AU-0051 Kalender, AU-0119 Login-Layout, AU-0102 Versionsnummern, AU-0134/0135 Animationen) — dieselbe Klasse wie bei meeting-2",
+    "signalPrecision_goldRelevanz": 0.5,
+    "signalBefund": "48 Signale, davon 24 auf gold-tragenden Units; Vorsicht: mehrere 'already_covered_indirectly'-Signale behaupten Deckung, wo das Urteil nur partial/none ergibt (AU-0084→G-048, AU-0086→G-061, AU-0125→G-030/31/32, AU-0136→G-078/108) — Signal heißt 'hier hinschauen', nicht 'ist gedeckt'",
+    "signalQualitaet": {
+      "signaleGesamt": 48,
+      "lueckenrelevant": 18,
+      "zeigenNurGedecktes": 6,
+      "goldIrrelevant": 24,
+      "signalMissPrecision": 0.375,
+      "signaleJeDetektierterLuecke": 0.5,
+      "lesart": "Von 48 Prüf-Zetteln zeigen 18 auf Quell-Units echter Lücken; 6 adressieren bereits Gedecktes, 24 gold-freie Units (Kontext). Aufmerksamkeits-Preis: ~0.5 lückenrelevante Signale je erkannter Lücke; 30 von 48 Zetteln kosten Prüfzeit ohne Lücken-Ertrag (attach_as_evidence hat dabei eigenen Evidenz-Wert).",
+      "hinweis": "AU-basiert-deterministisch; grobkörnig, da ein Signal-AU mehrere Gold-Units berühren kann"
+    }
+  },
+  "kanonisierung": {
+    "kandidaten": 54,
+    "kanonisch": 47,
+    "verlust": 7,
+    "attempts": 1
+  },
+  "goldUrteile": {
+    "G-001": {
+      "verdikt": "full",
+      "beleg": "CAN-002: digitale Lösung bevorzugt"
+    },
+    "G-002": {
+      "verdikt": "full",
+      "beleg": "CAN-003: must_not direktes Übersetzungssystem"
+    },
+    "G-003": {
+      "verdikt": "full",
+      "beleg": "CAN-006: primär Bewohner-Verstehen priorisiert"
+    },
+    "G-004": {
+      "verdikt": "full",
+      "beleg": "CAN-007: 'Lösung soll als App…'"
+    },
+    "G-005": {
+      "verdikt": "full",
+      "beleg": "CAN-007: Wissen über individuelle Kommunikationsweise festhalten"
+    },
+    "G-006": {
+      "verdikt": "partial",
+      "beleg": "CAN-007: Nachschlagen ✓, aber 'jederzeit und schnell' fehlt (Qualitäts-Qualifikation)"
+    },
+    "G-007": {
+      "verdikt": "full",
+      "beleg": "CAN-001"
+    },
+    "G-008": {
+      "verdikt": "partial",
+      "beleg": "CAN-007 'damit andere bei Verständigungsproblemen nachschauen können' deckt den Kern (andere verstehen Bewohner); Zielgruppe 'neue Mitarbeitende' + 'schneller' fehlen",
+      "korrektur": "Zweitprüfer 06.09. (none→partial)"
+    },
+    "G-009": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zur Verringerung des Einarbeitungsaufwands"
+    },
+    "G-010": {
+      "verdikt": "full",
+      "beleg": "CAN-012: Klärung mit Leitung + Umfangsbegrenzung — DECKT die F-Lücke"
+    },
+    "G-011": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum Zweck 'erster persönlicher Eindruck' (AU-0025 von CAN-012 konsumiert)"
+    },
+    "G-012": {
+      "verdikt": "full",
+      "beleg": "CAN-012: 'Fokus auf unterstützender Kommunikation erhalten'"
+    },
+    "G-013": {
+      "verdikt": "full",
+      "beleg": "CAN-024: Kalender mit Terminen und Medikamentengaben"
+    },
+    "G-014": {
+      "verdikt": "partial",
+      "beleg": "CAN-023: Hinzufügen ✓, aber Plus-Button + Position unten fehlen"
+    },
+    "G-015": {
+      "verdikt": "none",
+      "beleg": "Bereichs-Trennung ist bereits G-033 gutgeschrieben; der EIGENSTÄNDIGE Gehalt von G-015 (je eigener Navigations-Button zur Unterseite) fehlt komplett — partial wäre Doppel-Kredit",
+      "korrektur": "Zweitprüfer 06.09. (partial→none)"
+    },
+    "G-016": {
+      "verdikt": "full",
+      "beleg": "CAN-017"
+    },
+    "G-017": {
+      "verdikt": "partial",
+      "beleg": "CAN-017: Beitragen ✓, aber 'vorab bei neuen Bewohnern' fehlt (Bedingung)"
+    },
+    "G-018": {
+      "verdikt": "full",
+      "beleg": "CAN-018"
+    },
+    "G-019": {
+      "verdikt": "full",
+      "beleg": "CAN-019: 'Admins legen Accounts an'"
+    },
+    "G-020": {
+      "verdikt": "partial",
+      "beleg": "GEBÜNDELT CAN-019 (User-Rollentyp) + CAN-017 (Angehörigen-Zugriff): Substanz angerissen, explizite Zuordnung Mitarbeiter/Angehörige→User fehlt",
+      "korrektur": "Zweitprüfer 06.09. (none→partial)"
+    },
+    "G-021": {
+      "verdikt": "partial",
+      "beleg": "CAN-013: Hinzufügen-Fähigkeit ✓, aber Rollen-Bindung an normale User fehlt"
+    },
+    "G-022": {
+      "verdikt": "full",
+      "beleg": "CAN-019: 'verwalten Rechte'"
+    },
+    "G-023": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum Lösch-Verbot für normale User"
+    },
+    "G-024": {
+      "verdikt": "full",
+      "beleg": "CAN-019 + CAN-042: zugewiesene Accounts, keine (Selbst-)Registrierung"
+    },
+    "G-025": {
+      "verdikt": "partial",
+      "beleg": "CAN-019: Admin-Anlage + keine Selbstregistrierung ✓, aber Exklusivität (User KÖNNEN NICHT anlegen) nicht ausgesagt"
+    },
+    "G-026": {
+      "verdikt": "full",
+      "beleg": "CAN-020: anklickbare Liste aller sichtbaren Profile"
+    },
+    "G-027": {
+      "verdikt": "full",
+      "beleg": "CAN-020: nach Login auf Profilübersicht"
+    },
+    "G-028": {
+      "verdikt": "partial",
+      "beleg": "CAN-020: anklickbar ✓, aber Ziel Detailansicht fehlt — GENAU das meldet Signal AU-0124 (missing_claim)"
+    },
+    "G-029": {
+      "verdikt": "full",
+      "beleg": "CAN-022: erweiterbare Fotoliste mit Beschreibungen"
+    },
+    "G-030": {
+      "verdikt": "partial",
+      "beleg": "CAN-022: 'Personendaten' ✓, aber Position oben + Informationsfeld fehlen (wie F-Seite)"
+    },
+    "G-031": {
+      "verdikt": "partial",
+      "beleg": "CAN-022: 'neueste oben' ✓, aber Feed-Analogie + 'ältere darunter scrollbar' fehlen (Zweitprüfer-Präzedenz F-Seite)"
+    },
+    "G-032": {
+      "verdikt": "partial",
+      "beleg": "CAN-022: Plus-Button ✓, aber Position unten + Eingabedialog fehlen"
+    },
+    "G-033": {
+      "verdikt": "full",
+      "beleg": "CAN-023"
+    },
+    "G-034": {
+      "verdikt": "full",
+      "beleg": "CAN-023: mit Texten oder Bildern (gleicher Fähigkeitsumfang)"
+    },
+    "G-035": {
+      "verdikt": "partial",
+      "beleg": "CAN-024: übersichtlich ✓, aber Monatsansicht fehlt"
+    },
+    "G-036": {
+      "verdikt": "full",
+      "beleg": "CAN-024"
+    },
+    "G-037": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum Hinzufügen von Einträgen an einzelnen Tagen"
+    },
+    "G-038": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zur Medikamentenliste unter der Monatsansicht"
+    },
+    "G-039": {
+      "verdikt": "full",
+      "beleg": "CAN-025: Appbar auf jeder Seite"
+    },
+    "G-040": {
+      "verdikt": "full",
+      "beleg": "CAN-025: Logout in der Appbar jeder Seite = schnell erreichbar (Entailment)"
+    },
+    "G-041": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum Plus-Button auf der No-Go-Seite (nur CAN-018 Existenz)"
+    },
+    "G-042": {
+      "verdikt": "full",
+      "beleg": "CAN-026"
+    },
+    "G-043": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum Löschrecht der Admins"
+    },
+    "G-044": {
+      "verdikt": "full",
+      "beleg": "CAN-027: interner Gebrauch"
+    },
+    "G-045": {
+      "verdikt": "full",
+      "beleg": "CAN-027: nur Profile der eigenen Einrichtung"
+    },
+    "G-046": {
+      "verdikt": "full",
+      "beleg": "CAN-028: iPhone+Android ('möglichst' = quellennäherer Verpflichtungsgrad, gleicher Gehalt)"
+    },
+    "G-047": {
+      "verdikt": "full",
+      "beleg": "CAN-029"
+    },
+    "G-048": {
+      "verdikt": "partial",
+      "beleg": "CAN-030: Suchleiste ✓, aber Suchkriterien Name/Profildaten fehlen (Zweitprüfer-Präzedenz F-Seite G-048)"
+    },
+    "G-049": {
+      "verdikt": "partial",
+      "beleg": "CAN-032: Suchfunktion ✓, aber Position oben + Merkmals-Beispiele fehlen"
+    },
+    "G-050": {
+      "verdikt": "full",
+      "beleg": "CAN-032: einheitliches Beschreibungsmuster für gezieltes Finden"
+    },
+    "G-051": {
+      "verdikt": "full",
+      "beleg": "CAN-032: must_clarify = Offenheit ausgesagt"
+    },
+    "G-052": {
+      "verdikt": "full",
+      "beleg": "CAN-033: kein eigener Screen, Integration in Kommunikationsseiten"
+    },
+    "G-053": {
+      "verdikt": "full",
+      "beleg": "CAN-016: Videos mit Beschreibung erfassen"
+    },
+    "G-054": {
+      "verdikt": "partial",
+      "beleg": "CAN-013+CAN-034 gebündelt: Hinzufügen + About-Me-Benachrichtigung ✓, aber unmittelbares Teilen ALLER Erfahrungen mit Berechtigten fehlt"
+    },
+    "G-055": {
+      "verdikt": "full",
+      "beleg": "CAN-034"
+    },
+    "G-056": {
+      "verdikt": "full",
+      "beleg": "CAN-035"
+    },
+    "G-057": {
+      "verdikt": "full",
+      "beleg": "CAN-035: nur eigenes Profil sehen"
+    },
+    "G-058": {
+      "verdikt": "full",
+      "beleg": "CAN-035: stark begrenzte Rechte + Fehlbedienungs-Minimierung"
+    },
+    "G-059": {
+      "verdikt": "full",
+      "beleg": "CAN-035: About-Me-Zugriff"
+    },
+    "G-060": {
+      "verdikt": "full",
+      "beleg": "CAN-035: eigene Bilder hinzufügen"
+    },
+    "G-061": {
+      "verdikt": "partial",
+      "beleg": "CAN-044 (Hilfe/Tutorial) trägt den Kern Hilfebereich; die OFFENE Teilfrage Eingabe-/Such-Erläuterung fehlt",
+      "korrektur": "Zweitprüfer 06.09. (none→partial)"
+    },
+    "G-062": {
+      "verdikt": "full",
+      "beleg": "CAN-043: rollenabhängige Differenzierung + Admin-Funktionen (Entailment: nur Admins sehen Admin-Funktionen)"
+    },
+    "G-063": {
+      "verdikt": "partial",
+      "beleg": "analog G-061 (gleiche Regel-Logik): CAN-019/CAN-043 tragen den Rechteverwaltungs-Kern, der OFFENHEITS-Status ('noch festzulegen') fehlt",
+      "korrektur": "Zweitprüfer-Feedback 06.09. (none→partial, Nachtrag zur 4er-Kippungs-Meldung)"
+    },
+    "G-064": {
+      "verdikt": "full",
+      "beleg": "GEBÜNDELT CAN-019 (Admin+User, Admins legen an) + CAN-035 (Bewohner-Account) = drei Rollen"
+    },
+    "G-065": {
+      "verdikt": "full",
+      "beleg": "CAN-036"
+    },
+    "G-066": {
+      "verdikt": "partial",
+      "beleg": "CAN-037: einheitliche Versionen ✓, aber Versionsnummern 3.13.9/3.1.5 fehlen (Zahlenwert)"
+    },
+    "G-067": {
+      "verdikt": "full",
+      "beleg": "CAN-038: Firestore zunächst"
+    },
+    "G-068": {
+      "verdikt": "full",
+      "beleg": "CAN-038: lokale Speicherung muss geklärt werden"
+    },
+    "G-069": {
+      "verdikt": "partial",
+      "beleg": "CAN-038: Klärung offen ✓, aber die konkrete NoSQLite-Option fehlt"
+    },
+    "G-070": {
+      "verdikt": "full",
+      "beleg": "CAN-039"
+    },
+    "G-071": {
+      "verdikt": "full",
+      "beleg": "CAN-041"
+    },
+    "G-072": {
+      "verdikt": "partial",
+      "beleg": "CAN-042: Logo ✓, aber 'deutlich sichtbar' fehlt"
+    },
+    "G-073": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zur Logo-Platzierung (zentriert oben)"
+    },
+    "G-074": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum Kommunikations-Bezug des Logos"
+    },
+    "G-075": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zur runden Gestaltung"
+    },
+    "G-076": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zur offenen Schattenwurf-Frage"
+    },
+    "G-077": {
+      "verdikt": "partial",
+      "beleg": "CAN-042: Felder ✓, aber Anordnung unter dem Logo fehlt (Position)"
+    },
+    "G-078": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zu intuitiv/benutzerfreundlich (CAN-045 = Barrierefreiheit, anderes Konstrukt)"
+    },
+    "G-079": {
+      "verdikt": "partial",
+      "beleg": "CAN-042: Button ✓, aber Position unter den Feldern fehlt"
+    },
+    "G-080": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum optischen Hervorstechen des Login-Buttons"
+    },
+    "G-081": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum mittigen Seitennamen in der Appbar"
+    },
+    "G-082": {
+      "verdikt": "partial",
+      "beleg": "CAN-025: Rücknavigation ✓, aber Position links fehlt"
+    },
+    "G-083": {
+      "verdikt": "partial",
+      "beleg": "CAN-025: Einstellungsfunktionen als offen deklariert, aber Einstellungssymbol rechts → Einstellungsseite nicht ausgesagt"
+    },
+    "G-084": {
+      "verdikt": "full",
+      "beleg": "CAN-030: gut sichtbare Suchleiste unter der Appbar"
+    },
+    "G-085": {
+      "verdikt": "full",
+      "beleg": "CAN-030: Vorschaubild, Name, Kurzbeschreibung"
+    },
+    "G-086": {
+      "verdikt": "partial",
+      "beleg": "CAN-030: 'Liste oder Kacheln' als Optionen ✓, aber der OFFENHEITS-Status der Frage fehlt"
+    },
+    "G-087": {
+      "verdikt": "partial",
+      "beleg": "CAN-031: Anlegen mit Bild/Name/Beschreibung ✓, aber Plus-Symbol unten + Dialog fehlen"
+    },
+    "G-088": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum größeren Profilbild in der Detailansicht — GENAU von Signal AU-0124 (missing_claim) gemeldet"
+    },
+    "G-089": {
+      "verdikt": "partial",
+      "beleg": "CAN-021: Bereiche existieren ✓ (aber nur drei genannt), interaktive Buttons in der Detailansicht fehlen"
+    },
+    "G-090": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zur visuellen Unterscheidung durch Symbole"
+    },
+    "G-091": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum Warnsymbol/Stoppschild"
+    },
+    "G-092": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zur Überblickbarkeit der No-Gos"
+    },
+    "G-093": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zur Beschränkung auf wichtigste Informationen"
+    },
+    "G-094": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum Datum-Antippen → Details"
+    },
+    "G-095": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zu Medikamenten-Icons/Tags"
+    },
+    "G-096": {
+      "verdikt": "full",
+      "beleg": "CAN-043"
+    },
+    "G-097": {
+      "verdikt": "full",
+      "beleg": "CAN-043: Profil ändern"
+    },
+    "G-098": {
+      "verdikt": "full",
+      "beleg": "CAN-043: Sprache wählen"
+    },
+    "G-099": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zu leicht zugänglichen Datenschutzeinstellungen"
+    },
+    "G-100": {
+      "verdikt": "full",
+      "beleg": "CAN-044: kurze Tour beim ersten Login"
+    },
+    "G-101": {
+      "verdikt": "full",
+      "beleg": "CAN-044: erneut aufrufbarer Hilfebereich"
+    },
+    "G-102": {
+      "verdikt": "full",
+      "beleg": "CAN-045"
+    },
+    "G-103": {
+      "verdikt": "full",
+      "beleg": "CAN-045"
+    },
+    "G-104": {
+      "verdikt": "full",
+      "beleg": "CAN-045"
+    },
+    "G-105": {
+      "verdikt": "partial",
+      "beleg": "CAN-047: Verbots-Richtung ✓ (anders als F!), aber nur 'ablenkende' statt aller Animationen — Reichweite der Negation fehlt"
+    },
+    "G-106": {
+      "verdikt": "full",
+      "beleg": "CAN-046"
+    },
+    "G-107": {
+      "verdikt": "full",
+      "beleg": "CAN-047: ablenkende nicht einbauen ≡ falls doch, nicht ablenkend"
+    },
+    "G-108": {
+      "verdikt": "none",
+      "beleg": "KEIN Claim zum klaren Branding"
+    }
+  },
+  "verifikation": {
+    "status": "KI-VERIFIZIERT: separater KI-gestützter Verifikationsdurchgang (Kollegen-KI) nach vorab festgelegten Regeln — KEINE menschliche Prüfung; Stille-Misses-Prüfbasis zusätzlich UNGEPRÜFT",
+    "goldBlatt": {
+      "geprueft": 61,
+      "bestaetigt": 56,
+      "gekippt": [
+        "G-008 none→partial",
+        "G-020 none→partial",
+        "G-061 none→partial",
+        "G-015 partial→none",
+        "G-063 none→partial (Nachtrag)"
+      ],
+      "uebereinstimmung": 0.918,
+      "fehlerquote": "5/61 = 8,2 % < 10 % → keine Eskalation"
+    },
+    "claimBlatt": {
+      "geprueft": 12,
+      "bestaetigt": 12,
+      "fehlerquote": 0.0
+    },
+    "offenerPruefpunkt": "GESCHLOSSEN 06.09.: Prüfbasis durch Autor bestätigt",
+    "etikett": "KI-adjudiziert + KI-verifiziert (Eskalationsregel) + menschliche Stichproben-Verifikation durch den Autor",
+    "korrekturvermerk": "06.09.: Ursprüngliches Etikett 'human-verifiziert / unabhängiger Zweitprüfer' war FALSCH — der Prüfdurchgang war KI-gestützt (Offenlegung Kollege). Kippungen bleiben gültig (regelbasiert nachgeprüft), aber als KI-Zweitmeinung, nicht als menschliches Urteil.",
+    "autorStichprobe": {
+      "datum": "2026-09-06",
+      "auswahl": "Seed-Regel SHA-256(id+'w2seed42-human')",
+      "umfang": "10 ★-Blöcke (G-008/011/031/074/078/082/088/093/105/108) + Stille-Misses-Prüfbasis (16 Leer-Schnitte + Signal-Liste)",
+      "ergebnis": "ALLE bestätigt, 0 Kippungen (Autor-Zusage im Chat; Checkboxen im Auftrag gesetzt)"
+    }
+  },
+  "einordnung": "VORLÄUFIGE adjudizierte Hauptauswertung auf autor-konsolidiertem Goldstand (Hash ② ausstehend); N=1 je Fall/Arm — Aussagen nur über die vorab ausgewählten, vollständig adjudizierten Läufe",
+  "kosten": {
+    "inputTokens": 182184,
+    "outputTokens": 41133,
+    "quelle": "OTel-Summe des adjudizierten Ledger-Laufs"
+  }
+}

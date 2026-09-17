@@ -1,0 +1,863 @@
+{
+  "case_id": "AN-03",
+  "report_index_zero_based": 2,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "arch",
+    "disposition": "architecture",
+    "statement": "Für Offline-Cache und Medienhaltung muss ein mandanten- und berechtigungsgebundener Schlüsselrahmen festgelegt werden: Lokal gespeicherte Bewohnerdaten und Medien sind kryptografisch an Account und Einrichtung zu binden, sodass zwischengespeicherte Inhalte nach Logout, Rollenwechsel oder Entzug der Profilberechtigung nicht mit einem anderen Account desselben Geräts weiterverwendet werden können.",
+    "herleitung": "Abgeleitet aus PBI-024 zu Offline-first, lokalem Cache, Verschlüsselung und Synchronisationsverhalten, aus REQ-36 zur Unlesbarkeit lokaler Daten nach Abmeldung oder Berechtigungsentzug sowie aus REQ-84 zur festen Einrichtungszuordnung. ARCH-40 benennt das Cache-Thema nur als offene Klärung. Gerade bei gemeinsam genutzten Geräten und mehreren Rollen ist ohne Schlüsselrahmen unklar, wie verhindert wird, dass verschlüsselt vorliegende Caches nach Account- oder Einrichtungswechsel weiterhin zugänglich bleiben.",
+    "kategorie": "nfr:security",
+    "ankerIds": [
+      "PBI-024",
+      "REQ-36",
+      "REQ-84",
+      "ARCH-40"
+    ]
+  },
+  "reported_status": "neu",
+  "critic_reason": null,
+  "anchors_and_mentions": [
+    {
+      "id": "ARCH-40",
+      "present": true,
+      "item": {
+        "itemId": "ARCH-40",
+        "itemType": "architecture",
+        "text": "Es muss geklärt werden, ob und wie Cloud-Daten lokal auf dem Gerät gespeichert oder gecacht werden sollen. [canon-lokaler-cache-klären]",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_113115_35335a",
+        "sourceArtifactId": "ARCH",
+        "sourceArtifactType": "architecture",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4"
+        },
+        "identityKey": "geklärt werden ob und wie cloud daten lokal auf dem gerät gespeichert oder gecacht werden sollen canon lokaler cache klären",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "architecture": {
+          "roles": [
+            "design"
+          ],
+          "rationale": "Der lokale Cache ist ausdrücklich noch zu klären. Das ist momentan offener Architekturpunkt und damit dokumentationswürdiges Design-Wissen, aber keine unmittelbar ableitbare technische Arbeit.",
+          "adrId": null,
+          "adrStatus": null
+        },
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    },
+    {
+      "id": "PBI-024",
+      "present": true,
+      "item": {
+        "itemId": "PBI-024",
+        "itemType": "pbi",
+        "text": "Offline-first, lokaler Cache, Verschlüsselung und Synchronisationsverhalten festlegen",
+        "origin": "re-clarify",
+        "stage": null,
+        "version": 4,
+        "sourceRunId": "20260820_095055_5c8547",
+        "sourceArtifactId": null,
+        "sourceArtifactType": null,
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "legacyPbiId": "PBI-FC10-01",
+          "sourceRunId": "20260723_131421_80a11e",
+          "legacyOpenDecisions": "2",
+          "featureId": "FC-10"
+        },
+        "identityKey": "lokaler-cache-und-offline-verhalten-klaeren",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Lokalen Cache, Offline-Erfassung und Synchronisationsverhalten festlegen",
+            "status": "active",
+            "origin": "re-clarify",
+            "sourceRunId": "20260723_131421_80a11e",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-07-23T14:16:14.464927Z",
+            "note": "MARK_CHANGED: Requirement L3-REQ-004 verfeinert"
+          },
+          {
+            "versionId": 2,
+            "text": "Lokalen Cache, Offline-Erfassung und Synchronisationsverhalten festlegen",
+            "status": "needs_clarify",
+            "origin": "re-clarify",
+            "sourceRunId": "20260723_131421_80a11e",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-10T16:11:32.371295Z",
+            "note": "MARK_CHANGED: Klärungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort ersetzt die zuvor offene Entscheidungsfrage durch konkrete Festlegungen zu Architektur und Verhalten: offline-first, lokaler SQLite-Cache, automatische Synchronisation sowie eine definierte Konfliktregel mit erneuter Nutzerbestätigung lokaler Änderungen. Daher werden alle PBI-Inhalte vollständig auf die Antwort ausgerichtet."
+          },
+          {
+            "versionId": 3,
+            "text": "Offline-first, lokaler Cache und Synchronisationsverhalten festlegen",
+            "status": "active",
+            "origin": "re-clarify",
+            "sourceRunId": "20260810_152712_d31d38",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-20T10:48:04.909732Z",
+            "note": "MARK_CHANGED: Requirement REQ-36 verfeinert | ALIGN(R-26-C): REQ-36 wurde von einer offenen Klärungsfrage zur lokalen Speicherung zu einer konkreten Vorgabe verfeinert: lokal zwischengespeicherte Bewohnerdaten und Medien müssen im Ruhezustand verschlüsselt sein und nach Abmeldung oder Berechtigungsentzug im jeweiligen Kontext nicht mehr lesbar sein. Daher werden Titel, Statement und Akzeptanzkriterien um diese Sicherheitsanforderungen ergänzt; bestehende Aussagen zu Offline-first, SQLite, Synchronisation und Konfliktbehandlung bleiben unverändert erhalten."
+          }
+        ],
+        "feature": null,
+        "pbi": {
+          "goal": "Als Product Owner will ich das Offline-first-Verhalten mit lokalem Cache in SQLite, die Verschlüsselung lokal zwischengespeicherter Bewohnerdaten und Medien sowie das automatische Synchronisations- und Konfliktverhalten festlegen, damit Erfassungen lokal gespeichert, im Ruhezustand geschützt, bei bestehender Verbindung automatisch synchronisiert und nach Abmeldung oder Berechtigungsentzug im jeweiligen Kontext lokal nicht mehr lesbar sind.",
+          "title": "Offline-first, lokaler Cache, Verschlüsselung und Synchronisationsverhalten festlegen",
+          "acceptanceCriteria": [
+            "Lokal auf dem Gerät zwischengespeicherte Bewohnerdaten und Medien werden im Ruhezustand verschlüsselt gespeichert.",
+            "Nach Abmeldung dürfen lokal vorhandene Daten des betroffenen Kontexts nicht mehr lesbar sein.",
+            "Nach Entzug der Berechtigung dürfen lokal vorhandene Daten des betroffenen Kontexts nicht mehr lesbar sein."
+          ],
+          "linkedRequirementIds": [
+            "L3-REQ-004",
+            "REQ-36"
+          ],
+          "openDecisionRefs": [],
+          "priorityRank": 17,
+          "readiness": "blocked_by_decision",
+          "mvp": "required_for_mvp",
+          "trace": {
+            "canonicalRequirementIds": [
+              "L3-REQ-004",
+              "REQ-36"
+            ],
+            "l1Req": [
+              "REQ-36"
+            ],
+            "l3": [
+              "L3-REQ-004"
+            ],
+            "claims": []
+          }
+        },
+        "validity": "Active",
+        "progress": "Open",
+        "blocker": "None",
+        "confirmedBy": "Unmarked",
+        "confirmedInRun": "20260723_131421_80a11e",
+        "status": "active"
+      }
+    },
+    {
+      "id": "REQ-36",
+      "present": true,
+      "item": {
+        "itemId": "REQ-36",
+        "itemType": "requirement",
+        "text": "Lokal auf dem Gerät zwischengespeicherte Bewohnerdaten und Medien müssen im Ruhezustand verschlüsselt gespeichert werden; nach Abmeldung oder Entzug der Berechtigung dürfen lokal vorhandene Daten dieses Kontexts nicht mehr lesbar sein.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 2,
+        "sourceRunId": "20260820_095055_5c8547",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4",
+          "analystKategorie": "nfr:security",
+          "herleitung": "Abgeleitet aus PBI-024 mit Offline-first, lokalem Cache in SQLite und automatischer Synchronisation sowie aus REQ-64 zur revisionssicheren Protokollierung von Einsichtnahmen. Da in der App besonders schützensame Bewohnerdaten, Kommunikationshinweise, Fotos und potenziell Medikationsdaten offline auf gemeinsam genutzten Mobilgeräten vorliegen können, fehlt eine konkrete Datenschutz- und Sicherheitsanforderung für die lokale Speicherung selbst.",
+          "linse": "nfr"
+        },
+        "identityKey": "lokal auf dem gerät zwischengespeicherte bewohnerdaten und medien müssen im ruhezustand verschlüsselt gespeichert werden nach abmeldung oder entzug der berechtigung dürfen lokal vorhandene daten dieses kontexts nicht mehr lesbar sein",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Es muss geklärt werden, ob und wie Cloud-Daten lokal auf dem Gerät gespeichert oder gecacht werden sollen. [canon-lokaler-cache-klären]",
+            "status": "baseline",
+            "origin": "Extracted",
+            "sourceRunId": "20260723_113115_35335a",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-20T10:17:53.894206Z",
+            "note": "REFINE (ingestion 20260820_095055_5c8547, via CA-5)"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    },
+    {
+      "id": "REQ-84",
+      "present": true,
+      "item": {
+        "itemId": "REQ-84",
+        "itemType": "requirement",
+        "text": "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen. Einladungscodes geben die Einrichtungszuordnung bei der Registrierung unveränderlich mit. Die Selbstregistrierung für Angehörige per Einladungscode bleibt bestehen; für alle anderen Rollen bleibt der Zugang ausschließlich über intern vergebene Accounts möglich.",
+        "origin": "decision-tor2",
+        "stage": "evidence_baseline",
+        "version": 2,
+        "sourceRunId": "20260818_112553_8203f5",
+        "sourceArtifactId": null,
+        "sourceArtifactType": null,
+        "sourceDecisionId": "DEC-005",
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "adoptedFromDecision": "DEC-005"
+        },
+        "identityKey": "jeder account und jedes bewohnerprofil ist genau einer einrichtung zugeordnet diese zuordnung wird serverseitig erzwungen einladungscodes geben die einrichtungszuordnung bei der registrierung unveränderlich mit die selbstregistrierung für angehörige per einladungscode bleibt bestehen für alle anderen rollen bleibt der zugang ausschließlich über intern vergebene accounts möglich",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Angehörige können sich selbst mit einem Einladungscode der Einrichtung in der App registrieren; für alle anderen Rollen bleibt der Zugang ausschließlich über intern vergebene Accounts bestehen.",
+            "status": "accepted",
+            "origin": "decision-tor2",
+            "sourceRunId": "20260818_112553_8203f5",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-20T11:24:34.187174Z",
+            "note": "REFINE via DEC-008"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "PBI-024",
+      "toId": "FC-10",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-024",
+      "toId": "L3-REQ-004",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-024",
+      "toId": "REQ-36",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-36",
+      "toId": "FC-10",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-024",
+      "toId": "gh#24",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "24",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-07-23T14:58:33.7764290Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/24",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "21c07b8ebbd2c73f",
+        "projectedBodyHash": "041410e30fc53a71",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+      }
+    },
+    {
+      "fromId": "REQ-84",
+      "toId": "REQ-05",
+      "relationType": "supersedes",
+      "source": "decision-tor2",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-002",
+      "toId": "REQ-84",
+      "relationType": "covers",
+      "source": "decision-tor2",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-005",
+      "toId": "REQ-84",
+      "relationType": "covers",
+      "source": "decision-tor2",
+      "metadata": {}
+    },
+    {
+      "fromId": "DEC-008",
+      "toId": "REQ-84",
+      "relationType": "contradicts_resolved",
+      "source": "ingestion",
+      "metadata": {
+        "resolutionOutcome": "REFINE",
+        "resolvedUtc": "2026-08-20T11:24:34.1872410Z",
+        "decisionId": "DEC-008"
+      }
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "DEC-008",
+      "itemType": "decision",
+      "text": "Widerspruch zu REQ-84: Für die Einrichtungsgrenze aus Rollenmodell, Selbstregistrierung und Profilzugriff muss ein verbindlicher Mandantenrahmen festgelegt werden: Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; die Zuordnung muss serverseitig erzwungen werden, und Einladungscodes für Angehörige müssen diese Einrichtungszuordnung bei der Registrierung unveränderlich mitgeben.",
+      "origin": "INGESTION_CONTRADICTION",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260820_095055_5c8547",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-1"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-1",
+        "ingestedFromRun": "20260820_075153_7878ac",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus REQ-09, wonach Mitarbeiter nur Profile ihrer Einrichtung sehen dürfen, sowie aus REQ-84 und PBI-002 zur Selbstregistrierung von Angehörigen per Einladungscode. Fachlich ist die Einrichtungsgrenze gesetzt, aber es fehlt der technische Rahmen, wie diese Grenze bei Login, Registrierung und Datenzugriff durchgesetzt wird. Ohne serverseitig erzwungene Mandantentrennung könnten Angehörige oder Mitarbeitende trotz Rollenmodell auf Daten außerhalb ihrer Einrichtung zugreifen.",
+        "linse": "arch",
+        "targetEntityId": "REQ-84",
+        "resolutionOutcome": "REFINE",
+        "resolvedUtc": "2026-08-20T11:24:34.1873230Z"
+      },
+      "identityKey": "für die einrichtungsgrenze aus rollenmodell selbstregistrierung und profilzugriff muss ein verbindlicher mandantenrahmen festgelegt werden jeder account und jedes bewohnerprofil ist genau einer einrichtung zugeordnet die zuordnung muss serverseitig erzwungen werden und einladungscodes für angehörige müssen diese einrichtungszuordnung bei der registrierung unveränderlich mitgeben",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Widerspruch zu REQ-84: Für die Einrichtungsgrenze aus Rollenmodell, Selbstregistrierung und Profilzugriff muss ein verbindlicher Mandantenrahmen festgelegt werden: Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; die Zuordnung muss serverseitig erzwungen werden, und Einladungscodes für Angehörige müssen diese Einrichtungszuordnung bei der Registrierung unveränderlich mitgeben.",
+          "status": "open_decision",
+          "origin": "INGESTION_CONTRADICTION",
+          "sourceRunId": "20260820_095055_5c8547",
+          "sourceClaimIds": [
+            "CA-1"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187342Z",
+          "note": "resolved=REFINE; war contradicts REQ-84"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Resolved",
+      "status": "resolved"
+    },
+    {
+      "itemId": "FC-10",
+      "itemType": "feature",
+      "text": "Medien, Datenschutz und Datenhaltung",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-10",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": ""
+      },
+      "identityKey": "medien-und-datenschutz",
+      "history": [],
+      "feature": {
+        "label": "Medien, Datenschutz und Datenhaltung",
+        "rationale": "Die Requirements regeln den querschnittlichen Umgang mit Medien, Einwilligungen, lokalem Caching, Offline-Synchronisation und Änderungsnachverfolgung. Sie bilden zusammen ein techniknahes, aber fachlich zusammenhängendes Feature für sichere Inhaltsverwaltung.",
+        "coreRequirementIds": [
+          "L3-REQ-004",
+          "REQ-36"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "L3-REQ-004",
+      "itemType": "requirement",
+      "text": "Bei offline bearbeiteten Konfliktfällen muss eine klare Konfliktanzeige erfolgen; nichts darf stillschweigend überschrieben werden, und der Nutzer entscheidet, welche Version gilt.",
+      "origin": "HUMAN_ACCEPTED_OPEN_WORLD",
+      "stage": "l3_promoted",
+      "version": 2,
+      "sourceRunId": "20260723_122625_136540",
+      "sourceArtifactId": null,
+      "sourceArtifactType": "l3",
+      "sourceDecisionId": "HDEC-004",
+      "sourceCandidateId": "CAND-012",
+      "sourceClaimIds": [
+        "offline-konfliktbehandlung"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceCandidateId": "CAND-012",
+        "sourceDecisionId": "HDEC-004",
+        "decision": "accept",
+        "decisionReason": "sinvoll",
+        "reviewer": "human (review-ui)"
+      },
+      "identityKey": "bei offline bearbeiteten konfliktfällen muss eine klare konfliktanzeige erfolgen nichts darf stillschweigend überschrieben werden und der nutzer entscheidet welche version gilt",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Wenn Inhalte offline erfasst werden können, sollte die App ausstehende Synchronisationen kenntlich machen und Konflikte beim späteren Abgleich erkennbar behandeln.",
+          "status": "accepted",
+          "origin": "HUMAN_ACCEPTED_OPEN_WORLD",
+          "sourceRunId": "20260723_122625_136540",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-07-23T13:57:21.374961Z",
+          "note": "REFINE (ingestion)"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "confirmedInRun": "20260723_122625_136540",
+      "status": "accepted"
+    },
+    {
+      "itemId": "PBI-002",
+      "itemType": "pbi",
+      "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung ermöglichen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 9,
+      "sourceRunId": "20260820_112233_5d7a52",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-admin-screen-pruefen",
+        "canon-bewohner-account-mit-beschraenkung",
+        "canon-login-ohne-selbstregistrierung",
+        "canon-rollen-admin-user"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC02-01",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-02"
+      },
+      "identityKey": "interne-accounts-und-rollenkern",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Interne Accounts mit Basisrollen und ohne Selbstregistrierung bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-07-23T14:16:14.465124Z",
+          "note": "EXTEND_PBI: Die Einschränkung, dass nur Admins das Zugriffsprotokoll sehen dürfen, ist primär eine Rechte- und Rollenvorgabe. Daher passt sie besser als Erweiterung zum bestehenden PBI für interne Accounts und Basisrollen als zu einem neuen eigenständigen PBI."
+        },
+        {
+          "versionId": 2,
+          "text": "Interne Accounts mit Basisrollen und ohne Selbstregistrierung bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-09T10:28:02.320563Z",
+          "note": "MARK_CHANGED: Klärungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort ergänzt für das bestehende PBI eine zusätzliche Rechte-Regel: Das Zugriffsprotokoll darf nur für Admin sichtbar sein und nicht für Pflegekräfte oder Angehörige. Daher wurden Titel, Statement und Akzeptanzkriterien um diese belegte Einschränkung erweitert, ohne den bestehenden Scope zu entfernen."
+        },
+        {
+          "versionId": 3,
+          "text": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260809_102419_d403e0",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-18T10:30:24.249445Z",
+          "note": "BLOCK_PBI: Open Decision DEC-005 widerspricht REQ-05"
+        },
+        {
+          "versionId": 4,
+          "text": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260809_102419_d403e0",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-18T11:32:29.188981Z",
+          "note": "coverage-swap REQ-05->REQ-84 | unblock DEC-005 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 5,
+          "text": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260809_102419_d403e0",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-18T11:36:47.295489Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 ergänzt den bisherigen Scope um eine Ausnahme von der bisherigen Regel \"keine Selbstregistrierung\": Angehörige dürfen sich mit Einladungscode selbst registrieren. Daher werden Titel, Statement und die Akzeptanzkriterien zur Kontenerstellung entsprechend erweitert; der übrige Inhalt des PBIs bleibt unberührt."
+        },
+        {
+          "versionId": 6,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode ermöglichen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T10:48:04.909872Z",
+          "note": "BLOCK_PBI: Open Decision DEC-008 widerspricht REQ-84"
+        },
+        {
+          "versionId": 7,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode ermöglichen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187353Z",
+          "note": "unblock DEC-008 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 8,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode ermöglichen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T11:28:15.810655Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 wurde gegenüber der alten Fassung um die verpflichtende, serverseitig erzwungene Einrichtungszuordnung für Accounts und Bewohnerprofile ergänzt. Deshalb werden Titel, Story und Akzeptanzkriterien um diese feste Zuordnung sowie die unveränderliche Einrichtungszuordnung aus Einladungscodes erweitert; die bisherige Einschränkung der Selbstregistrierung bleibt inhaltlich bestehen."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Admin will ich interne Accounts mit Basisrollen verwalten und Angehörigen die Selbstregistrierung per Einladungscode der Einrichtung mit unveränderlicher Einrichtungszuordnung ermöglichen, damit für Admin, User und Bewohner der Zugang weiter nur über intern vergebene Accounts erfolgt, Angehörige sich im vorgegebenen Rahmen selbst registrieren können und jeder Account sowie jedes Bewohnerprofil genau einer Einrichtung zugeordnet ist.",
+        "title": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung ermöglichen",
+        "acceptanceCriteria": [
+          "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen.",
+          "Einladungscodes geben die Einrichtungszuordnung bei der Registrierung unveränderlich mit.",
+          "Angehörige können sich mit einem Einladungscode der Einrichtung in der App selbst registrieren; die dabei mitgegebene Einrichtungszuordnung kann nicht geändert werden."
+        ],
+        "linkedRequirementIds": [
+          "L3-REQ-009",
+          "L3-REQ-010",
+          "REQ-06",
+          "REQ-07",
+          "REQ-41",
+          "REQ-65",
+          "REQ-84"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 2,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "L3-REQ-009",
+            "L3-REQ-010",
+            "REQ-05",
+            "REQ-06",
+            "REQ-07",
+            "REQ-41"
+          ],
+          "l1Req": [
+            "REQ-05",
+            "REQ-06",
+            "REQ-07",
+            "REQ-41"
+          ],
+          "l3": [
+            "L3-REQ-009",
+            "L3-REQ-010"
+          ],
+          "claims": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ]
+        }
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-005",
+      "itemType": "pbi",
+      "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung bereitstellen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 7,
+      "sourceRunId": "20260820_112233_5d7a52",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "ADJ-GAP-AU-0117",
+        "canon-login-ohne-selbstregistrierung"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC03-01",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "1",
+        "featureId": "FC-03"
+      },
+      "identityKey": "login-screen-und-fehlerfeedback",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Login-Screen mit sicherem Fehlerfeedback bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-18T10:30:24.249563Z",
+          "note": "BLOCK_PBI: Open Decision DEC-005 widerspricht REQ-05 | EXTEND_PBI: Die technische bzw. gestalterische Arbeit betrifft unmittelbar dieselbe Aufgabe wie das bestehende Login-Screen-PBI. Dort ist bereits ein sichtbares Logo im oberen Drittel vorgesehen; das neue Item konkretisiert dessen Positionierung und ergänzt die Erstellung eines passenden Kommunikations-Logos, daher Erweiterung des vorhandenen PBI statt eigenes PBI. | ALIGN(R-26-C): ARCH-33 präzisiert die bestehende Logo-Anforderung: Das Logo soll zentriert und gut sichtbar im oberen Drittel angeordnet sein. Zugleich ist offen, welches konkrete Kommunikations-Logo verwendet wird, da dieses laut Anforderung noch zu erstellen ist; diese offene Stelle wird ehrlich im Akzeptanzkriterium benannt."
+        },
+        {
+          "versionId": 2,
+          "text": "Login-Screen mit sicherem Fehlerfeedback bereitstellen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_084712_765eea",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-18T11:32:29.18899Z",
+          "note": "coverage-swap REQ-05->REQ-84 | unblock DEC-005 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 3,
+          "text": "Login-Screen mit sicherem Fehlerfeedback bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_084712_765eea",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-18T11:36:47.295835Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 macht die bisherige Aussage \"keine Selbstregistrierung\" im Login-Kontext teilweise obsolet: Es gibt nun eine gezielte Selbstregistrierung nur für Angehörige mit Einladungscode. Deshalb werden Titel, Statement und die betroffenen Akzeptanzkriterien präzisiert, ohne das bestehende Login- und Fehlerfeedback-Verhalten zu verändern."
+        },
+        {
+          "versionId": 4,
+          "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-20T10:48:04.909875Z",
+          "note": "BLOCK_PBI: Open Decision DEC-008 widerspricht REQ-84"
+        },
+        {
+          "versionId": 5,
+          "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode bereitstellen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187355Z",
+          "note": "unblock DEC-008 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 6,
+          "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-20T11:28:15.810666Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 präzisiert zusätzlich zur bisherigen Regelung der Selbstregistrierung, dass Accounts und Bewohnerprofile genau einer Einrichtung zugeordnet sein müssen und dass Einladungscodes diese Zuordnung unveränderlich mitgeben. Daher wird der Login-/Registrierungskontext um diese belegten Vorgaben ergänzt; unveränderte bestehende Regeln müssen nicht erneut angepasst werden."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Nutzer will ich mich über einen klaren Login-Screen mit E-Mail und Passwort anmelden und als Angehöriger bei Bedarf mit einem Einladungscode der Einrichtung selbst registrieren können, wobei die Einrichtungszuordnung bei der Registrierung unveränderlich mitgegeben wird, damit ich sicher in die App einsteigen kann, die Selbstregistrierung nur im vorgesehenen Fall möglich ist und Accounts sowie Bewohnerprofile genau einer Einrichtung zugeordnet sind.",
+        "title": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung bereitstellen",
+        "acceptanceCriteria": [
+          "Angehörige können sich mit einem Einladungscode der Einrichtung in der App selbst registrieren; der Einladungscode gibt die Einrichtungszuordnung bei der Registrierung unveränderlich mit.",
+          "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen."
+        ],
+        "linkedRequirementIds": [
+          "L3-REQ-011",
+          "REQ-11",
+          "REQ-12",
+          "ARCH-33",
+          "REQ-84"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 4,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "L3-REQ-011",
+            "REQ-05",
+            "REQ-11",
+            "REQ-12"
+          ],
+          "l1Req": [
+            "REQ-05",
+            "REQ-11",
+            "REQ-12"
+          ],
+          "l3": [
+            "L3-REQ-011"
+          ],
+          "claims": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ]
+        }
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "REQ-05",
+      "itemType": "requirement",
+      "text": "Die App darf keine Selbstregistrierung erlauben; der Zugang erfolgt ausschließlich per Login mit intern vergebenen Accounts.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260723_113115_35335a",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-login-ohne-selbstregistrierung",
+        "no-self-registration-existing-decision"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "artifactVersion": "1",
+        "producerModel": "openai/gpt-5.4"
+      },
+      "identityKey": "die app darf keine selbstregistrierung erlauben der zugang erfolgt ausschließlich per login mit intern vergebenen accounts",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Die App darf keine Selbstregistrierung erlauben; der Zugang erfolgt ausschließlich per Login mit intern vergebenen Accounts.",
+          "status": "baseline",
+          "origin": "Extracted",
+          "sourceRunId": "20260723_113115_35335a",
+          "sourceClaimIds": [
+            "canon-login-ohne-selbstregistrierung",
+            "no-self-registration-existing-decision"
+          ],
+          "recordedUtc": "2026-08-18T11:32:29.188349Z",
+          "note": "superseded via DEC-005 (ADOPT_NEW)"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Superseded",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "superseded"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "ARCH-40": 1,
+    "PBI-024": 2,
+    "REQ-36": 2,
+    "REQ-84": 2
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

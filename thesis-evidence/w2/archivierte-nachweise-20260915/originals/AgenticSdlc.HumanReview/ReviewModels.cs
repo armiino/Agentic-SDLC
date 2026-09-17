@@ -1,0 +1,168 @@
+using System.Text.Json.Serialization;
+
+namespace AgenticSdlc.HumanReview;
+
+/// <summary>
+/// Generische, domaenen-agnostische Human-in-the-Loop-Review-Modelle.
+///
+/// Diese Schicht weiss NICHTS ueber Ledger, Adjudikation, SDLC oder irgendeine konkrete Domaene.
+/// Sie beschreibt nur: „ein Mensch soll eine Liste von Items durchsehen und pro Item ein paar Felder
+/// ausfuellen; zu jedem Item kann es lazily nachladbaren Kontext geben". Jede Domaene projiziert ihre
+/// eigenen Objekte ueber einen Adapter in eine <see cref="ReviewSession"/> hinein (fuer die
+/// Ledger-Adjudikation: <c>LedgerAdjudicationReviewAdapter</c> im Host-Projekt).
+///
+/// Dadurch ist derselbe Server + dasselbe Frontend spaeter fuer andere Review-Aufgaben nutzbar
+/// (Artefakt-Review, Agenten-Output-Freigabe, Facetten-Stichprobe, ...).
+/// </summary>
+public enum ReviewInputType
+{
+    /// <summary>Auswahl aus <see cref="ReviewFieldSpec.AllowedValues"/> (Dropdown).</summary>
+    Dropdown,
+    /// <summary>Freitext-Eingabe.</summary>
+    FreeText,
+    /// <summary>Mehrzeilige Freitext-Eingabe fuer laengere Texte oder listenartige Werte.</summary>
+    MultiLine,
+    /// <summary>Nur-Lese-Anzeige (kein Edit; z. B. eine ID/Referenz).</summary>
+    Readonly,
+    /// <summary>Nicht gerendertes Traeger-Feld: haelt einen Wert (z. B. Item-Art) NUR fuer <see cref="ReviewFieldSpec.VisibleWhen"/>,
+    /// erscheint aber nirgends in der UI. Erlaubt zwei Item-Arten in EINER Session ueber bedingte Sichtbarkeit.</summary>
+    Hidden,
+    /// <summary>Mehrwertiges Referenz-Feld (U2v2, 06.08.): Wert = Referenz-IDs, eine je Zeile. Die UI rendert
+    /// die IDs als Chips in der Card (Klick = Details, × = entfernen) und speist aus den
+    /// <see cref="ReviewFieldSpec.Options"/> die rechte Referenz-Liste (Suche + Detail-Panel via
+    /// <c>/api/reference</c> + „Als Ziel hinzufügen/entfernen") — die Verallgemeinerung des
+    /// Adjudikations-Musters (dort einwertig über den Feld-Schlüssel <c>referenceTarget</c>).</summary>
+    ReferenceList
+}
+
+/// <summary>Ein vorschlagbarer Wert für ein Feld (Dropdown-Option oder FreeText-Autocomplete via datalist).</summary>
+public sealed record ReviewOption(string Value, string Label);
+
+/// <summary>Optionale UI-Sichtbarkeitsbedingung fuer ein Review-Feld.</summary>
+public sealed record ReviewFieldVisibility(
+    string FieldKey,
+    IReadOnlyList<string> Values);
+
+/// <summary>Beschreibt EIN editierbares Feld pro Item (das Schema gilt session-weit fuer alle Items).</summary>
+public sealed record ReviewFieldSpec(
+    string FieldKey,
+    string Label,
+    ReviewInputType InputType,
+    IReadOnlyList<string> AllowedValues,
+    bool Required,
+    string? Help = null,
+    IReadOnlyList<ReviewOption>? Options = null,
+    ReviewFieldVisibility? VisibleWhen = null,
+    // U2v2: Titel der rechten Referenz-Liste, wenn dieses Feld sie speist (ReferenceList). null = Default.
+    string? CatalogTitle = null);
+
+/// <summary>Konkreter Wert eines Feldes fuer ein Item (mutabel: der Server aktualisiert ihn bei jedem Save).</summary>
+public sealed record ReviewFieldValue(string FieldKey, string? Value);
+
+public enum ContextBlockKind { Reference, Excerpt, Quote, Generic }
+
+/// <summary>
+/// Ein lazily nachladbarer Kontextblock zu einem Item (Evidenz, Transkript-Ausschnitt, referenzierter
+/// Datensatz ...). Der Inhalt wird erst bei Klick ueber <c>GET /api/context/{itemId}/{resolverKey}</c>
+/// aufgeloest — die Session bleibt schlank.
+/// </summary>
+public sealed record ContextBlock(ContextBlockKind Kind, string Label, string ResolverKey);
+
+/// <summary>Art einer Notiz — steuert nur die Darstellung im UI (Callout/Farbe), keine Logik.</summary>
+public enum ReviewNoteKind { Info, Suggestion, Reason, Warning }
+
+/// <summary>Eine hervorgehobene, IMMER sichtbare Notiz zu einem Item (z. B. System-Vorschlag, Grund).
+/// Im Gegensatz zu <see cref="ContextBlock"/> nicht lazy — kurzer Text, direkt gerendert.</summary>
+public sealed record ReviewNote(ReviewNoteKind Kind, string Label, string Text);
+
+/// <summary>Ein-Klick-Aktion an einem Item: ein Button, der ein Feld auf einen Wert setzt (z. B. „Anpassen" →
+/// action=apply_repair). Wiederverwendbar über alle Gates; die UI speichert wie bei jedem Feld-Edit (Autosave +
+/// Re-Render, sodass <see cref="ReviewFieldSpec.VisibleWhen"/> neu greift). Additiv: leere Liste = kein Button.</summary>
+public sealed record ReviewQuickAction(string Label, string FieldKey, string Value);
+
+/// <summary>Detailansicht zu einer auswählbaren Referenz (z. B. Claim aus einem Katalog). Generisch:
+/// Der Core kennt nur Titel, Summary, Notes und lazy ContextBlocks.</summary>
+public sealed record ReviewReferenceDetails(
+    string ReferenceId,
+    string Title,
+    string Summary,
+    IReadOnlyList<ReviewNote> Notes,
+    IReadOnlyList<ContextBlock> ContextBlocks);
+
+/// <summary>Glossar-Eintrag: erklaert einen Fach-Begriff (z. B. einen Status-Wert) in Klartext.
+/// Die UI zeigt Tooltips ueberall, wo der Begriff auftaucht, und listet das Glossar in der Hilfe.</summary>
+/// <summary>Ein Glossar-Eintrag. <paramref name="Group"/> ist optional: gesetzt → die Hilfe rendert die Begriffe
+/// gruppiert unter Zwischenüberschriften (in der Reihenfolge des ersten Auftretens); null → flache Liste (wie bisher).</summary>
+public sealed record ReviewGlossaryEntry(string Term, string Meaning, string? Group = null);
+
+/// <summary>
+/// Optionale Sammel-Aktion („Accept-all"): setzt die angegebenen Feldwerte (<see cref="Set"/>) auf allen Items, die
+/// noch keinen Entscheid tragen — NUR nach expliziter Bestaetigung (Confirm-Dialog). Bewusster Ein-Klick-Akt, kein
+/// Governance-Bypass: bereits gesetzte Entscheide werden nie ueberschrieben.
+/// <para><see cref="ApplyItemQuickActions"/>=true: statt <see cref="Set"/> wird je offenem Item dessen EIGENE erste
+/// <see cref="ReviewQuickAction"/> angewendet (heterogene Vorschläge je Item; Items ohne QuickAction bleiben offen).</para>
+/// </summary>
+public sealed record ReviewBulkAction(
+    string Label,
+    IReadOnlyList<ReviewFieldValue> Set,
+    string Confirm,
+    bool ApplyItemQuickActions = false);
+
+/// <summary>Domaenenspezifische Hilfe fuer die generische Review-UI.</summary>
+public sealed record ReviewHelp(
+    string Title,
+    string Summary,
+    IReadOnlyList<ReviewHelpSection> Sections);
+
+public sealed record ReviewHelpSection(
+    string Title,
+    string Text);
+
+/// <summary>Ein zu bearbeitendes Item. Feldwerte + Resolved-Flag sind mutabel (Server-Autosave).</summary>
+public sealed class ReviewItem
+{
+    public required string ItemId { get; init; }
+    public required string Summary { get; init; }
+    /// <summary>Kurzes Label (z. B. der itemType) fuer Gruppierung/Farbe im UI. Optional.</summary>
+    public string? Badge { get; init; }
+    /// <summary>Hervorgehobene, direkt sichtbare Notizen (System-Vorschlag, Grund, Warnung ...).</summary>
+    public IReadOnlyList<ReviewNote> Notes { get; init; } = [];
+    public IReadOnlyList<ContextBlock> ContextBlocks { get; init; } = [];
+    /// <summary>Optionale Ein-Klick-Aktionen (Buttons, die ein Feld setzen) — s. <see cref="ReviewQuickAction"/>.</summary>
+    public IReadOnlyList<ReviewQuickAction> QuickActions { get; init; } = [];
+    /// <summary>Optionale PER-ITEM-Optionen je Dropdown-Feld: überschreiben die session-weiten
+    /// <see cref="ReviewFieldSpec.Options"/> NUR für dieses Item (z. B. je Item-Typ nur die gültigen Aktionen).
+    /// Leer = Schema-Optionen gelten. Wiederverwendbar über alle Gates.</summary>
+    public IReadOnlyDictionary<string, IReadOnlyList<ReviewOption>> FieldOptions { get; init; }
+        = new Dictionary<string, IReadOnlyList<ReviewOption>>();
+    public List<ReviewFieldValue> FieldValues { get; set; } = [];
+    /// <summary>Wird nach jedem Save neu berechnet (domaenen-spezifisch, s. ReviewServerOptions.RecomputeResolved).</summary>
+    public bool Resolved { get; set; }
+}
+
+/// <summary>Eine komplette Review-Session: Titel, Feldschema (session-weit) und die Items.</summary>
+public sealed class ReviewSession
+{
+    public required string SessionId { get; init; }
+    public required string Title { get; init; }
+    public string? Subtitle { get; init; }
+    public ReviewHelp? Help { get; init; }
+    /// <summary>Session-weite Notizen (z. B. „Was bewirkt dein Entscheid?") — Banner ueber den Items.</summary>
+    public IReadOnlyList<ReviewNote> Notes { get; init; } = [];
+    /// <summary>Fach-Begriffe in Klartext; UI rendert Tooltips + Glossar-Abschnitt in der Hilfe.</summary>
+    public IReadOnlyList<ReviewGlossaryEntry> Glossary { get; init; } = [];
+    /// <summary>Optionale bestaetigungspflichtige Sammel-Aktion fuer alle noch unentschiedenen Items.</summary>
+    public ReviewBulkAction? BulkAction { get; init; }
+    /// <summary>
+    /// Teil-Abnahme (19.08., Abnahme-4-Akt-8-Fund): „Fertig" ist auch mit unentschiedenen Items erlaubt —
+    /// NUR fuer Stufen, deren Datei-Semantik das sicher traegt (weggelassen = vertagt, nichts mutiert; z. B.
+    /// adr). EINE deklarierte Quelle fuer Server-Erlaubnis UND Frontend-Knopf (vorher erlaubte nur der
+    /// Server, der Knopf blieb clientseitig gesperrt).
+    /// </summary>
+    public bool AllowPartialFinish { get; init; }
+    public IReadOnlyList<ReviewFieldSpec> FieldSchema { get; init; } = [];
+    public required IReadOnlyList<ReviewItem> Items { get; init; }
+
+    public bool AllResolved() => Items.All(i => i.Resolved);
+    public int ResolvedCount() => Items.Count(i => i.Resolved);
+}

@@ -1,0 +1,989 @@
+{
+  "case_id": "AN-01",
+  "report_index_zero_based": 0,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "arch",
+    "disposition": "architecture",
+    "statement": "Für die einrichtungsgebundene Stichwortsuche über alle Bewohnerprofile muss ein serverseitiger Suchrahmen festgelegt werden: Suchindizes dürfen nur Inhalte der jeweils zugeordneten Einrichtung enthalten oder nur innerhalb dieser Einrichtung abfragbar sein, damit Suchtreffer die Einrichtungsgrenze technisch nicht umgehen.",
+    "herleitung": "Abgeleitet aus REQ-60/PBI-031, die eine Stichwortsuche über alle Bewohnerprofile verlangen, und aus REQ-84 sowie ARCH-11, die die serverseitig erzwungene Einrichtungsgrenze festlegen. Für die Namenssuche auf Kommunikationsseiten gibt es mit ARCH-24 bereits einen Teilrahmen, für die einrichtungsübergreifende Stichwortsuche über Profile jedoch keinen technischen Rahmen, wie Indizierung und Mandantentrennung zusammen umgesetzt werden.",
+    "kategorie": "nfr:security",
+    "ankerIds": [
+      "REQ-60",
+      "REQ-84",
+      "ARCH-11",
+      "ARCH-24"
+    ]
+  },
+  "reported_status": "neu",
+  "critic_reason": null,
+  "anchors_and_mentions": [
+    {
+      "id": "ARCH-11",
+      "present": true,
+      "item": {
+        "itemId": "ARCH-11",
+        "itemType": "architecture",
+        "text": "Mitarbeiter dürfen nicht einrichtungsübergreifend auf alle Profile zugreifen, sondern nur auf Profile der Einrichtung, in der sie tätig sind; die technische Umsetzung dieser Beschränkung ist noch zu erarbeiten.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_113115_35335a",
+        "sourceArtifactId": "ARCH",
+        "sourceArtifactType": "architecture",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "canon-zugriff-nach-einrichtung-beschraenkt"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4"
+        },
+        "identityKey": "mitarbeiter dürfen nicht einrichtungsübergreifend auf alle profile zugreifen sondern nur auf profile der einrichtung in der sie tätig sind die technische umsetzung dieser beschränkung ist noch zu erarbeiten",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "architecture": {
+          "roles": [
+            "constraint",
+            "design"
+          ],
+          "rationale": "Die Beschränkung auf Profile der eigenen Einrichtung ist eine wesentliche Mandanten- und Zugriffsentscheidung. Sie setzt klare Grenzen für Rechte- und Zugriffsumsetzung.",
+          "adrId": null,
+          "adrStatus": null
+        },
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    },
+    {
+      "id": "ARCH-24",
+      "present": true,
+      "item": {
+        "itemId": "ARCH-24",
+        "itemType": "architecture",
+        "text": "Auf Kommunikationsseiten soll eine Suchfunktion vorhanden sein; dafür muss ein standardisiertes Beschreibungsmuster für Kommunikationseinträge definiert werden, damit Suche und spätere Filterung funktionieren.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_113115_35335a",
+        "sourceArtifactId": "ARCH",
+        "sourceArtifactType": "architecture",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "canon-suche-kommunikation-und-beschreibungsmuster"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4"
+        },
+        "identityKey": "auf kommunikationsseiten soll eine suchfunktion vorhanden sein dafür muss ein standardisiertes beschreibungsmuster für kommunikationseinträge definiert werden damit suche und spätere filterung funktionieren",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "architecture": {
+          "roles": [
+            "constraint",
+            "design"
+          ],
+          "rationale": "Das erforderliche standardisierte Beschreibungsmuster ist eine fachlich-technische Strukturentscheidung, damit Suche und spätere Filterung funktionieren. Das begrenzt die Such- und Erfassungslogik direkt.",
+          "adrId": null,
+          "adrStatus": null
+        },
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    },
+    {
+      "id": "PBI-031",
+      "present": true,
+      "item": {
+        "itemId": "PBI-031",
+        "itemType": "pbi",
+        "text": "Es muss eine Suche nach Stichworten über alle Bewohnerprofile hinweg geben.",
+        "origin": "pbi-update",
+        "stage": null,
+        "version": 1,
+        "sourceRunId": "20260723_135427_9260f1",
+        "sourceArtifactId": null,
+        "sourceArtifactType": null,
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "sourceRunId": "20260723_135427_9260f1",
+          "createdFromRequirement": "REQ-60",
+          "featureId": "FC-05"
+        },
+        "identityKey": null,
+        "history": [],
+        "feature": null,
+        "pbi": {
+          "goal": null,
+          "title": "Es muss eine Suche nach Stichworten über alle Bewohnerprofile hinweg geben.",
+          "acceptanceCriteria": [],
+          "linkedRequirementIds": [
+            "REQ-60"
+          ],
+          "openDecisionRefs": [],
+          "priorityRank": null,
+          "readiness": "needs_clarify",
+          "mvp": null,
+          "trace": null
+        },
+        "validity": "Active",
+        "progress": "Open",
+        "blocker": "NeedsClarify",
+        "confirmedBy": "Unmarked",
+        "confirmedInRun": "20260723_135427_9260f1",
+        "status": "needs_clarify"
+      }
+    },
+    {
+      "id": "REQ-60",
+      "present": true,
+      "item": {
+        "itemId": "REQ-60",
+        "itemType": "requirement",
+        "text": "Es muss eine Suche nach Stichworten über alle Bewohnerprofile hinweg geben.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_134102_c63c89",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "suche-ueber-alle-bewohnerprofile"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "REQ-07"
+        },
+        "identityKey": "eine suche nach stichworten über alle bewohnerprofile hinweg geben",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "confirmedInRun": "20260723_134102_c63c89",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "REQ-84",
+      "present": true,
+      "item": {
+        "itemId": "REQ-84",
+        "itemType": "requirement",
+        "text": "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen. Einladungscodes geben die Einrichtungszuordnung bei der Registrierung unveränderlich mit. Die Selbstregistrierung für Angehörige per Einladungscode bleibt bestehen; für alle anderen Rollen bleibt der Zugang ausschließlich über intern vergebene Accounts möglich.",
+        "origin": "decision-tor2",
+        "stage": "evidence_baseline",
+        "version": 2,
+        "sourceRunId": "20260818_112553_8203f5",
+        "sourceArtifactId": null,
+        "sourceArtifactType": null,
+        "sourceDecisionId": "DEC-005",
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "adoptedFromDecision": "DEC-005"
+        },
+        "identityKey": "jeder account und jedes bewohnerprofil ist genau einer einrichtung zugeordnet diese zuordnung wird serverseitig erzwungen einladungscodes geben die einrichtungszuordnung bei der registrierung unveränderlich mit die selbstregistrierung für angehörige per einladungscode bleibt bestehen für alle anderen rollen bleibt der zugang ausschließlich über intern vergebene accounts möglich",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Angehörige können sich selbst mit einem Einladungscode der Einrichtung in der App registrieren; für alle anderen Rollen bleibt der Zugang ausschließlich über intern vergebene Accounts bestehen.",
+            "status": "accepted",
+            "origin": "decision-tor2",
+            "sourceRunId": "20260818_112553_8203f5",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-20T11:24:34.187174Z",
+            "note": "REFINE via DEC-008"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "ARCH-11",
+      "toId": "canon-zugriff-nach-einrichtung-beschraenkt",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "ARCH-24",
+      "toId": "canon-suche-kommunikation-und-beschreibungsmuster",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-031",
+      "toId": "FC-05",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-031",
+      "toId": "REQ-60",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-031",
+      "toId": "gh#31",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "31",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-07-23T14:58:33.7764290Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/31",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "8dd869ec4c8835f5",
+        "projectedBodyHash": "e3dafa1c441c4123",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+      }
+    },
+    {
+      "fromId": "PBI-003",
+      "toId": "ARCH-11",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-020",
+      "toId": "ARCH-24",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-84",
+      "toId": "REQ-05",
+      "relationType": "supersedes",
+      "source": "decision-tor2",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-002",
+      "toId": "REQ-84",
+      "relationType": "covers",
+      "source": "decision-tor2",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-005",
+      "toId": "REQ-84",
+      "relationType": "covers",
+      "source": "decision-tor2",
+      "metadata": {}
+    },
+    {
+      "fromId": "DEC-008",
+      "toId": "REQ-84",
+      "relationType": "contradicts_resolved",
+      "source": "ingestion",
+      "metadata": {
+        "resolutionOutcome": "REFINE",
+        "resolvedUtc": "2026-08-20T11:24:34.1872410Z",
+        "decisionId": "DEC-008"
+      }
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "DEC-008",
+      "itemType": "decision",
+      "text": "Widerspruch zu REQ-84: Für die Einrichtungsgrenze aus Rollenmodell, Selbstregistrierung und Profilzugriff muss ein verbindlicher Mandantenrahmen festgelegt werden: Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; die Zuordnung muss serverseitig erzwungen werden, und Einladungscodes für Angehörige müssen diese Einrichtungszuordnung bei der Registrierung unveränderlich mitgeben.",
+      "origin": "INGESTION_CONTRADICTION",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260820_095055_5c8547",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-1"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-1",
+        "ingestedFromRun": "20260820_075153_7878ac",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus REQ-09, wonach Mitarbeiter nur Profile ihrer Einrichtung sehen dürfen, sowie aus REQ-84 und PBI-002 zur Selbstregistrierung von Angehörigen per Einladungscode. Fachlich ist die Einrichtungsgrenze gesetzt, aber es fehlt der technische Rahmen, wie diese Grenze bei Login, Registrierung und Datenzugriff durchgesetzt wird. Ohne serverseitig erzwungene Mandantentrennung könnten Angehörige oder Mitarbeitende trotz Rollenmodell auf Daten außerhalb ihrer Einrichtung zugreifen.",
+        "linse": "arch",
+        "targetEntityId": "REQ-84",
+        "resolutionOutcome": "REFINE",
+        "resolvedUtc": "2026-08-20T11:24:34.1873230Z"
+      },
+      "identityKey": "für die einrichtungsgrenze aus rollenmodell selbstregistrierung und profilzugriff muss ein verbindlicher mandantenrahmen festgelegt werden jeder account und jedes bewohnerprofil ist genau einer einrichtung zugeordnet die zuordnung muss serverseitig erzwungen werden und einladungscodes für angehörige müssen diese einrichtungszuordnung bei der registrierung unveränderlich mitgeben",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Widerspruch zu REQ-84: Für die Einrichtungsgrenze aus Rollenmodell, Selbstregistrierung und Profilzugriff muss ein verbindlicher Mandantenrahmen festgelegt werden: Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; die Zuordnung muss serverseitig erzwungen werden, und Einladungscodes für Angehörige müssen diese Einrichtungszuordnung bei der Registrierung unveränderlich mitgeben.",
+          "status": "open_decision",
+          "origin": "INGESTION_CONTRADICTION",
+          "sourceRunId": "20260820_095055_5c8547",
+          "sourceClaimIds": [
+            "CA-1"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187342Z",
+          "note": "resolved=REFINE; war contradicts REQ-84"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Resolved",
+      "status": "resolved"
+    },
+    {
+      "itemId": "FC-05",
+      "itemType": "feature",
+      "text": "Profilübersicht und Profilanlage",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-05",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": "REQ-07,REQ-09,L3-REQ-013"
+      },
+      "identityKey": "profiluebersicht-und-profilanlage",
+      "history": [],
+      "feature": {
+        "label": "Profilübersicht und Profilanlage",
+        "rationale": "Dieses Feature umfasst das Auffinden, Anzeigen und optionale Anlegen von Bewohnerprofilen in der Übersicht inklusive Suche, Sortierung, Status und Dublettenprüfung. Rollenbeschränkungen und Kennzeichnung neuer Inhalte beeinflussen die Übersicht, sind aber nicht ihr fachlicher Kern.",
+        "coreRequirementIds": [
+          "L3-REQ-006",
+          "L3-REQ-007",
+          "L3-REQ-008",
+          "L3-REQ-013",
+          "REQ-07",
+          "REQ-09",
+          "REQ-13",
+          "REQ-16",
+          "REQ-17",
+          "REQ-18",
+          "REQ-45"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-002",
+      "itemType": "pbi",
+      "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung ermöglichen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 9,
+      "sourceRunId": "20260820_112233_5d7a52",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-admin-screen-pruefen",
+        "canon-bewohner-account-mit-beschraenkung",
+        "canon-login-ohne-selbstregistrierung",
+        "canon-rollen-admin-user"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC02-01",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-02"
+      },
+      "identityKey": "interne-accounts-und-rollenkern",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Interne Accounts mit Basisrollen und ohne Selbstregistrierung bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-07-23T14:16:14.465124Z",
+          "note": "EXTEND_PBI: Die Einschränkung, dass nur Admins das Zugriffsprotokoll sehen dürfen, ist primär eine Rechte- und Rollenvorgabe. Daher passt sie besser als Erweiterung zum bestehenden PBI für interne Accounts und Basisrollen als zu einem neuen eigenständigen PBI."
+        },
+        {
+          "versionId": 2,
+          "text": "Interne Accounts mit Basisrollen und ohne Selbstregistrierung bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-09T10:28:02.320563Z",
+          "note": "MARK_CHANGED: Klärungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort ergänzt für das bestehende PBI eine zusätzliche Rechte-Regel: Das Zugriffsprotokoll darf nur für Admin sichtbar sein und nicht für Pflegekräfte oder Angehörige. Daher wurden Titel, Statement und Akzeptanzkriterien um diese belegte Einschränkung erweitert, ohne den bestehenden Scope zu entfernen."
+        },
+        {
+          "versionId": 3,
+          "text": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260809_102419_d403e0",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-18T10:30:24.249445Z",
+          "note": "BLOCK_PBI: Open Decision DEC-005 widerspricht REQ-05"
+        },
+        {
+          "versionId": 4,
+          "text": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260809_102419_d403e0",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-18T11:32:29.188981Z",
+          "note": "coverage-swap REQ-05->REQ-84 | unblock DEC-005 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 5,
+          "text": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260809_102419_d403e0",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-18T11:36:47.295489Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 ergänzt den bisherigen Scope um eine Ausnahme von der bisherigen Regel \"keine Selbstregistrierung\": Angehörige dürfen sich mit Einladungscode selbst registrieren. Daher werden Titel, Statement und die Akzeptanzkriterien zur Kontenerstellung entsprechend erweitert; der übrige Inhalt des PBIs bleibt unberührt."
+        },
+        {
+          "versionId": 6,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode ermöglichen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T10:48:04.909872Z",
+          "note": "BLOCK_PBI: Open Decision DEC-008 widerspricht REQ-84"
+        },
+        {
+          "versionId": 7,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode ermöglichen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187353Z",
+          "note": "unblock DEC-008 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 8,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode ermöglichen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T11:28:15.810655Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 wurde gegenüber der alten Fassung um die verpflichtende, serverseitig erzwungene Einrichtungszuordnung für Accounts und Bewohnerprofile ergänzt. Deshalb werden Titel, Story und Akzeptanzkriterien um diese feste Zuordnung sowie die unveränderliche Einrichtungszuordnung aus Einladungscodes erweitert; die bisherige Einschränkung der Selbstregistrierung bleibt inhaltlich bestehen."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Admin will ich interne Accounts mit Basisrollen verwalten und Angehörigen die Selbstregistrierung per Einladungscode der Einrichtung mit unveränderlicher Einrichtungszuordnung ermöglichen, damit für Admin, User und Bewohner der Zugang weiter nur über intern vergebene Accounts erfolgt, Angehörige sich im vorgegebenen Rahmen selbst registrieren können und jeder Account sowie jedes Bewohnerprofil genau einer Einrichtung zugeordnet ist.",
+        "title": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung ermöglichen",
+        "acceptanceCriteria": [
+          "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen.",
+          "Einladungscodes geben die Einrichtungszuordnung bei der Registrierung unveränderlich mit.",
+          "Angehörige können sich mit einem Einladungscode der Einrichtung in der App selbst registrieren; die dabei mitgegebene Einrichtungszuordnung kann nicht geändert werden."
+        ],
+        "linkedRequirementIds": [
+          "L3-REQ-009",
+          "L3-REQ-010",
+          "REQ-06",
+          "REQ-07",
+          "REQ-41",
+          "REQ-65",
+          "REQ-84"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 2,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "L3-REQ-009",
+            "L3-REQ-010",
+            "REQ-05",
+            "REQ-06",
+            "REQ-07",
+            "REQ-41"
+          ],
+          "l1Req": [
+            "REQ-05",
+            "REQ-06",
+            "REQ-07",
+            "REQ-41"
+          ],
+          "l3": [
+            "L3-REQ-009",
+            "L3-REQ-010"
+          ],
+          "claims": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ]
+        }
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-003",
+      "itemType": "pbi",
+      "text": "Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung festlegen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 3,
+      "sourceRunId": "20260810_152712_d31d38",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-angehoerige-zugriff-und-beitrag",
+        "canon-rechteverwaltung-noch-offen",
+        "canon-zugriff-nach-einrichtung-beschraenkt"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC02-02",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-02"
+      },
+      "identityKey": "rechte-fuer-angehoerige-und-einrichtungen-klaeren",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Rechtemodell für Angehörige und Einrichtungssicht festlegen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-angehoerige-zugriff-und-beitrag",
+            "canon-rechteverwaltung-noch-offen",
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ],
+          "recordedUtc": "2026-07-23T14:16:14.464928Z",
+          "note": "MARK_CHANGED: Requirement REQ-08 verfeinert"
+        },
+        {
+          "versionId": 2,
+          "text": "Rechtemodell für Angehörige und Einrichtungssicht festlegen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-angehoerige-zugriff-und-beitrag",
+            "canon-rechteverwaltung-noch-offen",
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ],
+          "recordedUtc": "2026-08-10T16:11:32.370835Z",
+          "note": "MARK_CHANGED: Klärungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort konkretisiert das zuvor offene Rechtemodell vollständig: Rollen wurden auf drei festgelegt und die Sicht- und Bearbeitungsrechte je Rolle sowie die Einschränkung für Angehörige auf Kommunikations-Inhalte präzisiert. Daher werden Titel, Statement und Akzeptanzkriterien vollständig auf diese belegten Festlegungen angepasst."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Product Owner will ich das Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung festlegen, damit Zugriffe auf betreute Profile der eigenen Einrichtung fachlich korrekt und datenschutzgerecht abgegrenzt sind und Angehörige nur freigegebene Kommunikations-Inhalte ihres Familienmitglieds sehen.",
+        "title": "Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung festlegen",
+        "acceptanceCriteria": [
+          "Es sind genau drei Rollen festgelegt: Einrichtungs-Personal, Angehörige und Leitung.",
+          "Einrichtungs-Personal hat Vollzugriff auf betreute Profile der eigenen Einrichtung.",
+          "Angehörige haben nur Lese-Sicht auf das eigene Familienmitglied.",
+          "Angehörige werden durch die Einrichtung freigeschaltet.",
+          "Leitung hat einrichtungsweite Sicht und Rollenverwaltung.",
+          "Angehörige sehen keine Pflege-Dokumentation.",
+          "Angehörige sehen nur Kommunikations-Inhalte."
+        ],
+        "linkedRequirementIds": [
+          "REQ-08",
+          "REQ-09",
+          "REQ-10"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 3,
+        "readiness": "blocked_by_decision",
+        "mvp": "required_for_mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "REQ-08",
+            "REQ-09",
+            "REQ-10"
+          ],
+          "l1Req": [
+            "REQ-08",
+            "REQ-09",
+            "REQ-10"
+          ],
+          "l3": [],
+          "claims": [
+            "canon-angehoerige-zugriff-und-beitrag",
+            "canon-rechteverwaltung-noch-offen",
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ]
+        }
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-005",
+      "itemType": "pbi",
+      "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung bereitstellen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 7,
+      "sourceRunId": "20260820_112233_5d7a52",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "ADJ-GAP-AU-0117",
+        "canon-login-ohne-selbstregistrierung"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC03-01",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "1",
+        "featureId": "FC-03"
+      },
+      "identityKey": "login-screen-und-fehlerfeedback",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Login-Screen mit sicherem Fehlerfeedback bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-18T10:30:24.249563Z",
+          "note": "BLOCK_PBI: Open Decision DEC-005 widerspricht REQ-05 | EXTEND_PBI: Die technische bzw. gestalterische Arbeit betrifft unmittelbar dieselbe Aufgabe wie das bestehende Login-Screen-PBI. Dort ist bereits ein sichtbares Logo im oberen Drittel vorgesehen; das neue Item konkretisiert dessen Positionierung und ergänzt die Erstellung eines passenden Kommunikations-Logos, daher Erweiterung des vorhandenen PBI statt eigenes PBI. | ALIGN(R-26-C): ARCH-33 präzisiert die bestehende Logo-Anforderung: Das Logo soll zentriert und gut sichtbar im oberen Drittel angeordnet sein. Zugleich ist offen, welches konkrete Kommunikations-Logo verwendet wird, da dieses laut Anforderung noch zu erstellen ist; diese offene Stelle wird ehrlich im Akzeptanzkriterium benannt."
+        },
+        {
+          "versionId": 2,
+          "text": "Login-Screen mit sicherem Fehlerfeedback bereitstellen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_084712_765eea",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-18T11:32:29.18899Z",
+          "note": "coverage-swap REQ-05->REQ-84 | unblock DEC-005 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 3,
+          "text": "Login-Screen mit sicherem Fehlerfeedback bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_084712_765eea",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-18T11:36:47.295835Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 macht die bisherige Aussage \"keine Selbstregistrierung\" im Login-Kontext teilweise obsolet: Es gibt nun eine gezielte Selbstregistrierung nur für Angehörige mit Einladungscode. Deshalb werden Titel, Statement und die betroffenen Akzeptanzkriterien präzisiert, ohne das bestehende Login- und Fehlerfeedback-Verhalten zu verändern."
+        },
+        {
+          "versionId": 4,
+          "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-20T10:48:04.909875Z",
+          "note": "BLOCK_PBI: Open Decision DEC-008 widerspricht REQ-84"
+        },
+        {
+          "versionId": 5,
+          "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode bereitstellen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187355Z",
+          "note": "unblock DEC-008 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 6,
+          "text": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ],
+          "recordedUtc": "2026-08-20T11:28:15.810666Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 präzisiert zusätzlich zur bisherigen Regelung der Selbstregistrierung, dass Accounts und Bewohnerprofile genau einer Einrichtung zugeordnet sein müssen und dass Einladungscodes diese Zuordnung unveränderlich mitgeben. Daher wird der Login-/Registrierungskontext um diese belegten Vorgaben ergänzt; unveränderte bestehende Regeln müssen nicht erneut angepasst werden."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Nutzer will ich mich über einen klaren Login-Screen mit E-Mail und Passwort anmelden und als Angehöriger bei Bedarf mit einem Einladungscode der Einrichtung selbst registrieren können, wobei die Einrichtungszuordnung bei der Registrierung unveränderlich mitgegeben wird, damit ich sicher in die App einsteigen kann, die Selbstregistrierung nur im vorgesehenen Fall möglich ist und Accounts sowie Bewohnerprofile genau einer Einrichtung zugeordnet sind.",
+        "title": "Login-Screen mit sicherem Fehlerfeedback und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung bereitstellen",
+        "acceptanceCriteria": [
+          "Angehörige können sich mit einem Einladungscode der Einrichtung in der App selbst registrieren; der Einladungscode gibt die Einrichtungszuordnung bei der Registrierung unveränderlich mit.",
+          "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen."
+        ],
+        "linkedRequirementIds": [
+          "L3-REQ-011",
+          "REQ-11",
+          "REQ-12",
+          "ARCH-33",
+          "REQ-84"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 4,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "L3-REQ-011",
+            "REQ-05",
+            "REQ-11",
+            "REQ-12"
+          ],
+          "l1Req": [
+            "REQ-05",
+            "REQ-11",
+            "REQ-12"
+          ],
+          "l3": [
+            "L3-REQ-011"
+          ],
+          "claims": [
+            "ADJ-GAP-AU-0117",
+            "canon-login-ohne-selbstregistrierung"
+          ]
+        }
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-020",
+      "itemType": "pbi",
+      "text": "Beschreibungsmuster und Suchlogik für Kommunikationswissen festlegen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-suche-kommunikation-und-beschreibungsmuster"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC08-03",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "1",
+        "featureId": "FC-08"
+      },
+      "identityKey": "kommunikationssuche-und-beschreibungsmuster",
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Product Owner will ich ein strukturiertes Beschreibungsmuster für Kommunikationsweisen und die darauf aufbauende Suchlogik festlegen, damit Kommunikationswissen später systematisch gefunden und gefiltert werden kann.",
+        "title": "Beschreibungsmuster und Suchlogik für Kommunikationswissen festlegen",
+        "acceptanceCriteria": [
+          "Es liegt ein dokumentiertes Beschreibungsmuster für Kommunikations-Einträge vor.",
+          "Das Muster beschreibt mindestens, welche Angaben für spätere Suche oder Filterung relevant sind.",
+          "Es ist entschieden, welche Sucharten in einer späteren Umsetzung unterstützt werden sollen."
+        ],
+        "linkedRequirementIds": [
+          "REQ-28"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 15,
+        "readiness": "blocked_by_decision",
+        "mvp": "required_for_mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "REQ-28"
+          ],
+          "l1Req": [
+            "REQ-28"
+          ],
+          "l3": [],
+          "claims": [
+            "canon-suche-kommunikation-und-beschreibungsmuster"
+          ]
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "REQ-05",
+      "itemType": "requirement",
+      "text": "Die App darf keine Selbstregistrierung erlauben; der Zugang erfolgt ausschließlich per Login mit intern vergebenen Accounts.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260723_113115_35335a",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-login-ohne-selbstregistrierung",
+        "no-self-registration-existing-decision"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "artifactVersion": "1",
+        "producerModel": "openai/gpt-5.4"
+      },
+      "identityKey": "die app darf keine selbstregistrierung erlauben der zugang erfolgt ausschließlich per login mit intern vergebenen accounts",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Die App darf keine Selbstregistrierung erlauben; der Zugang erfolgt ausschließlich per Login mit intern vergebenen Accounts.",
+          "status": "baseline",
+          "origin": "Extracted",
+          "sourceRunId": "20260723_113115_35335a",
+          "sourceClaimIds": [
+            "canon-login-ohne-selbstregistrierung",
+            "no-self-registration-existing-decision"
+          ],
+          "recordedUtc": "2026-08-18T11:32:29.188349Z",
+          "note": "superseded via DEC-005 (ADOPT_NEW)"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Superseded",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "superseded"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "ARCH-11": 0,
+    "ARCH-24": 0,
+    "PBI-031": 0,
+    "REQ-60": 1,
+    "REQ-84": 2
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

@@ -1,0 +1,158 @@
+% P10-4a, 14.09.2026: Mechanismus, Quellenreichweite und v4-Nachweis angeglichen.
+% M08, 11.09.2026: Objektbedeutung/F1 ergänzt; Status und Auflösung konzentriert.
+% Gegenprüfung: F1 07-github/applied/core-before.json; DecisionResolution*
+% sowie CoreKangal. Drei Auflösungsarten nur mit bestehendem Zielelement.
+\section{Core-zentrierte Projektfortschreibung}
+\label{sec:core-projektfortschreibung}
+
+Der Core führt den maßgeblichen fachlichen Projektzustand über
+Verarbeitungsläufe hinweg und konkretisiert damit die Anforderungen
+A5 und A7. Seine Elemente besitzen fachliche Typen, Kennungen,
+Beziehungen und eine Änderungshistorie. Requirements halten die
+Anforderungen fest; Features bündeln ein Thema; Arbeitspakete
+(PBIs) beschreiben die dafür geplante Arbeit. Architektur- und
+Entscheidungselemente ergänzen Rahmenbedingungen und offene
+Klärungsgegenstände. Daneben speichert das System begleitende
+Governance-Informationen, etwa wartende oder abgelehnte Vorschläge.
+Ihre Speicherung verleiht ihnen noch keine fachliche Geltung.
+
+Im Besuchsfall F1 referenzieren die Anforderungen REQ-82 und REQ-83
+denselben Ledger-Claim. Nach der freigegebenen Arbeitspaketbildung
+gehören beide zum Feature FC-15; PBI-046 plant die Besuchsankündigung,
+PBI-047 die Übersicht für Pflegende. Die jeweilige Beziehung
+\emph{deckt} ordnet das Arbeitspaket seiner Anforderung zu.
+Sie belegt geplante Zuständigkeit, keine bereits implementierte
+Softwarefunktion und keine gemessene semantische Abdeckung.
+Den gesamten Fall führt Tabelle~\ref{t:beispiel-besuchsplanung} zusammen.
+
+Quellenangaben an einem Element und die Herkunft einer Beziehung
+beantworten unterschiedliche Fragen. Die Quellenangaben verweisen
+auf die zugrunde gelegten Eingaben. Eine Erzeugerangabe an der Beziehung
+hält dagegen fest, welcher Verarbeitungsschritt die Verbindung
+angelegt hat. Sie bezeichnet den Mechanismus, keinen Zeitpunkt;
+für die zeitliche Rekonstruktion werden zusätzlich die archivierten
+Laufartefakte benötigt. Tabelle~\ref{t:core-objektmodell} erläutert
+die fachliche Bedeutung der Beziehungen und unterscheidet sie von
+Quellenbezügen und der Zuordnung zu externen Issues.
+
+\input{tables/chap5/chap5.5table1}
+
+% P10-6: Erzeugung von Elementen und Beziehungen als zusammenhängenden Absatz setzen.
+\begin{samepage}
+\emph{Vom Eingang zum verknüpften Bestand.} Der Einordnungsagent
+erhält Werkzeuge, um eingehende Inhalte, vorhandene Core-Elemente,
+offene Entscheidungen und frühere Ablehnungen nachzuschlagen.
+Er wählt Abfragen und schlägt vor, ob eine Aussage neu ist,
+Bekanntes bestätigt, verändert oder Klärung erfordert. Die
+Suchergebnisse liefern Anhaltspunkte; die fachliche Zuordnung bleibt
+ein Modellurteil. Sein Operationsplan verknüpft jeden Eingang mit
+der vorgeschlagenen Wirkung und bei Änderungen mit einer bestehenden
+Core-Kennung. Nach Prüfung und menschlicher Freigabe setzt die
+deterministische Anwendung die ausgewählten Operationen um: Sie
+vergibt neue Kennungen oder aktualisiert bestehende Elemente und
+übernimmt die vorgesehenen Herkunftsangaben aus dem Eingang.
+\par
+\end{samepage}
+
+Die fachliche Vernetzung wird in weiteren, eigens freigegebenen
+Schritten ergänzt. Bei der Arbeitspaketbildung schlagen Modelle
+Themenzuordnungen und den Zuschnitt der Arbeit vor. Die Anwendung
+erzeugt daraus PBI-zu-Anforderung-Beziehungen und die
+Feature-Zuordnungen. Wird später ein bestehendes PBI um eine
+Anforderung erweitert, ergänzt sie dessen Beziehung \emph{deckt}
+und ordnet die Anforderung dem Feature des PBI zu. Eine zusätzliche
+freigegebene Angleichung kann Titel, Beschreibung und
+Akzeptanzkriterien anpassen. Das Netz wächst somit durch konkrete
+Übernahmeoperationen; eine neue Beziehung allein bedeutet noch
+keine abgeschlossene Inhaltsangleichung.
+
+\emph{Kennungen und Herkunft.} Evidence-Unit-Kennungen entstehen
+positionsbasiert: Bei unveränderter Quelle und Segmentierung sind
+sie wiederholbar, über Quelländerungen aber nicht stabil und zwischen
+Quellen nicht eindeutig. Claim-Kennungen gelten innerhalb eines
+Laufbestands. Derselbe Zeichenwert in einem neuen Lauf bezeichnet
+deshalb nicht automatisch dieselbe Aussage. Laufübergreifende
+fachliche Identität tragen die Core-Kennungen. Normalisierte
+Textschlüssel unterstützen die Suche nach möglichen Entsprechungen;
+die fachliche Zuordnung erfolgt im kontrollierten Einordnungs- und
+Autorisierungsprozess. Eine garantierte Wiederzuordnung bei erneuter
+Verarbeitung folgt daraus nicht. Beim Transkript verbindet der
+Herkunftsweg das Core-Element über Lauf, Claim und Unit mit der
+Quellstelle. Für dialogische und GitHub-Eingaben bilden dagegen
+das jeweilige Eingangsartefakt und die dokumentierte Übernahme den
+Zugang. Herkunftsangaben, Historie und archivierte Pläne ergänzen
+damit die fachlichen Beziehungen aus Tabelle~\ref{t:core-objektmodell}.
+
+Diese Angaben werden bei Fortschreibungen nicht überall einheitlich
+nachgeführt. Eine Bestätigung kann Claim-Kennungen ergänzen, ohne
+den eigenen Eingangs- und Laufbezug eindeutig am Element anzubinden.
+Bei Verfeinerungen können aktueller Text und Herkunftsangaben
+unterschiedliche Stände betreffen. Ein auffindbarer Ursprung erklärt
+deshalb nicht automatisch jede spätere Ergänzung.
+Abschnitt~\ref{sec:eval-provenienz} untersucht direkte Bezüge,
+Beitragspfade und aktuelle Änderungsbelege getrennt.
+
+\emph{Zustandsdimensionen.} Mehrere getrennte Angaben beschreiben
+ein Element. Die \emph{Gültigkeit} unterscheidet geltende und
+abgelöste Fassungen; Ablösung ist keine Löschung. Der
+\emph{Fortschritt} bezeichnet bei Arbeitspaketen offene oder
+erledigte Arbeit: Ein erledigtes Arbeitspaket kann weiterhin gültig
+sein. Eine \emph{Blockade} kennzeichnet ungeklärte Voraussetzungen
+und kann seine operative Weitergabe verhindern. Der
+\emph{Bestätigungsmarker} unterscheidet etwa menschlich bestätigte
+Elemente von solchen, die bei der Initialisierung verankert wurden.
+Der \emph{Entscheidungsstand} hält fest, ob eine fachliche Frage
+offen oder aufgelöst ist. Eine kompakte Statusanzeige fasst diese
+Angaben zusammen, ersetzt ihre unterschiedlichen Bedeutungen aber nicht.
+
+\emph{Fortschreibung und Auflösung.} Änderungen können ein
+Element verfeinern oder durch eine neue Fassung ersetzen.
+Widersprüche und unbeantwortete Fragen werden als
+Entscheidungselemente fortgeführt. Abbildung~\ref{fig:entscheidungs-lifecycle} zeigt den
+Fall, in dem eine spätere Auflösung fachliche Inhalte verändert und
+abhängige Arbeit betreffen kann.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/05/Abbildung5.5.pdf}
+  \caption[Entscheidungsauflösung und abhängige Fortschreibung]{
+    Entscheidungsauflösung mit fachlicher Änderung und möglicher
+    abhängiger Fortschreibung (H: menschlicher Entscheidungspunkt;
+    eigene Darstellung).}
+  \label{fig:entscheidungs-lifecycle}
+\end{figure}
+
+Bei einem bestehenden Zielelement unterscheidet der Auflösungsplan
+drei Ergebnisse: bisherige Aussage beibehalten, neue Aussage als
+ablösende Fassung übernehmen oder bestehende Aussage verfeinern.
+Er beschreibt das Ergebnis und die betroffenen Elemente; der Mensch
+autorisiert die vorgeschlagenen Operationen am Entscheidungspunkt.
+Die anschließende Anwendung erhält beim Verfeinern die Kennung und
+erhöht die Version. Beim Ersatz entsteht dagegen ein neues Element
+mit Ablösungsbeziehung; die frühere Fassung bleibt historisch erhalten.
+Für freistehende Fragen ohne Zielelement gelten engere Regeln:
+Sie können als geklärt geschlossen werden; bei entsprechend
+gekennzeichneten Architekturfragen ist außerdem ein ausdrücklich
+dokumentierter Verzicht auf eine fachliche Festlegung vorgesehen.
+Ohne Zielelement gibt es nichts zu verfeinern oder abzulösen.
+
+Abhängige Arbeit wird anhand der Beziehungen ermittelt. Nach einer
+fachlichen Änderung markiert die Anwendung betroffene Arbeitspakete
+mit Klärungsbedarf; der nachgelagerte Angleichungspfad greift diese
+Markierung auf und legt seine Vorschläge erneut zur Entscheidung vor.
+Eine Auflösung führt daher nicht automatisch zur abgeschlossenen
+Angleichung aller abhängigen Inhalte. Der in
+Abschnitt~\ref{sec:einordnende-fortschreibung} eingeordnete
+Experimentfall E47-02 zeigt genau diese Grenze; seine Bewertung
+steht in Abschnitt~\ref{sec:eval-fortschreibung}. Zusätzliche
+Projektinformationen treten dagegen erneut über die reguläre
+Einordnung ein; ihr Ergebnis ist nicht vorbestimmt.
+
+Abgelöste Fassungen, aufgelöste Widerspruchsbeziehungen und
+Ablehnungswissen bleiben erhalten. Frühere Ablehnungen können die
+erneute Prüfung informieren, ersetzen aber keine neue menschliche
+Entscheidung. Auch die modellgestützte Einordnung garantiert keine
+fachlich richtige Klassifikation; Kapitel~\ref{chap:evaluation}
+untersucht ausgewählte Fälle, keine allgemeine Fehlerhäufigkeit.
+Welche Kontrollen vor der Übernahme einer Änderung gelten,
+erklärt der folgende Abschnitt.

@@ -1,0 +1,123 @@
+{
+  "artifactId": "DRISK",
+  "artifactType": "risks",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260723_134102_c63c89",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "DerivedRisksFromReqArch1"
+  },
+  "items": [
+    {
+      "itemId": "DRISK-01",
+      "origin": "Derived",
+      "text": "Revisionssichere Einsichtsprotokollierung kann durch Offline-Nutzung und nutzerentscheidbare Konfliktaufl\u00F6sung unterlaufen werden \u2014 Die geforderte revisionssichere Protokollierung jeder Profil-Einsicht ist gef\u00E4hrdet, wenn die Anwendung offline genutzt wird und \u00C4nderungen bzw. Synchronisationen sp\u00E4ter mit Konfliktaufl\u00F6sung durch den Nutzer zusammengef\u00FChrt werden. Ohne separates, unver\u00E4nderliches Erfassungsmodell f\u00FCr Lesezugriffe kann unklar werden, ob, wann und von wem eine Einsicht tats\u00E4chlich protokolliert wurde, insbesondere wenn Ger\u00E4te zeitweise ohne Serverkontakt arbeiten.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-11",
+        "REQ-13",
+        "REQ-19",
+        "ARCH-08",
+        "ARCH-12",
+        "ARCH-16"
+      ],
+      "assumptions": [
+        "Die L\u00F6sung soll zumindest teilweise offline nutzbar sein, da explizit Offline-\u00C4nderungskonflikte betrachtet werden.",
+        "Lesezugriffe werden nicht automatisch ausschlie\u00DFlich serverseitig in Echtzeit protokolliert, sondern m\u00FCssen mit der gew\u00E4hlten Client-/Sync-Architektur vereinbar umgesetzt werden."
+      ],
+      "derivationRationale": "REQ-11/ARCH-12 verlangen revisionssichere Logging-Pflicht f\u00FCr jede Einsicht. REQ-13/ARCH-08 belegen Offline-Bearbeitung mit sp\u00E4terer Konfliktaufl\u00F6sung. Mit REQ-19/ARCH-16 ist Firestore als Persistenz festgelegt. Aus dieser Kombination folgt das Risiko, dass ein unver\u00E4nderlicher Audit-Trail f\u00FCr reine Einsichtsvorg\u00E4nge architektonisch nicht automatisch mit der Offline-/Sync-Logik mitkommt."
+    },
+    {
+      "itemId": "DRISK-02",
+      "origin": "Derived",
+      "text": "Globale Suche kann unzul\u00E4ssige Sichtbarkeit sensibler Inhalte \u00FCber Bewohnergrenzen hinweg erzeugen \u2014 Die vorgesehene Stichwortsuche \u00FCber alle Bewohnerprofile hinweg kann dazu f\u00FChren, dass besonders sensible Inhalte aus Profilen in aggregierter Form auffindbar oder angedeutet werden, obwohl Nutzer diese Inhalte im Detail m\u00F6glicherweise nur eingeschr\u00E4nkt oder kontextgebunden sehen sollten. Damit entsteht ein Spannungsfeld zwischen schneller globaler Auffindbarkeit und restriktiver, nachvollziehbarer Einsicht in Bewohnerdaten.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-07",
+        "REQ-11",
+        "REQ-19",
+        "ARCH-07",
+        "ARCH-12",
+        "ARCH-16"
+      ],
+      "assumptions": [
+        "Die Suche soll Inhalte aus fachlich relevanten Profilbereichen indizieren und nicht nur Bewohnernamen.",
+        "Suchtreffer oder Vorschauen gelten fachlich bereits als Form der Einsicht in Bewohnerdaten oder erleichtern diese wesentlich."
+      ],
+      "derivationRationale": "REQ-07/ARCH-07 fordern eine global \u00FCber alle Profile gehende Stichwortsuche. REQ-11/ARCH-12 verlangen revisionssichere Protokollierung jeder Einsicht. Mit Firestore als festgelegter Persistenz (REQ-19/ARCH-16) ist nicht ersichtlich, wie Suche, Trefferdarstellung und Auditierung sensibler Inhalte ohne zus\u00E4tzliche Architekturma\u00DFnahmen sauber zusammenspielen. Daraus folgt das Risiko einer zu breiten Sichtbarkeit bzw. unklaren Auditierbarkeit von Suchtreffern."
+    },
+    {
+      "itemId": "DRISK-03",
+      "origin": "Derived",
+      "text": "Admin-exklusive Protokolleinsicht erzwingt eine belastbare Rollen- und Rechtearchitektur, die bislang f\u00FCr weitere Nutzergruppen ungekl\u00E4rt ist \u2014 Die Beschr\u00E4nkung der Einsicht in Zugriffsprotokolle auf Admins setzt eine pr\u00E4zise und technisch durchgesetzte Rollen- und Rechteverwaltung voraus. Gleichzeitig ist f\u00FCr Angeh\u00F6rige noch offen, ob sie schreiben oder nur lesen d\u00FCrfen. Ohne konsistentes Rollenmodell besteht das Risiko, dass Sonderrollen unklar bleiben und entweder zu weitgehende Einsichten erhalten oder fachlich ben\u00F6tigte Funktionen nicht nutzen k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-12",
+        "REQ-15",
+        "ARCH-13",
+        "ARCH-14"
+      ],
+      "assumptions": [
+        "Angeh\u00F6rige w\u00FCrden bei Freigabe als eigene Nutzergruppe im selben System gef\u00FChrt und nicht ausschlie\u00DFlich au\u00DFerhalb des Systems bedient.",
+        "Die Architektur enth\u00E4lt bislang kein separat spezifiziertes, fein granular definiertes Berechtigungsmodell \u00FCber \u0027Admin\u0027 und \u0027normale Nutzer\u0027 hinaus."
+      ],
+      "derivationRationale": "REQ-12/ARCH-13 definieren eine harte Zugriffsgrenze f\u00FCr Audit-Logs. REQ-15/ARCH-14 lassen zentrale Rechtefragen f\u00FCr Angeh\u00F6rige offen. Aus dem Zusammenspiel folgt das Risiko, dass die bestehende Rollenabgrenzung f\u00FCr kommende Nutzergruppen nicht ausreicht und nachtr\u00E4gliche Rechtekorrekturen n\u00F6tig werden."
+    },
+    {
+      "itemId": "DRISK-04",
+      "origin": "Derived",
+      "text": "Bewohnerverlinkte \u00DCbergabe-Notizen k\u00F6nnen Archivauffindbarkeit und Datenschutz-/Audit-Anforderungen gleichzeitig erschweren \u2014 Wenn \u00DCbergabe-Notizen pro Schicht prominent angezeigt, bewohnerbezogen verlinkt und nach sieben Tagen archiviert, aber weiter auffindbar bleiben sollen, entsteht das Risiko, dass Links ins Bewohnerprofil auch im Archivkontext unerwartete Einsichten erleichtern oder dass Archivsuche und Verlinkung ohne saubere Rechte- und Logging-Logik inkonsistent werden. Besonders kritisch ist die Kombination aus prominenter Anzeige, Langzeitauffindbarkeit und direkter Kontextnavigation zu Bewohnerdaten.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-08",
+        "REQ-09",
+        "REQ-10",
+        "REQ-11",
+        "ARCH-09",
+        "ARCH-10",
+        "ARCH-11",
+        "ARCH-12"
+      ],
+      "assumptions": [
+        "Archivierte \u00DCbergabe-Notizen bleiben inhaltlich zug\u00E4nglich und nicht nur als Metadateneintrag sichtbar.",
+        "Das \u00D6ffnen einer archivierten Notiz oder eines darin enthaltenen Bewohnerlinks ist als Einsicht in Bewohnerdaten bzw. als ausl\u00F6sender Zugriff fachlich relevant."
+      ],
+      "derivationRationale": "REQ-08 bis REQ-10 sowie ARCH-09 bis ARCH-11 definieren prominente Schichtnotizen, Bewohnerverlinkung und fortbestehende Auffindbarkeit im Archiv. REQ-11/ARCH-12 verlangen revisionssichere Protokollierung von Einsichtnahmen. Daraus folgt ein neues Risiko an der Schnittstelle von Archiv, Verlinkung und Auditierung: ohne klare technische Trennung kann Archivzugriff zus\u00E4tzliche oder schwer nachvollziehbare Bewohner-Einsichten erzeugen."
+    },
+    {
+      "itemId": "DRISK-05",
+      "origin": "Derived",
+      "text": "Unver\u00E4nderte About-Me-Seite kollidiert potenziell mit sp\u00E4terer Freigabe von Angeh\u00F6rigen-Eingaben \u2014 Falls entschieden wird, dass Angeh\u00F6rige selbst Inhalte eintragen d\u00FCrfen, k\u00F6nnte die Festlegung, die About-Me-Seite im MVP unver\u00E4ndert zu lassen, notwendige Eingabe-, Freigabe- oder Abgrenzungsmechanismen gerade in dem naheliegenden Inhaltsbereich blockieren. Damit entsteht das Risiko, dass eine sp\u00E4tere Rechteentscheidung funktional nicht in die bestehende MVP-Oberfl\u00E4che passt oder nur durch nachtr\u00E4gliche Umbauten umgesetzt werden kann.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-14",
+        "REQ-15",
+        "ARCH-02",
+        "ARCH-14"
+      ],
+      "assumptions": [
+        "Die About-Me-Seite ist ein realistischer Zielbereich f\u00FCr von Angeh\u00F6rigen gepflegte Inhalte, wie in REQ-15 beispielhaft angedeutet.",
+        "F\u00FCr Angeh\u00F6rigen-Eingaben w\u00E4ren UI- oder Interaktionsanpassungen erforderlich und nicht blo\u00DF unsichtbare Backend-Freischaltungen."
+      ],
+      "derivationRationale": "REQ-14/ARCH-02 frieren die About-Me-Seite im MVP ein. REQ-15/ARCH-14 lassen zugleich offen, ob Angeh\u00F6rige dort selbst Inhalte eintragen d\u00FCrfen. Aus dieser Kombination folgt das Risiko, dass die MVP-Architektur eine sp\u00E4tere fachliche Entscheidung in genau diesem Bereich erschwert."
+    },
+    {
+      "itemId": "DRISK-06",
+      "origin": "Derived",
+      "text": "Pflichtfeld \u0027mindestens eine Sofortinfo\u0027 bei gleichzeitigem Maximum von f\u00FCnf Eintr\u00E4gen kann Daten in ungeeignete Bereiche verdr\u00E4ngen \u2014 Die Kombination aus Pflicht zur Erfassung mindestens einer Sofortinfo und harter Begrenzung auf f\u00FCnf Eintr\u00E4ge kann dazu f\u00FChren, dass Nutzer Informationen verk\u00FCrzt, zusammengezogen oder in andere Profilbereiche ausweichen lassen, wenn mehrere wichtige Kurzinformationen vorliegen. Dadurch besteht das Risiko, dass fachlich dringliche Inhalte nicht mehr konsistent dort stehen, wo sie in der Detailansicht erwartet werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-06",
+        "ARCH-03",
+        "ARCH-04"
+      ],
+      "assumptions": [
+        "In einzelnen F\u00E4llen k\u00F6nnen mehr als f\u00FCnf fachlich relevante Sofortinformationen f\u00FCr einen Bewohner sinnvoll sein.",
+        "Es gibt keine benannte Priorisierungs- oder Ausweichlogik, die regelt, welche Informationen bei \u00DCberschreitung des Limits sichtbar bleiben sollen."
+      ],
+      "derivationRationale": "REQ-06/ARCH-03 verlangen mindestens einen Sofortinfo-Eintrag, REQ-05/ARCH-04 begrenzen den Bereich auf f\u00FCnf Eintr\u00E4ge. Aus dem Zusammenspiel folgt kein Widerspruch, aber ein neues Nutzungsrisiko: Bei hohem Informationsbedarf kann die Architektur Nutzer dazu dr\u00E4ngen, Informationen unstrukturiert zu komprimieren oder in andere Bereiche zu verlagern."
+    }
+  ]
+}

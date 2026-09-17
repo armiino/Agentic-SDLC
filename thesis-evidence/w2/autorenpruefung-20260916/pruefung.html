@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="de">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Autorenprüfung · Kapitel 7</title>
+<link rel="stylesheet" href="style.css">
+<script defer src="pruefdaten.js"></script><script defer src="pruefung.js"></script></head>
+<body>
+<header><div><span class="eyebrow">MASTERARBEIT · KAPITEL 7</span><h1>Deine Gegenprüfung</h1><p>Originalbelege prüfen. KI-Urteil bestätigen, ändern oder offenlassen.</p></div><div class="save-box"><strong id="saveState">Prüfmaterial wird geladen …</strong><small>Nur lokal. Keine Datenübertragung.</small><button id="export" class="primary" disabled>Antworten exportieren</button><label class="import-label">Antworten importieren<input id="import" type="file" accept=".json,application/json"></label></div></header>
+<noscript>Diese Prüfoberfläche benötigt JavaScript. Die Originalbelege und leere Antwortvorlage liegen daneben im Paket.</noscript>
+<main>
+<details id="intro"><summary>So prüfst du – und was danach wissenschaftlich gesagt werden kann</summary><div class="prose">
+<p>Du führst eine <strong>nicht verblindete Autoren-Gegenprüfung</strong> durch. Die KI-Urteile bleiben sichtbar. Das ist keine unabhängige Zweitannotation und keine Studie zur allgemeinen Treffsicherheit der KI.</p>
+<ol><li>Lies das Kriterium, die Originalquelle und den passenden Systemstand. Die Begründung der KI ist selbst Prüfgegenstand.</li><li>Entscheide für jedes Antwortfeld einzeln. Bei einer Bestätigung darf die vorhandene Begründung übernommen werden; bei einer Korrektur oder Unsicherheit gibst du eine eigene Begründung mit Belegstelle an.</li><li>Falls der Kontext nicht reicht, öffne den vollständigen Bestand oder die archivierte Quelldatei. Die vorgeschlagenen Claim-Ausschnitte begrenzen deinen Suchraum nicht.</li><li>Exportiere nach jeder Sitzung deine Antworten. Browser-Zwischenspeicherung ist nur eine Arbeitshilfe; sie schreibt nichts ins Repository.</li></ol>
+<p><strong>Kein pauschales „alles korrekt“:</strong> Erst nach tatsächlich erledigter Prüfung wird ihr Umfang berichtet. „Unklar“ ist bearbeitet, aber kein bestätigtes Urteil. Die Ursprungsbewertungen bleiben unverändert; später werden Änderungen abgeglichen und betroffene Zahlen neu berechnet.</p>
+<p>Die elf Module unterscheiden den aktuellen Haupttext, die historischen Zusatzläufe und die Referenzannotation. Karten und Antwortfelder sind <strong>keine unabhängigen Versuchsfälle</strong>. Wiederholte Quellen und gekoppelte Vorher-/Nachherzustände zählen nicht als zusätzliche Stichproben.</p>
+<p><a href="README.md">Vollständige Anleitung und Grenzen</a> · <a href="quellenmanifest.json">Quellen und Prüfsummen</a></p>
+</div></details>
+<div class="identity"><label>Prüfende Person<input id="reviewer" autocomplete="name" placeholder="Dein Name"></label><label>Optional: tatsächlicher Aufwand dieser Sitzung<input id="effort" placeholder="z. B. 45 Minuten"></label><button id="saveEffort">Aufwand notieren</button></div>
+<div class="progress-wrap"><div id="total"></div><progress id="progress" value="0" max="1"></progress><div id="completion"></div></div>
+<section class="toolbar" aria-label="Prüffälle auswählen"><label>Prüfmodul<select id="module"></select></label><label>Bearbeitung<select id="filter"><option value="all">Alle Karten</option><option value="open">Noch offene Antwortfelder</option><option value="unclear">Mit „unklar“</option><option value="changed">Mit Korrekturen / neuen Urteilen</option><option value="done">Alle Felder bearbeitet</option></select></label><label class="search">Suche nach Kennung oder Text<input id="search" type="search" placeholder="z. B. PBI-003 oder Löschrecht"></label></section>
+<div class="navigation"><button id="prev">← Zurück</button><label>Prüfkarte<select id="casePicker"></select></label><button id="next">Weiter →</button></div>
+<div id="empty" hidden>Keine Karte entspricht dieser Auswahl.</div>
+<article id="current"><div id="caseHeading"></div><p id="question"></p><p id="warning" class="warning" hidden></p>
+<div class="layout"><section id="evidence" aria-label="Originalmaterial"></section><section id="judgments" aria-label="Deine Bewertungen"></section></div>
+<section id="context" aria-label="Vollständiger Kontext"></section><section id="originals" aria-label="Archivierte Originaldateien"></section>
+</article>
+<footer>Arbeitsmaterial vom 16.09.2026 · Bestehende Urteile werden unverändert gezeigt · Antworten bleiben zunächst offen</footer>
+</main>
+<dialog id="viewer"><div class="dialog-head"><strong id="viewTitle"></strong><button id="closeView">Schließen</button></div><p id="viewMeta"></p><label>Im Original suchen<input id="sourceSearch" type="search" placeholder="Kennung oder Text"></label><div id="sourceHits"></div><pre id="sourceText"></pre></dialog>
+<script>window.addEventListener('error', function(e) { const n=document.getElementById('saveState'); if(n)n.textContent='Fehler beim Laden. Bitte alle Paketdateien zusammenhalten. '+e.message; });</script>
+</body></html>

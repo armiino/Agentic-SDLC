@@ -1,0 +1,13 @@
+# Offene Fragen
+
+- Welche konkreten KPIs sollen gemessen werden und wie werden sie technisch erfasst?
+- Soll das MVP eine native Mobile‑App erhalten oder reicht ein responsives Web‑Design?
+- Welche Identity‑Provider sollen im MVP unterstützt werden (Azure AD, Google, beides)?
+- Wie detailliert muss das Rollen‑ und Berechtigungskonzept im MVP sein (nur Admin/User oder weitere Rollen)?
+- Welche konkreten Daten aus SAP werden benötigt und wie erfolgt die Synchronisation?
+- Welche Managed‑Service‑Lösung (Datenbank, Hosting) wird gewählt, um EU‑only Hosting sicherzustellen?
+- Wie wird das Logging‑ und Audit‑Trail‑System implementiert (z. B. zentrale Log‑Aggregation, Aufbewahrungsdauer)?
+- Welche Backup‑ und Disaster‑Recovery‑Strategie ist für das MVP realistisch?
+- Wie wird das Double‑Opt‑In‑Verfahren technisch umgesetzt (E‑Mail‑Bestätigung, Consent‑Management‑Tool)?
+- Welche Priorität hat die Integration von Push‑Notifications im MVP?
+- Wie wird das Security Review durchgeführt und welche Ressourcen stehen dafür zur Verfügung?

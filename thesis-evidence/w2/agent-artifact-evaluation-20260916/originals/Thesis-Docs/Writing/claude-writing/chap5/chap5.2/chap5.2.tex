@@ -1,0 +1,328 @@
+% P10-4a, 14.09.2026: Mechanismus, Quellenreichweite und v4-Nachweis angeglichen.
+% M17, 12.09.2026: Gesamtfluss und Ebenen lesbarer getrennt; Grafik, Tabellen und Governance-Reichweiten erhalten.
+% ============================================================
+% §5.2 Logische Gesamtarchitektur — v06 (09.09.)
+% v06: Erst-Seed ohne Einzelautorisierung von den nachgelagerten
+% Strukturierungs- und Fortschreibungspfaden getrennt; Text, Caption
+% und Eingangstabelle an 5.6/5.9/7.4 angeglichen. Grafik separat ändern.
+% v05 (Gesamtdurchgang P0/P1, todo-v02 — Mini-Touches, keine Logik-
+% Änderung): ① Zugangsformen auf Konvergenz-Endform (P0-2, wie
+% 4.9-v07/5.8) ② damalige Bootstrap-Formulierung in v06 durch die
+% belegte Trennung von Erst-Seed und nachgelagerten Gates ersetzt
+% ③ „Abkürzung existiert nicht" → Architekturvertrag
+% des vorgesehenen Pfads (P1; 5.6-Grenze: Naht beweist Gate-Herkunft
+% nicht) ④ Tabellen-Zeile Meeting: „SELEKTIVER menschlicher
+% Adjudikation bei definiertem Prüfbedarf" (P1; kein Gate pro Claim).
+% MERKER an den AUTOR: In G1 den Erst-Seed als eigenen Weg zur
+% Speichernaht ohne Einzelautorisierung zeigen; nachgelagerte Themen-
+% und Arbeitspaket-Vorschläge durchlaufen die regulären Gates.
+% v04 (Abschluss-Review, beide Mikro-Punkte übernommen): ① „Alles,
+% was nach einer Zustandsänderung geschieht" → „Die nachgelagerten
+% Fortschreibungs- und Projektionspfade arbeiten auf diesem geltenden
+% Zustand" (konsequente Anwendung der Trigger-Logik-Klärung: kein
+% „Save löst Folgeprozess aus") ② „Schichtung von Architekturebenen"
+% → „Gliederung in Steuerungs-, Ausführungs- und Zustandsebene".
+% P6-„können"-Variante des Kollegen bewusst NICHT übernommen (er
+% selbst: „notwendig ist diese Änderung aber nicht") — Indikativ hält
+% die Wort-Parität zu Kap. 4.9. Kollegen-Urteil: „inhaltlich
+% geschlossen", FROZEN-Empfehlung — Freeze-ENTSCHEID = Autor.
+% v03 (Kollegen-Review, kritisch geprüft — P1/2/3/5/7 übernommen,
+% P4 abgeschwächt übernommen, P6 NUR TEILWEISE): ① Bootstrap in
+% Lebenszyklus-Absatz + Meeting-Tabellenzeile (P1 — echtes Loch,
+% repo-wahr: Erstbestand ohne Einordnung) ② Klärungsantwort als
+% „interner Wiedereintritt" ausgewiesen (P2 — Karte §0: kein vierter
+% Außen-Eingang; Tabellen-Caption/Spaltenkopf angepasst) ③ lokale
+% Ableitung vs. gated Außenkopplung getrennt (P3 — GithubDocPublish-
+% verifiziert) ④ Schleifen-Satz minimal entschärft ⑤ „Architektur-
+% ebenen" statt „Verantwortungsebenen" + „getrennt geführt" (P5;
+% bewusste Abweichung vom Blaupausen-Wort — Nachzug klein) ⑥ Steward-
+% Grammatik + „Schreibweg" (P6) — ABER „bedienen dieselben
+% Entscheidungspunkte" behalten (Kap.-4.9-Wortlaut + K14; Kollegen-
+% Abschwächung „stärker als notwendig" abgelehnt, weil repo-wahr)
+% ⑦ Einstieg geglättet (P7).
+% v02 (nach Grafik-FINAL gesamtarchitektur-reduziert-final.drawio,
+% Kollegen-Abnahme „freeze-ready"): ① figure-TODO auf finalen
+% Dateinamen ② Viererketten-Wortlaut an Grafik angeglichen
+% („pfadspezifische Prüfung", „fachliche Autorisierung", „autorisierte
+% Mutation") ③ Brücken-Satz zur zusammengefassten Eingangsaufbereitung
+% (funktionale Verantwortung ≠ gemeinsame Implementierung) ④ Kommentar
+% Zugangs-Bindung aktualisiert (Steward-Steuerungspfeil jetzt in der
+% Grafik). Der Core-Satz „ausschließlich Zustand … keine Verarbeitung"
+% ist seit dem Grafik-Kürzen (Kollegen-Punkt 8) TRAGEND im Text —
+% nicht streichen!
+% Grundlage: Schreibblaupause-Kapitel-5-6 §4 (Zeile 5.2: ~1,5 S.;
+% Pflichtinhalte: Gesamtgrafik + zwei Ansichten + Zustandsarten-
+% Trennung + Eingangs-Tabelle + Zugangsformen/Ein-Kette + G2) ·
+% architekturkarte-5-2.md v04 (FROZEN; §1b Lesehilfe = Rohmasse,
+% Kantenmatrix K1–K16 = Beleg-Grundlage) · Grafik-Abnahme 02.09.
+% (reduzierte Version + Detailversion konsistent; H an Doku-Sichten
+% per Autor-Beschluss 02.09.).
+%
+% PRÄZISIONS-PUNKTE (heutige Klärungsrunde, alle code-verifiziert):
+%   · Fortschreibung wird vom GELTENDEN ZUSTAND gespeist, nicht vom
+%     Speicher-Ereignis (keine Trigger-Logik in der Naht; K9/K10).
+%   · Schleifen-Ergebnisse münden als typisierte Vorschläge in die
+%     Governance — KEINE erneute Fünf-Kategorien-Einordnung
+%     (E47-02: Gate-Auflösung → DecisionApply direkt).
+%   · Beide Projektionsarten menschlich freigegeben, aber EINE
+%     Gate-Instanz (GithubDocPublish über dasselbe Forward-Gate).
+%   · Zugangs-Bindung nicht exklusiv: nur die dialogische Eingabe
+%     ist steward-exklusiv; beide Zugänge starten dieselben Abläufe.
+% EINMAL-PRINZIP: Viererkette hier nur BENANNT (Vertiefung 5.6);
+% Einordnungs-Kategorien nur benannt (5.5); Evidenzgewinnung (5.3);
+% Projektions-Rundweg (5.7); Durabilität/Steward (5.8). KEINE
+% Mechanismus-Erklärung in 5.2 — die Grafik-Führung zeigt nur, WAS
+% wo liegt und WIE es zusammenhängt.
+% Verweis-Merker: Refs auf 5.3–5.8 stehen als Klartext-Nummern und
+% werden nach Anlage der Abschnitte auf \ref umgestellt (Label-Regel
+% wie 3.2). Abbildung: Platzhalter-figure — Autor bindet den Export
+% der reduzierten drawio-Version ein (Detailversion → Anhang).
+% Budget ~1,5 S. + zwei kompakte Tabellen.
+% ============================================================
+
+\section{Logische Gesamtarchitektur}
+\label{sec:logische-gesamtarchitektur}
+
+Abbildung~\ref{fig:logische-gesamtarchitektur} zeigt den Zusammenhang
+der Architekturbausteine; eine detailliertere Fassung steht in
+Anhang~\ref{anh:g1-detail}. Zwei Perspektiven erschließen die
+Darstellung: Der funktionale Lebenszyklus beschreibt, wie
+Projektinformationen verarbeitet werden. Die Architekturebenen
+unterscheiden Steuerung, Ausführung und fachlichen Zustand.
+
+\begin{figure}[htbp]
+  \centering
+  % TODO (Autor): finalen Export einbinden —
+  % chap5/gesamtarchitektur-reduziert-final.drawio.pdf, z. B.
+  \includegraphics[width=\textwidth]{figures/05/GesamtArchitektur-Reduziert-v02.pdf}
+  \caption[Logische Gesamtarchitektur des Artefakts]{Logische Gesamtarchitektur des Artefakts
+    (Überblicksdarstellung; H = menschlicher Entscheidungspunkt).
+    Der Erst-Seed schreibt den ersten fachlichen Bestand über die
+    gemeinsame Speicheroperation (Speichernaht) ohne Einzelautorisierung
+    (Abschnitt~\ref{sec:endtoend-pfade}).
+    Detailfassung im Anhang.}
+  \label{fig:logische-gesamtarchitektur}
+\end{figure}
+% P10-6: Gesamtgrafik vor ihrer ausführlichen Leseanleitung ausgeben.
+\clearpage
+
+\emph{Erste Ansicht: der funktionale Lebenszyklus.} Der Hauptfluss
+verläuft von oben nach unten. Drei externe Eingänge liefern neue
+Projektinformationen: Transkripte, dialogische Eingaben und
+GitHub-Rückmeldungen (Tabelle~\ref{tab:eingaenge}). Sie unterscheiden
+sich zunächst in ihrer Aufbereitung. Beim Transkript führen
+Segmentierung, Claim-Extraktion und fachliche Ableitung zu
+strukturierten Inhalten. Der dialogische Eingang übernimmt die im
+Steward-Gespräch formulierten Angaben; beim GitHub-Eingang bereiten
+Agenten die eingesammelten Rückmeldungen fachlich auf. Die jeweiligen
+Schritte halten die verfügbaren Herkunftsangaben fest. Ihr gemeinsames
+Ergebnis ist ein \emph{Delta}: ein strukturiertes Eingangspaket mit
+neu zu prüfenden Inhalten und Quellenbezügen, noch kein autorisierter
+Änderungsplan.
+
+Bei vorhandenem Core münden diese Pakete in die gemeinsame
+Einordnung gegen den Bestand, mit fachabhängigen Zweigen für
+Anforderungen und Architekturinformationen. Erst dort entstehen
+konkrete Operationspläne: Sie benennen die vorgeschlagene
+Zustandsänderung und gegebenenfalls ihr bestehendes Ziel. Der
+Governance-Bereich verbindet die pfadspezifische Prüfung dieser
+Vorschläge mit menschlicher Autorisierung, Anwendung und Speicherung.
+Die gemeinsame Speicheroperation, in der Abbildung als
+\emph{Speichernaht} bezeichnet, prüft strukturelle Invarianten.
+Über diesen Weg werden freigegebene Änderungen Teil des Core, des
+maßgeblichen Projektzustands über einzelne Läufe hinweg. Die
+Begründung dieser Kontrollen steht in
+Abschnitt~\ref{sec:projektzustand-kontrollierte-mutation}, ihre
+Ausgestaltung in Abschnitt~\ref{sec:governance-mutation}.
+
+Der initiale Meetingpfad stellt dagegen den ersten Bestand her.
+Aus der verwendbaren Evidenzsicht nach selektiver Adjudikation
+entstehen modellgestützt fachliche Artefakte. Ein deterministischer
+\emph{Erst-Seed} übernimmt daraus Anforderungs- und Architekturelemente
+über die invariantengeschützte Speichernaht in den erstmals
+angelegten Core. Für diese Elemente fehlt eine gesonderte
+menschliche Einzelautorisierung. Die anschließende Themenstrukturierung
+und Arbeitspaketbildung durchlaufen die vorgesehenen menschlichen
+Gates. Das hergeleitete Autorisierungsziel ist bei der Initialisierung
+somit nur teilweise realisiert. Abschnitt~\ref{sec:endtoend-pfade}
+erklärt die Reihenfolge der Schreibvorgänge und Entscheidungen.
+
+Der Core enthält Elemente, Relationen, Statusangaben, Historie
+und Herkunftsinformationen. Die Verarbeitung leisten die
+umgebenden Komponenten. Die beiden Fortschreibungspfade unterhalb
+des Core-Bandes bearbeiten offene Entscheidungen und bereiten die
+Angleichung abhängiger Arbeit vor. Sie nutzen den gespeicherten
+Bestand einschließlich offener Vorgänge aus früheren Läufen.
+Der Bezug zum Bestand steht hier bereits fest; eine erneute
+Einordnung neuer Informationen ist deshalb nicht Teil ihrer Aufgabe.
+Die Klärungsantwort bildet einen solchen begrenzten internen
+Wiedereintritt. Die resultierenden Änderungsvorschläge gelangen
+wiederum in den Governance-Bereich und verändern den fachlichen
+Bestand nicht unmittelbar.
+
+Aus dem Core entstehen schließlich operative Sichten:
+GitHub-Issues mit eindeutiger Bindung an Core-Elemente sowie
+maschinell gepflegte Dokument- und Architektursichten. Ihre lokale
+Ableitung ist von der Veröffentlichung zu unterscheiden. Die
+Überführung nach außen wird für beide Projektionsarten über
+dieselbe menschliche Autorisierungsinstanz freigegeben. Nur der
+GitHub-Weg besitzt einen Rückkanal: Eingesammelte Außenänderungen
+gelangen erneut über einen kontrollierten Eingang in die
+Verarbeitung (Abschnitt~\ref{sec:projektionen-kontrollierte-aussenkopplung}).
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{p{0.24\textwidth}p{0.40\textwidth}p{0.26\textwidth}}
+    \hline
+    \textbf{Pfad} & \textbf{Aufbereitung} & \textbf{Eintritt} \\
+    \hline
+    Meeting-Transkript & Evidenzgewinnung: quellgebundene Belegeinheiten
+      mit selektiver menschlicher Adjudikation bei definiertem
+      Prüfbedarf und anschließender fachlicher Ableitung
+      (Abschnitte~\ref{sec:evidenzgebundene-verarbeitung}
+      und~\ref{sec:saeule-semantische-transformation}) & Bootstrap: Erst-Seed und
+      nachgelagerte Strukturierung; Betrieb: Einordnung gegen den
+      Bestand \\
+    GitHub-Rückmeldung & modellgestützte Aufbereitung der eingesammelten
+      Außenänderungen, mit Herkunftsangabe & Einordnung gegen den
+      Bestand \\
+    dialogische Eingabe & kontrollierter Entwurf über die agentische
+      Bedienschicht, mit Herkunftsangabe & Einordnung gegen den
+      Bestand \\
+    interner Wiedereintritt: Klärungsantwort & kontrollierte Auflösung
+      am menschlichen Entscheidungspunkt; eng begrenztes
+      Auflösungsvokabular & direkt in die Governance \\
+    \hline
+  \end{tabular}
+  \caption{Kontrollierte Eingangspfade und interner Wiedereintritt.}
+  \label{tab:eingaenge}
+\end{table}
+% [Zeile 1 = Kollegen-P1-Konsequenz (Bootstrap/Betrieb). Zeile 3
+%  (dialogische Eingabe) = K6, GEHÄRTET 02.09.: Lauf runs/fullworkflow/
+%  20260817_123342_f23f06 — Diktat im AF-Delta → Tor 1, reviewer
+%  „author via steward-chat", AF-1 apply → REQ-42→v2 + PBI-028→v2.
+%  Zeile 4 = heutige Klärungsrunde: die Antwort am Decision-Gate ist
+%  ein eng begrenzter Wiedereintritt (KEEP/ADOPT_NEW/REFINE/
+%  NO_TRUTH_NEEDED, nur Ziel-Element) — mehr implizierte Wahrheit
+%  nimmt den normalen Eingangsweg. Karte §1b/⑤.]
+
+\emph{Zweite Ansicht: Architekturebenen.} Die Steuerungsebene
+umfasst die Zugangsformen. Die Ausführungsebene verbindet die
+Verarbeitungsschritte zu einem planmäßig unterbrechbaren Ablauf
+mit speicherbarem Ausführungszustand. Der Core führt davon getrennt
+den fachlichen Projektzustand. Der Ausführungszustand beantwortet,
+wo ein Lauf steht und welche Entscheidung aussteht; der Core hält
+fest, was im Projekt gilt. Diese in
+Abschnitt~\ref{sec:durabilitaet-kontinuierliche-nutzung} begründete
+Trennung erläutert Abschnitt~\ref{sec:durable-ausfuehrung-agentische-bedienung}
+mit ihren Folgen für den Betrieb.
+
+\emph{Zugangsformen.} Von den fachlichen Eingängen sind die
+Arten der Bedienung zu unterscheiden. Der Direktzugang startet
+vorgegebene Abläufe; der \emph{Steward} interpretiert Anliegen im
+Dialog, wählt passende Systemfähigkeiten und vermittelt anstehende
+Entscheidungen. Beide nutzen für ihre fachlichen Wirkungen die
+vorgesehenen Prüf-, Entscheidungs- und Speicheroperationen. Die
+dialogische Eingabe ist an den Steward gebunden; dieser kann auch
+andere vorhandene Abläufe bedienen und besitzt keinen eigenen
+Core-Schreibweg. Seine Rolle vertieft
+Abschnitt~\ref{sec:durable-ausfuehrung-agentische-bedienung}.
+
+\emph{Verantwortungsverteilung.} Tabelle~\ref{tab:verantwortung}
+ordnet die Aufgaben den primär zuständigen Komponenten oder dem
+Menschen zu. Die folgenden Säulenabschnitte zeigen, wie diese
+Verantwortlichkeiten im jeweiligen Verarbeitungspfad zusammenwirken.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{p{0.56\textwidth}p{0.32\textwidth}}
+    \hline
+    \textbf{Aufgabenart} & \textbf{primäre Verantwortung} \\
+    \hline
+    Bedeutung interpretieren, einordnen, formulieren, semantisch
+      prüfen oder reparieren & agentisch (modellgestützt) \\
+    formal ausdrückbare Prüfung, Routing, Vertrags- und
+      Integritätsregeln, autorisierte Anwendung & deterministisch \\
+    fachlich folgenreiche Entscheidungen und Autorisierung & Mensch \\
+    Reihenfolge, Wiederholung, Verzweigung, Übergaben, Pausen &
+      Workflow \\
+    \hline
+  \end{tabular}
+  \caption{Verantwortungsverteilung in der Gesamtarchitektur.}
+  \label{tab:verantwortung}
+\end{table}
+% [G2 aus der Karte §5 (Blaupause: „G2 in 5.2 oder 5.4" — hier, weil
+%  sie die Lesebrille für ALLE Säulen-Zooms ist; „dosierte Agentik").]
+
+Diese Verteilung erhält agentischen Entscheidungsspielraum bei der
+Interpretation und Werkzeugwahl. Der Workflow legt dagegen fest,
+wann ein Ergebnis geprüft, zur Entscheidung vorgelegt und angewendet
+wird. Die in Kapitel~\ref{chap:explorative-problemklaerung}
+beobachteten Schwierigkeiten bei Review, Toolausführung und
+Zustandsfortschreibung motivieren diese Bindung an überprüfbare
+Zwischenstände. Sie ist eine begründete Gestaltung für den
+untersuchten Einsatz, keine nachgewiesene allgemeine Überlegenheit
+gegenüber freier Agentenkoordination. Die Realisierung mit MAF
+erläutert Abschnitt~\ref{sec:realisierung-agent-executor-workflow}.
+
+Die Abschnitte~\ref{sec:evidenzgebundene-verarbeitung}
+bis~\ref{sec:durable-ausfuehrung-agentische-bedienung} vertiefen nun
+die sechs Säulen aus Abschnitt~\ref{sec:konsolidierte-designanforderungen}.
+Sie erläutern jeweils den Beitrag zum beschriebenen Gesamtablauf.
+
+% Historische Inline-Herkunftsnotizen vor M17; aktuelle Änderung im M17-Bericht.
+% [v05-Rest 03.09.: qualitativer Anhangs-Verweis → \ref auf den jetzt
+%  angelegten Anhang chap5/anhang/anhang-g1-detail.tex (Autor:
+%  einbinden, sonst „??").]
+% [Zoom-Prinzip der Blaupause: Karte vollständig, Säulen = Zooms.
+%  v03: Einstieg geglättet (Kollegen-P7); „Architekturebenen" statt
+%  „Verantwortungsebenen" (Kollegen-P5: State ist keine Verantwortung,
+%  Kollision mit G2-„Verantwortungsverteilung" vermieden — weicht
+%  bewusst vom Blaupausen-Wort ab, Blaupausen-Nachzug klein).]
+% [09.09.: Erst-Seed vor den Struktur-Gates; Beleg:
+%  CoreBootstrapStageExecutor + PipelineFullWorkflow. Grafik: eigener
+%  Erst-Seed-Pfeil zur Speichernaht; nachgelagerte Strukturvorschläge
+%  weiterhin über Prüfung, menschliche Autorisierung und Anwendung.]
+% [v05/P1: „eine Abkürzung … existiert nicht" war absoluter als die
+%  5.6-Grenze erlaubt (die Naht beweist die Gate-Herkunft nicht
+%  rückwirkend) — jetzt als Architekturvertrag des vorgesehenen
+%  Pfads formuliert.]
+% [K9/K10 + E47-02; heutige Klärung: Speichernaht ohne Trigger-Logik,
+%  Fortschreibung zustandsgetrieben (Wiedervorlage!); geschlossenes
+%  Decision-Outcome-Vokabular → Karte §1b/⑤.]
+% [K11–K13 + Autor-Beschluss 02.09. (H an Doku-Sichten); Kollegen-P3
+%  (übernommen): lokales Rendern ungegated (deterministisch,
+%  Fingerprint), erst der Publish gated — Beleg GithubDocPublish.cs:
+%  „bestehendes github-forward-gate"; deckt sich mit Karte §1b/⑥.
+%  K12 GEHÄRTET 02.09.: „kein Doku-Rückweg" = Code-Grenze
+%  (GithubDocPublish.cs:12 „KEINE Doc-Ernte", Ernte liest NUR Issues)
+%  + Publish-Realität: 14 github_doc_projection-Stempel im Live-Core
+%  (sourceRun/contentHash/sha). Merker: → \ref auf 5.7.]
+% [v02-Kernkorrektur der Karte: NICHT alles durch den Ledger; K1–K6.
+%  Brücken-Satz = Kollegen-Vorschlag 02.09. (gemeinsame Box in der
+%  Grafik behauptet keine gemeinsame Implementierung). Kollegen-P2
+%  (übernommen): Klärungsantwort als WIEDEREINTRITT ausgewiesen —
+%  Karte §0 wörtlich: „Auflösung = Wiedereintritt, kein vierter
+%  Außen-Eingang".]
+% [Zustandsarten-Tabelle der Karte §4; K16/E47-01. Kollegen-P5
+%  (übernommen): „Architekturebenen" + „getrennt geführt".
+%  Merker: → \ref 5.8.]
+% [v05-Mini-Touch 03.09. (Gesamtdurchgang-P0, todo-v02): auf die
+%  Konvergenz-Endform vereinheitlicht (wie 4.9-v07 und 5.8) — die
+%  frühere Form „bedienen dieselben Entscheidungspunkte" behauptete
+%  implizit identisches Fähigkeitsinventar/Gate-Durchlauf; die
+%  damalige Verteidigung stützte sich auf den 4.9-Altwortlaut, der
+%  jetzt ebenfalls auf Konvergenz steht (Wort-Parität bleibt).]
+% [K14/K15; finale Grafik zeigt den Steward mit Diktat-Kante UND
+%  dezentem Steuerungspfeil aufs Verarbeitungsband („Fähigkeit wählen ·
+%  Gates vermitteln"). Kollegen-P6 TEILWEISE: Grammatik-Fix +
+%  „Schreibweg" übernommen; „bedienen dieselben Entscheidungspunkte"
+%  BEHALTEN — Kap. 4.9 sagt wörtlich „beide Zugänge bedienen dieselben
+%  Gates und Nähte", und K14 belegt Gate-Antworten über den Steward
+%  (Gate-Vermittlung ist real, keine Übertreibung).]
+% [Merker EINGELÖST 02.09. (5.1-Vorbau): echtes 4.10-Label ist
+%  sec:konsolidierte-designanforderungen (geprüft an chap4.10.tex:51);
+%  Tabellen: t:designanforderungen-a1-a10 · t:saeulen-uebergabe.
+%  Refs 5.3–5.8 nachziehen (todo.md).]

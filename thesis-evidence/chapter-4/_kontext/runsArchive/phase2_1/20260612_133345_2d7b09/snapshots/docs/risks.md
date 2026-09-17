@@ -1,0 +1,81 @@
+# Risikoanalyse Kundenportal
+
+## 1. Fachliche Risiken
+
+- **Unklare und widersprüchliche Zielsetzungen:** 
+  Das Projektziel ist hochkomplex und umfasst viele Funktionen (Angebote, Rechnungen, Support, KPI, Rabattfreigabe, Mehrwährung etc.), die im vorgegebenen 8-Wochen-MVP-Zeitrahmen nicht realistisch sind. Das Risiko von Scope Creep und Zielkonflikten ist hoch.
+- **Uneinheitliche Anforderungen der Stakeholder:** 
+  Unterschiedliche Vorstellungen zur Priorisierung von Features (z.B. Support mit Ticketsystem vs. nur Kontaktformular) führen zu Konflikten und Verzögerungen.
+- **Unklare Pilotkunden und Marktanforderungen:** 
+  Unklare Entscheidung über Pilotkunden beeinflusst Datenschutzanforderungen, Währungs- und Internationalisierungsbedarf, was die Planung erschwert.
+
+## 2. Technische Risiken
+
+- **SAP-Integration unvollständig:**
+  Lesender Zugriff im MVP ist vorgesehen, Schreibzugriffe für Bestellungen und Freigaben fehlen, was zu funktionalen Einschränkungen und Inkonsistenzen führen kann.
+- **API Gateway Verzögerung:**
+  Die Warteliste von sechs Wochen für das zentrale API Gateway gefährdet die 8-Wochen MVP-Zeitplanung.
+- **Backup, Disaster Recovery und Security Review:**
+  Security Review dauert sechs Wochen, Backup ist verpflichtend, doch Zeitplan und Ressourcen sind begrenzt.
+- **Fehlende finale Architektur:** 
+  Kein klar definierter technischer Architekturentwurf, insbesondere bzgl. SSO, API Layer und Hosting, erhöht das Risiko technischer Fehlentscheidungen.
+- **Skalierbarkeit und Performance:** 
+  Unsicherheit über Nutzerzahlen (200 bis 20.000) erschwert die Dimensionierung und Optimierung.
+- **Unzureichendes Logging und Audit:** 
+  Unterschiedliche Anforderungen an technische Logs, Audit-Trails und Datenschutz erschweren die Implementierung.
+- **Cache-Konzept problematisch:** 
+  Cache zur Verbesserung der Performance kollidiert mit Datenschutz und Datenaktualität.
+- **Fehlende Testdatenstrategie:** 
+  Umgang mit echten Kundendaten in Tests und Entwicklung ist unklar, Datenschutzrisiko.
+
+## 3. Compliance- und Datenschutzrisiken
+
+- **DSGVO-Konformität unklar:**
+  Hosting und Datenresidenz sind noch nicht konkret definiert. EU-only Hosting ist gefordert, Hosting-Kosten sind unklar.
+- **Datenschutz bei Supportprozessen:** 
+  Kein Ticketsystem im MVP, manuelle E-Mail-Verarbeitung führt zu unstrukturierter Datenhaltung und Compliance-Risiken.
+- **Löschkonzepte vs. Aufbewahrungspflichten:**
+  Konflikte zwischen Recht auf Löschung und gesetzlichen Aufbewahrungsfristen sind ungelöst.
+- **Einwilligungen und Double-Opt-In:** 
+  Anforderungen zur Einwilligung und Logging sind komplex und bedeuten Mehraufwand.
+- **Mehrsprachigkeit und Internationalisierung:** 
+  Integration von USA und Schweiz ist offen, mit teils abweichenden Datenschutzanforderungen.
+- **Rabatt- und Freigabeprozesse:** 
+  Finanz- und Compliance-Risiken bei unklaren oder fehlenden Freigabeprozessen.
+
+## 4. Widersprüche und Unsicherheiten
+
+- **Zeitplan vs. Umfang und Qualität:** 
+  Komplexe Compliance- und Security-Anforderungen widersprechen dem kurzen MVP-Zeitplan.
+- **Technische Machbarkeit vs. Budget:** 
+  Native mobile App vs. responsive Web, Managed Services vs. Eigenbetrieb, Kosten und Aufwand sind unklar.
+- **Rollen- und Berechtigungsmodell:** 
+  Konflikte zwischen Support-Sichtbarkeit und Datenschutz.
+- **KPIs und Analytics:** 
+  Bedarf besteht, technische Umsetzung ist nicht definiert und könnte Datenschutz gefährden.
+- **Architekturrichtlinien (z.B. API Gateway) nicht abgestimmt:** 
+  Widersprüche zwischen Vorgaben, Teamfähigkeit und Projektzeitraum.
+
+## 5. Mögliche Auswirkungen
+
+- Verzögerungen im Projektzeitplan und Übersteigen des Budgets
+- Rechtliche und regulatorische Sanktionen bei Nicht-Einhaltung der DSGVO
+- Unbefriedigende Nutzererfahrung und Stakeholder-Unzufriedenheit
+- Erhöhte Komplexität und Kosten in späteren Projektphasen
+- Sicherheitslücken durch unzureichendes Logging oder fehlende Security Reviews
+- Datenverlust oder -manipulation durch fehlende Backup- und Löschkonzepte
+
+## 6. Gegenmaßnahmen und Klärungsbedarfe
+
+- Klare Priorisierung und Scope-Definition, Abwägung von MVP-Funktionen und späteren Releases
+- Frühzeitige Einbindung von Compliance- und Datenschutz-Experten
+- Konkrete Architekturentscheidungen treffen, insbesondere zu API Gateway, SSO und Hosting
+- Entwicklung eines robusten Rollen- und Berechtigungskonzepts, abgestimmt mit Support und Finance
+- Einführung von Testdatenrichtlinien und Sicherheitsprüfungen im Entwicklungsprozess
+- Evaluierung alternativer API- und Hosting-Optionen aufgrund von Zeit- und Kostenrestriktionen
+- Dokumentation von Annahmen, offenen Fragen und Risiken für transparente Kommunikation
+- Risikobasierte Iteration und Monitoring des Projektfortschritts
+
+---
+
+*Dieses Risikoartefakt basiert auf der Analyse des Stakeholder-Transkripts und den abgeleiteten Requirements. Es ist Bestandteil der Projektdokumentation und soll als Grundlage für risikobewusste Entscheidungen dienen.*

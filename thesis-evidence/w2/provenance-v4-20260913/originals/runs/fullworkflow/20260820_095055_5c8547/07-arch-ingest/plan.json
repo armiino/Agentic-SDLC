@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "planId": "state-change-plan-20260820_101824",
+  "createdUtc": "2026-08-20T10:18:24.416498Z",
+  "sourceMeetingDeltaPath": "runs/fullworkflow/20260820_095055_5c8547/04-delta/project-state.json",
+  "operations": [
+    {
+      "incomingItemId": "CA-1",
+      "kind": "CONTRADICT",
+      "statement": "F\u00FCr die Einrichtungsgrenze aus Rollenmodell, Selbstregistrierung und Profilzugriff muss ein verbindlicher Mandantenrahmen festgelegt werden: Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; die Zuordnung muss serverseitig erzwungen werden, und Einladungscodes f\u00FCr Angeh\u00F6rige m\u00FCssen diese Einrichtungszuordnung bei der Registrierung unver\u00E4nderlich mitgeben.",
+      "targetEntityId": "REQ-84",
+      "featureKey": null,
+      "claimIds": [
+        "CA-1"
+      ],
+      "rationale": "Die Aussage setzt technisch zwingend auf Selbstregistrierung per Einladungscode f\u00FCr Angeh\u00F6rige auf und verkn\u00FCpft sie mit einer unver\u00E4nderlichen Einrichtungszuordnung. In der Quer-Sicht ist REQ-84 die aktive Wahrheit zur Selbstregistrierung; die eingehende Architektur-Aussage f\u00FChrt dazu eine st\u00E4rkere technische Leitplanke ein, die quer nicht als REFINE \u00FCbernommen werden darf. Daher als CONTRADICT gegen REQ-84 zur menschlichen Kl\u00E4rung. Kein dazu passender offener Entscheid vorhanden.",
+      "relatedRejectionId": "REJ-001"
+    },
+    {
+      "incomingItemId": "CA-2",
+      "kind": "NEW",
+      "statement": "F\u00FCr die revisionssichere Protokollierung von Einsichtnahmen muss ein unver\u00E4nderlicher Audit-Log-Rahmen festgelegt werden: Zugriffsereignisse werden serverseitig als append-only protokolliert, nachtr\u00E4gliche \u00C4nderungen oder L\u00F6schungen sind fachlich und technisch ausgeschlossen, und das Leserecht auf diese Protokolle bleibt strikt auf Admins beschr\u00E4nkt.",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "CA-2"
+      ],
+      "rationale": "Es gibt im Architektur-Core keine bestehende Entit\u00E4t zur technischen Ausgestaltung eines unver\u00E4nderlichen Audit-Logs. Die Quer-Sicht zeigt nur die fachlichen Ziele REQ-64 und REQ-65; die eingehende Aussage erg\u00E4nzt diese um konkrete technische Bauvorgaben, ohne ihnen zu widersprechen. Daher NEW.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "CA-3",
+      "kind": "CONTRADICT",
+      "statement": "F\u00FCr Offline-first mit lokalem Cache muss ein einheitlicher Synchronisationsrahmen festgelegt werden, der die inhaltliche Konfliktregel konsistent macht: Entweder gilt ein automatischer Server-Priorit\u00E4tsmechanismus oder eine nutzerseitige Konfliktentscheidung; beide Modelle d\u00FCrfen nicht parallel f\u00FCr dieselben Datenarten verwendet werden.",
+      "targetEntityId": "L3-REQ-004",
+      "featureKey": null,
+      "claimIds": [
+        "CA-3"
+      ],
+      "rationale": "Die aktive Requirement-Wahrheit L3-REQ-004 verlangt bei offline bearbeiteten Konfliktf\u00E4llen eine Nutzerentscheidung und schlie\u00DFt stillschweigendes \u00DCberschreiben aus. Die eingehende Architektur-Aussage l\u00E4sst alternativ einen automatischen Server-Priorit\u00E4tsmechanismus zu; das widerspricht dieser aktiven Anforderung. Kein passender offener Entscheid vorhanden.",
+      "relatedRejectionId": null
+    },
+    {
+      "incomingItemId": "CA-4",
+      "kind": "NEW",
+      "statement": "F\u00FCr Besuchserinnerungen am Vortag um 18 Uhr muss ein serverseitiger Benachrichtigungsrahmen festgelegt werden: Die Erinnerung wird aus dem best\u00E4tigten Besuchsstatus heraus zentral geplant, bei Status\u00E4nderung oder Absage wieder zur\u00FCckgezogen und darf nicht von der lokalen Verf\u00FCgbarkeit oder den Hintergrundrestriktionen des Ger\u00E4ts der Angeh\u00F6rigen abh\u00E4ngen.",
+      "targetEntityId": null,
+      "featureKey": null,
+      "claimIds": [
+        "CA-4"
+      ],
+      "rationale": "ARCH-46 legt nur die Push-Technologie auf Firebase Cloud Messaging fest. Die eingehende Aussage erg\u00E4nzt davon getrennt die serverseitige zentrale Planung, den R\u00FCckzug bei Status\u00E4nderung oder Absage und die Entkopplung von lokaler Ger\u00E4teverf\u00FCgbarkeit. Daf\u00FCr gibt es noch keine passende Architektur-Entit\u00E4t; zur Quer-Sicht mit REQ-88 besteht kein Widerspruch. Daher NEW.",
+      "relatedRejectionId": "REJ-007"
+    }
+  ]
+}

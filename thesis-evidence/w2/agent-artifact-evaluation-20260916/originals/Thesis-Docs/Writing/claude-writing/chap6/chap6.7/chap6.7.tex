@@ -1,0 +1,118 @@
+% P10-4a, 14.09.2026: Mechanismus, Quellenreichweite und v4-Nachweis angeglichen.
+% M08, 11.09.2026: Speichermechanismus, Projektion und Rückweg getrennt.
+% Geprüft: JsonCoreRepository, CoreKangal, GithubIssueTemplate,
+% GithubDriftCheck, GithubSnapshotGuard, GithubInboundHarvest,
+% PipelineFullRunner (GitHub-Eingang), GithubDocPublish.
+\section{Projektseitige Kernmechanismen: Persistenz und Außenkopplung}
+\label{sec:realisierung-persistenz-aussenkopplung}
+
+Die in den Abschnitten~\ref{sec:core-projektfortschreibung}
+und~\ref{sec:projektionen-kontrollierte-aussenkopplung} beschriebenen
+Mechanismen liegen an den Grenzen der MAF-Orchestrierung.
+Das Framework verbindet die Verarbeitungsschritte; das fachliche
+Zustandsmodell, seine Speicherregeln und die Außenabbildung sind
+projektspezifisch realisiert.
+
+\emph{Speicherung.} Die gemeinsame Speichernaht ist als
+\texttt{SaveAsync} des \texttt{JsonCoreRepository} umgesetzt.
+Vor dem Schreiben prüft \texttt{CoreKangal} strukturelle Regeln,
+etwa die Endpunkte interner Beziehungen und die eindeutige
+Issue-Zuordnung. Die Existenz externer Claim-Ziele und die
+vollständige Auflösung des Herkunftsregisters werden hier nicht
+geprüft. Fehler brechen den Speichervorgang ab, Warnungen
+werden protokolliert. Erst danach wird bei verändertem Dateiinhalt
+der bisherige Stand als Sicherungskopie (Snapshot) gesichert und die neue Fassung
+geschrieben. Die Historienkopie setzt also einen vorhandenen und
+tatsächlich abweichenden Vorgänger voraus.
+Listing~\ref{lst:speichernaht} zeigt die Reihenfolge.
+
+% M12: Das kurze Listing mit seiner Beschriftung zusammenhalten.
+\par\noindent
+\begin{minipage}{\linewidth}
+% M12-Nachtrag: Darstellung nur fuer dieses Listing, nicht in der Uni-Vorlage.
+\lstset{
+  language=[Sharp]C,
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true
+}
+\begin{lstlisting}[caption={[Speicherung nach Integritätsprüfung]Speicherung nach Integritätsprüfung
+  (Ausschnitt aus \texttt{JsonCoreRepository.cs}).},
+  label={lst:speichernaht}]
+var watch = CoreKangal.Check(core);
+foreach (var w in watch.Warnings)
+    Console.Error.WriteLine(
+        $"[core-kangal] WARNUNG {w.Code}: ...");
+if (!watch.Pass)
+    throw new InvalidOperationException(
+        "CORE_KANGAL: Save abgebrochen - ...");
+
+var json = JsonSerializer.Serialize(
+    core, ProjectStateJson.Options);
+await SnapshotBeforeOverwriteAsync(json, ct)
+    .ConfigureAwait(false);
+await File.WriteAllTextAsync(_file, json, ct)
+    .ConfigureAwait(false);
+\end{lstlisting}
+\end{minipage}
+\par\medskip
+
+Diese Operation prüft die Struktur des übergebenen Bestands,
+autorisiert aber keine Änderung. Die menschliche Auswahl erfolgt
+zuvor in den fachlichen Verarbeitungspfaden. Beim Besuchsfall F1
+liegt sie beispielsweise in den acht übernommenen und vier
+abgewiesenen Operationen der Anforderungseinordnung; eine erfolgreiche Speicherprüfung
+ersetzt diese Auswahl nicht. Die Prüfung der im Code identifizierten
+Schreibpfade stützt ihre Zuordnung zur gemeinsamen Speicheroperation;
+sie schließt nicht jede denkbare Umgehung aus. Der initiale Seed bleibt
+die in Abschnitt~\ref{sec:endtoend-pfade} erklärte Ausnahme von
+der Einzelautorisierung. Abschnitt~\ref{sec:eval-kontrollen}
+untersucht ausgewählte Zustandswirkungen; ein Angriffstest außerhalb
+der Speichernaht fehlt.
+
+\emph{Issue-Darstellung und Änderungsvergleich.}
+\texttt{GithubIssueTemplate} bildet die vorgesehenen Core-Inhalte
+ohne Modellaufruf in die Issue-Struktur ab. Die Beziehung zwischen
+PBI und Issue wird im Core geführt und strukturell geprüft.
+Um externe Änderungen von neuer Core-Information zu unterscheiden,
+vergleicht \texttt{GithubDriftCheck} Titel und Inhalt des erhobenen
+Issues mit den beim letzten eigenen Schreiben gespeicherten
+Prüfwerten (Hashwerten). Der Vergleich erfolgt bewusst nicht gegen eine neu
+gerenderte Core-Fassung. Normalisiert werden unter anderem
+Zeilenenden und nachgestellte Leerzeichen. Fehlen die gespeicherten
+Vergleichswerte, ist die Abweichung nicht bestimmbar; dies ist kein
+Nachweis eines unveränderten Issues.
+
+\emph{Schnappschüsse und Rückweg.} Die Prüfung durch
+\texttt{GithubSnapshotGuard} vergleicht bei konfiguriertem Ziel
+den Repository-Stempel mit diesem Ziel und weist fremde oder
+ungestempelte Bestände zurück. Sie ist in die geprüften
+Einstiege für die GitHub-Veröffentlichung (Forward) eingebunden
+und prüft keine Aktualität.
+Davon getrennt ruft der reguläre GitHub-Gesamteingang Issues und
+Kommentare neu ab. \texttt{GithubInboundHarvest} weist zusätzlich
+Issue-Schnappschüsse zurück, deren ermitteltes Alter 24 Stunden
+überschreitet. Diese Altersgrenze garantiert weder einen lückenlosen
+Außenbestand noch einen weiterhin aktuellen Stand beim späteren
+Schreiben. Für manuell übergebene Schnappschüsse dieses Rückwegs
+ist kein Aufruf der genannten Repository-Zugehörigkeitsprüfung
+eingebunden.
+
+Sammlung und Erkennung der Rückmeldungen erfolgen regelbasiert.
+Bei verarbeitbaren Issue- oder Kommentarfunden werden hingegen
+MAF-Agenten zur fachlichen Aufbereitung aufgerufen; ohne solche
+Funde entfällt der Modellaufruf. Ihre Vorschläge werden in ein
+Delta überführt und dem regulären Einordnungs- und
+Autorisierungspfad übergeben. Fehlt ein verarbeitbares Delta,
+endet der Gesamteingang vor diesem Pfad. Dokumentveröffentlichungen
+nutzen dieselbe externe Freigabeinstanz wie Issues, besitzen aber
+keinen entsprechenden Rückweg
+(Abschnitt~\ref{sec:projektionen-kontrollierte-aussenkopplung}).
+
+Die technische Trennung folgt damit der Architekturbegründung:
+Modelle deuten neue Inhalte, explizite Regeln sichern Speicherung
+und Abbildung bereits festgelegter Inhalte. Wie die Ausführung
+beobachtbar gemacht wird, behandelt der folgende Abschnitt.

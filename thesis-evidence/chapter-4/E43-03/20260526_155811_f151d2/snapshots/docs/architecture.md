@@ -1,0 +1,55 @@
+# Architekturüberblick – Kundenportal MVP (Phase 2.1)
+
+## 1. Systemkontext
+Das Kundenportal ist ein **Web‑basiertes Frontend** für externe Kunden (Sales, End‑Kunden, Support) zur Erstellung von Angeboten, Ansicht von Rechnungen und Basis‑Selbstdienste. Es nutzt ein **Backend‑API‑Layer**, das als Integrationsschicht zu vorhandenen Unternehmenssystemen (SAP, Managed Service DB, Identity Provider) dient. Das System muss EU‑only gehostet werden, DSGVO‑konform sein und innerhalb von **8 Wochen** ein MVP bereitstellen.
+
+## 2. Wichtige Komponenten (MVP‑Scope)
+| Komponente | Aufgabe | Hinweis / offene Entscheidung |
+|------------|----------|------------------------------|
+| **Frontend (SPA)** | Responsives Web‑Portal (React/Angular/Vue). Unterstützt DE/EN, Login, Angebotserstellung, PDF‑Export, Rechnungsdownload, Kontaktformular. | Mobile‑App wird später implementiert. |
+| **API‑Gateway / Proxy** | Authentifizierung (OAuth 2.0 Client‑Credentials), Rate‑Limiting, Routing zu internen Services. **Eigen‑hosted Proxy** für MVP, später Migration zum zentralen Unternehmens‑API‑Gateway (6 Wochen Warteliste). |
+| **Auth‑Service** | Nutzer‑Login per E‑Mail + Passwort, Double‑Opt‑In Workflow, optional SSO (Azure AD/Google) – **nicht im MVP aktiv**, aber Schnittstelle vorhanden. |
+| **Business‑API (REST)** | Endpunkte für Angebote, Rechnungen, Rollen‑Check, Auditing. Implementiert als **stateless Microservice** (z. B. Node.js/Java). | OAuth‑geschützt, minimaler Funktionsumfang. |
+| **SAP‑Adapter** | Read‑Only‑Connector zu SAP (RFC/ODATA). Holt Produkt‑, Preis‑ und Rabattdaten. Keine Schreib‑Operationen im MVP. | Fallback‑Message bei SAP‑Ausfall. |
+| **Managed Data Store** | EU‑only Managed relational DB (PostgreSQL‑aaS). Speichert Nutzer‑Accounts, Angebots‑Metadata, Audit‑Logs, Rechnungs‑Referenzen (PDF‑Pfad). Keine neuen DB‑Server. |
+| **PDF‑Generator Service** | Erstellt rechtssichere PDFs aus Angebots‑Templates (z. B. wkhtmltopdf). Templates versioniert, jedoch kein Full‑CMS. |
+| **Backup & DR Service** | Tägliches Backup des Managed DB (auf EU‑Region). Wiederherstellung ≤ 24 h (RPO = 24 h). |
+| **Monitoring / Logging** | Technisches Monitoring (Grafana/Prometheus) **ohne PII**. Separates Audit‑Log (Datenbank‑Tabelle) für Angebote & Logins. |
+| **Secrets‑Management** | Managed Secrets Service (z. B. Azure Key Vault, HashiCorp Vault) für DB‑Credentials, API‑Keys. |
+| **Kontakt‑Formular** | Einfaches HTML‑Formular → E‑Mail‑Versand an Support‑Team. Keine Ticket‑Persistenz im MVP. |
+
+## 3. Schnittstellen & Integrationspunkte
+| Quelle/Ziel | Protokoll | Daten | Sicherheits‑Aspekte |
+|-------------|-----------|-------|--------------------|
+| Frontend → API‑Gateway | HTTPS (TLS 1.2+) | JWT‑Bearer‑Token (OAuth 2.0) | Token‑Validierung, Rate‑Limiting |
+| API‑Gateway → Business‑API | HTTPS (TLS) | REST‑JSON | OAuth‑Scope‑Prüfung |
+| Business‑API → SAP‑Adapter | HTTPS (TLS) oder SAP‑Native (RFC) | Produkt‑/Preis‑/Rabatt‑Daten | Read‑Only, Service‑Account, Zugriffs‑Logging |
+| Business‑API → Managed DB | JDBC/PGSQL over TLS | Angebots‑Metadata, Audit‑Log, Nutzer‑Accounts | Role‑Based Access, encrypted at rest |
+| Business‑API → PDF‑Generator | Internal HTTP | Angebots‑Daten → PDF | No PII in transport, internal network only |
+| Frontend → Contact‑Form | HTTPS POST | Name, E‑Mail, Nachricht | Eingehende Daten prüfen, keine PII in Logs |
+| Monitoring → Alerting (Email/SMS) | SMTP/SMSc | Alerts | Keine PII, nur System‑Metriken |
+
+## 4. Daten‑ und Sicherheitsaspekte (erkenntlich aus Kontext)
+- **Datenschutz**: Double‑Opt‑In beim Registrieren, DSGVO‑konforme Auftrags‑Verarbeitungs‑Verträge (SAP, Managed Service), **EU‑Only‑Hosting**. Persönliche Daten (Kunden‑Stammdaten) werden nur bei Bedarf aus SAP **on‑demand** geladen; im Portal wird nur ein Minimal‑Datensatz (Name, Bestell‑ID) angezeigt.
+- **Verschlüsselung**: TLS 1.2+ für alle Netzwerkverbindungen. Daten at‑rest werden vom Managed Service verschlüsselt gespeichert. Keine End‑to‑End‑Verschlüsselung im MVP (TLS reicht, gemäß Stakeholder‑Aussage).
+- **Authentifizierung & Autorisierung**: E‑Mail/Passwort‑Login, Rollen‑basiertes Access‑Control (Admin, Sales, Kunde, Support). OAuth 2.0 Client‑Credentials für API‑Zugriff. SSO‑Integration optional, nicht im MVP.
+- **Audit‑Log**: Minimaler Log mit `user_id`, `action`, `entity`, `timestamp`. Keine personenbezogenen Daten in technischen Logs. Log‑Einträge werden in einer separaten DB‑Tabelle gespeichert und sind revisionssicher.
+- **Backup & DR**: Tägliches Snapshot‑Backup, Aufbewahrung 30 Tage, Wiederherstellung innerhalb von 24 Stunden.
+- **Rate‑Limiting & Missbrauchserkennung**: Simple leaky‑bucket implementation im Proxy (z. B. 100 Requests / Minute pro IP). Alerts bei Überschreitung.
+- **Secrets‑Management**: Alle sensiblen Konfigurationen (DB‑Passwort, OAuth‑Client‑Secret) aus einem Managed Secrets‑Service geladen, nicht im Repository.
+
+## 5. Offene Architekturentscheidungen (zu klären nach MVP)
+1. **Migration zum Unternehmens‑API‑Gateway** – Entscheidung über Zeitpunkt, Aufwand und Auth‑Strategie nach MVP.
+2. **SSO‑Implementierung** – Welche Provider (Azure AD, Google) werden unterstützt und wie wird das Identity‑Mapping zu SAP gehandhabt?
+3. **Cache‑Strategie für SAP‑Daten** – Ob ein Read‑Through‑Cache (z. B. Redis) eingesetzt wird, um SAP‑Ausfälle abzufedern.
+4. **Erweiterter Freigabe‑Workflow** – Technische Umsetzung (State‑Machine, Rollen‑Matrix) für Rabatte > 15 %.
+5. **Support‑Ticket‑System** – Auswahl (Jira Service Management, Zendesk) und Integration ins Portal.
+6. **Mehrwährungs‑Engine** – Unterstützung von CHF/​USD inkl. Wechselkurs‑Management und steuerlicher Behandlung.
+7. **Analytics‑Stack** – Entscheidung für ein DSGVO‑konformes Analyse‑Tool (z. B. Matomo) für langfristige KPI‑Erfassung.
+8. **Internationalisierung** – Erweiterung der Lokalisierung (Sprachen, länderspezifische Formate) über das MVP‑Level hinaus.
+9. **Disaster‑Recovery‑Details** – RPO/RTO‑Definition, Testszenarien und Verantwortlichkeiten.
+
+## 6. Zusammenfassung
+Der vorgestellte Architektur‑Entwurf konzentriert sich auf einen **minimalen, aber funktionalen MVP**, das die kritischsten Geschäftsziele (schnelle Angebotserstellung, Rechnungsdownload, DSGVO‑Konformität) innerhalb des 8‑Wochen‑Zeitfensters ermöglicht. Durch die Nutzung von **Managed Services**, einer **eigenen Proxy‑Lösung** und **stateless Microservices** wird das Risiko von langen Beschaffungs‑ oder Integrationszeiten reduziert. Offene Entscheidungen und erweiterte Features (SSO, Cache, Ticket‑System, Mehrwährung, erweiterte Analytics) werden bewusst als **Phase‑2‑Roadmap** gekennzeichnet, um das MVP‑Scope nicht zu überladen.
+
+*Dieses Architektur‑Dokument basiert ausschließlich auf den in `runs/phase2_1/20260526_155811_f151d2/state/context.md`, `docs/requirements.md` und `docs/risks.md` enthaltenen Informationen.*

@@ -1,0 +1,18 @@
+{
+  "lane": "operational",
+  "drafts": [
+    {
+      "itemId": "ARCH-50",
+      "title": "Serverseitige Einrichtungsgrenze in Firestore",
+      "context": "Erg\u00E4nzend zum bereits festgelegten serverseitigen Suchrahmen \u00FCber Einrichtungsgrenzen hinweg musste die allgemeine technische Durchsetzung der Einrichtungsgrenze f\u00FCr Firestore konkretisiert werden. Das vorliegende Design-Item legt daf\u00FCr fest, dass jede Collection eine Einrichtungs-ID tr\u00E4gt und dass jede Firestore Security Rule diese ID gegen die dem angemeldeten Benutzer zugeordnete Einrichtungs-ID pr\u00FCft. Laut Begr\u00FCndung handelt es sich um eine konkrete Architekturentscheidung zur mandantenf\u00E4higen serverseitigen Durchsetzung, die zugleich alle Arbeiten zur Benutzerzuordnung, zu Rollen und Rechten sowie zur fachlichen Einrichtungsgrenze einschr\u00E4nkt.",
+      "decision": "Wir nutzen in Firestore eine serverseitig erzwungene Einrichtungsgrenze, indem jede relevante Collection eine Einrichtungs-ID tr\u00E4gt und jede Firestore Security Rule diese Einrichtungs-ID gegen die dem angemeldeten Benutzer zugeordnete Einrichtungs-ID pr\u00FCft.",
+      "consequences": "Die Einrichtungsgrenze wird technisch konsistent und serverseitig durchgesetzt und kann nicht allein durch Client-Logik umgangen werden. Die L\u00F6sung passt den bereits festgelegten Suchrahmen an eine allgemeine Mandantentrennung \u00FCber Collections und Zugriffsregeln an. Zugleich bindet sie Datenmodell, Benutzerzuordnung und Regeldefinitionen: Collections m\u00FCssen die Einrichtungs-ID zuverl\u00E4ssig mitf\u00FChren, Authentifizierungs- und Accountdaten m\u00FCssen die Benutzer einer Einrichtung eindeutig zuordnen, und jede Firestore Security Rule muss diese Pr\u00FCfung explizit enthalten und pflegen. Fehler oder L\u00FCcken in dieser Zuordnung oder in einzelnen Regeln k\u00F6nnen unmittelbar zu unzul\u00E4ssigen Zugriffen oder zu blockierten legitimen Zugriffen f\u00FChren.",
+      "relatedIds": [
+        "ARCH-11",
+        "REQ-09",
+        "REQ-84"
+      ],
+      "alternatives": null
+    }
+  ]
+}

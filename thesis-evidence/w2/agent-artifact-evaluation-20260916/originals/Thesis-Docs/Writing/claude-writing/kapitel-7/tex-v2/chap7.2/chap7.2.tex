@@ -1,0 +1,284 @@
+% P10-Evaluationsfeinschliff, 16.09.2026: Aussagegrenzen und Anforderungsbilanz; keine neuen Messwerte.
+% B-59, 15.09.2026: datierte Ledger-Nachauswertung, Stützung und Reichweite.
+% Beleg: thesis-evidence/w2/ledger-repetitions-20260915/ (Originale unverändert).
+% B-58, 15.09.2026: Umfang der bereits in D.2 belegten Stufen-Nachprüfung explizit.
+% P10-4c-Nachtrag, 15.09.2026: Systemmodell der vier Hauptläufe explizit;
+% an den archivierten config.json-Dateien und den F-Metriken geprüft.
+% P10-4c, 14.09.2026: Ledger-Herleitung und Nachweisanschlüsse präzisiert.
+% P10-4b, 14.09.2026: Begriffs-/Beleganschlüsse und abgegrenzte Prüfaussagen präzisiert.
+% M19 (12.09.2026): Leserführung und präzise Ergebnisdarstellung;
+% Messwerte und historische Nachweisgrenzen bleiben erhalten.
+% M14 (11.09.2026): 7.2.2 verdichtet; Runden-Details in D.2/D.8,
+% Verfahren, Pruefgrenzen und konsolidierter Stand bleiben im Haupttext.
+% M02 (10.09.2026), B-16: Laufwahl gemäß Manifest; zeitliche
+% Vorabfixierung nicht belegt. Einordnung und Beleggrenze in D.1.
+% ============================================================
+% §7.2 Untersuchungsdesign und Bewertungsverfahren — v02 (08.09.)
+% NACHREVIEW: neue Bewertungsrunde 08.09. in 7.2.2 dokumentiert
+% (2 Voll-Reviews → beauftragte KI-Adjudikation, 8 Änderungen,
+% getrennt von der 8+3-Historie; Meeting-2-Konsistenz 9 IDs/0 Änd.);
+% 7.2.3 + drei Zusatzanalysen (Typen/Evidenzinhalt/Szenario).
+% Zusatz-HERKUNFT: runs/w2-nachreview-konsolidierung.json +
+% kapitel-7/ADJUDIKATION-Auftrag-Kapitel-7-Nachreview.md + beide
+% Review-Dateien (Review-Coverage-109-…/Review-F-Coverage-…).
+% NEUE 8er-Struktur (Schreibplan v2.4 Zeile 7.2: Systemstand/
+% Laufbestand · Fallauswahl ehrlich · Messgrenzen · Referenz+
+% Urteilsregeln inkl. Zählregeln · Entstehungs-Disclosure).
+% Ersetzt alt-7.2+7.3+7.4; Kollegen-Review 07.09. eingearbeitet:
+% Einstiegssatz, 109/Verlauf, Gold-Precision-Korrektur, Nenner
+% Referenzgültigkeit/Stützung, F1 raus, Prüfrunden getrennt,
+% „vor der betreffenden Prüfung dokumentiert" statt vorregistriert.
+% Budget ~2 S. + 1 Tabelle.
+% ============================================================
+% HERKUNFT: Verfahren/Grenzen = thesis-evidence/w2/
+% messprotokoll-kapitel-7.md (inkl. Nachträge Gold v2 + Neube-
+% rechnung + Autor-Volldurchsicht); Urteilsregeln =
+% input/eval-labels/w2-matchregeln.md (Hash ① v1.2); Gold-
+% Entstehung = input/eval-labels/w2-gold-aenderungslog-v2.md +
+% benchmark-checksums.txt (Hash ①/②) + 2 Review-Dossiers 07.09.
+% (kapitel-7/02-gold-pruefung/); Prüfrunden = runs/
+% w2-official-manifest.txt (Chronik) + Z1-Verifikationsprotokoll-
+% 2026-09-07.md; Läufe wie in §7.3/§7.5 einzeln benannt.
+% ------------------------------------------------------------
+
+\section{Untersuchungsdesign und Bewertungsverfahren}
+\label{sec:eval-design}
+
+Die quantitative Evaluation untersucht zwei bereits während der
+Entwicklung verwendete Quellenfälle: ein kurzes Folge-Meeting mit
+36 nummerierten Units und 31 Referenzaussagen sowie einen
+zusammengeführten Interview- und Ausarbeitungsverlauf mit 136
+Units und 109 Referenzaussagen. Die Fälle erfüllen
+unterschiedliche Funktionen: Der Meeting-Fall ist kompakt und klar
+strukturiert und dient als Treue-Fall; der Interview-Fall
+durchläuft mehrere Gesprächs- und Ausarbeitungsphasen und dient
+als Abdeckungs-Stressfall --- gut ein Drittel seines
+Referenzbestands (37 von 109 Aussagen) sind späte
+UI-Detailfestlegungen, was jede ungewichtete Abdeckungszahl
+mitprägt. Dass beide Quellen entwicklungsbekannt waren, ist eine
+ausgewiesene Grenze (Abschnitt~\ref{sec:eval-grenzen}); neue, unbekannte Quellen
+standen für die Kampagne nicht zur Verfügung.
+
+Die vier Hauptläufe --- je ein Lauf der Ledger- und der
+F-Konfiguration pro Quellenfall --- verwendeten GPT-5.4 als
+Systemmodell. Damit beruhen die Hauptvergleiche auf derselben
+Modellwahl. Die ergänzende Modellreihe mit weiteren Modellen ist
+gesondert im Anhang~\ref{anh:evaluation} ausgewiesen.
+
+Die Evaluation verbindet retrospektive Auswertungen
+dokumentierter Systemläufe mit ergänzenden, vor ihrer Ausführung
+spezifizierten Kontrolltests (Abschnitt~\ref{sec:eval-kontrollen}); jeder Untersuchung
+wird der tatsächlich verwendete Systemstand zugeordnet
+(Zuordnung von Lauf-ID, Messpunkt und verfügbaren Stand- und
+Modellangaben einschließlich dokumentierter Rekonstruktionslücken:
+Evidenztabelle im Anhang~\ref{anh:evaluation}). Als
+Benchmarklauf diente je Quellenfall und Konfiguration der
+chronologisch erste vollständige Lauf gemäß der im Laufmanifest
+dokumentierten Auswahlregel; deren Belegstand sowie Fehlversuche
+der Kampagne sind im
+Anhang~\ref{anh:evaluation} ausgewiesen. Beide Quellen lagen deterministisch vorsegmentiert
+vor (nummerierte Units als gemeinsame Adressbasis aller
+Konfigurationen); die Qualität dieser Segmentierung wird nicht
+mitgemessen. Ein zusammenhängender finaler Integrationslauf wurde
+nicht ausgeführt, entsprechend wird keine gemeinsame
+Ausführbarkeit eines späteren Endstands behauptet. Die
+Messgrenzen sind je Abschnitt gesetzt: Abschnitt~\ref{sec:eval-ledgerqualitaet} bewertet den
+maschinellen Claim-Bestand \emph{vor} dem Human-Gate,
+Abschnitt~\ref{sec:eval-kontrollen} die Kontrollen an der Speichernaht, Abschnitt~\ref{sec:eval-fortschreibung}
+historisch belegte, teils menschlich mitgestaltete
+Fortschreibungen.
+
+\subsection{Referenzbestand}
+\label{sec:eval-gold}
+
+Die in Abschnitt~\ref{sec:evidenzgebundene-wissensgewinnung}
+beschriebene offene Suche nach Auslassungen liefert für sich noch
+keine feste Bezugsmenge für eine Abdeckungsquote. Deshalb legt ein
+gesonderter Referenzbestand fest, welche Quellinhalte hier als
+erwartet gelten; die von den Konfigurationen erzeugten Claims bilden
+diesen Maßstab nicht selbst.
+
+Der Referenzbestand entstand als KI-Erstentwurf, der vom Autor
+Unit für Unit gegen die nummerierte Rohquelle konsolidiert wurde
+--- ohne Einsicht in Ausgaben der bewerteten Konfigurationen.
+Regeln (Annotationsleitfaden, Matchregeln) und Quellen wurden vor
+der Validierung eingefroren (Hash-Stufe~1). Nach der
+Hauptauswertung wurde der Bestand zwei separat durchgeführten,
+quellenbasierten KI-Vollprüfungen unterzogen (jede Aussage vorwärts, jede
+Unit rückwärts; gold-bewusst, nicht verblindet); die Befunde
+wurden vom Autor einzeln adjudiziert, als versionierter Stand~v2
+mit Änderungslog eingefroren (Hash-Stufe~2; im Interview-Fall kam
+eine Aussage hinzu: 108\,$\rightarrow$\,109) und der Bestand vom
+Autor vollständig durchgelesen (ohne Befund). Eine unabhängige
+menschliche Zweitannotation fand nicht statt --- der Autor ist
+zugleich Konsolidierer; dieser Prüfstand wird so berichtet, wie er
+vorliegt. Alle nach der Revision betroffenen Urteile wurden gegen
+v2 neu gefällt; Alt- und Neuwerte werden nicht vermischt.
+
+\subsection{Urteilsverfahren und Prüfrunden}
+\label{sec:eval-urteile}
+
+Ein LLM-Evaluator beurteilt anhand der eingefrorenen Matchregeln,
+ob eine Referenzaussage vollständig, teilweise oder nicht
+enthalten ist. Mehrere Claims dürfen sie gemeinsam abdecken
+(Bündelung); für die inhaltliche Korrektheit wird dagegen jeder
+Claim einzeln beurteilt. Die systeminternen Prüfer ersetzen diese
+externe Bewertung nicht.
+
+Die Hauptauswertung vom 06.09. verband eine KI-gestützte
+Urteilsbildung (Adjudikation) mit Beleg je Urteil, eine separate
+KI-Nachprüfung (Verifikation) und eine menschliche
+Stichprobenprüfung durch den Autor. Letztere umfasste
+16 Urteilsblöcke des Stressfalls sowie die Prüfbasis der Lücken
+ohne zugeordneten Prüfhinweis. Die nach der Gold-Revision am
+07.09. neu gefällten Urteile erhielten keinen eigenen Verifikationsdurchgang.
+Tabelle~\ref{t:anh-runden} dokumentiert die einzelnen Runden,
+Prüfumfänge und Korrekturen; deren Zählungen bleiben getrennt.
+
+Am 08.09. wurden beide Stressfall-Auswertungen vollständig
+KI-nachgeprüft, einschließlich der bisherigen Volltreffer. Die
+Prüfer kannten die bisherigen Urteile; eine Verblindung fand
+nicht statt. Anschließend entschied eine gesonderte
+KI-Adjudikation über die Änderungsvorschläge. Die dabei
+präzisierten Regelauslegungen wurden auf beide Konfigurationen
+angewandt und im Meeting-Fall gezielt an neun strukturgleichen
+Fällen geprüft, ohne weitere Änderungen. Eine erneute
+Vollprüfung des Meeting-Falls fand in dieser Runde nicht statt.
+Die Stufenanalyse (Abschnitt~\ref{sec:eval-stufen}) erhielt
+eine separate KI-Nachprüfung beider Statusänderungen und zehn
+per Seed ausgewählter unveränderter Paare, insgesamt zwölf Paare;
+auch sie war nicht verblindet und
+wich von der vorgesehenen Lesereihenfolge ab. Eine unabhängige
+menschliche Zweitannotation fand nicht statt.
+
+Kapitel~\ref{chap:evaluation} berichtet den daraus entstandenen
+\emph{konsolidierten Auswertungsstand}. Die Nachprüfung vom 08.09.
+änderte Bewertungen derselben Systemausgaben, weder die Ausgaben
+selbst noch den Referenzbestand. Frühere Werte bleiben im
+Änderungsnachweis erhalten. Die grundlegenden Match- und
+Zählregeln waren vor der Hauptauswertung eingefroren; spätere
+Prüfrunden dokumentierten ihre Prüfregeln vor der jeweiligen
+Prüfung. Die Nachreview-Runde enthält zusätzlich nachträgliche,
+ergebnisbekannte Auslegungsentscheidungen. Ihre Begründungen und
+die Auswirkungen alternativer Auslegungen auf die Kennzahlen
+sind in Anhang~\ref{anh:evaluation},
+\hyperref[anh:coverage-nachreview]{Abschnitt~D.8}, ausgewiesen.
+Auch die Darstellung dieses Kapitels wurde nach der
+Hauptauswertung überarbeitet.
+
+Am 15.09. wurden zwei weitere archivierte Ledger-Ausgaben des
+Stressfalls nach den bisherigen Regeln und dokumentierten
+Auslegungen bewertet: je 109 Abdeckungsurteile sowie Korrektheit
+und Quellenstützung aller Claims. Ein vor diesen Urteilen
+festgehaltener Leitfaden bestimmte das Vorgehen. Ein dabei erkannter
+unvollständiger Quellenbezug führte zur dokumentierten Erweiterung um eine
+erneute Claim-Prüfung des Hauptlaufs; dessen Abdeckungsurteile blieben
+unverändert. Insgesamt wurden 135 Claims KI-gestützt nachgeprüft.
+Der Autor beurteilte drei ausgewählte Fälle zur Verbindlichkeit der Aussagen anhand von
+Quellen-/Claim-Gegenüberstellungen. Diese fallbezogene Prüfung ist
+keine unabhängige Zweitannotation. Verfahren, Revisionen und
+Auslegungsalternativen stehen in
+\hyperref[anh:ledger-wiederholungen]{Anhang~D.11}.
+
+\subsection{Metriken und Zählregeln}
+\label{sec:eval-metriken}
+
+Tabelle~\ref{t:eval-metriken-v2} definiert die verwendeten
+Kennzahlen nach dem tatsächlich angewandten Rechenverfahren.
+$G$ bezeichnet den Referenzbestand, $|G|$ seine Anzahl an Aussagen.
+Die Zähler $N_{\mathrm{full}}$, $N_{\mathrm{partial}}$ und
+$N_{\mathrm{none}}$ erfassen vollständig, teilweise beziehungsweise
+nicht abgedeckte Referenzaussagen. Als \emph{Lücke} zählt hier jede
+nicht vollständig abgedeckte Aussage, also sowohl \emph{partial}
+als auch \emph{none}.
+
+\input{tables/Chap7-v02/chap7.2table1}
+
+\emph{Zuordnung und Zählung.} Ein Prüfhinweis darf mehrere Lücken
+adressieren; jede Lücke und jeder Hinweis zählt je Kennzahl nur einmal.
+Eine Lücke gilt als zugeordnet, wenn Hinweis und Referenzaussage
+mindestens eine Quell-Unit gemeinsam haben. Einzeln dokumentierte
+semantische Zuordnungen ergänzen diese Regel. Kennzahlen mit Nenner
+null werden als nicht definiert ausgewiesen. Eine gültige Quellen-ID
+belegt zunächst nur die technische Auflösbarkeit des Verweises.
+
+% P10-6: Definition der tatsächlich verwendeten Korrektheitskennzahl zusammenhalten.
+\begin{samepage}
+\emph{Abweichung vom Messprotokoll.} Die eingefrorenen Matchregeln
+sehen eine strikte \emph{Gold-Precision} vor: den Anteil der einzeln
+vollständig gold-gematchten Claims an allen gelieferten Claims.
+Quellengetragene Inhalte außerhalb des Referenzbestands gelten dort
+nicht als Treffer. Diese Kennzahl wurde nicht berechnet.
+Tatsächlich angewandt und hier berichtet wird die \emph{inhaltliche
+Korrektheit}: der Anteil der Claims ohne festgestellten Widerspruch
+zur Quelle oder Quellenverfälschung. Die Abweichung wurde für beide
+Konfigurationen identisch angewandt und im Messprotokoll nachgetragen;
+das eingefrorene Regeldokument bleibt unverändert erhalten.
+\par
+\end{samepage}
+
+
+Quellengetragene Inhalte außerhalb des Referenzbestands zählen bei
+diesem Verfahren nicht als Fehler. Eine nach der Gold-Revision
+geprüfte Zählung solcher \emph{gold\_escapes} liegt nur für den
+F-Treue-Fall vor (drei, alle gestützt). Das historische
+F-Stressfall-Blatt enthält einen Zähler von 17 auf dem früheren
+Referenzstand. Er wurde nach der Revision nicht neu geprüft und wird
+nicht übernommen (Anhang~\ref{anh:evaluation},
+\hyperref[anh:referenzpruefung]{Abschnitt~D.3}).
+
+\emph{Gegenstand der Inhaltsbewertung.} Bewertet wird der
+Aussagentext der Claims. Die fachliche Güte weiterer strukturierter
+Felder, etwa Facetten oder Status, gehört nicht zu dieser Kennzahl;
+systeminterne Prüferurteile ersetzen das externe Urteil nicht.
+Plausible, aber in der Quelle nicht gestützte Ergänzungen gelten
+nicht als quellenwidrig. Sie werden über die gesonderte Kennzahl der
+\emph{semantischen Stützung} erfasst. Auch ein inhaltlich korrekter
+Claim kann durch seine angegebenen Units nur teilweise gestützt sein,
+wenn nötiger Gesprächskontext außerhalb dieser Auswahl liegt.
+Bei F bewertete die bestehende Auswertung genau
+eine redaktionelle Zuordnung als nicht vollständig quellengetragen:
+die Zuweisung der zweiten Versionsnummer zu Dart, während die Quelle
+zweimal Flutter nennt. Daraus ergibt sich die Stützung von 0{,}991.
+Die ergänzende Claim-Prüfung vom 15.09. beschränkte sich auf den
+Ledger; die Stützungsurteile von F wurden dabei nicht erneut geprüft.
+
+\emph{Messgrenze.} Alle Inhaltsmetriken werden je Fall berechnet,
+ohne Aggregation über die Fälle. Läufe ohne gültiges Artefakt gelten
+als Ausfall und erhalten keine künstlichen Nullwerte. Der Aufwand
+umfasst ausschließlich Input- und Output-Tokens desselben
+Verarbeitungsausschnitts, einschließlich tatsächlich zugehöriger
+interner Reparaturen und Wiederholungen. Zusätzliche fehlgeschlagene
+Versuche der Kampagne werden gesondert ausgewiesen; die externe
+LLM-Adjudikation zählt nicht zum Systemaufwand.
+
+Die Trennung von Korrektheits- und Abdeckungsprüfung greift eine
+Unterscheidung der aktuellen Evaluationsliteratur zu langen
+generierten Texten auf: Samarinas et al.\ unterscheiden die
+faktische Stützung generierter Aussagen von der Abdeckung
+erwarteter Aspekte
+% K6-TODO (Autor, Overleaf-Bib): [96] von "arXiv Version 4" auf die
+% begutachtete Publikationsfassung umstellen — VERIFIZIERT 08.09. an
+% aclanthology.org/2025.findings-acl.693: Samarinas, Krubner, Salemi,
+% Kim, Zamani: "Beyond Factual Accuracy: …", Findings of the
+% Association for Computational Linguistics: ACL 2025, S. 13468–13482,
+% Wien, Juli 2025, DOI 10.18653/v1/2025.findings-acl.693.
+% Fertiger BibTeX-Eintrag im NACHREVIEW-UMSETZUNGSPROTOKOLL.md.
+\cite{samarinas2025coverage}. Die vorliegende Arbeit übernimmt
+diese Trennung der Bewertungsrichtungen, operationalisiert
+Abdeckung jedoch als ungewichtete Erhaltung festgelegter
+Referenzaussagen --- jede zählt gleich; ein kombinierter
+Gesamtscore im Sinne dieses Verfahrens wird nicht berechnet.
+
+Die Nachreview-Runde ergänzt drei klar getrennte
+\emph{Zusatzanalysen} ohne neue Gesamtmetrik: eine qualitative
+Typisierung der Lücken beider Konfigurationen nach dem fehlenden
+Bestandteil (Häufigkeiten, keine Wichtigkeitsskala); eine
+Betrachtung, ob im Aussagentext eines Claims fehlender Inhalt in
+\emph{tatsächlich gespeicherten} Belegzitaten erhalten ist (ein
+anderer Artefaktumfang als die Claim-Abdeckung --- der lediglich
+referenzierbare Ursprungstext zählt dort nicht); und eine
+ausdrücklich hypothetische Szenariorechnung zu den
+Queue-Zuordnungen (Abschnitt~\ref{sec:eval-luecken}). Diese Größen werden
+nebeneinander berichtet und nicht addiert; Definitionen und
+Herleitungen stehen im Anhang~\ref{anh:evaluation}.

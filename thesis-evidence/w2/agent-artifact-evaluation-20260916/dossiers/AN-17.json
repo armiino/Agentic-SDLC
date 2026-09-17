@@ -1,0 +1,436 @@
+{
+  "case_id": "AN-17",
+  "report_index_zero_based": 16,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "risiko",
+    "disposition": "question",
+    "statement": "Wie wird verhindert, dass prominente Übergabe-Hinweise und weitere Benachrichtigungen im Pflege-Alltag zu Gewöhnungseffekten führen und dadurch gerade kritische Informationen bei Schichtwechseln übersehen werden?",
+    "herleitung": "Abgeleitet aus REQ-61, REQ-81 und REQ-40: Die App soll Übergabe-Notizen beim Öffnen prominent anzeigen, am Schichtende eine Zusammenfassung von Medikamenten-Gaben zeigen und perspektivisch weitere Benachrichtigungen zu neuen Inhalten ausspielen. Damit entsteht ein konkretes Adoptionsrisiko im Pflege-Alltag: Wenn mehrere Hinweise als wichtig erscheinen, können Nutzer sie routiniert wegklicken oder nicht mehr priorisieren. Eine entsprechende offene Frage ist im Bestand noch nicht abgedeckt.",
+    "kategorie": "process",
+    "ankerIds": [
+      "REQ-61",
+      "REQ-81",
+      "REQ-40"
+    ]
+  },
+  "reported_status": "kritiker_aussortiert",
+  "critic_reason": "Zu allgemein und stark hypothesengetrieben; keine klare, entscheidbare Anforderung oder konkrete Projektregel ableitbar.",
+  "anchors_and_mentions": [
+    {
+      "id": "REQ-40",
+      "present": true,
+      "item": {
+        "itemId": "REQ-40",
+        "itemType": "requirement",
+        "text": "Wenn im About-Me-Bereich neue Inhalte hochgeladen werden, sollen verbundene Nutzer derselben Einrichtung per Popup benachrichtigt werden; dies ist als spätere mögliche Erweiterung vorgesehen.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_113115_35335a",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "canon-benachrichtigungen-about-me-updates"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4"
+        },
+        "identityKey": "wenn im about me bereich neue inhalte hochgeladen werden sollen verbundene nutzer derselben einrichtung per popup benachrichtigt werden dies ist als spätere mögliche erweiterung vorgesehen",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    },
+    {
+      "id": "REQ-61",
+      "present": true,
+      "item": {
+        "itemId": "REQ-61",
+        "itemType": "requirement",
+        "text": "Es soll eine Übergabe-Notiz pro Schicht geben, die der nächsten Schicht beim Öffnen der App prominent angezeigt wird.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_134102_c63c89",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "uebergabe-notizen-schichtworkflow"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "REQ-08"
+        },
+        "identityKey": "eine übergabe notiz pro schicht geben die der nächsten schicht beim öffnen der app prominent angezeigt wird",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "confirmedInRun": "20260723_134102_c63c89",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "REQ-81",
+      "present": true,
+      "item": {
+        "itemId": "REQ-81",
+        "itemType": "requirement",
+        "text": "Pflegende müssen am Ende ihrer Schicht eine Tages-Zusammenfassung aller von ihnen dokumentierten Medikamenten-Gaben sehen können, damit sie vor der Übergabe prüfen können, ob alles erfasst ist.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260818_084712_765eea",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "shift-end-medication-summary"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "REQ-03",
+          "ingestedFromRun": "20260818_085820_50b471"
+        },
+        "identityKey": "pflegende müssen am ende ihrer schicht eine tages zusammenfassung aller von ihnen dokumentierten medikamenten gaben sehen können damit sie vor der übergabe prüfen können ob alles erfasst ist",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "REQ-40",
+      "toId": "canon-benachrichtigungen-about-me-updates",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-016",
+      "toId": "REQ-40",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-40",
+      "toId": "FC-07",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-032",
+      "toId": "REQ-61",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-045",
+      "toId": "REQ-81",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-81",
+      "toId": "FC-12",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "FC-07",
+      "itemType": "feature",
+      "text": "About-Me-Profilbereich",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-07",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": "REQ-07,REQ-35,L3-REQ-003,L3-REQ-012,L3-REQ-001"
+      },
+      "identityKey": "about-me-profilbereich",
+      "history": [],
+      "feature": {
+        "label": "About-Me-Profilbereich",
+        "rationale": "Dieses Cluster bündelt den persönlichen About-Me-Bereich mit Kurzinfos, Foto-Timeline, Erweiterbarkeit und Benachrichtigung bei neuen Inhalten. Medien- und Datenschutzregeln wirken mit; die Kennzeichnung neuer Inhalte gehört fachlich direkt zu diesem Feature.",
+        "coreRequirementIds": [
+          "L3-REQ-001",
+          "L3-REQ-003",
+          "L3-REQ-012",
+          "L3-REQ-013",
+          "REQ-07",
+          "REQ-20",
+          "REQ-21",
+          "REQ-22",
+          "REQ-23",
+          "REQ-35",
+          "REQ-40"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "FC-12",
+      "itemType": "feature",
+      "text": "Dokumentationsintegration und Erweiterungen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-12",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": ""
+      },
+      "identityKey": "dokumentationsintegration-und-erweiterungen",
+      "history": [],
+      "feature": {
+        "label": "Dokumentationsintegration und Erweiterungen",
+        "rationale": "Hier geht es um die Anbindung beziehungsweise begrenzte Erweiterung der App in Richtung bestehender Dokumentation, Akten und möglicher Zusatzfunktionen wie Kalender/Medikation. Das ist fachlich ein separater Ausbaupfad jenseits der Kernkommunikationsfeatures.",
+        "coreRequirementIds": [
+          "L3-REQ-014",
+          "REQ-42",
+          "REQ-44",
+          "REQ-48",
+          "REQ-49"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-016",
+      "itemType": "pbi",
+      "text": "About-Me-Neu-Markierungen und Einrichtungs-Benachrichtigungen später ausbauen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260818_114850_eab853",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-benachrichtigungen-about-me-updates"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC07-04",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-07"
+      },
+      "identityKey": "about-me-neu-markierungen-und-benachrichtigung",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "About-Me-Neu-Markierungen und Einrichtungs-Benachrichtigungen später ausbauen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-benachrichtigungen-about-me-updates"
+          ],
+          "recordedUtc": "2026-08-18T12:20:20.6098Z",
+          "note": "MARK_CHANGED: Requirement ARCH-46 verfeinert | ALIGN(R-26-C): Die Anforderung ARCH-46 erweitert die festgelegte technische Umsetzung für Push-Benachrichtigungen von Angehörigen auf Angehörige und Pflegende. Der fachliche Scope des PBIs bleibt gleich; ergänzt wird nur das Akzeptanzkriterium zur technischen Festlegung."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als verbundener Nutzer will ich erkennen oder gemeldet bekommen, wenn im About-Me-Bereich neue Inhalte vorliegen, damit ich aktuelles Wissen schneller wahrnehme.",
+        "title": "About-Me-Neu-Markierungen und Einrichtungs-Benachrichtigungen später ausbauen",
+        "acceptanceCriteria": [
+          "Dieses Backlog Item ist als späterer Ausbau nach dem MVP gekennzeichnet.",
+          "Die spätere Umsetzung soll mindestens Neu-Markierungen in der App und die Option von Popups für verbundene Nutzer derselben Einrichtung berücksichtigen.",
+          "Für Push-Benachrichtigungen an Angehörige und Pflegende ist Firebase Cloud Messaging als technische Umsetzung festgelegt."
+        ],
+        "linkedRequirementIds": [
+          "L3-REQ-013",
+          "REQ-40"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 24,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "later",
+        "trace": {
+          "canonicalRequirementIds": [
+            "L3-REQ-013",
+            "REQ-40"
+          ],
+          "l1Req": [
+            "REQ-40"
+          ],
+          "l3": [
+            "L3-REQ-013"
+          ],
+          "claims": [
+            "canon-benachrichtigungen-about-me-updates"
+          ]
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-032",
+      "itemType": "pbi",
+      "text": "Es soll eine Übergabe-Notiz pro Schicht geben, die der nächsten Schicht beim Öffnen der Ap...",
+      "origin": "pbi-update",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260723_135427_9260f1",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceRunId": "20260723_135427_9260f1",
+        "createdFromRequirement": "REQ-61",
+        "featureId": "FC-12"
+      },
+      "identityKey": null,
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Es soll eine Übergabe-Notiz pro Schicht geben, die der nächsten Schicht beim Öffnen der Ap...",
+          "status": "needs_clarify",
+          "origin": "pbi-update",
+          "sourceRunId": "20260723_135427_9260f1",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-07-23T15:18:38.13091Z",
+          "note": "EXTEND_PBI: Das neue Requirement betrifft dieselbe fachliche Einheit wie PBI-032: Übergabe-Notizen. Der bestehende Zuschnitt umfasst das Erstellen/Bereitstellen einer Übergabe-Notiz pro Schicht; der wöchentliche PDF-Export ist eine zusätzliche Ausgabefunktion auf genau diesem Artefakt und keine eigenständige neue Fachdomäne. Daher ist es fachlich passender, das bestehende PBI zu erweitern, statt ein separates PBI anzulegen."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": null,
+        "title": "Es soll eine Übergabe-Notiz pro Schicht geben, die der nächsten Schicht beim Öffnen der Ap...",
+        "acceptanceCriteria": [],
+        "linkedRequirementIds": [
+          "REQ-61",
+          "REQ-77"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": "needs_clarify",
+        "mvp": null,
+        "trace": null
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "NeedsClarify",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_135427_9260f1",
+      "status": "needs_clarify"
+    },
+    {
+      "itemId": "PBI-045",
+      "itemType": "pbi",
+      "text": "Tages-Zusammenfassung dokumentierter Medikamenten-Gaben am Schichtende anzeigen",
+      "origin": "pbi-update",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260818_084712_765eea",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceRunId": "20260818_084712_765eea",
+        "createdFromRequirement": "REQ-81",
+        "featureId": "FC-12"
+      },
+      "identityKey": null,
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als pflegende Person will ich am Ende meiner Schicht eine Tages-Zusammenfassung aller von mir dokumentierten Medikamenten-Gaben sehen können, damit ich vor der Übergabe prüfen kann, ob alles erfasst ist.",
+        "title": "Tages-Zusammenfassung dokumentierter Medikamenten-Gaben am Schichtende anzeigen",
+        "acceptanceCriteria": [
+          "Pflegende können am Ende ihrer Schicht eine Tages-Zusammenfassung aller von ihnen dokumentierten Medikamenten-Gaben sehen.",
+          "Die Tages-Zusammenfassung zeigt nur Medikamenten-Gaben, die von der jeweiligen pflegenden Person selbst dokumentiert wurden.",
+          "Die Tages-Zusammenfassung steht zur Prüfung vor der Übergabe am Ende der Schicht zur Verfügung."
+        ],
+        "linkedRequirementIds": [
+          "REQ-81"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": "active",
+        "mvp": null,
+        "trace": null
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "REQ-40": 0,
+    "REQ-61": 2,
+    "REQ-81": 1
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

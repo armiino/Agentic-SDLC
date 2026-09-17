@@ -1,0 +1,1196 @@
+{
+  "case": {
+    "operation_key": "20260821_204808_042823|0|CA-2",
+    "run_id": "20260821_204808_042823",
+    "operation_index": 0,
+    "incoming_id": "CA-2",
+    "proposed_kind": "NEW_RELATED",
+    "proposed_target": null,
+    "feature_hint": "besuchsankuendigung",
+    "route_group": "other_delta",
+    "route_basis": "explicit delta + stored path",
+    "family": "new_requirement",
+    "known_run": false,
+    "plan_path": "originals/runs/fullworkflow/20260821_204808_042823/07-ingest/plan.json",
+    "plan_sha256": "6e0009890f8bae31f57220a82056332b7bda41ceab37b5d31537cdf8c5b60a46",
+    "operation_sha256": "74fe78abb39c6dbe9c9975783c35958589f53ea0d8980e8f0d6749221a85ef3c",
+    "rank_sha256": "1e0ecb6cb29394166ca3a191b09fd63f01a2191d988002cc3ef662566ac04609",
+    "has_statement": true,
+    "case_id": "N07",
+    "role": "additional",
+    "selected_slot": "other_delta/new_requirement"
+  },
+  "incoming": {
+    "itemId": "CA-2",
+    "itemType": "requirement",
+    "text": "Angehörige müssen eine bereits angefragte oder bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen können; nach einer Änderung muss der Besuch erneut den Status „angefragt“ erhalten, und nach einer Absage darf keine Erinnerung mehr versendet werden.",
+    "origin": "CoreAnalyst",
+    "stage": "core_analyst",
+    "version": 1,
+    "sourceRunId": "20260821_203951_db6050",
+    "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+    "sourceArtifactType": "analyst-finding",
+    "sourceDecisionId": null,
+    "sourceCandidateId": null,
+    "sourceClaimIds": [],
+    "sourceArtifactItemIds": [],
+    "metadata": {
+      "quelle": "core-analyst (erschlossen, nicht gesagt)",
+      "linse": "funktional",
+      "analystKategorie": "functional",
+      "herleitung": "Abgeleitet aus REQ-82 und REQ-87: Es gibt das Ankündigen sowie die Pflege-Entscheidung mit den Status angefragt, bestätigt und abgelehnt, aber keine Regel für den häufigen Folgefall, dass Angehörige Datum/Uhrzeit nachträglich ändern oder den Besuch absagen müssen. Aus REQ-88 folgt zusätzlich, dass ohne Absage-Regel falsche Erinnerungen an nicht mehr gültige Besuche versendet würden.",
+      "ankerIds": "REQ-82,REQ-87,REQ-88"
+    },
+    "identityKey": null,
+    "history": null,
+    "feature": null,
+    "pbi": null,
+    "validity": "Active",
+    "blocker": "None",
+    "confirmedBy": "Agent",
+    "status": "baseline"
+  },
+  "source_descriptors": [
+    {
+      "sourceId": "core-analysis:20260821_203951_db6050",
+      "sourceType": "analyst-finding",
+      "path": "runs/core-analysis/20260821_203951_db6050",
+      "runId": "20260821_203951_db6050",
+      "description": "Lücken-Hypothesen des Core-Analysten (erschlossen aus dem Bestand — Autor entscheidet an Tor 1)"
+    }
+  ],
+  "proposal": {
+    "incomingItemId": "CA-2",
+    "kind": "NEW_RELATED",
+    "statement": "Angehörige müssen eine bereits angefragte oder bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen können; nach einer Änderung muss der Besuch erneut den Status „angefragt“ erhalten, und nach einer Absage darf keine Erinnerung mehr versendet werden.",
+    "targetEntityId": null,
+    "featureKey": "besuchsankuendigung",
+    "claimIds": [
+      "CA-2"
+    ],
+    "rationale": "Fachlich neu im selben Besuchs-Feature wie REQ-82/REQ-87/REQ-88: bestehend sind Ankündigung, Bestätigung/Ablehnung, Statusanzeige und Erinnerung, aber noch nicht das nachträgliche Ändern/Absagen durch Angehörige samt Rücksetzung auf „angefragt“ und Unterdrückung der Erinnerung nach Absage. Kein Widerspruch zur Architektur; ARCH-48 stützt sogar das Zurückziehen der Erinnerung bei Absage.",
+    "relatedRejectionId": null
+  },
+  "before": [
+    {
+      "itemId": "PBI-046",
+      "itemType": "pbi",
+      "text": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260818_084712_765eea",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC15-01",
+        "sourceRunId": "20260818_084712_765eea",
+        "legacyOpenDecisions": "0",
+        "featureId": "FC-15"
+      },
+      "identityKey": "ik-FC-15-1",
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Angehörige/r will ich Besuche bei meiner Bezugsperson vorab in der App mit Datum und Uhrzeit ankündigen können, damit der Besuch vor dem Termin erfasst ist.",
+        "title": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen",
+        "acceptanceCriteria": [
+          "Angehörige können einen Besuch bei ihrer Bezugsperson in der App vorab ankündigen.",
+          "Bei der Besuchsankündigung werden Datum und Uhrzeit erfasst."
+        ],
+        "linkedRequirementIds": [
+          "REQ-82"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": null,
+        "mvp": null,
+        "trace": {
+          "canonicalRequirementIds": [],
+          "l1Req": [
+            "REQ-82"
+          ],
+          "l3": [],
+          "claims": []
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    }
+  ],
+  "ingest_decision": {
+    "runId": "20260821_204808_042823",
+    "reviewer": "author via steward-chat",
+    "decisions": [
+      {
+        "incomingItemId": "CA-2",
+        "decision": "apply",
+        "reason": null
+      },
+      {
+        "incomingItemId": "CA-3",
+        "decision": "apply",
+        "reason": null
+      },
+      {
+        "incomingItemId": "CA-4",
+        "decision": "apply",
+        "reason": null
+      }
+    ]
+  },
+  "applied_entries": [
+    {
+      "incomingItemId": "CA-2",
+      "kind": "NEW_RELATED",
+      "entityId": "REQ-91",
+      "outcome": "added"
+    }
+  ],
+  "after_ingest": [
+    {
+      "itemId": "REQ-91",
+      "itemType": "requirement",
+      "text": "Angehörige müssen eine bereits angefragte oder bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen können; nach einer Änderung muss der Besuch erneut den Status „angefragt“ erhalten, und nach einer Absage darf keine Erinnerung mehr versendet werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_204808_042823",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-2"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-2",
+        "ingestedFromRun": "20260821_203951_db6050",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-82 und REQ-87: Es gibt das Ankündigen sowie die Pflege-Entscheidung mit den Status angefragt, bestätigt und abgelehnt, aber keine Regel für den häufigen Folgefall, dass Angehörige Datum/Uhrzeit nachträglich ändern oder den Besuch absagen müssen. Aus REQ-88 folgt zusätzlich, dass ohne Absage-Regel falsche Erinnerungen an nicht mehr gültige Besuche versendet würden.",
+        "linse": "funktional",
+        "featureKey": "besuchsankuendigung"
+      },
+      "identityKey": "angehörige müssen eine bereits angefragte oder bestätigte besuchsankündigung bis zum beginn des besuchs ändern oder absagen können nach einer änderung muss der besuch erneut den status angefragt erhalten und nach einer absage darf keine erinnerung mehr versendet werden",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    }
+  ],
+  "before_pbi": [
+    {
+      "itemId": "PBI-046",
+      "itemType": "pbi",
+      "text": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260818_084712_765eea",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC15-01",
+        "sourceRunId": "20260818_084712_765eea",
+        "legacyOpenDecisions": "0",
+        "featureId": "FC-15"
+      },
+      "identityKey": "ik-FC-15-1",
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Angehörige/r will ich Besuche bei meiner Bezugsperson vorab in der App mit Datum und Uhrzeit ankündigen können, damit der Besuch vor dem Termin erfasst ist.",
+        "title": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen",
+        "acceptanceCriteria": [
+          "Angehörige können einen Besuch bei ihrer Bezugsperson in der App vorab ankündigen.",
+          "Bei der Besuchsankündigung werden Datum und Uhrzeit erfasst."
+        ],
+        "linkedRequirementIds": [
+          "REQ-82"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": null,
+        "mvp": null,
+        "trace": {
+          "canonicalRequirementIds": [],
+          "l1Req": [
+            "REQ-82"
+          ],
+          "l3": [],
+          "claims": []
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "REQ-91",
+      "itemType": "requirement",
+      "text": "Angehörige müssen eine bereits angefragte oder bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen können; nach einer Änderung muss der Besuch erneut den Status „angefragt“ erhalten, und nach einer Absage darf keine Erinnerung mehr versendet werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_204808_042823",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-2"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-2",
+        "ingestedFromRun": "20260821_203951_db6050",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-82 und REQ-87: Es gibt das Ankündigen sowie die Pflege-Entscheidung mit den Status angefragt, bestätigt und abgelehnt, aber keine Regel für den häufigen Folgefall, dass Angehörige Datum/Uhrzeit nachträglich ändern oder den Besuch absagen müssen. Aus REQ-88 folgt zusätzlich, dass ohne Absage-Regel falsche Erinnerungen an nicht mehr gültige Besuche versendet würden.",
+        "linse": "funktional",
+        "featureKey": "besuchsankuendigung"
+      },
+      "identityKey": "angehörige müssen eine bereits angefragte oder bestätigte besuchsankündigung bis zum beginn des besuchs ändern oder absagen können nach einer änderung muss der besuch erneut den status angefragt erhalten und nach einer absage darf keine erinnerung mehr versendet werden",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    }
+  ],
+  "after_pbi_before_forward": [
+    {
+      "itemId": "PBI-046",
+      "itemType": "pbi",
+      "text": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen, ändern und absagen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260821_204808_042823",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC15-01",
+        "sourceRunId": "20260818_084712_765eea",
+        "legacyOpenDecisions": "0",
+        "featureId": "FC-15"
+      },
+      "identityKey": "ik-FC-15-1",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_084712_765eea",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-21T20:57:34.934744Z",
+          "note": "EXTEND_PBI: Das Requirement gehört fachlich direkt zur Erstellung und Verwaltung einer Besuchsankündigung. PBI-046 deckt bereits das Ankündigen eines Besuchs mit Datum und Uhrzeit ab; Ändern und Absagen vor Besuchsbeginn sind keine eigene fachliche Einheit, sondern typische Erweiterungen derselben Aufgabe. Die Folgen für Statusrücksetzung auf „angefragt“ und das Unterdrücken von Erinnerungen bei Absage konkretisieren den Lebenszyklus derselben Besuchsankündigung, statt ein separates PBI zu rechtfertigen. | ALIGN(R-26-C): REQ-91 ergänzt den bestehenden Besuchs-PBI um die Bearbeitung bereits angefragter oder bestätigter Besuchsankündigungen. Daher erweitere ich Titel, Statement und Akzeptanzkriterien um Ändern, Absagen, die Frist bis Besuchsbeginn sowie die Folgen für Status und Erinnerungen."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Angehörige/r will ich Besuche bei meiner Bezugsperson in der App vorab mit Datum und Uhrzeit ankündigen sowie bereits angefragte oder bestätigte Besuchsankündigungen bis zum Beginn des Besuchs ändern oder absagen können, damit Besuchstermine vor dem Termin erfasst und bei Änderungen korrekt neu angefragt bzw. bei Absage ohne weitere Erinnerung behandelt werden.",
+        "title": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen, ändern und absagen",
+        "acceptanceCriteria": [
+          "Angehörige können einen Besuch bei ihrer Bezugsperson in der App vorab ankündigen.",
+          "Bei der Besuchsankündigung werden Datum und Uhrzeit erfasst.",
+          "Angehörige können eine bereits angefragte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen.",
+          "Angehörige können eine bereits bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen.",
+          "Nach einer Änderung erhält der Besuch erneut den Status „angefragt“.",
+          "Nach einer Absage wird keine Erinnerung mehr versendet."
+        ],
+        "linkedRequirementIds": [
+          "REQ-82",
+          "REQ-91"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": null,
+        "mvp": null,
+        "trace": {
+          "canonicalRequirementIds": [],
+          "l1Req": [
+            "REQ-82"
+          ],
+          "l3": [],
+          "claims": []
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "REQ-91",
+      "itemType": "requirement",
+      "text": "Angehörige müssen eine bereits angefragte oder bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen können; nach einer Änderung muss der Besuch erneut den Status „angefragt“ erhalten, und nach einer Absage darf keine Erinnerung mehr versendet werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_204808_042823",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "CA-2"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "CA-2",
+        "ingestedFromRun": "20260821_203951_db6050",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-82 und REQ-87: Es gibt das Ankündigen sowie die Pflege-Entscheidung mit den Status angefragt, bestätigt und abgelehnt, aber keine Regel für den häufigen Folgefall, dass Angehörige Datum/Uhrzeit nachträglich ändern oder den Besuch absagen müssen. Aus REQ-88 folgt zusätzlich, dass ohne Absage-Regel falsche Erinnerungen an nicht mehr gültige Besuche versendet würden.",
+        "linse": "funktional",
+        "featureKey": "besuchsankuendigung"
+      },
+      "identityKey": "angehörige müssen eine bereits angefragte oder bestätigte besuchsankündigung bis zum beginn des besuchs ändern oder absagen können nach einer änderung muss der besuch erneut den status angefragt erhalten und nach einer absage darf keine erinnerung mehr versendet werden",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    }
+  ],
+  "relations_before_ingest": [
+    {
+      "fromId": "PBI-046",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-046",
+      "toId": "REQ-82",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-046",
+      "toId": "gh#44",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "44",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-08-18T10:38:26.5530360Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/44",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "1883387dd3959772",
+        "projectedBodyHash": "66ea051d5b56e358",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+      }
+    }
+  ],
+  "relations_before_pbi": [
+    {
+      "fromId": "PBI-046",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-046",
+      "toId": "REQ-82",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-046",
+      "toId": "gh#44",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "44",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-08-18T10:38:26.5530360Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/44",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "1883387dd3959772",
+        "projectedBodyHash": "66ea051d5b56e358",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+      }
+    }
+  ],
+  "relations_after_pbi": [
+    {
+      "fromId": "PBI-046",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-046",
+      "toId": "REQ-82",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-046",
+      "toId": "gh#44",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "44",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-08-18T10:38:26.5530360Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/44",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "1883387dd3959772",
+        "projectedBodyHash": "66ea051d5b56e358",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+      }
+    },
+    {
+      "fromId": "PBI-046",
+      "toId": "REQ-91",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-91",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    }
+  ],
+  "pbi_operations": [
+    {
+      "kind": "EXTEND_PBI",
+      "requirementId": "REQ-91",
+      "pbiId": "PBI-046",
+      "featureId": null,
+      "replacementRequirementId": null,
+      "openDecisionRef": null,
+      "rationale": "Das Requirement gehört fachlich direkt zur Erstellung und Verwaltung einer Besuchsankündigung. PBI-046 deckt bereits das Ankündigen eines Besuchs mit Datum und Uhrzeit ab; Ändern und Absagen vor Besuchsbeginn sind keine eigene fachliche Einheit, sondern typische Erweiterungen derselben Aufgabe. Die Folgen für Statusrücksetzung auf „angefragt“ und das Unterdrücken von Erinnerungen bei Absage konkretisieren den Lebenszyklus derselben Besuchsankündigung, statt ein separates PBI zu rechtfertigen.",
+      "proposedFeatureLabel": null,
+      "authorAnswerRef": null,
+      "authorAnswerText": null,
+      "value": null
+    }
+  ],
+  "pbi_alignments": [
+    {
+      "pbiId": "PBI-046",
+      "proposedTitle": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen, ändern und absagen",
+      "proposedStatement": "Als Angehörige/r will ich Besuche bei meiner Bezugsperson in der App vorab mit Datum und Uhrzeit ankündigen sowie bereits angefragte oder bestätigte Besuchsankündigungen bis zum Beginn des Besuchs ändern oder absagen können, damit Besuchstermine vor dem Termin erfasst und bei Änderungen korrekt neu angefragt bzw. bei Absage ohne weitere Erinnerung behandelt werden.",
+      "proposedAcceptanceCriteria": [
+        "Angehörige können einen Besuch bei ihrer Bezugsperson in der App vorab ankündigen.",
+        "Bei der Besuchsankündigung werden Datum und Uhrzeit erfasst.",
+        "Angehörige können eine bereits angefragte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen.",
+        "Angehörige können eine bereits bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen.",
+        "Nach einer Änderung erhält der Besuch erneut den Status „angefragt“.",
+        "Nach einer Absage wird keine Erinnerung mehr versendet."
+      ],
+      "rationale": "REQ-91 ergänzt den bestehenden Besuchs-PBI um die Bearbeitung bereits angefragter oder bestätigter Besuchsankündigungen. Daher erweitere ich Titel, Statement und Akzeptanzkriterien um Ändern, Absagen, die Frist bis Besuchsbeginn sowie die Folgen für Status und Erinnerungen.",
+      "triggerRequirementIds": [
+        "REQ-91"
+      ],
+      "targetRequirementId": null,
+      "targetFeatureId": null,
+      "proposedPriority": null,
+      "proposedEstimate": null
+    }
+  ],
+  "pbi_human_decisions": {
+    "runId": "20260821_204808_042823",
+    "reviewer": "human (review-ui)",
+    "decisions": [
+      {
+        "opId": "op-0",
+        "decision": "apply",
+        "reason": null,
+        "featureId": null
+      },
+      {
+        "opId": "op-1",
+        "decision": "apply",
+        "reason": null,
+        "featureId": null
+      },
+      {
+        "opId": "op-2",
+        "decision": "apply",
+        "reason": null,
+        "featureId": null
+      }
+    ],
+    "alignmentDecisions": [
+      {
+        "pbiId": "PBI-003",
+        "decision": "accept",
+        "editedTitle": "Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung sowie Einrichtungsgrenzen in der Suche festlegen",
+        "editedStatement": "Als Product Owner will ich das Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung sowie einen serverseitigen Suchrahmen für die einrichtungsgebundene Stichwortsuche über alle Bewohnerprofile festlegen, damit Zugriffe und Suchtreffer die Einrichtungsgrenze fachlich korrekt und technisch nicht umgehen.",
+        "editedAcceptanceCriteria": [
+          "Für die einrichtungsgebundene Stichwortsuche über alle Bewohnerprofile ist ein serverseitiger Suchrahmen festgelegt.",
+          "Suchindizes enthalten nur Inhalte der jeweils zugeordneten Einrichtung oder sind nur innerhalb dieser Einrichtung abfragbar.",
+          "Suchtreffer können die Einrichtungsgrenze technisch nicht umgehen."
+        ],
+        "reason": null,
+        "editedPriority": null,
+        "editedEstimate": null
+      },
+      {
+        "pbiId": "PBI-046",
+        "decision": "accept",
+        "editedTitle": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen, ändern und absagen",
+        "editedStatement": "Als Angehörige/r will ich Besuche bei meiner Bezugsperson in der App vorab mit Datum und Uhrzeit ankündigen sowie bereits angefragte oder bestätigte Besuchsankündigungen bis zum Beginn des Besuchs ändern oder absagen können, damit Besuchstermine vor dem Termin erfasst und bei Änderungen korrekt neu angefragt bzw. bei Absage ohne weitere Erinnerung behandelt werden.",
+        "editedAcceptanceCriteria": [
+          "Angehörige können einen Besuch bei ihrer Bezugsperson in der App vorab ankündigen.",
+          "Bei der Besuchsankündigung werden Datum und Uhrzeit erfasst.",
+          "Angehörige können eine bereits angefragte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen.",
+          "Angehörige können eine bereits bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen.",
+          "Nach einer Änderung erhält der Besuch erneut den Status „angefragt“.",
+          "Nach einer Absage wird keine Erinnerung mehr versendet."
+        ],
+        "reason": null,
+        "editedPriority": null,
+        "editedEstimate": null
+      },
+      {
+        "pbiId": "PBI-032",
+        "decision": "accept",
+        "editedTitle": "Es soll eine Übergabe-Notiz pro Schicht geben, die bis zur Archivierung bearbeitet werden kann und deren letzte gültige Fassung nachvollziehbar ist",
+        "editedStatement": "Als Pflegekraft will ich eine Übergabe-Notiz pro Schicht bis zur Archivierung bearbeiten können, damit Änderungen vor der Archivierung möglich sind und die zuletzt gültige Fassung jeweils mit Änderungszeitpunkt und bearbeitendem Account nachvollziehbar bleibt.",
+        "editedAcceptanceCriteria": [
+          "Übergabe-Notizen können bis zur Archivierung bearbeitet werden.",
+          "Bei jeder Bearbeitung bleibt die zuletzt gültige Fassung nachvollziehbar erhalten.",
+          "Zu jeder zuletzt gültigen Fassung sind Änderungszeitpunkt und bearbeitender Account nachvollziehbar."
+        ],
+        "reason": null,
+        "editedPriority": null,
+        "editedEstimate": null
+      }
+    ]
+  },
+  "pbi_apply_report": {
+    "newPbis": [],
+    "updatedPbis": [
+      "PBI-003",
+      "PBI-046",
+      "PBI-032"
+    ],
+    "finalStatus": {
+      "PBI-003": "active",
+      "PBI-046": "active",
+      "PBI-032": "active"
+    },
+    "relationsAdded": 4,
+    "relationsRemoved": 0,
+    "skipped": []
+  },
+  "projection_entries": [
+    {
+      "pbiId": "PBI-046",
+      "title": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen, ändern und absagen",
+      "status": "active",
+      "readiness": "ready",
+      "coveredRequirementIds": [
+        "REQ-82",
+        "REQ-91"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#44",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Angehörige können einen Besuch bei ihrer Bezugsperson in der App vorab ankündigen.",
+        "Bei der Besuchsankündigung werden Datum und Uhrzeit erfasst.",
+        "Angehörige können eine bereits angefragte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen.",
+        "Angehörige können eine bereits bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen.",
+        "Nach einer Änderung erhält der Besuch erneut den Status „angefragt“.",
+        "Nach einer Absage wird keine Erinnerung mehr versendet."
+      ],
+      "statement": "Als Angehörige/r will ich Besuche bei meiner Bezugsperson in der App vorab mit Datum und Uhrzeit ankündigen sowie bereits angefragte oder bestätigte Besuchsankündigungen bis zum Beginn des Besuchs ändern oder absagen können, damit Besuchstermine vor dem Termin erfasst und bei Änderungen korrekt neu angefragt bzw. bei Absage ohne weitere Erinnerung behandelt werden.",
+      "constraints": null,
+      "coveredArchitecture": null,
+      "priority": null,
+      "estimate": null
+    }
+  ],
+  "github_decisions": {
+    "runId": "20260821_204808_042823",
+    "reviewer": "author via steward-chat",
+    "decisions": [
+      {
+        "opId": "op-0",
+        "decision": "apply",
+        "reason": null
+      },
+      {
+        "opId": "op-1",
+        "decision": "apply",
+        "reason": null
+      },
+      {
+        "opId": "op-2",
+        "decision": "apply",
+        "reason": null
+      },
+      {
+        "opId": "op-3",
+        "decision": "apply",
+        "reason": null
+      },
+      {
+        "opId": "op-4",
+        "decision": "apply",
+        "reason": null
+      },
+      {
+        "opId": "op-5",
+        "decision": "apply",
+        "reason": null
+      },
+      {
+        "opId": "op-6",
+        "decision": "apply",
+        "reason": null
+      },
+      {
+        "opId": "op-7",
+        "decision": "apply",
+        "reason": null
+      }
+    ]
+  },
+  "github_report": {
+    "dryRun": false,
+    "executed": true,
+    "success": true,
+    "repository": "armiino/Agentic-GitHub-refactor",
+    "sourcePlanId": "github-forward-plan-20260821_205735",
+    "startedUtc": "2026-08-21T21:04:47.070594Z",
+    "completedUtc": "2026-08-21T21:04:56.821232Z",
+    "operations": [
+      {
+        "opId": "op-0",
+        "kind": "UPDATE_ISSUE",
+        "pbiId": "PBI-003",
+        "targetIssueNumber": 3,
+        "resultIssueNumber": 3,
+        "resultUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/3",
+        "status": "updated",
+        "message": null
+      },
+      {
+        "opId": "op-1",
+        "kind": "UPDATE_ISSUE",
+        "pbiId": "PBI-032",
+        "targetIssueNumber": 32,
+        "resultIssueNumber": 32,
+        "resultUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/32",
+        "status": "updated",
+        "message": null
+      },
+      {
+        "opId": "op-2",
+        "kind": "UPDATE_ISSUE",
+        "pbiId": "PBI-046",
+        "targetIssueNumber": 44,
+        "resultIssueNumber": 44,
+        "resultUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/44",
+        "status": "updated",
+        "message": null
+      },
+      {
+        "opId": "op-3",
+        "kind": "UPSERT_FILE",
+        "pbiId": "doc:docs/anforderungen.md",
+        "targetIssueNumber": null,
+        "resultIssueNumber": null,
+        "resultUrl": null,
+        "status": "doc-upserted",
+        "message": null
+      },
+      {
+        "opId": "op-4",
+        "kind": "UPSERT_FILE",
+        "pbiId": "doc:docs/backlog.md",
+        "targetIssueNumber": null,
+        "resultIssueNumber": null,
+        "resultUrl": null,
+        "status": "doc-upserted",
+        "message": null
+      },
+      {
+        "opId": "op-5",
+        "kind": "UPSERT_FILE",
+        "pbiId": "doc:docs/architecture.md",
+        "targetIssueNumber": null,
+        "resultIssueNumber": null,
+        "resultUrl": null,
+        "status": "doc-upserted",
+        "message": null
+      },
+      {
+        "opId": "op-6",
+        "kind": "UPSERT_FILE",
+        "pbiId": "doc:docs/adr/0004-einrichtungsgebundener-serverseitiger-suchrahmen.md",
+        "targetIssueNumber": null,
+        "resultIssueNumber": null,
+        "resultUrl": null,
+        "status": "doc-upserted",
+        "message": null
+      },
+      {
+        "opId": "op-7",
+        "kind": "UPSERT_FILE",
+        "pbiId": "doc:docs/adr/README.md",
+        "targetIssueNumber": null,
+        "resultIssueNumber": null,
+        "resultUrl": null,
+        "status": "doc-upserted",
+        "message": null
+      }
+    ],
+    "summary": {
+      "accepted": 8,
+      "created": 0,
+      "updated": 3,
+      "commented": 0,
+      "linked": 0,
+      "flagged": 0,
+      "held": 0,
+      "noChange": 0,
+      "skipped": 0,
+      "rejected": 0,
+      "failed": 0,
+      "alreadyApplied": 0,
+      "docUpserts": 5
+    }
+  },
+  "rejections": [],
+  "events": [
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "get_incoming_items",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 1,
+      "timestampUtc": "2026-08-21T20:48:10.178963Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "list_core_requirements",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 2,
+      "timestampUtc": "2026-08-21T20:48:10.182004Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "list_core_architecture",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 3,
+      "timestampUtc": "2026-08-21T20:48:10.184162Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "list_open_decisions",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 4,
+      "timestampUtc": "2026-08-21T20:48:10.186024Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "search_rejections",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 5,
+      "timestampUtc": "2026-08-21T20:48:10.190129Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "search_core",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 6,
+      "timestampUtc": "2026-08-21T20:48:13.278872Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "search_core",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 7,
+      "timestampUtc": "2026-08-21T20:48:13.280192Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "search_core",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 8,
+      "timestampUtc": "2026-08-21T20:48:13.281028Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "get_core_entity",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 9,
+      "timestampUtc": "2026-08-21T20:48:15.245803Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "get_core_entity",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 10,
+      "timestampUtc": "2026-08-21T20:48:15.246885Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "get_core_entity",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 11,
+      "timestampUtc": "2026-08-21T20:48:15.248291Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "get_core_entity",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 12,
+      "timestampUtc": "2026-08-21T20:48:15.249459Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "check_state_change_plan",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 13,
+      "timestampUtc": "2026-08-21T20:48:22.756514Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260821_204808_042823",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "save_state_change_plan",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 14,
+      "timestampUtc": "2026-08-21T20:48:28.049428Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "ingest-gate",
+      "checkpointId": "291c50d43fdd43f8a8637c4e4ba8fa17",
+      "timestampUtc": "2026-08-21T20:48:29.500887Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "ingest-gate",
+      "policy": "Interactive",
+      "accepted": 3,
+      "source": "decisions-file",
+      "timestampUtc": "2026-08-21T20:49:14.408201Z"
+    },
+    {
+      "type": "PIPELINE_INGEST_APPLIED",
+      "runId": "20260821_204808_042823",
+      "applied": 3,
+      "timestampUtc": "2026-08-21T20:49:14.43679Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "arch-ingest-gate",
+      "checkpointId": "b3f5f7411c6745d29844ddda6042fbc1",
+      "timestampUtc": "2026-08-21T20:49:32.235507Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "arch-ingest-gate",
+      "policy": "Interactive",
+      "accepted": 1,
+      "source": "decisions-file",
+      "timestampUtc": "2026-08-21T20:50:24.003064Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "adr-gate",
+      "checkpointId": "0598e6e4da83470cac972912075e8477",
+      "timestampUtc": "2026-08-21T20:50:39.358225Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "adr-gate",
+      "policy": "Interactive",
+      "source": "adr-decisions",
+      "accepted": 1,
+      "deferred": 0,
+      "timestampUtc": "2026-08-21T20:51:09.232961Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "decision-gate",
+      "checkpointId": "3e26383b50734a48b200a2dba801e1d1",
+      "timestampUtc": "2026-08-21T20:51:09.268266Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "decision-gate",
+      "policy": "Interactive",
+      "resolved": 0,
+      "deferred": 10,
+      "timestampUtc": "2026-08-21T20:51:39.07097Z"
+    },
+    {
+      "type": "PBI_UPDATE_DERIVE",
+      "runId": "20260821_204808_042823",
+      "deterministic": 1,
+      "unplaced": 2,
+      "timestampUtc": "2026-08-21T20:51:39.097983Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "pbi-gate",
+      "checkpointId": "43fc3ed7531e487abd89426096cdef4f",
+      "timestampUtc": "2026-08-21T20:52:08.128591Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "pbi-gate",
+      "policy": "Interactive",
+      "accepted": 3,
+      "alignments": 3,
+      "timestampUtc": "2026-08-21T20:57:34.916431Z"
+    },
+    {
+      "type": "PBI_UPDATE_APPLY_START",
+      "runId": "20260821_204808_042823",
+      "accepted": 3,
+      "alignments": 3,
+      "featureOverrides": 0,
+      "reviewer": "human (review-ui)",
+      "timestampUtc": "2026-08-21T20:57:34.92182Z"
+    },
+    {
+      "type": "PBI_UPDATE_DONE",
+      "runId": "20260821_204808_042823",
+      "applied": true,
+      "newPbis": 0,
+      "updatedPbis": 3,
+      "timestampUtc": "2026-08-21T20:57:34.946517Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "github-forward-gate",
+      "checkpointId": "dbf5c5a7a8084e9cb66b6914196bf194",
+      "timestampUtc": "2026-08-21T20:57:35.960223Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "github-forward-gate",
+      "policy": "Interactive",
+      "accepted": 8,
+      "overwrite": 0,
+      "execute": true,
+      "timestampUtc": "2026-08-21T21:04:47.058336Z"
+    },
+    {
+      "type": "GITHUB_FWD_DONE",
+      "runId": "20260821_204808_042823",
+      "applied": true,
+      "executed": true,
+      "success": true,
+      "accepted": 8,
+      "linked": 0,
+      "created": 0,
+      "timestampUtc": "2026-08-21T21:04:56.824743Z"
+    },
+    {
+      "type": "PIPELINE_RUN_DONE",
+      "runId": "20260821_204808_042823",
+      "exit": 0,
+      "timestampUtc": "2026-08-21T21:04:56.828504Z"
+    }
+  ],
+  "source_base": "evidence/runs/fullworkflow/20260821_204808_042823",
+  "decision_resolutions": {
+    "runId": "20260821_204808_042823",
+    "reviewer": "author via steward-chat",
+    "resolutions": [
+      {
+        "decisionId": "DEC-001",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      },
+      {
+        "decisionId": "DEC-002",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      },
+      {
+        "decisionId": "DEC-004",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      },
+      {
+        "decisionId": "DEC-006",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      },
+      {
+        "decisionId": "DEC-007",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      },
+      {
+        "decisionId": "DEC-009",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      },
+      {
+        "decisionId": "DEC-010",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      },
+      {
+        "decisionId": "DEC-011",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      },
+      {
+        "decisionId": "DEC-012",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      },
+      {
+        "decisionId": "DEC-013",
+        "action": "defer",
+        "outcome": null,
+        "newStatement": null,
+        "reason": null
+      }
+    ]
+  },
+  "decision_apply_report": null
+}

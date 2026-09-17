@@ -1,0 +1,42 @@
+using AgenticSdlc.HumanReview;
+
+namespace AgenticSdlc.Host.FullWorkflow;
+
+// R3b (2026-07-22): geteilte UI-Review-Orchestrierung — das CollectViaUi-Muster existierte 4x in den *-hitl-
+// Runnern (und aehnlich in den -review-Runnern): Resolved setzen, Review-Server mit Autosave-Persist fahren,
+// final persistieren, Entscheidungs-Datei zurueckgeben. Die ADAPTER bleiben pro Stufe (Session-Bau, Merge,
+// Resolved-Regel, Kontext-Aufloesung, Apply) — das ist Fachlogik.
+public static class ReviewUiFlow
+{
+    public static async Task<(TFile Decisions, ReviewOutcome Outcome)> RunAsync<TFile>(
+        ReviewSession session, string decisionsPath,
+        Func<ReviewItem, bool> resolved,
+        Func<string, string, Task<string>>? resolveContext,
+        Func<ReviewSession, TFile> apply,
+        bool openBrowser,
+        // B1: optionaler Referenz-Katalog-Resolver (rechte Kontext-Leiste, z. B. die Feature-Landkarte). null =
+        // keine Referenz-Details (Stufen ohne rechte Leiste bleiben unberührt).
+        Func<string, Task<ReviewReferenceDetails?>>? resolveReference = null,
+        // U2v2: lazy Kontext-Blöcke IM Referenz-Detail-Panel (z. B. AKs/REQs/ARCHs eines PBI).
+        Func<string, string, Task<string>>? resolveReferenceContext = null,
+        // 1c-② (18.08., Teil-Fertig): Stufen, deren Datei-Semantik „weggelassen = vertagt" sicher trägt
+        // (z. B. adr), dürfen „Fertig" ohne Voll-Entscheidung erlauben. null = Default (alle entschieden).
+        Func<ReviewSession, bool>? isComplete = null)
+    {
+        foreach (var it in session.Items) it.Resolved = resolved(it);
+        async Task Persist() => await JsonFiles.SaveAsync(decisionsPath, apply(session)).ConfigureAwait(false);
+        var result = await LocalReviewServerHost.RunAsync(new ReviewServerOptions
+        {
+            Session = session,
+            RecomputeResolved = resolved,
+            ResolveContext = resolveContext,
+            ResolveReference = resolveReference,
+            ResolveReferenceContext = resolveReferenceContext,
+            OnItemSaved = async _ => await Persist().ConfigureAwait(false),
+            OpenBrowser = openBrowser,
+            IsComplete = isComplete
+        }).ConfigureAwait(false);
+        await Persist().ConfigureAwait(false);
+        return (apply(session), result.Outcome);
+    }
+}

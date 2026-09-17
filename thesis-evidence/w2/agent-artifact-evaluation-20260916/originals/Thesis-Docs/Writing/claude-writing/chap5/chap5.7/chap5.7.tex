@@ -1,0 +1,85 @@
+% M08, 11.09.2026: F1-Anschluss; Rückweg und Projektion getrennt.
+% GithubInboundHarvest/PipelineFullRunner: Sammlung deterministisch,
+% fachliche Aufbereitung bedingt modellgestützt; kein automatischer Core-Write.
+\section{Projektionen und kontrollierte Außenkopplung}
+\label{sec:projektionen-kontrollierte-aussenkopplung}
+
+Der Core wird über operative Sichten nutzbar, ohne seine Rolle als
+maßgeblicher fachlicher Bestand abzugeben (Anforderung A8).
+Im Besuchsfall F1 erscheinen die Arbeitspakete PBI-046 und PBI-047
+als GitHub-Issues \#44 und \#45. Die Projektion macht die geplante
+Arbeit außerhalb des Systems zugänglich; sie implementiert die
+Besuchsfunktion nicht. Abbildung~\ref{fig:projektion-rueckfuehrung}
+zeigt den Hinweg durchgezogen und den kontrollierten Rückweg
+gestrichelt.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/05/abbildung5.7.pdf}
+  \caption{Projektions- und Rückführungsmodell der kontrollierten
+    Außenkopplung (H: menschlicher Entscheidungspunkt; eigene
+    Darstellung).}
+  \label{fig:projektion-rueckfuehrung}
+\end{figure}
+
+\emph{Projektion.} Ein Erzeugungsvertrag legt fest, wie Titel,
+Arbeitsbeschreibung, Akzeptanzkriterien und fachliche Bezüge aus dem
+Core als Issue dargestellt werden. Die Inhaltsbildung erfolgt
+deterministisch. Die Zuordnung ist auf höchstens ein Issue je
+Arbeitspaket und höchstens ein Arbeitspaket je Issue begrenzt;
+nicht jedes Arbeitspaket muss bereits projiziert sein. Vor einer
+Veröffentlichung wird der Außenbestand als Schnappschuss erhoben.
+Die vorgeschlagenen Operationen werden auf diesen Bestand bezogen
+und menschlich freigegeben. Die Sicherungen gegen fremde
+Schnappschüsse und das Überschreiben externer Änderungen
+konkretisiert Abschnitt~\ref{sec:realisierung-persistenz-aussenkopplung};
+ihren Gestaltungsanlass erläutert
+Abschnitt~\ref{sec:projektionen-aussenkopplung}.
+
+\emph{Rückweg.} Der Abruf und die Auswertung externer Rückmeldungen
+werden über den Direktzugang oder nach Werkzeugzustimmung über den
+Steward gestartet. Im regulären GitHub-Gesamtlauf werden Issues und
+Kommentare neu abgerufen. Die in der Abbildung als \emph{Ernte}
+bezeichnete Sammlung erkennt zunächst verarbeitbare Änderungen.
+Modellgestützte Komponenten deuten die betreffenden Inhalte und
+formulieren Vorschläge mit Herkunftsangaben, das dort bezeichnete
+\emph{Destillat}. Diese werden als strukturiertes Änderungspaket
+(\emph{Delta}) an den Fortschreibungsablauf übergeben. Ohne
+verarbeitbares Änderungspaket endet der Lauf davor. Einordnung,
+menschliche Autorisierung und kontrollierte Anwendung bestimmen
+erst anschließend die fachliche Zustandsänderung.
+
+Eine spätere, getrennt dokumentierte Kommentarserie greift die
+Besuchsübersicht wieder auf: Ein Kommentar fordert eine Anzeige der
+nächsten 14 Tage. Laut dem Fallbeleg wurde daraus nach Freigabe eine
+zusätzliche Anforderung und eine Aktualisierung des zugehörigen
+Arbeitspakets und Issues. Abschnitt~\ref{sec:eval-fortschreibung}
+bewertet den Rückweg als F5b und weist seine teilweise narrativen
+Belege und weiteren Teilfälle getrennt aus. Der Anschluss zeigt,
+wie dasselbe Thema weiterbearbeitet wird; er erweitert F1 nicht
+rückwirkend zu einem einzigen durchgehenden Lauf.
+
+\emph{Dokument- und Architektursichten.} Auch sie werden nach außen
+veröffentlicht, über dieselbe Freigabeinstanz wie Issues. Bei
+hybriden Dokumenten, etwa C4- und Story-Map-Sichten, bleiben
+redaktionelle Bereiche von den deterministisch gepflegten
+Abschnitten getrennt. Externe Dokumentänderungen werden nicht in
+den Core zurückgeführt; Diskussionen und Änderungswünsche nutzen
+die vorgesehenen Issue-Kanäle. Fremdänderungen werden bei einem
+erneuten Veröffentlichen benannt und bewusst überschrieben.
+Architekturinformationen erhalten dabei konkrete Ausgaben:
+Begrenzungsbeziehungen liefern technische Rahmenbedingungen in
+den betroffenen Issues; als Entscheidungen eingeordnete
+Architekturinhalte werden zusätzlich als Architecture Decision
+Records dargestellt. Einen dokumentierten Ergebnisfall ordnet
+Anhang~\ref{anh:evaluation} zu.
+
+Dieser fachliche Kreislauf verbindet mehrere Läufe. Eine
+Prüf-Reparatur-Schleife bearbeitet dagegen ein Zwischenergebnis
+(Abschnitt~\ref{sec:saeule-semantische-transformation}); eine
+Wiederaufnahme setzt einen pausierten Lauf fort
+(Abschnitt~\ref{sec:durable-ausfuehrung-agentische-bedienung}).
+Kapitel~\ref{chap:evaluation} untersucht ausgewählte Übergaben und
+Kontrollfälle, keine vollständige Erkennung beliebiger externer
+Änderungen. Das Ausführungs- und Bedienmodell behandelt der
+folgende Abschnitt.

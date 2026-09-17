@@ -1,0 +1,152 @@
+% P10-4c, 14.09.2026: Ledger-Herleitung und Nachweisanschlüsse präzisiert.
+% M09, 11.09.2026: Leserführung und MCR konzentriert; neue
+% HERKUNFT-M09-Kommentare unten sind die aktuelle Schreibgrundlage.
+% Die folgende Versionshistorie beschreibt frühere Fassungen.
+% ============================================================
+% §4.5 Kontrollierte semantische Transformation — v08 (Claude)
+% v08 (01.09., Kollegen-Freeze-Runde — alle 4 Punkte berechtigt):
+% ① Designproblem ohne „gemeinsamen Verarbeitungsschritt" (Konsistenz
+% mit der entschärften Ausgangslage) ② E45-02: strukturelle Cluster→
+% Arbeitspaket-Regel IM TEXT disambiguiert (≠ Quellenabdeckung aus 4.4);
+% dabei Kommentar-Verschlucker gefixt ③ Grenzen je Prüfform getrennt
+% (modellgestützt übersieht · Repair führt ein · deterministisch sichert
+% NUR Formalisiertes) ④ Aufwand differenziert (Modellaufrufe nur bei
+% modellgestützten Schritten + Orchestrierungsaufwand). A4 → weiterhin
+% Gesamtcheck-Merker (Kollege bestätigt Vorgehen).
+% v07 (01.09., Freeze-Kandidaten-Runde): ① E45-03-Einzelfall PRÄZISIERT
+% — B42 nachgelesen: der belegte Fall war KEINE Auslassung, sondern eine
+% als nicht quellgedeckt EINGESTUFTE Technologiefestlegung (Kollegen-
+% Einwand berechtigt und durch die Note verschärft; Anhang-Zeile
+% mitgezogen). ② Maker-Eingabeseite ergänzt (Rolle+Eingabe+Ausgabe).
+% ③ „Agentenknoten bleiben agentisch" → „Einbettung hebt den Agenten-
+% charakter nicht auf" (2.2-Anschluss).
+% v06 (01.09., Kollegen-Runde zu v05 — KRITISCH geprüft): übernommen
+% ① Rückkante Repair→Checker + Terminal-Stopp (R-33-belegt) ② MCR-
+% Schleife vs. Human-Gate/Apply getrennt ③ Checker = kriteriums-
+% abhängige Verantwortung ④ E45-03-Übergangssatz ⑤ Ausgangslage
+% entschärft (Same-Call-Selbstprüfung für diese Ära nicht belegbar).
+% NICHT übernommen: A4-Umformulierung (Blaupausen-Kanon + 4.8-Matrix-
+% Kopplung → MERKER für den Autor-Gesamt-Check über A1–A8; Kollege
+% selbst: „später gegen A1–A8 insgesamt prüfen"); „strukturierter"
+% statt „wörtlicher" Befund (wörtlich ist die belegte Mechanik).
+% v05 (01.09., Erstleser-Runde auf Autor-Wunsch): ① E44-01-Satz
+% erzählt statt komprimiert (BEIDE Prüfarten modellgetragen — freie
+% Fehlersuche vs. feste Checkliste; „modellabhängig/verrauscht/
+% Befundmengen"-Jargon raus). ② Muster-Stationen = eigenständige
+% Workflow-Knoten (2.4.1-Anschluss; Autor-Punkt „Schritte sind
+% eigentlich Workflows"). ③ Akteurs-Markierung im Muster komplett:
+% Maker/Repair agentisch · Checker det./modellgestützt je Kriterium ·
+% Autorisierung Mensch · Anwendung deterministisch; Mega-Satz in
+% vier Sätze geteilt.
+% v04 (01.09., Konkretisierungs-Runde): M7 Repair-Vignette (70×
+% UNCOVERED_CORE = struktureller Cluster→PBI-Schnitt-Check, Pass in
+% Attempt 2; Grenz-Satz „Rückkopplungspfad, nicht Korrektheit");
+% E45-02-ID in die Vignette verschoben.
+% v02 (01.09., Kollegen-Review): E45-03-Neufassung (Variabilität +
+% dokumentierter Einzelfund statt Wertung „inhaltlich schärfer");
+% „mehrere der betrachteten Fehlerklassen"; E44-01-Wiederverwendung.
+% v03 (01.09., „dosierte Agentik"-Runde): Gestaltungsprinzip-Absatz
+% nach A4 (semantisch offen = agentisch · formal ausdrückbar =
+% deterministisch · Workflow verbindet; Agentenknoten bleiben agentisch).
+%
+% Grundlage: Kapitel-4-Blaupause §10 (Absatzfolge 1–7, A4) ·
+% genese-dossier Z6/P4 (AUDITIERT) · Beweiskette Säule 2.
+%
+% HERKUNFTS-ENTSCHEID (Blaupause §10 "Benötigte Evidenz"): Die
+% 4.8-Matrix deklariert A4 als "formative Beobachtung beziehungsweise
+% Designrationale" — der Text macht diese MISCHFORM explizit:
+%   · FORMATIV belegt ist die Prüf-Seite: D1-Spike (committet) —
+%     freie modellgetragene Prüfung modellabhängig + verrauscht,
+%     feste Prüfliste über Modelle hinweg gleichartig (S2-Richtung,
+%     KEINE Zahlen; "Severity 6→2" bleibt draußen).
+%   · RATIONALE ist die Rollen-Seite (Autorisierung/Anwendung):
+%     folgt aus den Kontrollebenen 2.3.3/2.3.4, nicht aus einem
+%     Fehlschlag — im Text ausdrücklich so gekennzeichnet (kein
+%     erfundener Pivot!).
+%
+% Audit-Anker (Anhang-Tabelle; committet ✓):
+%   D1-direct-vs-topic (Prüf-Modellabhängigkeit) · dokumentierter
+%   Loop-Lauf 074419 (Prüf-Feedback → Reparatur → Bestehen; Chronik)
+%   als Beleg der etablierten Musterform.
+%
+% Regeln: "Maker–Checker–Repair" hier als Musterbegriff EINGEFÜHRT
+% (Blaupause §10 sieht das vor); keine Instanzen-Aufzählung (Kap. 5);
+% keine Mess-Verben; Aufwands-Frage explizit nach Kap. 7 verwiesen
+% (Vergleich mit/ohne Prüf- und Reparaturschritte). Budget ~1,2 S.
+% ============================================================
+
+\section{Kontrollierte semantische Transformation}
+\label{sec:kontrollierte-semantische-transformation}
+
+\emph{Ausgangslage.} Die Quellenstrukturierung aus
+Abschnitt~\ref{sec:evidenzgebundene-wissensgewinnung} machte
+Zwischenergebnisse überprüfbar, entschied aber noch nicht über ihre
+Übernahme. Beim Bilden quellengebundener Aussagen und Ableiten
+fachlicher Vorschläge konnten sowohl inhaltliche Fehler als auch
+ungültige Referenzen oder fehlende Pflichtangaben entstehen. Dafür
+waren unterschiedliche Prüfmittel erforderlich.
+
+\emph{Formativer Befund und Designproblem.} Der Themenreview aus
+Abschnitt~\ref{sec:evidenzgebundene-wissensgewinnung} zeigte den
+Nutzen begrenzter Prüfaufträge im untersuchten Fall. Daraus ergab
+sich die weiterführende Gestaltungsfrage, welche Urteile Modelle
+übernehmen sollten und welche Bedingungen sich formal prüfen ließen.
+% HERKUNFT M09: D1-direct-vs-topic/evidence.md und acht R1-JSONs
+% gegengeprüft. Missing-Zahlen stark 1/4/5/6, mini 1/2/3/5;
+% beide Litmus-Themen unter MissingTopic in open-questions, nicht
+% identische Gesamtbefunde oder identische Artefaktzuordnung.
+
+Ein weiterer Vergleich zeigte zugleich den Nutzen offener
+Beurteilung (E45-03). Bei drei Prüfungen desselben Risikoartefakts
+variierte der frei prüfende Agent in Anzahl, Kategorien und
+Granularität seiner Befunde. Er benannte aber auch eine
+Technologiefestlegung als nicht durch die Quelle gedeckt, die die
+zerlegte Prüfstrecke nicht angezeigt hatte. Dies war die Einstufung
+des Prüfers, kein unabhängig bestätigter Fehler. Der Fall begründete
+somit keine generelle Überlegenheit einer Prüfungsform.
+% HERKUNFT M09: iteration-notes-Phase2B-Commited.md B42;
+% drei risks.review.md aus runsArchive/reviewpilot, 8/6/7 Befunde.
+
+Aus diesen Beobachtungen wurde eine Aufgabenverteilung abgeleitet:
+Modelle sollten Bedeutung interpretieren und fachliche Vorschläge
+beurteilen; bekannte Struktur-, Referenz- und Pflichtfeldregeln
+sollten deterministisch geprüft werden. Ein weiterer Modellaufruf
+war für diese formal ausdrückbaren Regeln nicht erforderlich.
+Entscheidend war damit nicht allein die Wahl eines stärkeren
+Modells, sondern auch, welche Verantwortung ihm übertragen wurde.
+
+\emph{Entwurfsentscheidung.} Erzeugung, Prüfung und eine an
+Prüfbefunde gebundene Reparatur wurden als getrennte Workflow-Schritte
+realisiert. Dieses Maker--Checker--Repair-Muster ermöglicht eine
+begrenzte Überarbeitung mit anschließender erneuter Prüfung;
+Abschnitt~\ref{sec:saeule-semantische-transformation} erklärt den
+Ablauf. Ein späterer Lauf dokumentiert seine Ausführung an einer
+strukturellen Zuordnungsregel für Arbeitspakete (E45-02), ohne damit
+die fachliche Reparaturqualität nachzuweisen. Die zusätzliche
+Trennung von menschlicher Autorisierung und Zustandsanwendung
+überträgt die Kontrollebenen aus den
+Abschnitten~\ref{sec:human-in-the-loop-oversight} und
+\ref{sec:governance-autorisierung-kontrollen} auf das System; sie
+wird nicht nachträglich als Reaktion auf einen beobachteten
+Fehlschlag ausgegeben. Daraus ergibt sich die vierte
+Designanforderung:
+
+\textbf{A4:} Semantische Erzeugung beziehungsweise Transformation,
+Prüfung, Reparatur, fachliche Autorisierung und Zustandsmutation sind
+als getrennte Verantwortlichkeiten zu realisieren.
+
+Der explizite Workflow verbindet diese Aufgaben und bestimmt
+Reihenfolge, Wiederholung und Übergänge. Agentische Entscheidungen
+bleiben dort möglich, wo Interpretation oder Auswahl erforderlich
+sind; die Ablaufsteuerung muss dafür nicht ebenfalls einem Modell
+überlassen werden (Abschnitt~\ref{sec:orchestrierungsformen}).
+
+\emph{Einordnung und Grenzen.} Die Trennung macht Prüfbefunde und
+Übergänge nachvollziehbar. Sie schließt weder übersehene inhaltliche
+Fehler noch neue Fehler durch Reparaturen aus. Deterministische
+Prüfungen erfassen nur die jeweils formalisierten Bedingungen.
+Kapitel~\ref{chap:evaluation} untersucht ausgewählte Änderungen der
+Inhaltsabdeckung, definierte Kontrollfälle und den Tokenaufwand der
+bewerteten Konfigurationen. Daraus folgt weder ein isolierter
+Wirksamkeitsnachweis jeder Prüf- oder Reparaturstufe noch ein
+allgemeines Verhältnis von Aufwand und Nutzen.

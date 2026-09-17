@@ -91,7 +91,13 @@ runs/fullworkflow/<runId>/
 | `pbi-update/` | isolierte Placement-/Align-Stufe | `pbi-update`-CLIs |
 | `github-forward/` · `github-snapshot/` | Tor 3 (Issues-Projektion / Repo-Snapshot) | forward-/snapshot-CLIs |
 | `bootstrap/` | Bootstrap-Ast (B0–B6: frischer Core aus Baselines) | bootstrap-Befehle |
-| `l4-re-clarify/` | ⚠️ **LIVE-Backlog-State** — der NEUESTE Run wird als Input gelesen! Nicht aufräumen. | re-clarify |
+| `steward/` | je Steward-Aufruf ein Lauf: Agent-Logs, Tool-Faden, otel | `steward` |
+| `core-analysis/` | Core-Analyst: Report + Delta der Lücken-Analyse | `core-analysis run` bzw. Steward `run_core_analysis` |
+| `arm-f/` | Arm F (W2-Mess-Baseline): output.json + metrics.json | `arm-f run` |
+| `artifact-draft/` | Entwurfs-Läufe der Autor-Artefakte (Vision/Personas/C4/…) | Steward `draft_authored_doc` (`AuthoredDocDrafting`) |
+| `clarify-sweep/` | Klärungs-Kataloge/Antworten (Werkbank-Bahn) | `clarify-sweep` (`ClarifySweep`) |
+| `github-inbound/` · `github-comment-distill/` | Ernte-Werkbank: Inbound-Detect / Kommentar-Destillat isoliert | `github-inbound` / `github-comment-distill` |
+| `l4-re-clarify/` | Alt-/Support-Werkstatt + Beleg. **Kein Live-State** (Korrektur 10.08., code-verifiziert): keine „neuester Run"-Automatik; nur `core-seed-backlog <run>` / `l4-re-clarify-issueplan <run>` / `-backlog-doc <run>` lesen hier — je mit explizit benanntem Lauf. Trotzdem nicht verschieben: Docs/CLIs referenzieren die Pfade. | re-clarify |
 | `_ui-sandbox/` | LLM-freie UI-Sandboxes je Review (feste Beispiel-Requests zum UI-Ansehen) | von Hand gepflegt |
 
 **Beleg-/Experiment-Ordner** (`_`-Präfix = kein Run-Zähler, von Hand angelegt):
@@ -99,8 +105,11 @@ runs/fullworkflow/<runId>/
 | Ordner | Was |
 |---|---|
 | `_e2e-backup/` · `_experiment-9g-graph/` · `_messpunkt-9g/` | Core-Backups + Evidenz bestimmter Experimente (SHA-Restore-Disziplin) |
-| `core-heal-features/` | Audit des R-36-Einmal-Heilwerkzeugs (03.08.; Werkzeug danach entfernt) |
-| `project-state/` | benannte Consumables/Deltas (z. B. `e2e-meeting2`) als Eingaben |
+| `core-heal-features/` | Audit des R-36-Einmal-Heilwerkzeugs (03.08.; Werkzeug danach entfernt — Explorations-Beleg) |
+| `project-state/` | Ausgaben von `project-state-build` + benannte Consumables/Deltas als Eingaben |
+| `w2-pilot-eval/` | deterministische W2-Auswertungen aus `tools/eval/w2_*.py` (kein LLM) |
+| `e2e-evidenz/` | Traceability-Audit (`tools/eval/w2_traceability_audit.py`) + handgeführte Beleg-Notizen |
+| `manual/` | handgeführte Einzel-Belege (z. B. `pbi033-klaerung`) |
 
 **Historisch:** abgeschlossene Ären liegen komplett in **`runsArchive/`** (Struktur 1:1, Thesis-Evidenz) —
 u. a. `phase1/`, `phase2*/`, `l3/`, `l4*/`, `derivation/`, und seit 06.08. auch `baseline-fanout/`,
@@ -120,7 +129,8 @@ EVIDENZ-INDEX (runId) → roher Ordner (Beweis). Nie andersherum anfangen.
 
 **Archiv-Regel:** Nach `runsArchive/` (Struktur 1:1) wandern nur GANZE Ordner-Arten abgeschlossener Ären —
 nie einzelne Läufe herauspicken (Configs/Docs referenzieren Pfade). NIE verschieben: `l4-re-clarify/`
-(Live-Input!), `_ui-sandbox/`, `project-state/`, `ledger/`+`recipe/` (Consumable-Inputs der run-config)
+(Support-CLIs + Belege referenzieren benannte Läufe — Live-State ist es NICHT, s. Karte oben),
+`_ui-sandbox/`, `project-state/`, `ledger/`+`recipe/` (Consumable-Inputs der run-config)
 und alles, was der Index als referenziert führt, ohne die Referenz-Doku mitzuziehen.
 
 ---

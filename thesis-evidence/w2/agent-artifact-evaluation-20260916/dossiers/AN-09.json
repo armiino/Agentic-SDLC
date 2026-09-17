@@ -1,0 +1,327 @@
+{
+  "case_id": "AN-09",
+  "report_index_zero_based": 8,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "nfr",
+    "disposition": "requirement",
+    "statement": "Die App muss für Offline- oder Verbindungsstörungen ein definiertes Degradationsverhalten bereitstellen: Nutzer müssen klar erkennen, ob Daten nur aus dem lokalen Cache stammen, ob Änderungen aktuell nicht sicher synchronisiert werden können und welche Funktionen in diesem Zustand nur lesend oder gar nicht verfügbar sind.",
+    "herleitung": "Abgeleitet aus PBI-024 und REQ-36: Verschlüsselung des lokalen Caches und Konfliktbehandlung sind teilweise adressiert, aber es fehlt die Verfügbarkeitsanforderung für den laufenden Betrieb bei Netzproblemen. Gerade bei einer mobilen Pflege-App mit Offline-first-Ansatz reicht es nicht, nur Cache und Verschlüsselung zu nennen; der sichere Betriebsmodus bei gestörter Verbindung muss explizit festgelegt sein.",
+    "kategorie": "nfr:availability",
+    "ankerIds": [
+      "PBI-024",
+      "REQ-36",
+      "L3-REQ-004"
+    ]
+  },
+  "reported_status": "neu",
+  "critic_reason": null,
+  "anchors_and_mentions": [
+    {
+      "id": "L3-REQ-004",
+      "present": true,
+      "item": {
+        "itemId": "L3-REQ-004",
+        "itemType": "requirement",
+        "text": "Bei offline bearbeiteten Konfliktfällen muss eine klare Konfliktanzeige erfolgen; nichts darf stillschweigend überschrieben werden, und der Nutzer entscheidet, welche Version gilt.",
+        "origin": "HUMAN_ACCEPTED_OPEN_WORLD",
+        "stage": "l3_promoted",
+        "version": 2,
+        "sourceRunId": "20260723_122625_136540",
+        "sourceArtifactId": null,
+        "sourceArtifactType": "l3",
+        "sourceDecisionId": "HDEC-004",
+        "sourceCandidateId": "CAND-012",
+        "sourceClaimIds": [
+          "offline-konfliktbehandlung"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "sourceCandidateId": "CAND-012",
+          "sourceDecisionId": "HDEC-004",
+          "decision": "accept",
+          "decisionReason": "sinvoll",
+          "reviewer": "human (review-ui)"
+        },
+        "identityKey": "bei offline bearbeiteten konfliktfällen muss eine klare konfliktanzeige erfolgen nichts darf stillschweigend überschrieben werden und der nutzer entscheidet welche version gilt",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Wenn Inhalte offline erfasst werden können, sollte die App ausstehende Synchronisationen kenntlich machen und Konflikte beim späteren Abgleich erkennbar behandeln.",
+            "status": "accepted",
+            "origin": "HUMAN_ACCEPTED_OPEN_WORLD",
+            "sourceRunId": "20260723_122625_136540",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-07-23T13:57:21.374961Z",
+            "note": "REFINE (ingestion)"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "confirmedInRun": "20260723_122625_136540",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "PBI-024",
+      "present": true,
+      "item": {
+        "itemId": "PBI-024",
+        "itemType": "pbi",
+        "text": "Offline-first, lokaler Cache, Verschlüsselung und Synchronisationsverhalten festlegen",
+        "origin": "re-clarify",
+        "stage": null,
+        "version": 4,
+        "sourceRunId": "20260820_095055_5c8547",
+        "sourceArtifactId": null,
+        "sourceArtifactType": null,
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "legacyPbiId": "PBI-FC10-01",
+          "sourceRunId": "20260723_131421_80a11e",
+          "legacyOpenDecisions": "2",
+          "featureId": "FC-10"
+        },
+        "identityKey": "lokaler-cache-und-offline-verhalten-klaeren",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Lokalen Cache, Offline-Erfassung und Synchronisationsverhalten festlegen",
+            "status": "active",
+            "origin": "re-clarify",
+            "sourceRunId": "20260723_131421_80a11e",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-07-23T14:16:14.464927Z",
+            "note": "MARK_CHANGED: Requirement L3-REQ-004 verfeinert"
+          },
+          {
+            "versionId": 2,
+            "text": "Lokalen Cache, Offline-Erfassung und Synchronisationsverhalten festlegen",
+            "status": "needs_clarify",
+            "origin": "re-clarify",
+            "sourceRunId": "20260723_131421_80a11e",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-10T16:11:32.371295Z",
+            "note": "MARK_CHANGED: Klärungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort ersetzt die zuvor offene Entscheidungsfrage durch konkrete Festlegungen zu Architektur und Verhalten: offline-first, lokaler SQLite-Cache, automatische Synchronisation sowie eine definierte Konfliktregel mit erneuter Nutzerbestätigung lokaler Änderungen. Daher werden alle PBI-Inhalte vollständig auf die Antwort ausgerichtet."
+          },
+          {
+            "versionId": 3,
+            "text": "Offline-first, lokaler Cache und Synchronisationsverhalten festlegen",
+            "status": "active",
+            "origin": "re-clarify",
+            "sourceRunId": "20260810_152712_d31d38",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-20T10:48:04.909732Z",
+            "note": "MARK_CHANGED: Requirement REQ-36 verfeinert | ALIGN(R-26-C): REQ-36 wurde von einer offenen Klärungsfrage zur lokalen Speicherung zu einer konkreten Vorgabe verfeinert: lokal zwischengespeicherte Bewohnerdaten und Medien müssen im Ruhezustand verschlüsselt sein und nach Abmeldung oder Berechtigungsentzug im jeweiligen Kontext nicht mehr lesbar sein. Daher werden Titel, Statement und Akzeptanzkriterien um diese Sicherheitsanforderungen ergänzt; bestehende Aussagen zu Offline-first, SQLite, Synchronisation und Konfliktbehandlung bleiben unverändert erhalten."
+          }
+        ],
+        "feature": null,
+        "pbi": {
+          "goal": "Als Product Owner will ich das Offline-first-Verhalten mit lokalem Cache in SQLite, die Verschlüsselung lokal zwischengespeicherter Bewohnerdaten und Medien sowie das automatische Synchronisations- und Konfliktverhalten festlegen, damit Erfassungen lokal gespeichert, im Ruhezustand geschützt, bei bestehender Verbindung automatisch synchronisiert und nach Abmeldung oder Berechtigungsentzug im jeweiligen Kontext lokal nicht mehr lesbar sind.",
+          "title": "Offline-first, lokaler Cache, Verschlüsselung und Synchronisationsverhalten festlegen",
+          "acceptanceCriteria": [
+            "Lokal auf dem Gerät zwischengespeicherte Bewohnerdaten und Medien werden im Ruhezustand verschlüsselt gespeichert.",
+            "Nach Abmeldung dürfen lokal vorhandene Daten des betroffenen Kontexts nicht mehr lesbar sein.",
+            "Nach Entzug der Berechtigung dürfen lokal vorhandene Daten des betroffenen Kontexts nicht mehr lesbar sein."
+          ],
+          "linkedRequirementIds": [
+            "L3-REQ-004",
+            "REQ-36"
+          ],
+          "openDecisionRefs": [],
+          "priorityRank": 17,
+          "readiness": "blocked_by_decision",
+          "mvp": "required_for_mvp",
+          "trace": {
+            "canonicalRequirementIds": [
+              "L3-REQ-004",
+              "REQ-36"
+            ],
+            "l1Req": [
+              "REQ-36"
+            ],
+            "l3": [
+              "L3-REQ-004"
+            ],
+            "claims": []
+          }
+        },
+        "validity": "Active",
+        "progress": "Open",
+        "blocker": "None",
+        "confirmedBy": "Unmarked",
+        "confirmedInRun": "20260723_131421_80a11e",
+        "status": "active"
+      }
+    },
+    {
+      "id": "REQ-36",
+      "present": true,
+      "item": {
+        "itemId": "REQ-36",
+        "itemType": "requirement",
+        "text": "Lokal auf dem Gerät zwischengespeicherte Bewohnerdaten und Medien müssen im Ruhezustand verschlüsselt gespeichert werden; nach Abmeldung oder Entzug der Berechtigung dürfen lokal vorhandene Daten dieses Kontexts nicht mehr lesbar sein.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 2,
+        "sourceRunId": "20260820_095055_5c8547",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4",
+          "analystKategorie": "nfr:security",
+          "herleitung": "Abgeleitet aus PBI-024 mit Offline-first, lokalem Cache in SQLite und automatischer Synchronisation sowie aus REQ-64 zur revisionssicheren Protokollierung von Einsichtnahmen. Da in der App besonders schützensame Bewohnerdaten, Kommunikationshinweise, Fotos und potenziell Medikationsdaten offline auf gemeinsam genutzten Mobilgeräten vorliegen können, fehlt eine konkrete Datenschutz- und Sicherheitsanforderung für die lokale Speicherung selbst.",
+          "linse": "nfr"
+        },
+        "identityKey": "lokal auf dem gerät zwischengespeicherte bewohnerdaten und medien müssen im ruhezustand verschlüsselt gespeichert werden nach abmeldung oder entzug der berechtigung dürfen lokal vorhandene daten dieses kontexts nicht mehr lesbar sein",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Es muss geklärt werden, ob und wie Cloud-Daten lokal auf dem Gerät gespeichert oder gecacht werden sollen. [canon-lokaler-cache-klären]",
+            "status": "baseline",
+            "origin": "Extracted",
+            "sourceRunId": "20260723_113115_35335a",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-20T10:17:53.894206Z",
+            "note": "REFINE (ingestion 20260820_095055_5c8547, via CA-5)"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "L3-REQ-004",
+      "toId": "HDEC-004",
+      "relationType": "accepted_by_human_decision",
+      "source": "l3.apply",
+      "metadata": {}
+    },
+    {
+      "fromId": "L3-REQ-004",
+      "toId": "CAND-012",
+      "relationType": "promoted_from_l3_candidate",
+      "source": "l3.apply",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-024",
+      "toId": "FC-10",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-024",
+      "toId": "L3-REQ-004",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-024",
+      "toId": "REQ-36",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "L3-REQ-004",
+      "toId": "FC-10",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-36",
+      "toId": "FC-10",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-024",
+      "toId": "gh#24",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "24",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-07-23T14:58:33.7764290Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/24",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "21c07b8ebbd2c73f",
+        "projectedBodyHash": "041410e30fc53a71",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+      }
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "FC-10",
+      "itemType": "feature",
+      "text": "Medien, Datenschutz und Datenhaltung",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-10",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": ""
+      },
+      "identityKey": "medien-und-datenschutz",
+      "history": [],
+      "feature": {
+        "label": "Medien, Datenschutz und Datenhaltung",
+        "rationale": "Die Requirements regeln den querschnittlichen Umgang mit Medien, Einwilligungen, lokalem Caching, Offline-Synchronisation und Änderungsnachverfolgung. Sie bilden zusammen ein techniknahes, aber fachlich zusammenhängendes Feature für sichere Inhaltsverwaltung.",
+        "coreRequirementIds": [
+          "L3-REQ-004",
+          "REQ-36"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "L3-REQ-004": 1,
+    "PBI-024": 2,
+    "REQ-36": 2
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

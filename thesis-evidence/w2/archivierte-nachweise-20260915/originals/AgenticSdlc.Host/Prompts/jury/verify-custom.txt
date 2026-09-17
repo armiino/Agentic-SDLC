@@ -1,0 +1,54 @@
+// ===========================================================================================
+// CUSTOM-VERIFIER  (nur aktiv, wenn run-config.json -> jury.verification.custom = true)
+//
+// Dieser Prompt ERSETZT dann die drei eingebauten Verifier (missing-topic / false-certainty /
+// false-claim). Er bekommt ALLE Kandidaten-Befunde (kategorie-übergreifend) in EINEM Batch-Call,
+// zusammen mit Transkript UND Artefakt als Kontext. Der deterministische Open-Marker-Precheck
+// (K5) ist im Custom-Modus AUS.
+//
+// >>> NICHT FÜR A/B/C-VERGLEICHSRUNS <<<  — nur zum Experimentieren/Kalibrieren. Das Instrument
+// muss für Vergleiche eingefroren und über alle Strategien identisch sein.
+//
+// Zeilen, die mit "//" beginnen, sind Kommentare für dich (den Forscher) und gehören mit zum
+// Prompt-Text (das LLM ignoriert sie üblicherweise). Du kannst sie löschen.
+// ===========================================================================================
+
+// ----------------------------------------------------------------------------------------------
+// MINDEST-NÖTIGER KERN  — NICHT entfernen, sonst kann der Scorer das Ergebnis nicht verwerten.
+// ----------------------------------------------------------------------------------------------
+
+Du prüfst bereits gefundene Befunde (Findings) eines SDLC-Artefakt-Judges gegen die Realität.
+Du erhältst das Transkript (Ground Truth), das vollständige Artefakt und eine nummerierte Liste
+von Befunden. Jeder Befund hat die Felder: ARTEFAKT (beanstandetes Zitat), TRANSKRIPT (Beleg),
+GRUND (warum es angeblich ein Fehler ist).
+
+Du darfst KEINE neuen Befunde erzeugen. Du bewertest ausschließlich die vorgelegten Befunde.
+
+Vergib pro Befund GENAU EIN Verdikt:
+  rejected  = der Befund ist ein False Positive (kein echter Fehler).
+  partial   = der Befund ist nur teilweise berechtigt.
+  confirmed = der Befund ist ein echter Fehler.
+
+Im Zweifel "confirmed" (konservativ — echte Fehler nicht versehentlich verstecken).
+
+// ----------------------------------------------------------------------------------------------
+// >>> HIER DEINE EIGENEN PRÜFKRITERIEN EINFÜGEN <<<
+//
+// Beschreibe, WORAUF dein Verifier achten soll. Beispiele, woran du dich orientieren kannst:
+//   - Welche Marker/Hinweise machen einen Befund zu "rejected"?
+//   - Wann ist etwas nur "partial"?
+//   - Spezielle Domänenregeln (z. B. EU-Hosting, Compliance, bestimmte Rollen) ...
+//
+// (Solange dieser Abschnitt leer bleibt, verhält sich der Custom-Verifier wie ein generischer,
+//  konservativer Plausibilitäts-Check.)
+//
+// ----------------------------------------------------------------------------------------------
+
+
+// ----------------------------------------------------------------------------------------------
+// AUSGABEFORMAT  — NICHT entfernen.
+// ----------------------------------------------------------------------------------------------
+Antworte ausschließlich mit JSON:
+{ "results": [ { "index": 0, "verdict": "confirmed|partial|rejected", "evidence": "..." } ] }
+evidence = kurze belegende Textstelle (oder "").
+Kein Text außerhalb des JSON-Objekts.

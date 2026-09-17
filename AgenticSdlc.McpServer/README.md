@@ -1,99 +1,45 @@
-# MCP Server
+# AgenticSdlc.McpServer — der frühe MCP-Spike (Exploration, eingefroren)
 
-This README was created using the C# MCP server project template.
-It demonstrates how you can easily create an MCP server using C# and publish it as a NuGet package.
+> Status: HISTORIE — Explorations-Station vom Februar–Mai 2026 (Ära `v-s1-phase2-dag`).
+> Baut als Teil der Solution mit, wird aber **vom heutigen System nicht verwendet.**
 
-The MCP server is built as a self-contained application and does not require the .NET runtime to be installed on the target machine.
-However, since it is self-contained, it must be built for each target platform separately.
-By default, the template is configured to build for:
-* `win-x64`
-* `win-arm64`
-* `osx-arm64`
-* `linux-x64`
-* `linux-arm64`
-* `linux-musl-x64`
+## Was das ist
 
-If your users require more platforms to be supported, update the list of runtime identifiers in the project's `<RuntimeIdentifiers />` element.
+Ein eigener **MCP-Server über stdio** (`ModelContextProtocol`-SDK), gebaut in der frühen
+Explorationsphase, um zwei Fragen praktisch zu beantworten: *Wie fühlt sich ein selbst
+gebauter MCP-Server an?* und *Lassen sich Dateizugriff und Freigaben über eine
+Werkzeug-Grenze absichern?*
 
-See [aka.ms/nuget/mcp/guide](https://aka.ms/nuget/mcp/guide) for the full guide.
+## Werkzeuge
 
-Please note that this template is currently in an early preview stage. If you have feedback, please take a [brief survey](http://aka.ms/dotnet-mcp-template-survey).
+| Tool | Datei | Verhalten |
+|---|---|---|
+| `FsRead` / `FsWrite` / `FsList` / `FsExists` | `Tools/FileSystemsTools.cs` | Dateizugriff unter der **RootPolicy**: lesen nur aus `input/`, `docs/`, `runs/`; schreiben nur nach `docs/`, `runs/`; Lese-Deckel 5 MB. `FsWrite` nimmt `intent`/`reason`/`evidence` als Begründungsfelder mit |
+| `RequestApproval` | `Tools/ApprovalTools.cs` | dateibasierte Freigabe: schreibt `runs/<runId>/approvals/approval_*.json`, höchstens eine je RunId — **derzeit nicht registriert** (in `Program.cs` auskommentiert, Freigaben wanderten zum Host) |
+| `GetRandomNumber` | `Tools/RandomNumberTools.cs` | Überbleibsel der C#-MCP-Projektvorlage, nie Teil der Exploration |
 
-## Checklist before publishing to NuGet.org
+Registriert ist in `Program.cs` nur `FileSystemTools`.
 
-- Test the MCP server locally using the steps below.
-- Update the package metadata in the .csproj file, in particular the `<PackageId>`.
-- Update `.mcp/server.json` to declare your MCP server's inputs.
-  - See [configuring inputs](https://aka.ms/nuget/mcp/guide/configuring-inputs) for more details.
-- Pack the project using `dotnet pack`.
+## Was davon weiterlebt — und was nicht
 
-The `bin/Release` directory will contain the package file (.nupkg), which can be [published to NuGet.org](https://learn.microsoft.com/nuget/nuget-org/publish-a-package).
+Die hier erprobten Ideen sind ins Hauptsystem gewandert, der Server selbst nicht:
 
-## Developing locally
+- **Freigaben** laufen heute über die MAF-RequestPort-Gates des Ein-Graphen und die
+  ⚿-ToolApprovals des Stewards — nicht mehr über Approval-Dateien.
+- **Pfad-Wächter-Denken** (RootPolicy) findet sich in der festen Artefakt-Whitelist des
+  Stewards (`05-core/AuthoredDocument.cs`) wieder.
+- **MCP im lebenden System** ist etwas anderes: der Steward mountet zur Laufzeit die
+  Lesewerkzeuge des **offiziellen github-mcp-servers** (Remote, serverseitig readonly —
+  `AgenticSdlc.Host/Mcp/GithubMcp.cs`). Kein Code des Hosts referenziert dieses Projekt.
 
-To test this MCP server from source code (locally) without using a built MCP server package, you can configure your IDE to run the project directly using `dotnet run`.
+## Eingefrorene Spike-Belege
 
-```json
-{
-  "servers": {
-    "AgenticSdlc.McpServer": {
-      "type": "stdio",
-      "command": "dotnet",
-      "args": [
-        "run",
-        "--project",
-        "<PATH TO PROJECT DIRECTORY>"
-      ]
-    }
-  }
-}
-```
+- `runs/20260220_164829_33b72c/` — ein vollständiger Spike-Lauf vom 20.02.2026 samt
+  Approval-Datei und geschriebenen Dokument-Kopien.
+- `docs/` — die damaligen Frühphasen-Artefakte (requirements, architecture, risks,
+  open-questions, issues.json) im Stand der Exploration. **Nicht** mit dem heutigen,
+  aus dem Core generierten `docs/` an der Repo-Wurzel verwechseln.
+- `.mcp/server.json` — noch mit den Platzhaltern der Projektvorlage; der Server wurde
+  nie als Paket veröffentlicht.
 
-Refer to the VS Code or Visual Studio documentation for more information on configuring and using MCP servers:
-
-- [Use MCP servers in VS Code (Preview)](https://code.visualstudio.com/docs/copilot/chat/mcp-servers)
-- [Use MCP servers in Visual Studio (Preview)](https://learn.microsoft.com/visualstudio/ide/mcp-servers)
-
-## Testing the MCP Server
-
-Once configured, you can ask Copilot Chat for a random number, for example, `Give me 3 random numbers`. It should prompt you to use the `get_random_number` tool on the `AgenticSdlc.McpServer` MCP server and show you the results.
-
-## Publishing to NuGet.org
-
-1. Run `dotnet pack -c Release` to create the NuGet package
-2. Publish to NuGet.org with `dotnet nuget push bin/Release/*.nupkg --api-key <your-api-key> --source https://api.nuget.org/v3/index.json`
-
-## Using the MCP Server from NuGet.org
-
-Once the MCP server package is published to NuGet.org, you can configure it in your preferred IDE. Both VS Code and Visual Studio use the `dnx` command to download and install the MCP server package from NuGet.org.
-
-- **VS Code**: Create a `<WORKSPACE DIRECTORY>/.vscode/mcp.json` file
-- **Visual Studio**: Create a `<SOLUTION DIRECTORY>\.mcp.json` file
-
-For both VS Code and Visual Studio, the configuration file uses the following server definition:
-
-```json
-{
-  "servers": {
-    "AgenticSdlc.McpServer": {
-      "type": "stdio",
-      "command": "dnx",
-      "args": [
-        "<your package ID here>",
-        "--version",
-        "<your package version here>",
-        "--yes"
-      ]
-    }
-  }
-}
-```
-
-## More information
-
-.NET MCP servers use the [ModelContextProtocol](https://www.nuget.org/packages/ModelContextProtocol) C# SDK. For more information about MCP:
-
-- [Official Documentation](https://modelcontextprotocol.io/)
-- [Protocol Specification](https://spec.modelcontextprotocol.io/)
-- [GitHub Organization](https://github.com/modelcontextprotocol)
-- [MCP C# SDK](https://modelcontextprotocol.github.io/csharp-sdk)
+Letzte inhaltliche Änderung: 21.05.2026 (`git log -- AgenticSdlc.McpServer`).

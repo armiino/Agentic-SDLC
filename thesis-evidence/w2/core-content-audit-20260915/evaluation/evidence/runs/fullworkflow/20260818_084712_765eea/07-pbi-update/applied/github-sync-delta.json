@@ -1,0 +1,175 @@
+{
+  "newPbis": [
+    "PBI-045",
+    "PBI-046",
+    "PBI-047"
+  ],
+  "updatedPbis": [
+    "PBI-044",
+    "PBI-002",
+    "PBI-005",
+    "PBI-028"
+  ],
+  "entries": [
+    {
+      "pbiId": "PBI-002",
+      "title": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+      "status": "blocked_by_decision",
+      "readiness": "ready_with_nonblocking_questions",
+      "coveredRequirementIds": [
+        "L3-REQ-009",
+        "L3-REQ-010",
+        "REQ-05",
+        "REQ-06",
+        "REQ-07",
+        "REQ-41",
+        "REQ-65"
+      ],
+      "blockedByOpenDecision": true,
+      "githubIssue": "gh#2",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Die App bietet keine Selbstregistrierung an; neue Zug\u00E4nge k\u00F6nnen nur durch Admins angelegt werden.",
+        "Ein Admin kann einen Account mit der Rolle Admin, User oder Bewohner anlegen und speichern.",
+        "Ein User kann sich mit vergebenem Account anmelden, aber keine Administrationsfunktionen aufrufen.",
+        "Ein Bewohner-Account ist als eigener Rollentyp vorhanden und kann f\u00FCr eingeschr\u00E4nkte Nutzung freigeschaltet werden.",
+        "Nach konfigurierbarer Inaktivit\u00E4t wird eine erneute Authentifizierung verlangt.",
+        "Ein Admin kann f\u00FCr einen bestehenden Account einen Passwort-Reset-Prozess ansto\u00DFen.",
+        "Das Zugriffsprotokoll ist ausschlie\u00DFlich f\u00FCr Accounts mit der Rolle Admin sichtbar.",
+        "Pflegekr\u00E4fte und Angeh\u00F6rige k\u00F6nnen das Zugriffsprotokoll nicht einsehen."
+      ],
+      "statement": "Als Admin will ich interne Accounts mit Basisrollen verwalten und das Zugriffsprotokoll ausschlie\u00DFlich f\u00FCr die Rolle Admin einsehen k\u00F6nnen, damit nur berechtigte Personen ohne Selbstregistrierung auf die App zugreifen und sensible Protokolldaten nicht f\u00FCr Pflegekr\u00E4fte oder Angeh\u00F6rige sichtbar sind.",
+      "constraints": [
+        "ARCH-07 \u2014 Die App darf keine Selbstregistrierung erlauben; Zugang erfolgt nur per Login mit intern vergebenen Accounts.",
+        "ARCH-08 \u2014 Es muss mindestens die Rollen Admin und User geben; Admins verwalten Accounts und Rechte, User k\u00F6nnen Inhalte hinzuf\u00FCgen, aber nichts l\u00F6schen."
+      ],
+      "coveredArchitecture": null
+    },
+    {
+      "pbiId": "PBI-005",
+      "title": "Login-Screen mit sicherem Fehlerfeedback bereitstellen",
+      "status": "blocked_by_decision",
+      "readiness": "ready_with_nonblocking_questions",
+      "coveredRequirementIds": [
+        "L3-REQ-011",
+        "REQ-05",
+        "REQ-11",
+        "REQ-12"
+      ],
+      "blockedByOpenDecision": true,
+      "githubIssue": "gh#5",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Der Login-Screen enth\u00E4lt ein zentriertes, gut sichtbares Logo im oberen Drittel; ein passendes Kommunikations-Logo ist noch zu erstellen.",
+        "Der Screen enth\u00E4lt keine Funktion zur Selbstregistrierung.",
+        "Bei ung\u00FCltigen Zugangsdaten zeigt die App eine verst\u00E4ndliche Fehlermeldung, ohne preiszugeben, ob ein bestimmter Account existiert.",
+        "Bei erfolgreicher Anmeldung wird der Nutzer in den gesch\u00FCtzten Bereich weitergeleitet."
+      ],
+      "statement": "Als Nutzer will ich mich \u00FCber einen klaren Login-Screen mit E-Mail und Passwort anmelden, damit ich sicher in die App einsteigen kann.",
+      "constraints": [
+        "ARCH-07 \u2014 Die App darf keine Selbstregistrierung erlauben; Zugang erfolgt nur per Login mit intern vergebenen Accounts."
+      ],
+      "coveredArchitecture": [
+        "ARCH-33 \u2014 Der Login-Screen soll ein zentriertes, gut sichtbares Logo im oberen Drittel enthalten; ein passendes Kommunikations-Logo ist noch zu erstellen."
+      ]
+    },
+    {
+      "pbiId": "PBI-028",
+      "title": "\u00DCbersicht der Medikamenten-Einnahmen f\u00FCr freigegebene Angeh\u00F6rige mit optionaler Bemerkungsanzeige als Monats\u00FCbersicht der letzten drei\u00DFig Tage bereitstellen",
+      "status": "active",
+      "readiness": "ready_with_nonblocking_questions",
+      "coveredRequirementIds": [
+        "REQ-42",
+        "REQ-80"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#28",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Freigegebene Angeh\u00F6rige k\u00F6nnen f\u00FCr ihre jeweilige Bezugsperson die Medikamenten-Einnahmen der letzten drei\u00DFig Tage einsehen."
+      ],
+      "statement": "Als freigegebene/r Angeh\u00F6rige/r will ich f\u00FCr meine jeweilige Bezugsperson eine Monats\u00FCbersicht der Medikamenten-Einnahmen der letzten drei\u00DFig Tage einsehen, damit ich den Verabreichungsstatus nachvollziehen kann, ohne Dosierungsdetails zu sehen oder Eintr\u00E4ge \u00E4ndern zu k\u00F6nnen; vorhandene einnahmebezogene Bemerkungen sollen dabei mit angezeigt werden.",
+      "constraints": [
+        "ARCH-26 \u2014 Eine Kalenderfunktion soll erwogen werden; zus\u00E4tzlich ist zu pr\u00FCfen, ob auch Medikamentengaben integriert werden sollen, wobei die Vertraulichkeit dieser Daten besonders zu ber\u00FCcksichtigen ist."
+      ],
+      "coveredArchitecture": null
+    },
+    {
+      "pbiId": "PBI-044",
+      "title": "Angeh\u00F6rige k\u00F6nnen eigene Fotos zu Eintr\u00E4gen hochladen",
+      "status": "active",
+      "readiness": null,
+      "coveredRequirementIds": [
+        "REQ-79"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#40",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Angeh\u00F6rige k\u00F6nnen zu Eintr\u00E4gen eigene Fotos hochladen.",
+        "Pro Eintrag sind maximal f\u00FCnf Fotos zul\u00E4ssig.",
+        "Es werden nur JPG- oder PNG-Formate akzeptiert."
+      ],
+      "statement": "Als Angeh\u00F6rige will ich zu Eintr\u00E4gen eigene Fotos hochladen k\u00F6nnen, damit diese den Eintr\u00E4gen zugeordnet werden; pro Eintrag sollen maximal f\u00FCnf Fotos zul\u00E4ssig sein, und es sollen nur JPG- oder PNG-Formate akzeptiert werden.",
+      "constraints": null,
+      "coveredArchitecture": null
+    },
+    {
+      "pbiId": "PBI-045",
+      "title": "Tages-Zusammenfassung dokumentierter Medikamenten-Gaben am Schichtende anzeigen",
+      "status": "active",
+      "readiness": "active",
+      "coveredRequirementIds": [
+        "REQ-81"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": null,
+      "githubIssueStatus": null,
+      "acceptanceCriteria": [
+        "Pflegende k\u00F6nnen am Ende ihrer Schicht eine Tages-Zusammenfassung aller von ihnen dokumentierten Medikamenten-Gaben sehen.",
+        "Die Tages-Zusammenfassung zeigt nur Medikamenten-Gaben, die von der jeweiligen pflegenden Person selbst dokumentiert wurden.",
+        "Die Tages-Zusammenfassung steht zur Pr\u00FCfung vor der \u00DCbergabe am Ende der Schicht zur Verf\u00FCgung."
+      ],
+      "statement": "Als pflegende Person will ich am Ende meiner Schicht eine Tages-Zusammenfassung aller von mir dokumentierten Medikamenten-Gaben sehen k\u00F6nnen, damit ich vor der \u00DCbergabe pr\u00FCfen kann, ob alles erfasst ist.",
+      "constraints": null,
+      "coveredArchitecture": null
+    },
+    {
+      "pbiId": "PBI-046",
+      "title": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ank\u00FCndigen",
+      "status": "active",
+      "readiness": null,
+      "coveredRequirementIds": [
+        "REQ-82"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": null,
+      "githubIssueStatus": null,
+      "acceptanceCriteria": [
+        "Angeh\u00F6rige k\u00F6nnen einen Besuch bei ihrer Bezugsperson in der App vorab ank\u00FCndigen.",
+        "Bei der Besuchsank\u00FCndigung werden Datum und Uhrzeit erfasst."
+      ],
+      "statement": "Als Angeh\u00F6rige/r will ich Besuche bei meiner Bezugsperson vorab in der App mit Datum und Uhrzeit ank\u00FCndigen k\u00F6nnen, damit der Besuch vor dem Termin erfasst ist.",
+      "constraints": null,
+      "coveredArchitecture": null
+    },
+    {
+      "pbiId": "PBI-047",
+      "title": "\u00DCbersicht der angek\u00FCndigten Besuche f\u00FCr Pflegende bereitstellen",
+      "status": "active",
+      "readiness": null,
+      "coveredRequirementIds": [
+        "REQ-83"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": null,
+      "githubIssueStatus": null,
+      "acceptanceCriteria": [
+        "Pflegende der Einrichtung k\u00F6nnen eine \u00DCbersicht der angek\u00FCndigten Besuche sehen."
+      ],
+      "statement": "Als pflegende Person will ich eine \u00DCbersicht der angek\u00FCndigten Besuche sehen k\u00F6nnen, damit ich bevorstehende Besuche einsehen kann.",
+      "constraints": null,
+      "coveredArchitecture": null
+    }
+  ]
+}

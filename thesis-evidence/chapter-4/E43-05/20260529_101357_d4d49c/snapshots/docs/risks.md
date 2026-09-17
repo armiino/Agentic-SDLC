@@ -1,0 +1,49 @@
+# Risikoartefakt – Kundenportal (MVP)
+
+## 1. Fachliche Risiken
+| ID | Risiko | Ursache / Bezug | Mögliche Auswirkungen | Gegenmaßnahme / Klärungsbedarf |
+|----|--------|----------------|-----------------------|--------------------------------|
+| FR-1 | Unklare Support‑Prozesse | Keine Ticket‑System‑Integration, nur Kontakt‑Formular (siehe Transkript, Zeile … ) | Verzögerte Bearbeitung von Kundenanfragen, erhöhte Kundenzufriedenheit‑Risiken | Definition eines minimalen Support‑Workflows (z. B. Email‑Tracking) und späteres Ticket‑System planen |
+| FR-2 | Fehlende Rabatt‑Freigabe >15 % | Sonderrabatte sind im MVP nicht erlaubt, aber Business‑Anforderung (Eva) fordert Freigabe‑Prozess | Finanzielle Verluste durch fehlerhafte Angebote, Compliance‑Risiko | Konkrete Schwelle im MVP festlegen (z. B. ≤15 % nur automatisiert) und Freigabe‑Workflow für höhere Rabatte dokumentieren |
+| FR-3 | Unklare Zielgruppe / Pilot‑Kunde (Schweiz vs. DACH) | Entscheidung über Pilot‑Kunde fehlt (Transkript, Zeile … ) | Fehlende Anforderungen an Währung, Lokalisierung, Datenschutz (Schweiz) → Nachträgliche Nachbesserungen | Entscheidung bis MVP‑Kick‑off treffen, Scope‑Anpassungen klar dokumentieren |
+| FR-4 | Daten‑Minimierung vs. Performance (SAP‑Cache) | Diskussion über Echtzeit‑SAP‑Lesen vs. Caching (Transkript) | Risiko von veralteten Preisen oder unerlaubter Speicherung personenbezogener Daten | Im MVP Echtzeit‑Lesen verpflichtend, Caching erst in Phase 2 mit Datenschutz‑ und Retention‑Konzept einführen |
+| FR-5 | KPI‑Messung erst nach MVP | Wunsch nach Conversion‑Rate, Time‑to‑Offer (Transkript) | Keine datenbasierte Erfolgskontrolle im ersten Release | KPI‑Erhebung erst nach MVP planen, ggf. Mock‑Daten für Early‑Feedback nutzen |
+
+## 2. Technische Risiken
+| ID | Risiko | Ursache / Bezug | Mögliche Auswirkungen | Gegenmaßnahme / Klärungsbedarf |
+|----|--------|----------------|-----------------------|--------------------------------|
+| TR-1 | Kritische Abhängigkeit von SAP‑Verfügbarkeit | Keine Schreibrechte, aber Lesedaten zwingend (Transkript) | Angebotserstellung ausfällt bei SAP‑Ausfall oder Wartungsfenster | Fallback‑Strategie (z. B. Read‑Only‑Cache für Produkt‑/Preis‑Daten) für kurzfristige Ausfälle definieren |
+| TR-2 | API‑Gateway‑Verfügbarkeit (6‑Wochen‑Warteliste) | Benötigt für sichere API‑Exposition, aber nicht im MVP realisierbar (Transkript) | Direkter Service‑Aufruf erhöht Sicherheits‑ und Skalierbarkeits‑Risiken | Temporäre interne API‑Schicht mit OAuth‑Token‑Management implementieren, später auf zentrales Gateway migrieren |
+| TR-3 | Unzureichendes Security‑Review (Zeitkonflikt) | 6‑Wochen Review überschneidet MVP‑Zeitplan (Transkript) | Sicherheitslücken (z. B. fehlende Pen‑Tests) im Live‑System | Minimal‑Security‑Check (Threat‑Model, OWASP‑Top‑10) innerhalb 2 Wochen, Review nach MVP planen |
+| TR-4 | Keine neue Datenbank → Nutzung Managed‑DB-Service | EU‑only Managed‑Hosting gefordert, aber Auswahl und Kosten offen (Transkript) | Kosten‑ und Performance‑Unsicherheit, mögliche Nicht‑EU‑Datenresidenz | Anbieter‑Evaluation (z. B. Azure Postgres EU‑Region) und Kosten‑Schätzung bis Vorstandspräsentation abschließen |
+| TR-5 | Logging‑ und Audit‑Trennung fehlt | Grund‑Audit‑Log definiert, aber technische Trennung zu App‑Logs fehlt (Transkript) | Datenschutz‑Verstoß durch personenbezogene Daten in technischen Logs | Einführung von strukturierten Audit‑Logs (z. B. JSON) getrennt von DEBUG‑Logs, Log‑Retention definieren |
+| TR-6 | Rate‑Limiting / Missbrauchserkennung unzureichend | Grund‑Rate‑Limit geplante, keine Abuse‑Detection (Transkript) | Überlastung, Datenexfiltration, Service‑Denial | Implementierung eines einfachen Token‑Buckets‑Rate‑Limits auf API‑Ebene, später erweiterte Anomalie‑Erkennung |
+| TR-7 | Secrets‑Management & CI/CD nicht vorhanden | Kein Secrets‑Management in MVP (Transkript) | Gefahr von credential leakage | Nutzung von Managed Secrets (z. B. Azure KeyVault) bereits im MVP für Datenbank‑ und API‑Keys |
+
+## 3. Compliance‑ und Datenschutzrisiken
+| ID | Risiko | Ursache / Bezug | Mögliche Auswirkungen | Gegenmaßnahme / Klärungsbedarf |
+|----|--------|----------------|-----------------------|--------------------------------|
+| CD-1 | Unvollständiges Double‑Opt‑In & Löschkonzept | Double‑Opt‑In gefordert, Löschkonzept offen (Transkript) | DSGVO‑Verstoß, Bußgelder, Vertrauensverlust | Implementierung Double‑Opt‑In Workflow & Dokumentation, sofortigen Draft für Löschkonzept erstellen |
+| CD-2 | EU‑only Hosting Kosten/Verfügbarkeit | Hosting‑Region muss EU‑only, Kosten nicht quantifiziert (Transkript) | Risiko von Nicht‑Einhaltung DSGVO, Budget‑Überschreitung | Auswahl eines EU‑Region‑Only Providers, Kosten‑Modell bis Freitag bereitstellen |
+| CD-3 | Fehlende Daten‑Retention‑ und Aufbewahrungs‑Regeln | Konflikt zwischen gesetzlicher Aufbewahrung und Löschrecht (Transkript) | Rechtsrisiko, fehlerhafte Datenlöschung oder -aufbewahrung | Definition von Retention‑Policy (z. B. 7 Jahre für Finanz‑Daten, 30 Tage für Log‑Daten) und Mapping zu Löschanfragen |
+| CD-4 | Personenbezogene Daten in technischen Logs | Hinweis auf Trennung von Audit‑ und technischen Logs fehlt (Transkript) | Missbrauch personenbezogener Daten, DSGVO‑Verstoß | Log‑Redaction für PII in technischen Logs, Nutzung von Maskierungstools |
+| CD-5 | Mehrwährungs‑ und Mehrsprachigkeits‑Ausblick (Schweiz, USA) | Schwellenwert für Schweiz‑Pilot unklar, Datenresidenz problematisch (Transkript) | Gefahr von non‑EU Datenübertragung, zusätzliche rechtliche Auflagen | Für MVP nur EUR, später rechtliche Prüfung für CHF/USA, klare Scope‑Definition |
+
+## 4. Widersprüche und Unsicherheiten
+| ID | Widerspruch / Unsicherheit | Betroffene Artefakte | Bewertung |
+|----|---------------------------|----------------------|-----------|
+| WI-1 | Mobile‑First vs. Web‑First | MVP‑Scope, Zeitplan | Keine klare Entscheidung – wird im MVP als optional betrachtet |
+| WI-2 | SSO (Azure AD / Google) vs. einfaches E‑Mail‑Login | Auth‑Mechanismus | Optional, aber nicht im MVP verpflichtend |
+| WI-3 | Umfang des Audit‑Trails vs. Aufwand | Logging‑Design | Minimaler Trail definiert, aber Details (Who/When/What) offen |
+| WI-4 | Kosten‑Schätzung für Managed Hosting & Backup | Budget‑Dokumentation | Noch nicht quantifiziert – Risiko für Vorstandspräsentation |
+| WI-5 | Test‑Umgebung mit echten SAP‑Daten vs. synthetischen Daten | CI/CD, Testing | Risiko von Datenschutz‑Verletzungen – muss geklärt werden |
+
+## 5. Priorisierte Risikogruppen (nach Impact & Likelihood)
+1. **Compliance/Datenschutz (CD‑1, CD‑2, CD‑4)** – Hoher Impact, mittlere Likelihood – sofortige Maßnahmen (Opt‑In, Log‑Redaction, Hosting‑Entscheidung).
+2. **Technische Kernabhängigkeit (TR‑1, TR‑2, TR‑3)** – Hoher Impact, hohe Likelihood – schnelle Prototyp‑Lösungen (Cache‑Fallback, interne OAuth‑Schicht, Mini‑Security‑Check).
+3. **Fachliche Geschäfts‑Risiken (FR‑1, FR‑2)** – Mittlerer Impact, mittlere Likelihood – klare Scope‑Definition und Dokumentation für spätere Phasen.
+4. **Operational (TR‑4, TR‑5, TR‑6, TR‑7)** – Mittlerer Impact, niedrige Likelihood – planen und nach MVP umsetzen.
+5. **Offene Fragen (WI‑*)** – Geringer bis mittlerer Impact – sollten bis MVP‑Kick‑off geklärt werden.
+
+---
+*Dieses Risikoartefakt wurde aus dem Projekt‑Kontext (runs/phase2_1/20260529_101357_d4d49c/state/context.md) und dem Stakeholder‑Transkript (input/transcripts/T9999_chaos.txt) abgeleitet.*

@@ -1,0 +1,35 @@
+## DEINE EINZIGE AUFGABE IN DIESEM DURCHGANG: FALSE_CERTAINTY
+Ignoriere fehlende Themen (MISSING_TOPIC) und erfundene/widersprüchliche Aussagen (FALSE_CLAIM) — die
+werden in eigenen Durchgängen geprüft. Melde HIER ausschließlich FALSE_CERTAINTY.
+
+category "FALSE_CERTAINTY":
+Das Artefakt stellt etwas als entschieden/gesetzt dar, obwohl das Transkript es offen/strittig ließ.
+Voraussetzung: Das Thema / die Richtung KOMMT im Transkript VOR — der Fehler liegt ausschließlich im
+Gewissheitsgrad der Darstellung, nicht im Inhalt selbst.
+ABER: Wenn das Artefakt die Aussage SELBST als offen, bevorzugt, "noch nicht final" oder als
+Annahme/offenen Punkt kennzeichnet, ist es KEIN Fehler.
+
+ABGRENZUNG (strikt): Kommt das Thema im Transkript NICHT vor oder widerspricht ihm direkt, ist das
+FALSE_CLAIM — NICHT dein Fall; melde es hier NICHT.
+
+## VERBOTEN
+- Keine "könnte vollständiger/detaillierter sein"-Findings, keine Stil-/Format-/Sprachkritik.
+- Jede Feststellung muss durch Transkript UND Artefakt belegbar sein.
+
+## SCHWERE
+KRITISCH = Kernthema/Compliance/Datenschutz/Security betroffen oder falsche Folgeentscheidung.
+MITTEL = fachlich relevant. GERING = kleine Ungenauigkeit.
+
+## AUSGABE (ausschließlich dieses JSON-Objekt)
+{
+  "findings": [
+    {
+      "category": "FALSE_CERTAINTY",
+      "severity": "KRITISCH | MITTEL | GERING",
+      "artifactQuote": "woertliches Zitat aus dem Artefakt",
+      "transcriptEvidence": "woertliches Zitat aus dem Transkript (offene/strittige Stelle)",
+      "reason": "ein Satz, warum die Darstellung zu sicher ist"
+    }
+  ]
+}
+Keine Fehler: {"findings": []}. Gib niemals Text außerhalb des JSON-Objekts aus.

@@ -1,0 +1,109 @@
+% M25, 13.09.2026: bestehende Dokumentationsbelege in den numerischen Zitierstil überführt.
+% M10, 11.09.2026: Leserführung, Kapiteltrennung und belegte Reichweite.
+% PipelineFullRunner.cs / .Cli.cs / .EventPump.cs; IngestionApplyExec.cs:31--41;
+% GithubForwardApply.cs:69--86; GateFreeBinding.cs; SubworkflowPortSpikeTests.cs.
+% B-33: 13 Checkpoints des Elternlaufs bis zur Pause, nicht 13 Ledger-Checkpoints.
+% BindGateFree weist alle Ports zurück. AsAIAgent-Dokumentation ist kein BindAsExecutor-Beleg.
+% Historischer Fall und Prozessgrenzen-Smoke in 7.6; keine neue Systemausführung für M10.
+
+\section{Durabilität: Checkpoints, Wiederaufnahme und Teilworkflows}
+\label{sec:realisierung-durabilitaet}
+
+MAF sichert den Workflowfortschritt an abgeschlossenen Ausführungsrunden
+(\emph{Supersteps}) in Checkpoints. Das Artefakt verwendet dafür einen
+dateibasierten JSON-Speicher. Zur Wiederaufnahme wird der Graph erneut
+aufgebaut und der gespeicherte Ausführungszustand geladen. Nach der
+Frameworkdokumentation müssen dabei Graphstruktur und
+Executor-Identitäten zum gespeicherten Stand passen; für neu erzeugte
+ChatClient-basierte Agenten müssen auch Kennung und gegebenenfalls
+Name erhalten bleiben \cite{msmaf2026checkpoints}.
+
+Abbildung~\ref{fig:checkpoint-core-trennung} zeigt den in
+Abschnitt~\ref{sec:realisierung-human-gates} beschriebenen Pausenzyklus.
+Checkpoint und Lauf-Zeiger ermöglichen die Fortsetzung nach einem
+Prozessende. Sie stellen dabei den Ausführungszusammenhang wieder her,
+keinen früheren Core-Stand. Im Lauf mitgeführte fachliche Daten bleiben
+von der maßgeblichen Speicherung des Projektzustands zu unterscheiden.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/06/Abbildung6.5.pdf}
+  \caption[Wiederaufnahme eines pausierten Workflows]{Wiederaufnahme eines pausierten Workflows: Der Checkpoint
+    sichert den Ausführungszustand. Der maßgebliche Core wird dadurch
+    nicht zurückgesetzt; seine Fortschreibung erfolgt über die
+    vorgesehenen Governance- und Speicheroperationen.}
+  \label{fig:checkpoint-core-trennung}
+\end{figure}
+
+Dieser Mechanismus trägt den geregelten Pausenfall. Ein fachlicher
+Abbruch oder technischer Fehler eröffnet dagegen nicht automatisch
+denselben Fortsetzungsweg (Tabelle~\ref{tab:beendigungsformen}). Für den
+beschriebenen Einzelbediener-Betrieb wird zudem angenommen, dass während
+einer Pause keine anderweitige Core-Änderung erfolgt. Eine durchgängige
+Aktualitätsprüfung früher erzeugter Vorschläge ist nicht realisiert;
+die Annahme ist keine nachträglich geprüfte Versuchsbedingung der
+historischen Läufe.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{p{0.20\textwidth}p{0.33\textwidth}p{0.36\textwidth}}
+    \hline
+    \textbf{Beendigungsform} & \textbf{Gespeichert bis dahin} & \textbf{Weg zurück} \\
+    \hline
+    geregelte Gate-Pause & Checkpoint, Lauf-Zeiger und Stufen-Artefakte & regulärer Wiederaufnahmebefehl \\
+    fachlicher Abbruch & bereits gesicherte Checkpoints und Stufen-Artefakte & neuer Lauf; keine automatische Fortsetzung \\
+    technischer Fehler & zuletzt gesicherter Checkpoint und vorhandene Artefakte & nicht systematisch untersucht; kein allgemeiner Wiederherstellungsanspruch \\
+    \hline
+  \end{tabular}
+  \caption[Beendigungsformen und Fortsetzungswege]{Beendigungsformen und Fortsetzungswege. Die geregelte
+    Gate-Pause ist der realisierte und belegte Wiederaufnahmefall.}
+  \label{tab:beendigungsformen}
+\end{table}
+
+Die Fortsetzung ergänzt ein projektspezifischer
+\emph{Wiederholungsschutz}. Bei erneuter Anwendung eines
+Einordnungsplans werden dessen Plankennung, Anwendungsvermerk und
+gespeicherter Ergebnisbericht geprüft. Wurde dieser Plan bereits
+übernommen, wird der Bericht zurückgegeben, ohne den Core erneut zu
+schreiben. Im GitHub-Pfad verhindert eine vorhandene Issue-Zuordnung
+die erneute Anlage beziehungsweise dieselbe Verknüpfung. Aktualisierungen
+und Kommentare sind von diesem Kurzschluss ausgenommen: Hier ist die
+Zuordnung Voraussetzung der Handlung, kein Beleg ihrer Ausführung.
+Daraus folgt keine allgemeine Garantie, dass jede Außenwirkung
+genau einmal eintritt, insbesondere nicht bei einem Absturz zwischen externem
+Schreiben und lokaler Protokollierung. Der Kontrolltest in
+Abschnitt~\ref{sec:eval-kontrollen} prüft die erneute Anwendung
+derselben Plankennung am Core-Pfad.
+
+Für die Einbettung größerer Verarbeitungseinheiten verwendet das
+Artefakt \emph{gebundene Teilworkflows}, in der Implementierung auch
+Kapseln genannt. So wird der Ledger-Workflow über
+\texttt{BindAsExecutor} in den Gesamtgraphen eingebunden; der geprüfte
+Elterncheckpoint enthält auch den inneren Checkpointbestand. Eine
+persistierte Zuordnung hält seine Teillauf-Kennung fest, damit der
+erneute Graphaufbau auf denselben Laufordner zugreift. Im dokumentierten
+Fall blieb dadurch der bereits abgeschlossene Ledger-Teillauf bei der
+Wiederaufnahme zugeordnet. Die Fortsetzung innerhalb einer noch
+laufenden Ledger-Verarbeitung wurde damit nicht gezeigt. Diesen
+Demonstrationsfall und den separaten technischen Nachweis der
+Wiederaufnahme in einem neuen Prozess unterscheidet
+Abschnitt~\ref{sec:eval-resume}.
+
+Die Kapselung erforderte eine weitere Strukturentscheidung. In einem
+isolierten Integrationstest mit MAF~1.15.0 erreichte eine innere
+Portanfrage ohne Weiterleitungskanten den Eltern-Runner nicht; die
+Ausführung wartete ohne sichtbares Fehlerereignis. Mit expliziter
+Weiterleitung von Anfrage und Antwort zwischen Teilworkflow und
+Elternport gelang derselbe Rundweg. Die produktive Bindefunktion
+\texttt{BindGateFree} lässt deshalb bewusst nur portfreie
+Teilworkflows zu; sie weist \emph{jeden} enthaltenen Request Port
+bereits beim Graphaufbau zurück. Entscheidungspunkte bleiben in
+dieser gewählten Form auf der übergeordneten Ebene.
+Verhaltenstests sichern beide untersuchten Konfigurationen ab.
+Die aktuelle Dokumentation beschreibt eine transparente Weiterleitung
+innerer Anfragen
+\cite[Abschnitt~„Requests and Responses“]{msmaf2026subworkflows}.
+Der Testbefund bleibt deshalb auf die
+untersuchte Version und Verdrahtung begrenzt. Er begründet die gewählte
+Struktur, kein generelles Verbot von Ports in Teilworkflows.

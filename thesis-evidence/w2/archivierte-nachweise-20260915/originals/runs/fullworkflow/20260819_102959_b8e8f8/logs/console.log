@@ -1,0 +1,44 @@
+[pipeline-full] run runId=20260819_102959_b8e8f8 slice=u2 (EIN Graph: front->branch->bootstrap|betrieb->forward) ledgerModel=openai/gpt-5.4 baselineModel=openai/gpt-5.4 adjudication=Interactive execute=False
+[pipeline-full] Einstieg: DELTA
+[pipeline-full] Verzweigung: mode=Auto coreExists=True -> Betriebs-Zweig
+[pipeline-full] Betriebs-Zweig: Ingest -> [ingest-gate] -> Apply -> Bridge -> PbiUpdate -> [pbi-gate] -> Apply (Core: 220 items)
+[pipeline-full] Gate 'ingest-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'ingest-gate'. checkpointId=3ad4e4c699f84ab99cc39ebd47f46fb9
+  Entscheid beim Resume: --accept-all | --accept id1,id2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260819_102959_b8e8f8   (oder: … resume 20260819_102959_b8e8f8 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260819_102959_b8e8f8/  (PAUSIERT)
+[pipeline-full] resume runId=20260819_102959_b8e8f8 gate=ingest-gate checkpointId=3ad4e4c699f84ab99cc39ebd47f46fb9
+[pipeline-full] 4 offene Entscheidung(en) im Core -> decision-gate (Tor 2).
+[pipeline-full] Gate 'decision-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'decision-gate'. checkpointId=a633980374ce49188de1373a886cf5c0
+  Review-UI: decision-gate-review runs/fullworkflow/20260819_102959_b8e8f8/07-decision  → decision-gate-decisions.json (Ausgang je Widerspruch, vertagen erlaubt)
+  Flags/accept-all koennen hier NICHT aufloesen (Wahrheits-Konflikt) — sie vertagen alles (laut).
+[pipeline-full] Fortsetzen: pipeline-full resume 20260819_102959_b8e8f8   (oder: … resume 20260819_102959_b8e8f8 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260819_102959_b8e8f8/  (erneut PAUSIERT — nächstes Gate)
+[pipeline-full] resume runId=20260819_102959_b8e8f8 gate=decision-gate checkpointId=a633980374ce49188de1373a886cf5c0
+[pipeline-full] decision-gate: alle 4 Entscheidung(en) vertagt — DECs parken sichtbar weiter.
+[pipeline-full] Gate 'pbi-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'pbi-gate'. checkpointId=62d937289c1745a195f13971c297e390
+  Entscheid beim Resume: --accept-all | --accept id1,id2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260819_102959_b8e8f8   (oder: … resume 20260819_102959_b8e8f8 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260819_102959_b8e8f8/  (erneut PAUSIERT — nächstes Gate)
+[review-ui] starte lokalen Review-Server...
+[review-ui] binde lokalen Port...
+[review-ui] 1 Items — offen unter: http://127.0.0.1:50621
+[pbi-update-review] Finished - 1/1 -> human-decisions.json
+[pbi-update-review] R-43: resume 20260819_102959_b8e8f8 laeuft automatisch an (Graph-Apply; Folgestufen inkl. LLM) …
+[pipeline-full] resume runId=20260819_102959_b8e8f8 gate=pbi-gate checkpointId=62d937289c1745a195f13971c297e390
+[pipeline-full] pbi-update applied newPbis=0 updatedPbis=1
+[pipeline-full] Snapshot (R-16): 45 Issues von armiino/Agentic-GitHub-refactor geholt (read-only, kein Write).
+[pipeline-full] Forward (DRY-RUN=True): 1 PBI-Ops -> GitHub-Plan (realer Write nur bei execute=true)
+[pipeline-full] Gate 'github-forward-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'github-forward-gate'. checkpointId=8e3e1c4321804301b83d06ec581aba7b
+  Review-UI: github-forward-review runs/fullworkflow/20260819_102959_b8e8f8/07-github  (→ human-decisions.json)
+  oder Steward decide_gate (→ github-forward-decisions.json) — beide liest der resume
+  oder beim Resume: --accept-all | --accept opId1,opId2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260819_102959_b8e8f8   (oder: … resume 20260819_102959_b8e8f8 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260819_102959_b8e8f8/  (erneut PAUSIERT — nächstes Gate)
+[pipeline-full] resume runId=20260819_102959_b8e8f8 gate=github-forward-gate checkpointId=8e3e1c4321804301b83d06ec581aba7b
+[pipeline-full] PIPELINE FERTIG (Forward): dryRun=True executed=False success=True.
+[pipeline-full] metrics.json geschrieben (6 Stufen).
+[pipeline-full] Faden: runs/fullworkflow/20260819_102959_b8e8f8/  exit=0

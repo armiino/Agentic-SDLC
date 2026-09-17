@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "reviewId": "cluster-review-20260727_053229",
+  "verdict": "revise",
+  "summary": "Die Cluster sind weitgehend tragf\u00E4hig, aber es gibt drei fachliche Probleme: REQ-19 ist als eigenes Feature zu fein geschnitten und geh\u00F6rt fachlich zum Access-Control-Feature; REQ-20/REQ-21 sind keine eigenst\u00E4ndigen Core-Features, sondern rollen-/berechtigungsbezogene Querschnittsanforderungen; REQ-29 ist im Cluster Kommunikationswissen als Cross-Cutting fehlplatziert, weil alternative Eingabemethoden ein allgemeines UX-/Accessibility-Thema sind und nicht spezifisch die Profil\u00FCbersicht betreffen.",
+  "findings": [
+    {
+      "clusterId": "FC-10",
+      "kind": "granularity",
+      "severity": "error",
+      "message": "FC-10 ist f\u00FCr die Backlog-Planung zu fein geschnitten. REQ-19 beschreibt keinen hinreichend eigenst\u00E4ndigen Fachwert gegen\u00FCber FC-02, sondern eine optionale Auspr\u00E4gung des Rollen- und Rechtekonzepts (Settings-Bereich mit rollenabh\u00E4ngiger Sicht, Account- und Rechteverwaltung, pers\u00F6nliche Einstellungen). Als separates Ein-Requirement-Cluster zerlegt es das Access-Control-Feature k\u00FCnstlich."
+    },
+    {
+      "clusterId": "FC-11",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-20 und REQ-21 sind als Core in FC-11 fachlich falsch eingeordnet. Beide Anforderungen erweitern das Rollen-/Berechtigungsmodell um besondere Nutzergruppen (Bewohner, Angeh\u00F6rige) und beschreiben damit keine eigenst\u00E4ndige Gesch\u00E4ftsfunktion, sondern querschnittliche Zugriffs- und Beteiligungsregeln, die mehrere Features betreffen."
+    },
+    {
+      "clusterId": "FC-04",
+      "kind": "miscategorized_crosscutting",
+      "severity": "error",
+      "message": "REQ-29 ist als Cross-Cutting in FC-04 fehlplatziert. Der Requirement-Text beschreibt optionale Sprachbefehle bzw. alternative Eingabemethoden f\u00FCr beeintr\u00E4chtigte Nutzer allgemein, also ein \u00FCbergreifendes Accessibility-/UX-Thema. Es ist nicht fachlich speziell an die Profil\u00FCbersicht und Profilerstellung gebunden."
+    }
+  ],
+  "operations": [
+    {
+      "opId": "op-01",
+      "kind": "merge_clusters",
+      "rationale": "REQ-19 ist fachlich eine Fortsetzung des Login-/Rollen- und Rechtekonzepts aus REQ-04 und REQ-06. Die Zusammenf\u00FChrung reduziert unn\u00F6tige Fragmentierung und bildet das gemeinsame Feature \u0027Anmeldung und Zugriffssteuerung\u0027 konsistent ab.",
+      "requirementId": null,
+      "fromClusterId": "FC-10",
+      "toClusterId": "FC-02",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-02",
+      "kind": "move_core",
+      "rationale": "Der Bewohner-Account in REQ-20 ist eine spezielle Auspr\u00E4gung von Rollen und Sichtbarkeiten und geh\u00F6rt daher als fachlicher Kern zum Access-Control-Cluster statt als eigenes Feature gef\u00FChrt zu werden.",
+      "requirementId": "REQ-20",
+      "fromClusterId": "FC-11",
+      "toClusterId": "FC-02",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-03",
+      "kind": "move_core",
+      "rationale": "Der Angeh\u00F6rigenzugriff in REQ-21 erweitert das Berechtigungs- und Beteiligungsmodell. Fachlich ist dies Teil von Zugriffssteuerung/Rollenmodell und nicht ein separates Produktfeature.",
+      "requirementId": "REQ-21",
+      "fromClusterId": "FC-11",
+      "toClusterId": "FC-02",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-04",
+      "kind": "remove_crosscutting",
+      "rationale": "Alternative Eingabemethoden aus REQ-29 sind kein spezifischer Querschnitt zur Profil\u00FCbersicht, daher sollte der Verweis aus FC-04 entfernt werden.",
+      "requirementId": "REQ-29",
+      "fromClusterId": "FC-04",
+      "toClusterId": null,
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    },
+    {
+      "opId": "op-05",
+      "kind": "add_crosscutting",
+      "rationale": "REQ-29 beschreibt ein allgemeines Accessibility-/UX-Prinzip und sollte deshalb dem entsprechenden Querschnittscluster FC-12 zugeordnet werden.",
+      "requirementId": "REQ-29",
+      "fromClusterId": null,
+      "toClusterId": "FC-12",
+      "newClusterId": null,
+      "label": null,
+      "identityKey": null,
+      "coreRequirementIds": []
+    }
+  ]
+}

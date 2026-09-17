@@ -1,0 +1,447 @@
+{
+  "case": {
+    "operation_key": "20260806_115016_01715f|0|MA-REQ-X1",
+    "run_id": "20260806_115016_01715f",
+    "operation_index": 0,
+    "incoming_id": "MA-REQ-X1",
+    "proposed_kind": "CONTRADICT",
+    "proposed_target": "REQ-70",
+    "feature_hint": null,
+    "route_group": "other_delta",
+    "route_basis": "explicit delta + stored path",
+    "family": "existing_reference",
+    "known_run": false,
+    "plan_path": "originals/runs/fullworkflow/20260806_115016_01715f/07-ingest/plan.json",
+    "plan_sha256": "5e982d187e60cd83e45a9a98c4190a09cdb61ccfda09d10f054554ee80dd28d4",
+    "operation_sha256": "e23f209c3781f2919cdc8c3880ec3aa97126a725c434fe13ae1d61e02ac4a114",
+    "rank_sha256": "5e4759b5e725e11d3ee576af1f7ed9688d31af59b4a998a94e8b5eb5f5c6576a",
+    "has_statement": true,
+    "case_id": "N08",
+    "role": "additional",
+    "selected_slot": "other_delta/existing_reference"
+  },
+  "incoming": {
+    "itemId": "MA-REQ-X1",
+    "itemType": "requirement",
+    "text": "Aus Datenschutzgruenden muessen alle Bewohnerdaten ausschliesslich lokal auf Geraeten der Einrichtung gespeichert werden; eine Cloud-Datenbank ist nicht zulaessig.",
+    "origin": "Extracted",
+    "stage": "evidence_baseline",
+    "version": 1,
+    "sourceRunId": "20260805_144331_1c6a4f",
+    "sourceArtifactId": "OQ",
+    "sourceArtifactType": "open-questions",
+    "sourceDecisionId": null,
+    "sourceCandidateId": null,
+    "sourceClaimIds": [
+      "no-go-global-statt-pro-bewohner"
+    ],
+    "sourceArtifactItemIds": [],
+    "metadata": {
+      "artifactVersion": "1",
+      "producerModel": "openai/gpt-5.4"
+    },
+    "identityKey": null,
+    "history": null,
+    "feature": null,
+    "pbi": null,
+    "validity": "Active",
+    "blocker": "None",
+    "confirmedBy": "Agent",
+    "status": "baseline"
+  },
+  "source_descriptors": [
+    {
+      "sourceId": "artifact:REQ:20260805_144331_1c6a4f",
+      "sourceType": "artifact",
+      "path": "runs/recipe/20260805_144331_1c6a4f/baselines/requirements/artifact.json",
+      "runId": "20260805_144331_1c6a4f",
+      "description": "requirements/evidence_baseline"
+    },
+    {
+      "sourceId": "artifact:OQ:20260805_144331_1c6a4f",
+      "sourceType": "artifact",
+      "path": "runs/recipe/20260805_144331_1c6a4f/baselines/open-questions/artifact.json",
+      "runId": "20260805_144331_1c6a4f",
+      "description": "open-questions/evidence_baseline"
+    }
+  ],
+  "proposal": {
+    "incomingItemId": "MA-REQ-X1",
+    "kind": "CONTRADICT",
+    "statement": "Aus Datenschutzgruenden muessen alle Bewohnerdaten ausschliesslich lokal auf Geraeten der Einrichtung gespeichert werden; eine Cloud-Datenbank ist nicht zulaessig.",
+    "targetEntityId": "REQ-70",
+    "featureKey": null,
+    "claimIds": [
+      "no-go-global-statt-pro-bewohner"
+    ],
+    "rationale": "Widerspricht der akzeptierten Requirement-Festlegung REQ-70, dass Firebase Firestore als Persistenztechnologie festgelegt ist; die eingehende Aussage schliesst eine Cloud-Datenbank explizit aus. Keine offene Entscheidung dazu vorhanden.",
+    "relatedRejectionId": null
+  },
+  "before": [
+    {
+      "itemId": "PBI-030",
+      "itemType": "pbi",
+      "text": "Technologiestack für App, State-Management und Datenbank festlegen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-firebase-firestore-vorlaeufig",
+        "canon-getx-pruefen",
+        "canon-technologiestack-flutter-dart"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC13B-01",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-13B"
+      },
+      "identityKey": "technologiestack-festlegen",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Technologiestack für App, State-Management und Datenbank festlegen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-firebase-firestore-vorlaeufig",
+            "canon-getx-pruefen",
+            "canon-technologiestack-flutter-dart"
+          ],
+          "recordedUtc": "2026-07-23T14:16:14.465119Z",
+          "note": "SUPERSEDE_PBI: Requirement REQ-55 ersetzt durch REQ-70"
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Product Owner will ich die wesentlichen Technologie- und Architekturentscheidungen verbindlich festlegen, damit die Umsetzung auf einem freigegebenen technischen Rahmen startet.",
+        "title": "Technologiestack für App, State-Management und Datenbank festlegen",
+        "acceptanceCriteria": [
+          "Es liegt eine dokumentierte Entscheidung vor, ob Flutter mit Dart als verbindliche Umsetzungsbasis verwendet wird.",
+          "Es ist entschieden, ob GetX eingesetzt, verworfen oder durch eine Alternative ersetzt wird.",
+          "Es ist entschieden, ob Firestore als Datenbank verbindlich verwendet wird oder welche Alternative stattdessen gilt."
+        ],
+        "linkedRequirementIds": [
+          "REQ-53",
+          "REQ-54",
+          "REQ-70"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 30,
+        "readiness": "blocked_by_decision",
+        "mvp": "required_for_mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "REQ-53",
+            "REQ-54",
+            "REQ-55"
+          ],
+          "l1Req": [
+            "REQ-53",
+            "REQ-54",
+            "REQ-55"
+          ],
+          "l3": [],
+          "claims": [
+            "canon-firebase-firestore-vorlaeufig",
+            "canon-getx-pruefen",
+            "canon-technologiestack-flutter-dart"
+          ]
+        }
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "NeedsClarify",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "needs_clarify"
+    },
+    {
+      "itemId": "REQ-70",
+      "itemType": "requirement",
+      "text": "Firebase Firestore ist als Persistenztechnologie festgelegt; Alternativen werden nicht weiter diskutiert.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260723_134102_c63c89",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "firestore-fixiert"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "REQ-19"
+      },
+      "identityKey": "firebase firestore ist als persistenztechnologie festgelegt alternativen werden nicht weiter diskutiert",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "confirmedInRun": "20260723_134102_c63c89",
+      "status": "accepted"
+    }
+  ],
+  "ingest_decision": null,
+  "applied_entries": [
+    {
+      "incomingItemId": "MA-REQ-X1",
+      "kind": "CONTRADICT",
+      "entityId": "DEC-001",
+      "outcome": "contradicted"
+    }
+  ],
+  "after_ingest": [
+    {
+      "itemId": "REQ-70",
+      "itemType": "requirement",
+      "text": "Firebase Firestore ist als Persistenztechnologie festgelegt; Alternativen werden nicht weiter diskutiert.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260723_134102_c63c89",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "firestore-fixiert"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "REQ-19"
+      },
+      "identityKey": "firebase firestore ist als persistenztechnologie festgelegt alternativen werden nicht weiter diskutiert",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "confirmedInRun": "20260723_134102_c63c89",
+      "status": "accepted"
+    },
+    {
+      "itemId": "DEC-001",
+      "itemType": "decision",
+      "text": "Widerspruch zu REQ-70: Aus Datenschutzgruenden muessen alle Bewohnerdaten ausschliesslich lokal auf Geraeten der Einrichtung gespeichert werden; eine Cloud-Datenbank ist nicht zulaessig.",
+      "origin": "INGESTION_CONTRADICTION",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260806_115016_01715f",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "no-go-global-statt-pro-bewohner"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "MA-REQ-X1",
+        "ingestedFromRun": "20260805_144331_1c6a4f",
+        "targetEntityId": "REQ-70"
+      },
+      "identityKey": "aus datenschutzgruenden muessen alle bewohnerdaten ausschliesslich lokal auf geraeten der einrichtung gespeichert werden eine cloud datenbank ist nicht zulaessig",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "decision": "Open",
+      "status": "open_decision"
+    }
+  ],
+  "before_pbi": [],
+  "after_pbi_before_forward": [],
+  "relations_before_ingest": [
+    {
+      "fromId": "PBI-030",
+      "toId": "FC-13B",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-030",
+      "toId": "REQ-53",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-030",
+      "toId": "REQ-54",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-70",
+      "toId": "REQ-55",
+      "relationType": "supersedes",
+      "source": "ingestion",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-030",
+      "toId": "REQ-70",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-030",
+      "toId": "gh#30",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "30",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-07-23T14:58:33.7764290Z",
+        "updatedUtc": "2026-07-23T14:58:33.7764290Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/30",
+        "repository": "armiino/agentic-github-refactor",
+        "origin": "CREATE"
+      }
+    }
+  ],
+  "relations_before_pbi": [],
+  "relations_after_pbi": [],
+  "pbi_operations": [],
+  "pbi_alignments": [],
+  "pbi_human_decisions": null,
+  "pbi_apply_report": null,
+  "projection_entries": [],
+  "github_decisions": null,
+  "github_report": null,
+  "rejections": [],
+  "events": [
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260806_115016_01715f",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "get_incoming_items",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 1,
+      "timestampUtc": "2026-08-06T11:50:24.884557Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260806_115016_01715f",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "list_core_requirements",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 2,
+      "timestampUtc": "2026-08-06T11:50:24.887467Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260806_115016_01715f",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "list_core_architecture",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 3,
+      "timestampUtc": "2026-08-06T11:50:24.888926Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260806_115016_01715f",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "list_open_decisions",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 4,
+      "timestampUtc": "2026-08-06T11:50:24.889754Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260806_115016_01715f",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "search_rejections",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 5,
+      "timestampUtc": "2026-08-06T11:50:24.891068Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260806_115016_01715f",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "check_state_change_plan",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 6,
+      "timestampUtc": "2026-08-06T11:50:27.924645Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260806_115016_01715f",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "save_state_change_plan",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 7,
+      "timestampUtc": "2026-08-06T11:50:31.189492Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "ingest-gate",
+      "policy": "AcceptAll",
+      "accepted": 1,
+      "rejected": 0,
+      "timestampUtc": "2026-08-06T11:50:33.664717Z"
+    },
+    {
+      "type": "PIPELINE_INGEST_APPLIED",
+      "runId": "20260806_115016_01715f",
+      "applied": 1,
+      "timestampUtc": "2026-08-06T11:50:33.686965Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "decision-gate",
+      "checkpointId": "15de003d071f47918937a7cf0bd54fa5",
+      "timestampUtc": "2026-08-06T11:50:33.700179Z"
+    }
+  ],
+  "source_base": "evidence/runs/fullworkflow/20260806_115016_01715f",
+  "decision_resolutions": null,
+  "decision_apply_report": null
+}

@@ -1,0 +1,43 @@
+% ============================================================
+% Tabelle 7.2-1: Metrikdefinitionen (korrigiert) — v01 (07.09.)
+% In Overleaf ablegen als: tables/eval-metriken-v2.tex
+% Aufruf im Fließtext: \input{\tabledir/eval-metriken-v2.tex}
+% Label: t:eval-metriken-v2
+% Stil: chap6.1-Konvention. ERSETZT tables/eval-metriken.tex
+% (alte Fassung: F1 [gestrichen laut Plan v2.1] + Precision-/
+% Nenner-Definitionen wichen vom Rechenverfahren ab —
+% Kollegen-Review 07.09., Punkte 3–5).
+% HERKUNFT: Verfahren = w2-matchregeln.md §§2–7 + tatsächliche
+% Berechnung in runs/w2-goldv2-eval-*.json (gold_escapes separat,
+% supported nicht als Fehler); Zuordnungsregel = z1-stufenanalyse.md
+% §4; Silent-Miss = Hauptmetrik (Schreibplan v2.1-Regel).
+% ============================================================
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.26\textwidth}>{\raggedright\arraybackslash}p{0.64\textwidth}}
+    \hline
+    \textbf{Metrik} & \textbf{Definition (tatsächliches Rechenverfahren)} \\
+    \hline
+    \multicolumn{2}{l}{\emph{Ergebnisqualität und Quellenbindung}} \\
+    Full Coverage & $N_{\mathrm{full}}/|G|$: Anteil der Referenzaussagen, deren Inhalt vollständig im Claim-Bestand enthalten ist (Bündelung mehrerer Claims erlaubt) \\
+    Touched Coverage & $(N_{\mathrm{full}}+N_{\mathrm{partial}})/|G|$: Anteil vollständig oder teilweise enthaltener Referenzaussagen \\
+    Inhaltliche Korrektheit & präzise Lesart: Anteil der Claims ohne \emph{festgestellte} Quellenverfälschung. Claims ohne quellenwidrigen oder verfälschenden Inhalt geteilt durch alle gelieferten Claims; geprüft gegen die gesamte nummerierte Quelle (nicht nur die zitierten Units). Die claimbezogene Quote hängt am Zuschnitt der Ausgabe (Bündelung verändert den Nenner) und ist zwischen verschieden granularen Beständen nur eingeschränkt vergleichbar. Gold-fremde, quellengetragene Inhalte zählen nicht als Fehler, sondern werden --- soweit erhoben (Anhang) --- gesondert als \emph{gold\_escapes} ausgewiesen (keine Gold-Deckungs-Präzision; Abweichung vom Matchregeln-P2 im Text dokumentiert). Abgrenzung: Semantische Stützung prüft die Belegqualität der \emph{zitierten} Units, diese Kennzahl die Verfälschungsfreiheit gegenüber der Quelle \\
+    Referenzgültigkeit & gültige \emph{Einzelreferenzen} geteilt durch alle abgegebenen Einzelreferenzen (technische Auflösbarkeit der Unit-IDs) \\
+    Semantische Stützung & direkt oder inferenziell gestützte Claims geteilt durch Claims mit mindestens einer auflösbaren Referenz; beurteilt wird die Vereinigung der referenzierten Units, unabhängig vom Selbst-Etikett des Systems \\
+    \multicolumn{2}{l}{\emph{Rechenschaft (Umgang mit eigenen Lücken) --- Hauptmetrik: Silent-Miss}} \\
+    Silent-Miss-Rate & $N_{\mathrm{ohne\ Hinweis}}/(N_{\mathrm{partial}}+N_{\mathrm{none}})$: Anteil unvollständig abgedeckter Referenzaussagen ohne zuordenbaren Prüfhinweis; das Gegenstück ($1-$ Silent-Miss) ist eine nachträgliche Hinweiszuordnungsquote, keine gemessene Wahrnehmung \\
+    Adressierbarkeit & (voll gedeckte $+$ hinweis-zugeordnete unvollständige Referenzaussagen)$\,/\,|G|$ --- ergänzende Größe: Prüfpotenzial, keine erreichte Abdeckung, keine gemessene Behebung \\
+    Signalbezogene Präzision & lückenrelevante Hinweise geteilt durch alle erzeugten Hinweise; ein zugeordneter Hinweis ist keine explizite Fehlermeldung (Prüfergebnisse werden mitberichtet) \\
+    \hline
+  \end{tabular}
+  \caption[Definitionen der verwendeten Kennzahlen]{Definitionen der verwendeten Kennzahlen nach dem
+    tatsächlich angewandten Rechenverfahren. Qualitäts- und
+    Quellenbindungsmetriken bewerten den gelieferten Bestand;
+    Rechenschaftsmetriken die nachträgliche Zuordenbarkeit
+    eigener Auslassungen zu erzeugten Hinweisen.
+    Prüfhinweise werden nie als erreichte Abdeckung
+    gutgeschrieben.}
+  \label{t:eval-metriken-v2}
+\end{table}

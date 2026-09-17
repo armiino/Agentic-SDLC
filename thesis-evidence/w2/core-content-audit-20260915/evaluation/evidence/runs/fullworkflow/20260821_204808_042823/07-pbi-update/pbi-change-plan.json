@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "planId": "pbi-change-plan-20260821_205151",
+  "createdUtc": "2026-08-21T20:51:51.476478Z",
+  "sourceIngestionRun": "20260821_204808_042823",
+  "operations": [
+    {
+      "kind": "MARK_CHANGED",
+      "requirementId": "ARCH-11",
+      "pbiId": "PBI-003",
+      "featureId": null,
+      "replacementRequirementId": null,
+      "openDecisionRef": null,
+      "rationale": "Requirement ARCH-11 verfeinert",
+      "proposedFeatureLabel": null,
+      "authorAnswerRef": null,
+      "authorAnswerText": null,
+      "value": null
+    },
+    {
+      "kind": "EXTEND_PBI",
+      "requirementId": "REQ-91",
+      "pbiId": "PBI-046",
+      "featureId": null,
+      "replacementRequirementId": null,
+      "openDecisionRef": null,
+      "rationale": "Das Requirement geh\u00F6rt fachlich direkt zur Erstellung und Verwaltung einer Besuchsank\u00FCndigung. PBI-046 deckt bereits das Ank\u00FCndigen eines Besuchs mit Datum und Uhrzeit ab; \u00C4ndern und Absagen vor Besuchsbeginn sind keine eigene fachliche Einheit, sondern typische Erweiterungen derselben Aufgabe. Die Folgen f\u00FCr Statusr\u00FCcksetzung auf \u201Eangefragt\u201C und das Unterdr\u00FCcken von Erinnerungen bei Absage konkretisieren den Lebenszyklus derselben Besuchsank\u00FCndigung, statt ein separates PBI zu rechtfertigen.",
+      "proposedFeatureLabel": null,
+      "authorAnswerRef": null,
+      "authorAnswerText": null,
+      "value": null
+    },
+    {
+      "kind": "EXTEND_PBI",
+      "requirementId": "REQ-92",
+      "pbiId": "PBI-032",
+      "featureId": null,
+      "replacementRequirementId": null,
+      "openDecisionRef": null,
+      "rationale": "Das Requirement erweitert fachlich die Arbeit an \u00DCbergabe-Notizen selbst. PBI-032 etabliert die \u00DCbergabe-Notiz pro Schicht als Arbeitsobjekt; die neue Anforderung erg\u00E4nzt daf\u00FCr die Bearbeitbarkeit bis zur Archivierung sowie Nachvollziehbarkeit der zuletzt g\u00FCltigen Fassung mit Zeitstempel und bearbeitendem Account. Das ist enger mit dem Kernzuschnitt von PBI-032 verbunden als mit PBI-033, das nur die automatische Archivierung und Auffindbarkeit archivierter Notizen behandelt.",
+      "proposedFeatureLabel": null,
+      "authorAnswerRef": null,
+      "authorAnswerText": null,
+      "value": null
+    }
+  ],
+  "alignments": [
+    {
+      "pbiId": "PBI-003",
+      "proposedTitle": "Rechtemodell f\u00FCr Einrichtungs-Personal, Angeh\u00F6rige und Leitung sowie Einrichtungsgrenzen in der Suche festlegen",
+      "proposedStatement": "Als Product Owner will ich das Rechtemodell f\u00FCr Einrichtungs-Personal, Angeh\u00F6rige und Leitung sowie einen serverseitigen Suchrahmen f\u00FCr die einrichtungsgebundene Stichwortsuche \u00FCber alle Bewohnerprofile festlegen, damit Zugriffe und Suchtreffer die Einrichtungsgrenze fachlich korrekt und technisch nicht umgehen.",
+      "proposedAcceptanceCriteria": [
+        "F\u00FCr die einrichtungsgebundene Stichwortsuche \u00FCber alle Bewohnerprofile ist ein serverseitiger Suchrahmen festgelegt.",
+        "Suchindizes enthalten nur Inhalte der jeweils zugeordneten Einrichtung oder sind nur innerhalb dieser Einrichtung abfragbar.",
+        "Suchtreffer k\u00F6nnen die Einrichtungsgrenze technisch nicht umgehen."
+      ],
+      "rationale": "ARCH-11 wurde von einer allgemeinen Zugriffsbegrenzung f\u00FCr Mitarbeiter auf eine konkrete Anforderung an den serverseitigen Suchrahmen f\u00FCr die einrichtungsgebundene Stichwortsuche pr\u00E4zisiert. Deshalb erg\u00E4nze ich den PBI gezielt um die technische Absicherung der Einrichtungsgrenze in der Suche.",
+      "triggerRequirementIds": [
+        "ARCH-11"
+      ],
+      "targetRequirementId": null,
+      "targetFeatureId": null,
+      "proposedPriority": null,
+      "proposedEstimate": null
+    },
+    {
+      "pbiId": "PBI-046",
+      "proposedTitle": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ank\u00FCndigen, \u00E4ndern und absagen",
+      "proposedStatement": "Als Angeh\u00F6rige/r will ich Besuche bei meiner Bezugsperson in der App vorab mit Datum und Uhrzeit ank\u00FCndigen sowie bereits angefragte oder best\u00E4tigte Besuchsank\u00FCndigungen bis zum Beginn des Besuchs \u00E4ndern oder absagen k\u00F6nnen, damit Besuchstermine vor dem Termin erfasst und bei \u00C4nderungen korrekt neu angefragt bzw. bei Absage ohne weitere Erinnerung behandelt werden.",
+      "proposedAcceptanceCriteria": [
+        "Angeh\u00F6rige k\u00F6nnen einen Besuch bei ihrer Bezugsperson in der App vorab ank\u00FCndigen.",
+        "Bei der Besuchsank\u00FCndigung werden Datum und Uhrzeit erfasst.",
+        "Angeh\u00F6rige k\u00F6nnen eine bereits angefragte Besuchsank\u00FCndigung bis zum Beginn des Besuchs \u00E4ndern oder absagen.",
+        "Angeh\u00F6rige k\u00F6nnen eine bereits best\u00E4tigte Besuchsank\u00FCndigung bis zum Beginn des Besuchs \u00E4ndern oder absagen.",
+        "Nach einer \u00C4nderung erh\u00E4lt der Besuch erneut den Status \u201Eangefragt\u201C.",
+        "Nach einer Absage wird keine Erinnerung mehr versendet."
+      ],
+      "rationale": "REQ-91 erg\u00E4nzt den bestehenden Besuchs-PBI um die Bearbeitung bereits angefragter oder best\u00E4tigter Besuchsank\u00FCndigungen. Daher erweitere ich Titel, Statement und Akzeptanzkriterien um \u00C4ndern, Absagen, die Frist bis Besuchsbeginn sowie die Folgen f\u00FCr Status und Erinnerungen.",
+      "triggerRequirementIds": [
+        "REQ-91"
+      ],
+      "targetRequirementId": null,
+      "targetFeatureId": null,
+      "proposedPriority": null,
+      "proposedEstimate": null
+    },
+    {
+      "pbiId": "PBI-032",
+      "proposedTitle": "Es soll eine \u00DCbergabe-Notiz pro Schicht geben, die bis zur Archivierung bearbeitet werden kann und deren letzte g\u00FCltige Fassung nachvollziehbar ist",
+      "proposedStatement": "Als Pflegekraft will ich eine \u00DCbergabe-Notiz pro Schicht bis zur Archivierung bearbeiten k\u00F6nnen, damit \u00C4nderungen vor der Archivierung m\u00F6glich sind und die zuletzt g\u00FCltige Fassung jeweils mit \u00C4nderungszeitpunkt und bearbeitendem Account nachvollziehbar bleibt.",
+      "proposedAcceptanceCriteria": [
+        "\u00DCbergabe-Notizen k\u00F6nnen bis zur Archivierung bearbeitet werden.",
+        "Bei jeder Bearbeitung bleibt die zuletzt g\u00FCltige Fassung nachvollziehbar erhalten.",
+        "Zu jeder zuletzt g\u00FCltigen Fassung sind \u00C4nderungszeitpunkt und bearbeitender Account nachvollziehbar."
+      ],
+      "rationale": "REQ-92 f\u00FCgt dem bestehenden PBI die Bearbeitbarkeit bis zur Archivierung sowie Nachvollziehbarkeit der zuletzt g\u00FCltigen Fassung hinzu. Da im aktuellen PBI noch kein ausgearbeitetes Statement und keine Akzeptanzkriterien vorliegen, schlage ich diese Inhalte gezielt f\u00FCr den neuen Umfang vor.",
+      "triggerRequirementIds": [
+        "REQ-92"
+      ],
+      "targetRequirementId": null,
+      "targetFeatureId": null,
+      "proposedPriority": null,
+      "proposedEstimate": null
+    }
+  ]
+}

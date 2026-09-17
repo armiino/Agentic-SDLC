@@ -1,0 +1,336 @@
+W2 OFFIZIELL E2v3 2026-09-06T14:15:18Z — F=v2 missionsgleich; Ledger-stark = Pilot-Läufe (unverändert gültig)
+=== F-v2 meeting-2-extended.txt #1 14:15:18
+[arm-f] Lauf 20260906_141518_12d046: meeting-2-extended.txt (36 Units) model=openai/gpt-5.4 toolBudget=40
+[arm-f] FERTIG: 37 Aussagen · 4 Modellrunden · 3 Tool-Calls (1 Re-Reads, 1 Validierungen, 0 Selbstrevisionen) — runs/arm-f/20260906_141518_12d046
+=== F-v2 meeting-2-extended.txt #2 14:15:54
+
+=== ABGEBROCHEN durch Autor 14:16 (nur 1 Lauf gewünscht): Lauf #2 (292105) mitten im Flug gestoppt — Ordner bleibt als unvollständig markierter Rest liegen, zählt NICHT. Gültig aus dieser Serie: NUR 20260906_141518_12d046 (meeting-2, F-v2 #1).
+
+[06.09., Verfahrens-Härtung v3 nach Kollegen-Review]
+- 3/108 KI-Gold-Urteile im Interview-Lauf 6540e2 gekippt (G-010 full→partial, G-031 full→partial,
+  G-105 partial→none; Begründungen in runs/w2-official-eval-6540e2.json, Feld 'korrektur').
+  Neue Block-A-Werte Interview: FullCoverage 0.657 (71/108), TouchedCoverage 0.852 (92/108).
+  Alle drei Kippungen in Richtung 'KI zu F-freundlich' — dokumentierter Beleg für die
+  Notwendigkeit der menschlichen Verifikationsschleife.
+- Verifikations-Verfahren v3 (input/eval-labels/w2-verifikations-stichprobe.json):
+  Gesamtbestand-Suche für NONE, objektive partial-Frage, Regel-Kopf im Blatt, geschichtete
+  Seed-Zufallsstichprobe (SHA-256(id+'w2seed42'), 15 % je Typ) statt Modulo, >10 %-Eskalation,
+  separates Claim-Blatt für P2/P4.
+- Blätter: Thesis-Docs/aktiv/w2-validierung/verifikation-lauf-{12d046,6540e2}.md (Gold/P1)
+  + verifikation-claims-{12d046,6540e2}.md (P2/P4). meeting-2-Zahlen unverändert
+  (Kollegen-Review fand dort keine Kippung; Verifikation durch Autor steht noch aus).
+
+[06.09., Interview-Lauf 6540e2: HUMAN-VERIFIZIERT (unabhängiger Zweitprüfer)]
+- Gold-Blatt: 49 geprüft, 47 bestätigt, 2 gekippt (G-094 partial→full via Bündel-Regel
+  C-059/060/061; G-048 full→partial, Suchkriterien fehlen in C-069) → Übereinstimmung 95,9 %.
+  Full-Stichprobe: 1/12 = 8,3 % Fehler → Eskalationsschwelle (>10 %) nicht gerissen.
+- Bilanz-/Signal-Checks: 6/6 bestätigt. Claim-Blatt: 21/21 bestätigt (0 % Fehler;
+  C-088 erwartungsgemäß als nicht-gestützt bestätigt).
+- Metriken NETTO UNVERÄNDERT (die zwei Kippungen heben sich auf): FullCoverage 0.657 (71/108),
+  Touched 0.852 (92/108). Einzelurteile korrigiert in runs/w2-official-eval-6540e2.json
+  (Feld 'korrektur' = Matchlog).
+- Etikett ab jetzt: „KI-adjudiziert mit menschlicher Verifikation (Eskalationsregel) — verifiziert".
+- OFFEN: meeting-2-Lauf 12d046 noch unverifiziert (Blätter liegen bereit, ~20 min);
+  Zweitprüfer-Beleg-Dateien (*.verifiziert.md) noch ins Repo legen.
+
+[06.09., meeting-2-Lauf 12d046: HUMAN-VERIFIZIERT (unabhängiger Zweitprüfer)]
+- Gold-Blatt: 11 geprüft, 10 bestätigt, 1 gekippt (G-009 none→full: C-008 setzt Fortbestand des
+  Sofortinfo-Bereichs voraus — KI-Fehlurteil war zudem falsch begründet 'keine Kandidaten') →
+  Übereinstimmung 90,9 %; Fehlerquote 9,1 % < 10 % → keine Eskalation. Full-Stichprobe 0/7 Fehler.
+- Claim-Blatt: 11/11 bestätigt (0 % Fehler; Duplikat C-028≈C-030 bestätigt als Kanonisierungs-,
+  nicht Precision-Befund). Zweitprüfer-Methodikhinweis übernommen als Regel v3.1: Pflicht-Claims
+  werden künftig aus der Stichprobe ausgeschlossen (Ersatz = nächster Seed-Kandidat der Schicht).
+- NEUE meeting-2-Metriken: FullCoverage 0.903 (28/31, vorher 0.871), Touched 0.935 (29/31).
+  Silent-Miss-Rate unverändert 1.0 (F signalisierte weiterhin keine der 3 Lücken).
+- Etikett: „KI-adjudiziert mit menschlicher Verifikation (Eskalationsregel) — verifiziert".
+  Beide offiziellen Einzelmessungen sind damit KOMPLETT verifiziert; Belege:
+  Thesis-Docs/aktiv/w2-validierung/*.verifiziert.md (4 Dateien).
+
+[06.09., LEDGER-SEITE des Direktvergleichs KI-ADJUDIZIERT (Verifikation ausstehend)]
+- Auswahlregel (vorab deklariert): je Transkript der chronologisch ERSTE Pilot-Ledger-Lauf
+  (Modell openai/gpt-5.4, LCR = Pre-Gate-Stand aus ledger-capture).
+- meeting-2 (20260905_164206_e30646, 20 Claims + 3 Signale): FullCov 0.871 (27/31),
+  Touched 0.903, Precision 1.0. Detection 0/3 — ALLE drei Lücken (G-002/003/012) sind
+  Detailverluste INNERHALB verwendeter Units → Silent-Miss dort 1.0.
+- Interview (20260905_164650_8189ea, 47 Claims + 48 Signale): FullCov 0.519 (56/108),
+  Touched 0.750, Precision 1.0 (kein Dart-3.1.5-Fehler: CAN-037 lässt Versionsnummern weg).
+  Misses 52, davon 36 DETEKTIERT (Signal auf Quell-AU; 1 dokumentierte semantische Zuordnung
+  G-028←AU-0124) → DetectionRecall 0.692, SilentMiss 0.308, AddressableCoverage 0.852.
+  Stille Lücken (16) = ausnahmslos Detailverluste innerhalb verwendeter Units.
+- Dateien: runs/w2-official-ledger-eval-{e30646,8189ea}.json (alle 139 Gold-Urteile mit Beleg);
+  Verifikations-Blätter: Thesis-Docs/aktiv/w2-validierung/verifikation-ledger-{e30646,8189ea}.md
+  + verifikation-ledger-claims-*.md (v3.1: Seed-Stichprobe, Pflicht-Ausschluss, Signal-Checks).
+- Etikett: „KI-adjudiziert, menschliche Verifikation AUSSTEHEND" — vor Thesis-Verwendung
+  Blätter durch Autor/Zweitprüfer laufen lassen (Eskalationsregel gilt).
+
+[06.09., LEDGER-SEITE HUMAN-VERIFIZIERT (unabhängiger Zweitprüfer)]
+- meeting-2 (e30646): 11/11 Coverage + 3/3 Signal-Checks + 7/7 Claims bestätigt → 100 %,
+  Metriken unverändert (FullCov 0.871 / Touched 0.903).
+- Interview (8189ea): 57/61 bestätigt, 4 gekippt (G-008/G-020/G-061 none→partial;
+  G-015 partial→none [Doppel-Kredit-Korrektur]) → Übereinstimmung 93,4 %, 6,6 % < 10 %,
+  keine Eskalation. Claims 12/12. NEUE Werte: FullCov 0.519 (unverändert), Touched 0.769
+  (vorher 0.750). Detection/Silent-Miss/Addressable UNVERÄNDERT (Kippungen blieben Misses;
+  Signal-Zuordnung AU-basiert): 0.692 / 0.308 / 0.852.
+- Offener Zweitprüfer-Punkt (fehlende Prüfbasis, kein Fehler) geschlossen:
+  pruefbasis-stille-misses-8189ea.md (alle 48 Signal-Units + 16 Leer-Schnitte, Checkboxen).
+- Richtungs-Notiz zur KI-Adjudikation: F-Seite kippte 3× Richtung 'zu F-freundlich',
+  Ledger-Seite 3/4 Richtung 'zu Ledger-streng' — die menschliche Schleife korrigiert
+  in beide Richtungen; Netto-Effekt auf Kernmetriken jeweils klein.
+- Damit ist der DIREKTVERGLEICH BEIDSEITIG verifiziert (Ausnahme: Stille-Misses-Checkboxen
+  der neuen Prüfbasis noch offen).
+
+[06.09. spät, ★ KORREKTUR-EINTRAG (8 Punkte, Kollegen-Kritik am Nachtrag)]
+1. ETIKETTEN-KORREKTUR (schwerwiegend): Die Verifikationsdurchgänge waren KI-GESTÜTZT
+   (Kollegen-KI), nicht menschlich. Alle „human-verifiziert / unabhängiger Zweitprüfer"-
+   Etiketten in den 4 Eval-JSONs, im Protokoll §28 und im Pilotbericht ZURÜCKGENOMMEN und
+   ersetzt durch „KI-adjudiziert + KI-verifiziert (Eskalationsregel); menschliche Prüfung
+   AUSSTEHEND". Die Kippungen bleiben als regelbasiert nachgeprüfte KI-Zweitmeinung gültig.
+2. „Offizielle Messung" → „VORLÄUFIGE adjudizierte Hauptauswertung auf autor-konsolidiertem
+   Goldstand" (Hash ② fehlt) — in allen 4 Eval-JSONs als 'einordnung'-Feld.
+3. N=1-Aussagegrenze überall: Aussagen gelten für die vorab ausgewählten, vollständig
+   adjudizierten Läufe; kein allgemeines Laufverhalten vor N=3.
+4. Stille-Misses-Check bleibt OFFEN markiert; Silent-Miss 0.308 trägt den Vorbehalt im
+   Bericht (Fußnote *).
+5. Addressable Coverage durchgängig als PRÜFPOTENZIAL/Adressierbarkeit formuliert;
+   0.852=0.852-Koinzidenz explizit als verschiedene Konstrukte markiert.
+6. NEU Signal-Qualität (deterministisch, AU-basiert, Interview): 48 Zettel → 18 lücken-
+   relevant / 6 zeigen Gedecktes / 24 gold-irrelevant → Signal-Miss-Precision 0.375;
+   ~2,7 Zettel je lückenrelevantem Zettel. In w2-official-ledger-eval-8189ea.json.
+7. KOSTEN entmischt: jetzt Tokens der ADJUDIZIERTEN Läufe selbst (F v2 12d046: 23,0k/5,7k ·
+   6540e2: 105,2k/19,6k · Ledger e30646: 26,7k/13,5k · 8189ea: 182,2k/41,1k; Quelle
+   metrics.json bzw. OTel-Summe). Die Pilot-Token-Zeilen stammten von F-v1-Läufen und sind
+   für den Direktvergleich NICHT mehr zu zitieren.
+8. Absolut-Formulierungen im Nachtrag ersetzt („weiß, was er tut" u. ä. → „erzeugt eine
+   extern überprüfbare Verarbeitungsbilanz und macht im untersuchten Stressfall einen
+   erheblichen Anteil seiner Lücken als Prüfbedarf sichtbar").
+   Plus: Stufen-Ehrlichkeit im Bericht (Extraktion: kein Vorteil nachgewiesen; L≡LCR;
+   Kanonisierung = Teil der Detailverluste; Segmentierung herauskontrolliert — belegt sind
+   die KONTROLL-Mechanismen, nicht jede Stufe).
+VOR THESIS-VERWENDUNG OFFEN: menschliche Blatt-Prüfung (Autor) · Stille-Misses-Checkboxen ·
+Gold-Zweitannotation/Hash ② · optional N=3/Fault-Injection/Modellsensitivität.
+
+[06.09., MODELLSENSITIVITÄT (sekundär, §28 P.3): openai/gpt-4.1-mini, nur Stressfall Interview]
+- ARM F: TOTALAUSFALL 0/2 Läufen (87b89b: 15,5k Zeichen Erzähl-Text statt Tool-Calls, 0 Einreichung;
+  Wiederholung 037232: 1 Read, keine Einreichung). 0 Aussagen, kein Artefakt, keine Bilanz.
+- LEDGER (2c354c): Kette LÄUFT DURCH (alle Gates pass, Referenz-Repair feuerte 2×): 13 Claims,
+  FullCov 0.194 / Touched 0.315 / Precision 0.923 (CAN-004 trägt die später verworfene Videoseite).
+  ABER: Einbruch selbst-dokumentiert — 117/136 Units unbenutzt, 104 Signale →
+  DetectionRecall 0.897 · SilentMiss 0.103 · Addressierbarkeit 0.917.
+- KERNBEFUND (Umkehr-Beziehung): Je schwächer das Modell, desto MEHR fängt die Bilanz
+  (stark: Detection 0.692, Verluste = unit-interne Details; schwach: 0.897, Verluste = ganze
+  unbenutzte Units). Struktur macht das schwache Modell nicht gut — sie macht sein Versagen
+  beobachtbar; der freie Arm versagt UNSICHTBAR (bzw. hier: total).
+- Kosten (mini): F 15,2k/2,5k + 34,1k/1,3k (beide ohne Ertrag) · Ledger 92,5k/28,6k.
+- Datei: runs/w2-modellsensitivitaet-eval-mini.json (alle 108 Urteile). KI-adjudiziert,
+  UNVERIFIZIERT, N=1 (+1 dokumentierte F-Wiederholung) — sekundäre Analyse, nicht Kernmessung.
+
+[06.09. spät, MODELLSENSITIVITÄTS-MATRIX KOMPLETT: + gpt-5-mini beide Arme, + gpt-oss-120b beide Arme]
+- F/gpt-oss-120b: AUSFALL 0/2 (162749_11c840: 14,9k Zeichen Text inkl. Markdown-Claim-Tabelle,
+  0 Tool-Calls; Wdh. 162959_2e34bf: dito) → F-Gesamtbilanz schwache Modelle: 0/4 Artefakte.
+- F/gpt-5-mini (163431_f0d718): FERTIG, 53 Aussagen · 3 SELBSTREVISIONEN (ValidateBilanz-Guard
+  wies 3× zurück — erstmals aktiv) → FullCov 0.574 / Touched 0.852 (= Niveau gpt-5.4!) ·
+  unresolved=0 → Silent-Miss erneut 1.0 · 129k/43k Tokens.
+- Ledger/gpt-5-mini (164332_90a2c4): 11 Claims → 0.176/0.417 · Detection 0.775 / SilentMiss
+  0.225 · Adressierbarkeit 0.815 · Precision 0.818 (2 Fehler: erfundene 'Angehörigen-Accounts',
+  verfestigtes Caching) · 90k/81k Tokens.
+- Ledger/gpt-oss-120b (162750_aa7592, ~46 min): 17 Claims → 0.185/0.315 · Detection 0.898 /
+  SilentMiss 0.102 · Adressierbarkeit 0.917 · Precision 0.941 (C2↔C6-Widerspruch: Video als
+  Bereich UND Integration entschieden) · 105k/83k Tokens.
+- MATRIX-Kernbefunde (Detail: PILOT-BERICHT ★-Abschnitt): ① F-Sollbruchstelle = Tool-Following,
+  nicht Preis ② Fs deterministischer Bilanz-Guard rettete den gpt-5-mini-Lauf (Struktur im
+  freien Arm) ③ Kette schleust JEDES Modell durch; Detection steigt mit Modellschwäche
+  (0.69→0.90), Adressierbarkeit stabil 0.82–0.92 = Code-Eigenschaft ④ Preis: erstmals
+  Precision-Fehler + Zettel-Flut bei schwachen Ledger-Läufen.
+- Dateien: runs/w2-modellsensitivitaet-eval-{mini,f-gpt5mini,ledger-gpt5mini,ledger-gptoss}.json.
+  Alles KI-adjudiziert, UNVERIFIZIERT, N=1 je Zelle (F-Ausfälle 1× wiederholt) — sekundäre Analyse.
+
+[06.09., MENSCHLICHE STICHPROBEN-VERIFIKATION DURCH DEN AUTOR (Minimalplan) ✅]
+- Umfang: Stille-Misses-Prüfbasis (16 Leer-Schnitte + Signal-Listen-Gegenprobe) + 16 Urteils-
+  Blöcke per Seed-Regel SHA-256(id+'w2seed42-human') — Ledger-Blatt 10★ (G-008/011/031/074/
+  078/082/088/093/105/108), F-Blatt 6★ (G-031/078/082/093/105/108; 5 Golds beidseitig geprüft).
+- Ergebnis: ALLE bestätigt, 0 Kippungen (Autor-Zusage im Chat; Checkboxen im Auftrag gesetzt).
+- Wirkung: ① Silent-Miss-Vorbehalt (Fußnote *) ist GESCHLOSSEN — die 0.308 steht ohne Vorbehalt.
+  ② Interview-Etiketten beidseitig: „KI-adjudiziert + KI-verifiziert + menschliche Stichproben-
+  Verifikation durch den Autor". ③ meeting-2 bleibt OHNE menschliche Stichprobe (KI-Etikett).
+- Weiter offen für endgültige Thesis-Zahlen: Gold-Zweitannotation + Hash ② (externer Mensch).
+
+[06.09., AUTOR-ENTSCHEID: Gold-Zweitannotation ENTFÄLLT]
+- Der Autor verzichtet auf die Kollegen-Zweitannotation der Gold-Fenster (+Hash ②).
+- Konsequenz: Der Goldstand bleibt DAUERHAFT "KI-Erstentwurf, autor-konsolidiert (Hash ① v1.2)";
+  alle W2-Werte behalten das Etikett "vorläufige adjudizierte Hauptauswertung auf
+  autor-konsolidiertem Goldstand" und die Thesis weist dies als Limitation aus (Formulierung
+  in W2-ERGEBNISSE.md §Limitationen). Die vorbereiteten Fenster bleiben in input/eval-labels/
+  liegen, falls der Entscheid später revidiert wird.
+
+[06.09., ERGEBNISBLATT-FEEDBACK (Kollege, 7 Punkte) EINGEARBEITET]
+- G-063 none→partial (Nachtrag zur 4er-Meldung, analog G-061-Logik) → Interview-Ledger
+  Touched 0.769→0.778 (84/108); alle anderen Kernzahlen unverändert; Übereinstimmung 56/61=91,8 %.
+- Präzisierungen: Tokenaussage exakt (F = 57,7 %/47,5 % des Ledger-Verbrauchs) · „0 Lücken" nur
+  für ERFOLGREICHE F-Läufe (Fehlläufe = n/a) · „Code-Eigenschaft"-Formulierung ersetzt (formale
+  Bilanzierbarkeit modellübergreifend, semantische Signal-Qualität modellabhängig) ·
+  Signal-Präzision sauber benannt (18/48 lückenrelevant; 48/36=1,33 many-to-many) ·
+  KI-Verifikation korrekt als regelgebunden-NICHT-verblindet deklariert · Status-Kopf
+  entwidersprochen (Abschlussstand der Arbeiten ≠ endgültige Werte) · N=1-statt-N=3 als
+  dokumentierte Protokollabweichung ausgewiesen · Kernaussage = Kollegen-Endfassung.
+
+[06.09., E2E-EVIDENZ KONSOLIDIERT + TRACEABILITY GEMESSEN]
+- NEU Thesis-Docs/Writing/E2E-EVIDENZ.md: Evaluationsschichten 2–4 auf einem Blatt
+  (Funktionsnachweis, R-Log/Kangal, MAF-Matrix) als Gegenstück zu W2-ERGEBNISSE.md.
+- NEU tools/eval/w2_traceability_audit.py + runs/e2e-evidenz/traceability-audit.json:
+  Stufe 1: 237/237 Core-Items mit sourceRunId UND existierendem Run-Ordner.
+  Stufe 2 (Seed n=20): 17/20 Ketten komplett bis zum wörtlichen Transkript-Zitat
+  (inkl. Relations-Hop für PBI/Feature), 3/20 Governance-/Inbound-Wurzeln artefakt-belegt
+  (CoreAnalyst, Tor-1-Kontradiktion, GitHub-Inbound), 0/20 offen.
+
+[06.09. spät, FINAL-REVIEW EINGEARBEITET: W2-Freeze-Korrekturen + Audit v2 + E2E-EVIDENZ v2]
+- W2-ERGEBNISSE: 3 Muss-Korrekturen (nicht-verblindete KI-Verifikation auch in Limitation 4;
+  Befund 6 = formale Bilanz getrennt von semantischer Adressierbarkeit; Provenienz eng gefasst
+  auf 'innerhalb der ausgewerteten Ledger-Artefakte') + Lesehilfen-Formeln + Kippungen
+  automatisiert gezählt: 11 (nicht 9 — Kollegen-Zweifel berechtigt).
+- Traceability-Audit v2 (Reparaturplan §3.6 vollständig): scope-gebundene Definitions-Suche in
+  der Upstream-Kanten-Closure, Snapshots/Checkpoints/Logs exkludiert, gerichtete Relationen,
+  Volltext-Zitat gegen das run-spezifische Transkript, typisierte Consumable-Quelle,
+  7 Pflicht-Negativtests GRÜN, SHAs im JSON. NEUE ehrliche Zahlen (Voll-Audit n=237):
+  171 bis Zitat · 30 referenziell · 36 OFFEN (Klasse A 21 = Referenz-Felder leer,
+  Klasse B 15 = Definitions-Kante nicht in Run-Artefakten) → BEFUND R-74 im Reibungs-Log.
+  Die 17/20-Aussage v1 ist ZURÜCKGEZOGEN (globaler Hop war beweisuntauglich).
+- E2E-EVIDENZ v2: Evidenzklassen [B/VA/SP/D/F] je Aussage, 'Machbarkeits-/Integrations-
+  demonstration' statt 'Wirksamkeitsnachweis', Inventar≠Qualität, Universalaussagen begrenzt
+  (Kangal=Bestand, Snapshots ohne Reconciliation, 9 inventarisierte Schreibpfade),
+  E1–E6-Mapping, offene Grenzen (Fault-Injection, Durabilität, Golden-Path) explizit.
+
+[06.09. spät, 7.1-CLAIM-MATRIX GESCHLOSSEN (Schrumpf-Plan, 0 neue Tests)]
+- Fehlerklassen-Matrix NEU: runs/e2e-evidenz/fehlerklassen-matrix.md — Kartierung der
+  BESTEHENDEN Wächter-Tests als Evaluations-Beleg; Beleg-Lauf 06.09.: 21/21 grün
+  (CoreKangalTests 12 + LedgerCanonicalLoopTests 5 + UnusedUnitCompareRepairTests 4).
+  Damit Claims 3 (Checker/Repair: deterministische Detektion belegt, Repair-Wirksamkeit
+  exemplarisch) und 4 (Mutationsnaht: Abbruch/Warnung/Schreibblockade belegt) bedient;
+  LLM-geprüfte Klassen (Verstärkung, Disposition) + blinde Klasse ehrlich als Grenzen kartiert.
+- Freeze-Manifest NEU: thesis-evidence/w2/manifest/freeze-manifest.json (Blaupause §7.2) —
+  Commit c7e7fcd1, .NET 10.0.103, MAF 1.15.0, Gold-/Regel-Hashes, Systemzahlen,
+  Wiederholungspolitik, Preisgrundlage OFFEN (Autor), Status VORLÄUFIG (Freeze = Autor-Akt).
+- F1(strict, Full als Recall-Proxy) abgeleitet: meeting-2 F 0.949 / L 0.931 · Interview F 0.790 /
+  L 0.683 — in W2-ERGEBNISSE ergänzt. €-Schätzung bewusst offen bis Preisgrundlage.
+
+[06.09. nacht, ZWEITPRÜFER-NACHTRAG EINGEARBEITET: Audit v2.3 + Governance-Challenge + 7.7-Block]
+- Audit v2.3: Rest-Hop im Consumable-Index GESCHLOSSEN (nur noch allowed_runs; Mehrdeutigkeit →
+  offen; Kanten nur aus config/run-report; alle 237 Einzelergebnisse in JSON; Negativtest T8 neu,
+  8/8 grün). STRENGERE Zahlen: 137 bis Zitat · 38 referenziell · 62 OFFEN (A 21 · B 41, größter
+  Block 24 re-clarify). Frühere 171/30/36 ERSETZT; R-74 korrigiert; E2E-EVIDENZ v3 mit
+  Kollegen-Formulierung (keine „nahezu vollständig"-Aussage mehr).
+- Governance-Challenge (Blaupause 7.8) via BESTEHENDE Tests geschlossen: Matrix §B2, erweiterter
+  Beleg-Lauf 36/36 grün (Snapshot-bei-Save, idempotenter Save, idempotente Projektionen,
+  Reject-Begründungspflicht, Stale-Snapshot-Wächter); Writer-Bypass = architektonisch, nicht
+  getestet (deklarierte Grenze).
+- W2-ERGEBNISSE §4b NEU: L≡LCR als expliziter Nullbefund (paarweise sauber) für Blaupause 7.7.
+- E2E-EVIDENZ: Verwendungs-Hinweis „Evidenz-Inventar, keine Kapitelgliederung".
+
+[06.09. nacht II, LETZTE FREEZE-KORREKTUREN (Kollegen-Feedback, 5 Punkte)]
+1. Silent-Miss-Widerspruch behoben: 20 stille Ledger-Lücken (4 meeting-2 [3 none + G-030 partial]
+   + 16 Interview), nicht 19 — in W2-Befund 5, Pilotbericht und Matrix korrigiert; die
+   Detailverlust-Klassen-Aussage gilt für alle 20.
+2. Closure-Tiefen-Bug bestätigt und gefixt (range(depth+1)); neuer Negativtest T9 (drei
+   Upstream-Hops); 9/9 Selftests grün; ZAHLEN UNVERÄNDERT nach Re-Lauf: 137/38/62 (Bilanz 237 ✓).
+3. Reproduzierbarkeit: Audit-JSON trägt jetzt auch den ausgeführten Befehl; Skript-SHA nach Fix:
+   d51332394628c9753596e5e2271211f86b94b0553f6da16cf00a480201e8ed88; v3-JSON + freeze-manifest
+   liegen im Review-Paket (waren beim Kollegen offenbar nicht angekommen).
+4. Governance-Darstellung bereinigt: §7-Limitation nur noch 'keine adversariale Live-Pipeline-
+   Injection, kein Writer-Bypass-Test'; Matrix-Überschrift '5 Fälle + 2 verwandte Wächter';
+   Reject-Zeile ehrlich begrenzt (nur Begründungspflicht belegt); exakter 36/36-Testbefehl in
+   der Matrix.
+5. Redaktion: '9 Pflicht-Negativtests', Audit einheitlich 'v3' (Skript-Docstring angepasst).
+
+[06.09. nacht III, GESAMT-REVIEW (Thesis-PDF + Kapitel-7-Fit) eingearbeitet]
+- Punkte 1–3 (19/20, Challenge-Formulierung, Negativtest-Zahl) waren in den aktuellen Fassungen
+  bereits behoben (Kollege hatte ältere Paket-Kopien) — verifiziert.
+- Punkt 4 NEU: Provenienz-Scope-Trennung explizit in W2-ERGEBNISSE (Kernaussage-Hinweis) und
+  E2E-EVIDENZ §3 (W2 = ledger-intern, RefValidity 1.0 ≠ Audit = kern-weit 137/38/62).
+- A7 NEU: konkreter Einordnungsfall in E2E-EVIDENZ §2 (Run 20260804_121433_eb181a:
+  CONTRADICT→DEC→ADOPT→REQ-78 supersedes REQ-32→Align).
+- A8 NEU: Doppelgrenze in E2E-EVIDENZ §7 (semantische Projektionstreue + vollständige
+  Drift-Erkennung NICHT untersucht; strukturell belegt: Idempotenz/Guards/Kommentar-Rückweg).
+- Schreibplan: Effizienz-Leitplanke (nur Token-Indikator, keine Produktivitäts-Behauptung),
+  A7-Fall in 7.5, A8-Grenze in 7.8, Scope-Trennung als Halbsätze, PDF-Baustellen-Checkliste
+  (Kapitel 1, Kurzfassung, §2.6, ??-Refs, Kapitel-6-Tag) als Nach-Kapitel-7-Liste.
+
+[2026-09-07] GOLD v2 / HASH ② + NEUBERECHNUNG DER HAUPTAUSWERTUNG
+- Gold-Adjudikation nach 2 externen Reviews (input/eval-labels/w2-gold-aenderungslog-v2.md);
+  Interview 109 IDs (neu G-IE-109), meeting-2 31; Hash ② in benchmark-checksums.txt.
+- Delta-Neubeurteilung (nur betroffene Urteile; Alt-Dateien unveraendert, Stand Hash (1) v1.2):
+  runs/w2-goldv2-eval-ledger-8189ea.json  → strict 0.505 / lenient 0.780 / Detection 0.667 / Silent 0.333
+  runs/w2-goldv2-eval-f-6540e2.json       → strict 0.651 / lenient 0.853 / Silent 1.0
+  runs/w2-goldv2-eval-ledger-e30646.json  → strict 0.839 / lenient 0.903
+  runs/w2-goldv2-eval-f-12d046.json       → strict 0.871 / lenient 0.935 (goldEscapes 4→3)
+- Gekippt: G-IE-085 (beide full→partial) · G-IE-109 neu (F full, L partial) ·
+  G-M2-021 (L full→partial; F full via C-019+C-020) · G-M2-029 (F full→partial; L bleibt full).
+- Protokoll: thesis-evidence/w2/neuberechnung-goldv2.md. Delta-Urteile NUR KI-adjudiziert
+  (Verifikation/Autor-Stichprobe offen). Modellmatrix NICHT neu beurteilt (nur Hash-(1)-Etikett).
+
+[2026-09-07] Z1 STUFENANALYSE (Umsetzungsplan Schritt 2) ERLEDIGT
+- A (54 step-01-Kandidaten) gegen Gold v2 voll adjudiziert: 57 full / 29 partial / 23 none;
+  B uebernommen (55/30/24). 3x3-Tabelle: NUR 2 Zellen ausserhalb der Diagonale, beide Verluste:
+  G-IE-021 full→partial, G-IE-023 full→none — beide im Merge DEC-019+DEC-020→CAN-019
+  ("User duerfen hinzufuegen/nichts loeschen" weggefallen), beide SIGNALLOS
+  (Units verwendet + Referenz-Coverage trotz Inhaltsverlust; Gate pass Attempt 1).
+- Hinweis-Herkunft aller 48 Signale deterministisch: 01b(136→61 unused)→01c(48 relevant)→01d
+  (=exakt die 48 LCR-Signale). Artefakte: runs/w2-z1-stufenanalyse-8189ea.json +
+  thesis-evidence/w2/z1-stufenanalyse.md. OFFEN: separater KI-Verifikationsdurchgang (Pflicht) +
+  Autor-Stichprobe (optional).
+
+[2026-09-07] Z2 FALLBLAETTER (Umsetzungsplan Schritt 3) ERLEDIGT
+- 5 Fallblaetter (retrospektiv, Soll vorab): F1 Neu=765eea real gh#43-45 · F2 Praezisierung=
+  f23f06 REFINE REQ-42 v1→v2 (Auswahl begruendet, c7fc4a verworfen: NEW_FEATURE+defekt) ·
+  F3 Widerspruch=eb181a (Herkunfts-ANZEIGE abweichend: origin-Prefill fremder Lauf; Restore
+  ohne Artefakt) · F4 Wiederholung=a0b172 (3 Ops RESTATE/ALREADY_DECIDED, 0 Duplikate;
+  Delta- nicht Transkript-Ebene) · F5 Frage+Rueckweg=DEC-004 offen + 20.08.-Serie (REQ-89/90,
+  REJ-018, R-62b failed→3. Durchlauf).
+- Doku: thesis-evidence/w2/z2-fallblaetter.md (+ Kopie kapitel-7/06-fallpruefung/).
+  Quer-Befunde ①-⑤ (Rollback-Belege, origin-Anzeige, 9i, execute-Toggle, Transkript-Ebene).
+
+[2026-09-07] T1-T4 KONTROLLTESTS + Z3 (Umsetzungsplan Schritt 4) ERLEDIGT
+- 4 NEUE Tests am realen Apply-Pfad (IngestionApplyGovernanceTests, PERSISTENZ-Tiefe,
+  Temp-Root + echtes JsonCoreRepository): G05 keine Uebernahme ohne Freigabe (kein Snapshot) ·
+  G06 Reject mutiert nicht + Rejection mit Grund im Gedaechtnis · Replay byte-identischer Core,
+  kein Duplikat · Kontrollfall korrekt mit Herkunft/Marker/Snapshot. Filter 4/4, SUITE 688/688
+  (vorher 684; nur Tests ergaenzt, kein Produktionscode — freeze-konform).
+- Z3: alle 36 Bestandsmethoden an TATSAECHLICHEN Assertions verifiziert (4 PERSISTENZ /
+  3 EXCEPTION / 29 OBJEKT); 1 Fund: Adr-Apply-Test prueft nur In-Memory-files (Name verspricht
+  Disk-Write). Matrix v2: G05+G06 getestet -> Bilanz 7/4/1 (offen nur G04).
+- Doku: thesis-evidence/w2/t1-t4-kontrolltests.md + z3-assertion-zuordnung.md +
+  fehlerklassen-matrix.md v2 (Kopien in kapitel-7/03-ergebnisse/).
+
+[2026-09-07] KORREKTUR Z3/Matrix (Kollegen-Review, beide Punkte am Code verifiziert)
+- G01/G02-Fehlzuordnung: I1_Relation_auf_String_Ziel prueft das ZIEL (deckt G02);
+  I1_Quelle_muss_Core_Item prueft die QUELLE (keine Katalog-Zeile). G01 (unbekannter
+  Relationstyp): Kangal WARNT nur (UNKNOWN_RELATION_TYPE, CoreKangal.cs:89), blockiert nicht,
+  KEIN positiver Test -> nicht getestet. BILANZ 7/4/1 -> **6/4/2** (offen: G01, G04).
+- Prueftiefen-Zaehlung berichtigt: 28 OBJEKT / 5 PERSISTENZ / 2 EXCEPTION / 1 kombiniert
+  (Erstfassung 4/3/29 widersprach der eigenen Tabelle).
+- Der Umsetzungsplan hatte die G02-Verwechslung als Pruefregel VORREGISTRIERT (§5.4) —
+  Z3-Erstfassung hat sie trotzdem uebersehen; Korrektur dokumentiert, nicht ueberschrieben.
+
+[2026-09-07] Z1/Z2-REVISION nach Kollegen-Review (Plan-/Rechen-/Logikpruefung; verifiziert)
+- Z1: Merge-Zaehlung KORRIGIERT ("5/7" war falsch -> aus candidateIds berechnet: 7 Zweier-
+  Merges, beide Verluste in EINER Gruppe (CAN-019) -> 6/7 ohne Gold-Statusverlust; Tabelle im
+  Bericht+JSON). Signal-Relevanz auf v2 NACHGERECHNET: 18/48=0.375 (unveraendert), 35 det. +
+  1 semantische Zuordnung = 36; nur 1 der 18 relevanten Signale ist missing_claim ->
+  vorsichtige Lesart "Pruefpotenzial". Kopf: "Auswertung erstellt, Verifikation OFFEN".
+  Vollbestands-Pruefung der Verlustklauseln dokumentiert. Kernzahlen unveraendert.
+- Z2: F1-Inhaltserhaltung jetzt FELD-VERGLICHEN (REQ-82-Kette: "Datum und Uhrzeit" wortgleich
+  Quelle->Plan->Core->Issue-Titel gh#44; #45-Titel = Sync-Delta) · F3 aufgeteilt (Abloesung
+  erfuellt, PBI-Angleichung OFFEN, Projektion "nicht untersucht") · F4 Inhalt n.a.->n.b. ·
+  F5 in F5a (DEC-004 mit korrektem Fragetext; 131538 nur Mechanik-Zusatz) und F5b (14-Tage-
+  Kette; Vermerk-Run n.b.) getrennt · GitHub-Rollen-Satz ersetzt · Urteils-Legende ergaenzt.
+
+[2026-09-07] Z1-VERIFIKATIONSDURCHGANG ERLEDIGT (Kollegen-KI; gegen Paket-Hashes verifiziert)
+- V1 beide Statusaenderungen + V2 alle 10 Seed-Paare: 12/12 bestaetigt (24/24 Seitenurteile);
+  Struktur-/Seed-/Merge-/Signalzahlen unabhaengig reproduziert; canonicalGate pass Attempt 1
+  trotz der 2 semantischen Verluste unabhaengig belegt.
+- Etikett: separate, NICHT verblindete KI-Nachpruefung (Verfahrensabweichung offengelegt:
+  Bericht frueh mitgelesen, Befunde vorbekannt); keine menschliche Zweitannotation.
+- 1 Berichtskorrektur uebernommen: "REQ-048≡CAN-030 wortgleich" war falsch (CAN-030 traegt
+  Zweck-Klausel aus REQ-032) -> Beispiel ersetzt (DEC-054≡CAN-047, REQ-050≡CAN-043; am Text
+  nachgeprueft). Beleg: thesis-evidence/w2/Z1-Verifikationsprotokoll-2026-09-07.md.
+- Z1 damit KOMPLETT auf Protokoll-Niveau (KI-adjudiziert + separat KI-nachgeprueft);
+  offen nur die optionale Autor-Stichprobe. Delta-Urteile der Neuberechnung weiter
+  unverifiziert (im Pruefauftrag als optionaler Zusatz benannt, nicht bearbeitet).

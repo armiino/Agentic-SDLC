@@ -1,0 +1,311 @@
+{
+  "case_id": "AN-11",
+  "report_index_zero_based": 10,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "nfr",
+    "disposition": "question",
+    "statement": "Welche verbindlichen Aufbewahrungs- und Löschfristen gelten für revisionssichere Zugriffsprotokolle und für exportierte Übergabe-PDFs, damit Datenschutz und Dokumentationspflichten zugleich eingehalten werden?",
+    "herleitung": "Abgeleitet aus REQ-64, ARCH-47 und REQ-77: Zugriffe auf Bewohnerdaten müssen revisionssicher protokolliert werden, und zusätzlich sollen Übergabe-Notizen als PDF exportiert werden können. Für beide hochsensiblen Datenarten fehlt im aktuellen Stand jedoch eine konkrete Regel zu Aufbewahrungsdauer, Löschzeitpunkt und Verantwortlichkeit; ohne diese Klärung bleibt die Compliance-Lage zu DSGVO und Pflegedokumentation unvollständig.",
+    "kategorie": "nfr:compliance",
+    "ankerIds": [
+      "REQ-64",
+      "ARCH-47",
+      "REQ-77"
+    ]
+  },
+  "reported_status": "neu",
+  "critic_reason": null,
+  "anchors_and_mentions": [
+    {
+      "id": "ARCH-47",
+      "present": true,
+      "item": {
+        "itemId": "ARCH-47",
+        "itemType": "architecture",
+        "text": "Für die revisionssichere Protokollierung von Einsichtnahmen muss ein unveränderlicher Audit-Log-Rahmen festgelegt werden: Zugriffsereignisse werden serverseitig als append-only protokolliert, nachträgliche Änderungen oder Löschungen sind fachlich und technisch ausgeschlossen, und das Leserecht auf diese Protokolle bleibt strikt auf Admins beschränkt.",
+        "origin": "CoreAnalyst",
+        "stage": "core_analyst",
+        "version": 1,
+        "sourceRunId": "20260820_095055_5c8547",
+        "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+        "sourceArtifactType": "analyst-finding",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "CA-2"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "CA-2",
+          "ingestedFromRun": "20260820_075153_7878ac",
+          "analystKategorie": "nfr:compliance",
+          "herleitung": "Abgeleitet aus REQ-64, das eine revisionssichere Protokollierung jeder Einsichtnahme verlangt, sowie aus REQ-65, das die Einsicht in das Protokoll auf Admins begrenzt. Der Core enthält die Pflicht zum Logging, aber keinen technischen Rahmen, der Revisionssicherheit tatsächlich herstellt. Ohne unveränderliches, serverseitiges Audit-Logging wäre die Anforderung leicht durch lokale Änderungen, nachträgliche Manipulation oder unklare Schreibpfade unterlaufen.",
+          "linse": "arch"
+        },
+        "identityKey": "für die revisionssichere protokollierung von einsichtnahmen muss ein unveränderlicher audit log rahmen festgelegt werden zugriffsereignisse werden serverseitig als append only protokolliert nachträgliche änderungen oder löschungen sind fachlich und technisch ausgeschlossen und das leserecht auf diese protokolle bleibt strikt auf admins beschränkt",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "architecture": {
+          "roles": [
+            "constraint",
+            "design"
+          ],
+          "rationale": "Der Item legt einen konkreten unveränderlichen Audit-Log-Rahmen fest und ist damit eine dokumentierbare Architekturentscheidung. Gleichzeitig schränkt er die Umsetzung der revisionssicheren Protokollierung fachlich und technisch direkt ein, insbesondere hinsichtlich serverseitigem Append-only-Logging, Änderungs-/Löschverbot und strikt begrenztem Leserecht für Protokolle; betroffen ist daher das PBI zur revisionssicheren Einsichtnahme-Protokollierung.",
+          "adrId": "ADR-0002",
+          "adrStatus": "accepted"
+        },
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "REQ-64",
+      "present": true,
+      "item": {
+        "itemId": "REQ-64",
+        "itemType": "requirement",
+        "text": "Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschließlich wer wann welches Profil angesehen hat.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_134102_c63c89",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "zugriffsprotokoll-pflicht-revisionssicher-adminsicht"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "REQ-11"
+        },
+        "identityKey": "jede einsichtnahme in bewohnerdaten muss revisionssicher protokolliert werden einschließlich wer wann welches profil angesehen hat",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "confirmedInRun": "20260723_134102_c63c89",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "REQ-77",
+      "present": true,
+      "item": {
+        "itemId": "REQ-77",
+        "itemType": "requirement",
+        "text": "Die Leitung soll wöchentlich einen PDF-Export aller Übergabe-Notizen der Woche erstellen können, um sie für Träger-Berichte abzulegen.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "mini-meeting-3",
+        "sourceArtifactId": null,
+        "sourceArtifactType": null,
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": null,
+        "metadata": {
+          "ingestedFrom": "M3-REQ-02",
+          "featureKey": "uebergabe-notizen"
+        },
+        "identityKey": "die leitung soll wöchentlich einen pdf export aller übergabe notizen der woche erstellen können um sie für träger berichte abzulegen",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "confirmedInRun": "mini-meeting-3",
+        "status": "accepted"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "PBI-034",
+      "toId": "REQ-64",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-032",
+      "toId": "REQ-77",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-77",
+      "toId": "FC-12",
+      "relationType": "part_of_feature",
+      "source": "core-heal-features",
+      "metadata": {
+        "healedFrom": "uebergabe-notizen",
+        "derivedFromPbi": "PBI-032"
+      }
+    },
+    {
+      "fromId": "PBI-034",
+      "toId": "ARCH-47",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
+      "metadata": {}
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "FC-12",
+      "itemType": "feature",
+      "text": "Dokumentationsintegration und Erweiterungen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-12",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": ""
+      },
+      "identityKey": "dokumentationsintegration-und-erweiterungen",
+      "history": [],
+      "feature": {
+        "label": "Dokumentationsintegration und Erweiterungen",
+        "rationale": "Hier geht es um die Anbindung beziehungsweise begrenzte Erweiterung der App in Richtung bestehender Dokumentation, Akten und möglicher Zusatzfunktionen wie Kalender/Medikation. Das ist fachlich ein separater Ausbaupfad jenseits der Kernkommunikationsfeatures.",
+        "coreRequirementIds": [
+          "L3-REQ-014",
+          "REQ-42",
+          "REQ-44",
+          "REQ-48",
+          "REQ-49"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-032",
+      "itemType": "pbi",
+      "text": "Es soll eine Übergabe-Notiz pro Schicht geben, die der nächsten Schicht beim Öffnen der Ap...",
+      "origin": "pbi-update",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260723_135427_9260f1",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceRunId": "20260723_135427_9260f1",
+        "createdFromRequirement": "REQ-61",
+        "featureId": "FC-12"
+      },
+      "identityKey": null,
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Es soll eine Übergabe-Notiz pro Schicht geben, die der nächsten Schicht beim Öffnen der Ap...",
+          "status": "needs_clarify",
+          "origin": "pbi-update",
+          "sourceRunId": "20260723_135427_9260f1",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-07-23T15:18:38.13091Z",
+          "note": "EXTEND_PBI: Das neue Requirement betrifft dieselbe fachliche Einheit wie PBI-032: Übergabe-Notizen. Der bestehende Zuschnitt umfasst das Erstellen/Bereitstellen einer Übergabe-Notiz pro Schicht; der wöchentliche PDF-Export ist eine zusätzliche Ausgabefunktion auf genau diesem Artefakt und keine eigenständige neue Fachdomäne. Daher ist es fachlich passender, das bestehende PBI zu erweitern, statt ein separates PBI anzulegen."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": null,
+        "title": "Es soll eine Übergabe-Notiz pro Schicht geben, die der nächsten Schicht beim Öffnen der Ap...",
+        "acceptanceCriteria": [],
+        "linkedRequirementIds": [
+          "REQ-61",
+          "REQ-77"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": "needs_clarify",
+        "mvp": null,
+        "trace": null
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "NeedsClarify",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_135427_9260f1",
+      "status": "needs_clarify"
+    },
+    {
+      "itemId": "PBI-034",
+      "itemType": "pbi",
+      "text": "Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschließl...",
+      "origin": "pbi-update",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_135427_9260f1",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceRunId": "20260723_135427_9260f1",
+        "createdFromRequirement": "REQ-64",
+        "featureId": "FC-10"
+      },
+      "identityKey": null,
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": null,
+        "title": "Jede Einsichtnahme in Bewohnerdaten muss revisionssicher protokolliert werden, einschließl...",
+        "acceptanceCriteria": [],
+        "linkedRequirementIds": [
+          "REQ-64"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": "needs_clarify",
+        "mvp": null,
+        "trace": null
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "NeedsClarify",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_135427_9260f1",
+      "status": "needs_clarify"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "ARCH-47": 3,
+    "REQ-64": 1,
+    "REQ-77": 1
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

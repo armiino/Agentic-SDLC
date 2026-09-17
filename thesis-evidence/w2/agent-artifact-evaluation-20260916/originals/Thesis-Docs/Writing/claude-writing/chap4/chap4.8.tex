@@ -1,0 +1,66 @@
+% P10-4b, 14.09.2026: Begriffs-/Beleganschlüsse und abgegrenzte Prüfaussagen präzisiert.
+% M08, 11.09.2026: Gestaltungsanlässe erhalten; Fallzahlen E48-01 im Anhang.
+\section{Projektionen und kontrollierte Außenkopplung}
+\label{sec:projektionen-aussenkopplung}
+
+\emph{Zielbild und Designproblem.} Die Übergabe nach GitHub gehörte
+zum ursprünglichen Zielkorridor. Mit dem persistenten Projektzustand
+aus Abschnitt~\ref{sec:projektzustand-kontrollierte-mutation} entstand
+eine neue Frage: Wie können Issues und Dokumente operativ genutzt
+und verändert werden, ohne einen konkurrierenden fachlichen Bestand
+zu führen? Die Entwurfsentscheidung unterscheidet deshalb die
+maßgebliche Projektinformation von ihren abgeleiteten Außensichten.
+Externe Änderungen sollen als neue Eingaben beurteilt werden und
+den Bestand nicht still überschreiben.
+
+\emph{Formative Befunde und Entwurfsfolge.} Ein dokumentierter
+Durchlauf zeigte, dass Arbeitselemente als Issues angelegt und nach
+fachlichen Änderungen gezielt aktualisiert werden konnten (E48-01).
+Die Zuordnung wurde auf höchstens ein Issue je Arbeitselement und
+höchstens ein Arbeitselement je Issue begrenzt. Ein weiterer Befund
+zeigte jedoch, dass eine korrekte Zuordnungsregel einen falschen
+Außenbestand nicht kompensiert: Ein Synchronisationslauf verwendete
+einen veralteten Schnappschuss eines anderen Repositories und hätte
+22 falsche Verknüpfungen erzeugt. Die vorgelagerte Probelauf-Stufe
+machte dies vor dem Schreiben sichtbar (E48-02). Erhalten ist der
+zeitnahe Protokolleintrag; der damalige Laufordner wurde entfernt.
+Daraus folgten die Neuerhebung des Außenbestands als Ablaufprinzip
+und eine technische Prüfung seiner Zugehörigkeit zum Ziel-Repository.
+
+Auch die Inhaltsbildung wurde eingegrenzt: Ein modellformulierter
+Aktualisierungsvorschlag hatte einen ausführlichen Issue-Text durch
+eine dünne Statuszeile ersetzt. Daraufhin wurden die maßgeblichen
+Textbausteine für Anlage und Aktualisierung in einem gemeinsamen
+deterministischen Erzeugungsvertrag zusammengeführt. Er legt fest,
+welche Core-Inhalte in welcher Form dargestellt werden.
+
+Für die Gegenrichtung dokumentiert eine spätere Abnahmerunde einen
+externen Issue-Kommentar, der mit Herkunftsangabe als Vorschlag
+aufbereitet und dem Einordnungs- und Autorisierungsweg zugeführt
+wurde. Die Entscheidung wurde anschließend als Vermerk am Issue
+sichtbar. Im Folgeabruf wurde der bereits verarbeitete Kommentar
+ausgefiltert; andere Funde blieben bestehen (E48-03). Hin- und Rückweg übernehmen damit unterschiedliche
+Aufgaben: Der eine stellt bereits geltende Inhalte dar, der andere
+bereitet externe Informationen für eine erneute fachliche Beurteilung
+vor.
+
+Das Prinzip gilt auch für maschinell gepflegte Dokument- und
+Architektursichten; redaktionelle Bereiche bleiben davon getrennt.
+Rückwege bestehen nur für die vorgesehenen operativen Kanäle.
+Daraus ergibt sich die achte Designanforderung:
+
+\textbf{A8:} Operative Darstellungen und externe Systeme dürfen keinen
+konkurrierenden fachlichen Projektbestand bilden; ihre maßgeblichen
+Inhalte müssen aus dem autorisierten Projektzustand abgeleitet und
+eindeutig auf ihn bezogen werden. Externe Rückmeldungen sind als
+kontrollierte Eingänge zu verarbeiten; daraus resultierende
+Zustandsänderungen dürfen nur über die bestehenden Mutations- und
+Autorisierungspfade wirksam werden.
+
+\emph{Einordnung und Grenzen.} Die Fälle belegen ausgeführte
+Projektions- und Rückwegschritte sowie die Wirkung des Probelaufs
+im bezeichneten Fehlerfall. Sie belegen weder die vollständige
+Erfassung externer Änderungen noch allgemeine Drift-Freiheit.
+Abschnitt~\ref{sec:projektionen-kontrollierte-aussenkopplung} erklärt
+die resultierende Architektur; Kapitel~\ref{chap:evaluation}
+untersucht ausgewählte Übergaben und Kontrollfälle.

@@ -1,0 +1,120 @@
+using System.Text.Json.Serialization;
+using AgenticSdlc.Host.FullWorkflow.Artifacts;
+using Microsoft.Agents.AI.Workflows;
+
+namespace AgenticSdlc.Host.FullWorkflow.Derivation;
+
+// ---- Edge-Payloads der generischen Derivation (Generate → Anker → Check) ----
+
+/// <summary>
+/// Multi-Source-Eingabe der Derivation: 1..N geprüfte Quell-Artefakte, aus deren VEREINIGTER Item-Menge abgeleitet
+/// wird. Einzelquelle = Set der Länge 1 (rückwärtskompatibel). Zugleich der Workflow-Eingabetyp (<see cref="DerivationGenerateExecutor"/>).
+/// </summary>
+public sealed record SourceArtifactSet(IReadOnlyList<ArtifactDocument> Sources)
+{
+    /// <summary>Bequemer Wrapper für Einzelquelle.</summary>
+    public static SourceArtifactSet Of(ArtifactDocument source) => new([source]);
+
+    /// <summary>Vereinigte Anker-Grundmenge (ID → Item) über alle Quellen; bei ID-Kollision gewinnt die erste Quelle.</summary>
+    public IReadOnlyDictionary<string, ArtifactItem> ItemsById()
+    {
+        var map = new Dictionary<string, ArtifactItem>(StringComparer.Ordinal);
+        foreach (var it in Sources.SelectMany(s => s.Items)) map.TryAdd(it.ItemId, it);
+        return map;
+    }
+
+    /// <summary>Gesamtzahl der Quell-Items über alle Quellen (Diagnose/Log).</summary>
+    public int TotalItemCount => Sources.Sum(s => s.Items.Count);
+}
+
+/// <summary>Ein vom Generator-Agenten erzeugtes Roh-Item (vor Anker-Validierung + ID-Vergabe). Generisch für JEDE
+/// Ableitung (Risiken, Gap-Requirements, User-Stories …).</summary>
+/// <remarks>
+/// TOLERANT ggü. Feldnamen-Varianten des Generators: der Aussagetext kann als <c>text</c>, <c>statement</c>,
+/// <c>risk</c>, <c>requirement</c> ODER als <c>title</c>+<c>description</c> kommen. <see cref="EffectiveText"/>
+/// normalisiert das auf EINEN Text. Grund: der Generate-Agent liefert je Prompt/Modell mal <c>text</c>, mal
+/// <c>title/description</c> — ohne Normalisierung landete der Risikotext als <c>null</c> im Artefakt (Bug, run 299d8c:
+/// 8/8 Risiken ohne Text; der Inference-Check „Supported" war dadurch wertlos).
+/// </remarks>
+public sealed record RawDerivedItem(
+    [property: JsonPropertyName("text")] string? Text,
+    [property: JsonPropertyName("sourceArtifactItemIds")] IReadOnlyList<string>? SourceArtifactItemIds,
+    [property: JsonPropertyName("assumptions")] IReadOnlyList<string>? Assumptions,
+    [property: JsonPropertyName("rationale")] string? Rationale)
+{
+    [property: JsonPropertyName("title")] public string? Title { get; init; }
+    [property: JsonPropertyName("description")] public string? Description { get; init; }
+    [property: JsonPropertyName("statement")] public string? Statement { get; init; }
+    [property: JsonPropertyName("risk")] public string? Risk { get; init; }
+    [property: JsonPropertyName("requirement")] public string? Requirement { get; init; }
+
+    /// <summary>Normalisierter Item-Text (leer, wenn der Generator gar keinen lieferte → wird verworfen).</summary>
+    [JsonIgnore]
+    public string EffectiveText
+    {
+        get
+        {
+            var direct = FirstNonEmpty(Text, Statement, Risk, Requirement);
+            if (!string.IsNullOrWhiteSpace(direct)) return direct!.Trim();
+            var t = Title?.Trim();
+            var d = Description?.Trim();
+            if (!string.IsNullOrWhiteSpace(t) && !string.IsNullOrWhiteSpace(d)) return $"{t} — {d}";
+            return FirstNonEmpty(t, d)?.Trim() ?? string.Empty;
+        }
+    }
+
+    private static string? FirstNonEmpty(params string?[] values)
+        => values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
+}
+
+/// <summary>Ungültig verankertes Item (Anker fehlt/zeigt ins Leere) — Audit, nicht ins konsumierbare Dokument.</summary>
+public sealed record InvalidAnchor(string Text, IReadOnlyList<string> Anchors, IReadOnlyList<string> BadIds, string Reason);
+
+public sealed record GeneratedDerivation(SourceArtifactSet Sources, IReadOnlyList<RawDerivedItem> Raw, string Decision);
+public sealed record AnchoredDerivation(SourceArtifactSet Sources, IReadOnlyList<ArtifactItem> Items, IReadOnlyList<InvalidAnchor> Invalid, string Decision);
+
+/// <summary>Terminales Ergebnis der Derivation: das (anker-gültige) abgeleitete Dokument + I-c-Verdikte + die
+/// verworfenen Anker. Als YieldOutput-Typ zugleich der Ausgabetyp beim Binden per BindAsExecutor.</summary>
+public sealed record DerivationResult(
+    [property: JsonPropertyName("document")] ArtifactDocument Document,
+    [property: JsonPropertyName("verdicts")] IReadOnlyList<InferenceVerdict> Verdicts,
+    [property: JsonPropertyName("invalidAnchors")] IReadOnlyList<InvalidAnchor> InvalidAnchors,
+    [property: JsonPropertyName("decision")] string Decision);
+
+/// <summary>
+/// Verallgemeinerte Derivation als bindbarer MAF-Workflow: <c>Generate (echter AIAgent) → AnchorValidate
+/// (deterministisch) → InferenceCheck (bounded Judge)</c>. Eine Ableitung ist ein <see cref="DerivationSpec"/>;
+/// derselbe Graph läuft für jede (Risiken, Gap-Requirements, …). Per <c>WithOutputFrom</c> + <c>BindAsExecutor</c>
+/// als EIN Knoten in größere Graphen einhängbar.
+/// </summary>
+public static class DerivationWorkflow
+{
+    internal static Microsoft.Agents.AI.Workflows.Workflow Build(
+        DerivationGenerateExecutor generate,
+        DerivationAnchorExecutor anchor,
+        DerivationCheckExecutor check)
+    {
+        var builder = new WorkflowBuilder(generate)
+            .WithName($"Derivation-{generate.Spec.Id}")
+            .WithDescription($"{generate.Spec.SourceLabel} → {generate.Spec.TargetArtifactType} "
+                           + "(Generate[Agent] → AnchorValidate[det] → InferenceCheck[Judge]).");
+
+        builder.AddEdge(generate, anchor);
+        builder.AddEdge(anchor, check);
+        builder.WithOutputFrom(check);
+        return builder.Build();
+    }
+
+    /// <summary>AGENTISCHER Modus (Stufe 1): EIN Knoten — der Agent liest/verankert/schreibt selbst; die unabhängige
+    /// Assurance läuft im selben Executor danach. Gleicher Ausgabetyp (<see cref="DerivationResult"/>) → als
+    /// Derivation-Knoten austauschbar mit dem strukturierten Graphen.</summary>
+    internal static Microsoft.Agents.AI.Workflows.Workflow BuildAgentic(DerivationAgenticExecutor agentic, DerivationSpec spec)
+    {
+        var builder = new WorkflowBuilder(agentic)
+            .WithName($"Derivation-{spec.Id}-agentic")
+            .WithDescription($"{spec.SourceLabel} → {spec.TargetArtifactType} "
+                           + "(agentisch: Agent liest/verankert/schreibt selbst via Tools; unabhängige Assurance danach).");
+        builder.WithOutputFrom(agentic);
+        return builder.Build();
+    }
+}

@@ -1,0 +1,177 @@
+% P10-4c-Nachtrag, 15.09.2026: Auswertungsregel für technische Handlungen
+% und die bedingte Aussagekraft fehlender Ereignisse expliziert.
+% P10-4c, 14.09.2026: Ledger-Herleitung und Nachweisanschlüsse präzisiert.
+% M15, 11.09.2026: Ziel und offener Lösungsweg, Anforderungsherkunft
+% sowie Belegarten getrennt erklärt; Instrumentierung kurz definiert.
+% M03 / B-17, 10.09.2026: ursprüngliches und erweitertes Nutzungsziel
+% unterschieden; keine neue Datierung des Betreuerimpulses.
+% ============================================================
+% §3.2 Iteratives Vorgehen und Evidenzgrundlage — v03 (Claude)
+% v03 (01.09., Kollegen-Feedback nach Kap-4-Konkretisierung):
+%   Punkt 1 (Instrumentierungs-Herkunft) war bereits umgesetzt
+%   (Beobachtungsschicht-Absatz) — ergänzt nur „über OpenTelemetry".
+%   Punkt 2 ÜBERNOMMEN: „Systemverhalten" pauschal→Kap.7 war zu weit
+%   (widersprach dem Test-Satz davor); jetzt getrennt: VERGLEICHENDE/
+%   Wirkungs-Aussagen → Kap.-7-Evaluation · technische Eigenschaften →
+%   Verifikation durch Tests/Prüffälle (= 4.8-Vokabular, drei Ebenen
+%   Beobachtung/Verifikation/Evaluation).
+%
+% v02 (Review-Runde 1 — kritisch geprüft):
+%   GEGENSTANDSLOS: ① "alte Verweise in 3.1" — Kollege reviewte die
+%     Fassung VOR der v03-Umstellung; aktuelle Labels sind korrekt
+%     (per grep verifiziert). Sein Auftakt-/Absatz-3-Ersatz hätte
+%     zudem die vom Autor beauftragte POSITIVE DREHUNG rückgängig
+%     gemacht → nicht übernommen.
+%   ÜBERNOMMEN (alle epistemisch berechtigt):
+%   ② "repräsentative" → "projektnahe Eingaben" (Repräsentativität
+%     wäre eine unbelegte Stichproben-Behauptung; real: echte/
+%     projektnahe Transkripte — Abweichung vom Blaupause-Wortlaut
+%     "repräsentativen" ist BEWUSST, Blaupause-v02 §7 ggf. nachziehen).
+%   ③ "vielfach" → "wiederholt durchlaufen; überarbeitet, stabilisiert
+%     oder verworfen" (keine Pseudo-Quantität).
+%   ④ Dritter Herkunftstyp als "abgeleitete Realisierungsanforderungen"
+%     + Anti-Zirkel-Satz — sein bester Punkt; liegt näher am
+%     Blaupause-Wortlaut ("konsistente Realisierung, Governance,
+%     Betrieb") als meine v01-Formulierung.
+%   ⑤⑥⑦ Schlussabsatz konsolidiert: "dokumentieren" statt "belegen";
+%     Tests = Evidenz unter Prüfbedingungen; und der wichtigste Fang:
+%     auch Kapitel 7 liefert KEINE "allgemeinen" Wirksamkeitsaussagen,
+%     sondern begrenzte Aussagen unter definierten Bedingungen (meine
+%     v01-Formulierung hatte das implizit versprochen).
+%     ("Traceability" aus seinem Vorschlag → "Nachvollziehbarkeit",
+%     deutscher Begriffshaushalt von Kap. 2.)
+%   ZURÜCKGEWIESEN: Zweifel am "Fehler- und Beobachtungslog" — das Log
+%     EXISTIERT real und systematisch (fortlaufendes Reibungslog mit
+%     Beleg-Lauf, Befund und Fix-Status je Eintrag; Projektpflichtregel
+%     seit Beginn der E2E-Phase). Keine "verstreuten Notizen".
+%   MERKER (berechtigt): Dateikopf-Kommentare vor finaler Abgabe aus
+%     allen .tex entfernen (reine Arbeitsdokumentation).
+%
+% Grundlage: Kapitel-3-Blaupause v02 §7 (Absatzplan 1–6). KEINE neuen
+% Methodenquellen (Blaupause: "Das eigene Vorgehen wird durch
+% Projektdokumentation und Artefakte gestützt"); Hevner/Peffers wirken
+% aus 3.1 nach.
+%
+% Realitäts-Abgleich (Claude, gegen die Projektgeschichte):
+%   · M03/B-17, Autorenpräzisierung 10.09.2026: ursprüngliches Ziel
+%     MAF + KI-Agenten + Kick-off-Transkript -> GitHub-Issue;
+%     Rückkopplung/Wiederverwendung = Zielerweiterung. Die Architektur
+%     war damit nicht vorgegeben. Der Betreuerimpuls ist nicht durch
+%     zeitnahe Aufzeichnungen unabhängig datiert; keine Datierung
+%     oder wörtliches Gesprächszitat aus Implementierungsdaten ableiten.
+%   · Der 6-Schritte-Zyklus = der tatsächliche Arbeitsmodus (Stufe
+%     bauen → mit echten Transkripten laufen lassen → beobachten →
+%     Konsequenz → umbauen/stabilisieren).
+%   · "fortlaufend geführtes Fehler- und Beobachtungslog" = das
+%     Reibungslog (systemneutral formuliert; vom Autor-Vorschlag
+%     31.08. gedeckt — beschreibt das markanteste formative
+%     Instrument präziser als nur "Notizen").
+%   · Alle genannten Evidenzformen existieren real (Versionshistorie,
+%     Runs/Logs/Tool-Aufrufe, Artefakte, Tests, Notizen).
+%
+% Selbstcheck gegen Blaupause-§7-Abnahme:
+%   Zielkorridor/Lösungsraum getrennt ✓ · Zyklus abstrakt, keine
+%   Pivots/Agenten/Fehler ✓ · 3 Herkunftstypen ✓ · Auswahlregel +
+%   Schutzregeln ✓ · Evidenzgrenzen als Prosa statt Tabelle (Blaupause
+%   erlaubt "drei bis vier Sätze") ✓ · verbindlicher Grenzsatz wörtlich
+%   getragen ✓ · Übergang zu Kap. 4 ✓ · ~440 Wörter ≈ 1,2 Seiten
+%   (Budget 1,1–1,4) ✓ · systemneutral ✓ · keine Mess-Verben ✓.
+% ============================================================
+
+\section{Iteratives Vorgehen und Evidenzgrundlage}
+\label{sec:iteratives-vorgehen-evidenz}
+
+Ausgangspunkt war das Ziel, mit dem Microsoft Agent Framework
+KI-Agenten einzusetzen, die ein Gesprächstranskript verarbeiten und
+daraus ein GitHub-Issue ableiten. Später kam das Ziel hinzu, die
+eingesetzten agentischen Fähigkeiten nach der Issue-Erzeugung erneut
+zu nutzen und Rückmeldungen in einen Verarbeitungskreislauf
+einzubeziehen. Damit rückte die Verarbeitung weiterer
+Projektkommunikation in den Blick. Offen blieben die Rollen und
+Grenzen der Agenten, ihre Orchestrierung, die Zwischenrepräsentationen,
+das Zustandsmodell und die Aufteilung zwischen agentischen und
+deterministischen Komponenten. Exploriert wurde der Lösungsweg zu
+diesem im Verlauf erweiterten Nutzungsziel innerhalb der frühen
+SDLC-Phasen. Die Implementierung der fachlichen Zielanwendung blieb
+außerhalb des Untersuchungsgegenstands.
+
+Die Entwicklung folgte einem wiederkehrenden Zyklus: Eine Teillösung
+wurde entworfen oder verändert, technisch umgesetzt und mit
+projektnahen Eingaben ausgeführt. Die erzeugten Artefakte und das
+Laufzeitverhalten wurden beobachtet. Aus der Interpretation dieser
+Beobachtungen wurden Konsequenzen für den Entwurf abgeleitet und die
+Teillösung anschließend überarbeitet, stabilisiert oder verworfen.
+Kapitel~\ref{chap:explorative-problemklaerung} behandelt die ausgewählten
+Beobachtungen und die daraus hervorgegangenen Entscheidungen.
+
+Die dort hergeleiteten Designanforderungen haben drei unterschiedliche
+Ursprünge. \emph{Zielgetriebene Anforderungen} konkretisieren das
+ursprüngliche oder erweiterte Nutzungsszenario und die Systemgrenze.
+\emph{Anforderungen aus formativen Beobachtungen} gehen auf Probleme
+oder Grenzen früher Entwicklungsstände zurück.
+\emph{Abgeleitete Realisierungsanforderungen} ergeben sich aus der
+technischen Umsetzung, dem Betrieb oder der Absicherung bereits
+begründeter Architekturentscheidungen. Dieser dritte Typ konkretisiert
+eine Entscheidung, liefert aber keine unabhängige Begründung für sie.
+Die Unterscheidung hält gesetzte Ziele, beobachtete Probleme und
+spätere Entscheidungen auseinander. So werden weder alle Anforderungen
+nachträglich aus Fehlschlägen hergeleitet noch spätere Entscheidungen
+als von Beginn an feststehend dargestellt.
+
+Die Rekonstruktion stützt sich auf die im Projekt entstandenen Belege:
+Quellcode und Versionshistorie, identifizierbare Entwicklungsstände,
+Laufzeitereignisse und protokollierte Werkzeugaufrufe, Zwischen- und
+Ergebnisartefakte, gezielte explorative Vorstudien mit dokumentierten
+Grenzen sowie automatisierte Tests und zeitnahe Entwicklungsnotizen.
+Zu Letzteren gehört ein fortlaufend geführtes Fehler- und
+Beobachtungslog.
+
+Die Laufzeitbelege entstanden durch eine schrittweise aufgebaute
+Instrumentierung, also die technische Erfassung des
+Ausführungsverhaltens. Eine anwendungsseitige Beobachtungsschicht
+protokollierte laufbezogene Metadaten sowie Modell-, Workflow- und
+Werkzeugereignisse, ergänzt um Telemetriesignale über OpenTelemetry.
+Damit ließen sich sprachliche Modellausgaben, angeforderte
+Werkzeugaktionen und beobachtbare Zustandswirkungen getrennt
+betrachten. Der Umfang dieser Erfassung wurde während der Entwicklung
+erweitert und war nicht in allen historischen Ständen gleich.
+Aussagen aus Laufprotokollen werden deshalb auf die tatsächlich
+erfassten Ausführungsschritte begrenzt. Die technische Realisierung
+beschreibt Abschnitt~\ref{sec:realisierung-observability}.
+
+Für Aussagen über ausgeführte Handlungen haben die zugehörigen
+Werkzeug- und Systemereignisse Vorrang vor widersprechenden
+Selbstauskünften des Modells; behauptete Zustandsänderungen werden
+zusätzlich an den Ergebnisartefakten geprüft. Aus einem fehlenden
+Ereignis wird nur dann auf eine unterbliebene Handlung geschlossen,
+wenn der betreffende Ausführungspfad nachweislich instrumentiert
+und der relevante Protokollabschnitt vollständig erhalten ist.
+Andernfalls wird die fehlende Aufzeichnung als Nachweislücke behandelt.
+
+Die Auswertung umfasst ausgewählte Entwicklungsbefunde. Aufgenommen
+wird eine Beobachtung, wenn sie eine zentrale Designanforderung
+motivierte, eine tragende Architekturentscheidung beeinflusste oder
+eine für die Forschungsfragen relevante Grenze sichtbar machte.
+Fehlende Aufzeichnungen werden nicht durch plausible Annahmen ersetzt
+und nicht betrachtete Alternativen nicht als verworfen dargestellt.
+Relevante Gegenbeobachtungen werden bei der jeweiligen Aussagegrenze
+berücksichtigt.
+
+Die Belegarten erfüllen unterschiedliche Aufgaben. Entwicklungsunterlagen
+und formative Beobachtungen begründen die Rekonstruktion von
+Gestaltungsentscheidungen. Einzelne Beobachtungen erlauben weder
+Häufigkeitsangaben noch einen Nachweis der Wirksamkeit des finalen
+Systems. Quellcode und Konfigurationen dokumentieren implementierte
+Regeln; Tests und ausgeführte Prüffälle können technische Eigenschaften
+unter den jeweils angegebenen Bedingungen verifizieren. Daraus folgt
+noch keine Aussage über die fachliche Qualität der erzeugten Artefakte.
+
+Formative Vergleiche können innerhalb ihrer jeweiligen
+Versuchsbedingungen Verbesserungen und Grenzen sichtbar machen. Sie
+begründen die weitere Gestaltung, ohne damit die Leistungsfähigkeit des
+späteren Systems nachzuweisen. Dessen ausgewählte Eigenschaften werden
+in Kapitel~\ref{chap:evaluation} bewertet; die dortigen Aussagen zu
+Qualität, Nachvollziehbarkeit, Aufwand und Mechanismenwirkung gelten
+für die ausgewiesenen Lauf-, Bewertungs- und Untersuchungsstände.
+Die Projektbelege erlauben keine allgemeinen Aussagen über LLM-basierte
+Agenten, das Requirements Engineering oder das verwendete Framework.

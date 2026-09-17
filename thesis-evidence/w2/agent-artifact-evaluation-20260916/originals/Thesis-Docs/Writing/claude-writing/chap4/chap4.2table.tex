@@ -1,0 +1,131 @@
+% P10-4c, 14.09.2026: Ledger-Herleitung und Nachweisanschlüsse präzisiert.
+% B-46-Nachtrag, 13.09.2026: Z3 an die Originalprüfung E43-05
+% und die bereits synchronisierten Fassungen von 4.3/Anhang A angeglichen.
+% M16 / B-34, 11.09.2026: Z4 trennt die Artefakte der beiden Prüfbeobachtungen.
+% M03 / B-17, 10.09.2026: ursprüngliches und erweitertes Nutzungsziel
+% unterschieden; keine neue Datierung des Betreuerimpulses.
+% ============================================================
+% Tabelle zu §4.2 — Ziel gemäß aktueller Einbindung in chap4.2.tex:
+%   tables/chap4/chap4.2table.tex
+% Aufruf: \input{tables/chap4/chap4.2table}
+% Label: t:explorationsverlauf-zyklen
+% v03 (01.09., Tabellen-Feedback-Runde — kritisch geprüft): Z1 konkreter
+% (Übergaben + Ablaufreihenfolge explizit zu gestalten) · Z2 „als eigene
+% Designvariable" · Z4-Designrichtung „an Quellenrepräsentation BINDEN"
+% (statt „verlagern") · Z6 ohne MCR-Begriff (fällt erst in 4.5) · Z7
+% „deterministische Zuordnungslogik" (VERIFIZIERT am Audit: IngestionApply
+% schrieb featureKey-String als Relationsziel — stärkere Variante belegt;
+% 4.6-Text + E46-01-Zeile synchronisiert) · Z8 „im Entwicklungsbetrieb"
+% (4.7-Grenze schon hier) + „unter Nutzung der bestehenden Governance"
+% (= A8-Wortlaut) · Z9 als Stabilisierungs-Übergang · Caption
+% „zugehörigen Ankern" (E-IDs+Tags+Kapitelverweise gemischt zulässig).
+% v02 (01.09., Kollegen-Review): Zeilen Z0–Z6/Z8/Z9 auf Evidenzgrenzen
+% nachgeschärft (keine unbelegten Wertungen/Kausalitäten mehr: Z0 ohne
+% „Ergebnisqualität modellabhängig", Z1 als Zielkonkretisierung, Z3
+% „unbelegt trotz geschärfter Promptvorgaben", Z4 ohne Zerlegungs-
+% Kausalität, Z5 Zirkularität als Eignungsaussage, Z6 Variabilitäts-
+% beschreibung statt „inhaltlich scharf", Z8 „regulärer Ablaufzustand",
+% Z9 „technische Tests").
+% Grundlage: genese-dossier §2 (Z0–Z9), AUDITIERT 31.08. inkl.
+% Korrektur-Kopf (A/B/C: zwei ausgeführt, C nie implementiert).
+% Systemnamen vermieden; Evidenzanker-Spalte verweist auf die E-IDs
+% aus Anhang A und die Artefaktstände (git-Tags) — verbindet Zyklen-
+% Überblick und Evidenzsystem.
+% ============================================================
+
+\begin{table}[tbp]
+\centering
+\caption[Verdichteter Explorationsverlauf]{Verdichteter
+Explorationsverlauf: Entwicklungszyklen mit prägender Beobachtung
+beziehungsweise Zielkonkretisierung, daraus folgender Designrichtung und
+den zugehörigen Ankern (E-IDs nach Anhang~\ref{anh:evidenzanker},
+markierte Artefaktstände \texttt{v-s}$n$, Kapitelverweise). Eigene
+Darstellung.}
+\label{t:explorationsverlauf-zyklen}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\textwidth}{
+    >{\raggedright\arraybackslash}p{0.03\textwidth}
+    >{\raggedright\arraybackslash}p{0.16\textwidth}
+    >{\raggedright\arraybackslash}X
+    >{\raggedright\arraybackslash}p{0.20\textwidth}
+    >{\raggedright\arraybackslash}p{0.115\textwidth}
+}
+\toprule
+& \textbf{Fokus} &
+\textbf{Prägende Beobachtung / Zielkonkretisierung} &
+\textbf{Designrichtung} & \textbf{Anker} \\
+\midrule
+Z0 & Einzelagent-Durchstich &
+Modelltext beschrieb Werkzeugaufrufe ohne registrierte Ausführung &
+Ausführung unabhängig von der Modellausgabe beobachtbar machen &
+E43-01, E43-02; \texttt{v-s0} \\
+\addlinespace[0.3em]
+Z1 & linearer Mehr-Agenten-Ablauf &
+mit der Aufteilung auf mehrere spezialisierte Rollen mussten auch deren
+Informationsübergaben und Ablaufreihenfolge explizit gestaltet werden &
+Informationsübergaben und Ablaufsteuerung getrennt von den fachlichen
+Rollen betrachten &
+\texttt{v-s1} \\
+\addlinespace[0.3em]
+Z2 & Beobachtbarkeit ausgebaut &
+Artefakterzeugung ohne vorausgehenden eigenen Quellzugriff; tatsächlicher
+Informationsweg auf Verarbeitungsebene nicht explizit ausgewiesen &
+Kontextführung als eigene Designvariable untersuchen &
+E43-03; \texttt{v-s2} \\
+\addlinespace[0.3em]
+Z3 & Strategievergleich (zwei von drei geplanten Varianten) &
+nach Promptschärfung zunächst Schreiben ohne Leseaufruf,
+im nächsten Lauf Lesen ohne Artefakterzeugung; zwei Varianten
+der Kontextführung wurden explorativ verglichen &
+Informationsflüsse explizit modellieren &
+E43-04, E43-05 \\
+\addlinespace[0.3em]
+Z4 & nachgelagerte Prüfung als Messinstrument &
+freie Prüfung variierte und übersah ausgewählte Inhaltslücken;
+festgelegte Prüfeinheiten und Themen ermöglichten gezielte
+Einzelprüfungen; die Vollständigkeitsfrage blieb offen &
+Vollständigkeitsprüfung an eine explizite Quellenrepräsentation binden &
+E44-01, E44-04; \texttt{v-s3} \\
+\addlinespace[0.3em]
+Z5 & quellgebundene Zwischenrepräsentation &
+keine explizite Zuordnung Artefakt--Quellstelle; eine allein
+modellgenerierte, nicht menschlich bestätigte Vollständigkeitsreferenz
+war als unabhängiger
+Bewertungsmaßstab ungeeignet &
+Evidenz vor Erzeugung; geteilte Referenzbildung mit menschlicher
+Bestätigung &
+E44-02, E44-03, E44-05; \texttt{v-s4} \\
+\addlinespace[0.3em]
+Z6 & getrennte Prüf- und Erzeugungsverantwortung &
+freie Prüfung variierte zwischen Wiederholungen in Zahl, Kategorien und
+Granularität der Befunde &
+Erzeugung, Prüfung und Reparatur als getrennte
+Workflow-Verantwortlichkeiten &
+E45-02, E45-03; \texttt{v-s5}--\texttt{s6} \\
+\addlinespace[0.3em]
+Z7 & laufübergreifender Zustand, Kontrolle und Fortschreibung &
+Konkretisierung des erweiterten Nutzungsziels (kein Fehlschlag-Pivot);
+später: fehlerhafte
+Relationen aus einer deterministisch implementierten Zuordnungsregel &
+Zustand mit Identitäten, Relationen, Historie; gemeinsamer Mutationspfad
+mit Invariantenprüfung; Einordnung neuer Information gegen den Bestand &
+E46-01, E47-02; \texttt{v-s7}--\texttt{s8} \\
+\addlinespace[0.3em]
+Z8 & Außenkopplung, durable Ausführung und Bedienschicht &
+menschliche Entscheidungspunkte machen planmäßiges Anhalten zu einem
+regulären Ablaufzustand; direkte Einzelbedienung wurde im
+Entwicklungsbetrieb mit wachsender Systembreite aufwendiger &
+Projektionen aus dem Zustand mit kontrolliertem Rückweg;
+Sicherungspunkte und Wiederaufnahme; agentische Bedienebene unter
+Nutzung der bestehenden Governance &
+E47-01, E48-01/-02; \texttt{v-s9} \\
+\addlinespace[0.3em]
+Z9 & Stabilisierung des Untersuchungsartefakts &
+End-to-End-Abnahmen, Integritätsprüfungen und technische Tests &
+stabilisierten Artefaktstand für die Evaluation herstellen &
+Kapitel~\ref{chap:maf-realisierung}/\ref{chap:evaluation} \\
+\bottomrule
+\end{tabularx}
+\end{table}

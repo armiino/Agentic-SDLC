@@ -1,83 +1,37 @@
-# thesis-evidence/
+# Belege zur Masterarbeit
 
-Kuratierter, **getrackter** Ordner für die Lauf-/Mess-Ergebnisse, die in der Thesis zitiert werden.
-Bewusst **getrennt** vom großen `runs/`-Baum: hier landet nur die *zitierte Teilmenge* (das, worauf
-Faktenblatt/Evidence-Ledger zeigen), damit man sie sofort sieht und nutzen kann.
+Stand der Bereitstellung: 15.09.2026; Ergänzung der Bewertungsunterlagen am 16.09.2026. Dieser Index erschließt die Projektevidenz zur Arbeit „Einsatz von KI-Agenten in den frühen Phasen des Software Development Lifecycle“. Er führt von einer Aussage zum zugehörigen Verfahren, Ergebnis und Originalbeleg. Die Ablage ist eine lokale Vorbereitung des Abgabepakets; der finale Artefakt-Commit und der Material-/Nutzungsstatus sind noch offen.
 
----
+## Einstieg nach Prüfgegenstand
 
-## Was hier zu finden ist (der rote Faden)
+| Prüfgegenstand | Belegzugang | Aussageweite |
+|---|---|---|
+| Explorative Beobachtungen und Designentscheidungen, Kapitel 4 / Anhang A | [Kapitel-4-Paket mit 19 E-IDs](./chapter-4/README.md) | Ausgewählte formative Beobachtungen, einschließlich benannter Teil- und Ersatzbelege; keine allgemeine Wirksamkeitsmessung. |
+| Ledger/F-Hauptvergleich, Stufenanalyse und Modellsensitivität, 7.2/7.3 / D.1–D.5 | [Originale und Zuordnung](./w2/archivierte-nachweise-20260915/README.md), [Auswertungsdateien](./w2/eval/), [Nachreview-Konsolidierung](./w2/eval/w2-nachreview-konsolidierung.json) | Ausgaben, Goldstand, Einzelurteile, Konfigurationen und Logs der angegebenen historischen Läufe. Die Hauptauswertung wird nicht rückwirkend zu einer kontrollierten Messung des finalen Codes. |
+| Wiederholungen des Ledger-Stressfalls / D.11 | [Bericht und Einzelurteile](./w2/ledger-repetitions-20260915/bericht.md), [Paket und Berechnung](./w2/ledger-repetitions-20260915/README.md) | Drei vorhandene Ausgaben desselben Falls; ergänzende Inhaltsprüfung und gezielte Autorenurteile. Keine unabhängige Zweitannotation oder allgemeine Stabilitätsgarantie. |
+| HITL, Fortschreibung, Pause/Resume, Bootstrap und Architekturpfad / D.6 | [Lauf- und Kontrollbelege](./w2/archivierte-nachweise-20260915/README.md#governance-und-technische-nachweise) | Historische Entscheidungen und gespeicherte Wirkungen, getrennt von Experimentmodi, Dry-Run und späteren technischen Prüfungen. |
+| Herkunft und Beziehungen im historischen Core, 7.4 / D.10 | [Herkunftsaudit v4 mit Originaldateien](./w2/provenance-v4-20260913/README.md) | Technische Auflösbarkeit der definierten Pfade im untersuchten Bestand; keine pauschale semantische Richtigkeit und keine vollständige Änderungshistorie. |
+| Inhaltliche Prüfung ausgewählter Einordnungsfälle, 7.5 / D.12 | [Ergebnisse und Belegketten](./w2/core-content-audit-20260915/evaluation/README.md), [gesicherte Auswahl](./w2/core-content-audit-20260915/README.md) | Acht regelgebunden ausgewählte zusätzliche Fälle und vier getrennte bekannte Kontrollen; positive, begrenzte und ungeklärte Ergebnisse. Keine repräsentative Erfolgsquote. |
+| Tokenverbrauch der vier Hauptläufe | [Korrektur und Rechenregel](./w2/token-usage-correction-20260910.md), [Rechenskript](./w2/recompute-token-usage.py), [portable Ausführung](./w2/archivierte-nachweise-20260915/README.md#technische-nachrechnung) | Auswertung archivierter Zähler, geprüft gegen einzelne Chat-Spans; keine Rechnungskontrolle oder neue Modellmessung. |
+| Agentenbeitrag und ganze PBIs/Issues: KI-Erstauswertung vom 16.09. | [Ergebnisbericht, Einzelurteile und Autorenprüfung](./w2/agent-artifact-evaluation-20260916/evaluation/README.md) | 17 Vorschläge, drei PBI-/Issue-Paare; nachrechenbare Zählungen und begründete Ersturteile. Sechs punktuelle Autorenrückmeldungen und spätere HTML-Durchsicht (siehe Bewertungsnachtrag), keine unabhängige Annotation. |
+| Aktueller Bewertungsnachtrag vom 16.09. | [Maßstabskorrekturen und Autorenprotokoll](./w2/bewertungskonsolidierung-20260916/README.md) | Zwei korrigierte IDE-Urteile (Ledger A41 und F C-086), neue Zählungen und vollständige HTML-Durchsicht laut Autor. Keine erfundene menschliche Einzelannotation; historische Stände bleiben erhalten. |
+| R3: Entwurfsanker, Governance-Modi und Standzuordnung | [Prüfung, Primärbelege und Integrationsprotokoll](./r3-standabgleich-20260916/README.md) | Inventur aller 143 Fullworkflow-Verzeichnisse; 685 Dateien entsprechen dem Teststand vom 11.09. Kein neuer Lauf und noch kein finaler Integrationsnachweis. |
+| Finaler Abgabestand | [Vorbereitete Abschlussfelder](./ABSCHLUSS-VORBEREITUNG.md) | Noch kein Freeze. Historische Prüfstände und der spätere finale Commit bleiben getrennt. |
 
-Die Unterordner sind **keine** parallelen Experimente, sondern **eine Kette**, die zur Entscheidung führte,
-einen Evidence-Ledger zu bauen. Lies sie in dieser Reihenfolge:
+## Belege richtig lesen
 
-| # | Ordner | Frage | Kern-Befund |
-|---|---|---|---|
-| 1 | `D1-direct-vs-topic/` | Braucht Coverage die feste Topic-Checkliste, oder findet ein starkes Modell die Lücken direkt? | **TopicCoverage (feste Checkliste) ist modell-robust + reproduzierbar** → A/B/C-Messinstrument. **DirectReview ist modellabhängig + verrauscht** (Severity `arch crit 6→2`) → nur L3-Critic. |
-| 2 | `grounding-spotcheck/` | Wie verlässlich ist die Grounding-Achse von Haus aus? | Grounding ist ein **„Sieb, kein Messwert"** — Precision/Recall-Regler, modellabhängig (v1 recall-first vs. v2 precision, Modalitäts-Blindspot). **Kein LLM ist Ground Truth** (Mensch korrigierte das LLM-Label). |
-| 3 | `claim-grounding-spike/` | Wird Grounding stabiler mit **atomaren Claims gegen zugeordnete Evidence** statt Unit-gegen-Volltranskript? | **Claim+Evidence löst als EINZIGES beide Fehlerklassen** (Modalitäts-Over-Claims + Risiko-Synthesen). E2E auto-Selection **27/28**, **0 Fabrication** (Zwei-Transkript). Grenze: Erfolg „bei kuratierter Evidenz"; **Coverage strukturell nicht** adressiert. |
-| 4 | `source-claim-coverage-spike/` | Ist claim-/evidence-native **Coverage** feiner als TopicCoverage? Lässt sich der SourceClaim-Ledger automatisch extrahieren? | claim-native Coverage feiner; `missing` stark (Matrix-v2 **18/18**), aber `covered/partial/contradicted` + Status/Scope bleiben **hart**. **Wurzel-Ursache benannt: freie Generierung ohne Provenienz** → daraus folgt der Ledger/evidence-first-Pfad. |
-| 5 | `evidence-first-spike/` | Erhält Generierung **aus einem Ledger** die Quellsemantik besser als freie Generierung? | Ja, deutlich (required-only ~0 → hoch). Über **2 Domänen** generalisiert; **Modell-Confound** via A' (gpt-5.4 frei) isoliert → **Mechanismus, nicht Modell**. Grenzen: Prompt-Confound, Grounding-Metrik = Format, Hand-Ledger = Best-Case. |
+Die Originalkopien behalten ihren Inhalt und ihre ursprünglichen Kennungen. Paketmanifeste nennen Originalpfad, Ablagepfad und SHA-256. Ein Hashvergleich sichert die Identität der Datei; er belegt weder ihre fachliche Wahrheit noch die Vollständigkeit der damaligen Instrumentierung.
 
-**Ein-Satz-Zusammenfassung der Kette:** Review gegen freie Artefakte ist schwer und modellabhängig (1,2) →
-Claim+Evidence lokalisiert Grounding (3) → claim-native Coverage ist feiner, aber die Wurzel ist freie
-Generierung ohne Provenienz (4) → also Generierung **aus** einem Evidence-Ledger (5) → daraus der aktuelle
-Ledger-Bauplan.
+Maßgeblich für die aktuell berichteten Kennzahlen sind die in der Thesis bezeichneten Auswertungsfassungen einschließlich Nachreview und datierter Ergänzungen. Ältere Messprotokolle, Inspektionskopien und Manifeste dokumentieren die Entwicklung: Sie enthalten teils frühere Goldstände, später korrigierte Tokenwerte oder zurückgenommene Prüferetiketten. Das Datum eines Ordners allein macht solche Angaben nicht zur aktuellen Ergebnisfassung. Insbesondere sind KI-Gegenprüfungen keine unabhängigen menschlichen Bewertungen.
 
-## Zwei universelle Befunde (in JEDEM Strang)
+Die vollständigen kopierten Laufordner im neuen Ergänzungspaket enthalten auch ihre vorhandenen Zwischenstände und Checkpoints. Ein Checkpoint dokumentiert einen gespeicherten Workflowzustand; seine bloße Anzahl belegt weder fachliche Qualität noch erfolgreiche Wiederaufnahme. Dafür sind die jeweils ausgewerteten Ereignisse und Zustandsübergänge heranzuziehen.
 
-1. **Struktur schlägt frei** — feste Checkliste / Claim+Evidence / Ledger sind reproduzierbar und
-   **robust gegen Modellstärke**; offene Generierung/Bewertung ist modellabhängig.
-2. **Die gleiche harte Wand überall:** Status / Modalität / Scope / Disposition (`covered vs partial vs
-   contradicted`, `required vs optional`, `undecided vs planned`). `missing` ist dagegen verlässlich.
+## Integrität und Grenzen der Bereitstellung
 
----
+[Aktualisiertes Gesamtdateiverzeichnis mit Prüfsummen](./file-manifest-20260916-r3-v1.json) und [lokale Integritätsprüfung](./verify-evidence.py) erlauben die Prüfung dieser bereitgestellten Auswahl ohne Zugriff auf die ursprünglichen Arbeitsordner. Aufruf aus dem Repository: `python3 thesis-evidence/verify-evidence.py --manifest file-manifest-20260916-r3-v1.json`. Die Prüfung verändert keine Belege. Nach späteren bewussten Paketänderungen muss das datierte Verzeichnis neu erstellt werden.
 
-## Commit-Anker (welcher Stand liegt in welchem Commit)
+Die technische Wiederholung des Herkunftsaudits und der Tokenaggregation ist [protokolliert](./preparation-checks-20260915.json). Dabei wurden keine Modelle aufgerufen, kein produktiver Core verändert und keine neuen fachlichen Urteile erzeugt. Die Integritätsprüfung ersetzt weder eine semantische Neubewertung noch eine Ausführung des Gesamtsystems.
 
-```text
-Code (Spike-Klassen):
-  7e5674d  Source-Claim Coverage-Matrix-Spikes (v1/v2/Batch)        -> source-claim-coverage-spike/
-  1f9c2c2  globaler Source-Claim-Ledger + Selection + Obligation     -> source-claim-coverage-spike/
-  f520247  Claim-Splitter/Verifier (Grounding-Pilot)                 -> claim-grounding-spike/
-  01ef8d3  Evidence-first + Semantic-Ledger + Human-Artifact         -> evidence-first-spike/
+**Materialstatus B-50:** [Herkunft, Autorenangaben und offener Nutzungsumfang](./MATERIALSTATUS-20260916.md). Nachgespielte Gespräche auf Grundlage eines realen Hochschulprojekts; der Bewohnername ist nach der Autorenklärung fiktiv/ersetzt, die Projektbezeichnung real. Vollständige Anonymisierung und dokumentierte Nutzungsumfänge werden nicht behauptet. Der Treue-Fall meeting-2-extended ist durch [archivierte Entwicklungsunterlagen](./materialherkunft-20260916/README.md) als gezielt konstruiertes Testgespräch ausgewiesen. Die Herkunft der beiden quantitativen Quellen ist damit beschrieben; der Nachweis des tatsächlichen Nutzungsumfangs bleibt offen. Historische Prüfquellen wurden nicht verändert.
 
-Daten/Evidenz:
-  670f17c  thesis-evidence (alle Straenge) + Hand-Labels + Fixtures + diese README
-  c34b9a0  A'-Run runs/phase2B/20260630_145558_68149f (gpt-5.4 frei, Modell-Confound)
-
-Frueher (Daten der Review-/Closure-Phase):
-  43d8a7b  B45-B51  D1 + Grounding v2.x + Claim-Pilot validiert      -> D1-direct-vs-topic/, grounding-spotcheck/
-  2cbec6d  B43-B44  relevantFor separat + Precision/Recall-Befund
-  ccde963  eval-Buendel: GateResult-Persist + grounding-handlabels
-```
-
-Hinweis: Das Dispatch-Wiring (`Program.cs`) + die `.gitignore`-Anpassung liegen in einem separaten
-Commit (s. `git log`); ohne dieses Wiring sind die Spike-Kommandos zwar im Code, aber nicht aufrufbar.
-
-## Datei-Konventionen pro Ordner
-
-```text
-evidence.md                  Zusammenfassung: Aussage → Befehl → Werte → Faktenblatt-F# → Commit (Prosa)
-*.json                       ROHE Mess-Outputs (die belastbare Evidenz; jeder Defect mit Feldern)
-*-labels.md / *-handlabels.md / *-adjudication.md   menschliche Referenz-/Hand-Labels
-*.md (artefakt-spezifisch)   generierte Artefakte / Per-Run-Zusammenfassungen
-```
-
-**Die `*.json` sind die zitierbare Evidenz.** Konsolen-/`evidence.md`-Zahlen sind abgeleitete
-Zusammenfassungen — im Zweifel über Python aus den JSONs reproduzieren.
-
-## Regeln
-
-- **Ein Unterordner pro zitierwürdigem Experiment** (Closure-Schritt, A/B/C-Lauf, L3-Vergleich).
-- **Provenienz-Pflicht** je Datei/Ordner: Run-ID, Modell(e), Prompt-/Fixture-/GatePolicy-Version, Datum,
-  Commit. Ohne Provenienz nicht zitierbar.
-- **Rohdaten bleiben zusätzlich in `runs/`**; hier liegt die kuratierte Kopie/der gezielte Output.
-
-## Bezug zu den (privaten, gitignored) Notizen
-
-Die Interpretationen/Verdikte liegen privat unter `…/Phase2/Evaluation/NextStep/`:
-`faktenblatt-review.md`, `ReviewWorkflow-Evidence.md`, `iteration-notes-v02-L3.md`,
-`Vorschlag_28_6_umsetzung.md`, `LedgerExecutorWorkflow.md` + `…-smallVersion.md`,
-`ZUSATZ-entscheidungsnotiz-ledger-review.md`. Die rohen Outputs **hier** sind die zitierbaren Anker, auf
-die jene zeigen.
+Die älteren Vorstudienordner bleiben erhalten. Ihr Einstieg erfolgt über die zugeordneten E-IDs im Kapitel-4-Paket. Der [frühere Hauptindex](./historisch/README-vor-P10-5-20260915.md) ist unverändert archiviert; seine pauschalen Aussagen zu Modellrobustheit oder struktureller Überlegenheit sind keine aktuellen Gesamtergebnisse.

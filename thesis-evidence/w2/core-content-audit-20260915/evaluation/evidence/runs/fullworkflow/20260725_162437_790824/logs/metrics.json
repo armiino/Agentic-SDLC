@@ -1,0 +1,110 @@
+{
+  "runId": "20260725_162437_790824",
+  "benchmarkVersion": "input/transcripts/meeting-2-extended.txt",
+  "policyProfile": "Interactive",
+  "models": {
+    "01-ledger": "openai/gpt-4.1-mini",
+    "02-baselines": "openai/gpt-4.1-mini",
+    "default": "openai/gpt-4.1-mini"
+  },
+  "stages": [
+    {
+      "stage": "01-ledger",
+      "wallMs": 128781,
+      "attempts": 1,
+      "gate": {
+        "pass": true,
+        "errors": 2,
+        "warnings": 0
+      },
+      "tokens": {
+        "in": 21773,
+        "out": 11900
+      }
+    },
+    {
+      "stage": "02-baselines",
+      "wallMs": 20166,
+      "attempts": 1,
+      "gate": null,
+      "tokens": {
+        "in": 6560,
+        "out": 1561
+      }
+    },
+    {
+      "stage": "04-delta",
+      "wallMs": 10,
+      "attempts": 1,
+      "gate": null,
+      "tokens": {
+        "in": 0,
+        "out": 0
+      }
+    },
+    {
+      "stage": "07-ingest",
+      "wallMs": 90655,
+      "attempts": 1,
+      "gate": {
+        "pass": true,
+        "errors": 0,
+        "warnings": 0
+      },
+      "tokens": {
+        "in": 50944,
+        "out": 4151
+      }
+    },
+    {
+      "stage": "07-pbi-update",
+      "wallMs": 678,
+      "attempts": 1,
+      "gate": {
+        "pass": true,
+        "errors": 0,
+        "warnings": 0
+      },
+      "tokens": {
+        "in": 0,
+        "out": 0
+      }
+    },
+    {
+      "stage": "07-github",
+      "wallMs": 36,
+      "attempts": 1,
+      "gate": {
+        "pass": true,
+        "errors": 0,
+        "warnings": 0
+      },
+      "tokens": {
+        "in": 0,
+        "out": 0
+      }
+    }
+  ],
+  "humanGates": [
+    {
+      "gate": "ingest-gate",
+      "answeredBy": "AcceptAll"
+    },
+    {
+      "gate": "pbi-gate",
+      "answeredBy": "AcceptAll"
+    },
+    {
+      "gate": "github-forward-gate",
+      "answeredBy": "AcceptAll"
+    }
+  ],
+  "coreItemsBefore": 194,
+  "coreItemsAfter": 194,
+  "issuesCreated": 0,
+  "issuesUpdated": 1,
+  "violations": [
+    "01-ledger:gate-errors=2"
+  ],
+  "recall": null
+}

@@ -1,0 +1,7 @@
+# Umfangsnachtrag zur Vergleichbarkeit, 15.09.2026
+
+Bei der Konsistenzprüfung nach den Ersturteilen der zwei Zusatzläufe ist aufgefallen, dass eine ähnliche anaphorische Referenz im ursprünglichen Lauf ebenfalls vorkommt (R47/AU-0135). Dessen veröffentlichte semantische Stützung ist 47/47. Es wäre deshalb irreführend, neue kritischere Stützungsurteile neben diesen Altwert zu stellen und die Differenz vollständig dem Systemlauf zuzuschreiben.
+
+Deshalb werden zusätzlich alle 47 Propositionen des ursprünglichen Laufs unter demselben jetzigen Claim-Verfahren auf Quellenverfälschung und Stützung geprüft. Das ist eine ergebnisbekannte, nachträglich begründete Erweiterung um 47 Claim-Fälle, keine vorab geplante dritte unabhängige Annotation. Die Originaldateien und der historische Hauptstand bleiben unverändert. Der neue Vergleich bekommt für Claim-Qualität einen einheitlichen Bewertungsstand; eine Änderung des Alturteils ist als Auswertungsänderung zu bezeichnen, nicht als nachträglicher Systemfehler oder Ergebnis eines neuen Runs.
+
+Die ursprünglichen 109 Coverage-Urteile werden weiter aus der konsolidierten Hauptauswertung übernommen. Für die beiden neuen Ausgaben werden analoge historische Fallauslegungen berücksichtigt; Änderungen ihrer Ersturteile stehen im Revisionslog. Diese Konsistenzprüfung ist keine unabhängige Verifikation der Golddefinition. Zweifelhafte Grenzfälle bleiben mit Sensitivität/Autorenprüfung sichtbar. Kein Ersatz durch System-Checker-Labels.

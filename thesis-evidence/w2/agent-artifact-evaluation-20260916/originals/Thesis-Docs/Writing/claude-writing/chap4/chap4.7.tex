@@ -1,0 +1,60 @@
+% P10-4a, 14.09.2026: Mechanismus, Quellenreichweite und v4-Nachweis angeglichen.
+% M08, 11.09.2026: Anlass und Entwurfsfolge; E47-02 mit Grenzen erhalten.
+\section{Einordnende Fortschreibung des Projektbestands}
+\label{sec:einordnende-fortschreibung}
+
+\emph{Zielbild und Designproblem.} Der persistente Zustand aus
+Abschnitt~\ref{sec:projektzustand-kontrollierte-mutation} ermöglicht
+den Bezug auf bereits erarbeitetes Projektwissen. Eine neue Aussage
+kann dieses bestätigen, präzisieren, ersetzen oder ihm widersprechen.
+Eine rein additive Verarbeitung würde dagegen bei jedem Meeting
+weitere Elemente anlegen und könnte konkurrierende Fassungen
+desselben Sachverhalts erzeugen.
+
+\emph{Entwurfsentscheidung.} Ein agentischer Einordnungsschritt
+interpretiert neue Informationen deshalb relativ zum vorhandenen
+Bestand und schlägt eine typisierte Einordnung vor: Neuzugang,
+Bestätigung, Änderung, Widerspruch oder Klärungsbedarf. Auch eine
+Bestätigung kann zusätzliche Herkunftsinformation liefern; deren
+durchgängige Anbindung bleibt eine Implementierungsgrenze
+(Abschnitt~\ref{sec:core-projektfortschreibung}). Widersprüche
+und unbeantwortete Fragen bleiben als eigene
+Entscheidungselemente sichtbar, statt zu einem vermeintlich
+eindeutigen Ergebnis geglättet zu werden. Die resultierenden
+Änderungen unterliegen den bestehenden Autorisierungspfaden.
+
+Ein isolierter Experimentlauf illustriert den Bedarf an expliziter
+Ablösung (E47-02). Einer bestehenden Anforderung, Ausschluss-Listen
+je Bewohner zu führen, widersprach ein Folge-Meeting mit einer
+übergreifenden Geltung. Die Einordnung erzeugte einen
+Entscheidungsgegenstand; seine am Entscheidungs-Gate eingereichte
+Auflösung führte zu einer neuen Anforderung mit Ablösungsbeziehung.
+Die alte Fassung blieb historisch erhalten. Betroffene Arbeitselemente
+wurden zur Angleichung vorgeschlagen, deren fachliche Bearbeitung
+aber nicht abgeschlossen. Nur das Entscheidungs-Gate war interaktiv,
+vier weitere Gates liefen im Experimentmodus; die anschließende
+Rücksetzung ist nur narrativ dokumentiert. Der Fall zeigt den
+ausgeführten Weg unter diesen Bedingungen. Seine fachliche Bewertung
+folgt in Abschnitt~\ref{sec:eval-fortschreibung}.
+
+Auch früher abgelehnte Vorschläge werden als Kontext für spätere
+Einordnungen erhalten. Sie liefern Hinweise bei wiederkehrenden
+Themen, lösen aber keine automatische Ablehnung aus; die erneute
+Entscheidung bleibt beim Menschen. Die Gestaltung gilt für
+Anforderungs- und Architekturinformationen. Daraus ergibt sich die
+siebte Designanforderung:
+
+\textbf{A7:} Neue fachliche Informationen müssen relativ zum
+autorisierten Projektzustand als Neuzugang, Bestätigung, Änderung,
+Widerspruch oder Klärungsbedarf eingeordnet werden; daraus resultierende
+Zustandsänderungen müssen über die bestehenden kontrollierten
+Fortschreibungs- und Autorisierungspfade erfolgen.
+
+\emph{Einordnung und Grenzen.} Die Einordnung bleibt eine offene
+semantische Aufgabe und kann fehlerhaft sein. Die beschriebenen
+Kontrollen begrenzen ihre Zustandswirkung, belegen aber keine
+allgemeine Erkennungsleistung für Bestandsinhalte oder Widersprüche.
+Abschnitt~\ref{sec:core-projektfortschreibung} erklärt die resultierende
+Fortschreibungslogik; Kapitel~\ref{chap:evaluation} untersucht
+ausgewählte historische Fälle. Der folgende Abschnitt erweitert den
+Kreislauf um operative Darstellungen und externe Rückmeldungen.

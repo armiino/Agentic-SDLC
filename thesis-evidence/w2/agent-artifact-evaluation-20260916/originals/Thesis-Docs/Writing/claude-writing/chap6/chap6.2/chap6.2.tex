@@ -1,0 +1,217 @@
+% P10-4a, 14.09.2026: Mechanismus, Quellenreichweite und v4-Nachweis angeglichen.
+% M09, 11.09.2026: Leserführung und MCR konzentriert; neue
+% HERKUNFT-M09-Kommentare unten sind die aktuelle Schreibgrundlage.
+% Die folgende Versionshistorie beschreibt frühere Fassungen.
+% M03 / B-18, 10.09.2026: Rückkopplung und Wiederverwendung
+% am bestehenden Ablauf präzisiert; keine Änderung des Systems.
+% M01 / B-09, 10.09.2026: Aufrufformen und Executor-Einbindung
+% präzisiert; folgende Versionsnotizen dokumentieren den Vorzustand.
+% ============================================================
+% §6.2 Agent, Executor und Workflowgraph — v04 (Claude, 04.09.)
+% v04 (04.09., v23-Lesungs-Runde): „Präge-" aus der Executor-
+%   Aufzählung gestrichen (Kollision mit modellgestütztem „Claims
+%   prägen", Kap. 4); Schlussrunde davor: „maßgeblicher
+%   Projektzustand".
+% v03/v04-Sammel (03./04.09.): V6-Zweistufigkeit; Gesamtpass
+%   (Modellaufruf-Scope); Freeze-Pass (Instrumentierungs-
+%   Anbindung); ANALYST-Spannweite mit Kollegen-Mikrofix „unter
+%   anderem deterministisch" (disk-analyst.md §4-④). Danach
+%   wieder SEMANTISCH FROZEN.
+% v02 (Kollegen-Runde 1, alle 5 Punkte + Prüfauftrag gegengeprüft):
+% ① „drei Komponentenarten" -> „zwei Knotenarten + Komposition"
+% ② P0: „Kompositionsfehler scheitern laut" auf TYP-Verträge
+%   begrenzt (kollidierte mit R-38!) + 6.5-Grenzen-Vorverweis
+% ③ P0: Structured-Output entschärft (nur betrachtete Workflowstufen;
+%   Schema VERLANGT Strukturen, erzwingt keine semantische
+%   Stabilität; ID-Fallback code-verifiziert :215f)
+% ④ GateLoop-Prosa ans Listing angepasst (Repair loopt, Rest ->
+%   Finalisierung/Mensch; MaxAttempts/Historie ehrlich als „nicht
+%   dargestellt")
+% ⑤ CONTRADICT auf Proposal-before-Truth; „stufenweiser
+%   Direktaufruf" -> „separat gestarteter Stufenworkflow"
+% + Root-Input-Abgleich aufgelöst: Reproject == Steward-Recovery
+%   (kein fünfter Typ). Kollegen-Urteil danach: semantisch
+%   einfrieren, weiter mit 6.3.
+% Grundlage: kapitel-6-gesamtvertrag.md ★FROZEN (§4 Zeile 6.2,
+% Kernaussage #1 mit GateLoop integriert, 7+1-Ops-Satz §8.1) +
+% probeschnitt-vertrag-6-1-6-2.md ★FROZEN (§3 Klassifikation v02,
+% §4b Ingest-Pfad-Code-Walk, Nachtrag Ledger-Bestellung aus der
+% 6.1-Runde).
+% Form (§7): Rückverweis -> Instanziierung -> repräsentativer
+% Mechanismus -> Beleg/Grenze. KEINE erneute Architekturlehre.
+% Listing-Entscheid (Prüffrage bestanden): EIN Listing — die
+% GateLoop-Kantenkomposition (zeigt die Systemgrenze „semantisches
+% Urteil wird typisierte Nachricht, Routing ist deterministisch"
+% besser als Prosa; L2/Enum verworfen — Kollegen-Einschätzung).
+% Zählt 1 von max. 3–4 (Gesamtvertrag §7).
+% TODO (Autor, Overleaf-Präambel): \usepackage{listings} + einmalige
+% \lstset-Grundkonfiguration (bisher kein Listing in der Arbeit).
+% Bewusst NICHT hier: Gate-/Responder-Mechanik (6.4) ·
+% Kapsel-/Checkpoint-Details (6.5) · Speichernaht (6.7) ·
+% Op-Katalog (nur 7+1-Satz + 2 Beispiele) · Placement-/Decision-/
+% PBI-/Arch-Pfade (formgleich, EINMAL-Prinzip).
+% ============================================================
+
+\section{Agent, Executor und Workflowgraph}
+\label{sec:realisierung-agent-executor-workflow}
+
+Die Verantwortungsverteilung aus
+Kapitel~\ref{chap:loesungsarchitektur} wird in MAF durch
+\emph{Executors} und ihre Verbindung im Workflowgraphen umgesetzt.
+Ein Executor bindet eine ausführbare Verarbeitungseinheit ein;
+deren Aufgabe kann deterministisch oder modellgestützt sein. Ob
+sie als \emph{agentisch} eingeordnet wird, richtet sich nach der
+funktionalen Arbeitsdefinition in
+Abschnitt~\ref{sec:arbeitsdefinition-llm-agent}, nicht allein nach
+der verwendeten Frameworkklasse.
+
+Die modellgestützten Stufen nutzen zwei technische Aufrufformen:
+Der Ledger-Extraktor verarbeitet vorgegebenen Kontext über
+\texttt{IChatClient.GetResponseAsync}; der Einordnungsagent nutzt
+\texttt{AIAgent.RunAsync} und wählt Werkzeuge zur Bestandsabfrage
+und Planablage. Beide Aufrufformen nutzen die gemeinsame
+\emph{Chat-Pipeline}. Diese Verarbeitungskette verbindet den
+Modellzugriff mit der Werkzeugausführung und einer konfigurierbaren
+Protokollierung. Die Abschnitte~\ref{sec:realisierung-tools-mcp}
+und~\ref{sec:realisierung-observability} erklären diese Anbindung.
+
+Bei aktiviertem Structured Output fordert der Extraktor ein
+JSON-Schema für Claims mit
+Kennungen und Quellenankern an. Die Antwort wird in fachliche
+Typen überführt; fehlende Kennungen werden deterministisch
+ergänzt. Das Schema begrenzt die Ausgabeform, garantiert aber
+keine semantisch richtige Zuordnung. Die vollständige
+Verarbeitungsschrittfolge zeigt Tabelle~\ref{t:ledger-schritte}.
+% HERKUNFT M09: SemanticLedgerExtractor.ExtractAsync und
+% IngestionHitlResolveExecutor; M01-Abgrenzung IChatClient/AIAgent
+% erhalten. Gemeinsame Instrumentierung: AgentChatPipelineBuilder.
+
+Fachlich weiterverarbeitete Ergebnisse werden als typisierte
+Nachrichten oder über Speicherwerkzeuge mit validierten
+Argumenten übergeben. \emph{Deterministische Executors} übernehmen
+unter anderem formale Prüfung, Verzweigung und Zustandsanwendung.
+Die deklarierten Eingangs-, Sende- und Ausgabetypen erlauben
+Kontrollen beim Graphaufbau und zur Laufzeit. Sie sichern die
+technische Übergabe, nicht die Bedeutung des Ergebnisses oder
+jede mögliche Graphverdrahtung
+(Abschnitt~\ref{sec:realisierung-durabilitaet}).
+
+\emph{Workflowgraphen} verbinden die Executors über Nachrichten
+und Kantenbedingungen. Im Gesamtgraphen prüft der
+\emph{Eingangs-Dispatcher}, welche von vier Eingaben vorliegt:
+Transkript, strukturiertes Eingangspaket (Delta), Klärungsantworten
+oder erneute Projektion des Bestands. Er gibt genau den
+zugehörigen Nachrichtentyp weiter. Transkripte durchlaufen Ledger
+und fachliche Ableitung; vorbereitete Deltas gelangen direkt zur
+Verzweigung zwischen Initialisierung und Betrieb. Bei vorhandenem
+Core nutzen beide Eingänge dieselben nachgelagerten Einordnungs-
+und Fortschreibungsknoten. Wiederverwendet werden damit
+Komponenten und ihre Verträge; eine dauerhafte Agentidentität
+über mehrere Läufe ist dafür nicht erforderlich.
+
+Ein frischer Lauf beginnt am Dispatcher. Die Wiederaufnahme eines
+gesicherten Laufs am Checkpoint und die Einbettung von
+Teilworkflows behandelt
+Abschnitt~\ref{sec:realisierung-durabilitaet}.
+
+\emph{Prüfung und Rückkopplung.} Die in
+Abschnitt~\ref{sec:saeule-semantische-transformation} erklärte
+Schleife lässt sich an der Einordnungsstufe konkret verfolgen.
+Der Agent erhält Werkzeuge, um neue Inhalte, den Core und frühere
+Ablehnungen abzufragen und einen Operationsplan zu speichern.
+Ein deterministischer Checker prüft dessen formale Regeln.
+Die gemeinsame Entscheidungsfunktion \texttt{GateLoop.Decide}
+bestimmt aus Prüfergebnis, Reparierbarkeit und Versuchszahl den
+Folgeschritt. Bei \texttt{Repair} erhält ein erneuter
+Agentenaufruf die Fehlermeldungen; sein Ergebnis durchläuft
+wieder den Checker. Versuchszähler und Historie führt die Stufe
+in ihren typisierten Nachrichten mit.
+
+Listing~\ref{lst:gateloop-komposition} zeigt diese Kanten im
+separat startbaren Einordnungsworkflow. Alle anderen Ergebnisse
+gelangen zur Finalisierung, die Plan und Prüfprotokoll ablegt.
+Nur bei \texttt{Pass} und mindestens einer Operation
+sendet sie eine Anfrage an den menschlichen Port. Die Statuswerte
+\texttt{HumanReview} (manueller Prüfbedarf) und
+\texttt{MaxAttemptsReached} (Versuchsschranke erreicht) führen hier
+zum Abschluss ohne Anwendung. Der Prüfbedarf wird dokumentiert;
+eine Portanfrage wird in diesen beiden Fällen nicht gestellt.
+Ein leerer, bestandener Plan wird ohne menschliche Anfrage
+durchgereicht. Dieser Leerfall sowie Versuchszähler und
+Protokollierung sind im gekürzten Listing nicht dargestellt.
+% HERKUNFT M09: IngestionResolveWorkflow.cs (Gate/Repair/History),
+% IngestionHitlWorkflow.cs (Finalize: Pass + Ops > 0 -> Request;
+% Pass + 0 Ops -> EmptyGate; übrige Entscheidungen -> YieldOutput).
+
+% M12: Das kurze Listing mit seiner Beschriftung zusammenhalten.
+\par\noindent
+\begin{minipage}{\linewidth}
+% M12-Nachtrag: Darstellung nur fuer dieses Listing, nicht in der Uni-Vorlage.
+\lstset{
+  language=[Sharp]C,
+  basicstyle=\ttfamily,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  breaklines=true,
+  breakatwhitespace=true
+}
+\begin{lstlisting}[caption={[Prüf-Reparatur-Kanten der Einordnungsstufe]Prüf-Reparatur-Kanten der Einordnungsstufe
+  (gekürzter Ausschnitt aus \texttt{IngestionHitlWorkflow.cs}).},
+  label={lst:gateloop-komposition}]
+b.AddEdge(resolve, gate);
+b.AddEdge<IngestionVerdict>(gate, repair,
+    m => m is not null && m.Decision == GateDecision.Repair);
+b.AddEdge<IngestionVerdict>(gate, finalize,
+    m => m is not null && m.Decision != GateDecision.Repair);
+b.AddEdge(repair, gate);
+b.AddEdge(finalize, humanGate);
+b.AddEdge(humanGate, apply);
+\end{lstlisting}
+\end{minipage}
+\par\medskip
+
+\emph{Modellurteil und formale Regel am Fall.} Der separate
+Verfeinerungsfall F2 aus Abschnitt~\ref{sec:endtoend-pfade}
+verdeutlicht die Aufgabenverteilung. Ein Diktat verlangte, dass
+freigegebene Angehörige die Medikamenten-Einnahmen der letzten
+sieben Tage einsehen können. Der Einordnungsagent bezog dies auf
+die vorhandene, noch vage Anforderung REQ-42 zu Kalenderfunktion
+und Medikamentengaben und schlug \texttt{REFINE} vor. Ob die
+Aussage diese Anforderung fachlich verfeinert, ist das
+Modellurteil. Die deterministische Zielregel prüft dagegen unter
+anderem, ob ein bestehendes Zielelement angegeben ist; bei einer
+Operation \texttt{NEW} wäre eine solche Zielangabe unzulässig.
+Nach menschlicher Freigabe entstand eine neue Fassung von REQ-42
+mit präzisiertem Zeitraum und Personenkreis; Vorgängerfassung und
+Historie blieben erhalten. Der Plan bestand im ersten Prüfversuch,
+eine Reparatur wurde in F2 nicht ausgelöst. Der Fall zeigt somit
+Einordnung, Prüfung und autorisierte Anwendung, nicht die Wirkung
+der Rückschleife. Die Gate-Interaktion und Speicherung vertiefen
+die Abschnitte~\ref{sec:realisierung-human-gates} und
+\ref{sec:realisierung-persistenz-aussenkopplung}.
+% HERKUNFT M09: F2 20260817_123342_f23f06, plan.json (AF-1 ->
+% REFINE REQ-42), ingest-gate-decisions.json, ingestion-attempts.json
+% (ein Maker-Pass), applied/run-report.json und Core vor/nach Apply.
+
+Die Einordnungs-Executors werden mit einer fachlichen
+Konfiguration, dem \emph{Aspektprofil}, sowohl für Anforderungen
+als auch für Architekturinformationen verwendet. Auch Einzel-
+und Gesamtworkflow nutzen diese Verarbeitungskomponenten.
+Ihre Kanten werden für diese Stufe jedoch an zwei Stellen
+definiert: im Einzelworkflow und in der Komposition des
+Gesamtgraphen. Die Wiederverwendung betrifft hier die
+Ausführungslogik, nicht eine gemeinsame Kantenquelle.
+% HERKUNFT M09: IngestionHitlWorkflow.Build versus
+% PipelineComposedWorkflow.AddTo, Aufruf in PipelineFullWorkflow.
+% Frühere Behauptung einer einzigen Quelle für DIESE Stufe korrigiert.
+
+Auch der offenere Core-Analyst bleibt orchestriert: Ein eigener
+Graph verteilt die Analyse auf mehrere Perspektiven, führt die
+Funde deterministisch zusammen und gleicht sie gegen bekannte
+Inhalte und frühere Ablehnungen ab. Ein modellgestützter Kritiker
+bewertet die verbleibenden Kandidaten. Der Graph stellt die
+beibehaltenen Funde als Delta für eine anschließende
+Fortschreibung bereit; er schreibt sie nicht selbst in den Core.
+Die verfügbaren Werkzeuge und ihre Anbindung behandelt der
+folgende Abschnitt.

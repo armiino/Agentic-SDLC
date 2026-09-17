@@ -1,0 +1,784 @@
+{
+  "case": {
+    "operation_key": "20260817_123342_f23f06|0|AF-1",
+    "run_id": "20260817_123342_f23f06",
+    "operation_index": 0,
+    "incoming_id": "AF-1",
+    "proposed_kind": "REFINE",
+    "proposed_target": "REQ-42",
+    "feature_hint": null,
+    "route_group": "author_delta",
+    "route_basis": "explicit delta + stored path",
+    "family": "existing_reference",
+    "known_run": true,
+    "plan_path": "originals/runs/fullworkflow/20260817_123342_f23f06/07-ingest/plan.json",
+    "plan_sha256": "8daa2cb4bdac9fd3b3f19ed3e167cc88c05595c2bbbbe19d383871c6a495f024",
+    "operation_sha256": "75f76552b9057b599f4c5a2961d6fc857aefb97a0308717e194e85115f3e3632",
+    "rank_sha256": "27c3016902ea4b6af43a5cc3f57cfb02b5253761598e9f9bad763b48f357e21b",
+    "has_statement": true,
+    "case_id": "K02",
+    "known_context": "F2: REQ-42 refinement and human PBI editing",
+    "role": "known_control"
+  },
+  "incoming": {
+    "itemId": "AF-1",
+    "itemType": "requirement",
+    "text": "Freigegebene Angehörige sollen für ihre jeweilige Bezugsperson eine Übersicht der Medikamenten-Einnahmen der letzten 7 Tage einsehen können, damit telefonische Rückfragen im Haus ersetzt werden. Pro Eintrag werden nur der Status `verabreicht` oder `nicht verabreicht` sowie der Zeitpunkt angezeigt; Dosierungsdetails sind nicht sichtbar. Angehörige haben ausschließlich Leserechte und können Einnahmen weder bestätigen noch korrigieren.",
+    "origin": "AuthorFront",
+    "stage": "author_front",
+    "version": 1,
+    "sourceRunId": "angehoerige-wochenuebersicht-medikation",
+    "sourceArtifactId": "author-chat:angehoerige-wochenuebersicht-medikation",
+    "sourceArtifactType": "author-statement",
+    "sourceDecisionId": null,
+    "sourceCandidateId": null,
+    "sourceClaimIds": [],
+    "sourceArtifactItemIds": [],
+    "metadata": {
+      "quelle": "author via steward-chat",
+      "sessionName": "angehoerige-wochenuebersicht-medikation",
+      "rationale": "Nutzen: telefonische Rückfragen im Haus ersetzen. Kriterien: letzte 7 Tage, nur freigegebene Angehörige, nur eigene Bezugsperson, Anzeige nur von Status und Zeitpunkt, keine Dosierungsdetails, nur Leserechte."
+    },
+    "identityKey": null,
+    "history": null,
+    "feature": null,
+    "pbi": null,
+    "validity": "Active",
+    "blocker": "None",
+    "confirmedBy": "Agent",
+    "status": "baseline"
+  },
+  "source_descriptors": [
+    {
+      "sourceId": "author-chat:angehoerige-wochenuebersicht-medikation",
+      "sourceType": "author-statement",
+      "path": "steward-chat/angehoerige-wochenuebersicht-medikation",
+      "runId": null,
+      "description": "Wörtliches Autor-Diktat (Autor-Front)"
+    }
+  ],
+  "proposal": {
+    "incomingItemId": "AF-1",
+    "kind": "REFINE",
+    "statement": "Freigegebene Angehörige sollen für ihre jeweilige Bezugsperson eine Übersicht der Medikamenten-Einnahmen der letzten 7 Tage einsehen können; pro Eintrag werden nur Status (verabreicht/nicht verabreicht) und Zeitpunkt angezeigt, ohne Dosierungsdetails, und Angehörige haben hierbei ausschließlich Leserechte ohne Bestätigungs- oder Korrekturmöglichkeit.",
+    "targetEntityId": "REQ-42",
+    "featureKey": null,
+    "claimIds": [],
+    "rationale": "Konkretisiert die bestehende Anforderung, Medikamentengaben zu integrieren und ihre Vertraulichkeit besonders zu berücksichtigen, indem Umfang (letzte 7 Tage), Sichtinhalt und lesender Angehörigenzugriff präzisiert werden. Kein Widerspruch zu REQ-08, sondern Ausformulierung eines konkreten Falls der dort offenen Rechtefrage.",
+    "relatedRejectionId": null
+  },
+  "before": [
+    {
+      "itemId": "REQ-42",
+      "itemType": "requirement",
+      "text": "Eine Kalenderfunktion soll erwogen werden. Zusätzlich ist zu prüfen, ob auch Medikamentengaben integriert werden sollen; die Vertraulichkeit dieser Daten ist dabei besonders zu berücksichtigen.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260723_113115_35335a",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-kalender-und-medikamente-pruefen"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "artifactVersion": "1",
+        "producerModel": "openai/gpt-5.4"
+      },
+      "identityKey": "eine kalenderfunktion soll erwogen werden zusätzlich ist zu prüfen ob auch medikamentengaben integriert werden sollen die vertraulichkeit dieser daten ist dabei besonders zu berücksichtigen",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "confirmedInRun": "20260723_113115_35335a",
+      "status": "baseline"
+    },
+    {
+      "itemId": "PBI-028",
+      "itemType": "pbi",
+      "text": "Kalender- und Medikationsfunktionen als späteren Ausbau bewerten",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-kalender-und-medikamente-pruefen"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC12-02",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "1",
+        "featureId": "FC-12"
+      },
+      "identityKey": "kalender-und-medikation-spaeter-bewerten",
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Product Owner will ich Kalender- und mögliche Medikationsfunktionen erst nach dem Kommunikationskern bewerten, damit sensible Zusatzfunktionen nicht den Fokus der ersten Version verschieben.",
+        "title": "Kalender- und Medikationsfunktionen als späteren Ausbau bewerten",
+        "acceptanceCriteria": [
+          "Dieses Backlog Item ist als späterer Ausbau außerhalb des MVP gekennzeichnet.",
+          "Die spätere Bewertung berücksichtigt ausdrücklich die besondere Vertraulichkeit von Medikationsdaten."
+        ],
+        "linkedRequirementIds": [
+          "REQ-42"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 29,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "later",
+        "trace": {
+          "canonicalRequirementIds": [
+            "REQ-42"
+          ],
+          "l1Req": [
+            "REQ-42"
+          ],
+          "l3": [],
+          "claims": [
+            "canon-kalender-und-medikamente-pruefen"
+          ]
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    }
+  ],
+  "ingest_decision": {
+    "runId": "20260817_123342_f23f06",
+    "reviewer": "author via steward-chat",
+    "decisions": [
+      {
+        "incomingItemId": "AF-1",
+        "decision": "apply",
+        "reason": null
+      }
+    ]
+  },
+  "applied_entries": [
+    {
+      "incomingItemId": "AF-1",
+      "kind": "REFINE",
+      "entityId": "REQ-42",
+      "outcome": "refined"
+    }
+  ],
+  "after_ingest": [
+    {
+      "itemId": "REQ-42",
+      "itemType": "requirement",
+      "text": "Freigegebene Angehörige sollen für ihre jeweilige Bezugsperson eine Übersicht der Medikamenten-Einnahmen der letzten 7 Tage einsehen können; pro Eintrag werden nur Status (verabreicht/nicht verabreicht) und Zeitpunkt angezeigt, ohne Dosierungsdetails, und Angehörige haben hierbei ausschließlich Leserechte ohne Bestätigungs- oder Korrekturmöglichkeit.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 2,
+      "sourceRunId": "20260817_123342_f23f06",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "artifactVersion": "1",
+        "producerModel": "openai/gpt-5.4"
+      },
+      "identityKey": "freigegebene angehörige sollen für ihre jeweilige bezugsperson eine übersicht der medikamenten einnahmen der letzten 7 tage einsehen können pro eintrag werden nur status verabreicht nicht verabreicht und zeitpunkt angezeigt ohne dosierungsdetails und angehörige haben hierbei ausschließlich leserechte ohne bestätigungs oder korrekturmöglichkeit",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Eine Kalenderfunktion soll erwogen werden. Zusätzlich ist zu prüfen, ob auch Medikamentengaben integriert werden sollen; die Vertraulichkeit dieser Daten ist dabei besonders zu berücksichtigen.",
+          "status": "baseline",
+          "origin": "Extracted",
+          "sourceRunId": "20260723_113115_35335a",
+          "sourceClaimIds": [
+            "canon-kalender-und-medikamente-pruefen"
+          ],
+          "recordedUtc": "2026-08-17T12:35:57.668224Z",
+          "note": "REFINE (ingestion 20260817_123342_f23f06, via AF-1)"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "confirmedInRun": "20260723_113115_35335a",
+      "status": "baseline"
+    }
+  ],
+  "before_pbi": [
+    {
+      "itemId": "REQ-42",
+      "itemType": "requirement",
+      "text": "Freigegebene Angehörige sollen für ihre jeweilige Bezugsperson eine Übersicht der Medikamenten-Einnahmen der letzten 7 Tage einsehen können; pro Eintrag werden nur Status (verabreicht/nicht verabreicht) und Zeitpunkt angezeigt, ohne Dosierungsdetails, und Angehörige haben hierbei ausschließlich Leserechte ohne Bestätigungs- oder Korrekturmöglichkeit.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 2,
+      "sourceRunId": "20260817_123342_f23f06",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "artifactVersion": "1",
+        "producerModel": "openai/gpt-5.4"
+      },
+      "identityKey": "freigegebene angehörige sollen für ihre jeweilige bezugsperson eine übersicht der medikamenten einnahmen der letzten 7 tage einsehen können pro eintrag werden nur status verabreicht nicht verabreicht und zeitpunkt angezeigt ohne dosierungsdetails und angehörige haben hierbei ausschließlich leserechte ohne bestätigungs oder korrekturmöglichkeit",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Eine Kalenderfunktion soll erwogen werden. Zusätzlich ist zu prüfen, ob auch Medikamentengaben integriert werden sollen; die Vertraulichkeit dieser Daten ist dabei besonders zu berücksichtigen.",
+          "status": "baseline",
+          "origin": "Extracted",
+          "sourceRunId": "20260723_113115_35335a",
+          "sourceClaimIds": [
+            "canon-kalender-und-medikamente-pruefen"
+          ],
+          "recordedUtc": "2026-08-17T12:35:57.668224Z",
+          "note": "REFINE (ingestion 20260817_123342_f23f06, via AF-1)"
+        }
+      ],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "confirmedInRun": "20260723_113115_35335a",
+      "status": "baseline"
+    },
+    {
+      "itemId": "PBI-028",
+      "itemType": "pbi",
+      "text": "Kalender- und Medikationsfunktionen als späteren Ausbau bewerten",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-kalender-und-medikamente-pruefen"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC12-02",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "1",
+        "featureId": "FC-12"
+      },
+      "identityKey": "kalender-und-medikation-spaeter-bewerten",
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Product Owner will ich Kalender- und mögliche Medikationsfunktionen erst nach dem Kommunikationskern bewerten, damit sensible Zusatzfunktionen nicht den Fokus der ersten Version verschieben.",
+        "title": "Kalender- und Medikationsfunktionen als späteren Ausbau bewerten",
+        "acceptanceCriteria": [
+          "Dieses Backlog Item ist als späterer Ausbau außerhalb des MVP gekennzeichnet.",
+          "Die spätere Bewertung berücksichtigt ausdrücklich die besondere Vertraulichkeit von Medikationsdaten."
+        ],
+        "linkedRequirementIds": [
+          "REQ-42"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 29,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "later",
+        "trace": {
+          "canonicalRequirementIds": [
+            "REQ-42"
+          ],
+          "l1Req": [
+            "REQ-42"
+          ],
+          "l3": [],
+          "claims": [
+            "canon-kalender-und-medikamente-pruefen"
+          ]
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    }
+  ],
+  "after_pbi_before_forward": [],
+  "relations_before_ingest": [
+    {
+      "fromId": "REQ-42",
+      "toId": "canon-kalender-und-medikamente-pruefen",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-028",
+      "toId": "FC-12",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-028",
+      "toId": "REQ-42",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-42",
+      "toId": "FC-12",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-028",
+      "toId": "gh#28",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "28",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-07-23T14:58:33.7764290Z",
+        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/28",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "5f1edf06ccf0238b",
+        "projectedBodyHash": "eddda5cb7bc67e5e",
+        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+      }
+    }
+  ],
+  "relations_before_pbi": [
+    {
+      "fromId": "REQ-42",
+      "toId": "canon-kalender-und-medikamente-pruefen",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-028",
+      "toId": "FC-12",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-028",
+      "toId": "REQ-42",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-42",
+      "toId": "FC-12",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-028",
+      "toId": "gh#28",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "28",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-07-23T14:58:33.7764290Z",
+        "updatedUtc": "2026-08-13T11:00:52.5282120Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/28",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "5f1edf06ccf0238b",
+        "projectedBodyHash": "eddda5cb7bc67e5e",
+        "projectedUtc": "2026-08-13T11:00:52.5282120Z"
+      }
+    }
+  ],
+  "relations_after_pbi": [],
+  "pbi_operations": [
+    {
+      "kind": "MARK_CHANGED",
+      "requirementId": "REQ-42",
+      "pbiId": "PBI-028",
+      "featureId": null,
+      "replacementRequirementId": null,
+      "openDecisionRef": null,
+      "rationale": "Requirement REQ-42 verfeinert",
+      "proposedFeatureLabel": null,
+      "authorAnswerRef": null,
+      "authorAnswerText": null
+    }
+  ],
+  "pbi_alignments": [
+    {
+      "pbiId": "PBI-028",
+      "proposedTitle": "Übersicht der Medikamenten-Einnahmen für freigegebene Angehörige bereitstellen",
+      "proposedStatement": "Als freigegebene/r Angehörige/r will ich für meine jeweilige Bezugsperson eine Übersicht der Medikamenten-Einnahmen der letzten 7 Tage einsehen, damit ich den Verabreichungsstatus nachvollziehen kann, ohne Dosierungsdetails zu sehen oder Einträge ändern zu können.",
+      "proposedAcceptanceCriteria": [
+        "Freigegebene Angehörige können für ihre jeweilige Bezugsperson die Medikamenten-Einnahmen der letzten 7 Tage einsehen.",
+        "Pro Eintrag werden nur der Status \"verabreicht\" oder \"nicht verabreicht\" sowie der Zeitpunkt angezeigt.",
+        "Dosierungsdetails werden in der Übersicht nicht angezeigt.",
+        "Angehörige haben in dieser Übersicht ausschließlich Leserechte.",
+        "Angehörige können Medikamenten-Einträge weder bestätigen noch korrigieren."
+      ],
+      "rationale": "REQ-42 wurde von einer allgemeinen späteren Prüfung von Kalender- und Medikationsfunktionen auf eine konkrete fachliche Anforderung geändert. Daher wird das PBI von einem Prüf-/Ausbau-Thema auf eine konkrete Lesefunktion für freigegebene Angehörige mit klar begrenztem Sichtumfang und ohne Änderungsrechte angeglichen.",
+      "triggerRequirementIds": [
+        "REQ-42"
+      ],
+      "targetRequirementId": null,
+      "targetFeatureId": null
+    }
+  ],
+  "pbi_human_decisions": {
+    "runId": "20260817_123342_f23f06",
+    "reviewer": "human (review-ui)",
+    "decisions": [
+      {
+        "opId": "op-0",
+        "decision": "apply",
+        "reason": null,
+        "featureId": null
+      }
+    ],
+    "alignmentDecisions": [
+      {
+        "pbiId": "PBI-028",
+        "decision": "accept",
+        "editedTitle": "Übersicht der Medikamenten-Einnahmen für freigegebene Angehörige bereitstellen",
+        "editedStatement": "Als freigegebene/r Angehörige/r will ich für meine jeweilige Bezugsperson eine Übersicht der Medikamenten-Einnahmen der letzten 7 Tage einsehen, damit ich den Verabreichungsstatus nachvollziehen kann, ohne Dosierungsdetails zu sehen oder Einträge ändern zu können.",
+        "editedAcceptanceCriteria": [
+          "Freigegebene Angehörige können für ihre jeweilige Bezugsperson die Medikamenten-Einnahmen der letzten 7 Tage einsehen.",
+          "Pro Eintrag werden nur der Status \"verabreicht\" oder \"nicht verabreicht\" sowie der Zeitpunkt angezeigt.",
+          "Dosierungsdetails werden in der Übersicht nicht angezeigt.",
+          "Angehörige haben in dieser Übersicht ausschließlich Leserechte.",
+          "Angehörige können Medikamenten-Einträge weder bestätigen noch korrigieren."
+        ],
+        "reason": null
+      }
+    ]
+  },
+  "pbi_apply_report": {
+    "newPbis": [],
+    "updatedPbis": [
+      "PBI-028"
+    ],
+    "finalStatus": {
+      "PBI-028": "active"
+    },
+    "relationsAdded": 0,
+    "relationsRemoved": 0,
+    "skipped": []
+  },
+  "projection_entries": [
+    {
+      "pbiId": "PBI-028",
+      "title": "Übersicht der Medikamenten-Einnahmen für freigegebene Angehörige bereitstellen",
+      "status": "active",
+      "readiness": "ready_with_nonblocking_questions",
+      "coveredRequirementIds": [
+        "REQ-42"
+      ],
+      "blockedByOpenDecision": false,
+      "githubIssue": "gh#28",
+      "githubIssueStatus": "open",
+      "acceptanceCriteria": [
+        "Freigegebene Angehörige können für ihre jeweilige Bezugsperson die Medikamenten-Einnahmen der letzten 7 Tage einsehen.",
+        "Pro Eintrag werden nur der Status \"verabreicht\" oder \"nicht verabreicht\" sowie der Zeitpunkt angezeigt.",
+        "Dosierungsdetails werden in der Übersicht nicht angezeigt.",
+        "Angehörige haben in dieser Übersicht ausschließlich Leserechte.",
+        "Angehörige können Medikamenten-Einträge weder bestätigen noch korrigieren."
+      ],
+      "statement": "Als freigegebene/r Angehörige/r will ich für meine jeweilige Bezugsperson eine Übersicht der Medikamenten-Einnahmen der letzten 7 Tage einsehen, damit ich den Verabreichungsstatus nachvollziehen kann, ohne Dosierungsdetails zu sehen oder Einträge ändern zu können.",
+      "constraints": null,
+      "coveredArchitecture": null
+    }
+  ],
+  "github_decisions": {
+    "runId": "20260817_123342_f23f06",
+    "reviewer": "author via steward-chat",
+    "decisions": [
+      {
+        "opId": "op-0",
+        "decision": "apply",
+        "reason": null
+      }
+    ]
+  },
+  "github_report": {
+    "dryRun": true,
+    "executed": false,
+    "success": true,
+    "repository": "armiino/Agentic-GitHub-refactor",
+    "sourcePlanId": "github-forward-plan-20260817_124351",
+    "startedUtc": "2026-08-17T12:45:49.999336Z",
+    "completedUtc": "2026-08-17T12:45:49.999666Z",
+    "operations": [
+      {
+        "opId": "op-0",
+        "kind": "UPDATE_ISSUE",
+        "pbiId": "PBI-028",
+        "targetIssueNumber": 28,
+        "resultIssueNumber": 28,
+        "resultUrl": null,
+        "status": "would-update",
+        "message": null
+      }
+    ],
+    "summary": {
+      "accepted": 1,
+      "created": 0,
+      "updated": 1,
+      "commented": 0,
+      "linked": 0,
+      "flagged": 0,
+      "held": 0,
+      "noChange": 0,
+      "skipped": 0,
+      "rejected": 0,
+      "failed": 0,
+      "alreadyApplied": 0
+    }
+  },
+  "rejections": [],
+  "events": [
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260817_123342_f23f06",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "get_incoming_items",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 1,
+      "timestampUtc": "2026-08-17T12:33:45.30655Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260817_123342_f23f06",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "list_core_requirements",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 2,
+      "timestampUtc": "2026-08-17T12:33:45.310428Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260817_123342_f23f06",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "list_core_architecture",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 3,
+      "timestampUtc": "2026-08-17T12:33:45.313601Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260817_123342_f23f06",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "list_open_decisions",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 4,
+      "timestampUtc": "2026-08-17T12:33:45.315172Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260817_123342_f23f06",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "search_rejections",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 5,
+      "timestampUtc": "2026-08-17T12:33:45.317918Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260817_123342_f23f06",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "search_core",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 6,
+      "timestampUtc": "2026-08-17T12:33:47.931229Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260817_123342_f23f06",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "search_rejections",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 7,
+      "timestampUtc": "2026-08-17T12:33:47.932346Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260817_123342_f23f06",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "check_state_change_plan",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 8,
+      "timestampUtc": "2026-08-17T12:33:52.942461Z"
+    },
+    {
+      "type": "TOOL_CALL_FINISHED",
+      "runId": "20260817_123342_f23f06",
+      "agentName": "RequirementIngestionAgent",
+      "tool": "save_state_change_plan",
+      "targetPath": null,
+      "result": "<JsonElement>",
+      "outcome": "success",
+      "reasonCode": null,
+      "toolResultError": null,
+      "toolStep": 9,
+      "timestampUtc": "2026-08-17T12:33:56.34659Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "ingest-gate",
+      "checkpointId": "2c8d9348af5843359b312fbd7c0c97e6",
+      "timestampUtc": "2026-08-17T12:33:57.481887Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "ingest-gate",
+      "policy": "Interactive",
+      "accepted": 1,
+      "source": "decisions-file",
+      "timestampUtc": "2026-08-17T12:35:57.64757Z"
+    },
+    {
+      "type": "PIPELINE_INGEST_APPLIED",
+      "runId": "20260817_123342_f23f06",
+      "applied": 1,
+      "timestampUtc": "2026-08-17T12:35:57.679169Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "decision-gate",
+      "policy": "Interactive",
+      "deferred": 1,
+      "timestampUtc": "2026-08-17T12:35:57.689928Z"
+    },
+    {
+      "type": "PBI_UPDATE_DERIVE",
+      "runId": "20260817_123342_f23f06",
+      "deterministic": 1,
+      "unplaced": 0,
+      "timestampUtc": "2026-08-17T12:35:57.706334Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "pbi-gate",
+      "checkpointId": "635c649e684b40ed9cff3ae14103b90a",
+      "timestampUtc": "2026-08-17T12:36:08.551645Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "pbi-gate",
+      "policy": "Interactive",
+      "accepted": 1,
+      "alignments": 1,
+      "timestampUtc": "2026-08-17T12:43:50.987522Z"
+    },
+    {
+      "type": "PBI_UPDATE_APPLY_START",
+      "runId": "20260817_123342_f23f06",
+      "accepted": 1,
+      "alignments": 1,
+      "featureOverrides": 0,
+      "reviewer": "human (review-ui)",
+      "timestampUtc": "2026-08-17T12:43:51.011702Z"
+    },
+    {
+      "type": "PBI_UPDATE_DONE",
+      "runId": "20260817_123342_f23f06",
+      "applied": true,
+      "newPbis": 0,
+      "updatedPbis": 1,
+      "timestampUtc": "2026-08-17T12:43:51.068273Z"
+    },
+    {
+      "type": "PIPELINE_PAUSED",
+      "gate": "github-forward-gate",
+      "checkpointId": "fca28d5846fd4bb082060dc48909768d",
+      "timestampUtc": "2026-08-17T12:43:52.009612Z"
+    },
+    {
+      "type": "GATE_ANSWERED",
+      "gate": "github-forward-gate",
+      "policy": "Interactive",
+      "accepted": 1,
+      "execute": false,
+      "timestampUtc": "2026-08-17T12:45:49.975059Z"
+    },
+    {
+      "type": "GITHUB_FWD_DONE",
+      "runId": "20260817_123342_f23f06",
+      "applied": true,
+      "executed": false,
+      "success": true,
+      "accepted": 1,
+      "linked": 0,
+      "created": 0,
+      "timestampUtc": "2026-08-17T12:45:50.001249Z"
+    },
+    {
+      "type": "PIPELINE_RUN_DONE",
+      "runId": "20260817_123342_f23f06",
+      "exit": 0,
+      "timestampUtc": "2026-08-17T12:45:50.006586Z"
+    }
+  ],
+  "source_base": "evidence/runs/fullworkflow/20260817_123342_f23f06",
+  "decision_resolutions": null,
+  "decision_apply_report": null
+}

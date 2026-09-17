@@ -1,0 +1,54 @@
+% M10, 11.09.2026: Leserführung, Kapiteltrennung und belegte Reichweite.
+% Architekturrolle und drei Zustandsarten; E47-01 bleibt in 4.9/Anhang A.
+% Mechanik 6.4--6.6; Nachweise 7.6. Kein neuer Versuchsfall.
+
+\section{Durable Ausführung und agentische Bedienung}
+\label{sec:durable-ausfuehrung-agentische-bedienung}
+
+Die sechste Architektursäule verbindet den unterbrechbaren Betrieb
+(A9) mit der agentischen Bedienung (A10). Ein Workflow bestimmt die
+Verarbeitungsschritte und ihre Übergänge. Der Steward ergänzt diese
+Steuerung um die Interpretation von Nutzeranliegen und die Auswahl
+passender Systemfähigkeiten. Damit bleiben die fachlichen Abläufe
+explizit festgelegt, während der Zugang zu ihnen dialogisch gestaltet
+ist.
+
+Für dieses Zusammenspiel sind drei Zustandsarten auseinanderzuhalten.
+Der \emph{Core} enthält die maßgeblichen Projektinformationen. Der
+\emph{Ausführungszustand} hält den Fortschritt eines einzelnen Laufs
+einschließlich ausstehender Antworten fest. Der
+\emph{Sitzungszustand des Stewards} bewahrt den Gesprächszusammenhang.
+Eine Wiederaufnahme des Laufs stellt dessen Fortsetzung her; ein
+gespeicherter Dialog ermöglicht die Fortführung des Gesprächs. Keiner
+dieser Vorgänge setzt für sich genommen den Core zurück oder autorisiert
+neue fachliche Änderungen.
+
+Wartet ein Lauf auf eine menschliche Entscheidung, kann sein
+Ausführungszustand an einem Sicherungspunkt gespeichert werden. Nach
+Einreichung der Antwort setzt er von dort fort. Gegen unbeabsichtigte
+Wiederholung bereits vollzogener Wirkungen sind zusätzlich
+projektspezifische Prüfungen erforderlich. Die Architektur sieht solche
+Prüfungen für ausgewählte Anwendungspfade vor; sie beansprucht keine
+allgemeine Garantie genau einmaliger externer Ausführung. Die Mechanik
+und ihre Betriebsgrenzen behandelt
+Abschnitt~\ref{sec:realisierung-durabilitaet}.
+
+Der Steward kann Projektinformationen und Laufstatus abfragen,
+Verarbeitung anstoßen und anstehende Entscheidungen im Dialog
+vermitteln. So kann ein fachlicher Präzisierungswunsch zum Eingang
+eines regulären Fortschreibungslaufs werden. Die Bedienschicht erhält
+dafür einen begrenzten Werkzeugraum; sie besitzt keinen unmittelbaren
+Schreibzugriff auf den Core. Ihre fachlichen Wirkungen laufen über
+die vorgesehenen Prüf-, Entscheidungs- und Speicheroperationen.
+Werkzeugzustimmung und fachliche Autorisierung bleiben dabei getrennt
+(Abschnitt~\ref{sec:governance-mutation}): Die Erlaubnis, einen Ablauf
+zu starten, ist noch keine Freigabe seines späteren Änderungsvorschlags.
+
+Diese Rollenverteilung verbindet agentische Handlungsauswahl mit
+kontrollierter Workflowausführung. Ihre technische Umsetzung zeigt
+Abschnitt~\ref{sec:realisierung-steward}; die Wiederaufnahmebelege und
+zwei dokumentierte Steward-Aufgaben werden in
+Abschnitt~\ref{sec:eval-resume} eingeordnet. Daraus folgt keine
+Bewertung der Bedienqualität. Der folgende Abschnitt führt die
+bisherigen Architekturbausteine an den beiden End-to-End-Pfaden
+zusammen.

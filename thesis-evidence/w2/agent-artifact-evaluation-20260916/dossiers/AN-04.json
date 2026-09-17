@@ -1,0 +1,376 @@
+{
+  "case_id": "AN-04",
+  "report_index_zero_based": 3,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "funktional",
+    "disposition": "requirement",
+    "statement": "Angehörige müssen eine bereits angefragte oder bestätigte Besuchsankündigung bis zum Beginn des Besuchs ändern oder absagen können; nach einer Änderung muss der Besuch erneut den Status „angefragt“ erhalten, und nach einer Absage darf keine Erinnerung mehr versendet werden.",
+    "herleitung": "Abgeleitet aus REQ-82 und REQ-87: Es gibt das Ankündigen sowie die Pflege-Entscheidung mit den Status angefragt, bestätigt und abgelehnt, aber keine Regel für den häufigen Folgefall, dass Angehörige Datum/Uhrzeit nachträglich ändern oder den Besuch absagen müssen. Aus REQ-88 folgt zusätzlich, dass ohne Absage-Regel falsche Erinnerungen an nicht mehr gültige Besuche versendet würden.",
+    "kategorie": "functional",
+    "ankerIds": [
+      "REQ-82",
+      "REQ-87",
+      "REQ-88"
+    ]
+  },
+  "reported_status": "neu",
+  "critic_reason": null,
+  "anchors_and_mentions": [
+    {
+      "id": "REQ-82",
+      "present": true,
+      "item": {
+        "itemId": "REQ-82",
+        "itemType": "requirement",
+        "text": "Angehörige müssen Besuche bei ihrer Bezugsperson vorab in der App mit Datum und Uhrzeit ankündigen können.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260818_084712_765eea",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "visit-planning-announcement"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "REQ-04",
+          "ingestedFromRun": "20260818_085820_50b471"
+        },
+        "identityKey": "angehörige müssen besuche bei ihrer bezugsperson vorab in der app mit datum und uhrzeit ankündigen können",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "REQ-87",
+      "present": true,
+      "item": {
+        "itemId": "REQ-87",
+        "itemType": "requirement",
+        "text": "Pflegende der jeweiligen Einrichtung müssen angekündigte Besuche bestätigen oder ablehnen können; bei Ablehnung ist eine kurze Begründung Pflicht. Angehörige sehen zu ihrer Ankündigung genau einen Status: angefragt, bestätigt oder abgelehnt.",
+        "origin": "AuthorFront",
+        "stage": "author_front",
+        "version": 1,
+        "sourceRunId": "20260818_184406_c27447",
+        "sourceArtifactId": "author-chat:besuchsplanung-vollstaendige-neuaufnahme",
+        "sourceArtifactType": "author-statement",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "AF-1"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "AF-1",
+          "ingestedFromRun": "besuchsplanung-vollstaendige-neuaufnahme",
+          "featureKey": "AF-1"
+        },
+        "identityKey": "pflegende der jeweiligen einrichtung müssen angekündigte besuche bestätigen oder ablehnen können bei ablehnung ist eine kurze begründung pflicht angehörige sehen zu ihrer ankündigung genau einen status angefragt bestätigt oder abgelehnt",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "REQ-88",
+      "present": true,
+      "item": {
+        "itemId": "REQ-88",
+        "itemType": "requirement",
+        "text": "Angehörige sollen einmal am Vortag um 18 Uhr per Push-Mitteilung an ihren bestätigten Besuch erinnert werden, damit Besuche nicht vergessen werden.",
+        "origin": "AuthorFront",
+        "stage": "author_front",
+        "version": 2,
+        "sourceRunId": "20260819_102959_b8e8f8",
+        "sourceArtifactId": "author-chat:steward",
+        "sourceArtifactType": "author-statement",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "AF-1"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "AF-1",
+          "ingestedFromRun": "steward",
+          "featureKey": "REQ-82"
+        },
+        "identityKey": "angehörige sollen einmal am vortag um 18 uhr per push mitteilung an ihren bestätigten besuch erinnert werden damit besuche nicht vergessen werden",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Angehörige sollen einmal am Vortag per Push-Mitteilung an ihren bestätigten Besuch erinnert werden, damit Besuche nicht vergessen werden.",
+            "status": "accepted",
+            "origin": "AuthorFront",
+            "sourceRunId": "20260818_203354_fcbf9a",
+            "sourceClaimIds": [
+              "AF-1"
+            ],
+            "recordedUtc": "2026-08-19T10:30:43.997313Z",
+            "note": "REFINE (ingestion 20260819_102959_b8e8f8, via AF-1)"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "PBI-046",
+      "toId": "REQ-82",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-82",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-048",
+      "toId": "REQ-87",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-87",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-049",
+      "toId": "REQ-88",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-88",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "FC-15",
+      "itemType": "feature",
+      "text": "Besuchsankündigung und Besuchskoordination",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260818_084712_765eea",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-15",
+        "sourceRunId": "20260818_084712_765eea",
+        "legacyCrossCutting": ""
+      },
+      "identityKey": "FC-15",
+      "history": [],
+      "feature": {
+        "label": "Besuchsankündigung und Besuchskoordination",
+        "rationale": "Die Vorankündigung von Besuchen durch Angehörige eröffnet ein eigenständiges organisatorisches Thema rund um Besuchsplanung. Dieses wird von keinem bestehenden Feature inhaltlich abgedeckt; insbesondere wäre das Hineinlegen in ein Sammel- oder Integrationsfeature fachlich unpräzise.",
+        "coreRequirementIds": [
+          "REQ-82",
+          "REQ-83"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-046",
+      "itemType": "pbi",
+      "text": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260818_084712_765eea",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC15-01",
+        "sourceRunId": "20260818_084712_765eea",
+        "legacyOpenDecisions": "0",
+        "featureId": "FC-15"
+      },
+      "identityKey": "ik-FC-15-1",
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Angehörige/r will ich Besuche bei meiner Bezugsperson vorab in der App mit Datum und Uhrzeit ankündigen können, damit der Besuch vor dem Termin erfasst ist.",
+        "title": "Besuche bei der Bezugsperson mit Datum und Uhrzeit vorab ankündigen",
+        "acceptanceCriteria": [
+          "Angehörige können einen Besuch bei ihrer Bezugsperson in der App vorab ankündigen.",
+          "Bei der Besuchsankündigung werden Datum und Uhrzeit erfasst."
+        ],
+        "linkedRequirementIds": [
+          "REQ-82"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": null,
+        "mvp": null,
+        "trace": {
+          "canonicalRequirementIds": [],
+          "l1Req": [
+            "REQ-82"
+          ],
+          "l3": [],
+          "claims": []
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-048",
+      "itemType": "pbi",
+      "text": "Angekündigte Besuche bestätigen oder ablehnen",
+      "origin": "pbi-update",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260818_184406_c27447",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceRunId": "20260818_184406_c27447",
+        "createdFromRequirement": "REQ-87",
+        "featureId": "FC-15"
+      },
+      "identityKey": null,
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als pflegende Person der jeweiligen Einrichtung will ich angekündigte Besuche bestätigen oder ablehnen können, damit Angehörige zu ihrer Ankündigung einen eindeutigen Status sehen und bei einer Ablehnung eine kurze Begründung erhalten.",
+        "title": "Angekündigte Besuche bestätigen oder ablehnen",
+        "acceptanceCriteria": [
+          "Pflegende der jeweiligen Einrichtung können eine angekündigte Besuchsanfrage bestätigen.",
+          "Pflegende der jeweiligen Einrichtung können eine angekündigte Besuchsanfrage ablehnen.",
+          "Wenn eine Besuchsanfrage abgelehnt wird, ist die Eingabe einer kurzen Begründung verpflichtend.",
+          "Angehörige sehen zu ihrer Ankündigung genau einen Status.",
+          "Der angezeigte Status einer Ankündigung ist entweder „angefragt“, „bestätigt“ oder „abgelehnt“."
+        ],
+        "linkedRequirementIds": [
+          "REQ-87"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": "active",
+        "mvp": null,
+        "trace": null
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-049",
+      "itemType": "pbi",
+      "text": "Angehörige am Vortag per Push an bestätigte Besuche erinnern",
+      "origin": "pbi-update",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260819_102959_b8e8f8",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceRunId": "20260818_203354_fcbf9a",
+        "createdFromRequirement": "REQ-88",
+        "featureId": "FC-15"
+      },
+      "identityKey": null,
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Angehörige am Vortag per Push an bestätigte Besuche erinnern",
+          "status": "active",
+          "origin": "pbi-update",
+          "sourceRunId": "20260818_203354_fcbf9a",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-19T10:33:16.185944Z",
+          "note": "MARK_CHANGED: Requirement REQ-88 verfeinert | ALIGN(R-26-C): Die Anforderung REQ-88 wurde präzisiert: Neu ist der konkrete Versandzeitpunkt \"um 18 Uhr\" am Vortag. Daher werden Statement und das betroffene Akzeptanzkriterium auf diesen Zeitpunkt angeglichen; übrige Inhalte bleiben unverändert."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Angehörige:r will ich einmal am Vortag um 18 Uhr per Push-Mitteilung an meinen bestätigten Besuch erinnert werden, damit ich den Besuch nicht vergesse.",
+        "title": "Angehörige am Vortag per Push an bestätigte Besuche erinnern",
+        "acceptanceCriteria": [
+          "Die Push-Mitteilung wird einmal am Vortag um 18 Uhr des bestätigten Besuchs versendet."
+        ],
+        "linkedRequirementIds": [
+          "REQ-88"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": "active",
+        "mvp": null,
+        "trace": null
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "REQ-82": 1,
+    "REQ-87": 1,
+    "REQ-88": 2
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

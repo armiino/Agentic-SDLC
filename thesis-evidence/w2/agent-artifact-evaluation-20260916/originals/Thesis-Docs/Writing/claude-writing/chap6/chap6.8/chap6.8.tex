@@ -1,0 +1,151 @@
+% P10-4c-Nachtrag, 15.09.2026: Kontextverfügbarkeit und Nutzung sowie
+% Werkzeugrückgabe und Zustandswirkung getrennt; Logger am Code geprüft.
+% M25, 13.09.2026: bestehende Dokumentationsbelege in den numerischen Zitierstil überführt.
+% M11, 11.09.2026: Übergang zu 6.9 auf ausgewählte technische
+% Prüfungen begrenzt; Kapitelverweise als Referenzen.
+% ============================================================
+% §6.8 Observability und technische Verifikation — v02
+% (Claude, 03.09.)
+% v02 (Kollegen-Runde 1, 4 Präzisierungen + Schlussfix):
+% ① Artefaktarten konditional (nicht jeder Lauf hat Gates/Repair)
+% ② „protokollierte Ausführungsschritte" statt „Lauf
+%   rekonstruierbar" (A1-Grenze) ③ Messdraht auf die gemeinsame
+%   Pipeline begrenzt (Steward-Dialog nicht verifiziert) +
+%   Reasoning als „explizit ausgegebener Text" ④ OTel-Absatz ohne
+%   Framework-Abwesenheits-Behauptung (positive Eigenanteil-Form)
+% ⑤ Schluss epistemisch exakt. Kollegen-Urteil danach:
+%   SEMANTISCH FROZEN.
+% Grundlage: kapitel-6-gesamtvertrag.md ★FROZEN (§4 Zeile 6.8 mit
+% Leitfrage v03: „Wie wird eine tatsächliche Ausführung technisch
+% beobachtbar und nachweisbar?"; Kernaussage #7; Label-Regel
+% sec:realisierung-observability — 3.2-/Anhang-Verweise beim
+% Label-Pass auf \ref) + V6-Check #13 (UseOpenTelemetry/GenAI-
+% Konventionen BESTÄTIGT) + Code-Fundstellen aus den 6.3-Checks.
+% ABGRENZUNG (v03-Regel): 6.8 = Beobachtbarkeit EINER Ausführung;
+% 6.9 = reproduzierbare Prüfung des STANDES — kein zweites Mal
+% Tests/Logs. Budget ~0,75 S. KEIN Listing (2/3–4 verbraucht).
+% Zahlen-Politik: keine Zählungen (Testzahl -> 6.9, commit-
+% gebunden).
+% ============================================================
+
+\section{Observability und technische Verifikation}
+\label{sec:realisierung-observability}
+
+Die Beobachtbarkeit aus
+Abschnitt~\ref{sec:evidenzgebundene-verarbeitung} stützt sich auf
+drei technische Ebenen: gespeicherte Laufartefakte, Protokolle der
+Modell- und Werkzeugaufrufe sowie Telemetrie. Sie erfassen
+unterschiedliche Ausschnitte der Ausführung und ergänzen sich bei
+deren Rekonstruktion.
+
+\emph{Laufartefakte.} Jeder Lauf erhält ein eigenes Verzeichnis
+mit einem fortlaufenden Ereignisprotokoll und den anfallenden
+Stufenartefakten. Durchlaufene Human Gates ergänzen Anfrage- und
+Antwortartefakte; Prüf-Reparatur-Schleifen halten ihre Versuche
+fest. Der Gesamtworkflow behandelt die Fehlerereignisse seines
+Ereignisstroms ausdrücklich und weist den Lauf in diesen Fällen
+als gescheitert aus. Die gespeicherten Belege erlauben es,
+protokollierte Schritte nachträglich zu rekonstruieren, etwa Pause
+und Wiederaufnahme aus
+Abschnitt~\ref{sec:realisierung-durabilitaet}.
+
+Diese Rekonstruktion reicht nur so weit wie die erhaltenen
+Artefakte. Fehlende Belege für Konfigurationswechsel oder
+Rücksetzungen in historischen Läufen bleiben deshalb
+Nachweislücken, die Kapitel~\ref{chap:evaluation} ausweist.
+
+\emph{Modell- und Werkzeugprotokolle.} Die gemeinsame
+Chat-Pipeline protokolliert Modellaufrufe und Angaben zu ihrem
+Eingabekontext. Diese Kontextanalyse erfasst die Struktur der
+übergebenen Nachrichten und darin enthaltene Werkzeugaufrufe;
+sie weist keine tatsächliche Nutzung oder Gewichtung der Inhalte
+durch das Modell nach. Im detaillierten Protokollierungsmodus erfasst
+die Chat-Pipeline auch die einzelnen Modellrunden innerhalb der
+Werkzeugschleife;
+im anderen Modus wird der Chat-Aufruf als Ganzes aufgezeichnet.
+Die Werkzeugprotokolle erfassen Beginn, Rückgabe und Fehler eines
+Aufrufs gesondert; eine erfolgreiche Rückgabe belegt für sich noch
+keine beabsichtigte Zustandsänderung. Damit lässt sich die in
+Abschnitt~\ref{sec:realisierung-tools-mcp} erklärte Trennung von
+Ankündigung und Ausführung für die protokollierten Aufrufe prüfen.
+Für ausgewählte agentische Knoten kann zusätzlich ein explizit
+ausgegebener Analyse- oder Begründungstext des Modells
+mitprotokolliert werden. Er dient der nachträglichen Analyse und
+steuert den Ablauf nicht.
+
+\emph{Telemetrie.} Die Chat-Pipeline nutzt die
+OpenTelemetry-Anbindung des Frameworks. Sie erfasst Aufrufe und
+Verbrauchsattribute nach den GenAI-Konventionen, also gemeinsamen
+Bezeichnungen für Telemetriedaten generativer KI \cite{msmaf2026agentobservability}.
+Bei aktiviertem Telemetrieexport schreiben projektspezifische
+Exporter die Ablaufspuren (Traces) und Metriken in Dateien des
+jeweiligen Laufs. Die Exporter übernehmen damit die lokale Ablage
+der vom Framework bereitgestellten Signale. Eine abschließende
+Aggregation führt vorhandene Telemetriedaten und Stufenartefakte
+in einer Metrikdatei zusammen. Die erfassten Daten bilden eine
+technische Grundlage für Kapitel~\ref{chap:evaluation}; ihre
+Aussagekraft hängt von der gewählten Aufzeichnung und den
+tatsächlich erhaltenen Belegen ab.
+
+Wie automatisierte Tests diese Ausführungsbelege ergänzen und
+welche Reichweite ihre Ergebnisse besitzen, erläutert
+Abschnitt~\ref{sec:realisierung-reproduzierbarkeit-grenzen}.
+
+% M18, 12.09.2026: Sprachliche Neufassung; historische Prüfnotizen
+% aus der Vorfassung folgen als lokale Herkunftshinweise.
+% [Rückverweis-Satz (Form §7; A1-Linie über 5.3). Leitfrage =
+%  Gesamtvertrags-Endform (6.8/6.9-Abgrenzung v03).]
+% [v02 (Kollegen-Punkte 1+2): ① „jeder Lauf erhält Gate-Artefakte/
+%  Versuchshistorien" war zu universal (nicht jeder Lauf durchläuft
+%  Gates/Repair — z. B. LLM-freie Läufe) ② „Lauf rekonstruierbar" ->
+%  „PROTOKOLLIERTE Ausführungsschritte" (A1-Grenze: Beobachtbarkeit
+%  macht feststellbar, nicht vollständig — Reasoning ist optional).
+%  Merker: „Abschnitt 6.5" -> \ref GESETZT (Label-Pass 03.09.).]
+% [runs/<stufe>/<runId>/ mit events.jsonl, gate/*.json
+%  (GateAttempt-Historien = W2-Messdraht), logs/, decision-log;
+%  Fehler-Events: R-18 (ExecutorFailedEvent/WorkflowErrorEvent
+%  behandelt — „sonst endet der Lauf still", CLAUDE.md-Falle).
+%  Selbst-Beleg: die V5-Forensik (§4d) rekonstruierte Pause/Resume/
+%  Abschluss vollständig aus events.jsonl+checkpoints/ — der Satz
+%  ist wörtlich wahr. Merker: „Abschnitt 6.5" -> \ref GESETZT (Label-Pass 03.09.).]
+% [Freeze-Pass 04.09. (Kollegen-P1-10): „Messdraht" =
+%  Entwicklerjargon; „als verlässliche Quelle" gestrichen
+%  (Wertungs-Attribut, die Trennung selbst trägt die Aussage).]
+% [v02 (Kollegen-Punkt 3): „JEDER Modellaufruf" scope-begrenzt auf
+%  die gemeinsame Pipeline — ob der Steward-Dialog denselben
+%  Messdraht nimmt, ist NICHT verifiziert (nicht behaupten).
+%  Reasoning: „vom Modell explizit ausgegebener Text" (Mechanik =
+%  Prompt-Appendix+Schema-Feld) — kein privilegierter Einblick in
+%  den internen Schlussfolgerungsprozess impliziert.]
+% [W1b „jeder Call am Messdraht": AgentChatPipelineBuilder.cs:44/73
+%  (zwei Varianten); ChatDecisionLoggerMiddleware (ModelRound) ·
+%  InputContextLoggerMiddleware · ToolCallLoggerMiddleware
+%  (Code-Kommentar „die verlässliche Quelle für tatsächlich
+%  ausgeführte Tools", ChatDecisionLoggerMiddleware.cs:51).
+%  Reasoning: W1a captureReasoning-Schalter; Ledger „reasoning
+%  log-only via Prompt-Appendix + Schema-Feld"
+%  (SemanticLedgerExtractor.cs:194) — „log-only" => keine
+%  Steuerungsfunktion, defensiv formuliert.
+%  Merker: „Abschnitt 6.3" -> \ref GESETZT (Label-Pass 03.09.).]
+% [„Kapitel~7" bewusst KLARTEXT: das Kapitel existiert noch nicht,
+%  ein \ref würde als „??" rendern. Merker: bei Kap.-7-Anlage dort
+%  \label{chap:evaluation} (o. ä.) setzen und HIER auf \ref
+%  umstellen — gleicher Posten in 6.9.]
+% [v02 (Kollegen-Punkt 4, WICHTIG): Die Abwesenheits-Behauptung
+%  „Framework sieht keine laufbezogene Ablage vor" stützte sich nur
+%  auf einen Klassen-Kommentar im EIGENEN Code — extern schwer
+%  beweisbar und unnötig. Positive Fassung trägt dieselbe
+%  MAF-vs-Eigenanteil-Aussage (MAF = OTel-Instrumentierung;
+%  Projekt = Run-Senken + Aggregation).]
+% [V6 #13 BESTÄTIGT: .UseOpenTelemetry(sourceName) + „OpenTelemetry
+%  GenAI Semantic Conventions", gen_ai.client.token.usage etc.;
+%  wir aktivieren auf CHAT-Ebene (Doppel-Erfassungs-Warnung der
+%  Doku beachtet). Eigenanteil (Matrix B, bewusst custom):
+%  OtelRunExporters (otel-traces.jsonl je Lauf — „MAF/OTel liefern
+%  keine solche Senke", Klassen-Kommentar) + MetricsFinalizer ->
+%  metrics.json. KEINE Wirksamkeits-/Messwert-Aussagen hier
+%  (implementiert ≠ wirksam; Werte -> Kap. 7).]
+% [v02 (Kollegen-Schlussfix): „Ausführungen belegbar" pauschal ->
+%  epistemisch exakt (protokollierte Schritte, technische Belege).]
+% [Schlussklammer = exakt die 6.8/6.9-Leitfragen-Abgrenzung
+%  (v03-Regel: kein zweites Mal Tests/Logs); Übergang nummernfrei.]

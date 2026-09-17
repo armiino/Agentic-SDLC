@@ -1,0 +1,43 @@
+% M12: Optionale Zeilenumbrueche an Paketnamensbestandteilen.
+% M08, 11.09.2026: Kapitelauftrag und Zuordnung konzentriert.
+\chapter{Technische Realisierung mit dem Microsoft Agent Framework}
+\label{chap:maf-realisierung}
+
+Kapitel~\ref{chap:loesungsarchitektur} hat die Architektur und ihre
+Verantwortungsverteilung erklärt. Dieses Kapitel zeigt, wie die
+tragenden Mechanismen mit MAF und C\#/.NET realisiert wurden:
+Welche Frameworkmittel tragen die Ausführung, welche fachlichen
+Regeln ergänzt das Projekt, und wo liegen technische Grenzen?
+Die Abschnitte vertiefen diese Fragen entlang der Zuordnung in
+Tabelle~\ref{t:maf-zuordnung}.
+
+\section{Technischer Kontext und MAF-Zuordnung}
+\label{sec:technischer-kontext-maf-zuordnung}
+
+Die Darstellung bezieht sich auf den festzuhaltenden
+Implementierungsstand des Artefakts
+(Stand: \emph{Tag/Commit folgen mit dem technischen Einfrieren des
+Artefakts}). Die Belege in Kapitel~\ref{chap:evaluation} werden
+dagegen jeweils dem tatsächlich ausgeführten Systemstand
+zugeordnet; historische Läufe gelten nicht als Ausführungen eines
+späteren Stands. Die MAF-Kernnutzung basiert auf
+\texttt{Microsoft.\allowbreak Agents.\allowbreak AI}, \texttt{Microsoft.\allowbreak Agents.\allowbreak AI.\allowbreak Workflows}
+und \texttt{Microsoft.\allowbreak Agents.\allowbreak AI.\allowbreak OpenAI}, jeweils in Version~1.15.0.
+Weitere Abhängigkeiten und Konfigurationsangaben stehen bei den
+betreffenden Mechanismen und in
+Abschnitt~\ref{sec:realisierung-reproduzierbarkeit-grenzen}.
+
+Die allgemeine Grenze zwischen Frameworkangebot und Projektaufgabe
+aus Abschnitt~\ref{sec:maf-leistungsumfang-grenzen} wird hier am
+Artefakt konkretisiert. Tabelle~\ref{t:maf-zuordnung} verbindet jede
+Architekturverantwortung mit ihrer technischen Grundlage und dem
+Ort ihrer Vertiefung. MAF trägt etwa Nachrichtenübergaben,
+Werkzeugaufrufe und Workflowzustand; das Evidenzmodell, die
+fachliche Geltung von Änderungen und die Regeln der Außenabbildung
+legt das Projekt fest. Die konkrete Zuordnung richtet sich nach
+dem verwendeten Code, nicht allein nach dem verfügbaren
+Frameworkangebot. Dokumentierte Auswahlentscheidungen und
+relevante, nicht eingesetzte Alternativen werden am jeweiligen
+Mechanismus erläutert.
+
+\input{tables/chap6/maf-zuordnung}

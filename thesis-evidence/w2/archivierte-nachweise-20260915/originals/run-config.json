@@ -1,0 +1,169 @@
+
+{
+  "agentPhase": "phase2_evidence",
+//"agentPhase": "phase2_1",
+//"agentPhase": "phase1",
+ // "phase2ContextStrategy": "message_passing",
+  "phase2ContextStrategy": "artifact_state",   // Phase 2.1B: MAF Shared State. Umschalten reicht..Prompts werden automatisch gewählt.
+  "llmProvider": "openrouter",
+  "agentModel": "openai/gpt-5.4",
+ // "agentModel": "openai/gpt-4.1-mini",
+ //  "agentModel": "openai/gpt-oss-120b",
+ //langsam: "agentModel": "nvidia/nemotron-3-super-120b-a12b:free",
+
+  // Prompts gruppiert nach Phase -> Strategie -> Agent.
+  // A<->B wird allein über "phase2ContextStrategy" oben umgeschaltet.. hier nichts tauschen
+  "prompts": {
+    "phase1": {
+      "default": {
+        "Phase1SinglePass": "Phase1_3Prompt"
+      }
+    },
+    "phase2_1": {
+      "message_passing": {
+        "Phase2ContextAgent": "ContextPrompt3",
+        "Phase2RequirementsAgent": "RequirementsPrompt5",
+        "Phase2RisksAgent": "RisksPrompt3",
+        "Phase2ArchitectureAgent": "ArchitecturePrompt3",
+        "Phase2OpenQuestionsAgent": "OpenQuestionsPrompt3"
+      },
+      "artifact_state": {
+        "Phase2ContextAgent": "ContextPrompt3",
+        "Phase2RequirementsAgent": "RequirementsPromptB1",
+        "Phase2RisksAgent": "RisksPromptB1",
+        "Phase2ArchitectureAgent": "ArchitecturePromptB1",
+        "Phase2OpenQuestionsAgent": "OpenQuestionsPromptB1"
+      }
+    },
+    // Kapitel B: Prompt pro Arm (transcript = Arm A; ledger = Arm B). Beide teilen sich _shared-core.txt
+    // (Aufgabe/Format/Treue) — der Runner komponiert Arm-Header + Kern → Prompt-Parität beweisbar.
+    "phase2_evidence": {
+      "transcript": {
+        "EvidenceRequirementsAgent": "RequirementsFromTranscript1",
+        "EvidenceRisksAgent": "RisksFromTranscript1"
+      },
+      "ledger": {
+        "EvidenceRequirementsAgent": "RequirementsFromLedger2",
+        "EvidenceRisksAgent": "RisksFromLedger1",
+        "EvidenceArchitectureAgent": "ArchitectureFromLedger1",
+        "EvidenceOpenQuestionsAgent": "OpenQuestionsFromLedger1"
+      }
+    }
+  },
+  "observability": {
+    "enableOtel": true,
+    "enableOtelSensitive": true,
+    "enableOtelRaw": true,
+    "innerCycleLogging": true,
+    "responseTextMaxChars": 0,
+    "captureReasoning": "enforced"
+  },
+  "llmPreview": {
+    "chars": 1200
+  },
+  "fullworkflow": {
+    // Real-Write-Beweis ✅ 13.08. (Block R: gh#12 + Voll-Stempel 39/39, Runs 104957/…). Default false; für G6/L8 per R-42 bewusst scharf schalten.
+    // 20.08.: Kommentar-Rundweg K1–K8 KOMPLETT ✅ (inkl. Nachprobe; R-62/R-62b dabei gefunden+gefixt) — Flag AUS.
+    // 22.08. spät: Leitfaden-Livetest (Autor hat für den scharfen Abgleich selbst AN geschaltet;
+    // Beweis: storymap.md UPSERT + Issue-Update PBI-031, Lauf 20260822_220612) — danach wieder AUS.
+    "execute": false,
+    "policyProfile": "interactive",           // Fallback bewusst interactive: unbekanntes Gate => lauter Exit 5
+    "transcript": "input/transcripts/meeting-4-ux-block-l.txt",
+    "mode": "auto",                           // leerer Core (geparkt) => Bootstrap-Zweig
+    "timeoutMinutes": 90,                     // 5 LLM-Stufen; 20-min-Default reicht nicht
+    // ⚠️ REAL-WRITE-Test (11.08.): repo/token AN + execute:true unten → der Forward schreibt WIRKLICH an das Issue.
+    "repo": "armiino/Agentic-GitHub-refactor",
+    "tokenEnv": "GITHUB_AGENTIC_REFACTOR_TOKEN",
+    // Standard-Zuschnitt (5.4, unbeaufsichtigt). H1/H2-Live-Beweis 27.07. lief mit mini + 2x interactive
+    // (Runs 074919 + 080638 — Pause/Resume/zweite Pause real bewiesen, s. Reibungs-Log R-29).
+    "models": { "01-ledger": "openai/gpt-5.4", "02-baselines": "openai/gpt-5.4" },
+    "stages": { "l3": "off" },
+    "gates": {
+      "adjudication-gate": { "policy": "interactive" },
+      "ingest-gate": { "policy": "interactive" },
+      "arch-ingest-gate": { "policy": "interactive" },
+      "arch-classify-gate": { "policy": "interactive" },
+      "adr-gate": { "policy": "interactive" },
+      "pbi-gate": { "policy": "interactive" },
+      "cluster-review-gate": { "policy": "interactive" },
+      "backlog-review-gate": { "policy": "interactive" },
+      "github-forward-gate": { "policy": "interactive" }
+    }
+  },
+  "jury": {
+    "enabled": true,
+    "judgeModel": "openai/gpt-5.4",
+    // Strukturierte Judge-Ausgabe (json_schema) erzwingen. Default true.
+    // Bei Judges ohne json_schema-Support (zb manche OpenRouter-Modelle) auf false setzen..
+    // dann fängt der evaluation_failed-Pfad (B8) ungültiges JSON ab.
+    "structuredOutput": true,
+    // DISK-12/G3: Call 1 (Finding-Generierung) pro Kategorie splitten (FALSE_CLAIM/FALSE_CERTAINTY/
+    // MISSING_TOPIC) statt von einem 3-in-1-Calls. Hebt Recall schwacher Modelle (B20). Default true;
+    // false = altes 3-in-1-Verhalten (für Instrument-Vergleich). Verifier-Pass bleibt unverändert.
+    "splitGeneration": true,
+    // DISK-12/B22: aktive Fehlerkategorien PRO ARTEFAKTTYP (Generierung + Verifikation). Ohne Block
+    // gilt der Code-Default: open-questions = nur FALSE_CERTAINTY + MISSING_TOPIC (FALSE_CLAIM passt
+    // dort nicht — Optionen/Beispiele in offenen Fragen sind keine Claims). Hier nur setzen, um den
+    // Default zu überschreiben; die effektive Policy steht reproduzierbar im config.json-Snapshot.
+    // Beispiel:
+    // "categories": {
+    //   "open-questions": ["FALSE_CERTAINTY", "MISSING_TOPIC"],
+    //   "requirements":   ["FALSE_CLAIM", "FALSE_CERTAINTY", "MISSING_TOPIC"]
+    // },
+    // DISK-7: zweiter Verifikations-Pass pro Fehlerkategorie. Pro aktivierter Kategorie ein
+    // eigener Batch-Call (nur bei vorhandenen Kandidaten). Verdikt: confirmed/partial/rejected.
+    // Defaults (ohne Block): missingTopic=true, falseCertainty=true, falseClaim=false.
+    // falseClaim ist teurer (Transkript-Re-Read) und bewusst konservativ -> standardmässig aus.
+    "verification": {
+      "falseClaim": true,
+      "falseCertainty": true,
+      "missingTopic": true,
+      // custom=true ersetzt die 3 Verifier durch EINEN ausgelagerten Prompt
+      // (Prompts/jury/verify-custom.txt). Nur zum Experimentieren — NICHT für A/B/C-Vergleiche.
+      "custom": false,
+      // DISK-9: max. MISSING_TOPIC-Kandidaten pro Verifikations-Call (Default 8). Grössere Listen
+      // werden in Folge-Calls aufgeteilt (Verifier-Kollaps-Schutz, Run 639979). Nur MISSING_TOPIC.
+      "missingTopicBatchSize": 8
+    }
+  },
+  // Nur für Phase 2.1B (artifact_state) wirksam. Default (ohne Block) = beta-full.
+  // beta-minimal: "writeArtifacts": false + reads je Agent auf ["context"] kürzen.
+  "phase2BState": {
+    "writeArtifacts": true,
+    "reads": {
+      "Phase2RequirementsAgent": ["context"],
+      "Phase2RisksAgent": ["context", "requirements"],
+      "Phase2ArchitectureAgent": ["context", "requirements", "risks"],
+      "Phase2OpenQuestionsAgent": ["context", "requirements", "risks", "architecture"]
+    }
+  },
+  // Nur für `ledger-build` wirksam (Plan §4). Config-gesteuerter Human-in-the-Loop-Adjudikationsschritt.
+  //   skip        = kein Schritt, validated Ledger unverändert (Default, Baseline-neutral)
+  //   manual      = queue.json in step-03b schreiben, Prozess endet (Naht) -> später apply/-ui
+  //   interactive = blockierende lokale Review-UI (Autosave), "Fertig" wendet direkt an
+  "ledger": {
+    "adjudicationMode": "skip",
+    "adjudicationOpenBrowser": true
+  },
+
+  // Kapitel B (Evidenz-Agent): nur wirksam, wenn oben "agentPhase": "phase2_evidence".
+  // *** NUR für die STANDALONE-Evidenz-/recipe-/derive-Werkzeuge (evidence-agent, recipe, derive,
+  //     baseline-fanout, evidence-chain, checker-repair) — die Arm-A/B-Treue-Messung. ***
+  // pipeline-full (Ein-Graph) LIEST DIESEN BLOCK NICHT (code-verifiziert 10.08.): die 02-baselines-Stufe
+  // überschreibt source+ledgerRun in-memory mit dem im SELBEN Lauf erzeugten consumable
+  // (BaselineStageExecutor:42) und bestellt die Artefakte fest über OrderedArtifacts — nicht über artifact.
+  // Für einen frischen pipeline-full-Lauf ist dieser Block also totes Config (ignorierbar).
+  // Vergleicht Artefakt-Generierung aus dem Ledger (Arm B) vs. Rohtranskript (Arm A) auf Treue.
+  // Runs landen unter runs/phase2evidenz-agent/<source>/<runId>. Plan: Phases/Phase2/Evidenz-Agent/ReusePlan.md
+  //   source     = transcript (Arm A, Baseline) | ledger (Arm B)
+  //   artifact   = requirements (B-Minimal-Bar; später risks/architecture/open-questions)
+  //   ledgerRun  = Pfad zur consumable.json (nur bei source=ledger)
+  //   repetitions= k Läufe pro Arm (temp>0) für Verteilungs-Messung
+  "evidenceAgent": {
+    "source": "ledger",
+    "artifact": "risks",
+    "transcript": "input/transcripts/meeting-2-extended.txt",
+    "ledgerRun": "runs/ledger/20260723_133055_48b8cf/step-03b-adjudicated/consumable.json",
+    "repetitions": 1
+  }
+}

@@ -1,0 +1,62 @@
+% M16, 11.09.2026: Durchstich am Einstieg erläutert; Ausgangsziel erhalten.
+% M07, 11.09.2026: fachlicher Szenariorahmen ergänzt; methodische
+% Wiederholungen verdichtet. Zielherkunft und E-ID-Funktion erhalten.
+% Quelle des Szenariorahmens: input/transcripts/Interview-Einrichtung.txt,
+% Gesprächsauftakt und Vorschlag einer App zur Kommunikationsunterstützung.
+
+\chapter{Explorative Problemklärung und Herleitung der
+Designanforderungen}
+\label{chap:explorative-problemklaerung}
+
+Auf Grundlage des Vorgehens aus
+Abschnitt~\ref{sec:iteratives-vorgehen-evidenz} rekonstruiert dieses
+Kapitel die architekturprägenden Entwicklungsbefunde. Aus ausgewählten
+Beobachtungen, dem Nutzungsziel und technischen Konsequenzen werden
+die zehn Designanforderungen A1 bis A10 hergeleitet.
+Abschnitt~\ref{sec:konsolidierte-designanforderungen} führt sie
+zusammen; Kapitel~\ref{chap:loesungsarchitektur} erläutert die daraus
+entwickelte Architektur.
+
+\section{Ausgangslage und Auswahl der Entwicklungsbefunde}
+\label{sec:ausgangslage-entwicklungsbefunde}
+
+Das als Projektmaterial verwendete Ausgangstranskript behandelt ein
+Kick-off-Gespräch zur Planung einer App für eine Einrichtung für
+Menschen mit Beeinträchtigungen.\footnote{Projektquelle im Repository:
+\path{input/transcripts/Interview-Einrichtung.txt}.}
+Darin erörtern die Einrichtungsleitung
+und ein Projektteam aus Informatik und Sozialer Arbeit, wie Wissen
+über betreute Personen und ihre individuelle Kommunikation zugänglich
+gemacht werden könnte. Die vorgeschlagene App soll beispielsweise
+Betreuenden helfen, Ausdrucksweisen einer Person anhand hinterlegter
+Informationen besser zu verstehen. Diese App ist das zu planende
+Zielsystem. Gegenstand der vorliegenden Arbeit ist das Agentensystem,
+das solche Gesprächsinhalte für die Softwareplanung verarbeitet.
+
+Der ursprüngliche technische Auftrag bestand im Weg vom Transkript
+über KI-Agenten mit Microsoft Agent Framework zum GitHub-Issue
+(Abschnitt~\ref{sec:iteratives-vorgehen-evidenz}). Das später um
+Rückkopplung und Wiederverwendung erweiterte Nutzungsziel gab Anlass,
+auch weitere Projektinformationen und den Umgang mit bereits
+erzeugten Ergebnissen zu untersuchen. Die heutige Architektur war
+damit noch nicht festgelegt.
+
+Den Anfang bildete ein einfacher technischer Durchstich, also ein
+erster lauffähiger Prototyp für den Weg von der Eingabe zum Ergebnis.
+Ein einzelner Agent sollte das Transkript verarbeiten, Artefakte über
+Dateiwerkzeuge ablegen und Freigaben anfordern. Die operative
+Arbeitsumgebung wurde früh angebunden. Offen blieben der angemessene
+Autonomiegrad, die Aufgabenverteilung, die Zustandsführung und die
+menschliche Kontrolle. Die Entwicklung klärte schrittweise, welche
+Entscheidungen dem Agenten überlassen werden konnten und wo explizite
+Informationsführung, deterministische Prüfungen oder menschliche
+Autorisierung benötigt wurden. Den Einsatz unterschiedlicher Modelle in frühen Entwicklungsständen
+ordnet Abschnitt~\ref{sec:explorationsverlauf} methodisch ein.
+
+Die Darstellung folgt den Übergängen, die eine tragende Anforderung,
+Architekturentscheidung oder Grenze erklären; eine vollständige Chronik
+ist nicht beabsichtigt. Abschnitt~\ref{sec:explorationsverlauf} gibt
+zunächst den Überblick. Als formative Evidenz verwendete
+Projektbeobachtungen erhalten lokale Evidenzanker (E-IDs).
+Anhang~\ref{anh:evidenzanker} ordnet sie der Dokumentation im
+eingefrorenen Repository-Stand und ihrer jeweiligen Aussagegrenze zu.

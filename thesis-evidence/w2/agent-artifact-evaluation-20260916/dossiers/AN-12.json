@@ -1,0 +1,351 @@
+{
+  "case_id": "AN-12",
+  "report_index_zero_based": 11,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "nfr",
+    "disposition": "requirement",
+    "statement": "Für zentrale Alltagsaktionen müssen messbare Performance-Ziele festgelegt werden; insbesondere sollen Profilübersicht, Namenssuche und profilübergreifende Stichwortsuche auch bei realistischem Datenbestand ohne wahrnehmbare Verzögerung bedienbar bleiben.",
+    "herleitung": "Abgeleitet aus ARCH-06, REQ-17 und REQ-60: Das Produkt soll Informationen schneller auffindbar machen als bestehende Akten, die heute als schwer nutzbar beschrieben werden. Es existieren Suche über Namen und sogar profilübergreifende Stichwortsuche, aber kein messbarer Leistungsrahmen, an dem geprüft werden kann, ob die App den versprochenen Arbeitsvorteil im Pflegealltag tatsächlich erreicht.",
+    "kategorie": "nfr:performance",
+    "ankerIds": [
+      "ARCH-06",
+      "REQ-17",
+      "REQ-60"
+    ]
+  },
+  "reported_status": "kritiker_aussortiert",
+  "critic_reason": "Zu generisch als übliche Performance-Forderung; Anker tragen den konkreten Zielwert nicht. Ohne messbare Schwellen nicht vorlagefähig.",
+  "anchors_and_mentions": [
+    {
+      "id": "ARCH-06",
+      "present": true,
+      "item": {
+        "itemId": "ARCH-06",
+        "itemType": "architecture",
+        "text": "Es muss berücksichtigt werden, dass vorhandene Akten im Arbeitsalltag schwer nutzbar sein können, weil sie umfangreich sind und gesuchte Informationen nicht schnell gefunden werden; dies ist jedoch nur als persönliche Einschätzung belegt.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_113115_35335a",
+        "sourceArtifactId": "ARCH",
+        "sourceArtifactType": "architecture",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "canon-risiko-akten-schwer-nutzbar"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4"
+        },
+        "identityKey": "berücksichtigt werden dass vorhandene akten im arbeitsalltag schwer nutzbar sein können weil sie umfangreich sind und gesuchte informationen nicht schnell gefunden werden dies ist jedoch nur als persönliche einschätzung belegt",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "architecture": {
+          "roles": [
+            "design"
+          ],
+          "rationale": "Die Aussage beschreibt ein belegtes Nutzungsrisiko beziehungsweise eine Problemwahrnehmung über bestehende Akten. Sie ist eher Kontextwissen für die Architekturbegründung als ein harter Rahmen für konkrete aktive PBIs.",
+          "adrId": null,
+          "adrStatus": null
+        },
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    },
+    {
+      "id": "REQ-17",
+      "present": true,
+      "item": {
+        "itemId": "REQ-17",
+        "itemType": "requirement",
+        "text": "Auf der Profilübersicht muss eine Suchleiste vorhanden sein, um Profile schnell nach Namen zu finden.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_113115_35335a",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "canon-suche-profile"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4"
+        },
+        "identityKey": "auf der profilübersicht muss eine suchleiste vorhanden sein um profile schnell nach namen zu finden",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    },
+    {
+      "id": "REQ-60",
+      "present": true,
+      "item": {
+        "itemId": "REQ-60",
+        "itemType": "requirement",
+        "text": "Es muss eine Suche nach Stichworten über alle Bewohnerprofile hinweg geben.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_134102_c63c89",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "suche-ueber-alle-bewohnerprofile"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "REQ-07"
+        },
+        "identityKey": "eine suche nach stichworten über alle bewohnerprofile hinweg geben",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "confirmedInRun": "20260723_134102_c63c89",
+        "status": "accepted"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "REQ-17",
+      "toId": "canon-suche-profile",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "ARCH-06",
+      "toId": "canon-risiko-akten-schwer-nutzbar",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-009",
+      "toId": "REQ-17",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-17",
+      "toId": "FC-05",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-031",
+      "toId": "REQ-60",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "FC-05",
+      "itemType": "feature",
+      "text": "Profilübersicht und Profilanlage",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-05",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": "REQ-07,REQ-09,L3-REQ-013"
+      },
+      "identityKey": "profiluebersicht-und-profilanlage",
+      "history": [],
+      "feature": {
+        "label": "Profilübersicht und Profilanlage",
+        "rationale": "Dieses Feature umfasst das Auffinden, Anzeigen und optionale Anlegen von Bewohnerprofilen in der Übersicht inklusive Suche, Sortierung, Status und Dublettenprüfung. Rollenbeschränkungen und Kennzeichnung neuer Inhalte beeinflussen die Übersicht, sind aber nicht ihr fachlicher Kern.",
+        "coreRequirementIds": [
+          "L3-REQ-006",
+          "L3-REQ-007",
+          "L3-REQ-008",
+          "L3-REQ-013",
+          "REQ-07",
+          "REQ-09",
+          "REQ-13",
+          "REQ-16",
+          "REQ-17",
+          "REQ-18",
+          "REQ-45"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-009",
+      "itemType": "pbi",
+      "text": "Profilübersicht mit Suche und öffnbaren Profilkarten bereitstellen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-bewohner-account-mit-beschraenkung",
+        "canon-profiluebersicht-darstellung",
+        "canon-profiluebersicht-nach-login",
+        "canon-suche-profile",
+        "canon-zugriff-nach-einrichtung-beschraenkt"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC05-01",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-05"
+      },
+      "identityKey": "profiluebersicht-suchen-und-oeffnen",
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Nutzer will ich in einer Profilübersicht berechtigte Bewohnerprofile sehen, nach Namen suchen und ein Profil öffnen, damit ich relevante Informationen schnell finde.",
+        "title": "Profilübersicht mit Suche und öffnbaren Profilkarten bereitstellen",
+        "acceptanceCriteria": [
+          "Nach dem Login wird eine Profilübersicht angezeigt.",
+          "Jedes sichtbare Profil zeigt Vorschaubild, Name und kurze Beschreibung.",
+          "Die Übersicht enthält eine Suche, mit der Profile nach Namen gefiltert werden können.",
+          "Ein Klick oder Tap auf ein Profil öffnet die Detailansicht dieses Profils.",
+          "Ein Bewohner-Account sieht in der Übersicht nur das eigene Profil.",
+          "Nutzer sehen keine Profile außerhalb ihrer fachlich zugeordneten Sichtbarkeit."
+        ],
+        "linkedRequirementIds": [
+          "REQ-07",
+          "REQ-09",
+          "REQ-13",
+          "REQ-16",
+          "REQ-17",
+          "REQ-18"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 6,
+        "readiness": "blocked_by_decision",
+        "mvp": "mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "REQ-07",
+            "REQ-09",
+            "REQ-13",
+            "REQ-16",
+            "REQ-17",
+            "REQ-18"
+          ],
+          "l1Req": [
+            "REQ-07",
+            "REQ-09",
+            "REQ-13",
+            "REQ-16",
+            "REQ-17",
+            "REQ-18"
+          ],
+          "l3": [],
+          "claims": [
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-profiluebersicht-darstellung",
+            "canon-profiluebersicht-nach-login",
+            "canon-suche-profile",
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ]
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-031",
+      "itemType": "pbi",
+      "text": "Es muss eine Suche nach Stichworten über alle Bewohnerprofile hinweg geben.",
+      "origin": "pbi-update",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_135427_9260f1",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceRunId": "20260723_135427_9260f1",
+        "createdFromRequirement": "REQ-60",
+        "featureId": "FC-05"
+      },
+      "identityKey": null,
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": null,
+        "title": "Es muss eine Suche nach Stichworten über alle Bewohnerprofile hinweg geben.",
+        "acceptanceCriteria": [],
+        "linkedRequirementIds": [
+          "REQ-60"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": "needs_clarify",
+        "mvp": null,
+        "trace": null
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "NeedsClarify",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_135427_9260f1",
+      "status": "needs_clarify"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "ARCH-06": 0,
+    "REQ-17": 0,
+    "REQ-60": 1
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

@@ -46,6 +46,8 @@ im Faden hält `runs/ledger/<id>` über Resume konstant; die Ledger-Token laufen
 | `step-03-facet-validation` | FacetValidation | ja | Per-Claim-Verdict gegen das Transkript: `grounded`→approved, sonst `review_required` (deterministisch abgeleitet, `ValidatedLedgerEntry.DeriveStatus`) |
 | `gate/` | LedgerQualityGate + Traces | nein | Invarianten I0–I6 (IDs eindeutig, kein Candidate verschwindet still, Evidence-/Trace-Pflicht, Taxonomie, validated-Deckung) + `unused-unit-trace` (Deckungs-Urteile → existierender Ziel-Claim). **error ⇒ GATE FAILED ⇒ nicht weiterfahren** |
 
+**Sprechersegmentierung (Korrektur R-76/B-20, 11.09.2026):** Das Format `Name:` erkennt auch Rollen mit Bindestrich, etwa `Angehörigen-Vertreterin:`; das Klammerformat `[Name]` bleibt erhalten. AU-IDs werden aus der Position gebildet: Zusätzliche erkannte Sprecherwechsel verschieben deshalb IDs in neuen Läufen. Historische Ledger nicht unter Beibehaltung alter Zuordnungen neu segmentieren. Abgesichert durch `TranscriptSpeakerRegressionTests` einschließlich des F1-Originaltranskripts und des Vergleichs beider W2-Eingaben.
+
 Getestet (deterministische Kerne): `TranscriptSegmenterTests`, `LedgerQualityGateTests`,
 `LedgerVerdictParsingTests`, `UnusedUnitCompareRepairTests`.
 
@@ -56,6 +58,9 @@ ledger-adjudicate <step-03…/output.json> <step-01d…/output.json>   # Queue: 
 ledger-adjudicate-ui <step-03b-adjudicated/queue.json>             # DEINE Entscheidungen (Review-UI, Finish → apply)
 → step-03b-adjudicated/{adjudicated-ledger, consumable, gate}.json # AdjudicationCompletenessGate projiziert das Ergebnis
 ledger-adjudicate-refine <consumable.json> <transcript>            # nur bei pending>0: neu geminteten Claims Facetten geben (A10)
+# A10 im EIN-GRAPH (09.09.): pipeline-full hat den Refine als eigenen Knoten PipelineAdjudicationRefine
+# zwischen Adjudikations-Apply und Baselines — GETEILTE Naht AdjudicationRefine.cs mit dieser CLI-Bahn;
+# No-op ohne pending-Claims (kein LLM-Aufbau). Beleg: Läufe 20260909_190157/190518, R-75 im E2E-RUNBOOK.
 ```
 
 `consumable.json` (pending=0) ist das Übergabe-Artefakt an 02-baselines.
@@ -123,6 +128,13 @@ unbilanziert verloren", nicht „das Urteil stimmt". Genau deshalb entscheidest 
 - `ledger-build` = älterer Pfad ohne Atomic Units (Fixture-Match optional als 3. Argument).
 - `measure/`: `ledger-reference-template` (Annotations-Vorlage) → handgebaute Referenz →
   `ledger-reference-recall[-fast]`, `facet-validation-eval` — Completeness/Recall-Messung für die Thesis.
+- **`ledger-capture <runId>` (W2, 04.09.):** rein lesender, deterministischer Export der Messpunkte
+  **L-machine** (= `step-02-canonical-draft` — Maker-Stand VOR aller maschinellen QC; Facetten-VERGABE
+  ist Maker, Facetten-VALIDIERUNG ist QC) und **LCR-machine** (= `step-03`-Claims + Verdikte +
+  `step-01d`-Miss-Signal + QC-Protokolle) nach `capture/{l-machine,lcr-machine,capture-report}.json`
+  (bit-stabil, Artefakt-SHA256s im Report). HITL-Messgrenze strukturell: liest NIE `step-03b-adjudicated`.
+  Grenzdefinition: Evaluationskonzept §11/§12.0-3 (`LedgerCaptureRunner.BoundaryL/BoundaryLcr` wörtlich).
+  Tests: `LedgerCaptureTests`.
 
 Beleg-Läufe: `runs/ledger/20260723_090059_7b4e24` (frischer E2E, gate pass 0/0) ·
 `runsArchive/ledger/20260704_131614_018865` (Alt-Beleg). Gescheiterte R-1-Belege: `runs/ledger/20260723_08*`.

@@ -1,0 +1,82 @@
+% P10, 15.09.2026: Gate-Reichweite und Host-Zustimmung; StewardGateTools/RunTools/ChatRunner.
+% M25, 13.09.2026: bestehende Dokumentationsbelege in den numerischen Zitierstil überführt.
+% M10, 11.09.2026: Leserführung, Kapiteltrennung und belegte Reichweite.
+% StewardChatRunner.cs (Agent, Session, Reducer); StewardGateTools.cs:368--397;
+% IngestGateDecisions.cs:24--45 (gleicher Loader, zwei schema-gleiche Dateien);
+% StewardRunTools.cs (Approval, RunCoreAnalysis, Resume); HandoffSpikeTests.cs.
+% B-32: gemeinsame Einreichung ist hier ein Vertrag, keine identische Schreibfunktion.
+
+\section{Steward-Realisierung}
+\label{sec:realisierung-steward}
+
+Der Steward aus
+Abschnitt~\ref{sec:durable-ausfuehrung-agentische-bedienung} ist ein
+einzelner MAF-Agent mit Systemauftrag, Werkzeugkatalog und
+Dialogschleife. Er nutzt damit die Agentabstraktion für die
+Interpretation von Anliegen und die Werkzeugwahl. Die aufgerufenen
+Workflows behalten die Kontrolle über ihre Verarbeitungsschritte.
+
+MAF ermöglicht die Serialisierung einer Sitzung, sodass ihr
+Gesprächszusammenhang gespeichert und später wieder geladen werden
+kann \cite{msmaf2026session}.
+Das Artefakt legt diese Sitzungen dateibasiert ab. Für den an das
+Modell übergebenen Verlauf sind drei Strategien konfigurierbar:
+vollständige Nachrichtenfolge, begrenztes Nachrichtenfenster oder
+zusammenfassende Verdichtung. Diese Verlaufsreduktion wird über die
+entsprechende Frameworkschnittstelle in die Dialogführung eingebunden
+\cite{msmaf2026storage}.
+Die Sitzung dient der Fortführung des Dialogs; maßgebliche
+Projektinformationen werden weiterhin aus dem Core bezogen.
+
+Der Werkzeugkatalog erschließt vorhandene Systemfähigkeiten:
+Projekt- und Laufstatus lesen, Verarbeitung starten oder wiederaufnehmen
+und Gate-Entscheidungen einreichen. Ein Teil der Lesezugriffe nutzt die
+MCP-Anbindung aus Abschnitt~\ref{sec:realisierung-tools-mcp}.
+Auch die Core-Analyse wird über denselben Aufruf wie im Direktzugang
+gestartet. Für entsprechend ausgewiesene kosten- oder
+außenwirkungsträchtige Werkzeuge greift die dort beschriebene
+Zustimmungsprüfung vor der Ausführung.
+
+Gate-Entscheidungen lassen sich für ausgewählte Gate-Arten direkt im
+Dialog bearbeiten, etwa am Ingest-Gate. Für andere Entscheidungspunkte
+kann der Steward eine unterstützte Review-Oberfläche öffnen oder auf
+den gesonderten Review-Aufruf verweisen. Vor der Ausführung eines
+Einreichungswerkzeugs zeigt die Dialogsteuerung den konkreten Aufruf
+an und fragt die Zustimmung des Menschen ab.
+
+Der Übergang vom Dialog zur fachlichen Wirkung lässt sich am
+Diktateingang erklären: Der Mensch äußert einen Präzisierungswunsch;
+der Steward fasst ihn als Eingabe und startet nach Zustimmung den
+zuständigen Workflow. Dessen Änderungsvorschlag wird am Ingest-Gate
+vorgelegt. Der Steward fragt die Entscheidung ab und überträgt sie mit
+dem zustimmungspflichtigen Einreichungswerkzeug in eine
+Entscheidungsdatei. Geprüft werden dabei die betroffenen Kennungen,
+zulässige Optionen, vollständige Einträge und bei Ablehnung eine
+Begründung. Für diesen Eingang verwenden Steward und Review-Oberfläche
+Dateien mit demselben Schema, die über dieselbe Ladefunktion in die
+Gate-Antwort eingehen. Die Einreichung kann unmittelbar die
+Wiederaufnahme anstoßen. Ein bloß besprochener Vorschlag ändert den
+Core noch nicht; ohne eingereichte Antwort bleibt der Lauf pausiert.
+Fall F2 in Abschnitt~\ref{sec:eval-resume} dokumentiert eine solche
+Aufgabe, ohne damit jede Dialogvariante zu prüfen.
+
+Die Kontrolle verteilt sich auf drei Ebenen: Der Systemauftrag
+beschreibt das erwartete Dialogverhalten; die Werkzeugdefinitionen
+begrenzen die angebotenen Fähigkeiten; Werkzeug-, Workflow- und
+Speicherlogik prüfen die jeweiligen Aufrufe und Zustandsänderungen.
+Die Aufforderung an den Agenten, nachzufragen, ist daher von einer
+technischen Prüfung zu unterscheiden. Der Werkzeugkatalog bietet
+keinen unmittelbaren Core-Schreibzugriff. Eine umfassende Untersuchung
+möglicher Umgehungswege oder der Bedienqualität erfolgte nicht.
+
+Die Handoff-Orchestrierung wurde in einem isolierten Test mit
+skriptgesteuerten Modellantworten erprobt, aber nicht für den Steward
+übernommen. Sie übergibt die Aufgabenbearbeitung an einen anderen
+Agenten \cite{msmaf2026handoff}; beim gewählten Werkzeugmodell bleibt dagegen
+der Steward der dialogführende Agent. Der Test belegt die technische
+Übergabe, keine Überlegenheit einer der beiden Steuerungsformen.
+Zusätzliche Dienste für dauerhaftes Agentengedächtnis wurden nicht
+eingebunden; die Sitzungskontinuität wird durch die beschriebene
+Speicherung gedeckt. Wie die fachlichen Wirkungen der aufgerufenen
+Abläufe gespeichert und nach außen übertragen werden, behandelt der
+folgende Abschnitt.

@@ -1,0 +1,202 @@
+% M27, 13.09.2026: Einleitung aus dem konsolidierten Hauptteil.
+% Overleaf-Ziel: Kapitel/01/01-Einleitung.tex (vollständige Datei ersetzen).
+% Quellen und Fragenzuordnung: M27-Umsetzung-2026-09-13.md.
+% Allgemeine Motivation und explorative Entstehung sind getrennt;
+% kein vorab festgelegtes Gesamtdesign, kein Effizienzversprechen.
+
+\chapter{Einleitung}
+\label{chap:einleitung}
+
+\section{Motivation und Problemstellung}
+\label{sec:einleitung-motivation}
+
+In den frühen Phasen eines Softwareprojekts wird geklärt, welches
+Problem ein System lösen soll, welche Funktionen benötigt werden und
+welche Randbedingungen seine Gestaltung bestimmen. Diese Informationen
+geben der weiteren Entwicklung eine Richtung. Ihre Qualität ist deshalb
+auch für spätere Arbeiten relevant. Kasauli et al. beschreiben in einer
+Mehrfachfallstudie mit sieben Unternehmen der großskaligen agilen
+Systementwicklung das Risiko umfangreicher Nacharbeit, wenn etwa
+Leistungs- oder Gebrauchstauglichkeitsprobleme erst spät bearbeitet
+werden. Zugleich arbeiten sie einen Zielkonflikt heraus: Fehlende
+Anforderungsinformationen können die Entwicklung verzögern, während
+eine übermäßig detaillierte Ausarbeitung ebenfalls Zeit beansprucht
+\cite[S.~1, 19]{kasauli2021largescaleagilere}.
+Für die vorliegende Untersuchung motiviert dies eine Informationsführung,
+die frühe Klärung unterstützt und spätere Erkenntnisse aufnehmen kann.
+
+Ein Gespräch zu Projektbeginn liefert dafür eine mögliche Quelle.
+Es enthält Wünsche, Begründungen, offene Fragen und erste
+Lösungsvorstellungen, die zunächst eingeordnet und miteinander in
+Beziehung gesetzt werden müssen. Die anschließende Planung benötigt
+unterschiedliche Ergebnisse: Anforderungen beschreiben benötigtes
+Verhalten und Qualitäten, Architekturinformationen betreffen die technische Gestaltung,
+und Arbeitspakete bereiten die Umsetzung vor. Werden Inhalte dabei
+verdichtet oder umformuliert, stellt sich die Frage, auf welchen
+Gesprächsaussagen die Ergebnisse beruhen. Kommen später Ergänzungen oder
+Korrekturen hinzu, muss außerdem erkennbar bleiben, welche bestehenden
+Inhalte sie betreffen und wie mit ihnen weitergearbeitet wird.
+
+Große Sprachmodelle, im Folgenden \emph{Large Language Models} (LLMs),
+eröffnen Möglichkeiten, solche sprachlich vorliegenden Informationen
+zu verarbeiten. Die systematische Literaturübersicht von Cheng et al.
+dokumentiert Anwendungen generativer KI insbesondere bei der Erhebung,
+Analyse und Spezifikation von Anforderungen. Die fortlaufende
+Anforderungsverwaltung wird in dem untersuchten Literaturbestand
+seltener behandelt; zugleich werden Grenzen der Reproduzierbarkeit,
+Verlässlichkeit und praktischen Erprobung deutlich
+\cite[S.~141, 153, 165]{cheng2026generative}.
+Ein geeigneter Untersuchungsgegenstand ist damit die Verbindung von
+inhaltlicher Verarbeitung und weiterführender Bearbeitung im
+Projektzusammenhang.
+
+LLM-basierte KI-Agenten betten die Modellverarbeitung in
+zielgerichtete Handlungen ein. Sie können beispielsweise Teilaufgaben
+bearbeiten, Werkzeuge auswählen oder Rückmeldungen in weitere Schritte
+einbeziehen. Mehrere spezialisierte Agenten lassen sich dazu über eine
+Orchestrierung verbinden, also über eine Koordination ihrer Aufgaben
+und Informationsflüsse. He et al. beschreiben entsprechende Ansätze
+auch für die Bearbeitung mehrerer Aufgaben der Anforderungsentwicklung,
+von der Erhebung über die Prüfung bis zur Spezifikation
+\cite[S.~124:4, 124:6]{he2025llmbasedmultiagent}.
+Für ein daraus aufgebautes System muss jedoch festgelegt werden,
+welche Entscheidungen Agenten treffen dürfen, wie Ergebnisse geprüft
+werden und wann sie in den verbindlichen Projektbestand eingehen.
+
+Hier setzt die Arbeit an. Sie untersucht, wie agentische Verarbeitung
+so in einen Gesamtprozess eingebunden werden kann, dass aus
+Projektkommunikation fachliche Ergebnisse entstehen und deren Herkunft,
+Beziehungen und Änderungen untersucht werden können. Der in
+Abschnitt~\ref{sec:forschungsstand-positionierung} ausgeführte
+Forschungsvergleich ordnet diesen Untersuchungsbedarf gegenüber
+bestehenden Ansätzen ein. Im Mittelpunkt steht die konkrete Verbindung
+von Quellenbezug, Projektzustand und kontrollierter Fortschreibung.
+
+\section{Zielsetzung und Forschungsfragen}
+\label{sec:einleitung-forschungsfragen}
+
+Ziel ist die Entwicklung und Untersuchung eines Agentensystems, das
+Projektinformationen in Anforderungen, Architekturinformationen und
+Arbeitspakete überführt und bei weiteren Eingaben auf vorhandene
+Ergebnisse zurückgreift. Der betrachtete Ausschnitt des
+\emph{Software Development Lifecycle} (SDLC), also des Lebenszyklus
+eines Softwaresystems, umfasst damit die Informationsarbeit für
+Anforderungsanalyse, frühe Architekturplanung und die Vorbereitung der
+Umsetzung. Microsoft Agent Framework (MAF) ist der gesetzte technische
+Rahmen für die Realisierung.
+
+Das Ausgangsszenario macht diese Aufgabe konkret: Ein
+Kick-off-Transkript behandelt die Planung einer App für eine
+Einrichtung für Menschen mit Beeinträchtigungen. Die App soll
+Betreuenden unter anderem Wissen über die individuelle Kommunikation
+betreuter Personen zugänglich machen. Diese zu planende Anwendung ist
+vom Forschungsartefakt zu unterscheiden: Untersucht wird das
+Agentensystem, das ihre Planungsinformationen verarbeitet.
+Abschnitt~\ref{sec:ausgangslage-entwicklungsbefunde} erläutert das
+Ausgangsmaterial und den Projektkontext.
+
+Die Hauptforschungsfrage lautet:
+\begin{quote}
+\emph{Wie können KI-Agenten mittels Microsoft Agent Framework in den
+frühen Phasen des Software Development Lifecycle eingesetzt werden?}
+\end{quote}
+
+Für die Bearbeitung werden drei Teilfragen unterschieden:
+\begin{description}
+  \item[TF1:] Welche Gestaltungsprobleme und Designanforderungen ergeben
+  sich aus dem angestrebten Einsatz und der explorativen Entwicklung
+  des Agentensystems?
+  \item[TF2:] Wie lassen sich diese Anforderungen durch die Verteilung
+  von Aufgaben und Entscheidungen zwischen Agenten, Ablaufsteuerung
+  und menschlicher Mitwirkung adressieren und mit MAF realisieren?
+  \item[TF3:] Welche Eigenschaften, Zielkonflikte und Grenzen zeigen
+  die ausgewählten Untersuchungen der Inhaltsverarbeitung, der
+  nachvollziehbaren Fortschreibung und der technischen
+  Kontrollmechanismen?
+\end{description}
+
+Die Teilfragen gliedern den Erkenntnisweg der Arbeit. TF1 wird anhand
+der ausgewählten Entwicklungsbefunde und der Anforderungsherleitung
+bearbeitet, TF2 anhand der Architektur und ihrer Realisierung.
+TF3 richtet sich auf die empirischen und technischen Nachweise der
+Evaluation. Tabelle~\ref{t:methodischer-zugang-teilfragen} konkretisiert
+die jeweiligen methodischen Zugänge;
+Kapitel~\ref{chap:diskussion-fazit} führt die Antworten zusammen.
+
+\section{Vorgehen, Beitrag und Abgrenzung}
+\label{sec:einleitung-vorgehen-beitrag}
+
+Die Arbeit verfolgt einen explorativen, artefaktzentrierten Ansatz mit
+Elementen der Design Science Research, also einer Forschung durch die
+Gestaltung und Untersuchung eines Artefakts. Zu Beginn stand ein
+einfaches technisches Ziel: Ein Transkript sollte durch KI-Agenten mit
+MAF verarbeitet werden, sodass daraus ein GitHub-Issue als operative
+Arbeitsaufgabe entsteht. Die spätere Erweiterung um Rückkopplung und
+Wiederverwendung gab Anlass, auch die weitere Bearbeitung vorhandener
+Ergebnisse zu untersuchen. Die konkrete Aufgabenverteilung,
+Informationsstruktur und Ablaufsteuerung waren dabei zunächst offen.
+Sie entstanden schrittweise aus Prototypen, beobachteten Problemen und
+Gestaltungsentscheidungen. Kapitel~\ref{chap:forschungsmethodik}
+erläutert die wissenschaftliche Einordnung dieses Vorgehens.
+
+Die Rekonstruktion der Entwicklung konzentriert sich auf Beobachtungen,
+die tragende Anforderungen und Architekturentscheidungen erklären.
+Diese formative Untersuchung dient der Begründung des Entwurfs.
+Die anschließende Evaluation charakterisiert ausgewählte Eigenschaften
+des realisierten Systems. Hierfür werden Inhaltsausgaben mit
+Referenzaussagen verglichen, gespeicherte Zwischenstände und
+Fortschreibungsfälle ausgewertet sowie technische Kontrollmechanismen
+an definierten Prüffällen untersucht. Die jeweiligen System- und
+Auswertungsstände werden getrennt ausgewiesen. Entwicklungsbeobachtungen
+und technische Implementierung bilden somit jeweils andere Belege als
+eine vergleichende Inhaltsmessung.
+
+Der Beitrag liegt in der begründeten Integration dieser Aufgaben in
+einem ausführbaren Forschungsartefakt und in der Untersuchung seiner
+Möglichkeiten und Grenzen. Die Architektur verbindet semantische
+Modellarbeit, etwa die Interpretation und fachliche Einordnung von
+Aussagen, mit expliziten Workflows. Diese legen die Verarbeitungsschritte
+und ihre Übergänge fest. Regelprüfungen sichern formal prüfbare
+Bedingungen; menschliche Entscheidungen bestimmen die fachliche
+Übernahme in den Fortschreibungspfaden. Strukturierte Zwischenstände
+und ein über einzelne Ausführungen hinaus geführter Projektbestand
+machen Herkunft und Änderungen zu Gegenständen der Prüfung.
+Die MAF-Realisierung zeigt, wie die Frameworkmechanismen und die
+projektseitig entwickelten Informations- und Kontrollstrukturen
+zusammenwirken.
+
+Die Untersuchung konzentriert sich auf einen begrenzten Projekt- und
+Bedienkontext mit ausgewählten Quellen, Verarbeitungsläufen und
+Prüffällen. Die Implementierung der geplanten App und die nachfolgenden
+SDLC-Phasen gehören nicht zum Untersuchungsumfang. Die Evaluation
+liefert zudem keinen Nachweis einer allgemeinen Überlegenheit gegenüber
+anderen Agentenarchitekturen oder Frameworks. Tokenangaben
+charakterisieren den technischen Aufwand der untersuchten Ausführungen;
+eine Verringerung der gesamten Projektkosten oder des menschlichen
+Prüfaufwands wird damit nicht nachgewiesen. Nachvollziehbarkeit,
+Inhaltserhaltung und technische Kontrolle werden als unterschiedliche
+Eigenschaften bewertet.
+
+\section{Aufbau der Arbeit}
+\label{sec:einleitung-aufbau}
+
+Kapitel~\ref{chap:grundlagen-forschungsstand} erläutert die fachlichen
+und technischen Grundlagen und ordnet verwandte Forschungsansätze ein.
+Kapitel~\ref{chap:forschungsmethodik} beschreibt, wie die explorative
+Entwicklung und die Evaluation zur Beantwortung der Forschungsfragen
+beitragen.
+
+Die Kapitel~\ref{chap:explorative-problemklaerung} bis
+\ref{chap:maf-realisierung} bilden den zusammenhängenden
+Gestaltungs- und Realisierungsbogen:
+Kapitel~\ref{chap:explorative-problemklaerung} leitet aus Nutzungsziel
+und Entwicklungsbefunden die Designanforderungen her.
+Kapitel~\ref{chap:loesungsarchitektur} erklärt die daraus entwickelte
+Architektur und ihre Funktionsweise.
+Kapitel~\ref{chap:maf-realisierung} vertieft die dafür relevanten
+Realisierungsentscheidungen mit MAF.
+
+Kapitel~\ref{chap:evaluation} berichtet die ausgewählten Untersuchungen
+und ihre Ergebnisse. Kapitel~\ref{chap:diskussion-fazit} führt diese mit
+der Gestaltungsbegründung zusammen, beantwortet die Forschungsfragen
+und diskutiert Beitrag, Grenzen und weiterführende Untersuchungen.

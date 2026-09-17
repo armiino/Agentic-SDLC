@@ -1,0 +1,377 @@
+% P10-Evaluationsfeinschliff, 16.09.2026: Aussagegrenzen und Anforderungsbilanz; keine neuen Messwerte.
+% B-59, 15.09.2026: datierte Ledger-Nachauswertung, Stützung und Reichweite.
+% Beleg: thesis-evidence/w2/ledger-repetitions-20260915/ (Originale unverändert).
+% B-58, 15.09.2026: Referenzzahlen nach Fall benannt; Werte unverändert.
+% P10-4c, 14.09.2026: Ledger-Herleitung und Nachweisanschlüsse präzisiert.
+% M19 (12.09.2026): Leserführung und präzise Ergebnisdarstellung;
+% Messwerte und historische Nachweisgrenzen bleiben erhalten.
+% M02 (10.09.2026), B-14: Inputverhältnis F/Ledger rund 78 Prozent.
+% HERKUNFT: thesis-evidence/w2/token-usage-correction-20260910.json.
+% ============================================================
+% §7.3 Ergebnisqualität der Ledger-Kette — v02 (Claude, 08.09.)
+% NACHREVIEW-STAND: konsolidierte Matchurteile der Adjudikations-
+% runde 08.09. (8 Änderungen: Ledger 025/062/086/105/107,
+% F 025/089/107; Auslegung G-IE-105 = none beidseitig).
+% Struktur: 7.3.1 Ergebnisqualität · 7.3.2 Lücken/Hinweise (a/b/c)
+% · 7.3.3 Stufenanalyse · 7.3.4 F-Einordnung. Nenner 109 / Gold v2.
+% Leitplanken (Auftrag 08.09.): Hinweis ≠ Erkennung ≠ Behebung ·
+% Szenario = bedingte Rechnung · Claim-Zahl ≠ Qualität · keine
+% Wichtigkeitsskala aus Lückentypen · kein Gesamtsieger.
+% ============================================================
+% HERKUNFT: Konsolidierter Auswertungsstand + alle abgeleiteten
+% Zahlen = runs/w2-nachreview-konsolidierung.json (Beziehungstabelle
+% je Gold-ID; Kopie thesis-evidence/w2/eval/); Entscheidungsrunde =
+% kapitel-7/ADJUDIKATION-Auftrag-Kapitel-7-Nachreview.md (beauftragte
+% KI-Adjudikation 08.09., getrennt von der 8+3-Historie); Reviews =
+% kapitel-7/Review-Coverage-109-Aussagen-8189ea.md + Review-F-
+% Coverage-und-Ledger-Vergleich-6540e2.md; Basis-Urteilsblätter =
+% runs/w2-goldv2-eval-ledger-8189ea.json + …-ledger-e30646.json +
+% …-f-6540e2.json + …-f-12d046.json (Kopien thesis-evidence/w2/eval/);
+% Stufenanalyse = runs/w2-z1-stufenanalyse-8189ea.json (A-Urteile der
+% 5 geänderten IDs unter denselben Auslegungen nachgezogen, s.
+% konsolidierung.json §aBAbgleich); Signale = runs/ledger/
+% 20260905_164650_8189ea/step-01d-unused-unit-ledger-compare/
+% output.json; Design-Gruppe = 37 Gold-IDs mit sämtlichen Quell-Units
+% ab AU-0117. Läufe: Ledger 20260905_164650_8189ea (Interview) /
+% 20260905_164206_e30646 (meeting-2); F 20260906_143052_6540e2 /
+% 20260906_141518_12d046. Meeting-2-Urteile unverändert
+% (Konsistenzprüfung 9 IDs / 4 Muster, 0 Änderungen).
+% ------------------------------------------------------------
+
+\section{Ergebnisqualität der Ledger-Kette}
+\label{sec:eval-ledgerqualitaet}
+
+Dieser Abschnitt untersucht den maschinellen Claim-Bestand der
+Ledger-Kette vor dem Human-Gate (\emph{Pre-Gate}) gegen den in
+Abschnitt~\ref{sec:eval-design} beschriebenen Referenzbestand (Gold~v2: 109 bzw.\ 31
+Referenzaussagen). Zunächst werden erhaltene Inhalte und Lücken
+bestimmt (Abschnitt~\ref{sec:eval-kernzahlen}). Danach folgen die
+Zuordnung zu Prüfhinweisen und die Lokalisierung von Verlusten in der
+Kette (Abschnitte~\ref{sec:eval-luecken} und~\ref{sec:eval-stufen}).
+Abschließend wird die freie Vergleichskonfiguration F eingeordnet
+(Abschnitt~\ref{sec:eval-armf}). Die Abdeckungswerte der Hauptläufe
+entsprechen dem konsolidierten Stand vom 08.09.; die ergänzende
+Ledger-Auswertung und die erneute Stützungsprüfung vom 15.09. sind
+jeweils gekennzeichnet (Abschnitt~\ref{sec:eval-design}). Sämtliche
+Bewertungen betreffen unveränderte historische Ausgaben. Ein externer Akzeptanzmaßstab für eine ausreichende Abdeckung wurde
+nicht festgelegt; die Zahlen beschreiben den erreichten Stand.
+
+\subsection{Zwei Fälle, zwei Aufgabenprofile}
+\label{sec:eval-kernzahlen}
+
+Tabelle~\ref{t:eval-kernzahlen-v2} stellt beide Quellenfälle
+nebeneinander. Der \emph{Treue-Fall} (meeting-2) ist ein kompaktes,
+klar strukturiertes Meeting; der \emph{Stressfall}
+(Interview-Einrichtung) ist ein zusammengeführter Interview- und
+Ausarbeitungsverlauf über mehrere Gesprächsphasen, dessen
+Referenzbestand zu gut einem Drittel aus späten
+UI-Detailfestlegungen besteht (37 von 109 Aussagen mit sämtlichen
+Quell-Units im Design-Abschnitt).
+
+\input{tables/Chap7-v02/chap7.3table1}
+
+\emph{Quellenbindung und Inhaltsurteil.} In den beiden
+Hauptausgaben wurde bei keinem der 67 Claims eine Quellenverfälschung
+festgestellt. Vollständig durch die angegebenen Units gestützt sind
+nach dem jeweiligen Prüfstand 20/20 Claims im Treue-Fall und 45/47
+im Stressfall. Dessen frühere Bewertung von 47/47 wurde am 15.09.
+berichtigt: Bei zwei Claims liegt notwendiger Kontext außerhalb
+der referenzierten Units. Beispielsweise nennt ein Claim Animationen,
+verweist aber nur auf eine Antwort, deren Gegenstand erst aus der
+vorhergehenden Frage hervorgeht. Der Inhalt bleibt im Transkript
+auffindbar; die angegebene Textstelle trägt ihn allein nicht
+vollständig (\hyperref[anh:ledger-wiederholungen]{Anhang~D.11}).
+Quellengetragene Inhalte ohne Gold-Gegenstück (etwa Kontext- und
+Prozessaussagen) zählen verfahrensgemäß nicht als Fehler. Sie werden, soweit
+erhoben, separat als \emph{gold\_escapes} geführt. Die Korrektheitskennzahl
+misst damit Verfälschungsfreiheit gegenüber der Quelle (Definition,
+Erhebungsstand und dokumentierte Protokoll-Abweichung:
+Abschnitt~\ref{sec:eval-design}). Die
+technische Auflösbarkeit ist deterministisch geprüft: Sämtliche abgegebenen
+Einzelreferenzen lösen auf: beim Ledger 33/33 im Treue-Fall und
+87/87 im Stressfall, bei F entsprechend 44/44 und 208/208.
+In keinem der vier Läufe ist ein Claim referenzlos.
+Eine nach der Gold-Revision geprüfte Zählung quellengetragener
+Inhalte außerhalb des Referenzbestands liegt nur für den
+F-Treue-Fall vor (drei, alle gestützt); für die übrigen Läufe
+wird keine konsolidierte Zählung berichtet --- ein historischer
+Altzähler des F-Stressfall-Blatts auf dem früheren Referenzstand
+wird nicht übernommen (Anhang~\ref{anh:evaluation}).
+
+\emph{Abdeckung.} Der Stressfall-Bestand deckt knapp die Hälfte der
+Referenzaussagen vollständig (0{,}495 strict), der Treue-Fall
+0{,}839. Dabei ist die ungewichtete Aussageabdeckung wörtlich zu
+nehmen: Jede Referenzaussage zählt gleich viel, und eine als
+unvollständig oder nicht abgedeckt gewertete Aussage bedeutet oft
+einen fehlenden Teilaspekt \emph{innerhalb} einer erkannten
+Funktion --- auch ein „none`` belegt nicht, dass ein komplettes
+Modul fehlt (Beispiel: das Kalendermodul ist erfasst, das
+Hinzufügen von Tageseinträgen nicht). Im Design-Abschnitt des
+Stressfalls sind 26 von 37 Referenzaussagen unvollständig
+abgedeckt, im übrigen Referenzbestand 29 von 72 --- die späten
+UI-Festlegungen bilden einen überproportionalen Schwerpunkt der
+beobachteten Lücken, erklären die Differenz zum Treue-Fall aber
+nicht allein.
+
+\emph{Prüfhinweise.} Im Stressfall ließ sich 37 der 55 Lücken
+mindestens ein Hinweis zuordnen. Zusammen mit den 54 vollständig
+abgedeckten Aussagen ergibt das eine Adressierbarkeit von
+$(54+37)/109 = 0{,}835$. Diese Kennzahl beschreibt das
+\emph{Prüfpotenzial}; sie misst weder zusätzliche Abdeckung noch
+menschliche Behebung. Im Treue-Fall blieben alle fünf Lücken ohne
+Hinweis, weil sie sämtlich in bereits verwendeten Units liegen.
+
+\emph{Ergänzende Wiederholungsprüfung.} Zwei weitere archivierte
+Stressfall-Ausgaben erreichen 57 beziehungsweise 54 Volltreffer.
+Zusammen mit dem Hauptlauf ergibt sich eine beobachtete Spanne von
+49{,}5--52{,}3\,\% Full Coverage bei einem Median von 49{,}5\,\%.
+Die ähnlichen Gesamtwerte verdecken Unterschiede im erhaltenen
+Inhalt: Nur 43 Referenzaussagen sind in allen drei Ausgaben
+vollständig enthalten; bei 25 wechselt der Status zwischen
+vollständig und nicht vollständig. Beide Zusatzläufe
+enthalten ausdrückliche Verbote für Nutzer, Daten zu löschen oder
+Accounts anzulegen. Diese fehlen im Hauptlauf. Dessen Entscheidung zur
+Auslagerung vertiefter Datenschutzplanung fehlt dagegen in den
+Zusatzläufen.
+Alle Quellenreferenzen sind technisch gültig; die Stützungsprüfung
+ergibt für die Zusatzläufe 44/47 und 38/41 vollständig gestützte
+Claims. Jeweils ein Claim schwächt zudem den Planungsstand der Quelle
+ab. Die drei Ausgaben beschreiben diesen Quellenfall unter den
+protokollierten Bedingungen. Hinweise, menschliche Behebung und
+allgemeine Zuverlässigkeit wurden damit nicht zusätzlich untersucht
+(\hyperref[anh:ledger-wiederholungen]{Anhang~D.11}).
+
+\subsection{Lücken und Prüfhinweise}
+\label{sec:eval-luecken}
+
+\textbf{a) Was fehlt inhaltlich?} Die 55 unvollständig
+abgedeckten Referenzaussagen des Stressfalls wurden retrospektiv
+nach dem jeweils \emph{fehlenden Bestandteil} typisiert
+(Tabelle~\ref{t:eval-lueckentypen}; qualitative Inhaltsbeschreibung,
+keine validierte Wichtigkeitsskala): 18-mal fehlt eine Funktion,
+Berechtigung oder ein fachlicher Ablauf, 18-mal Darstellung oder
+konkrete Bediengestaltung, 11-mal ein Zweck- oder Qualitätsziel,
+8-mal eine offene Frage oder technische Konkretisierung. Drei
+belegte Beispiele zeigen die Spannweite: Bei der Profilanlage
+fehlt nur der Bedienweg (Plus-Symbol unten samt Dialog --- die
+Funktion selbst ist erhalten); beim Berechtigungsmodell fehlt die
+kurze, fachlich gewichtige Verbotsklausel „User dürfen nichts
+löschen``; beim Kommunikationswissen fehlt die
+Qualitätszusage des jederzeit schnellen Nachschlagens. Eine kurze
+Formulierung kann fachlich wesentlich sein --- die Typen sagen
+nicht, dass Darstellungs- oder Zweck-Lücken unwichtig wären.
+
+\textbf{b) Welche Prüfansätze entstehen --- und welche erreichen
+die Vorlage?} Die deterministische Bilanz des Stresslaufs erfasste
+75 der 136 Quell-Units mit Bezug zu mindestens einem Kandidaten;
+61 blieben ohne Kandidatenbezug. Alle 61 wurden modellgestützt triagiert,
+davon 48 als potenziell relevant eingeordnet und gegen den
+Kandidatenbestand geprüft. Daraus entstanden 24 Vorschläge zum
+Anhängen als Beleg, 21 Einstufungen als mittelbar abgedeckt, ein
+Hinweis auf einen fehlenden Claim und zwei menschlich zu klärende
+Fälle. Die gespeicherten Begründungen machen diese Einordnungen
+nachlesbar. Die 24 Belegvorschläge waren am Messpunkt vor dem
+Human-Gate keine ausgeführten Ergänzungen. Die 48 Hinweise sind
+damit Verarbeitungsergebnisse, nicht 48 erkannte Inhaltslücken
+(Abschnitt~\ref{sec:eval-kontrollen} nutzt ihre Herkunft für die Kontrollbetrachtung).
+Als einem Hinweis zugeordnet gilt eine Lücke nach einer festen
+Regel: wenn die Hinweis-Unit in den Quell-Units der
+Referenzaussage vorkommt (Unit-Schnittmenge); eine einzige,
+dokumentierte semantische Zusatz-Zuordnung ergänzt diese Regel.
+
+18 der 48 Hinweise sind
+für mindestens eine tatsächliche Lücke relevant (signalbezogene
+Präzision 0{,}375); 37 der 55 Lücken tragen mindestens eine
+Zuordnung (ohne die semantische Ergänzung 36; Silent-Miss dann
+19/55 statt 18/55).
+
+In die rekonstruierte Adjudikations-Queue (45
+Positionen: 18 Claim-Reviews, 27 Unit-Hinweise) gelangen davon
+\emph{29 Lücken} --- acht weitere verlieren ihre Vorlage, weil ihr
+einziger Hinweis das Prüfergebnis \texttt{already\_covered\_indirectly}
+trägt, also „indirekt bereits abgedeckt``, und der Queue-Aufbau
+solche Hinweise verwirft. Die Einzelprüfung zeigt: Die Einstufungen
+treffen das Kernthema, übergehen aber die fehlende Qualifikation.
+Diese Lücken entfallen damit aus dem Unit-Hinweiskanal; andere
+Zugänge zur Prüfung sind dadurch nicht ausgeschlossen. Nur ein
+einziges Queue-Item beanstandet ein Fehlen \emph{explizit} samt
+Formulierungsvorschlag (\texttt{missing\_claim} zur nicht
+verwendeten Unit AU-0124, Profil-Detailansicht --- es trägt zwei
+direkte Gold-Bezüge und die eine semantische Zuordnung); die
+übrigen Hinweise schlagen beruhigendere Einstufungen vor.
+Nur ein Teil der Hinweise verweist somit auf tatsächliche Lücken;
+ihre Einstufung benennt das Fehlen meist nicht ausdrücklich.
+
+Ein zweiter Zugang existiert über die 18
+Claim-Reviews: Deren gespeicherte Zitate enthalten in Einzelfällen
+genau den im Aussagentext fehlenden Inhalt, etwa die Profilanlage
+per Plus-Symbol und Dialog. Dieser andere Zugang erhöht die
+Unit-Signal-Zählung nicht; eine tatsächliche Nutzung der Belege zur
+inhaltlichen Ergänzung ist nicht nachgewiesen.
+
+Beispiel für einen \emph{stillen Detailverlust in einer
+verwendeten Unit}: AU-0102 (einheitliche Flutter-/Dart-Versionen)
+wurde von einem Claim referenziert, der die
+Versionsvereinheitlichung trägt --- die konkreten Versionsnummern
+3.13.9/3.1.5 ließ er fallen; da die Unit als „verwendet`` galt,
+entstand kein Hinweis. Alle 18 stillen Lücken des Stressfalls
+(und alle fünf des Treue-Falls) gehören zu dieser Klasse.
+
+\textbf{c) Was wäre unter idealisierter Ergänzung möglich?} Als
+ausdrücklich hypothetische Rechnung: Würden alle 29 in der Queue
+mit einem Unit-Hinweis verknüpften Lücken vollständig geschlossen
+--- was voraussetzt, dass der gesamte fehlende Gehalt erkannt
+wird, der erforderliche Quellenkontext zugänglich ist, eine
+zulässige Bearbeitung den Aussagentext vollständig ergänzt und
+alle bisherigen Volltreffer erhalten bleiben ---, ergäbe sich eine
+bedingte Full Coverage von $(54+29)/109 = 0{,}761$. Das ist keine
+gemessene Post-HITL-Abdeckung, keine Wahrscheinlichkeit und keine
+bewiesene Obergrenze der Behebbarkeit: Mehrere zugeordnete Units
+tragen den fehlenden Gehalt nicht allein (AU-0024 trägt die
+Nutzenaussagen zweier Lücken nicht; AU-0118 trägt bei der
+appweiten Usability-Aussage zunächst nur den
+Eingabefeld-Kontext). Über die 26 nicht angesetzten Lücken trifft
+die Rechnung keine Aussage zu weiteren Zugängen; für einzelne
+dieser Restfälle sind Claim-Review-Kontexte belegt, eine Vorlage
+aller 26 ist nicht gezeigt. Der Zahlenwert stimmt
+zufällig mit der Touched Coverage überein; die beiden 29er-Mengen
+sind nicht identisch (das Szenario zählt 13 teilweise und 16
+nicht abgedeckte Lücken).
+
+\subsection{Begrenzte Stufenanalyse: Wo entsteht der Verlust?}
+\label{sec:eval-stufen}
+
+Für den Stresslauf wurde derselbe Referenzmaßstab an zwei
+Beständen desselben Laufs angelegt: an den 54 Extraktions-Kandidaten
+(Bestand~A, \texttt{step-01}) und am kanonischen Endbestand
+(Bestand~B, 47 Claims). Die A-Urteile der fünf in der
+Nachreview-Runde geänderten Referenzaussagen wurden unter
+denselben Auslegungen nachgezogen (alle fünf folgen ihrer
+B-Klasse; Belege im Konsolidierungs-Artefakt).
+Tabelle~\ref{t:eval-stufen} zeigt den Übergang; jede
+Referenzaussage belegt genau eine Zelle.
+
+\input{tables/Chap7-v02/chap7.3table2}
+
+Im untersuchten Übergang behielten 107 der 109 Referenzaussagen
+ihre Abdeckungsklasse; Verbesserungen traten nicht auf. „Gleiche
+Klasse`` ist dabei die präzise Aussage --- ein
+partial-zu-partial-Übergang kann Veränderungen innerhalb der
+Klasse enthalten. Zwei zuvor vollständig enthaltene Aussagen
+wurden nur noch teilweise beziehungsweise nicht mehr abgedeckt
+--- beide betrafen dieselbe kanonische Zusammenführung: Der
+Kandidat DEC-019 enthielt wörtlich „User können Inhalte
+hinzufügen, aber nichts löschen``; der aus DEC-019 und DEC-020
+zusammengeführte kanonische Claim übernahm Rollen, Admin-Rechte
+und Registrierungsverbot, ließ diese Klausel jedoch fallen, und
+kein anderer Claim des Endbestands trägt sie. Der referenzielle
+Übergangscheck meldete dabei keinen Fehler, denn der Claim
+referenziert beide Kandidaten korrekt --- für diese beiden
+Inhalte war eine gültige Kandidatenverknüpfung somit kein
+ausreichender Nachweis semantischer Erhaltung. Die Mengenänderung
+von 54 auf 47 Claims ist dagegen kein Verlustnachweis: Sie geht
+vollständig auf sieben Zweiergruppen zurück, von denen sechs ohne
+Klassenverlust der geprüften Referenzinhalte blieben (was
+semantische Verlustfreiheit im Detail nicht beweist).
+
+Damit ist die Abdeckungsgrenze der Kette lokalisiert: 53 der 55
+Lücken des Endbestands bestanden bereits im Extraktions-Bestand~A
+und wurden im untersuchten weiteren Verlauf nicht vollständig
+geschlossen; zwei zusätzliche Abdeckungsverluste entstanden
+zwischen A und B. Die gespeicherten Zwischenstände machen genau
+diese Lokalisierung möglich --- das ist die belegte Eigenschaft;
+verhindert hat der referenzielle Übergangscheck den semantischen
+Verlust nicht. Der Befund beschreibt den Gesamtübergang dieses
+einen Laufs (Kanonisierung einschließlich Übergangs-Check); eine
+Zuschreibung an einen einzelnen Modellaufruf tragen die Artefakte
+nicht.
+
+\subsection{Ergänzende Einordnung: die freie Vergleichsbedingung F}
+\label{sec:eval-armf}
+
+Als Kontrastfolie verarbeitete eine Einzel-Agent-Konfiguration~F
+dieselben Fälle: gleiche Quelle, ausdrücklich beauftragte
+konsolidierte, atomare, kanonische Aussagen mit erhaltenen
+Qualifikationen und vollständiger Quellenbilanz
+(\texttt{used}/\texttt{non\_relevant}/\texttt{unresolved} je
+Unit), freie Arbeitsweise mit genutzter Vorprüfung über mehrere
+Modellrunden --- damit geht F über einen einzelnen Roh-Extraktionsaufruf hinaus.
+Anders als der frühe Erzeugungsansatz aus
+Abschnitt~\ref{sec:evidenzgebundene-wissensgewinnung} verlangt F
+bereits explizite Quellenreferenzen und eine Bilanz. Der Vergleich
+prüft somit die bezeichneten späteren Konfigurationen, nicht
+unverändert den damaligen Ausgangsversuch.
+
+F erreichte im Stressfall die höhere direkte Abdeckung
+(0{,}633 strict / 0{,}844 touched) bei rund 78\,\% der Eingabe-
+und 48\,\% der Ausgabe-Tokens des Ledger-Laufs. Die inhaltliche
+Korrektheit beträgt 0{,}991; es gilt dieselbe Kennzahl wie in
+Tabelle~\ref{t:eval-kernzahlen-v2}. Ihre claimbezogenen Quoten sind
+wegen der unterschiedlichen Granularität jedoch nur eingeschränkt
+vergleichbar: 47 gebündelte Claims stehen 117 feingranularen Aussagen
+gegenüber. Aus 1{,}0 gegenüber 0{,}991 folgt deshalb kein belastbarer
+genereller Qualitätsvorsprung. Die 117 Aussagen sind eine
+Bestandsgröße, keine Qualitätskennzahl.
+
+Der gepaarte Vergleich der beiden Stressfall-Hauptläufe über dieselben
+109 Referenzaussagen ergibt: 49 sind bei beiden vollständig erhalten,
+20 nur bei F, fünf nur beim Ledger, 35 bei keinem (vollständige
+ID-Mengen im Anhang). Die 20 nur von F gedeckten Fälle sind
+\emph{nicht} überwiegend UI-Details: Nach dem beim Ledger
+fehlenden Bestandteil verteilen sie sich auf acht funktionale
+beziehungsweise rollenbezogene, fünf Darstellungs-, vier
+Zweck-/Qualitäts- und drei offene/technische Aspekte ---
+beispielsweise trägt F das ausdrückliche Verbot, dass normale
+User hinzugefügte Daten löschen (ein anderer Gegenstand als das
+bei beiden fehlende Verbot der Account-Anlage), und die
+leicht zugänglichen Datenschutzeinstellungen. Umgekehrt erhält
+der Ledger unter anderem die Klärung der Dokumentationsübernahme
+mit der Einrichtungsleitung und die Entscheidung, die vertiefte
+Datenschutzkonzeption als Folgeprojekt auszulagern --- beides
+fehlt im F-Hauptlauf. Diese Beispiele kennzeichnen Unterschiede
+dieses Laufpaars. In beiden zusätzlichen Ledger-Ausgaben ist das
+Löschverbot enthalten, die Auslagerung der Datenschutzkonzeption
+dagegen nicht (Abschnitt~\ref{sec:eval-kernzahlen}). Daraus lassen
+sich keine beständigen inhaltlichen Stärken der Konfigurationen
+ableiten; für F liegt keine entsprechende Wiederholungsprüfung vor.
+Die Lückenprofile der Hauptläufe ähneln sich strukturell
+(Tabelle~\ref{t:eval-lueckentypen}): Beide Konfigurationen
+verlieren überwiegend Qualifikationen, Gestaltungsmerkmale und
+Zweckaussagen innerhalb erkannter Themen.
+
+\input{tables/Chap7-v02/chap7.3table3}
+
+\emph{Umgang mit eigenen Lücken.} F meldete über den vorgesehenen \texttt{unresolved}-Kanal keine
+einzige Lücke (bei 40 realen Lücken; Bilanz formal vollständig,
+101 verwendete und 35 als nicht relevant eingestufte Units). Die
+17 mitgelieferten Unsicherheitsmarker kennzeichnen bestehende
+Aussagen als unsicher, benennen aber keine fehlenden Inhalte; die
+Quellen-IDs eröffnen menschliches Nachlesen, eine systematische
+Vorlage der fehlenden Inhalte gibt es nicht. Die
+100-Prozent-Silent-Miss-Angabe gilt entsprechend nur für diese
+Signalregel und beweist keine dauerhafte Unauffindbarkeit.
+
+Im Ledger-Bestand konnten dagegen 37 der 55 unvollständig erfassten
+Referenzaussagen nachträglich mindestens einem Hinweis zugeordnet
+werden --- ein Ansatzpunkt für weitere Prüfung, weder eine
+explizite Lückenmeldung noch ein Nachweis tatsächlicher
+menschlicher Erkennung oder Behebung; die breitere
+Ledger-Zuordnung über Quell-Units ist keine bessere
+\emph{explizite} Fehlererkennung.
+
+Ein technischer Nebenbefund
+begrenzt zudem die Lesart einer vollkommen konsistenten
+F-Bilanz: Alle 208 Einzelreferenzen sind gültig, aber drei
+Claim--Unit-Kanten widersprechen sich zwischen Aussagen- und
+Bilanzseite (Anhang~\ref{anh:evaluation}); ein spiegelbildlicher
+Konsistenznachweis für den Ledger wurde nicht geführt.
+
+Direkte Abdeckung und Prüfpotenzial bleiben getrennte Größen; nicht
+beauftragte Dispositionen oder Facetten werden F nicht als Fehler
+zugerechnet, und die unterschiedliche Architektur (Einzel-Agent
+gegen mehrstufige Kette mit mehr Modellaufrufen und
+Zwischenprüfungen) bleibt Teil der Konfiguration --- der
+Vergleich isoliert keinen einzelnen Mechanismus kausal. Eine
+ergänzende Modellreihe (vier Modelle je Konfiguration; formale
+Fertigstellung und semantische Qualität getrennt betrachtet)
+findet sich im Anhang.

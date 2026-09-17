@@ -1,0 +1,56 @@
+# Requirements Dokument
+
+## Functional Requirements
+- **Login**: E‑Mail + Passwort mit Double‑Opt‑In. Optional SSO (Azure AD / Google) – nicht im MVP.
+- **Angebotserstellung**: Lesen von Produkt‑/Preis‑Daten aus SAP, Erstellung von Angeboten im Portal. Keine Sonderrabatte > Standard‑Rabatt im MVP.
+- **Rechnungs‑ und Bestellungs‑Download**: Kunden können ihre Rechnungen und Bestellungen im Portal einsehen und als PDF herunterladen.
+- **Rollen‑ und Berechtigungskonzept**: Minimalrollen Admin, Sales, Kunde. Zugriffskontrolle auf Angebote, Rechnungen und Admin‑Funktionen.
+- **Audit‑Trail**: Protokollierung von Angebots‑Erstellung, -Änderungen und -Zugriffen (wer, wann, was). Minimaler Audit‑Log für rechtliche Nachvollziehbarkeit.
+- **API Layer**: REST‑API mit OAuth‑Basiertem Auth‑Mechanismus (Fallback API‑Key). Lesender Zugriff auf SAP‑Daten, Bereitstellung für Frontend.
+- **Backup & Disaster Recovery**: Tägliche Backups, Wiederherstellungs‑SLAs definiert, EU‑Only Datenhaltung.
+- **Compliance‑Checks**: Double‑Opt‑In, Lösch‑ und Aufbewahrungskonzept, keine personenbezogenen Daten in technischen Logs.
+- **KPI‑Erfassung**: Conversion Rate (Angebot → Bestellung) und Zeit bis Angebot.
+- **Mehrwährung & Internationalisierung**: EUR (Standard) + optional CHF für Schweizer Pilot; UI in DE/EN.
+- **PDF‑Template**: Rechtlich konforme Angebots‑ und Rechnungs‑PDFs mit Versionshinweis.
+
+## Non-functional Requirements
+- **Performance**: Antwortzeit < 2 s für Angebotserstellung unter 200 gleichzeitigen Nutzern.
+- **Scalability**: Horizontal skalierbare Managed Services, Fähigkeit bis 20 000 Nutzer zu wachsen (Phase 2).
+- **Security**: TLS 1.2+ für alle Verbindungen, OAuth‑2.0, getrennte Audit‑ und Application‑Logs, keine personenbezogenen Daten in Monitoring.
+- **Reliability**: Verfügbarkeit ≥ 99,5 % (inkl. Backup‑Restore‑Tests).
+- **Usability**: Web‑First UI, responsive Design, klare Fehlermeldungen, Support‑Kontaktformular.
+- **Maintainability**: Dokumentierte API‑Spezifikation (OpenAPI), Infrastruktur‑as‑Code (IaC) für Managed Services.
+- **Compliance**: DSGVO‑konform (EU‑Only Hosting, Double‑Opt‑In, Recht auf Löschung, Datenminimierung).
+
+## Constraints/Compliance
+- **Zeitplan**: MVP‑Release in 8 Wochen.
+- **Budget**: Keine neue Datenbank‑Instanz, Nutzung von Managed Services.
+- **Hosting**: EU‑Only Managed Service; Kosten‑Schätzung offen.
+- **Security Review**: Vollständige Security‑Review >6 Wochen, daher nur minimale Security im MVP (TLS, OAuth, Audit‑Log).
+- **API‑Gateway**: Warteliste 6 Wochen – MVP nutzt eigenständige API‑Instanz ohne zentrales Gateway (Risiko).
+- **SAP‑Verfügbarkeit**: Kritische Abhängigkeit, Wartungsfenster am Wochenende – Fallback‑Strategie nicht im MVP.
+- **Support**: Kein Ticket‑System, nur Kontaktformular (bewusste Einschränkung).
+- **Rabatt‑Freigabe**: Sonderrabatte >15 % nur in späteren Phasen (keine im MVP).
+- **Internationalisierung**: DACH‑Start, EU‑Later, USA‑Later (Datenschutz‑Implikationen).
+
+## Traceability
+| Requirement | Quelle |
+|--------------|--------|
+| Login mit Double‑Opt‑In | Anna (Zeile 1‑4) & Clara (DSGVO‑Hinweise) |
+| Angebotserstellung über SAP | Ben (SAP‑Daten) & Anna (Angebots‑Ziel) |
+| Rechnungsdownload | Anna (Rechnungen) |
+| Rollen‑Modell | Anna (Rollen) |
+| Audit‑Trail | Clara (Audit‑Pflicht) |
+| API Layer mit OAuth | Ben (OAuth‑Präferenz) |
+| Backup & DR | Clara (Backup‑Diskussion) |
+| DSGVO‑Compliance | Clara (DSGVO‑Themen) |
+| KPI‑Messung | Anna (Conversion Rate, Zeit bis Angebot) |
+| Mehrwährung (CHF) | Eva (Währung) |
+| UI‑Sprachen DE/EN | Anna (Deutsch/Englisch) |
+| PDF‑Export | Eva (PDF‑Fußnoten) |
+| No Sonderrabatte im MVP | Eva (Freigabe‑Prozess) |
+| No Ticket‑System | David (Support‑Bedarf) |
+| EU‑Only Hosting | Farid (Hosting‑Policy) |
+| 8‑Wochen‑MVP | Anna (Zeitplan) |
+
+*Alle Angaben leiten sich ausschließlich aus dem Transkript **input/transcripts/T9999_chaos.txt** ab.*

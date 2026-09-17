@@ -1,0 +1,257 @@
+% M16, 11.09.2026: Leserführung und Absatzlogik; Anforderungen und Anker erhalten.
+% ============================================================
+% §4.3 Beobachtbare Ausführung und explizite Informationsführung
+% — v04 (Claude)
+%
+% v04 (Review-Runde 2 + Tiefen-Checks):
+%   ② "gilt nur als erfolgt wenn nachweisbar" → instrumentierte-Pfade-
+%     Formulierung + Zustandswirkung (Kollege, berechtigt: Logging =
+%     Beobachtungsinstrument; nicht-geloggt ≠ nicht-passiert).
+%   ③ E43-03 beobachtungsnah + GOLD-FUND: tool-calls.jsonl zeigt
+%     toolStep 1 = fs_write OHNE vorherigen Read, evidence-Feld
+%     deklariert die Quellen trotzdem (Deklaration-ohne-Zugriff);
+%     Historien-Herkunft als Interpretation gekennzeichnet (Eingabe-
+%     kontext nicht als Rohdaten geloggt).
+%   ④ E43-04 ENTSCHÄRFT nach Metadaten-Check: Arme phasen-/wochen-
+%     versetzt (A=phase2_1/Mai, B=phase2B/13.06., C nicht lokalisiert),
+%     Modelle teils verschieden → "konstant gehalten" + "unveränderte
+%     Prompts" GESTRICHEN (Protokoll=Plan≠Ausführung — korrigiert auch
+%     meine v02-Verteidigung dieses Punkts). Freeze-Klärung notiert.
+%   (v03 = E-ID-Klammern eingefügt.)
+%
+% v02 (Review-Runde 1 — kritisch geprüft):
+%   ÜBERNOMMEN: ② "entspricht exakt" → "verdeutlicht … nun anhand des
+%     beobachteten Systemverhaltens" (unnötig absolut). ③ Herkunfts-
+%     Präzisierung — sein bester Punkt, trifft die Primärquelle besser
+%     als v01 (Note: "wahrscheinlich … mit der weitergereichten
+%     Historie" → Problem ist der fehlende EXPLIZITE Ausweis, nicht
+%     Unerkennbarkeit). Schluss-Vorschlag übernommen (Kap. 6 =
+%     Realisierung+Verifikation, Kap. 7 = Wirkung unter definierten
+%     Bedingungen — kein Vorgriff "verifiziert jede Einhaltung").
+%   ZURÜCKGEWIESEN: ① Anker im Fließtext — kollidiert mit der
+%     Autor-Entscheidung (b): Prosa ankerfrei, Anker in der
+%     Anhang-Zuordnungstabelle (Blaupause §5.1 lässt "Anhangtabelle"
+%     als Ankerform zu); Pauschalverweis kommt in 4.1 Absatz 4. Seine
+%     Ankerpflicht-Liste = deckungsgleich mit dem Dateikopf hier ✓.
+%   BEHALTEN mit Beleg: ④ "konstant gehaltene Laufbedingungen" +
+%     "unveränderte Prompts" — durch das Vergleichsprotokoll GEDECKT
+%     (wörtlich: "Einzige Variable: phase2ContextStrategy … Alle
+%     anderen Parameter sind über alle Vergleichs-Runs identisch",
+%     inkl. run-config-Fixierung; im Audit verifiziert).
+%
+% Grundlage: Kapitel-4-Blaupause §8 (Absatzfolge 1–8, A1+A2) ·
+% genese-dossier P1 + Z0–Z3 (AUDITIERT 31.08.) · Beispiel-Pivot-Muster
+% (Prosa-Form mit kursiven Absatz-Leitwörtern).
+%
+% Audit-Belege hinter den Kernaussagen (NICHT im Text — für die
+% Anhang-Ankertabelle; Priorität committeter Bestand):
+%   A1-Befund: Phase-1-Läufe im Run-Archiv (Eventlog ohne fs_write/
+%     request_approval trotz Toolcall-Ankündigung im Text; zusätzl.
+%     Bonus-Fall: Approval-Payload behauptete Prüfung aller Artefakte,
+%     gelesen wurde eines). Privatnotiz-Wortlaut: phase01-notes Z. 6.
+%   A2-Befund: Run 20260526_155811_f151d2 (Artefakt geschrieben OHNE
+%     fs_read auf context.md/Transkript; Diagnose: Historie lieferte
+%     Inhalte implizit).
+%   A/B/C: Vergleichsprotokoll fixierte EINE Variable (Kontextstrategie),
+%     alle übrigen Parameter konstant; feste Bewertungsrubrik; Beleg
+%     committet: thesis-evidence/D1-direct-vs-topic (Checklisten-
+%     Instrument robust ggü. freiem Review). KORREKTE Zuordnung:
+%     A=message_passing · B=artifact_state · C=independent_source_reads
+%     (Dossier-Fehler behoben; im Text FUNKTIONAL benannt).
+%
+% Regeln eingehalten: S1/S2-Aussageweite sprachlich markiert ("in
+% dokumentierten Läufen", "explorativer Vergleich … motivierte");
+% VERBOTEN-Check: keine Verallgemeinerung "Orchestrierung bestimmt
+% generell Verhalten" (§8 unzulässige Verkürzung), keine Mess-Verben,
+% keine Klassen-/Dateinamen. A1/A2-Wortlaut = Blaupause §8 wörtlich.
+% Rückverweis 2.2.3 eingelöst (dort wurde diese Analyse angekündigt).
+% MERKER: "Abschnitt 2.2.3" ggf. auf \ref umstellen, sobald die
+%   Kapitel-2.2-Labels vorliegen. Budget: ~1,3 Seiten (Ziel 1,2–1,5).
+% ============================================================
+
+% v05 (01.09., Kollegen-Runde 4.3 — kritisch geprüft, ALLE 5 Punkte
+% berechtigt): ① Strategievergleich auf Plan-Formulierung zurückgebaut
+% („geplant/sollten") — mein „variiert wurde allein" hatte den eigenen
+% v04-Audit-Befund (phasenversetzte Arme) im Fließtext wieder kassiert;
+% Nicht-Isolations-Satz ergänzt. ② C-Lücke explizit: die Leitfrage hing
+% an der NICHT ausgeführten Variante → „konnte nicht beantwortet
+% werden". ③ Referenzfehler „Diese Annahme" (Bezugssatz war bei der
+% Autor-Überarbeitung entfallen) → „Diese Form der Handlungs-
+% beschreibung". ④ Freigabe-Wirkung präzisiert (nur operative
+% Wirkungen blockiert; Artefaktablage lief direkt — zsmfassung Z. 25).
+% ⑤ A2: „ob beziehungsweise welche Quellen er ZUSÄTZLICH selbst liest"
+% (Explizitheit, kein Direktzugriffs-Zwang).
+% v-KONKRETISIERUNG (01.09., Konkretisierungs-Runde): M2 Machbarkeits-
+% Motiv + M3 konkreter Aufbau (Einzelagent→lineare Kette, Nachrichten-
+% historie) im Ausgangslage-Absatz; M4 Freigabeschritt-Erklärung vor
+% E43-02; Autor-X-Fragen verarbeitet (Log→Anhang per E2, Grafik→E3a
+% verworfen); alle Ergänzungen notes-verifiziert (s. Inline-Fundstellen).
+\section{Beobachtbare Ausführung und explizite Informationsführung}
+\label{sec:beobachtbare-ausfuehrung-informationsfuehrung}
+
+\emph{Ausgangslage.} Zunächst sollte erprobt werden, ob ein möglichst
+selbstständig arbeitender Agent ein Meeting-Transkript verarbeiten und
+daraus Frühphasenartefakte erzeugen kann. Der erste Aufbau bestand aus
+einem einzelnen Agenten, der die bereitgestellten Quellen über
+Dateiwerkzeuge las und seine Ergebnisse über Werkzeugaufrufe ablegte.
+Ein späterer Stand verband spezialisierte Agenten unter anderem für Kontext,
+Anforderungen, Risiken und offene Fragen in einer linearen Kette.
+Zwischenergebnisse wurden über die Nachrichtenhistorie weitergegeben.
+Die tatsächlichen Handlungen wurden noch nicht durchgängig technisch
+erfasst; ein wesentlicher Teil der sichtbaren Ablaufbeschreibung
+stammte daher aus den Modellausgaben selbst.
+
+\emph{Erster formativer Befund.} Die frühen Entwicklungsnotizen
+beschreiben angekündigte Schreiboperationen ohne tatsächliche
+Ausführung. Ein archivierter Lauf enthält bei registriertem
+Schreibwerkzeug keinen Schreibaufruf und keine erzeugten
+Zielartefakte. Sein Modell-Rohtext ist nicht erhalten; die genaue
+Zuordnung zur frühen Notiz bleibt offen
+(vgl. Anhang~\ref{anh:evidenzanker}, E43-01).
+
+Dieser frühe Stand sah bereits eine menschliche Freigabe vor.
+Wirkungen über die Artefaktablage hinaus, etwa Übergaben an die
+operative Arbeitsumgebung, waren deaktiviert. Der Agent sollte
+stattdessen zum Abschluss eine Freigabe anfordern und strukturiert
+darlegen, was er erzeugt und geprüft hatte. Ein Mensch hätte auf
+Grundlage dieser Selbstauskunft entscheiden sollen. In einem
+weiteren Fall behauptete der Agent beim Schreiben der Freigabe-Anfrage,
+alle Pflichtartefakte erneut gelesen und geprüft zu haben. Das
+Protokoll wies jedoch nur einen erneuten Lesezugriff auf ein
+erzeugtes Artefakt aus (E43-02).
+
+Damit wurde die in Abschnitt~\ref{sec:tool-use-function-calling}
+eingeführte Trennung zwischen sprachlicher Behauptung,
+Werkzeuganforderung und technischer Ausführung praktisch relevant.
+Als Konsequenz wurde die Instrumentierung ausgebaut: Ereignis- und
+Werkzeugprotokolle machten für die erfassten Ausführungspfade
+unterscheidbar, welche Handlungen lediglich beschrieben und welche
+tatsächlich registriert wurden.
+
+\emph{Zweiter formativer Befund.} Die erweiterte Beobachtbarkeit
+machte ein Problem der Informationsführung sichtbar. In einem Lauf
+der linearen Agentenkette erzeugte der Anforderungsagent sein
+Ergebnis bereits im ersten protokollierten Werkzeugschritt. Vor
+diesem Schritt war kein eigener Quellzugriff protokolliert, obwohl
+der Aufruf die vorgesehenen Quellen als verwendete Grundlage
+auswies (E43-03). Die Weitergabe über die Nachrichtenhistorie war
+eine plausible Erklärung, ließ sich dem Protokoll aber nicht direkt
+entnehmen. Auf Ebene des Verarbeitungsschritts blieb somit unklar,
+wie die verwendeten Informationen zum Agenten gelangt waren.
+Geschärfte Promptvorgaben forderten daraufhin einen eigenen,
+belegbaren Quellzugriff. Im ersten Folgelauf entstand das
+Anforderungsartefakt weiterhin ohne eigenen Leseaufruf. Im zweiten
+las der Agent zwar die Kontextdatei, schrieb aber das geforderte
+Artefakt nicht; die Validierung meldete dessen Fehlen (E43-05).
+
+Zur weiteren Klärung wurde ein Vergleich von drei Formen der
+Kontextführung geplant. Die erste sollte die Nachrichtenhistorie
+weiterreichen, die zweite explizit gespeicherte Zwischenartefakte
+über einen geteilten Zustand übergeben. In der dritten sollte jeder
+Agent das Transkript selbst erneut lesen. Untersucht werden sollte,
+ob ein eigener Quellzugriff etwa die Themenabdeckung verbessert.
+Ein modellgestützter Prüfagent bewertete die erzeugten Artefakte
+anhand einer festen Checkliste (E43-04).
+
+Ausgeführt und bewertet wurden die ersten beiden Varianten; die
+dritte wurde nicht umgesetzt. Die Frage nach dem möglichen Vorteil
+eines unabhängigen erneuten Quellzugriffs blieb damit unbeantwortet.
+Auch die ausgeführten Varianten entstanden nicht unter vollständig
+identischen Laufbedingungen. Ihre Unterschiede lassen sich deshalb
+nicht allein der Kontextführung zuschreiben. Die protokollierten
+Quellzugriffe unterschieden sich jedoch und gaben Anlass, explizite
+Informationsflüsse weiterzuverfolgen. Der geplante Vergleich blieb
+unvollständig: Beim Versuch, seine Bewertung verlässlich zu machen,
+rückte der Reviewprozess selbst in den Mittelpunkt. Diesen Übergang
+behandelt der folgende Abschnitt.
+
+\emph{Entwurfsentscheidung.} Aus den Befunden wurden zwei
+Festlegungen für die weitere Entwicklung abgeleitet. Erstens werden
+Modelltext, Werkzeuganforderung und Systemwirkung getrennt erfasst.
+Für die instrumentierten Pfade belegen registrierte Werkzeug- und
+Systemereignisse eine technische Handlung; ist ihre Zustandswirkung
+maßgeblich, wird zusätzlich das entstandene Artefakt geprüft.
+Zweitens werden Informationswege als typisierte Übergaben mit
+deklarierten Quellzugriffen modelliert. Für jeden Schritt ist damit
+festgelegt und im Protokoll prüfbar, welche Eingaben er erhält und
+ob beziehungsweise welche Quellen er zusätzlich selbst liest. Daraus ergeben sich die
+ersten beiden Designanforderungen:
+
+\textbf{A1:} Agentische Aktionen müssen außerhalb der sprachlichen
+Selbstauskunft des Modells beobachtbar und prüfbar sein.
+
+\textbf{A2:} Informationsquellen und Übergaben zwischen
+Verarbeitungsschritten müssen explizit modelliert werden.
+
+\emph{Einordnung und Grenzen.} Die Befunde stammen aus einzelnen
+Läufen früher Entwicklungsstände. Sie erlauben weder
+Häufigkeitsaussagen noch eine Übertragung auf andere Aufbauten.
+Der unvollständige Strategievergleich motiviert eine Designrichtung,
+belegt aber keine allgemeine Überlegenheit einer Kontextführung.
+Beobachtbarkeit macht fehlerhafte Handlungen feststellbar, verhindert
+sie jedoch nicht. Ebenso garantiert eine explizite Übergabe keine
+richtige Interpretation ihrer Inhalte. Die technische Realisierung
+und Verifikation der Mechanismen zu A1 und A2 beschreibt
+Kapitel~\ref{chap:maf-realisierung}. Ihre ausgewählten Wirkungen werden
+unter den in Kapitel~\ref{chap:evaluation} definierten Bedingungen
+untersucht.
+
+% Historische Inline-Herkunftsnotizen vor M16; aktueller Befund im M16-Bericht.
+% [M2/M3 verifiziert 01.09.: phase01-zsmfassung Z. 5 („technischer Durch-
+%  stich … der Agent entscheidet selbst, welche Tools er nutzt"; Tools
+%  fs_list/fs_exists/fs_read/fs_write + request_approval, Z. 45–47);
+%  Kette: phase02-iteration-notes Z. 5/10 („Context -> Requirements ->
+%  Risks -> Architecture -> OpenQuestions", linearer MAF-Workflow);
+%  Nachrichtenhistorie: phase02-notes Z. 283/370/377 (message_passing,
+%  gen_ai.input.messages)]
+% [Fundstelle Autonomie-Ideal: thesis-story/fruehphase/phase01-zsmfassung.md
+%  Z. 6 („wenn der Host mehr übernimmt … RPA. Das will ich verhindern")]
+% [Autor-X-Fragen 01.09. verarbeitet: Log-Auszug → NICHT im Text, sondern
+%  als A.2-Druckauszug beim Freeze (E2-Entscheid; Kopierliste); Aufbau-
+%  Beschreibung → Ausgangslage-Absatz oben (M3); Grafik → verworfen (E3a).]
+% [Fundstelle E43-01: fruehphase/phase01-iteration-notes.md — Iteration 1
+%  (Beobachtung wörtlich, Z. 6); Fix dokumentiert: Iteration 2
+%  (UseFunctionInvocation → echte TOOL_CALL-Events); s.a. zsmfassung Z. 185]
+% [Freigabe-Wirkung präzisiert 01.09. (Kollegen-Punkt 4, belegt):
+%  zsmfassung Z. 25 — „Aktionen (Commit/Push, GitHub Issues) sind in
+%  Phase 1 nicht aktiv. Stattdessen erzeugt der Agent eine
+%  Approval-Request als Datei." — Artefakt-Schreiben lief direkt,
+%  operative Wirkungen waren bis zur Freigabe blockiert.]
+% [M4 verifiziert 01.09.: phase01-notes Z. 37 (Contract
+%  request_approval(action,payload), Payload mit runId), Z. 748–753
+%  (Selbstauskunfts-Felder intent/reason/evidence/rationaleComplete),
+%  zsmfassung Z. 25 (echte Aktionen deaktiviert, Approval als Datei —
+%  HITL-Vorform); Befund: Z. 1000 + 1053–1056 (Run 150331: nur
+%  fs_read requirements.md, Payload „klingt so, als seien alle
+%  Artefakte geprüft")]
+% [Fundstelle E43-02: fruehphase/phase01-iteration-notes.md — Self-Check-
+%  Befund Umfeld Z. ~1000; Run 20260519_150331_b9fbd4 dort benannt]
+% [Fundstelle E43-03: fruehphase/phase02-iteration-notes.md — Iteration 10
+%  (Stress-Test 155811) + Z. 277 ff. (kein fs_read; „wahrscheinlich …
+%  weitergereichte Chat-/Tool-Historie"); Lauf-Verifikation 31.08.:
+%  logs/agents/Phase2RequirementsAgent/tool-calls.jsonl (toolStep 1 =
+%  fs_write; evidence-Feld deklariert Transkript+context.md)]
+% [Fundstelle E43-05: fruehphase/phase02-iteration-notes.md — Iter 11
+%  („RequirementsPrompt3 fuer belegbaren Quellenzugriff"), Iter 12
+%  (Run 589104: „eigener Quellenzugriff bleibt unbelegt"), Iter 13
+%  (RequirementsPrompt4)]
+% [Fundstelle E43-04: fruehphase/vergleichsprotokoll.md (Plan, Kontroll-
+%  variablen, A/B/C-Werte; §9 Hypothesen — u. a. „C zeigt mehr Kat.3-
+%  Treffer als A: Eigener Quellenzugriff → bessere Themenabdeckung" =
+%  Leitfrage belegt) + qualitaetsrubrik.md Kopf (Zweck „für den
+%  A/B/C-Vergleich"); Prüfagent = Jury/Judge (phase02-notes Iter 23–26,
+%  Iter 24: automatischer Post-Run-Trigger, judgeModel-Config);
+%  B implementiert: phase02-notes Iter 27 (13.06., MAF-nativer Shared
+%  State — Framework-Detail bewusst erst Kap. 6);
+%  C nie implementiert: Code-Suche 31.08. + Autor-Bestätigung]
+% [Methodische Ehrlichkeit 01.09. (Kollegen-Punkt 1+2, berechtigt):
+%  „Kette blieb unverändert; variiert wurde allein…" widersprach dem
+%  eigenen v04-Audit (Arme phasen-/wochenversetzt, Modelle teils
+%  verschieden — Ein-Faktor-Konstanz galt nur für den PLAN, nicht die
+%  Ausführung) → Plan-Formulierung („geplant/sollten") + expliziter
+%  Nicht-Isolations-Satz + C-Lücke ausbuchstabiert (Leitfrage hing an
+%  der NICHT gebauten Variante).]
+% [A2-Präzisierung 01.09. (Kollegen-Punkt, berechtigt): A2 fordert
+%  EXPLIZITHEIT des Informationswegs, nicht redundanten Direktzugriff
+%  jedes Agenten auf die Originalquelle — der spätere Requirements-
+%  Konsument liest Claims, nicht das Rohtranskript.]

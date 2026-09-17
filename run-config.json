@@ -3,8 +3,11 @@
   "agentPhase": "phase2_evidence",
 //"agentPhase": "phase2_1",
 //"agentPhase": "phase1",
- // "phase2ContextStrategy": "message_passing",
-  "phase2ContextStrategy": "artifact_state",   // Phase 2.1B: MAF Shared State. Umschalten reicht..Prompts werden automatisch gewählt.
+  // TOT seit Move 3 (22.07.2026): wird nur bei agentPhase "phase2_1" gelesen, und die Phase ist
+  // archiviert (Program.cs kennt nur noch "phase2_evidence"; alles andere -> UnknownPhase).
+  // Lauffaehige Historie: git checkout v-s1-phase2-dag
+  // "phase2ContextStrategy": "message_passing",
+  // "phase2ContextStrategy": "artifact_state",
   "llmProvider": "openrouter",
   "agentModel": "openai/gpt-5.4",
  // "agentModel": "openai/gpt-4.1-mini",
@@ -12,29 +15,29 @@
  //langsam: "agentModel": "nvidia/nemotron-3-super-120b-a12b:free",
 
   // Prompts gruppiert nach Phase -> Strategie -> Agent.
-  // A<->B wird allein über "phase2ContextStrategy" oben umgeschaltet.. hier nichts tauschen
   "prompts": {
-    "phase1": {
-      "default": {
-        "Phase1SinglePass": "Phase1_3Prompt"
-      }
-    },
-    "phase2_1": {
-      "message_passing": {
-        "Phase2ContextAgent": "ContextPrompt3",
-        "Phase2RequirementsAgent": "RequirementsPrompt5",
-        "Phase2RisksAgent": "RisksPrompt3",
-        "Phase2ArchitectureAgent": "ArchitecturePrompt3",
-        "Phase2OpenQuestionsAgent": "OpenQuestionsPrompt3"
-      },
-      "artifact_state": {
-        "Phase2ContextAgent": "ContextPrompt3",
-        "Phase2RequirementsAgent": "RequirementsPromptB1",
-        "Phase2RisksAgent": "RisksPromptB1",
-        "Phase2ArchitectureAgent": "ArchitecturePromptB1",
-        "Phase2OpenQuestionsAgent": "OpenQuestionsPromptB1"
-      }
-    },
+    // TOT seit Move 3 (22.07.2026): die Phasen "phase1" und "phase2_1" sind archiviert
+    // (archive/phase1, archive/phase2-dag, archive/phase2b) und ueber Program.cs nicht mehr
+    // erreichbar. Lauffaehige Historie: git checkout v-s0-phase1 / v-s1-phase2-dag
+    // "phase1": {
+    //   "default": { "Phase1SinglePass": "Phase1_3Prompt" }
+    // },
+    // "phase2_1": {
+    //   "message_passing": {
+    //     "Phase2ContextAgent": "ContextPrompt3",
+    //     "Phase2RequirementsAgent": "RequirementsPrompt5",
+    //     "Phase2RisksAgent": "RisksPrompt3",
+    //     "Phase2ArchitectureAgent": "ArchitecturePrompt3",
+    //     "Phase2OpenQuestionsAgent": "OpenQuestionsPrompt3"
+    //   },
+    //   "artifact_state": {
+    //     "Phase2ContextAgent": "ContextPrompt3",
+    //     "Phase2RequirementsAgent": "RequirementsPromptB1",
+    //     "Phase2RisksAgent": "RisksPromptB1",
+    //     "Phase2ArchitectureAgent": "ArchitecturePromptB1",
+    //     "Phase2OpenQuestionsAgent": "OpenQuestionsPromptB1"
+    //   }
+    // },
     // Kapitel B: Prompt pro Arm (transcript = Arm A; ledger = Arm B). Beide teilen sich _shared-core.txt
     // (Aufgabe/Format/Treue) — der Runner komponiert Arm-Header + Kern → Prompt-Parität beweisbar.
     "phase2_evidence": {
@@ -91,7 +94,9 @@
     }
   },
   "jury": {
-    "enabled": true,
+    // TOT: wird in HostSettings gemappt, aber von keinem Runner gelesen. Der Rest dieses
+    // Blocks (judgeModel, structuredOutput, splitGeneration, verification) ist AKTIV.
+    // "enabled": true,
     "judgeModel": "openai/gpt-5.4",
     // Strukturierte Judge-Ausgabe (json_schema) erzwingen. Default true.
     // Bei Judges ohne json_schema-Support (zb manche OpenRouter-Modelle) auf false setzen..
@@ -126,17 +131,17 @@
       "missingTopicBatchSize": 8
     }
   },
-  // Nur für Phase 2.1B (artifact_state) wirksam. Default (ohne Block) = beta-full.
-  // beta-minimal: "writeArtifacts": false + reads je Agent auf ["context"] kürzen.
-  "phase2BState": {
-    "writeArtifacts": true,
-    "reads": {
-      "Phase2RequirementsAgent": ["context"],
-      "Phase2RisksAgent": ["context", "requirements"],
-      "Phase2ArchitectureAgent": ["context", "requirements", "risks"],
-      "Phase2OpenQuestionsAgent": ["context", "requirements", "risks", "architecture"]
-    }
-  },
+  // TOT: galt nur für Phase 2.1B (artifact_state) — die Phase ist archiviert. Wird zwar noch
+  // nach HostSettings gemappt (Phase2BWriteArtifacts/Phase2BReads), aber von keinem Runner gelesen.
+  // "phase2BState": {
+  //   "writeArtifacts": true,
+  //   "reads": {
+  //     "Phase2RequirementsAgent": ["context"],
+  //     "Phase2RisksAgent": ["context", "requirements"],
+  //     "Phase2ArchitectureAgent": ["context", "requirements", "risks"],
+  //     "Phase2OpenQuestionsAgent": ["context", "requirements", "risks", "architecture"]
+  //   }
+  // },
   // Nur für `ledger-build` wirksam (Plan §4). Config-gesteuerter Human-in-the-Loop-Adjudikationsschritt.
   //   skip        = kein Schritt, validated Ledger unverändert (Default, Baseline-neutral)
   //   manual      = queue.json in step-03b schreiben, Prozess endet (Naht) -> später apply/-ui
@@ -151,7 +156,7 @@
   //     baseline-fanout, evidence-chain, checker-repair) — die Arm-A/B-Treue-Messung. ***
   // pipeline-full (Ein-Graph) LIEST DIESEN BLOCK NICHT (code-verifiziert 10.08.): die 02-baselines-Stufe
   // überschreibt source+ledgerRun in-memory mit dem im SELBEN Lauf erzeugten consumable
-  // (BaselineStageExecutor:42) und bestellt die Artefakte fest über OrderedArtifacts — nicht über artifact.
+  // (BaselineStageExecutor:46, ConfigBridge) und bestellt die Artefakte fest über OrderedArtifacts — nicht über artifact.
   // Für einen frischen pipeline-full-Lauf ist dieser Block also totes Config (ignorierbar).
   // Vergleicht Artefakt-Generierung aus dem Ledger (Arm B) vs. Rohtranskript (Arm A) auf Treue.
   // Runs landen unter runs/phase2evidenz-agent/<source>/<runId>. Plan: Phases/Phase2/Evidenz-Agent/ReusePlan.md

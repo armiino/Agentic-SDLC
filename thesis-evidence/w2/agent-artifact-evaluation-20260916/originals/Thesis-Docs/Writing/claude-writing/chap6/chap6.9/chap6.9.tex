@@ -1,0 +1,52 @@
+% M11, 11.09.2026: Prüfansatz und Reichweite statt Vollreproduktions-Zusage.
+% Gegenprüfung: GateResponder.Resolve; ReClarifyBacklogLoopTests;
+% SubworkflowPortSpikeTests; tools/smoke-hitl.sh. Keine neuen Testläufe.
+% B-30/B-32: Wiederverwendung und Replay bleiben pfadspezifisch begrenzt.
+
+\section{Reproduzierbarkeit und Grenzen}
+\label{sec:realisierung-reproduzierbarkeit-grenzen}
+
+Die Laufartefakte aus Abschnitt~\ref{sec:realisierung-observability}
+machen protokollierte Ausführungsschritte nachvollziehbar.
+Automatisierte Tests ergänzen diese Beobachtung durch wiederholbare
+Prüfungen ausgewählter Mechanismen. Dafür müssen Implementierungs-
+und Paketstand eindeutig zugeordnet sein
+(Abschnitt~\ref{sec:technischer-kontext-maf-zuordnung}). Die in
+Kapitel~\ref{chap:evaluation} ausgewerteten Läufe werden zusätzlich
+ihren Modellen, Gate-Betriebsarten und Eingabeversionen zugeordnet.
+Auch Testergebnisse gelten für den Stand ihrer Ausführung
+(Umfang wird mit dem Freeze-Stand angegeben).
+% TODO: Freeze-Commit und zugehörigen Testumfang mit 6.1 abstimmen.
+
+Die Prüfungen setzen auf mehreren Ebenen an. Einzelne
+Entscheidungsregeln lassen sich ohne Modell- oder Graphaufruf testen,
+etwa die Auflösung einer Liste von Gate-Elementen. Ausgewählte
+MAF-Graphen werden im Testprozess mit skriptgesteuerten Ersatz-Agenten
+ausgeführt. Deren vorgegebene Ergebnisse machen die Steuerung gezielt
+prüfbar, beispielsweise den Übergang in eine Reparatur und das Ende
+an der Versuchsschranke. Verhaltenstests halten außerdem konkrete
+Frameworkeigenschaften fest, etwa die Weiterleitung einer inneren
+Portanfrage aus Abschnitt~\ref{sec:realisierung-durabilitaet}.
+Ändert sich das geprüfte Verhalten, wird die Abweichung im Test
+sichtbar. Ein separater technischer Kurztest
+(\emph{Prozessgrenzen-Smoke-Test}) prüft schließlich Start, Pause
+und Wiederaufnahme in getrennten Programmaufrufen
+(Abschnitt~\ref{sec:eval-resume}).
+
+Für die Wiederholung eines Ablaufs sind außerdem seine konkrete
+Graphkomposition und die Antwortregeln der beteiligten Gates
+maßgeblich (Abschnitte~\ref{sec:realisierung-agent-executor-workflow}
+und~\ref{sec:realisierung-human-gates}). Wiederverwendete Komponenten
+oder die Betriebsart Replay allein sichern keine identischen Abläufe
+und menschlichen Einzelentscheidungen.
+
+Diese Tests belegen die tatsächlich geprüften Eigenschaften und
+Zustandswirkungen unter ihren jeweiligen Bedingungen. Sie belegen
+weder die fachliche Richtigkeit neu erzeugter Modellinhalte noch
+eine vollständige Reproduktion des Gesamtsystems. Auch die
+historischen Läufe gelten nicht als gemeinsame End-to-End-Prüfung
+eines späteren Implementierungsstands.
+Kapitel~\ref{chap:evaluation} führt die technischen Kontrollnachweise
+mit referenzgestützten Inhaltsbewertungen und historischen
+Fallprüfungen zusammen. Damit wird aus der beschriebenen
+Realisierung eine Untersuchung ausgewählter Leistungen und Grenzen.

@@ -1,0 +1,142 @@
+% P10-4c-Nachtrag, 15.09.2026: Modellwahl aus Iteration 8 sowie L3-B/L4-B
+% (01.07.) und MC0-Stress (07.07.) eingeordnet; Belegdetails im P10-4c-Bericht.
+% M16, 11.09.2026: Leserführung und Absatzlogik; Anforderungen und Anker erhalten.
+% ============================================================
+% §4.2 Verdichteter Explorationsverlauf — v05 (Claude)
+% v05 (01.09., Kollegen-Runde 4.2 — kritisch geprüft): ① Zählfehler
+% „neun" → „Z0 bis Z9" (waren zehn; mein Fehler) ② Synthese-Absatz:
+% Verantwortlichkeiten-Satz sprachlich + „menschlich autorisiert"
+% ergänzt (Vierer-Teilung Agentik/Workflow/Deterministik/Mensch)
+% ③ Modellhistorie NICHT abgeschwächt — Kausalität ist Iter-8-belegt
+% (Kollegen-Bedingung erfüllt) ④ Fixierungs-Satz geglättet
+% ⑤ Vergleichsarm konkretisiert (A' = freie Variante unter denselben
+% Modellbedingungen; verifiziert am Spike) ⑥ Schluss direkter
+% („ausgewählte Wirkmechanismen … Kapitel-7-Bedingungen"); Tabelle:
+% Z6-Designrichtung ohne „Maker–Checker–Repair" (Begriff wird erst in
+% 4.5 geprägt — roter Faden).
+% v04 (01.09., Konkretisierungs-Runde): M1 Modellhistorie-Satz im
+% P0-Absatz (lokal → gehostet → fester Arbeitsstandard; defensiv per
+% E4-Entscheid, Toolcall-Ausfälle notes-belegt, keine Modellwertung);
+% Autor-X-Kommentare verarbeitet+entfernt.
+% v03 (01.09., „dosierte Agentik"-Runde): Synthese-Absatz nach der
+% Tabelle — der übergeordnete Entwicklungspfad (Differenzierung der
+% Verantwortlichkeiten, NICHT Ablösung von Agenten durch Workflows).
+% v02 (01.09., Kollegen-Review): „ordnet…zu" statt „Inhaltsverzeichnis";
+% Z9-Schlusssatz expliziert (Stabilisierung → Kap. 6 Realisierung /
+% Kap. 7 Evaluation); P0-Absatz präzisiert (Fixierung INNERHALB der
+% Vergleichsanordnung; „keine kausale Isolation eines Designeffekts").
+%
+% Grundlage: Kap-4-Blaupause §7 (Tabelle statt Chronik-Prosa;
+% P0 = 2–3 Sätze nach der Tabelle mit VORGEGEBENER zulässiger
+% Aussage; Grenz-Absatz) · genese-dossier §2 (Z0–Z9, auditiert
+% inkl. Korrektur-Kopf) · Kap-3-v02 §13.2 (KEINE Wiederholung der
+% Vier-Phasen aus 3.2 — nur inhaltliche Orientierung).
+%
+% Entscheidungen:
+%   · Die Anker-Spalte der Tabelle verweist auf E-IDs + Tags —
+%     der Zyklen-Überblick wird damit zum Inhaltsverzeichnis des
+%     Evidenzsystems (statt eigener Beleg-Doppelung).
+%   · Z3 trägt die korrigierte Wahrheit („zwei von drei geplanten
+%     Varianten"); Z7 deklariert die Zielbild-Herkunft direkt in
+%     der Tabelle („kein Fehlschlag-Pivot").
+%   · P0-Absatz = Blaupausen-Wortlaut („explorativer Vergleichsarm",
+%     „reduzierten den Modelleffekt als alternative Erklärung",
+%     KEINE kausale Isolation).
+% Budget ~0,9 S. inkl. Tabelle (Ziel 0,8–1,0).
+% [Fundstellen P0: genese-dossier §3/P0 + thesis-evidence/README
+%  Spike 5 (A'-Arm); Modell-Wechsel: phase01-zsmfassung (Ollama),
+%  Run-Configs Ende Mai (gpt-oss-120b:free / gpt-4.1-mini)]
+% ============================================================
+
+\section{Verdichteter Explorationsverlauf}
+\label{sec:explorationsverlauf}
+
+Tabelle~\ref{t:explorationsverlauf-zyklen} ordnet die prägenden
+Entwicklungsschritte in die Zyklen Z0 bis Z9. Sie verbindet den jeweiligen
+Arbeitsfokus mit einer Beobachtung oder Zielkonkretisierung, der daraus
+abgeleiteten Designrichtung und den zugehörigen Belegen. Die Zyklen
+strukturieren das in Abschnitt~\ref{sec:iteratives-vorgehen-evidenz}
+beschriebene Vorgehen rückblickend. Sie bilden keine strikt getrennten
+Zeiträume ab; einzelne Zwischenlösungen bestanden parallel oder wurden
+verworfen.
+
+Die folgenden Abschnitte vertiefen diese Entwicklung: Z0 bis Z3 betreffen
+Ausführung und Informationsführung
+(Abschnitt~\ref{sec:beobachtbare-ausfuehrung-informationsfuehrung}),
+Z4 und Z5 die Quellenbindung
+(Abschnitt~\ref{sec:evidenzgebundene-wissensgewinnung}) und Z6 die
+Trennung der Verarbeitungsverantwortlichkeiten
+(Abschnitt~\ref{sec:kontrollierte-semantische-transformation}). Z7
+verbindet Projektzustand und Fortschreibung
+(Abschnitte~\ref{sec:projektzustand-kontrollierte-mutation}
+und~\ref{sec:einordnende-fortschreibung}); Z8 ergänzt Außenkopplung
+und kontinuierliche Nutzung
+(Abschnitte~\ref{sec:projektionen-aussenkopplung}
+und~\ref{sec:durabilitaet-kontinuierliche-nutzung}). Z9 bezeichnet die
+Stabilisierung und technische Prüfung. Die Realisierung und die
+untersuchten Lauf- und Teststände beschreiben
+Kapitel~\ref{chap:maf-realisierung} und~\ref{chap:evaluation}.
+
+\input{tables/chap4/chap4.2table}
+
+Über die Zyklen hinweg wurde vor allem die Aufgabenverteilung
+ausdifferenziert. Modelle übernahmen semantisch offene Aufgaben.
+Formal beschreibbare Prüfungen wurden deterministisch ausgeführt,
+Verarbeitungsschritte durch explizite Workflows verbunden und
+die fachliche Fortschreibung an menschliche Entscheidungspunkte gebunden.
+Die zentrale Entwurfsfrage war damit, welche Verantwortung ein Agent
+übernehmen sollte und wie sein Beitrag in einen kontrollierten
+Gesamtablauf eingebettet werden konnte.
+
+Die frühen Beobachtungen lassen sich nur unter Berücksichtigung der
+jeweiligen Modellwahl einordnen. Nach wiederholt ausbleibenden
+Werkzeugaufrufen mit lokal betriebenen Modellen kamen gehostete
+Modelle wie GPT-4.1-mini zum Einsatz. Für qualitätsbezogene
+Ledger-Versuche wurde Anfang Juli GPT-5.4 bevorzugt. Die
+Entwicklungsnotizen begründen diese Wahl mit beobachteten Auslassungen
+von Quellinhalten und zu nachsichtigen inhaltlichen Prüfurteilen
+kleinerer Modelle. Kleinere Modelle blieben für kostengünstige
+Funktionstests und gezielte Vergleiche im Einsatz; es gab keinen
+vollständigen Wechsel zu nur einem Modell.
+
+Die Modellwahl war damit Teil der explorativen Weiterentwicklung.
+Da sich sowohl Modelle als auch Systemaufbau änderten, waren
+beobachtete Unterschiede zunächst nicht eindeutig dem Design
+zuzuordnen.
+
+In ausgewählten explorativen Vergleichen blieb das Erzeugermodell
+innerhalb der jeweiligen Vergleichsanordnung gleich. In einem dieser Vergleiche
+wurde zusätzlich die direkte Erzeugung aus dem Transkript unter
+denselben Modellbedingungen erneut ausgeführt. Damit entfiel ein
+Modellwechsel als unmittelbare Erklärung für Unterschiede zwischen
+den Varianten. Die begrenzte Vergleichsbasis erlaubte dennoch keine
+kausale Zuordnung eines Effekts zum Design. Die Zyklen dokumentieren
+die Entwicklungsrichtung; die Evaluation ausgewählter Mechanismen
+folgt unter den in Kapitel~\ref{chap:evaluation} ausgewiesenen
+Bedingungen.
+
+% Historische Inline-Herkunftsnotizen vor M16; aktueller Befund im M16-Bericht.
+% [Option A′ 01.09.: Mapping erweitert (Z7 → 4.6+4.7, Z8 → 4.8+4.9);
+%  Z-Nummern bewusst UNVERÄNDERT (Kollegen-Entscheid).]
+% [Einordnung: Kollegen-Vorschlag 01.09. („dosierte Agentik"-Runde);
+%  deckt sich mit dem Projekt-Kernprinzip (Agent-Knoten in det.
+%  Workflows mit Gates/Repair/Human-Autorisierung) und der 2.2/2.4.1-
+%  Begriffsbasis (Agent-in-Workflow bleibt Agent).]
+% [Kausalitäts-Check 01.09. (Kollegen-Nachfrage): die Verbindung IST
+%  notes-belegt — phase01-notes Iteration 8 („Modell-/Provider-Wechsel:
+%  OpenRouter als Alternative") nennt als Ausgangslage wörtlich die
+%  Fehlerbilder der lokalen Modelle inkl. „erzeugten keine echten
+%  fs_write-Toolcalls" → Nebeneinanderstellung bleibt, keine
+%  Abschwächung nötig.]
+% [M1 verifiziert 01.09. (E4-Entscheid: defensiv, keine Modellwertung):
+%  phase01-notes Z. 432–438 (lokale qwen2.5-Modelle „instabil …
+%  erzeugten keine echten fs_write-Toolcalls … Pseudo-Toolcalls"),
+%  Z. 429 ff. (Iteration 8: OpenRouter-Wechsel, openai/gpt-4.1-mini);
+%  „zuletzt gpt-5.4" (Autor-X) bewusst OHNE Modellnamen — Kap. 7 nennt
+%  die Evaluations-Konfiguration.]
+% [Vergleichsarm konkretisiert 01.09. (Kollegen-Punkt 5, verifiziert):
+%  A'-Arm des evidence-first-Spikes = frisch erzeugtes freies Artefakt
+%  unter gpt-5.4 (Run 20260630_145558_68149f, Commit c34b9a0), damit
+%  B-vs-A nicht am alten Artefakt-/Modellstand hängt.]
+% P10-6: Zyklenübersicht vor Beginn der Vertiefungen abschließen.
+\clearpage

@@ -1,0 +1,34 @@
+[github-snapshot] provider=api issues=45 open=45 closed=0
+[github-snapshot] -> runs/fullworkflow/20260820_182614_a5f6b3/00-github-inbound/snapshot/github-issues-snapshot.json
+[github-snapshot] Danach: github-reconciliation agent ... --issues <snapshot>
+[github-snapshot] comments=12 issues=4
+[github-snapshot] -> runs/fullworkflow/20260820_182614_a5f6b3/00-github-inbound/snapshot/issue-comments.json
+[github-inbound] issues=45 unchanged=43 drift=1 neu=0 nic=1 unstamped=0 skipped=0
+[github-inbound]   F1_MAPPED_DRIFT #43 (PBI-045) — AK NEU im Issue: 'Testkriterium: Export der Übersicht als PDF möglich.'
+[github-inbound] kommentare=12 neue-kommentar-funde=1 (Anker-gefiltert)
+[github-inbound] drafts=1 -> delta-items=1 · kommentar-destillate=1 · noise=1 (nur Report)
+[pipeline-full] run runId=20260820_182614_a5f6b3 slice=u2 (EIN Graph: front->branch->bootstrap|betrieb->forward) ledgerModel=openai/gpt-5.4 baselineModel=openai/gpt-5.4 adjudication=Interactive execute=True
+[pipeline-full] Einstieg: DELTA
+[pipeline-full] Verzweigung: mode=Auto coreExists=True -> Betriebs-Zweig
+[pipeline-full] Betriebs-Zweig: Ingest -> [ingest-gate] -> Apply -> Bridge -> PbiUpdate -> [pbi-gate] -> Apply (Core: 226 items)
+[pipeline-full] Gate 'ingest-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'ingest-gate'. checkpointId=702ca609e9c44458bc0047baa430160e
+  Entscheid beim Resume: --accept-all | --accept id1,id2
+[pipeline-full] Fortsetzen: pipeline-full resume 20260820_182614_a5f6b3   (oder: … resume 20260820_182614_a5f6b3 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260820_182614_a5f6b3/  (PAUSIERT)
+[pipeline-full] resume runId=20260820_182614_a5f6b3 gate=ingest-gate checkpointId=702ca609e9c44458bc0047baa430160e
+[ingest-apply] R-35: 1 Ablehnung(en) als Wiedervorlage-Wissen im Core: REJ-018
+[pipeline-full] 5 offene Entscheidung(en) im Core -> decision-gate (Tor 2).
+[pipeline-full] Gate 'decision-gate' — pausiere (Checkpoint mit offenem Gate wird gesichert)…
+[pipeline-full] PAUSIERT am Gate 'decision-gate'. checkpointId=be1e7243be5d49db8de4c2ef7a5e35b0
+  Review-UI: decision-gate-review runs/fullworkflow/20260820_182614_a5f6b3/07-decision  → decision-gate-decisions.json (Ausgang je Widerspruch, vertagen erlaubt)
+  Flags/accept-all koennen hier NICHT aufloesen (Wahrheits-Konflikt) — sie vertagen alles (laut).
+[pipeline-full] Fortsetzen: pipeline-full resume 20260820_182614_a5f6b3   (oder: … resume 20260820_182614_a5f6b3 --accept-all)
+[pipeline-full] Faden: runs/fullworkflow/20260820_182614_a5f6b3/  (erneut PAUSIERT — nächstes Gate)
+[pipeline-full] resume runId=20260820_182614_a5f6b3 gate=decision-gate checkpointId=be1e7243be5d49db8de4c2ef7a5e35b0
+[pipeline-full] decision-gate: alle 5 Entscheidung(en) vertagt — DECs parken sichtbar weiter.
+[pipeline] pbi-gate: 0 Operationen — Human-Gate übersprungen (R-50, laut); leere Antwort läuft den normalen Apply-Pfad.
+[pipeline-full] pbi-update applied newPbis=0 updatedPbis=0
+[pipeline-full] Forward übersprungen (R-50): leeres github-sync-delta (0 Einträge) — Lauf endet ohne GitHub-Stufe.
+[pipeline-full] metrics.json geschrieben (6 Stufen).
+[pipeline-full] Faden: runs/fullworkflow/20260820_182614_a5f6b3/  exit=0

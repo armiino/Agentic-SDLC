@@ -1,0 +1,639 @@
+{
+  "case_id": "AN-06",
+  "report_index_zero_based": 5,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "funktional",
+    "disposition": "requirement",
+    "statement": "Für Bewohnerprofile muss festgelegt werden, welche berechtigten Rollen bestehende Profile bearbeiten, archivieren und gegebenenfalls wieder reaktivieren dürfen; archivierte Profile dürfen nicht wie aktive Profile im Alltagszugriff behandelt werden.",
+    "herleitung": "Abgeleitet aus PBI-010 sowie PBI-011/L3-REQ-007: Das Anlegen neuer Bewohnerprofile ist beschrieben und ein Profilstatus ist vorgesehen, aber die zugehörigen Lebenszyklus-Übergänge und Rechte dazu fehlen. Ohne Regeln für Bearbeiten, Archivieren und Reaktivieren bleibt unklar, wie mit ausziehenden, vorläufig angelegten oder versehentlich fehlerhaften Profilen umzugehen ist.",
+    "kategorie": "functional",
+    "ankerIds": [
+      "PBI-010",
+      "PBI-011",
+      "L3-REQ-007"
+    ]
+  },
+  "reported_status": "neu",
+  "critic_reason": null,
+  "anchors_and_mentions": [
+    {
+      "id": "L3-REQ-007",
+      "present": true,
+      "item": {
+        "itemId": "L3-REQ-007",
+        "itemType": "requirement",
+        "text": "Für Bewohnerprofile sollte ein Status vorgesehen werden, der zwischen aktiv, archiviert und gegebenenfalls in Vorbereitung unterscheidet.",
+        "origin": "HUMAN_ACCEPTED_OPEN_WORLD",
+        "stage": "l3_promoted",
+        "version": 1,
+        "sourceRunId": "20260723_122625_136540",
+        "sourceArtifactId": null,
+        "sourceArtifactType": "l3",
+        "sourceDecisionId": "HDEC-007",
+        "sourceCandidateId": "CAND-015",
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "sourceCandidateId": "CAND-015",
+          "sourceDecisionId": "HDEC-007",
+          "decision": "accept",
+          "decisionReason": "korrekt",
+          "reviewer": "human (review-ui)"
+        },
+        "identityKey": "für bewohnerprofile sollte ein status vorgesehen werden der zwischen aktiv archiviert und gegebenenfalls in vorbereitung unterscheidet",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "confirmedInRun": "20260723_122625_136540",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "PBI-010",
+      "present": true,
+      "item": {
+        "itemId": "PBI-010",
+        "itemType": "pbi",
+        "text": "Neue Bewohnerprofile mit Basisdaten und Dublettenprüfung über Nachname und Geburtsdatum anlegen",
+        "origin": "re-clarify",
+        "stage": null,
+        "version": 3,
+        "sourceRunId": "20260811_133847_5d5f13",
+        "sourceArtifactId": null,
+        "sourceArtifactType": null,
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "canon-neue-profile-anlegen-pruefen"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "legacyPbiId": "PBI-FC05-02",
+          "sourceRunId": "20260723_131421_80a11e",
+          "legacyOpenDecisions": "2",
+          "featureId": "FC-05"
+        },
+        "identityKey": "profile-anlegen-mit-dublettenpruefung",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Neue Bewohnerprofile mit Basisdaten und Dublettenprüfung anlegen",
+            "status": "active",
+            "origin": "re-clarify",
+            "sourceRunId": "20260723_131421_80a11e",
+            "sourceClaimIds": [
+              "canon-neue-profile-anlegen-pruefen"
+            ],
+            "recordedUtc": "2026-07-23T14:16:14.465122Z",
+            "note": "EXTEND_PBI: Die Pflicht, beim Anlegen eines Bewohners mindestens einen Sofortinfo-Eintrag zu erfassen, betrifft direkt den Profil-Anlegeprozess. Daher passt das Requirement fachlich zum bestehenden PBI für das Anlegen neuer Bewohnerprofile."
+          },
+          {
+            "versionId": 2,
+            "text": "Neue Bewohnerprofile mit Basisdaten und Dublettenprüfung anlegen",
+            "status": "needs_clarify",
+            "origin": "re-clarify",
+            "sourceRunId": "20260723_131421_80a11e",
+            "sourceClaimIds": [
+              "canon-neue-profile-anlegen-pruefen"
+            ],
+            "recordedUtc": "2026-08-11T13:39:39.570798Z",
+            "note": "MARK_CHANGED: Klärungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort konkretisiert die bisher offenen Inhalte vollständig: Basisdaten sind nun Name, Geburtsdatum, Einrichtung und Zimmer; die Dublettenprüfung erfolgt über Nachname plus Geburtsdatum; und bei einem Treffer sind die Optionen „trotzdem anlegen“ oder „bestehendes öffnen“ vorgesehen. Daher werden Titel, Statement und Akzeptanzkriterien vollständig auf diese belegten Angaben ausgerichtet."
+          }
+        ],
+        "feature": null,
+        "pbi": {
+          "goal": "Als berechtigter Nutzer will ich ein neues Bewohnerprofil mit Name, Geburtsdatum, Einrichtung und Zimmer anlegen können, damit neue Bewohner strukturiert erfasst und mögliche Dubletten vor dem Anlegen erkannt werden.",
+          "title": "Neue Bewohnerprofile mit Basisdaten und Dublettenprüfung über Nachname und Geburtsdatum anlegen",
+          "acceptanceCriteria": [
+            "Berechtigte Nutzer können aus der Profilübersicht einen Anlegefluss für neue Bewohnerprofile starten.",
+            "Der Anlegefluss erfasst die Basisdaten Name, Geburtsdatum, Einrichtung und Zimmer.",
+            "Vor dem Speichern prüft die App auf mögliche Dubletten über die Kombination aus Nachname und Geburtsdatum.",
+            "Bei einem Treffer wird eine Warnung mit dem bestehenden Profil angezeigt.",
+            "Der Nutzer kann nach der Warnung zwischen „trotzdem anlegen“ und „bestehendes öffnen“ entscheiden."
+          ],
+          "linkedRequirementIds": [
+            "L3-REQ-008",
+            "REQ-45",
+            "REQ-59"
+          ],
+          "openDecisionRefs": [],
+          "priorityRank": 9,
+          "readiness": "blocked_by_decision",
+          "mvp": "required_for_mvp",
+          "trace": {
+            "canonicalRequirementIds": [
+              "L3-REQ-008",
+              "REQ-45"
+            ],
+            "l1Req": [
+              "REQ-45"
+            ],
+            "l3": [
+              "L3-REQ-008"
+            ],
+            "claims": [
+              "canon-neue-profile-anlegen-pruefen"
+            ]
+          }
+        },
+        "validity": "Active",
+        "progress": "Open",
+        "blocker": "None",
+        "confirmedBy": "Unmarked",
+        "confirmedInRun": "20260723_131421_80a11e",
+        "status": "active"
+      }
+    },
+    {
+      "id": "PBI-011",
+      "present": true,
+      "item": {
+        "itemId": "PBI-011",
+        "itemType": "pbi",
+        "text": "Profilübersicht um Sortierung, Profilstatus, Neu-Markierungen und Dringlichkeitssortierung erweitern",
+        "origin": "re-clarify",
+        "stage": null,
+        "version": 2,
+        "sourceRunId": "20260817_100135_03f491",
+        "sourceArtifactId": null,
+        "sourceArtifactType": null,
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "legacyPbiId": "PBI-FC05-03",
+          "sourceRunId": "20260723_131421_80a11e",
+          "legacyOpenDecisions": "2",
+          "featureId": "FC-05"
+        },
+        "identityKey": "sortierung-status-und-neu-markierungen",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Profilübersicht um Sortierung, Profilstatus und Neu-Markierungen erweitern",
+            "status": "active",
+            "origin": "re-clarify",
+            "sourceRunId": "20260723_131421_80a11e",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-17T10:16:50.843193Z",
+            "note": "EXTEND_PBI: REQ-78 erweitert dieselbe fachliche Aufgabe wie PBI-011: die Sortierung in der Profilübersicht. Das bestehende PBI deckt bereits Sortieroptionen in der Übersicht ab; die zusätzliche Sortierung nach Dringlichkeit ist daher eine fachlich klare Erweiterung statt eines eigenen PBIs. | ALIGN(R-26-C): REQ-78 ergänzt das bestehende PBI um eine zusätzliche Sortiermöglichkeit nach Dringlichkeit. Deshalb wird der Titel erweitert und ein Akzeptanzkriterium zur Dringlichkeitssortierung ergänzt; der übrige bestehende Scope bleibt erhalten."
+          }
+        ],
+        "feature": null,
+        "pbi": {
+          "goal": "Als Nutzer will ich Profile sortieren, ihren Status erkennen und neue oder aktualisierte Inhalte sehen, damit ich in der Übersicht schneller priorisieren kann.",
+          "title": "Profilübersicht um Sortierung, Profilstatus, Neu-Markierungen und Dringlichkeitssortierung erweitern",
+          "acceptanceCriteria": [
+            "Die Profilübersicht unterstützt eine Sortierung nach Name.",
+            "Wenn eine Sortierung nach Aktualität aktiviert ist, werden zuletzt aktualisierte Profile entsprechend geordnet dargestellt.",
+            "Die Liste ist zusätzlich nach Dringlichkeit sortierbar.",
+            "Profile können mit einem Status 'aktiv' oder 'archiviert' dargestellt werden.",
+            "Neue oder aktualisierte Inhalte sind in der Übersicht erkennbar markiert."
+          ],
+          "linkedRequirementIds": [
+            "L3-REQ-006",
+            "L3-REQ-007",
+            "L3-REQ-013",
+            "REQ-78"
+          ],
+          "openDecisionRefs": [],
+          "priorityRank": 20,
+          "readiness": "blocked_by_decision",
+          "mvp": "later",
+          "trace": {
+            "canonicalRequirementIds": [
+              "L3-REQ-006",
+              "L3-REQ-007",
+              "L3-REQ-013"
+            ],
+            "l1Req": [],
+            "l3": [
+              "L3-REQ-006",
+              "L3-REQ-007",
+              "L3-REQ-013"
+            ],
+            "claims": []
+          }
+        },
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Unmarked",
+        "confirmedInRun": "20260723_131421_80a11e",
+        "status": "active"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "L3-REQ-007",
+      "toId": "HDEC-007",
+      "relationType": "accepted_by_human_decision",
+      "source": "l3.apply",
+      "metadata": {}
+    },
+    {
+      "fromId": "L3-REQ-007",
+      "toId": "CAND-015",
+      "relationType": "promoted_from_l3_candidate",
+      "source": "l3.apply",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-010",
+      "toId": "FC-05",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-010",
+      "toId": "L3-REQ-008",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-010",
+      "toId": "REQ-45",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-011",
+      "toId": "FC-05",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-011",
+      "toId": "L3-REQ-006",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-011",
+      "toId": "L3-REQ-007",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-011",
+      "toId": "L3-REQ-013",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "L3-REQ-007",
+      "toId": "FC-05",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-010",
+      "toId": "REQ-59",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-010",
+      "toId": "gh#10",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "10",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-07-23T14:58:33.7764290Z",
+        "updatedUtc": "2026-08-20T16:44:45.9544810Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/10",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "bd9329765be12aec",
+        "projectedBodyHash": "d63fa55466286c54",
+        "projectedUtc": "2026-08-20T16:44:45.9544810Z"
+      }
+    },
+    {
+      "fromId": "PBI-011",
+      "toId": "gh#11",
+      "relationType": "implemented_by_issue",
+      "source": "github-sync",
+      "metadata": {
+        "issueNumber": "11",
+        "operationalStatus": "open",
+        "linkedUtc": "2026-07-23T14:58:33.7764290Z",
+        "updatedUtc": "2026-08-20T16:50:16.5656290Z",
+        "issueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/11",
+        "repository": "armiino/Agentic-GitHub-refactor",
+        "origin": "UPDATE",
+        "projectedTitleHash": "e7abb8ffa3a7f368",
+        "projectedBodyHash": "01c0ba8f5e4ada2e",
+        "projectedUtc": "2026-08-20T16:50:16.5656290Z"
+      }
+    },
+    {
+      "fromId": "PBI-011",
+      "toId": "REQ-78",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-010",
+      "toId": "ARCH-27",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
+      "metadata": {}
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "ARCH-27",
+      "itemType": "architecture",
+      "text": "Es soll erwogen werden, in der Profilübersicht das Anlegen neuer Profile per Plus-Symbol und Dialog für Bild, Name und Beschreibung zu ermöglichen.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260723_113115_35335a",
+      "sourceArtifactId": "ARCH",
+      "sourceArtifactType": "architecture",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-neue-profile-anlegen-pruefen"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "artifactVersion": "1",
+        "producerModel": "openai/gpt-5.4"
+      },
+      "identityKey": "erwogen werden in der profilübersicht das anlegen neuer profile per plus symbol und dialog für bild name und beschreibung zu ermöglichen",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "architecture": {
+        "roles": [
+          "constraint"
+        ],
+        "rationale": "Das erwogene Anlegen neuer Profile über Plus-Symbol und Dialog gibt eine konkrete fachliche Richtung für die Profilanlage in der Übersicht vor.",
+        "adrId": null,
+        "adrStatus": null
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "confirmedInRun": "20260723_113115_35335a",
+      "status": "baseline"
+    },
+    {
+      "itemId": "FC-05",
+      "itemType": "feature",
+      "text": "Profilübersicht und Profilanlage",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-05",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": "REQ-07,REQ-09,L3-REQ-013"
+      },
+      "identityKey": "profiluebersicht-und-profilanlage",
+      "history": [],
+      "feature": {
+        "label": "Profilübersicht und Profilanlage",
+        "rationale": "Dieses Feature umfasst das Auffinden, Anzeigen und optionale Anlegen von Bewohnerprofilen in der Übersicht inklusive Suche, Sortierung, Status und Dublettenprüfung. Rollenbeschränkungen und Kennzeichnung neuer Inhalte beeinflussen die Übersicht, sind aber nicht ihr fachlicher Kern.",
+        "coreRequirementIds": [
+          "L3-REQ-006",
+          "L3-REQ-007",
+          "L3-REQ-008",
+          "L3-REQ-013",
+          "REQ-07",
+          "REQ-09",
+          "REQ-13",
+          "REQ-16",
+          "REQ-17",
+          "REQ-18",
+          "REQ-45"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "L3-REQ-006",
+      "itemType": "requirement",
+      "text": "Die Profilübersicht sollte zusätzlich zur Namenssuche eine Sortierung nach Name und optional nach zuletzt aktualisiert unterstützen.",
+      "origin": "HUMAN_ACCEPTED_OPEN_WORLD",
+      "stage": "l3_promoted",
+      "version": 1,
+      "sourceRunId": "20260723_122625_136540",
+      "sourceArtifactId": null,
+      "sourceArtifactType": "l3",
+      "sourceDecisionId": "HDEC-006",
+      "sourceCandidateId": "CAND-014",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceCandidateId": "CAND-014",
+        "sourceDecisionId": "HDEC-006",
+        "decision": "accept",
+        "decisionReason": "richtig das ist nötig.",
+        "reviewer": "human (review-ui)"
+      },
+      "identityKey": "die profilübersicht sollte zusätzlich zur namenssuche eine sortierung nach name und optional nach zuletzt aktualisiert unterstützen",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "confirmedInRun": "20260723_122625_136540",
+      "status": "accepted"
+    },
+    {
+      "itemId": "L3-REQ-008",
+      "itemType": "requirement",
+      "text": "Beim Anlegen eines neuen Bewohnerprofils sollte geprüft werden, ob ein Profil mit gleichem oder sehr ähnlichem Namen bereits existiert, um Dubletten zu vermeiden.",
+      "origin": "HUMAN_ACCEPTED_OPEN_WORLD",
+      "stage": "l3_promoted",
+      "version": 1,
+      "sourceRunId": "20260723_122625_136540",
+      "sourceArtifactId": null,
+      "sourceArtifactType": "l3",
+      "sourceDecisionId": "HDEC-008",
+      "sourceCandidateId": "CAND-016",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceCandidateId": "CAND-016",
+        "sourceDecisionId": "HDEC-008",
+        "decision": "accept",
+        "decisionReason": "korrekt das ist zum validieren wichtig.",
+        "reviewer": "human (review-ui)"
+      },
+      "identityKey": "beim anlegen eines neuen bewohnerprofils sollte geprüft werden ob ein profil mit gleichem oder sehr ähnlichem namen bereits existiert um dubletten zu vermeiden",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "confirmedInRun": "20260723_122625_136540",
+      "status": "accepted"
+    },
+    {
+      "itemId": "L3-REQ-013",
+      "itemType": "requirement",
+      "text": "Bei Benachrichtigungen und Übersichten sollte klar erkennbar sein, welche Inhalte seit dem letzten Besuch neu oder aktualisiert sind.",
+      "origin": "HUMAN_ACCEPTED_OPEN_WORLD",
+      "stage": "l3_promoted",
+      "version": 1,
+      "sourceRunId": "20260723_122625_136540",
+      "sourceArtifactId": null,
+      "sourceArtifactType": "l3",
+      "sourceDecisionId": "HDEC-017",
+      "sourceCandidateId": "CAND-029",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceCandidateId": "CAND-029",
+        "sourceDecisionId": "HDEC-017",
+        "decision": "accept",
+        "decisionReason": "stimmt",
+        "reviewer": "human (review-ui)"
+      },
+      "identityKey": "bei benachrichtigungen und übersichten sollte klar erkennbar sein welche inhalte seit dem letzten besuch neu oder aktualisiert sind",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "confirmedInRun": "20260723_122625_136540",
+      "status": "accepted"
+    },
+    {
+      "itemId": "REQ-45",
+      "itemType": "requirement",
+      "text": "In der Profilübersicht soll erwogen werden, das Anlegen neuer Profile per Plus-Symbol und Dialog für Bild, Name und Beschreibung zu ermöglichen.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260723_113115_35335a",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-neue-profile-anlegen-pruefen"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "artifactVersion": "1",
+        "producerModel": "openai/gpt-5.4"
+      },
+      "identityKey": "in der profilübersicht soll erwogen werden das anlegen neuer profile per plus symbol und dialog für bild name und beschreibung zu ermöglichen",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "confirmedInRun": "20260723_113115_35335a",
+      "status": "baseline"
+    },
+    {
+      "itemId": "REQ-59",
+      "itemType": "requirement",
+      "text": "Beim Anlegen eines Bewohners muss mindestens ein Sofortinfo-Eintrag verpflichtend sein.",
+      "origin": "Extracted",
+      "stage": "evidence_baseline",
+      "version": 1,
+      "sourceRunId": "20260723_134102_c63c89",
+      "sourceArtifactId": "REQ",
+      "sourceArtifactType": "requirements",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "sofortinfo-mindestens-eins"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "REQ-06",
+        "featureKey": "sofortinfo"
+      },
+      "identityKey": "beim anlegen eines bewohners muss mindestens ein sofortinfo eintrag verpflichtend sein",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "confirmedInRun": "20260723_134102_c63c89",
+      "status": "accepted"
+    },
+    {
+      "itemId": "REQ-78",
+      "itemType": "requirement",
+      "text": "Zusätzlich zur bestehenden Sortierung nach Datum soll die Liste auch nach Dringlichkeit sortierbar sein.",
+      "origin": "GithubInbound",
+      "stage": "github_inbound",
+      "version": 1,
+      "sourceRunId": "20260817_100135_03f491",
+      "sourceArtifactId": "github-issue:7",
+      "sourceArtifactType": "github-issue",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "ingestedFrom": "GH-7",
+        "ingestedFromRun": "20260817_100135_03f491",
+        "githubIssueNumber": "7",
+        "githubIssueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/7",
+        "harvestedTitleHash": "a9b18f6d81abced6",
+        "harvestedBodyHash": "fca337af7572cf6c"
+      },
+      "identityKey": "zusätzlich zur bestehenden sortierung nach datum soll die liste auch nach dringlichkeit sortierbar sein",
+      "history": [],
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Human",
+      "status": "accepted"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "L3-REQ-007": 0,
+    "PBI-010": 1,
+    "PBI-011": 0
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

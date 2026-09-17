@@ -1,0 +1,35 @@
+{
+  "runId": "20260820_095055_5c8547",
+  "decisions": [
+    {
+      "draft": {
+        "itemId": "ARCH-47",
+        "title": "Unver\u00E4nderlicher Audit-Log-Rahmen f\u00FCr Einsichtnahmen",
+        "context": "Die revisionssichere Protokollierung von Einsichtnahmen musste konkret festgelegt werden. Das zugrunde liegende Design-Item beschreibt als bindenden Rahmen, dass Zugriffsereignisse serverseitig protokolliert werden, nur anh\u00E4ngend erfasst werden d\u00FCrfen und nachtr\u00E4gliche \u00C4nderungen oder L\u00F6schungen fachlich und technisch ausgeschlossen sind. Zus\u00E4tzlich ist festgelegt, dass das Leserecht auf diese Protokolle strikt auf Admins beschr\u00E4nkt bleibt. Damit wird die Umsetzung der revisionssicheren Einsichtnahme-Protokollierung unmittelbar fachlich und technisch eingegrenzt.",
+        "decision": "Wir nutzen f\u00FCr Einsichtnahmen einen serverseitigen, append-only Audit-Log. Wir schlie\u00DFen nachtr\u00E4gliche \u00C4nderungen und L\u00F6schungen der Protokolle fachlich und technisch aus. Wir beschr\u00E4nken das Leserecht auf diese Protokolle strikt auf Admins.",
+        "consequences": "Die Protokollierung von Einsichtnahmen wird revisionssicher und zentral nachvollziehbar. Manipulationen an Protokolleintr\u00E4gen werden ausgeschlossen, was Nachweisbarkeit und Kontrolle st\u00E4rkt. Die Umsetzung muss jedoch serverseitige Erfassung und unver\u00E4nderliche Speicherung sicherstellen. Einsicht in die Protokolle ist organisatorisch und technisch an die Admin-Rolle gebunden; normale Nutzer erhalten keinen Zugriff. Betriebs- und Supportprozesse m\u00FCssen diese restriktive Zugriffsregel ber\u00FCcksichtigen.",
+        "relatedIds": [
+          "REQ-64",
+          "REQ-65",
+          "ARCH-08"
+        ],
+        "alternatives": null
+      }
+    },
+    {
+      "draft": {
+        "itemId": "ARCH-48",
+        "title": "Serverseitiger Benachrichtigungsrahmen f\u00FCr Besuchserinnerungen",
+        "context": "F\u00FCr Besuchserinnerungen am Vortag um 18 Uhr musste festgelegt werden, wie die Erinnerung verl\u00E4sslich ausgel\u00F6st wird. Das zugrunde liegende Design-Item bestimmt, dass die Erinnerung zentral aus dem best\u00E4tigten Besuchsstatus heraus geplant wird, bei Status\u00E4nderung oder Absage wieder zur\u00FCckgezogen werden muss und nicht von lokaler Verf\u00FCgbarkeit oder Hintergrundrestriktionen auf dem Ger\u00E4t der Angeh\u00F6rigen abh\u00E4ngen darf. Damit wird die Umsetzung der Push-Erinnerung an best\u00E4tigte Besuche architektonisch festgelegt.",
+        "decision": "Wir planen Besuchserinnerungen serverseitig und zentral aus dem best\u00E4tigten Besuchsstatus heraus. Wir ziehen eine geplante Erinnerung bei Status\u00E4nderung oder Absage wieder zur\u00FCck. Wir gestalten die Erinnerung so, dass sie nicht von lokaler Verf\u00FCgbarkeit oder Hintergrundrestriktionen des Ger\u00E4ts der Angeh\u00F6rigen abh\u00E4ngt.",
+        "consequences": "Die Erinnerung wird unabh\u00E4ngig vom lokalen Ger\u00E4tezustand zentral verwaltet und bleibt dadurch f\u00FCr best\u00E4tigte Besuche konsistent. \u00C4nderungen am Besuchsstatus wirken direkt auf die Erinnerungsplanung, sodass veraltete Erinnerungen vermieden werden. Die Umsetzung wird an eine serverseitige Planungs- und R\u00FCckzugslogik gebunden. Reine clientseitige oder nur lokal terminierte Erinnerungen gen\u00FCgen daf\u00FCr nicht.",
+        "relatedIds": [
+          "REQ-88",
+          "REQ-87",
+          "ARCH-46"
+        ],
+        "alternatives": "Erkennbar verworfen ist eine lokale, ger\u00E4teabh\u00E4ngige Planung der Erinnerung, da die Zustellung nicht von lokaler Verf\u00FCgbarkeit oder Hintergrundrestriktionen abh\u00E4ngen darf."
+      }
+    }
+  ]
+}

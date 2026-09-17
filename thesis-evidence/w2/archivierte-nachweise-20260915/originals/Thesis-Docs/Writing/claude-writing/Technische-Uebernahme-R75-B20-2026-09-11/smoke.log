@@ -1,0 +1,25 @@
+== BUILD ==
+  PASS  vorheriger erfolgreicher Build: Binaerdateien hashgleich (kein Neubuild)
+== Core-Baseline: 237 items ==
+== [1/5] ingest-requirements-hitl ==
+  PASS  ingestion leeres Gate -> R-50-Skip (laut) (20260911_135725_93faa4)
+  PASS  ingestion Skip -> Apply im selben Lauf
+== [2/5] pbi-update-hitl ==
+  PASS  pbi-update leeres Gate -> R-50-Skip (laut) (20260911_135725_586e3d)
+  PASS  pbi-update Skip -> Apply im selben Lauf
+== [3/5] decision-resolve-hitl ==
+  PASS  decision start -> Pause (20260911_135726_31db94)
+  PASS  decision resume -> Apply
+== [4/5] github-forward-hitl ==
+  PASS  github-forward leeres Gate -> R-50-Skip (laut) (20260911_135727_607031)
+  PASS  github-forward Skip -> dry-run Apply im selben Lauf
+== [5/5] pipeline-full --from-delta (Ein-Graph, Pause->Resume via Fixture-DEC) ==
+  PASS  pipeline-full Delta-Einstieg (Front uebersprungen)
+  PASS  pipeline-full run -> Pause decision-gate (20260911_135728_a2daa4)
+  PASS  pipeline-full resume -> FERTIG (R-50: leere Gates übersprungen, Forward-Skip)
+== Core-Integritaet ==
+  PASS  Core-Item-Zahl unveraendert (237)
+  PASS  Core aus Backup restauriert
+============================================================
+SMOKE-ERGEBNIS:  14 PASS  |  0 FAIL
+============================================================

@@ -1,0 +1,301 @@
+--- a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/BaselineStageExecutor.cs
++++ b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/BaselineStageExecutor.cs
+@@ -23,7 +23,9 @@
+ /// Rückgabewert — der frühere Ordner-Diff-Hack ist gelöscht).
+ /// </remarks>
+ [SendsMessage(typeof(ProjectStateBuildRequest))]
+-internal sealed class BaselineStageExecutor(HostSettings settings, string? baselineModel, RunContext parentRun, string repoRoot)
++[YieldsOutput(typeof(string))]
++internal sealed class BaselineStageExecutor(HostSettings settings, string? baselineModel, RunContext parentRun, string repoRoot,
++    Func<Recipe, string, string?, bool, HostSettings, string, Task<RecipeRunner.RecipeExecution>>? executeRecipe = null)
+     : Executor<ConsumableLedgerOutput>("PipelineBaselines")
+ {
+     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+@@ -52,9 +54,10 @@
+         var recipe = new Recipe(new RecipeBaseline("build", OrderedArtifacts), Derivations: []);
+         await File.WriteAllTextAsync(recipeJsonPath, JsonSerializer.Serialize(recipe, Json), ct).ConfigureAwait(false);
+ 
+-        var result = await RecipeRunner.ExecuteAsync(
++        // The default executes the real recipe; tests can supply a model-free recipe result.
++        var result = await (executeRecipe ?? RecipeRunner.ExecuteAsync)(
+             recipe, recipeJsonPath, string.IsNullOrWhiteSpace(baselineModel) ? null : baselineModel,
+-            dryRun: false, recipeSettings, repoRoot).ConfigureAwait(false);
++            false, recipeSettings, repoRoot).ConfigureAwait(false);
+         var exit = result.Exit;
+ 
+         var recipeRunDir = result.Run?.RunDir;
+--- a/AgenticSdlc.Host/FullWorkflow/01-ledger/core/TranscriptSegmenter.cs
++++ b/AgenticSdlc.Host/FullWorkflow/01-ledger/core/TranscriptSegmenter.cs
+@@ -14,7 +14,7 @@
+ {
+     // Turn-Start: "[Name] ..." ODER "Name: ..." (Sprechername + Doppelpunkt).
+     private static readonly Regex SpeakerRx =
+-        new(@"^\s*(?:\[(?<sp>[^\]]+)\]|(?<sp2>\p{Lu}[\p{L}]+):)\s*(?<rest>.*)$", RegexOptions.Compiled);
++        new(@"^\s*(?:\[(?<sp>[^\]]+)\]|(?<sp2>\p{Lu}[\p{L}]+(?:-[\p{L}]+)*):)\s*(?<rest>.*)$", RegexOptions.Compiled);
+     private static readonly Regex WhitespaceRx = new(@"\s+", RegexOptions.Compiled);
+ 
+     public static IReadOnlyList<TranscriptTurn> Segment(string transcript)
+--- /dev/null
++++ b/AgenticSdlc.Tests/FullWorkflow/BaselineStageOutputRegressionTests.cs
+@@ -0,0 +1,121 @@
++using System.Collections.Concurrent;
++using AgenticSdlc.Host.Configuration;
++using AgenticSdlc.Host.FullWorkflow.Delta;
++using AgenticSdlc.Host.FullWorkflow.Pipeline;
++using AgenticSdlc.Host.FullWorkflow.Recipes;
++using AgenticSdlc.Host.Run;
++using Microsoft.Agents.AI.Workflows;
++using Xunit;
++
++namespace AgenticSdlc.Tests.FullWorkflow;
++
++// R-75: runs the actual baseline executor and MAF output contract, without a model call.
++public sealed class BaselineStageOutputRegressionTests
++{
++    private sealed class Downstream(ConcurrentBag<ProjectStateBuildRequest> hits)
++        : Executor<ProjectStateBuildRequest>("DownstreamProbe")
++    {
++        public override ValueTask HandleAsync(ProjectStateBuildRequest input,
++            IWorkflowContext context, CancellationToken ct = default)
++        { hits.Add(input); return ValueTask.CompletedTask; }
++    }
++
++    [Fact]
++    public async Task Missing_ledger_yields_terminal_failure_without_forwarding_to_delta()
++    {
++        var parent = new RunContext(RunId.New(), "test-r75");
++        parent.EnsureFolders();
++        var settings = HostSettings.FromRuntimeConfig(new RunConfig(), Directory.GetCurrentDirectory());
++        var baseline = new BaselineStageExecutor(settings, null, parent, Directory.GetCurrentDirectory());
++        var hits = new ConcurrentBag<ProjectStateBuildRequest>();
++        var builder = new WorkflowBuilder(baseline);
++        builder.AddEdge(baseline, new Downstream(hits));
++        builder.WithOutputFrom(baseline);
++        var run = await InProcessExecution.Default.RunAsync(builder.Build(),
++            new ConsumableLedgerOutput(Path.Combine(parent.RunDir, "missing-consumable.json"), 0),
++            parent.RunId, CancellationToken.None);
++
++        var errors = run.OutgoingEvents.Where(e => e is ExecutorFailedEvent or WorkflowErrorEvent)
++            .Select(e => e switch {
++                ExecutorFailedEvent f => f.Data?.Message,
++                WorkflowErrorEvent w => w.Exception?.Message,
++                _ => e.ToString()
++            }).ToList();
++        Assert.True(errors.Count == 0, string.Join("\n", errors));
++        var output = Assert.Single(run.OutgoingEvents.OfType<WorkflowOutputEvent>());
++        Assert.Contains("02-baselines fehlgeschlagen (exit 2)", Assert.IsType<string>(output.Data));
++        Assert.Empty(hits);
++    }
++
++    [Theory]
++    [InlineData("HumanReview")]
++    [InlineData("MaxIterationsReached")]
++    public async Task Nonpass_report_yields_terminal_notice_without_forwarding_to_delta(string decision)
++    {
++        var parent = new RunContext(RunId.New(), "test-r75-review");
++        parent.EnsureFolders();
++        var recipeRun = new RunContext(RunId.New(), "test-r75-recipe");
++        recipeRun.EnsureFolders();
++        var artifactDir = Path.Combine(recipeRun.RunDir, "baselines", "requirements");
++        Directory.CreateDirectory(artifactDir);
++        await File.WriteAllTextAsync(Path.Combine(artifactDir, "artifact.json"), "{}");
++        await File.WriteAllTextAsync(Path.Combine(artifactDir, BaselineFinalReport.FileName),
++            System.Text.Json.JsonSerializer.Serialize(new { decision, pass = false }));
++        var settings = HostSettings.FromRuntimeConfig(new RunConfig(), Directory.GetCurrentDirectory());
++        var baseline = new BaselineStageExecutor(settings, null, parent, Directory.GetCurrentDirectory(),
++            (_, _, _, _, _, _) => Task.FromResult(new RecipeRunner.RecipeExecution(0, recipeRun)));
++        var hits = new ConcurrentBag<ProjectStateBuildRequest>();
++        var builder = new WorkflowBuilder(baseline);
++        builder.AddEdge(baseline, new Downstream(hits));
++        builder.WithOutputFrom(baseline);
++        var run = await InProcessExecution.Default.RunAsync(builder.Build(),
++            new ConsumableLedgerOutput("scripted-recipe-result", 1), parent.RunId, CancellationToken.None);
++        var errors = run.OutgoingEvents.Where(e => e is ExecutorFailedEvent or WorkflowErrorEvent)
++            .Select(e => e switch {
++                ExecutorFailedEvent f => f.Data?.Message,
++                WorkflowErrorEvent w => w.Exception?.Message,
++                _ => e.ToString()
++            }).ToList();
++        Assert.True(errors.Count == 0, string.Join("\n", errors));
++        var output = Assert.Single(run.OutgoingEvents.OfType<WorkflowOutputEvent>());
++        var text = Assert.IsType<string>(output.Data);
++        Assert.Contains($"Checker-Verdikt '{decision}'", text);
++        Assert.Contains(Path.Combine(artifactDir, BaselineFinalReport.FileName), text);
++        Assert.Empty(hits);
++        Assert.False(File.Exists(Path.Combine(parent.RunDir, "02-baselines", "baseline-stage.json")));
++        Assert.Contains("STAGE_BASELINES_NEEDS_HUMAN", await File.ReadAllTextAsync(parent.EventsPath));
++    }
++
++    [Theory]
++    [InlineData(true)]
++    [InlineData(false)]
++    public async Task Pass_or_legacy_missing_report_keeps_existing_forwarding_behavior(bool writePassReport)
++    {
++        var parent = new RunContext(RunId.New(), "test-r75-forward");
++        parent.EnsureFolders();
++        var recipeRun = new RunContext(RunId.New(), "test-r75-recipe");
++        recipeRun.EnsureFolders();
++        var artifactDir = Path.Combine(recipeRun.RunDir, "baselines", "requirements");
++        Directory.CreateDirectory(artifactDir);
++        var artifactPath = Path.Combine(artifactDir, "artifact.json");
++        await File.WriteAllTextAsync(artifactPath, "{}");
++        if (writePassReport)
++            await File.WriteAllTextAsync(Path.Combine(artifactDir, BaselineFinalReport.FileName),
++                "{\"decision\":\"Pass\",\"pass\":true}");
++        var settings = HostSettings.FromRuntimeConfig(new RunConfig(), Directory.GetCurrentDirectory());
++        var baseline = new BaselineStageExecutor(settings, null, parent, Directory.GetCurrentDirectory(),
++            (_, _, _, _, _, _) => Task.FromResult(new RecipeRunner.RecipeExecution(0, recipeRun)));
++        var hits = new ConcurrentBag<ProjectStateBuildRequest>();
++        var builder = new WorkflowBuilder(baseline);
++        builder.AddEdge(baseline, new Downstream(hits));
++        builder.WithOutputFrom(baseline);
++        var run = await InProcessExecution.Default.RunAsync(builder.Build(),
++            new ConsumableLedgerOutput("scripted-recipe-result", 1), parent.RunId, CancellationToken.None);
++        Assert.DoesNotContain(run.OutgoingEvents, e => e is ExecutorFailedEvent or WorkflowErrorEvent);
++        Assert.Empty(run.OutgoingEvents.OfType<WorkflowOutputEvent>());
++        Assert.Single(hits);
++        var events = await File.ReadAllTextAsync(parent.EventsPath);
++        Assert.Contains("STAGE_BASELINES_DONE", events);
++        if (!writePassReport) Assert.Contains("STAGE_BASELINES_VERDICT_MISSING", events);
++    }
++}
+--- /dev/null
++++ b/AgenticSdlc.Tests/FullWorkflow/TranscriptSpeakerRegressionTests.cs
+@@ -0,0 +1,72 @@
++using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
++using AgenticSdlc.Host.FullWorkflow.Ledger;
++using System.Text.Json;
++using System.Security.Cryptography;
++using Xunit;
++
++namespace AgenticSdlc.Tests.FullWorkflow;
++
++public sealed class TranscriptSpeakerRegressionTests
++{
++    [Fact]
++    public void Hyphenated_role_starts_its_own_turn_and_does_not_inherit_previous_speaker()
++    {
++        const string text = "Leitung: Gut, dann Notiz mit Push.\n\n" +
++            "Angehörigen-Vertreterin: Zum Schluss noch ein Wunsch: Besuchsplanung.\n\n" +
++            "Leitung: Das ist hilfreich.";
++        var turns = TranscriptSegmenter.Segment(text);
++        Assert.Equal(3, turns.Count);
++        Assert.Equal(new[] { "Leitung", "Angehörigen-Vertreterin", "Leitung" }, turns.Select(t => t.Speaker));
++        Assert.Equal("Gut, dann Notiz mit Push.", turns[0].Text);
++        Assert.Equal("Zum Schluss noch ein Wunsch: Besuchsplanung.", turns[1].Text);
++    }
++
++    private static string RepoRoot()
++    {
++        var directory = new DirectoryInfo(AppContext.BaseDirectory);
++        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, "input", "transcripts")))
++            directory = directory.Parent;
++        return directory?.FullName ?? throw new DirectoryNotFoundException("Isolated input snapshot missing.");
++    }
++
++    [Fact]
++    public void Historical_F1_source_has_separate_visit_planning_unit_with_correct_speaker()
++    {
++        const string source = "meeting-4-ux-block-l.txt";
++        var text = File.ReadAllText(Path.Combine(RepoRoot(), "input", "transcripts", source));
++        var units = AtomicUnitSegmenter.Segment(text, source);
++        Assert.Equal(17, units.Count);
++        Assert.Equal(4, units.Count(u => u.Speaker == "Angehörigen-Vertreterin"));
++        var visit = Assert.Single(units, u => u.Text.Contains("Zum Schluss das zweite neue Thema"));
++        Assert.Equal("Angehörigen-Vertreterin", visit.Speaker);
++        Assert.Equal("AU-0016", visit.Id);
++        Assert.DoesNotContain("Angehörigen-Vertreterin:", visit.Text);
++    }
++
++    [Fact]
++    public void Corpus_comparison_records_changes_and_preserves_both_W2_inputs_exactly()
++    {
++        var root = RepoRoot();
++        var rows = new List<object>();
++        var changed = new List<string>();
++        foreach (var path in Directory.GetFiles(Path.Combine(root, "input", "transcripts"), "*.txt").Order())
++        {
++            var name = Path.GetFileName(path);
++            var text = File.ReadAllText(path);
++            var before = TranscriptSegmenterBeforeB20.Segment(text)
++                .Select((t, i) => new AtomicUnit($"AU-{i + 1:D4}", name, t.Index, t.Speaker, t.Text)).ToList();
++            var after = AtomicUnitSegmenter.Segment(text, name);
++            var beforeBytes = JsonSerializer.SerializeToUtf8Bytes(before);
++            var afterBytes = JsonSerializer.SerializeToUtf8Bytes(after);
++            bool identical = beforeBytes.SequenceEqual(afterBytes);
++            if (!identical) changed.Add(name);
++            rows.Add(new { source = name, sourceSha256 = Convert.ToHexStringLower(SHA256.HashData(File.ReadAllBytes(path))),
++                beforeCount = before.Count, afterCount = after.Count, identical,
++                beforeUnitsSha256 = Convert.ToHexStringLower(SHA256.HashData(beforeBytes)),
++                afterUnitsSha256 = Convert.ToHexStringLower(SHA256.HashData(afterBytes)) });
++        }
++        File.WriteAllText(Path.Combine(AppContext.BaseDirectory, "b20-corpus-comparison.json"),
++            JsonSerializer.Serialize(rows, new JsonSerializerOptions { WriteIndented = true }));
++        Assert.Equal(new[] { "meeting-4-ux-block-l.txt" }, changed);
++    }
++}
+--- /dev/null
++++ b/AgenticSdlc.Tests/FullWorkflow/TranscriptSegmenterBeforeB20.cs
+@@ -0,0 +1,62 @@
++// Diagnostic reference: verbatim pre-fix parser, except namespace/class and shared result record.
++using System.Text.RegularExpressions;
++
++using AgenticSdlc.Host.FullWorkflow.Ledger.Core;
++namespace AgenticSdlc.Tests.FullWorkflow;
++
++/// <summary>Eine deterministisch segmentierte Transkript-äusserung (Sprecher-Turn).</summary>
++
++
++/// <summary>
++/// DISK-14 Coverage-Achse: zerlegt ein Transkript deterministisch in Sprecher-Turns (KEIN LLM →
++/// fixe, reproduzierbare Einheiten). Das ist der bounded Anker für die MISSING-Prüfung (Transkript →
++/// Artefakt), damit sie NICHT in offene "finde was fehlt"-Generierung zurückfällt.
++/// </summary>
++internal static class TranscriptSegmenterBeforeB20
++{
++    // Turn-Start: "[Name] ..." ODER "Name: ..." (Sprechername + Doppelpunkt).
++    private static readonly Regex SpeakerRx =
++        new(@"^\s*(?:\[(?<sp>[^\]]+)\]|(?<sp2>\p{Lu}[\p{L}]+):)\s*(?<rest>.*)$", RegexOptions.Compiled);
++    private static readonly Regex WhitespaceRx = new(@"\s+", RegexOptions.Compiled);
++
++    public static IReadOnlyList<TranscriptTurn> Segment(string transcript)
++    {
++        var turns = new List<TranscriptTurn>();
++        string? speaker = null;
++        var buffer = new List<string>();
++        var idx = 0;
++
++        void Flush()
++        {
++            if (speaker is not null)
++            {
++                var text = Normalize(string.Join(" ", buffer));
++                if (text.Length > 0) turns.Add(new TranscriptTurn(idx++, speaker, text));
++            }
++            buffer.Clear();
++        }
++
++        foreach (var raw in (transcript ?? string.Empty).Replace("\r\n", "\n").Replace('\r', '\n').Split('\n'))
++        {
++            if (raw.Trim().Length == 0) continue;
++
++            var m = SpeakerRx.Match(raw);
++            if (m.Success)
++            {
++                Flush();
++                speaker = (m.Groups["sp"].Success ? m.Groups["sp"].Value : m.Groups["sp2"].Value).Trim();
++                buffer.Add(m.Groups["rest"].Value);
++            }
++            else if (speaker is not null)
++            {
++                buffer.Add(raw.Trim()); // Fortsetzungszeile desselben Turns
++            }
++            // Zeilen vor dem ersten Sprecher = Präambel -> ignoriert
++        }
++
++        Flush();
++        return turns;
++    }
++
++    private static string Normalize(string s) => WhitespaceRx.Replace(s, " ").Trim();
++}

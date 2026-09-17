@@ -1,0 +1,592 @@
+{
+  "projectId": "agentic-sdlc",
+  "schemaVersion": 4,
+  "createdUtc": "2026-08-21T20:40:30.338313Z",
+  "sources": [
+    {
+      "sourceId": "core-analysis:20260821_203951_db6050",
+      "sourceType": "analyst-finding",
+      "path": "runs/core-analysis/20260821_203951_db6050",
+      "runId": "20260821_203951_db6050",
+      "description": "L\u00FCcken-Hypothesen des Core-Analysten (erschlossen aus dem Bestand \u2014 Autor entscheidet an Tor 1)"
+    }
+  ],
+  "items": [
+    {
+      "itemId": "CA-1",
+      "itemType": "architecture",
+      "text": "F\u00FCr die einrichtungsgebundene Stichwortsuche \u00FCber alle Bewohnerprofile muss ein serverseitiger Suchrahmen festgelegt werden: Suchindizes d\u00FCrfen nur Inhalte der jeweils zugeordneten Einrichtung enthalten oder nur innerhalb dieser Einrichtung abfragbar sein, damit Suchtreffer die Einrichtungsgrenze technisch nicht umgehen.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "arch",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus REQ-60/PBI-031, die eine Stichwortsuche \u00FCber alle Bewohnerprofile verlangen, und aus REQ-84 sowie ARCH-11, die die serverseitig erzwungene Einrichtungsgrenze festlegen. F\u00FCr die Namenssuche auf Kommunikationsseiten gibt es mit ARCH-24 bereits einen Teilrahmen, f\u00FCr die einrichtungs\u00FCbergreifende Stichwortsuche \u00FCber Profile jedoch keinen technischen Rahmen, wie Indizierung und Mandantentrennung zusammen umgesetzt werden.",
+        "ankerIds": "REQ-60,REQ-84,ARCH-11,ARCH-24"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-2",
+      "itemType": "architecture",
+      "text": "F\u00FCr den datenschutzkonformen Schnellzugriff auf zuletzt genutzten Kontext muss ein lokaler Persistenzrahmen festgelegt werden: Gespeichert werden darf nur ein minimaler, verschl\u00FCsselter Verweis pro Account und Einrichtung; der Verweis muss bei Logout, Berechtigungsentzug oder Einrichtungswechsel technisch ung\u00FCltig gemacht oder gel\u00F6scht werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "arch",
+        "analystKategorie": "nfr:privacy",
+        "herleitung": "Abgeleitet aus PBI-006 und L3-REQ-005 zum Schnellzugriff auf zuletzt genutzten Kontext sowie aus REQ-36 zur verschl\u00FCsselten lokale Datenhaltung und Unlesbarkeit nach Abmeldung oder Entzug der Berechtigung. ARCH-40 kl\u00E4rt den lokalen Cache nur allgemein, definiert aber noch nicht, wie genau ein zuletzt genutzter Kontext gespeichert werden darf, ohne dass fr\u00FChere Bewohner- oder Einrichtungsbez\u00FCge nach Rollen- oder Berechtigungswechsel wieder sichtbar werden.",
+        "ankerIds": "PBI-006,L3-REQ-005,REQ-36,ARCH-40"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-3",
+      "itemType": "architecture",
+      "text": "F\u00FCr Offline-Cache und Medienhaltung muss ein mandanten- und berechtigungsgebundener Schl\u00FCsselrahmen festgelegt werden: Lokal gespeicherte Bewohnerdaten und Medien sind kryptografisch an Account und Einrichtung zu binden, sodass zwischengespeicherte Inhalte nach Logout, Rollenwechsel oder Entzug der Profilberechtigung nicht mit einem anderen Account desselben Ger\u00E4ts weiterverwendet werden k\u00F6nnen.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "arch",
+        "analystKategorie": "nfr:security",
+        "herleitung": "Abgeleitet aus PBI-024 zu Offline-first, lokalem Cache, Verschl\u00FCsselung und Synchronisationsverhalten, aus REQ-36 zur Unlesbarkeit lokaler Daten nach Abmeldung oder Berechtigungsentzug sowie aus REQ-84 zur festen Einrichtungszuordnung. ARCH-40 benennt das Cache-Thema nur als offene Kl\u00E4rung. Gerade bei gemeinsam genutzten Ger\u00E4ten und mehreren Rollen ist ohne Schl\u00FCsselrahmen unklar, wie verhindert wird, dass verschl\u00FCsselt vorliegende Caches nach Account- oder Einrichtungswechsel weiterhin zug\u00E4nglich bleiben.",
+        "ankerIds": "PBI-024,REQ-36,REQ-84,ARCH-40"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-4",
+      "itemType": "requirement",
+      "text": "Angeh\u00F6rige m\u00FCssen eine bereits angefragte oder best\u00E4tigte Besuchsank\u00FCndigung bis zum Beginn des Besuchs \u00E4ndern oder absagen k\u00F6nnen; nach einer \u00C4nderung muss der Besuch erneut den Status \u201Eangefragt\u201C erhalten, und nach einer Absage darf keine Erinnerung mehr versendet werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "funktional",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-82 und REQ-87: Es gibt das Ank\u00FCndigen sowie die Pflege-Entscheidung mit den Status angefragt, best\u00E4tigt und abgelehnt, aber keine Regel f\u00FCr den h\u00E4ufigen Folgefall, dass Angeh\u00F6rige Datum/Uhrzeit nachtr\u00E4glich \u00E4ndern oder den Besuch absagen m\u00FCssen. Aus REQ-88 folgt zus\u00E4tzlich, dass ohne Absage-Regel falsche Erinnerungen an nicht mehr g\u00FCltige Besuche versendet w\u00FCrden.",
+        "ankerIds": "REQ-82,REQ-87,REQ-88"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-5",
+      "itemType": "requirement",
+      "text": "\u00DCbergabe-Notizen m\u00FCssen bis zur Archivierung bearbeitet werden k\u00F6nnen; bei jeder Bearbeitung ist die zuletzt g\u00FCltige Fassung mit \u00C4nderungszeitpunkt und bearbeitendem Account nachvollziehbar zu halten.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "funktional",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus REQ-61 und REQ-85: Es gibt die fachliche Anlage und Anzeige einer \u00DCbergabe-Notiz pro Schicht sowie die automatische Archivierung nach drei\u00DFig Tagen, aber keine Regel f\u00FCr Korrekturen an fehlerhaften oder unvollst\u00E4ndigen Notizen im laufenden Schichtbetrieb. Gerade weil die n\u00E4chste Schicht die Notiz prominent sieht, fehlt ein geregelter Bearbeitungsfall im Lebenszyklus.",
+        "ankerIds": "REQ-61,REQ-85,L3-REQ-001"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-6",
+      "itemType": "requirement",
+      "text": "F\u00FCr Bewohnerprofile muss festgelegt werden, welche berechtigten Rollen bestehende Profile bearbeiten, archivieren und gegebenenfalls wieder reaktivieren d\u00FCrfen; archivierte Profile d\u00FCrfen nicht wie aktive Profile im Alltagszugriff behandelt werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "funktional",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus PBI-010 sowie PBI-011/L3-REQ-007: Das Anlegen neuer Bewohnerprofile ist beschrieben und ein Profilstatus ist vorgesehen, aber die zugeh\u00F6rigen Lebenszyklus-\u00DCberg\u00E4nge und Rechte dazu fehlen. Ohne Regeln f\u00FCr Bearbeiten, Archivieren und Reaktivieren bleibt unklar, wie mit ausziehenden, vorl\u00E4ufig angelegten oder versehentlich fehlerhaften Profilen umzugehen ist.",
+        "ankerIds": "PBI-010,PBI-011,L3-REQ-007"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-7",
+      "itemType": "requirement",
+      "text": "F\u00FCr Bilder und andere personenbezogene Medien muss der Einwilligungsstatus je Bewohner und Medium nachvollziehbar hinterlegt werden; bei fehlender oder widerrufener Einwilligung d\u00FCrfen betroffene Medien weder neu hochgeladen noch angezeigt oder weiter verteilt werden.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "nfr",
+        "analystKategorie": "nfr:privacy",
+        "herleitung": "Abgeleitet aus PBI-015 und REQ-35: Einwilligungen f\u00FCr Bilder sollen gekl\u00E4rt werden, aber es fehlt die nicht-funktionale Schutzanforderung, wie das Produkt einen fehlenden oder widerrufenen Status technisch wirksam durchsetzt. Das wird durch PBI-044 zus\u00E4tzlich kritisch, weil Angeh\u00F6rige selbst Fotos hochladen d\u00FCrfen und dadurch weitere personenbezogene Medien in Umlauf kommen k\u00F6nnen.",
+        "ankerIds": "PBI-015,REQ-35,PBI-044"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-8",
+      "itemType": "requirement",
+      "text": "Die App muss f\u00FCr Offline- oder Verbindungsst\u00F6rungen ein definiertes Degradationsverhalten bereitstellen: Nutzer m\u00FCssen klar erkennen, ob Daten nur aus dem lokalen Cache stammen, ob \u00C4nderungen aktuell nicht sicher synchronisiert werden k\u00F6nnen und welche Funktionen in diesem Zustand nur lesend oder gar nicht verf\u00FCgbar sind.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "nfr",
+        "analystKategorie": "nfr:availability",
+        "herleitung": "Abgeleitet aus PBI-024 und REQ-36: Verschl\u00FCsselung des lokalen Caches und Konfliktbehandlung sind teilweise adressiert, aber es fehlt die Verf\u00FCgbarkeitsanforderung f\u00FCr den laufenden Betrieb bei Netzproblemen. Gerade bei einer mobilen Pflege-App mit Offline-first-Ansatz reicht es nicht, nur Cache und Verschl\u00FCsselung zu nennen; der sichere Betriebsmodus bei gest\u00F6rter Verbindung muss explizit festgelegt sein.",
+        "ankerIds": "PBI-024,REQ-36,L3-REQ-004"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-9",
+      "itemType": "requirement",
+      "text": "F\u00FCr Push-Benachrichtigungen mit Bewohnerbezug d\u00FCrfen auf dem Sperrbildschirm und in Benachrichtigungsvorschauen keine sensiblen Personen- oder Gesundheitsinformationen im Klartext angezeigt werden; der Detailinhalt darf erst nach Authentifizierung in der App sichtbar sein.",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "nfr",
+        "analystKategorie": "nfr:privacy",
+        "herleitung": "Abgeleitet aus REQ-88 sowie ARCH-46 und ARCH-48: Besuchserinnerungen an Angeh\u00F6rige sind fachlich gewollt und technisch \u00FCber Push vorgesehen. Es fehlt jedoch eine konkrete Datenschutzanforderung f\u00FCr die Anzeige dieser Hinweise auf fremd einsehbaren Ger\u00E4tesperrbildschirmen, obwohl die Nachrichten einen klaren Personenbezug haben und R\u00FCckschl\u00FCsse auf Betreuungskontexte zulassen.",
+        "ankerIds": "REQ-88,ARCH-46,ARCH-48"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-10",
+      "itemType": "open_question",
+      "text": "Welche verbindlichen Aufbewahrungs- und L\u00F6schfristen gelten f\u00FCr revisionssichere Zugriffsprotokolle und f\u00FCr exportierte \u00DCbergabe-PDFs, damit Datenschutz und Dokumentationspflichten zugleich eingehalten werden?",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "nfr",
+        "analystKategorie": "nfr:compliance",
+        "herleitung": "Abgeleitet aus REQ-64, ARCH-47 und REQ-77: Zugriffe auf Bewohnerdaten m\u00FCssen revisionssicher protokolliert werden, und zus\u00E4tzlich sollen \u00DCbergabe-Notizen als PDF exportiert werden k\u00F6nnen. F\u00FCr beide hochsensiblen Datenarten fehlt im aktuellen Stand jedoch eine konkrete Regel zu Aufbewahrungsdauer, L\u00F6schzeitpunkt und Verantwortlichkeit; ohne diese Kl\u00E4rung bleibt die Compliance-Lage zu DSGVO und Pflegedokumentation unvollst\u00E4ndig.",
+        "ankerIds": "REQ-64,ARCH-47,REQ-77"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-11",
+      "itemType": "open_question",
+      "text": "Wie k\u00F6nnen Angeh\u00F6rige ihre bereits angek\u00FCndigten Besuche in der App selbst einsehen und den aktuellen Status eines Besuchs nachvollziehen, insbesondere ob er noch ausstehend, best\u00E4tigt, abgelehnt oder bereits erledigt ist?",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "persona",
+        "analystKategorie": "functional",
+        "herleitung": "Abgeleitet aus den belegten Bed\u00FCrfnissen der Persona \u201EAngeh\u00F6rige / Bezugsperson\u201C: REQ-82 belegt das Ank\u00FCndigen von Besuchen, REQ-87 die R\u00FCckmeldung bei Best\u00E4tigung oder Ablehnung und REQ-88 die Erinnerung an best\u00E4tigte Besuche. F\u00FCr diese Persona gibt es jedoch kein gefundenes Requirement oder PBI, das eine eigene \u00DCbersicht oder Detailansicht der bereits angek\u00FCndigten Besuche f\u00FCr Angeh\u00F6rige beschreibt. Die vorhandenen \u00DCbersichts-Requirements REQ-83, REQ-89 und REQ-90 beziehen sich ausdr\u00FCcklich auf Pflegende.",
+        "ankerIds": "REQ-82,REQ-87,REQ-88"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-12",
+      "itemType": "open_question",
+      "text": "Wie wird das Missbrauchs- und Fehlzuordnungsrisiko bei Angeh\u00F6rigenbeitr\u00E4gen begrenzt, wenn Angeh\u00F6rige Fotos hochladen d\u00FCrfen: Wer pr\u00FCft, ob ein Bild tats\u00E4chlich zum richtigen Bewohner und zum richtigen Eintrag geh\u00F6rt, bevor andere Nutzer es im Pflegekontext sehen?",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "risiko",
+        "analystKategorie": "process",
+        "herleitung": "Abgeleitet aus REQ-79 und REQ-84: Angeh\u00F6rige d\u00FCrfen eigene Fotos hochladen und sind fest einer Einrichtung zugeordnet. Die Einrichtungsgrenze reduziert zwar Mandantenfehler, beantwortet aber nicht das inhaltliche Risiko, dass innerhalb derselben Einrichtung Bilder dem falschen Bewohner oder einem unpassenden Eintrag zugeordnet werden. Da ARCH-14 und REQ-35 nur Einwilligungen behandeln, fehlt noch die offene Risikofrage zur fachlichen Fehlzuordnung und m\u00F6glichem Missbrauch im Pflegealltag.",
+        "ankerIds": "REQ-79,REQ-84,ARCH-14,REQ-35"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    },
+    {
+      "itemId": "CA-13",
+      "itemType": "open_question",
+      "text": "Was ist das betriebliche Fallback, wenn Firebase Cloud Messaging oder die Zustellung auf Endger\u00E4ten ausf\u00E4llt und Besuchserinnerungen die Angeh\u00F6rigen nicht rechtzeitig erreichen?",
+      "origin": "CoreAnalyst",
+      "stage": "core_analyst",
+      "version": 1,
+      "sourceRunId": "20260821_203951_db6050",
+      "sourceArtifactId": "core-analysis:20260821_203951_db6050",
+      "sourceArtifactType": "analyst-finding",
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "quelle": "core-analyst (erschlossen, nicht gesagt)",
+        "linse": "risiko",
+        "analystKategorie": "process",
+        "herleitung": "Abgeleitet aus REQ-88, ARCH-46 und ARCH-48: Die Besuchserinnerung ist fachlich relevant und technisch von FCM sowie serverseitiger Planung abh\u00E4ngig. Zwar ist festgelegt, dass die Erinnerung nicht von lokaler Verf\u00FCgbarkeit abh\u00E4ngen darf, aber es bleibt offen, wie das Projekt mit dem Restrisiko eines Ausfalls oder einer Nichtzustellung des externen Push-Dienstes umgeht. Da die Erinnerung explizit dazu dient, vergessene Besuche zu vermeiden, ist dies ein konkretes Abh\u00E4ngigkeitsrisiko.",
+        "ankerIds": "REQ-88,ARCH-46,ARCH-48"
+      },
+      "identityKey": null,
+      "history": null,
+      "feature": null,
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Agent",
+      "status": "baseline"
+    }
+  ],
+  "relations": [],
+  "provenance": [
+    {
+      "itemId": "CA-1",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-1",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-60,REQ-84,ARCH-11,ARCH-24"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-2",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-2",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "PBI-006,L3-REQ-005,REQ-36,ARCH-40"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-3",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-3",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "PBI-024,REQ-36,REQ-84,ARCH-40"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-4",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-4",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-82,REQ-87,REQ-88"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-5",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-5",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-61,REQ-85,L3-REQ-001"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-6",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-6",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "PBI-010,PBI-011,L3-REQ-007"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-7",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-7",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "PBI-015,REQ-35,PBI-044"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-8",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-8",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "PBI-024,REQ-36,L3-REQ-004"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-9",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-9",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-88,ARCH-46,ARCH-48"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-10",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-10",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-64,ARCH-47,REQ-77"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-11",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-11",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-82,REQ-87,REQ-88"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-12",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-12",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-79,REQ-84,ARCH-14,REQ-35"
+          }
+        }
+      ]
+    },
+    {
+      "itemId": "CA-13",
+      "links": [
+        {
+          "targetType": "analyst-finding",
+          "targetId": "CA-13",
+          "relation": "derived_from_core",
+          "source": "core-analysis:20260821_203951_db6050",
+          "metadata": {
+            "ankerIds": "REQ-88,ARCH-46,ARCH-48"
+          }
+        }
+      ]
+    }
+  ],
+  "proposals": []
+}

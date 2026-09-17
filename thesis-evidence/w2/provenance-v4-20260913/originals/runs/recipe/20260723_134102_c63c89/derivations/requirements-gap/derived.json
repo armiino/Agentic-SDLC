@@ -1,0 +1,132 @@
+{
+  "artifactId": "DREQ",
+  "artifactType": "requirements",
+  "version": 1,
+  "stage": "derivation",
+  "producer": {
+    "runId": "20260723_134102_c63c89",
+    "model": "openai/gpt-5.4",
+    "promptVersion": "RequirementsGapFromRequirements1"
+  },
+  "items": [
+    {
+      "itemId": "DREQ-01",
+      "origin": "Derived",
+      "text": "Jeder No-Go-Eintrag muss eindeutig einem konkreten Bewohnerprofil zugeordnet gespeichert werden.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-01",
+        "REQ-03",
+        "REQ-04"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Wenn No-Go-Eintr\u00E4ge pro Bewohner gelten und nicht global sein d\u00FCrfen, sowie bearbeitet/gel\u00F6scht und optional aus Vorlagen angelegt werden k\u00F6nnen, ist eine explizite bewohnerbezogene Zuordnung jedes Eintrags notwendig, damit diese Anforderungen erf\u00FCllbar sind."
+    },
+    {
+      "itemId": "DREQ-02",
+      "origin": "Derived",
+      "text": "Die Anlage eines Bewohnerprofils darf nur abgeschlossen werden, wenn mindestens ein Sofortinfo-Eintrag vorhanden ist und zugleich nicht mehr als f\u00FCnf Sofortinfo-Eintr\u00E4ge erfasst sind.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05",
+        "REQ-06"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Aus der Pflicht zu mindestens einem Sofortinfo-Eintrag beim Anlegen und der Obergrenze von maximal f\u00FCnf Eintr\u00E4gen folgt eine notwendige Abschlussbedingung f\u00FCr die Profilerstellung."
+    },
+    {
+      "itemId": "DREQ-03",
+      "origin": "Derived",
+      "text": "Das System muss sicherstellen, dass pro Bewohnerprofil zu jedem Zeitpunkt h\u00F6chstens f\u00FCnf Sofortinfo-Eintr\u00E4ge gespeichert sind, auch bei nachtr\u00E4glichen \u00C4nderungen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-05"
+      ],
+      "assumptions": [
+        "Die Begrenzung auf maximal f\u00FCnf Eintr\u00E4ge soll nicht nur f\u00FCr die Anzeige, sondern f\u00FCr den zul\u00E4ssigen Datenbestand im Sofortinfo-Bereich gelten."
+      ],
+      "derivationRationale": "Eine reine Anzeigebegrenzung w\u00FCrde die Anforderung \u0027muss auf maximal f\u00FCnf Eintr\u00E4ge begrenzt werden\u0027 unterlaufen; damit die Begrenzung wirksam ist, muss sie auch bei \u00C4nderungen des Datenbestands eingehalten werden."
+    },
+    {
+      "itemId": "DREQ-04",
+      "origin": "Derived",
+      "text": "\u00DCbergabe-Notizen m\u00FCssen mit einem Erstellungszeitpunkt oder einem fachlich \u00E4quivalenten Datum gespeichert werden, damit die automatische Archivierung nach sieben Tagen ausgef\u00FChrt werden kann.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-10"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Ohne gespeicherten Zeitbezug kann die Regel \u0027nach sieben Tagen automatisch archiviert\u0027 nicht umgesetzt werden."
+    },
+    {
+      "itemId": "DREQ-05",
+      "origin": "Derived",
+      "text": "Archivierte \u00DCbergabe-Notizen m\u00FCssen in Such- oder Listenfunktionen so gekennzeichnet oder filterbar sein, dass sie trotz Archivierung weiterhin auffindbar bleiben.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-10"
+      ],
+      "assumptions": [
+        "\u0027Weiterhin auffindbar\u0027 erfordert eine unterscheidbare Behandlung archivierter gegen\u00FCber nicht archivierten Notizen."
+      ],
+      "derivationRationale": "Wenn Notizen automatisch archiviert werden, aber weiterhin auffindbar bleiben m\u00FCssen, braucht es eine explizite M\u00F6glichkeit, archivierte Notizen in der Auffindung zu ber\u00FCcksichtigen."
+    },
+    {
+      "itemId": "DREQ-06",
+      "origin": "Derived",
+      "text": "Wenn eine \u00DCbergabe-Notiz auf einen Bewohner verweist, muss die Verlinkung auf genau ein bestehendes Bewohnerprofil zeigen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-09"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Eine bewohnerbezogene Verlinkung ist nur erf\u00FCllbar, wenn der Verweis eindeutig einem konkreten Profil zugeordnet ist."
+    },
+    {
+      "itemId": "DREQ-07",
+      "origin": "Derived",
+      "text": "Beim \u00D6ffnen der App muss klar bestimmbar sein, welche \u00DCbergabe-Notiz der jeweils n\u00E4chsten Schicht prominent angezeigt wird.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-08"
+      ],
+      "assumptions": [
+        "Es kann pro Schicht mehrere Notizen geben oder geben k\u00F6nnen; daher ist eine Regel n\u00F6tig, welche Notiz bzw. welche Notizen als \u0027f\u00FCr die n\u00E4chste Schicht\u0027 gelten."
+      ],
+      "derivationRationale": "Die prominente Anzeige f\u00FCr die n\u00E4chste Schicht setzt voraus, dass die fachliche Zuordnung von Notizen zu einer Schicht beim \u00D6ffnen der App eindeutig ermittelt werden kann."
+    },
+    {
+      "itemId": "DREQ-08",
+      "origin": "Derived",
+      "text": "Das revisionssichere Zugriffsprotokoll muss f\u00FCr jeden protokollierten Zugriff mindestens Nutzeridentit\u00E4t, Zeitpunkt und das betroffene Bewohnerprofil enthalten.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-11"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Diese Angaben sind in REQ-11 explizit als Bestandteil der Protokollierung genannt; als abgeleitete Strukturanforderung sind sie notwendig, damit die Protokollpflicht umsetzbar und pr\u00FCfbar ist."
+    },
+    {
+      "itemId": "DREQ-09",
+      "origin": "Derived",
+      "text": "Normale Nutzer d\u00FCrfen keine Funktion erhalten, mit der Inhalte des Zugriffsprotokolls angezeigt oder abgefragt werden k\u00F6nnen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-12"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Wenn nur Admins Einsicht in das Zugriffsprotokoll haben d\u00FCrfen, folgt daraus als notwendige Zugriffsbeschr\u00E4nkung, dass f\u00FCr normale Nutzer keine Einsichtsm\u00F6glichkeit bereitgestellt werden darf."
+    },
+    {
+      "itemId": "DREQ-10",
+      "origin": "Derived",
+      "text": "Bei einem erkannten Offline-Bearbeitungskonflikt muss das System beide konkurrierenden Versionen des ge\u00E4nderten Eintrags zur Entscheidung des Nutzers verf\u00FCgbar machen.",
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [
+        "REQ-13"
+      ],
+      "assumptions": [],
+      "derivationRationale": "Damit der Nutzer entscheiden kann, welche Version gilt, d\u00FCrfen nicht nur Konflikte angezeigt werden; beide Versionen m\u00FCssen in der Konfliktsituation vorliegen und ausw\u00E4hlbar sein."
+    }
+  ]
+}

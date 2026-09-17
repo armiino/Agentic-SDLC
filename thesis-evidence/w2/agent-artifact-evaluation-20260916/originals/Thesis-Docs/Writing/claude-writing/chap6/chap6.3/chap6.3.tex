@@ -1,0 +1,152 @@
+% M25, 13.09.2026: bestehende Dokumentationsbelege in den numerischen Zitierstil überführt.
+% ============================================================
+% §6.3 Tools und MCP — v02 (Claude, 03.09.)
+% v02 (Kollegen-Runde 1): ① „JEDER agentische Knoten erhält
+%   Werkzeugsatz" -> konditional („soweit … verwenden") ② Schluss-
+%   Widerspruch behoben (nicht-freigabepflichtig automatisch vs.
+%   gekennzeichnet mit Freigabe; Brücke Tool Approval ≠ Human Gate)
+%   ③ optional übernommen: „ausgewiesene" Werkzeuge (5.6-Gleichzug).
+%   Kollegen-Urteil danach: SEMANTISCH FROZEN.
+% Grundlage: kapitel-6-gesamtvertrag.md ★FROZEN (§4 Zeile 6.3,
+% E43-01-defensiv) + Autor-/Kollegen-Schreibauftrag 03.09. (drei
+% Leistungen: Trennung der Werkzeugausführung · Werkzeuggrenzen ·
+% MCP differenzieren) + maf-doku-checks.md §Ergebnisse (V6-Merker
+% 2.5: UseFunctionInvocation nur pipeline-bezogen; ChatClientAgent
+% fügt die Middleware automatisch ein · MCP-SDK-Zitierweg).
+% Budget ~0,75 S. KEINE Toolliste, kein Tool-Katalog.
+% MCP-Alt-Spike (AgenticSdlc.McpServer/) bewusst NICHT in der Prosa
+% — die Thesis hat ihn nie als Systemkomponente behauptet; er ist
+% unreferenzierte Phase-1-Werkstatt (V1-Audit §4c). Negativ-Erwähnung
+% würde nur Verwirrung stiften.
+% ============================================================
+
+\section{Tools und MCP}
+\label{sec:realisierung-tools-mcp}
+
+Die in Abschnitt~\ref{sec:governance-mutation} begründete Kontrolle
+wird beim Werkzeugaufruf konkret: Das ausführende Programm
+(\emph{Host}) legt fest, welche Funktionen einer agentischen
+Komponente zur Verfügung stehen. Das Modell kann daraus einen
+Aufruf wählen; die technische Ausführung übernimmt der Host. Dies setzt
+die begriffliche Trennung aus den
+Abschnitten~\ref{sec:tool-use-function-calling} und
+\ref{sec:maf-tools-structured-output} um.
+
+\emph{Registrierung, Auswahl und Ausführung.} Der Host registriert
+die Funktionen als typisierte Werkzeuge. Für den vom Modell
+gewählten Aufruf führt die Function-Invocation-Schicht der
+gemeinsamen Chat-Pipeline die zugehörige Funktion aus. Diese
+Ausführungsschicht ist in beide Pipeline-Varianten eingebunden;
+damit steht sie auch bei Modellaufrufen ohne Agentabstraktion zur
+Verfügung. Das Werkzeugergebnis oder ein Ausführungsfehler wird
+als Feedback zurückgegeben.
+
+Eine eigene Protokoll-Middleware hält Beginn, Ergebnis und Fehler
+der angebundenen Werkzeugaufrufe als Ereignisse fest. So bleiben
+Modellausgabe und technische Ausführung getrennt beobachtbar.
+Den Bedarf zeigt der belegte Fall E43-02 aus
+Abschnitt~\ref{sec:beobachtbare-ausfuehrung-informationsfuehrung}:
+Der Agent behauptete, alle Pflichtartefakte erneut gelesen und
+geprüft zu haben; protokolliert war nur ein erneutes Lesen eines
+erzeugten Artefakts. Die Instrumentierung macht solche Abweichungen
+für die erfassten Zugriffe prüfbar.
+
+\emph{Begrenzter Werkzeugraum.} Für Stufen mit Werkzeugnutzung
+begrenzt der Host den Werkzeugsatz auf die jeweilige Aufgabe. Die
+Einordnungsstufe aus
+Abschnitt~\ref{sec:realisierung-agent-executor-workflow} kann den
+Eingang und den Bestand lesen, ihren Plan prüfen und ihn als
+typisierten Operationsplan ablegen. Als kosten- oder
+außenwirkungsträchtig ausgewiesene Werkzeuge gehören nicht zu
+ihrem Werkzeugsatz. Wo ein Werkzeug zusätzlich menschliche
+Zustimmung erfordert, wird seine Funktion um eine Freigabeprüfung
+ergänzt. Den Einsatz auf der Bedienebene erläutert
+Abschnitt~\ref{sec:realisierung-steward}.
+
+\emph{Externe Anbindung über MCP.} Der Steward kann einen Teil
+seiner Werkzeuge über das Model Context Protocol anbinden. Als
+MCP-Client nutzt er dann den offiziellen entfernten GitHub-Server für
+lesende Zugriffe \cite{github2026remotemcp}.
+Die bezogenen Werkzeuge werden in derselben Werkzeugform genutzt
+wie lokal registrierte Funktionen. Der Endpunktpfad beschränkt die angebotenen Werkzeuge
+serverseitig auf lesende Issue-Zugriffe. MCP ergänzt damit den
+kontrollierten Werkzeugraum um eine standardisierte Anbindung;
+es bildet kein eigenes tragendes Architekturprinzip.
+
+Nach der modellseitigen Auswahl werden Werkzeugaufrufe innerhalb
+dieser Grenzen automatisch ausgeführt, sofern keine zusätzliche
+Werkzeugfreigabe vorgesehen ist. Eine solche Zustimmung erlaubt
+den einzelnen Aufruf. Über die Übernahme fachlicher Änderungen
+entscheiden die Human Gates auf Workflowebene, die der folgende
+Abschnitt behandelt.
+
+% M18, 12.09.2026: Sprachliche Neufassung; historische Prüfnotizen
+% aus der Vorfassung folgen als lokale Herkunftshinweise.
+% [Label-Pass 03.09.: 2.4.3 = sec:maf-tools-structured-output;
+%  2.2.3 = sec:tool-use-function-calling (vom Autor aus dem
+%  Overleaf-Bestand eingesetzt) — TODO damit erledigt.]
+% [Rückverweis-Satz (Form §7).]
+% [Freeze-Pass 04.09. (Kollegen-P1-4): „Ausführungsfeedback" ist in
+%  2.2.3 als RÜCKGABE (Ergebnis/Fehler) definiert — die Protokoll-
+%  Middleware hält EREIGNISSE fest; Begriffe jetzt getrennt.
+%  Kap.-2-Definition lokal nicht prüfbar (2.2er-Dateien nur in
+%  Overleaf) — Kollegen-Zitat der eigenen Kapitel-2-Fassung.]
+% [Vier-Schritte-Trennung: Modellentscheidung (FunctionCallContent)
+%  · Registrierung (AIFunctionFactory.Create, z. B.
+%  IngestionTools.cs:28–49) · Ausführung (UseFunctionInvocation in
+%  BEIDEN Pipeline-Varianten, AgentChatPipelineBuilder.cs:44/73;
+%  Microsoft.Extensions.AI-Middleware FunctionInvokingChatClient,
+%  V6-Check 2.5 BESTÄTIGT) · Feedback (ToolCallLoggerMiddleware,
+%  agent-seitig via AsBuilder().Use, DerivationRunner.cs:224/242;
+%  Code-Kommentar: „die verlässliche Quelle für tatsächlich
+%  ausgeführte Tools", ChatDecisionLoggerMiddleware.cs:51).
+%  Letzter Satz = V6-Eingrenzung: ChatClientAgent fügt die
+%  Middleware AUTOMATISCH ein, wenn keine vorhanden — die explizite
+%  Einbindung ist deshalb Systemeigenschaft (Sicherung roher
+%  IChatClient-Pfade), KEINE Voraussetzung auf Agent-Ebene; bewusst
+%  ohne die falsche Behauptung „ohne sie keine Ausführung".]
+% [E43-01 in der EXAKTEN Anker-Einfassung (anhang-ankertabelle:
+%  „belegt die Diskrepanz zwischen Modelltext und registrierter
+%  Ausführung, nicht deren Ursache oder Häufigkeit") — Gesamtvertrag
+%  §4/6.3: KEINE Genese-Behauptung zur heutigen Konfiguration
+%  („daraus entstand UseFunctionInvocation" wäre unbelegt).]
+% [Freeze-Pass 04.09. (Kollegen-P1-5): „Speicherwerkzeuge auf …
+%  Bestand" war als Core-Schreibrecht lesbar — code-wahr ist
+%  save_state_change_plan = Ablegen des PLANS (Proposal before
+%  Truth), kein Core-Write (IngestionTools.cs:49).]
+% [v02 (Kollegen-Punkte 1 + optional): „JEDER agentische Knoten
+%  erhält einen Werkzeugsatz" war unnötig universal — Werkzeugnutzung
+%  ist möglicher Handlungsspielraum, kein Agentenmerkmal (Kap.-2-
+%  Basis; code-wahr: der Ledger-Extraktor ist agentisch OHNE Tools,
+%  SemanticLedgerExtractor = reiner IChatClient+Schema).
+%  „ausgewiesene" = Terminologie-Gleichzug mit 5.6-Endform
+%  („entsprechend als wirkungs- oder kostenträchtig ausgewiesene
+%  Handlungen").]
+% [Werkzeuggrenzen ohne Toolliste (Auftrag Punkt 2): EIN Beispiel
+%  (Einordnungs-Tool-Satz, IngestionTools.cs:28–49 — nur
+%  get/list/search/check/save, keine Run-/Forward-Tools).
+%  Freigabe-Hülle = ApprovalRequiredAIFunction
+%  (Microsoft.Extensions.AI-Typ; „does not enforce the requirement"
+%  — Durchsetzung leistet der Agent/Workflow, V6-Check §10;
+%  Steward-Wrapping StewardRunTools.cs:68–88 -> 6.6).
+%  Merker: „Abschnitt 6.6" -> \ref GESETZT (Label-Pass 03.09.).]
+% [v03 (V6-SCHLUSSPASS 03.09., Punkt 4 BESTÄTIGT): offizieller
+%  Remote-Server existiert (api.githubcopilot.com/mcp/), readonly
+%  per /readonly-Pfad bzw. Header, Toolsets per /x/{toolset} —
+%  deckt unsere Nutzung (readonly/x/issues) und den
+%  „serverseitig"-Satz.]
+% [V1-Audit §4c: Steward als MCP-CLIENT produktiv
+%  (StewardChatRunner.cs:31/174–183, ConnectRemoteReadonlyIssuesAsync,
+%  „Governance SERVER-seitig"; ModelContextProtocol 2.1.0,
+%  Host.csproj:26). „dieselbe Werkzeugform": McpClientTool erbt von
+%  AIFunction — Quelle MCP-C#-SDK-Doku (V6-Check §16; Learn sagt
+%  „Convert the MCP tools to AIFunction's"). Einordnungs-Schluss =
+%  Auftrag Punkt 3 („standardisierte Werkzeuganbindung, kein
+%  Architekturprinzip").]
+% [v02 (Kollegen-Punkt 2): „Werkzeugaufrufe laufen automatisch"
+%  widersprach dem eigenen Freigabe-Hüllen-Satz davor — jetzt
+%  differenziert (nicht-freigabepflichtig automatisch ·
+%  gekennzeichnete mit Freigabe) + saubere Brücke
+%  Tool Approval ≠ Human Gate. Zwei-Ebenen-Trennung aus Matrix §C
+%  (ToolApproval = Tool-Ebene, Gates = Workflow-Ebene).
+%  Nummernfrei-robust.]

@@ -1,0 +1,346 @@
+diff --git a/AgenticSdlc.Host/FullWorkflow/01-ledger/LedgerCommands.cs b/AgenticSdlc.Host/FullWorkflow/01-ledger/LedgerCommands.cs
+index 0e0272fd..0eabcddb 100644
+--- a/AgenticSdlc.Host/FullWorkflow/01-ledger/LedgerCommands.cs
++++ b/AgenticSdlc.Host/FullWorkflow/01-ledger/LedgerCommands.cs
+@@ -39,6 +39,11 @@ public static class LedgerCommands
+         // L3-B: Selective-Metrics für den FacetValidator gegen die autor-bestätigte Fixture (correct vs perturbed).
+         map["facet-validation-eval"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Ledger.FacetValidationEvalRunner.RunAsync(args, settings, repoRoot);
+ 
++        // W2 L/LCR-Capture (DETERMINISTISCH, kein LLM, rein lesend): exportiert die Messpunkte L-machine
++        // (Maker-Draft vor aller maschinellen QC) und LCR-machine (nach QC, vor Adjudikation) aus einem
++        // bestehenden ledger-build-units-Lauf nach capture/ (Evaluationskonzept §11/§12.0-3).
++        map["ledger-capture"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Ledger.LedgerCaptureRunner.RunAsync(args, repoRoot);
++
+         // Ledger-Referenz-Recall (DETERMINISTISCH, kein LLM): Segment-Overlap-Screen, gratis. Misses verlässlich.
+         map["ledger-reference-recall-fast"] = (args, settings, repoRoot) => AgenticSdlc.Host.FullWorkflow.Ledger.LedgerReferenceRecallFastRunner.RunAsync(args, settings, repoRoot);
+ 
+diff --git a/AgenticSdlc.Host/FullWorkflow/01-ledger/README.md b/AgenticSdlc.Host/FullWorkflow/01-ledger/README.md
+index 686102e3..9763de11 100644
+--- a/AgenticSdlc.Host/FullWorkflow/01-ledger/README.md
++++ b/AgenticSdlc.Host/FullWorkflow/01-ledger/README.md
+@@ -46,6 +46,8 @@ im Faden hält `runs/ledger/<id>` über Resume konstant; die Ledger-Token laufen
+ | `step-03-facet-validation` | FacetValidation | ja | Per-Claim-Verdict gegen das Transkript: `grounded`→approved, sonst `review_required` (deterministisch abgeleitet, `ValidatedLedgerEntry.DeriveStatus`) |
+ | `gate/` | LedgerQualityGate + Traces | nein | Invarianten I0–I6 (IDs eindeutig, kein Candidate verschwindet still, Evidence-/Trace-Pflicht, Taxonomie, validated-Deckung) + `unused-unit-trace` (Deckungs-Urteile → existierender Ziel-Claim). **error ⇒ GATE FAILED ⇒ nicht weiterfahren** |
+ 
++**Sprechersegmentierung (Korrektur R-76/B-20, 11.09.2026):** Das Format `Name:` erkennt auch Rollen mit Bindestrich, etwa `Angehörigen-Vertreterin:`; das Klammerformat `[Name]` bleibt erhalten. AU-IDs werden aus der Position gebildet: Zusätzliche erkannte Sprecherwechsel verschieben deshalb IDs in neuen Läufen. Historische Ledger nicht unter Beibehaltung alter Zuordnungen neu segmentieren. Abgesichert durch `TranscriptSpeakerRegressionTests` einschließlich des F1-Originaltranskripts und des Vergleichs beider W2-Eingaben.
++
+ Getestet (deterministische Kerne): `TranscriptSegmenterTests`, `LedgerQualityGateTests`,
+ `LedgerVerdictParsingTests`, `UnusedUnitCompareRepairTests`.
+ 
+@@ -56,6 +58,9 @@ ledger-adjudicate <step-03…/output.json> <step-01d…/output.json>   # Queue:
+ ledger-adjudicate-ui <step-03b-adjudicated/queue.json>             # DEINE Entscheidungen (Review-UI, Finish → apply)
+ → step-03b-adjudicated/{adjudicated-ledger, consumable, gate}.json # AdjudicationCompletenessGate projiziert das Ergebnis
+ ledger-adjudicate-refine <consumable.json> <transcript>            # nur bei pending>0: neu geminteten Claims Facetten geben (A10)
++# A10 im EIN-GRAPH (09.09.): pipeline-full hat den Refine als eigenen Knoten PipelineAdjudicationRefine
++# zwischen Adjudikations-Apply und Baselines — GETEILTE Naht AdjudicationRefine.cs mit dieser CLI-Bahn;
++# No-op ohne pending-Claims (kein LLM-Aufbau). Beleg: Läufe 20260909_190157/190518, R-75 im E2E-RUNBOOK.
+ ```
+ 
+ `consumable.json` (pending=0) ist das Übergabe-Artefakt an 02-baselines.
+@@ -123,6 +128,13 @@ unbilanziert verloren", nicht „das Urteil stimmt". Genau deshalb entscheidest
+ - `ledger-build` = älterer Pfad ohne Atomic Units (Fixture-Match optional als 3. Argument).
+ - `measure/`: `ledger-reference-template` (Annotations-Vorlage) → handgebaute Referenz →
+   `ledger-reference-recall[-fast]`, `facet-validation-eval` — Completeness/Recall-Messung für die Thesis.
++- **`ledger-capture <runId>` (W2, 04.09.):** rein lesender, deterministischer Export der Messpunkte
++  **L-machine** (= `step-02-canonical-draft` — Maker-Stand VOR aller maschinellen QC; Facetten-VERGABE
++  ist Maker, Facetten-VALIDIERUNG ist QC) und **LCR-machine** (= `step-03`-Claims + Verdikte +
++  `step-01d`-Miss-Signal + QC-Protokolle) nach `capture/{l-machine,lcr-machine,capture-report}.json`
++  (bit-stabil, Artefakt-SHA256s im Report). HITL-Messgrenze strukturell: liest NIE `step-03b-adjudicated`.
++  Grenzdefinition: Evaluationskonzept §11/§12.0-3 (`LedgerCaptureRunner.BoundaryL/BoundaryLcr` wörtlich).
++  Tests: `LedgerCaptureTests`.
+ 
+ Beleg-Läufe: `runs/ledger/20260723_090059_7b4e24` (frischer E2E, gate pass 0/0) ·
+ `runsArchive/ledger/20260704_131614_018865` (Alt-Beleg). Gescheiterte R-1-Belege: `runs/ledger/20260723_08*`.
+diff --git a/AgenticSdlc.Host/FullWorkflow/01-ledger/adjudication/LedgerAdjudicateRefineRunner.cs b/AgenticSdlc.Host/FullWorkflow/01-ledger/adjudication/LedgerAdjudicateRefineRunner.cs
+index b1d39928..c42d045a 100644
+--- a/AgenticSdlc.Host/FullWorkflow/01-ledger/adjudication/LedgerAdjudicateRefineRunner.cs
++++ b/AgenticSdlc.Host/FullWorkflow/01-ledger/adjudication/LedgerAdjudicateRefineRunner.cs
+@@ -36,15 +36,11 @@ public static class LedgerAdjudicateRefineRunner
+ 
+         var consumable = JsonSerializer.Deserialize<ConsumableLedger>(await File.ReadAllTextAsync(consumablePath), Json);
+         if (consumable is null) { Console.Error.WriteLine("[refine] consumable nicht lesbar."); return 2; }
+-        var claims = consumable.Claims.ToList();
+ 
+-        // DETERMINISTISCHER Filter: nur pending-Claims (keine LLM-Kosten für den Rest).
+-        var pendingIdx = claims.Select((c, i) => (c, i))
+-            .Where(x => string.Equals(x.c.FacetStatus, "pending", StringComparison.OrdinalIgnoreCase))
+-            .ToList();
+-
+-        Console.WriteLine($"[refine] consumable claims={claims.Count} pending={pendingIdx.Count}");
+-        if (pendingIdx.Count == 0)
++        // DETERMINISTISCHER Filter (geteilter A10-Kern): nur pending-Claims (keine LLM-Kosten für den Rest).
++        var pendingCount = AdjudicationRefine.CountPending(consumable);
++        Console.WriteLine($"[refine] consumable claims={consumable.Claims.Count} pending={pendingCount}");
++        if (pendingCount == 0)
+         {
+             Console.WriteLine("[refine] nichts zu tun (keine facetStatus=pending Claims) — kein LLM-Call.");
+             return 0;
+@@ -54,7 +50,7 @@ public static class LedgerAdjudicateRefineRunner
+             modelArg is not null ? settings with { ModelId = modelArg }
+             : !string.IsNullOrWhiteSpace(settings.JuryJudgeModel) ? settings with { ModelId = settings.JuryJudgeModel! }
+             : settings;
+-        Console.WriteLine($"[refine] Facetten-Zuweisung für {pendingIdx.Count} Claim(s) mit model={judgeSettings.ModelId} (transcript={(transcript is null ? "nein" : "ja")})");
++        Console.WriteLine($"[refine] Facetten-Zuweisung für {pendingCount} Claim(s) mit model={judgeSettings.ModelId} (transcript={(transcript is null ? "nein" : "ja")})");
+ 
+         // W1b: Judge-Call observability-verdrahtet (ChatDecisionLogger + InputContext + OTel) über AgentChatPipelineBuilder.Build.
+         var run = new RunContext(RunId.New(), "ledger-adjudicate-refine");
+@@ -67,10 +63,10 @@ public static class LedgerAdjudicateRefineRunner
+             rawTracesPath: settings.OtelRawEnabled ? Path.Combine(run.LogsDir, "otel-traces.raw.jsonl") : null);
+         var refineClient = AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "FacetAssigner", SourceName);
+         var assigner = new FacetAssigner(refineClient, settings.JuryStructuredOutput, settings.ReasoningCapture);
+-        IReadOnlyList<SemanticLedgerEntry> refined;
++        AdjudicationRefineResult result;
+         try
+         {
+-            refined = await assigner.AssignAllAsync(pendingIdx.Select(x => x.c).ToList(), transcript, CancellationToken.None).ConfigureAwait(false);
++            result = await AdjudicationRefine.RefineAsync(consumable, assigner.AssignAllAsync, transcript, CancellationToken.None).ConfigureAwait(false);
+         }
+         catch (Exception ex)
+         {
+@@ -78,20 +74,14 @@ public static class LedgerAdjudicateRefineRunner
+             return 4;
+         }
+ 
+-        var refinedById = refined.ToDictionary(r => r.Id, r => r, StringComparer.Ordinal);
+-        foreach (var (c, i) in pendingIdx)
+-            if (refinedById.TryGetValue(c.Id, out var r)) claims[i] = r;
+-
+-        var stillPending = claims.Count(c => string.Equals(c.FacetStatus, "pending", StringComparison.OrdinalIgnoreCase));
+-        var updated = consumable with
+-        {
+-            Claims = claims,
+-            Note = consumable.Note + " | A10-refine: neue Claims facettiert (facetStatus gelöscht).",
+-        };
+-        await File.WriteAllTextAsync(outPath, JsonSerializer.Serialize(updated, Json)).ConfigureAwait(false);
++        await File.WriteAllTextAsync(outPath, JsonSerializer.Serialize(result.Consumable, Json)).ConfigureAwait(false);
+ 
+-        Console.WriteLine($"[refine] refined={refined.Count} nochPending={stillPending} -> {Path.GetRelativePath(repoRoot, outPath)}");
+-        foreach (var r in refined)
++        var pendingIds = consumable.Claims
++            .Where(c => string.Equals(c.FacetStatus, "pending", StringComparison.OrdinalIgnoreCase))
++            .Select(c => c.Id)
++            .ToHashSet(StringComparer.Ordinal);
++        Console.WriteLine($"[refine] refined={result.RefinedCount} nochPending={result.StillPending} -> {Path.GetRelativePath(repoRoot, outPath)}");
++        foreach (var r in result.Consumable.Claims.Where(c => pendingIds.Contains(c.Id)))
+             Console.WriteLine($"[refine]   {r.Id}: kind={r.Kind} status={r.Status} modality={r.Modality} timeScope={r.TimeScope}");
+         return 0;
+     }
+diff --git a/AgenticSdlc.Host/FullWorkflow/01-ledger/core/TranscriptSegmenter.cs b/AgenticSdlc.Host/FullWorkflow/01-ledger/core/TranscriptSegmenter.cs
+index c916b559..62042950 100644
+--- a/AgenticSdlc.Host/FullWorkflow/01-ledger/core/TranscriptSegmenter.cs
++++ b/AgenticSdlc.Host/FullWorkflow/01-ledger/core/TranscriptSegmenter.cs
+@@ -14,7 +14,7 @@ public static class TranscriptSegmenter
+ {
+     // Turn-Start: "[Name] ..." ODER "Name: ..." (Sprechername + Doppelpunkt).
+     private static readonly Regex SpeakerRx =
+-        new(@"^\s*(?:\[(?<sp>[^\]]+)\]|(?<sp2>\p{Lu}[\p{L}]+):)\s*(?<rest>.*)$", RegexOptions.Compiled);
++        new(@"^\s*(?:\[(?<sp>[^\]]+)\]|(?<sp2>\p{Lu}[\p{L}]+(?:-[\p{L}]+)*):)\s*(?<rest>.*)$", RegexOptions.Compiled);
+     private static readonly Regex WhitespaceRx = new(@"\s+", RegexOptions.Compiled);
+ 
+     public static IReadOnlyList<TranscriptTurn> Segment(string transcript)
+diff --git a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/AdjudicationStageExecutor.cs b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/AdjudicationStageExecutor.cs
+index e68542c8..5c8ee229 100644
+--- a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/AdjudicationStageExecutor.cs
++++ b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/AdjudicationStageExecutor.cs
+@@ -125,3 +125,42 @@ internal sealed class AdjudicationApplyExecutor(RunContext parentRun) : Executor
+         await context.SendMessageAsync(new ConsumableLedgerOutput(consumablePath, consumable.Claims.Count)).ConfigureAwait(false);
+     }
+ }
++
++// REFINE (A10, Schluss der Adjudikationsstufe): per accept_gap/promote_to_claim NEU gemintete Claims
++// tragen bewusst generische Platzhalter-Facetten (facetStatus=pending) — dieser Knoten hebt sie über die
++// GETEILTE Naht AdjudicationRefine (identisch zur CLI-Bahn ledger-adjudicate-refine) auf Pipeline-Niveau,
++// BEVOR die Baseline-Ableitung den Bestand liest. Ohne pending-Claims: reiner Durchreich-Knoten ohne
++// LLM-Aufbau (die Assigner-Factory wird gar nicht erst gerufen); Fehler der Zuweisung sind LAUT (fail-fast).
++[SendsMessage(typeof(ConsumableLedgerOutput))]
++internal sealed class AdjudicationRefineExecutor(RunContext parentRun, Func<RefineAssign> assignFactory, string? transcript)
++    : Executor<ConsumableLedgerOutput>("PipelineAdjudicationRefine")
++{
++    public override async ValueTask HandleAsync(ConsumableLedgerOutput input, IWorkflowContext context, CancellationToken ct = default)
++    {
++        var consumable = JsonSerializer.Deserialize<ConsumableLedger>(
++            await File.ReadAllTextAsync(input.ConsumablePath, ct).ConfigureAwait(false), AdjudicationIo.Json)
++            ?? throw new InvalidOperationException($"ADJUDICATION_REFINE_UNREADABLE: {input.ConsumablePath}");
++
++        if (AdjudicationRefine.CountPending(consumable) == 0)
++        {
++            parentRun.AppendEvent(new { type = "ADJUDICATION_REFINE_SKIPPED", pending = 0, timestampUtc = DateTime.UtcNow });
++            await context.SendMessageAsync(input).ConfigureAwait(false);
++            return;
++        }
++
++        var result = await AdjudicationRefine.RefineAsync(consumable, assignFactory(), transcript, ct).ConfigureAwait(false);
++        await File.WriteAllTextAsync(input.ConsumablePath,
++            JsonSerializer.Serialize(result.Consumable, AdjudicationIo.Json), ct).ConfigureAwait(false);
++
++        parentRun.AppendEvent(new
++        {
++            type = "STAGE_ADJUDICATION_REFINE_DONE",
++            pendingBefore = result.PendingBefore,
++            refined = result.RefinedCount,
++            stillPending = result.StillPending,
++            timestampUtc = DateTime.UtcNow
++        });
++        await context.SendMessageAsync(
++            new ConsumableLedgerOutput(input.ConsumablePath, result.Consumable.Claims.Count)).ConfigureAwait(false);
++    }
++}
+diff --git a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/BaselineStageExecutor.cs b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/BaselineStageExecutor.cs
+index 444568e7..b8e36d18 100644
+--- a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/BaselineStageExecutor.cs
++++ b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/BaselineStageExecutor.cs
+@@ -23,7 +23,9 @@ namespace AgenticSdlc.Host.FullWorkflow.Pipeline;
+ /// Rückgabewert — der frühere Ordner-Diff-Hack ist gelöscht).
+ /// </remarks>
+ [SendsMessage(typeof(ProjectStateBuildRequest))]
+-internal sealed class BaselineStageExecutor(HostSettings settings, string? baselineModel, RunContext parentRun, string repoRoot)
++[YieldsOutput(typeof(string))]
++internal sealed class BaselineStageExecutor(HostSettings settings, string? baselineModel, RunContext parentRun, string repoRoot,
++    Func<Recipe, string, string?, bool, HostSettings, string, Task<RecipeRunner.RecipeExecution>>? executeRecipe = null)
+     : Executor<ConsumableLedgerOutput>("PipelineBaselines")
+ {
+     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web) { WriteIndented = true };
+@@ -52,9 +54,10 @@ internal sealed class BaselineStageExecutor(HostSettings settings, string? basel
+         var recipe = new Recipe(new RecipeBaseline("build", OrderedArtifacts), Derivations: []);
+         await File.WriteAllTextAsync(recipeJsonPath, JsonSerializer.Serialize(recipe, Json), ct).ConfigureAwait(false);
+ 
+-        var result = await RecipeRunner.ExecuteAsync(
++        // The default executes the real recipe; tests can supply a model-free recipe result.
++        var result = await (executeRecipe ?? RecipeRunner.ExecuteAsync)(
+             recipe, recipeJsonPath, string.IsNullOrWhiteSpace(baselineModel) ? null : baselineModel,
+-            dryRun: false, recipeSettings, repoRoot).ConfigureAwait(false);
++            false, recipeSettings, repoRoot).ConfigureAwait(false);
+         var exit = result.Exit;
+ 
+         var recipeRunDir = result.Run?.RunDir;
+diff --git a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/MetricsFinalizer.cs b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/MetricsFinalizer.cs
+index 45008456..de873c60 100644
+--- a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/MetricsFinalizer.cs
++++ b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/MetricsFinalizer.cs
+@@ -156,7 +156,7 @@ public static class MetricsFinalizer
+             IssuesCreated: issuesCreated,
+             IssuesUpdated: issuesUpdated,
+             Violations: violations,
+-            Recall: null); // M-4: Gold-Referenz noch nicht erhoben.
++            InternalQaRecall: null); // Bleibt leer: offizielles P1 entsteht NUR im externen Evaluationsreport (§27).
+     }
+ 
+     // ---------------- Helpers ----------------
+diff --git a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullMessages.cs b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullMessages.cs
+index d9e0a0af..fae277dc 100644
+--- a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullMessages.cs
++++ b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullMessages.cs
+@@ -92,7 +92,10 @@ public sealed record PipelineMetrics(
+     [property: JsonPropertyName("issuesCreated")] int IssuesCreated,
+     [property: JsonPropertyName("issuesUpdated")] int IssuesUpdated,
+     [property: JsonPropertyName("violations")] IReadOnlyList<string> Violations,
+-    [property: JsonPropertyName("recall")] RecallMetric? Recall);
++    // W2-Messgrenze (Evaluationskonzept §27, 04.09.): interne QA-Größe, NIE das offizielle
++    // P1 Gold-Coverage — das entsteht AUSSCHLIESSLICH im externen Evaluationsreport gegen das
++    // eingefrorene Hand-Gold. Vorher hieß das Feld "recall" (immer null geschrieben, kein Leser).
++    [property: JsonPropertyName("internalQaRecall")] RecallMetric? InternalQaRecall);
+ 
+ public sealed record StageMetric(
+     [property: JsonPropertyName("stage")] string Stage,
+diff --git a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullRunner.cs b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullRunner.cs
+index 6d1ad942..920089b6 100644
+--- a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullRunner.cs
++++ b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullRunner.cs
+@@ -428,6 +428,13 @@ public static partial class PipelineFullRunner
+                 RequestPort.Create<AdjudicationReviewRequest, AdjudicationReviewResponse>("adjudication-gate"),
+                 new AdjudicationApplyExecutor(run),
+                 new AdjudicationEmptyGateResponder(run),
++                // A10: die Assigner-Factory wird NUR bei pending-Claims gerufen (kein Client-Aufbau im No-op-Fall);
++                // Modellwahl = Ledger-Stufenmodell (judgeSettings), Naht identisch zur CLI-Bahn (FacetAssigner).
++                new AdjudicationRefineExecutor(run,
++                    () => new FacetAssigner(
++                        AgentChatPipelineBuilder.Build(ChatClientFactory.Create(judgeSettings), settings, run, "FacetAssigner", "AgenticSdlc.Host"),
++                        settings.JuryStructuredOutput, settings.ReasoningCapture).AssignAllAsync,
++                    transcriptText.Length > 0 ? transcriptText : null),
+                 new BaselineStageExecutor(settings, baselineModel, run, repoRoot),
+                 new ProjectStateBuildExecutor(run, repoRoot),
+                 new BranchDetectorExecutor(run, repoRoot, fw.Mode)),
+diff --git a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullWorkflow.cs b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullWorkflow.cs
+index 601e284e..0dc8bd74 100644
+--- a/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullWorkflow.cs
++++ b/AgenticSdlc.Host/FullWorkflow/08-pipeline/fullworkflow/PipelineFullWorkflow.cs
+@@ -14,6 +14,7 @@ internal sealed record FrontNodes(
+     ReprojectEntryExecutor ReprojectEntry, // ONLY-STEWARD: vierter Eingang (Recovery) — Core→Delta → Forward-Schwanz
+     LedgerIntakeExecutor LedgerIntake, ExecutorBinding LedgerCapsule, LedgerSummaryExecutor LedgerSummary, // Schritt 5 ②: sichtbare Kapsel statt Wrapper
+     AdjudicationGateRequestExecutor AdjudicationRequest, RequestPort AdjudicationPort, AdjudicationApplyExecutor AdjudicationApply, AdjudicationEmptyGateResponder AdjudicationEmptyGate, // H2 + R-50
++    AdjudicationRefineExecutor AdjudicationRefine, // A10: pending-Gap-Claims facettieren (geteilte Naht, No-op ohne pending)
+     BaselineStageExecutor Baselines,
+     ProjectStateBuildExecutor Delta, BranchDetectorExecutor Branch);
+ 
+@@ -85,7 +86,7 @@ internal static class PipelineFullWorkflow
+         // MAF-nativ per Input-Typ-Routing; der Delta-Einstieg dockt am existierenden BranchDetector an.
+         var b = new WorkflowBuilder(front.Entry)
+             .WithName("pipeline-full")
+-            .WithDescription("(Transkript | Delta) -> Entry -> [Ledger -> Adjudikation -> Baselines -> Delta ->] [Branch] -> "
++            .WithDescription("(Transkript | Delta) -> Entry -> [Ledger -> Adjudikation -> Refine -> Baselines -> Delta ->] [Branch] -> "
+                            + "Bootstrap (core-bootstrap -> Cluster+Gate -> PBIs+Gate -> Seed) | Betrieb (Ingest+Gate -> Pbi+Gate) "
+                            + "-> Snapshot -> Forward+Gate -> Dry-Run/Apply.");
+ 
+@@ -115,7 +116,10 @@ internal static class PipelineFullWorkflow
+         b.AddEdge(front.AdjudicationRequest, front.AdjudicationEmptyGate);  // leere Queue -> LAUTER Skip (R-50)
+         b.AddEdge(front.AdjudicationEmptyGate, front.AdjudicationApply);
+         b.AddEdge(front.AdjudicationPort, front.AdjudicationApply);
+-        b.AddEdge(front.AdjudicationApply, front.Baselines);
++        // A10: Refine zwischen Apply und Baselines — hebt NEU gemintete Gap-Claims (facetStatus=pending)
++        // auf Pipeline-Niveau, bevor die Baseline-Ableitung liest; ohne pending reiner Durchreich-Knoten.
++        b.AddEdge(front.AdjudicationApply, front.AdjudicationRefine);
++        b.AddEdge(front.AdjudicationRefine, front.Baselines);
+         b.AddEdge(front.Baselines, front.Delta);
+         b.AddEdge(front.Delta, front.Branch);
+ 
+@@ -185,6 +189,7 @@ internal static class PipelineFullWorkflow
+         b.WithOutputFrom(front.ClarifyEntry);      // A′ Schritt 2: Non-Pass = terminaler Klartext-Output (bewusst gestoppt)
+         b.WithOutputFrom(front.ReprojectEntry);    // ONLY-STEWARD: „keine gemappten PBIs" = terminaler Klartext-Output
+         b.WithOutputFrom(front.LedgerSummary);     // Fehler-String (Gate/Step-Outputs) — Schritt 5 ②; v1-Wrapper hatte den Yield nie deklariert
++        b.WithOutputFrom(front.Baselines);         // R-75 (09.09.): SP2/R-32-Yields (fehlgeschlagen / Checker-Rest->Mensch) waren NIE deklariert — Crash statt lautem Ende (gleiche Klasse wie der v1-Wrapper-Fall)
+         b.WithOutputFrom(boot.CoreBootstrap);      // Fehler-String (Core existiert) + Info-Output
+         b.WithOutputFrom(boot.Seed);               // BacklogSeedOutput = Bootstrap-Mitte fertig
+         b.WithOutputFrom(op.IngestBridge);         // Fehler-String (Core fehlt bei erzwungenem operational)
+diff --git a/AgenticSdlc.Host/Program.cs b/AgenticSdlc.Host/Program.cs
+index 2e79cc06..a04196f0 100644
+--- a/AgenticSdlc.Host/Program.cs
++++ b/AgenticSdlc.Host/Program.cs
+@@ -69,6 +69,7 @@ AgenticSdlc.Host.FullWorkflow.Decision.DecisionCommands.Register(commands);
+ AgenticSdlc.Host.FullWorkflow.Tore.Github.GithubCommands.Register(commands);
+ AgenticSdlc.Host.FullWorkflow.Pipeline.PipelineCommands.Register(commands);
+ AgenticSdlc.Host.FullWorkflow.Analyst.AnalystCommands.Register(commands);   // 1g-B: Core-Analyst (core-analysis run)
++AgenticSdlc.Host.FullWorkflow.ArmF.ArmFCommands.Register(commands);   // W2 Arm F: freier Ziel-Agent, Mess-Arm (arm-f run)
+ AgenticSdlc.Host.Steward.StewardCommands.Register(commands);   // C1b: die Steward-Schicht (steward [--session] [--once])
+ AgenticSdlc.Host.Mcp.GithubMcpProbeRunner.Register(commands);  // C2d ②: MCP-Spike-Probe (LLM-frei, readonly-Wache)
+ AgenticSdlc.Host.FullWorkflow.HitlSpike.SpikeCommands.Register(commands);
+diff --git a/AgenticSdlc.Tests/FullWorkflow/PipelineFullMessagesTests.cs b/AgenticSdlc.Tests/FullWorkflow/PipelineFullMessagesTests.cs
+index bba4430f..52f30c91 100644
+--- a/AgenticSdlc.Tests/FullWorkflow/PipelineFullMessagesTests.cs
++++ b/AgenticSdlc.Tests/FullWorkflow/PipelineFullMessagesTests.cs
+@@ -42,7 +42,7 @@ public sealed class PipelineFullMessagesTests
+             IssuesCreated: 39,
+             IssuesUpdated: 2,
+             Violations: [],
+-            Recall: new RecallMetric(0.91, "input/eval-labels/T9999_chaos.reference-ledger.json"));
++            InternalQaRecall: new RecallMetric(0.91, "input/eval-labels/T9999_chaos.reference-ledger.json"));
+ 
+         var json = JsonSerializer.Serialize(metrics, Json);
+         var back = JsonSerializer.Deserialize<PipelineMetrics>(json, Json);
+@@ -52,7 +52,7 @@ public sealed class PipelineFullMessagesTests
+         Assert.Equal(2, back!.Stages.Count);
+         Assert.True(back.Stages[0].Gate!.Pass);
+         Assert.Equal(404, back.Stages[0].Tokens.Out);
+-        Assert.Equal(0.91, back.Recall!.Value, 3);
++        Assert.Equal(0.91, back.InternalQaRecall!.Value, 3);
+     }
+ 
+     [Fact]
+@@ -67,7 +67,7 @@ public sealed class PipelineFullMessagesTests
+         // Stabile Feldnamen (der Messkontrakt v1 hängt daran — nicht versehentlich umbenennen).
+         foreach (var field in new[] { "runId", "benchmarkVersion", "policyProfile", "models", "stages",
+                                       "humanGates", "coreItemsBefore", "coreItemsAfter", "issuesCreated",
+-                                      "issuesUpdated", "violations", "recall" })
++                                      "issuesUpdated", "violations", "internalQaRecall" })   // §27: Ex-"recall", umbenannt 04.09.
+             Assert.Contains($"\"{field}\"", json);
+     }
+ 

@@ -1,0 +1,653 @@
+{
+  "evaluated_utc": "2026-09-15T20:05:58.733115+00:00",
+  "protocol": "../protokoll.md",
+  "selection": "../selected-cases.json",
+  "status": "criterion-based case review; author clarifications recorded separately; no independent annotation",
+  "role_note": "KI-gestützte Fallbewertung; drei gezielte Rückfragen an Autor/Entwickler. Antworten begründen keine menschliche Vollprüfung. Historische Gates sind keine nachträglichen unabhängigen Qualitätsurteile.",
+  "cases": [
+    {
+      "case_id": "N01",
+      "role": "additional",
+      "title": "Medikamentennachweis: Eingang erhalten, Weiterplatzierung ausgeblieben",
+      "source_interpretation": "AU-0005 verlangt aus Sicht der Angehörigen einen Nachweis pro Gabe mit Zeitpunkt; AU-0006 nimmt ihn in die Zusammenfassung auf. Der Consumable-Claim kombiniert eine Muss-Proposition mit status=open/modality=desired. Die Baseline macht daraus einen Wunsch mit offener Umsetzung bzw. Entscheidung. Die heutige Autorenantwort legt den Verpflichtungsgrad nicht sicher fest.",
+      "agent_contribution": "NEW ist gegenüber dem damaligen Bestand vertretbar. REQ-42 betrifft dort nur eine mögliche spätere Medikamentenintegration; eine konkrete Dokumentation je Gabe liegt noch nicht vor. Der Einordnungsagent übernimmt den Delta-Text unverändert.",
+      "decision": "Ingest und PBI-Tor: GATE_ANSWERED/policy=AcceptAll. Keine menschliche Einzelautorisierung dieses Falls belegt, trotz policyProfile=Interactive in der Konfiguration.",
+      "observed_effect": "REQ-81 v1 enthält den Vorschlag einschließlich Zweck/Zeitpunkt. Die anschließende NEW_FEATURE-Platzierung für REQ-81 wird laut Apply-Bericht mangels akzeptierten Create-Drafts übersprungen. Kein neues PBI, keine neue Feature-Verbindung, kein GitHub-Write aus dieser Operation.",
+      "limits": "Historischer Juli-Stand. REQ-81 bezeichnet hier einen anderen Inhalt als in späteren August-Ständen. Quellenwiedergabe hinsichtlich Modalität bleibt mehrdeutig; keine heutige Systemstörung oder allgemeine Platzierungsquote aus diesem Fall ableiten.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "mehrdeutig",
+            "reason": "Sachgehalt getragen; offen/gewünscht gegenüber Zusammenfassung auslegungsbedürftig."
+          },
+          "recorded_result": {
+            "rating": "mehrdeutig",
+            "reason": "Die gleiche Modalität wurde gespeichert; Autor konnte sie anhand der Vorlage nicht sicher entscheiden."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Eigenständiger Nachweis ist im damaligen Requirement-Bestand nicht konkret geregelt; NEW vertretbar."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Neue Anforderung angelegt."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Alle fachlichen Bestandteile des ausgewählten Delta-Items bleiben im Vorschlag."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Vorschlag und gespeichertes REQ-81 sind textgleich; Rohquellenmodalität separat K1."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Nachgewiesen ist automatische Annahme und genau diese Speicherung, kein menschlicher Qualitätsentscheid."
+        },
+        "K5": {
+          "rating": "teilweise getragen",
+          "reason": "Geplante Weiterplatzierung nicht erreicht; dokumentierter Skip wegen fehlendem Create-Draft."
+        }
+      },
+      "dossier": "dossiers/N01.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260729_142120_1ac7c2",
+      "additional_evidence": [
+        "evidence/runs/ledger/20260729_142120_9ca536/step-00-atomic-units/output.json"
+      ]
+    },
+    {
+      "case_id": "N02",
+      "role": "additional",
+      "title": "Übergabe-Notiz als Bestätigung des Bestands",
+      "source_interpretation": "AU-0016 des historischen Ledger-Laufs verlangt die pro Schicht angelegte und bei App-Öffnung prominent gezeigte Übergabe-Notiz. Incoming REQ-07 und Bestands-REQ-61 stimmen in dieser Aufgabe überein.",
+      "agent_contribution": "RESTATE auf REQ-61 vermeidet eine zweite Anforderung für denselben Inhalt. Weitere Notizanforderungen des Meetings sind andere Operationen und kein fehlender Teil dieses ausgewählten Satzes.",
+      "decision": "AcceptAll im historischen Ingest; keine menschliche Einzelprüfung belegt.",
+      "observed_effect": "REQ-61 behält Text, Version 1 und bisherigen sourceRunId. Als einzige Item-Änderung kommt canonical-shift-hand-over-note in sourceClaimIds hinzu. Vorhandene covers-/Feature-Beziehungen bleiben. Andere PBI-Änderungen im Lauf stammen von anderen Operationen.",
+      "limits": "Der neue Claim hat am Item keinen eigenen zusätzlichen Laufbezug; die Bestätigung lässt sich über das jetzt gesicherte Laufpaket zurückverfolgen, nicht als vollständige neue Herkunftskette allein aus dem Item. Bekannte B-51-Reichweite; kein neuer Ursprungsschaden.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Quelleninhalt getragen."
+          },
+          "recorded_result": {
+            "rating": "teilweise getragen",
+            "reason": "Inhalt und alter Ursprung erhalten; neuer Claim ohne eigenen Laufbezug am Item."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Pro-Schicht-Notiz und prominente Anzeige stimmen überein."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Bestätigung statt Neuanlage."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Kein zusätzlicher fachlicher Inhalt erfordert Ersetzung."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Text und Version bleiben exakt gleich."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Auto-Annahme und Quellenkennungs-Ergänzung belegt."
+        },
+        "K5": {
+          "rating": "getragen",
+          "reason": "Bestehende PBI-/Feature-Verbindungen erhalten; keine neue Projektion dieser Bestätigung behauptet."
+        }
+      },
+      "dossier": "dossiers/N02.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260725_162437_790824",
+      "additional_evidence": [
+        "evidence/runs/ledger/20260725_162437_d9208d/step-00-atomic-units/output.json"
+      ]
+    },
+    {
+      "case_id": "N03",
+      "role": "additional",
+      "title": "Unvollständige Besuchsstatus-Vorlage wird abgewiesen",
+      "source_interpretation": "Das Autor-Delta nennt Bestätigen/Ablehnen, sichtbaren Status, Begründungspflicht, Einrichtungsschranke, keine Fristen sowie genau einen der drei Zustände angefragt/bestätigt/abgelehnt.",
+      "agent_contribution": "NEW_RELATED zum Besuchsthema ist gegenüber REQ-82/83 plausibel. Der Vorschlag behält zentrale Funktionen, lässt aber die exakte Statusmenge und die Aussage ohne Fristen weg.",
+      "decision": "Historische Ablehnung: „Detail aus dem Diktat fehlt — Angehörige sehen genau einen Status aus: angefragt, bestätigt oder abgelehnt. Bitte vollständige Fassung neu aufnehmen.“",
+      "observed_effect": "Keine der Operationen dieses Ingests übernommen; Items, Relationen und Proposals im Ingest-Vorzustand und vor dem PBI-Schritt sind gleich. Keine unvollständige neue Besuchsanforderung entstanden.",
+      "limits": "Die Ablehnung schützt hier vor der Übernahme einer unvollständigen Vorlage. Das ist kein Nachweis allgemeinen Qualitätsgewinns. In den beiden erhaltenen Core-Snapshots fehlt eine neue REJ-Proposal dieses Falls; die Ablehnung ist in der separaten Entscheidungsdatei belegt. Nicht mit einer späteren Neuaufnahme gleichsetzen.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "teilweise getragen",
+            "reason": "Vorschlag stammt aus dem Diktat, lässt aber ausdrücklich genannte Details weg."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Kein neuer Requirement-Inhalt übernommen."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Ergänzung zur vorhandenen Besuchsankündigung/-übersicht vertretbar."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Abgewiesen."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "teilweise getragen",
+            "reason": "Exakte drei Zustände und fehlende Fristen fehlen im Vorschlag."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Keine neue Anforderung; Nichtübernahme unter K4."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Ablehnung und ausbleibende inhaltliche Übernahme an zwei Zuständen belegt."
+        },
+        "K5": {
+          "rating": "nicht anwendbar",
+          "reason": "Nach Abweisung keine neue fachliche Verbindung zu erwarten."
+        }
+      },
+      "dossier": "dossiers/N03.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260818_183319_b3d6e6",
+      "additional_evidence": []
+    },
+    {
+      "case_id": "N04",
+      "role": "additional",
+      "title": "Besuchserinnerung auf 18 Uhr präzisiert",
+      "source_interpretation": "Autor-Delta ergänzt an der bereits vorgesehenen einmaligen Push-Erinnerung am Vortag ausschließlich die Uhrzeit 18 Uhr.",
+      "agent_contribution": "REFINE auf REQ-88 benennt dieselbe Handlung und erhält Angehörige, bestätigten Besuch, Kanal, Häufigkeit und Zweck. Der PBI-Schritt markiert PBI-049 als geändert und schlägt die inhaltliche Angleichung vor.",
+      "decision": "Ingest apply, anschließend PBI-/Alignment-Annahme. Die ausgefüllten edited-Felder enthalten dieselben Texte wie der Vorschlag; daraus folgt keine eigenständige menschliche Textverbesserung.",
+      "observed_effect": "REQ-88 v2 enthält 18 Uhr, die History erhält v1. PBI-049 wird mit passendem Zieltext und 18-Uhr-Akzeptanzkriterium als Projektionsobjekt ausgegeben. Bestehende covers- und Feature-Verbindungen bleiben; kein realer GitHub-Write (dryRun=true, would-create).",
+      "limits": "Ein vollständiger Core-Snapshot nach PBI-Apply fehlt innerhalb dieses Laufs. Die Inhaltsangleichung ist am erzeugten github-sync-delta belegt; damit werden nicht alle späteren Core-Metadaten oder ein externes Issue bestätigt. Frühere Kriterienliste wird kürzer; Akteur, bestätigter Besuch und Zweck stehen weiter im PBI-Zieltext.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Neu hinzugefügte Uhrzeit entspricht Autor-Delta."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Gespeicherte Anforderung führt aktuellen Lauf und frühere Textfassung."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Gleiche Anforderung wird präzisiert."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Gleiche REQ-ID, Version erhöht."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Alter fachlicher Inhalt und neue Uhrzeit erhalten."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Anforderung und nachgewiesenes PBI-Projektionsobjekt erhalten den ausgewählten Bedeutungsumfang."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Zwei Freigaben und ihre jeweilige Wirkung belegt; keine besondere Redaktionsleistung aus Formularfeldern abgeleitet."
+        },
+        "K5": {
+          "rating": "getragen",
+          "reason": "Vorhandener PBI-/Feature-Bezug und inhaltlich angeglichene Projektionsausgabe belegt; externe Ausführung ausdrücklich nicht."
+        }
+      },
+      "dossier": "dossiers/N04.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260819_102959_b8e8f8",
+      "additional_evidence": []
+    },
+    {
+      "case_id": "N05",
+      "role": "additional",
+      "title": "PDF-Testkriterium am GitHub-Issue wird nicht Produktanforderung",
+      "source_interpretation": "Archiviertes Issue 43 enthält zusätzlich „Testkriterium: Export der Übersicht als PDF möglich.“ Der Eingang stammt aus dem Issue-Text, nicht aus einem Kommentar.",
+      "agent_contribution": "Der Agent bildet eine separate Exportanforderung. Die bestehende Anzeigeanforderung REQ-81 wird nicht verkürzt ersetzt; die Begründung nennt die sonst verloren gehenden Angaben. NEW ist vertretbar; NEW_RELATED wäre ebenfalls eine mögliche Einordnung.",
+      "decision": "Autor lehnt ab: „Abnahme-Testzeile — kein echter Bedarf.“ Damit ist die fehlende fachliche Verbindlichkeit der Testzeile dokumentiert.",
+      "observed_effect": "Keine neue Requirement-Entität. REJ-018 unter core.proposals hält Vorlagetext, Grund, Incoming-ID und Planpfad fest; bestehende Items bleiben unverändert.",
+      "limits": "Dies ist eine Testeingabe und kein unabhängiger Feldbefund. Die Umformung zum verbindlichen Bedarf ist ohne die Gate-Entscheidung nicht legitimiert. Die Ablehnung belegt Kontrolle über Scope, nicht dass der Agent einen echten Bedarf korrekt erkannt hätte.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "teilweise getragen",
+            "reason": "PDF-Inhalt stammt aus dem Issue, Teststatus wird im normativen Vorschlag nicht erhalten."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Nicht als neue Anforderung übernommen."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Separater Export statt verlustbehafteter Ersetzung der Anzeige ist fachlich vertretbar."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Abgewiesen."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "teilweise getragen",
+            "reason": "Exportinhalt erhalten; Testkennzeichnung fehlt. Bestehende REQ-81 bleibt im Plan unberührt."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Keine neue Anforderung."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Ablehnung, unveränderte Items und REJ-018 mit Vorlagetext/Grund belegt."
+        },
+        "K5": {
+          "rating": "nicht anwendbar",
+          "reason": "Keine aktive neue PBI-/Feature-Verbindung nach Abweisung."
+        }
+      },
+      "dossier": "dossiers/N05.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260820_182614_a5f6b3",
+      "additional_evidence": []
+    },
+    {
+      "case_id": "N06",
+      "role": "additional",
+      "title": "Mehrteilige Push-Frage nur teilweise als schon erfasst eingeordnet",
+      "source_interpretation": "Kommentar 5313971856 fragt nach Push zur Wochenübersicht, auslösenden Ereignissen und Ein-/Ausschaltbarkeit. DEC-006 nennt nur die Selbstdeaktivierung von Push-Erinnerungen.",
+      "agent_contribution": "ALREADY_DECIDED wird mit einer enthaltenen Teilfrage begründet. Die Zielentscheidung trägt die Teilüberlappung, aber nicht das vollständige Fragenbündel. Das Vokabular bezeichnet hier eine bereits erfasste offene Entscheidung, nicht eine bereits fachlich beantwortete Frage.",
+      "decision": "Historisch reject mit „System-Echo: dito, Frage ist als DEC-006 bereits erfasst.“ Heutige Erinnerung: „glauube aus test gründen verworfen“. Diese unsichere Erinnerung wird nicht zur bestätigten damaligen Absicht oder vollständigen Vorabdeckung aufgewertet.",
+      "observed_effect": "DEC-006 bleibt textlich unverändert; keine ausgewählte Operation angewandt. REJ-015 erhält den ganzen Vorschlag samt Ablehnungsgrund und Planpfad. Aus der Nichtübernahme folgt weder nachgewiesener Datenverlust eines echten Bedarfs noch vollständige Abdeckung aller Teilfragen.",
+      "limits": "Hintergrund der Test-/Echo-Einordnung nicht abschließend rekonstruierbar. Der archivierte Kommentar ist eine ausformulierte Frage, kein sichtbarer Verarbeitungsmarker. Nicht behaupten, der Mensch habe hier einen erkannten Semantikfehler korrigiert.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Vorschlag gibt die Frage sinngemäß wieder."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Abgewiesen; vollständiger Vorlagetext im Ablehnungseintrag."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "teilweise getragen",
+            "reason": "Nur eine Teilfrage im bezeichneten Ziel; vollständige Gleichsetzung nicht gedeckt."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Keine Bestätigung am Ziel angewandt."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "teilweise getragen",
+            "reason": "Vorschlagstext vollständig, vorgesehene Bestandszuordnung würde weitere Teilfragen nicht in den Entscheidungstext übernehmen."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Abgewiesen; kein fachlich unvollständiger Ersetzungstext gespeichert."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Ablehnung und ausbleibende Zieländerung belegt; Qualitätsmotiv bleibt offen."
+        },
+        "K5": {
+          "rating": "nicht anwendbar",
+          "reason": "Keine neuen fachlichen Relationen dieser abgewiesenen Operation."
+        }
+      },
+      "dossier": "dossiers/N06.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260820_165512_73b1dc",
+      "additional_evidence": []
+    },
+    {
+      "case_id": "N07",
+      "role": "additional",
+      "title": "Agentische Ableitung wächst nachvollziehbar in den Besuchsbestand",
+      "source_interpretation": "CoreAnalyst leitet Ändern/Absagen aus REQ-82/87/88 ab. Der Report, die ausgewählte Delta-Fassung und der spätere Core-Text stimmen überein. Das ist als „erschlossen, nicht gesagt“ gekennzeichnete neue Entwurfsregel, keine angebliche Transkriptaussage.",
+      "agent_contribution": "Der Einordnungsagent prüft den Bestand und schlägt NEW_RELATED vor. PBIPlacement ordnet die Anforderung der bestehenden Ankündigungsaufgabe PBI-046 zu; Alignment ergänzt deren bisherigen Inhalt um Änderungs-/Absagefälle.",
+      "decision": "Autor apply für CA-2, PBI-Tor/Alignment akzeptiert. Die eingetragenen PBI-Formulartexte entsprechen dem Agentenvorschlag; keine eigenständige menschliche Redaktion nachgewiesen.",
+      "observed_effect": "REQ-91 speichert Herkunft CoreAnalyst, Verarbeitungslauf und Ableitungsbegründung. PBI-046 v2 enthält alten Inhalt (vorab ankündigen, Datum/Uhrzeit) und neuen Inhalt (angefragt/bestätigt, bis Beginn, Änderung→angefragt, Absage→keine Erinnerung). Neue Kanten PBI-046 covers REQ-91 und REQ-91 part_of_feature FC-15 mit source=pbi-update stehen im Core-Snapshot vor Forward. Update von Issue 44 wird als tatsächlich ausgeführt protokolliert.",
+      "limits": "Die Regel ist plausibel und autorisiert, aber nicht die einzig mögliche Produktentscheidung. Aus Werkzeugausführung folgt keine vollständige Suche; aus diesem Einzelfall weder Vollständigkeit aller Relationen noch besserer Projektbetrieb. Externer Erfolg nach gespeichertem Ausführungsbericht, keine heutige Live-Abfrage.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Ableitung und Ausgangsanforderungen explizit benannt; keine falsche Quote-Herkunft."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Aktuelle Anforderung führt Verarbeitungs- und Ursprungsbezug sowie Ableitungsgrund."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Neue Regel ergänzt den vorhandenen Besuchslebenszyklus."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Separate REQ-91 im passenden vorhandenen Besuchsfeature."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Delta-Inhalt und alte Ankündigungsanforderung bleiben erhalten."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Gespeicherte REQ/PBI-Texte und Kriterien decken alle ausgewählten Einschränkungen."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Auswahl und Ausführung an Entscheidungen sowie Core-Nachzustand belegt."
+        },
+        "K5": {
+          "rating": "getragen",
+          "reason": "Zwei neue fachlich passende Kanten, vorhandene Issue-Zuordnung und protokolliertes Issue-Update."
+        }
+      },
+      "dossier": "dossiers/N07.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260821_204808_042823",
+      "additional_evidence": [
+        "evidence/runs/core-analysis/20260821_203951_db6050/analysis/report.json",
+        "evidence/runs/core-analysis/20260821_203951_db6050/analysis/delta-auswahl.json",
+        "evidence/runs/core-analysis/20260821_203951_db6050/logs/agents/CoreAnalystAgent/tool-calls.jsonl"
+      ]
+    },
+    {
+      "case_id": "N08",
+      "role": "additional",
+      "title": "Lokale Speicherung: Konflikt erkannt, ursprüngliche Eingabeherkunft offen",
+      "source_interpretation": "Das archivierte Delta fordert ausschließlich lokale Bewohnerdatenspeicherung und verbietet Cloud-Datenbanknutzung. Der ursprünglich konfigurierte temporäre Input fehlt. Übernommene Metadaten verweisen inhaltlich auf ein No-Go-Thema. Der Autor weiß nicht mehr, wie die Eingabe erstellt wurde.",
+      "agent_contribution": "CONTRADICT auf die bestehende Firestore-Festlegung REQ-70 ist anhand des Delta-Texts vertretbar. Der Agent entscheidet den Konflikt nicht selbst.",
+      "decision": "Ingest AcceptAll im historischen Versuch; anschließend Pause am Entscheidungstor. Keine menschliche Auflösung dokumentiert.",
+      "observed_effect": "REQ-70 bleibt geltend und textgleich. DEC-001 enthält die neue Aussage als Konflikt, Kante contradicts zeigt auf REQ-70. Die erhaltene Kette endet vor PBI/Forward.",
+      "limits": "Delta→Konflikt mechanisch und inhaltlich prüfbar, Ursprung vor Delta nicht. Nicht sicher als manuell erzeugten Test oder als vom System verursachten Quellenfehler klassifizieren. Keine fingierte semantische Stützung durch die sachfremde Claim-ID.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "nicht beurteilbar",
+            "reason": "Vorgelagerte Rohquelle fehlt, Metadaten sachfremd; Autor erinnert Entstehung nicht."
+          },
+          "recorded_result": {
+            "rating": "teilweise getragen",
+            "reason": "Konflikt trägt Delta-Text und Verarbeitungsbezug; kein tragfähiger vorgelagerter Inhaltsbeleg."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Cloud-Verbot stellt die bestehende Persistenzfestlegung infrage."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Offene Entscheidung statt automatischer Ersetzung."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Beide unvereinbaren Aussagen werden getrennt gehalten."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Alttext erhalten; neue Aussage vollständig in DEC-001."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Automatische Ingest-Annahme und tatsächliche Pause belegt, keine menschliche Konfliktentscheidung."
+        },
+        "K5": {
+          "rating": "getragen",
+          "reason": "contradicts-Kante passt; Ende am Entscheidungstor, kein Folgezustand behauptet."
+        }
+      },
+      "dossier": "dossiers/N08.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260806_115016_01715f",
+      "additional_evidence": []
+    },
+    {
+      "case_id": "K01",
+      "role": "known_control",
+      "title": "Bekannte Kontrolle F1: REQ-42 vor Verkürzung geschützt",
+      "source_interpretation": "Eingehende Aussage bekräftigt Angehörigensicht; Bestands-REQ-42 v3 regelt zusätzlich optionale Bemerkung mit maximal 200 Zeichen und nur bei Erfassung.",
+      "agent_contribution": "REFINE würde den umfangreicheren Bestandsinhalt durch die Sichtbarkeitsaussage ersetzen. Die Teilüberlappung trägt keine vollständige Ersetzung.",
+      "decision": "Human-UI: skip mit ausdrücklichem Verweis auf verdrängte Bemerkungs-Präzisierung.",
+      "observed_effect": "REQ-42 v3 bleibt zwischen Ingest-Vorzustand und vor PBI text-/versionsgleich; REJ-002 bewahrt Vorschlag und Begründung. PBI-028 wird im selben Lauf wegen einer anderen Operation (REQ-80) geändert.",
+      "limits": "Bekannter Kontrollfall, kein neuer Erfolg. Andere Änderungen desselben PBI nicht dieser abgewiesenen Operation zurechnen.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Sichtbarkeitsaussage durch Eingang getragen."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Bestehender Text und dessen Herkunft erhalten."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "abweichend",
+            "reason": "REFINE ersetzt zu viel; bestehende Einzelanforderung enthält zusätzliche Regeln."
+          },
+          "recorded_result": {
+            "rating": "nicht anwendbar",
+            "reason": "Abgewiesene Zuordnung."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "teilweise getragen",
+            "reason": "Sichtbarkeit bleibt, Bemerkungsregeln würden fehlen."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Nichtübernahme erhält Bestandsinhalt."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Begründete Ablehnung und Nichtverlust konkret belegt."
+        },
+        "K5": {
+          "rating": "getragen",
+          "reason": "Keine Kantenwirkung dieser Operation; Vorlagetext und Grund als REJ-002 nachvollziehbar."
+        }
+      },
+      "dossier": "dossiers/K01.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260818_084712_765eea",
+      "additional_evidence": []
+    },
+    {
+      "case_id": "K02",
+      "role": "known_control",
+      "title": "Bekannte Kontrolle F2: autorisierte Medikationskonkretisierung",
+      "source_interpretation": "Autor-Delta legt den siebentägigen, ausschließlich lesenden Angehörigenzugriff mit Status/Zeitpunkt ohne Dosisdetails fest; alter Text nennt eine Kalenderprüfung und mögliche Medikamentenintegration.",
+      "agent_contribution": "REFINE realisiert den konkreten neuen Medikamenteninhalt. Der zuvor ebenfalls genannte Prüfauftrag zum Kalender steht danach nur noch in der History.",
+      "decision": "Ingest und PBI-Alignment angenommen. Edited-Texte stimmen mit Vorschlag überein; ausgefüllte Felder sind keine belegte inhaltliche Verbesserung.",
+      "observed_effect": "REQ-42 v2 und PBI-028 bewahren die neuen Einschränkungen; History erhält v1. Projektionsobjekt entspricht der Entscheidung; externer Write ist nur would-update.",
+      "limits": "Keine pauschale vollständige Erhaltung aller Altinhalte: Rücknahme/Erledigung des Kalender-Prüfauftrags ist in der Auswahlentscheidung nicht eigens begründet. Kontext und Herkunftsmetadaten des historischen REFINE unterliegen den bekannten Grenzen.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Neue fachliche Festlegung stammt aus Autor-Delta."
+          },
+          "recorded_result": {
+            "rating": "teilweise getragen",
+            "reason": "Neuer Inhalt belegbar; historische Herkunftsfelder nicht vollständig auf Autorquelle umgestellt."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "teilweise getragen",
+            "reason": "Bezug auf Medikamentenfunktion plausibel, vollständige Ersetzung eines gemischten Alttexts nicht allein fachlich begründet."
+          },
+          "recorded_result": {
+            "rating": "teilweise getragen",
+            "reason": "Ersetzung tatsächlich autorisiert; Kalender-Teilfrage nicht gesondert entschieden."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "teilweise getragen",
+            "reason": "Neue Einschränkungen vollständig, alter Kalender-Prüfauftrag fällt weg."
+          },
+          "recorded_result": {
+            "rating": "teilweise getragen",
+            "reason": "Neue Aussage erhalten; alte Kalenderfrage nur in History, keine bestätigte Fortgeltung oder Rücknahme."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Annahme und gespeicherte Wirkung belegt; daraus keine pauschale Qualitätswirkung des Menschen ableiten."
+        },
+        "K5": {
+          "rating": "getragen",
+          "reason": "Angeglichener PBI-Inhalt und lokales Projektionsobjekt, kein externer Write."
+        }
+      },
+      "dossier": "dossiers/K02.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260817_123342_f23f06",
+      "additional_evidence": []
+    },
+    {
+      "case_id": "K03",
+      "role": "known_control",
+      "title": "Bekannte Kontrolle F3: Konfliktauflösung mit begrenzter Folgeangleichung",
+      "source_interpretation": "Delta stellt globale gegenüber bewohnerbezogenen No-Gos zur Klärung. Der konkrete globale Zieltext stammt aus der späteren menschlichen Entscheidung, nicht aus angeblichem Konsens der Rohquelle.",
+      "agent_contribution": "CONTRADICT macht die infrage gestellte Festlegung als offene Entscheidung sichtbar.",
+      "decision": "Ingest automatisch; Entscheidungstor interaktiv mit ADOPT_NEW und neuem globalem Text im deklarierten Live-Beleg-Experiment.",
+      "observed_effect": "REQ-32 wird superseded, REQ-78 erhält menschlichen Text, DEC-001 resolved. PBI-012/023 werden auf REQ-78 umgehängt. Mindestens die PBI-Texte bleiben weiter klärungsbedürftig; keine vollständige semantische Folgeangleichung oder Live-Projektion.",
+      "limits": "Bekannte Kontrolle: Relationswechsel und vollständige Inhaltskonvergenz sind verschieden. Herkunft des menschlichen Zieltexts über DEC prüfen, nicht als schon vorher festgelegte Transkriptaussage.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Prüfung begrenzt auf archiviertes Delta und dokumentierten menschlichen Zieltext; keine neue Vollprüfung der Rohquelle."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Zieltext und sourceDecisionId im neuen Requirement belegbar."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Infragestellung bestehender Festlegung wird als Konflikt behandelt."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Auflösung entspricht ADOPT_NEW."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Alte und neue Position bis zur Entscheidung getrennt."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Autorisierten neuen Text übernommen und alte Fassung historisiert."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Automatischen Ingest und interaktive fachliche Auflösung ausdrücklich getrennt."
+        },
+        "K5": {
+          "rating": "teilweise getragen",
+          "reason": "Supersedes-/covers-Wechsel belegt; PBI-Inhalt/Readiness nicht vollständig konsolidiert, needs_clarify und Dry-Run-Grenze."
+        }
+      },
+      "dossier": "dossiers/K03.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260804_121433_eb181a",
+      "additional_evidence": []
+    },
+    {
+      "case_id": "K04",
+      "role": "known_control",
+      "title": "Bekannte Kontrolle: GitHub ergänzt den 14-Tage-Besuchszeitraum",
+      "source_interpretation": "Kommentar 5359314065 schlägt die nächsten 14 Tage für die Besuchsübersicht vor. Seine Übernahme erhält den Vorschlagsinhalt; die Verbindlichkeit entsteht durch Annahme.",
+      "agent_contribution": "NEW_RELATED lässt die bestehende REQ-83 für die Pflegeübersicht stehen; PBI-047 wird um REQ-89 ergänzt.",
+      "decision": "Ingest- und PBI-Annahme; weiteres Wetterthema ausdrücklich abgewiesen. Keine zusätzliche menschliche Textverbesserung allein aus den edited-Feldern.",
+      "observed_effect": "REQ-89, covers von PBI-047, Feature-Bezug zu FC-15 und inhaltlich erweiterter PBI belegt. Tatsächliches Update von Issue 45 protokolliert.",
+      "limits": "Bereits bekannter Kontrollfall. Quelle, Autorisierung und technische Ausführung sind getrennte Belege; kein Vollständigkeitsnachweis für beliebige GitHub-Kommentare.",
+      "criteria": {
+        "K1": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Kommentarinhalt und vorgeschlagene Ergänzung passen."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Quellenkommentar und Verarbeitungslauf sind zuordenbar."
+          }
+        },
+        "K2": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Ergänzung einer bestehenden Übersicht ohne Verlust der Grundanforderung."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Separate Anforderung und passender PBI-Bezug."
+          }
+        },
+        "K3": {
+          "proposal": {
+            "rating": "getragen",
+            "reason": "Bisherige Übersicht für Pflegende plus neuer Zeitraum erhalten."
+          },
+          "recorded_result": {
+            "rating": "getragen",
+            "reason": "Gespeicherter PBI enthält beide Inhalte."
+          }
+        },
+        "K4": {
+          "rating": "getragen",
+          "reason": "Annahmen und Ausführung dokumentiert."
+        },
+        "K5": {
+          "rating": "getragen",
+          "reason": "Neue covers-/Feature-Kanten und ausgeführtes Issue-Update belegt."
+        }
+      },
+      "dossier": "dossiers/K04.json",
+      "run_evidence": "evidence/runs/fullworkflow/20260820_172043_802e63",
+      "additional_evidence": []
+    }
+  ]
+}

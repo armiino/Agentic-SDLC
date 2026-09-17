@@ -1,0 +1,158 @@
+% P10-HITL, 15.09.2026: Entscheidungszweck und belegte Zustandswirkung präzisiert.
+% P10-4a, 14.09.2026: Mechanismus, Quellenreichweite und v4-Nachweis angeglichen.
+% M08, 11.09.2026: Governance als Hauptstelle; Begründungspflicht
+% pfadspezifisch (IngestionReviewAdapter vs. DecisionResolutionReviewAdapter).
+\section{Governance und kontrollierte Mutation}
+\label{sec:governance-mutation}
+
+Ein vorbereiteter Änderungsvorschlag ist noch kein geltender
+Projektinhalt. Für die Fortschreibung des vorhandenen Bestands
+verbindet der kontrollierte Mutationspfad deshalb fachliche Prüfung,
+menschliche Autorisierung, Anwendung und Speicherung. Er konkretisiert
+Anforderung A6. Der initiale Seed schreibt dagegen ohne
+Einzelautorisierung der entstehenden Elemente; dort ist das
+Gestaltungsziel nur teilweise realisiert
+(Abschnitt~\ref{sec:endtoend-pfade}).
+Abbildung~\ref{fig:kontrollierter-mutationspfad} zeigt den Ablauf
+am Beispiel der Anforderungseinordnung.
+
+An den menschlichen Entscheidungspunkten (\emph{Human Gates}) entscheidet
+der Mensch, welche fachliche Wirkung ein Vorschlag erhalten soll. Das ist auch bei
+einem plausiblen Vorschlag erforderlich: Eine neue Aussage kann eine
+bisherige Festlegung infrage stellen, ohne bereits die Entscheidung
+über ihre Ablösung zu enthalten. HITL ermöglicht somit sowohl die
+Korrektur von Vorschlägen als auch eine verbindliche fachliche Auswahl.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/05/Abbildung5.6.pdf}
+  \caption[Kontrollierter Mutationspfad]{Kontrollierter Mutationspfad
+    am Beispiel der Anforderungseinordnung
+    (H: menschlicher Entscheidungspunkt; eigene Darstellung).}
+  \label{fig:kontrollierter-mutationspfad}
+\end{figure}
+
+\emph{Prüfung und Entscheidung.} Bei der Anforderungseinordnung
+vergleicht der Agent den neuen Eingang mit dem vorhandenen Core und
+erstellt einen typisierten Operationsplan. Eine deterministische
+Prüfung kontrolliert unter anderem die zulässigen Operationstypen
+und ihre Zielreferenzen. Bei reparierbaren Verstößen erhält der Agent
+die Befunde zur Überarbeitung; die Versuchsschranke begrenzt diese
+Rückkopplung (Abschnitt~\ref{sec:saeule-semantische-transformation}).
+Nach bestandener Prüfung sieht der Mensch am Human Gate die
+vorgeschlagene Operation, den eingehenden Inhalt, die Begründung und
+gegebenenfalls den betroffenen Bestandstext. Er übernimmt einzelne
+Operationen oder lehnt sie mit Begründung ab. Die Anwendung übernimmt
+ausschließlich die freigegebene Menge. Sie konstruiert den nächsten Core-Zustand mit
+den jeweiligen Elementen, Herkunftsangaben und Beziehungen
+(Abschnitt~\ref{sec:core-projektfortschreibung}). Welche Felder
+und Verbindungen entstehen, bestimmt die konkrete Operation;
+die gemeinsame Speicheroperation erzeugt sie nicht selbst.
+
+\emph{Speicherung.} Die resultierende Änderung gelangt zur
+gemeinsamen Speicheroperation, der Speichernaht. Sie prüft
+strukturelle Invarianten vor dem Schreiben und erhält bei einer
+Änderung den bisherigen Bestand in der Historie. Die als Fehler eingestuften
+Verstöße verhindern das Schreiben; weitere Auffälligkeiten werden
+als Warnungen protokolliert. Geprüft wird beispielsweise, ob eine
+\emph{deckt}-Beziehung von einem PBI auf eine vorhandene Anforderung
+oder ein Architekturelement zeigt. Externe Herkunftsziele werden
+dabei nicht vollständig auf ihre Auflösbarkeit geprüft. Die
+Realisierung dieses Wächters, \emph{CoreKangal}, erläutert
+Abschnitt~\ref{sec:realisierung-persistenz-aussenkopplung}. Die Speichernaht
+erzwingt damit strukturelle Zulässigkeit, keine fachliche
+Autorisierung: Diese muss im vorgelagerten Verarbeitungspfad
+erfolgen. Auch wartende Vorschläge können bereits als begleitende
+Governance-Information gespeichert werden, ohne dadurch zu
+geltenden Anforderungen zu werden.
+
+Drei Kontrollarten beantworten somit unterschiedliche Fragen
+(Tabelle~\ref{tab:kontrollarten}). Insbesondere autorisiert die
+Zustimmung zu einem Werkzeugaufruf noch nicht die fachlichen
+Änderungen, die dieser Aufruf erst vorschlägt.
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{p{0.26\textwidth}p{0.30\textwidth}p{0.32\textwidth}}
+    \hline
+    \textbf{Kontrollart} & \textbf{Leitfrage} & \textbf{Wirkort} \\
+    \hline
+    Werkzeugzustimmung (Tool Approval) & Darf diese Handlung
+      ausgeführt werden? & agentische Bedienebene, für entsprechend
+      als wirkungs- oder kostenträchtig ausgewiesene Handlungen \\
+    fachliche Autorisierung (Human Gate) & Soll die fachliche
+      Änderung gelten? & vor der Anwendung einer vorgeschlagenen
+      Änderung, je Element \\
+    Invariantenprüfung & Ist die resultierende Mutation strukturell
+      zulässig? & gemeinsame Speichernaht, vor der Persistenz \\
+    \hline
+  \end{tabular}
+  \caption{Drei Kontrollarten der Governance und ihre getrennten
+    Leitfragen.}
+  \label{tab:kontrollarten}
+\end{table}
+
+Im Besuchsfall F1 wird die fachliche Entscheidung an der Übernahme
+neuer Informationen sichtbar: Der Einordnungsplan legte zwölf
+Operationen vor, von denen der Mensch acht übernahm und vier mit
+Begründung abwies. Zu den übernommenen Inhalten gehören die beiden
+Anforderungen zur Besuchsankündigung und zur Übersicht für Pflegende.
+Abgewiesen wurde beispielsweise eine vom Agenten als Verfeinerung
+vorgeschlagene Änderung an REQ-42. Der Mensch bewertete sie als bloße
+Bestätigung des Bestands; der vorgeschlagene Ersatztext hätte die
+vorhandenen Angaben zu einnahmebezogenen Bemerkungen verdrängt.
+Die protokollierte Auswahl bestimmt, welche Änderungen angewendet
+werden. Die Prüfung von Vorlage, Entscheidung und gespeichertem
+Ergebnis steht in Abschnitt~\ref{sec:eval-fortschreibung}.
+ Diese fachliche Auswahl ist von der
+Evidenzklärung in Abschnitt~\ref{sec:evidenzgebundene-verarbeitung}
+zu unterscheiden; den Durchgang bis zu Core und Issues zeigt
+Tabelle~\ref{t:beispiel-besuchsplanung}.
+
+\emph{Andere Entscheidungsgegenstände.} Bei einem Widerspruch reicht
+die Entscheidung über seine Aufnahme als offene Entscheidung (DEC)
+noch nicht aus, um den Konflikt aufzulösen. Dafür stellt ein deterministischer
+Schritt der Hauptkette offene Entscheidungen aus dem Core zusammen.
+Der Mensch sieht den bisherigen Inhalt und die entgegenstehende
+Aussage. Er kann das Original behalten, die neue Aussage übernehmen,
+eine verfeinerte Fassung festlegen oder die Entscheidung vertagen.
+Bei Übernahme oder Verfeinerung gibt er den endgültigen Text an;
+der Workflow überträgt seine Auswahl in einen ausführbaren Plan.
+Die möglichen Bestandsänderungen erklärt
+Abschnitt~\ref{sec:core-projektfortschreibung}; Fall F3 in
+Abschnitt~\ref{sec:eval-fortschreibung} zeigt eine tatsächlich
+ausgeführte Ablösung. Am zentralen DEC-Gate bestimmt kein weiterer
+Agent die Auflösung. Eine zusätzliche Begründung ist bei solchen
+zielbezogenen Konflikten optional. Offene Fragen ohne Zielanforderung
+haben eingeschränkte Optionen: Ihre Erledigung und der bewusste
+Verzicht auf eine Architekturfestlegung benötigen eine Begründung.
+
+Weitere Freigaben betreffen die Arbeitsplanung und die Außenwirkung.
+Bei der PBI-Fortschreibung entscheidet der Mensch getrennt über
+vorgeschlagene Zuordnungen und die inhaltliche Angleichung der
+Arbeitspakete. Vor der GitHub-Projektion werden die extern wirksamen
+Operationen gesondert freigegeben. Die vorgelagerte
+Evidenz-Adjudikation klärt dagegen die verwendbaren Aussagen und
+ihre Einordnung; sie autorisiert keine fachliche Core-Änderung.
+Anhang~\ref{anh:gate-matrix} ordnet die zehn Entscheidungspunkte
+der Hauptkette nach Gegenstand und Wirkung ein.
+
+Im interaktiven Fortschreibungsbetrieb autorisiert weder ein Agent
+noch eine deterministische Komponente den eigenen fachlichen
+Vorschlag. Deklarierte Experimentbetriebsarten können die
+Interaktion für definierte Untersuchungen durch vorgegebene oder
+gespeicherte Entscheidungen ersetzen. Daraus entsteht keine
+zusätzliche fachliche Autorität eines Agenten. Die technische
+Realisierung und ihre Betriebsarten erklärt
+Abschnitt~\ref{sec:realisierung-human-gates};
+die zugehörigen Bedienwege beschreibt
+Abschnitt~\ref{sec:realisierung-steward}.
+
+Eine menschliche Freigabe garantiert keine fachliche Richtigkeit;
+die Invariantenprüfung sichert keine semantisch richtige Beziehung.
+Die Kontrollen begrenzen, wie Vorschläge wirksam werden.
+Kapitel~\ref{chap:evaluation} untersucht ausgewählte Erzeugungs-,
+Prüf- und Kontrollmechanismen. Wie der freigegebene Projektzustand
+nach außen dargestellt und externe Information zurückgeführt wird,
+erklärt der folgende Abschnitt.

@@ -1,0 +1,374 @@
+{
+  "case_id": "AN-16",
+  "report_index_zero_based": 15,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "risiko",
+    "disposition": "question",
+    "statement": "Was ist das betriebliche Fallback, wenn Firebase Cloud Messaging oder die Zustellung auf Endgeräten ausfällt und Besuchserinnerungen die Angehörigen nicht rechtzeitig erreichen?",
+    "herleitung": "Abgeleitet aus REQ-88, ARCH-46 und ARCH-48: Die Besuchserinnerung ist fachlich relevant und technisch von FCM sowie serverseitiger Planung abhängig. Zwar ist festgelegt, dass die Erinnerung nicht von lokaler Verfügbarkeit abhängen darf, aber es bleibt offen, wie das Projekt mit dem Restrisiko eines Ausfalls oder einer Nichtzustellung des externen Push-Dienstes umgeht. Da die Erinnerung explizit dazu dient, vergessene Besuche zu vermeiden, ist dies ein konkretes Abhängigkeitsrisiko.",
+    "kategorie": "process",
+    "ankerIds": [
+      "REQ-88",
+      "ARCH-46",
+      "ARCH-48"
+    ]
+  },
+  "reported_status": "neu",
+  "critic_reason": null,
+  "anchors_and_mentions": [
+    {
+      "id": "ARCH-46",
+      "present": true,
+      "item": {
+        "itemId": "ARCH-46",
+        "itemType": "architecture",
+        "text": "Für Push-Benachrichtigungen an Angehörige und Pflegende ist Firebase Cloud Messaging als technische Umsetzung festgelegt.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 2,
+        "sourceRunId": "20260818_114850_eab853",
+        "sourceArtifactId": "ARCH",
+        "sourceArtifactType": "architecture",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "fcm-auch-fuer-pflegende"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "ARCH-03",
+          "ingestedFromRun": "20260818_085820_50b471"
+        },
+        "identityKey": "für push benachrichtigungen an angehörige und pflegende ist firebase cloud messaging als technische umsetzung festgelegt",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Für Push-Benachrichtigungen an Angehörige ist Firebase Cloud Messaging als technische Umsetzung festgelegt.",
+            "status": "accepted",
+            "origin": "Extracted",
+            "sourceRunId": "20260818_084712_765eea",
+            "sourceClaimIds": [
+              "push-fcm-technology"
+            ],
+            "recordedUtc": "2026-08-18T11:55:14.399384Z",
+            "note": "REFINE (ingestion 20260818_114850_eab853, via ARCH-S1)"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "architecture": {
+          "roles": [
+            "constraint",
+            "design"
+          ],
+          "rationale": "Die Festlegung auf Firebase Cloud Messaging ist eine konkrete Technologieentscheidung und damit als Architekturentscheidung zu dokumentieren. Gleichzeitig schränkt sie alle Arbeiten zu Push-Benachrichtigungen an Angehörige technisch ein; fachlich betroffen ist das PBI zur Benachrichtigungserweiterung im About-Me-Bereich.",
+          "adrId": "ADR-0001",
+          "adrStatus": "accepted"
+        },
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "ARCH-48",
+      "present": true,
+      "item": {
+        "itemId": "ARCH-48",
+        "itemType": "architecture",
+        "text": "Für Besuchserinnerungen am Vortag um 18 Uhr muss ein serverseitiger Benachrichtigungsrahmen festgelegt werden: Die Erinnerung wird aus dem bestätigten Besuchsstatus heraus zentral geplant, bei Statusänderung oder Absage wieder zurückgezogen und darf nicht von der lokalen Verfügbarkeit oder den Hintergrundrestriktionen des Geräts der Angehörigen abhängen.",
+        "origin": "CoreAnalyst",
+        "stage": "core_analyst",
+        "version": 1,
+        "sourceRunId": "20260820_095055_5c8547",
+        "sourceArtifactId": "core-analysis:20260820_075153_7878ac",
+        "sourceArtifactType": "analyst-finding",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "CA-4"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "CA-4",
+          "ingestedFromRun": "20260820_075153_7878ac",
+          "analystKategorie": "nfr:availability",
+          "herleitung": "Abgeleitet aus REQ-88 zur zeitgenauen Push-Erinnerung, aus REQ-87 zum bestätigten oder abgelehnten Besuchsstatus und aus ARCH-46, das FCM als Push-Technik festlegt. Fachlich ist klar, dass genau bestätigte Besuche zu einem festen Zeitpunkt erinnert werden sollen; es fehlt aber der technische Rahmen, wo diese Terminlogik lebt und wie nachträgliche Statusänderungen berücksichtigt werden. Ohne serverseitige Planung wäre die Erinnerung bei App-Schließung, Offline-Zustand oder OS-Hintergrundbeschränkungen unzuverlässig und würde der fachlichen Zusage nicht genügen.",
+          "linse": "arch"
+        },
+        "identityKey": "für besuchserinnerungen am vortag um 18 uhr muss ein serverseitiger benachrichtigungsrahmen festgelegt werden die erinnerung wird aus dem bestätigten besuchsstatus heraus zentral geplant bei statusänderung oder absage wieder zurückgezogen und darf nicht von der lokalen verfügbarkeit oder den hintergrundrestriktionen des geräts der angehörigen abhängen",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "architecture": {
+          "roles": [
+            "constraint",
+            "design"
+          ],
+          "rationale": "Der Item legt den serverseitigen Benachrichtigungsrahmen für Besuchserinnerungen fest und ist damit eine Architekturentscheidung. Zugleich schränkt er die Umsetzung der Besuchserinnerung direkt ein, weil Planung zentral aus bestätigtem Status erfolgen, bei Änderungen zurückgezogen werden und die Zustellung nicht von lokaler Geräteverfügbarkeit oder Hintergrundrestriktionen abhängen darf; fachlich betroffen ist damit das PBI zur Push-Erinnerung an bestätigte Besuche.",
+          "adrId": "ADR-0003",
+          "adrStatus": "accepted"
+        },
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    },
+    {
+      "id": "REQ-88",
+      "present": true,
+      "item": {
+        "itemId": "REQ-88",
+        "itemType": "requirement",
+        "text": "Angehörige sollen einmal am Vortag um 18 Uhr per Push-Mitteilung an ihren bestätigten Besuch erinnert werden, damit Besuche nicht vergessen werden.",
+        "origin": "AuthorFront",
+        "stage": "author_front",
+        "version": 2,
+        "sourceRunId": "20260819_102959_b8e8f8",
+        "sourceArtifactId": "author-chat:steward",
+        "sourceArtifactType": "author-statement",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "AF-1"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "AF-1",
+          "ingestedFromRun": "steward",
+          "featureKey": "REQ-82"
+        },
+        "identityKey": "angehörige sollen einmal am vortag um 18 uhr per push mitteilung an ihren bestätigten besuch erinnert werden damit besuche nicht vergessen werden",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Angehörige sollen einmal am Vortag per Push-Mitteilung an ihren bestätigten Besuch erinnert werden, damit Besuche nicht vergessen werden.",
+            "status": "accepted",
+            "origin": "AuthorFront",
+            "sourceRunId": "20260818_203354_fcbf9a",
+            "sourceClaimIds": [
+              "AF-1"
+            ],
+            "recordedUtc": "2026-08-19T10:30:43.997313Z",
+            "note": "REFINE (ingestion 20260819_102959_b8e8f8, via AF-1)"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "PBI-016",
+      "toId": "ARCH-46",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-049",
+      "toId": "REQ-88",
+      "relationType": "covers",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-88",
+      "toId": "FC-15",
+      "relationType": "part_of_feature",
+      "source": "pbi-update",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-049",
+      "toId": "ARCH-48",
+      "relationType": "constrained_by",
+      "source": "arch-classify",
+      "metadata": {}
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "FC-15",
+      "itemType": "feature",
+      "text": "Besuchsankündigung und Besuchskoordination",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260818_084712_765eea",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-15",
+        "sourceRunId": "20260818_084712_765eea",
+        "legacyCrossCutting": ""
+      },
+      "identityKey": "FC-15",
+      "history": [],
+      "feature": {
+        "label": "Besuchsankündigung und Besuchskoordination",
+        "rationale": "Die Vorankündigung von Besuchen durch Angehörige eröffnet ein eigenständiges organisatorisches Thema rund um Besuchsplanung. Dieses wird von keinem bestehenden Feature inhaltlich abgedeckt; insbesondere wäre das Hineinlegen in ein Sammel- oder Integrationsfeature fachlich unpräzise.",
+        "coreRequirementIds": [
+          "REQ-82",
+          "REQ-83"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-016",
+      "itemType": "pbi",
+      "text": "About-Me-Neu-Markierungen und Einrichtungs-Benachrichtigungen später ausbauen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260818_114850_eab853",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-benachrichtigungen-about-me-updates"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC07-04",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-07"
+      },
+      "identityKey": "about-me-neu-markierungen-und-benachrichtigung",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "About-Me-Neu-Markierungen und Einrichtungs-Benachrichtigungen später ausbauen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-benachrichtigungen-about-me-updates"
+          ],
+          "recordedUtc": "2026-08-18T12:20:20.6098Z",
+          "note": "MARK_CHANGED: Requirement ARCH-46 verfeinert | ALIGN(R-26-C): Die Anforderung ARCH-46 erweitert die festgelegte technische Umsetzung für Push-Benachrichtigungen von Angehörigen auf Angehörige und Pflegende. Der fachliche Scope des PBIs bleibt gleich; ergänzt wird nur das Akzeptanzkriterium zur technischen Festlegung."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als verbundener Nutzer will ich erkennen oder gemeldet bekommen, wenn im About-Me-Bereich neue Inhalte vorliegen, damit ich aktuelles Wissen schneller wahrnehme.",
+        "title": "About-Me-Neu-Markierungen und Einrichtungs-Benachrichtigungen später ausbauen",
+        "acceptanceCriteria": [
+          "Dieses Backlog Item ist als späterer Ausbau nach dem MVP gekennzeichnet.",
+          "Die spätere Umsetzung soll mindestens Neu-Markierungen in der App und die Option von Popups für verbundene Nutzer derselben Einrichtung berücksichtigen.",
+          "Für Push-Benachrichtigungen an Angehörige und Pflegende ist Firebase Cloud Messaging als technische Umsetzung festgelegt."
+        ],
+        "linkedRequirementIds": [
+          "L3-REQ-013",
+          "REQ-40"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 24,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "later",
+        "trace": {
+          "canonicalRequirementIds": [
+            "L3-REQ-013",
+            "REQ-40"
+          ],
+          "l1Req": [
+            "REQ-40"
+          ],
+          "l3": [
+            "L3-REQ-013"
+          ],
+          "claims": [
+            "canon-benachrichtigungen-about-me-updates"
+          ]
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-049",
+      "itemType": "pbi",
+      "text": "Angehörige am Vortag per Push an bestätigte Besuche erinnern",
+      "origin": "pbi-update",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260819_102959_b8e8f8",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "sourceRunId": "20260818_203354_fcbf9a",
+        "createdFromRequirement": "REQ-88",
+        "featureId": "FC-15"
+      },
+      "identityKey": null,
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Angehörige am Vortag per Push an bestätigte Besuche erinnern",
+          "status": "active",
+          "origin": "pbi-update",
+          "sourceRunId": "20260818_203354_fcbf9a",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-19T10:33:16.185944Z",
+          "note": "MARK_CHANGED: Requirement REQ-88 verfeinert | ALIGN(R-26-C): Die Anforderung REQ-88 wurde präzisiert: Neu ist der konkrete Versandzeitpunkt \"um 18 Uhr\" am Vortag. Daher werden Statement und das betroffene Akzeptanzkriterium auf diesen Zeitpunkt angeglichen; übrige Inhalte bleiben unverändert."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Angehörige:r will ich einmal am Vortag um 18 Uhr per Push-Mitteilung an meinen bestätigten Besuch erinnert werden, damit ich den Besuch nicht vergesse.",
+        "title": "Angehörige am Vortag per Push an bestätigte Besuche erinnern",
+        "acceptanceCriteria": [
+          "Die Push-Mitteilung wird einmal am Vortag um 18 Uhr des bestätigten Besuchs versendet."
+        ],
+        "linkedRequirementIds": [
+          "REQ-88"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": "active",
+        "mvp": null,
+        "trace": null
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "ARCH-46": 1,
+    "ARCH-48": 2,
+    "REQ-88": 2
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

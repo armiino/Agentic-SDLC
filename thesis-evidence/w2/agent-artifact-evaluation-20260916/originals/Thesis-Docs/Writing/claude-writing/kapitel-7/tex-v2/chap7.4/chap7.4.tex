@@ -1,0 +1,153 @@
+% P10-HITL, 15.09.2026: Entscheidungszweck und belegte Zustandswirkung präzisiert.
+% P10-4b, 14.09.2026: Begriffs-/Beleganschlüsse und abgegrenzte Prüfaussagen präzisiert.
+% M19 (12.09.2026): Leserführung und präzise Ergebnisdarstellung;
+% Messwerte und historische Nachweisgrenzen bleiben erhalten.
+% ============================================================
+% §7.4 Kontrollen der Wahrheits-Mutation — v01 (Claude, 07.09.)
+% NEUE 8er-Struktur (Umsetzungsplan §5: 5.1 Bestandsevidenz nach
+% Assertions [Z3] · 5.2 T1–T4 am realen Apply-Pfad · 5.3 Maker–
+% Checker-Nullbefund). Budget ~1,5 S. + 2 Tabellen.
+% Leitplanken: Assertions statt Testnamen · Zustandswirkung als
+% Beleg · G04 offen benennen · keine Erfolgsquote/Bestehensschwelle.
+% ============================================================
+% HERKUNFT: Z3-Zuordnung = thesis-evidence/w2/z3-assertion-zuordnung.md
+% (36 Methoden, Prüftiefen 28/5/2/1; inkl. Korrektur G01/G02 nach
+% Kollegen-Review 07.09.); Matrix = runs/e2e-evidenz/
+% fehlerklassen-matrix.md (v2, Bilanz 6/4/2); T1–T4 =
+% thesis-evidence/w2/t1-t4-kontrolltests.md + Testcode
+% AgenticSdlc.Tests/FullWorkflow/IngestionApplyGovernanceTests.cs
+% (Beleg-Lauf 07.09.: Filter 4/4, Suite 688/688); Signal-Herkunft =
+% z1-stufenanalyse.md §4 (Lauf 20260905_164650_8189ea);
+% canonical-gate = runs/ledger/20260905_164650_8189ea/gate/.
+% ------------------------------------------------------------
+
+\section{Kontrollen von Änderungen am Core}
+\label{sec:eval-kontrollen}
+
+Im vorgesehenen Anwendungsablauf werden Änderungen am fachlichen
+Projektbestand über die gemeinsame Speichernaht mit strukturellen
+Invarianten gespeichert. Die menschliche
+Einzelfreigabe fachlicher Übernahmen gilt für die
+Fortschreibungspfade des vorhandenen Bestands --- der initiale Seed
+der Bestandsherstellung ist davon ausgenommen
+(Abschnitt~\ref{sec:endtoend-pfade}). Das umfassende
+Autorisierungsziel A6 ist somit nur teilweise umgesetzt; dies
+begrenzt auch die Autorisierungsannahme des Projektzustands in A5,
+A7 und A8. Prüfgegenstand ist die Bindung der fachlichen
+Zustandsänderung an die vorgesehene Freigabe: Eine nicht freigegebene
+Operation darf nicht übernommen werden; bei einem gültigen und
+freigegebenen Vorschlag muss die vorgesehene Übernahme möglich sein.
+Die Untersuchung bewertet
+damit die Umsetzung der Entscheidungshoheit, nicht die fachliche
+Richtigkeit menschlicher Urteile. Der Abschnitt prüft die
+realisierten Kontrollen auf zwei Wegen: durch die
+Zuordnung der \emph{bestehenden} Tests deterministischer Kontrollen
+anhand ihrer tatsächlich geprüften Bedingungen (Assertions) und durch
+vier \emph{neu ausgeführte} Kontrolltests am realen
+Anwendungspfad.
+
+\subsection{Bestehende Tests nach Prüfinhalt}
+\label{sec:eval-z3}
+
+36 vorhandene Testmethoden decken die Prüfmechanik der Kette
+(Kanonisierungs-Check, Referenzprüfung und Rückstufung zur
+Nachprüfung), die Invariantenprüfung am Core, die Snapshot-Historie
+und die deterministischen Projektionen ab. Die Realisierung der
+Invariantenprüfung als \texttt{CoreKangal} erläutert
+Abschnitt~\ref{sec:realisierung-persistenz-aussenkopplung}. Die Zuordnung der Testmethoden erfolgte anhand
+der tatsächlichen Prüfinhalte; dabei wurde je Methode die
+Prüftiefe erfasst: 28 Methoden prüfen Rückgabewerte im Arbeitsspeicher (In-Memory), fünf
+den echten Datei-/Repository-Zustand, zwei einen Ausnahme-Wurf und
+eine kombiniert Ausnahme und Dateizustand. Diese Kartierung
+korrigierte zwei frühere Zuordnungsfehler: Ein Test prüft entgegen
+seinem Namen nur die zurückgegebene Dateiliste, keinen
+Datenträger-Schreibvorgang; und die Challenge „unbekannte
+Relation`` war fälschlich als blockiert-getestet geführt ---
+tatsächlich quittiert die Invarianten-Prüfung unbekannte
+Relationstypen nur mit einer protokollierten Warnung, und kein Test prüft
+dieses Verhalten. Der einzige Test, der die strukturelle Blockade
+der Speichernaht am echten Dateizustand nachweist, ist der
+Save-Test der Invarianten-Prüfung (wirft und schreibt nichts,
+anschließend persistiert ein gültiger Save).
+
+\subsection{Vier Kontrolltests am realen Anwendungspfad}
+\label{sec:eval-t1t4}
+
+Die von der Testkartierung offengelegten Lücken --- Apply ohne
+Freigabe und die Zustandswirkung einer Ablehnung waren nirgends am
+persistierenden Pfad getestet --- wurden durch vier neue Tests
+geschlossen (Tabelle~\ref{t:eval-kontrolltests}). Alle vier
+arbeiten ohne simulierte Ersatzkomponenten (Mocks): Sie setzen einen realen Core in einem
+Temporärverzeichnis auf, durchlaufen die geteilte
+Anwendungsroutine des Ingestion-Tors
+(Apply; gemeinsam von CLI und Workflow genutzt) und lesen den Core-Zustand anschließend aus
+dem Dateisystem zurück. Unterschieden wird dabei der fachliche
+Item-Bestand von den gespeicherten Ablehnungsvermerken: Eine abgelehnte
+Änderung darf keinen fachlichen Inhalt erzeugen, wohl aber einen
+begründeten Ablehnungsvermerk hinterlassen.
+
+\input{\tabledir/eval-kontrolltests.tex}
+
+In den geprüften Fällen verhinderten fehlende beziehungsweise
+abgelehnte Freigaben die fachliche Übernahme; die erneute
+Anwendung desselben Plans erzeugte keine zweite fachliche Wirkung;
+der gültige Kontrollfall bestätigte die vorgesehene Übernahme
+einschließlich Herkunft und Historisierung --- und belegt damit
+zugleich, dass die negativen Fälle nicht deshalb folgenlos
+blieben, weil der Pfad grundsätzlich nichts speichert. Die
+Aussagen gelten für den geprüften Anwendungspfad; sie sind ein
+anderer Nachweis als die strukturelle Naht-Blockade und ersetzen
+weder diese noch eine allgemeine Absicherung gegen doppelte
+externe Schreibvorgänge nach einem Absturz.
+
+\subsection{Bilanz und Grenzen}
+\label{sec:eval-kontrollbilanz}
+
+Tabelle~\ref{t:eval-challenge} schließt den zwölfteiligen
+Challenge-Katalog aus der Anforderungslandkarte: sechs Fälle sind
+getestet, vier teilweise belegt, zwei nicht getestet. Offen
+bleiben die unbekannte Relation (nur Warnung, ungetestet) und der
+direkte Umgehungsweg außerhalb der Speichernaht (G04) --- Aussagen
+wie „technisch nicht umgehbar`` sind daher auf das belegte
+Architektur- und Ausführungsmodell begrenzt (eine Speichernaht,
+neun inventarisierte Schreiber). Die geprüften Governance-Pfade
+belegen zudem keine durchgängige menschliche Einzelautorisierung
+sämtlicher Bestandsinhalte: Der initiale Seed der
+Bestandsherstellung schreibt ohne Einzelautorisierung der
+entstehenden Elemente (Abschnitt~\ref{sec:endtoend-pfade}); die
+Kontrollnachweise betreffen die Fortschreibungspfade. Eine
+Erfolgsquote oder
+Bestehensschwelle wird bewusst nicht gebildet.
+
+\input{\tabledir/eval-challenge-bilanz.tex}
+
+Für die Prüf-Reparatur-Schleife der Kanonisierung gilt: Im
+ausgewerteten Stresslauf passierte der kanonische Bestand den
+deterministischen Übergangs-Check im ersten Versuch; dieser
+Reparaturzweig wurde nicht ausgelöst, sein Korrektureffekt ist
+daher nicht gemessen --- ein nicht ausgeführter Mechanismus ist
+kein negativer Wirksamkeitstest. Davon zu unterscheiden sind zwei
+weitere Mechanismen desselben Laufs, die regulär ausgeführt
+wurden: Die Facetten-Validierung meldete 22 Facettenbefunde
+(20 mit angewandter Facetten-Reparatur) und stufte 18 Claims zur
+Nachprüfung ein; ein Referenz-Reparatur-Durchgang der
+Hinweisstufe lief einmal (Stufenzuordnung:
+Anhang~\ref{anh:evaluation}). Deren fachliche Wirkung wurde nicht
+separat bewertet.
+
+Der deterministische Übergangs-Check der Kanonisierung ist
+zugleich die in Abschnitt~\ref{sec:eval-stufen} belegte Grenze:
+Er prüft referenzielle Deckung, nicht semantische Erhaltung ---
+die beiden dort nachgewiesenen Merge-Verluste passierten ihn
+unbeanstandet. Die Erkennung definierter Fehlerklassen durch die
+Schleife ist deterministisch getestet (erste Tabellengruppe der
+Kartierung). Ein Korrektureffekt der LLM-Reparatur wurde in der
+hier ausgewerteten Stufenanalyse nicht gemessen. Der historische
+Backlog-Lauf \texttt{20260804\_074419\_acab74} zeigt dagegen einen
+Reparaturversuch nach zunächst ausgebliebener Gesamteinreichung.
+Innerhalb dieses Versuchs wurden vier fehlende Verbindungen eines
+19-PBI-Entwurfs ergänzt; anschließend bestand die Strukturprüfung
+(Abschnitt~\ref{sec:saeule-semantische-transformation}, E45-02).
+Dieser formative Einzelfall belegt eine strukturelle Korrektur,
+keine semantisch geprüfte Reparaturqualität oder allgemeine
+Wirksamkeit des Musters.

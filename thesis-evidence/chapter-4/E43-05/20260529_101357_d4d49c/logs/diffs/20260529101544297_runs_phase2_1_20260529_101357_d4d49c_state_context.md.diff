@@ -1,0 +1,74 @@
+﻿--- before/runs/phase2_1/20260529_101357_d4d49c/state/context.md
++++ after/runs/phase2_1/20260529_101357_d4d49c/state/context.md
+- 
++ # Projektkontext – Kundenportal (MVP)
++ 
++ ## 1. Projektziel (aus Stakeholder‑Äußerungen)
++ - **Hauptziel:** Schnellere Angebotserstellung für das Sales‑Team (Conversion Offer → Order). Das Kundenportal ist dabei Mittel zum Zweck.
++ - **MVP‑Leistungsumfang (definiert von Anna):**
++   1. Login / Double‑Opt‑In (E‑Mail + Passwort). Optional: SSO (Azure AD / Google) – **nicht verpflichtend**.
++   2. Angebotserstellung basierend auf **SAP‑Lesedaten** (Produkt, Preis, Rabatt‑Logik). Sonderrabatte > Standard‑/15 % sind **nicht erlaubt** im MVP (diese werden erst in Phase 2 freigegeben).
++   3. Rechnungs‑ und Bestellungs‑Download für den Kunden.
++   4. Rollenmodell auf **Admin / Sales / Kunde** (weitere Rollen wie Support, Manager, Finance werden bewusst ausgeschlossen).
++   5. Minimaler Audit‑Trail (Wer hat welches Angebot geöffnet/geändert, Login‑Events). 
++   6. EU‑only Managed‑Hosting, keine neue Datenbank (Nutzung eines bestehenden Managed‑DB‑Services).
++   7. Backup / Disaster‑Recovery (mindestens ein wöchentliches Backup, Aufbewahrung nach gesetzlicher Vorgabe).
++ - **Zeitplan:** MVP in **8 Wochen**; danach weitere Features (mehrsprachig, Mehrwährung, Freigabe‑Workflow, Ticket‑System, erweiterte SSO, API‑Gateway, Skalierbarkeit) werden evaluiert.
++ 
++ ## 2. Wesentliche Sprecher‑ und Rollenprofile
++ | Sprecher | Rolle / Interessensbereich |
++ |----------|---------------------------|
++ | Anna | Produkt‑Owner / Business‑Stakeholder (Vertretung Sales & Marketing). Definiert Kern‑MVP, Prioritäten und Zeitplan. |
++ | Ben | Technischer Lead (Entwicklung, Integration, Infrastruktur). Bringt technische Machbarkeit, API‑Layer, Security‑Aspekte ein. |
++ | Clara | Datenschutz / Compliance (DSGVO, Audit, Logging, Löschkonzept). |
++ | David | Customer‑Support (Operative Sicht, Ticket‑ und Kontakt‑Prozesse). |
++ | Eva | Finance / Controlling (Rabatt‑Freigaben, rechtliche Vorgaben, PDF‑Templates, Aufbewahrung). |
++ | Farid | IT‑Operations (Hosting, EU‑Datenresidenz, Monitoring, Secrets‑Management). |
++ | (Weitere) | – |
++ 
++ ## 3. Fachliche Themen & Anforderungen (aus dem Dialog)
++ - **Kundenportal‑Funktionalität**: Login, Angebots‑Wizard, Rechnungs‑Einblick, Download, ggf. Kontakt‑Formular.
++ - **SAP‑Integration**: Nur **Leserecht** für Produkt‑/Preis‑Daten im MVP; Schreibzugriff (Bestellungen, Freigaben) erst später.
++ - **Rollen & Berechtigungen**: Minimal‑Modell (Admin, Sales, Kunde). Rollen‑ und Berechtigungskonzept wird als Risiko **bewusst** außen vor gelassen – muss aber später ergänzt werden.
++ - **DSGVO‑Pflichten**: Double‑Opt‑In, Logging ohne personenbezogene Daten, Löschkonzept (offen), Datenminimierung (Nur notwendige Kundendaten im Portal), EU‑only Hosting, Audit‑Log getrennt von techn. Logs.
++ - **Security**: TLS‑Verschlüsselung (E2E nicht notwendig), Security‑Review (Zeit‑Konflikt – im MVP nur minimale Maßnahmen).
++ - **Backup & DR**: Pflicht, muss in Kostenkalkulation erscheinen.
++ - **Performance & Skalierbarkeit**: Erwarteter Nutzer‑Span von 200 bis 20 000; MVP fokussiert auf **funktionales Kern‑Feature**, Skalierbarkeit wird später adressiert.
++ - **KPIs**: Conversion Rate (Offer → Order), Time‑to‑Offer. Daten für KPI‑Messung werden erst nach MVP‑Release erhoben.
++ - **Mehrsprachigkeit / Internationalisierung**: MVP nur Deutsch (Englisch optional); später EU/USA.
++ - **Währungen**: EUR im MVP; CHF/ USD in späteren Phasen (Pilot‑Kunde Schweiz ggf. relevant).
++ - **PDF‑Export & Templates**: Grundlegende Angebots‑PDF‑Generierung, rechtliche Fußnoten, Versions‑Info – minimal.
++ - **Support‑Prozess**: Kein Ticket‑System im MVP, nur Kontakt‑Formular; bewusst als **Risiko** dokumentiert.
++ - **Freigabe‑Workflow für Rabatte**: Im MVP keine Sonderrabatte > 15 %; Freigabe‑Logik wird in Phase 2 definiert.
++ - **API‑Layer / Gateway**: Notwendig, aber **Warteliste von 6 Wochen** beim zentralen API‑Gateway – kein MVP‑Fit, daher später.
++ - **Testing & Environments**: Dev/Test/Prod, keine echten Kundendaten in Test‑Umgebung, Pseudonymisierung/ synthetische Daten gefordert.
++ - **Rate‑Limiting & Missbrauchserkennung**: Grund‑Rate‑Limit über Managed Service / Gateway (falls verfügbar). Keine umfangreiche Abuse‑Detection im MVP.
++ 
++ ## 4. Offene Fragen / Risiken (bewusste Ausschlüsse im MVP)
++ | Risiko / Offene Frage | Konsequenz für MVP |
++ |------------------------|--------------------|
++ | **Support‑Ticket‑System** – Bedarf an strukturierter Kundensupport | Ausgeschlossen, nur Kontakt‑Formular (Risiko: unklare Support‑Erwartungen). |
++ | **Rabatt‑Freigabe > 15 %** | Nicht implementiert; Vorgabe, dass Sonderrabatte im MVP nicht möglich sind. |
++ | **API‑Gateway‑Verfügbarkeit** (6‑Wochen‑Warteliste) | MVP nutzt direkten Service‑Aufruf oder temporäre Lösung – kein robustes Gateway. |
++ | **EU‑only Hosting Kosten** | Noch nicht quantifiziert – muss in Kostenschätzung für Vorstand berücksichtigt werden. |
++ | **Backup‑Strategie & DR‑Details** | Nur Grund‑Backup definiert; detaillierter Plan fehlt. |
++ | **Mehrsprachigkeit & Mehrwährung** | Nicht im MVP; später notwendig, besonders für Schweizer Pilot. |
++ | **Daten‑Minimierung vs. Performance (SAP‑Cache)** | Cache‑Strategie noch offen – im MVP wird auf Echtzeit‑SAP‑Lesen gesetzt (kritische Abhängigkeit). |
++ | **Audit‑Log vs. Technical Log Trennung** | Grund‑Audit‑Log definiert, aber genaue Trennung in Logs fehlt. |
++ | **Retention / Löschkonzept** | Noch offen – muss später definiert werden (konflikt mit gesetzlichen Aufbewahrungspflichten). |
++ | **Testing mit echten SAP‑Daten** | Risiko wegen Datenschutz; muss synthetische Testdaten erzeugen. |
++ | **Secrets‑Management / CI‑CD** | Noch nicht implementiert – wird in späteren Phasen angelegt. |
++ | **Kostenschätzung (MVP‑Budget)** | Fehlende Zahlen – Ernsthaftes Risiko für Vorstandspräsentation. |
++ | **Verfügbarkeit SAP (Wartungsfenster)** | Kritische Abhängigkeit – muss Fallback/Cache oder Offline‑Modus planen. |
++ | **PDF‑Template‑Versionierung** | Minimal, aber keine komplette Versionierungs‑Strategie. |
++ | **Rate‑Limiting / Missbrauch** | Grund‑Rate‑Limit geplant, aber keine erweiterte Detection. |
++ 
++ ## 5. Quellenhinweise (Beleg für jede Aussage)
++ - Alle oben genannten Punkte stammen aus dem Transkript **input/transcripts/T9999_chaos.txt** (Zitat‑Auszüge im Kontext). 
++ - Zitate zu MVP‑Definition (Anna, 1‑2. Abs.) und technische Einschränkungen (Ben, 2‑3. Abs.) sowie Datenschutz‑Hinweise (Clara, diverse Absätze) bilden die Basis.
++ - Offene Fragen und Risiken wurden von allen Beteiligten (Anna, Ben, Clara, David, Eva, Farid) explizit benannt.
++ 
++ ## 6. Zusammenfassung
++ Der aktuelle Kontext zeigt ein **hochkomplexes Vorhaben**, das in ein sehr knappes **8‑Wochen‑MVP** gepackt werden muss. Das MVP konzentriert sich auf ein **Login‑System, Angebotserstellung (ohne Sonderrabatte), Rechnungs‑Download, minimale Rollen‑ und Audit‑Funktionalität** sowie **EU‑Managed‑Hosting und Backup**. Viele weitere Anforderungen (Support‑Ticket‑System, Freigabe‑Workflow, Mehrsprachigkeit, Mehrwährung, API‑Gateway, umfassende DSGVO‑Umsetzung, vollständige Logging‑Trennung, Kosten‑ und Risikobewertung) sind bewusst **ausgeschlossen** bzw. als **Risiken** bzw. **offene Fragen** gekennzeichnet, um falsche Sicherheit zu vermeiden und spätere Phasen klar zu definieren.
++ 
++ *Dieses Dokument dient als neutrale Kontext‑Zusammenfassung für die weitere Anforderungs‑ und Architektur‑Erarbeitung.*

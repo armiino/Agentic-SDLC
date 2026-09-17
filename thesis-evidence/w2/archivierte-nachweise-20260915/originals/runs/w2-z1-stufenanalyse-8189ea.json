@@ -1,0 +1,778 @@
+{
+  "gegenstand": "Stresslauf 20260905_164650_8189ea; Bestand A = step-01-candidate/output.json (54 Kandidaten), Bestand B = kanonischer Endbestand (47 Claims, LCR)",
+  "goldStand": "v2 (Hash ②, 109 IDs); B-Urteile ÜBERNOMMEN aus runs/w2-goldv2-eval-ledger-8189ea.json",
+  "verfahren": "Messprotokoll §3 (Matchregeln v1.2, Bündelung erlaubt, Suche im gesamten Bestand A); KI-Adjudikation Claude 07.09.2026",
+  "uebergangstabelle": {
+    "A_full": {
+      "B_full": 55,
+      "B_partial": 1,
+      "B_none": 1
+    },
+    "A_partial": {
+      "B_full": 0,
+      "B_partial": 29,
+      "B_none": 0
+    },
+    "A_none": {
+      "B_full": 0,
+      "B_partial": 0,
+      "B_none": 23
+    }
+  },
+  "summen": {
+    "A": {
+      "full": 57,
+      "partial": 29,
+      "none": 23
+    },
+    "B": {
+      "full": 55,
+      "partial": 30,
+      "none": 24
+    }
+  },
+  "statusaenderungen": [
+    {
+      "id": "G-IE-021",
+      "A": "full",
+      "B": "partial",
+      "belegA": "Kandidat DEC-019: 'User können Inhalte hinzufügen, aber nichts löschen' (wörtlich)",
+      "belegB": "CAN-019 (candidateIds DEC-019+DEC-020) lässt die User-Rechte-Klausel weg; B nur partial via CAN-013 (Hinzufügen ohne Rollen-Bindung)",
+      "einordnung": "Verlust im GESAMTÜBERGANG A→B (Kanonisierungs-Merge)"
+    },
+    {
+      "id": "G-IE-023",
+      "A": "full",
+      "B": "none",
+      "belegA": "Kandidat DEC-019: 'aber nichts löschen' (wörtlich)",
+      "belegB": "kein kanonischer Claim trägt das Lösch-Verbot",
+      "einordnung": "Verlust im GESAMTÜBERGANG A→B (Kanonisierungs-Merge)"
+    }
+  ],
+  "verbesserungen": [],
+  "sichtbarkeitsbefund": "Beide Verluste waren SIGNALLOS: AU-0043/AU-0060 wurden verwendet (75 used units) — die Unused-Unit-Kette (01b→01c→01d) prüft nur unverwendete Units und kann sie konstruktionsbedingt nicht sehen. Durch capture bewiesen: CAN-019 referenziert DEC-019+DEC-020 als candidateIds — der Übergang war damit referenz-gedeckt, obwohl Inhalt verloren ging (Referenz-Coverage ≠ Inhalts-Coverage; Gate pass Attempt 1).",
+  "hinweisHerkunft": {
+    "kette": "01b unit-coverage (deterministisch: 136 Units, 75 used, 61 unused) → 01c Triage der 61 (48 potentially_relevant · 4 smalltalk · 6 acknowledgement · 3 low_signal) → 01d Ledger-Compare der 48 (21 already_covered_indirectly · 24 attach_as_evidence · 2 needs_human · 1 missing_claim)",
+    "zuordnung": "Die 48 LCR-Miss-Signale sind EXAKT die 48 01d-Items (unitId-Mengen identisch, geprüft) — erzeugende Stufe aller Signale = 01d auf der 01b/01c-Vorauswahl; nichts unrekonstruierbar",
+    "konsequenz": "Signale adressieren ausschließlich UNVERWENDETE Units; alle 18 stillen v2-Lücken (inkl. der 2 Kanonisierungs-Verluste) liegen in VERWENDETEN Units"
+  },
+  "seedStichprobe": {
+    "regel": "SHA-256(id+'w2seed42'), 10 niedrigste der unveränderten Paare",
+    "ids": [
+      "G-IE-080",
+      "G-IE-083",
+      "G-IE-048",
+      "G-IE-082",
+      "G-IE-017",
+      "G-IE-044",
+      "G-IE-012",
+      "G-IE-041",
+      "G-IE-057",
+      "G-IE-003"
+    ],
+    "ergebnis": "alle 10 im Zweitblick bestätigt (A- und B-Seite konsistent)"
+  },
+  "grenzen": "KI-Adjudikation (Claude) mit Beleg je Urteil; der im Messprotokoll vorgesehene SEPARATE KI-Verifikationsdurchgang (Kollegen-KI) und die optionale Autor-Stichprobe stehen AUS. Eine kleinere Claim-Zahl (54→47) ist kein Verlustnachweis — der Nachweis sind die zwei belegten Statusänderungen.",
+  "urteilsblatt": {
+    "G-IE-001": {
+      "A": "full",
+      "belegA": "REQ-002",
+      "B": "full",
+      "belegB": "CAN-002: digitale Lösung bevorzugt"
+    },
+    "G-IE-002": {
+      "A": "full",
+      "belegA": "DEC-003",
+      "B": "full",
+      "belegB": "CAN-003: must_not direktes Übersetzungssystem"
+    },
+    "G-IE-003": {
+      "A": "full",
+      "belegA": "DEC-006",
+      "B": "full",
+      "belegB": "CAN-006: primär Bewohner-Verstehen priorisiert"
+    },
+    "G-IE-004": {
+      "A": "full",
+      "belegA": "REQ-007 (als App)",
+      "B": "full",
+      "belegB": "CAN-007: 'Lösung soll als App…'"
+    },
+    "G-IE-005": {
+      "A": "full",
+      "belegA": "REQ-007",
+      "B": "full",
+      "belegB": "CAN-007: Wissen über individuelle Kommunikationsweise festhalten"
+    },
+    "G-IE-006": {
+      "A": "partial",
+      "belegA": "REQ-007: Nachschauen ✓, jederzeit/schnell fehlt",
+      "B": "partial",
+      "belegB": "CAN-007: Nachschlagen ✓, aber 'jederzeit und schnell' fehlt (Qualitäts-Qualifikation)"
+    },
+    "G-IE-007": {
+      "A": "full",
+      "belegA": "REQ-001",
+      "B": "full",
+      "belegB": "CAN-001"
+    },
+    "G-IE-008": {
+      "A": "partial",
+      "belegA": "REQ-007: Verstehen-Unterstützung ✓, Zielgruppe neue Mitarbeitende/Unvertraute fehlt",
+      "B": "partial",
+      "belegB": "CAN-007 'damit andere bei Verständigungsproblemen nachschauen können' deckt den Kern (andere verstehen Bewohner); Zielgruppe 'neue Mitarbeitende' + 'schneller' fehlen"
+    },
+    "G-IE-009": {
+      "A": "none",
+      "belegA": "kein Kandidat zum Einarbeitungs-Ziel (SCOPE-011 = Ist-Zustand)",
+      "B": "none",
+      "belegB": "KEIN Claim zur Verringerung des Einarbeitungsaufwands"
+    },
+    "G-IE-010": {
+      "A": "full",
+      "belegA": "OQ-012",
+      "B": "full",
+      "belegB": "CAN-012: Klärung mit Leitung + Umfangsbegrenzung — DECKT die F-Lücke"
+    },
+    "G-IE-011": {
+      "A": "none",
+      "belegA": "Zweck erster persönlicher Eindruck in keinem Kandidaten",
+      "B": "none",
+      "belegB": "KEIN Claim zum Zweck 'erster persönlicher Eindruck' (AU-0025 von CAN-012 konsumiert)"
+    },
+    "G-IE-012": {
+      "A": "full",
+      "belegA": "OQ-012 (Umfang begrenzt, Fokus Kommunikation)",
+      "B": "full",
+      "belegB": "CAN-012: 'Fokus auf unterstützender Kommunikation erhalten'"
+    },
+    "G-IE-013": {
+      "A": "full",
+      "belegA": "REQ-025",
+      "B": "full",
+      "belegB": "CAN-024: Kalender mit Terminen und Medikamentengaben"
+    },
+    "G-IE-014": {
+      "A": "partial",
+      "belegA": "REQ-024: Hinzufügen mit Texten/Bildern ✓; Plus-Button, Position unten, Dialog fehlen",
+      "B": "partial",
+      "belegB": "CAN-023: Hinzufügen mit Texten/Bildern ✓; Plus-Button, Position unten und der (v2 ergänzte) Eingabedialog fehlen"
+    },
+    "G-IE-015": {
+      "A": "none",
+      "belegA": "je-eigener-Button mit Navigation fehlt (REQ-024 nur Unterteilung)",
+      "B": "none",
+      "belegB": "Bereichs-Trennung ist bereits G-033 gutgeschrieben; der EIGENSTÄNDIGE Gehalt von G-015 (je eigener Navigations-Button zur Unterseite) fehlt komplett — partial wäre Doppel-Kredit"
+    },
+    "G-IE-016": {
+      "A": "full",
+      "belegA": "REQ-017",
+      "B": "full",
+      "belegB": "CAN-017"
+    },
+    "G-IE-017": {
+      "A": "partial",
+      "belegA": "REQ-017: Beitragen ✓, vorab/bei neuen Bewohnern fehlt",
+      "B": "partial",
+      "belegB": "CAN-017: Beitragen ✓, aber 'vorab bei neuen Bewohnern' fehlt (Bedingung)"
+    },
+    "G-IE-018": {
+      "A": "full",
+      "belegA": "REQ-018",
+      "B": "full",
+      "belegB": "CAN-018"
+    },
+    "G-IE-019": {
+      "A": "full",
+      "belegA": "DEC-019",
+      "B": "full",
+      "belegB": "CAN-019: 'Admins legen Accounts an'"
+    },
+    "G-IE-020": {
+      "A": "partial",
+      "belegA": "DEC-019: User-Typ ✓, Mitarbeiter+Angehörige als User nicht ausgesagt",
+      "B": "partial",
+      "belegB": "GEBÜNDELT CAN-019 (User-Rollentyp) + CAN-017 (Angehörigen-Zugriff): Substanz angerissen, explizite Zuordnung Mitarbeiter/Angehörige→User fehlt"
+    },
+    "G-IE-021": {
+      "A": "full",
+      "belegA": "DEC-019: „User können Inhalte hinzufügen“ EXPLIZIT",
+      "B": "partial",
+      "belegB": "CAN-013: Hinzufügen-Fähigkeit ✓, aber Rollen-Bindung an normale User fehlt"
+    },
+    "G-IE-022": {
+      "A": "full",
+      "belegA": "DEC-019",
+      "B": "full",
+      "belegB": "CAN-019: 'verwalten Rechte'"
+    },
+    "G-IE-023": {
+      "A": "full",
+      "belegA": "DEC-019: „aber nichts löschen“ EXPLIZIT",
+      "B": "none",
+      "belegB": "KEIN Claim zum Lösch-Verbot für normale User"
+    },
+    "G-IE-024": {
+      "A": "full",
+      "belegA": "DEC-020",
+      "B": "full",
+      "belegB": "CAN-019 + CAN-042: zugewiesene Accounts, keine (Selbst-)Registrierung"
+    },
+    "G-IE-025": {
+      "A": "partial",
+      "belegA": "DEC-019/020: Exklusivität (User können NICHT anlegen) nicht ausgesagt",
+      "B": "partial",
+      "belegB": "CAN-019: Admin-Anlage + keine Selbstregistrierung ✓, aber Exklusivität (User KÖNNEN NICHT anlegen) nicht ausgesagt"
+    },
+    "G-IE-026": {
+      "A": "full",
+      "belegA": "DEC-021 (Liste = Übersicht, Grenzfall wie B)",
+      "B": "full",
+      "belegB": "CAN-020: anklickbare Liste = spezifische Form der geforderten Übersicht; 'Liste' folgt AU-0045 wörtlich (Grenzfall #1)"
+    },
+    "G-IE-027": {
+      "A": "full",
+      "belegA": "DEC-021",
+      "B": "full",
+      "belegB": "CAN-020: nach Login auf Profilübersicht"
+    },
+    "G-IE-028": {
+      "A": "partial",
+      "belegA": "DEC-021: anklickbar ✓, Ziel Detailansicht fehlt",
+      "B": "partial",
+      "belegB": "CAN-020: anklickbar ✓, aber Ziel Detailansicht fehlt — GENAU das meldet Signal AU-0124 (missing_claim)"
+    },
+    "G-IE-029": {
+      "A": "full",
+      "belegA": "REQ-023",
+      "B": "full",
+      "belegB": "CAN-022: erweiterbare Fotoliste mit Beschreibungen"
+    },
+    "G-IE-030": {
+      "A": "partial",
+      "belegA": "REQ-023: Informationsfeld ✓, ganz oben + Name/Alter/Hobbys fehlen",
+      "B": "partial",
+      "belegB": "CAN-022: 'Personendaten' ✓, aber Position oben + Informationsfeld fehlen (wie F-Seite)"
+    },
+    "G-IE-031": {
+      "A": "partial",
+      "belegA": "REQ-023: neueste oben ✓, scrollbar/Feed-Charakter fehlt",
+      "B": "partial",
+      "belegB": "CAN-022: 'neueste oben' ✓, aber Feed-Analogie + 'ältere darunter scrollbar' fehlen (Zweitprüfer-Präzedenz F-Seite)"
+    },
+    "G-IE-032": {
+      "A": "partial",
+      "belegA": "REQ-023: Plus-Button ✓, Position unten + Eingabedialog fehlen",
+      "B": "partial",
+      "belegB": "CAN-022: Plus-Button ✓, aber Position unten + Eingabedialog fehlen"
+    },
+    "G-IE-033": {
+      "A": "full",
+      "belegA": "REQ-024",
+      "B": "full",
+      "belegB": "CAN-023"
+    },
+    "G-IE-034": {
+      "A": "full",
+      "belegA": "REQ-024",
+      "B": "full",
+      "belegB": "CAN-023: mit Texten oder Bildern (gleicher Fähigkeitsumfang)"
+    },
+    "G-IE-035": {
+      "A": "partial",
+      "belegA": "REQ-025: übersichtlich ✓, MONATSansicht fehlt",
+      "B": "partial",
+      "belegB": "CAN-024: übersichtlich ✓, aber Monatsansicht fehlt"
+    },
+    "G-IE-036": {
+      "A": "full",
+      "belegA": "REQ-025",
+      "B": "full",
+      "belegB": "CAN-024"
+    },
+    "G-IE-037": {
+      "A": "none",
+      "belegA": "Tages-Einträge hinzufügen in keinem Kandidaten",
+      "B": "none",
+      "belegB": "KEIN Claim zum Hinzufügen von Einträgen an einzelnen Tagen"
+    },
+    "G-IE-038": {
+      "A": "none",
+      "belegA": "Liste unter der Monatsansicht fehlt (REQ-025 deckt nur G-013; gleicher Maßstab wie B/CAN-024)",
+      "B": "none",
+      "belegB": "KEIN Claim zur Medikamentenliste unter der Monatsansicht"
+    },
+    "G-IE-039": {
+      "A": "full",
+      "belegA": "DEC-026",
+      "B": "full",
+      "belegB": "CAN-025: Appbar auf jeder Seite"
+    },
+    "G-IE-040": {
+      "A": "full",
+      "belegA": "DEC-026 (Logout in Appbar jeder Seite)",
+      "B": "full",
+      "belegB": "CAN-025: Logout in der Appbar jeder Seite = schnell erreichbar (Entailment)"
+    },
+    "G-IE-041": {
+      "A": "none",
+      "belegA": "No-Go-Plus-Button in keinem Kandidaten",
+      "B": "none",
+      "belegB": "KEIN Claim zum Plus-Button auf der No-Go-Seite (nur CAN-018 Existenz)"
+    },
+    "G-IE-042": {
+      "A": "full",
+      "belegA": "CON-027",
+      "B": "full",
+      "belegB": "CAN-026"
+    },
+    "G-IE-043": {
+      "A": "none",
+      "belegA": "Admin-Löschrecht nicht ausgesagt (DEC-019 regelt nur User-Verbot)",
+      "B": "none",
+      "belegB": "KEIN Claim zum Löschrecht der Admins"
+    },
+    "G-IE-044": {
+      "A": "full",
+      "belegA": "CON-028",
+      "B": "full",
+      "belegB": "CAN-027: interner Gebrauch"
+    },
+    "G-IE-045": {
+      "A": "full",
+      "belegA": "DEC-029",
+      "B": "full",
+      "belegB": "CAN-027: nur Profile der eigenen Einrichtung"
+    },
+    "G-IE-046": {
+      "A": "full",
+      "belegA": "REQ-030",
+      "B": "full",
+      "belegB": "CAN-028: iPhone+Android ('möglichst' = quellennäherer Verpflichtungsgrad, gleicher Gehalt)"
+    },
+    "G-IE-047": {
+      "A": "full",
+      "belegA": "OQ-031",
+      "B": "full",
+      "belegB": "CAN-029"
+    },
+    "G-IE-048": {
+      "A": "partial",
+      "belegA": "REQ-032+REQ-048: Suchleiste ✓, Suchkriterien (Name/Profildaten) fehlen",
+      "B": "partial",
+      "belegB": "CAN-030: Suchleiste ✓, aber Suchkriterien Name/Profildaten fehlen (Zweitprüfer-Präzedenz F-Seite G-048)"
+    },
+    "G-IE-049": {
+      "A": "partial",
+      "belegA": "REQ-033: Suche nach Körperteil-Signalen ✓, Position oben fehlt",
+      "B": "partial",
+      "belegB": "CAN-032: Suchfunktion ✓, aber Position oben + Merkmals-Beispiele fehlen"
+    },
+    "G-IE-050": {
+      "A": "full",
+      "belegA": "OQ-034",
+      "B": "full",
+      "belegB": "CAN-032: einheitliches Beschreibungsmuster für gezieltes Finden"
+    },
+    "G-IE-051": {
+      "A": "full",
+      "belegA": "OQ-034 (soll definiert werden = offen)",
+      "B": "full",
+      "belegB": "CAN-032: must_clarify = Offenheit ausgesagt"
+    },
+    "G-IE-052": {
+      "A": "full",
+      "belegA": "DEC-035",
+      "B": "full",
+      "belegB": "CAN-033: kein eigener Screen, Integration in Kommunikationsseiten"
+    },
+    "G-IE-053": {
+      "A": "full",
+      "belegA": "REQ-016",
+      "B": "full",
+      "belegB": "CAN-016: Videos mit Beschreibung erfassen"
+    },
+    "G-IE-054": {
+      "A": "partial",
+      "belegA": "REQ-013: Hinzufügen ✓, unmittelbares Teilen mit Berechtigten fehlt",
+      "B": "partial",
+      "belegB": "CAN-013+CAN-034 gebündelt: Hinzufügen + About-Me-Benachrichtigung ✓, aber unmittelbares Teilen ALLER Erfahrungen mit Berechtigten fehlt"
+    },
+    "G-IE-055": {
+      "A": "full",
+      "belegA": "REQ-036",
+      "B": "full",
+      "belegB": "CAN-034"
+    },
+    "G-IE-056": {
+      "A": "full",
+      "belegA": "REQ-037",
+      "B": "full",
+      "belegB": "CAN-035"
+    },
+    "G-IE-057": {
+      "A": "full",
+      "belegA": "REQ-037",
+      "B": "full",
+      "belegB": "CAN-035: nur eigenes Profil sehen"
+    },
+    "G-IE-058": {
+      "A": "full",
+      "belegA": "GEBÜNDELT REQ-037+RISK-038: eigenes Profil + About-Me + eigene Bilder + Funktionsbegrenzung wegen Fehlbedienung",
+      "B": "full",
+      "belegB": "CAN-035 deckt die v2-Engfassung passgenau: eigenes Profil + About-Me-Zugriff + eigene Bilder + Fehlbedienungs-Zweck"
+    },
+    "G-IE-059": {
+      "A": "full",
+      "belegA": "REQ-037",
+      "B": "full",
+      "belegB": "CAN-035: About-Me-Zugriff"
+    },
+    "G-IE-060": {
+      "A": "full",
+      "belegA": "REQ-037",
+      "B": "full",
+      "belegB": "CAN-035: eigene Bilder hinzufügen"
+    },
+    "G-IE-061": {
+      "A": "partial",
+      "belegA": "REQ-051: allgemeine Hilfe ✓, Offenheit der Eingabe-/Such-Hilfe fehlt",
+      "B": "partial",
+      "belegB": "CAN-044 (Hilfe/Tutorial) trägt den Kern Hilfebereich; die OFFENE Teilfrage Eingabe-/Such-Erläuterung fehlt"
+    },
+    "G-IE-062": {
+      "A": "full",
+      "belegA": "REQ-050 (Entailment wie B/CAN-043)",
+      "B": "full",
+      "belegB": "CAN-043: rollenabhängige Differenzierung + Admin-Funktionen (Entailment: nur Admins sehen Admin-Funktionen)"
+    },
+    "G-IE-063": {
+      "A": "partial",
+      "belegA": "DEC-026: „noch weiter auszugestalten“ (gleicher Maßstab wie B)",
+      "B": "partial",
+      "belegB": "analog G-061 (gleiche Regel-Logik): CAN-019/CAN-043 tragen den Rechteverwaltungs-Kern, der OFFENHEITS-Status ('noch festzulegen') fehlt"
+    },
+    "G-IE-064": {
+      "A": "full",
+      "belegA": "GEBÜNDELT DEC-019+REQ-037: drei Rollen",
+      "B": "full",
+      "belegB": "GEBÜNDELT CAN-019 (Admin+User, Admins legen an) + CAN-035 (Bewohner-Account) = drei Rollen"
+    },
+    "G-IE-065": {
+      "A": "full",
+      "belegA": "DEC-039",
+      "B": "full",
+      "belegB": "CAN-036"
+    },
+    "G-IE-066": {
+      "A": "partial",
+      "belegA": "PROC-041: einheitliche Versionen ✓, Versionsnummern fehlen",
+      "B": "partial",
+      "belegB": "CAN-037: einheitliche Versionen ✓, aber Versionsnummern 3.13.9/3.1.5 fehlen (Zahlenwert)"
+    },
+    "G-IE-067": {
+      "A": "full",
+      "belegA": "DEC-042",
+      "B": "full",
+      "belegB": "CAN-038: Firestore zunächst"
+    },
+    "G-IE-068": {
+      "A": "full",
+      "belegA": "OQ-043+DEC-042",
+      "B": "full",
+      "belegB": "CAN-038: lokale Speicherung muss geklärt werden"
+    },
+    "G-IE-069": {
+      "A": "partial",
+      "belegA": "OQ-043: lokale Speicherung offen ✓, NoSQLite-Nennung fehlt",
+      "B": "partial",
+      "belegB": "CAN-038: Klärung offen ✓, aber die konkrete NoSQLite-Option fehlt"
+    },
+    "G-IE-070": {
+      "A": "full",
+      "belegA": "DEC-044",
+      "B": "full",
+      "belegB": "CAN-039"
+    },
+    "G-IE-071": {
+      "A": "full",
+      "belegA": "DEC-046",
+      "B": "full",
+      "belegB": "CAN-041"
+    },
+    "G-IE-072": {
+      "A": "partial",
+      "belegA": "DEC-047: Logo ✓, deutlich sichtbar fehlt",
+      "B": "partial",
+      "belegB": "CAN-042: Logo ✓, aber 'deutlich sichtbar' fehlt"
+    },
+    "G-IE-073": {
+      "A": "none",
+      "belegA": "keine Logo-Platzierung",
+      "B": "none",
+      "belegB": "kein Claim zur Logo-Platzierung (CAN-042 nennt nur die Login-Elemente)"
+    },
+    "G-IE-074": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zum Kommunikations-Bezug des Logos"
+    },
+    "G-IE-075": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zur runden Gestaltung"
+    },
+    "G-IE-076": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zur offenen Schattenwurf-Frage"
+    },
+    "G-IE-077": {
+      "A": "partial",
+      "belegA": "DEC-047: Felder ✓, Anordnung unter dem Logo fehlt",
+      "B": "partial",
+      "belegB": "CAN-042: Felder ✓, aber Anordnung unter dem Logo fehlt (Position)"
+    },
+    "G-IE-078": {
+      "A": "none",
+      "belegA": "intuitiv/benutzerfreundlich in keinem Kandidaten (NFR-052 = Barrierefreiheit)",
+      "B": "none",
+      "belegB": "KEIN Claim zu intuitiv/benutzerfreundlich (CAN-045 = Barrierefreiheit, anderes Konstrukt)"
+    },
+    "G-IE-079": {
+      "A": "partial",
+      "belegA": "DEC-047: Button ✓, Anordnung unter Feldern fehlt",
+      "B": "partial",
+      "belegB": "CAN-042: Button ✓, aber Position unter den Feldern fehlt"
+    },
+    "G-IE-080": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zum optischen Hervorstechen des Login-Buttons"
+    },
+    "G-IE-081": {
+      "A": "none",
+      "belegA": "Seitenname mittig in keinem Kandidaten",
+      "B": "none",
+      "belegB": "KEIN Claim zum mittigen Seitennamen in der Appbar"
+    },
+    "G-IE-082": {
+      "A": "partial",
+      "belegA": "DEC-026: Rücknavigation ✓, links + Pfeilsymbol fehlen",
+      "B": "partial",
+      "belegB": "CAN-025: Rücknavigation ✓; Position links und (v2) Pfeilsymbol fehlen"
+    },
+    "G-IE-083": {
+      "A": "partial",
+      "belegA": "DEC-026: Einstellungen erwähnt, Symbol rechts + Navigationsziel fehlen",
+      "B": "partial",
+      "belegB": "CAN-025: Einstellungsfunktionen als offen deklariert, aber Einstellungssymbol rechts → Einstellungsseite nicht ausgesagt"
+    },
+    "G-IE-084": {
+      "A": "full",
+      "belegA": "REQ-048 (gut sichtbare Suchleiste unter der Appbar)",
+      "B": "full",
+      "belegB": "CAN-030: gut sichtbare Suchleiste unter der Appbar"
+    },
+    "G-IE-085": {
+      "A": "partial",
+      "belegA": "REQ-048: Vorschau-Inhalte ✓, Positionsrelation unterhalb der Suchleiste fehlt (wie B/CAN-030)",
+      "B": "partial",
+      "belegB": "CAN-030 nennt Suchleiste und Profil-Vorschau (Bild/Name/Beschreibung ✓), drückt die v2-Positionsrelation 'Profile unterhalb der Suchleiste' aber nicht aus (Grenzfall #2)"
+    },
+    "G-IE-086": {
+      "A": "partial",
+      "belegA": "REQ-048: „als Liste oder Kacheln“ — Offenheit nur implizit (wie B)",
+      "B": "partial",
+      "belegB": "CAN-030: 'Liste oder Kacheln' als Optionen ✓, aber der OFFENHEITS-Status der Frage fehlt"
+    },
+    "G-IE-087": {
+      "A": "partial",
+      "belegA": "REQ-049: Anlegen mit Bild/Name/Beschreibung ✓, Plus-Symbol unten + Dialog fehlen",
+      "B": "partial",
+      "belegB": "CAN-031: Anlegen mit Bild/Name/Beschreibung ✓, aber Plus-Symbol unten + Dialog fehlen"
+    },
+    "G-IE-088": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zum größeren Profilbild in der Detailansicht — GENAU von Signal AU-0124 (missing_claim) gemeldet"
+    },
+    "G-IE-089": {
+      "A": "partial",
+      "belegA": "DEC-022: drei Bereiche genannt, vier interaktive Buttons fehlen",
+      "B": "partial",
+      "belegB": "CAN-021: Bereiche existieren ✓ (aber nur drei genannt), interaktive Buttons in der Detailansicht fehlen"
+    },
+    "G-IE-090": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zur visuellen Unterscheidung durch Symbole"
+    },
+    "G-IE-091": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zum Warnsymbol/Stoppschild"
+    },
+    "G-IE-092": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zur Überblickbarkeit der No-Gos"
+    },
+    "G-IE-093": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zur Beschränkung auf wichtigste Informationen"
+    },
+    "G-IE-094": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zum Datum-Antippen → Details"
+    },
+    "G-IE-095": {
+      "A": "none",
+      "belegA": "REQ-025 deckt Medikamente-im-Kalender (G-013), nicht die Kenntlichmachung von Erinnerungen",
+      "B": "none",
+      "belegB": "CAN-024 deckt Medikamente-im-Kalender (= G-013); der v2-Kern 'Erinnerungen kenntlich gemacht' (Icons/Tags als mögliche Gestaltung) fehlt"
+    },
+    "G-IE-096": {
+      "A": "full",
+      "belegA": "REQ-050 (inkl. Admin-Verortung)",
+      "B": "full",
+      "belegB": "CAN-043 deckt auch die v2-Verortung: Admins sollen DORT (Einstellungsseite) Accounts hinzufügen und Rechte anpassen"
+    },
+    "G-IE-097": {
+      "A": "full",
+      "belegA": "REQ-050",
+      "B": "full",
+      "belegB": "CAN-043: Profil ändern"
+    },
+    "G-IE-098": {
+      "A": "full",
+      "belegA": "REQ-050",
+      "B": "full",
+      "belegB": "CAN-043: Sprache wählen"
+    },
+    "G-IE-099": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zu leicht zugänglichen Datenschutzeinstellungen"
+    },
+    "G-IE-100": {
+      "A": "full",
+      "belegA": "REQ-051",
+      "B": "full",
+      "belegB": "CAN-044: kurze Tour beim ersten Login"
+    },
+    "G-IE-101": {
+      "A": "full",
+      "belegA": "REQ-051",
+      "B": "full",
+      "belegB": "CAN-044: erneut aufrufbarer Hilfebereich"
+    },
+    "G-IE-102": {
+      "A": "full",
+      "belegA": "NFR-052",
+      "B": "full",
+      "belegB": "CAN-045"
+    },
+    "G-IE-103": {
+      "A": "full",
+      "belegA": "NFR-052",
+      "B": "full",
+      "belegB": "CAN-045"
+    },
+    "G-IE-104": {
+      "A": "full",
+      "belegA": "NFR-052",
+      "B": "full",
+      "belegB": "CAN-045"
+    },
+    "G-IE-105": {
+      "A": "partial",
+      "belegA": "DEC-054: Verbots-Richtung ✓, Negations-Reichweite nur „ablenkende“ (wie B/CAN-047)",
+      "B": "partial",
+      "belegB": "CAN-047: Verbots-Richtung ✓ (anders als F!), aber nur 'ablenkende' statt aller Animationen — Reichweite der Negation fehlt"
+    },
+    "G-IE-106": {
+      "A": "full",
+      "belegA": "OQ-053",
+      "B": "full",
+      "belegB": "CAN-046"
+    },
+    "G-IE-107": {
+      "A": "full",
+      "belegA": "DEC-054 (bedingte Ablenkungsgrenze)",
+      "B": "full",
+      "belegB": "CAN-047: ablenkende nicht einbauen ≡ falls doch, nicht ablenkend"
+    },
+    "G-IE-108": {
+      "A": "none",
+      "belegA": "kein Kandidat",
+      "B": "none",
+      "belegB": "KEIN Claim zum klaren Branding"
+    },
+    "G-IE-109": {
+      "A": "partial",
+      "belegA": "OQ-043: lokale Speicherung/Wiederverwendung als offene Frage ✓, konkreter Ablauf-VORSCHLAG fehlt (wie B/CAN-038)",
+      "B": "partial",
+      "belegB": "CAN-038 erfasst lokale Speicherung/Wiederverwendung als OFFENE Frage; der konkrete vorgeschlagene Ablauf 'beim Seitenaufruf laden und lokal speichern' fehlt"
+    }
+  },
+  "revision": "rev2 07.09.2026 nach Kollegen-Review: Merge-Struktur aus candidateIds berechnet; Signal-Relevanz auf v2 nachgerechnet; Kernzahlen unverändert.",
+  "mergeStruktur": {
+    "regel": "aus candidateIds der 47 kanonischen Claims berechnet (07.09.); alle 54 Kandidaten referenziert, keiner doppelt, keiner verworfen",
+    "gruppen": {
+      "CAN-019": [
+        "DEC-019",
+        "DEC-020"
+      ],
+      "CAN-027": [
+        "CON-028",
+        "DEC-029"
+      ],
+      "CAN-030": [
+        "REQ-032",
+        "REQ-048"
+      ],
+      "CAN-032": [
+        "REQ-033",
+        "OQ-034"
+      ],
+      "CAN-035": [
+        "REQ-037",
+        "RISK-038"
+      ],
+      "CAN-037": [
+        "DEC-040",
+        "PROC-041"
+      ],
+      "CAN-038": [
+        "DEC-042",
+        "OQ-043"
+      ]
+    },
+    "befund": "7 Zweier-Merges; beide Gold-Statusverluste in EINER Gruppe (CAN-019) -> 6/7 ohne Gold-Statusverlust (bezogen auf die 109 Referenzinhalte). Erstfassung '5 der 7' war nicht ableitbar und falsch - korrigiert."
+  },
+  "signalRelevanzV2": {
+    "regel": "deterministisch: Signal-Unit ∩ Gold-Quell-Units (Gold v2), nachgerechnet 07.09.",
+    "relevanteSignale": "18/48 = 0.375 (unverändert ggü. Hash ①)",
+    "getroffeneMisses": "35 deterministisch + 1 dokumentierte semantische Zuordnung (G-IE-028←AU-0124) = 36/54",
+    "verdikteDerRelevanten": {
+      "already_covered_indirectly": 6,
+      "attach_as_evidence": 11,
+      "missing_claim": 1
+    },
+    "lesart": "Prüfpotenzial, keine gemessene menschliche Erkennung; nur 1 explizites missing_claim"
+  }
+}

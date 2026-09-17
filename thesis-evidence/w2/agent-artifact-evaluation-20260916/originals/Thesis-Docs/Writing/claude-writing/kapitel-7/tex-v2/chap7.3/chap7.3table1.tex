@@ -1,0 +1,59 @@
+% B-59, 15.09.2026: datierte Ledger-Nachauswertung, Stützung und Reichweite.
+% Beleg: thesis-evidence/w2/ledger-repetitions-20260915/ (Originale unverändert).
+% M19 (12.09.2026): Leserführung und präzise Ergebnisdarstellung;
+% Messwerte und historische Nachweisgrenzen bleiben erhalten.
+% ============================================================
+% Tabelle 7.3-1: Kernzahlen beider Fälle (Gold v2) — v02 (08.09.)
+% In Overleaf ablegen als: tables/Chap7-v02/chap7.3table1.tex
+% Aufruf im Fließtext: \input{tables/Chap7-v02/chap7.3table1}
+% Label: t:eval-kernzahlen-v2
+% Stil: chap6.1-Konvention.
+% HERKUNFT: konsolidierter Auswertungsstand 08.09. =
+% runs/w2-nachreview-konsolidierung.json (Nachreview-Runde: 5
+% geänderte Ledger-Urteile 025/062/086/105/107); Basis =
+% runs/w2-goldv2-eval-ledger-8189ea.json (Interview) +
+% runs/w2-goldv2-eval-ledger-e30646.json (meeting-2, unverändert),
+% Kopien thesis-evidence/w2/eval/; Nenner = Gold v2 (109/31, Hash ②).
+% ============================================================
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.40\textwidth}rr}
+    \hline
+    & \textbf{Treue-Fall} & \textbf{Stressfall} \\
+    & (meeting-2) & (Interview) \\
+    \hline
+    Quell-Units / Referenzaussagen (Gold v2) & 36 / 31 & 136 / 109 \\
+    Gelieferte kanonische Claims & 20 & 47 \\
+    Urteile full / partial / none & 26 / 2 / 3 & 54 / 29 / 26 \\
+    \hline
+    Full Coverage (strict) & 0{,}839 & 0{,}495 \\
+    Touched Coverage & 0{,}903 & 0{,}761 \\
+    Inhaltliche Korrektheit der Claims & 1{,}0 & 1{,}0 \\
+    Semantische Stützung & 1{,}0 & 0{,}957 \\
+    \hline
+    Lücken gesamt (partial + none) & 5 & 55 \\
+    \quad davon mit zuordenbarem Prüfhinweis & 0 & 37 \\
+    \quad davon still & 5 & 18 \\
+    Silent-Miss-Rate & 1{,}0 & 0{,}327 \\
+    Adressierbarkeit (Prüfpotenzial) & 0{,}839 & 0{,}835 \\
+    Prüfhinweise gesamt / lückenrelevant & 3 / 0 & 48 / 18 \\
+    Signalbezogene Präzision & 0{,}0 & 0{,}375 \\
+    \hline
+  \end{tabular}
+  \caption[Ergebnisqualität der Ledger-Kette vor dem Human-Gate]{Ergebnisqualität der Ledger-Kette (Pre-Gate) gegen den
+    Referenzbestand Gold~v2, je Fall ein Lauf gemäß
+    dokumentierter Auswahlregel;
+    Stressfall-Abdeckung konsolidiert am 08.09.; Stützung am
+    15.09. nachgeprüft (45/47, \hyperref[anh:ledger-wiederholungen]{Anhang~D.11}).
+    Bewertungsrevisionen betreffen dieselben Ausgaben, keine
+    Systemänderung. „Inhaltliche
+    Korrektheit`` folgt dem tatsächlichen Urteilsverfahren:
+    quellengetragene Inhalte ohne Gold-Gegenstück zählen nicht als
+    Fehler (gesonderte \emph{gold\_escapes}-Zählung nur soweit
+    erhoben, Anhang~\ref{anh:evaluation}, \hyperref[anh:referenzpruefung]{Abschnitt~D.3}; keine Gold-Precision im engeren Sinn). Adressierbarkeit
+    bezeichnet Prüfpotenzial, keine erreichte Abdeckung; jede Lücke
+    und jeder Hinweis zählt je Kennzahl nur einmal.}
+  \label{t:eval-kernzahlen-v2}
+\end{table}

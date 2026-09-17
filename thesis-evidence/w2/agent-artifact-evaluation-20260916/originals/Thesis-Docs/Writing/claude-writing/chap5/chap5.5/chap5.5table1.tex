@@ -1,0 +1,36 @@
+% P10-4a, 14.09.2026: Mechanismus, Quellenreichweite und v4-Nachweis angeglichen.
+% ============================================================
+% Tabelle 5.5-1: Zentrale Objekte und Beziehungen des Core — v01 (09.09.)
+% In Overleaf ablegen als: tables/core-objektmodell.tex
+% Aufruf im Fließtext: \input{\tabledir/core-objektmodell.tex}
+% Label: t:core-objektmodell
+% Stil: chap6.1-Konvention.
+% HERKUNFT: Relationstypen und Feldnamen aus state/core/
+% project-state.json (relations: fromId/relationType/toId; items:
+% sourceRunId/sourceClaimIds) — am Besuchsplanungs-Bestand verifiziert
+% (REQ-82/83 · PBI-046/047 · FC-15 · gh#44/45; supersedes am
+% E47-02-Fall). Bewusst NUR die tragenden Beziehungen, kein
+% vollständiges Klassen-/Feldinventar (Umsetzungsplan P4).
+% ============================================================
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.17\textwidth}>{\raggedright\arraybackslash}p{0.34\textwidth}}
+    \hline
+    \textbf{Ausgangsobjekt} & \textbf{Beziehung} & \textbf{Zielobjekt} & \textbf{Bedeutung} \\
+    \hline
+    Core-Element & Herkunftsangaben, je Eingang & Ledger-Claim oder Eingangs-/Übernahmebeleg & deklarierter Quellenzugang; Auflösbarkeit und Bezug zur aktuellen Fassung gesondert zu prüfen \\
+    Arbeitselement (PBI) & deckt & Requirement / Architektur-Element & ordnet geplante Arbeit einem fachlichen Inhalt zu; kein Umsetzungs- oder Abdeckungsnachweis \\
+    Requirement / PBI & gehört zu Feature & Feature & fachliche Themenstruktur \\
+    Arbeitselement (PBI) & begrenzt durch & Architektur-Element & technische Rahmenbedingung wirkt auf die Umsetzung \\
+    neue Fassung & löst ab & frühere Fassung & Ablösung mit erhaltener Historie (keine Löschung) \\
+    Arbeitselement (PBI) & umgesetzt durch Issue & externes Issue & operative Darstellung des Arbeitspakets; keine implementierte Softwarefunktion \\
+    \hline
+  \end{tabular}
+  \caption[Objekte und Beziehungen im Core]{Zentrale Objekte und
+    Beziehungen im Core. Herkunfts- und Issue-Zuordnung verweisen
+    nach außen; die übrigen Zeilen verbinden Core-Objekte.
+    Begleitende Governance-Informationen sind nicht dargestellt.}
+  \label{t:core-objektmodell}
+\end{table}

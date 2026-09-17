@@ -1,0 +1,946 @@
+{
+  "case_id": "AN-07",
+  "report_index_zero_based": 6,
+  "run": "runs/core-analysis/20260821_203951_db6050",
+  "finding": {
+    "linse": "funktional",
+    "disposition": "question",
+    "statement": "Welche konkreten Schreib-, Änderungs- und Löschrechte haben Angehörige und Bewohner-Accounts je Inhaltsart, insbesondere für eigene Foto-Uploads und About-Me-Inhalte?",
+    "herleitung": "Abgeleitet aus REQ-08, REQ-07 und REQ-79: Angehörige sollen teilweise Inhalte beitragen können und Bewohner-Accounts dürfen eingeschränkte Funktionen nutzen; zusätzlich gibt es konkrete Upload-Funktionalität für Angehörigenfotos. Es fehlt jedoch eine durchgehende Rechte-Story pro Inhaltsart, insbesondere ob eigene Beiträge nur erstellt, auch bearbeitet oder auch gelöscht werden dürfen und wo die Grenzen zwischen Angehörigen-, Bewohner-, User- und Admin-Rechten liegen.",
+    "kategorie": "functional",
+    "ankerIds": [
+      "REQ-08",
+      "REQ-07",
+      "REQ-79"
+    ]
+  },
+  "reported_status": "kritiker_aussortiert",
+  "critic_reason": "Zu breit und unscharf formuliert; eher Themenbündel als gate-fähige Lücke. Rechte je Inhaltsart müssten konkret pro Objekt/Use Case getrennt werden.",
+  "anchors_and_mentions": [
+    {
+      "id": "REQ-07",
+      "present": true,
+      "item": {
+        "itemId": "REQ-07",
+        "itemType": "requirement",
+        "text": "Zusätzlich soll es einen Bewohner-Account geben. Dieser darf nur das eigene Profil in der Profilübersicht sehen und nur eingeschränkte Funktionen nutzen, insbesondere Zugriff auf den About-Me-Bereich und gegebenenfalls das Hinzufügen eigener Bilder.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 1,
+        "sourceRunId": "20260723_113115_35335a",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "canon-bewohner-account-mit-beschraenkung"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4"
+        },
+        "identityKey": "zusätzlich soll es einen bewohner account geben dieser darf nur das eigene profil in der profilübersicht sehen und nur eingeschränkte funktionen nutzen insbesondere zugriff auf den about me bereich und gegebenenfalls das hinzufügen eigener bilder",
+        "history": [],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    },
+    {
+      "id": "REQ-08",
+      "present": true,
+      "item": {
+        "itemId": "REQ-08",
+        "itemType": "requirement",
+        "text": "Ob Angehörige selbst Inhalte eintragen dürfen oder nur Leserechte erhalten, muss noch geklärt werden; die Rechtefrage bleibt bis dahin offen.",
+        "origin": "Extracted",
+        "stage": "evidence_baseline",
+        "version": 2,
+        "sourceRunId": "20260723_113115_35335a",
+        "sourceArtifactId": "REQ",
+        "sourceArtifactType": "requirements",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "angehoerige-schreibrechte-offen"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "artifactVersion": "1",
+          "producerModel": "openai/gpt-5.4"
+        },
+        "identityKey": "ob angehörige selbst inhalte eintragen dürfen oder nur leserechte erhalten muss noch geklärt werden die rechtefrage bleibt bis dahin offen",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Neben Mitarbeitern sollen auch Angehörige Zugriff auf die App erhalten und Inhalte beziehungsweise Wissen beitragen können; unterschiedliche Rechte sind dabei vorgesehen, die konkrete Ausgestaltung bleibt jedoch zu klären.",
+            "status": "baseline",
+            "origin": "Extracted",
+            "sourceRunId": "20260723_113115_35335a",
+            "sourceClaimIds": [
+              "canon-angehoerige-zugriff-und-beitrag",
+              "canon-rechteverwaltung-noch-offen"
+            ],
+            "recordedUtc": "2026-07-23T13:57:21.37497Z",
+            "note": "REFINE (ingestion)"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Agent",
+        "confirmedInRun": "20260723_113115_35335a",
+        "status": "baseline"
+      }
+    },
+    {
+      "id": "REQ-79",
+      "present": true,
+      "item": {
+        "itemId": "REQ-79",
+        "itemType": "requirement",
+        "text": "Angehörige sollen zu Einträgen eigene Fotos hochladen können; pro Eintrag sind maximal fünf Fotos zulässig, und es dürfen nur JPG- oder PNG-Formate akzeptiert werden.",
+        "origin": "GithubInbound",
+        "stage": "github_inbound",
+        "version": 2,
+        "sourceRunId": "20260818_084712_765eea",
+        "sourceArtifactId": "github-issue:40",
+        "sourceArtifactType": "github-issue",
+        "sourceDecisionId": null,
+        "sourceCandidateId": null,
+        "sourceClaimIds": [
+          "weekly-entry-photo-limit-format"
+        ],
+        "sourceArtifactItemIds": [],
+        "metadata": {
+          "ingestedFrom": "GH-40",
+          "ingestedFromRun": "20260817_100135_03f491",
+          "githubIssueNumber": "40",
+          "githubIssueUrl": "https://github.com/armiino/Agentic-GitHub-refactor/issues/40",
+          "harvestedTitleHash": "ea1c66537a4ed191",
+          "harvestedBodyHash": "d08bdd031ca4d32c"
+        },
+        "identityKey": "angehörige sollen zu einträgen eigene fotos hochladen können pro eintrag sind maximal fünf fotos zulässig und es dürfen nur jpg oder png formate akzeptiert werden",
+        "history": [
+          {
+            "versionId": 1,
+            "text": "Angehörige sollen zu Einträgen der Wochenübersicht eigene Fotos hochladen können; diese Fotos dürfen nur für die jeweilige eigene Bezugsperson sichtbar sein.",
+            "status": "accepted",
+            "origin": "GithubInbound",
+            "sourceRunId": "20260817_100135_03f491",
+            "sourceClaimIds": [],
+            "recordedUtc": "2026-08-18T09:14:05.943708Z",
+            "note": "REFINE (ingestion 20260818_084712_765eea, via REQ-06)"
+          }
+        ],
+        "feature": null,
+        "pbi": null,
+        "validity": "Active",
+        "blocker": "None",
+        "confirmedBy": "Human",
+        "status": "accepted"
+      }
+    }
+  ],
+  "one_hop_relations": [
+    {
+      "fromId": "REQ-07",
+      "toId": "canon-bewohner-account-mit-beschraenkung",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-08",
+      "toId": "canon-angehoerige-zugriff-und-beitrag",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-08",
+      "toId": "canon-rechteverwaltung-noch-offen",
+      "relationType": "evidenced_by_ledger_claim",
+      "source": "artifact.sourceClaimIds",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-002",
+      "toId": "REQ-07",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-003",
+      "toId": "REQ-08",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-009",
+      "toId": "REQ-07",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-013",
+      "toId": "REQ-07",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-07",
+      "toId": "FC-02",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-08",
+      "toId": "FC-02",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-07",
+      "toId": "FC-05",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-07",
+      "toId": "FC-07",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "PBI-044",
+      "toId": "REQ-79",
+      "relationType": "covers",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    },
+    {
+      "fromId": "REQ-79",
+      "toId": "FC-14",
+      "relationType": "part_of_feature",
+      "source": "core-seed-backlog",
+      "metadata": {}
+    }
+  ],
+  "neighbor_items": [
+    {
+      "itemId": "FC-02",
+      "itemType": "feature",
+      "text": "Zugang und Rechteverwaltung",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-02",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": "L3-REQ-001"
+      },
+      "identityKey": "zugang-und-rechteverwaltung",
+      "history": [],
+      "feature": {
+        "label": "Zugang und Rechteverwaltung",
+        "rationale": "Dieses Cluster bündelt Anmeldung, Rollen, Zugriffsgrenzen und administrative Rechtevergabe als ein gemeinsames Access-Control-Feature. Auditierbarkeit beim Ändern von Inhalten betrifft dieses Feature mit, ist fachlich aber breiter querschnittlich.",
+        "coreRequirementIds": [
+          "L3-REQ-001",
+          "L3-REQ-009",
+          "L3-REQ-010",
+          "REQ-05",
+          "REQ-06",
+          "REQ-07",
+          "REQ-08",
+          "REQ-09",
+          "REQ-10",
+          "REQ-41"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "FC-05",
+      "itemType": "feature",
+      "text": "Profilübersicht und Profilanlage",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-05",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": "REQ-07,REQ-09,L3-REQ-013"
+      },
+      "identityKey": "profiluebersicht-und-profilanlage",
+      "history": [],
+      "feature": {
+        "label": "Profilübersicht und Profilanlage",
+        "rationale": "Dieses Feature umfasst das Auffinden, Anzeigen und optionale Anlegen von Bewohnerprofilen in der Übersicht inklusive Suche, Sortierung, Status und Dublettenprüfung. Rollenbeschränkungen und Kennzeichnung neuer Inhalte beeinflussen die Übersicht, sind aber nicht ihr fachlicher Kern.",
+        "coreRequirementIds": [
+          "L3-REQ-006",
+          "L3-REQ-007",
+          "L3-REQ-008",
+          "L3-REQ-013",
+          "REQ-07",
+          "REQ-09",
+          "REQ-13",
+          "REQ-16",
+          "REQ-17",
+          "REQ-18",
+          "REQ-45"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "FC-07",
+      "itemType": "feature",
+      "text": "About-Me-Profilbereich",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-07",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyCrossCutting": "REQ-07,REQ-35,L3-REQ-003,L3-REQ-012,L3-REQ-001"
+      },
+      "identityKey": "about-me-profilbereich",
+      "history": [],
+      "feature": {
+        "label": "About-Me-Profilbereich",
+        "rationale": "Dieses Cluster bündelt den persönlichen About-Me-Bereich mit Kurzinfos, Foto-Timeline, Erweiterbarkeit und Benachrichtigung bei neuen Inhalten. Medien- und Datenschutzregeln wirken mit; die Kennzeichnung neuer Inhalte gehört fachlich direkt zu diesem Feature.",
+        "coreRequirementIds": [
+          "L3-REQ-001",
+          "L3-REQ-003",
+          "L3-REQ-012",
+          "L3-REQ-013",
+          "REQ-07",
+          "REQ-20",
+          "REQ-21",
+          "REQ-22",
+          "REQ-23",
+          "REQ-35",
+          "REQ-40"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "FC-14",
+      "itemType": "feature",
+      "text": "Wochenübersicht und Angehörigenbeiträge",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260817_100135_03f491",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyClusterId": "FC-14",
+        "sourceRunId": "20260817_100135_03f491",
+        "legacyCrossCutting": ""
+      },
+      "identityKey": "FC-14",
+      "history": [],
+      "feature": {
+        "label": "Wochenübersicht und Angehörigenbeiträge",
+        "rationale": "REQ-79 eröffnet fachlich ein eigenes Thema: eine Wochenübersicht mit angehörigenseitigem Foto-Upload und personenscharfer Sichtbarkeit je Bezugsperson. Das passt nicht in den Kern der bestehenden Features. About-Me-Foto-Timeline betrifft persönliche Profilinhalte, nicht Wochenübersichtseinträge; das Rechtemodell für Angehörige regelt nur allgemeine Lesesicht, nicht diesen neuen Beitrags- und Sichtbarkeitskontext. Deshalb ist ein neues Feature angemessen statt ein bestehendes Sammel- oder Rand-Feature zu überladen.",
+        "coreRequirementIds": [
+          "REQ-79"
+        ],
+        "crossCuttingRequirementIds": []
+      },
+      "pbi": null,
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-002",
+      "itemType": "pbi",
+      "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung ermöglichen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 9,
+      "sourceRunId": "20260820_112233_5d7a52",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-admin-screen-pruefen",
+        "canon-bewohner-account-mit-beschraenkung",
+        "canon-login-ohne-selbstregistrierung",
+        "canon-rollen-admin-user"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC02-01",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-02"
+      },
+      "identityKey": "interne-accounts-und-rollenkern",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Interne Accounts mit Basisrollen und ohne Selbstregistrierung bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-07-23T14:16:14.465124Z",
+          "note": "EXTEND_PBI: Die Einschränkung, dass nur Admins das Zugriffsprotokoll sehen dürfen, ist primär eine Rechte- und Rollenvorgabe. Daher passt sie besser als Erweiterung zum bestehenden PBI für interne Accounts und Basisrollen als zu einem neuen eigenständigen PBI."
+        },
+        {
+          "versionId": 2,
+          "text": "Interne Accounts mit Basisrollen und ohne Selbstregistrierung bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-09T10:28:02.320563Z",
+          "note": "MARK_CHANGED: Klärungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort ergänzt für das bestehende PBI eine zusätzliche Rechte-Regel: Das Zugriffsprotokoll darf nur für Admin sichtbar sein und nicht für Pflegekräfte oder Angehörige. Daher wurden Titel, Statement und Akzeptanzkriterien um diese belegte Einschränkung erweitert, ohne den bestehenden Scope zu entfernen."
+        },
+        {
+          "versionId": 3,
+          "text": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260809_102419_d403e0",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-18T10:30:24.249445Z",
+          "note": "BLOCK_PBI: Open Decision DEC-005 widerspricht REQ-05"
+        },
+        {
+          "versionId": 4,
+          "text": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260809_102419_d403e0",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-18T11:32:29.188981Z",
+          "note": "coverage-swap REQ-05->REQ-84 | unblock DEC-005 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 5,
+          "text": "Interne Accounts mit Basisrollen und admin-exklusivem Zugriffsprotokoll bereitstellen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260809_102419_d403e0",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-18T11:36:47.295489Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 ergänzt den bisherigen Scope um eine Ausnahme von der bisherigen Regel \"keine Selbstregistrierung\": Angehörige dürfen sich mit Einladungscode selbst registrieren. Daher werden Titel, Statement und die Akzeptanzkriterien zur Kontenerstellung entsprechend erweitert; der übrige Inhalt des PBIs bleibt unberührt."
+        },
+        {
+          "versionId": 6,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode ermöglichen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T10:48:04.909872Z",
+          "note": "BLOCK_PBI: Open Decision DEC-008 widerspricht REQ-84"
+        },
+        {
+          "versionId": 7,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode ermöglichen",
+          "status": "blocked_by_decision",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T11:24:34.187353Z",
+          "note": "unblock DEC-008 | status blocked_by_decision->needs_clarify"
+        },
+        {
+          "versionId": 8,
+          "text": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode ermöglichen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260818_112553_8203f5",
+          "sourceClaimIds": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ],
+          "recordedUtc": "2026-08-20T11:28:15.810655Z",
+          "note": "MARK_CHANGED: Requirement REQ-84 verfeinert | ALIGN(R-26-C): REQ-84 wurde gegenüber der alten Fassung um die verpflichtende, serverseitig erzwungene Einrichtungszuordnung für Accounts und Bewohnerprofile ergänzt. Deshalb werden Titel, Story und Akzeptanzkriterien um diese feste Zuordnung sowie die unveränderliche Einrichtungszuordnung aus Einladungscodes erweitert; die bisherige Einschränkung der Selbstregistrierung bleibt inhaltlich bestehen."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Admin will ich interne Accounts mit Basisrollen verwalten und Angehörigen die Selbstregistrierung per Einladungscode der Einrichtung mit unveränderlicher Einrichtungszuordnung ermöglichen, damit für Admin, User und Bewohner der Zugang weiter nur über intern vergebene Accounts erfolgt, Angehörige sich im vorgegebenen Rahmen selbst registrieren können und jeder Account sowie jedes Bewohnerprofil genau einer Einrichtung zugeordnet ist.",
+        "title": "Interne Accounts mit Basisrollen bereitstellen und Selbstregistrierung für Angehörige per Einladungscode mit fester Einrichtungszuordnung ermöglichen",
+        "acceptanceCriteria": [
+          "Jeder Account und jedes Bewohnerprofil ist genau einer Einrichtung zugeordnet; diese Zuordnung wird serverseitig erzwungen.",
+          "Einladungscodes geben die Einrichtungszuordnung bei der Registrierung unveränderlich mit.",
+          "Angehörige können sich mit einem Einladungscode der Einrichtung in der App selbst registrieren; die dabei mitgegebene Einrichtungszuordnung kann nicht geändert werden."
+        ],
+        "linkedRequirementIds": [
+          "L3-REQ-009",
+          "L3-REQ-010",
+          "REQ-06",
+          "REQ-07",
+          "REQ-41",
+          "REQ-65",
+          "REQ-84"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 2,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "L3-REQ-009",
+            "L3-REQ-010",
+            "REQ-05",
+            "REQ-06",
+            "REQ-07",
+            "REQ-41"
+          ],
+          "l1Req": [
+            "REQ-05",
+            "REQ-06",
+            "REQ-07",
+            "REQ-41"
+          ],
+          "l3": [
+            "L3-REQ-009",
+            "L3-REQ-010"
+          ],
+          "claims": [
+            "canon-admin-screen-pruefen",
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-login-ohne-selbstregistrierung",
+            "canon-rollen-admin-user"
+          ]
+        }
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-003",
+      "itemType": "pbi",
+      "text": "Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung festlegen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 3,
+      "sourceRunId": "20260810_152712_d31d38",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-angehoerige-zugriff-und-beitrag",
+        "canon-rechteverwaltung-noch-offen",
+        "canon-zugriff-nach-einrichtung-beschraenkt"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC02-02",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-02"
+      },
+      "identityKey": "rechte-fuer-angehoerige-und-einrichtungen-klaeren",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Rechtemodell für Angehörige und Einrichtungssicht festlegen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-angehoerige-zugriff-und-beitrag",
+            "canon-rechteverwaltung-noch-offen",
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ],
+          "recordedUtc": "2026-07-23T14:16:14.464928Z",
+          "note": "MARK_CHANGED: Requirement REQ-08 verfeinert"
+        },
+        {
+          "versionId": 2,
+          "text": "Rechtemodell für Angehörige und Einrichtungssicht festlegen",
+          "status": "needs_clarify",
+          "origin": "re-clarify",
+          "sourceRunId": "20260723_131421_80a11e",
+          "sourceClaimIds": [
+            "canon-angehoerige-zugriff-und-beitrag",
+            "canon-rechteverwaltung-noch-offen",
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ],
+          "recordedUtc": "2026-08-10T16:11:32.370835Z",
+          "note": "MARK_CHANGED: Klärungs-Sweep: author via steward-chat | ALIGN(R-26-C): Die Autor-Antwort konkretisiert das zuvor offene Rechtemodell vollständig: Rollen wurden auf drei festgelegt und die Sicht- und Bearbeitungsrechte je Rolle sowie die Einschränkung für Angehörige auf Kommunikations-Inhalte präzisiert. Daher werden Titel, Statement und Akzeptanzkriterien vollständig auf diese belegten Festlegungen angepasst."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Product Owner will ich das Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung festlegen, damit Zugriffe auf betreute Profile der eigenen Einrichtung fachlich korrekt und datenschutzgerecht abgegrenzt sind und Angehörige nur freigegebene Kommunikations-Inhalte ihres Familienmitglieds sehen.",
+        "title": "Rechtemodell für Einrichtungs-Personal, Angehörige und Leitung festlegen",
+        "acceptanceCriteria": [
+          "Es sind genau drei Rollen festgelegt: Einrichtungs-Personal, Angehörige und Leitung.",
+          "Einrichtungs-Personal hat Vollzugriff auf betreute Profile der eigenen Einrichtung.",
+          "Angehörige haben nur Lese-Sicht auf das eigene Familienmitglied.",
+          "Angehörige werden durch die Einrichtung freigeschaltet.",
+          "Leitung hat einrichtungsweite Sicht und Rollenverwaltung.",
+          "Angehörige sehen keine Pflege-Dokumentation.",
+          "Angehörige sehen nur Kommunikations-Inhalte."
+        ],
+        "linkedRequirementIds": [
+          "REQ-08",
+          "REQ-09",
+          "REQ-10"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 3,
+        "readiness": "blocked_by_decision",
+        "mvp": "required_for_mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "REQ-08",
+            "REQ-09",
+            "REQ-10"
+          ],
+          "l1Req": [
+            "REQ-08",
+            "REQ-09",
+            "REQ-10"
+          ],
+          "l3": [],
+          "claims": [
+            "canon-angehoerige-zugriff-und-beitrag",
+            "canon-rechteverwaltung-noch-offen",
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ]
+        }
+      },
+      "validity": "Active",
+      "progress": "Open",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-009",
+      "itemType": "pbi",
+      "text": "Profilübersicht mit Suche und öffnbaren Profilkarten bereitstellen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-bewohner-account-mit-beschraenkung",
+        "canon-profiluebersicht-darstellung",
+        "canon-profiluebersicht-nach-login",
+        "canon-suche-profile",
+        "canon-zugriff-nach-einrichtung-beschraenkt"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC05-01",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "2",
+        "featureId": "FC-05"
+      },
+      "identityKey": "profiluebersicht-suchen-und-oeffnen",
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Nutzer will ich in einer Profilübersicht berechtigte Bewohnerprofile sehen, nach Namen suchen und ein Profil öffnen, damit ich relevante Informationen schnell finde.",
+        "title": "Profilübersicht mit Suche und öffnbaren Profilkarten bereitstellen",
+        "acceptanceCriteria": [
+          "Nach dem Login wird eine Profilübersicht angezeigt.",
+          "Jedes sichtbare Profil zeigt Vorschaubild, Name und kurze Beschreibung.",
+          "Die Übersicht enthält eine Suche, mit der Profile nach Namen gefiltert werden können.",
+          "Ein Klick oder Tap auf ein Profil öffnet die Detailansicht dieses Profils.",
+          "Ein Bewohner-Account sieht in der Übersicht nur das eigene Profil.",
+          "Nutzer sehen keine Profile außerhalb ihrer fachlich zugeordneten Sichtbarkeit."
+        ],
+        "linkedRequirementIds": [
+          "REQ-07",
+          "REQ-09",
+          "REQ-13",
+          "REQ-16",
+          "REQ-17",
+          "REQ-18"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 6,
+        "readiness": "blocked_by_decision",
+        "mvp": "mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "REQ-07",
+            "REQ-09",
+            "REQ-13",
+            "REQ-16",
+            "REQ-17",
+            "REQ-18"
+          ],
+          "l1Req": [
+            "REQ-07",
+            "REQ-09",
+            "REQ-13",
+            "REQ-16",
+            "REQ-17",
+            "REQ-18"
+          ],
+          "l3": [],
+          "claims": [
+            "canon-bewohner-account-mit-beschraenkung",
+            "canon-profiluebersicht-darstellung",
+            "canon-profiluebersicht-nach-login",
+            "canon-suche-profile",
+            "canon-zugriff-nach-einrichtung-beschraenkt"
+          ]
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-013",
+      "itemType": "pbi",
+      "text": "About-Me-Seite mit persönlichen Kurzinfos anzeigen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 1,
+      "sourceRunId": "20260723_131421_80a11e",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [
+        "canon-about-me-seite",
+        "canon-bewohner-account-mit-beschraenkung"
+      ],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC07-01",
+        "sourceRunId": "20260723_131421_80a11e",
+        "legacyOpenDecisions": "1",
+        "featureId": "FC-07"
+      },
+      "identityKey": "about-me-anzeigen",
+      "history": [],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Nutzer will ich eine About-Me-Seite mit persönlichen Kurzinfos eines Bewohners sehen, damit ich schnell einen ersten Eindruck der Person bekomme.",
+        "title": "About-Me-Seite mit persönlichen Kurzinfos anzeigen",
+        "acceptanceCriteria": [
+          "Für jeden Bewohner ist eine About-Me-Seite aufrufbar.",
+          "Die Seite zeigt persönliche Kurzinfos für den ersten Eindruck, darunter mindestens Name sowie weitere beschreibende Angaben, sofern gepflegt.",
+          "Vorhandene Bilder können im About-Me-Bereich angezeigt werden.",
+          "Ein Bewohner-Account kann den eigenen About-Me-Bereich öffnen."
+        ],
+        "linkedRequirementIds": [
+          "REQ-07",
+          "REQ-20"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": 10,
+        "readiness": "ready_with_nonblocking_questions",
+        "mvp": "mvp",
+        "trace": {
+          "canonicalRequirementIds": [
+            "REQ-07",
+            "REQ-20"
+          ],
+          "l1Req": [
+            "REQ-07",
+            "REQ-20"
+          ],
+          "l3": [],
+          "claims": [
+            "canon-about-me-seite",
+            "canon-bewohner-account-mit-beschraenkung"
+          ]
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "confirmedInRun": "20260723_131421_80a11e",
+      "status": "active"
+    },
+    {
+      "itemId": "PBI-044",
+      "itemType": "pbi",
+      "text": "Angehörige können eigene Fotos zu Einträgen hochladen",
+      "origin": "re-clarify",
+      "stage": null,
+      "version": 2,
+      "sourceRunId": "20260818_084712_765eea",
+      "sourceArtifactId": null,
+      "sourceArtifactType": null,
+      "sourceDecisionId": null,
+      "sourceCandidateId": null,
+      "sourceClaimIds": [],
+      "sourceArtifactItemIds": [],
+      "metadata": {
+        "legacyPbiId": "PBI-FC14-01",
+        "sourceRunId": "20260817_100135_03f491",
+        "legacyOpenDecisions": "0",
+        "featureId": "FC-14"
+      },
+      "identityKey": "ik-FC-14-1",
+      "history": [
+        {
+          "versionId": 1,
+          "text": "Angehörige können eigene Fotos zu Einträgen der Wochenübersicht hochladen",
+          "status": "active",
+          "origin": "re-clarify",
+          "sourceRunId": "20260817_100135_03f491",
+          "sourceClaimIds": [],
+          "recordedUtc": "2026-08-18T10:30:24.249294Z",
+          "note": "MARK_CHANGED: Requirement REQ-79 verfeinert | ALIGN(R-26-C): REQ-79 wurde gegenüber der alten Fassung geändert: Der Bezug auf die Wochenübersicht entfällt, neu hinzu kommen die Begrenzung auf maximal fünf Fotos pro Eintrag sowie die erlaubten Formate JPG und PNG. Die bisherige Sichtbarkeitsaussage für die jeweilige Bezugsperson ist in der neuen Fassung nicht mehr enthalten und wird daher nicht weiter vorgeschlagen."
+        }
+      ],
+      "feature": null,
+      "pbi": {
+        "goal": "Als Angehörige will ich zu Einträgen eigene Fotos hochladen können, damit diese den Einträgen zugeordnet werden; pro Eintrag sollen maximal fünf Fotos zulässig sein, und es sollen nur JPG- oder PNG-Formate akzeptiert werden.",
+        "title": "Angehörige können eigene Fotos zu Einträgen hochladen",
+        "acceptanceCriteria": [
+          "Angehörige können zu Einträgen eigene Fotos hochladen.",
+          "Pro Eintrag sind maximal fünf Fotos zulässig.",
+          "Es werden nur JPG- oder PNG-Formate akzeptiert."
+        ],
+        "linkedRequirementIds": [
+          "REQ-79"
+        ],
+        "openDecisionRefs": [],
+        "priorityRank": null,
+        "readiness": null,
+        "mvp": null,
+        "trace": {
+          "canonicalRequirementIds": [],
+          "l1Req": [
+            "REQ-79"
+          ],
+          "l3": [],
+          "claims": []
+        }
+      },
+      "validity": "Active",
+      "blocker": "None",
+      "confirmedBy": "Unmarked",
+      "status": "active"
+    }
+  ],
+  "direct_get_counts_run_wide": {
+    "REQ-07": 0,
+    "REQ-08": 1,
+    "REQ-79": 1
+  },
+  "limitations": [
+    "Direct reads are run-wide: concurrent lenses share agent name and non-unique toolStep. A per-finding causal tool trajectory is not reconstructed.",
+    "Tool results are logged as <JsonElement>; retrospective Core reconstruction is not an observed tool return."
+  ]
+}

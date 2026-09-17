@@ -1,0 +1,43 @@
+% P10-4b, 14.09.2026: Begriffs-/Beleganschlüsse und abgegrenzte Prüfaussagen präzisiert.
+% ============================================================
+% Tabelle 7.4-2: Challenge-Katalog G01–G12, Bilanz — v01 (07.09.)
+% In Overleaf ablegen als: tables/eval-challenge-bilanz.tex
+% Aufruf im Fließtext: \input{\tabledir/eval-challenge-bilanz.tex}
+% Label: t:eval-challenge
+% Stil: chap6.1-Konvention.
+% HERKUNFT: runs/e2e-evidenz/fehlerklassen-matrix.md v2 (07.09.,
+% inkl. G01/G02-Korrektur nach Kollegen-Review; Bilanz 6/4/2) +
+% thesis-evidence/w2/z3-assertion-zuordnung.md. ERSETZT die alte
+% Steinbruch-Tabelle chap7.8table2.tex (dort G01/G02 FALSCH).
+% ============================================================
+
+\begin{table}[htbp]
+  \centering
+  \small
+  \begin{tabular}{l>{\raggedright\arraybackslash}p{0.32\textwidth}>{\raggedright\arraybackslash}p{0.40\textwidth}l}
+    \hline
+    \textbf{Nr} & \textbf{Challenge} & \textbf{Nachweis (nach Assertions)} & \textbf{Status} \\
+    \hline
+    G01 & unbekannte Relation & Invarianten-Prüfung warnt nur (kein Block); kein positiver Test & offen \\
+    G02 & fehlendes Relationsziel & Invariantenprüfung: ungültiges \emph{Ziel} blockiert; zusätzlich eigener Wächter für fehlende \emph{Quelle} & getestet \\
+    G03 & unzulässige 1:1-Beziehung & doppelte Issue-Zuordnungen blockiert (beide Richtungen) & getestet \\
+    G04 & Umgehung außerhalb der Speichernaht & architektonisch (eine Naht, neun inventarisierte Schreiber); kein Angriffstest & offen \\
+    G05 & Apply ohne Autorisierung & neuer Kontrolltest am realen Pfad (Tab.~\ref{t:eval-kontrolltests}) & getestet \\
+    G06 & abgelehnte externe Änderung & Begründungspflicht (UI-Test) + neuer Kontrolltest: fachlicher Item-Bestand unverändert; Ablehnungsvermerk gespeichert & getestet \\
+    G07 & unveränderter Core-Save und lokale Planungs-Idempotenz (eng gefasster Gegenstand) & identischer Core-Save erzeugt keinen Snapshot (Dateizustand) + ADR-Apply-Idempotenz (zurückgegebene Dateiliste); ein Außenprojektions-No-op wurde NICHT untersucht & getestet \\
+    G08 & Drift Core--GitHub & Snapshot-Stempel-Wächter (fremd/fehlend laut abgelehnt); keine vollständige Drift-Erkennung & teilweise \\
+    G09 & Rückweg externer Änderung & Kommentar-Rundweg als Live-Demonstration, kein deterministischer Test & teilweise \\
+    G10 & Snapshot vor Mutation & Snapshot des Alt-Stands am echten Dateizustand & getestet \\
+    G11 & Supersede statt Löschen & Invarianten-Ausnahmen getestet; Kein-Lösch-Pfad architektonisch & teilweise \\
+    G12 & manipulierte Projektion & deterministischer Fingerabdruck; kein adversarialer Test & teilweise \\
+    \hline
+    \multicolumn{4}{l}{\emph{Bilanz: 6 getestet · 4 teilweise · 2 offen — keine Bestehensschwelle definiert.}} \\
+    \hline
+  \end{tabular}
+  \caption[Challenge-Katalog der Mutationskontrollen]{Challenge-Katalog der Mutationskontrollen nach der
+    assertionsbasierten Zuordnung (einschließlich zweier im Review
+    korrigierter Fehlzuordnungen). „Offen`` benennt bewusst
+    ungetestete Fälle; die Statusspalte macht keine Aussage über
+    nicht geprüfte Außenwirkungen.}
+  \label{t:eval-challenge}
+\end{table}

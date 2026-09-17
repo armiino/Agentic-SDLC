@@ -1,0 +1,163 @@
+% P10-4c, 14.09.2026: Ledger-Herleitung und Nachweisanschlüsse präzisiert.
+% M07, 11.09.2026: Begriffe vor Verarbeitungstabelle erklärt;
+% Adjudikationsvorlage und datierten Facettennachtrag aus 5.6 hierher
+% verschoben. Selektive Evidenzklärung bleibt von Autorisierung getrennt.
+% Belege: SemanticLedgerEntry / ArtifactDisposition;
+% EvidenceLedgerProjection.cs; F1 consumable.json; rekonstruierte Queue
+% thesis-evidence/w2/hitl-queue-8189ea/queue.md, US::AU-0124;
+% LedgerAdjudicationReviewAdapter.UsActionOptions;
+% Facetten-Integrationslauf 20260909_190518_f58d6a (D.6).
+
+\section{Beobachtbare und evidenzgebundene Informationsverarbeitung}
+\label{sec:evidenzgebundene-verarbeitung}
+
+Die erste Säule bündelt die Anforderungen A1 bis A3. Der
+\emph{Evidence Ledger} konkretisiert für transkriptbasierte Eingaben
+die in Abschnitt~\ref{sec:evidenzgebundene-wissensgewinnung}
+begründete Quellenstrukturierung: Zwischen Rohtranskript und
+fachlicher Ableitung hält er Aussagen und ihre Herkunft in einer
+überprüfbaren Zwischenrepräsentation fest. Er entspricht der
+Evidenzgewinnung des Meeting-Pfads aus
+Abschnitt~\ref{sec:logische-gesamtarchitektur}. Das Rohtranskript
+bleibt die ursprüngliche Quelle; der maßgebliche fachliche
+Projektzustand wird getrennt davon im Core geführt.
+
+\emph{Evidence Units} sind einzeln adressierbare Quellausschnitte,
+die durch deterministische Segmentierung des Transkripts entstehen.
+Aus ihnen extrahiert das Modell fachlich relevante Aussagen, die
+\emph{Claims}. Jeder Claim besitzt einen Aussagentext
+(\emph{Proposition}), eine Kennung sowie Bezüge zu den
+zugrunde liegenden Units und gespeicherte Quellzitate. Die in
+Abbildung~\ref{fig:evidenz-provenienzmodell} dargestellte
+Claim-Kennung ermöglicht Referenzen innerhalb des betreffenden Laufbestands;
+die unterschiedlichen Kennungsreichweiten erläutert
+Abschnitt~\ref{sec:core-projektfortschreibung}.
+Eine anschließende modellgestützte \emph{Kanonisierung} führt die
+Kandidaten in einen konsolidierten Claim-Bestand über und kann eng
+zusammengehörige Inhalte bündeln. Ein Claim ist daher nicht zwingend
+mit einer atomaren Referenzaussage der Evaluation identisch.
+
+\emph{Facetten} beschreiben Eigenschaften einer Aussage, etwa ihren
+fachlichen Typ, ihren Status und ihre Modalität: Handelt es sich
+beispielsweise um eine Anforderung oder eine offene Frage, ist sie
+entschieden oder ungeklärt, und wird sie als verpflichtend oder als
+Wunsch formuliert? Eine \emph{Disposition} kennzeichnet zusätzlich
+für jedes Zielartefakt, ob der Claim dort erforderlich, als Kontext
+relevant oder nicht einschlägig ist. Im Besuchsfall ist der Claim
+für die Anforderungsableitung als erforderlich, für Architektur als
+Kontext und für offene Fragen als nicht einschlägig eingeordnet.
+Diese Zuordnungen steuern die Weiterverarbeitung; sie erteilen keine
+fachliche Freigabe und garantieren keine korrekte Ableitung.
+
+Abbildung~\ref{fig:evidenz-provenienzmodell} zeigt das logische
+Modell: Durchgezogene Verbindungen beschreiben die Verarbeitung,
+gestrichelte den deklarierten Herkunftsbezug. Die tatsächliche
+Reihenfolge und die jeweiligen Prüf- und Klärungsbedingungen stehen
+in Tabelle~\ref{t:ledger-schritte}.
+
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=\textwidth]{figures/05/Abbildung5.3.pdf}
+  \caption{Logisches Evidenz- und Provenienzmodell des Evidence
+    Ledgers (eigene Darstellung).}
+  \label{fig:evidenz-provenienzmodell}
+\end{figure}
+
+\input{tables/chap5/chap5.3table1}
+
+Die Unit-Bilanz stellt für die Hinweisprüfung eine explizite Menge
+ungenutzter Quellstellen bereit. Modelle beurteilen deren Relevanz
+und Bezug zum Kandidatenbestand; der Workflow legt fest, wann diese
+Urteile eingeholt und wie sie weitergegeben werden. So wird die
+offene Suche nach Auslassungen für diesen Prüfkanal in eine
+Bearbeitung benannter Quellstellen überführt.
+
+% P10-6-Nachzug, 16.09.2026: Erklärabsatz nicht durch eine ganzseitige Übersicht trennen.
+\begin{samepage}
+Die Reihenfolge begrenzt das Blickfeld der Prüfungen: Hinweise auf
+ungenutzte Quellstellen entstehen auf dem Kandidatenbestand
+\emph{vor} der Kanonisierung. Inhalte, die erst bei einer späteren
+Bündelung verloren gehen, werden damit nicht erneut gesucht. Der
+Übergangs-Check prüft anschließend, ob Kandidaten referenziert
+bleiben, nicht ob ihre Bedeutung vollständig erhalten wurde.
+Abschnitt~\ref{sec:eval-stufen} untersucht diese Grenze am Lauf.
+Auch die Vergabe der Dispositionen bleibt ein Modellurteil unter
+expliziten Vorgaben: Dem Fragen-Pfad sollen nur tatsächlich offene
+Inhalte als erforderlich zugeordnet werden. Ob etwa eine
+rhetorische oder bereits geklärte Frage richtig erkannt wurde, ist
+dadurch nicht gesichert.
+\par
+\end{samepage}
+
+Die \emph{Evidenz-Adjudikation} ist die menschliche Entscheidung
+über die vom System vorgelegten Prüf- und Klärungsfälle. Sie betrifft
+die \emph{verwendbare Evidenzsicht}, also den Claim-Bestand für die
+nachgelagerte fachliche Ableitung. Die Auswahl ist selektiv:
+Unbeanstandete Claims werden ohne Einzelentscheidung weitergeführt;
+bei leerer Vorlagenliste entfällt der Entscheidungspunkt.
+Ob eine aus diesen Claims abgeleitete Änderung in den Core
+übernommen werden soll, entscheidet der gesonderte
+Autorisierungspfad aus Abschnitt~\ref{sec:governance-mutation}.
+Ein adjudizierter Claim ist noch keine autorisierte fachliche
+Zustandsänderung.
+
+Was eine solche Vorlage enthält, zeigt die \emph{unbeantwortete}
+Position AU-0124 aus der rekonstruierten Vorlagenliste des
+Stresslaufs (Abschnitt~\ref{sec:eval-luecken}). Sie enthält den
+Formulierungsvorschlag „Bei Auswahl eines Profils soll eine
+Detailansicht erscheinen, die das Profilbild vergrößert zeigt und
+die vier Hauptbereiche der App als interaktive Buttons anbietet``.
+Das Systemurteil lautet \emph{fehlender Claim}; die Begründung
+verweist auf eine konkrete Anforderung über die bereits erfasste
+Profilübersicht hinaus. Für diesen Vorlagentyp bietet die
+Bedienoberfläche fünf Aktionen: als neuen Claim übernehmen; als
+Beleg an einen bestehenden Claim anhängen; einem bestehenden Claim
+zuordnen (Audit); mit Begründung verwerfen; offen lassen. Diese
+Optionen sind typabhängig. Welche davon hier gewählt werden sollte,
+bleibt offen; eine ausgeführte Antwort wird nicht behauptet.
+
+Nur die erste dieser Aktionen erzeugt einen zusätzlichen Claim.
+Dessen Facetten und Dispositionen sind zunächst vorläufig belegt.
+Im Gesamtablauf vervollständigt ein nachgelagerter modellgestützter
+Schritt diese Zuordnungen vor der fachlichen Ableitung; ohne
+ausstehende Facetten erfolgt kein zusätzlicher Modellaufruf.
+Der Schritt garantiert keine semantisch richtige Übernahme in ein
+Folgeartefakt. Die zuvor separat verfügbare Vervollständigung wurde
+am 09.09.2026 im Zuge des nachträglichen Systemreviews in den
+Gesamtablauf eingebunden. Der Integrationsbeleg in
+Anhang~\ref{anh:evaluation} dokumentiert Einbindung und Ausführung;
+die in Kapitel~\ref{chap:evaluation} ausgewerteten Ledger-Läufe
+entstanden davor und belegen ihre Wirkung nicht.
+
+Nachgelagerte Artefaktelemente übernehmen Claim-Kennungen als
+Herkunftsreferenzen. Im Besuchsfall enthält ein Claim sowohl die
+Ankündigung als auch die Übersicht für Pflegende. Die fachliche
+Ableitung bildet daraus zwei Anforderungen, die denselben Claim
+referenzieren (Tabelle~\ref{t:beispiel-besuchsplanung}). Bei
+technisch auflösbaren Referenzen lässt sich so vom abgeleiteten
+Element über den archivierten Claim und seine Unit-Bezüge zur
+Quellstelle zurückgehen. Die deklarierte Herkunft gehört damit zur
+Verarbeitung und muss nicht erst aus dem fertigen Text erschlossen
+werden.
+
+Dieser Herkunftsbezug hat klare Grenzen. Der Ledger ist der
+Evidenzpfad des Transkripteingangs; andere Eingänge erhalten ihre
+Herkunft durch die jeweilige kontrollierte Aufbereitung
+(Abschnitt~\ref{sec:logische-gesamtarchitektur}). Eine vorhandene
+Referenz garantiert weder ihre technische Auflösbarkeit noch die
+semantische Stützung der Aussage oder die Erfassung aller relevanten
+Inhalte. Diese Ebenen aus Abschnitt~\ref{sec:traceability-provenienz}
+werden deshalb getrennt betrachtet; Kapitel~\ref{chap:evaluation}
+untersucht die ausgewiesenen Eigenschaften. Die fachliche Güte der
+Facetten- und Dispositionszuordnung wird nicht gesondert gemessen;
+Abschnitt~\ref{sec:eval-anschluss} ordnet ihre Bedeutung für die
+Weiterverarbeitung qualitativ ein.
+
+Der Ledger macht somit semantische Zwischenstände und ihre Herkunft
+überprüfbar. Die von A1 zusätzlich geforderte Beobachtung tatsächlich
+ausgeführter Agenten-, Werkzeug- und Workflowaktionen ist eine
+gesonderte Realisierungsaufgabe
+(Abschnitt~\ref{sec:realisierung-observability}). Auf der
+bereitgestellten Evidenzsicht setzt nun die fachliche Erzeugung,
+Prüfung und Reparatur aus
+Abschnitt~\ref{sec:saeule-semantische-transformation} auf.

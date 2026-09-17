@@ -1,0 +1,47 @@
+## Functional Requirements
+
+- Das System ermöglicht Kundenlogin per E-Mail und Passwort mit Double-Opt-In-Verfahren. Optional wird Single Sign-On (SSO) unterstützt.
+- Es gibt definierte Rollen und Berechtigungen: Admin, Sales, Manager, Support.
+- Angebotsverwaltung: Erstellung von Angeboten mit Produkt-, Preis- und Rabattdaten aus SAP (lesender Zugriff).
+- Rabattgewährung erfordert eine Freigabe durch Manager oder Finance bei Rabatten über 15–20 %.
+- Rechnungsanzeige mit Downloadmöglichkeit als PDF, inklusive rechtlicher Fußnoten.
+- SAP-Daten werden in Echtzeit oder mit definiertem Fallback abgerufen.
+- Support-Kontakt ist im MVP durch ein Kontaktformular möglich; kein Ticketsystem im MVP.
+
+## Non-functional Requirements
+
+- Einhaltung der DSGVO, insbesondere Datenminimierung, Löschkonzepte und Auditierbarkeit.
+- Hosting ausschließlich in EU-Datenzentren (EU-only).
+- Sicherheitsmaßnahmen: TLS-verschlüsselte Kommunikation, Audit Trails, Logging, Backup und Disaster Recovery.
+- API-Layer mit OAuth-Authentifizierung, bevorzugt Managed Services und API Gateway.
+- Das MVP muss innerhalb von ca. 8 Wochen realisiert werden.
+- Mehrsprachigkeit und Multiwährung initial für DACH, spätere Erweiterung auf Schweiz, EU und USD geplant.
+
+## Constraints/Compliance
+
+- EU-Datenresidenz ist zwingend vorgeschrieben.
+- DSGVO-Konformität muss strikt eingehalten werden.
+- Freigabeprozesse und Rollen dürfen nicht gegen interne Compliance-Regeln verstoßen.
+- Kein Ticketsystem im MVP erlaubt, Supportprozess begrenzt auf Kontaktformular.
+
+## Assumptions and Open Points
+
+- Die finale Ausgestaltung des Rabattfreigabeprozesses und der genauen Prozentschwelle ist noch offen.
+- SAP-Datenaktualität und Fallbackmechanismen bei Nichtverfügbarkeit sind noch zu definieren.
+- Entscheidung für Identity Provider (Azure AD, Google oder andere) steht noch aus.
+- Support-Zugriff auf sensible Angebotsdaten ist kritisch und noch nicht final geregelt.
+- Security- und Auditlog-Umfang wird zwischen Minimalanforderungen und vollständiger Nachvollziehbarkeit diskutiert.
+- Pilotkunde und spezifische regionale Anforderungen (Schweiz vs. Deutschland) sind noch unklar.
+- Risiko, dass der Zeitrahmen für MVP und notwendige Reviews und Architekturentscheidungen kollidieren.
+- Mangel an dedizierten Architekturressourcen könnte die Umsetzung behindern.
+
+## Traceability
+
+- Anforderungen stammen aus dem Stakeholdertranskript T9999_chaos.txt.
+- Produktmanagement (Anna) treibt MVP und Zielsetzung.
+- Technische Umsetzung (Ben) verantwortet API und Backend.
+- Datenschutz (Clara) stellt DSGVO-konforme Anforderungen.
+- Finance (Eva) definiert Freigabeprozesse.
+- Customer Support (David) bringt Supportperspektive, jedoch mit Einschränkungen im MVP.
+- IT Operations (Farid) gibt Hosting- und Infrastrukturanforderungen vor.
+

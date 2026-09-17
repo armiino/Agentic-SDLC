@@ -1,0 +1,62 @@
+% P10, 15.09.2026: konkreter Browserweg; LocalReviewServerHost.cs und ReviewUiFlow.cs.
+% M10, 11.09.2026: Leserführung, Kapiteltrennung und belegte Reichweite.
+% PipelineFullRunner.EventPump.cs:80--212 (Dispatch und gate-spezifische Regeln);
+% BacklogStageExecutors.cs:27--40; PipelineFullRunner.GateResponder.cs; HitlShell.cs.
+% B-32: zentraler Dispatch ist keine globale Replay-Regel. Ingest-/UI-Dateivertrag in 6.6.
+
+\section{Human Gates mit Request Ports}
+\label{sec:realisierung-human-gates}
+
+Die menschlichen Entscheidungspunkte aus
+Abschnitt~\ref{sec:governance-mutation} verwenden \emph{Request Ports}.
+Über diese MAF-Schnittstellen gibt ein Workflow eine typisierte Anfrage
+nach außen und wartet auf eine dazu passende Antwort. Am Beispiel der
+Einordnungsstufe aus
+Abschnitt~\ref{sec:realisierung-agent-executor-workflow} wird daraus
+ein konkreter Übergang: Nach erfolgreicher Prüfung sendet die
+Finalisierung den Operationsplan an den Gate-Port. Dessen Anfrage
+erscheint im Ereignisstrom des Laufs. Eine zentrale Ereignisschleife
+ordnet sie anhand der Port-Kennung dem zuständigen Antwortverfahren zu.
+
+Im hier beschriebenen Betrieb mit persistierter Gate-Pause wird
+zunächst geprüft, ob bereits eine eingereichte Antwort vorliegt.
+Andernfalls sichert der Lauf einen Checkpoint mit der offenen Anfrage
+und hinterlegt einen \emph{Lauf-Zeiger}, der Sitzung, Checkpoint und
+Gate identifiziert. Damit kann der ausführende Prozess beendet
+werden, ohne den vorgesehenen Fortsetzungspunkt zu verlieren.
+
+Für die Review-Oberfläche startet der jeweilige Review-Aufruf einen
+lokalen Webserver, der die Bearbeitung im Browser ermöglicht. Je nach
+Gate zeigt die Oberfläche die vorgelegten Vorschläge, zugehörige Belege
+oder Bestandsinformationen und die verfügbaren Entscheidungsoptionen.
+Die Eingaben des Menschen werden als Entscheidungen gespeichert.
+Alternativ unterstützt der Steward die Einreichung im Dialog, wie
+Abschnitt~\ref{sec:realisierung-steward} erläutert.
+
+Bei der Wiederaufnahme wird die gespeicherte Entscheidung geladen und
+in die zum Gate passende Antwort übertragen: je nach Gegenstand etwa
+eine Auswahl von Elementen, eine überarbeitete Fassung oder eine
+Konfliktentscheidung. Erst die Antwort ermöglicht die nachgelagerte
+Verarbeitung.
+
+Die deklarierten Experiment-Betriebsarten beantworten Anfragen dagegen
+nach gate-spezifischen Regeln. Die zentrale Verteilung bedeutet hier
+keine einheitliche Entscheidungsregel: Beispielsweise weist das
+Cluster-Review beim Einspielen gespeicherter Entscheidungen
+(\emph{Replay}) unbekannte Elemente ab; im Backlog-Review gilt ein
+fehlender Eintrag dagegen als Annahme ohne Bearbeitung.
+Architekturklassifikation und ADR-Freigabe übernehmen in diesem Modus die
+Vorschläge. Replay ist somit kein globaler Nachweis unveränderter
+menschlicher Einzelentscheidungen. Offene fachliche Konflikte werden
+in den Experimentmodi ausdrücklich vertagt. Leere Entscheidungsmengen
+umgehen die Anfrage über einen protokollierten Leerfall.
+
+Das Human Gate ist von Werkzeugzustimmung und Invariantenprüfung
+abzugrenzen: Es erfasst die fachliche Entscheidung über den vorgelegten
+Gegenstand. Die Werkzeugzustimmung erlaubt eine einzelne Handlung
+(Abschnitt~\ref{sec:realisierung-tools-mcp}); die Speicherprüfung
+kontrolliert die strukturelle Zulässigkeit der resultierenden Mutation
+(Abschnitt~\ref{sec:realisierung-persistenz-aussenkopplung}). Die
+Gate-Übersicht steht in Anhang~\ref{anh:gate-matrix}. Wie der Lauf über
+die beschriebene Pause hinweg erhalten bleibt, zeigt der nächste
+Abschnitt.
